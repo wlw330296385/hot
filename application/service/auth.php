@@ -2,7 +2,7 @@
 namespace app\service;
 use app\admin\model\Admin;
 
-class auth {
+class Auth {
     public static function login($username, $password, $keeptime = 0) {
         $admin = Admin::get(['username' => $username]);
         $admin_dataArr = $admin->toArray();

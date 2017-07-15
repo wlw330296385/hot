@@ -2,7 +2,7 @@
 namespace app\service;
 use wechatsdk\TPwechat;
 
-class wechat
+class Wechat
 {
     public $options;
 
