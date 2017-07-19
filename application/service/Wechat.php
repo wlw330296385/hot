@@ -9,7 +9,7 @@ class Wechat
     public function __construct() {
         $this->options = array(
             'token' => config('queue.token'),
-            //'encodingaeskey'=> config('queue.encodingaeskey'),
+            //'encodingaeskey'=> config('queue.encodingaeskey'),s
             'appid' => config('queue.appid'),
             'appsecret' => config('queue.appsecret')
         );

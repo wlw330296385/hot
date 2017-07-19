@@ -1,6 +1,6 @@
 <?php
 namespace app\service;
-use app\admin\model\Admin;
+use app\model\Admin;
 
 class Auth {
     public static function login($username, $password, $keeptime = 0) {

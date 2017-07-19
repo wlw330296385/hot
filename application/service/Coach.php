@@ -1,6 +1,6 @@
 <?php 
 namespace app\service;
-use app\api\model\Coach;
+use app\model\Coach;
 class Coach{
 
 		
