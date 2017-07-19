@@ -2,7 +2,7 @@
 namespace app\model;
 use think\Model;
 
-class BillModel extends{
+class Bill extends{
 
 	protected $type = [
         'status'    =>  'integer',

@@ -2,7 +2,7 @@
 namespace app\model;
 use think\Model;
 
-class CoachModel extends Model {
+class Coach extends Model {
 
 	protected $autoWriteTimestamp = true;
 	//自定义初始化
