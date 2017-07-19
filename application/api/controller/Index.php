@@ -7,4 +7,7 @@ class Index{
     	dump($memberInfo);
         echo 111;
     }
+
+
+    
 }

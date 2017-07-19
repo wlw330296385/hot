@@ -20,5 +20,5 @@ return [
         'controller' => ['Index', 'Login'],
         'model'      => [],
         'view'       => ['index/index', 'login/index'],
-    ]
+    ],
 ];
