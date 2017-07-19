@@ -17,7 +17,7 @@ class Base{
 
 
 
-    public function check_login(){
+    public function checklogin(){
     	
     }
 }
