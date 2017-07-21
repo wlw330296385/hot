@@ -4,9 +4,16 @@ namespace app\api\controller;
 
 use think\Controller;
 use think\Request;
-
+use app\service\CampService;
 class camp extends Controller
 {
+
+    public $campService;
+
+    public function _initialize() {     
+        $this->campService = new CampService;
+    }
+
     /**
      * 显示资源列表
      *
@@ -35,7 +42,8 @@ class camp extends Controller
      */
     public function save(Request $request)
     {
-        //
+        $result = $this->campService->createCamp($request); 
+        return json($result);
     }
 
     /**
@@ -46,7 +54,12 @@ class camp extends Controller
      */
     public function read($id)
     {
-        //
+        $result = $this->campService->CampOneById($id); 
+        if($result){
+            return json(['data' => $result,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>100]);
+        }else{
+            return json(['msg'=>__lang('MSG_200_ERROR'),'code'=>200]);
+        }
     }
 
     /**
@@ -67,9 +80,14 @@ class camp extends Controller
      * @param  int  $id
      * @return \think\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $resutl = $this->campService->UpdateCamp([$request]); 
+        if($resutl){
+            return json(['data'=>$result,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>'100']);
+        }else{
+            return json(['msg'=>__lang('MSG_200_ERROR'),'code'=>'200']);
+        }
     }
 
     /**

@@ -1,10 +1,19 @@
 <?php
 namespace app\model;
 use think\Model;
-
+use traits\model\SoftDelete;
 class Coach extends Model {
-
+    use SoftDelete;
+    protected $deleteTime = 'delete_time';
 	protected $autoWriteTimestamp = true;
+    protected $readonly = [
+                            'create_time',
+                            'student_flow',
+                            'kps',
+                            'lesson_flow',
+                            'coach_rank',
+                            'coach_level'
+                            ];
 	//自定义初始化
     protected function initialize()
     {
@@ -20,8 +29,9 @@ class Coach extends Model {
     }
 
 
-    public function profile(){
-    	// return $this->hasOne('member','member_id','id','memberinfo')->field('member,nickname,avatar,telephone,email');
-    	return $this->hasOne('member','member_id','id','memberinfo');
+    public function member(){
+    	return $this->hasOne('member','id','member_id',[],'left join');
     }
+
+    
 }

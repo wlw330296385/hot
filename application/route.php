@@ -23,5 +23,7 @@ return [
         'member'	=>'api/member',
         'coach'		=>'api/coach',
         'camp'		=>'api/camp',
+        'student'   =>'api/student',
+        'bill'      =>'api/bill'
     ],
 ];

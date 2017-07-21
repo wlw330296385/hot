@@ -1,7 +1,7 @@
 <?php 
 namespace app\validate;
 use think\Validate;
-class Member extends Validate{
+class MemberVal extends Validate{
 
 
 	protected $rule = [

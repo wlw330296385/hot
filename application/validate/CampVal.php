@@ -1,7 +1,7 @@
 <?php 
 namespace app\validate;
 use think\Validate;
-class Camp extends Validate{
+class CampVal extends Validate{
 
 
 	protected $rule = [

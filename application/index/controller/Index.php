@@ -6,7 +6,7 @@ class Index
 {
     public function index()
     {
-
+    	echo 1;
     }
 
     public function wxbind() {

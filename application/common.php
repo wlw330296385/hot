@@ -22,3 +22,11 @@ function getdomain() {
 function passwd($str) {
     return sha1(config('queue.salekey') . $str);
 }
+
+
+// 获取语言包
+function __lang($name, $vars = [], $lang = '') {
+    $Lang = new \think\Lang;
+    $Lang::load(APP_PATH . '/lang/' . $Lang::detect() . '/msg.php');
+    return $Lang::get($name, $vars, $lang);
+}

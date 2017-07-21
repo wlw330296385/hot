@@ -4,9 +4,17 @@ namespace app\api\controller;
 
 use think\Controller;
 use think\Request;
-
-class coach extends Controller
+use app\service\CoachService;
+class Coach extends Controller
 {
+
+
+    public $coachService;
+
+    public function _initialize() {     
+        $this->coachService = new CoachService;
+    }
+
     /**
      * 显示资源列表
      *
@@ -35,7 +43,7 @@ class coach extends Controller
      */
     public function save(Request $request)
     {
-        //
+        
     }
 
     /**
@@ -46,7 +54,13 @@ class coach extends Controller
      */
     public function read($id)
     {
-        //
+        $result = $this->coachService->getCoachInfo(['id'=>$id]);
+        if($result){
+            return json(['data' => $result,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>100]);
+        }else{
+            return json(['msg'=>__lang('MSG_200_ERROR'),'code'=>200]);
+        }
+        
     }
 
     /**
@@ -69,7 +83,9 @@ class coach extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = Request::instance()->param();
+        $result = $this->coachService->updateCoach($data,$id);
+        return json($result);
     }
 
     /**
