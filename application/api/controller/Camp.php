@@ -2,16 +2,17 @@
 
 namespace app\api\controller;
 
-use think\Controller;
+use app\api\controller\Base;
 use think\Request;
 use app\service\CampService;
-class camp extends Controller
+class camp extends Base
 {
 
     public $campService;
 
     public function _initialize() {     
         $this->campService = new CampService;
+        parent::_initialize();
     }
 
     /**
@@ -42,7 +43,12 @@ class camp extends Controller
      */
     public function save(Request $request)
     {
-        $result = $this->campService->createCamp($request); 
+        $data = $request::instance()->param();
+        //dump($data);
+        $data['realname'] = $this->memberInfo['realname'];
+        $data['member_id'] = $this->memberInfo['id'];
+        $data['camp_telephone'] = $this->memberInfo['telephone'];
+        $result = $this->campService->createCamp($data); 
         return json($result);
     }
 

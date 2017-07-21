@@ -2,10 +2,11 @@
 
 namespace app\api\controller;
 
-use think\Controller;
+use app\api\controller\Base;
+// use think\Controller;
 use think\Request;
 use app\service\CoachService;
-class Coach extends Controller
+class Coach extends Base
 {
 
 
@@ -83,7 +84,7 @@ class Coach extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = Request::instance()->param();
+        $data = $request::instance()->param();
         $result = $this->coachService->updateCoach($data,$id);
         return json($result);
     }

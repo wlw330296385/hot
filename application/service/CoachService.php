@@ -1,7 +1,7 @@
 <?php 
 namespace app\service;
 use app\model\Coach;
-use app\validate\CoachVal;
+use app\common\validate\CoachVal;
 
 class CoachService{
 

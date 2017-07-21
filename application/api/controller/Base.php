@@ -11,9 +11,12 @@ class Base extends Controller{
     public function _initialize() {  	
         $this->gettoken();
         $is_login = cookie('member');
-    	if($is_login!=md5($this->memberInfo['id'].$this->memberInfo['create_time'].'hot')){
+        $this->memberInfo = session('memberInfo');
+    	if(($is_login!=md5($this->memberInfo['id'].$this->memberInfo['create_time'].'hot'))||!$is_login){
     		$this->checklogin();
     	}
+
+        
     }
 
 
@@ -24,6 +27,7 @@ class Base extends Controller{
 
     // token 限制
     public function gettoken(){
+
         $TokenService =new TokenService;
         $visits = $TokenService->visitTimes();
         if(!$visits){
@@ -34,10 +38,12 @@ class Base extends Controller{
 
 
     public function checklogin(){
+
     	$member =new \app\service\MemberService;
-    	$memberInfo = $member::getMemberInfo(1);
+    	$memberInfo = $member->getMemberInfo(1);
     	$cookie = md5($memberInfo['id'].$memberInfo['create_time'].'hot');
     	cookie('member',$memberInfo['id']);
     	$this->memberInfo = $memberInfo;
+        session('memberInfo',$memberInfo);
     }
 }

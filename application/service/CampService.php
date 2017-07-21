@@ -1,7 +1,8 @@
 <?php
 namespace app\service;
 use app\model\Camp;
-use app\validate\CampVal;
+use app\common\validate\CampVal;
+use think\Db;
 class CampService {
 
     public $Camp;
@@ -52,10 +53,20 @@ class CampService {
      */
     public function createCamp($request){
         // 一个人只能创建一个训练营
+        $is_create = $this->Camp->where(['member_id'=>$request['member_id'],'status'=>['NEQ',1]])->find();
+        if($is_create){
+            return ['msg'=>'一个用户只能创建一个训练营','code'=>'200'];
+        }
         $res = $this->Camp->validate('CampVal')->save($request);
         if($res === false){
             return ['msg'=>$this->Camp->getError(),'code'=>'200'];
         }else{
+            $data = ['camp' =>$request['camp'],'camp_id'=>$res,'type'=>3,'realname'=>$request['realname'],'member_id'=>$request];
+            $result = Db::name('grade_member')->insert($data);
+            if(!$result){
+                $tihs->Camp::destroy($res);
+                return ['msg'=>Db::name('grade_member')->getError(),'code'=>'200'];
+            }
             return ['data'=>$res,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>'100'];
         }
     }

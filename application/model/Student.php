@@ -10,7 +10,10 @@ class Student extends Model{
     						'total_lession',
     						'finished_total',
     					]
-	 public function profile(){
+
+
+
+	 public function member(){
     	// return $this->hasOne('member','member_id','id','memberinfo')->field('member,nickname,avatar,telephone,email');
     	return $this->hasOne('member','member_id','id','memberinfo');
     }

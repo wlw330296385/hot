@@ -1,7 +1,7 @@
 <?php 
 namespace app\service;
 use app\model\Member;
-use app\validate\MemberVal;
+use app\common\validate\MemberVal;
 class MemberService{
 	private $Member;	
 	public function __construct(){

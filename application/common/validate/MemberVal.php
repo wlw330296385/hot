@@ -1,5 +1,5 @@
 <?php 
-namespace app\validate;
+namespace app\common\validate;
 use think\Validate;
 class MemberVal extends Validate{
 
