@@ -2,7 +2,6 @@
 namespace app\api\controller;
 use app\service\Wechat;
 use think\Controller;
-// use think\controller\Rest;
 use app\service\TokenService;
 class Base extends Controller{
 

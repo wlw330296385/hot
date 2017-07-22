@@ -1,16 +1,14 @@
 <?php
-
 namespace app\api\controller;
-
-use api\controller\Base;
+use app\api\controller\Base;
 use think\Request;
 use app\service\MemberService;
-class Member 
-{
+class Member extends Base{
 
     public $memberService;
 
-    public function _initialize() {     
+    public function _initialize() {   
+        parent::_initialize();  
         $this->memberService = new MemberService;
     }
 
@@ -55,9 +53,10 @@ class Member
     public function read($id)
     {
 
-        $memberInfo = $this->memberService->getMemberInfo($id);
-        unset($memberInfo['password']);
-        return json(['data' => $memberInfo, 'code' => 200, 'message' => '读取成功']);
+        $result = $this->memberService->getMemberInfo(['id'=>$id]);
+
+        unset($result['password']);
+        return json(['data' => $result, 'code' => 200, 'message' => '读取成功']);
 
     }
 

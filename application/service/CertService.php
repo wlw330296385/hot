@@ -7,9 +7,10 @@ use app\model\Cert;
 
 class CertService {
     public static function CertOneById($cert_id) {
-        $cert = Cert::get($cert_id)->toArray();
+        $cert = Cert::get($cert_id);
         if (!$cert) return false;
-        return $cert;
+        if ( empty($cert)  ) return ;
+        return $cert->toArray();
     }
 
 

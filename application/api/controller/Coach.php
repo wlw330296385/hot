@@ -55,7 +55,7 @@ class Coach extends Base
      */
     public function read($id)
     {
-        $result = $this->coachService->getCoachInfo(['id'=>$id]);
+        $result = $this->coachService->getCoachInfo($id);
         if($result){
             return json(['data' => $result,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>100]);
         }else{
