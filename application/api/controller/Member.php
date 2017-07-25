@@ -41,7 +41,7 @@ class Member extends Base{
      */
     public function save(Request $request)
     {
-        
+        dump($request);die;
     }
 
     /**
@@ -52,8 +52,20 @@ class Member extends Base{
      */
     public function read($id)
     {
+        
+        $start = strpos($id,'&');
 
-        $result = $this->memberService->getMemberInfo(['id'=>$id]);
+        if($start!== false){
+            $map = substr($id,$start+1); 
+            dump(json_encode($map));die;
+            $ids = substr($id,0,$start);
+            $result = $this->memberService->getMemberInfo(json_decode($map));
+            
+        }else{
+            $result = $this->memberService->getMemberInfo(['id'=>$id]);
+        }
+
+        
 
         unset($result['password']);
         return json(['data' => $result, 'code' => 200, 'message' => '读取成功']);
