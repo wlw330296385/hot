@@ -9,13 +9,17 @@ class Student extends Model{
     						'member_id',
     						'total_lession',
     						'finished_total',
-    					]
+    					];
 
 
 
 	 public function member(){
     	// return $this->hasOne('member','member_id','id','memberinfo')->field('member,nickname,avatar,telephone,email');
-    	return $this->hasOne('member','member_id','id','memberinfo');
+    	return $this->hasOne('member','member_id','id',[],'left join');
     }
 	
+
+    public function grade(){
+        return $this->hasOne('grade','grade_id','id',[],'left join');
+    }
 }

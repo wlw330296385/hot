@@ -2,18 +2,19 @@
 namespace app\service;
 use app\model\Coach;
 use app\common\validate\CoachVal;
-
+use app\model\GradeMember;
 class CoachService{
-	private $Coach;
+	private $CoachModel;
 	public function __construct(){
-		$this->Coach = new Coach();
+		$this->CoachModel = new Coach();
+        $this->gradeMemberModel = new GradeMember;
 	}
 
 	/**
 	 * 查询教练信息&&关联member表
 	 */
-	public function getCoachInfo($id){
-        $coach = Coach::with('MemberInfo')->where('id', $id)->find();
+	public function getCoachInfo($map){
+        $coach = Coach::with('member')->where($map)->find();
         if (!$coach)
             return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
 
@@ -24,7 +25,7 @@ class CoachService{
 	 * 申请成为教练
 	 */
 	public function createCoach($request){
-		$result = $this->Coach->validate('CoachVal')->save($request);
+		$result = $this->CoachModel->validate('CoachVal')->save($request);
 		return $result;
 	}
 
@@ -34,7 +35,7 @@ class CoachService{
 	 */
 	public function updateCoach($request)
     {
-        $result = $this->Coach->validate('CoachVal')->save($request);
+        $result = $this->CoachModel->validate('CoachVal')->save($request);
 
         if ($result === false) {
             return ['msg' => $this->Coach->getError(), 'code' => 200];
@@ -45,7 +46,7 @@ class CoachService{
 	
 	// 教练列表
 	public function coachList($map=[], $order='') {
-	    $result = Coach::with('MemberInfo')->where($map)->order($order)->select();
+	    $result = Coach::with('member')->where($map)->order($order)->select();
 	    //return $result;
         if (!$result) {
             return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
@@ -58,7 +59,7 @@ class CoachService{
 
     // 教练列表 分页
     public function coachListPage($paginate=0, $map=[], $order='') {
-        $result = Coach::with('MemberInfo')->where($map)->order($order)->paginate($paginate);
+        $result = Coach::with('member')->where($map)->order($order)->paginate($paginate);
         //return $result;
         if (!$result) {
             return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
@@ -86,4 +87,11 @@ class CoachService{
             return ['msg' => __lang('MSG_100_SUCCESS'), 'code' => 100, 'data' => $result];
         }
     }
+
+
+    // 获取训练营下的教练
+    public function getCoahListOfCamp($map){
+        $result = $this->gradeMemberModel->where($map)->select()->toArray();
+        return $result;
+    }   
 }
