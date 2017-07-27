@@ -2,7 +2,7 @@
 namespace app\model;
 use think\Model;
 use traits\model\SoftDelete;
-class GradeMember extends Model {
+class ScheduleMember extends Model {
     use SoftDelete;
     protected $deleteTime = 'delete_time';
 	protected $autoWriteTimestamp = true;
@@ -13,10 +13,6 @@ class GradeMember extends Model {
                             ];
 
 
-    // 关联训练营
-    public function camp(){
-    	return $this->hasOne('camp','id','camp_id',[],'left join');
-    }
 
     // 关联member
     public function member(){
@@ -29,14 +25,4 @@ class GradeMember extends Model {
     	return $this->hasOne('grade','id','grade_id',[],'LEFT JOIN');
     }
 
-
-    // 关联??多对多???
-    public function coach(){
-    	return $this->belongsToMany('coach','grade_member','coach_id','');
-    }
-
-    // 关联学生
-    public function student(){
-    	return $this->hasOne('student','id','student_id',[],'left join');
-    }
 }

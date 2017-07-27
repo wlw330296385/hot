@@ -14,14 +14,16 @@ class ScheduleService {
 	}
 
 
+    // 获取课时数据列表
+	public function getscheduleList($field='*', $map=[], $order=''){
+		$res = Schedule::where($map)->field($field)->order($order)->select();
+		if (!$res)
+            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200];
 
-	public function getscheduleList($map){
-		$result = $this->scheduleModel->where($map)->select()->toArray();
-		if($result ===false){
-			return ['msg'=>__lang('MSG_201_DBNOTFOUND'),'code'=>200];
-		}else{
-			return ['msg'=>__lang('MSG_100_SUCCESS'),'code'=>100,'data'=>$result];
-		}
+		if ($res->isEmpty())
+		    return [ 'msg' => __lang('MSG_000_NULL'), 'code' => '000', 'data' => '' ];
+
+        return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $res->toArray() ];
 	}
 
 	// 发布课时
@@ -50,7 +52,7 @@ class ScheduleService {
 	}
 
 	//查看一条课时信息
-	public function getScheduleInfo(){
+	public function getScheduleInfo($map){
 		$result = $this->scheduleModel->where($map)->find();
 		if($result ===false){
 			return ['msg'=>__lang('MSG_201_DBNOTFOUND'),'code'=>200];

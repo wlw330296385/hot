@@ -9,7 +9,7 @@ class MemberService{
 	}
 	// 获取会员
 	public function getMemberInfo($map){
-		$result = $this->memberModel->where($map)->find()->toArray();
+		$result = $this->memberModel->with('coach')->where($map)->find()->toArray();
 		return $result;
 	}
 

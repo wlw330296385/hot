@@ -38,11 +38,6 @@ class Base extends Controller{
 
     public function checklogin(){
 
-    	$member =new \app\service\MemberService;
-    	$memberInfo = $member->getMemberInfo(1);
-    	$cookie = md5($memberInfo['id'].$memberInfo['create_time'].'hot');
-    	cookie('member',$memberInfo['id']);
-    	$this->memberInfo = $memberInfo;
-        session('memberInfo',$memberInfo);
+    	$this->redirect('frontend/index/index');
     }
 }
