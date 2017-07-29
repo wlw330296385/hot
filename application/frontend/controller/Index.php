@@ -8,6 +8,7 @@ class Index extends Base{
 	}
 
     public function index() {
+    	dump(cookie('member'));
     	dump(session('memberInfo'));
     	dump($this->memberInfo);die;
         return view();

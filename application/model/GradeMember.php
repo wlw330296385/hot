@@ -18,6 +18,7 @@ class GradeMember extends Model {
     	return $this->hasOne('camp','id','camp_id',[],'left join');
     }
 
+
     // 关联member
     public function member(){
     	return $this->hasOne('member','id','member_id',[],'left join');
@@ -26,7 +27,7 @@ class GradeMember extends Model {
 
     // 关联班级
     public function grade(){
-    	return $this->hasOne('grade','id','grade_id',[],'LEFT JOIN');
+    	return $this->hasOne('grade','id','grade_id',[],'left join');
     }
 
 

@@ -3,17 +3,16 @@
 namespace app\api\controller;
 
 use app\api\controller\Base;
-// use think\Controller;
 use think\Request;
-use app\service\CoachService;
-class Coach extends Base
+use app\service\CampService;
+class camp extends Base
 {
 
-
-    public $coachService;
+    public $campService;
 
     public function _initialize() {     
-        $this->coachService = new CoachService;
+        $this->campService = new CampService;
+        parent::_initialize();
     }
 
     /**
@@ -44,7 +43,13 @@ class Coach extends Base
      */
     public function save(Request $request)
     {
-        
+        $data = $request::instance()->param();
+        //dump($data);
+        $data['realname'] = $this->memberInfo['realname'];
+        $data['member_id'] = $this->memberInfo['id'];
+        $data['camp_telephone'] = $this->memberInfo['telephone'];
+        $result = $this->campService->createCamp($data); 
+        return json($result);
     }
 
     /**
@@ -55,13 +60,12 @@ class Coach extends Base
      */
     public function read($id)
     {
-        $result = $this->coachService->getCoachInfo($id);
+        $result = $this->campService->CampOneById($id); 
         if($result){
             return json(['data' => $result,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>100]);
         }else{
             return json(['msg'=>__lang('MSG_200_ERROR'),'code'=>200]);
         }
-        
     }
 
     /**
@@ -82,11 +86,14 @@ class Coach extends Base
      * @param  int  $id
      * @return \think\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $data = $request::instance()->param();
-        $result = $this->coachService->updateCoach($data,$id);
-        return json($result);
+        $resutl = $this->campService->UpdateCamp([$request]); 
+        if($resutl){
+            return json(['data'=>$result,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>'100']);
+        }else{
+            return json(['msg'=>__lang('MSG_200_ERROR'),'code'=>'200']);
+        }
     }
 
     /**

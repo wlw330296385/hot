@@ -8,7 +8,11 @@ class Lesson extends Base{
 	}
 
     public function index() {
-
+    	
         return view();
+    }
+
+    public function lesson(){
+
     }
 }

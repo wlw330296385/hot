@@ -15,5 +15,7 @@ class Member extends Model{
 							'pid',
 							'flow',
 							];
-
+	public function coach(){
+		return $this->hasOne('coach','member_id','id',[],'LEFT');
+	}
 }

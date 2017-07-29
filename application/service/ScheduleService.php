@@ -15,7 +15,7 @@ class ScheduleService {
 
 
     // 获取课时数据列表
-	public function getscheduleList($field='*', $map=[], $order=''){
+	public function getscheduleList($map=[], $order='', $field='*'){
 		$res = Schedule::where($map)->field($field)->order($order)->select();
 		if (!$res)
             return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200];
@@ -60,4 +60,5 @@ class ScheduleService {
 			return ['msg'=>__lang('MSG_100_SUCCESS'),'code'=>100,'data'=>$result];
 		}
 	}
+
 }

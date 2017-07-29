@@ -10,11 +10,13 @@ class Base extends Controller{
     public function _initialize() {  	
         $this->gettoken();
         $is_login = cookie('member');
-        $this->memberInfo = session('memberInfo');
+
+        $this->memberInfo = session('memberInfo','','think');
+
     	if(($is_login!=md5($this->memberInfo['id'].$this->memberInfo['create_time'].'hot'))||!$is_login){
+            echo 1;die;
     		$this->checklogin();
     	}
-
         
     }
 
@@ -29,6 +31,7 @@ class Base extends Controller{
 
         $TokenService =new TokenService;
         $visits = $TokenService->visitTimes();
+        // dump($visits);die;
         if(!$visits){
             // $this->error('非法操作');
             $this->checklogin();

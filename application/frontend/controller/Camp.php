@@ -10,7 +10,7 @@ class Camp extends Base{
 
 
     public function index() {
-
+    	$this->assign('campInfo','');
         return view();
     }
 
