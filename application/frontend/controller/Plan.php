@@ -7,7 +7,7 @@ class Plan extends Base{
 
 	public function _initialize(){
 		parent::_initialize();
-		$this->palnService = new PlanService;
+		$this->PlanService = new PlanService;
 	}
 
     public function index() {
@@ -18,7 +18,7 @@ class Plan extends Base{
 
     public function planInfo(){
     	$id = input('id');
-    	$result = $this->palnService->PlanOneById(['id'=>$id],10);
+    	$result = $this->PlanService->PlanOneById(['id'=>$id],10);
     	return view();
     }
 
@@ -27,17 +27,23 @@ class Plan extends Base{
     public function updatePlan(){
     	
     	$id = input('id');
-		$palnInfo = $this->planService->PlanOneById(['id'=>$id]);
+		$planInfo = $this->PlanService->PlanOneById(['id'=>$id]);
 		$this->assign('planInfo',$planInfo);
 
     	return view();
     }
 
     // 分页获取数据
-    public function palnList(){
+    public function planList(){
     	$map = input('post.');
-    	$palnList = $this->palnService->PlanListPage($map,2);
-    	dump($palnList['data']);die;
+    	$planList = $this->PlanService->PlanListPage($map,10);
+    	dump($planList['data']);die;
     }
 
+
+    public function planListApi(){
+        $map = input('post.');
+        $planList = $this->PlanService->PlanListPage($map,10);
+        return json($planList);
+    }
 }

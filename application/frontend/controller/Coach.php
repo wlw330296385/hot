@@ -16,12 +16,13 @@ class Coach extends Base{
 
 	// 教练首页
     public function index(){
+        $coach_id = input('coach_id');
     	// 获取教练档案
-    	$coachInfo = $this->coachService->getCoachInfo(['member_id'=>$this->memberInfo['id']]);
+    	$coachInfo = $this->coachService->getCoachInfo(['member_id'=>$coach_id]);
     	// dump($coachInfo);
     	//教练的班级
-    	$gradeOfCoach1 = $this->gradeMemberService->getGradeOfCoach(['member_id'=>$this->memberInfo['id'],'type'=>4,'status'=>1,'grade_id'=>['neq','']]);
-        $gradeOfCoach0 = $this->gradeMemberService->getGradeOfCoach(['member_id'=>$this->memberInfo['id'],'type'=>4,'grade_id'=>['neq','']]);
+    	$gradeOfCoach1 = $this->gradeMemberService->getGradeOfCoach(['member_id'=>$coach_id,'type'=>4,'status'=>1,'grade_id'=>['neq','']]);
+        $gradeOfCoach0 = $this->gradeMemberService->getGradeOfCoach(['member_id'=>$coach_id,'type'=>4,'grade_id'=>['neq','']]);
         $gradeOfCoach = array_merge($gradeOfCoach0,$gradeOfCoach1);
         $count0 = count($gradeOfCoach0);
         $count1 = count($gradeOfCoach1);
@@ -36,7 +37,7 @@ class Coach extends Base{
 
         $scheduleOfCoach = $this->scheduleService
                             ->getScheduleList([
-                            'coach_id'=>$this->memberInfo['id'],
+                            'coach_id'=>$coach_id,
                             // 'type'=>1,
                             'lesson_time'=>['BETWEEN',[$begin_m,$end_m]]
                             ]);
@@ -44,7 +45,7 @@ class Coach extends Base{
         $monthScheduleOfCoach = count($scheduleOfCoach);
         $yearScheduleOfCoachList = $this->scheduleService
                             ->getScheduleList([
-                            'coach'=>$this->memberInfo['id'],
+                            'coach_id'=>$coach_id,
                             // 'type'=>1,
                             'lesson_time'=>['BETWEEN',[$begin_y,$end_y]]
                             ]);

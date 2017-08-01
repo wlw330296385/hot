@@ -10,7 +10,10 @@ class Camp extends Base{
 
 
     public function index() {
-    	$this->assign('campInfo','');
+    	$a = input();
+    	$b = ['b'=>123];
+    	$c = array_merge($a,$b);
+    	dump($c);
         return view();
     }
 

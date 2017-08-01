@@ -36,7 +36,7 @@ class LessonService {
     }
 
     // 分页获取课程
-    public function getLessonPage($paginate=0, $map=[], $order=''){
+    public function getLessonPage($map=[],$paginate=0, $order=''){
         $res = Lesson::where($map)->order($order)->paginate($paginate);
         if (!$res) {
             return ['msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200];
@@ -74,7 +74,7 @@ class LessonService {
                         'camp_id'   =>$data['camp_id'],
                         'status'    =>1,
                         'member_id'  =>$data['member_id'],
-                        'type'      =>['in','3,4,5']
+                        'type'      =>['in','2,3,4']
                         ])
                     ->find()
                     ->toArray();
@@ -82,6 +82,29 @@ class LessonService {
             return ['code'=>200,'msg'=>'权限不足'];
         }
         $result = $this->lessonModel->validate('LessonVal')->data($data)->save();
+        if($result){
+            return ['msg' => $this->lessonModel->getError(), 'code' => 100, 'data' => $result];
+        }else{
+            return ['msg'=>__lang('MSG_200_ERROR'), 'code' => 200];
+        }
+    }
+
+    // 编辑课程
+    public function updateLesson($data,$id){
+        $is_power = $this->gradeMemberModel
+                    ->where([
+                        'camp_id'   =>$data['camp_id'],
+                        'status'    =>1,
+                        'member_id'  =>$data['member_id'],
+                        'type'      =>['in','2,3,4']
+                        ])
+                    ->find()
+                    ->toArray();
+        if(!$is_power){
+            return ['code'=>200,'msg'=>'权限不足'];
+        }
+
+        $result = $this->lessonModel->validate('LessonVal')->save($data,['id'=>$id]);
         if($result){
             return ['msg' => $this->lessonModel->getError(), 'code' => 100, 'data' => $result];
         }else{
