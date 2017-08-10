@@ -2,15 +2,20 @@
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\LessonService;
+use app\service\GradeService;
 class Lesson extends Base{
 	protected $LessonService;
+	protected $GradeService;
 	public function _initialize(){
+		$this->LessonService = new LessonService;
+		$this->GradeService = new GradeService;
 		parent::_initialize();
 	}
 
     public function index() {
     	
-        return view();
+        $a = ['10','20','30'];
+        dump(serialize($a));
     }
 
     public function lessonInfo(){
@@ -20,14 +25,20 @@ class Lesson extends Base{
     	if($result['code']==100){
     		$lessonInfo = $result['data'];
     	}
+
+       
+        $lessonInfo['doms'] =  unserialize($lessonInfo['dom']);
+        unset($lessonInfo['dom']);
+        $this->assign('lessonInfoJson',json_encode($lessonInfo));
     	$this->assign('lessonInfo',$lessonInfo);
     	return view();
     }
 
-    // 获取课程
+    // 课程列表
     public function lessonList(){
-    	$map = input('post.');
-    	$result = $LessonService->getLessonPage($map,10);
+    	$map = input();
+    	$map = $map?$map:[];
+    	$result = $this->LessonService->getLessonPage($map,10);
     	if($result['code'] == 100){
 			$list = $result['data'];
 	    	//在线课程
@@ -97,6 +108,9 @@ class Lesson extends Base{
     	$camp_id = input('get.camp_id');
     	$coachList = db('grade_member')->where(['type'=>4,'camp_id'=>$camp_id,'status'=>1])->select();
     	$assitantList = db('grade_member')->where(['type'=>8,'camp_id'=>$camp_id,'status'=>1])->select();
+    	$gradeCategoryList = $this->GradeService->getGradeCategory(1);
+
+    	$this->assign('gradeCategoryList',$gradeCategoryList);
     	$this->assign('coachList',$coachList);
     	$this->assign('assitantList',$assitantList);
     	return view();
@@ -113,6 +127,23 @@ class Lesson extends Base{
 
     	return json($result);die;
     	
+    }
+
+    // 购买课程
+    public function buyLesson(){
+        $studentInfo = db('student')->where(['member_id'=>$this->memberInfo['id']])->select();        
+        $this->assign('studentInfo',$studentInfo); 
+    	return view();
+    }
+
+    //课程订单支付
+    public function comfirmBill(){
+    // 生成订单号
+    $billOrder = '1'.date('YmrHis',time()).rand(0000,9999);
+    // 生成微信参数
+
+    $this->assign('billOrder',$billOrder);
+    return view();
     }
 
 }

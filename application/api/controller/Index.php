@@ -1,16 +1,13 @@
-<?php
+<?php 
 namespace app\api\controller;
-use think\Controller;
-use app\service\MemberService;
+use app\api\controller\Base;
+use app\service\LessonService;
+class Index extends Base{
+	protected $LessonService;
+	public function _initialize(){
+		parent::_initialize();
+		$this->LessonService = new LessonService;
+	}
 
-class Index extends Controller{
-	
-    public function index() {
-    	$Member = new MemberService();
-    	$member = $Member->getMemberInfo(1);
-    	dump($member);
-    }
 
-    
-    
 }

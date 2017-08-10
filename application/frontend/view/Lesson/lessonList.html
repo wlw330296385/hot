@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>课程列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body class=whitebg>
+
+
+<!--首页-->
+<div class="mui-content">
+
+    <!--课程列表-->
+    <!--头部搜索2-->
+    <header id="header" class="mui-bar mui-bar-nav search2">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title"><input type="search" class="mui-input-clear" placeholder="搜课程/训练营/训练地点等"></h1>
+        <span class="mui-icon mui-icon-search searchicon"></span>
+    </header>
+    <div class="mui-content">
+        <div class="location-frame">
+            <span class="location"><i class="mui-icon mui-icon-location"></i>深圳市</span>
+            <span class="location-choise">全部区域<i class="mui-icon mui-icon-arrowdown"></i></span>
+        </div>
+
+
+        <ul class="mui-table-view course-list">
+            {volist name="onlineList" id="vol"}
+            <li class="mui-table-view-cell mui-media course-listli course-padding">
+                <a href="{:url('lessonInfo',['id'=>$vol['id']])}">
+                    <img class="mui-media-object mui-pull-left" src="/static/frontend/images/shuijiao.jpg">
+                    <div class="mui-media-body">
+                        {$vol.lesson}
+                        <p class="mui-ellipsis">{$vol.gradecate}</p>
+                    </div>
+                    <div class="price-frame">
+                        <p class="price">￥{$vol.cost}</p>
+                        <p class="address">{$vol.province}-{$vol.city}</p>
+                    </div>
+                </a>
+            </li>
+            {/volist}
+        </ul>
+    </div>
+
+</div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+</script>
+</html>

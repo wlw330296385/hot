@@ -7,10 +7,10 @@ use think\Db;
 use app\model\GradeMember;
 use app\common\validate\LessonVal;
 class LessonService {
-
+    private $gradeMemberModel;
     private $lessonModel;
     public function __construct(){
-        $this->lessonModel = new Lesson();
+        $this->lessonModel = new Lesson;
         $this->gradeMemberModel = new GradeMember;
     }
 
@@ -24,8 +24,8 @@ class LessonService {
     }
 
     // 获取所有课程
-    public function getLessonAll($map=[], $order='') {
-        $res = Lesson::where($map)->order($order)->select();
+    public function getLessonAll($map=[], $order='',$limit = 10) {
+        $res = Lesson::where($map)->limit($limit)->order($order)->select();
         if (!$res)
             return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
 
@@ -36,7 +36,7 @@ class LessonService {
     }
 
     // 分页获取课程
-    public function getLessonPage($map=[],$paginate=0, $order=''){
+    public function getLessonPage($map=[],$paginate=10, $order=''){
         $res = Lesson::where($map)->order($order)->paginate($paginate);
         if (!$res) {
             return ['msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200];

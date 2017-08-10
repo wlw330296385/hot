@@ -11,14 +11,19 @@ class CampService {
         $this->Camp = new Camp();
     }
 
-    public function CampList($map=[], $order='') {
-        $res = $this->Camp->where($map)->order($order)->select()->toArray();
-        return $res;
+    public function getCampList($map=[],$paginate = 10; $order='') {
+        $res = $this->Camp->where($map)->order($order)->paginate($paginate);
+        return $res->toArray();
     }
 
-    public function campListPage($paginate=0, $map=[], $order=''){
+    public function campListPage( $map=[],$paginate=10, $order=''){
         $res = $this->Camp->where($map)->order($order)->paginate($paginate);
-        return $res;
+        if($res['data']){
+            return $res['data'];
+        }else{
+            return $res;
+        }
+        
     }
 
     /**

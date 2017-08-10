@@ -13,7 +13,7 @@ class CoachService{
 	/**
 	 * 查询教练信息&&关联member表
 	 */
-	public function getCoachInfo($map){
+	public function coachInfo($map){
         $coach = Coach::with('member')->where($map)->find();
         if (!$coach)
             return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
@@ -74,7 +74,7 @@ class CoachService{
 	    $result = Coach::update($request);
 	    if (!$result) {
 	        return [ 'msg' => __lang('MSG_200_ERROR'), 'code' => 200 ];
-        } else {
+        }else{
             return ['msg' => __lang('MSG_100_SUCCESS'), 'code' => 100, 'data' => $result];
         }
     }
@@ -91,7 +91,32 @@ class CoachService{
 
     // 获取训练营下的教练
     public function getCoahListOfCamp($map){
-        $result = $this->gradeMemberModel->where($map)->select()->toArray();
-        return $result;
+        $result = $this->gradeMemberModel->where($map)->paginate($paginate);
+        return $result->toArray();
+    }
+
+    public function coachListPage(){
+        $result = Coach::with('member')->where($map)->order($order)->paginate($paginate);
+        if (!$result) {
+            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
+        }
+        if ($result->isEmpty()) {
+            return [ 'msg' => __lang('MSG_000_NULL'), 'code' => 000, 'data' => []];
+        }
+        return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $result->toArray()];
     }   
+
+
+
+    // 教练列表 分页
+    public function getCoachList($map=[], $paginate = 10, $order='') {
+        $result = Coach::with('member')->where($map)->order($order)->paginate($paginate);
+        return $result->toArray();
+    }
+
+
+    public function getCoachInfo($map){
+        $result = $this->CoachModel->where($map)->find();
+        return $result;
+    }
 }

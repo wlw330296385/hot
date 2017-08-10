@@ -21,25 +21,23 @@ class TokenService{
      // 	return $this->visit($this->num);
      // }
 
-	public function visitTimes(){
-		// Session::prefix('token');
-		// session::expire(3600);
-		session(['prefix'=>'token','expire'=>3600]);
-		$this->num = session('visittime','','token');
+	public function visitTimes($limit = 10,$expire=3600,$prefix = 'token'){
+		session(['prefix'=>'token','expire'=>$expire]);
+		$this->num = session('visittime','',$prefix);
 		if(!$this->num){
 			session('visittime',1,'token');
 			return 1;
 		}else{
 			
-			if($this->num>10){
-				session(null,'token');
+			if($this->num>$limit){
+				session(null,$prefix);
 				return false;
 			}
 			$this->num++;
-			session('visittime',$this->num,'token');
+			session('visittime',$this->num,$prefix);
 			return $this->num++;
 		}
-
-
 	}
+
+
 }

@@ -32,7 +32,7 @@ class MemberService{
 
 	//新建会员
 	public function saveMemberInfo($request){
-		$result = $this->memberModel->data($request)->save();
+		$result = $this->memberModel->validate('MemberVal')->data($request)->save();
 		
 		if($result ===false){
 			return ['msg'=>$this->memberModel->getError(),'code'=>200];

@@ -14,16 +14,19 @@ class Coach extends Base{
 
 	}
 
-	// 教练首页
     public function index(){
+
+    }
+
+	// 教练首页
+    public function coachInfo(){
         $coach_id = input('coach_id');
     	// 获取教练档案
     	$coachInfo = $this->coachService->getCoachInfo(['member_id'=>$coach_id]);
-    	// dump($coachInfo);
     	//教练的班级
     	$gradeOfCoach1 = $this->gradeMemberService->getGradeOfCoach(['member_id'=>$coach_id,'type'=>4,'status'=>1,'grade_id'=>['neq','']]);
         $gradeOfCoach0 = $this->gradeMemberService->getGradeOfCoach(['member_id'=>$coach_id,'type'=>4,'grade_id'=>['neq','']]);
-        $gradeOfCoach = array_merge($gradeOfCoach0,$gradeOfCoach1);
+        $gradeOfCoachList = array_merge($gradeOfCoach0,$gradeOfCoach1);
         $count0 = count($gradeOfCoach0);
         $count1 = count($gradeOfCoach1);
         
@@ -35,14 +38,14 @@ class Coach extends Base{
         $begin_y = mktime(0,0,0,1,1,$y);
         $end_y = mktime(23,59,59,12,30,$y)-1;
 
-        $scheduleOfCoach = $this->scheduleService
+        $scheduleOfCoachList = $this->scheduleService
                             ->getScheduleList([
                             'coach_id'=>$coach_id,
                             // 'type'=>1,
                             'lesson_time'=>['BETWEEN',[$begin_m,$end_m]]
                             ]);
-        // echo 3;
-        $monthScheduleOfCoach = count($scheduleOfCoach);
+
+        $monthScheduleOfCoach = count($scheduleOfCoachList);
         $yearScheduleOfCoachList = $this->scheduleService
                             ->getScheduleList([
                             'coach_id'=>$coach_id,
@@ -51,15 +54,51 @@ class Coach extends Base{
                             ]);
         $yearScheduleOfCoach = count($yearScheduleOfCoachList); 
         //教练工资
-        
-        dump($scheduleOfCoach);
-        echo '班级数量'.$count0;
-        echo '<br />';
-        echo '全部班级数量'.$count1;
-        dump($gradeOfCoach);die;
+        $this->assign('scheduleOfCoachList',$scheduleOfCoachList);//教练当月的课量
+        $this->assign('monthScheduleOfCoach',$monthScheduleOfCoach)//当月课量数量
+        $this->assign('gradeOfCoachList',$gradeOfCoachList);//教练班级
+        $this->assign('yearScheduleOfCoachList',$yearScheduleOfCoachList);//当年课量
+        $this->assign('yearScheduleOfCoach',$yearScheduleOfCoach);//当年课量数量
+        $this->assign('coachInfo',$coachInfo);
         return view();
     }
 
+     public function searchCoach(){
+        $map = [];
+        $keyword = input('keyword');
+        // $province = input('province');
+        // $city = input('city');
+        // $area = input('area');
+        // $map = ['province'=>$province,'city'=>$city,'area'=>$area];
+        // foreach ($map as $key => $value) {
+        //     if($value == ''){
+        //         unset($map[$key])
+        //     }
+        // }
+        if($keyword){
+            $map['camp'] = ['LIKE',$keyword];
+        }
+        $result = $this->CoachService->getCoachList($map);
+        $this->assign('campList',$result['data']);
+        return view();
+    }
 
-
+    public function searchCoachList(){
+        $map = [];
+        $keyword = input('keyword');
+        // $province = input('province');
+        // $city = input('city');
+        // $area = input('area');
+        // $map = ['province'=>$province,'city'=>$city,'area'=>$area];
+        // foreach ($map as $key => $value) {
+        //     if($value == ''){
+        //         unset($map[$key])
+        //     }
+        // }
+        if($keyword){
+            $map['camp'] = ['LIKE',$keyword];
+        }
+        $campList = $this->CoachService->getCoachListPage($map);
+        return json($campList);
+    }
 }

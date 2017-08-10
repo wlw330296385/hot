@@ -6,13 +6,15 @@ class Bill extends Model{
 	use SoftDelete;
     protected $deleteTime = 'delete_time';
 	protected $type = [
-        'status'    =>  'integer',
-        'fee'     =>  'float',
-        'salary'  =>  'float',
-        'callback_str'      =>  'json',
+        
     ];
-
+    protected $autoWriteTimestamp = true;
 
     protected $readonly = ['create_time'];
+
+    public function lesson(){
+    	return $this->hasOne('lesson','id','lesson_id',[],'left join');
+    } 
+
 }
 

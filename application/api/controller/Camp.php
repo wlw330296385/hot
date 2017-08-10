@@ -1,109 +1,45 @@
-<?php
-
+<?php 
 namespace app\api\controller;
-
 use app\api\controller\Base;
-use think\Request;
 use app\service\CampService;
-class camp extends Base
-{
+class Camp extends Base{
+    protected $CampService;
+	public function _initialize(){
+		parent::_initialize();
+	}
 
-    public $campService;
 
-    public function _initialize() {     
-        $this->campService = new CampService;
-        parent::_initialize();
+    public function searchCampApi(){
+        try{
+            $keyword = input('keyword');
+            $province = input('province');
+            $city = input('city');
+            $area = input('area');
+            $map = ['province'=>$province,'city'=>$city,'area'=>$area];
+            foreach ($map as $key => $value) {
+                if($value == ''){
+                    unset($map[$key])
+                }
+            }
+            if($keyword){
+                $map['camp'] = ['LIKE',$keyword];
+            }
+            $campList = $this->CampService->getCampList($map);
+            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
+        }catch(Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }       
     }
 
-    /**
-     * 显示资源列表
-     *
-     * @return \think\Response
-     */
-    public function index()
-    {
-        //
-    }
+    public function getCampListApi(){
+        try{
+            $map = input('post.');
+            $campList = $this->CampService->getCampList($map);
 
-    /**
-     * 显示创建资源表单页.
-     *
-     * @return \think\Response
-     */
-    public function create()
-    {
-        //
-    }
+            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
 
-    /**
-     * 保存新建的资源
-     *
-     * @param  \think\Request  $request
-     * @return \think\Response
-     */
-    public function save(Request $request)
-    {
-        $data = $request::instance()->param();
-        //dump($data);
-        $data['realname'] = $this->memberInfo['realname'];
-        $data['member_id'] = $this->memberInfo['id'];
-        $data['camp_telephone'] = $this->memberInfo['telephone'];
-        $result = $this->campService->createCamp($data); 
-        return json($result);
-    }
-
-    /**
-     * 显示指定的资源
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function read($id)
-    {
-        $result = $this->campService->CampOneById($id); 
-        if($result){
-            return json(['data' => $result,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>100]);
-        }else{
-            return json(['msg'=>__lang('MSG_200_ERROR'),'code'=>200]);
-        }
-    }
-
-    /**
-     * 显示编辑资源表单页.
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * 保存更新的资源
-     *
-     * @param  \think\Request  $request
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function update(Request $request)
-    {
-        $resutl = $this->campService->UpdateCamp([$request]); 
-        if($resutl){
-            return json(['data'=>$result,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>'100']);
-        }else{
-            return json(['msg'=>__lang('MSG_200_ERROR'),'code'=>'200']);
-        }
-    }
-
-    /**
-     * 删除指定资源
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function delete($id)
-    {
-        //
+        }catch(Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }  
     }
 }

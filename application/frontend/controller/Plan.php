@@ -18,12 +18,14 @@ class Plan extends Base{
 
     public function planInfo(){
     	$id = input('id');
-    	$result = $this->PlanService->PlanOneById(['id'=>$id],10);
+    	$result = $this->PlanService->PlanOneById(['id'=>$id]);
+
+        $this->assign('planInfo',$result);
     	return view();
     }
 
 
-
+    //编辑项目
     public function updatePlan(){
     	
     	$id = input('id');
@@ -37,7 +39,9 @@ class Plan extends Base{
     public function planList(){
     	$map = input('post.');
     	$planList = $this->PlanService->PlanListPage($map,10);
-    	dump($planList['data']);die;
+    	// dump($planList['data']);die;
+        $this->assign('planList',$planList);
+        return view();
     }
 
 

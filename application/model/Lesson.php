@@ -2,7 +2,7 @@
 namespace app\model;
 use think\Model;
 use traits\model\SoftDelete;
-class Member extends Model{
+class Lesson extends Model{
 	use SoftDelete;
     protected $deleteTime = 'delete_time';
 	protected $readonly = [

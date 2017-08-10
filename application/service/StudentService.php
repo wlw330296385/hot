@@ -2,15 +2,18 @@
 namespace app\service;
 use app\model\Student;
 use app\model\GradeMember;
+use app\model\ScheduleMember;
 use think\Db;
 use app\common\validate\StudentVal;
 class StudentService{
 
 	private $studentModel;
-
+	private $gradeMemberModel;
+	private $scheduleMemberModel;
 	public function __construct(){
 		$this->studentModel = new Student;
 		$this->gradeMemberModel = new GradeMember;
+		$this->scheduleMemberModel = new ScheduleMember;
 	}
 
 
@@ -24,7 +27,23 @@ class StudentService{
 			// }
 	}	
 
+	public function createStudent($data){
+		$reuslt = $this->studentModel->validate('StudentVal')->data($data)->save();
+		if($result){
+			return ['code'=>100,'msg'=>'ok','data'=>$result];
+		}else{
+			return ['code'=>200,'msg'=>$this->studentModel->getError()];
+		}
+	}
 
+	public function updateStudent($data,$id){
+		$result = $this->studentModel->validate('StudentVal')->save($data,$id);
+		if($result){
+			return ['code'=>100,'msg'=>'ok','data'=>$result];
+		}else{
+			return ['code'=>200,'msg'=>$this->studentModel->getError()];
+		}
+	}
 	/**
 	 * 	
 	 */
@@ -60,7 +79,22 @@ class StudentService{
 
 	// 获取一个教练下的所有学生
 	public function getStudentListOfCoach($map){
-		$result = $this->gradeMemberModel->where($map)->select()->toArray();
+		$result = $this->gradeMemberModel->where($map)->paginate(10)->toArray();
 		return $result;
+    }
+
+    public function getStudentGradeList($map){
+    	$result = $this->gradeMemberModel->where($map)->paginate(10)->toArray();
+		return $result;
+    }
+
+    public function getStudentScheduleList($map){
+    	$result = $this->scheduleMemberModel->where($map)->paginate(10)->toArray();
+    	return $result;
+    }
+
+    public function getStudentList(){
+    	$result = $this->gradeMemberModel->where($map)->paginate(10)->toArray();
+    	return $result;
     }
 }

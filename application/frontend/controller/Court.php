@@ -16,7 +16,7 @@ class Court extends Base{
     }
 
 
-    public function CourtInfo(){
+    public function courtInfo(){
     	$id = input('id');
     	$result = $this->CourtService->getCourtOne(['id'=>$id]);
     	return view();
@@ -31,6 +31,12 @@ class Court extends Base{
     	return view();
     }
 
+    public function createCourt(){
+        $pidList = $this->CourtService->getCourtAll(['pid'=>0]);
+
+        $this->assign('pidList',$pidList['data']);
+        return view();
+    }
     // 分页获取数据
     public function courtListApi(){
     	$camp_id = input('get.camp_id');
