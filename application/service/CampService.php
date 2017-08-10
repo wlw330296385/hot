@@ -18,8 +18,9 @@ class CampService {
 
     public function campListPage( $map=[],$paginate=10, $order=''){
         $res = $this->Camp->where($map)->order($order)->paginate($paginate);
-        if($res['data']){
-            return $res['data'];
+        $result = $res->toArray();
+        if($result['data']){
+            return $result['data'];
         }else{
             return $res;
         }
@@ -58,9 +59,9 @@ class CampService {
      */
     public function createCamp($request){
         // 一个人只能创建一个训练营
-        $is_create = $this->Camp->where(['member_id'=>$request['member_id'],'status'=>['NEQ',1]])->find();
+        $is_create = $this->isCreateCamp($request['member_id']);
         if($is_create){
-            return ['msg'=>'一个用户只能创建一个训练营','code'=>'200'];
+            return ['msg'=>'一个用户只能创建一个训练营','code'=>'200'];die;
         }
         $res = $this->Camp->validate('CampVal')->save($request);
         if($res === false){
@@ -73,6 +74,19 @@ class CampService {
                 return ['msg'=>Db::name('grade_member')->getError(),'code'=>'200'];
             }
             return ['data'=>$res,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>'100'];
+        }
+    }
+
+    /**
+     * 判断是否已拥有训练营
+     */
+
+    public function isCreateCamp($member_id){
+        $is_create = $this->Camp->where(['member_id'=>$member_id,'status'=>['NEQ',1]])->find();
+        if($is_create){
+            return $is_create['id'];
+        }else{
+            return false;
         }
     }
 }

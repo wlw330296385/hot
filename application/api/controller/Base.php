@@ -13,7 +13,6 @@ class Base extends Controller{
  	public $memberInfo;
 
 
-
   public function _initialize() {  	
 
       $this->gettoken();
@@ -24,7 +23,7 @@ class Base extends Controller{
   		$this->checklogin();
 
   	}
-
+  }
   public function gettoken(){
 
  
@@ -45,7 +44,6 @@ class Base extends Controller{
     // $this->redirect('frontend/index/index');
   }
 
-}
 
 
 
@@ -59,40 +57,5 @@ class Base extends Controller{
 
 
 
-
-
-  // token 闄愬埗
-
-  public function gettoken(){
-
-
-
-      $TokenService =new TokenService;
-
-      $visits = $TokenService->visitTimes();
-
-      // dump($visits);die;
-
-      if(!$visits){
-
-          // $this->error('闈炴硶鎿嶄綔');
-
-          $this->checklogin();
-
-      }       
-
-  }
-
-
-
-
-
-  public function checklogin(){
-
-
-
-  	$this->redirect('api/index/index');
-
-  }
 
 }

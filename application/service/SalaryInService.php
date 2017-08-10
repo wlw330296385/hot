@@ -34,10 +34,10 @@ class SalaryInService {
     }
 
     /**
-     * 参数:  $data = ['salary','score',]
+     * 参数:  
      * 递归分销
      */
-    public function memberRebate($pid,$salary,$score,$salary_id,$times = 1){
+    public function memberSalaryRebate($pid,$salary,$salary_id,$times = 1){
         
         if($times>3){
             return true;
@@ -46,15 +46,14 @@ class SalaryInService {
         $member = db('member')->find($pid);
         if($member){
             $times++;
-            dump($times);
             $pidSalary  = $salary*$this->setting['rebate'];
-            $pidScore   = $score*$this->setting['rebate'];
-            $data = ['salary'=>$pidSalary,'score'=>$pidScore,'pid'=>$member['pid'],'member_id'=>$member['id'],'member'=>$member['member'],'salary_id'=>$salary_id,'tier'=>$times,'create_time'=>time()];
+            $data = ['salary'=>$pidSalary,'pid'=>$member['pid'],'member_id'=>$member['id'],'member'=>$member['member'],'salary_id'=>$salary_id,'tier'=>$times,'create_time'=>time()];
             $result = db('rebate')->insert($data);
             if($result){
+                db('member')->where(['id'=>$pid])->setInc('balance',$pidSalary);
                 file_put_contents(ROOT_PATH.'/data/rebate/'.date('Y-m-d',time()).'.txt',['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]);
                 if($member['pid']>1){ 
-                    $res = $this->memberRebate($member['pid'],$pidSalary,$pidScore,$salary_id,$times);
+                    $res = $this->memberRebate($member['pid'],$pidSalary,$salary_id,$times);
                     
                 }else{
                     return true;
@@ -68,34 +67,33 @@ class SalaryInService {
         }
     }
 
+
+
     /**
      * 课时结算佣金
-     * 参数:  $data = ['salary','score','camp_id','camp','star','lesson_id','lesson']
+     * 参数:  $data = ['salary','camp_id','camp','star','lesson_id','lesson']
      */
     public function scheduleRebate($data){
         $sysrebate = $this->setting['sysrebate'];
         $starrebate = $this->setting['starrebate'];
         $salary = $data['salary'];
-        $score = $data['score'];
         $star = $data['star'];
         $totalSalary = $data['salary']*(1-$sysrebate-$starrebate*(1-$star/100));
-        $totalScore = $data['score']*(1-$sysrebate-$starrebate*(1-$star/100));
-        $result = $this->memberRebate($this->memberInfo['pid'],$totalSalary,$totalScore,1);
-        if($result){
-            $data['realname']   = $this->memberInfo['realname'];
-            $data['member_id']  = $this->memberInfo['id'];
-            $data['pid']        = $this->memberInfo['pid'];
-            $data['level']      = $this->memberInfo['level'];
-            $data['member_type']= 1;
-            $res = $this->SalaryIn->data($data)->save();
+        $data['realname']   = $this->memberInfo['realname'];
+        $data['member_id']  = $this->memberInfo['id'];
+        $data['pid']        = $this->memberInfo['pid'];
+        $data['level']      = $this->memberInfo['level'];
+        $data['member_type']= 1;
+        $res = $this->SalaryIn->data($data)->save();
             if($res){
+                $result = $this->memberSalaryRebate($this->memberInfo['pid'],$totalSalary,$res);
                 file_put_contents(ROOT_PATH.'/data/salaryin/'.date('Y-m-d',time()).'.txt',['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]);
                 return true;
             }else{
                 file_put_contents(ROOT_PATH.'/data/salaryin/'.date('Y-m-d',time()).'.txt',['error'=>$data,'time'=>date('Y-m-d H:i:s',time())]);
                 return false;
             }
-        }
+        
     }
 
     /**
@@ -159,8 +157,6 @@ class SalaryInService {
 
     // 获取平均月收入
     public function getAverageSalaryByMonth($member_id){
-        // $maxTime = $this->SalaryIn->where(['status'=>1,'member_id'=>$member_id])->max('create_time');
-        // $minTime = $this->SalaryIn->where(['status'=>1,'member_id'=>$member_id])->min('create_time');
         $maxTime = time();
         $minTime = $this->memberInfo['create_time'];
         $months = getMonthInterval($minTime,$maxTime);

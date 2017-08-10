@@ -6,6 +6,8 @@ use app\service\GradeMemberService;
 use app\service\ScheduleService;
 class Coach extends Base{
 	protected $coachService;
+    protected $gradeMemberService;
+    protected $scheduleService;
 	public function _initialize(){
 		parent::_initialize();
 		$this->coachService = new CoachService;
@@ -15,7 +17,24 @@ class Coach extends Base{
 	}
 
     public function index(){
-
+        $coachInfo = $this->coachService->getCoachInfo(['member_id'=>$this->memberInfo['id']]);
+        // 全部课时
+        $totalSchedule = db('schedule')->where(['coach_id'=>$this->memberInfo['id']])->count();
+        // 全部学员
+        $totalStudent = db('grade_member')->distinct(true)->field('member_id')->where(['coach_id'=>$this->memberInfo['id'],'type'=>1,'status'=>1])->count();
+        // 全部课程
+        $totalLesson = db('lesson')->where(['coach_id'=>$this->memberInfo['id']])->count();
+        // 全部班级
+        $totalGrade = db('grade')->where(['coach_id'=>$this->memberInfo['id']])->count();
+        //最新消息
+        $messageList = db('message')->limit(10)->select();
+        $this->assign('messageList',$messageList);
+        $this->assign('totalLesson',$totalLesson);
+        $this->assign('totalGrade',$totalGrade);
+        $this->assign('totalStudent',$totalStudent);
+        $this->assign('totalSchedule',$totalSchedule);
+        $this->assign('coachInfo',$coachInfo);
+        return view();
     }
 
 	// 教练首页
@@ -55,7 +74,7 @@ class Coach extends Base{
         $yearScheduleOfCoach = count($yearScheduleOfCoachList); 
         //教练工资
         $this->assign('scheduleOfCoachList',$scheduleOfCoachList);//教练当月的课量
-        $this->assign('monthScheduleOfCoach',$monthScheduleOfCoach)//当月课量数量
+        $this->assign('monthScheduleOfCoach',$monthScheduleOfCoach);//当月课量数量
         $this->assign('gradeOfCoachList',$gradeOfCoachList);//教练班级
         $this->assign('yearScheduleOfCoachList',$yearScheduleOfCoachList);//当年课量
         $this->assign('yearScheduleOfCoach',$yearScheduleOfCoach);//当年课量数量

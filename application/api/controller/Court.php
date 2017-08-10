@@ -27,7 +27,7 @@ class Court extends Base{
     public function updateCourtApi(){
         try{
             $data = input('post.');
-            $id = input('id');
+            $id = input('get.id');
             $result = $this->CourtService->updateCourt($data,$id);
             return json($result);
         }catch (Exception $e){

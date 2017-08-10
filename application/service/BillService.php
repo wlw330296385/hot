@@ -24,6 +24,14 @@ class BillService {
         return $result->toArray();
     }
 
-
+    public function pubBill($data){
+        $result = $this->Bill->validate('BillVal')->save($data);
+        if($result){
+            return ['code'=>100,'msg'=>'新建成功','data'=>$result];
+        }else{
+            return ['code'=>200,'msg'=>$this->Bill->getError()];
+        }
+    }
+    
     
 }

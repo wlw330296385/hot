@@ -24,4 +24,10 @@ class Index extends Base{
     	$this->assign('sortLessonList',$sortLessonList['data']);
         return view();
     }
+
+
+
+    public function search(){
+        return view();
+    }
 }

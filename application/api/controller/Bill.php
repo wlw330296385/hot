@@ -6,6 +6,7 @@ class Bill extends Base{
 	protected $BillService;
 	public function _initialize(){
 		parent::_initialize();
+        $this->BillService = new BillService;
 	}
 
 
@@ -16,12 +17,11 @@ class Bill extends Base{
             $map = input('post.');
             $result = $this->BillService->getBillList($map);
             $billList = $result['data'];
-            $billList['count'] = count($count);
+            $billList['count'] = count($billList);
             return json(['code'=>100,'data'=>$billList,'msg'=>'OK']);       
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }
-    	
+        }   	
     }
 
     //编辑|添加订单接口
@@ -38,7 +38,9 @@ class Bill extends Base{
         
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }
-    	
+        }   	
     }
+
+
+    
 }

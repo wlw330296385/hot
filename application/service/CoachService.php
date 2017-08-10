@@ -26,16 +26,20 @@ class CoachService{
 	 */
 	public function createCoach($request){
 		$result = $this->CoachModel->validate('CoachVal')->save($request);
-		return $result;
+        if($result){
+            return ['code'=>100,'msg'=>'OK','data'=>$result];
+        }else{
+            return ['code'=>100,'msg'=>$this->CoachModel->getError(),'data'=>$result];
+        }
 	}
 
 
 	/**
 	 * 教练更改资料
 	 */
-	public function updateCoach($request)
+	public function updateCoach($request,$id)
     {
-        $result = $this->CoachModel->validate('CoachVal')->save($request);
+        $result = $this->CoachModel->validate('CoachVal')->save($request,$id);
 
         if ($result === false) {
             return ['msg' => $this->Coach->getError(), 'code' => 200];
@@ -58,7 +62,7 @@ class CoachService{
     }
 
     // 教练列表 分页
-    public function coachListPage($paginate=0, $map=[], $order='') {
+    public function coachListPage( $map=[], $paginate=0,$order='') {
         $result = Coach::with('member')->where($map)->order($order)->paginate($paginate);
         //return $result;
         if (!$result) {
@@ -89,13 +93,13 @@ class CoachService{
     }
 
 
-    // 获取训练营下的教练
-    public function getCoahListOfCamp($map){
-        $result = $this->gradeMemberModel->where($map)->paginate($paginate);
-        return $result->toArray();
-    }
+    // // 获取训练营下的教练
+    // public function getCoahListOfCamp($map){
+    //     $result = $this->gradeMemberModel->where($map)->paginate($paginate);
+    //     return $result->toArray();
+    // }
 
-    public function coachListPage(){
+    public function getCoachListPage(){
         $result = Coach::with('member')->where($map)->order($order)->paginate($paginate);
         if (!$result) {
             return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
@@ -110,7 +114,7 @@ class CoachService{
 
     // 教练列表 分页
     public function getCoachList($map=[], $paginate = 10, $order='') {
-        $result = Coach::with('member')->where($map)->order($order)->paginate($paginate);
+        $result = $this->CoachModel->where($map)->order($order)->paginate($paginate);
         return $result->toArray();
     }
 

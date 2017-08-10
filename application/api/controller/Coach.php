@@ -28,13 +28,36 @@ class Coach extends Base{
             //     }
             // }
             if($keyword){
-                $map['camp'] = ['LIKE',$keyword];
+                $map['coach'] = ['LIKE','%'.$keyword.'%'];
             }
-            $campList = $this->CoachService->getCoachListPage($map);
-            return json($campList);
+            $coachList = $this->coachService->getCoachList($map);
+            if($coachList){
+                return json(['code'=>100,'msg'=>'OK','data'=>$coachList]);
+            }else{
+                return json(['code'=>100,'msg'=>'OK','data'=>'']);
+            }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
+    }
 
+    public function createCoachApi(){
+        try{
+            $data = input('post.');
+            $result = $this->coachService->createCoach($data);
+            return json($result);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    public function getCoachList(){
+        try{
+            $map = intpu('post.');
+            $coachList = $this->coachService->getCoachList($map);
+            return json(['code'=>100,'msg'=>'OK','data'=>$coachList]);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
     }
 }
