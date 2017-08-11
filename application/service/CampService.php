@@ -11,7 +11,7 @@ class CampService {
         $this->Camp = new Camp();
     }
 
-    public function getCampList($map=[],$paginate = 10; $order='') {
+    public function getCampList($map=[],$paginate = 10,$order='') {
         $res = $this->Camp->where($map)->order($order)->paginate($paginate);
         return $res->toArray();
     }

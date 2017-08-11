@@ -51,7 +51,7 @@ class SalaryInService {
             $result = db('rebate')->insert($data);
             if($result){
                 db('member')->where(['id'=>$pid])->setInc('balance',$pidSalary);
-                file_put_contents(ROOT_PATH.'/data/rebate/'.date('Y-m-d',time()).'.txt',['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]);
+                file_put_contents(ROOT_PATH.'/data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]));
                 if($member['pid']>1){ 
                     $res = $this->memberRebate($member['pid'],$pidSalary,$salary_id,$times);
                     
@@ -59,7 +59,7 @@ class SalaryInService {
                     return true;
                 }
             }else{
-                file_put_contents(ROOT_PATH.'/data/rebate/'.date('Y-m-d',time()).'.txt',['error'=>$data,'time'=>date('Y-m-d H:i:s',time())]);
+                file_put_contents(ROOT_PATH.'/data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['error'=>$data,'time'=>date('Y-m-d H:i:s',time())]));
                 return false;
             }
         }else{
@@ -87,10 +87,10 @@ class SalaryInService {
         $res = $this->SalaryIn->data($data)->save();
             if($res){
                 $result = $this->memberSalaryRebate($this->memberInfo['pid'],$totalSalary,$res);
-                file_put_contents(ROOT_PATH.'/data/salaryin/'.date('Y-m-d',time()).'.txt',['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]);
+                file_put_contents(ROOT_PATH.'/data/salaryin/'.date('Y-m-d',time()).'.txt',json_encode(['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]));
                 return true;
             }else{
-                file_put_contents(ROOT_PATH.'/data/salaryin/'.date('Y-m-d',time()).'.txt',['error'=>$data,'time'=>date('Y-m-d H:i:s',time())]);
+                file_put_contents(ROOT_PATH.'/data/salaryin/'.date('Y-m-d',time()).'.txt',json_encode(['error'=>$data,'time'=>date('Y-m-d H:i:s',time())]));
                 return false;
             }
         

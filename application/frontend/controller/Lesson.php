@@ -146,4 +146,12 @@ class Lesson extends Base{
     return view();
     }
 
+
+    // 邀请购买课程
+    public function inviteStudent(){
+        
+        return view();
+    }
+
+
 }

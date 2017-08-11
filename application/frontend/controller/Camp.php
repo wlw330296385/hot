@@ -2,10 +2,12 @@
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\CampService;
+use think\Db;
 class Camp extends Base{
     protected $CampService;
 	public function _initialize(){
 		parent::_initialize();
+        $this->CampService = new CampService;
 	}
 
 
@@ -23,6 +25,11 @@ class Camp extends Base{
 
     public function campInfo(){
         $id = input('id');
+        // 教练员
+        $coachList = Db::view('grade_member','member_id')->view('coach','portraits,star','coach.member_id = grade_member.member_id')->where(['camp_id'=>$id,'type'=>4])->order('star')->limit(5)->select();
+        $lessonList = db('lesson')->where(['camp_id'=>1,'status'=>1])->limit(5)->select();
+        $this->assign('lessonList',$lessonList);
+        $this->assign('coachList',$coachList);
         $result = $this->CampService->CampOneById($id);
         $this->assign('campInfo',$result);
         return view();
@@ -41,9 +48,10 @@ class Camp extends Base{
         $city = input('city');
         $area = input('area');
         $map = ['province'=>$province,'city'=>$city,'area'=>$area];
+        // dump($map);die;
         foreach ($map as $key => $value) {
             if($value == ''){
-                unset($map[$key])
+                unset($map[$key]);
             }
         }
         if($keyword){
@@ -63,7 +71,7 @@ class Camp extends Base{
             $map = ['province'=>$province,'city'=>$city,'area'=>$area];
             foreach ($map as $key => $value) {
                 if($value == ''){
-                    unset($map[$key])
+                    unset($map[$key]);
                 }
             }
             if($keyword){

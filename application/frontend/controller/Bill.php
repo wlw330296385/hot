@@ -54,6 +54,10 @@ class Bill extends Base{
     public function updateBillApi(){
     	$id = input('get.id');
     	$data = input('post.');
+        $billInfo = $this->BillService->getBill(['id'=>$id]);
+        if($billInfo['is_pay']>0){
+            return ['code'];
+        }
     	if($id){
     		$result = $this->BillService->updateBill($data,$id);
     	}else{
@@ -66,9 +70,9 @@ class Bill extends Base{
 
     public function comfirmBill(){
         // 生成订单号
-        $billOrder = date('YmrHis',time()).rand(0000,9999);
+        $billOrder = '1'.date('YmdHis',time()).rand(0000,9999).$this->memberInfo['id'];
         // 生成微信参数
-
+        dump($billOrder);die;
         $this->assign('billOrder',$billOrder);
         return view();
     }
