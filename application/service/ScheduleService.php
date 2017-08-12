@@ -61,8 +61,15 @@ class ScheduleService {
 		}
 	}
 
+	// 统计课时数量
+	public function countSchedules($map){
+		$result = $this->scheduleModel->where($map)->count();
+		return $result?$result:0;
+	}
 
-	
-
-	
+	// 获得课时评论
+	public function getCommentList($id){
+		$result = db('schedule_comment')->where(['schedule_id'=>$id])->select();		
+		return $result;
+	}
 }

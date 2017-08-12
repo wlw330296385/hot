@@ -146,8 +146,15 @@ class Lesson extends Base{
     return view();
     }
 
+    public function bookBill(){
+        // 生成订单号
+        $billOrder = '1'.date('YmrHis',time()).rand(0000,9999);
+        // 生成微信参数
 
-    // 邀请购买课程
+        $this->assign('billOrder',$billOrder);
+        return view();
+    }
+    // 邀请体验课程
     public function inviteStudent(){
         
         return view();

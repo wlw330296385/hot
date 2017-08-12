@@ -11,4 +11,9 @@ class Schedule extends Model{
 
 
     protected $readonly = ['create_time'];
+
+
+    public function scheduleComment(){
+    	return $this->hasMany('schedule_comment','schedule_id');
+    }
 }

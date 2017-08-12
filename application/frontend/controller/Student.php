@@ -67,6 +67,6 @@ class Student extends Base
 		return view();
 	}
 	
-
+	
 		
 }

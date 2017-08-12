@@ -38,7 +38,7 @@ class Coach extends Base{
     }
 
 	// 教练首页
-    public function coachInfo(){
+    public function coachInfoOfCamp(){
         $coach_id = input('coach_id');
     	// 获取教练档案
     	$coachInfo = $this->coachService->getCoachInfo(['member_id'=>$coach_id]);
@@ -119,5 +119,49 @@ class Coach extends Base{
         }
         $campList = $this->CoachService->getCoachListPage($map);
         return json($campList);
+    }
+
+
+    public function coachInfo(){
+        $id = input('id')?intput('id'):$this->memberInfo['id'];
+        // 获取教练档案
+        $coachInfo = $this->coachService->coachInfo(['member_id'=>$id]);
+        // 执教过多少个班级
+        $gradeService = new \app\service\GradeService;
+        $gradeCount = $gradeService->countGrades(['coach_id'=>$coachInfo['id'],'status'=>1]);
+        // 执教过多少个学生
+        $studentCount = $this->gradeMemberService->countMembers(['coach_id'=>$coachInfo['id'],'type'=>1]);
+        // 执教过多少课时
+        $scheduleCount = $this->scheduleService->countSchedules(['coach_id'=>$coachInfo['id'],'status'=>1]);
+        $this->assign('scheduleCount',$scheduleCount);
+        $this->assign('studentCount',$studentCount);
+        $this->assign('gradeCount',$gradeCount);
+        $this->assign('coachInfo',$coachInfo);
+        return view();
+    }
+
+    //教练员注册
+    public function coachRegister(){
+        return view();
+    }
+
+    // 教练员注册1
+    public function coachRegister1(){
+        return view();
+    }
+
+    // 教练员注册1
+    public function coachRegister2(){
+        return view();
+    }
+
+    // 教练员注册1
+    public function coachRegister3(){
+        return view();
+    }
+
+    //注册成功
+    public function registerSuccess(){
+        return view();
     }
 }

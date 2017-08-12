@@ -14,11 +14,8 @@ class CoachService{
 	 * 查询教练信息&&关联member表
 	 */
 	public function coachInfo($map){
-        $coach = Coach::with('member')->where($map)->find();
-        if (!$coach)
-            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
-
-        return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $coach->toArray()];
+        $result = Coach::with('member')->where($map)->find();
+        return $result->toArray();
 	}
 
 	/**

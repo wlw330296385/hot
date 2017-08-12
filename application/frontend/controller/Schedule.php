@@ -10,8 +10,9 @@ class Schedule extends Base
 	
 	protected $scheduleService;
 
-	function __construct()
+	function _initialize()
 	{
+		parent::_initialize();
 		$this->scheduleService = new ScheduleService;
 	}
 
@@ -26,22 +27,7 @@ class Schedule extends Base
     	$map = $map?$map:[];
     	$result = $this->scheduleService->getLessonPage($map,10);
     	if($result['code'] == 100){
-			$list = $result['data'];
-	  //   	//在线课程
-	  //   	$dateNow = date('Y-m-d',time());
-	  //   	$onlineList = [];
-
-	  //   	//离线课程
-	  //   	$offlineList = [];
-			// foreach ($list as $key => $value) {
-			// 	if($value['end']<$dateNow || $value['start']>$dateNow){
-			// 		$offlineList[] = $value;
-			// 	}else{
-			// 		$onlineList[] = $value;
-			// 	}
-				
-			// }
-	    		 	
+			$list = $result['data'];	    		 	
     	}else{
     		$list = []; 
     	}
@@ -54,7 +40,15 @@ class Schedule extends Base
 	public function scheduleInfo(){
 		$id = input('id');
 		$scheduleInfo = $this->scheduleService->getScheduleInfo(['id'=>$id]);
-		$this->view();
+		$commentList = $this->scheduleService->getCommentList($id);
+		foreach ($commentList as $key => $value) {
+			if($value['anonymous'] == 0){
+				$commentList[$key]['member'] = '匿名用户';
+			}
+		}
+		$this->assign('scheduleInfo',$scheduleInfo);
+		$this->assign('commentList',$commentList);
+		return view();
 	}
 
 
@@ -120,7 +114,7 @@ class Schedule extends Base
 	}
 	
 	// 判断是否有录课权限|审核
-	public function recordSchedulePowerApi(){
+	public function recordSchedulePower(){
 		// 只要是训练营的教练都可以跨训练营录课
 		$camp_id = input('camp_id');
 		$member_id = $this->memberInfo['id'];

@@ -27,7 +27,7 @@ class Bill extends Base{
         $map['member_id'] = $member_id;
         $result = $this->BillService->getBillList($map);
         $billList = $result['data'];
-        $billList['count'] = count($count);
+        $billList['count'] = count($billList);
         $this->assign('billList',$billList);
 		return view();
     }
@@ -37,7 +37,7 @@ class Bill extends Base{
     	$map = input('post.');
         $result = $this->BillService->getBillList($map);
         $billList = $result['data'];
-        $billList['count'] = count($count);
+        $billList['count'] = count($billList);
         return json(['code'=>100,'data'=>$billList,'msg'=>'OK']);    	
     }
     //编辑|添加订单
@@ -72,7 +72,7 @@ class Bill extends Base{
         // 生成订单号
         $billOrder = '1'.date('YmdHis',time()).rand(0000,9999).$this->memberInfo['id'];
         // 生成微信参数
-        dump($billOrder);die;
+        // dump($billOrder);die;
         $this->assign('billOrder',$billOrder);
         return view();
     }

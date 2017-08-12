@@ -66,17 +66,6 @@ class StudentService{
 	}
 
 
-
-	public function createStudent($request){
-		$result = $this->studentModel->validate('StudentVal')->save($request);
-		if ($result === false) {
-	        return ['msg' => $this->studentModel->getError(), 'code' => 200];
-	    } else {
-	        return ['msg' => __lang('MSG_100_SUCCESS'), 'code' => 100, 'data' => $result];
-		}
-	}
-
-
 	// 获取一个教练下的所有学生
 	public function getStudentListOfCoach($map){
 		$result = $this->gradeMemberModel->where($map)->paginate(10)->toArray();

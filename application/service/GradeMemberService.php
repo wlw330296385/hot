@@ -20,5 +20,8 @@ class GradeMemberService{
 		return $result;
     }
 
-
+    public function countMembers($map){
+    	$result = $this->gradememberModel->where($map)->count();
+    	return $result?$result:0;
+    }
 }

@@ -3,6 +3,14 @@ namespace app\service;
 use app\model\Grade;
 use think\Db;
 class GradeService {
+
+    protected $GradeModel;
+
+    public function __construct(){
+        $this->GradeModel = new Grade;
+    }
+
+
     // 班级列表
     public function getGradeAll($map=[], $order='') {
         $result = Grade::where($map)->order($order)->select();
@@ -51,5 +59,12 @@ class GradeService {
         } else {
             return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $res ];
         }
+    }
+
+
+    // 返回班级数量统计
+    public function countGrades($map){
+        $result = $this->GradeModel->where($map)->count();
+        return $result?$result:0;
     }
 }
