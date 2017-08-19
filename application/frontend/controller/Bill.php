@@ -89,4 +89,8 @@ class Bill extends Base{
         $this->assign('billInfo',$billInfo);
         return view();
     }
+
+    public function finishBookBill(){
+        return view();
+    }
 }

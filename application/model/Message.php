@@ -9,4 +9,10 @@ class Message extends Model {
     protected $deleteTime = 'delete_time';
 
     protected $autoWriteTimestamp = true;
+
+    public function getStatusAttr($value){
+        $status = [0=>'过期',1=>'正常'];
+        return $status[$value];
+    }
+
 }

@@ -17,19 +17,29 @@ class Exercise extends Base{
 
 
     public function exerciseInfo(){
-    	$id = input('id');
-    	$result = $this->ExerciseService->ExerciseOneById(['id'=>$id]);
+    	$exercise_id = input('param.exercise_id');
+    	$exerciseInfo = $this->ExerciseService->getExerciseInfo(['id'=>$exercise_id]);
+        // 获取类型
+        $exercisePInfo =  $this->ExerciseService->getExerciseInfo(['id'=>$exerciseInfo['pid']]);
+        $this->assign('exercisePInfo',$exercisePInfo);
+        $this->assign('exerciseInfo',$exerciseInfo);
     	return view();
     }
 
 
     //编辑项目
     public function updateExercise(){
-    	
-    	$id = input('id');
-		$ExerciseInfo = $this->ExerciseService->ExerciseOneById(['id'=>$id]);
-		$this->assign('ExerciseInfo',$ExerciseInfo);
+    	   
+    	$exercise_id = input('param.exercise_id');
+		$ExerciseInfo = $this->ExerciseService->getExerciseInfo(['id'=>$exercise_id]);
+        if($ExerciseInfo['pid']==0){
+            $this->error('系统训练项目不允许编辑');
+        }
+        // 分类
+        $ExerciseType = $this->ExerciseService->getExerciseType();
 
+        $this->assign('ExerciseType',$ExerciseType);
+		$this->assign('ExerciseInfo',$ExerciseInfo);
     	return view();
     }
 
@@ -50,7 +60,6 @@ class Exercise extends Base{
         }
         
     }
-
 
 
 }

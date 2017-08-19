@@ -22,30 +22,37 @@ class Schedule extends Base
 	}
 
 	// 课时列表
-    public function lessonList(){
+    public function scheduleList(){
     	$map = input();
     	$map = $map?$map:[];
-    	$result = $this->scheduleService->getLessonPage($map,10);
-    	if($result['code'] == 100){
-			$list = $result['data'];	    		 	
-    	}else{
-    		$list = []; 
-    	}
-    	
-  		$this->assign('lessonList',$list);
+    	$scheduleList = $this->scheduleService->getscheduleList($map);
+    	$start_time = mktime(0,0,0,date('m',time()),1,date('Y',time()));
+    	$end_time = time();
+    	// 本年课量
+
+    	// 本月课量
+    	$scheduleOfMonth = $this->scheduleService->countSchedules([]);
+    	//总课量
+    	$myCount = 1;
+    	$scheduleListCount = count('$scheduleList');
+    	$this->assign('myCount',$myCount);
+  		$this->assign('scheduleList',$scheduleList);
+  		$this->assign('scheduleListCount',$scheduleListCount);
 		return view();
     }
 
 	// 课时详情
 	public function scheduleInfo(){
-		$id = input('id');
-		$scheduleInfo = $this->scheduleService->getScheduleInfo(['id'=>$id]);
-		$commentList = $this->scheduleService->getCommentList($id);
+		$schedule_id = input('schedule_id');
+		$scheduleInfo = $this->scheduleService->getScheduleInfo(['id'=>$schedule_id]);
+		$studentList = $this->scheduleService->getStudentList($schedule_id);
+		$commentList = $this->scheduleService->getCommentList($schedule_id);
 		foreach ($commentList as $key => $value) {
 			if($value['anonymous'] == 0){
 				$commentList[$key]['member'] = '匿名用户';
 			}
 		}
+		$this->assign('studentList',$studentList);
 		$this->assign('scheduleInfo',$scheduleInfo);
 		$this->assign('commentList',$commentList);
 		return view();
@@ -71,13 +78,6 @@ class Schedule extends Base
 										])
 										->field('member,member_id,coach,coach_id')
 										->select();
-		// $assistantList = db('grade_member')->where([
-		// 								'camp_id'	=>$camp_id,
-		// 								'type'		=>['or',[2,3,4,8]],
-		// 								'status'	=>1
-		// 								])
-		// 								->field('member,member_id,coach,coach_id')
-		// 								->select();
 		$this->assign('memberOfAllList',$memberOfAllList);
 		// $this->assign('coachList',$coachtList);
 		// $this->assign('assistantList',$assistantList);
@@ -155,5 +155,10 @@ class Schedule extends Base
 		$data = input('post.');
 		$result = $this->scheduleService->pubSchedule($data);
 		return json($result);
+	}
+
+
+	public function scheduleListWeek(){
+		return view();
 	}
 }

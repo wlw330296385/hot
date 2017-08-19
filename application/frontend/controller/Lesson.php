@@ -19,14 +19,9 @@ class Lesson extends Base{
     }
 
     public function lessonInfo(){
-    	$id = input('id');
-    	$result = $this->LessonService->getLessonOne(['id'=>$id]);
-    	$lessonInfo = [];
-    	if($result['code']==100){
-    		$lessonInfo = $result['data'];
-    	}
-
-       
+    	$lesson_id = input('param.lesson_id');
+    	$lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+     
         $lessonInfo['doms'] =  unserialize($lessonInfo['dom']);
         unset($lessonInfo['dom']);
         $this->assign('lessonInfoJson',json_encode($lessonInfo));
@@ -102,22 +97,48 @@ class Lesson extends Base{
     			break;
     	}   		    	
     }
-    //编辑|添加课程
+    //编辑课程
     public function updateLesson(){
     	//训练营主教练
-    	$camp_id = input('get.camp_id');
+    	$camp_id = input('param.camp_id');
+        $lesson_id = input('param.lesson_id');
+        $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+        $lessonInfo['doms'] = unserialize($lessonInfo['dom']);
+
     	$coachList = db('grade_member')->where(['type'=>4,'camp_id'=>$camp_id,'status'=>1])->select();
     	$assitantList = db('grade_member')->where(['type'=>8,'camp_id'=>$camp_id,'status'=>1])->select();
     	$gradeCategoryList = $this->GradeService->getGradeCategory(1);
-
+        $courtService = new \app\service\CourtService;
+        $courtList = $courtService->getCourtList(['status'=>$camp_id]);
+        $this->assign('lessonInfo',$lessonInfo);
     	$this->assign('gradeCategoryList',$gradeCategoryList);
+        $this->assign('courtList',$courtList);
     	$this->assign('coachList',$coachList);
     	$this->assign('assitantList',$assitantList);
     	return view();
     }
+
+    // 添加课程
+    public function createLesson(){
+        //训练营主教练
+        $camp_id = input('param.camp_id');
+        $lesson_id = input('param.lesson_id');
+        $coachList = db('grade_member')->where(['type'=>4,'camp_id'=>$camp_id,'status'=>1])->select();
+        $assitantList = db('grade_member')->where(['type'=>8,'camp_id'=>$camp_id,'status'=>1])->select();
+        $gradeCategoryList = $this->GradeService->getGradeCategory(1);
+        $courtService = new \app\service\CourtService;
+        $courtList = $courtService->getCourtList(['status'=>$camp_id]);
+        // dump($assitantList);die;
+        $this->assign('gradeCategoryList',$gradeCategoryList);
+        $this->assign('courtList',$courtList);
+        $this->assign('coachList',$coachList);
+        $this->assign('assitantList',$assitantList);
+        return view();
+    }
+
     //编辑|添加课程接口
     public function updateLessonApi(){
-    	$id = input('get.id');
+    	$id = input('param.id');
     	$data = input('post.');
     	if($id){
     		$result = $this->LessonService->updateLesson($data,$id);
@@ -160,5 +181,15 @@ class Lesson extends Base{
         return view();
     }
 
-
+    public function campLessonInfo(){
+        $id = input('id');
+        $result = $this->LessonService->getLessonOne(['id'=>$id]);
+        $lessonInfo = [];
+        if($result['code']==100){
+            $lessonInfo = $result['data'];
+        }
+        $this->assign('lessonInfoJson',json_encode($lessonInfo));
+        $this->assign('lessonInfo',$lessonInfo);
+        return view();
+    }
 }

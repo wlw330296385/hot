@@ -27,9 +27,9 @@
 </header>
 <div class="mui-content">
 
-    <div class="course-list camp-list detalis-list coach">
+    <div class="list camp-list detalis-list coach">
         <ul class="mui-table-view mb" style="margin-top: -4px">
-            <li class="mui-table-view-cell mui-media course-listli" style="padding:11px 15px;">
+            <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
                 <a href="javascript:;">
                     <img class="mui-media-object mui-pull-left coachicon"
                          src="/static/frontend/images/shuijiao.jpg">
@@ -56,7 +56,7 @@
         </ul>
 
         <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell course-detailsli detalisli">自我介绍
+            <li class="mui-table-view-cell listli detalisli">自我介绍
                 <span class="about">{$coachInfo.introduction}
                         <a href="#">全文展示</a>
                     </span>
@@ -64,53 +64,42 @@
         </ul>
 
         <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell course-detailsli detalisli" style="line-height: 40px;">
-                <a class="mui-navigate-right">
+            <li class="mui-table-view-cell listli detalisli" style="line-height: 40px;">
+                <a class="mui-navigate-right" href="{:url('camp/campListOfCaoch',['coach_id'=>$coachInfo['id']])}">
                     所属训练营
-                    <img class="coachicon" src="/static/frontend/images/yuantiao.jpg" alt="">
-                    <img class="coachicon" src="/static/frontend/images/yuantiao.jpg" alt="">
+                    {volist name="campList" id="vol"}
+                    <img class="coachicon" src="{$vol.logo}" alt="">
+                    {/volist}
                 </a>
             </li>
-            <li class="mui-table-view-cell course-detailsli detalisli">个人认证
+            <li class="mui-table-view-cell listli detalisli">个人认证
                 <span>
                     <img class="rzicon" src="/static/frontend/images/icon05.jpg/">证书认证&nbsp;&nbsp;&nbsp;
                     <img class="rzicon" src="/static/frontend/images/icon05.jpg/">身份认证
                 </span>
             </li>
-            <li class="mui-table-view-cell course-detailsli detalisli">课量<span>执教过{$scheduleCount}课时</span></li>
-            <li class="mui-table-view-cell course-detailsli detalisli">学员<span>执教过{$studentCount}个学生</span></li>
-            <li class="mui-table-view-cell course-detailsli detalisli">班级<span>执教{$gradeCount}个班级</span></li>
+            <li class="mui-table-view-cell listli detalisli">课量<span>执教过{$scheduleCount}课时</span></li>
+            <li class="mui-table-view-cell listli detalisli">学员<span>执教过{$studentCount}个学生</span></li>
+            <li class="mui-table-view-cell listli detalisli">班级<span>执教{$gradeCount}个班级</span></li>
         </ul>
         <div class="page-header">
             <span class="course">学员评价</span>
         </div>
-        <ul class="mui-table-view course-list">
-            <li class="mui-table-view-cell mui-media course-listli course-padding">
-                <a href="javascript:;">
-                    <img class="mui-media-object mui-pull-left coachicon"
-                         src="/static/frontend/images/shuijiao.jpg">
-                    <div class="mui-media-body">
-                        @iamlegend
-                        <p class="mui-ellipsis">教练不错，你值得拥有</p>
-                    </div>
-                    <div class="price-frame">
-                        <p>2017-08-04 13:20</p>
-                    </div>
-                </a>
-            </li>
-            <li class="mui-table-view-cell mui-media course-listli course-padding">
-                <a href="javascript:;">
-                    <img class="mui-media-object mui-pull-left coachicon"
-                         src="/static/frontend/images/shuijiao.jpg">
-                    <div class="mui-media-body">
-                        @iamlegend
-                        <p class="mui-ellipsis">教练不错，你值得拥有</p>
-                    </div>
-                    <div class="price-frame">
-                        <p>2017-08-04 13:20</p>
-                    </div>
-                </a>
-            </li>
+        <ul class="mui-table-view list">
+            {volist name='commentList' id="vol" empty="暂无评论"}
+                <li class="mui-table-view-cell mui-media listli padding">
+                    <a href="javascript:;">
+                        <img class="mui-media-object mui-pull-left coachicon" src="{$vol.avatar}">
+                        <div class="mui-media-body">
+                            {$vol.member}
+                            <p class="mui-ellipsis">{$vol.comment}</p>
+                        </div>
+                        <div class="price-frame">
+                            <p>{$vol.create_time|date='Y-m-d',###}</p>
+                        </div>
+                    </a>
+                </li>
+            {/volist}
         </ul>
         <p class="dropdown"><a href="#">查看16条评论...</a></p>
 

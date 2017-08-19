@@ -13,7 +13,7 @@ class Grade extends Model {
 
 
     public function getStatusAttr($value){
-    	$status = [0=>'下架',1=>'正常'];
+    	$status = [0=>'已结束',1=>'正常'];
     	return $status[$value];
     }
 
@@ -22,5 +22,7 @@ class Grade extends Model {
     	return $this->hasOne('member','id','member_id',[],'left join');
     }
 
-    
+    public function student(){
+        return $this->hasMany('student','grade_id','member_id',[],'left join');
+    }
 }

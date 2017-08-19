@@ -16,9 +16,14 @@ class PlanService {
         return $res;
     }
 
-    public function PlanListPage( $map=[],$paginate=0, $order=''){
+    public function PlanListPage( $map=[],$paginate=10, $order=''){
         $res = $this->Plan->where($map)->order($order)->paginate($paginate)->toArray();
-        return $res;
+        if($res){
+            $result = $res['data'];
+            return $result;
+        }else{
+            return $res;
+        }
     }
 
     /**

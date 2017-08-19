@@ -9,34 +9,27 @@ class ExerciseService {
         $this->exerciseModel = new Exercise;
     }
     // 获取训练项目顶级分类
-    public function getExeriseType() {
-        $res = Exercise::where([ 'camp_id' => 0, 'pid' => 0, 'status' => 1 ])->field(['id', 'exercise'])->select();
-        if (!$res)
-            return ['msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200];
-        if ($res->isEmpty())
-            return ['msg' => __lang('MSG_000_NULL'), 'code' => '000', 'data' => ''];
-        return ['msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $res->toArray()];
+    public function getExerciseType() {
+        $result = Exercise::where([ 'camp_id' => 0, 'pid' => 0, 'status' => 1 ])->field(['id', 'exercise'])->select();
+        if($result){
+            return $result->toArray();
+        }else{
+            return $result;
+        }
     }
 
-    // 获取训练项目所有数据
-    public function getExeriseAll() {
-        $res = Exercise::all();
-        //dump($res->toArray());
-        if (!$res)
-            return ['msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200];
-        return ['msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $res->toArray()];
-    }
 
-    public function getExeriseOne($condi) {
-        $res = Exercise::get($condi);
-        //dump($res);
-        if (!$res)
-            return ['msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200];
-        return ['msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $res->toArray()];
+    public function getExerciseInfo($condi) {
+        $result = Exercise::get($condi);
+        if($result){
+            return $result->toArray();
+        }else{
+            return $result;
+        }
     }
 
     // 新增 训练项目数据
-    public function addExerise($data) {
+    public function addExercise($data) {
         $model = new Exercise();
         $res = $model->save($data);
         //dump($res);
@@ -47,7 +40,7 @@ class ExerciseService {
     }
 
     // 更新 训练项目数据
-    public function updateExerise($data, $condi) {
+    public function updateExercise($data, $condi) {
         $model = new Exercise();
         $res = $model->save($data, $condi);
         if (!$res)
@@ -65,8 +58,8 @@ class ExerciseService {
         }
     }
 
-    public function getExerciseList(){
-        $res = Exercise::all();
+    public function getExerciseList($p = 10){
+        $res = Exercise::paginate($p);
         if($result){
             return $result;
         }else{

@@ -18,13 +18,8 @@ class StudentService{
 
 
 	public function getStudentInfo($map){
-			$result = $this->studentModel->where($map)->select()->toArray();
+			$result = $this->studentModel->where($map)->find()->toArray();
 			return $result;
-			// if ($result === false) {
-	  //       	return ['msg' => $this->studentModel->getError(), 'code' => 200];
-		 //    } else {
-		 //        return ['msg' => __lang('MSG_100_SUCCESS'), 'code' => 100, 'data' => $result];
-			// }
 	}	
 
 	public function createStudent($data){

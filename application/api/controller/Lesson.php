@@ -81,7 +81,35 @@ class Lesson extends Base{
     	
     }
 
+    // 获取已经被分配的学生
+    public function getActiveLessonStudentsApi(){
+        try{
+            $lesson_id = input('lesson_id');
+            $students = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->where('grade_id','neq','');->field('student,id')->select();
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 获取毕业学生
+    public function getEduatedStudentsApi(){
+        try{
+            $lesson_id = input('lesson_id');
+            $students = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>4])->field('student,id')->select();
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 获取没有被分配班级的学生
+    public function getInactiveStudentsApi(){
+        try{
+            $lesson_id = input('lesson_id');
+            $students = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->where('grade_id','eq','');->field('student,id')->select();
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
     
-
 }

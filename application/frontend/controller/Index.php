@@ -13,15 +13,12 @@ class Index extends Base{
 
     	$bannerList = unserialize($this->systemSetting['banner']); 
     	// 热门课程
-    	$hotLessonList = $this->LessonService->getLessonAll([],'hot ASC',4);
+    	$hotLessonList = $this->LessonService->getLessonList([],'hot ASC',4);
     	//推荐课程
-    	$sortLessonList = $this->LessonService->getLessonAll([],'sort ASC',4);
-    	// $bannerList = ['/uploads/images/banner/1.jpg','/uploads/images/banner/2.jpg','/uploads/images/banner/3.jpg'];
-    	// echo serialize($bannerList);die;
+    	$sortLessonList = $this->LessonService->getLessonList([],'sort ASC',4);
     	$this->assign('bannerList',$bannerList);
-    	$this->assign('hotLessonList',$hotLessonList['data']);
-    	// dump($hotLessonList['data']);die;
-    	$this->assign('sortLessonList',$sortLessonList['data']);
+    	$this->assign('hotLessonList',$hotLessonList);
+    	$this->assign('sortLessonList',$sortLessonList);
         return view();
     }
 
@@ -29,5 +26,16 @@ class Index extends Base{
 
     public function search(){
         return view();
+    }
+
+    public function test(){
+        $a = ['a'=>33333,'b'=>44444444,'c'=>55555555];
+        $b = ['a'=>1111,'g'=>666666];
+        $c = array_merge($a,$b);
+        $c['url'] = '/uploads/images/lesson/1.jpg';
+        $media = new \app\model\Media;
+        $result = $media->allowField(true)->data($c)->save();
+        dump($result);
+        dump($c);
     }
 }

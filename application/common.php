@@ -87,3 +87,27 @@ function getYearInterval($min,$max){
     return $sum?$sum:1;
 }
 
+
+
+/**
+ * 获取性别
+ */
+
+function getSex($value){
+    if($value == 1){
+        //1=男
+        return "/static/frontend/images/icon04.jpg";
+    }else{
+         return "/static/frontend/images/icon03.jpg";
+    }
+}
+
+
+/**
+ * 返回checkbox的选中值;$value:传入的值|$val:标准值
+ */
+function getChecked($value,$val){
+    if($value == $val){
+        return 'checked';
+    }
+}

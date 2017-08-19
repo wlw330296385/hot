@@ -15,15 +15,9 @@ class ScheduleService {
 
 
     // 获取课时数据列表
-	public function getscheduleList($map=[], $order='', $field='*'){
-		$res = Schedule::where($map)->field($field)->order($order)->select();
-		if (!$res)
-            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200];
-
-		if ($res->isEmpty())
-		    return [ 'msg' => __lang('MSG_000_NULL'), 'code' => '000', 'data' => '' ];
-
-        return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $res->toArray() ];
+	public function getscheduleList($map=[], $order='', $p='10'){
+		$result = Schedule::where($map)->order($order)->paginate($p)->toArray();
+		return $result?$result['data']:false;
 	}
 
 	// 发布课时
@@ -54,11 +48,7 @@ class ScheduleService {
 	//查看一条课时信息
 	public function getScheduleInfo($map){
 		$result = $this->scheduleModel->where($map)->find();
-		if($result ===false){
-			return ['msg'=>__lang('MSG_201_DBNOTFOUND'),'code'=>200];
-		}else{
-			return ['msg'=>__lang('MSG_100_SUCCESS'),'code'=>100,'data'=>$result];
-		}
+		return $result?$result->toArray():false;
 	}
 
 	// 统计课时数量
@@ -68,8 +58,14 @@ class ScheduleService {
 	}
 
 	// 获得课时评论
-	public function getCommentList($id){
-		$result = db('schedule_comment')->where(['schedule_id'=>$id])->select();		
+	public function getCommentList($schedule_id){
+		$result = db('schedule_comment')->where(['schedule_id'=>$schedule_id])->select();		
+		return $result;
+	}
+
+	// 获取课时学生
+	public function getStudentList($schedule_id){
+		$result = db('schedule_member')->where(['schedule_id'=>$schedule_id,'type'=>0,'status'=>1])->select();
 		return $result;
 	}
 }

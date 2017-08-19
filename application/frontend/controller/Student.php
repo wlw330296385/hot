@@ -9,8 +9,9 @@ use app\frontend\controller\Base;
 class Student extends Base
 {
 	protected $studentService;
-	function __construct()
-	{
+	function _initialize()
+	{	
+		parent::_initialize();
 		$this->studentService = new StudentService;
 	}
 
@@ -18,21 +19,21 @@ class Student extends Base
 		return view();
 	}
 
-	public function studentInfo(){
-		$id = input('student_id');
+	public function studentInfoOfCamp(){
+		$student_id = input('param.student_id');
 		// 学生信息
-		$studentInfo = $this->studentService->getStudentInfo(['id'=>$id]);
+		$studentInfo = $this->studentService->getStudentInfo(['id'=>$student_id]);
 		//学生的班级
-		$studentGradeList = $this->studentService->getStudentGradeList(['student_id'=>$id,'type'=>1,'status'=>1]);	
+		$studentGradeList = $this->studentService->getStudentGradeList(['student_id'=>$student_id,'type'=>1,'status'=>1]);	
 		// 学生课量
-		$studentScheduleList = $this->studentService->getStudentScheduleList(['member_id'=>$id,'type'=>0]);
+		$studentScheduleList = $this->studentService->getStudentScheduleList(['member_id'=>$student_id,'type'=>0]);
 		// 学生订单
-		$billService = new app\service\BillService;
+		$billService = new \app\service\BillService;
 		$studentBillList = $billService->getBillList(['student_id'=>$student_id,'status'=>1]);
 		$totalBill = count($studentBillList);
-		$this->assgin('studentInfo',$studentInfo);
+		$this->assign('studentInfo',$studentInfo);
 		$this->assign('studentGradeList',$studentGradeList);
-		$this->assign('studentGradeList',$studentGradeList);
+		// $this->assign('studentGradeList',$studentGradeList);
 		$this->assign('studentBillList',$studentBillList);
 		$this->assign('totalBill',$totalBill);
 		return view();
@@ -67,6 +68,13 @@ class Student extends Base
 		return view();
 	}
 	
-	
+	public function studentInfo(){
+		$student_id = input('param.student_id');
+		// 学生信息
+		$studentInfo = $this->studentService->getStudentInfo(['id'=>$student_id]);
+		// dump($studentInfo);die;
+		$this->assign('studentInfo',$studentInfo);
+		return view();
+	}
 		
 }

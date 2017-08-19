@@ -23,10 +23,9 @@ class Exercise extends Base{
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
-
         
     }
 
-
+    
 
 }

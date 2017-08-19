@@ -17,8 +17,8 @@ class Plan extends Base{
 
 
     public function planInfo(){
-    	$id = input('id');
-    	$result = $this->PlanService->PlanOneById(['id'=>$id]);
+    	$plan_id = input('param.plan_id');
+    	$result = $this->PlanService->PlanOneById(['id'=>$plan_id]);
 
         $this->assign('planInfo',$result);
     	return view();
@@ -28,19 +28,21 @@ class Plan extends Base{
     //编辑项目
     public function updatePlan(){
     	
-    	$id = input('id');
-		$planInfo = $this->PlanService->PlanOneById(['id'=>$id]);
-		$this->assign('planInfo',$planInfo);
+    	$plan_id = input('param.plan_id');
+        $result = $this->PlanService->PlanOneById(['id'=>$plan_id]);
+
+        $this->assign('planInfo',$result);
 
     	return view();
     }
 
     // 分页获取数据
     public function planList(){
-    	$map = input('post.');
-    	$planList = $this->PlanService->PlanListPage($map,10);
-    	// dump($planList['data']);die;
-        $this->assign('planList',$planList);
+    	$camp_id = input('param.camp_id');
+    	$planListOfCamp = $this->PlanService->PlanListPage(['camp_id'=>$camp_id,'type'=>1]);
+    	$planListOfSys = $this->PlanService->PlanListPage(['type'=>0]);
+        $this->assign('planListOfCamp',$planListOfCamp);
+        $this->assign('planListOfSys',$planListOfSys);
         return view();
     }
 

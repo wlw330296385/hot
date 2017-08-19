@@ -37,23 +37,29 @@ class SalaryInService {
      * 参数:  
      * 递归分销
      */
-    public function memberSalaryRebate($pid,$salary,$salary_id,$times = 1){
+    public function memberSalaryRebate($pid,$salary,$salary_id,$sid,$s_member,$times = 1){
         
-        if($times>3){
+        if($times>2){
             return true;
         }
         
         $member = db('member')->find($pid);
         if($member){
             $times++;
-            $pidSalary  = $salary*$this->setting['rebate'];
-            $data = ['salary'=>$pidSalary,'pid'=>$member['pid'],'member_id'=>$member['id'],'member'=>$member['member'],'salary_id'=>$salary_id,'tier'=>$times,'create_time'=>time()];
+            if($times == 1){
+                $rebate = $this->setting['rebate'];
+            }else{
+                $rebate = $this->setting['rebate2'];
+            }
+            $pidSalary  = $salary*$rebate;
+            $data = ['salary'=>$pidSalary,'sid'=>$sid,'s_member'=>$s_member,'member_id'=>$member['id'],'member'=>$member['member'],'salary_id'=>$salary_id,'tier'=>$times,'create_time'=>time()];
             $result = db('rebate')->insert($data);
             if($result){
                 db('member')->where(['id'=>$pid])->setInc('balance',$pidSalary);
                 file_put_contents(ROOT_PATH.'/data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]));
+                // file_put_contents(ROOT_PATH.'data\rebate\2017-08-15.txt',json_encode(['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]));
                 if($member['pid']>1){ 
-                    $res = $this->memberRebate($member['pid'],$pidSalary,$salary_id,$times);
+                    $res = $this->memberSalaryRebate($member['pid'],$salary,$salary_id,$member['id'],$member['realname'],$times);
                     
                 }else{
                     return true;
@@ -80,13 +86,14 @@ class SalaryInService {
         $star = $data['star'];
         $totalSalary = $data['salary']*(1-$sysrebate-$starrebate*(1-$star/100));
         $data['realname']   = $this->memberInfo['realname'];
+        $data['member']     = $this->memberInfo['member'];
         $data['member_id']  = $this->memberInfo['id'];
         $data['pid']        = $this->memberInfo['pid'];
         $data['level']      = $this->memberInfo['level'];
         $data['member_type']= 1;
         $res = $this->SalaryIn->data($data)->save();
             if($res){
-                $result = $this->memberSalaryRebate($this->memberInfo['pid'],$totalSalary,$res);
+                $result = $this->memberSalaryRebate($this->memberInfo['pid'],$totalSalary,$res,$this->memberInfo['id'],$this->memberInfo['realname']);
                 file_put_contents(ROOT_PATH.'/data/salaryin/'.date('Y-m-d',time()).'.txt',json_encode(['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]));
                 return true;
             }else{
@@ -103,14 +110,14 @@ class SalaryInService {
         if($member_id == 0){
             $member_id = $this->memberInfo['id'];
         }
-        if(!$endtTime){
-            $endtTime = time();
+        if(!$endTime){
+            $endTime = time();
         }
         $scheduleIn = $this->SalaryIn
                     ->where(['member_id'=>$member_id])
-                    ->where(['create_time'=>['between',[$startTime,$endtTime]]])
+                    ->where(['create_time'=>['between',[$startTime,$endTime]]])
                     ->sum('salary');
-        echo $this->SalaryIn->getlastsql();
+        // echo $this->SalaryIn->getlastsql();
         return $scheduleIn?$scheduleIn:0;
     }
 
@@ -119,12 +126,12 @@ class SalaryInService {
         if($member_id == ''){
             $member_id = $this->memberInfo['id'];
         }
-        if(!$endtTime){
-            $endtTime = time();
+        if(!$endTime){
+            $endTime = time();
         }
         $rebateIn = $this->SystemAward
                     ->where(['member_id'=>$member_id])
-                    ->where(['create_time'=>['between',[$startTime,$endtTime]]])
+                    ->where(['create_time'=>['between',[$startTime,$endTime]]])
                     ->sum('salary');
         return $rebateIn?$rebateIn:0;
     }
@@ -134,12 +141,12 @@ class SalaryInService {
         if($member_id == 0){
             $member_id = $this->memberInfo['id'];
         }
-        if(!$endtTime){
-            $endtTime = time();
+        if(!$endTime){
+            $endTime = time();
         }
         $rebateIn = $this->Rebate
                     ->where(['member_id'=>$member_id])
-                    ->where(['create_time'=>['between',[$startTime,$endtTime]]])
+                    ->where(['create_time'=>['between',[$startTime,$endTime]]])
                     ->sum('salary');
         return $rebateIn?$rebateIn:0;
     }
@@ -149,8 +156,8 @@ class SalaryInService {
         if($member_id == 0){
             $member_id = $this->memberInfo['id'];
         }
-        if(!$endtTime){
-            $endtTime = time();
+        if(!$endTime){
+            $endTime = time();
         }
     }
 
@@ -183,11 +190,38 @@ class SalaryInService {
 
     //获取教学分成列表
     public function getSalaryList($startTime,$endTime,$member_id = 0){
-        $salaryList = $this->salaryin
+        $result = $this->SalaryIn
+                    ->where(['member_id'=>$member_id,'type'=>1])
+                    ->where(['create_time'=>['between',[$startTime,$endTime]]])
+                    ->paginate(10)
+                    ->toArray();
+        return $result['data'];
+    }
+
+    // 获取销售提成列表
+    public function getGoodsSellList($startTime,$endTime,$member_id = 0){
+        $result = $this->SalaryIn
+                    ->where(['member_id'=>$member_id,'type'=>2])
+                    ->where(['create_time'=>['between',[$startTime,$endTime]]])
+                    ->paginate(10)
+                    ->toArray();
+        return $result['data'];
+    }
+
+    // 获取组织收入列表
+    public function getRebateList($startTime,$endTime,$member_id = 0){
+        $result = $this->Rebate
                     ->where(['member_id'=>$member_id])
                     ->where(['create_time'=>['between',[$startTime,$endTime]]])
                     ->paginate(10)
                     ->toArray();
-        return $salaryList;
+        // echo $this->Rebate->getlastsql();
+        return $result['data'];
+    }
+
+
+
+    public function saveSalaryin(){
+        
     }
 }

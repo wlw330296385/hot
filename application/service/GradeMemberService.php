@@ -8,20 +8,28 @@ class GradeMemberService{
 		$this->gradememberModel = new GradeMember;
 	}
 
+
 	public function getList($map){
-		$result = GradeMember::where($map)->select()->toArray();
-		return $result;
+		$result = GradeMember::where($map)->select();
+		if($result){
+            $result = $result->toArray();
+        }
+        return $result;
     }
 
     //获取教练拥有的班级
     public function getGradeOfCoach($map){
     	$result = GradeMember::with('grade')->where($map)->select()->toArray();
-    	// dump(GradeMember::getlastsql());die;
-		return $result;
+        if($result){
+                    $result = $result->toArray();
+                }
+        return $result;
     }
-
+    // 统计用户数量
     public function countMembers($map){
     	$result = $this->gradememberModel->where($map)->count();
     	return $result?$result:0;
     }
+    
+    
 }

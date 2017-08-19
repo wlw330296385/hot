@@ -3,6 +3,7 @@ namespace app\service;
 use app\model\Coach;
 use app\common\validate\CoachVal;
 use app\model\GradeMember;
+use think\Db;
 class CoachService{
 	private $CoachModel;
 	public function __construct(){
@@ -112,9 +113,32 @@ class CoachService{
     // 教练列表 分页
     public function getCoachList($map=[], $paginate = 10, $order='') {
         $result = $this->CoachModel->where($map)->order($order)->paginate($paginate);
-        return $result->toArray();
+        if($result){
+            $result = $result->toArray();
+            return $result['data'];
+        }else{
+            return $result;
+        }
+        
     }
 
+
+    // 教练列表 分页
+    public function getCoachListOfCamp($map=[], $paginate = 10, $order='') {
+        $result = Db::view('grade_member','*')
+                ->view('coach','portraits,star,sex,coach_year,coach_level','grade_member.coach_id=coach.id')
+                ->where($map)
+                ->order($order)
+                ->paginate($paginate);
+                // echo db('grade_member')->getlastsql();die;
+        if($result){
+            $result = $result->toArray();
+            return $result['data'];
+        }else{
+            return $result;
+        }
+        
+    }
 
     public function getCoachInfo($map){
         $result = $this->CoachModel->where($map)->find();

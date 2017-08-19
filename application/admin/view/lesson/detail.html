@@ -1,0 +1,182 @@
+{extend name="layout/common" /}
+
+{block name="page-content"}
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">课程 详细资料</h3>
+            </div>
+            <form class="form-horizontal lesson-form" method="post" action="">
+                <input type="hidden" id="lesson-id" name="id" value="{$lesson.id}">
+                <div class="box-body">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">课程名称</div>
+                        <div class="col-sm-5">
+                            {$lesson.lesson}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">领队</div>
+                        <div class="col-sm-5">
+                            {$lesson.leader}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">所属训练营</div>
+                        <div class="col-sm-5">
+                            {$lesson.camp}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">课程类型</div>
+                        <div class="col-sm-5">
+                            {$lesson.gradecate}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">课程金额</div>
+                        <div class="col-sm-5">
+                            {$lesson.cost}元/课
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">课次数量</div>
+                        <div class="col-sm-5">
+                            {$lesson.total}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">购买课程需要积分</div>
+                        <div class="col-sm-5">
+                            {$lesson.score}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">主教练</div>
+                        <div class="col-sm-5">
+                            {$lesson.coach}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">副教练</div>
+                        <div class="col-sm-5">
+                            {$lesson.assistant}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">最少开课学生数量</div>
+                        <div class="col-sm-5">
+                            {$lesson.min}人
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">最大开课学生数量</div>
+                        <div class="col-sm-5">
+                            {$lesson.max}人
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">课程日期</div>
+                        <div class="col-sm-5">
+                            {$lesson.start} ~
+                            {empty name="lesson.end"}长期{else/}{$lesson.end}{/empty}
+                            ( {$lesson.week} )
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">具体上课时间</div>
+                        <div class="col-sm-5">
+                            {$lesson.lesson_time}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">上课场地</div>
+                        <div class="col-sm-5">
+                            {$lesson.court}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">所在地区</div>
+                        <div class="col-sm-5">
+                            {$lesson.province}-{$lesson.city}-{$lesson.area}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">备注</div>
+                        <div class="col-sm-5">
+                            {$lesson.remarks}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <div class="form-group">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-10">
+                            {eq name="$lesson.status" value="0"}
+                            <button type="button" class="btn btn-success" onclick="check(1);">审核通过</button>
+                            <button type="button" class="btn btn-default" onclick="check(2);">审核不通过</button>
+                            {/eq}
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    "use strict";
+    function check(code) {
+        var lesson = $('#lesson-id').val();
+        switch ( code ) {
+            case 1:
+                var msg = '确定审核通过?';
+                if ( confirm(msg) === true ) {
+                    sendpost(lesson, code);
+                }
+                break;
+            case 2:
+                var msg = '确定审核不通过?';
+                if ( confirm(msg) === true ) {
+                    sendpost(lesson, code);
+                }
+                break;
+        }
+    }
+
+    function sendpost(lesson, code) {
+        var serverurl = "{:url('lesson/audit')}";
+        $.post(serverurl, {
+            lesson: lesson,
+            code: code,
+        }, function(res) {
+            //console.log(res);
+            alert(res.msg);
+            if (res.status) {
+                location.href = res.goto;
+            } else {
+                location.reload();
+            }
+        }, 'json');
+    }
+</script>
+{/block}

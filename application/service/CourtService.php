@@ -8,35 +8,30 @@ class CourtService {
         $this->courtModel = new Court;
     }
     // 场地列表
-    public function getCourtAll($map=[], $order='', $field='*'){
-        $res = Court::where($map)->field($field)->order($order)->select();
-        if (!$res)
-            return ['msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200];
-
-        if ($res->isEmpty())
-            return ['msg' => __lang('MSG_000_NULL'), 'code' => '000', 'data' => ''];
-
-        return ['msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $res->toArray()];
+    public function getCourtList($map=[], $order='', $field='*'){
+        $result = Court::where($map)->whereOr(['status'=>1])->field($field)->limit(10)->order($order)->select();
+        if($result){           
+            $result = $result->toArray();
+        }
+        return $result;
     }
 
     // 场地分页
-    public function getCourtPage($map=[], $order='', $field='*', $paginate=0){
-        $res = Court::where($map)->field($field)->order($order)->paginate($paginate);
-        if (!$res)
-            return ['msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200];
-
-        if ($res->isEmpty())
-            return ['msg' => __lang('MSG_000_NULL'), 'code' => '000', 'data' => ''];
-
-        return ['msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $res->toArray()];
+    public function getCourtPage($map=[], $order='', $field='*', $paginate=10){
+        $result = Court::where($map)->field($field)->order($order)->paginate($paginate)->toArray();
+        if($result){           
+            $result = $result['data'];
+        }
+        return $result;
     }
 
     // 场地详情
-    public function getCourtOne($map=[]) {
-        $res = Court::get($map);
-        if (!$res)
-            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
-        return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $res->toArray()];
+    public function getCourtInfo($map=[]) {
+        $result = Court::get($map);
+        if($result){           
+            $result = $result->toArray();
+        }
+        return $result;
     }
 
 

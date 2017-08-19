@@ -14,7 +14,6 @@ class Student extends Model{
 
 
 	 public function member(){
-    	// return $this->hasOne('member','member_id','id','memberinfo')->field('member,nickname,avatar,telephone,email');
     	return $this->hasOne('member','member_id','id',[],'left join');
     }
 	

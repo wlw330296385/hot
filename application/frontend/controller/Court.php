@@ -2,12 +2,14 @@
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\CourtService;
+use app\service\CourtMediaService;
 class Court extends Base{
 	protected $CourtService;
-
+    protected $CourtMediaService;
 	public function _initialize(){
 		parent::_initialize();
 		$this->CourtService = new CourtService;
+        $this->CourtMediaService = new CourtMediaService;
 	}
 
     public function index() {
@@ -17,29 +19,36 @@ class Court extends Base{
 
 
     public function courtInfo(){
-    	$id = input('id');
-    	$result = $this->CourtService->getCourtOne(['id'=>$id]);
+    	$court_id = input('param_court_id');
+    	$result = $this->CourtService->getCourtOne(['id'=>$court_id]);
     	return view();
     }
 
-
+    public function courtList(){
+        $courtList = $this->CourtService->getCourtList();
+        $this->assign('courtList',$courtList);
+        return view();
+    }
 
     public function updateCourt(){   	
-    	$id = input('id');
-		$courtInfo = $this->CourtService->getCourtOne(['id'=>$id]);
+    	$court_id = input('param.court_id');
+		$CourtInfo = $this->CourtService->getCourtInfo(['id'=>$court_id]);
+        // dump($CourtInfo);die;
+        $mediaList = $this->CourtMediaService->getCourtMediaList(['court_id'=>$court_id]);
 		$this->assign('CourtInfo',$CourtInfo);
+        $this->assign('mediaList',$mediaList);
     	return view();
     }
 
     public function createCourt(){
-        $pidList = $this->CourtService->getCourtAll(['pid'=>0]);
+        // $pidList = $this->CourtService->getCourtList(['pid'=>0]);
 
-        $this->assign('pidList',$pidList['data']);
+        // $this->assign('pidList',$pidList['data']);
         return view();
     }
     // 分页获取数据
     public function courtListApi(){
-    	$camp_id = input('get.camp_id');
+    	$camp_id = input('param.camp_id');
         $condition = input('post.');
         $where = ['status'=>['or',[1,$camp_id]]];
         $map = array_merge($condition,$where);

@@ -1,0 +1,103 @@
+{extend name="layout/common"/}
+{block name="css"}
+<link rel="stylesheet" href="/backend/adminlte/css/bootstrap-table.min.css">
+<style>
+    .show-execrise {
+        cursor: pointer;
+    }
+</style>
+{/block}
+
+{block name="page-content"}
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+            <em>训练项目管理</em>
+        </div>
+        <ul class="nav nav-tabs">
+            <li><a href="{:url('exercise/index')}">平台发布</a></li>
+            <li class="active"><a href="{:url('exercise/lists')}">训练营/教练发布</a></li>
+        </ul>
+    </div>
+    <div class="panel-body">
+        <div class="tab-pane">
+            <div class="box no-border">
+                <div class="box-body">
+                    <table class="table table-striped table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>训练项目</th>
+                            <th>训练项目类型</th>
+                            <th>所属训练营</th>
+                            <th>发布作者</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {volist name="exercise" id="vo"}
+                        <tr>
+                            <td>{$vo.id}</td>
+                            <td>{$vo.exercise}</td>
+                            <td>{$vo.parent_exercise}</td>
+                            <td>{$vo.camp}</td>
+                            <td>{$vo.member}</td>
+                            <td>{$vo.create_time}</td>
+
+                            <td>
+                                <a href="javascript:;" class="show-execrise btn btn-info" data-id="{$vo.id}"><i class="fa fa-inbox"></i></a>
+                                <a href="javascript:;" class="del-execrise btn btn-danger" data-id="{$vo.id}"><i class="fa fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        {/volist}
+                        </tbody>
+                    </table>
+                </div>
+                {if condition="$exercise">
+                <div class="box-footer clearfix">
+                    {$exercise->render()}
+                </div>
+                {/if}
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+$(function() {
+    $('.show-execrise').click(function() {
+        var dataid = $(this).attr('data-id');
+        layui.use('layer', function() {
+            var layer = layui.layer;
+            //layer.msg('heelo');
+            layer.open({
+                type: 2,
+                title: '训练项目详情/编辑',
+                shadeClose: true,
+                shade: false,
+                maxmin: true, //开启最大化最小化按钮
+                area: ['900px', '650px'],
+                content: "{:url('exercise/show')}/id/"+dataid
+            })
+        });
+    });
+
+    $('.del-execrise').click(function(){
+        if ( confirm('确定要删除记录吗? 不可恢复的喔~') ){
+            var serverurl = "{:url('exercise/del')}",
+                dataid = $(this).attr('data-id');
+            $.post(serverurl, {
+                id: dataid
+            },function(res){
+                //console.log(res);
+                alert(res.msg);
+                window.location.reload();
+            });
+        }
+    })
+});
+</script>
+{/block}

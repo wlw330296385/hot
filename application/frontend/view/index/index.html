@@ -8,68 +8,39 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
-    <link rel="stylesheet" href="css/mui.min.css">
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="css/icons-extra.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
     <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="css/app.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
 </head>
 
 <body>
-<!--顶部导航-->
-<header class="mui-bar mui-bar-nav platform-title">
-    <h1 class="mui-title">{$systemSetting.sitename}</h1>
-</header>
 
-
-<!--底部导航-->
-<nav class="mui-bar mui-bar-tab">
-    <a class="mui-tab-item mui-active" href="#tabbar">
-        <span class="mui-icon mui-icon-home"></span>
-        <span class="mui-tab-label">首页</span>
-    </a>
-    <a class="mui-tab-item" href="#tabbar-with-chat">
-        <span class="mui-icon mui-icon-chatbubble"></span>
-        <span class="mui-tab-label">消息</span>
-    </a>
-    <a class="mui-tab-item" href="#tabbar-with-contact">
-        <span class="mui-icon mui-icon-checkmarkempty"></span>
-        <span class="mui-tab-label">发现</span>
-    </a>
-    <a class="mui-tab-item" href="#tabbar-with-contact">
-        <span class="mui-icon mui-icon-extra mui-icon-extra-class"></span>
-        <span class="mui-tab-label">商城</span>
-    </a>
-    <a class="mui-tab-item" href="#tabbar-with-map">
-        <span class="mui-icon mui-icon-contact mui-icon-icon-contact-filled"></span>
-        <span class="mui-tab-label">我的</span>
-    </a>
-</nav>
 
 <!--首页-->
 <div class="mui-content">
     <!--搜索-->
-    <ul class="mui-table-view mui-grid-view mui-grid-9 search">
-        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+    <ul class="mui-table-view mui-grid-view mui-grid-9 search1">
+        <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 search1li">
             <span class="mui-icon mui-icon-location"></span>
             <span class="address">深圳市</span>
         </li>
-        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-7 navli">
+        <li class="mui-table-view-cell mui-media mui-col-xs-7 mui-col-sm-7 search1li">
             <a href="#">
                 <span style="color: #fff">
                     <input type="search" class="mui-input-clear" placeholder="搜课程/训练营/训练地点等">
                 </span>
             </a>
         </li>
-        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-2 navli">
+        <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-2 search1li">
             <a href="#">
                 <span class="mui-icon mui-icon-search font"></span>
             </a>
         </li>
     </ul>
-
 
     <div id="tabbar" class="mui-control-content mui-active">
         <!--图片轮播-->
@@ -106,23 +77,23 @@
         <!--图文导航-->
         <div class="nav-list">
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="#">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="{:url('lesson/lessonList')}">
                     <span></span>
                     <div class="mui-media-body">课程</div>
                 </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="#">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="{:url('camp/campList')}">
                     <span></span>
                     <div class="mui-media-body">训练营</div>
                 </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="#">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="{:url('coach/coachList')}">
                     <span></span>
                     <div class="mui-media-body">教练推荐</div>
                 </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="#">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="{:url('court/courtList')}">
                     <span></span>
                     <div class="mui-media-body">训练点</div>
                 </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="#">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="#" onclick="alert('暂未开放')">
                     <span></span>
                     <div class="mui-media-body">约战</div>
                 </a></li>
@@ -134,13 +105,13 @@
 
             <div class="page-header">
                 <span class="course">热门课程</span>
-                <span class="more"><a href="#">更多>></a></span>
+                <span class="more"><a href="{:url('lesson/lessonList')}">更多>></a></span>
             </div>
 
             <ul class="mui-table-view mui-grid-view show-list-cont">
             {volist name="hotLessonList" id="vol"}
                 <li class="mui-table-view-cell mui-media mui-col-xs-6">
-                    <a href="#">
+                    <a href="{:url('lesson/lessonInfo',['lesson_id'=>$vol['id']])}">
                         <img class="mui-media-object" src="{$vol.cover}">
                         <div class="mui-media-body typename">{$vol.lesson}</div>
                     </a>
@@ -155,13 +126,13 @@
 
             <div class="page-header">
                 <span class="course">推荐课程</span>
-                <span class="more">更多>></span>
+                <span class="more"><a href="{:url('lesson/lessonList')}">更多>></a></span>
             </div>
 
             <ul class="mui-table-view mui-grid-view show-list-cont">
             {volist name="sortLessonList" id="vol"}
                 <li class="mui-table-view-cell mui-media mui-col-xs-6">
-                    <a href="#">
+                    <a href="{:url('lesson/lessonInfo',['lesson_id'=>$vol['id']])}">
                         <img class="mui-media-object" src="{$vol.cover}">
                         <div class="mui-media-body typename">{$vol.lesson}</div>
                         <div class="frame">
@@ -176,167 +147,33 @@
         </div>
 
     </div>
-
-
-    <div id="tabbar-with-chat" class="mui-control-content">
-        <div class="title">这是div模式选项卡中的第2个子页面，该页面展示一个消息列表</div>
-
-        <ul class="mui-table-view mui-table-view-chevron">
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 1</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 2</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 3</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 4</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 5</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 6</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 7</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 8</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 9</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 10</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 11</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 12</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 13</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 14</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 15</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 16</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 17</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 18</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 19</a></li>
-            <li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 20</a></li>
-        </ul>
-
-    </div>
-    <div id="tabbar-with-contact" class="mui-control-content">
-        <div class="title">这是div模式选项卡中的第3个子页面，该页面展示一个通讯录示例.</div>
-        <ul class="mui-table-view mui-table-view-striped mui-table-view-condensed">
-            <li class="mui-table-view-cell">
-                <div class="mui-slider-cell">
-                    <div class="oa-contact-cell mui-table">
-                        <div class="oa-contact-avatar mui-table-cell">
-                            <img src="images/60x60.gif"/>
-                        </div>
-                        <div class="oa-contact-content mui-table-cell">
-                            <div class="mui-clearfix">
-                                <h4 class="oa-contact-name">叶文洁</h4>
-                                <span class="oa-contact-position mui-h6">董事长</span>
-                            </div>
-                            <p class="oa-contact-email mui-h6">
-                                yewenjie@sina.com
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <li class="mui-table-view-cell">
-                <div class="mui-slider-cell">
-                    <div class="oa-contact-cell mui-table">
-                        <div class="oa-contact-avatar mui-table-cell">
-                            <img src="images/60x60.gif"/>
-                        </div>
-                        <div class="oa-contact-content mui-table-cell">
-                            <div class="mui-clearfix">
-                                <h4 class="oa-contact-name">艾AA</h4>
-                                <span class="oa-contact-position mui-h6">总经理</span>
-                            </div>
-                            <p class="oa-contact-email mui-h6">
-                                aaa@163.com
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <li class="mui-table-view-cell">
-                <div class="mui-slider-cell">
-                    <div class="oa-contact-cell mui-table">
-                        <div class="oa-contact-avatar mui-table-cell">
-                            <img src="images/60x60.gif"/>
-                        </div>
-                        <div class="oa-contact-content mui-table-cell">
-                            <div class="mui-clearfix">
-                                <h4 class="oa-contact-name">罗辑</h4>
-                                <span class="oa-contact-position mui-h6">员工</span>
-                            </div>
-                            <p class="oa-contact-email mui-h6">
-                                luoji@126.com
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <li class="mui-table-view-cell">
-                <div class="mui-slider-cell">
-                    <div class="oa-contact-cell mui-table">
-                        <div class="oa-contact-avatar mui-table-cell">
-                            <img src="images/60x60.gif"/>
-                        </div>
-                        <div class="oa-contact-content mui-table-cell">
-                            <div class="mui-clearfix">
-                                <h4 class="oa-contact-name">云天明</h4>
-                                <span class="oa-contact-position mui-h6">员工</span>
-                            </div>
-                            <p class="oa-contact-email mui-h6">
-                                ytm@163.com
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <li class="mui-table-view-cell">
-                <div class="mui-slider-cell">
-                    <div class="oa-contact-cell mui-table">
-                        <div class="oa-contact-avatar mui-table-cell">
-                            <img src="images/60x60.gif"/>
-                        </div>
-                        <div class="oa-contact-content mui-table-cell">
-                            <div class="mui-clearfix">
-                                <h4 class="oa-contact-name">史强</h4>
-                                <span class="oa-contact-position mui-h6">员工</span>
-                            </div>
-                            <p class="oa-contact-email mui-h6">
-                                shiqiang@gmail.com
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </div>
-    <div id="tabbar-with-map" class="mui-control-content">
-        <div class="title">这是div模式选项卡中的第4个子页面，该页面展示一个常见的设置示例.</div>
-        <ul class="mui-table-view">
-            <li class="mui-table-view-cell">
-                <a class="mui-navigate-right">
-                    新消息通知
-                </a>
-            </li>
-            <li class="mui-table-view-cell">
-                <a class="mui-navigate-right">
-                    隐私
-                </a>
-            </li>
-            <li class="mui-table-view-cell">
-                <a class="mui-navigate-right">
-                    通用
-                </a>
-            </li>
-        </ul>
-        <ul class="mui-table-view" style="margin-top: 25px;">
-            <li class="mui-table-view-cell">
-                <a class="mui-navigate-right">
-                    关于mui
-                </a>
-            </li>
-        </ul>
-        <ul class="mui-table-view" style="margin-top: 25px;">
-            <li class="mui-table-view-cell">
-                <a style="text-align: center;color: #FF3B30;">
-                    退出登录
-                </a>
-            </li>
-        </ul>
-    </div>
 </div>
+
+<!--底部导航-->
+<nav class="mui-bar mui-bar-tab">
+    <a class="mui-tab-item mui-active" href="#tabbar">
+        <span class="mui-icon mui-icon-home"></span>
+        <span class="mui-tab-label">首页</span>
+    </a>
+    <a class="mui-tab-item" href="#tabbar-with-chat">
+        <span class="mui-icon mui-icon-chatbubble"></span>
+        <span class="mui-tab-label">消息</span>
+    </a>
+    <a class="mui-tab-item" href="#tabbar-with-contact">
+        <span class="mui-icon mui-icon-checkmarkempty"></span>
+        <span class="mui-tab-label">发现</span>
+    </a>
+    <a class="mui-tab-item" href="#tabbar-with-contact">
+        <span class="mui-icon mui-icon-extra mui-icon-extra-class"></span>
+        <span class="mui-tab-label">商城</span>
+    </a>
+    <a class="mui-tab-item" href="#tabbar-with-map">
+        <span class="mui-icon mui-icon-contact mui-icon-icon-contact-filled"></span>
+        <span class="mui-tab-label">我的</span>
+    </a>
+</nav>
 </body>
-<script src="js/mui.min.js"></script>
+<script src="/static/frontend/js/mui.min.js"></script>
 <script>
     //初始化
     mui.init({

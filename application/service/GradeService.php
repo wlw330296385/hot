@@ -2,9 +2,10 @@
 namespace app\service;
 use app\model\Grade;
 use think\Db;
-class GradeService {
+use app\common\GradeVal;
+class GradeService{
 
-    protected $GradeModel;
+    private $GradeModel;
 
     public function __construct(){
         $this->GradeModel = new Grade;
@@ -12,53 +13,38 @@ class GradeService {
 
 
     // 班级列表
-    public function getGradeAll($map=[], $order='') {
-        $result = Grade::where($map)->order($order)->select();
-        //return $result;
-        if (!$result) {
-            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
+    public function getGradeList($map=[], $order='',$p=10) {
+        $result = [];
+        $res = Grade::where($map)->order($order)->paginate($p);
+        if($res){           
+            $res = $res->toArray();
+            $result = $res['data'];
         }
-        if ($result->isEmpty()) {
-            return [ 'msg' => __lang('MSG_000_NULL'), 'code' => '000', 'data' => ''];
-        }
-        return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $result];
+        return $result;
     }
 
     // 班级分页
     public function getGradePage($map=[], $order='', $paginate=0) {
         $result =  Grade::where($map)->order($order)->paginate($paginate);
-        //return $result;
-        if (!$result) {
-            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
+        if($result){           
+            $result = $result->toArray();
         }
-        if ($result->isEmpty()) {
-            return [ 'msg' => __lang('MSG_000_NULL'), 'code' => '000', 'data' => ''];
-        }
-        return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $result];
+        return $result;
     }
 
     // 一个班级
-    public function getGradeOne($map=[]) {
-        $res = Grade::with('student')->where($map)->find();
-        //dump($res);die;
-        if (!$res)
-            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
-
-        return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $res->toArray() ];
+    public function getGradeInfo($map=[]) {
+        $result = $this->GradeModel->where($map)->find();
+        if($result){           
+            $result = $result->toArray();
+        }
+        return $result;
     }
 
     // 获取班级分类 $tree传1 返回树状列表，不传就返回查询结果集数组
     public function getGradeCategory($tree=0) {
-        $res = Db::name('grade_category')->field(['id', 'name', 'pid'])->select();
-        if (!$res)
-            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
-
-        if ($tree) {
-            $list = channelLevel($res, 0, 'id', 'pid');
-            return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $list ];
-        } else {
-            return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $res ];
-        }
+        $result = Db::name('grade_category')->field(['id', 'name', 'pid'])->select();
+        return $result;
     }
 
 
@@ -67,4 +53,25 @@ class GradeService {
         $result = $this->GradeModel->where($map)->count();
         return $result?$result:0;
     }
+
+    public function createGrade($data){
+        $result = $this->GradeModel->validate('GradeVal')->data($map)->save();
+         if (!$result) {
+            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
+        }else{
+             return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $result];
+        }
+    }
+
+
+    // 获取班级学生
+    public function getStudentList($id){
+        $result = db('grade_member')->where(['grade_id'=>$id,'type'=>1,'status'=>1])->select();
+        // if($result){           
+        //     $result = $result->toArray();
+        // }
+        return $result;
+    }
+
+
 }

@@ -24,15 +24,14 @@ class LessonService {
     }
 
     // 获取所有课程
-    public function getLessonAll($map=[], $order='',$limit = 10) {
-        $res = Lesson::where($map)->limit($limit)->order($order)->select();
-        if (!$res)
-            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
-
-        if ( $res->isEmpty() )
-            return [ 'msg' => __lang('MSG_000_NULL'), 'code' => '000', 'data' => '' ];
-
-        return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $res->toArray() ];
+    public function getLessonList($map=[], $order='',$paginate = 10) {
+        $result = Lesson::where($map)->order($order)->paginate($paginate);
+        if($result){
+            $result = $result->toarray();
+            return $result['data'];
+        }else{
+            return $result;
+        }
     }
 
     // 分页获取课程
@@ -58,11 +57,12 @@ class LessonService {
     }
 
     // 获取一个课程
-    public function getLessonOne($map) {
-        $res = Lesson::where($map)->find();
-        if (!$res)
-            return ['msg'=>__lang('MSG_201_DBNOTFOUND'), 'code' => 200];
-        return ['msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $res->toArray()];
+    public function getLessonInfo($map) {
+        $result = Lesson::where($map)->find();
+        if ($result){
+            $result = $result->toArray();
+        }
+            return $result;
     }
 
 
