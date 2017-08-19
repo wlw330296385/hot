@@ -2,6 +2,7 @@
 namespace app\service;
 use app\model\Court;
 use app\common\validate\CourtVal;
+use think\Db;
 class CourtService {
     private $courtModel;
     public function __construct(){

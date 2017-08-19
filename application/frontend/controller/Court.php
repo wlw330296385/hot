@@ -19,8 +19,11 @@ class Court extends Base{
 
 
     public function courtInfo(){
-    	$court_id = input('param_court_id');
-    	$result = $this->CourtService->getCourtOne(['id'=>$court_id]);
+    	$court_id = input('param.court_id');
+    	$courtInfo = $this->CourtService->getCourtInfo(['id'=>$court_id]);
+        $mediaList = db('court_media')->where(['court_id'=>$court_id])->limit(3)->select();
+        $this->assign('courtInfo',$courtInfo);
+        $this->assign('mediaList',$mediaList);
     	return view();
     }
 
