@@ -80,4 +80,43 @@ class Grade extends Base{
         $this->assign('actGradeList',$actGradeList);
         return view();
     }
+
+        public function gradeListWeek(){
+        $coach_id = input('param.coach_id');
+        $camp_id = input('param.camp_id');
+        if(!$coach_id){
+            $coach_id = db('coach')->where(['member_id'=>$this->memberInfo['id'],'status'=>1])->value('id');
+        }
+        $week = input('post.week');
+        $week = '周日';
+        // $gradeList = Db::view('grade')
+        //          ->view('grade_member','member','grade_member.grade_id=grade.id')
+        //          ->where(['grade_member.type'=>1,'grade_member.status'=>1])
+        //          ->where('grade.week','LIKE',"%$week%")
+        //          ->where(['grade.coach_id'=>$coach_id])
+        //          ->select();
+
+        if(!$camp_id){
+
+            $gradeList = db('grade')->where(['coach_id'=>$coach_id])->where('week','like',"%$week%")->select();
+        }else{
+            $gradeList = db('grade')->where(['coach_id'=>$coach_id,'camp_id'=>$camp_id])->where('week','like',"%$week%")->select();    
+        }
+        // echo db('grade')->getlastsql();
+        // dump($gradeList);die;
+        $this->assign('gradeList',$gradeList);
+        
+        return view();
+    }
+
+    // 课时日历
+    public function gradeCalendar(){
+        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        $gradeList = Db::view('grade_member','grade_id')
+                    ->view('grade','location,camp,grade,week,lesson_time','grade_member.grade_id=grade.id')
+                    ->where(['grade_member.type'=>1,'grade_member.member_id'=>$member_id,'grade_member.status'=>1])
+                    ->select();
+        $this->assign('gradeList',$gradeList);  
+        return view();
+    }
 }

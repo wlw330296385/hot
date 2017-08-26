@@ -30,12 +30,12 @@
                     <img class="mui-media-object mui-pull-left coachicon"
                          src="/static/frontend/images/shuijiao.jpg">
                     <div class="mui-media-body">
-                        陈同学<img src="/static/frontend/images/icon03.jpg" class="sex" alt="">
-                        <p class="mui-ellipsis">所属训练营名称</p>
+                        {$studentInfo['student']}<img src="{:getSex($studentInfo['student_sex'])}" class="sex" alt="">
+                        <p class="mui-ellipsis">{$campInfo.camp}</p>
                     </div>
                     <div class="price-frame camp-num">
                         <ul>
-                            <li class="fr">ID:200001</li>
+                            <li class="fr">ID:{$studentInfo.id}</li>
                         </ul>
                     </div>
                 </a>
@@ -52,52 +52,37 @@
         <div class="item-list">
             <div id="item1" class="mui-control-content mui-active">
                 <ul class="mui-table-view list detalis-list mt55">
-                    <li class="mui-table-view-cell listli">学员姓名<span>陈麦克</span></li>
-                    <li class="mui-table-view-cell listli">性别<span>男</span></li>
-                    <li class="mui-table-view-cell listli">出生日期<span>2005-7-1</span></li>
-                    <li class="mui-table-view-cell listli">身高<span>180cm</span></li>
-                    <li class="mui-table-view-cell listli">体重<span>60KG</span></li>
-                    <li class="mui-table-view-cell listli">鞋码<span>20cm</span></li>
-                    <li class="mui-table-view-cell listli">所属地区<span>广东 深圳 南山</span></li>
-                    <li class="mui-table-view-cell listli">所读学校<span>南山实验小学</span></li>
-                    <li class="mui-table-view-cell listli">注册日期<span>2017-02-12</span></li>
-                    <li class="mui-table-view-cell listli">性格特征<span>活泼开朗</span></li>
-                    <li class="mui-table-view-cell listli">家长姓名<span>陈妈妈</span></li>
-                    <li class="mui-table-view-cell listli">手机号码<span>13146154135</span></li>
-                    <li class="mui-table-view-cell listli">紧急电话<span>2666668</span></li>
-                    <li class="mui-table-view-cell listli">个人备注<span>巴拉巴拉巴拉</span></li>
+                    <li class="mui-table-view-cell listli">学员姓名<span>{$studentInfo['student']}</span></li>
+                    <li class="mui-table-view-cell listli">性别<span>{switch name="studentInfo.student_sex" }
+                                                            {case value="0" }女{/case}
+                                                            {case value="1"}男{/case}
+                                                            {default /}未知
+                                                        {/switch}</span></li>
+                    <li class="mui-table-view-cell listli">出生日期<span>{$studentInfo['student_birthday']}</span></li>
+                    <li class="mui-table-view-cell listli">身高<span>{$studentInfo['student_height']}cm</span></li>
+                    <li class="mui-table-view-cell listli">体重<span>{$studentInfo['student_weight']}KG</span></li>
+                    <li class="mui-table-view-cell listli">鞋码<span>{$studentInfo['student_shoe_code']}cm</span></li>
+                    <li class="mui-table-view-cell listli">所属地区<span>{$studentInfo['student_province']} {$studentInfo['student_city']} {$studentInfo['student_area']}</span></li>
+                    <li class="mui-table-view-cell listli">所读学校<span>{$studentInfo['school']}</span></li>
+                    <li class="mui-table-view-cell listli">注册日期<span>{$studentInfo['create_time']}</span></li>
+                    <li class="mui-table-view-cell listli">性格特征<span>{$studentInfo['student_charater']}</span></li>
+                    <li class="mui-table-view-cell listli">家长姓名<span>{$studentInfo['parent']}</span></li>
+                    <li class="mui-table-view-cell listli">手机号码<span>{$studentInfo['mobile']}</span></li>
+                    <li class="mui-table-view-cell listli">紧急电话<span>{$studentInfo['emergency_telephone']}</span></li>
+                    <li class="mui-table-view-cell listli">个人备注<span>{$studentInfo['remarks']}</span></li>
                 </ul>
             </div>
             <div id="item2" class="mui-control-content">
                 <ul class="mui-table-view mui-text-center mb">
+                {volist name='studentGradeList' id="vol"}
                     <li class="mui-table-view-cell">
                         <ul class="mui-row table mui-navigate-right">
-                            <li class="mui-col-sm-4 mui-col-xs-4">大热篮球训练营</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">周六 14:20</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">大人篮球A班</li>
+                            <li class="mui-col-sm-4 mui-col-xs-4">{$vol.grade}</li>
+                            <li class="mui-col-sm-4 mui-col-xs-4">{$vol.week} {$vol.lesson_time}</li>
+                            <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.gradecate}</li>
                         </ul>
                     </li>
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table mui-navigate-right">
-                            <li class="mui-col-sm-4 mui-col-xs-4">大热篮球训练营</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">周六 14:20</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">大人篮球A班</li>
-                        </ul>
-                    </li>
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table mui-navigate-right">
-                            <li class="mui-col-sm-4 mui-col-xs-4">大热篮球训练营</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">周六 14:20</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">大人篮球A班</li>
-                        </ul>
-                    </li>
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table mui-navigate-right">
-                            <li class="mui-col-sm-4 mui-col-xs-4">大热篮球训练营</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">周六 14:20</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">大人篮球A班</li>
-                        </ul>
-                    </li>
+                {/volist}
                 </ul>
             </div>
             <div id="item3" class="mui-control-content">
@@ -105,15 +90,15 @@
                     <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
                             <span>当前所报</span>
-                            <div class="mui-media-body">40</div>
+                            <div class="mui-media-body">{$allSchedule}</div>
                         </a></li>
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
                             <span>剩余课量</span>
-                            <div class="mui-media-body">23</div>
+                            <div class="mui-media-body">{$restSchedule}</div>
                         </a></li>
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
                             <span>历史已上</span>
-                            <div class="mui-media-body">2232</div>
+                            <div class="mui-media-body">{$totalSchedule}</div>
                         </a></li>
                     </ul>
                 </div>
@@ -123,71 +108,19 @@
                             <li class="mui-col-xs-2">状态</li>
                             <li class="mui-col-xs-4">日期</li>
                             <li class="mui-col-xs-4">班级</li>
-                            <li class="mui-col-xs-2">人数</li>
+                            <li class="mui-col-xs-2">上课人数</li>
                         </ul>
                     </li>
+                    {volist name="studentScheduleList" id="vol"}
                     <li class="mui-table-view-cell">
                         <ul class="mui-row table">
-                            <li class="mui-col-sm-2 mui-col-xs-2"><i class="mui-icon mui-icon-checkmarkempty"></i></li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">2017-10-20 16:20</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">芝加哥公牛队</li>
-                            <li class="mui-col-sm-2 mui-col-xs-2 ">12</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2"><i class="mui-icon mui-icon-checkmarkempty">{$vol.status}</i></li>
+                            <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.schedule_time}</li>
+                            <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.schedule}</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2 ">{$vol.students-$vol.leave}</li>
                         </ul>
                     </li>
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-sm-2 mui-col-xs-2"><i class="mui-icon mui-icon-checkmarkempty"></i></li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">2017-10-20 16:20</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">芝加哥公牛队</li>
-                            <li class="mui-col-sm-2 mui-col-xs-2 ">12</li>
-                        </ul>
-                    </li>
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-sm-2 mui-col-xs-2"><i
-                                    class="mui-icon mui-icon-checkmarkempty colorgreen"></i></li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">2017-10-20 16:20</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">芝加哥公牛队</li>
-                            <li class="mui-col-sm-2 mui-col-xs-2 ">12</li>
-                        </ul>
-                    </li>
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-sm-2 mui-col-xs-2"><i
-                                    class="mui-icon mui-icon-checkmarkempty colorgreen"></i></li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">2017-10-20 16:20</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">芝加哥公牛队</li>
-                            <li class="mui-col-sm-2 mui-col-xs-2 ">12</li>
-                        </ul>
-                    </li>
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-sm-2 mui-col-xs-2"><i
-                                    class="mui-icon mui-icon-checkmarkempty colorgreen"></i></li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">2017-10-20 16:20</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">芝加哥公牛队</li>
-                            <li class="mui-col-sm-2 mui-col-xs-2 ">12</li>
-                        </ul>
-                    </li>
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-sm-2 mui-col-xs-2"><i
-                                    class="mui-icon mui-icon-checkmarkempty colorgreen"></i></li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">2017-10-20 16:20</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">芝加哥公牛队</li>
-                            <li class="mui-col-sm-2 mui-col-xs-2 ">12</li>
-                        </ul>
-                    </li>
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-sm-2 mui-col-xs-2"><i
-                                    class="mui-icon mui-icon-checkmarkempty colorgreen"></i></li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">2017-10-20 16:20</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">芝加哥公牛队</li>
-                            <li class="mui-col-sm-2 mui-col-xs-2 ">12</li>
-                        </ul>
-                    </li>
-
+                    {/volist}
                 </ul>
             </div>
             <div id="item4" class="mui-control-content">
@@ -195,19 +128,19 @@
                     <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                         <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"><a href="#">
                             <span>总订单</span>
-                            <div class="mui-media-body">23</div>
+                            <div class="mui-media-body">{$totalBill}</div>
                         </a></li>
                         <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"><a href="#">
                             <span>已付款</span>
-                            <div class="mui-media-body">21</div>
+                            <div class="mui-media-body">{$payBill}</div>
                         </a></li>
                         <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"><a href="#">
                             <span>未付款</span>
-                            <div class="mui-media-body">2</div>
+                            <div class="mui-media-body">{$notPayBill}</div>
                         </a></li>
                         <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"><a href="#">
                             <span>退款</span>
-                            <div class="mui-media-body">0</div>
+                            <div class="mui-media-body">{$repayBill}</div>
                         </a></li>
                     </ul>
                 </div>
@@ -219,56 +152,15 @@
                             <li class="mui-col-sm-4 mui-col-xs-4">提交日期</li>
                         </ul>
                     </li>
+                    {volist name="studentBillList" id="vol"}
                     <li class="mui-table-view-cell">
                         <ul class="mui-row table">
-                            <li class=" mui-col-xs-4">北头高年级基础班</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">3000</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">2017-08-20 16:40</li>
+                            <li class=" mui-col-xs-4">{$vol.lesson}</li>
+                            <li class="mui-col-sm-4 mui-col-xs-4">{$vol.is_pay}</li>
+                            <li class="mui-col-sm-4 mui-col-xs-4">{$vol.create_time}</li>
                         </ul>
                     </li>
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-sm-4 mui-col-xs-4">北头高年级基础班</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">3000</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">2017-08-20 16:40</li>
-                        </ul>
-                    </li>
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-sm-4 mui-col-xs-4">北头高年级基础班</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">3000</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">2017-08-20 16:40</li>
-                        </ul>
-                    </li>
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-sm-4 mui-col-xs-4">北头高年级基础班</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">3000</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">2017-08-20 16:40</li>
-                        </ul>
-                    </li>
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-sm-4 mui-col-xs-4">北头高年级基础班</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">3000</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">2017-08-20 16:40</li>
-                        </ul>
-                    </li>
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-sm-4 mui-col-xs-4">北头高年级基础班</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">3000</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">2017-08-20 16:40</li>
-                        </ul>
-                    </li>
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-sm-4 mui-col-xs-4">北头高年级基础班</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">3000</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">2017-08-20 16:40</li>
-                        </ul>
-                    </li>
-
+                    {/volist}
                 </ul>
             </div>
         </div>

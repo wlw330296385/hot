@@ -31,4 +31,34 @@ class UploadService {
             return ['err' => 0, 'code' => 100, 'msg' => __lang('MSG_101_SUCCESS'), 'data' => $domain.$ret['key']];
         }
     }
+
+
+
+
+
+        public function imgUpload(){
+            $file = request()->file('img');
+            $filePath = $file->getRealPath();   
+            $ext = pathinfo($file->getInfo('name'), PATHINFO_EXTENSION);
+            $key = date('Ymd').substr(md5($filePath), 0, 5).uniqid().'.'.$ext; 
+            $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads');
+            if($info){
+                // 成功上传后 获取上传信息
+                // 输出 jpg
+                echo $info->getExtension();
+                // 输出 20160820/42a79759f284b767dfcb2a0197904287.jpg
+                echo $info->getSaveName();
+                // 输出 42a79759f284b767dfcb2a0197904287.jpg
+                echo $info->getFilename(); 
+            }else{
+                // 上传失败获取错误信息
+                echo $file->getError();
+            }
+        }
+
+
+        public function imgUploadQiniu(){
+            
+        }
+
 }

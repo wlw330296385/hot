@@ -22,7 +22,7 @@ class LessonService {
 
         return ['msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $category];
     }
-
+    
     // 获取所有课程
     public function getLessonList($map=[], $order='',$paginate = 10) {
         $result = Lesson::where($map)->order($order)->paginate($paginate);
@@ -69,15 +69,7 @@ class LessonService {
     // 发布课程
     public function pubLession($data){
         // 查询是否有权限
-        $is_power = $this->gradeMemberModel
-                    ->where([
-                        'camp_id'   =>$data['camp_id'],
-                        'status'    =>1,
-                        'member_id'  =>$data['member_id'],
-                        'type'      =>['in','2,3,4']
-                        ])
-                    ->find()
-                    ->toArray();
+        $is_power = $this->isPower($data['camp_id'],$data['member_id']);
         if(!$is_power){
             return ['code'=>200,'msg'=>'权限不足'];
         }
@@ -91,15 +83,8 @@ class LessonService {
 
     // 编辑课程
     public function updateLesson($data,$id){
-        $is_power = $this->gradeMemberModel
-                    ->where([
-                        'camp_id'   =>$data['camp_id'],
-                        'status'    =>1,
-                        'member_id'  =>$data['member_id'],
-                        'type'      =>['in','2,3,4']
-                        ])
-                    ->find()
-                    ->toArray();
+        $is_power = $this->isPower($data['camp_id'],$data['member_id']);
+
         if(!$is_power){
             return ['code'=>200,'msg'=>'权限不足'];
         }
@@ -109,6 +94,24 @@ class LessonService {
             return ['msg' => $this->lessonModel->getError(), 'code' => 100, 'data' => $result];
         }else{
             return ['msg'=>__lang('MSG_200_ERROR'), 'code' => 200];
+        }
+    }
+
+
+    // 课程权限
+    public function isPower($camp_id,$member_id){
+        $is_power = $this->gradeMemberModel
+                    ->where([
+                        'camp_id'   =>$camp_id,
+                        'status'    =>1,
+                        'member_id'  =>$member_id,
+                        'type'      =>['in','2,3,4']
+                        ])
+                    ->find();
+        if($is_power){
+            return true;
+        }else{
+            return false;
         }
     }
 }

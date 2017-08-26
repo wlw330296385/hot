@@ -21,7 +21,18 @@ class BillService {
     // 获取订单列表
     public function getBillList($map,$p = 10){
         $result = $this->Bill->where($map)->paginate($p);
-        return $result->toArray();
+        
+        if($result){
+            $res = $result->toArray();
+            return $res['data'];
+        }else{
+            return $result;
+        }
+    }
+
+    public function billCount($map){
+        $result = $this->Bill->where($map)->count();
+        return $result?$result:0;
     }
 
     public function pubBill($data){

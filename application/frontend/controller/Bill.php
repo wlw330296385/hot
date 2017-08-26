@@ -14,7 +14,7 @@ class Bill extends Base{
     }
 
     public function billInfo(){
-    	$id = input('id');
+    	$id = input('param.id');
     	$result = $this->BillService->getBill(['id'=>$id]);
     	$this->assign('billInfo',$result);
     	return view();
@@ -22,7 +22,7 @@ class Bill extends Base{
 
     // 获取会员订单列表
     public function billList(){
-        $member_id = $this->memberInfo['id'];
+        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
     	$map = input('post.');
         $map['member_id'] = $member_id;
         $result = $this->BillService->getBillList($map);
@@ -43,7 +43,7 @@ class Bill extends Base{
     //编辑|添加订单
     public function createBill(){
     	//训练营主教练
-    	$camp_id = input('get.camp_id');
+    	$camp_id = input('param.camp_id');
     	$coachList = db('grade_member')->where(['type'=>4,'camp_id'=>$camp_id,'status'=>1])->select();
     	$assitantList = db('grade_member')->where(['type'=>8,'camp_id'=>$camp_id,'status'=>1])->select();
     	$this->assign('coachList',$coachList);
@@ -52,7 +52,7 @@ class Bill extends Base{
     }
     //编辑|添加订单接口
     public function updateBillApi(){
-    	$id = input('get.id');
+    	$id = input('param.id');
     	$data = input('post.');
         $billInfo = $this->BillService->getBill(['id'=>$id]);
         if($billInfo['is_pay']>0){

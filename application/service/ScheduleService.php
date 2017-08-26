@@ -15,8 +15,8 @@ class ScheduleService {
 
 
     // 获取课时数据列表
-	public function getscheduleList($map=[], $order='', $p='10'){
-		$result = Schedule::where($map)->order($order)->paginate($p)->toArray();
+	public function getscheduleList($map=[], $order='', $p='10',$field = '*'){
+		$result = Schedule::where($map)->field($field)->order($order)->paginate($p)->toArray();
 		return $result?$result['data']:false;
 	}
 
@@ -67,5 +67,54 @@ class ScheduleService {
 	public function getStudentList($schedule_id){
 		$result = db('schedule_member')->where(['schedule_id'=>$schedule_id,'type'=>0,'status'=>1])->select();
 		return $result;
+	}
+
+
+
+
+	// 教练增加课流量并升级
+	public function addScheduleLevel($coach_id){
+		$result = db('coach')->where(['id'=>$coach_id])->setInc('lesson_flow');
+		if($result){
+			$System =  new SystemService();
+        	$setting =$System->getSite();
+        	$coachLevel = db('coach')->where(['id'=>$coach_id])->value('coach_level');
+        	if($coachLevel>=$setting['coachlevel8']){
+        		db('coach')->save(['coach_level'=>8],$coach_id);
+        		return true;
+        	}
+        	if($coachLevel>=$setting['coachlevel7']){
+        		db('coach')->save(['coach_level'=>8],$coach_id);
+        		return true;
+        	}
+        	if($coachLevel>=$setting['coachlevel6']){
+        		db('coach')->save(['coach_level'=>8],$coach_id);
+        		return true;
+        	}
+        	if($coachLevel>=$setting['coachlevel5']){
+        		db('coach')->save(['coach_level'=>8],$coach_id);
+        		return true;
+        	}
+        	if($coachLevel>=$setting['coachlevel4']){
+        		db('coach')->save(['coach_level'=>8],$coach_id);
+        		return true;
+        	}
+        	if($coachLevel>=$setting['coachlevel3']){
+        		db('coach')->save(['coach_level'=>8],$coach_id);
+        		return true;
+        	}
+        	if($coachLevel>=$setting['coachlevel2']){
+        		db('coach')->save(['coach_level'=>8],$coach_id);
+        		return true;
+        	}
+        	if($coachLevel>=$setting['coachlevel1']){
+        		db('coach')->save(['coach_level'=>8],$coach_id);
+        		return true;
+        	}
+
+        	return false;
+		}
+		file_put_contents(ROOT_PATH.'/data/coachlevel/'.date('Y-m-d',time()).'.txt',json_encode(['error'=>'未成功返回课流量,教练id为:'.$coach_id,'time'=>date('Y-m-d H:i:s',time())]));
+		return false;
 	}
 }

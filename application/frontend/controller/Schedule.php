@@ -2,6 +2,7 @@
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\ScheduleService;
+use think\Db;
 /**
 * 课时表类
 */
@@ -17,7 +18,7 @@ class Schedule extends Base
 	}
 
 	public function index(){
-		$this->recordSchedulePower();
+		return view();
 
 	}
 
@@ -69,15 +70,16 @@ class Schedule extends Base
 			$this->error('您没有权限录课');die;
 		}
 		// 教练列表
-		$memberOfAllList = db('grade_member')->where([
-										'camp_id'	=>$camp_id,
-										'type'		=>['or',[2,3,4,6,8]],
-										'grade_id'	=>$grade_id,
-										// 'type'		=>4,
-										'status'	=>1
-										])
-										->field('member,member_id,coach,coach_id')
-										->select();
+		$memberOfAllList = db('grade_member')
+						->where([
+						'camp_id'	=>$camp_id,
+						'grade_id'	=>$grade_id,
+						// 'type'		=>4,
+						'status'	=>1
+						])
+						->whereOr(['type'=>['in',[2,3,4,6,8]]])
+						->field('member,member_id,coach,coach_id')
+						->select();
 		$this->assign('memberOfAllList',$memberOfAllList);
 		// $this->assign('coachList',$coachtList);
 		// $this->assign('assistantList',$assistantList);
@@ -122,9 +124,10 @@ class Schedule extends Base
 		$is_power = db('grade_member')->where([
 											'member_id'	=>$member_id,
 											'camp_id'	=>$camp_id,
-											'type'		=>['or',['2,3,4,8']],
 											'status'	=>1
-									])->find();
+									])
+									->whereOr(['type'=>['in',[2,3,4,6,8]]])	
+									->find();
 		if(!$is_power){
 			$result = 0;
 		}
@@ -158,7 +161,5 @@ class Schedule extends Base
 	}
 
 
-	public function scheduleListWeek(){
-		return view();
-	}
+
 }

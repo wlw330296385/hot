@@ -12,9 +12,7 @@ class SalaryIn extends Model{
 
     protected $readonly = ['create_time'];
 
-    public function lesson(){
-    	return $this->hasOne('lesson','id','lesson_id',[],'left join');
-    } 
+
 
 }
 

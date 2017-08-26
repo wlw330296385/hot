@@ -29,8 +29,14 @@ class SalaryInService {
 
     // 获取订单列表
     public function getSalaryInList($map,$p = 10,$order = 'id DESC'){
-        $result = $this->SalaryIn->where($map)->order('id DESC')->paginate($p);
-        return $result;
+        $res = $this->SalaryIn->where($map)->order('id DESC')->paginate($p);
+        if($res){
+            $result = $res->toArray();
+            return $result['data'];
+        }else{
+            return $res;
+        }
+        
     }
 
     /**

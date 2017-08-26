@@ -40,16 +40,37 @@ class Coach extends Base{
 
 	// 教练首页
     public function coachInfoOfCamp(){
-        $coach_id = input('coach_id');
-    	// 获取教练档案
-    	$coachInfo = $this->coachService->getCoachInfo(['member_id'=>$coach_id]);
+        $coach_id = input('param.coach_id');            	
+        if(!$coach_id){
+            // 获取教练档案
+            $coachInfo = $this->coachService->getCoachInfo(['member_id'=>$this->memberInfo['id']]);
+            $coach_id = $coachInfo['id'];
+            $member_id = $coachInfo['member_id'];
+        }else{
+            $coachInfo = $this->coachService->getCoachInfo(['id'=>$coach_id]);
+            $member_id = $coachInfo['member_id'];
+        }
     	//教练的班级
-    	$gradeOfCoach1 = $this->gradeMemberService->getGradeOfCoach(['member_id'=>$coach_id,'type'=>4,'status'=>1,'grade_id'=>['neq','']]);
-        $gradeOfCoach0 = $this->gradeMemberService->getGradeOfCoach(['member_id'=>$coach_id,'type'=>4,'grade_id'=>['neq','']]);
+    	$gradeOfCoach1 = $this->gradeMemberService->getGradeOfCoach(['member_id'=>$member_id,'type'=>4,'status'=>1,'grade_id'=>['neq','']]);
+        $gradeOfCoach0 = $this->gradeMemberService->getGradeOfCoach(['member_id'=>$member_id,'type'=>4,'grade_id'=>['neq','']]);
         $gradeOfCoachList = array_merge($gradeOfCoach0,$gradeOfCoach1);
         $count0 = count($gradeOfCoach0);
         $count1 = count($gradeOfCoach1);
-        
+        // 教练的证件
+        $cert = db('cert')->where(['member_id'=>$member_id,'status'=>1])->select();
+        $identCert = [];
+        $coachCert = [];
+        foreach ($cert as $key => $value) {
+            if($value['cert_type'] == 1){
+                $identCert = $value;
+            }
+
+            if($value['cert_type'] == 3){
+                $coachCert = $value;
+            }
+        }
+        // dump($cert);
+        // dump($identCert);
         //获取教练的课量
         $m = input('m')?input('m'):date('m');
         $y = input('y')?input('y'):date('Y');
@@ -74,12 +95,32 @@ class Coach extends Base{
                             ]);
         $yearScheduleOfCoach = count($yearScheduleOfCoachList); 
         //教练工资
+        $SalaryInService = new \app\service\SalaryInService($member_id);
+        $salaryList = $SalaryInService->getSalaryInList(['member_id'=>$member_id,'type'=>1]);
+        // 平均月薪
+        $averageSalaryByMonth = $SalaryInService->getAverageSalaryByMonth($member_id);
+        // 平均年薪
+        $averageSalaryByYear = $SalaryInService->getAverageSalaryByYear($member_id);
+        // dump($salaryList);die;
         $this->assign('scheduleOfCoachList',$scheduleOfCoachList);//教练当月的课量
         $this->assign('monthScheduleOfCoach',$monthScheduleOfCoach);//当月课量数量
         $this->assign('gradeOfCoachList',$gradeOfCoachList);//教练班级
+
         $this->assign('yearScheduleOfCoachList',$yearScheduleOfCoachList);//当年课量
         $this->assign('yearScheduleOfCoach',$yearScheduleOfCoach);//当年课量数量
+        $this->assign('y',$y);
+        $this->assign('m',$m);
+        $this->assign('salaryList',$salaryList);
         $this->assign('coachInfo',$coachInfo);
+        $this->assign('identCert',$identCert);
+        $this->assign('coachCert',$coachCert);
+        $this->assign('averageSalaryByMonth',$averageSalaryByMonth);
+        $this->assign('averageSalaryByYear',$averageSalaryByYear);
+        return view();
+    }
+
+    // 教练档案
+    public function coachAechives(){
         return view();
     }
 
@@ -174,7 +215,11 @@ class Coach extends Base{
     }
 
     //教练员注册
-    public function coachRegister(){
+    public function createCoach(){
+        $referer = input('param.referer');
+        $pid = input('param.pid');
+        $this->assign('pid',$pid);
+        $this->assign('referer',$referer);
         return view();
     }
 

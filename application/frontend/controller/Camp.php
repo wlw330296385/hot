@@ -12,14 +12,13 @@ class Camp extends Base{
 
 
     public function index() {
-    	$a = input();
-    	$b = ['b'=>123];
-    	$c = array_merge($a,$b);
-    	dump($c);
+
         return view();
     }
 
     public function createCamp(){
+
+        
         return view();
     }
 
@@ -29,9 +28,9 @@ class Camp extends Base{
         $coachList = Db::view('grade_member','member_id')->view('coach','portraits,star','coach.member_id = grade_member.member_id')->where(['camp_id'=>$camp_id,'type'=>4])->order('star')->limit(5)->select();
         $lessonList = db('lesson')->where(['camp_id'=>1,'status'=>1])->select();
         $lessonCount = count($lessonList);
-        $commemtList = db('camp_comment')->where(['camp_id'=>$camp_id])->select();
-        $campInfo = $this->CampService->CampOneById($camp_id);
-        $this->assign('commemtList',$commemtList);
+        $commentList = db('camp_comment')->where(['camp_id'=>$camp_id])->select();
+        $campInfo = $this->CampService->getCampInfo($camp_id);
+        $this->assign('commentList',$commentList);
         $this->assign('lessonCount',$lessonCount);
         $this->assign('lessonList',$lessonList);
         $this->assign('coachList',$coachList);
@@ -47,10 +46,10 @@ class Camp extends Base{
     }
 
     public function campListOfCaoch(){
-        $coach_id = input('param.coach_id');
+        $member_id = input('param.member_id')? input('param.member_id'):$this->memberInfo['id'];
         $campList = Db::view('grade_member','camp_id')
                 ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo,id,total_member,total_lessons','camp.id=grade_member.camp_id')
-                ->where(['grade_member.member_id'=>$coach_id,'grade_member.type'=>4,'grade_member.status'=>1])
+                ->where(['grade_member.member_id'=>$member_id,'grade_member.type'=>4,'grade_member.status'=>1])
                 ->select();
         $this->assign('campList',$campList);
         return view();
@@ -62,7 +61,6 @@ class Camp extends Base{
         $city = input('city');
         $area = input('area');
         $map = ['province'=>$province,'city'=>$city,'area'=>$area];
-        // dump($map);die;
         foreach ($map as $key => $value) {
             if($value == ''){
                 unset($map[$key]);
@@ -101,7 +99,7 @@ class Camp extends Base{
 
     // 邀请学生入驻
     public function inviteStudent(){
-        $data = input('get.');
+        $data = input('param.');
         $data['member'] = $this->memberInfo['member'];
         $data['member_id'] = $this->memberInfo['id'];
         $data['type'] = 1;
@@ -118,7 +116,7 @@ class Camp extends Base{
     }
 
     // 学生的训练营
-    public function studentCampList(){
+    public function campListOfStudent(){
         $member_id = $this->memberInfo['id'];
         // $actCampList = db('grade_member')->where(['member_id'=>$member_id,'type'=>1,'status'=>1])->select();
         $actCampList = Db::view('grade_member','camp_id')
@@ -160,4 +158,32 @@ class Camp extends Base{
 
         return view();
     }
+
+    // 没啥权限的campInfo菜单
+    public function indexCamp(){
+
+        return view();
+    }
+
+    // 管理员的camp菜单
+    public function powerCamp(){
+        $camp_id = input('param.camp_id');
+        $member_id = $this->memberInfo['id'];
+        $is_power = $this->CampService->isPower234($camp_id,$member_id);
+        if($is_power == 0){
+            $this->error('您没有权限');
+        }
+        $campInfo = $this->CampService->getCampInfo($camp_id);
+        $gradeCount = db('grade')->where(['camp_id'=>$camp_id])->count();
+        $scheduleCount = db('schedule')->where(['camp_id'=>$camp_id])->count();
+        $lessonCount = db('lesson')->where(['camp_id'=>$camp_id])->count();
+
+        $this->assign('gradeCount',$gradeCount);
+        $this->assign('scheduleCount',$scheduleCount);
+        $this->assign('lessonCount',$lessonCount);
+        $this->assign('campInfo',$campInfo); 
+        return view();
+    }
+
+
 }

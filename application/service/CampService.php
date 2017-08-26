@@ -30,11 +30,12 @@ class CampService {
     /**
      * 读取资源
      */
-    public function CampOneById($id) {
-        $res = $this->Camp->get($id)->toArray();
+    public function getCampInfo($id) {
+        $res = $this->Camp->get($id);
+
         if (!$res) return false;
         
-        return $res;
+        return $res->toArray();
     }
 
     /**
@@ -88,5 +89,18 @@ class CampService {
         }else{
             return false;
         }
+    }
+
+
+    /**
+     * 是否有2,3,4权限管理训练营
+     */
+    public function isPower234($camp_id,$member_id){
+        $is_power = db('grade_member')
+                    ->where(['member_id'=>$member_id,'camp_id'=>$camp_id,'status'=>1])
+                    ->where(function ($query) {
+                            $query->where('type', 2)->whereor('type', 3)->whereor('type',4);})
+                    ->select();
+        return $is_power?$is_power:0;
     }
 }

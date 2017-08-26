@@ -16,6 +16,8 @@ class Grade extends Base{
             $data = input('post.');
             $studentList = $data['student_list'];
             $gradeData = $data['gradeData'];
+            $gradeData['member_id'] = $this->memberInfo['id'];
+            $gradeData['member'] = $this->memberInfo['member'];
             $GradeService = new GradeService;
             $result = $GradeService->createGrade($gradeData);
             if($result['code']==200){

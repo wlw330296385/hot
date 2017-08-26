@@ -67,6 +67,8 @@ class Lesson extends Base{
         try{
             $id = input('get.id');
             $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
             if($id){
                 $result = $this->LessonService->updateLesson($data,$id);
             }else{

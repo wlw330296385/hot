@@ -13,5 +13,13 @@ class CertService {
         return $cert->toArray();
     }
 
-
+    public function getCertList($map){
+    	$res = Cert::all($map);
+    	if($res){
+    		$result = $res->toArray();
+    		return ['code'=>100,'msg'=>'ok','data'=>$result];
+    	}else{
+    		return ['code'=>200,'msg'=>'暂无数据'];
+    	}
+    }
 }

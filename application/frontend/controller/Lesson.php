@@ -11,22 +11,30 @@ class Lesson extends Base{
 		$this->GradeService = new GradeService;
 		parent::_initialize();
 	}
-
-    public function index() {
-    	
-        $a = ['10','20','30'];
-        dump(serialize($a));
+    public function test(){
+        $is_power = $this->LessonService->isPower(9,1);
+        dump($lessonInfo);
     }
-
-    public function lessonInfo(){
+    // 可购买
+    public function index() {
     	$lesson_id = input('param.lesson_id');
-    	$lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+        $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
      
         $lessonInfo['doms'] =  unserialize($lessonInfo['dom']);
         unset($lessonInfo['dom']);
         $this->assign('lessonInfoJson',json_encode($lessonInfo));
-    	$this->assign('lessonInfo',$lessonInfo);
-    	return view();
+        $this->assign('lessonInfo',$lessonInfo);
+        return view();
+
+    }
+
+    // 可编辑
+    public function lessonInfo(){
+    	$lesson_id = input('param.lesson_id');
+        $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+        $this->assign('lessonInfoJson',json_encode($lessonInfo));
+        $this->assign('lessonInfo',$lessonInfo);
+        return view();
     }
 
     // 课程列表
@@ -60,48 +68,16 @@ class Lesson extends Base{
 		return view();
     }
 
-    //翻页获取课程接口
-    public function getLessonListApi(){
-    	$type = input('get.type');
-    	$map = input('post.');
-    	$result = $LessonService->getLessonPage($map,10);
-    	if($result['code'] == 100){
-			$list = $result['data'];
-	    	//在线课程
-	    	$dateNow = date('Y-m-d',time());
-	    	$onlineList = [];
 
-	    	//离线课程
-	    	$offlineList = [];
-			foreach ($list as $key => $value) {
-				if($value['end']<$dateNow || $value['start']>$dateNow){
-					$offlineList[] = $value;
-				}else{
-					$onlineList[] = $value;
-				}
-				
-			}
-	    		 	
-    	}else{
-    		return json(['code'=>'200','msg'=>$result['msg']]);die;
-    	}
-    	switch ($type) {
-    		case '1':
-    			return json(['code'=>100,'msg'=>'success','data'=>$onlineList]);die;
-    			break;
-    		case '2':
-    			return json(['code'=>100,'msg'=>'success','data'=>$onlineList]);die;
-    			break;
-    		default:
-    			return json(['code'=>200,'msg'=>'???']);die;
-    			break;
-    	}   		    	
-    }
     //编辑课程
     public function updateLesson(){
     	//训练营主教练
     	$camp_id = input('param.camp_id');
         $lesson_id = input('param.lesson_id');
+        $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
+        if(!$is_power){
+            $this->error('您没有权限');
+        }
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         $lessonInfo['doms'] = unserialize($lessonInfo['dom']);
 
@@ -136,19 +112,7 @@ class Lesson extends Base{
         return view();
     }
 
-    //编辑|添加课程接口
-    public function updateLessonApi(){
-    	$id = input('param.id');
-    	$data = input('post.');
-    	if($id){
-    		$result = $this->LessonService->updateLesson($data,$id);
-    	}else{
-    		$result = $this->LessonService->pubLesson($data);
-    	}
 
-    	return json($result);die;
-    	
-    }
 
     // 购买课程
     public function buyLesson(){
@@ -181,15 +145,22 @@ class Lesson extends Base{
         return view();
     }
 
-    public function campLessonInfo(){
-        $id = input('id');
-        $result = $this->LessonService->getLessonOne(['id'=>$id]);
-        $lessonInfo = [];
-        if($result['code']==100){
-            $lessonInfo = $result['data'];
-        }
-        $this->assign('lessonInfoJson',json_encode($lessonInfo));
-        $this->assign('lessonInfo',$lessonInfo);
+    public function LessonInfoOfCamp(){
+        
+    }
+
+
+    public function lessonListOfCamp(){
+        $camp_id = input('param.camp_id');
+        // 上架课程
+        $onlineLessonList = $this->LessonService->getLessonList(['camp_id'=>$camp_id,'status'=>1]);
+
+
+        // 下架课程
+        $offlineLessonList = $this->LessonService->getLessonList(['camp_id'=>$camp_id,'status'=>-1]);
+
+        $this->assign('onlineLessonList',$onlineLessonList);
+        $this->assign('offlineLessonList',$offlineLessonList);
         return view();
     }
 }

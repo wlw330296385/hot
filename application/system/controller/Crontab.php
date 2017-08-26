@@ -32,9 +32,9 @@ class Crontab{
 				//人头基数薪资
 				$salaryOfBase = $salary_base*$students;
 				// 教练薪资
-				$coachSalary = ($salaryOfBase+$coach_salary)*(1-$this->setting['sysrebate'])+($salaryOfBase+$coach_salary)*$this->setting['starrebate']*$star/100;
+				$coachSalary = ($salaryOfBase+$coach_salary)*(1-$this->setting['sysrebate'])+($salaryOfBase+$coach_salary)*$this->setting['starrebate']*$star/25;
 				//助教薪资
-				$assitantSalary = ($salaryOfBase+$assistant_salary)*(1-$this->setting['sysrebate'])+($salaryOfBase+$assistant_salary)*$this->setting['starrebate']*$star/100;
+				$assitantSalary = ($salaryOfBase+$assistant_salary)*(1-$this->setting['sysrebate'])+($salaryOfBase+$assistant_salary)*$this->setting['starrebate']*$star/25;
 				// 分配教练练薪资
 				$memberOfCoach = $this->getMemberByCoachId($coach_id);
 				if($memberOfCoach){
@@ -78,7 +78,7 @@ class Crontab{
 	}
 
 	/**
-	 * 分配薪资
+	 * 分配薪资记录数据
 	 */
 	private function allotSalary($data){
 		$result = $this->modelSalary->allowField(true)->data($data)->save();
@@ -88,7 +88,55 @@ class Crontab{
 			file_put_contents(ROOT_PATH.'/data/salaryin/'.date('Y-m-d',time()).'.txt',json_encode(['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]));
 		}else{
 			file_put_contents(ROOT_PATH.'/data/salaryin/'.date('Y-m-d',time()).'.txt',json_encode(['error'=>$data,'time'=>date('Y-m-d H:i:s',time())]));
-		}
-		
+		}		
 	}
+
+
+	/**
+     * 参数:  
+     * 递归分销人头返钱:用在教练获取薪资的时候,返回薪资
+     */
+    public function memberSalaryRebate($pid,$salary,$salary_id,$sid,$s_member,$times = 1){
+        
+        if($times>2){
+            return true;
+        }
+        
+        $member = db('member')->find($pid);
+        if($member){
+            $times++;
+            if($times == 1){
+                $rebate = $this->setting['rebate'];
+            }else{
+                $rebate = $this->setting['rebate2'];
+            }
+            $pidSalary  = $salary*$rebate;
+            $data = ['salary'=>$pidSalary,'sid'=>$sid,'s_member'=>$s_member,'member_id'=>$member['id'],'member'=>$member['member'],'salary_id'=>$salary_id,'tier'=>$times,'create_time'=>time()];
+            $result = db('rebate')->insert($data);
+            if($result){
+                db('member')->where(['id'=>$pid])->setInc('balance',$pidSalary);
+                file_put_contents(ROOT_PATH.'/data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]));
+                // file_put_contents(ROOT_PATH.'data\rebate\2017-08-15.txt',json_encode(['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]));
+                if($member['pid']>1){ 
+                    $res = $this->memberSalaryRebate($member['pid'],$salary,$salary_id,$member['id'],$member['realname'],$times);
+                    
+                }else{
+                    return true;
+                }
+            }else{
+                file_put_contents(ROOT_PATH.'/data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['error'=>$data,'time'=>date('Y-m-d H:i:s',time())]));
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+
+    /**
+     * 业绩100%返回到2级人头
+     */
+    public function hpRebate(){
+    	
+    }
 }

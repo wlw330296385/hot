@@ -27,7 +27,7 @@ class CoachService{
         if($result){
             return ['code'=>100,'msg'=>'OK','data'=>$result];
         }else{
-            return ['code'=>100,'msg'=>$this->CoachModel->getError(),'data'=>$result];
+            return ['code'=>100,'msg'=>$this->CoachModel->getError()];
         }
 	}
 
@@ -37,7 +37,7 @@ class CoachService{
 	 */
 	public function updateCoach($request,$id)
     {
-        $result = $this->CoachModel->validate('CoachVal')->save($request,$id);
+        $result = $this->CoachModel->allowField(true)->validate('CoachVal')->save($request,$id);
 
         if ($result === false) {
             return ['msg' => $this->Coach->getError(), 'code' => 200];

@@ -18,8 +18,14 @@ class StudentService{
 
 
 	public function getStudentInfo($map){
-			$result = $this->studentModel->where($map)->find()->toArray();
-			return $result;
+			$res = $this->studentModel->where($map)->find();
+			if($res){
+				$result = $res->toArray();
+				return $result;
+			}else{
+				return $res;
+			}
+			
 	}	
 
 	public function createStudent($data){
@@ -63,22 +69,34 @@ class StudentService{
 
 	// 获取一个教练下的所有学生
 	public function getStudentListOfCoach($map){
-		$result = $this->gradeMemberModel->where($map)->paginate(10)->toArray();
+		$result = $this->gradeMemberModel->where($map)->paginate(10);
+		if($result){
+			$res = $result->toArray();return $res['data'];
+		}
 		return $result;
     }
 
     public function getStudentGradeList($map){
-    	$result = $this->gradeMemberModel->where($map)->paginate(10)->toArray();
+    	$result = $this->gradeMemberModel->where($map)->paginate(10);
+    	if($result){
+			$res = $result->toArray();return $res['data'];
+		}
 		return $result;
     }
 
     public function getStudentScheduleList($map){
-    	$result = $this->scheduleMemberModel->where($map)->paginate(10)->toArray();
+    	$result = $this->scheduleMemberModel->where($map)->paginate(10);
+    	if($result){
+			$res = $result->toArray();return $res['data'];
+		}
     	return $result;
     }
 
-    public function getStudentList(){
-    	$result = $this->gradeMemberModel->where($map)->paginate(10)->toArray();
+    public function getStudentList($map){
+    	$result = $this->gradeMemberModel->where($map)->paginate(10);
+    	if($result){
+			$res = $result->toArray();return $res['data'];
+		}
     	return $result;
     }
 }

@@ -15,6 +15,9 @@
     <link rel="stylesheet" type="text/css" href="../../static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="../../static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="../../static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="../../static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
 </head>
 
 <body class=whitebg>
@@ -34,11 +37,18 @@
                                                                                 placeholder="微信授权自动获取"></li>
                     <li class="mui-table-view-cell listli detalisli">训练营名称<input type="text" class="input"
                                                                                  placeholder="请输入训练营名称"></li>
-                    <li class="mui-table-view-cell listli detalisli">训练营类型<span class="wd52">机构/教练/其他<i
-                            class="mui-icon mui-icon-arrowdown"></i></span>
+                    <li class="mui-table-view-cell listli detalisli">训练营类型
+                        <span class="wd52">
+                            <select class="pbselect">
+                                <option>运球/传球等</option>
+                                <option>运球</option>
+                                <option>传球</option>
+                            </select>
+                             <i class="mui-icon mui-icon-arrowdown"></i>
+                        </span>
                     </li>
                     <li class="mui-table-view-cell listli detalisli">创建者姓名<input type="text" class="input"
-                                                                                 placeholder="请输入创建者姓名"></li>
+                                                                                 placeholder="请输入负责人真实姓名"></li>
                     <li class="mui-table-view-cell listli detalisli">密码<input type="text" class="input"
                                                                               placeholder="请输入密码"></li>
                     <li class="mui-table-view-cell listli detalisli">默认密码<input type="text" class="input"
@@ -47,7 +57,7 @@
                                                                                 placeholder="请输入手机号码"></li>
                     <li class="mui-table-view-cell listli detalisli">短信验证码
                         <input type="button" class="code-btn" value="获取验证码" onclick="clickButton(this)">
-                        <input type="text" class="input" placeholder="输入验证码" style="width: 45%">
+                        <input type="text" class="input" placeholder="输入验证码" style="width: 44%;margin-top: 4px">
                     </li>
                     <li class="mui-table-view-cell listli detalisli border-b">推荐人<input type="text" class="input"
                                                                                         placeholder="微信转发代参填写"></li>
@@ -56,7 +66,7 @@
                     <input name="checkbox" value="同意大热篮球事业合伙协议" type="checkbox">
                     <label>同意大热篮球事业合伙协议</label>
                 </div>
-                <div class="tjbtn">
+                <div class="tjbtn" style="margin-bottom: 25px">
                     <button type="button" class="mui-btn btn registerbtn1">
                         注册
                     </button>
@@ -67,38 +77,38 @@
             <form action="" class="whitebg form2" style="display: none">
                 <ul class="mui-table-view list camp-list camp-lesson-list detalis-list grade-list">
                     <li class="mui-table-view-cell listli detalisli">训练营名称<span class="wd52">通过上一页获取</span></li>
-                    <li class="mui-table-view-cell listli detalisli border-b">
+                    <li class="mui-table-view-cell listli detalisli">
                         <a href="#" class="mui-navigate-right">
                             训练营LOGO
                             <!--上传照片后的界面-->
-                            <!--<img class="coachicon icon01" src="../../static/frontend/images/yuantiao.jpg" alt="">-->
-                            <span class="wd52">上传</span>
+                            <img class="coachicon icon01" src="../../static/frontend/images/yuantiao.jpg" alt="">
+                            <!--<span class="wd52">上传</span>-->
                         </a>
                     </li>
-                    <li class="mui-table-view-cell listli detalisli border-b">
+                    <li class="mui-table-view-cell listli detalisli">
                         <a href="#" class="mui-navigate-right">
                             训练营封面
                             <!--上传照片后的界面-->
-                            <!--<img class="coachicon icon01" src="../../static/frontend/images/yuantiao.jpg" alt="">-->
-                            <span class="wd52">上传</span>
+                            <img class="coachicon icon01" src="../../static/frontend/images/yuantiao.jpg" alt="">
+                            <!--<span class="wd52">上传</span>-->
                         </a>
                     </li>
-                    <li class="mui-table-view-cell listli detalisli">
+                    <li class="mui-table-view-cell listli detalisli listinitial">
                         所属公司
                         <input type="text" class="input" placeholder="非机构可不填">
                     </li>
-                    <li class="mui-table-view-cell listli detalisli">
+                    <li class="mui-table-view-cell listli detalisli listinitial">
                         总部地址
                         <input type="text" class="input" placeholder="非机构可不填">
                     </li>
-                    <li class="mui-table-view-cell listli detalisli">
+                    <li class="mui-table-view-cell listli detalisli listinitial" id='showCityPicker3'>
                         <a href="#" class="mui-navigate-right">所属地区
-                            <span>选择</span>
+                            <span id="cityResult3" class="ui-alert" style="color:#737373">选择</span>
                         </a>
                     </li>
-                    <li class="mui-table-view-cell listli detalisli border-b">训练营简介
+                    <li class="mui-table-view-cell listli detalisli listinitial border-b">训练营简介
                         <div class="tips">
-                            <p>教学经验教学经验教学经验教学经验教学经验教学经验教学经验教学经验教学经验教学经验教学经验教学经验教学经验</p>
+                            <textarea rows="5" placeholder="填写训练营简介"></textarea>
                         </div>
                     </li>
                 </ul>
@@ -119,33 +129,40 @@
                     <li class="mui-table-view-cell listli detalisli">
                         <a href="#" class="mui-navigate-right">营业执照
                             <!--上传照片后的界面-->
-                            <!--<img class="coachicon icon01" src="../../static/frontend/images/yuantiao.jpg" alt="">-->
-                            <span>上传</span>
+                            <img class="coachicon icon01" src="../../static/frontend/images/yuantiao.jpg" alt="">
+                            <!--<span>上传</span>-->
                         </a>
                     </li>
                     <li class="mui-table-view-cell listli detalisli">
                         <a href="#" class="mui-navigate-right">法人身份证
                             <!--上传照片后的界面-->
-                            <!--<img class="coachicon icon01" src="../../static/frontend/images/yuantiao.jpg" alt="">-->
-                            <span class="wd52">上传</span>
+                            <img class="coachicon icon01" src="../../static/frontend/images/yuantiao.jpg" alt="">
+                            <!--<span class="wd52">上传</span>-->
                         </a>
                     </li>
                     <li class="mui-table-view-cell listli detalisli">
                         法人身份证号
-                        <input type="text" class="input" placeholder="请输入身份证号码"></li>
+                        <input type="text" class="input" placeholder="请输入身份证号码">
+                    </li>
                     <li class="mui-table-view-cell listli detalisli">
-                        <a href="#" class="mui-navigate-right">创建者身份证
+                        <a href="#" class="mui-navigate-right">
+                            创建者身份证
                             <!--上传照片后的界面-->
-                            <!--<img class="coachicon icon01" src="../../static/frontend/images/yuantiao.jpg" alt="">-->
-                            <span class="wd52">上传</span>
+                            <img class="coachicon icon01" src="../../static/frontend/images/yuantiao.jpg" alt="">
+                            <!--<span class="wd52">上传</span>-->
                         </a>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        创建者身份证
+                        <input type="text" class="input" placeholder="请输入创建者身份证码">
                     </li>
                     <li class="mui-table-view-cell listli detalisli border-b">
                         <a href="#" class="mui-navigate-right">
                             其他证明
                             <!--上传照片后的界面-->
-                            <!--<img class="coachicon icon01" src="../../static/frontend/images/yuantiao.jpg" alt="">-->
-                            <span>上传</span></a>
+                            <img class="coachicon icon01" src="../../static/frontend/images/yuantiao.jpg" alt="">
+                            <!--<span>上传</span>-->
+                        </a>
                     </li>
                 </ul>
                 <p class=height20></p>
@@ -163,11 +180,42 @@
 </body>
 <script src="../../static/frontend/js/mui.min.js"></script>
 <script src="../../static/frontend/js/jquery-3.2.1.min.js"></script>
+<!--选择器-->
+<script src="../../static/frontend/js/mui.picker.min.js"></script>
+<script src="../../static/frontend/js/mui.poppicker.js"></script>
+<script src="../../static/frontend/js/city.data.js"></script>
+<script src="../../static/frontend/js/city.data-3.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+    //选择器
+    (function ($, doc) {
+        $.init();
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+            ///级联示例
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
+            });
+            cityPicker3.setData(cityData3);
+            var showCityPickerButton = doc.getElementById('showCityPicker3');
+            var cityResult3 = doc.getElementById('cityResult3');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+        });
+    })(mui, document);
+
+    //验证码
     function clickButton(obj) {
         var obj = $(obj);
         obj.attr("disabled", "disabled");
@@ -183,6 +231,8 @@
             clearInterval(set);
         }, 60000);
     }
+
+    //流程跳转
     $(function () {
         $(".registerbtn1").click(function () {
             $(".form1").hide();
@@ -197,5 +247,7 @@
             $(".form1").show();
         });
     })
+
+
 </script>
 </html>

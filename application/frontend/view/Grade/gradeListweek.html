@@ -25,54 +25,27 @@
         <div class="camp-lesson-list">
             <div id="segmentedControl" class="mui-segmented-control mb">
                 <a class="mui-control-item" href="#item1">返回首页</a>
-                <a class="mui-control-item" href="#item2">全部班级</a>
                 <a class="mui-control-item mui-active" href="#item3">我的班级</a>
                 <a class="mui-control-item" href="#item4">训练营<i class="mui-icon mui-icon-arrowdown"></i></a>
             </div>
         </div>
         <div class="whitebg card-list">
+        {volist name="gradeList" id="vol"}
+       
             <div class="mui-card">
                 <div class="mui-card-header">
-                    <div class="card-left"><span class="time">08:00</span> 南科实验小学(室外)</div>
-                    <div class="card-right"><a href="#">编辑</a></div>
+                    <div class="card-left"><span class="time">{$vol.lesson_time}</span> {$vol.location}</div>
                 </div>
                 <div class="mui-card-content">
                     <div class="mui-card-content-inner">
-                        <h4>暑假塘朗低年级进阶班 <span class="name">安凯翔</span></h4>
-                        <p class="cont">王超，马汉，张龙，赵虎，王超，马汉，张龙，赵虎</p>
+                        <h4>{$vol.grade} <span class="name">{$vol.coach}</span></h4>
                     </div>
                 </div>
-                <div class="mui-card-footer">[10学员] 小学-基础班(7-9岁)</div>
-            </div>
-
-            <div class="mui-card">
-                <div class="mui-card-header">
-                    <div class="card-left"><span class="time">08:00</span> 南科实验小学(室外)</div>
-                    <div class="card-right"><a href="#">编辑</a></div>
-                </div>
-                <div class="mui-card-content">
-                    <div class="mui-card-content-inner">
-                        <h4>暑假塘朗低年级进阶班 <span class="name">安凯翔</span></h4>
-                        <p class="cont">王超，马汉，张龙，赵虎，王超，马汉，张龙，赵虎</p>
-                    </div>
-                </div>
-                <div class="mui-card-footer">[10学员] 小学-基础班(7-9岁)</div>
-            </div>
-
-
-            <div class="mui-card">
-                <div class="mui-card-header">
-                    <div class="card-left"><span class="time">08:00</span> 南科实验小学(室外)</div>
-                    <div class="card-right"><a href="#">编辑</a></div>
-                </div>
-                <div class="mui-card-content">
-                    <div class="mui-card-content-inner">
-                        <h4>暑假塘朗低年级进阶班 <span class="name">安凯翔</span></h4>
-                        <p class="cont">王超，马汉，张龙，赵虎，王超，马汉，张龙，赵虎</p>
-                    </div>
-                </div>
-                <div class="mui-card-footer">[10学员] 小学-基础班(7-9岁)</div>
-            </div>
+                <div class="mui-card-footer">{$vol.gradecate} 
+                <a style="color:red;" href="{:url('schedule/recordSchedule',['grade_id'=>$vol['id'],'lesson_id'=>$vol['lesson_id'],'camp_id'=>$vol['camp_id']])}">录课</a>
+            </div></div>
+            
+        {/volist}
         </div>
     </div>
 

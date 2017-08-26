@@ -19,11 +19,14 @@ class GradeMemberService{
 
     //获取教练拥有的班级
     public function getGradeOfCoach($map){
-    	$result = GradeMember::with('grade')->where($map)->select()->toArray();
-        if($result){
-                    $result = $result->toArray();
-                }
-        return $result;
+    	$res = GradeMember::with('grade')->where($map)->select();
+        if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
+        }
+        
     }
     // 统计用户数量
     public function countMembers($map){

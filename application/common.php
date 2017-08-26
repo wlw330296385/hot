@@ -87,7 +87,14 @@ function getYearInterval($min,$max){
     return $sum?$sum:1;
 }
 
-
+// 格式化输出性别
+function format_sex($sex_int) {
+    $str = '未知';
+    if ($sex_int) {
+        $str = $sex_int == 2 ? '女' : '男';
+    }
+    return $str;
+}
 
 /**
  * 获取性别
@@ -96,9 +103,9 @@ function getYearInterval($min,$max){
 function getSex($value){
     if($value == 1){
         //1=男
-        return "/static/frontend/images/icon04.jpg";
+        return "/static/frontend/images/icon03.jpg";
     }else{
-         return "/static/frontend/images/icon03.jpg";
+         return "/static/frontend/images/icon04.jpg";
     }
 }
 
@@ -110,4 +117,17 @@ function getChecked($value,$val){
     if($value == $val){
         return 'checked';
     }
+}
+
+
+// 生成交易单号,int
+function getTID($salt){
+    $result = date('YmdHis').rand(0000,9999).$salt;
+    return $result;
+}
+
+// 生成订单号
+function getOrderID(){
+    $result = date('YmdHis').rand(0000,9999).$salt;
+    return $result;
 }

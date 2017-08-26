@@ -14,6 +14,7 @@ class Coach extends Base{
 
 	}
 
+    // 搜索教练
     public function searchCoachListApi(){
         try{
             $map = [];
@@ -41,10 +42,25 @@ class Coach extends Base{
         }
     }
 
-    public function createCoachApi(){
+    public function createCoach1Api(){
         try{
             $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            dump($_SESSION);
+            dump($this->memberInfo);
             $result = $this->coachService->createCoach($data);
+            return json($result);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    public function createCoach2Api(){
+        try{
+            $data = input('post.');
+            $coach_id = $data['coach_id'];
+            unset($data['coach_id']);
+            $result = $this->coachService->updateCoach($data,$coach_id);
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

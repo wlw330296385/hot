@@ -9,5 +9,7 @@ class Index extends Base{
 		$this->LessonService = new LessonService;
 	}
 
-
+	public function noLogin(){
+		return json(['code'=>400,'msg'=>'请重新登录']);die;
+	}
 }
