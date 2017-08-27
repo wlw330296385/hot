@@ -55,7 +55,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
     // 数据表主键 复合主键使用数组定义 不设置则自动获取
     protected $pk;
     // 数据表字段信息 留空则自动获取
-    protected $field = [];
+    protected $field = true;
     // 只读字段
     protected $readonly = [];
     // 显示属性

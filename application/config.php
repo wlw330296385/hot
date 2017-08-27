@@ -10,6 +10,34 @@
 // +----------------------------------------------------------------------
 
 return [
+    // 安全key
+    'salekey' => 'hotpaas',
+
+    // 公众号 测试账号
+    'appid' => 'wx96e47b68ca398cf8',
+    'appsecret' => '2bd8014b1fca2a04e6ea6f371bda39aa',
+    'token' => 'hot-basket',
+    'encodingaeskey' => '',
+    'state' => 'hb',
+
+
+    // 七牛云
+    //accessKey
+    'qn_accesskey' => 'OOzGcbsIECVSx8uNY7d6iy8z8j60LruYL88dCGj8',
+    //secretKey
+    'qn_secretkey' => 'jBcQ0f2v4z-bV35i-mbW46goE70LPKDS2FsY2MHl',
+    //上传的空间
+    'qn_bucket' => 'w8723qmxxhwmcpgcgoymbbv1kwlpvayo',
+    //空间绑定的域名
+    'qn_domain'=>'http://ou1z1q8b2.bkt.clouddn.com/',
+	
+	// 短信通道showapi
+    'sms_appid' => '37836',
+    'sms_secret' => 'ccf5ac14e3994cd0850765326275eb41',
+	
+	
+	
+
     // +----------------------------------------------------------------------
     // | 应用设置
     // +----------------------------------------------------------------------

@@ -1,0 +1,54 @@
+{extend name="layout/common" /}
+
+{block name="css"}
+<link rel="stylesheet" href="/backend/plugins/fullcalendar/fullcalendar.min.css">
+<link rel="stylesheet" href="/backend/plugins/fullcalendar/fullcalendar.print.css" media="print">
+{/block}
+
+{block name="page-content"}
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+            <em>课时日程</em>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script src="/backend/plugins/moment.min.js"></script>
+<script src="/backend/plugins/fullcalendar/fullcalendar.min.js"></script>
+<script>
+$(function(){
+    var serverUrl = "{:url('schedule/calendar')}";
+    $.get(serverUrl, function(res){
+//        console.log(res);
+        if (res.status) {
+            $('#calendar').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                buttonText: {
+                    today: 'today',
+                    month: 'month',
+                    week: 'week',
+                    day: 'day'
+                },
+                //Random default events
+                events: res.data
+            });
+        }
+    }, 'json');
+
+});
+</script>
+{/block}

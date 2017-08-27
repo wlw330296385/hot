@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>{$systemSetting.sitename}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body>
+
+
+<!--首页-->
+<div class="mui-content">
+    <!--搜索-->
+    <ul class="mui-table-view mui-grid-view mui-grid-9 search1">
+        <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 search1li">
+            <span class="mui-icon mui-icon-location"></span>
+            <span class="address">深圳市</span>
+        </li>
+        <li class="mui-table-view-cell mui-media mui-col-xs-7 mui-col-sm-7 search1li">
+            <a href="#">
+                <span style="color: #fff">
+                    <input type="search" class="mui-input-clear" placeholder="搜课程/训练营/训练地点等">
+                </span>
+            </a>
+        </li>
+        <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-2 search1li">
+            <a href="#">
+                <span class="mui-icon mui-icon-search font"></span>
+            </a>
+        </li>
+    </ul>
+
+    <div id="tabbar" class="mui-control-content mui-active">
+        <!--图片轮播-->
+        <div id="slider" class="mui-slider">
+            <div class="mui-slider-group mui-slider-loop">
+                <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+                <div class="mui-slider-item mui-slider-item-duplicate">
+                    <a href="#">
+                        <img src="{$bannerList[0]}">
+                    </a>
+                </div>
+                <!-- 第一张 -->
+                {volist name="bannerList" id="vol"}
+                <div class="mui-slider-item">
+                    <a href="">
+                        <img src="{$vol}">
+                    </a>
+                </div>
+                {/volist}
+                <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+                <div class="mui-slider-item mui-slider-item-duplicate">
+                    <a href="#">
+                        <img src="{$bannerList[2]}">
+                    </a>
+                </div>
+            </div>
+            <div class="mui-slider-indicator">
+                <div class="mui-indicator mui-active"></div>
+                <div class="mui-indicator"></div>
+                <div class="mui-indicator"></div>
+            </div>
+        </div>
+
+        <!--图文导航-->
+        <div class="nav-list">
+            <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="{:url('lesson/lessonList')}">
+                    <span></span>
+                    <div class="mui-media-body">课程</div>
+                </a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="{:url('camp/campList')}">
+                    <span></span>
+                    <div class="mui-media-body">训练营</div>
+                </a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="{:url('coach/coachList')}">
+                    <span></span>
+                    <div class="mui-media-body">教练推荐</div>
+                </a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="{:url('court/courtList')}">
+                    <span></span>
+                    <div class="mui-media-body">训练点</div>
+                </a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="#" onclick="alert('暂未开放')">
+                    <span></span>
+                    <div class="mui-media-body">约战</div>
+                </a></li>
+            </ul>
+        </div>
+
+        <!--热门课程-->
+        <div class=show-list>
+
+            <div class="page-header">
+                <span class="course">热门课程</span>
+                <span class="more"><a href="{:url('lesson/lessonList')}">更多>></a></span>
+            </div>
+
+            <ul class="mui-table-view mui-grid-view show-list-cont">
+            {volist name="hotLessonList" id="vol"}
+                <li class="mui-table-view-cell mui-media mui-col-xs-6">
+                    <a href="{:url('lesson/lessonInfo',['lesson_id'=>$vol['id']])}">
+                        <img class="mui-media-object" src="{$vol.cover}">
+                        <div class="mui-media-body typename">{$vol.lesson}</div>
+                    </a>
+                </li>
+            {/volist}
+            </ul>
+
+        </div>
+
+        <!--推荐课程-->
+        <div class=show-list>
+
+            <div class="page-header">
+                <span class="course">推荐课程</span>
+                <span class="more"><a href="{:url('lesson/lessonList')}">更多>></a></span>
+            </div>
+
+            <ul class="mui-table-view mui-grid-view show-list-cont">
+            {volist name="sortLessonList" id="vol"}
+                <li class="mui-table-view-cell mui-media mui-col-xs-6">
+                    <a href="{:url('lesson/lessonInfo',['lesson_id'=>$vol['id']])}">
+                        <img class="mui-media-object" src="{$vol.cover}">
+                        <div class="mui-media-body typename">{$vol.lesson}</div>
+                        <div class="frame">
+                            <span class="typename-num">{$vol.students}</span>
+                            <span class="typename-money">￥{$vol.cost}</span>
+                        </div>
+                    </a>
+                </li>
+            {/volist}
+            </ul>
+
+        </div>
+
+    </div>
+</div>
+
+<!--底部导航-->
+<nav class="mui-bar mui-bar-tab">
+    <a class="mui-tab-item mui-active" href="#tabbar">
+        <span class="mui-icon mui-icon-home"></span>
+        <span class="mui-tab-label">首页</span>
+    </a>
+    <a class="mui-tab-item" href="#tabbar-with-chat">
+        <span class="mui-icon mui-icon-chatbubble"></span>
+        <span class="mui-tab-label">消息</span>
+    </a>
+    <a class="mui-tab-item" href="#tabbar-with-contact">
+        <span class="mui-icon mui-icon-checkmarkempty"></span>
+        <span class="mui-tab-label">发现</span>
+    </a>
+    <a class="mui-tab-item" href="#tabbar-with-contact">
+        <span class="mui-icon mui-icon-extra mui-icon-extra-class"></span>
+        <span class="mui-tab-label">商城</span>
+    </a>
+    <a class="mui-tab-item" href="#tabbar-with-map">
+        <span class="mui-icon mui-icon-contact mui-icon-icon-contact-filled"></span>
+        <span class="mui-tab-label">我的</span>
+    </a>
+</nav>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    //轮播
+    var slider = mui("#slider");
+    slider.slider({
+        interval: 5000
+    });
+</script>
+</html>

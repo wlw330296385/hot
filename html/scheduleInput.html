@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>课时录入</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="../../static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="../../static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="../../static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <style>
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+
+        p {
+            text-indent: 22px;
+        }
+
+        .mui-popover {
+            height: 300px;
+        }
+    </style>
+</head>
+
+<body class=whitebg>
+
+<header id="header" class="mui-bar mui-bar-nav subheader">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+    <h1 class="mui-title">训练营名称</h1>
+</header>
+<div class="mui-content">
+
+    <div class="camp-list camp-lesson-list detalis-list grade-list editor mt">
+        <ul class="mui-table-view list mb">
+            <li class="mui-table-view-cell mui-media listli">
+                <a href="javascript:;" class="mui-navigate-right">
+                    <div class="mui-media-body wd">
+                        <strong>暑期塘朗低年级进阶班</strong>
+                        <p class="mui-ellipsis" style="text-indent: 0">所属训练营 | 课程类型</p>
+                    </div>
+                    <div class="price-frame">
+                        <span class="editor-btn">编辑</span>
+                    </div>
+                </a>
+            </li>
+        </ul>
+        <div class="page-header">
+            <span class="course">参训学员</span>
+        </div>
+        <div class="image-items">
+            <div class="imagef image">
+                <!--<img src=../../static/frontend/images/yuantiao.jpg>-->
+                上传合照
+            </div>
+            <form class="mui-input-group">
+                <div class="mui-input-row mui-checkbox">
+                    <label>100001<span class="name">张国荣</span></label>
+                    <input name="checkbox1" value="Item 3" type="checkbox">
+                </div>
+                <div class="mui-input-row mui-checkbox">
+                    <label>100001<span class="name">张国荣</span></label>
+                    <input name="checkbox1" value="Item 4" type="checkbox">
+                </div>
+                <div class="mui-input-row mui-checkbox">
+                    <label>100001<span class="name">张国荣</span></label>
+                    <input name="checkbox1" value="Item 4" type="checkbox">
+                </div>
+                <div class="operation-btn">
+                    <span class="mui-badge">3</span>
+                    <a href="#" class="all">全选</a>
+                    <a href="#" class="cancel">取消</a>
+                    <a href="#" class="del">[删除]</a>
+                    <a href="#" class="mui-icon mui-icon-personadd add"></a>
+                </div>
+            </form>
+
+        </div>
+        <ul class="mui-table-view list">
+            <li class="mui-table-view-cell listli detalisli picker btn" id="demo5"
+                data-options='{"type":"time","customData":{"d":[{"text":"周日","value":"周日"},{"text":"周一","value":"周一"},{"text":"周二","value":"周二"},{"text":"周二","value":"周三"},{"text":"周三","value":"周四"},{"text":"周四","value":"周五"},{"text":"周六","value":"周六"}]},"labels":["星期","时", "分"]}'>
+                <a href="#" class="mui-navigate-right">
+                    训练时间
+                    <span id="result" class="ui-alert">周六 16:30</span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                <a href="#trainLocation" class="mui-navigate-right">
+                    训练地点
+                    <span>深圳湾篮球场</span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli detalisli" id='showCityPicker3'>
+                <a href="#" class="mui-navigate-right">
+                    所属地区
+                    <span id='cityResult3' class="ui-alert">广东 深圳 南山</span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                <a href="#bishopPopover" class="mui-navigate-right">
+                    主教练
+                    <span>陈麦克</span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                <a href="#assistantPopover" class="mui-navigate-right">
+                    助理教练
+                    <span></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                <a href="#leader" class="mui-navigate-right">
+                    领队
+                    <span>陈麦克</span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                <a href="#headmaster" class="mui-navigate-right">
+                    班主任
+                    <span>张乔丹</span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                <a href="#teachingPlan" class="mui-navigate-right">
+                    训练项目
+                    <span>教案名称：点进去教案列表</span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                场地租金
+                <span>145</span>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                主教佣金<font style="font-size: 12px">(底薪150+人数3x基数20)x助教人数</font>
+                <span style="width: 9%">240</span>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                助教佣金<font style="font-size: 12px">(底薪100+人数3x基数15)x助教人数</font>
+                <span style="width: 9%">210</span>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                备注
+                <input type="text" class="input" value="巴拉巴拉巴拉">
+            </li>
+        </ul>
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff">
+                提交录入
+            </li>
+        </ul>
+    </div>
+
+    <!--主教练-->
+    <div id="bishopPopover" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course"><strong>教练列表</strong></span>
+                    </div>
+                    <ul class="mui-table-view list">
+                        <li class="mui-table-view-cell listli detalisli">
+                            陈麦克
+                            <span>添加</span>
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            陈麦克
+                            <span>添加</span>
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            陈麦克
+                            <span>添加</span>
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            陈麦克
+                            <span>添加</span>
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            陈麦克
+                            <span>添加</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--助理教练-->
+    <div id="assistantPopover" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="page-header">
+                    <span class="course"><strong>助理教练列表</strong></span>
+                </div>
+                <ul class="mui-table-view list">
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+    <!--课程类型-->
+    <div id="lessonType" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course"><strong>课程类型</strong></span>
+                    </div>
+                    <ul class="mui-table-view list">
+                        <li class="mui-table-view-cell listli detalisli">
+                            小学高年级基础班
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            小学高年级基础班
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            小学高年级基础班
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            小学高年级基础班
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            小学高年级基础班
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--班级类型-->
+    <div id="gradeType" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course"><strong>班级类型</strong></span>
+                    </div>
+                    <ul class="mui-table-view list">
+                        <li class="mui-table-view-cell listli detalisli">
+                            小学高年级基础班
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            小学高年级基础班
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            小学高年级基础班
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            小学高年级基础班
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            小学高年级基础班
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--训练地点-->
+    <div id="trainLocation" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course"><strong>训练地点</strong></span>
+                    </div>
+                    <ul class="mui-table-view list">
+                        <li class="mui-table-view-cell listli detalisli">
+                            深圳湾篮球场
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            深圳湾篮球场
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            深圳湾篮球场
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            深圳湾篮球场
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            深圳湾篮球场
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--领队-->
+    <div id="leader" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="page-header">
+                    <span class="course"><strong>领队列表</strong></span>
+                </div>
+                <ul class="mui-table-view list">
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+    <!--班主任-->
+    <div id="headmaster" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="page-header">
+                    <span class="course"><strong>班主任列表</strong></span>
+                </div>
+                <ul class="mui-table-view list">
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+    <!--教案-->
+    <div id="teachingPlan" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="page-header">
+                    <span class="course"><strong>教案列表</strong></span>
+                </div>
+                <ul class="mui-table-view list">
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <input type="checkbox">
+                        陈麦克
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+<script src="../../static/frontend/js/mui.min.js"></script>
+<!--选择器js-->
+<script src="../../static/frontend/js/mui.picker.js"></script>
+<script src="../../static/frontend/js/mui.poppicker.js"></script>
+<script src="../../static/frontend/js/city.data.js"></script>
+<script src="../../static/frontend/js/city.data-3.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    //弹出菜单
+    mui('.mui-scroll-wrapper').scroll();
+    mui('body').on('shown', '.mui-popover', function (e) {
+        //console.log('shown', e.detail.id);//detail为当前popover元素
+    });
+    mui('body').on('hidden', '.mui-popover', function (e) {
+        //console.log('hidden', e.detail.id);//detail为当前popover元素
+    });
+
+    (function ($, doc) {
+        $.init();
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+            //级联示例
+            var cityPicker = new $.PopPicker({
+                layer: 2
+            });
+            cityPicker.setData(cityData);
+            var showCityPickerButton = doc.getElementById('showCityPicker');
+            var cityResult = doc.getElementById('cityResult');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker.show(function (items) {
+                    cityResult.innerText = items[0].text + "-" + items[1].text;
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+            ///级联示例
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
+            });
+            cityPicker3.setData(cityData3);
+            var showCityPickerButton = doc.getElementById('showCityPicker3');
+            var cityResult3 = doc.getElementById('cityResult3');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+
+            //时间
+            var result = $('#result')[0];
+            var btns = $('.btn');
+            btns.each(function (i, btn) {
+                btn.addEventListener('tap', function () {
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var id = this.getAttribute('id');
+                    var picker = new $.DtPicker(options);
+
+                    picker.show(function (rs) {
+                        result.innerText = rs.text;
+                        picker.dispose();
+                    });
+                }, false);
+            });
+
+        });
+    })(mui, document);
+</script>
+</html>

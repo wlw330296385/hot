@@ -1,0 +1,96 @@
+{extend name="layout/common"/}
+
+{block name="page-content"}
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">添加教案</h3>
+            </div>
+            <form action="{:url('plan/store')}" class="form-horizontal" method="post">
+                {:token()}
+                <div class="box-body">
+                    <div class="form-group">
+                        <label class="col-sm-2 col-md-2 control-label">教案名称</label>
+                        <div class="col-sm-8 col-md-8">
+                            <input type="text" name="outline" class="form-control">
+                        </div>
+                        <div class="col-sm-2 col-md-2"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 col-md-2 control-label">适合阶段</label>
+                        <div class="col-sm-8 col-md-8">
+                            <select name="grade_category_id" id="grade_category_id" class="form-control">
+                                <option value=""></option>
+                                {volist name="category" id="vo"}
+                                <optgroup label="{$vo.name}">
+                                    {volist name="$vo['_data']" id="vo2"}
+                                    <option value="{$vo2.id}">{$vo2.name}</option>
+                                    {/volist}
+                                </optgroup>
+                                {/volist}
+                            </select>
+                            <input type="hidden" name="grade_category" id="grade_category">
+                        </div>
+                        <div class="col-sm-2 col-md-2"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 col-md-2 control-label">教案介绍</label>
+                        <div class="col-sm-8 col-md-8">
+                            <textarea name="outline_detail"  class="form-control" rows="5"></textarea>
+                        </div>
+                        <div class="col-sm-2 col-md-2"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 col-md-2 control-label">训练项目</label>
+                        <div class="col-sm-8 col-md-8">
+                            <a href="javascript:;" class="btn btn-default choose-exer" data-url="{:url('plan/exerciselist')}">选择训练项目</a>
+                            <input type="hidden" id="exercise_txt" name="exercise" class="form-control">
+                            <div class="row" id="program-list"></div>
+                        </div>
+                        <div class="col-sm-2 col-md-2"></div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <div class="col-sm-12 col-sm-8 col-sm-offset-2">
+                        <button type="submit" class="btn btn-success btn-flat">提 交</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+"use strict";
+$(function() {
+    $('.choose-exer').click(function() {
+        var listurl = $(this).attr('data-url');
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.open({
+                type: 2,
+                title: '选择训练项目',
+                shadeClose: true,
+                shade: 0.8,
+                area: ['1000px', '800px'],
+                content: listurl
+            });
+        });
+    });
+
+    $('#grade_category_id').change(function() {
+        //console.log($(this).val());
+        //console.log($(this).find('option:selected').text());
+
+
+         $('#grade_category').val($(this).find('option:selected').text());
+    });
+});
+</script>
+{/block}

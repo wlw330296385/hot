@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>训练营课程列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body class="whitebg">
+
+<div class="mui-content">
+
+    <div id="tabbar" class="mui-control-content mui-active">
+        <div class="camp-lesson-list">
+            <div id="segmentedControl" class="mui-segmented-control mb">
+                <a class="mui-control-item" href="#item1">添加课程</a>
+                <a class="mui-control-item mui-active" href="#item2">上架课程</a>
+                <a class="mui-control-item" href="#item3">下架课程</a>
+                <a class="mui-control-item" href="">训练营<i class="mui-icon mui-icon-arrowdown"></i></a>
+            </div>
+
+            <div class="item-list">
+                <div id="item2" class="mui-control-content mui-active">
+                    <ul class="mui-table-view list">
+                    {volist name="onlineLessonList" id="vol"}
+                        <li class="mui-table-view-cell mui-media listli padding">
+                            <a href="{:url('lesson/lessonInfo',['lesson_id'=>$vol['id']])}" class="mui-navigate-right">
+                                <div class="mui-media-body">
+                                    <strong>{$vol.lesson}</strong>
+                                    <p class="mui-ellipsis">{$vol.gradecate} | {$vol.court}</p>
+                                </div>
+                            </a>
+                        </li>
+                    {/volist}
+                    </ul>
+                </div>
+                <div id="item3" class="mui-control-content">
+                    <ul class="mui-table-view list">
+                    {volist name="offlineLessonList" id="vol"}
+                        <li class="mui-table-view-cell mui-media listli padding">
+                            <a href="{:url('lesson/lessonInfo',['lesson_id'=>$vol['id']])}" class="mui-navigate-right">
+                                <div class="mui-media-body">
+                                    <strong>{$vol.lesson}</strong>
+                                    <p class="mui-ellipsis">{$vol.gradecate} | {$vol.court}</p>
+                                </div>
+                            </a>
+                        </li>
+                    {/volist}
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+
+    <!--底部导航-->
+    <nav class="mui-bar mui-bar-tab">
+        <a class="mui-tab-item mui-active" href="#tabbar">
+            <span class="mui-icon mui-icon-home"></span>
+            <span class="mui-tab-label">首页</span>
+        </a>
+        <a class="mui-tab-item" href="#tabbar-with-chat">
+            <span class="mui-icon mui-icon-chatbubble"></span>
+            <span class="mui-tab-label">消息</span>
+        </a>
+        <a class="mui-tab-item" href="#tabbar-with-contact">
+            <span class="mui-icon mui-icon-checkmarkempty"></span>
+            <span class="mui-tab-label">录课</span>
+        </a>
+        <a class="mui-tab-item" href="#tabbar-with-contact">
+            <span class="mui-icon mui-icon-extra mui-icon-extra-class"></span>
+            <span class="mui-tab-label">商城</span>
+        </a>
+        <a class="mui-tab-item" href="#tabbar-with-map">
+            <span class="mui-icon mui-icon-contact mui-icon-icon-contact-filled"></span>
+            <span class="mui-tab-label">我的</span>
+        </a>
+    </nav>
+
+</div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+</script>
+</html>

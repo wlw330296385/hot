@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>我的积分</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body class=whitebg>
+<header id="header" class="mui-bar mui-bar-nav subheader subheader-other">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <h1 class="mui-title">当前积分</h1>
+</header>
+<div class="mui-content" style="padding: 0">
+
+    <div class="list camp-list camp-lesson-list detalis-list coach mine explain-media">
+        <div class="integral-show">
+            <p>{$memberInfo['score']}</p>
+        </div>
+        <div class="frame frame1 mui-text-center whitebg">
+            <button type="button" class="btn colorblue">积分兑换</button>
+            <p><a href="#" class="explainbtn">积分说明</a></p>
+        </div>
+
+        <div class="page-header mt">
+            <span class="course">最近30天积分记录</span>
+        </div>
+        <ul class="mui-table-view">
+        {volist name="scoreList" id="vol"}
+            <li class="mui-table-view-cell item-list listli">
+                <div class="list-cont">
+                    <h4>{$vol.score_des}</h4>
+                    <p>{$vol.create_time}</p>
+                </div>
+                <span class="date money">{$vol.score}</span>
+            </li>
+        {/volist}
+        </ul>
+    </div>
+    <div class="list mine explain-body" style="display: none">
+        <header class="mui-bar mui-bar-nav subheader">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+            <h1 class="mui-title">积分说明</h1>
+        </header>
+        <div class="mui-content">
+            <div class="explain">
+                <div class="page-header explain-title">
+                    <span class="course">Q1 如何获得积分？</span>
+                </div>
+                <div class="explain-cont">
+                    <p>1、在线支付的订单将获得订单积分奖励;</p>
+                    <p>2、组织关系在线支付订单将按比例获取积分奖励;</p>
+                    <p>3、参加平台相关活动获取相应积分奖励;</p>
+                </div>
+            </div>
+
+            <div class="explain">
+                <div class="page-header explain-title">
+                    <span class="course">Q2 积分用来做什么？</span>
+                </div>
+                <div class="explain-cont">  
+                    <p>1、可以在商城兑换各种商品;</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+    mui('body').on('tap', '.explainbtn', function () {
+    $(".explain-body").show();
+    $(".explain-media").hide();
+    });
+</script>
+</html>

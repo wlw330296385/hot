@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>预约体检</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="../../static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/style.css"/>
+</head>
+
+<body class=whitebg>
+
+
+<!--首页-->
+<div class="mui-content">
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">预约体检</h1>
+    </header>
+    <div class="mui-content pt">
+        <div class="list detalis-list">
+
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell mui-media listli padding mb">
+                    <a href="javascript:;">
+                        <img class="mui-media-object mui-pull-left" src="./../static/frontend/images/shuijiao.jpg">
+                        <div class="mui-media-body">
+                            北头周六高年级基础班
+                            <p class="mui-ellipsis">9-12岁初级班</p>
+                        </div>
+                        <div class="price-frame singup-num">
+                            1022人已报名
+                        </div>
+                    </a>
+                </li>
+            </ul>
+
+
+            <div class="page-header">
+                <span class="course">课程信息</span>
+            </div>
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli detalisli">
+                    <a class="mui-navigate-right">
+                        训练营
+                        <span>训练营名称</span>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">训练时间<span>周六 16:30</span></li>
+                <li class="mui-table-view-cell listli detalisli">训练地点<span>深圳湾篮球场</span></li>
+                <li class="mui-table-view-cell listli detalisli">所属地区<span>广东 深圳 南山</span></li>
+            </ul>
+
+
+            <div class="page-header">
+                <span class="course">个人信息</span>
+            </div>
+
+
+            <form action="">
+                <ul class="mui-table-view">
+                    <!--新会员预约-->
+                    <li class="mui-table-view-cell listli detalisli">
+                        学员姓名
+                        <input type="text" class="input" placeholder="输入学员姓名">
+                    </li>
+
+                    <!--老会员预约-->
+                    <li class="mui-table-view-cell listli detalisli" style="display: none">
+                        学员姓名
+                        <span class="dropdown-btn">
+                        请选择学员
+                        <i class="mui-icon mui-icon-arrowdown"></i>
+                    </span>
+                    </li>
+
+                    <li class="mui-table-view-cell listli detalisli">家长姓名
+                        <input type="text" class="input" placeholder="输入家长姓名">
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">手机号码
+                        <input type="text" class="input" placeholder="输入手机号码">
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">短信验证码
+                        <input type="button" class="code-btn" value="获取验证码" onclick="clickButton(this)">
+                        <input type="text" class="input" placeholder="输入验证码">
+                    </li>
+                </ul>
+            </form>
+
+            <!--老会员（选择框中没有学员姓名）-->
+            <form action="">
+                <ul class="mui-table-view" style="display: none">
+                    <li class="mui-table-view-cell listli detalisli">
+                        学员姓名
+                        <input type="text" class="input" placeholder="输入学员姓名">
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">家长姓名<span>习大大</span></li>
+                    <li class="mui-table-view-cell listli detalisli">手机号码<span>13254685461</span></li>
+                </ul>
+
+
+                <ul class="mui-table-view operation">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-8 opli">请确定你所选课程及个人信息无误</li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bgblue">确定预约</li>
+                </ul>
+            </form>
+        </div>
+    </div>
+
+</div>
+</body>
+<script src="./../static/frontend/js/mui.min.js"></script>
+<script src="./../static/frontend/js/jquery-3.2.1.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+    function clickButton(obj) {
+        var obj = $(obj);
+        obj.attr("disabled", "disabled");
+        /*按钮倒计时*/
+        var time = 60;
+        var set = setInterval(function () {
+            obj.val(--time + "(s)");
+        }, 1000);
+        /*等待时间*/
+        setTimeout(function () {
+            obj.attr("disabled", false).val("重新获取验证码");
+            /*倒计时*/
+            clearInterval(set);
+        }, 60000);
+    }
+</script>
+</html>

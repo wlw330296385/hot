@@ -3,12 +3,17 @@ namespace app\admin\controller;
 use think\Controller;
 use think\Request;
 use think\Validate;
-use app\service\Auth;
+use app\service\AuthService;
 
 class Login extends Controller
 {
+    public function __construct()
+    {
+        $this->Auth = new AuthService();
+    }
+
     public function index() {
-        if ( Auth::islogin() ) {
+        if ( $this->Auth->islogin() ) {
             $this->error('你已经登录，无需重复登录', url('Index/index'));
         }
         if ( Request::instance()->isPost() ) {
@@ -36,15 +41,17 @@ class Login extends Controller
                 return;
             }
 
-            $result = Auth::login($username, $password, $keeplogin ? 86400 : 0);
+            $result = $this->Auth->login($username, $password, $keeplogin ? 86400 : 0);
             if ($result === true) {
+                $this->Auth->record('控制台 登录 成功');
                 $this->success('登录成功', url('Index/index'));
             } else {
+                $this->Auth->record('控制台 登录 失败');
                 $this->error('用户名或密码错误');
             }
         }
 
-        if ( Auth::autologin() ) {
+        if ( $this->Auth->autologin() ) {
             $this->redirect('Index/index');
         }
         return view('index');

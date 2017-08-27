@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>训练营-课程编辑/添加-</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="../../static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="../../static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="../../static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <style>
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+
+        p {
+            text-indent: 22px;
+        }
+
+        .mui-popover {
+            height: 300px;
+        }
+    </style>
+</head>
+
+<body class=whitebg>
+
+<header id="header" class="mui-bar mui-bar-nav subheader">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+    <h1 class="mui-title">训练营名称</h1>
+</header>
+<div class="mui-content">
+
+    <div class="camp-list camp-lesson-list detalis-list" style="margin-top: 4px">
+
+        <ul class="mui-table-view list">
+            <li class="mui-table-view-cell listli detalisli">
+                课程名称
+                <input type="text" class="input" value="">
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                <a href="#lessonType" class="mui-navigate-right">
+                    课程类型
+                    <span></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                课程单价
+                <input type="text" class="input" value="">
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                课程数量
+                <input type="text" class="input" value="">
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                课程所需积分
+                <input type="text" class="input" value="">
+            </li>
+            <!--<li class="mui-table-view-cell listli detalisli picker btn" id="demo5" data-options='{"type":"time","customData":{"d":[{"text":"周日","value":"周日"},{"text":"周一","value":"周一"},{"text":"周二","value":"周二"},{"text":"周二","value":"周三"},{"text":"周三","value":"周四"},{"text":"周四","value":"周五"},{"text":"周六","value":"周六"}]},"labels":["星期","时", "分"]}'>-->
+            <li class="mui-table-view-cell listli detalisli" >
+                训练时间
+                <span>
+                        <select class="select">
+                            <option>周日</option>
+                            <option>周一</option>
+                            <option>周二</option>
+                            <option>周三</option>
+                            <option>周四</option>
+                            <option>周五</option>
+                            <option>周六</option>
+                        </select>
+                    </span>
+            </li>
+            <li class="mui-table-view-cell listli detalisli picker btn" id="demo5" data-options='{"type":"time"}'>
+                训练时间
+                <span>
+                        
+                        <font id="result" class="mui-navigate-right ui-alert"></font>
+                    </span>
+            </li>
+            <li class="mui-table-view-cell listli detalisli" id='showCityPicker3'>
+                <a href="#" class="mui-navigate-right">
+                    所属地区
+                    <span id="cityResult3" class="ui-alert"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                <a href="#trainLocation" class="mui-navigate-right">
+                    训练地点
+                    <span></span>
+                </a>
+            </li>
+
+
+            <li class="mui-table-view-cell listli detalisli" id="showCityPicker">
+                <a href="#" class="mui-navigate-right">
+                    人数范围
+                    <span id="cityResult" class="ui-alert"></span>
+                </a>
+                <a href="#" class="mui-navigate-right">
+                    人数范围
+                    <span id="cityResult" class="ui-alert"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                <a href="#bishopPopover" class="mui-navigate-right">
+                    主教练
+                    <span></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                <a href="#bishopPopover" class="mui-navigate-right">
+                    助理教练
+                    <span></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                <a href="#bishopPopover" class="mui-navigate-right">
+                    领队
+                    <span></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                <a href="#bishopPopover" class="mui-navigate-right">
+                    班主任
+                    <span></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                备注
+                <input type="text" class="input" value="">
+            </li>
+        </ul>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff">
+                提交
+            </li>
+        </ul>
+    </div>
+    <!--主教练-->
+    <div id="bishopPopover" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="camp-lesson-list">
+                        <div id="segmentedControl" class="mui-segmented-control mb">
+                            <a class="mui-control-item mui-active" href="#item1">粉丝列表</a>
+                            <a class="mui-control-item" href="#item2">教练列表</a>
+                        </div>
+                    </div>
+                    <div id="item1" class="mui-control-content mui-active">
+                        <div class="mui-scroll">
+                            <ul class="mui-table-view list">
+                                <li class="mui-table-view-cell listli detalisli">
+                                    陈麦克
+                                    <span>添加</span>
+                                </li>
+                                <li class="mui-table-view-cell listli detalisli">
+                                    陈麦克
+                                    <span>添加</span>
+                                </li>
+                                <li class="mui-table-view-cell listli detalisli">
+                                    陈麦克
+                                    <span>添加</span>
+                                </li>
+                                <li class="mui-table-view-cell listli detalisli">
+                                    陈麦克
+                                    <span>添加</span>
+                                </li>
+                                <li class="mui-table-view-cell listli detalisli">
+                                    陈麦克
+                                    <span>添加</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="item2" class="mui-control-content">
+                        <div class="mui-scroll">
+                            <ul class="mui-table-view list">
+                                <li class="mui-table-view-cell listli detalisli">
+                                    郑海霞
+                                    <span>添加</span>
+                                </li>
+                                <li class="mui-table-view-cell listli detalisli">
+                                    郑海霞
+                                    <span>添加</span>
+                                </li>
+                                <li class="mui-table-view-cell listli detalisli">
+                                    郑海霞
+                                    <span>添加</span>
+                                </li>
+                                <li class="mui-table-view-cell listli detalisli">
+                                    郑海霞
+                                    <span>添加</span>
+                                </li>
+                                <li class="mui-table-view-cell listli detalisli">
+                                    郑海霞
+                                    <span>添加</span>
+                                </li>
+                                <li class="mui-table-view-cell listli detalisli">
+                                    郑海霞
+                                    <span>添加</span>
+                                </li>
+                                <li class="mui-table-view-cell listli detalisli">
+                                    郑海霞
+                                    <span>添加</span>
+                                </li>
+                                <li class="mui-table-view-cell listli detalisli">
+                                    郑海霞
+                                    <span>添加</span>
+                                </li>
+                                <li class="mui-table-view-cell listli detalisli">
+                                    郑海霞
+                                    <span>添加</span>
+                                </li>
+                                <li class="mui-table-view-cell listli detalisli">
+                                    郑海霞
+                                    <span>添加</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--课程类型-->
+    <div id="lessonType" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course"><strong>课程类型</strong></span>
+                    </div>
+                    <ul class="mui-table-view list">
+                        <li class="mui-table-view-cell listli detalisli">
+                            小学高年级基础班
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            小学高年级基础班
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            小学高年级基础班
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            小学高年级基础班
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            小学高年级基础班
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--训练地点-->
+    <div id="trainLocation" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course"><strong>训练地点</strong></span>
+                    </div>
+                    <ul class="mui-table-view list">
+                        <li class="mui-table-view-cell listli detalisli">
+                            深圳湾篮球场
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            深圳湾篮球场
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            深圳湾篮球场
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            深圳湾篮球场
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            深圳湾篮球场
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script src="../../static/frontend/js/mui.min.js"></script>
+<script src="../../static/frontend/js/mui.picker.min.js"></script>
+<script src="../../static/frontend/js/mui.poppicker.js"></script>
+<script src="../../static/frontend/js/city.data.js"></script>
+<script src="../../static/frontend/js/city.data-3.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    //弹出菜单
+    mui('.mui-scroll-wrapper').scroll();
+    mui('body').on('shown', '.mui-popover', function (e) {
+        //console.log('shown', e.detail.id);//detail为当前popover元素
+    });
+    mui('body').on('hidden', '.mui-popover', function (e) {
+        //console.log('hidden', e.detail.id);//detail为当前popover元素
+    });
+
+    (function ($, doc) {
+        $.init();
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+            //级联示例
+            var cityPicker = new $.PopPicker({
+                layer: 2
+            });
+            cityPicker.setData(cityData);
+            var showCityPickerButton = doc.getElementById('showCityPicker');
+            var cityResult = doc.getElementById('cityResult');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker.show(function (items) {
+                    cityResult.innerText = items[0].text + "-" + items[1].text;
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+            ///级联示例
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
+            });
+            cityPicker3.setData(cityData3);
+            var showCityPickerButton = doc.getElementById('showCityPicker3');
+            var cityResult3 = doc.getElementById('cityResult3');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+
+            //时间
+            var result = $('#result')[0];
+            var btns = $('.btn');
+            btns.each(function (i, btn) {
+                btn.addEventListener('tap', function () {
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var id = this.getAttribute('id');
+                    var picker = new $.DtPicker(options);
+
+                    picker.show(function (rs) {
+                        result.innerText = rs.text;
+                        picker.dispose();
+                    });
+                }, false);
+            });
+
+        });
+    })(mui, document);
+</script>
+</html>
