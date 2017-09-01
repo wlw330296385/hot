@@ -18,16 +18,20 @@ class Coach extends Base{
     public function searchCoachListApi(){
         try{
             $map = [];
-            $keyword = input('keyword');
-            // $province = input('province');
-            // $city = input('city');
-            // $area = input('area');
-            // $map = ['province'=>$province,'city'=>$city,'area'=>$area];
-            // foreach ($map as $key => $value) {
-            //     if($value == ''){
-            //         unset($map[$key])
-            //     }
-            // }
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $city = input('param.city');
+            $area = input('param.area');
+            $sex = input('param.sex');
+            $map = ['province'=>$province,'city'=>$city,'area'=>$area];
+            foreach ($map as $key => $value) {
+                if($value == ''){
+                    unset($map[$key]);
+                }
+            }
+            if($sex){
+                $map['sex'] = $sex;
+            }
             if($keyword){
                 $map['coach'] = ['LIKE','%'.$keyword.'%'];
             }
@@ -42,12 +46,12 @@ class Coach extends Base{
         }
     }
 
-    public function createCoach1Api(){
+
+
+    public function createCoachApi(){
         try{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
-            dump($_SESSION);
-            dump($this->memberInfo);
             $result = $this->coachService->createCoach($data);
             return json($result);
         }catch (Exception $e){
@@ -55,11 +59,12 @@ class Coach extends Base{
         }
     }
 
-    public function createCoach2Api(){
+    public function updateCoachApi(){
         try{
             $data = input('post.');
-            $coach_id = $data['coach_id'];
-            unset($data['coach_id']);
+            // $coach_id = $data['coach_id'];
+            $coach_id = input('param.coach_id');
+            // unset($data['coach_id']);
             $result = $this->coachService->updateCoach($data,$coach_id);
             return json($result);
         }catch (Exception $e){
@@ -67,11 +72,26 @@ class Coach extends Base{
         }
     }
 
-    public function getCoachList(){
+    public function getCoachListApi(){
         try{
             $map = intpu('post.');
             $coachList = $this->coachService->getCoachList($map);
             return json(['code'=>100,'msg'=>'OK','data'=>$coachList]);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+    // 获取教练下的训练营
+    public function campListOfCaochApi(){
+        try{
+            $member_id = input('param.member_id')? input('param.member_id'):$this->memberInfo['id'];
+            $campList = Db::view('grade_member','camp_id')
+                    ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo,id,total_member,total_lessons','camp.id=grade_member.camp_id')
+                    ->where(['grade_member.member_id'=>$member_id,'grade_member.type'=>4,'grade_member.status'=>1])
+                    ->select();
+            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);        
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }

@@ -28,7 +28,13 @@ class Member extends Base{
     	return view();
     }
 
-
+    // 完善会员资料
+    public function updateMember(){
+        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        $memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);  
+        $this->assign('memberInfo',$memberInfo);
+        return view();
+    }
     public function photoAlbum(){
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
         // 相册类型
@@ -144,6 +150,31 @@ class Member extends Base{
         return view();
     }
 
+    // 收支明细
+    public function salaryDetail(){
+        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        $SalaryInService = new \app\service\SalaryInService($member_id);
+        $salaryinList = $SalaryInService->getSalaryInList(['member_id'=>$member_id]);
+        $salaryoutList = db('salary_out')->where(['member_id'=>$member_id])->select();
+
+        $this->assign('salaryoutList',$salaryoutList);
+        $this->assign('salaryinList',$salaryinList);
+        return view();
+    }
+
+    // 我的积分
+    // public function myScore(){
+    //     $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+    //     if($member_id){
+
+    //     }
+    //     // 积分明细
+    //     $ScoreService = new \app\service\ScoreService;
+    //     $scoreList = $ScoreService->getScoreList(['member_id'=>$member_id]);
+    //     $this->assign('rebateList',$rebateList);
+    //     return view();
+    // }
+    // 添加银行卡
     public function createBankCard(){
 
         return view();

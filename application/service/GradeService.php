@@ -34,17 +34,24 @@ class GradeService{
 
     // 一个班级
     public function getGradeInfo($map=[]) {
-        $result = $this->GradeModel->where($map)->find();
-        if($result){           
-            $result = $result->toArray();
+        $res = $this->GradeModel->where($map)->find();
+        if($res){           
+            $result = $res->toArray();
+            $result['assistant_list'] = unserialize($result['assistant']);
+            return $result;
         }
-        return $result;
+        return $res;
     }
 
     // 获取班级分类 $tree传1 返回树状列表，不传就返回查询结果集数组
     public function getGradeCategory($tree=0) {
-        $result = Db::name('grade_category')->field(['id', 'name', 'pid'])->select();
-        return $result;
+        $res = Db::name('grade_category')->field(['id', 'name', 'pid'])->select();
+        if($res){
+            $result = channelLevel($res,0,'id','pid');
+            return $result;
+        }else{
+            return $res;
+        }
     }
 
 

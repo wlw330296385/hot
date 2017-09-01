@@ -18,9 +18,9 @@ class Plan extends Base{
 
     public function planInfo(){
     	$plan_id = input('param.plan_id');
-    	$result = $this->PlanService->PlanOneById(['id'=>$plan_id]);
-
-        $this->assign('planInfo',$result);
+    	$planInfo = $this->PlanService->PlanOneById(['id'=>$plan_id]);
+        $planInfo['exerciseList'] = unserialize($planInfo['exercise']);
+        $this->assign('planInfo',$planInfo);
     	return view();
     }
 
@@ -29,9 +29,16 @@ class Plan extends Base{
     public function updatePlan(){
     	
     	$plan_id = input('param.plan_id');
-        $result = $this->PlanService->PlanOneById(['id'=>$plan_id]);
-
-        $this->assign('planInfo',$result);
+        $planInfo = $this->PlanService->PlanOneById(['id'=>$plan_id]);
+        // 获取适合阶段
+        $gradecateService = new \app\service\GradeService;
+        $gradecateList = $gradecateService->getGradeCategory();
+        $exerciseService = new \app\service\ExerciseService;
+        $exerciseList = $exerciseService->getExerciseList();
+        // 训练项目
+        $this->assign('exerciseList',$exerciseList);
+        $this->assign('gradecateList',$gradecateList);
+        $this->assign('planInfo',$planInfo);
 
     	return view();
     }

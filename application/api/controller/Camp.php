@@ -5,24 +5,25 @@ use app\service\CampService;
 class Camp extends Base{
     protected $CampService;
 	public function _initialize(){
+        $this->CampService = new CampService;
 		parent::_initialize();
 	}
 
 
     public function searchCampApi(){
         try{
-            $keyword = input('keyword');
-            $province = input('province');
-            $city = input('city');
-            $area = input('area');
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $city = input('param.city');
+            $area = input('param.area');
             $map = ['province'=>$province,'city'=>$city,'area'=>$area];
             foreach ($map as $key => $value) {
                 if($value == ''){
-                    unset($map[$key])
+                    unset($map[$key]);
                 }
             }
             if($keyword){
-                $map['camp'] = ['LIKE',$keyword];
+                $map['camp'] = ['LIKE',"%$keyword%"];
             }
             $campList = $this->CampService->getCampList($map);
             return json(['code'=>100,'msg'=>'OK','data'=>$campList]);

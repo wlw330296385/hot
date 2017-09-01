@@ -21,20 +21,20 @@
 
 <div class="mui-content">
 
-    <div id="tabbar" class="mui-control-content mui-active">
+    <div class="list camp-list camp-lesson-list detalis-list coach">
         <div class="camp-lesson-list">
             <div id="segmentedControl" class="mui-segmented-control mb">
-                <a class="mui-control-item" href="#item1">添加课程</a>
+                <a class="mui-control-item" href="#">添加课程</a>
                 <a class="mui-control-item mui-active" href="#item2">上架课程</a>
                 <a class="mui-control-item" href="#item3">下架课程</a>
-                <a class="mui-control-item" href="">训练营<i class="mui-icon mui-icon-arrowdown"></i></a>
+                <a class="mui-control-item" href="#item4">训练营</a>
             </div>
 
             <div class="item-list">
                 <div id="item2" class="mui-control-content mui-active">
                     <ul class="mui-table-view list">
                     {volist name="onlineLessonList" id="vol"}
-                        <li class="mui-table-view-cell mui-media listli padding">
+                        <li class="mui-table-view-cell mui-media listli">
                             <a href="{:url('lesson/lessonInfo',['lesson_id'=>$vol['id']])}" class="mui-navigate-right">
                                 <div class="mui-media-body">
                                     <strong>{$vol.lesson}</strong>
@@ -48,7 +48,7 @@
                 <div id="item3" class="mui-control-content">
                     <ul class="mui-table-view list">
                     {volist name="offlineLessonList" id="vol"}
-                        <li class="mui-table-view-cell mui-media listli padding">
+                        <li class="mui-table-view-cell mui-media listli">
                             <a href="{:url('lesson/lessonInfo',['lesson_id'=>$vol['id']])}" class="mui-navigate-right">
                                 <div class="mui-media-body">
                                     <strong>{$vol.lesson}</strong>
@@ -59,35 +59,30 @@
                     {/volist}
                     </ul>
                 </div>
-                
+                <div id="item4" class="mui-control-content">
+                    <div class="page-header">
+                        <span class="course">我加入的训练营</span>
+                    </div>
+                    <ul class="mui-table-view">
+                        <li class="mui-table-view-cell listli">
+                            <a href="#" class="mui-navigate-right">
+                                大热安凯翔训练营
+                            </a>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <a href="#" class="mui-navigate-right">
+                                大热韦林训练营
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 
 
     <!--底部导航-->
-    <nav class="mui-bar mui-bar-tab">
-        <a class="mui-tab-item mui-active" href="#tabbar">
-            <span class="mui-icon mui-icon-home"></span>
-            <span class="mui-tab-label">首页</span>
-        </a>
-        <a class="mui-tab-item" href="#tabbar-with-chat">
-            <span class="mui-icon mui-icon-chatbubble"></span>
-            <span class="mui-tab-label">消息</span>
-        </a>
-        <a class="mui-tab-item" href="#tabbar-with-contact">
-            <span class="mui-icon mui-icon-checkmarkempty"></span>
-            <span class="mui-tab-label">录课</span>
-        </a>
-        <a class="mui-tab-item" href="#tabbar-with-contact">
-            <span class="mui-icon mui-icon-extra mui-icon-extra-class"></span>
-            <span class="mui-tab-label">商城</span>
-        </a>
-        <a class="mui-tab-item" href="#tabbar-with-map">
-            <span class="mui-icon mui-icon-contact mui-icon-icon-contact-filled"></span>
-            <span class="mui-tab-label">我的</span>
-        </a>
-    </nav>
+ {layout name="layout/footer"}
 
 </div>
 </body>
@@ -96,6 +91,9 @@
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
+    });
+    mui("body").on("tap","a",function(){
+        window.top.location.href=this.href;
     });
 </script>
 </html>

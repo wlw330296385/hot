@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>完善信息</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <style>
+        .regspan {
+            font-size: 12px;
+            text-align: center;
+            height: 20px;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+
+<body class=whitebg>
+<header class="mui-bar mui-bar-nav subheader header1">
+    <a class="mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <h1 class="mui-title">填写会员登陆信息</h1>
+</header>
+
+<div class="mui-content pt">
+    <div class="detalis-list register">
+        <form action="" class="whitebg">
+            <ul class="mui-table-view list">
+                <li class="mui-table-view-cell listli detalisli">微信昵称<span style="color: #737373">{$memberInfo.nickname}</span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">真实姓名<input type="text" class="input coachname" required placeholder="请输入真实姓名" value="{$memberInfo['realname']}"></li>
+                <li class="mui-table-view-cell listli detalisli">手机号码<input type="text" class="reg_mobile input"
+                                                                            placeholder="请输入手机号码"></li>
+                <li class="mui-table-view-cell listli detalisli">短信验证码
+                    <input type="button" class="code-btn" value="获取验证码" onclick="clickButton(this)">
+                    <input type="text" class="input" placeholder="输入验证码" style="width: 44%;margin-top: 4px">
+                </li>
+                <li class="mui-table-view-cell listli detalisli listinitial" id="showUserPicker">
+                    性别
+                    <span class="">
+                       <input name="radio" type="radio" {:getChecked($memberInfo['sex'],1)}> <label class="colorgray">男</label>
+                       <input name="radio" type="radio" {:getChecked($memberInfo['sex'],0)}> <label class="colorgray">女</label>
+                    </span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli listinitial bbtn" id='demo2' data-options='{"type":"date"}'>
+                    <a href="#" class="mui-navigate-right">出生日期
+                         <span id='result' class="ui-alert">{$memberInfo.birthday}</span>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">身高<input type="text" class="input height" placeholder="请输入身高" value="{$memberInfo.height}"></li>
+                <li class="mui-table-view-cell listli detalisli">体重<input type="text" class="input weight" placeholder="请输入体重" value="{$memberInfo.weight}"></li>
+                <li class="mui-table-view-cell listli detalisli listinitial" id='showCityPicker3'>
+                    <a href="#" class="mui-navigate-right">所属地区
+                         <span id='cityResult3' class="ui-alert" style="color:#737373"></span>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli listinitial">
+                    居住地址<input type="text" class="input location" placeholder="请输入居住地址" value="{$memberInfo.location}">
+                </li>
+
+            </ul>
+            <p class="height20"></p>
+            <div class="tjbtn">
+                <button type="submit" class="mui-btn btn registerbtn1">
+                    继续完善信息
+                </button>
+            </div>
+            <p class="pass"><a href="#">[跳过，稍后完善]</a></p>
+
+        </form>
+    </div>
+
+</div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!--选择器-->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
+
+<script src="/static/frontend/libs/yzvalidate.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    (function ($, doc) {
+        $.init();
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+            ///级联示例
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
+            });
+            cityPicker3.setData(cityData3);
+            var showCityPickerButton = doc.getElementById('showCityPicker3');
+            var cityResult3 = doc.getElementById('cityResult3');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+        });
+
+        //选择时间
+        var result = $('#result')[0];
+        var btns = $('.bbtn');
+        btns.each(function (i, btn) {
+            btn.addEventListener('tap', function () {
+                var optionsJson = this.getAttribute('data-options') || '{}';
+                var options = JSON.parse(optionsJson);
+                var id = this.getAttribute('id');
+                var picker = new $.DtPicker(options);
+                picker.show(function (rs) {
+                    result.innerText = rs.text;
+                    picker.dispose();
+                });
+            }, false);
+        });
+
+    })(mui, document);
+
+
+    $(function () {
+        $(".registerbtn1").on("click", function () {
+            var coach = $(".coachname").val();
+            var height = $(".height").val();
+            var weight = $(".weight").val();
+            var location = $(".location").val();
+            mui.ajax('createCoach', {
+                data: {
+                    'coach': coach,
+                    'height': height,
+                    'weight': weight,
+                    'location': location
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: {'Content-Type': 'application/json'},
+                success: function (data) {
+                    console.log(data)
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(type);
+                }
+            });
+        });
+    })
+</script>
+</html>

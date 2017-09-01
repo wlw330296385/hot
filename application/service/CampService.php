@@ -13,13 +13,19 @@ class CampService {
 
     public function getCampList($map=[],$paginate = 10,$order='') {
         $res = $this->Camp->where($map)->order($order)->paginate($paginate);
-        return $res->toArray();
+        if($res){
+            $result = $res->toArray();
+            return $result['data'];
+        }else{
+            return $res;
+        }
     }
 
     public function campListPage( $map=[],$paginate=10, $order=''){
         $res = $this->Camp->where($map)->order($order)->paginate($paginate);
-        $result = $res->toArray();
-        if($result['data']){
+        
+        if($res){
+            $result = $res->toArray();
             return $result['data'];
         }else{
             return $res;

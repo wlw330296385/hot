@@ -25,15 +25,12 @@ class Base extends Controller{
   }
   public function gettoken(){
 
- 
-
      $TokenService = new TokenService;
 
      $visits = $TokenService->visitTimes();
 
      if(!$visits){
          $this->checklogin();
-
      }       
 
  }

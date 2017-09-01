@@ -9,20 +9,33 @@ class MemberService{
 	}
 	// 获取会员
 	public function getMemberInfo($map){
-		$result = $this->memberModel->where($map)->find()->toArray();
+		$result = $this->memberModel->where($map)->find();
+		if($result){
+			$res = $result->toArray();
+			return $res;
+		}
 		return $result;
 	}
 
 	//获取资源列表
 	public function getMemberList($map){
-		$result = $this->memberModel->where($map)->find()->toArray();
+		$result = $this->memberModel->where($map)->select();
+		if($result){
+			$res = $result->toArray();
+			return $res;
+		}
 		return $result;
 	}
 
 	//修改会员资料
 	public function updateMemberInfo($request,$id){
-		$result = $this->memberModel->save($request,['id'=>$id]);
-		
+		//验证规则
+		$validate = validate('MemberVal');
+		if(!$validate->check($request)){
+			return ['msg'=>$validate->getError(),'code'=>200];
+		}
+
+		$result = $this->memberModel->allowField(true)->save($request,['id'=>$id]);
 		if($result ===false){
 			return ['msg'=>$this->memberModel->getError(),'code'=>200];
 		}else{
@@ -32,16 +45,48 @@ class MemberService{
 
 	//新建会员
 	public function saveMemberInfo($request){
-		$result = $this->memberModel->validate('MemberVal')->data($request)->save();
-		
+		//验证规则
+		$validate = validate('MemberVal');
+		if(!$validate->check($request)){
+			return ['msg'=>$validate->getError(),'code'=>200];
+		}
+		$result = $this->memberModel->data($request)->save();
 		if($result ===false){
 			return ['msg'=>$this->memberModel->getError(),'code'=>200];
 		}else{
-			return ['msg'=>__lang('MSG_100_SUCCESS'),'code'=>100,'data'=>$result];
+			$res = $this->saveLogin($result);
+			if($res){
+				return ['msg'=>__lang('MSG_100_SUCCESS'),'code'=>100,'data'=>$result];
+			}else{
+				return ['msg'=>'请重新登陆','code'=>100,'data'=>$result];
+			}
+			
 		}	
 	}
 
+	// 会员登录
+	public function login($username,$password){
 
+		$result = $this->memberModel
+				->where(['password'=>$password])
+				->where(function($query) use ($username){
+						$query->where('member',$username)->whereOr('telephone',$username);
+					})
+				->find();
+		return $result['id'];
+	}
+	// 会员登录状态
+	public function saveLogin($id){
+		$memberInfo = $this->getMemberInfo(['id'=>$id]);
+		$result = false;
+		if($memberInfo){
+			$cookie = md5($memberInfo['id'].$memberInfo['create_time'].'hot');
+	    	cookie('member',md5($memberInfo['id'].$memberInfo['create_time'].'hot'));    	
+	        $result = session('memberInfo',$memberInfo,'think');
+	        $result = true;
+		}	
+        return $result;
+	}
 
 	// 获取组织列表
 	public function getMyGroup($member_id){
@@ -72,5 +117,11 @@ class MemberService{
 			}
 		}	
 		return $arr;
+	}
+
+
+	public function isFieldRegister($field,$value){
+		$result = $this->memberModel->where([$field=>$value])->find();
+		return $result?1:0;
 	}
 }

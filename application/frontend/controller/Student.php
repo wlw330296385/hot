@@ -78,7 +78,7 @@ class Student extends Base
 
 	// 获取教练的学生列表
 	public function studentListOfCoach(){
-		$map = input();
+		$map = input('post.');
 		$studenList = $this->studentService->getStudentListOfCoach($map);
 		$this->assign('studenList',$studenList);
 		// dump($studentInfo);die;

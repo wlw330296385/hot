@@ -15,8 +15,13 @@ class CoachService{
 	 * 查询教练信息&&关联member表
 	 */
 	public function coachInfo($map){
-        $result = Coach::with('member')->where($map)->find();
-        return $result->toArray();
+        $res = Coach::with('member')->where($map)->find();
+        if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
+        }
 	}
 
 	/**
@@ -141,7 +146,12 @@ class CoachService{
     }
 
     public function getCoachInfo($map){
-        $result = $this->CoachModel->where($map)->find();
-        return $result;
+        $res = $this->CoachModel->where($map)->find();
+        if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
+        }
     }
 }

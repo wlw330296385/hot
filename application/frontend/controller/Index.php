@@ -10,7 +10,7 @@ class Index extends Base{
 	}
 
     public function index() {
-
+        // dump($this->memberInfo);die;
     	$bannerList = unserialize($this->systemSetting['banner']); 
     	// 热门课程
     	$hotLessonList = $this->LessonService->getLessonList([],'hot ASC',4);

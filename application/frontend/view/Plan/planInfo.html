@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>训练项目</title>
+    <title>教学大纲</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -23,12 +23,12 @@
     <div class="camp-list camp-lesson-list detalis-list grade-list editor program">
         <ul class="mui-table-view list">
             <li class="mui-table-view-cell mui-media listli listinitial">
-                <a href="exprciseEditor.html" class="mui-navigate-right">
+                <a href="{:url('plan/updatePlan',['plan_id'=>$planInfo['id']])}" class="mui-navigate-right">
                     <img class="mui-media-object mui-pull-left" src="/static/frontend/images/program.png"
                          style="width: 45px;height: 45px;">
                     <div class="mui-media-body wd52">
-                        <strong>{$exerciseInfo.exercise}</strong>
-                        <p class="mui-ellipsis" style="text-indent: 0">作者:{$exerciseInfo.member}</p>
+                        <strong>{$planInfo.outline}</strong>
+                        <p class="mui-ellipsis" style="text-indent: 0">作者:{$planInfo.member}</p>
                     </div>
                     <div class="price-frame">
                         <span class="editor-btn">编辑</span>
@@ -37,12 +37,25 @@
             </li>
         </ul>
         <div class=program-view2>
-            <span class=fl>类型:{$exercisePInfo.exercise}</span>
-            <span class=fr>{$exerciseInfo.camp}</span>
+            <span class=fl>{$planInfo.grade_category}</span>
+            <span class=fr>{$planInfo.camp}</span>
         </div>
         <div class="program-view3 border-b">
-            <h5>项目要领:</h5>
-            <p>{$exerciseInfo.exercise_detail}</p>
+            <h5>大纲介绍:</h5>
+            <p>{$planInfo.outline_detail}</p>
+        </div>
+        <div class="program-view4 border-b">
+            <h5>训练项目:</h5>
+            {volist name="$planInfo.exerciseList" id="vol"}
+            <div class="mui-row">
+                <dl class="mui-col-sm-6 mui-col-xs-6">
+                    <dt>{$vol.name}</dt>
+                    {volist name='vol._data' id="v"}
+                    <dd>{$v.name}</dd>
+                    {/volist}
+                </dl>
+            </div>
+            {/volist}
         </div>
         <div class="program-view5 border-b">
             <div class="image-items">
@@ -54,7 +67,7 @@
         </div>
         <div class="program-view6">
            <p>
-               <input type="checkbox" {:getChecked(1,$exerciseInfo.is_open)}>对外开放
+               <input type="checkbox">对外开放
            </p>
         </div>
     </div>

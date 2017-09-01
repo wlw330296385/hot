@@ -1,7 +1,7 @@
 <?php 
 namespace app\frontend\controller;
-
-class Login{
+use think\Controller;
+class Login extends Controller{
 	
     public function index() {
 
@@ -9,6 +9,7 @@ class Login{
     }
 
     public function login(){
+        
     	return view();
     }
     public function registerSuccess(){
@@ -17,5 +18,14 @@ class Login{
     }
     public function loginSuccess(){
     	return view();
+    }
+
+
+    public function register(){
+        $referer = input('param.referer');
+        $pid = input('param.pid');
+        $this->assign('pid',$pid);
+        $this->assign('referer',$referer);
+        return view();
     }
 }

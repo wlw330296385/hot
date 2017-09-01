@@ -21,29 +21,70 @@
 
 <div class="mui-content">
 
-        <div class="list camp-list camp-lesson-list detalis-list coach">
-            <div class="camp-lesson-list">
-                <div id="segmentedControl" class="mui-segmented-control mb">
-                    <a class="mui-control-item mui-active" href="#item1">在营学员</a>
-                    <a class="mui-control-item" href="#item2">离营学员</a>
-                    <a class="mui-control-item" href="#item4">训练营<i class="mui-icon mui-icon-arrowdown"></i></a>
-                </div>
+    <div class="list camp-list camp-lesson-list detalis-list coach">
+        <div class="camp-lesson-list">
+            <div id="segmentedControl" class="mui-segmented-control mb">
+                <a class="mui-control-item mui-active" href="#item1">在营学员</a>
+                <a class="mui-control-item" href="#item2">离营学员</a>
+                <a class="mui-control-item" href="#item3">训练营</a>
             </div>
+        </div>
+        <div class="item-list">
+            <div id="item1" class="mui-control-content mui-active">
+                <ul class="mui-table-view list detalis-list list coach student-list">
+                    {volist name="studenList" id="vol"}
+                    <li class="mui-table-view-cell mui-media listli list-wide">
+                        <a href="{:url('student/studentInfoOfCamp',['student_id'=>$vol['student_id'],'camp_id'=>$vol['camp_id']])}"
+                           class="mui-navigate-right">
+                            <img class="mui-media-object mui-pull-left coachicon"
+                                 src="{$vol.student_avatar}">
+                            <div class="mui-media-body wd">
+                                {$vol.student}<img src="{:getSex($vol['student_sex'])}" class="sex" alt=""><font
+                                    class="fontid">ID:{$vol.student_id}</font>
+                                <p class="mui-ellipsis">{$vol.grade}</p>
+                            </div>
+                        </a>
+                    </li>
+                    {/volist}
+                </ul>
+            </div>
+            <div id="item2" class="mui-control-content ">
+                <ul class="mui-table-view list detalis-list list coach student-list">
+                    {volist name="studenList" id="vol"}
+                    <li class="mui-table-view-cell mui-media listli list-wide">
+                        <a href="{:url('student/studentInfoOfCamp',['student_id'=>$vol['student_id'],'camp_id'=>$vol['camp_id']])}"
+                           class="mui-navigate-right">
+                            <img class="mui-media-object mui-pull-left coachicon"
+                                 src="{$vol.student_avatar}">
+                            <div class="mui-media-body wd">
+                                {$vol.student}<img src="{:getSex($vol['student_sex'])}" class="sex" alt=""><font
+                                    class="fontid">ID:{$vol.student_id}</font>
+                                <p class="mui-ellipsis">{$vol.grade}</p>
+                            </div>
+                        </a>
+                    </li>
+                    {/volist}
+                </ul>
+            </div>
+            <div id="item3" class="mui-control-content ">
+                <div class="page-header">
+                    <span class="course">我加入的训练营</span>
+                </div>
+                <ul class="mui-table-view">
+                    <li class="mui-table-view-cell listli listinitial">
+                        <a href="#" class="mui-navigate-right">
+                            大热安凯翔训练营
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell listli listinitial">
+                        <a href="#" class="mui-navigate-right">
+                            大热韦林训练营
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
 
-            <ul class="mui-table-view list detalis-list list coach student-list">
-            {volist name="studenList" id="vol"}
-                <li class="mui-table-view-cell mui-media listli padding list-wide">
-                    <a href="{:url('student/studentInfoOfCamp',['student_id'=>$vol['student_id'],'camp_id'=>$vol['camp_id']])}" class="mui-navigate-right">
-                        <img class="mui-media-object mui-pull-left coachicon"
-                             src="{$vol.student_avatar}">
-                        <div class="mui-media-body wd">
-                            {$vol.student}<img src="{:getSex($vol['student_sex'])}" class="sex" alt=""><font class="fontid">ID:{$vol.student_id}</font>
-                            <p class="mui-ellipsis">{$vol.grade}</p>
-                        </div>
-                    </a>
-                </li>
-            {/volist}
-            </ul>
     </div>
 
 </div>

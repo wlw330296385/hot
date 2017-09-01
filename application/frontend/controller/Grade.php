@@ -39,6 +39,7 @@ class Grade extends Base{
     public function gradeInfo(){
         $grade_id = input('grade_id');
         $gradeInfo = $this->GradeService->getGradeInfo(['id'=>$grade_id]);
+        
         // 班级同学
         $studentList = $this->GradeService->getStudentList($grade_id);
         $this->assign('studentList',$studentList);
@@ -87,23 +88,12 @@ class Grade extends Base{
         if(!$coach_id){
             $coach_id = db('coach')->where(['member_id'=>$this->memberInfo['id'],'status'=>1])->value('id');
         }
-        $week = input('post.week');
-        $week = '周日';
-        // $gradeList = Db::view('grade')
-        //          ->view('grade_member','member','grade_member.grade_id=grade.id')
-        //          ->where(['grade_member.type'=>1,'grade_member.status'=>1])
-        //          ->where('grade.week','LIKE',"%$week%")
-        //          ->where(['grade.coach_id'=>$coach_id])
-        //          ->select();
-
+        $week = input('param.week');
         if(!$camp_id){
-
             $gradeList = db('grade')->where(['coach_id'=>$coach_id])->where('week','like',"%$week%")->select();
         }else{
             $gradeList = db('grade')->where(['coach_id'=>$coach_id,'camp_id'=>$camp_id])->where('week','like',"%$week%")->select();    
         }
-        // echo db('grade')->getlastsql();
-        // dump($gradeList);die;
         $this->assign('gradeList',$gradeList);
         
         return view();

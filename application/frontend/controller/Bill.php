@@ -6,6 +6,7 @@ class Bill extends Base{
 	protected $BillService;
 	public function _initialize(){
 		parent::_initialize();
+        $this->BillService = new BillService;
 	}
 
     public function index() {
@@ -14,9 +15,14 @@ class Bill extends Base{
     }
 
     public function billInfo(){
-    	$id = input('param.id');
-    	$result = $this->BillService->getBill(['id'=>$id]);
-    	$this->assign('billInfo',$result);
+    	$bill_id = input('param.bill_id');
+    	$billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+        if($billInfo['goods_type']==1){
+            $lessonInfo = db('lesson')->where(['id'=>$billInfo['lesson_id']])->find();
+        }
+
+        $this->assign('lessonInfo',$lessonInfo);
+    	$this->assign('billInfo',$billInfo);
     	return view();
     }
 
@@ -25,8 +31,8 @@ class Bill extends Base{
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
     	$map = input('post.');
         $map['member_id'] = $member_id;
-        $result = $this->BillService->getBillList($map);
-        $billList = $result['data'];
+        $billList = $this->BillService->getBillList($map);
+        // dump($billList);die;
         $billList['count'] = count($billList);
         $this->assign('billList',$billList);
 		return view();

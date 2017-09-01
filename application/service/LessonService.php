@@ -37,13 +37,12 @@ class LessonService {
     // 分页获取课程
     public function getLessonPage($map=[],$paginate=10, $order=''){
         $res = Lesson::where($map)->order($order)->paginate($paginate);
-        if (!$res) {
-            return ['msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200];
+        if($res){
+            $result = $res->toArray();
+            return $result['data'];
+        }else{
+            return $res;
         }
-        if ($res->isEmpty()) {
-            return ['msg' => __lang('MSG_000_NULL'), 'code' => 000, 'data' => ''];
-        }
-        return ['msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $res];
     }
 
     // 软删除

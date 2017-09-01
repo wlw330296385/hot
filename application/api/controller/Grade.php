@@ -5,6 +5,13 @@ use app\service\GradeService;
 use app\service\GradeMemberService;
 class Grade extends Base{
 
+    protected $GradeService;
+
+    public function _initialize(){
+        parent::_initialize();
+        $this->GradeService = new GradeService;
+    }
+
     public function index() {
 
         
@@ -41,7 +48,7 @@ class Grade extends Base{
             $camp_id = input('get.camp_id');
             $map = input('post.');
             $map1 = $map;
-            $map1['coach_id'=>$member_id];
+            $map1['coach_id']=$member_id;
             $myGradeList = $this->GradeService->getGradeList($map);
             $gradeList = $this->GradeService->getGradeList($map1);
             $myGradeCount = count($myGradeList);

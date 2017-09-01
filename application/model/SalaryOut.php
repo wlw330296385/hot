@@ -2,7 +2,7 @@
 namespace app\model;
 use think\Model;
 use traits\model\SoftDelete;
-class SalaryIn extends Model{
+class SalaryOut extends Model{
 	use SoftDelete;
     protected $deleteTime = 'delete_time';
 	protected $type = [

@@ -17,9 +17,12 @@ class Score extends Base{
 
     // 我的积分
     public function myScore(){
-        $member_id = $this->memberInfo['id'];
+        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        if($member_id){
+            $memberInfo = db('member')->where(['id'=>$member_id])->find();
+            $this->assign('memberInfo',$memberInfo);
+        }
         $scoreList = $this->ScoreService->getScoreList(['member_id'=>$member_id]);
-
         $this->assign('scoreList',$scoreList);
         return view();
     }

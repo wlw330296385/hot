@@ -33,22 +33,45 @@
     <div class="mui-content">
         <div class="location-frame">
             <span class="location"><i class="mui-icon mui-icon-location"></i>深圳市</span>
-            <span class="location-choise">全部区域<i class="mui-icon mui-icon-arrowdown"></i></span>
+            <span class="location-choise">
+                <select>
+                    <option>全部区域</option>
+                    <option>南山区</option>
+                    <option>福田区</option>
+                    <option>罗湖区</option>
+                    <option>龙岗区</option>
+                    <option>龙华区</option>
+                    <option>宝安区</option>
+                </select>
+                <i class="mui-icon mui-icon-arrowdown"></i>
+            </span>
+            <span class="location-choise">
+                 <select class="wd83">
+                    <option>课程类型</option>
+                    {volist name="gradecateList" id="vol"}
+                        <option>{$vol.name}</option>
+                        {volist name="vol._data" id="v"}
+                        <option data-gradecate_id="{$v.id}">|-{$v.name}</option>                       
+                    {/volist}
+                    {/volist}
+                </select>
+                <i class="mui-icon mui-icon-arrowdown"></i>
+            </span>
         </div>
 
 
         <ul class="mui-table-view list">
-            {volist name="onlineList" id="vol"}
-            <li class="mui-table-view-cell mui-media listli padding">
-                <a href="{:url('index',['lesson_id'=>$vol['id']])}">
+            {volist name="lessonList" id="vol"}
+            <li class="mui-table-view-cell mui-media listli">
+                <a href="{:url('lessonInfo',['lesson_id'=>$vol['id']])}">
                     <img class="mui-media-object mui-pull-left" src="/static/frontend/images/shuijiao.jpg">
-                    <div class="mui-media-body">
+                    <div class="mui-media-body wd45">
                         {$vol.lesson}
                         <p class="mui-ellipsis">{$vol.gradecate}</p>
                     </div>
                     <div class="price-frame">
                         <p class="price">￥{$vol.cost}</p>
-                        <p class="address">{$vol.province}-{$vol.city}</p>
+                        <p class="address">{$vol.province}-{$vol.city}-{$vol.area}</p>
                     </div>
                 </a>
             </li>

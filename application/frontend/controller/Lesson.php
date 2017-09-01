@@ -13,7 +13,6 @@ class Lesson extends Base{
 	}
     public function test(){
         $is_power = $this->LessonService->isPower(9,1);
-        dump($lessonInfo);
     }
     // 可购买
     public function index() {
@@ -38,36 +37,45 @@ class Lesson extends Base{
     }
 
     // 课程列表
-    public function lessonList(){
-    	$map = input();
-    	$map = $map?$map:[];
-    	$result = $this->LessonService->getLessonPage($map,10);
-    	if($result['code'] == 100){
-			$list = $result['data'];
-	    	//在线课程
-	    	$dateNow = date('Y-m-d',time());
-	    	$onlineList = [];
+  //   public function lessonList(){
+  //   	$map = input();
+  //   	$map = $map?$map:[];
+  //   	$result = $this->LessonService->getLessonPage($map,10);
+  //   	if($result['code'] == 100){
+		// 	$list = $result['data'];
+	 //    	//在线课程
+	 //    	$dateNow = date('Y-m-d',time());
+	 //    	$onlineList = [];
 
-	    	//离线课程
-	    	$offlineList = [];
-			foreach ($list as $key => $value) {
-				if($value['end']<$dateNow || $value['start']>$dateNow){
-					$offlineList[] = $value;
-				}else{
-					$onlineList[] = $value;
-				}
+	 //    	//离线课程
+	 //    	$offlineList = [];
+		// 	foreach ($list as $key => $value) {
+		// 		if($value['end']<$dateNow || $value['start']>$dateNow){
+		// 			$offlineList[] = $value;
+		// 		}else{
+		// 			$onlineList[] = $value;
+		// 		}
 				
-			}
+		// 	}
 	    		 	
-    	}else{
-    		$list = []; 
-    	}
+  //   	}else{
+  //   		$list = []; 
+  //   	}
     	
-  		$this->assign('onlineList',$onlineList);
-  		$this->assign('offlineList',$offlineList);
-		return view();
-    }
+  // 		$this->assign('onlineList',$onlineList);
+  // 		$this->assign('offlineList',$offlineList);
+		// return view();
+  //   }
+    public function lessonList(){
+        $lessonList = $this->LessonService->getLessonPage();
+        // 课程类型
+        $GradeService = new \app\service\GradeService;
+        $gradecateList = $GradeService->getGradeCategory();
 
+        $this->assign('gradecateList',$gradecateList);
+        $this->assign('lessonList',$lessonList);
+        return view();
+    }
 
     //编辑课程
     public function updateLesson(){

@@ -24,29 +24,55 @@
     <div class="list camp-list camp-lesson-list detalis-list coach">
         <div class="camp-lesson-list">
             <div id="segmentedControl" class="mui-segmented-control mb">
-                <a class="mui-control-item" href="#item1">返回首页</a>
-                <a class="mui-control-item mui-active" href="#item3">我的班级</a>
-                <a class="mui-control-item" href="#item4">训练营<i class="mui-icon mui-icon-arrowdown"></i></a>
+                <a class="mui-control-item" href="#">返回首页</a>
+                <a class="mui-control-item mui-active" href="#item2">我的班级</a>
+                <a class="mui-control-item" href="#item3">训练营</a>
             </div>
         </div>
-        <div class="whitebg card-list">
-        {volist name="gradeList" id="vol"}
-       
-            <div class="mui-card">
-                <div class="mui-card-header">
-                    <div class="card-left"><span class="time">{$vol.lesson_time}</span> {$vol.location}</div>
-                </div>
-                <div class="mui-card-content">
-                    <div class="mui-card-content-inner">
-                        <h4>{$vol.grade} <span class="name">{$vol.coach}</span></h4>
+
+
+        <div class="item-list">
+            <div id="item2" class="mui-control-content mui-active">
+                <div class="whitebg card-list">
+                    {volist name="gradeList" id="vol"}
+                    <div class="mui-card">
+                        <div class="mui-card-header">
+                            <div class="card-left"><span class="time">{$vol.lesson_time}</span> {$vol.location}</div>
+                        </div>
+                        <div class="mui-card-content">
+                            <div class="mui-card-content-inner">
+                                <h4>{$vol.grade} <span class="name">{$vol.coach}</span></h4>
+                            </div>
+                        </div>
+                        <div class="mui-card-footer">{$vol.gradecate}
+                            <a style="color:red;"
+                               href="{:url('schedule/recordSchedule',['grade_id'=>$vol['id'],'lesson_id'=>$vol['lesson_id'],'camp_id'=>$vol['camp_id']])}">录课</a>
+                        </div>
                     </div>
+
+                    {/volist}
                 </div>
-                <div class="mui-card-footer">{$vol.gradecate} 
-                <a style="color:red;" href="{:url('schedule/recordSchedule',['grade_id'=>$vol['id'],'lesson_id'=>$vol['lesson_id'],'camp_id'=>$vol['camp_id']])}">录课</a>
-            </div></div>
-            
-        {/volist}
+            </div>
+            <div id="item3" class="mui-control-content">
+                <div class="page-header">
+                    <span class="course">我加入的训练营</span>
+                </div>
+                <ul class="mui-table-view">
+                    <li class="mui-table-view-cell listli listinitial">
+                        <a href="#" class="mui-navigate-right">
+                            大热安凯翔训练营
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell listli listinitial">
+                        <a href="#" class="mui-navigate-right">
+                            大热韦林训练营
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
         </div>
+
     </div>
 
 </div>
@@ -79,4 +105,10 @@
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+</script>
 </html>

@@ -20,24 +20,31 @@ class Salaryin extends Base{
             return view();
 	}
 
-    public function getAverageSalaryApi(){
-        try{
-            $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];
-            $result = $this->SalaryInService->getReabteByMonth('8',2);
-            $avreageMonthSalary = $this->SalaryInService->getAverageSalaryByMonth(2);
-            $averageYearSalary = $this->SalaryInService->getAverageSalaryByYear(2); 
-            return json(['code'=>100,'msg'=>'ok','data'=>['avreageMonthSalary'=>$avreageMonthSalary,'averageYearSalary'=>$averageYearSalary]]);
-        }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
-        }
+
+
+
+    // 训练营的当月工资单
+    public function salaryOfCamp(){
+        $camp_id = input('param.camp_id');
+        $start = input('param.start')?input('param.start'):date(strtotime('-1 month'));
+        $end = input('param.end')?input('param.end'):date('Y-m-d H:i:s',time());
+        $startInt = strtotime($start);
+        $endInt = strtotime($end);
+        $y = date('Y',time());
+        $m = date('m',time());
+        $salaryList = $this->SalaryInService->getSalaryInList($startInt,$endInt,['camp_id'=>$camp_id,'type'=>1]);
+        // 工资总额
+        // $countSalaryin = $this->SalaryInService->countSalaryin(['camp_id'=>$camp_id,'type'=>1,'create_time'=>['BETWEEN',[$startInt,$endInt]]]);
+        $countSalaryin = $this->SalaryInService->countSalaryin(['camp_id'=>$camp_id,'type'=>1]);
+        // 教练总数
+
+        $this->assign('countSalaryin',$countSalaryin);
+        $this->assign('salaryList',$salaryList);   
+        $this->assign('y',$y); 
+        $this->assign('m',$m);        
+        // dump($salaryList);
+        return view();
     }
-
-
-    public function indexs() {
-    	$data = input();
-    	$result = $this->SalaryInService->scheduleRebate($data);        
-    }
-
 
     // 当月工资详情
     public function salaryInfo(){
@@ -81,8 +88,8 @@ class Salaryin extends Base{
 
     public function getSalaryInfoByMonthApi(){
         try{
-            $start = input('start')?input('start'):date(strtotime('-1 month'));
-            $end = input('end')?input('end'):date('Y-m-d H:i:s',time());
+            $start = input('param.start')?input('param.start'):date(strtotime('-1 month'));
+            $end = input('param.end')?input('param.end'):date('Y-m-d H:i:s',time());
             $startInt = strtotime($start);
             $endInt = strtotime($end);
             $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];
@@ -102,38 +109,25 @@ class Salaryin extends Base{
 
     // 教学明细
     public function salaryList(){
-        $start = input('start')?input('start'):date(strtotime('-1 month'));
-        $end = input('end')?input('end'):date('Y-m-d H:i:s',time());
+        $start = input('param.start')?input('param.start'):date(strtotime('-1 month'));
+        $end = input('param.end')?input('param.end'):date('Y-m-d H:i:s',time());
         $startInt = strtotime($start);
         $endInt = strtotime($end);
         $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];
-        $salaryList = $this->SalaryInService->getSalaryList($startInt,$endInt,$member_id);
+        $salaryList = $this->SalaryInService->getSalaryList($startInt,$endInt,['member_id'=>$member_id,'type'=>1]);
         $count = $this->SalaryInService->getSalaryByMonth($startInt,$endInt,$member_id);   
         $this->assign('count',$count);
         $this->assign('salaryList',$salaryList);
         return view();
     }
 
-    public function salaryListApi(){
-        try{
-            $start = input('start')?input('start'):date(strtotime('-1 month'));
-            $end = input('end')?input('end'):date('Y-m-d H:i:s',time());
-            $startInt = strtotime($start);
-            $endInt = strtotime($end);
-            $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];
-            $salaryList = $this->SalaryInService->getSalaryList($startInt,$endInt,$member_id);
-            return json(['code'=>100,'msg'=>'ok','data'=>$salaryList]);
-        }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
-        }        
-    }
 
     // 商品推荐|分成
     public function goodsSalary(){
 
         //销售提成
-        $start = input('start')?input('start'):date(strtotime('-1 month'));
-        $end = input('end')?input('end'):date('Y-m-d H:i:s',time());
+        $start = input('param.start')?input('param.start'):date(strtotime('-1 month'));
+        $end = input('param.end')?input('param.end'):date('Y-m-d H:i:s',time());
         $startInt = strtotime($start);
         $endInt = strtotime($end);
         $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];
@@ -147,8 +141,10 @@ class Salaryin extends Base{
         return view();
     }
 
+    // 教练工资
     public function coachSalaryOfCamp(){
-        $coach_id = input('coach_id');
+        $coach_id = input('param.coach_id');
+        $camp_id = input('param.coach_id');
         $coachInfo = db('coach')->where(['id'=>$coach_id])->find();
 
 

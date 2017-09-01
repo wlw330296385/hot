@@ -110,7 +110,7 @@ class SalaryInService {
     }
 
     /**
-     * 
+     * 统计一个月的工资
      */
     public function getSalaryByMonth($startTime,$endTime,$member_id = 0){
         if($member_id == 0){
@@ -167,9 +167,18 @@ class SalaryInService {
         }
     }
 
+    // 获取平均工资月收入
+    public function getAverageSalaryByMonth($member_id,$camp_id){
+        $maxTime = time();
+        $minTime = $this->memberInfo['create_time'];
+        $months = getMonthInterval($minTime,$maxTime);
+        $totalSalary = $this->SalaryIn->where(['status'=>1,'member_id'=>$member_id,'camp_id'=>$camp_id])->sum('salary');
+        $averageSalary = floatval(($totalSalary)/$months);
+        return $averageSalary?$averageSalary:0;
+    }
 
-    // 获取平均月收入
-    public function getAverageSalaryByMonth($member_id){
+    // 获取平均所有月收入
+    public function getAverageIncomeByMonth($member_id){
         $maxTime = time();
         $minTime = $this->memberInfo['create_time'];
         $months = getMonthInterval($minTime,$maxTime);
@@ -181,8 +190,8 @@ class SalaryInService {
         return $averageSalary?$averageSalary:0;
     }
 
-    //获取平均年薪
-    public function  getAverageSalaryByYear($member_id){
+    //获取平均所有年薪
+    public function  getAverageIncomeByYear($member_id){
         $maxTime = time();
         $minTime = $this->memberInfo['create_time'];
         $years = getYearInterval($minTime,$maxTime);
@@ -194,14 +203,30 @@ class SalaryInService {
         return $averageSalary?$averageSalary:0;
     }
 
+    //获取平均工资年薪
+    public function  getAverageSalaryByYear($member_id,$camp_id){
+        $maxTime = time();
+        $minTime = $this->memberInfo['create_time'];
+        $years = getYearInterval($minTime,$maxTime);
+        $totalSalary = $this->SalaryIn->where(['status'=>1,'member_id'=>$member_id,'camp_id'=>$camp_id])->sum('salary');
+        $averageSalary = floatval(($totalSalary)/$years);
+        return $averageSalary?$averageSalary:0;
+    }
+
     //获取教学分成列表
-    public function getSalaryList($startTime,$endTime,$member_id = 0){
-        $result = $this->SalaryIn
-                    ->where(['member_id'=>$member_id,'type'=>1])
+    public function getSalaryList($startTime,$endTime,$map){
+        $res = $this->SalaryIn
+                    ->where($map)
                     ->where(['create_time'=>['between',[$startTime,$endTime]]])
-                    ->paginate(10)
-                    ->toArray();
-        return $result['data'];
+                    ->paginate(10);
+        if($res){
+            $result = $res->toArray();
+            return $result['data'];
+        }else{
+            return $res;
+        }
+                    
+        
     }
 
     // 获取销售提成列表
@@ -230,4 +255,16 @@ class SalaryInService {
     public function saveSalaryin(){
         
     }
+
+
+    // 统计工资总额
+    public function countSalaryin($map){
+            $result = $this->SalaryIn
+                    ->where($map)
+                    ->sum('salary');
+        return $result?$result:0;
+    }
+
+
+
 }

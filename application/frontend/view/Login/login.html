@@ -26,8 +26,8 @@
             <img src="/static/frontend/images/logo.png" alt="大热篮球">
         </div>
         <p class="tjlogin">（推荐使用微信登陆）</p>
-        <div class="tjdlbtn">
-            <button type="button" class="mui-btn">
+        <div class="tjbtn">
+            <button type="button" class="mui-btn btn">
                 <span class="mui-icon mui-icon-weixin"></span>使用微信登陆
             </button>
         </div>
@@ -36,31 +36,60 @@
         </p>
         <p class="line"></p>
 
-        <div class="login">
+        <form action="" class="login">
             <h3>会员登录</h3>
             <div class="mui-input-row">
-                <input type="text" class="mui-input-clear" placeholder="输入手机号/会员ID" data-input-clear="5">
-                <span class="mui-icon mui-icon-clear mui-hidden"></span>
+                <input type="text" name="username" class="mui-input-clear inputname reg_user" placeholder="输入手机号\会员ID"
+                       data-input-clear="5" style="margin-bottom: 0">
+                <span class="regspan tip user_hint"></span>
             </div>
             <div class="mui-input-row">
-                <input type="text" class="mui-input-clear password" placeholder="输入密码" data-input-clear="5"><span class="forgot-password"><a href="#">忘记密码</a></span>
-                <span class="mui-icon mui-icon-clear mui-hidden"></span>
+                <input type="text" class="mui-input-clear password reg_password" required placeholder="输入密码" data-input-clear="5"><span class="forgot-password"><a href="#">忘记密码</a></span>
+                <span class="regspan tip password_hint" ></span>
             </div>
-            <div class="tjdlbtn">
-                <button type="button" class="mui-btn">
+            <div class="tjbtn">
+                <button type="button" class="mui-btn btn loginbtn">
                     登陆
                 </button>
             </div>
-        </div>
+        </form>
 
     </div>
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/libs/yzvalidate.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+    $(function () {
+        $(".loginbtn").on("click", function () {
+            var member = $(".reg_user").val();
+            var password = $(".reg_password").val();
+            mui.ajax('http://hotpaas.com/api/login/loginApi', {
+                data: {
+                    'username': member,
+                    'password': password
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: {'Content-Type': 'application/json'},
+                success: function (data) {
+                    if(data.code==100){
+                        mui.toast(data.msg);
+                        window.location.href="{:url('index/index')}";
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(type);
+                }
+            });
+        })
+    })
 </script>
 </html>

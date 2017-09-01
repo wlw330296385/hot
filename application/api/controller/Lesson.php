@@ -21,10 +21,12 @@ class Lesson extends Base{
 
     //翻页获取课程接口
     public function getLessonListApi(){
+        
         try{
-            $type = input('get.type');
+            $type = input('param.type');
             $map = input('post.');
-            $result = $LessonService->getLessonPage($map,10);
+            $result = $this->LessonService->getLessonPage($map,10);
+
             if($result['code'] == 100){
                 $list = $result['data'];
                 //在线课程
@@ -87,7 +89,8 @@ class Lesson extends Base{
     public function getActiveLessonStudentsApi(){
         try{
             $lesson_id = input('lesson_id');
-            $students = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->where('grade_id','neq','');->field('student,id')->select();
+            $students = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->where('grade_id','neq','')->field('student,id')->select();
+            
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -107,7 +110,7 @@ class Lesson extends Base{
     public function getInactiveStudentsApi(){
         try{
             $lesson_id = input('lesson_id');
-            $students = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->where('grade_id','eq','');->field('student,id')->select();
+            $students = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->where('grade_id','eq','')->field('student,id')->select();
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }

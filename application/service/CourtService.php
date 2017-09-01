@@ -10,7 +10,7 @@ class CourtService {
     }
     // 场地列表
     public function getCourtList($map=[], $order='', $field='*'){
-        $result = Court::where($map)->whereOr(['status'=>1])->field($field)->limit(10)->order($order)->select();
+        $result = Court::where($map)->field($field)->limit(10)->order($order)->select();
         if($result){           
             $result = $result->toArray();
         }

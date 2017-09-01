@@ -59,11 +59,27 @@ class ExerciseService {
     }
 
     public function getExerciseList($p = 10){
-        $res = Exercise::paginate($p);
-        if($result){
-            return $result;
+        $res = Exercise::all();
+        if(!$res){
+            return $res;
         }else{
-            $result = $this->getExerciseTree($res->toArray());
+            $result = channelLevel($res->toArray(),0,'id','pid');
+            return $result;
+        }
+    }
+
+
+    // 获取训练营下的训练项目
+    public function getExerciseListOfCamp($camp_id){
+        $res = $this->exerciseModel->where(function($query) use($camp_id){
+            $query->where('camp_id','eq',0)->whereOr('camp_id','eq',$camp_id);
+        })->select();
+
+        if(!$res){
+            return $res;
+        }else{
+            
+            $result = channelLevel($res->toArray(),0,'id','pid');
             return $result;
         }
     }
@@ -72,9 +88,10 @@ class ExerciseService {
         $list = [];
          foreach ($arr as $key => $value) {
             if($value['pid'] == $pid){
-                $value['daughter'] = $this->getExercise($arr,$value['id']);
-               $list[] = $value;
-            }
+                $value['daughter'] = $this->getExerciseTree($arr,$value['id']);
+              
+            } 
+            $list[] = $value;
         }
         return $list;
     }

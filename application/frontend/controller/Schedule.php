@@ -62,27 +62,40 @@ class Schedule extends Base
 
 	// 录课界面
 	public function recordSchedule(){
-		$camp_id = input('camp_id');
-		$lesson_id = input('lesson_id');
-		$grade_id = input('grade_id');
+		$camp_id = input('param.camp_id');
+		$lesson_id = input('param.lesson_id');
+		$grade_id = input('param.grade_id');
 		$is_power = $this->recordSchedulePower();
 		if($is_power == 0){
 			$this->error('您没有权限录课');die;
 		}
+
 		// 教练列表
-		$memberOfAllList = db('grade_member')
+		$coachListOfCamp = db('grade_member')
 						->where([
 						'camp_id'	=>$camp_id,
 						'grade_id'	=>$grade_id,
-						// 'type'		=>4,
 						'status'	=>1
 						])
 						->whereOr(['type'=>['in',[2,3,4,6,8]]])
 						->field('member,member_id,coach,coach_id')
 						->select();
-		$this->assign('memberOfAllList',$memberOfAllList);
-		// $this->assign('coachList',$coachtList);
-		// $this->assign('assistantList',$assistantList);
+		// 班级信息
+		$GradeService = new \app\service\GradeService;		
+		$gradeInfo = $GradeService->getGradeInfo(['id'=>$grade_id]);
+
+		// 训练项目
+		$ExerciseService = new \app\service\ExerciseService;
+		$exerciseList = $ExerciseService->getExerciseListOfCamp($camp_id);
+
+		// 班级学生
+		$studentList = db('grade_member')->where(['grade_id'=>$grade_id,'status'=>1,'type'=>1])->select();
+		$countStudentList = count($studentList);
+		$this->assign('countStudentList',$countStudentList);
+		$this->assign('studentList',$studentList);
+		$this->assign('exerciseList',$exerciseList);
+		$this->assign('gradeInfo',$gradeInfo);
+		$this->assign('coachListOfCamp',$coachListOfCamp);
 		return view();
 	}
 

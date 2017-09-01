@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>训练营列表</title>
+    <title>教练列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -28,36 +28,38 @@
     <!--头部搜索2-->
     <header id="header" class="mui-bar mui-bar-nav search2">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title"><input type="search" class="mui-input-clear" placeholder="搜课程/训练营/训练地点等"></h1>
+        <h1 class="mui-title"><input type="search" class="mui-input-clear" placeholder="搜索教练关键词"></h1>
         <span class="mui-icon mui-icon-search searchicon"></span>
     </header>
+
+    <h1><a href="{:url('camp/applyListOfCoach',['camp_id'=>$campInfo['id']])}">申请列表</a></h1>
+
     <div class="mui-content">
-        <div class="location-frame">
-            <span class="location"><i class="mui-icon mui-icon-location"></i>深圳市</span>
-            <span class="location-choise">全部区域<i class="mui-icon mui-icon-arrowdown"></i></span>
-        </div>
 
 
-        <ul class="mui-table-view list">
-        {volist name="campList" id="vol"}
-            <li class="mui-table-view-cell mui-media listli padding">
-                <a href="{:url('camp/campInfo',['camp_id'=>$vol['id']])}">
-                    <img class="mui-media-object mui-pull-left" src="{$vol.logo}">
+        <ul class="mui-table-view list detalis-list list coach">
+        {volist name="coachList" id="vol"}
+            <li class="mui-table-view-cell mui-media listli padding list-wide">
+                <a href="{:url('coach/coachInfoOfCamp',['coach_id'=>$vol['coach_id']])}">
+                    <img class="mui-media-object mui-pull-left coachicon"
+                         src="{$vol.portraits}">
                     <div class="mui-media-body">
-                        {$vol.camp}
-                        <p class="mui-ellipsis">已报名{$vol.total_member}&nbsp;&nbsp;已上课{$vol.total_lessons}节</p>
+                        {$vol.coach}<img src="{:getSex($vol['sex'])}" class="sex" alt="">
+                        <p class="mui-ellipsis">教龄:{$vol.coach_year}&nbsp;&nbsp;等级:{$vol.coach_level}</p>
                     </div>
                     <div class="price-frame">
                         <div class="icons mui-inline">{$vol.star}
                             <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
                             <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
                             <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
+                            <i data-index="4" class="mui-icon mui-icon-star-filled"></i>
+                            <i data-index="5" class="mui-icon mui-icon-star-filled"></i>
                         </div>
-                        <p class="address">{$vol.province} {$vol.city}</p>
+                        <p class="address tr">南山区</p>
                     </div>
                 </a>
             </li>
-            {/volist}
+        {/volist}
         </ul>
     </div>
 
