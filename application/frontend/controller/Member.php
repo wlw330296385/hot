@@ -146,8 +146,11 @@ class Member extends Base{
 
     // 我的钱包
     public function myWallet(){
-
-        return view();
+        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        if($member_id){
+            $memberInfo = db('member')->where(['id'=>$member_id])->find();
+            $this->assign('memberInfo',$memberInfo);
+        }
     }
 
     // 收支明细

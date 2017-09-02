@@ -87,8 +87,11 @@ class LessonService {
         if(!$is_power){
             return ['code'=>200,'msg'=>'权限不足'];
         }
-
-        $result = $this->lessonModel->validate('LessonVal')->save($data,['id'=>$id]);
+        $validate = validate('LessonVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        $result = $this->lessonModel->save($data,$id);
         if($result){
             return ['msg' => $this->lessonModel->getError(), 'code' => 100, 'data' => $result];
         }else{
@@ -96,6 +99,24 @@ class LessonService {
         }
     }
 
+    // 新增课程
+    public function createLesson($data){
+        $is_power = $this->isPower($data['camp_id'],$data['member_id']);
+
+        if(!$is_power){
+            return ['code'=>200,'msg'=>'权限不足'];
+        }
+        $validate = validate('LessonVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        $result = $this->lessonModel->save($data);
+        if($result){
+            return ['msg' => $this->lessonModel->getError(), 'code' => 100, 'data' => $result];
+        }else{
+            return ['msg'=>__lang('MSG_200_ERROR'), 'code' => 200];
+        }
+    }
 
     // 课程权限
     public function isPower($camp_id,$member_id){

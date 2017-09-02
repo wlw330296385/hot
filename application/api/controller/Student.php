@@ -47,8 +47,11 @@ class Student extends Base
 
 	public function getStudentListApi(){
 		try{
-			$map = input('post.');
-			$result = $this->studentService->getStudentList($map);
+			dump(session('memberInfo','','think'));
+			dump($this->memberInfo);
+			$member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+			$result = $this->studentService->getStudentList(['member_id'=>$member_id]);
+			dump($result);
 			if($result){
 				return json(['data'=>$result,'code'=>100,'msg'=>'ok']);
 			}else{

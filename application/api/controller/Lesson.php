@@ -59,7 +59,7 @@ class Lesson extends Base{
                     break;
             }   
         }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
 		    	
     }
@@ -67,52 +67,54 @@ class Lesson extends Base{
     //编辑|添加课程接口
     public function updateLessonApi(){
         try{
-            $id = input('get.id');
+            $lesson_id = input('param.lesson_id');
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-            if($id){
-                $result = $this->LessonService->updateLesson($data,$id);
+            if($lesson_id){
+                $result = $this->LessonService->updateLesson($data,$lesson_id);
             }else{
-                $result = $this->LessonService->pubLesson($data);
+                $result = $this->LessonService->createLesson($data);
             }
 
-            return json($result);die;
+            return json($result);
         }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
 
     	
     }
 
-    // 获取已经被分配的学生
+    // 获取购买了课程的学生
     public function getActiveLessonStudentsApi(){
         try{
-            $lesson_id = input('lesson_id');
-            $students = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->where('grade_id','neq','')->field('student,id')->select();
-            
+            $lesson_id = input('param.lesson_id');
+            $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->where('grade_id','neq','')->field('student,id')->select();
+            return json(['code'=>100,'msg'=>'获取成功','data'=>$studentList]);
         }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
     }
 
     // 获取毕业学生
     public function getEduatedStudentsApi(){
         try{
-            $lesson_id = input('lesson_id');
-            $students = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>4])->field('student,id')->select();
+            $lesson_id = input('param.lesson_id');
+            $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>4])->field('student,id')->select();
+            return json(['code'=>100,'msg'=>'获取成功','data'=>$studentList]);
         }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
     }
 
     // 获取没有被分配班级的学生
     public function getInactiveStudentsApi(){
         try{
-            $lesson_id = input('lesson_id');
-            $students = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->where('grade_id','eq','')->field('student,id')->select();
+            $lesson_id = input('param.lesson_id');
+            $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->where('grade_id','neq','')->field('student,id')->select();
+            return json(['code'=>100,'msg'=>'获取成功','data'=>$studentList]);
         }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
     }
 

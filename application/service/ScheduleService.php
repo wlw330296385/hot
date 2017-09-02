@@ -21,7 +21,7 @@ class ScheduleService {
 	}
 
 	// 发布课时
-	public function pubSchedule($data){
+	public function createSchedule($data){
 		// 查询权限
 		$is_power = $this->scheduleModel
                     ->where([
@@ -36,14 +36,47 @@ class ScheduleService {
                     ->toArray();
         if(!$is_power){
             return ['code'=>200,'msg'=>'权限不足'];
+        }
+        $validate = validate('ScheduleVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
         }            
-		$result = $this->scheduleModel->validate('scheduleVal')->data($data)->save();
+		$result = $this->scheduleModel->save($data);
 		if($result ===false){
 			return ['msg'=>$this->scheduleModel->getError(),'code'=>200];
 		}else{
 			return ['msg'=>__lang('MSG_100_SUCCESS'),'code'=>100,'data'=>$result];
 		}
 	}
+
+    // 修改课时
+    public function updateSchedule($data,$id){
+        // 查询权限
+        $is_power = $this->scheduleModel
+                    ->where([
+                        'camp_id'   =>$data['camp_id'],
+                        'grade_id'  =>$data['geade_id'],
+                        'lesson_id' =>$data['lesson_id'],
+                        'status'    =>1,
+                        'member_id'  =>$data['member_id'],
+                        'type'      =>['in','2,3,4,6,7']
+                        ])
+                    ->find()
+                    ->toArray();
+        if(!$is_power){
+            return ['code'=>200,'msg'=>'权限不足'];
+        }
+        $validate = validate('ScheduleVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }            
+        $result = $this->scheduleModel->save($data,$id);
+        if($result ===false){
+            return ['msg'=>$this->scheduleModel->getError(),'code'=>200];
+        }else{
+            return ['msg'=>__lang('MSG_100_SUCCESS'),'code'=>100,'data'=>$result];
+        }
+    }
 
 	//查看一条课时信息
 	public function getScheduleInfo($map){

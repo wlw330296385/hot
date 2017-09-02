@@ -64,7 +64,9 @@ class Coach extends Base{
             $data = input('post.');
             // $coach_id = $data['coach_id'];
             $coach_id = input('param.coach_id');
-            // unset($data['coach_id']);
+            if(!$coach_id){
+                return json(['code'=>200,'msg'=>'找不到教练信息']);
+            }
             $result = $this->coachService->updateCoach($data,$coach_id);
             return json($result);
         }catch (Exception $e){

@@ -34,9 +34,10 @@ class CourtMediaService {
     }
 
 
-    // 编辑场地
+    // 编辑场地图片
     public function updateCourtMedia($data,$id){
-        $result = $this->CourtMediaModel->validate('CourtMediaVal')->save($data,$id);
+
+        $result = $this->CourtMediaModel->save($data,$id);
         if($result){
             return ['code'=>100,'data'=>$result,'msg'=>__lang('MSG_101_SUCCESS')];
         }else{
@@ -46,7 +47,7 @@ class CourtMediaService {
 
     // 新增场地
     public function createCourtMedia($data){
-        $result = $this->CourtMediaModel->validate('CourtMediaVal')->save($data);
+        $result = $this->CourtMediaModel->save($data);
         if($result){
             return ['code'=>100,'data'=>$result,'msg'=>__lang('MSG_101_SUCCESS')];
         }else{

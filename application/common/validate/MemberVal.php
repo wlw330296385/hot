@@ -8,7 +8,7 @@ class MemberVal extends Validate{
         'member'  =>  'require|max:60|unique:member,member',
         'nickname'	=> 'max:60',
         'email' =>  'email',
-        'telephone' => 'length:11',
+        'telephone' => 'length:11|unique:member,telephone',
         'password'=>'require|confirm:repassword'
     ];
     
@@ -18,12 +18,13 @@ class MemberVal extends Validate{
         'nickname.require'	=> '昵称必须',
         'email' =>  'email格式不正确',
         'telephone.length' =>'电话号码格式不正确',
+        'telephone.unique' =>'电话号码被占用',
         'password.confirm'	=>'两次密码不一致'
     ];
     
     protected $scene = [
-        'add'   =>  ['member'],
-        'edit'  =>  ['email','telephone','password'],
+        'add'   =>  ['member','telephone','password'],
+        'edit'  =>  ['email','telephone'],
     ];    
 
 }

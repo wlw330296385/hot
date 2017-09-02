@@ -39,8 +39,12 @@ class PlanService {
     /**
      * 更新资源
      */
-    public function UpdatePlan($data) {
-        $res = $this->Plan->validate('PlanVal')->update($data);
+    public function updatePlan($data) {
+        $validate = validate('PlanVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        $res = $this->Plan->update($data);
         if($res === false){
             return ['msg'=>$this->Plan->getError(),'code'=>'200'];
         }else{
@@ -62,7 +66,11 @@ class PlanService {
         if($is_create){
             return ['msg'=>'一个用户只能创建一个训练营','code'=>'200'];
         }
-        $res = $this->Plan->validate('PlanVal')->save($request);
+        $validate = validate('PlanVal');
+        if(!$validate->check($request)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        $res = $this->Plan->save($request);
         if($res === false){
             return ['msg'=>$this->Plan->getError(),'code'=>'200'];
         }else{

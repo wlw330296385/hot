@@ -18,7 +18,7 @@ class Base extends Controller{
       $this->gettoken();
       $is_login = cookie('member');
       $this->memberInfo = session('memberInfo','','think');
-  	 if(($is_login!=md5($this->memberInfo['id'].$this->memberInfo['create_time'].'hot'))||!$is_login||!$this->memberInfo){
+  	   if(($is_login!=md5($this->memberInfo['id'].$this->memberInfo['create_time'].'hot'))||!$is_login||!$this->memberInfo){
 
     		$this->checklogin();
     	}

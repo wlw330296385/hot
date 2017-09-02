@@ -29,7 +29,11 @@ class StudentService{
 	}	
 
 	public function createStudent($data){
-		$reuslt = $this->studentModel->validate('StudentVal')->data($data)->save();
+		$validate = validate('StudentVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+		$reuslt = $this->studentModel->data($data)->save();
 		if($result){
 			return ['code'=>100,'msg'=>'ok','data'=>$result];
 		}else{
@@ -38,7 +42,11 @@ class StudentService{
 	}
 
 	public function updateStudent($data,$id){
-		$result = $this->studentModel->validate('StudentVal')->save($data,$id);
+		$validate = validate('CampVal');
+        if(!$validate->check($StudentVal)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+		$result = $this->studentModel->save($data,$id);
 		if($result){
 			return ['code'=>100,'msg'=>'ok','data'=>$result];
 		}else{
@@ -46,11 +54,11 @@ class StudentService{
 		}
 	}
 	/**
-	 * 	
+	 * 	购买课程
 	 */
 	public function buyLesson($request,$id = false){
 		//是否完善资料
-		$is_student = $this->studentModel->where(['member_id'=>$this->memberInfo['id']])->find()->toArray();
+		$is_student = $this->studentModel->where(['member_id'=>$this->memberInfo['id']])->find();
 		if(!$is_student){
 			return false;
 		}
@@ -76,6 +84,7 @@ class StudentService{
 		return $result;
     }
 
+    // 获取学生班级?
     public function getStudentGradeList($map){
     	$result = $this->gradeMemberModel->where($map)->paginate(10);
     	if($result){
@@ -84,18 +93,31 @@ class StudentService{
 		return $result;
     }
 
+    // 获取课时学生列表
     public function getStudentScheduleList($map){
-    	$result = $this->scheduleMemberModel->where($map)->paginate(10);
+    	$result = db('schedule_member')->where($map)->paginate(10);
     	if($result){
 			$res = $result->toArray();return $res['data'];
 		}
     	return $result;
     }
 
-    public function getStudentList($map){
+    // 获取学生?
+    public function getStudentListOfCamp($map){
     	$result = $this->gradeMemberModel->where($map)->paginate(10);
     	if($result){
 			$res = $result->toArray();return $res['data'];
+		}
+    	return $result;
+    }
+
+     // 获取用户学生列表
+    public function getStudentList($map){
+        $result = $this->studentModel->where($map)->select();
+        echo $this->studentModel->getlastsql();
+        if($result){
+			$res = $result->toArray();
+			return $res;
 		}
     	return $result;
     }

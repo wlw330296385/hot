@@ -61,8 +61,13 @@ class GradeService{
         return $result?$result:0;
     }
 
+    // 新增班级
     public function createGrade($data){
-        $result = $this->GradeModel->validate('GradeVal')->data($map)->save();
+        $validate = validate('GradeVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        $result = $this->GradeModel->save($data);
          if (!$result) {
             return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
         }else{
@@ -70,15 +75,28 @@ class GradeService{
         }
     }
 
+    // 编辑班级
+    public function updateGrade($data,$id){
+        $validate = validate('GradeVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        $result = $this->GradeModel->save($data,$id);
+         if (!$result) {
+            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
+        }else{
+             return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $result];
+        }
+    }
+   
 
-    // 获取班级学生
-    public function getStudentList($id){
+
+    // 获取学生列表
+     public function getStudentListOfCamp($id){
         $result = db('grade_member')->where(['grade_id'=>$id,'type'=>1,'status'=>1])->select();
         // if($result){           
         //     $result = $result->toArray();
         // }
         return $result;
     }
-
-
 }

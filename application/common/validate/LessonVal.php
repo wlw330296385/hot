@@ -5,7 +5,7 @@ class LessonVal extends Validate{
 
 
 	protected $rule = [
-        'Lesson'        =>  'require|max:60',
+        'lesson'        =>  'require|max:60',
         'lessoncate'	=> 'require',
         'total'         => 'require',
         'coach'         =>'require',
@@ -18,7 +18,7 @@ class LessonVal extends Validate{
     ];
     
     protected $message = [
-        'Lesson.require'        =>  '课程名必须',
+        'lesson.require'        =>  '课程名必须',
         'lessoncate.require'	=> '课程类型必须',
         'realname.require'      =>  '创建者必须实名认证',
         'camp'                  =>'所属训练营必须',

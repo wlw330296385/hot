@@ -40,17 +40,13 @@ class Member extends Base{
     //添加银行卡
     public function createBankCardApi(){
         try{
-            $data = input('post.');
-            $data['member_id'] = $this->memberInfo['id'];
-            $data['member'] = $this->memberInfo['member'];
-            $result = $this->SalaryOut->saveSalaryOut();
-            return json($result);
+            
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
     }
 
-
+    // 编辑个人资料
     public function updateMemberApi(){
         try{
             $member_id = $this->memberInfo['id'];

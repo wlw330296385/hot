@@ -47,8 +47,12 @@ class CampService {
     /**
      * 更新资源
      */
-    public function UpdateCamp($data) {
-        $res = $this->Camp->validate('CampVal')->update($data);
+    public function UpdateCamp($data,$id) {
+        $validate = validate('CampVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        $res = $this->Camp->update($data,$id);
         if($res === false){
             return ['msg'=>$this->Camp->getError(),'code'=>'200'];
         }else{
@@ -70,7 +74,11 @@ class CampService {
         if($is_create){
             return ['msg'=>'一个用户只能创建一个训练营','code'=>'200'];die;
         }
-        $res = $this->Camp->validate('CampVal')->save($request);
+        $validate = validate('CampVal');
+        if(!$validate->check($$request)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        $res = $this->Camp->save($request);
         if($res === false){
             return ['msg'=>$this->Camp->getError(),'code'=>'200'];
         }else{
