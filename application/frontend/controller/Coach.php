@@ -35,7 +35,7 @@ class Coach extends Base{
         $this->assign('totalStudent',$totalStudent);
         $this->assign('totalSchedule',$totalSchedule);
         $this->assign('coachInfo',$coachInfo);
-        return view();
+        return view('Coach/index');
     }
 
 	// 教练首页
@@ -115,13 +115,13 @@ class Coach extends Base{
         $this->assign('coachCert',$coachCert);
         $this->assign('averageSalaryByMonth',$averageSalaryByMonth);
         $this->assign('averageSalaryByYear',$averageSalaryByYear);
-        return view();
+        return view('Coach/coachInfoOfCamp');
         }
     }
 
     // 教练档案
     public function coachAechives(){
-        return view();
+        return view('Coach/coachAechives');
     }
 
      public function searchCoach(){
@@ -149,7 +149,7 @@ class Coach extends Base{
         $coachList = $this->coachService->getCoachList($map);
         // dump($coachList);die;
         $this->assign('coachList',$coachList);
-        return view();
+        return view('Coach/coachList');
     }
 
    
@@ -203,7 +203,7 @@ class Coach extends Base{
         $this->assign('studentCount',$studentCount);
         $this->assign('gradeCount',$gradeCount);
         $this->assign('coachInfo',$coachInfo);
-        return view();
+        return view('Coach/coachInfo');
     }
 
     //教练员注册

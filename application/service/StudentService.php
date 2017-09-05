@@ -76,45 +76,45 @@ class StudentService{
 
 
 	// 获取一个教练下的所有学生
-	public function getStudentListOfCoach($map){
-		$result = $this->gradeMemberModel->where($map)->paginate(10);
+	public function getStudentListOfCoach($map,$page = 1,$paginate = 10){
+		$result = $this->gradeMemberModel->where($map)->page($page,$paginate)->select();
 		if($result){
-			$res = $result->toArray();return $res['data'];
+			$res = $result->toArray();return $res;
 		}
 		return $result;
     }
 
     // 获取学生班级?
-    public function getStudentGradeList($map){
-    	$result = $this->gradeMemberModel->where($map)->paginate(10);
+    public function getStudentGradeList($map,$page = 1,$paginate = 10){
+    	$result = $this->gradeMemberModel->where($map)->page($page,$paginate)->select();
     	if($result){
-			$res = $result->toArray();return $res['data'];
+			$res = $result->toArray();return $res;
 		}
 		return $result;
     }
 
     // 获取课时学生列表
-    public function getStudentScheduleList($map){
-    	$result = db('schedule_member')->where($map)->paginate(10);
+    public function getStudentScheduleList($map,$page = 1,$paginate = 10){
+    	$result = db('schedule_member')->where($map)->page($page,$paginate)->select();
     	if($result){
-			$res = $result->toArray();return $res['data'];
+			$res = $result->toArray();return $res;
 		}
     	return $result;
     }
 
     // 获取学生?
-    public function getStudentListOfCamp($map){
-    	$result = $this->gradeMemberModel->where($map)->paginate(10);
+    public function getStudentListOfCamp($map,$page = 1,$paginate = 10){
+    	$result = $this->gradeMemberModel->where($map)->page($page,$paginate)->select();
     	if($result){
-			$res = $result->toArray();return $res['data'];
+			$res = $result->toArray();return $res;
 		}
     	return $result;
     }
 
      // 获取用户学生列表
-    public function getStudentList($map){
-        $result = $this->studentModel->where($map)->select();
-        echo $this->studentModel->getlastsql();
+    public function getStudentList($map,$page = 1,$paginate = 10){
+        $result = $this->studentModel->where($map)->page($page,$paginate)->select();
+
         if($result){
 			$res = $result->toArray();
 			return $res;

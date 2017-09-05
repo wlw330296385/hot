@@ -16,8 +16,7 @@ class Member extends Base{
          $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
         $memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);
         $this->assign('memberInfo',$memberInfo);
-        return view();
-        return view();
+        return view('Member/index');
     }
 
 
@@ -25,7 +24,7 @@ class Member extends Base{
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
         $memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);
         $this->assign('memberInfo',$memberInfo);
-    	return view();
+    	return view('Member/memberInfo');
     }
 
     // 完善会员资料
@@ -33,7 +32,7 @@ class Member extends Base{
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
         $memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);  
         $this->assign('memberInfo',$memberInfo);
-        return view();
+        return view('Member/updateMember');
     }
     public function photoAlbum(){
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
@@ -95,7 +94,7 @@ class Member extends Base{
 
         // dump($albumList);die;
         $this->assign('albumList',$albumList);
-    	return view();
+    	return view('Member/photoAlbum');
     }
 
     //学员个人档案
@@ -103,7 +102,7 @@ class Member extends Base{
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
         $memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);
         $this->assign('memberInfo',$memberInfo);
-    	return view();
+    	return view('Member/studentPersonArchives');
     }
 
 
@@ -117,14 +116,14 @@ class Member extends Base{
         $this->assign('memberInfo',$memberInfo);
         $this->assign('count',$count);
         $this->assign('myGroupList',$myGroupList);
-        return view();
+        return view('Member/myGroup');
     }
 
 
     // 个人钱包充值
     public function charge(){
 
-        return view();
+        return view('Member/charge');
     }
 
 
@@ -141,7 +140,7 @@ class Member extends Base{
         $this->assign('bankcardList',$bankcardList);
         $this->assign('tid',$tid);
         $this->assign('ident',$ident);
-        return view();
+        return view('Member/withdraw');
     }
 
     // 我的钱包
@@ -151,6 +150,7 @@ class Member extends Base{
             $memberInfo = db('member')->where(['id'=>$member_id])->find();
             $this->assign('memberInfo',$memberInfo);
         }
+        return view('Member/myWallet');
     }
 
     // 收支明细
@@ -162,7 +162,7 @@ class Member extends Base{
 
         $this->assign('salaryoutList',$salaryoutList);
         $this->assign('salaryinList',$salaryinList);
-        return view();
+        return view('Member/salaryDetail');
     }
 
     // 我的积分
@@ -180,7 +180,7 @@ class Member extends Base{
     // 添加银行卡
     public function createBankCard(){
 
-        return view();
+        return view('Member/createBankCard');
     }
 
 
@@ -190,7 +190,7 @@ class Member extends Base{
         $campList = db('grade_member')->where(['member_id'=>$member_id,'type'=>2])->select();
 
         $this->assign('campList',$campList);
-        return view();
+        return view('Member/myLeader');
     }
 
     // 我的教练身份训练营
@@ -199,7 +199,7 @@ class Member extends Base{
         $campList = db('grade_member')->where(['member_id'=>$member_id,'type'=>4])->select();
 
         $this->assign('campList',$campList);
-        return view();
+        return view('Member/myCoach');
     }
      // 我的学生身份训练营
     public function myStudent(){
@@ -207,7 +207,7 @@ class Member extends Base{
         $campList = db('grade_member')->where(['member_id'=>$member_id,'type'=>1])->select();
 
         $this->assign('campList',$campList);
-        return view();
+        return view('Member/myStudent');
     }
      // 我的班主任训练营
     public function myTeacher(){
@@ -215,7 +215,7 @@ class Member extends Base{
         $campList = db('grade_member')->where(['member_id'=>$member_id,'type'=>7])->select();
 
         $this->assign('campList',$campList);
-        return view();
+        return view('Member/myTeacher');
     }
 
     // 我名下的训练营
@@ -224,6 +224,6 @@ class Member extends Base{
         $campList = db('camp')->where(['member_id'=>$member_id])->select();
 
         $this->assign('campList',$campList);
-        return view();
+        return view('Member/myCamp');
     }
 }

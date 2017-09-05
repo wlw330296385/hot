@@ -23,7 +23,7 @@ class Bill extends Base{
 
         $this->assign('lessonInfo',$lessonInfo);
     	$this->assign('billInfo',$billInfo);
-    	return view();
+    	return view('Bill/billInfo');
     }
 
     // 获取会员订单列表
@@ -35,7 +35,7 @@ class Bill extends Base{
         // dump($billList);die;
         $billList['count'] = count($billList);
         $this->assign('billList',$billList);
-		return view();
+		return view('Bill/billList');
     }
 
     //获取会员订单接口
@@ -54,7 +54,7 @@ class Bill extends Base{
     	$assitantList = db('grade_member')->where(['type'=>8,'camp_id'=>$camp_id,'status'=>1])->select();
     	$this->assign('coachList',$coachList);
     	$this->assign('assitantList',$assitantList);
-    	return view();
+    	return view('Bill/createBill');
     }
     //编辑|添加订单接口
     public function updateBillApi(){
@@ -80,7 +80,7 @@ class Bill extends Base{
         // 生成微信参数
         // dump($billOrder);die;
         $this->assign('billOrder',$billOrder);
-        return view();
+        return view('Bill/createBill');
     }
 
     
@@ -93,10 +93,11 @@ class Bill extends Base{
             $billInfo = $this->BillService->getBill(['bill_order'=>$billOrder]);
         }       
         $this->assign('billInfo',$billInfo);
-        return view();
+        return view('Bill/finishBill');
     }
 
     public function finishBookBill(){
-        return view();
+        
+        return view('Bill/finishBookBill');
     }
 }

@@ -58,7 +58,7 @@ class ExerciseService {
         }
     }
 
-    public function getExerciseList($p = 10){
+    public function getExerciseList($p = 1){
         $res = Exercise::all();
         if(!$res){
             return $res;

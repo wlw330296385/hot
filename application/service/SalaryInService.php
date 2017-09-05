@@ -28,11 +28,11 @@ class SalaryInService {
 
 
     // 获取订单列表
-    public function getSalaryInList($map,$p = 10,$order = 'id DESC'){
-        $res = $this->SalaryIn->where($map)->order('id DESC')->paginate($p);
+    public function getSalaryInList($map,$page = 1 ,$paginate = 10 ,$order = 'id DESC'){
+        $res = $this->SalaryIn->where($map)->order('id DESC')->page($page,$paginate)->select();
         if($res){
             $result = $res->toArray();
-            return $result['data'];
+            return $result;
         }else{
             return $res;
         }
@@ -214,14 +214,15 @@ class SalaryInService {
     }
 
     //获取教学分成列表
-    public function getSalaryList($startTime,$endTime,$map){
+    public function getSalaryList($startTime,$endTime,$map,$page = 1,$paginate = 10){
         $res = $this->SalaryIn
                     ->where($map)
                     ->where(['create_time'=>['between',[$startTime,$endTime]]])
-                    ->paginate(10);
+                    ->page($page,$paginate)
+                    ->select();
         if($res){
             $result = $res->toArray();
-            return $result['data'];
+            return $result;
         }else{
             return $res;
         }
@@ -230,24 +231,33 @@ class SalaryInService {
     }
 
     // 获取销售提成列表
-    public function getGoodsSellList($startTime,$endTime,$member_id = 0){
-        $result = $this->SalaryIn
+    public function getGoodsSellList($startTime,$endTime,$member_id = 0,$page = 1,$paginate = 10){
+        $res = $this->SalaryIn
                     ->where(['member_id'=>$member_id,'type'=>2])
                     ->where(['create_time'=>['between',[$startTime,$endTime]]])
-                    ->paginate(10)
-                    ->toArray();
-        return $result['data'];
+                    ->page($page,$paginate)
+                    ->select()
+         if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
+        }
     }
 
     // 获取组织收入列表
-    public function getRebateList($startTime,$endTime,$member_id = 0){
-        $result = $this->Rebate
+    public function getRebateList($startTime,$endTime,$member_id = 0,$page = 1,$paginate = 10){
+        $res = $this->Rebate
                     ->where(['member_id'=>$member_id])
                     ->where(['create_time'=>['between',[$startTime,$endTime]]])
-                    ->paginate(10)
-                    ->toArray();
-        // echo $this->Rebate->getlastsql();
-        return $result['data'];
+                    -page($page,$paginate)
+                    ->select();
+         if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
+        }
     }
 
 

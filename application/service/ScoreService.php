@@ -23,11 +23,11 @@ class ScoreService {
 
 
     // 获取积分记录列表
-    public function getScoreList($map,$p = 10,$order = 'id DESC'){
-        $res = $this->Score->where($map)->order('id DESC')->paginate($p);
+    public function getScoreList($map,$p = 1,$order = 'id DESC'){
+        $res = $this->Score->where($map)->order('id DESC')->page($p,10)->select();
         if($res){
             $result = $res->toArray();
-            return $result['data'];
+            return $result;
         }else{
             return false;
         }

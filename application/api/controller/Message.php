@@ -17,7 +17,8 @@ class Message{
     public function messageListApi(){
     	try{
     		$map = input()?input():[];
-	    	$messageList = $this->MessageService->getMessageList($map);
+            $page = input('param.page')?input('param.page'):1;
+	    	$messageList = $this->MessageService->getMessageList($map,$page);
 	    	if($messageList){
 	    		return json(['code'=>100,'msg'=>'OK','data'=>$messageList]);
 	    	}else{

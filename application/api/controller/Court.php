@@ -17,7 +17,8 @@ class Court extends Base{
             $condition = input('post.');
             $where = ['status'=>['or',[1,$camp_id]]];
             $map = array_merge($condition,$where);
-            $courtList = $this->CourtService->getCourtPage($map,10);
+            $page = input('param.page')?input('param.page'):1;
+            $courtList = $this->CourtService->getCourtList($map,$page);
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

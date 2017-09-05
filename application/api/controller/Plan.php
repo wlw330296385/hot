@@ -21,7 +21,8 @@ class Plan extends Base{
     public function planListApi(){
         try{
             $map = input('post.');
-            $planList = $this->PlanService->PlanListPage($map,10);
+            $page = input('param.page')?input('param.page'):1;
+            $planList = $this->PlanService->PlanListPage($map,$page);
             return json($planList);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

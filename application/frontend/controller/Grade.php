@@ -13,16 +13,15 @@ class Grade extends Base{
         $gradeInfo = $this->GradeService->getGradeInfo(['id'=>$grade_id]);
     	// 获取班级学生
     	$students = db('grade_member')->where(['grade_id'=>$id,'type'=>1,'status'=>1])->field('student')->select();
-    	dump($students);
-    	dump($gradeInfo);die;
+
     	$this->assign('gradeInfo',$gradeInfo);
-        return view();
+        return view('Grade/index');
     }
 
 
     public function createGrade(){
     	
-    	return view();
+    	return view('Grade/createGrade');
     }
 
 
@@ -31,7 +30,7 @@ class Grade extends Base{
         $gradeInfo = $this->GradeService->getGradeInfo(['id'=>$grade_id]);
     	// 获取班级学生
     	$students = db('grade_member')->where(['grade_id'=>$id,'type'=>1,'status'=>1])->field('student')->select();
-    	return view();
+    	return view('Grade/updateGrade');
     }
 
 
@@ -44,7 +43,7 @@ class Grade extends Base{
         $studentList = $this->GradeService->getStudentList($grade_id);
         $this->assign('studentList',$studentList);
         $this->assign('gradeInfo',$gradeInfo);
-        return view();
+        return view('Grade/gradeInfo');
     }
 
     public function gradeInfoOfCamp(){
@@ -54,7 +53,7 @@ class Grade extends Base{
         $studentList = $this->GradeService->getStudentList($grade_id);
         $this->assign('studentList',$studentList);
         $this->assign('gradeInfo',$gradeInfo);
-        return view();
+        return view('Grade/gradeInfoOfCamp');
     }
 
 
@@ -79,7 +78,7 @@ class Grade extends Base{
         $this->assign('count0',$count0);
         $this->assign('count1',$count1);
         $this->assign('actGradeList',$actGradeList);
-        return view();
+        return view('Grade/gradeList');
     }
 
         public function gradeListWeek(){
@@ -96,7 +95,7 @@ class Grade extends Base{
         }
         $this->assign('gradeList',$gradeList);
         
-        return view();
+        return view('Grade/gradeListWeek');
     }
 
     // 课时日历
@@ -107,6 +106,6 @@ class Grade extends Base{
                     ->where(['grade_member.type'=>1,'grade_member.member_id'=>$member_id,'grade_member.status'=>1])
                     ->select();
         $this->assign('gradeList',$gradeList);  
-        return view();
+        return view('Grade/gradeCalendar');
     }
 }

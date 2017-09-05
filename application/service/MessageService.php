@@ -9,14 +9,26 @@ class MessageService{
 	}
 	// 获取Message
 	public function getMessageInfo($map){
-		$result = $this->MessageModel->where($map)->find()->toArray();
-		return $result;
+		$result = $this->MessageModel->where($map)->find();
+		if($result){
+			$res = $result->toArray();
+			return $result;
+		}else{
+			return $res;
+		}
+		
+		
 	}
 
 	//获取资源列表
-	public function getMessageList($map,$paginate=10){
-		$result = $this->MessageModel->where($map)->paginate();
-		return $result->toArray();
+	public function getMessageList($map,$page = 1 ,$paginate=10){
+		$result = $this->MessageModel->where($map)->page($page,$paginate)->select();
+		if($result){
+			$res = $result->toArray();
+			return $result;
+		}else{
+			return $res;
+		}
 	}
 
 	//修改Message资料

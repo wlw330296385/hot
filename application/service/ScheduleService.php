@@ -15,9 +15,14 @@ class ScheduleService {
 
 
     // 获取课时数据列表
-	public function getscheduleList($map=[], $order='', $p='10',$field = '*'){
-		$result = Schedule::where($map)->field($field)->order($order)->paginate($p)->toArray();
-		return $result?$result['data']:false;
+	public function getscheduleList($map=[],$page = 1,$p='10',$order='',$field = '*'){
+		$res = Schedule::where($map)->field($field)->order($order)->page($page,$p)->select();
+		if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
+        }
 	}
 
 	// 发布课时
@@ -91,14 +96,14 @@ class ScheduleService {
 	}
 
 	// 获得课时评论
-	public function getCommentList($schedule_id){
-		$result = db('schedule_comment')->where(['schedule_id'=>$schedule_id])->select();		
+	public function getCommentList($schedule_id,$page = 1,$paginate = 10){
+		$result = db('schedule_comment')->where(['schedule_id'=>$schedule_id])->page($page,$paginate)->select();		
 		return $result;
 	}
 
 	// 获取课时学生
-	public function getStudentList($schedule_id){
-		$result = db('schedule_member')->where(['schedule_id'=>$schedule_id,'type'=>0,'status'=>1])->select();
+	public function getStudentList($schedule_id,$page = 1,$paginate = 10){
+		$result = db('schedule_member')->where(['schedule_id'=>$schedule_id,'type'=>0,'status'=>1])->page($page,$paginate)->select();
 		return $result;
 	}
 

@@ -23,7 +23,7 @@ class Lesson extends Base{
         unset($lessonInfo['dom']);
         $this->assign('lessonInfoJson',json_encode($lessonInfo));
         $this->assign('lessonInfo',$lessonInfo);
-        return view();
+        return view('Lesson/index');
 
     }
 
@@ -33,7 +33,7 @@ class Lesson extends Base{
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         $this->assign('lessonInfoJson',json_encode($lessonInfo));
         $this->assign('lessonInfo',$lessonInfo);
-        return view();
+        return view('Lesson/lessonInfo');
     }
 
     // 课程列表
@@ -74,7 +74,7 @@ class Lesson extends Base{
 
         $this->assign('gradecateList',$gradecateList);
         $this->assign('lessonList',$lessonList);
-        return view();
+        return view('Lesson/lessonList');
     }
 
     //编辑课程
@@ -99,7 +99,7 @@ class Lesson extends Base{
         $this->assign('courtList',$courtList);
     	$this->assign('coachList',$coachList);
     	$this->assign('assitantList',$assitantList);
-    	return view();
+    	return view('Lesson/updateLesson');
     }
 
     // 添加课程
@@ -117,7 +117,7 @@ class Lesson extends Base{
         $this->assign('courtList',$courtList);
         $this->assign('coachList',$coachList);
         $this->assign('assitantList',$assitantList);
-        return view();
+        return view('Lesson/createLesson');
     }
 
 
@@ -126,17 +126,17 @@ class Lesson extends Base{
     public function buyLesson(){
         $studentInfo = db('student')->where(['member_id'=>$this->memberInfo['id']])->select();        
         $this->assign('studentInfo',$studentInfo); 
-    	return view();
+    	return view('Lesson/buyLesson');
     }
 
     //课程订单支付
     public function comfirmBill(){
-    // 生成订单号
-    $billOrder = '1'.date('YmrHis',time()).rand(0000,9999);
-    // 生成微信参数
+        // 生成订单号
+        $billOrder = '1'.date('YmrHis',time()).rand(0000,9999);
+        // 生成微信参数
 
-    $this->assign('billOrder',$billOrder);
-    return view();
+        $this->assign('billOrder',$billOrder);
+        return view('Lesson/comfirmBill');
     }
 
     public function bookBill(){
@@ -145,12 +145,12 @@ class Lesson extends Base{
         // 生成微信参数
 
         $this->assign('billOrder',$billOrder);
-        return view();
+        return view('Lesson/bookBill');
     }
     // 邀请体验课程
     public function inviteStudent(){
         
-        return view();
+        return view('Lesson/inviteStudent');
     }
 
     public function LessonInfoOfCamp(){
@@ -169,6 +169,6 @@ class Lesson extends Base{
 
         $this->assign('onlineLessonList',$onlineLessonList);
         $this->assign('offlineLessonList',$offlineLessonList);
-        return view();
+        return view('Lesson/lessonListOfCamp');
     }
 }

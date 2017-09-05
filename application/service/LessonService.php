@@ -24,22 +24,22 @@ class LessonService {
     }
     
     // 获取所有课程
-    public function getLessonList($map=[], $order='',$paginate = 10) {
-        $result = Lesson::where($map)->order($order)->paginate($paginate);
+    public function getLessonList($map=[],$page = 1,$order='',$paginate = 10) {
+        $result = Lesson::where($map)->order($order)->page($page,$paginate)->select();
         if($result){
             $result = $result->toarray();
-            return $result['data'];
+            return $result;
         }else{
             return $result;
         }
     }
 
     // 分页获取课程
-    public function getLessonPage($map=[],$paginate=10, $order=''){
-        $res = Lesson::where($map)->order($order)->paginate($paginate);
+    public function getLessonPage($map=[],$page = 1 ,$paginate=10, $order=''){
+        $res = Lesson::where($map)->order($order)->page($page,$paginate)->select();
         if($res){
             $result = $res->toArray();
-            return $result['data'];
+            return $result;
         }else{
             return $res;
         }

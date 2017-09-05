@@ -25,7 +25,8 @@ class Lesson extends Base{
         try{
             $type = input('param.type');
             $map = input('post.');
-            $result = $this->LessonService->getLessonPage($map,10);
+            $page = input('param.page')?input('param.page'):1;
+            $result = $this->LessonService->getLessonPage($map,$page);
 
             if($result['code'] == 100){
                 $list = $result['data'];

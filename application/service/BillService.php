@@ -19,12 +19,12 @@ class BillService {
 
 
     // 获取订单列表
-    public function getBillList($map,$p = 10){
-        $result = $this->Bill->where($map)->paginate($p);
+    public function getBillList($map,$p = 1){
+        $result = $this->Bill->where($map)->page($p,10)->select();
         
         if($result){
             $res = $result->toArray();
-            return $res['data'];
+            return $res;
         }else{
             return $result;
         }

@@ -11,15 +11,15 @@ class PlanService {
         $this->Plan = new Plan();
     }
 
-    public function PlanList($map=[], $order='') {
-        $res = $this->Plan->where($map)->order($order)->select()->toArray();
+    public function getPlanList($map=[],$page = 1,$paginate = 10, $order='') {
+        $res = $this->Plan->where($map)->order($order)->page($page,$paginate)->select();
         return $res;
     }
 
-    public function PlanListPage( $map=[],$paginate=10, $order=''){
-        $res = $this->Plan->where($map)->order($order)->paginate($paginate)->toArray();
+    public function PlanListPage( $map=[],$page = 1,$paginate=10, $order=''){
+        $res = $this->Plan->where($map)->order($order)->page($page,$paginate)->select();
         if($res){
-            $result = $res['data'];
+            $result = $res->toArray();
             return $result;
         }else{
             return $res;

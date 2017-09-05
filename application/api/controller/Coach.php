@@ -76,8 +76,9 @@ class Coach extends Base{
 
     public function getCoachListApi(){
         try{
-            $map = intpu('post.');
-            $coachList = $this->coachService->getCoachList($map);
+            $map = input('post.');
+            $page = input('param.page')?input('param.page'):1;
+            $coachList = $this->coachService->getCoachList($map,$page);
             return json(['code'=>100,'msg'=>'OK','data'=>$coachList]);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

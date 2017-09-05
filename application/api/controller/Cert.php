@@ -14,7 +14,8 @@ class Cert extends Base{
     public function CertListApi(){
         try{
             $map = input();
-            $result = $this->CertService->getCertList($map);    
+            $page = input('param.page')?input('param.page'):1;
+            $result = $this->CertService->getCertList($map,$page);    
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

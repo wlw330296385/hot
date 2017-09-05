@@ -15,7 +15,8 @@ class Bill extends Base{
     public function getBillListApi(){
         try{
             $map = input('post.');
-            $result = $this->BillService->getBillList($map);
+            $page = input('param.page')?input('param.page'):1;
+            $result = $this->BillService->getBillList($map,$page);
             $billList = $result['data'];
             $billList['count'] = count($billList);
             return json(['code'=>100,'data'=>$billList,'msg'=>'OK']);       

@@ -5,19 +5,19 @@ class Login extends Controller{
 	
     public function index() {
 
-        return view();
+        return view('Login/index');
     }
 
     public function login(){
         
-    	return view();
+    	return view('Login/login');
     }
     public function registerSuccess(){
 
-    	return view();
+    	return view('Login/registerSuccess');
     }
     public function loginSuccess(){
-    	return view();
+    	return view('Login/loginSuccess');
     }
 
 
@@ -26,6 +26,6 @@ class Login extends Controller{
         $pid = input('param.pid');
         $this->assign('pid',$pid);
         $this->assign('referer',$referer);
-        return view();
+        return view('Login/register');
     }
 }

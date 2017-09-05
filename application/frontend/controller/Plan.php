@@ -12,7 +12,7 @@ class Plan extends Base{
 
     public function index() {
 
-        return view();
+        return view('Plan/index');
     }
 
 
@@ -21,7 +21,7 @@ class Plan extends Base{
     	$planInfo = $this->PlanService->PlanOneById(['id'=>$plan_id]);
         $planInfo['exerciseList'] = unserialize($planInfo['exercise']);
         $this->assign('planInfo',$planInfo);
-    	return view();
+    	return view('Plan/planInfo');
     }
 
 
@@ -40,7 +40,7 @@ class Plan extends Base{
         $this->assign('gradecateList',$gradecateList);
         $this->assign('planInfo',$planInfo);
 
-    	return view();
+    	return view('Plan/updatePlan');
     }
 
     // 分页获取数据
@@ -50,7 +50,7 @@ class Plan extends Base{
     	$planListOfSys = $this->PlanService->PlanListPage(['type'=>0]);
         $this->assign('planListOfCamp',$planListOfCamp);
         $this->assign('planListOfSys',$planListOfSys);
-        return view();
+        return view('Plan/planList');
     }
 
 

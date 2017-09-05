@@ -45,12 +45,12 @@ class Grade extends Base{
     public function getGradeListApi(){
         try{
             $member_id = $this->memberInfo['id'];
-            $camp_id = input('get.camp_id');
+            $camp_id = input('param.camp_id');
             $map = input('post.');
-            $map1 = $map;
+            $page = input('param.page')?input('param.page'):1;
             $map1['coach_id']=$member_id;
-            $myGradeList = $this->GradeService->getGradeList($map);
-            $gradeList = $this->GradeService->getGradeList($map1);
+            $myGradeList = $this->GradeService->getGradeList($map,$page);
+            $gradeList = $this->GradeService->getGradeList($map,$page);
             $myGradeCount = count($myGradeList);
             $gradeListCount = count($gradeList);
             return json(['code'=>100,'msg'=>'ok','data'=>['myGradeCount'=>$myGradeCount,'gradeList'=>$gradeList,'gradeListCount'=>$gradeListCount]]);

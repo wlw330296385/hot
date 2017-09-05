@@ -18,11 +18,11 @@ class CertService {
         return $cert->toArray();
     }
 
-    public function getCertList($map,$p= 10){
-    	$res = Cert::where($map)->paginate($p);
+    public function getCertList($map,$page = 1,$p= 10){
+    	$res = Cert::where($map)->page($page,$p)->select();
     	if($res){
     		$result = $res->toArray();
-    		return ['code'=>100,'msg'=>'ok','data'=>$result['data']];
+    		return ['code'=>100,'msg'=>'ok','data'=>$result];
     	}else{
     		return ['code'=>200,'msg'=>'暂无数据'];
     	}

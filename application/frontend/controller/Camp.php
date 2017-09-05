@@ -13,13 +13,13 @@ class Camp extends Base{
 
     public function index() {
 
-        return view();
+        return view('Camp/index');
     }
 
     public function createCamp(){
 
         
-        return view();
+        return view('Camp/createCamp');
     }
 
     public function campInfo(){
@@ -35,14 +35,14 @@ class Camp extends Base{
         $this->assign('lessonList',$lessonList);
         $this->assign('coachList',$coachList);
         $this->assign('campInfo',$campInfo);
-        return view();
+        return view('Camp/campInfo');
     }
 
     public function campList(){
         $map = input();
         $campList = $this->CampService->campListPage($map);
         $this->assign('campList',$campList);
-        return view();
+        return view('Camp/campList');
     }
 
    
@@ -63,7 +63,7 @@ class Camp extends Base{
         }
         $campList = $this->CampService->getCampList($map);
         $this->assign('campList',$campList);
-        return view();
+        return view('Camp/searchCamp');
     }
 
     public function searchCampApi(){
@@ -97,7 +97,7 @@ class Camp extends Base{
         $data['type'] = 1;
         $data['status'] = 1;
         $is_join = db('grade_member');
-        return view();
+        return view('Camp/inviteStudent');
     }
 
 
@@ -123,7 +123,7 @@ class Camp extends Base{
         $this->assign('actCampList',$actCampList);
         $this->assign('restCampList',$restCampList);
 
-        return view();
+        return view('Camp/campListOfStudent');
     }
 
     // 教练的训练营
@@ -134,7 +134,7 @@ class Camp extends Base{
                         ->where(['grade_member.member_id'=>$member_id,'grade_member.type'=>4,'grade_member.status'=>1])
                         ->select();
         $this->assign('campList',$campList);
-        return view();
+        return view('Camp/campListOfCoach');
     }
 
     // 申请列表
@@ -153,19 +153,19 @@ class Camp extends Base{
         $this->assign('count',$count);
         // dump($applyListOfCoach);die;
         $this->assign('applyListOfCoach',$applyListOfCoach);
-        return view();
+        return view('Camp/applyListOfCoach');
     }
 
 
     public function studentInfo(){
 
-        return view();
+        return view('Camp/studentInfo');
     }
 
     // 没啥权限的campInfo菜单
     public function indexCamp(){
 
-        return view();
+        return view('Camp/indexCamp');
     }
 
     // 管理员的camp菜单
@@ -185,7 +185,7 @@ class Camp extends Base{
         $this->assign('scheduleCount',$scheduleCount);
         $this->assign('lessonCount',$lessonCount);
         $this->assign('campInfo',$campInfo); 
-        return view();
+        return view('Camp/powerCamp');
     }
 
     // 教练的camp菜单
@@ -205,7 +205,7 @@ class Camp extends Base{
         $this->assign('scheduleCount',$scheduleCount);
         $this->assign('lessonCount',$lessonCount);
         $this->assign('campInfo',$campInfo); 
-        return view();
+        return view('Camp/coachCamp');
     }
 
      public function coachListOfCamp(){
@@ -217,6 +217,6 @@ class Camp extends Base{
         $coachList = $this->coachService->getCoachListOfCamp($map);
         $this->assign('campInfo',$campInfo); 
         $this->assign('coachList',$coachList);
-        return view();
+        return view('Camp/coachListOfCamp');
     }
 }

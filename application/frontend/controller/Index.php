@@ -19,7 +19,7 @@ class Index extends Base{
     	$this->assign('bannerList',$bannerList);
     	$this->assign('hotLessonList',$hotLessonList);
     	$this->assign('sortLessonList',$sortLessonList);
-        return view();
+        return view('Index/index');
     }
 
 

@@ -20,8 +20,8 @@ class SalaryOutService {
 
 
     // 获取提现记录列表
-    public function getSalaryOutList($map,$p = 10,$order = 'id DESC'){
-        $result = $this->SalaryOut->where($map)->order('id DESC')->paginate($p);
+    public function getSalaryOutList($map,$p = 1,$order = 'id DESC'){
+        $result = $this->SalaryOut->where($map)->order('id DESC')->page($p,10)->select();
         return $result;
     }
 

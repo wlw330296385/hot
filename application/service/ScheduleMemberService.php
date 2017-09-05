@@ -9,7 +9,7 @@ class ScheduleMemberService{
 	}
 
 	public function getScheduleList($map){
-		$result = ScheduleMember::where($map)->select()->toArray();
+		$result = ScheduleMember::where($map)->select();
 		return $result;
     }
 

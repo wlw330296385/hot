@@ -25,7 +25,8 @@ class Camp extends Base{
             if($keyword){
                 $map['camp'] = ['LIKE',"%$keyword%"];
             }
-            $campList = $this->CampService->getCampList($map);
+            $page = input('param.page')?input('param.page'):1;
+            $campList = $this->CampService->getCampList($map,$page);
             return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
         }catch(Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
@@ -35,7 +36,8 @@ class Camp extends Base{
     public function getCampListApi(){
         try{
             $map = input('post.');
-            $campList = $this->CampService->getCampList($map);
+            $page = input('param.page')?input('param.page'):1;
+            $campList = $this->CampService->getCampList($map,$page);
 
             return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
 

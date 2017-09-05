@@ -9,8 +9,8 @@ class CourtService {
         $this->courtModel = new Court;
     }
     // 场地列表
-    public function getCourtList($map=[], $order='', $field='*'){
-        $result = Court::where($map)->field($field)->limit(10)->order($order)->select();
+    public function getCourtList($map=[],$page = 1,$paginate = 10 $order='', $field='*'){
+        $result = Court::where($map)->field($field)->order($order)->page($page,$paginate)->select();
         if($result){           
             $result = $result->toArray();
         }
@@ -19,9 +19,9 @@ class CourtService {
 
     // 场地分页
     public function getCourtPage($map=[], $order='', $field='*', $paginate=10){
-        $result = Court::where($map)->field($field)->order($order)->paginate($paginate)->toArray();
+        $result = Court::where($map)->field($field)->order($order)->page($page,$paginate)->select();
         if($result){           
-            $result = $result['data'];
+            $result = $result;
         }
         return $result;
     }

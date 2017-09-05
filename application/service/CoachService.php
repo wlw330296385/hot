@@ -74,7 +74,7 @@ class CoachService{
 
     // 教练列表 分页
     public function coachListPage( $map=[], $paginate=0,$order='') {
-        $result = Coach::with('member')->where($map)->order($order)->paginate($paginate);
+        $result = Coach::with('member')->where($map)->order($order)->page($page,$paginate)->select();
         //return $result;
         if (!$result) {
             return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
@@ -106,12 +106,12 @@ class CoachService{
 
     // // 获取训练营下的教练
     // public function getCoahListOfCamp($map){
-    //     $result = $this->gradeMemberModel->where($map)->paginate($paginate);
+    //     $result = $this->gradeMemberModel->where($map)->page($page,$paginate)->select();
     //     return $result->toArray();
     // }
 
     public function getCoachListPage(){
-        $result = Coach::with('member')->where($map)->order($order)->paginate($paginate);
+        $result = Coach::with('member')->where($map)->order($order)->page($page,$paginate)->select();
         if (!$result) {
             return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
         }
@@ -124,11 +124,11 @@ class CoachService{
 
 
     // 教练列表 分页
-    public function getCoachList($map=[], $paginate = 10, $order='') {
-        $result = $this->CoachModel->where($map)->order($order)->paginate($paginate);
+    public function getCoachList($map=[],$page=1, $paginate = 10, $order='') {
+        $result = $this->CoachModel->where($map)->order($order)->page($page,$paginate)->select();
         if($result){
             $result = $result->toArray();
-            return $result['data'];
+            return $result;
         }else{
             return $result;
         }
@@ -137,16 +137,16 @@ class CoachService{
 
 
     // 教练列表 分页
-    public function getCoachListOfCamp($map=[], $paginate = 10, $order='') {
+    public function getCoachListOfCamp($map=[], $paginate = 1, $order='') {
         $result = Db::view('grade_member','*')
                 ->view('coach','portraits,star,sex,coach_year,coach_level','grade_member.coach_id=coach.id')
                 ->where($map)
                 ->order($order)
-                ->paginate($paginate);
+                ->page($page,$paginate)->select();
                 // echo db('grade_member')->getlastsql();die;
         if($result){
             $result = $result->toArray();
-            return $result['data'];
+            return $result;
         }else{
             return $result;
         }

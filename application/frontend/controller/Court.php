@@ -14,7 +14,7 @@ class Court extends Base{
 
     public function index() {
 
-        return view();
+        return view('Court/index');
     }
 
 
@@ -24,7 +24,7 @@ class Court extends Base{
         $mediaList = db('court_media')->where(['court_id'=>$court_id])->limit(3)->select();
         $this->assign('courtInfo',$courtInfo);
         $this->assign('mediaList',$mediaList);
-    	return view();
+    	return view('Court/courtInfo');
     }
 
     public function courtList(){
@@ -32,7 +32,7 @@ class Court extends Base{
         $courtList0 = $this->CourtService->getCourtList(['camp_id'=>1,'status'=>0]);
         $this->assign('courtList1',$courtList1);
         $this->assign('courtList0',$courtList0);
-        return view();
+        return view('Court/courtList');
     }
 
     public function updateCourt(){   	
@@ -42,14 +42,12 @@ class Court extends Base{
         $mediaList = $this->CourtMediaService->getCourtMediaList(['court_id'=>$court_id]);
 		$this->assign('CourtInfo',$CourtInfo);
         $this->assign('mediaList',$mediaList);
-    	return view();
+    	return view('Court/updateCourt');
     }
 
     public function createCourt(){
-        // $pidList = $this->CourtService->getCourtList(['pid'=>0]);
 
-        // $this->assign('pidList',$pidList['data']);
-        return view();
+        return view('Court/createCourt');
     }
     // 分页获取数据
     public function courtListApi(){

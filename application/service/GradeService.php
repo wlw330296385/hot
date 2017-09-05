@@ -13,19 +13,19 @@ class GradeService{
 
 
     // 班级列表
-    public function getGradeList($map=[], $order='',$p=10) {
+    public function getGradeList($map=[],$page = 1, $order='',$p=10) {
         $result = [];
-        $res = Grade::where($map)->order($order)->paginate($p);
+        $res = Grade::where($map)->order($order)->page($page,$p)->select();
         if($res){           
             $res = $res->toArray();
-            $result = $res['data'];
+            $result = $res;
         }
         return $result;
     }
 
     // 班级分页
-    public function getGradePage($map=[], $order='', $paginate=0) {
-        $result =  Grade::where($map)->order($order)->paginate($paginate);
+    public function getGradePage($map=[],$page = 1, $order='', $paginate=10) {
+        $result =  Grade::where($map)->order($order)->page($page,$paginate)->select();
         if($result){           
             $result = $result->toArray();
         }
@@ -92,11 +92,9 @@ class GradeService{
 
 
     // 获取学生列表
-     public function getStudentListOfCamp($id){
-        $result = db('grade_member')->where(['grade_id'=>$id,'type'=>1,'status'=>1])->select();
-        // if($result){           
-        //     $result = $result->toArray();
-        // }
+     public function getStudentListOfCamp($grade_id,$page = 1,$paginate = 10){
+        $result = db('grade_member')->where(['grade_id'=>$grade_id,'type'=>1,'status'=>1])->page($page,$paginate)->select();
+
         return $result;
     }
 }

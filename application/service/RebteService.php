@@ -20,11 +20,11 @@ class RebateService {
 
 
     // 获取提现记录列表
-    public function getRebateList($map,$p = 10,$order = 'id DESC'){
-        $res = $this->Rebate->where($map)->order('id DESC')->paginate($p);
+    public function getRebateList($map,$p = 1,$paginate = 10,$order = 'id DESC'){
+        $res = $this->Rebate->where($map)->order('id DESC')->page($p,$paginate)->select();
         if($res){
             $result = $res->toArray();
-            return $result['data'];
+            return $result;
         }else{
             return $res;
         }
