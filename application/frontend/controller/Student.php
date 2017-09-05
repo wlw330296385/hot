@@ -18,7 +18,7 @@ class Student extends Base
 	public function index(){
 
 
-		return view();
+		return view('Student/index');
 	}
 
 	public function studentInfoOfCamp(){
@@ -73,7 +73,7 @@ class Student extends Base
 		$this->assign('studentScheduleList',$studentScheduleList);
 		$this->assign('studentBillList',$studentBillList);
 		$this->assign('totalBill',$totalBill);
-		return view();
+		return view('Student/studentInfoOfCamp');
 	}
 
 	// 获取教练的学生列表
@@ -82,7 +82,7 @@ class Student extends Base
 		$studenList = $this->studentService->getStudentListOfCoach($map);
 		$this->assign('studenList',$studenList);
 		// dump($studentInfo);die;
-		return view();
+		return view('Student/studentListOfCoach');
 	}
 
 	// 获取训练营学生列表
@@ -104,7 +104,7 @@ class Student extends Base
 			$this->assign('studenListOffLine',$studenListOffLine);
 			return view();
 		}
-		return view('expStudentListOfCamp');
+		return view('Student/expStudentListOfCamp');
 	}
 	
 	public function createStudentApi(){
@@ -123,7 +123,7 @@ class Student extends Base
 			$studentInfo = [];
 		}
 		$this->assign('studentInfo',$studentInfo);
-		return view();
+		return view('Student/updateStudent');
 	}
 	
 	public function studentInfo(){
@@ -132,7 +132,7 @@ class Student extends Base
 		// 学生信息
 		$studentInfo = $this->studentService->getStudentInfo(['id'=>$student_id]);
 		$this->assign('studentInfo',$studentInfo);
-		return view();
+		return view('Student/studentInfo');
 	}
 		
 }

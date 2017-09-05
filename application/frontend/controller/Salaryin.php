@@ -17,7 +17,7 @@ class Salaryin extends Base{
             $avreageMonthSalary = $this->SalaryInService->getAverageSalaryByMonth(2);
             $averageYearSalary = $this->SalaryInService->getAverageSalaryByYear(2);
             $this->assign('monthRebate',$monthRebate);
-            return view();
+            return view('Salaryin/index');
 	}
 
 
@@ -43,7 +43,7 @@ class Salaryin extends Base{
         $this->assign('y',$y); 
         $this->assign('m',$m);        
         // dump($salaryList);
-        return view();
+        return view('Salaryin/salaryOfCamp');
     }
 
     // 当月工资详情
@@ -81,7 +81,7 @@ class Salaryin extends Base{
     	$this->assign('levelAward',$levelAward);
     	$this->assign('rankAward',$rankAward);
     	$this->assign('totalSalary',$totalSalary); 
-    	return view(); 
+    	return view('Salaryin/salaryInfo'); 
     }
 
 
@@ -118,7 +118,7 @@ class Salaryin extends Base{
         $count = $this->SalaryInService->getSalaryByMonth($startInt,$endInt,$member_id);   
         $this->assign('count',$count);
         $this->assign('salaryList',$salaryList);
-        return view();
+        return view('Salaryin/salaryList');
     }
 
 
@@ -138,7 +138,7 @@ class Salaryin extends Base{
         // dump($rebateIn);die;
         $this->assign('sellsIn',$sellsIn);
         $this->assign('rebateIn',$rebateIn);
-        return view();
+        return view('Salaryin/goodsSalary');
     }
 
     // 教练工资
@@ -149,12 +149,12 @@ class Salaryin extends Base{
 
 
         $this->assign('coachInfo',$coachInfo);
-        return view();
+        return view('Salaryin/coachSalaryOfCamp');
     }
 
     // 教练年薪
     public function coachSalaryOfYear(){
 
-        return view();
+        return view('Salaryin/coachSalaryOfYear');
     }
 }

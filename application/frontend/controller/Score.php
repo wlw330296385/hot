@@ -24,7 +24,7 @@ class Score extends Base{
         }
         $scoreList = $this->ScoreService->getScoreList(['member_id'=>$member_id]);
         $this->assign('scoreList',$scoreList);
-        return view();
+        return view('Score/myScore');
     }
 
 }

@@ -18,7 +18,7 @@ class Schedule extends Base
 	}
 
 	public function index(){
-		return view();
+		return view('Schedule/index');
 
 	}
 
@@ -39,7 +39,7 @@ class Schedule extends Base
     	$this->assign('myCount',$myCount);
   		$this->assign('scheduleList',$scheduleList);
   		$this->assign('scheduleListCount',$scheduleListCount);
-		return view();
+		return view('Schedule/scheduleList');
     }
 
 	// 课时详情
@@ -56,7 +56,7 @@ class Schedule extends Base
 		$this->assign('studentList',$studentList);
 		$this->assign('scheduleInfo',$scheduleInfo);
 		$this->assign('commentList',$commentList);
-		return view();
+		return view('Schedule/scheduleInfo');
 	}
 
 
@@ -96,7 +96,7 @@ class Schedule extends Base
 		$this->assign('exerciseList',$exerciseList);
 		$this->assign('gradeInfo',$gradeInfo);
 		$this->assign('coachListOfCamp',$coachListOfCamp);
-		return view();
+		return view('Schedule/recordSchedule');
 	}
 
 	//判断录课冲突,规则:同一个训练营课程班级,在某个时间点左右2个小时之内只允许一条数据;

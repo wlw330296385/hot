@@ -209,7 +209,7 @@ class Coach extends Base{
     //教练员注册
     public function createCoach(){
         
-        return view();
+        return view('Coach/createCoach');
     }
 
     public function updateCoach(){
@@ -238,7 +238,7 @@ class Coach extends Base{
         $this->assign('coachInfo',$coachInfo);
         $this->assign('identCert',$identCert);
         $this->assign('coachCert',$coachCert);
-        return view();
+        return view('Coach/updateCoach');
     }
     // 教练员注册1
     public function coachRegister1(){
@@ -257,7 +257,7 @@ class Coach extends Base{
 
     //注册成功
     public function registerSuccess(){
-        return view();
+        return view('Coach/registerSuccess');
     }
 
 
@@ -267,9 +267,8 @@ class Coach extends Base{
                 ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo,id,total_member,total_lessons','camp.id=grade_member.camp_id')
                 ->where(['grade_member.member_id'=>$member_id,'grade_member.type'=>4,'grade_member.status'=>1])
                 ->select();
-        dump($campList);die;
         $this->assign('campList',$campList);
-        return view();
+        return view('Coach/campListOfCaoch');
     }
 
     // 训练营下的教练
@@ -283,6 +282,6 @@ class Coach extends Base{
         $coachList = $this->coachService->getCoachListOfCamp($map);
         $this->assign('campInfo',$campInfo); 
         $this->assign('coachList',$coachList);
-        return view();
+        return view('Coach/coachListOfCamp');
     }
 }
