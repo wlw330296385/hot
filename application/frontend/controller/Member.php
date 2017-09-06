@@ -1,10 +1,10 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Base;
+use app\frontend\controller\Frontend;
 use app\service\MemberService;
 use app\service\StudentService;
 use think\Db;
-class Member extends Base{
+class Member extends Frontend{
     private $MemberService;
 	public function _initialize(){
 

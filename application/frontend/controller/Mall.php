@@ -1,8 +1,8 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Base;
+use app\frontend\controller\Frontend;
 
-class Mall extends Base{
+class Mall extends Frontend{
 	
 	public function _initialize(){
 		parent::_initialize();

@@ -4,42 +4,12 @@ use think\Controller;
 use app\service\SystemService;
 use think\Request;
 class Base extends Controller{
-
-	public $memberInfo;
 	public $systemSetting;
-	public function _initialize(){
-		$this->memberInfo = session('memberInfo','','think');
-		if(!$this->memberInfo['avatar']){
-			$this->nologin();
-		}else{
-			$re = session('memberInfo',$this->memberInfo);
-			$this->assign('memberInfo',$this->memberInfo);
-			$this->systemSetting = SystemService::getSite();
-			$this->assign('systemSetting',$this->systemSetting);
-			$this->footMenu();
-		}	
-	}
-
-
-
-	protected function wxlogin($id){
-		$member =new \app\service\MemberService;
-    	$memberInfo = $member->getMemberInfo(['id'=>$id]);
-    	unset($memberInfo['password']);
-    	$this->memberInfo = $memberInfo;
-    	$cookie = md5($memberInfo['id'].$memberInfo['create_time'].'hot');
-    	cookie('member',md5($this->memberInfo['id'].$this->memberInfo['create_time'].'hot'));  	
-        $result = session('memberInfo',$memberInfo,'think');
-        if($result){
-        	return true;
-        }else{
-        	return false;
-        }      
-	}
-
-
-	protected function nologin(){
-		$this->redirect('login/login');
+	public function _initialize(){		
+		$this->systemSetting = SystemService::getSite();
+		$this->assign('systemSetting',$this->systemSetting);
+		$this->footMenu();
+		
 	}
 
 	protected function footMenu(){
@@ -49,7 +19,7 @@ class Base extends Controller{
 		$footMenu =  [
 			[
 				'name'=>'首页',
-				'icon'=>'icon iconfont icon-hotnav-home1',
+				'icon'=>'icon iconfont icon-hotnav-home',
 				'action'=>'index',
 				'controller'=>'Index'
 			],
@@ -73,7 +43,7 @@ class Base extends Controller{
 			],
 			[
 				'name'=>'我的',
-				'icon'=>'icon iconfont icon-hotnav-mine1',
+				'icon'=>'icon iconfont icon-hotnav-mine',
 				'action'=>'index',
 				'controller'=>'Member'
 			],

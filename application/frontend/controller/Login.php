@@ -34,13 +34,12 @@ class Login extends Controller{
     public function wxlogin() {
         $WechatS = new WechatService();
         $userinfo = $WechatS->oauthUserinfo();
-        //dump( $userinfo );
         if ($userinfo) {
+            session('memberInfo.id','','think');
             session('memberInfo.openid', $userinfo['openid'], 'think');
             session('memberInfo.nickname', $userinfo['nickname'], 'think');
             session('memberInfo.avatar', $userinfo['headimgurl'], 'think');
         }
-        //dump( session('memberInfo', '', 'think') );
         $this->redirect('frontend/Index/index');
     }
 }

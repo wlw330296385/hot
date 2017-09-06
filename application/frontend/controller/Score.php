@@ -1,8 +1,8 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Base;
+use app\frontend\controller\Frontend;
 use app\service\ScoreService;
-class Score extends Base{
+class Score extends Frontend{
 	protected $ScoreService;
 	public function _initialize(){
 		parent::_initialize();

@@ -1,8 +1,8 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Base;
+use app\frontend\controller\Frontend;
 use app\service\ExerciseService;
-class Exercise extends Base{
+class Exercise extends Frontend{
 	protected $ExerciseService;
     
 	public function _initialize(){

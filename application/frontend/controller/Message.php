@@ -1,8 +1,8 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Base;
+use app\frontend\controller\Frontend;
 
-class Message extends Base{
+class Message extends Frontend{
 	
 	public function _initialize(){
 		parent::_initialize();

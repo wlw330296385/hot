@@ -1,9 +1,9 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Base;
+use app\frontend\controller\Frontend;
 use app\service\LessonService;
 use app\service\GradeService;
-class Lesson extends Base{
+class Lesson extends Frontend{
 	protected $LessonService;
 	protected $GradeService;
 	public function _initialize(){
@@ -78,7 +78,7 @@ class Lesson extends Base{
     	return view('Lesson/updateLesson');
     }
 
-    // 添加课程
+    // 添加课程|发布课程
     public function createLesson(){
         //训练营主教练
         $camp_id = input('param.camp_id');
@@ -99,18 +99,21 @@ class Lesson extends Base{
 
 
     // 购买课程
-    public function buyLesson(){
-        $studentInfo = db('student')->where(['member_id'=>$this->memberInfo['id']])->select();        
-        $this->assign('studentInfo',$studentInfo); 
-    	return view('Lesson/buyLesson');
-    }
+    // public function buyLesson(){
+    //     $studentInfo = db('student')->where(['member_id'=>$this->memberInfo['id']])->select();        
+    //     $this->assign('studentInfo',$studentInfo); 
+    // 	return view('Lesson/buyLesson');
+    // }
 
     //课程订单支付
     public function comfirmBill(){
+        $lesson_id = input('param.lesson_id');
+        $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+
         // 生成订单号
         $billOrder = '1'.date('YmrHis',time()).rand(0000,9999);
         // 生成微信参数
-
+        $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billOrder',$billOrder);
         return view('Lesson/comfirmBill');
     }

@@ -1,9 +1,9 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Base;
+use app\frontend\controller\Frontend;
 use app\service\GradeService;
 use think\Db;
-class Grade extends Base{
+class Grade extends Frontend{
 	public function _initialize(){
 		parent::_initialize();
 		$this->GradeService = new GradeService;

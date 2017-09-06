@@ -15,6 +15,18 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="../../static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="../../static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <style>
+        .editor {
+            padding-right: 0 !important;
+        }
+
+        .editorIntial {
+            width: 7% !important;
+        }
+    </style>
 </head>
 
 <body class=whitebg>
@@ -27,36 +39,79 @@
     <div class="list camp-list camp-lesson-list detalis-list coach">
         <div class="page-header">
             <span class="course"><b>个人信息</b></span>
+            <span class="more"><a href="#" class="editroBtn">编辑</a></span>
         </div>
-        <ul class="mui-table-view archives mb">
-            <li class="mui-table-view-cell listli detalisli ">
+
+        <ul class="mui-table-view archives1 mb">
+            <li class="mui-table-view-cell listli detalisli line-height40">
                 头像<img class="coachicon" src="/static/frontend/images/yuantiao.jpg" alt="">
             </li>
             <li class="mui-table-view-cell listli listinitial">学员ID<span>{$memberInfo['id']}</span></li>
             <li class="mui-table-view-cell listli listinitial">
-                姓名<span>{$memberInfo['member']}</span>
+                姓名<span class="name">{$memberInfo['member']}</span>
             </li>
             <li class="mui-table-view-cell listli listinitial">
-                性别<span>{$memberInfo['sex']}</span>
+                性别<span class="sex">{$memberInfo['sex']}</span>
             </li>
             <li class="mui-table-view-cell listli listinitial">
-                身高<span>{$memberInfo['height']}cm</span>
+                身高<span class="height">{$memberInfo['height']}cm</span>
             </li>
             <li class="mui-table-view-cell listli listinitial">
-                体重<span>{$memberInfo['weight']}kg</span>
+                体重<span class="weight">{$memberInfo['weight']}kg</span>
             </li>
             <li class="mui-table-view-cell listli listinitial">
-                性格特征<span>{$memberInfo['charater']}</span>
+                出生日期<span class="birthday">{$memberInfo['birthday']}</span>
             </li>
             <li class="mui-table-view-cell listli listinitial">
-                出生日期<span>{$memberInfo['birthday']}</span>
-            </li>
-            <li class="mui-table-view-cell listli listinitial">
-                所属地区<span>{$memberInfo['province']}{$memberInfo['city']}{$memberInfo['area']}</span>
+                所属地区<span class="location">{$memberInfo['province']}{$memberInfo['city']}{$memberInfo['area']}</span>
             </li>
             <li class="mui-table-view-cell listli listinitial">
                 注册日期<span class="">{$memberInfo['create_time']}</span></li>
         </ul>
+
+        <ul class="mui-table-view archives2 mb" style="display: none">
+            <li class="mui-table-view-cell listli detalisli line-height40">
+                <a href="#picture">
+                    头像<img class="coachicon" src="/static/frontend/images/yuantiao.jpg" alt="">
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli listinitial">学员ID<span>{$memberInfo['id']}</span></li>
+            <li class="mui-table-view-cell listli listinitial">
+                姓名<span><input type="text" class="input name editor" value="{$memberInfo['member']}"></span>
+            </li>
+            <li class="mui-table-view-cell listli listinitial">
+                性别
+                <span class="editor">
+                     <select class="wd25 sex" style="margin: 0;padding: 0;direction: rtl;">
+                            <option>{$memberInfo['sex']}</option>
+                            <option>男</option>
+                          <option>女</option>
+                        </select>
+                </span>
+            </li>
+            <li class="mui-table-view-cell listli listinitial">
+                身高
+                <span class="editorIntial">cm</span>
+                <input type="text" class="input height editor" value="{$memberInfo['height']}">
+            </li>
+            <li class="mui-table-view-cell listli listinitial">
+                体重
+                <span class="editorIntial">kg</span>
+                <input type="text" class="input weight editor" value="{$memberInfo['weight']}">
+            </li>
+            <li class="mui-table-view-cell listli listinitial btn" id="demo2"
+                data-options='{"type":"date","beginYear":2000,"endYear":2012}'>
+                出生日期<span id="result" class="ui-alert birthday">{$memberInfo['birthday']}</span>
+            </li>
+            <li class="mui-table-view-cell listli listinitial" id='showCityPicker3'>
+                所属地区<span id="cityResult3"
+                          class="ui-alert location">{$memberInfo['province']}{$memberInfo['city']}{$memberInfo['area']}</span>
+            </li>
+            <li class="mui-table-view-cell listli listinitial">
+                注册日期<span class="">{$memberInfo['create_time']}</span></li>
+        </ul>
+
+
         <div class="page-header">
             <span class="course"><b>安全设置</b></span>
         </div>
@@ -78,15 +133,107 @@
                 </a>
             </li>
         </ul>
+
+        <!--上传图片-->
+        <div id="picture" class="mui-popover mui-popover-action mui-popover-bottom" style="height:inherit;">
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell">
+                    <a href="#">拍照</a>
+                </li>
+                <li class="mui-table-view-cell">
+                    <a href="#">从手机照片选择</a>
+                </li>
+            </ul>
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell">
+                    <a href="#picture"><b>取消</b></a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!--选择器-->
+<script src="../../static/frontend/js/mui.picker.min.js"></script>
+<script src="../../static/frontend/js/mui.poppicker.js"></script>
+<script src="../../static/frontend/js/city.data-3.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+    (function ($, doc) {
+        $.init();
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+            ///级联示例
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
+            });
+            cityPicker3.setData(cityData3);
+            var showCityPickerButton = doc.getElementById('showCityPicker3');
+            var cityResult3 = doc.getElementById('cityResult3');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+
+            //时间
+            var result = $('#result')[0];
+            var btns = $('.btn');
+            btns.each(function (i, btn) {
+                btn.addEventListener('tap', function () {
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var id = this.getAttribute('id');
+                    var picker = new $.DtPicker(options);
+
+                    picker.show(function (rs) {
+                        result.innerText = rs.text;
+                        picker.dispose();
+                    });
+                }, false);
+            });
+
+        });
+    })(mui, document);
+
+    //编辑
+    $(".editroBtn").click(function () {
+        var name = $(".archives2 .name").val();
+        var sex = $(".archives2 .sex option:selected").html();
+        var height = $(".archives2 .height").val();
+        var weight = $(".archives2 .weight").val();
+        var birthday = $(".archives2 .birthday").html();
+        var location = $(".archives2 .location").html();
+        console.log(birthday);
+        console.log(location);
+        if ($(".archives2").is(":hidden")) {
+            $(".archives2").show();
+            $(".archives1").hide();
+            $(this).text("完成")
+        } else {
+            $(".archives1").show();
+            $(".archives2").hide();
+            $(this).text("编辑");
+            $(".archives1 .name").html(name);
+            $(".archives1 .sex").html(sex)
+            $(".archives1 .height").html(height + 'cm')
+            $(".archives1 .weight").html(weight + 'kg')
+            $(".archives1 .birthday").html(birthday)
+            $(".archives1 .location").html(location)
+        }
+    })
+
+
 </script>
 </html>

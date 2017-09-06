@@ -1,8 +1,8 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Base;
+use app\frontend\controller\Frontend;
 use app\service\SalaryInService;
-class Salaryin extends Base{
+class Salaryin extends Frontend{
 	private $SalaryInService;
 	public function __construct(){
 		parent::__construct();

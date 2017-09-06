@@ -1,8 +1,8 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Base;
+use app\frontend\controller\Frontend;
 use app\service\BillService;
-class Bill extends Base{
+class Bill extends Frontend{
 	protected $BillService;
 	public function _initialize(){
 		parent::_initialize();
@@ -48,31 +48,15 @@ class Bill extends Base{
     }
     //编辑|添加订单
     public function createBill(){
-    	//训练营主教练
-    	$camp_id = input('param.camp_id');
-    	$coachList = db('grade_member')->where(['type'=>4,'camp_id'=>$camp_id,'status'=>1])->select();
+    	// 训练营主教练
+    	$map = input('post.');
+    	$coachList = db('grade_member')->where(['type'=>0,'camp_id'=>$camp_id,'status'=>1])->select();
     	$assitantList = db('grade_member')->where(['type'=>8,'camp_id'=>$camp_id,'status'=>1])->select();
     	$this->assign('coachList',$coachList);
     	$this->assign('assitantList',$assitantList);
     	return view('Bill/createBill');
     }
-    //编辑|添加订单接口
-    public function updateBillApi(){
-    	$id = input('param.id');
-    	$data = input('post.');
-        $billInfo = $this->BillService->getBill(['id'=>$id]);
-        if($billInfo['is_pay']>0){
-            return ['code'];
-        }
-    	if($id){
-    		$result = $this->BillService->updateBill($data,$id);
-    	}else{
-    		$result = $this->BillService->pubBill($data);
-    	}
 
-    	return json($result);die;
-    	
-    }
 
     public function comfirmBill(){
         // 生成订单号
@@ -80,7 +64,7 @@ class Bill extends Base{
         // 生成微信参数
         // dump($billOrder);die;
         $this->assign('billOrder',$billOrder);
-        return view('Bill/createBill');
+        return view('Bill/comfirmBill');
     }
 
     
