@@ -1,6 +1,7 @@
 <?php 
 namespace app\frontend\controller;
 use think\Controller;
+use app\service\WechatService;
 class Login extends Controller{
 	
     public function index() {
@@ -27,5 +28,19 @@ class Login extends Controller{
         $this->assign('pid',$pid);
         $this->assign('referer',$referer);
         return view('Login/register');
+    }
+
+    // 微信用户授权
+    public function wxlogin() {
+        $WechatS = new WechatService();
+        $userinfo = $WechatS->oauthUserinfo();
+        //dump( $userinfo );
+        if ($userinfo) {
+            session('memberInfo.openid', $userinfo['openid'], 'think');
+            session('memberInfo.nickname', $userinfo['nickname'], 'think');
+            session('memberInfo.avatar', $userinfo['headimgurl'], 'think');
+        }
+        //dump( session('memberInfo', '', 'think') );
+        $this->redirect('frontend/Index/index');
     }
 }

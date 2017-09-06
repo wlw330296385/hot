@@ -13,7 +13,7 @@ class Member extends Base{
 	}
 
     public function index() {
-         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
         $memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);
         $this->assign('memberInfo',$memberInfo);
         return view('Member/index');

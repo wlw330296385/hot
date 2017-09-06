@@ -1,8 +1,8 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Base;
+use think\Controller;
 use app\service\LessonService;
-class Index extends Base{
+class Index extends Controller{
 	protected $LessonService;
 	public function _initialize(){
 		parent::_initialize();
@@ -29,13 +29,6 @@ class Index extends Base{
     }
 
     public function test(){
-        $a = ['a'=>33333,'b'=>44444444,'c'=>55555555];
-        $b = ['a'=>1111,'g'=>666666];
-        $c = array_merge($a,$b);
-        $c['url'] = '/uploads/images/lesson/1.jpg';
-        $media = new \app\model\Media;
-        $result = $media->allowField(true)->data($c)->save();
-        dump($result);
-        dump($c);
+        
     }
 }

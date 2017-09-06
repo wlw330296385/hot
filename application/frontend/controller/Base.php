@@ -9,7 +9,7 @@ class Base extends Controller{
 	public $systemSetting;
 	public function _initialize(){
 		$this->memberInfo = session('memberInfo','','think');
-		if(!$this->memberInfo){
+		if(!$this->memberInfo['avatar']){
 			$this->nologin();
 		}else{
 			$re = session('memberInfo',$this->memberInfo);
