@@ -273,7 +273,7 @@ class Coach extends Frontend{
         return view('Coach/campListOfCoach');
     }
 
-    // 训练营下的教练
+    // 训练营下的人员
     public function coachListOfCamp(){
         $camp_id = input('param.camp_id');
         $CampService = new \app\service\CampService;

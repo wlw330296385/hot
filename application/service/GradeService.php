@@ -92,9 +92,8 @@ class GradeService{
 
 
     // 获取学生列表
-     public function getStudentListOfCamp($grade_id,$page = 1,$paginate = 10){
+     public function getStudentList($grade_id,$page = 1,$paginate = 10){
         $result = db('grade_member')->where(['grade_id'=>$grade_id,'type'=>1,'status'=>1])->page($page,$paginate)->select();
-
         return $result;
     }
 }

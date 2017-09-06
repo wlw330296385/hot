@@ -13,7 +13,7 @@ class Grade extends Frontend{
     	$grade_id = input('grade_id');
         $gradeInfo = $this->GradeService->getGradeInfo(['id'=>$grade_id]);
     	// 获取班级学生
-    	$students = db('grade_member')->where(['grade_id'=>$id,'type'=>1,'status'=>1])->field('student')->select();
+    	$students = db('grade_member')->where(['grade_id'=>$grade_id,'type'=>1,'status'=>1])->field('student')->select();
 
     	$this->assign('gradeInfo',$gradeInfo);
         return view('Grade/index');
@@ -30,7 +30,9 @@ class Grade extends Frontend{
     	$grade_id = input('grade_id');
         $gradeInfo = $this->GradeService->getGradeInfo(['id'=>$grade_id]);
     	// 获取班级学生
-    	$students = db('grade_member')->where(['grade_id'=>$id,'type'=>1,'status'=>1])->field('student')->select();
+    	$studentList = $this->GradeService->getStudentList($grade_id);
+        $this->assign('gradeInfo',$gradeInfo);
+        $this->assign('studentList',$studentList);
     	return view('Grade/updateGrade');
     }
 
@@ -38,8 +40,7 @@ class Grade extends Frontend{
 
     public function gradeInfo(){
         $grade_id = input('grade_id');
-        $gradeInfo = $this->GradeService->getGradeInfo(['id'=>$grade_id]);
-        
+        $gradeInfo = $this->GradeService->getGradeInfo(['id'=>$grade_id]);      
         // 班级同学
         $studentList = $this->GradeService->getStudentList($grade_id);
         $this->assign('studentList',$studentList);
