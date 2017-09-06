@@ -36,38 +36,14 @@ class Lesson extends Base{
         return view('Lesson/lessonInfo');
     }
 
-    // 课程列表
-  //   public function lessonList(){
-  //   	$map = input();
-  //   	$map = $map?$map:[];
-  //   	$result = $this->LessonService->getLessonPage($map,10);
-  //   	if($result['code'] == 100){
-		// 	$list = $result['data'];
-	 //    	//在线课程
-	 //    	$dateNow = date('Y-m-d',time());
-	 //    	$onlineList = [];
-
-	 //    	//离线课程
-	 //    	$offlineList = [];
-		// 	foreach ($list as $key => $value) {
-		// 		if($value['end']<$dateNow || $value['start']>$dateNow){
-		// 			$offlineList[] = $value;
-		// 		}else{
-		// 			$onlineList[] = $value;
-		// 		}
-				
-		// 	}
-	    		 	
-  //   	}else{
-  //   		$list = []; 
-  //   	}
-    	
-  // 		$this->assign('onlineList',$onlineList);
-  // 		$this->assign('offlineList',$offlineList);
-		// return view();
-  //   }
+    //
     public function lessonList(){
-        $lessonList = $this->LessonService->getLessonPage();
+        $camp_id = input('param.camp_id');
+        $map = [];
+        if($camp_id){
+            $map['camp_id'] = $camp_id;
+        }
+        $lessonList = $this->LessonService->getLessonPage($map);
         // 课程类型
         $GradeService = new \app\service\GradeService;
         $gradecateList = $GradeService->getGradeCategory();

@@ -261,14 +261,14 @@ class Coach extends Base{
     }
 
 
-     public function campListOfCaoch(){
+    public function campListOfCoach(){
         $member_id = input('param.member_id')? input('param.member_id'):$this->memberInfo['id'];
         $campList = Db::view('grade_member','camp_id')
                 ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo,id,total_member,total_lessons','camp.id=grade_member.camp_id')
                 ->where(['grade_member.member_id'=>$member_id,'grade_member.type'=>4,'grade_member.status'=>1])
                 ->select();
         $this->assign('campList',$campList);
-        return view('Coach/campListOfCaoch');
+        return view('Coach/campListOfCoach');
     }
 
     // 训练营下的教练

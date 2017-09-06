@@ -59,7 +59,10 @@ class LessonService {
     public function getLessonInfo($map) {
         $result = Lesson::where($map)->find();
         if ($result){
-            $result = $result->toArray();
+            $res = $result->toArray();
+            // dump($res);die;
+            $res['doms'] = unserialize($res['dom']);
+            return $res;
         }
             return $result;
     }

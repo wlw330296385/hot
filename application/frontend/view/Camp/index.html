@@ -3,18 +3,18 @@
 
 <head>
     <meta charset="utf-8">
-    <title>训练营管理平台首页</title>
+    <title>训练营</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
-    <link rel="stylesheet" href="../../static/frontend/css/mui.min.css">
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/icons-extra.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
     <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/app.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
 </head>
 
 <body class="whitebg">
@@ -40,64 +40,46 @@
             <span class="course">最新消息：陈佐敦报名体验周二</span>
             <span class="more">更多</span>
         </div>
-
+        {volist name="campList" id="vol" empty="<div class='choise-identity'>你还没有加入任何训练营哦。赶紧来查找你的组织吧！</div>"}
         <div class="mb">
             <ul class="mui-table-view list">
-                <li class="mui-table-view-cell listli">训练营A<span class="mui-navigate-right"></span></li>
+                {lt name="vol.type" value="4"}<a href="{:url('camp/commonCamp',['camp_id'=>$vol['id']])}">{else/}<a href="{:url('camp/powerCamp',['camp_id'=>$vol['id']])}">{/lt}<li class="mui-table-view-cell listli">{$vol.camp}<span class="mui-navigate-right"></span></li></a>
             </ul>
             <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module2">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                    <a href="#">
+                    <a href="{:url('camp/campInfo',['camp_id'=>$vol['camp_id']])}">
                         <span class="mui-icon mui-icon-home"></span>
                         <div class="mui-media-body">训练营介绍</div>
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                    <a href="#">
-                        <span class="mui-icon mui-icon-email"><span class="mui-badge">5</span></span>
+                    <a href="{:url('lesson/lessonList',['camp_id'=>$vol['id']])}">
+                        <span class="mui-icon mui-icon-email"></span>
                         <div class="mui-media-body">课程</div>
                     </a>
                 </li>
+                {lt name="vol.type" value="4"}
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                    <a href="#">
+                    <a href="{:url('grade/gradeList',['camp_id'=>$vol['id']])}">
+                        <span class="mui-icon mui-icon-chatbubble"></span>
+                        <div class="mui-media-body colororange">班级</div>
+                    </a>
+                </li>
+                {else/}
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                    <a href="{:url('grade/gradeListWeek',['camp_id'=>$vol['id']])}">
                         <span class="mui-icon mui-icon-chatbubble"></span>
                         <div class="mui-media-body colororange">录课</div>
                     </a>
                 </li>
+                {/lt}
             </ul>
         </div>
+        {/volist}
 
-        <div>
-            <ul class="mui-table-view list">
-                <li class="mui-table-view-cell listli">训练营B<span class="mui-navigate-right"></span></li>
-            </ul>
-            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module2">
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                    <a href="#">
-                        <span class="mui-icon mui-icon-home"></span>
-                        <div class="mui-media-body">训练营介绍</div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                    <a href="#">
-                        <span class="mui-icon mui-icon-email"><span class="mui-badge">5</span></span>
-                        <div class="mui-media-body">课程</div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                    <a href="#">
-                        <span class="mui-icon mui-icon-chatbubble"></span>
-                        <div class="mui-media-body colororange">录课</div>
-                    </a>
-                </li>
-            </ul>
-        </div>
 
         <div class="success-frame success-frame2">
-            <div class="choise-identity">
-                你还没有加入任何训练营哦。
-                赶紧来查找你的组织吧！
-            </div>
+            
 
             <div class="choise">
                 <button type="button" class="mui-btn">找训练营/俱乐部</button>
@@ -108,11 +90,11 @@
 
 
     <!--底部导航-->
-{layout name="layout/footer"}
+{layout name="Layout/footer"}
 
 </div>
 </body>
-<script src="../../static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/mui.min.js"></script>
 <script>
     //初始化
     mui.init({

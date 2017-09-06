@@ -2,6 +2,7 @@
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\GradeService;
+use think\Db;
 class Grade extends Base{
 	public function _initialize(){
 		parent::_initialize();
@@ -56,8 +57,33 @@ class Grade extends Base{
         return view('Grade/gradeInfoOfCamp');
     }
 
-
+    // 普通版及列表
     public function gradeList(){
+        $member_id = $this->memberInfo['id'];
+        $camp_id = input('camp_id');
+        $map = ['camp_id'=>$camp_id];
+        $gradeList = Db::view('grade','grade,id,students,gradecate,status')
+                    ->view('grade_member','grade_id,camp_id,member_id','grade_member.grade_id=grade.id')
+                    ->where(['grade_member.status'=>1])
+                    ->where(['grade_member.camp_id'=>$camp_id])
+                    ->where(['grade.camp_id'=>$camp_id])
+                    ->select();
+        $countMyGrade = 0;
+        foreach ($gradeList as $key => $value) {
+                       if($value['member_id'] == $member_id){
+                        $countMyGrade++;
+                       }
+                    }            
+        $count = count($gradeList);
+        $this->assign('countMyGrade',$countMyGrade);
+        $this->assign('gradeList',$gradeList);
+        $this->assign('count',$count);
+        return view('Grade/gradeList');
+    }
+
+
+    // 有权限的班级列表
+    public function gradeListOfCamp(){
         $member_id = $this->memberInfo['id'];
         $camp_id = input('camp_id');
         $map1 = ['camp_id'=>$camp_id,'status'=>1];
@@ -80,6 +106,7 @@ class Grade extends Base{
         $this->assign('actGradeList',$actGradeList);
         return view('Grade/gradeList');
     }
+
 
         public function gradeListWeek(){
         $coach_id = input('param.coach_id');

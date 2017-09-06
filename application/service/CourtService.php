@@ -9,7 +9,7 @@ class CourtService {
         $this->courtModel = new Court;
     }
     // 场地列表
-    public function getCourtList($map=[],$page = 1,$paginate = 10 $order='', $field='*'){
+    public function getCourtList($map=[],$page = 1,$paginate = 10, $order='', $field='*'){
         $result = Court::where($map)->field($field)->order($order)->page($page,$paginate)->select();
         if($result){           
             $result = $result->toArray();

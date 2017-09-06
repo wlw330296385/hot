@@ -12,7 +12,13 @@ class Camp extends Base{
 
 
     public function index() {
+        // 最新消息
+        $member_id = $this->memberInfo['id'];
+        $messageList = db('message')->page(1,10)->select();
+        $campList = db('grade_member')->where(['member_id'=>$member_id,'status'=>1])->select();
 
+        $this->assign('campList',$campList);
+        $this->assign('messageList',$messageList);
         return view('Camp/index');
     }
 
@@ -45,7 +51,7 @@ class Camp extends Base{
         return view('Camp/campList');
     }
 
-   
+  
 
     public function searchCamp(){
         $keyword = input('keyword');
@@ -128,7 +134,16 @@ class Camp extends Base{
 
     // 教练的训练营
     public function campListOfCoach(){
-        $member_id = $this->memberInfo['id'];
+        $coach_id = input('param.coach_id');
+        if(!$coach_id){
+            $member_id = $this->memberInfp['id'];
+            $coachInfo = db('coach')->where(['member_id'=>$member_id])->find();
+            $this->assign('coachInfo',$coachInfo);
+            $coach_id = $coachInfo['id'];
+        }else{
+            $coachInfo = db('coach')->where(['id'=>$coach_id])->find();
+            $member_id = $coachInfo['member_id'];
+        }
         $campList = Db::view('grade_member','camp_id')
                         ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo','camp.id=grade_member.camp_id')
                         ->where(['grade_member.member_id'=>$member_id,'grade_member.type'=>4,'grade_member.status'=>1])
