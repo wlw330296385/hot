@@ -1,0 +1,114 @@
+{extend name="layout/common"/}
+{block name="css"}
+<link rel="stylesheet" href="/static/backend/adminlte/css/bootstrap-table.min.css">
+<style>
+    .show-execrise {
+        cursor: pointer;
+    }
+</style>
+{/block}
+
+{block name="page-content"}
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+            <em>训练项目管理</em>
+        </div>
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="{:url('exercise/index')}">平台发布</a></li>
+            <li><a href="{:url('exercise/lists')}">训练营/教练发布</a></li>
+        </ul>
+    </div>
+    <div class="panel-body">
+        <div class="tab-pane">
+            <div class="no-padding">
+                <div class="fixed-table-toolbar">
+                    <div class="bs-bars pull-left">
+                        <!--<a href="javascript:;" class="btn btn-primary btn-refresh"><i class="fa fa-refresh"></i> </a>-->
+                        <a href="javascript:;" class="btn btn-success btn-add" data-iframe="{:url('exercise/create')}"><i class="fa fa-plus"></i> 添加</a>
+                        <!--<a href="javascript:;" class="btn btn-danger btn-del disabled"><i class="fa fa-trash"></i> 删除</a>-->
+                    </div>
+                </div>
+
+                <div class="fixed-table-container no-border">
+                    <div class="row">
+                    {volist name="exercise" id="vo"}
+                        <div class="col-sm-6 col-md-3 col-xs-12">
+                            <ul class="list-group">
+                                <li class="list-group-item">{$vo.exercise}</li>
+                                {if condition="$vo['_data']"}
+                                {volist name="vo['_data']" id="vo2"}
+                                <li class="list-group-item clearfix">
+                                    <input type="checkbox" name="del[]" id="{$vo2.id}">
+                                    <span class="show-execrise" data-id="{$vo2.id}">{$vo2.exercise}</span>
+                                    <div class="pull-right">
+                                        <a href="javascript:;" class="show-execrise btn btn-success btn-xs" data-id="{$vo2.id}"><i class="fa fa-pencil"></i></a>
+                                        <a href="javascript:;" class="del-execrise btn btn-danger btn-xs" data-id="{$vo2.id}"><i class="fa fa-trash"></i></a>
+                                    </div>
+                                </li>
+                                {/volist}
+                                {/if}
+                            </ul>
+                        </div>
+                    {/volist}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+$(function() {
+    $('.btn-add').click(function() {
+        var iframeurl = $(this).attr('data-iframe');
+        layui.use('layer', function() {
+            var layer = layui.layer;
+            //layer.msg('heelo');
+                layer.open({
+                type: 2,
+                title: '新增训练项目',
+                shadeClose: true,
+                shade: false,
+                maxmin: true, //开启最大化最小化按钮
+                area: ['900px', '650px'],
+                content: iframeurl
+            });
+        });
+    });
+
+    $('.show-execrise').click(function() {
+        var dataid = $(this).attr('data-id');
+        layui.use('layer', function() {
+            var layer = layui.layer;
+            //layer.msg('heelo');
+            layer.open({
+                type: 2,
+                title: '训练项目详情/编辑',
+                shadeClose: true,
+                shade: false,
+                maxmin: true, //开启最大化最小化按钮
+                area: ['900px', '650px'],
+                content: "{:url('exercise/show')}/id/"+dataid
+            })
+        });
+    });
+
+    $('.del-execrise').click(function(){
+        if ( confirm('确定要删除记录吗? 不可恢复的喔~') ){
+            var serverurl = "{:url('exercise/del')}",
+                dataid = $(this).attr('data-id');
+            $.post(serverurl, {
+                id: dataid
+            },function(res){
+                //console.log(res);
+                alert(res.msg);
+                window.location.reload();
+            });
+        }
+    })
+});
+</script>
+{/block}

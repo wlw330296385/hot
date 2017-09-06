@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>提现</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body class=whitebg>
+<header id="header" class="mui-bar mui-bar-nav subheader">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <h1 class="mui-title">钱包提现</h1>
+</header>
+<div class="mui-content">
+
+    <div class="list camp-list camp-lesson-list detalis-list coach">
+        <ul class="mui-table-view mb">
+            <li class="mui-table-view-cell listli listinitial">
+                <span>钱包余额￥{$memberInfo['balance']}</span>
+            </li>
+            <li class="mui-table-view-cell listli listinitial">
+                提现金额<input type="text" class="input" placeholder="￥0.00">
+            </li>
+            <li class="mui-table-view-cell listli listinitial">
+                <a href="#" class="mui-navigate-right bankcard">
+                    到账银行<span>{$bankcardList.0.bank}({$bankcardList.0.bank_card|substr=-4})</span>
+                </a>
+            </li>
+           
+            <ul class="mui-table-view bankcard-body" style="display: none">
+            {volist name="bankcardList" id="vol"}
+                <li class="mui-table-view-cell item-list listli listinitial">
+                    <div class="list-cont">
+                        <h4>{$vol.bank}({$vol.bank_card|substr=-4})</h4>
+                        <p>提现手续费0.1%</p>
+                    </div>
+                </li> {/volist}
+
+                <li class="mui-table-view-cell listli listinitial border-b">
+                    <a href="{:url('member/createBankCard')}">添加新银行卡</a>
+                </li>
+            </ul>
+            <div class="tjbtn tjbtn-next">
+                <button type="button" class="btn btn1">
+                    提现
+                </button>
+            </div>
+        </ul>
+    </div>
+</div>
+
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+    mui('body').on('tap', 'a', function () {
+        window.top.location.href = this.href;
+    });
+    mui('body').on('tap', '.bankcard', function () {
+    $(".bankcard-body").show();
+    $(".sxf").hide();
+    });
+</script>
+</html>

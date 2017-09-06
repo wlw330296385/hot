@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>教练工资列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--等级星星样式-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
+</head>
+
+<body class=whitebg>
+
+<div class="mui-content">
+
+    <div class="list camp-list camp-lesson-list detalis-list coach">
+        <div class="camp-lesson-list">
+            <div id="segmentedControl" class="mui-segmented-control mb">
+                <a class="mui-control-item  mui-active" href="#item1">每月工资列表</a>
+                <a class="mui-control-item" href="#item2">训练营</a>
+            </div>
+        </div>
+
+        <div class="item-list">
+            <div id="item1" class="mui-control-content mui-active mt55">
+                <div class="nav-list mb">
+                    <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                        <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6"><a href="#">
+                            <span>教练人数</span>
+                            <div class="mui-media-body">13</div>
+                        </a></li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6"><a href="#">
+                            <span>工资总额</span>
+                            <div class="mui-media-body">{$countSalaryin}</div>
+                        </a></li>
+                    </ul>
+                </div>
+                <div class="page-header location-frame">
+                    <span class="course location-choise wd27" style=float:left;>
+                          <select class="wd73">
+                            {for start="$m" end="0" comparison="gt" step="-1" name="i"}
+                            <option>{$i}月工资</option>
+                            {/for}
+                            
+                        </select>
+                         <i class="mui-icon mui-icon-arrowdown iconsize"></i>
+                    </span>
+                    <span class="location-choise">
+                         <select class="wd73">
+                            {for start="$y" end="$y-8" comparison="gt" step="-1" name="i"}
+                            <option>{$i}年</option>
+                            {/for}
+                        </select>
+                        <i class="mui-icon mui-icon-arrowdown iconsize"></i>
+                    </span>
+                </div>
+
+                <ul class="mui-table-view">
+                    <li class="mui-table-view-cell listli" style="color:#000">
+                        教练名称
+                        <span>工资</span>
+                    </li>
+                    {volist name="salaryList" id="vol"}
+                    <li class="mui-table-view-cell listli">
+                        <a class="mui-navigate-right" style="color:#000" href="{:url('coach/coachInfoOfCamp',['member_id'=>$vol.member_id])}">
+                            {$vol.realname}
+                            <span class="wd45">{$vol.salary}</span>
+                        </a>
+                    </li>
+                    {/volist}
+                </ul>
+            </div>
+            <div id="item2" class="mui-control-content">
+                <div class="page-header">
+                    <span class="course">我加入的训练营</span>
+                </div>
+                <ul class="mui-table-view">
+                    <li class="mui-table-view-cell listli">
+                        <a href="#" class="mui-navigate-right">
+                            大热安凯翔训练营
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell listli">
+                        <a href="#" class="mui-navigate-right">
+                            大热韦林训练营
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!--底部导航-->
+{layout name="Layout/footer"}
+
+</div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<!--等级星星样式-->
+<script src="/static/frontend/js/feedback.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    mui('body').on('shown', '.mui-popover', function (e) {
+        //console.log('shown', e.detail.id);//detail为当前popover元素
+    });
+    mui('body').on('hidden', '.mui-popover', function (e) {
+        //console.log('hidden', e.detail.id);//detail为当前popover元素
+    });
+    var info = document.getElementById("info");
+    mui('body').on('tap', '.mui-popover-action li>a', function () {
+        var a = this,
+            parent;
+        //根据点击按钮，反推当前是哪个actionsheet
+        for (parent = a.parentNode; parent != document.body; parent = parent.parentNode) {
+            if (parent.classList.contains('mui-popover-action')) {
+                break;
+            }
+        }
+        //关闭actionsheet
+        mui('#' + parent.id).popover('toggle');
+        info.innerHTML = "你刚点击了\"" + a.innerHTML + "\"按钮";
+    })
+</script>
+</html>

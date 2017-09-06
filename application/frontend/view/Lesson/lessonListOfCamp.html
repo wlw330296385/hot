@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>训练营课程列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body class="whitebg">
+
+<div class="mui-content">
+
+    <div class="list camp-list camp-lesson-list detalis-list coach">
+        <div class="camp-lesson-list">
+            <div id="segmentedControl" class="mui-segmented-control mb">
+                <a class="mui-control-item" href="#">添加课程</a>
+                <a class="mui-control-item mui-active" href="#item2">上架课程</a>
+                <a class="mui-control-item" href="#item3">下架课程</a>
+                <a class="mui-control-item" href="#item4">训练营</a>
+            </div>
+
+            <div class="item-list">
+                <div id="item2" class="mui-control-content mui-active">
+                    <ul class="mui-table-view list">
+                    {volist name="onlineLessonList" id="vol"}
+                        <li class="mui-table-view-cell mui-media listli">
+                            <a href="{:url('lesson/lessonInfo',['lesson_id'=>$vol['id']])}" class="mui-navigate-right">
+                                <div class="mui-media-body">
+                                    <strong>{$vol.lesson}</strong>
+                                    <p class="mui-ellipsis">{$vol.gradecate} | {$vol.court}</p>
+                                </div>
+                            </a>
+                        </li>
+                    {/volist}
+                    </ul>
+                </div>
+                <div id="item3" class="mui-control-content">
+                    <ul class="mui-table-view list">
+                    {volist name="offlineLessonList" id="vol"}
+                        <li class="mui-table-view-cell mui-media listli">
+                            <a href="{:url('lesson/lessonInfo',['lesson_id'=>$vol['id']])}" class="mui-navigate-right">
+                                <div class="mui-media-body">
+                                    <strong>{$vol.lesson}</strong>
+                                    <p class="mui-ellipsis">{$vol.gradecate} | {$vol.court}</p>
+                                </div>
+                            </a>
+                        </li>
+                    {/volist}
+                    </ul>
+                </div>
+                <div id="item4" class="mui-control-content">
+                    <div class="page-header">
+                        <span class="course">我加入的训练营</span>
+                    </div>
+                    <ul class="mui-table-view">
+                        <li class="mui-table-view-cell listli">
+                            <a href="#" class="mui-navigate-right">
+                                大热安凯翔训练营
+                            </a>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <a href="#" class="mui-navigate-right">
+                                大热韦林训练营
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--底部导航-->
+ {layout name="Layout/footer"}
+
+</div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+    mui("body").on("tap","a",function(){
+        window.top.location.href=this.href;
+    });
+</script>
+</html>

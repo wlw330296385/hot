@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>周课表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body class=whitebg>
+
+<div class="mui-content">
+
+    <div class="list camp-list camp-lesson-list detalis-list coach">
+        <div class="camp-lesson-list">
+            <div id="segmentedControl" class="mui-segmented-control mb">
+                <a class="mui-control-item" href="#">返回首页</a>
+                <a class="mui-control-item mui-active" href="#item2">我的班级</a>
+                <a class="mui-control-item" href="#item3">训练营</a>
+            </div>
+        </div>
+
+
+        <div class="item-list">
+            <div id="item2" class="mui-control-content mui-active">
+                <div class="whitebg card-list">
+                    {volist name="gradeList" id="vol"}
+                    <div class="mui-card">
+                        <div class="mui-card-header">
+                            <div class="card-left"><span class="time">{$vol.lesson_time}</span> {$vol.location}</div>
+                        </div>
+                        <div class="mui-card-content">
+                            <div class="mui-card-content-inner">
+                                <h4>{$vol.grade} <span class="name">{$vol.coach}</span></h4>
+                            </div>
+                        </div>
+                        <div class="mui-card-footer">{$vol.gradecate}
+                            <a style="color:red;"
+                               href="{:url('schedule/recordSchedule',['grade_id'=>$vol['id'],'lesson_id'=>$vol['lesson_id'],'camp_id'=>$vol['camp_id']])}">录课</a>
+                        </div>
+                    </div>
+
+                    {/volist}
+                </div>
+            </div>
+            <div id="item3" class="mui-control-content">
+                <div class="page-header">
+                    <span class="course">我加入的训练营</span>
+                </div>
+                <ul class="mui-table-view">
+                    <li class="mui-table-view-cell listli listinitial">
+                        <a href="#" class="mui-navigate-right">
+                            大热安凯翔训练营
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell listli listinitial">
+                        <a href="#" class="mui-navigate-right">
+                            大热韦林训练营
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!--底部导航-->
+<nav class="mui-bar mui-bar-tab schedule-list weeklist">
+    <a class="mui-tab-item mui-active" href="#tabbar">
+        <span class="mui-tab-label">一</span>
+    </a>
+    <a class="mui-tab-item" href="#tabbar-with-chat">
+        <span class="mui-tab-label">二</span>
+    </a>
+    <a class="mui-tab-item" href="#tabbar-with-contact">
+        <span class="mui-tab-label">三</span>
+    </a>
+    <a class="mui-tab-item" href="#tabbar-with-contact">
+        <span class="mui-tab-label">四</span>
+    </a>
+    <a class="mui-tab-item" href="#tabbar-with-map">
+        <span class="mui-tab-label">五</span>
+    </a>
+    <a class="mui-tab-item" href="#tabbar-with-map">
+        <span class="mui-tab-label">六</span>
+    </a>
+    <a class="mui-tab-item" href="#tabbar-with-map">
+        <span class="mui-tab-label">日</span>
+    </a>
+</nav>
+
+</div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+</script>
+</html>

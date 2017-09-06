@@ -1,0 +1,94 @@
+{extend name="layout/common"/}
+
+{block name="page-content"}
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+            <em>提现列表</em>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="bootstrap-table">
+            <div class="search-form">
+                <form action="" class="form-inline" method="post">
+                    <fieldset>
+                        <div class="form-group">
+                            <label class="control-label">会员</label>
+                            <input class="form-control" type="text" name="member" >
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12 text-center">
+                                <button type="submit" class="btn btn-success btn-flat">搜索</button>
+                                <button type="reset" class="btn btn-default btn-flat">重置</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+
+            <div class="fixed-table-container no-border">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box no-border">
+                            <div class="box-body">
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>收入金额</th>
+                                        <th>会员</th>
+                                        <th>会员姓名</th>
+                                        <th>联系电话</th>
+                                        <th>提现时间</th>
+                                        <th>完成提现时间</th>
+                                        <th>提现情况</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {volist name="list" id="vo"}
+                                    <tr>
+                                        <td>{$vo.id}</td>
+                                        <td>{$vo.salary}</td>
+                                        <td>{$vo.member}</td>
+                                        <td>{$vo.realname}</td>
+                                        <td>{$vo.telephone}</td>
+                                        <td>{$vo.create_time|date="Y-m-d H:i", ###}</td>
+                                        <td>{$vo.pay_time|date="Y-m-d H:i", ###}</td>
+                                        <td>
+                                            {switch name="vo.is_pay"}
+                                            {case value="1"}完成{/case}
+                                            {default/}失败
+                                            {/switch}
+                                        </td>
+                                        <td>
+                                            {switch name="vo.status"}
+                                            {case value="1"}正常{/case}
+                                            {default/}失败
+                                            {/switch}
+                                        </td>
+                                        <td>
+                                            <a href="{:url('finance/salaryout', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i></a>
+                                            <!--<a href="" class="btn btn-xs btn-danger del-btn"><i class="fa fa-trash"></i></a>-->
+                                        </td>
+                                    </tr>
+                                    {/volist}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {if condition="$list"}
+                            <div class="box-footer clearfix">
+                                {$list->render()}
+                            </div>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{/block}

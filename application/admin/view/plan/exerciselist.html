@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>控制台</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/backend/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/backend/plugins/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/skins/skin-blue.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/master.css">
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="wrapper">
+    <div class="panel panel-default panel-intro">
+        <div class="panel-heading">
+            <div class="panel-lead clearfix">
+                <em>训练项目列表</em>
+                <ul class="pull-right">
+                    <li><button class="btn btn-success" id="sub-exer">确认</button></li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="tab-pane">
+                <div class="no-padding">
+                    <div class="fixed-table-container no-border">
+                        <div class="row">
+                            {volist name="exercise" id="vo"}
+                            <div class="col-sm-6 col-md-3 col-xs-12">
+                                <ul class="list-group">
+                                    <li class="list-group-item exer_p" data-id="{$vo.id}">{$vo.exercise}</li>
+                                    {if condition="$vo['_data']"}
+                                    {volist name="vo['_data']" id="vo2"}
+                                    <li class="list-group-item clearfix">
+                                        <label><input type="checkbox" class="exer_item" name="exercise-list" value="{$vo2.id}" data-pid="{$vo2.pid}"><span>{$vo2.exercise}</span></label>
+                                    </li>
+                                    {/volist}
+                                    {/if}
+                                </ul>
+                            </div>
+                            {/volist}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/backend/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="/static/backend/adminlte/js/bootstrap.min.js"></script>
+<script src="/static/backend/layui/layui.js"></script>
+<script src="/static/backend/adminlte/js/app.min.js"></script>
+<script src="/static/backend/adminlte/js/master.js"></script>
+<script>
+"use struct";
+$(function() {
+    var index = parent.layer.getFrameIndex(window.name);
+
+    var ajaxurl = "{:url('plan/ajaxselected')}";
+    var ajax_selected = parent.$('#exercise_txt').val();
+    if (ajax_selected.length > 0) {
+        //console.log(ajax_selected);
+        $.post(ajaxurl, {
+            content: ajax_selected
+        }, function(res) {
+            console.log(res);
+            if (res.status) {
+                $('.exer_item').each(function() {
+                    var cur_id = $(this).val();
+                    var map1 = $.inArray(cur_id, res.data);
+                    console.log(map1);
+                    if (map1 > -1) {
+                        $(this).attr('checked', true);
+                    }
+                });
+            }
+        }, 'json');
+    }
+
+
+
+    $('#sub-exer').click(function() {
+        if ( $('.exer_item').is(':checked') ) {
+            var selected = "";
+            $('.exer_item:checked').each(function() {
+                var exer_parent = $(this).parent().parent().parent().find('.exer_p'),
+                    exer_parent_id = exer_parent.attr('data-id'),
+                    exer_parent_txt = exer_parent.html(),
+                    cur_pid = $(this).attr('data-pid'),
+                    cur_txt = $(this).siblings('span').text(),
+                    cur_id = $(this).val();
+                selected += exer_parent_id+','+exer_parent_txt+"|"+cur_id+','+cur_txt+','+cur_pid+"|";
+                console.log(selected);
+            });
+        } else {
+            alert('请选择训练项目');
+            return;
+        }
+        selected = selected.substring(0, selected.length-1);
+        //console.log(selected);
+
+        var handleurl = "{:url('plan/handleselected')}";
+        $.post(handleurl, {
+            content: selected
+        }, function(res){
+            if (res.status) {
+                // 传值
+                parent.$('#program-list').append(res.html);
+                parent.$('#exercise_txt').val(res.string);
+                // 关闭layer层
+                parent.layer.close(index);
+            }
+        }, 'json');
+    });
+})
+</script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>我的订单</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body class=whitebg>
+
+<div class="mui-content">
+
+    <div class="list camp-list camp-lesson-list detalis-list coach">
+        <div class="camp-lesson-list">
+            <div id="segmentedControl" class="mui-segmented-control mb">
+                <a class="mui-control-item mui-active" href="#item1">全部</a>
+                <a class="mui-control-item" href="#item2">已付款</a>
+                <a class="mui-control-item" href="#item3">未付款</a>
+                <a class="mui-control-item" href="#item4">退款</a>
+            </div>
+        </div>
+        <div class="nav-list">
+            <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"><a href="#">
+                    <span>总订单</span>
+                    <div class="mui-media-body">23</div>
+                </a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"><a href="#">
+                    <span>已付款</span>
+                    <div class="mui-media-body">21</div>
+                </a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"><a href="#">
+                    <span>未付款</span>
+                    <div class="mui-media-body">2</div>
+                </a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"><a href="#">
+                    <span>退款</span>
+                    <div class="mui-media-body">0</div>
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="item-list">
+            <div id="item1" class="mui-control-content mui-active">
+
+                <ul class="mui-table-view mui-text-center">
+                    <li class="mui-table-view-cell">
+                        <ul class="mui-row table">
+                            <li class="mui-col-sm-6 mui-col-xs-6 mui-text-left">订单名称(课程)</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2">金额(元)</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2">积分</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2">付款状态</li>
+                        </ul>
+                    </li>
+                    {volist name="billList" id="vol"}
+                    <li class="mui-table-view-cell">
+                        <a href="{:url('bill/billInfo',['bill_id'=>$vol['id']])}">
+                            <ul class="mui-row table  item-list">
+                                <li class="mui-col-sm-6 mui-col-xs-6">
+                                    <div class="list-cont1">
+                                        <h4>{$vol.goods_des}</h4>
+                                        <p>{$vol.create_time}</p>
+                                    </div>
+                                </li>
+                                <li class="mui-col-sm-2 mui-col-xs-2 line-height40">{$vol.balance_pay}</li>
+                                <li class="mui-col-sm-2 mui-col-xs-2 line-height40">{$vol.score_pay}</li>
+                                <li class="mui-col-sm-2 mui-col-xs-2 line-height40">{$vol.is_pay}</li>
+                            </ul>
+                        </a>
+                    </li>
+
+                    {/volist}
+                </ul>
+            </div>
+            <div id="item2" class="mui-control-content">
+
+                <ul class="mui-table-view mui-text-center">
+                    <li class="mui-table-view-cell">
+                        <ul class="mui-row table">
+                            <li class="mui-col-sm-6 mui-col-xs-6 mui-text-left">订单名称(课程)</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2">金额(元)</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2">积分</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2">付款状态</li>
+                        </ul>
+                    </li>
+                    {volist name="billList" id="vol"}
+                    {eq name="vol.is_pay" value="已付款"}
+                    <li class="mui-table-view-cell">
+                        <a href="{:url('bill/billInfo',['bill_id'=>$vol['id']])}">
+                            <ul class="mui-row table  item-list">
+                                <li class="mui-col-sm-6 mui-col-xs-6">
+                                    <div class="list-cont1">
+                                        <h4>{$vol.goods_des}</h4>
+                                        <p>{$vol.create_time}</p>
+                                    </div>
+                                </li>
+                                <li class="mui-col-sm-2 mui-col-xs-2 line-height40">{$vol.balance_pay}</li>
+                                <li class="mui-col-sm-2 mui-col-xs-2 line-height40">{$vol.score_pay}</li>
+                                <li class="mui-col-sm-2 mui-col-xs-2 line-height40">{$vol.is_pay}</li>
+                            </ul>
+                        </a>
+                    </li>
+                    {/eq}
+                    {/volist}
+                </ul>
+            </div>
+            <div id="item3" class="mui-control-content">
+
+                <ul class="mui-table-view mui-text-center">
+
+                    <li class="mui-table-view-cell">
+                        <ul class="mui-row table">
+                            <li class="mui-col-sm-6 mui-col-xs-6 mui-text-left">订单名称(课程)</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2">金额(元)</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2">积分</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2">付款状态</li>
+                        </ul>
+                    </li>
+                    {volist name="billList" id="vol"}
+                    {eq name="vol.is_pay" value="未付款"}
+                    <li class="mui-table-view-cell">
+                        <a href="{:url('bill/billInfo',['bill_id'=>$vol['id']])}">
+                            <ul class="mui-row table item-list">
+                                <li class="mui-col-sm-6 mui-col-xs-6">
+                                    <div class="list-cont1">
+                                        <h4>{$vol.goods_des}</h4>
+                                        <p>{$vol.create_time}</p>
+                                    </div>
+                                </li>
+                                <li class="mui-col-sm-2 mui-col-xs-2 line-height40">{$vol.balance_pay}</li>
+                                <li class="mui-col-sm-2 mui-col-xs-2 line-height40">{$vol.score_pay}</li>
+                                <li class="mui-col-sm-2 mui-col-xs-2 line-height40">{$vol.is_pay}</li>
+                            </ul>
+                        </a>
+                    </li>
+                    {/eq}
+                    {/volist}
+
+                </ul>
+            </div>
+            <div id="item4" class="mui-control-content">
+
+                <ul class="mui-table-view mui-text-center">
+                    <li class="mui-table-view-cell">
+                        <ul class="mui-row table">
+                            <li class="mui-col-sm-6 mui-col-xs-6 mui-text-left">订单名称(课程)</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2">金额(元)</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2">积分</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2">付款状态</li>
+                        </ul>
+                    </li>
+                    {volist name="billList" id="vol"}
+                    {switch name="vol.is_pay"}
+                    {case value="申请退款|已退款"}
+                    <li class="mui-table-view-cell">
+                        <ul class="mui-row table  item-list">
+                            <a href="{:url('bill/billInfo',['bill_id'=>$vol['id']])}">
+                                <li class="mui-col-sm-6 mui-col-xs-6">
+                                    <div class="list-cont1">
+                                        <h4>{$vol.goods_des}</h4>
+                                        <p>{$vol.create_time}</p>
+                                    </div>
+                                </li>
+                                <li class="mui-col-sm-2 mui-col-xs-2 line-height40">{$vol.balance_pay}</li>
+                                <li class="mui-col-sm-2 mui-col-xs-2 line-height40">{$vol.score_pay}</li>
+                                <li class="mui-col-sm-2 mui-col-xs-2 line-height40">{$vol.is_pay}</li>
+                            </a>
+                        </ul>
+                    </li>
+                    {/case}
+                    {/switch}
+                    {/volist}
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+</script>
+</html>

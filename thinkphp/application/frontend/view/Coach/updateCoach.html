@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>教练注册</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <style>
+        .regspan {
+            font-size: 12px;
+            text-align: center;
+            height: 20px;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+
+<body class=whitebg>
+
+<header class="mui-bar mui-bar-nav subheader header2">
+    <a class="mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <h1 class="mui-title">完善教练信息</h1>
+</header>
+<div class="mui-content pt">
+    <div class="detalis-list register">
+        <form action="" class="whitebg">
+
+            <ul class="mui-table-view list">
+                <li class="mui-table-view-cell listli detalisli listinitial">姓名<span style="color: #737373">{$coachInfo.coach}</span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">身份证号码<input type="text" class="input wd66"
+                                                                             placeholder="请输入身份证号码"{notempty name="identCert"} value=" {$identCert.cert_no}"{/noenmpty}></li>
+                <li class="mui-table-view-cell listli detalisli line-height40">
+                    <a href="#" class="mui-navigate-right">身份证正面
+                        <img class="coachicon icon01" {notempty name="identCert"} src="{$identCert.photo_positive}" {/noenmpty} alt="">
+                    </a>
+                    <a href="#" class="mui-navigate-right">身份证反面
+                        <img class="coachicon icon01" {notempty name="identCert"} src="{$identCert.photo_back}" {/noenmpty} alt="">
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli line-height40"><a href="#" class="mui-navigate-right">个人形象照
+                    <img class="coachicon icon01" {notempty name="coachInfo"} src="{$coachInfo.portraits}" {/noenmpty}alt="">
+                </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli line-height40"><a href="#"
+                                                                                  class="mui-navigate-right">资质证明
+                    <img class="coachicon icon01" {notempty name="coachCert"} src="{$coachCert.photo_positive}"{/noenmpty} alt="">
+                </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli listinitial">教学工龄
+                    <input type="text" class="input"
+                           placeholder="请输入教学工龄" value="{$coachInfo.coach_year}">
+                </li>
+                <li class="mui-table-view-cell listli detalisli border-b">教学经验描述
+                    <div class="tips">
+                        <textarea rows="5" placeholder="填写教学经验">{$coachInfo.experience}</textarea>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell listli detalisli border-b">自我介绍
+                    <div class="tips">
+                        <textarea rows="5" placeholder="填写教学经验">{$coachInfo.introduction}</textarea>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell listli detalisli border-b">个人宣言
+                    <div class="tips">
+                        <textarea rows="5" placeholder="填写教学经验">{$coachInfo.description}</textarea>
+                    </div>
+                </li>
+            </ul>
+            <div class="regspan tip repassword_hint password_hint mobile_hint"></div>
+            <div class="registf">
+                <input type="checkbox" checked>
+                <label>同意大热篮球事业合伙协议</label>
+            </div>
+            <div class="tjbtn">
+                <button type="button" class="mui-btn btn registerbtn2">
+                    完成
+                </button>
+            </div>
+            <p class="height20"></p>
+        </form>
+    </div>
+
+</div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!--选择器-->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
+
+<script src="/static/frontend/libs/yzvalidate.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    //验证码
+    function clickButton(obj) {
+        var obj = $(obj);
+        obj.attr("disabled", "disabled");
+        /*按钮倒计时*/
+        var time = 60;
+        var set = setInterval(function () {
+            obj.val(--time + "(s)");
+        }, 1000);
+        /*等待时间*/
+        setTimeout(function () {
+            obj.attr("disabled", false).val("重新获取验证码");
+            /*倒计时*/
+            clearInterval(set);
+        }, 60000);
+    }
+
+    $(function () {
+
+        $(".registerbtn2").on("click", function () {
+            mui.ajax('http://hotpaas.com/api/coach/updateCoachApi/coach_id/{$coachInfo.id}', {
+                data: {
+                   'status':1,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: {'Content-Type': 'application/json'},
+                success: function (data) {
+                    console.log(data)
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(type);
+                }
+            });
+        })
+
+    })
+
+</script>
+</html>

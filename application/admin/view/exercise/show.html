@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>控制台</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/backend/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/backend/plugins/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/skins/skin-blue.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/master.css">
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="/static/backend/plugins/webuploader/webuploader.css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="box no-border">
+                <form role="form" action="{:url('exercise/update')}" method="post">
+                    {:token()}
+                    <input type="hidden" name="id" value="{$exercise.id}">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="">项目名称</label>
+                            <input type="text" class="form-control" placeholder="项目名称" name="exercise" value="{$exercise.exercise}">
+                        </div>
+                        <div class="form-group">
+                            <label for="">项目类型</label>
+                            <select name="pid" class="form-control">
+                                <option name=""></option>
+                                {volist name="type" id="vo"}
+                                <option value="{$vo.id}" {if condition='$vo["id"] eq $exercise["pid"]'}selected{/if}>{$vo.exercise}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="">项目要领</label>
+                            <textarea class="form-control" placeholder="项目要领" name="exercise_detail">{$exercise.exercise_detail}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            {if condition="$exercise.media"}
+                            <p>视频</p>
+                            <div class="col-xs-12 uploader-list">
+                                <div id="uploader-preview" class="thumbnail col-md-5">
+                                    <i class="fa fa-times-circle remove-picture"></i>
+                                    <video width="100%" controls src="{$exercise.media}"></video>
+                                </div>
+                            </div>
+                            {else/}
+                            <p>无视频</p>
+                            {/if}
+
+                            {if condition="$exercise['camp_id'] eq 0"}
+                            <div id="uploader-wrap">
+                                <div id="fileList" class="uploader-list"></div><!--用来存放item-->
+                                <div id="filePicker">选择上传</div>
+                            </div>
+                            {/if}
+                            <input id="uploader-input" type="hidden" name="media" value="{$exercise.media}">
+                        </div>
+
+                        {if condition="$exercise['camp_id'] neq 0"}
+                        <div class="form-group">
+                            <label for="">发布者</label>
+                            <p>{$exercise.member} ({$exercise.member_id})</p>
+                        </div>
+                        {/if}
+
+                        <div class="form-group">
+                            {if condition="$exercise['camp_id'] eq 0"}
+                            <p>平台发布</p>
+                            {else/}
+                            <label for="">所属训练营</label>
+                            <p>{$exercise.camp}</p>
+                            {/if}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">是否对外开放</label>
+                            <p>{if condition="$exercise['is_open'] eq 0"}不{/if}开放</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">状态</label>
+                            <p>
+                            {switch name="exercise.status"}
+                            {case value="1"}正常{/case}
+                            {case value="0"}未审核{/case}
+                            {default /} {$exercise.member}发布
+                            {/switch}
+                            </p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">创建时间</label>
+                            <p>{$exercise.create_time}</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">最后修改时间</label>
+                            <p>{$exercise.update_time}</p>
+                        </div>
+
+                    </div>
+
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-success">修 改</button>
+                        <!--<button type="button" class="btn btn-default">关闭</button>-->
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- ./wrapper -->
+
+
+<script src="/static/backend/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="/static/backend/adminlte/js/bootstrap.min.js"></script>
+<script src="/static/backend/layui/layui.js"></script>
+<script src="/static/backend/adminlte/js/app.min.js"></script>
+<script src="/static/backend/adminlte/js/master.js"></script>
+<script src="/static/backend/plugins/webuploader/webuploader.min.js"></script>
+<script>
+    var serverUrl = "{:url('Upload/video')}";
+</script>
+<script src="/static/backend/adminlte/js/upload/video.js"></script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>训练营详情页-</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css" />
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--等级星星样式-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css" />
+</head>
+
+<body class=whitebg>
+
+
+    <!--首页-->
+    <div class="mui-content">
+
+        <!--训练营详情页-->
+        <div class="mui-content">
+            <div class="list camp-list detalis-list">
+                <img class="cover" src="/static/frontend/images/yuantiao.jpg" alt="">
+                <ul class="mui-table-view mb" style="margin-top: -4px">
+                    <li class="mui-table-view-cell mui-media listli de " style="padding:11px 15px;">
+                        <a href="javascript:;">
+                            <img class="mui-media-object mui-pull-left" src="{$campInfo.logo}">
+                            <div class="mui-media-body">
+                                {$campInfo.camp}
+                                <p class="mui-ellipsis">{$campInfo.province} {$campInfo.city} {$campInfo.area}</p>
+                            </div>
+                            <div class="price-frame camp-num">
+                                <ul>
+                                    <li>
+                                        <div class="icons mui-inline">{$campInfo.star}
+                                            <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
+                                            <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
+                                            <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
+                                            <i data-index="4" class="mui-icon mui-icon-star-filled"></i>
+                                            <i data-index="5" class="mui-icon mui-icon-star-filled"></i>
+                                        </div>
+                                    </li>
+                                    <li class="fr">{$campInfo.total_member}人报名</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="mui-table-view mb">
+                    <li class="mui-table-view-cell listli detalisli">训练营介绍
+                        <span class="about">{$campInfo.camp_introduction}
+                        <a href="#">全文展示</a>
+    
+                    </span>
+                    </li>
+                </ul>
+
+                <ul class="mui-table-view mb">
+                    <li class="mui-table-view-cell listli detalisli" style="line-height: 40px;">
+                        <a class="mui-navigate-right">
+                        教练
+                        {volist name="coachList" id="vol"}
+                        <img class="coachicon" src="{$vol.portraits}" alt="">
+                        {/volist}
+                    </a>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">课量<span>已上{$campInfo.total_schedule}课时</span></li>
+                    <li class="mui-table-view-cell listli detalisli">班级<span>全部{$campInfo.total_grade}个班级</span></li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <a class="mui-navigate-right">
+                        训练点<span>全部{$campInfo.camp_base}个训练点</span>
+                    </a>
+                    </li>
+                </ul>
+                <div class="page-header">
+                    <span class="course">热门课程</span>
+                    <span class="more">全部{$lessonCount}个课程</span>
+                </div>
+                <ul class="mui-table-view course-list">
+                    {volist name="lessonList" id="vol" limit='5'}
+                    <li class="mui-table-view-cell mui-media listli padding">
+                        <a href="{:url('lesson/lessonInfo',['lesson_id'=>$vol['id']])}">
+                            <img class="mui-media-object mui-pull-left" src="{$vol.cover}">
+                            <div class="mui-media-body">
+                                {$vol.lesson}
+                                <p class="mui-ellipsis">{$vol.gradecate}</p>
+                            </div>
+                            <div class="price-frame">
+                                <p class="price">￥{$vol.cost}</p>
+                                <p class="address">{$vol.province} {$vol.city} {$vol.area}</p>
+                            </div>
+                        </a>
+                    </li>
+                    {/volist}
+                </ul>
+                <p class="dropdown"><a href="{:url('lesson/lessonList',['lesson_id'=>$vol['id']])}">更多课程...</a></p>
+
+                <ul class="mui-table-view operation">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-6 opli">
+                        <a href="tel:18507717466"></a>
+                        <span class="mui-icon mui-icon-phone"></span>电话咨询
+                    </li>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-6 opli" style="color:#000;border-left: 1px solid #ccc;"><a href="#delete">评价列表</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div id="delete" class="mui-popover mui-popover-action mui-popover-bottom" data-backdrop="static">
+
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell">
+                    <textarea id="question" class="mui-input-clear question" placeholder="说说你对教练的印象吧..."></textarea>
+                </li>
+            </ul>
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell">
+                    <a href="#delete"><b>提交评价</b></a>
+                </li>
+                <li class="mui-table-view-cell">
+                    <a href="#delete"><b>取消</b></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<!--等级星星样式-->
+<script src="/static/frontend/js/feedback.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+</script>
+
+</html>
