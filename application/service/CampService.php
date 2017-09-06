@@ -107,14 +107,15 @@ class CampService {
 
 
     /**
-     * 是否有2,3,4权限管理训练营
+     * 返回权限
      */
-    public function isPower234($camp_id,$member_id){
-        $is_power = db('grade_member')
+    public function isPower($camp_id,$member_id){
+        $is_power = db('camp_member')
                     ->where(['member_id'=>$member_id,'camp_id'=>$camp_id,'status'=>1])
-                    ->where(function ($query) {
-                            $query->where('type', 2)->whereor('type', 3)->whereor('type',4);})
-                    ->select();
+                    // ->where(function ($query) {
+                            // $query->where('type', 2)->whereor('type', 3)->whereor('type',4);})
+                    ->value('type');
+                    // echo db('camp_member')->getlastsql();die;
         return $is_power?$is_power:0;
     }
 }

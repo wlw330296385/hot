@@ -187,7 +187,7 @@ class Member extends Frontend{
     // 我的管理员身份训练营
     public function myLeader(){
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
-        $campList = db('grade_member')->where(['member_id'=>$member_id,'type'=>2])->select();
+        $campList = db('camp_member')->where(['member_id'=>$member_id,'type'=>3])->select();
 
         $this->assign('campList',$campList);
         return view('Member/myLeader');
@@ -196,7 +196,7 @@ class Member extends Frontend{
     // 我的教练身份训练营
     public function myCoach(){
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
-        $campList = db('grade_member')->where(['member_id'=>$member_id,'type'=>4])->select();
+        $campList = db('camp_member')->where(['member_id'=>$member_id,'type'=>2])->select();
 
         $this->assign('campList',$campList);
         return view('Member/myCoach');
@@ -204,7 +204,7 @@ class Member extends Frontend{
      // 我的学生身份训练营
     public function myStudent(){
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
-        $campList = db('grade_member')->where(['member_id'=>$member_id,'type'=>1])->select();
+        $campList = db('camp_member')->where(['member_id'=>$member_id,'type'=>1])->select();
 
         $this->assign('campList',$campList);
         return view('Member/myStudent');
@@ -212,8 +212,7 @@ class Member extends Frontend{
      // 我的班主任训练营
     public function myTeacher(){
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
-        $campList = db('grade_member')->where(['member_id'=>$member_id,'type'=>7])->select();
-
+        $campList = db('camp_member')->where(['member_id'=>$member_id,'type'=>7])->select();
         $this->assign('campList',$campList);
         return view('Member/myTeacher');
     }
@@ -221,8 +220,13 @@ class Member extends Frontend{
     // 我名下的训练营
     public function myCamp(){
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
-        $campList = db('camp')->where(['member_id'=>$member_id])->select();
-
+        $type = input('param.type')?input('param.type'):4;
+        if($type){
+            $campList = db('camp_member')->where(['member_id'=>$member_id,'type'=>$type,'status'=>1])->select();
+        }else{
+            $campList = db('camp')->where(['member_id'=>$member_id,'status'=>1])->select();
+        }
+        $this->assign('type',$type);
         $this->assign('campList',$campList);
         return view('Member/myCamp');
     }

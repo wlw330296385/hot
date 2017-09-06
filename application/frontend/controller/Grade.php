@@ -58,11 +58,10 @@ class Grade extends Frontend{
         return view('Grade/gradeInfoOfCamp');
     }
 
-    // 普通版及列表
+    // 普通班级列表
     public function gradeList(){
         $member_id = $this->memberInfo['id'];
-        $camp_id = input('camp_id');
-        $map = ['camp_id'=>$camp_id];
+        $camp_id = input('param.camp_id');
         $gradeList = Db::view('grade','grade,id,students,gradecate,status')
                     ->view('grade_member','grade_id,camp_id,member_id','grade_member.grade_id=grade.id')
                     ->where(['grade_member.status'=>1])
@@ -88,24 +87,18 @@ class Grade extends Frontend{
         $member_id = $this->memberInfo['id'];
         $camp_id = input('camp_id');
         $map1 = ['camp_id'=>$camp_id,'status'=>1];
-        $map0 = ['camp_id'=>$camp_id,'status'=>0];
-        $actGradeList = $this->GradeService->getGradeList($map1);
-        $readyGradeList = $this->GradeService->getGradeList($map0);
-        $gradeList = $this->GradeService->getGradeList(['camp_id'=>$camp_id]);
-        $count1 = count($actGradeList);
-        $count0 = count($readyGradeList);
+        $map0 = ['camp_id'=>$camp_id,'status'=>0]; 
         // 我的班级
-        $myGradeList = $this->GradeService->getGradeList(['camp_id'=>$camp_id,'status'=>1,'coach_id'=>$member_id]);
+        $gradeList = $this->GradeService->getGradeList(['camp_id'=>$camp_id]);
+
+        $myGradeList = $this->GradeService->getGradeList(['camp_id'=>$camp_id,'coach_id'=>$member_id]);
         $myCount = count($myGradeList);
         $gradeListCount = count($gradeList);
         $this->assign('gradeList',$gradeList);
         $this->assign('gradeListCount',$gradeListCount);
         $this->assign('myGradeList',$myGradeList);
         $this->assign('myCount',$myCount);
-        $this->assign('count0',$count0);
-        $this->assign('count1',$count1);
-        $this->assign('actGradeList',$actGradeList);
-        return view('Grade/gradeList');
+        return view('Grade/gradeListOfCamp');
     }
 
 

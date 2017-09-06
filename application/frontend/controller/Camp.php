@@ -189,15 +189,12 @@ class Camp extends Frontend{
     public function powerCamp(){
         $camp_id = input('param.camp_id');
         $member_id = $this->memberInfo['id'];
-        $is_power = $this->CampService->isPower234($camp_id,$member_id);
-        if($is_power == 0){
-            $this->error('您没有权限');
-        }
+        $power = $this->CampService->isPower($camp_id,$member_id);
         $campInfo = $this->CampService->getCampInfo($camp_id);
         $gradeCount = db('grade')->where(['camp_id'=>$camp_id])->count();
         $scheduleCount = db('schedule')->where(['camp_id'=>$camp_id])->count();
         $lessonCount = db('lesson')->where(['camp_id'=>$camp_id])->count();
-
+        $this->assign('power',$power);
         $this->assign('gradeCount',$gradeCount);
         $this->assign('scheduleCount',$scheduleCount);
         $this->assign('lessonCount',$lessonCount);
@@ -209,7 +206,7 @@ class Camp extends Frontend{
     public function coachCamp(){
         $camp_id = input('param.camp_id');
         $member_id = $this->memberInfo['id'];
-        $is_power = $this->CampService->isPower234($camp_id,$member_id);
+        $is_power = $this->CampService->is_power($camp_id,$member_id);
         if($is_power == 0){
             $this->error('您没有权限');
         }
