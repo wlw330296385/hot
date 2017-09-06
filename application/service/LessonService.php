@@ -4,14 +4,12 @@ namespace app\service;
 
 use app\model\Lesson;
 use think\Db;
-use app\model\GradeMember;
+
 use app\common\validate\LessonVal;
 class LessonService {
-    private $gradeMemberModel;
     private $lessonModel;
     public function __construct(){
         $this->lessonModel = new Lesson;
-        $this->gradeMemberModel = new GradeMember;
     }
 
     // 课程分类数据
@@ -123,13 +121,13 @@ class LessonService {
 
     // 课程权限
     public function isPower($camp_id,$member_id){
-        $is_power = $this->gradeMemberModel
+        $is_power = db('camp_member')
                     ->where([
                         'camp_id'   =>$camp_id,
                         'status'    =>1,
                         'member_id'  =>$member_id,
-                        'type'      =>['in','2,3,4']
                         ])
+                    ->where('type','gt','2')
                     ->find();
         if($is_power){
             return true;

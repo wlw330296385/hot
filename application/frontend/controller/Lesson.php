@@ -64,9 +64,9 @@ class Lesson extends Frontend{
         }
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         $lessonInfo['doms'] = unserialize($lessonInfo['dom']);
+        // 教练列表
+    	$coachList = db('camp_member')->where(['type'=>2,'camp_id'=>$camp_id,'status'=>1])->select();
 
-    	$coachList = db('grade_member')->where(['type'=>4,'camp_id'=>$camp_id,'status'=>1])->select();
-    	$assitantList = db('grade_member')->where(['type'=>8,'camp_id'=>$camp_id,'status'=>1])->select();
     	$gradeCategoryList = $this->GradeService->getGradeCategory(1);
         $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['status'=>$camp_id]);
@@ -74,7 +74,6 @@ class Lesson extends Frontend{
     	$this->assign('gradeCategoryList',$gradeCategoryList);
         $this->assign('courtList',$courtList);
     	$this->assign('coachList',$coachList);
-    	$this->assign('assitantList',$assitantList);
     	return view('Lesson/updateLesson');
     }
 
@@ -82,9 +81,8 @@ class Lesson extends Frontend{
     public function createLesson(){
         //训练营主教练
         $camp_id = input('param.camp_id');
-        $lesson_id = input('param.lesson_id');
-        $coachList = db('grade_member')->where(['type'=>4,'camp_id'=>$camp_id,'status'=>1])->select();
-        $assitantList = db('grade_member')->where(['type'=>8,'camp_id'=>$camp_id,'status'=>1])->select();
+        // 教练列表
+        $coachList = db('camp_member')->where(['type'=>2,'camp_id'=>$camp_id,'status'=>1])->select();
         $gradeCategoryList = $this->GradeService->getGradeCategory(1);
         $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['status'=>$camp_id]);
@@ -92,7 +90,6 @@ class Lesson extends Frontend{
         $this->assign('gradeCategoryList',$gradeCategoryList);
         $this->assign('courtList',$courtList);
         $this->assign('coachList',$coachList);
-        $this->assign('assitantList',$assitantList);
         return view('Lesson/createLesson');
     }
 
@@ -105,7 +102,7 @@ class Lesson extends Frontend{
     // 	return view('Lesson/buyLesson');
     // }
 
-    //课程订单支付
+    //课程订单购买页面
     public function comfirmBill(){
         $lesson_id = input('param.lesson_id');
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
@@ -118,11 +115,15 @@ class Lesson extends Frontend{
         return view('Lesson/comfirmBill');
     }
 
+    // 购买体验课
     public function bookBill(){
+        $lesson_id = input('param.lesson_id');
+        $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+
         // 生成订单号
         $billOrder = '1'.date('YmrHis',time()).rand(0000,9999);
         // 生成微信参数
-
+        $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billOrder',$billOrder);
         return view('Lesson/bookBill');
     }

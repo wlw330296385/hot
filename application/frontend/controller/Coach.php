@@ -17,16 +17,18 @@ class Coach extends Frontend{
 
 	}
 
+    // 教练主页
     public function index(){
         $coachInfo = $this->coachService->getCoachInfo(['member_id'=>$this->memberInfo['id']]);
         // 全部课时
         $totalSchedule = db('schedule')->where(['coach_id'=>$this->memberInfo['id']])->count();
+        // 全部班级
+        $gradeList = db('grade')->where(['coach_id'=>$this->memberInfo['id']])->column('id');
+        $totalGrade = count($gradeList);
         // 全部学员
-        $totalStudent = db('grade_member')->distinct(true)->field('member_id')->where(['coach_id'=>$this->memberInfo['id'],'type'=>1,'status'=>1])->count();
+        $totalStudent = db('grade_member')->distinct(true)->field('member_id')->where(['grade_id'=>['in',$gradeList],'type'=>1,'status'=>1])->count();
         // 全部课程
         $totalLesson = db('lesson')->where(['coach_id'=>$this->memberInfo['id']])->count();
-        // 全部班级
-        $totalGrade = db('grade')->where(['coach_id'=>$this->memberInfo['id']])->count();
         //最新消息
         $messageList = db('message')->limit(10)->select();
         $this->assign('messageList',$messageList);
@@ -183,19 +185,19 @@ class Coach extends Frontend{
             $coachInfo = $this->coachService->getCoachInfo(['member_id'=>$this->memberInfo['id']]);
         }
         
-        // 执教过多少个班级
-        $gradeService = new \app\service\GradeService;
-        $gradeCount = $gradeService->countGrades(['coach_id'=>$coachInfo['id'],'status'=>1]);
-        // 执教过多少个学生
-        $studentCount = $this->gradeMemberService->countMembers(['coach_id'=>$coachInfo['id'],'type'=>1]);
+        // 全部班级
+        $gradeList = db('grade')->where(['coach_id'=>$this->memberInfo['id']])->column('id');
+        $gradeCount = count($gradeList);
+        // 全部学员
+        $studentCount = db('grade_member')->distinct(true)->field('member_id')->where(['grade_id'=>['in',$gradeList],'type'=>1,'status'=>1])->count();
         // 执教过多少课时
         $scheduleCount = $this->scheduleService->countSchedules(['coach_id'=>$coachInfo['id'],'status'=>1]);
         //教练评论
         $commentList = db('coach_comment')->where(['coach_id'=>$coach_id])->select();
         //所属训练营
-        $campList = Db::view('grade_member','camp_id')
-                    ->view('camp','logo','camp.id=grade_member.camp_id')
-                    ->where(['grade_member.member_id'=>$this->memberInfo['id'],'grade_member.type'=>4,'grade_member.status'=>1])
+        $campList = Db::view('camp_member','camp_id')
+                    ->view('camp','logo','camp.id=camp_member.camp_id')
+                    ->where(['camp_member.member_id'=>$this->memberInfo['id'],'camp_member.type'=>4,'camp_member.status'=>1])
                     ->select();
         $this->assign('campList',$campList);
         $this->assign('commentList',$commentList);
@@ -260,12 +262,12 @@ class Coach extends Frontend{
         return view('Coach/registerSuccess');
     }
 
-
+    // 教练的训练营列表
     public function campListOfCoach(){
         $member_id = input('param.member_id')? input('param.member_id'):$this->memberInfo['id'];
-        $campList = Db::view('grade_member','camp_id')
-                ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo,id,total_member,total_lessons','camp.id=grade_member.camp_id')
-                ->where(['grade_member.member_id'=>$member_id,'grade_member.type'=>4,'grade_member.status'=>1])
+        $campList = Db::view('camp_member','camp_id')
+                ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo,id,total_member,total_lessons','camp.id=camp_member.camp_id')
+                ->where(['camp_member.member_id'=>$member_id,'camp_member.type'=>2,'camp_member.status'=>1])
                 ->select();
         $this->assign('campList',$campList);
         return view('Coach/campListOfCoach');
@@ -276,10 +278,11 @@ class Coach extends Frontend{
         $camp_id = input('param.camp_id');
         $CampService = new \app\service\CampService;
         $campInfo = $CampService->getCampInfo($camp_id);
-        $type = input('param.type')?input('param.type'):4;
+        $type = input('param.type')?input('param.type'):2;
         $status = input('param.status')?input('param.status'):1;
-        $map = ['grade_member.camp_id'=>$camp_id,'grade_member.type'=>$type,'grade_member.status'=>$status];
+        $map = ['camp_member.camp_id'=>$camp_id,'camp_member.type'=>$type,'camp_member.status'=>$status];
         $coachList = $this->coachService->getCoachListOfCamp($map);
+        // dump($coachList);die;
         $this->assign('campInfo',$campInfo); 
         $this->assign('coachList',$coachList);
         return view('Coach/coachListOfCamp');

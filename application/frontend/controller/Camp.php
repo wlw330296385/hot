@@ -15,7 +15,7 @@ class Camp extends Frontend{
         // 最新消息
         $member_id = $this->memberInfo['id'];
         $messageList = db('message')->page(1,10)->select();
-        $campList = db('grade_member')->where(['member_id'=>$member_id,'status'=>1])->select();
+        $campList = db('camp_member')->where(['member_id'=>$member_id,'status'=>1])->select();
 
         $this->assign('campList',$campList);
         $this->assign('messageList',$messageList);
@@ -31,7 +31,12 @@ class Camp extends Frontend{
     public function campInfo(){
         $camp_id = input('param.camp_id');
         // 教练员
-        $coachList = Db::view('grade_member','member_id')->view('coach','portraits,star','coach.member_id = grade_member.member_id')->where(['camp_id'=>$camp_id,'type'=>4])->order('star')->limit(5)->select();
+        $coachList = Db::view('camp_member','member_id')
+                    ->view('coach','portraits,star','coach.member_id = camp_member.member_id')
+                    ->where(['camp_id'=>$camp_id,'type'=>2])
+                    ->order('coach.star')
+                    ->limit(5)
+                    ->select();
         $lessonList = db('lesson')->where(['camp_id'=>1,'status'=>1])->select();
         $lessonCount = count($lessonList);
         $commentList = db('camp_comment')->where(['camp_id'=>$camp_id])->select();
@@ -102,7 +107,7 @@ class Camp extends Frontend{
         $data['member_id'] = $this->memberInfo['id'];
         $data['type'] = 1;
         $data['status'] = 1;
-        $is_join = db('grade_member');
+        $is_join = db('camp_member');
         return view('Camp/inviteStudent');
     }
 
@@ -116,27 +121,24 @@ class Camp extends Frontend{
     // 学生的训练营
     public function campListOfStudent(){
         $member_id = $this->memberInfo['id'];
-        // $actCampList = db('grade_member')->where(['member_id'=>$member_id,'type'=>1,'status'=>1])->select();
-        $actCampList = Db::view('grade_member','camp_id')
-                        ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo','camp.id=grade_member.camp_id')
-                        ->where(['grade_member.member_id'=>$member_id,'grade_member.type'=>1,'grade_member.status'=>1])
+        $actCampList = Db::view('camp_member','camp_id,member_id')
+                        ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo','camp.id=camp_member.camp_id')
+                        ->where(['camp_member.member_id'=>$member_id,'camp_member.type'=>1,'camp_member.status'=>1])
                         ->select();
-        // $restCampList = db('grade_member')->where(['member_id'=>$member_id,'type'=>1,'status'=>0])->select();
-        $restCampList = Db::view('grade_member','camp_id')
-                        ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo','camp.id=grade_member.camp_id')
-                        ->where(['grade_member.member_id'=>$member_id,'grade_member.type'=>1,'grade_member.status'=>0])
+        $restCampList = Db::view('camp_member','camp_id')
+                        ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo','camp.id=camp_member.camp_id')
+                        ->where(['camp_member.member_id'=>$member_id,'camp_member.type'=>1,'camp_member.status'=>2])
                         ->select();
         $this->assign('actCampList',$actCampList);
         $this->assign('restCampList',$restCampList);
-
         return view('Camp/campListOfStudent');
     }
 
-    // 教练的训练营
+    // 教练身份的训练营
     public function campListOfCoach(){
         $coach_id = input('param.coach_id');
         if(!$coach_id){
-            $member_id = $this->memberInfp['id'];
+            $member_id = $this->memberInfo['id'];
             $coachInfo = db('coach')->where(['member_id'=>$member_id])->find();
             $this->assign('coachInfo',$coachInfo);
             $coach_id = $coachInfo['id'];
@@ -144,9 +146,9 @@ class Camp extends Frontend{
             $coachInfo = db('coach')->where(['id'=>$coach_id])->find();
             $member_id = $coachInfo['member_id'];
         }
-        $campList = Db::view('grade_member','camp_id')
-                        ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo','camp.id=grade_member.camp_id')
-                        ->where(['grade_member.member_id'=>$member_id,'grade_member.type'=>4,'grade_member.status'=>1])
+        $campList = Db::view('camp_member','camp_id,member_id')
+                        ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo','camp.id=camp_member.camp_id')
+                        ->where(['camp_member.member_id'=>$member_id,'camp_member.type'=>2,'camp_member.status'=>1])
                         ->select();
         $this->assign('campList',$campList);
         return view('Camp/campListOfCoach');
@@ -155,10 +157,10 @@ class Camp extends Frontend{
     // 申请列表
     public function applyListOfCoach(){
         $camp_id = input('param.camp_id');
-        $applyListOfCoach = Db::view('grade_member','coach_id,remarks')
-                            ->view('coach','star,coach,coach_level,lesson_flow,portraits','coach.member_id=grade_member.member_id')
+        $applyListOfCoach = Db::view('camp_member','member_id,remarks')
+                            ->view('coach','star,coach,coach_level,lesson_flow,portraits','coach.member_id=camp_member.member_id')
                             ->view('member','sex,birthday','coach.member_id=member.id')
-                            ->where(['grade_member.camp_id'=>$camp_id,'grade_member.type'=>4,'grade_member.status'=>0])
+                            ->where(['camp_member.camp_id'=>$camp_id,'camp_member.type'=>2,'camp_member.status'=>0])
                             ->select();
         // 计算年龄
         foreach ($applyListOfCoach as $key => $value) {
@@ -226,9 +228,9 @@ class Camp extends Frontend{
      public function coachListOfCamp(){
         $camp_id = input('param.camp_id');
         $campInfo = $this->CampService->getCampInfo($camp_id);
-        $type = input('param.type')?input('param.type'):4;
+        $type = input('param.type')?input('param.type'):2;
         $status = input('param.status')?input('param.status'):1;
-        $map = ['grade_member.camp_id'=>$camp_id,'grade_member.type'=>$type,'grade_member.status'=>$status];
+        $map = ['camp_member.camp_id'=>$camp_id,'camp_member.type'=>$type,'camp_member.status'=>$status];
         $coachList = $this->coachService->getCoachListOfCamp($map);
         $this->assign('campInfo',$campInfo); 
         $this->assign('coachList',$coachList);

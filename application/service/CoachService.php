@@ -133,11 +133,12 @@ class CoachService{
 
     // 教练列表 分页
     public function getCoachListOfCamp($map=[],$page = 1, $paginate = 10, $order='') {
-        $result = Db::view('grade_member','*')
-                ->view('coach','portraits,star,sex,coach_year,coach_level','grade_member.coach_id=coach.id')
+        $result = Db::view('camp_member','member_id,type')
+                ->view('coach','*','camp_member.member_id=coach.member_id')
                 ->where($map)
                 ->order($order)
-                ->page($page,$paginate)->select();
+                ->page($page,$paginate)
+                ->select();
                 // echo db('grade_member')->getlastsql();die;
         return $result;
     }

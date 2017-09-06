@@ -8,16 +8,30 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
-    <link rel="stylesheet" href="../../static/frontend/css/mui.min.css">
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/icons-extra.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
     <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/app.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <!--选择器样式-->
-    <link href="../../static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
-    <link href="../../static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <style>
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+
+        p {
+            text-indent: 22px;
+        }
+
+        .mui-popover {
+            height: 300px;
+        }
+    </style>
 </head>
 
 <body class=whitebg>
@@ -47,36 +61,37 @@
             </li>
             <li class="mui-table-view-cell listli detalisli">
                 课程数量
-                <input type="text" class="input" value="">
+                <input type="text" class="input" value=''>
             </li>
             <li class="mui-table-view-cell listli detalisli">
                 课程所需积分
                 <input type="text" class="input" value="">
             </li>
-            <li id="list" class="mui-table-view-cell listli detalisli">
-                训练时间
-                <span>
-                    <select class="select" style="width: 13%">
-                        <option>周日</option>
-                        <option>周一</option>
-                        <option>周二</option>
-                        <option>周三</option>
-                        <option>周四</option>
-                        <option>周五</option>
-                        <option>周六</option>
-                    </select>
-                </span>
-            </li>
+            <!--<li class="mui-table-view-cell listli detalisli picker btn" id="demo5" data-options='{"type":"time","customData":{"d":[{"text":"周日","value":"周日"},{"text":"周一","value":"周一"},{"text":"周二","value":"周二"},{"text":"周二","value":"周三"},{"text":"周三","value":"周四"},{"text":"周四","value":"周五"},{"text":"周六","value":"周六"}]},"labels":["星期","时", "分"]}'>-->
             <li class="mui-table-view-cell listli detalisli picker btn" id="demo5" data-options='{"type":"time"}'>
                 训练时间
                 <span>
-                    <font id="result" class="mui-navigate-right ui-alert"></font>
-                </span>
+                       
+                        <font id="result" class="mui-navigate-right ui-alert">00:00</font>
+                    </span>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">
+                训练日期
+                <span>
+                 <select class="select">
+                            <option>周日</option>
+                            <option>周一</option>
+                            <option>周二</option>
+                            <option>周三</option>
+                            <option>周四</option>
+                            <option>周五</option>
+                            <option>周六</option>
+                </select></span>
             </li>
             <li class="mui-table-view-cell listli detalisli" id='showCityPicker3'>
                 <a href="#" class="mui-navigate-right">
                     所属地区
-                    <span id="cityResult3" class="ui-alert"></span>
+                    <span id="cityResult3" class="ui-alert">广东 深圳 南山</span>
                 </a>
             </li>
             <li class="mui-table-view-cell listli detalisli">
@@ -90,7 +105,8 @@
             <li class="mui-table-view-cell listli detalisli" id="showCityPicker">
                 <a href="#" class="mui-navigate-right">
                     人数范围
-                    <span id="cityResult" class="ui-alert"></span>
+                     <input type="text" class="input" value="">
+                      <input type="text" class="input" value="">
                 </a>
             </li>
             <li class="mui-table-view-cell listli detalisli">
@@ -144,72 +160,24 @@
                     <div id="item1" class="mui-control-content mui-active">
                         <div class="mui-scroll">
                             <ul class="mui-table-view list">
+                            {volist name="coachList" id="vol"}
                                 <li class="mui-table-view-cell listli detalisli">
-                                    陈麦克
+                                    {$vol.member}
                                     <span>添加</span>
                                 </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    陈麦克
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    陈麦克
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    陈麦克
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    陈麦克
-                                    <span>添加</span>
-                                </li>
+                            {/volist}
                             </ul>
                         </div>
                     </div>
                     <div id="item2" class="mui-control-content">
                         <div class="mui-scroll">
                             <ul class="mui-table-view list">
+                            {volist name="coachList" id="vol"}
                                 <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
+                                    {$vol.member}
                                     <span>添加</span>
                                 </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
+                            {/volist}
                             </ul>
                         </div>
                     </div>
@@ -227,21 +195,11 @@
                         <span class="course"><strong>课程类型</strong></span>
                     </div>
                     <ul class="mui-table-view list">
+                    {volist name="gradeCategoryList" id="vol"}
                         <li class="mui-table-view-cell listli detalisli">
-                            小学高年级基础班
+                            {$vol.name}
                         </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            小学高年级基础班
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            小学高年级基础班
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            小学高年级基础班
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            小学高年级基础班
-                        </li>
+                    {/volist}
                     </ul>
                 </div>
             </div>
@@ -257,21 +215,11 @@
                         <span class="course"><strong>训练地点</strong></span>
                     </div>
                     <ul class="mui-table-view list">
+                    {volist name="courtList" id="vol"}
                         <li class="mui-table-view-cell listli detalisli">
-                            深圳湾篮球场
+                            {$vol.court}
                         </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            深圳湾篮球场
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            深圳湾篮球场
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            深圳湾篮球场
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            深圳湾篮球场
-                        </li>
+                    {/volist}
                     </ul>
                 </div>
             </div>
@@ -280,11 +228,11 @@
 </div>
 
 </body>
-<script src="../../static/frontend/js/mui.min.js"></script>
-<script src="../../static/frontend/js/mui.picker.min.js"></script>
-<script src="../../static/frontend/js/mui.poppicker.js"></script>
-<script src="../../static/frontend/js/city.data.js"></script>
-<script src="../../static/frontend/js/city.data-3.js"></script>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/city.data.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
 <script>
     //初始化
     mui.init({
@@ -351,8 +299,6 @@
                     });
                 }, false);
             });
-
-            mui("#list").on("tap", "li", foo_1);
 
         });
     })(mui, document);
