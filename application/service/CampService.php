@@ -83,10 +83,10 @@ class CampService {
             return ['msg'=>$this->Camp->getError(),'code'=>'200'];
         }else{
             $data = ['camp' =>$request['camp'],'camp_id'=>$res,'type'=>3,'realname'=>$request['realname'],'member_id'=>$request['member_id']];
-            $result = Db::name('grade_member')->insert($data);
+            $result = Db::name('camp_member')->insert($data);
             if(!$result){
                 Camp::destroy($res);
-                return ['msg'=>Db::name('grade_member')->getError(),'code'=>'200'];
+                return ['msg'=>Db::name('camp_member')->getError(),'code'=>'200'];
             }
             return ['data'=>$res,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>'100'];
         }

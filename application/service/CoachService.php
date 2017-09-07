@@ -139,7 +139,6 @@ class CoachService{
                 ->order($order)
                 ->page($page,$paginate)
                 ->select();
-                // echo db('grade_member')->getlastsql();die;
         return $result;
     }
 

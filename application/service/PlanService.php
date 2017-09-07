@@ -12,12 +12,17 @@ class PlanService {
     }
 
     public function getPlanList($map=[],$page = 1,$paginate = 10, $order='') {
-        $res = $this->Plan->where($map)->order($order)->page($page,$paginate)->select();
-        return $res;
+        $res = $this->Plan->where($map)->whereOr(['type'=>0])->order($order)->page($page,$paginate)->select();
+         if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
+        }
     }
 
     public function PlanListPage( $map=[],$page = 1,$paginate=10, $order=''){
-        $res = $this->Plan->where($map)->order($order)->page($page,$paginate)->select();
+        $res = $this->Plan->where($map)->whereOr(['type'=>0])->order($order)->page($page,$paginate)->select();
         if($res){
             $result = $res->toArray();
             return $result;
@@ -61,11 +66,6 @@ class PlanService {
      * 创建资源
      */
     public function createPlan($request){
-        // 一个人只能创建一个训练营
-        $is_create = $this->Plan->where(['member_id'=>$request['member_id'],'status'=>['NEQ',1]])->find();
-        if($is_create){
-            return ['msg'=>'一个用户只能创建一个训练营','code'=>'200'];
-        }
         $validate = validate('PlanVal');
         if(!$validate->check($request)){
             return ['msg' => $validate->getError(), 'code' => 200];
@@ -74,12 +74,6 @@ class PlanService {
         if($res === false){
             return ['msg'=>$this->Plan->getError(),'code'=>'200'];
         }else{
-            $data = ['Plan' =>$request['Plan'],'Plan_id'=>$res,'type'=>3,'realname'=>$request['realname'],'member_id'=>$request['member_id']];
-            $result = Db::name('grade_member')->insert($data);
-            if(!$result){
-                Plan::destroy($res);
-                return ['msg'=>Db::name('grade_member')->getError(),'code'=>'200'];
-            }
             return ['data'=>$res,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>'100'];
         }
     }
