@@ -234,4 +234,15 @@ class Camp extends Frontend{
         $this->assign('coachList',$coachList);
         return view('Camp/coachListOfCamp');
     }
+
+    public function campSetting(){
+        $camp_id = input('param.camp_id');
+        $campInfo = $this->CampService->getCampInfo($camp_id);
+        // 营业执照
+        $certInfo = db('cert')->where([''])
+
+
+        $this->assign('campInfo',$campInfo); 
+        return view('camp/campSetting');
+    }
 }

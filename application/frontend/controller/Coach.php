@@ -44,17 +44,20 @@ class Coach extends Frontend{
     public function coachInfoOfCamp(){
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
         $coach_id = input('param.coach_id');
-        $camp_id = input('param.camp_id');            	
+        $camp_id = input('param.camp_id');
+        if(!$camp_id){
+            $this->error('找不到训练营');
+        }            	
         if(!$coach_id){
             // 获取教练档案
             $coachInfo = $this->coachService->getCoachInfo(['member_id'=>$member_id]);
             $coach_id = $coachInfo['id'];
+        }else{
+            $coachInfo = $this->coachService->getCoachInfo(['id'=>$coach_id]);
+        }
     	//教练的班级
-    	$gradeOfCoach1 = $this->gradeMemberService->getGradeOfCoach(['member_id'=>$member_id,'camp_id'=>$camp_id,'type'=>4,'status'=>1,'grade_id'=>['neq','']]);
-        $gradeOfCoach0 = $this->gradeMemberService->getGradeOfCoach(['member_id'=>$member_id,'camp_id'=>$camp_id,'type'=>4,'grade_id'=>['neq','']]);
-        $gradeOfCoachList = array_merge($gradeOfCoach0,$gradeOfCoach1);
-        $count0 = count($gradeOfCoach0);
-        $count1 = count($gradeOfCoach1);
+        $GradeService = new \app\service\GradeService;
+    	$gradeOfCoachList = $GradeService->getGradeList(['coach_id'=>$member_id,'camp_id'=>$camp_id]);
         // 教练的证件
         $cert = db('cert')->where(['member_id'=>$member_id,'status'=>1])->select();
         $identCert = [];
@@ -68,8 +71,6 @@ class Coach extends Frontend{
                 $coachCert = $value;
             }
         }
-        // dump($cert);
-        // dump($identCert);
         //获取教练的课量
         $m = input('m')?input('m'):date('m');
         $y = input('y')?input('y'):date('Y');
@@ -78,21 +79,21 @@ class Coach extends Frontend{
         $begin_y = mktime(0,0,0,1,1,$y);
         $end_y = mktime(23,59,59,12,30,$y)-1;
 
-        $scheduleOfCoachList = $this->scheduleService
+        $monthScheduleOfCoachList = $this->scheduleService
                             ->getScheduleList([
-                            'coach_id'=>$coach_id,
+                            'coach_id'=>$member_id,
                             // 'type'=>1,
                             'camp_id'=>$camp_id,
-                            'lesson_time'=>['BETWEEN',[$begin_m,$end_m]]
+                            'create_time'=>['BETWEEN',[$begin_m,$end_m]]
                             ]);
-
-        $monthScheduleOfCoach = count($scheduleOfCoachList);
+                         
+        $monthScheduleOfCoach = count($monthScheduleOfCoachList);
         $yearScheduleOfCoachList = $this->scheduleService
                             ->getScheduleList([
-                            'coach_id'=>$coach_id,
+                            'coach_id'=>$member_id,
                             // 'type'=>1,
                             'camp_id'=>$camp_id,
-                            'lesson_time'=>['BETWEEN',[$begin_y,$end_y]]
+                            'create_time'=>['BETWEEN',[$begin_y,$end_y]]
                             ]);
         $yearScheduleOfCoach = count($yearScheduleOfCoachList); 
         //教练工资
@@ -103,7 +104,7 @@ class Coach extends Frontend{
         // 平均年薪
         $averageSalaryByYear = $SalaryInService->getAverageSalaryByYear($member_id,$camp_id);
         // dump($salaryList);die;
-        $this->assign('scheduleOfCoachList',$scheduleOfCoachList);//教练当月的课量
+        $this->assign('monthScheduleOfCoachList',$monthScheduleOfCoachList);//教练当月的课量
         $this->assign('monthScheduleOfCoach',$monthScheduleOfCoach);//当月课量数量
         $this->assign('gradeOfCoachList',$gradeOfCoachList);//教练班级
 
@@ -118,7 +119,7 @@ class Coach extends Frontend{
         $this->assign('averageSalaryByMonth',$averageSalaryByMonth);
         $this->assign('averageSalaryByYear',$averageSalaryByYear);
         return view('Coach/coachInfoOfCamp');
-        }
+        
     }
 
     // 教练档案

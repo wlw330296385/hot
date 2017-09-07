@@ -1,41 +1,30 @@
 <?php
+// 场地
 namespace app\admin\controller;
-
-
 use app\admin\controller\base\Backend;
-use app\service\CourtService;
 use app\service\AuthService;
 use think\Db;
+use app\model\Court as CourtModel;
 
 class Court extends Backend {
     // 场地管理
     public function index() {
-        $CourtS = new CourtService();
-        $court_res = $CourtS->getCourtPage();
-        if ($court_res['code'] == 200) {
-            $this->error($court_res['msg']);
-        }
-        //dump($court_res);
+        $court = CourtModel::paginate(15);
 
         $breadcrumb = [ 'ptitle' => '训练营' , 'title' => '场地管理' ];
         $this->assign( 'breadcrumb', $breadcrumb );
-        $this->assign('list', $court_res['data']);
+        $this->assign('list', $court);
         return $this->fetch();
     }
 
     // 场地详情
     public function detail() {
         $id = input('id');
-
-        $CourtS = new CourtService();
-        $court_res = $CourtS->getCourtOne([ 'id' => $id ]);
-        if ($court_res['code'] == 200) {
-            $this->error($court_res['msg']);
-        }
+        $data = CourtModel::get($id);
 
         $breadcrumb = [ 'ptitle' => '教练管理' , 'title' => '教练详细' ];
         $this->assign( 'breadcrumb', $breadcrumb );
-        $this->assign('data', $court_res['data']);
+        $this->assign('data', $data);
         return view();
     }
 

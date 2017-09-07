@@ -1,20 +1,17 @@
 <?php
-// 教练模块
+// 教练
 namespace app\admin\controller;
 
 use app\admin\controller\base\Backend;
 use app\service\CoachService;
 use app\service\AuthService;
 use think\Db;
-use think\Request;
+use app\model\Coach as CoachModel;
 
 class Coach extends Backend {
+    // 教练列表
     public function index() {
-        $Coach = new CoachService();
-        $res = $Coach->coachListPage();
-        if ($res['code'] != 200) {
-            $list = $res['data'];
-        }
+        $list = CoachModel::paginate(15);
 
         $breadcrumb = [ 'ptitle' => '训练营' , 'title' => '教练管理' ];
         $this->assign( 'breadcrumb', $breadcrumb );
@@ -22,23 +19,20 @@ class Coach extends Backend {
         return $this->fetch();
     }
 
-    public function detail() {
+    // 教练详情
+    public function show() {
         $id = input('id');
-        $Coach = new CoachService();
-        $result = $Coach->getCoachInfo($id);
-        if ($result['code'] == 100 ) {
-            $coach = $result['data'];
-            $coachcamp_res = $Coach->coachCamp($coach['id'], $coach['member_id']);
-            if ($coachcamp_res['code'] != 200) {
-                $coachcamp = $coachcamp_res['data'];
-                foreach ($coachcamp as $k => $val) {
-                    //dump($val['camp']);
-                    $coach['_camp'] = $val['camp'] . ',';
-                }
-            }
-            $coach['cert'] = getCert($coach['cert_id']);
-            $coach['member']['cert'] = getCert($coach['member']['cert_id']);
+
+        $coach = CoachModel::with('member')->where(['id' => $id])->find()->toArray();
+        $coach['cert'] = $coach['cert_id'] ? getCert($coach['cert_id']) : '';
+        // 教练所在训练营集合
+        $coachInCamp = Db::name('grade_member')->where([ 'coach_id' => $coach['id'], 'member_id' => $coach['member_id'], 'type' => 4 ])->select();
+        $coach['_incamp'] = '';
+        foreach ($coachInCamp as $k => $val) {
+            $coach['_incamp'] .= $val['camp'] . ',';
         }
+        $coach['member']['cert'] = $coach['member']['cert_id'] ? getCert($coach['member']['cert_id']) : '';
+        //dump($coach);
 
         $breadcrumb = [ 'ptitle' => '教练管理' , 'title' => '教练详细' ];
         $this->assign( 'breadcrumb', $breadcrumb );
@@ -46,15 +40,14 @@ class Coach extends Backend {
         return view();
     }
 
+    // 教练审核
     public function audit() {
         if ( request()->isAjax() ) {
             $id = input('coach');
             $status = input('code');
-            $sys_remarks = input('sys_remarks');
             $data = [
                 'id' => $id,
                 'status' => $status,
-                'remarks_admin' => $sys_remarks,
                 'update_time' => time()
             ];
 
@@ -77,10 +70,12 @@ class Coach extends Backend {
         }
     }
 
+    // 软删除教练
     public function sdel() {
         $id = input('id');
         $Coach = new CoachService();
         $result = $Coach->SoftDeleteCamp($id);
+
         $Auth = new AuthService();
         if ( $result['code'] == 100 ) {
             $Auth->record('教练id:'. $id .' 软删除 成功');
@@ -91,14 +86,14 @@ class Coach extends Backend {
         }
     }
 
+    // 修改教练信息
     public function edit() {
         if ( request()->isPost() ) {
-            $request = Request::instance()->post();
-            $id = $request['id'];
+            $id = input('id');
             $validate = $this->validate(
                 [
                     'id' => $id,
-                    '__token__' => $request['__token__']
+                    '__token__' => input('__token__')
                 ],
                 [
                     'id' => 'require',
@@ -110,13 +105,19 @@ class Coach extends Backend {
             }
             $data = [
                 'id' => $id,
-                'remarks_admin' => $request['remarks_admin']
+                'coach_rank' => input('coach_rank'),
+                'coach_year' => input('coach_year'),
+                'coach_level' => input('coach_level'),
+                'student_flow' => input('student_flow'),
+                'lesson_flow' => input('lesson_flow'),
+                'sys_remarks' => input('sys_remarks'),
+                'update_time' => time()
             ];
-            $Coach = new CoachService();
-            $res = $Coach->updateCoachStatus($data);
+            $execute = Db::name('coach')->update($data);
+
 
             $Auth = new AuthService();
-            if ( $res['code'] == 100 ) {
+            if ( $execute ) {
                 $Auth->record('教练id:'. $id .' 修改平台备注 成功');
                 $this->success(__lang('MSG_100_SUCCESS'), 'coach/index');
             } else {

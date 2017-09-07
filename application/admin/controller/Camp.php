@@ -2,54 +2,39 @@
 // 训练营
 namespace app\admin\controller;
 use app\admin\controller\base\Backend;
-use app\service\CertService;
-use app\service\GradeMemberService;
-use app\service\MemberService;
 use think\Db;
 use think\Validate;
+use think\Cookie;
 use app\service\AuthService;
-use app\service\CampService;
+use app\model\Camp as CampModel;
+use app\model\Member as MemberModel;
 
 class Camp extends Backend {
     // 训练营列表
     public function index() {
-        $Camp = new CampService();
-        $res = $Camp->campListPage();
-        if ($res['code'] != 200) {
-            $list = $res['data'];
-        }
+        $list = CampModel::paginate(15);
         $breadcrumb = ['title' => '训练营管理', 'ptitle' => '训练营模块'];
         $this->assign( 'breadcrumb', $breadcrumb );
         $this->assign('list', $list);
-        //return view();
-        return $this->fetch();
+        return $this->fetch('camp/index');
     }
 
-    public function detail() {
+    // 训练营详情
+    public function show() {
         $id = input('id');
-        $Camp = new CampService();
-        $res = $Camp->CampOneById($id);
-        if ($res['code'] != 200) {
-            $camp = $res['data'];
-        }
-        $Member_S = new MemberService();
-        $Cert = new CertService();
-        // 训练营创建人会员数据
-        $camp_member_res = $Member_S->getMemberInfo([ 'id' => $camp['member_id'] ]);
-        if ($camp_member_res['code' ]!= 200) {
-            $camp_member = $camp_member_res['data'];
-            $camp_member['cert'] = $camp_member['cert_id'] ? getCert($camp_member['cert_id']) : '';
-            $camp['member'] = $camp_member;
-        }
-        $cert = $camp['cert_id'] ? $Cert->CertOneById($camp['cert_id']) : '';
+        $camp = CampModel::get($id)->toArray();
+        $camp['cert'] = $camp['cert_id'] ? getCert($camp['cert_id']) : '';
+        $camp_member = MemberModel::get(['id' => $camp['member_id']])->toArray();
+        $camp_member['cert'] = $camp_member['cert_id'] ? getCert($camp_member['cert_id']) : '';
+        $camp['member_info'] = $camp_member;
 
         $breadcrumb = ['title' => '训练营详情', 'ptitle' => '训练营模块'];
         $this->assign( 'breadcrumb', $breadcrumb );
         $this->assign('camp', $camp);
-        $this->assign('cert', $cert);
-        return view();
+        return view('camp/show');
     }
 
+    // 修改训练营信息
     public function edit() {
         if ( request()->isPost() ) {
             $id = input('id');
@@ -71,16 +56,15 @@ class Camp extends Backend {
                 return;
             }
 
-            $data = [
+            $update = [
                 'id' => $id,
                 'sys_remarks' => $sys_remarks,
                 'update_time' => time()
             ];
-            $Camp = new CampService();
-            $result = $Camp->UpdateCamp($data);
+            $execute = Db::name('camp')->update($update);
 
             $Auth = new AuthService();
-            if ( $result['code'] == 100 ) {
+            if ( $execute ) {
                 $Auth->record('训练营id:'. $id .' 修改平台备注 成功');
                 $this->success(__lang('MSG_100_SUCCESS'), 'camp/index');
             } else {
@@ -90,6 +74,7 @@ class Camp extends Backend {
         }
     }
 
+    // 审核训练营申请
     public function audit() {
         if ( request()->isAjax() ) {
             $campid = input('campid');
@@ -130,6 +115,7 @@ class Camp extends Backend {
         }
     }
 
+    // 软删除
     public function sdel() {
         $id = input('id');
         $Camp = new CampService();
@@ -141,6 +127,31 @@ class Camp extends Backend {
         } else {
             $Auth->record('训练营id:'. $id .' 软删除 失败');
             $this->error(__lang('MSG_200_ERROR'));
+        }
+    }
+
+    //设置当前查看训练营
+    public function setcur() {
+        $id = input('id');
+        $camp = CampModel::get($id)->toArray();
+//        dump($camp);
+
+        if ($camp) {
+            Cookie::set('camp_id', $camp['id'], ['prefix' => 'curcamp_']);
+            Cookie::set('camp', $camp['camp'], ['prefix' => 'curcamp_']);
+
+            $this->success(__lang('MSG_100_SUCCESS'));
+        } else {
+            $this->error(__lang('MSG_200_ERROR'));
+        }
+    }
+
+    public function clearcur() {
+        $curcamp = $this->getCurCamp();
+        if ($curcamp) {
+            Cookie::clear('curcamp_');
+
+            $this->success(__lang('MSG_100_SUCCESS'));
         }
     }
 }
