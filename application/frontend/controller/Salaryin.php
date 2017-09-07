@@ -37,12 +37,13 @@ class Salaryin extends Frontend{
         // $countSalaryin = $this->SalaryInService->countSalaryin(['camp_id'=>$camp_id,'type'=>1,'create_time'=>['BETWEEN',[$startInt,$endInt]]]);
         $countSalaryin = $this->SalaryInService->countSalaryin(['camp_id'=>$camp_id,'type'=>1]);
         // 教练总数
-
+        $coachList = db('camp_member')->where(['camp_id'=>$camp_id,'type'=>2,'status'=>1])->select();
+        $coachCount = count($coachList);
         $this->assign('countSalaryin',$countSalaryin);
         $this->assign('salaryList',$salaryList);   
         $this->assign('y',$y); 
         $this->assign('m',$m);        
-        // dump($salaryList);
+        $this->assign('coachCount',$coachCount);
         return view('Salaryin/salaryOfCamp');
     }
 

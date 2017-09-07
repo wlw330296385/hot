@@ -8,49 +8,86 @@
         </div>
     </div>
     <div class="panel-body">
-        <div class="box no-border">
-            <div class="box-body">
-                <table class="table table-striped table-bordered table-hover">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>课程名称</th>
-                        <th>课程类型</th>
-                        <th>所属训练营</th>
-                        <th>负责教练</th>
-                        <th>上课日期</th>
-                        <th>场地</th>
-                        <th>状态</th>
-                        <th>操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {volist name="list" id="vo"}
-                    <tr>
-                        <td>{$vo.id}</td>
-                        <td>{$vo.lesson}</td>
-                        <td>{$vo.gradecate}</td>
-                        <td>{$vo.camp}</td>
-                        <td>{$vo.coach}</td>
-                        <td>{$vo.start}~{$vo.end} ( {$vo.week} ) </td>
-                        <td>{$vo.court}</td>
-                        <td>
-                            {$vo.status}
-                        </td>
-                        <td>
-                            <a href="{:url('lesson/detail', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i></a>
-                            <a href="{:url('lesson/sdel', ['id' => $vo['id']])}" class="btn btn-xs btn-danger del-btn"><i class="fa fa-trash"></i></a>
-                        </td>
-                    </tr>
-                    {/volist}
-                    </tbody>
-                </table>
+        <div class="no-padding">
+            <div class="bootstrap-table">
+                <div class="search-form">
+                    <form action="" class="form-inline" method="post">
+                        <fieldset>
+                            {if condition="!isset($curcamp)"}
+                            <div class="form-group">
+                                <label class="control-label">训练营</label>
+                                <input class="form-control" type="text" name="camp" >
+                            </div>
+                            {/if}
+                            <div class="form-group">
+                                <label class="control-label">课程名称</label>
+                                <input class="form-control" type="text" name="lesson" >
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">负责教练</label>
+                                <input class="form-control" type="text" name="coach" >
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12 text-center">
+                                    <button type="submit" class="btn btn-success btn-flat">搜索</button>
+                                    <button type="reset" class="btn btn-default btn-flat">重置</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+
+                <div class="fixed-table-container no-border">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="box no-border">
+                                <div class="box-body">
+                                    <table class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>课程名称</th>
+                                            <th>课程类型</th>
+                                            <th>所属训练营</th>
+                                            <th>负责教练</th>
+                                            <th>上课日期</th>
+                                            <th>场地</th>
+                                            <th>状态</th>
+                                            <th>操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {volist name="list" id="vo"}
+                                        <tr>
+                                            <td>{$vo.id}</td>
+                                            <td>{$vo.lesson}</td>
+                                            <td>{$vo.gradecate}</td>
+                                            <td>{$vo.camp}</td>
+                                            <td>{$vo.coach}</td>
+                                            <td>{$vo.start}~{$vo.end} ( {$vo.week} ) </td>
+                                            <td>{$vo.court}</td>
+                                            <td>
+                                                {$vo.status}
+                                            </td>
+                                            <td>
+                                                <a href="{:url('lesson/detail', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i></a>
+                                                <a href="{:url('lesson/sdel', ['id' => $vo['id']])}" class="btn btn-xs btn-danger del-btn"><i class="fa fa-trash"></i></a>
+                                            </td>
+                                        </tr>
+                                        {/volist}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {if condition="$list">
+                                <div class="box-footer clearfix">
+                                    {$list->render()}
+                                </div>
+                                {/if}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            {if condition="$list">
-            <div class="box-footer clearfix">
-                {$list->render()}
-            </div>
-            {/if}
         </div>
     </div>
 </div>

@@ -20,6 +20,12 @@ class Plan extends Frontend{
     	$plan_id = input('param.plan_id');
     	$planInfo = $this->PlanService->PlanOneById(['id'=>$plan_id]);
         $planInfo['exerciseList'] = unserialize($planInfo['exercise']);
+        // 判读权限
+        $CampService = new \app\service\CampService;
+        $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
+        
+
+        $this->assign('power',$is_power);
         $this->assign('planInfo',$planInfo);
     	return view('Plan/planInfo');
     }
@@ -30,6 +36,12 @@ class Plan extends Frontend{
     	
     	$plan_id = input('param.plan_id');
         $planInfo = $this->PlanService->PlanOneById(['id'=>$plan_id]);
+        // 判读权限
+        $CampService = new \app\service\CampService;
+        $is_power = $CampService->isPower($gradeInfo['camp_id'],$this->memberInfo['id']);
+        if($is_power < 2){
+            $this->error('您没有权限');
+        }       
         // 获取适合阶段
         $gradecateService = new \app\service\GradeService;
         $gradecateList = $gradecateService->getGradeCategory();

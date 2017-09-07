@@ -32,10 +32,12 @@ class Login extends Controller{
 
     // 微信用户授权
     public function wxlogin() {
+        //session('memberInfo', null,'think');
         $WechatS = new WechatService();
         $userinfo = $WechatS->oauthUserinfo();
         if ($userinfo) {
-            session('memberInfo.id','','think');
+            session('memberInfo.id', 0, 'think');
+            session('memberInfo.member', '游客', 'think');
             session('memberInfo.openid', $userinfo['openid'], 'think');
             session('memberInfo.nickname', $userinfo['nickname'], 'think');
             session('memberInfo.avatar', $userinfo['headimgurl'], 'think');

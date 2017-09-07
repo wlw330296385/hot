@@ -3,6 +3,7 @@ namespace app\admin\controller;
 
 use app\admin\controller\base\Backend;
 use app\service\ScheduleService;
+use app\model\Schedule as ScheduleModel;
 
 class Schedule extends Backend {
     public function index() {
@@ -13,23 +14,34 @@ class Schedule extends Backend {
 
     public function calendar() {
         if (request()->isAjax()) {
-            $Schedule_S = new ScheduleService();
-            $field = [ 'id', 'grade', 'grade_id' ,'teacher', 'assistant', 'lesson_date', 'lesson_time', 'court', 'remarks' ];
-            $res = $Schedule_S->getscheduleList([], '',$field);
+            $map = [];
+            if ($cur_camp = $this->cur_camp) {
+                $map['camp_id'] = $cur_camp['camp_id'];
+            }
+            $camp = input('camp');
+            if ($camp) {
+                $map['camp'] = ['like', '%'. $camp .'%'];
+            }
+            $grade = input('grade');
+            if ($grade) {
+                $map['grade'] = ['like', '%'. $grade .'%'];
+            }
+            $field = ['id', 'grade', 'grade_id', 'teacher', 'assistant', 'lesson_date', 'lesson_time', 'court', 'remarks'];
+            $schedule = ScheduleModel::where($map)->field($field)->select();
             $calendar_events = [];
-            if ($res['code'] == 100) {
-                $schedule = $res['data'];
+            if ($schedule) {
                 foreach ($schedule as $k => $val) {
                     $calendar_events[] = [
                         'id' => $val['id'],
                         'title' => $val['grade'],
-                        'start' => $val['lesson_time'],
+                        'start' => date('Y-m-d H:i', $val['lesson_time']),
                         'url' => url('schedule/detail', ['id' => $val['id']])
                     ];
                 }
-                return [ 'status' => 1, 'data' => $calendar_events ];
+
+                return ['status' => 1, 'data' => $calendar_events];
             } else {
-                return [ 'status' => 0, 'data' => $calendar_events ];
+                return ['status' => 0, 'data' => $calendar_events];
             }
         }
     }
@@ -37,12 +49,14 @@ class Schedule extends Backend {
     public function detail(){
         $id = input('id');
 
-        $Schedule_S = new ScheduleService();
+        /*$Schedule_S = new ScheduleService();
         $schedule_res = $Schedule_S->getScheduleInfo(['id' => $id]);
         if ($schedule_res['code'] == 200 ) {
             $this->error($schedule_res['msg']);
         }
-        $schedule = $schedule_res['data'];
+        $schedule = $schedule_res['data'];*/
+
+        $schedule = ScheduleModel::where(['id' => $id])->find()->toArray();
         $students = explode(',', $schedule['student_str']);
 
 

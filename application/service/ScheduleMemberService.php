@@ -10,7 +10,13 @@ class ScheduleMemberService{
 
 	public function getScheduleList($map){
 		$result = ScheduleMember::where($map)->select();
-		return $result;
+		if($result){
+			$res = $result->toArray();
+			return $res;
+		}else{
+			return $result;
+		}
+
     }
 
  	

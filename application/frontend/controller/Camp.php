@@ -190,6 +190,7 @@ class Camp extends Frontend{
         $camp_id = input('param.camp_id');
         $member_id = $this->memberInfo['id'];
         $power = $this->CampService->isPower($camp_id,$member_id);
+
         $campInfo = $this->CampService->getCampInfo($camp_id);
         $gradeCount = db('grade')->where(['camp_id'=>$camp_id])->count();
         $scheduleCount = db('schedule')->where(['camp_id'=>$camp_id])->count();
@@ -206,7 +207,7 @@ class Camp extends Frontend{
     public function coachCamp(){
         $camp_id = input('param.camp_id');
         $member_id = $this->memberInfo['id'];
-        $is_power = $this->CampService->is_power($camp_id,$member_id);
+        $is_power = $this->CampService->isPower($camp_id,$member_id);
         if($is_power == 0){
             $this->error('您没有权限');
         }
@@ -232,5 +233,16 @@ class Camp extends Frontend{
         $this->assign('campInfo',$campInfo); 
         $this->assign('coachList',$coachList);
         return view('Camp/coachListOfCamp');
+    }
+
+    public function campSetting(){
+        $camp_id = input('param.camp_id');
+        $campInfo = $this->CampService->getCampInfo($camp_id);
+        // 营业执照
+        $certInfo = db('cert')->where([''])
+
+
+        $this->assign('campInfo',$campInfo); 
+        return view('camp/campSetting');
     }
 }

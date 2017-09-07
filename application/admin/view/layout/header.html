@@ -11,8 +11,49 @@
         <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
             <span class="sr-only">Toggle navigation</span>
         </a>
+
+        <div id="nav" class="pull-left">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="{:url('index/index')}">
+                        <i class="fa fa-dashboard"></i>
+                        <span>控制台</span>
+                    </a>
+                </li>
+
+                {if condition="isset($curcamp)"}
+                <li>
+                    <a href="{:url('camp/index')}" title="点击进入切换训练营">
+                        <i class="fa fa-leaf"></i>
+                        <span>{$curcamp.camp}</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{:url('camp/clearcur')}">
+                        <span>清空选择</span>
+                    </a>
+                </li>
+                {else/}
+                <li>
+                    <a href="{:url('camp/index')}" title="点击进入切换训练营">
+                        <i class="fa fa-leaf"></i>
+                        <span>选择查看训练营</span>
+                    </a>
+                </li>
+                {/if}
+            </ul>
+        </div>
+
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
+                <li>
+                    <a href="javascript:;" data-toggle="wipecache" title="清空缓存">
+                        <i class="fa fa-trash"></i>
+                        <span>清空缓存</span>
+                    </a>
+                </li>
+                <!-- .messages-menu
                 <li class="dropdown messages-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-envelope-o"></i>
@@ -35,11 +76,10 @@
                         <li class="footer"><a href="#">查看所有</a></li>
                     </ul>
                 </li>
-                <!-- /.messages-menu -->
+                -->
 
-                <!-- Notifications Menu -->
+                <!-- Notifications Menu
                 <li class="dropdown notifications-menu">
-                    <!-- Menu toggle button -->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-bell-o"></i>
                         <span class="label label-warning">10</span>
@@ -58,18 +98,15 @@
                         <li class="footer"><a href="#">查看所有</a></li>
                     </ul>
                 </li>
+                -->
 
                 <!-- User Account Menu -->
                 <li class="dropdown user user-menu">
-                    <!-- Menu Toggle Button -->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <!-- The user image in the navbar-->
                         <img src="{$admin.avatar}" class="user-image" alt="User Image">
-                        <!-- hidden-xs hides the username on small devices so only the image appears. -->
                         <span class="hidden-xs">{$admin.username}</span>
                     </a>
                     <ul class="dropdown-menu">
-                        <!-- The user image in the menu -->
                         <li class="user-header">
                             <img src="{$admin.avatar}" class="img-circle" alt="User Image">
 

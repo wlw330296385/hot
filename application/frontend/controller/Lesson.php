@@ -1,9 +1,9 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Frontend;
+use app\frontend\controller\Base;
 use app\service\LessonService;
 use app\service\GradeService;
-class Lesson extends Frontend{
+class Lesson extends Base{
 	protected $LessonService;
 	protected $GradeService;
 	public function _initialize(){
@@ -59,13 +59,13 @@ class Lesson extends Frontend{
     	$camp_id = input('param.camp_id');
         $lesson_id = input('param.lesson_id');
         $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
-        if(!$is_power){
+        if($is_power<2){
             $this->error('您没有权限');
         }
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         $lessonInfo['doms'] = unserialize($lessonInfo['dom']);
         // 教练列表
-    	$coachList = db('camp_member')->where(['type'=>2,'camp_id'=>$camp_id,'status'=>1])->select();
+    	$staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
 
     	$gradeCategoryList = $this->GradeService->getGradeCategory(1);
         $courtService = new \app\service\CourtService;
@@ -73,7 +73,7 @@ class Lesson extends Frontend{
         $this->assign('lessonInfo',$lessonInfo);
     	$this->assign('gradeCategoryList',$gradeCategoryList);
         $this->assign('courtList',$courtList);
-    	$this->assign('coachList',$coachList);
+    	$this->assign('staffList',$staffList);
     	return view('Lesson/updateLesson');
     }
 
@@ -133,8 +133,19 @@ class Lesson extends Frontend{
         return view('Lesson/inviteStudent');
     }
 
+     // 可编辑课程
     public function LessonInfoOfCamp(){
-        
+        $lesson_id = input('param.lesson_id');
+        $member_id = $this->memberInfo['id'];
+        $camp_id = input('param.camp_id');
+        $power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
+        if($power<2){
+            $this->error('您没有权限');
+        }
+        $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+        $this->assign('lessonInfo',$lessonInfo);
+        $this->assign('power',$power);
+        return view('Lesson/LessonInfoOfCamp');
     }
 
 
@@ -142,8 +153,6 @@ class Lesson extends Frontend{
         $camp_id = input('param.camp_id');
         // 上架课程
         $onlineLessonList = $this->LessonService->getLessonList(['camp_id'=>$camp_id,'status'=>1]);
-
-
         // 下架课程
         $offlineLessonList = $this->LessonService->getLessonList(['camp_id'=>$camp_id,'status'=>-1]);
 

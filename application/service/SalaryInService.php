@@ -236,7 +236,7 @@ class SalaryInService {
                     ->where(['member_id'=>$member_id,'type'=>2])
                     ->where(['create_time'=>['between',[$startTime,$endTime]]])
                     ->page($page,$paginate)
-                    ->select()
+                    ->select();
          if($res){
             $result = $res->toArray();
             return $result;

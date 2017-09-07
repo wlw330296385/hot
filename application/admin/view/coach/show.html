@@ -1,0 +1,350 @@
+{extend name="layout/common" /}
+
+{block name="page-content"}
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">教练 详细资料</h3>
+            </div>
+            <form class="form-horizontal coach-form" method="post" action="{:url('coach/edit')}">
+                <input type="hidden" id="coach-id" name="id" value="{$coach.id}">
+                {:token()}
+                <div class="box-body">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">教练名称</div>
+                        <div class="col-sm-5">
+                            <input type="hidden" name="coach" value="{$coach.member.member}">
+                            {$coach.member.realname}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">所属训练营</div>
+                        <div class="col-sm-5">
+                            {notempty name="coach._incamp"}{$coach._incamp|rtrim=###, ","}{/notempty}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">资质证书</div>
+                        <div class="col-sm-5">
+                            {notempty name="coach.cert_id"}
+                            <img src="{$coach.cert.photo_positive}" class="img-thumbnail" alt="">
+                            {/notempty}
+                        </div>
+                        <div class="col-sm-5">
+                            {notempty name="coach.cert_id"}
+                            {notempty name="cert.photo_back"}
+                            <img src="{coach.cert.photo_back}" class="img-thumbnail" alt="">
+                            {/notempty}
+                            {/notempty}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">形象照</div>
+                        <div class="col-sm-5">
+                            {notempty name="coach.portraits"}
+                            <img src="{$coach.portraits}" class="img-thumbnail" alt="">
+                            {/notempty}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">评分</div>
+                        <div class="col-sm-5">
+                            {$coach.star}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">阶衔</div>
+                        <div class="col-sm-5">
+                            <input type="text" name="coach_rank" value="{$coach.coach_rank}">
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">教练等级</div>
+                        <div class="col-sm-5">
+                            <input type="text" name="coach_level" value="{$coach.coach_level}">
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">教龄</div>
+                        <div class="col-sm-5">
+                            <input type="text" name="coach_year" value="{$coach.coach_year}">
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">教学经验</div>
+                        <div class="col-sm-5">
+                            {$coach.experience}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">个人宣言</div>
+                        <div class="col-sm-5">
+                            {$coach.description}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">学员流量</div>
+                        <div class="col-sm-5">
+                            <input type="text" name="student_flow" value="{$coach.student_flow}">
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">课程流量</div>
+                        <div class="col-sm-5">
+                            <input type="text" name="lesson_flow" value="{$coach.lesson_flow}">
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">标签</div>
+                        <div class="col-sm-5">
+                            {$coach.tag1} {$coach.tag2} {$coach.tag3} {$coach.tag4} {$coach.tag5}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">申请时间</div>
+                        <div class="col-sm-5">
+                            {$coach.create_time}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">个人备注</div>
+                        <div class="col-sm-5">
+                            {$coach.remarks}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">平台备注</div>
+                        <div class="col-sm-5">
+                            <textarea  class="form-control" name="sys_remarks" rows="3">{$coach.sys_remarks}</textarea>
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">状态</div>
+                        <div class="col-sm-5">
+                            {$coach.status}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <div class="form-group">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-10">
+                            {if condition="$coach.status neq '正常'"}
+                            <button type="button" class="btn btn-success" onclick="check(1);">审核通过</button>
+                            <button type="button" class="btn btn-default" onclick="check(2);">审核不通过</button>
+                            {else/}
+                            <button type="button" class="btn btn-info" onclick="check(3);">修改教练信息</button>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-sm-12 col-md-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">会员 详细资料</h3>
+            </div>
+            <form class="form-horizontal" method="post" action="">
+                <input type="hidden" id="member-id" name="mid" value="{$coach.member.id}">
+                {:token()}
+                <div class="box-body">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">用户名</div>
+                        <div class="col-sm-5">
+                            {$coach.member.member}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">电话号码</div>
+                        <div class="col-sm-5">
+                            {$coach.member.telephone}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">电子邮箱</div>
+                        <div class="col-sm-5">
+                            {$coach.member.email}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">证件</div>
+                        <div class="col-sm-5">
+                            {notempty name="coach.member.cert_id"}
+                            <img src="{$coach.member.cert.photo_positive}" class="img-thumbnail" alt="">
+                            {/notempty}
+                        </div>
+                        <div class="col-sm-5">
+                            {notempty name="coach.member.cert_id"}
+                            {notempty name="coach.member.cert.photo_back"}
+                            <img src="{$coach.member.cert.photo_back}" class="img-thumbnail" alt="">
+                            {/notempty}
+                            {/notempty}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">头像</div>
+                        <div class="col-sm-5">
+                            {notempty name="coach.member.avatar"}
+                            <img src="{$coach.member.avatar}" class="img-thumbnail" alt="">
+                            {/notempty}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">性别</div>
+                        <div class="col-sm-5">
+                            {switch name="coach.member.sex"}
+                            {case value="1"}男{/case}
+                            {case value="2"}女{/case}
+                            {default/}未知
+                            {/switch}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">生日</div>
+                        <div class="col-sm-5">
+                            {$coach.member.birthday}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">所在地区</div>
+                        <div class="col-sm-5">
+                            {$coach.member.province}-{$coach.member.city}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">居住地址</div>
+                        <div class="col-sm-5">
+                            {$coach.member.location}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">流量</div>
+                        <div class="col-sm-5">
+                            {$coach.member.flow}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">阶衔</div>
+                        <div class="col-sm-5">
+                            {$coach.member.level}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">积分余额</div>
+                        <div class="col-sm-5">
+                            {$coach.member.score}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">人民币余额</div>
+                        <div class="col-sm-5">
+                            {$coach.member.balance}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">身高 体重 鞋码</div>
+                        <div class="col-sm-5">
+                            {$coach.member.height}cm  {$coach.member.weight}kg {$coach.member.shoe_code}码
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">注册时间</div>
+                        <div class="col-sm-5">
+                            {$coach.member.create_time}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">个人备注</div>
+                        <div class="col-sm-5">
+                            {$coach.member.remarks}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    "use strict";
+    function check(code) {
+        var coach = $('#coach-id').val();
+        var sremarks_txt = $("textarea[name='sys_remarks']").val();
+        switch ( code ) {
+            case 1:
+                var msg = '确定审核通过?';
+                if ( confirm(msg) === true ) {
+                    sendpost(coach, code, '');
+                }
+                break;
+            case 3:
+                $('.coach-form').submit();
+                break;
+            case 2:
+                var msg = '确定审核不通过?';
+                if ( confirm(msg) === true ) {
+                    if (sremarks_txt == "") {
+                        alert('请输入平台备注');
+                        return;
+                    }
+                    sendpost(coach, code, sremarks_txt);
+                }
+                break;
+        }
+    }
+
+    function sendpost(coach, code, sremarks) {
+        var serverurl = "{:url('coach/audit')}";
+        $.post(serverurl, {
+            coach: coach,
+            code: code,
+            sys_remarks: sremarks
+        }, function(res) {
+            console.log(res);
+            alert(res.msg);
+            if (res.status) {
+                location.href = res.goto;
+            } else {
+                location.reload();
+            }
+        }, 'json');
+    }
+</script>
+{/block}

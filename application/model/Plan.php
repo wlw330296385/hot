@@ -8,19 +8,15 @@ class Plan extends Model {
 	protected $autoWriteTimestamp = true;
     protected $readonly = [
                             'create_time',
-                            'students',
                             ];
 
-
+    protected $insert = ['type'=>1];                        
     public function getStatusAttr($value){
     	$status = [0=>'未审核',1=>'正常',2=>'拒绝'];
     	return $status[$value];
     }
 
 
-    public function member(){
-    	return $this->hasOne('member','id','member_id',[],'left join');
-    }
 
     
 }
