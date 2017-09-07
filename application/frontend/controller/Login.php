@@ -47,6 +47,6 @@ class Login extends base{
 
     public function fastRegister(){
 
-        return view('login/fastRegister');
+        return view('Login/fastRegister');
     }
 }
