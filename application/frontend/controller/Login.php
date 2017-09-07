@@ -1,8 +1,8 @@
 <?php 
 namespace app\frontend\controller;
-use think\Controller;
+use app\frontend\controller\Base;
 use app\service\WechatService;
-class Login extends Controller{
+class Login extends base{
 	
     public function index() {
 

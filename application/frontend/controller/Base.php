@@ -9,6 +9,7 @@ class Base extends Controller{
 		$this->systemSetting = SystemService::getSite();
 		$this->assign('systemSetting',$this->systemSetting);
 		$this->footMenu();
+		
 	}
 
 	protected function footMenu(){
