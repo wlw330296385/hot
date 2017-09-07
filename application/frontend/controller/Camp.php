@@ -238,10 +238,34 @@ class Camp extends Frontend{
     public function campSetting(){
         $camp_id = input('param.camp_id');
         $campInfo = $this->CampService->getCampInfo($camp_id);
+        $is_power = $this->CampService->isPower($camp_id,$this->memberInfo['id']);
+        if($is_power < 4){
+            $this->error('您没有权限');
+        }
         // 营业执照
-        $certInfo = db('cert')->where([''])
+        $campCert = [];
+        $memberCert = [];
+        $otherCert = [];
+        $certList = db('cert')->where(['camp_id'=>$camp_id])->select();
+        foreach ($certList as $key => $value) {
+            switch ($value['cert_type']) {
+                case '1':
+                    $memberCert = $value;
+                    break;
+                case '4':
+                    $campCert = $value;
+                    break;
+                default:
+                    $otherCert[] = $value;
+                    break;
+            }
+                
+                
 
-
+        }
+        $this->assign('memberCert',$memberCert);
+        $this->assign('otherCert',$otherCert);
+        $this->assign('campCert',$campCert);
         $this->assign('campInfo',$campInfo); 
         return view('camp/campSetting');
     }

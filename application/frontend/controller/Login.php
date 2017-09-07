@@ -44,4 +44,9 @@ class Login extends Controller{
         }
         $this->redirect('frontend/Index/index');
     }
+
+    public function fastRegister(){
+
+        return view('login/fastRegister');
+    }
 }
