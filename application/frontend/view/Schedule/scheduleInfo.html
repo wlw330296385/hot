@@ -28,6 +28,10 @@
         .marginlr {
             margin: 0 20px;
         }
+        .mui-icon-star-filled {
+            font-size: 22px !important;
+            color: #FFB400;
+        }
     </style>
 </head>
 
@@ -36,7 +40,7 @@
 
 <div class="mui-content">
 
-    <div class="camp-list camp-lesson-list grade-list coach">
+    <div  class="camp-list camp-lesson-list grade-list coach">
         <ul class="mui-table-view list mb">
             <li class="mui-table-view-cell mui-media listli">
                 <a href="javascript:;" class="mui-navigate-right">
@@ -116,12 +120,18 @@
                             态度
                         </li>
                         <li class="mui-col-xs-7 mui-col-sm-7">
-                            <div class="icons mui-inline">
-                                <i data-index="1" class="mui-icon mui-icon-star"></i>
-                                <i data-index="2" class="mui-icon mui-icon-star"></i>
-                                <i data-index="3" class="mui-icon mui-icon-star"></i>
-                                <i data-index="4" class="mui-icon mui-icon-star"></i>
-                                <i data-index="5" class="mui-icon mui-icon-star"></i>
+                            <div id="feedback">
+                                <button id="submit"  style="display: none"></button>
+                                <div class="mui-page-content">
+                                    <div id='image-list' id="question" style=display:none></div>
+                                    <div class="icons mui-inline" >
+                                        <i data-index="1" class="mui-icon mui-icon-star"></i>
+                                        <i data-index="2" class="mui-icon mui-icon-star"></i>
+                                        <i data-index="3" class="mui-icon mui-icon-star"></i>
+                                        <i data-index="4" class="mui-icon mui-icon-star"></i>
+                                        <i data-index="5" class="mui-icon mui-icon-star"></i>
+                                    </div>
+                                </div>
                             </div>
                         </li>
                         <li class="mui-col-xs-2 mui-col-sm-2">
@@ -218,10 +228,17 @@
 
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/mui.view.js "></script>
+<script src="/static/frontend/js/feedback.js"></script>
 <script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
+    $(function () {
+        $(".show_number li p").each(function (index, element) {
+            var num = $(this).attr("tip");
+            var www = num * 2 * 16;//
+            $(this).css("width", www);
+            $(this).parent(".atar_Show").siblings("span").text(num + "分");
+        });
+    })
 </script>
 </html>
