@@ -2,7 +2,7 @@
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
 class Frontend extends Base{
-	public $memberInfo;
+	
 	public function _initialize(){
 		parent::_initialize();
 		$this->memberInfo = session('memberInfo','','think');
