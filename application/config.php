@@ -13,11 +13,11 @@ return [
     // 安全key
     'salekey' => 'hotpaas',
 
-    // 公众号 测试账号
-    'appid' => 'wx96e47b68ca398cf8',
-    'appsecret' => '2bd8014b1fca2a04e6ea6f371bda39aa',
-    'token' => 'hot-basket',
-    'encodingaeskey' => '',
+    // 公众号
+    'appid' => 'wx19f60be0f2f24c31',
+    'appsecret' => 'cd9e6671b9d382ebd079929e70b86f99',
+    'token' => 'hotbasketball',
+    'encodingaeskey' => 'hWJMgOj45Q5wNRFmY0BRHzNz6jLsDBNKFqd11YK492s',
     'state' => 'hb',
 
 

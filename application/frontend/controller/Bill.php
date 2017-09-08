@@ -14,6 +14,58 @@ class Bill extends Frontend{
         return view();
     }
 
+    //训练营查看会员订单
+    public function billInfoOfCamp(){
+        $bill_id = input('param.bill_id');
+        $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+        // 课程信息
+        if($billInfo['goods_type'] == 1){
+            $LessonService = new \app\service\LessonService;
+            $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['lesson_id']]);
+            $this->assign('lessonInfo',$lessonInfo);
+            // 学生信息
+            $StudentService = new \app\service\StudentService;
+            $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
+            $this->assign('studentInfo',$studentInfo);
+        }        
+        // 判断权限
+        $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
+
+
+        $this->assign('power',$isPower);
+        $this->assign('billInfo',$billInfo);
+        return view('Bill/billInfoOfCamp');
+    }
+
+    // 训练营修改会员订单
+    public function updateBillInfoOfCamp(){
+        $bill_id = input('param.bill_id');
+        $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+        // 判断权限
+        $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
+        if($isPower<3){
+            $this->error('您没有权限');
+        }
+        // 课程信息
+        if($billInfo['goods_type'] == 1){
+            $LessonService = new \app\service\LessonService;
+            $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['lesson_id']]);
+            $this->assign('lessonInfo',$lessonInfo);
+            // 学生信息
+            $StudentService = new \app\service\StudentService;
+            $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
+            $this->assign('studentInfo',$studentInfo);
+        }        
+        
+
+
+        $this->assign('power',$isPower);
+        $this->assign('billInfo',$billInfo);
+        return view('Bill/updateBillInfoOfCamp');
+    }
+
+
+    // 会员查看自己的订单信息
     public function billInfo(){
     	$bill_id = input('param.bill_id');
     	$billInfo = $this->BillService->getBill(['id'=>$bill_id]);

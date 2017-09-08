@@ -2,6 +2,7 @@
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\WechatService;
+
 class Login extends base{
 	
     public function index() {
@@ -32,15 +33,12 @@ class Login extends base{
 
     // 微信用户授权
     public function wxlogin() {
-        //session('memberInfo', null,'think');
+        // session('memberInfo', null,'think');
         $WechatS = new WechatService();
         $userinfo = $WechatS->oauthUserinfo();
         if ($userinfo) {
-            session('memberInfo.id', 0, 'think');
-            session('memberInfo.member', '游客', 'think');
-            session('memberInfo.openid', $userinfo['openid'], 'think');
-            session('memberInfo.nickname', $userinfo['nickname'], 'think');
-            session('memberInfo.avatar', $userinfo['headimgurl'], 'think');
+            $data = ['id'=>0,'member'=>'游客','nickname'=>$userinfo['nickname'],'hp'=>0,'level'=>0,'avatar'=>$userinfo['headimgurl']];
+            session('memberInfo',$data,'think');
         }
         $this->redirect('frontend/Index/index');
     }
