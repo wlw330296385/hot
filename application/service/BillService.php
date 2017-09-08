@@ -72,4 +72,18 @@ class BillService {
         }
 
     }
+
+
+    /**
+     * 返回权限
+     */
+    public function isPower($camp_id,$member_id){
+        $is_power = db('camp_member')
+                    ->where(['member_id'=>$member_id,'camp_id'=>$camp_id,'status'=>1])
+                    // ->where(function ($query) {
+                            // $query->where('type', 2)->whereor('type', 3)->whereor('type',4);})
+                    ->value('type');
+                    // echo db('camp_member')->getlastsql();die;
+        return $is_power?$is_power:0;
+    }
 }

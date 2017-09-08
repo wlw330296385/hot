@@ -1,4 +1,4 @@
-s<?php 
+<?php 
 namespace app\frontend\controller;
 use think\Controller;
 use app\service\SystemService;
