@@ -13,9 +13,12 @@ class Member extends Frontend{
 	}
 
     public function index() {
-        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
-        $memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);
-        $this->assign('memberInfo',$memberInfo);
+        $member_id = input('param.member_id');
+        if($member_id){
+            $memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);
+            $this->assign('memberInfo',$memberInfo);
+        }
+        
         return view('Member/index');
     }
 
