@@ -195,9 +195,12 @@
 
    //提示框
    $(function () {
-
-       if ("{$memberInfo['id']}" ) {
-           var btnArray = ['取消', "<a href='{:url('login/fastRegister')}' style='color:#007aff'>前往完善</a>"];
+       if (!"{$memberInfo['id']}") {
+           var btnArray = ['取消', "<a href='{:url('member/updateMember')}' style='color:#007aff'>前往完善</a>"];
+           mui.confirm('欢迎使用大热篮球服务平台，请先完善您的登陆信息，以便进行后续操作，谢谢！', '提示', btnArray);
+       }
+       if("{$memberInfo['id']}" === 0 ){
+            var btnArray = ['取消', "<a href='{:url('login/fastRegister')}' style='color:#007aff'>前往完善</a>"];
            mui.confirm('欢迎使用大热篮球服务平台，请先完善您的登陆信息，以便进行后续操作，谢谢！', '提示', btnArray);
        }
 
@@ -210,12 +213,6 @@
     //     $(".address").html(city + "市");
     // })
 
-
-    //定位当前城市
-    // $(function () {
-    //     var city = remote_ip_info['city'];
-    //     $(".address").html(city + "市");
-    // })
 
 </script>
 </html>

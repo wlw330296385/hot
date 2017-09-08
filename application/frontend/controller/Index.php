@@ -1,8 +1,8 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Frontend;
+use app\frontend\controller\Base;
 use app\service\LessonService;
-class Index extends Frontend{
+class Index extends Base{
 	protected $LessonService;
 	public function _initialize(){
 		parent::_initialize();
