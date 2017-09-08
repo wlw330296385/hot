@@ -1,11 +1,15 @@
 <?php 
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
+use app\service\WechatService;
 class Frontend extends Base{
 	
 	public function _initialize(){
 		parent::_initialize();
 		$this->memberInfo = session('memberInfo','','think');
+		$param = input('param.');
+		cache('param',$param);
+		cookie('param', $param);
 		if(!$this->memberInfo['member']){
 			$this->nologin();
 		}else{
@@ -32,12 +36,14 @@ class Frontend extends Base{
 
 	protected function nologin(){
 		$result = $this->is_weixin();
+		
 		if($result){
-			$this->redirect('login/wxlogin');
+			$WechatService = new WechatService;
+			$callback = url('login/wxlogin','','', true);
+			$this->redirect($WechatService -> oauthredirect($callback));
 		}else{
 			$this->redirect('login/login');
 		}
-		
 	}
 
 	

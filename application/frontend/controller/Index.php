@@ -2,6 +2,7 @@
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\LessonService;
+use app\service\WechatService;
 class Index extends Base{
 	protected $LessonService;
 	public function _initialize(){
@@ -10,6 +11,7 @@ class Index extends Base{
 	}
 
     public function index() {
+
         $page = input('param.page')?input('param.page'):1;
     	$bannerList = unserialize($this->systemSetting['banner']); 
     	// 热门课程
@@ -29,6 +31,20 @@ class Index extends Base{
     }
 
     public function test(){
-        
+       /* session(null,'think');
+        $param = input('param.');
+        cache('param',$param);
+        cookie('param', $param);
+        dump($param);
+        dump($this->memberInfo);
+        dump(session('memberInfo','','think'));
+        dump(cache('param'));
+        dump(cookie('param'));*/
+
+        $WechatService = new WechatService;
+        $callback1 = url('login/wxlogin','','', true);
+        $callback2 = url('login/wxlogin');
+        dump( $WechatService -> oauthredirect($callback1) );
+        dump( $WechatService -> oauthredirect($callback2) );
     }
 }

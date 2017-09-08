@@ -58,7 +58,7 @@ class WechatService
     // 生成用户授权链接
     public function oauthredirect($callback) {
         $weObj = new TPwechat($this->options);
-        return $weObj->getOauthRedirect($callback,config('queue.state'));
+        return $weObj->getOauthRedirect($callback,config('state'));
     }
 
     // 获取授权用户信息
