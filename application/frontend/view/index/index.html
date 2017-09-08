@@ -15,6 +15,9 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
 </head>
 
 <body class="mmt44">
@@ -24,9 +27,9 @@
 <div class="mui-content">
     <!--搜索-->
     <ul class="mui-table-view mui-grid-view mui-grid-9 search1">
-        <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 search1li id='showCityPicker3'">
+        <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 search1li" id='showCityPicker3'>
             <span class="mui-icon mui-icon-location"></span>
-            <span class="address ui-alert" id="cityResult3">深圳市</span>
+            <span class="address ui-alert" id="cityResult3">广州市</span>
         </li>
         <li class="mui-table-view-cell mui-media mui-col-xs-7 mui-col-sm-7 search1li">
             <a href="#">
@@ -77,23 +80,28 @@
         <!--图文导航-->
         <div class="nav-list">
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="{:url('lesson/lessonList')}">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a
+                        href="{:url('lesson/lessonList')}">
                     <span><i class="icon iconfont icon-hothome-course"></i></span>
                     <div class="mui-media-body">课程</div>
                 </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="{:url('camp/campList')}">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a
+                        href="{:url('camp/campList')}">
                     <span><i class="icon iconfont icon-hothome-trainingcam"></i></span>
                     <div class="mui-media-body">训练营</div>
                 </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="{:url('coach/coachList')}">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a
+                        href="{:url('coach/coachList')}">
                     <span><i class="icon iconfont icon-hothome-coach"></i></span>
                     <div class="mui-media-body">教练推荐</div>
                 </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="{:url('court/courtList')}">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a
+                        href="{:url('court/courtList')}">
                     <span><i class="icon iconfont icon-hothome-trainingpoi"></i></span>
                     <div class="mui-media-body">训练点</div>
                 </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="#" onclick="alert('暂未开放')">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="#"
+                                                                                             onclick="alert('暂未开放')">
                     <span><i class="icon iconfont icon-hothome-aboutwar"></i></span>
                     <div class="mui-media-body">约战</div>
                 </a></li>
@@ -109,14 +117,14 @@
             </div>
 
             <ul class="mui-table-view mui-grid-view show-list-cont">
-            {volist name="hotLessonList" id="vol"}
+                {volist name="hotLessonList" id="vol"}
                 <li class="mui-table-view-cell mui-media mui-col-xs-6">
                     <a href="{:url('lesson/lessonInfo',['lesson_id'=>$vol['id']])}">
                         <img class="mui-media-object" src="{$vol.cover}">
                         <div class="mui-media-body typename">{$vol.lesson}</div>
                     </a>
                 </li>
-            {/volist}
+                {/volist}
             </ul>
 
         </div>
@@ -130,7 +138,7 @@
             </div>
 
             <ul class="mui-table-view mui-grid-view show-list-cont">
-            {volist name="sortLessonList" id="vol"}
+                {volist name="sortLessonList" id="vol"}
                 <li class="mui-table-view-cell mui-media mui-col-xs-6">
                     <a href="{:url('lesson/lessonInfo',['lesson_id'=>$vol['id']])}">
                         <img class="mui-media-object" src="{$vol.cover}">
@@ -141,7 +149,7 @@
                         </div>
                     </a>
                 </li>
-            {/volist}
+                {/volist}
             </ul>
 
         </div>
@@ -154,6 +162,12 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!--新浪获取城市位置-->
+<script src="http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js"></script>
+<!--选择器-->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
 <script>
     //初始化
     mui.init({
@@ -175,7 +189,7 @@
             var cityResult3 = doc.getElementById('cityResult3');
             showCityPickerButton.addEventListener('tap', function (event) {
                 cityPicker3.show(function (items) {
-                    cityResult3.innerText = _getParam(items[2], 'text');
+                    cityResult3.innerText = _getParam(items[1], 'text');
                     //返回 false 可以阻止选择框的关闭
                     //return false;
                 });
@@ -193,33 +207,24 @@
     });
 
 
-   //提示框
-   $(function () {
-    alert("{$memberInfo['id']}")
-       if (!"{$memberInfo['id']}") {
-           var btnArray = ['取消', "<a href='{:url('member/updateMember')}' style='color:#007aff'>前往完善</a>"];
-           mui.confirm('欢迎使用大热篮球服务平台，请先完善您的登陆信息，以便进行后续操作，谢谢！', '提示', btnArray);
-       }
-       if("{$memberInfo['id']}" === 0 ){
+    //提示框
+    $(function () {
+        console.log("{$memberInfo['id']}")
+        if (!"{$memberInfo['id']}") {
+            var btnArray = ['取消', "<a href='{:url('member/updateMember')}' style='color:#007aff'>前往完善</a>"];
+            mui.confirm('欢迎使用大热篮球服务平台，请先完善您的登陆信息，以便进行后续操作，谢谢！', '提示', btnArray);
+        }
+        if ("{$memberInfo['id']}" === 0) {
             var btnArray = ['取消', "<a href='{:url('login/fastRegister')}' style='color:#007aff'>前往完善</a>"];
-           mui.confirm('欢迎使用大热篮球服务平台，请先完善您的登陆信息，以便进行后续操作，谢谢！', '提示', btnArray);
-       }
-
-       
-   })
+            mui.confirm('欢迎使用大热篮球服务平台，请先完善您的登陆信息，以便进行后续操作，谢谢！', '提示', btnArray);
+        }
+    })
 
     //定位当前城市
-    // $(function () {
-    //     var city = remote_ip_info['city'];
-    //     $(".address").html(city + "市");
-    // })
-
-
-    //定位当前城市
-    // $(function () {
-    //     var city = remote_ip_info['city'];
-    //     $(".address").html(city + "市");
-    // })
+    $(function () {
+        var city = remote_ip_info['city'];
+        $(".address").html(city + "市");
+    })
 
 </script>
 </html>
