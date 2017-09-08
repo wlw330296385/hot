@@ -1,19 +1,87 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : mysql
-Source Server Version : 50553
-Source Host           : localhost:3306
+Source Server         : 30
+Source Server Version : 50554
+Source Host           : 192.168.1.30:3306
 Source Database       : hot
 
 Target Server Type    : MYSQL
-Target Server Version : 50553
+Target Server Version : 50554
 File Encoding         : 65001
 
-Date: 2017-09-08 18:01:52
+Date: 2017-09-08 18:44:38
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for `__camp_power`
+-- ----------------------------
+DROP TABLE IF EXISTS `__camp_power`;
+CREATE TABLE `__camp_power` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `camp_id` int(10) NOT NULL,
+  `member_id` int(10) NOT NULL COMMENT '角色名称',
+  `coach` tinyint(4) NOT NULL DEFAULT '0' COMMENT '有教练权限就是1',
+  `admin` tinyint(4) NOT NULL DEFAULT '0' COMMENT '管理员',
+  `owner` tinyint(4) NOT NULL DEFAULT '0' COMMENT '拥有者',
+  `create_time` int(10) NOT NULL,
+  `update_time` int(10) NOT NULL,
+  `delete_time` int(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='会员角色表\r\n暂时废弃';
+
+-- ----------------------------
+-- Records of __camp_power
+-- ----------------------------
+INSERT INTO `__camp_power` VALUES ('7', '1', '0', '0', '0', '0', '0', '0', null);
+INSERT INTO `__camp_power` VALUES ('8', '2', '0', '0', '0', '0', '0', '0', null);
+INSERT INTO `__camp_power` VALUES ('9', '3', '0', '0', '0', '0', '0', '0', null);
+INSERT INTO `__camp_power` VALUES ('10', '4', '0', '0', '0', '0', '0', '0', null);
+INSERT INTO `__camp_power` VALUES ('11', '5', '0', '0', '0', '0', '0', '0', null);
+INSERT INTO `__camp_power` VALUES ('12', '6', '0', '0', '0', '0', '0', '0', null);
+
+-- ----------------------------
+-- Table structure for `__grade_member`
+-- ----------------------------
+DROP TABLE IF EXISTS `__grade_member`;
+CREATE TABLE `__grade_member` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `grade` varchar(60) NOT NULL,
+  `grade_id` int(10) NOT NULL,
+  `member` varchar(60) NOT NULL COMMENT '会员',
+  `member_id` int(10) NOT NULL,
+  `avatar` varchar(255) NOT NULL COMMENT '头像',
+  `type` tinyint(4) NOT NULL COMMENT 'member_id所属类型 1:普通学生|2:管理员|3:创建者|4:教练|5体验生|6领队|7班主任',
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0:待审核;1:正常;2:退出;3:被开除;',
+  `create_time` int(10) NOT NULL,
+  `delete_time` int(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of __grade_member
+-- ----------------------------
+INSERT INTO `__grade_member` VALUES ('1', '', '0', 'weilin', '1', '', '4', '1', '0', null);
+INSERT INTO `__grade_member` VALUES ('3', '3-7岁儿童班', '1', 'coloring', '3', '', '5', '1', '0', null);
+INSERT INTO `__grade_member` VALUES ('4', '8-12岁少年班', '2', 'woo', '1', '', '4', '1', '0', null);
+
+-- ----------------------------
+-- Table structure for `__schedule_media`
+-- ----------------------------
+DROP TABLE IF EXISTS `__schedule_media`;
+CREATE TABLE `__schedule_media` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `url` varchar(255) NOT NULL,
+  `create_time` int(10) NOT NULL,
+  `delete_time` int(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of __schedule_media
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `admin`
@@ -73,8 +141,8 @@ DROP TABLE IF EXISTS `bill`;
 CREATE TABLE `bill` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `bill_order` varchar(20) NOT NULL COMMENT '订单号',
-  `lesson_id` int(10) NOT NULL,
-  `lesson` varchar(210) NOT NULL,
+  `goods_id` int(10) NOT NULL COMMENT '1:对应lesson.id;|2:对应goods.id',
+  `goods` varchar(210) NOT NULL,
   `total` tinyint(4) NOT NULL DEFAULT '1' COMMENT '购买数量',
   `price` decimal(8,2) NOT NULL COMMENT '每节课的单价',
   `camp_id` int(10) NOT NULL,
@@ -209,6 +277,33 @@ INSERT INTO `camp_member` VALUES ('4', '1', '大热伟霖篮球训练营', '2', 
 INSERT INTO `camp_member` VALUES ('5', '1', '大热伟霖篮球训练营', '3', 'coloring', '申请加入', '1', '1', '0', null, '0');
 INSERT INTO `camp_member` VALUES ('6', '1', '大热伟霖篮球训练营', '4', '吴光蔚', '申请加入', '2', '1', '0', null, '0');
 INSERT INTO `camp_member` VALUES ('7', '3', '大热color篮球训练营', '1', 'weilin', '申请加入', '2', '1', '0', null, '0');
+
+-- ----------------------------
+-- Table structure for `camp_power`
+-- ----------------------------
+DROP TABLE IF EXISTS `camp_power`;
+CREATE TABLE `camp_power` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `camp_id` int(10) NOT NULL,
+  `member_id` int(10) NOT NULL COMMENT '角色名称',
+  `coach` tinyint(4) NOT NULL DEFAULT '0' COMMENT '有教练权限就是1',
+  `admin` tinyint(4) NOT NULL DEFAULT '0' COMMENT '管理员',
+  `owner` tinyint(4) NOT NULL DEFAULT '0' COMMENT '拥有者',
+  `create_time` int(10) NOT NULL,
+  `update_time` int(10) NOT NULL,
+  `delete_time` int(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='会员角色表';
+
+-- ----------------------------
+-- Records of camp_power
+-- ----------------------------
+INSERT INTO `camp_power` VALUES ('7', '1', '0', '0', '0', '0', '0', '0', null);
+INSERT INTO `camp_power` VALUES ('8', '2', '0', '0', '0', '0', '0', '0', null);
+INSERT INTO `camp_power` VALUES ('9', '3', '0', '0', '0', '0', '0', '0', null);
+INSERT INTO `camp_power` VALUES ('10', '4', '0', '0', '0', '0', '0', '0', null);
+INSERT INTO `camp_power` VALUES ('11', '5', '0', '0', '0', '0', '0', '0', null);
+INSERT INTO `camp_power` VALUES ('12', '6', '0', '0', '0', '0', '0', '0', null);
 
 -- ----------------------------
 -- Table structure for `cert`
@@ -1409,72 +1504,4 @@ CREATE TABLE `system_award` (
 
 -- ----------------------------
 -- Records of system_award
--- ----------------------------
-
--- ----------------------------
--- Table structure for `__camp_power`
--- ----------------------------
-DROP TABLE IF EXISTS `__camp_power`;
-CREATE TABLE `__camp_power` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `camp_id` int(10) NOT NULL,
-  `member_id` int(10) NOT NULL COMMENT '角色名称',
-  `coach` tinyint(4) NOT NULL DEFAULT '0' COMMENT '有教练权限就是1',
-  `admin` tinyint(4) NOT NULL DEFAULT '0' COMMENT '管理员',
-  `owner` tinyint(4) NOT NULL DEFAULT '0' COMMENT '拥有者',
-  `create_time` int(10) NOT NULL,
-  `update_time` int(10) NOT NULL,
-  `delete_time` int(10) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='会员角色表\r\n暂时废弃';
-
--- ----------------------------
--- Records of __camp_power
--- ----------------------------
-INSERT INTO `__camp_power` VALUES ('7', '1', '0', '0', '0', '0', '0', '0', null);
-INSERT INTO `__camp_power` VALUES ('8', '2', '0', '0', '0', '0', '0', '0', null);
-INSERT INTO `__camp_power` VALUES ('9', '3', '0', '0', '0', '0', '0', '0', null);
-INSERT INTO `__camp_power` VALUES ('10', '4', '0', '0', '0', '0', '0', '0', null);
-INSERT INTO `__camp_power` VALUES ('11', '5', '0', '0', '0', '0', '0', '0', null);
-INSERT INTO `__camp_power` VALUES ('12', '6', '0', '0', '0', '0', '0', '0', null);
-
--- ----------------------------
--- Table structure for `__grade_member`
--- ----------------------------
-DROP TABLE IF EXISTS `__grade_member`;
-CREATE TABLE `__grade_member` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `grade` varchar(60) NOT NULL,
-  `grade_id` int(10) NOT NULL,
-  `member` varchar(60) NOT NULL COMMENT '会员',
-  `member_id` int(10) NOT NULL,
-  `avatar` varchar(255) NOT NULL COMMENT '头像',
-  `type` tinyint(4) NOT NULL COMMENT 'member_id所属类型 1:普通学生|2:管理员|3:创建者|4:教练|5体验生|6领队|7班主任',
-  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0:待审核;1:正常;2:退出;3:被开除;',
-  `create_time` int(10) NOT NULL,
-  `delete_time` int(10) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of __grade_member
--- ----------------------------
-INSERT INTO `__grade_member` VALUES ('1', '', '0', 'weilin', '1', '', '4', '1', '0', null);
-INSERT INTO `__grade_member` VALUES ('3', '3-7岁儿童班', '1', 'coloring', '3', '', '5', '1', '0', null);
-INSERT INTO `__grade_member` VALUES ('4', '8-12岁少年班', '2', 'woo', '1', '', '4', '1', '0', null);
-
--- ----------------------------
--- Table structure for `__schedule_media`
--- ----------------------------
-DROP TABLE IF EXISTS `__schedule_media`;
-CREATE TABLE `__schedule_media` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `url` varchar(255) NOT NULL,
-  `create_time` int(10) NOT NULL,
-  `delete_time` int(10) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of __schedule_media
 -- ----------------------------
