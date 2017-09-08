@@ -13,8 +13,14 @@ class BillService {
 
     // 关联lesson获取订单详情
     public function getBill($map){
-        $result = $this->Bill->with('lesson')->where($map)->find();
-        return $result;
+        // $result = $this->Bill->with('lesson')->where($map)->find();
+        $result = $this->Bill->where($map)->find();
+        if($result){
+            $res = $result->toArray();
+            return $res;
+        }else{
+            return $result;
+        }
     }
 
 

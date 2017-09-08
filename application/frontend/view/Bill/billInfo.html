@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>课程订单支付-</title>
+    <title>未付款订单-确认支付</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -18,65 +18,80 @@
 </head>
 
 <body class=whitebg>
-
 <header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-    <h1 class="mui-title">订单详情</h1>
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回订单列表</span></a>
 </header>
 <div class="mui-content">
 
-    <!--课程订单支付-->
-    <div class="mui-content">
-        <div class="list">
-            <ul class="mui-table-view">
-                <li class="mui-table-view-cell mui-media listli mb">
-                    <a href="javascript:;">
-                        <img class="mui-media-object mui-pull-left" src="/static/frontend/images/shuijiao.jpg">
-                        <div class="mui-media-body wd45">
-                            {$lessonInfo.lesson}
-                            <p class="mui-ellipsis">{$lessonInfo.gradecate}</p>
-                        </div>
-                        <div class="price-frame singup-num">
-                            {$lessonInfo.students}人已报名
-                        </div>
-                    </a>
-                </li>
-            </ul>
-
-            <ul class="mui-table-view">
-                <li class="mui-table-view-cell listli">
-                    <a class="mui-navigate-right">
-                        所属训练营<span class="wd66">{$lessonInfo.camp}</span>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell listli">课程单价<span><b class="colororange">￥{$billInfo.price}</b>（元）</span></li>
-                <li class="mui-table-view-cell listli">所选课量<span><b class="colororange" id="total">{$billInfo.total}</b>（节）</span></li>
-                <li class="mui-table-view-cell listli">训练时间<span>{$lessonInfo.week}.{$lessonInfo.lesson_time}</span></li>
-                <li class="mui-table-view-cell listli">训练地点<span>{$lessonInfo.location}</span></li>
-                <li class="mui-table-view-cell listli">所属地区<span>{$lessonInfo.province}{$lessonInfo.city}{$lessonInfo.area}</span></li>
-                <li class="mui-table-view-cell listli"><span>课程总价<b class="colororange">￥{$billInfo.balance_pay}</b></span></li>
-                <li class="mui-table-view-cell listli"><span>课程所需积分<b class="colororange">{$billInfo.score_pay}</b></span></li>
-            </ul>
-
-            <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-8 opli">个人剩余积分:{$memberInfo['score']}<b class="colororange">￥{$billInfo.balance_pay}</b></li>
-                {switch name="billInfo.is_pay"}
-                {case value="已付款"}
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen"><a href="{:url('Bill/finishBill',['bill_no'=>$billInfo['id']])}">已付款</a></li>
-                {/case}
-                {case value="未付款"}
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen"><a href="{:url('Bill/finishBill',['bill_no'=>$billInfo['id']])}">立即支付</a></li>
-                {/case}
-                {case value="申请退款"}
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen"><a href="{:url('Bill/finishBill',['bill_no'=>$billInfo['id']])}">取消申请</a></li>
-                {/case}
-                {case value="已退款"}
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen"><a href="{:url('Bill/finishBill',['bill_no'=>$billInfo['id']])}">已退款</a></li>
-                {/case}
-                {/switch}
-            </ul>
-
+    <div class="list camp-list camp-lesson-list detalis-list grade-list coach mt">
+       
+                    改!!!!!!!!!!!!!!!!!
+                    
+   
+        <div class="page-header">
+            <span class="course"><strong>订单信息</strong></span>
         </div>
+        <ul class="mui-table-view list detalis-list mb">
+            <li class="mui-table-view-cell listli">订单号<span>{$billInfo.bill_order}</span></li>
+            <li class="mui-table-view-cell listli">支付方式<span>{$billInfo.pay_type}</span></li>
+            <li class="mui-table-view-cell listli">订单时间<span>{$billInfo.create_time}</span></li>
+        </ul>
+
+        <div class="page-header">
+            <span class="course"><strong>商品信息</strong></span>
+        </div>
+        <ul class="mui-table-view list detalis-list mb">
+            <li class="mui-table-view-cell listli">商品号<span>{$billInfo.goods_id}</span></li>
+            <li class="mui-table-view-cell listli">商品类型<span>{$billInfo.goods_type}</span></li>
+            <li class="mui-table-view-cell listli border-b">商品描述<span>{$billInfo.goods_des}</span></li>
+        </ul>
+
+
+        {switch name="billInfo.is_pay"}
+        {case  value="未付款"}
+        <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%;">
+            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><span
+                    class="mui-icon mui-icon-phone"></span>电话咨询
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen"
+                style="color:#fff;border-left: 1px solid #ccc;"><a href="#delete">确认支付</a>
+            </li>
+        </ul>
+        {/case}
+        {case  value="已付款"}
+        <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%;">
+            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><span
+                    class="mui-icon mui-icon-phone"></span>电话咨询
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"
+                style="color:#000;border-left: 1px solid #ccc;"><a href="#delete">申请退款</a>
+            </li>
+        </ul>
+
+
+        <div id="delete" class="mui-popover mui-popover-action mui-popover-bottom actionsheet" style="margin-bottom: 0">
+            <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+                <ul class="mui-table-view mui-text-left operation">
+                    <h5 class="mui-text-left">退款申请<a class="mui-icon mui-icon-closeempty" href="#delete"></a></h5>
+                    <p>退款金额:<font class="colororange">￥2000</font>&nbsp;&nbsp;(根据协议xxxxxxxx)</p>
+                    <p>退款说明</p>
+                    <li class="mui-table-view-cell">
+                        <textarea id="question" class="mui-input-clear question" placeholder="请填写申请退款的原因..."></textarea>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" style="background:#59b200"><a href="#">提交申请</a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+        {/case}
+        {case  value="申请退款"}
+            退款中
+        {/case}
+        {case  value="已退款"}
+            已退款
+        {/case}
+       {/switch}
     </div>
 
 </div>
@@ -87,9 +102,5 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-    var total = sessionStorage.getItem('total');
-
-    var memberInfo = "";
-    console.log(memberInfo);
 </script>
 </html>
