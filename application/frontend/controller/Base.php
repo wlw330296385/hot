@@ -5,11 +5,14 @@ use app\service\SystemService;
 use think\Request;
 class Base extends Controller{
 	public $systemSetting;
+	public $memberInfo;
 	public function _initialize(){		
 		$this->systemSetting = SystemService::getSite();
 		$this->assign('systemSetting',$this->systemSetting);
 		$this->footMenu();
-		
+		$this->memberInfo = session('memberInfo','' , 'think');
+		$this->memberInfo['id'] = null;
+		$this->assign('memberInfo',$this->memberInfo);
 	}
 
 	protected function footMenu(){
