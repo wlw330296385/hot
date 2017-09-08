@@ -11,12 +11,9 @@ class Base extends Controller{
 		$this->assign('systemSetting',$this->systemSetting);
 		$this->footMenu();
 		$this->memberInfo = session('memberInfo','' , 'think');
-		if($this->memberInfo['id'] === 0){
-			
-		}else{
+		if(!$this->memberInfo){
 			$this->memberInfo['id'] = null;
-		}
-		
+		}	
 		$this->assign('memberInfo',$this->memberInfo);
 	}
 
