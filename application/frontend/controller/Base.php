@@ -12,7 +12,7 @@ class Base extends Controller{
 		$this->footMenu();
 		$this->memberInfo = session('memberInfo','' , 'think');
 		if(!$this->memberInfo){
-			$this->memberInfo['id'] = null;
+			$this->memberInfo = ['id'=>-1,'member'=>'游客','hp'=>0,'level'=>0,'avatar'=>'/static/default/avatar.png'];
 		}	
 		$this->assign('memberInfo',$this->memberInfo);
 	}

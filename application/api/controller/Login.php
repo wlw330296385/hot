@@ -66,4 +66,20 @@ class Login{
         	return false;
         }
 	}
+
+
+
+    public function autoLogin(){
+
+    }
+
+
+    // 获取手机验证码
+    public function getMobileCode(){
+        try{
+            
+        }catch (Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }
+    }
 }

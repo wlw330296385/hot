@@ -17,6 +17,11 @@ class Member extends Base{
       
     }
 
+    // 登陆成功跳转的页面
+    public function loginSuccess(){
+
+        return view('Member/loginSuccess');
+    }
 
     // 提现申请
     public function withdrawApi(){

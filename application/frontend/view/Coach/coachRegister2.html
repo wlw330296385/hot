@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>教练员注册</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="../../static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/style.css"/>
+
+    <link href="../../static/frontend/css/mui.picker.css" rel="stylesheet"/>
+    <link href="../../static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+</head>
+
+<body class=whitebg>
+
+<div class="mui-content">
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">完善个人信息</h1>
+    </header>
+    <div class="mui-content pt">
+        <div class="detalis-list list">
+            <form action="" class="whitebg">
+                <ul class="mui-table-view">
+                    <li class="mui-table-view-cell listli detalisli">姓名<span>通过上一页获取</span></li>
+                    <li class="mui-table-view-cell listli detalisli" id="showUserPicker"><a href="#"
+                                                                                             class="mui-navigate-right">性别
+                        <span id='userResult' class="ui-alert"></span></a>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli"><a href="#" class="mui-navigate-right">出生日期</a>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli" id='showCityPicker'><a href="#"
+                                                                                             class="mui-navigate-right">所属地区
+                        <span id='cityResult' class="ui-alert"></span></a>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">居住地址<input type="text" class="input"
+                                                                                 placeholder="请输入居住地址"></li>
+                    <li class="mui-table-view-cell listli detalisli">教学工龄
+                        <input type="text" class="input"
+                               placeholder="请输入教学工龄">
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli border-b">教学经验
+                        <div class="tips">
+                            <p>教学经验教学经验教学经验教学经验教学经验教学经验教学经验教学经验教学经验教学经验教学经验教学经验教学经验</p>
+                        </div>
+                    </li>
+                </ul>
+                <p class=height20></p>
+                <div class="tjbtn">
+                    <button type="button" class="mui-btn btn">
+                        完善个人信息
+                    </button>
+                </div>
+                <p class="pass"><a href="#">[跳过，稍后完善]</a></p>
+            </form>
+        </div>
+    </div>
+
+</div>
+</body>
+<script src="../../static/frontend/js/mui.min.js"></script>
+<script src="../../static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="../../static/frontend/js/mui.picker.js"></script>
+<script src="../../static/frontend/js/mui.poppicker.js"></script>
+<script src="../../static/frontend/js/city.data.js"></script>
+<script src="../../static/frontend/js/city.data-3.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    //选择器
+    (function ($, doc) {
+        $.init();
+        $.ready(function () {
+            /**
+             * 获取对象属性的值
+             * 主要用于过滤三级联动中，可能出现的最低级的数据不存在的情况，实际开发中需要注意这一点；
+             * @param {Object} obj 对象
+             * @param {String} param 属性名
+             */
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+            //普通示例
+            var userPicker = new $.PopPicker();
+            userPicker.setData([{
+                text: '男'
+            }, {
+                text: '女'
+            }]);
+            var showUserPickerButton = doc.getElementById('showUserPicker');
+            var userResult = doc.getElementById('userResult');
+            showUserPickerButton.addEventListener('tap', function (event) {
+                userPicker.show(function (items) {
+                    userResult.innerText = JSON.stringify(items[0]);
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+            //-----------------------------------------
+            //级联示例
+            var cityPicker = new $.PopPicker({
+                layer: 2
+            });
+            cityPicker.setData(cityData);
+            var showCityPickerButton = doc.getElementById('showCityPicker');
+            var cityResult = doc.getElementById('cityResult');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker.show(function (items) {
+                    cityResult.innerText = items[0].text + " " + items[1].text;
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+            //-----------------------------------------
+            //					//级联示例
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
+            });
+            cityPicker3.setData(cityData3);
+            var showCityPickerButton = doc.getElementById('showCityPicker3');
+            var cityResult3 = doc.getElementById('cityResult3');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.innerText = "你选择的城市是:" + _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+        });
+    })(mui, document);
+</script>
+
+</html>
