@@ -1,6 +1,6 @@
 <?php 
 namespace app\api\controller;
-
+use SmsApi;
 class Login{
 	
     public function index() {
@@ -66,4 +66,26 @@ class Login{
         	return false;
         }
 	}
+
+
+
+    public function autoLogin(){
+
+    }
+
+
+    // 获取手机验证码
+    public function getMobileCode(){
+        try{
+            $telephone = input('param.telephone');
+            $SmsApi = new SmsApi;
+            $SmsApi->paramArr = [
+                  'mobile' => $telephone,
+                  'content' => '',
+                  'tNum' => 'T150606060601'
+             ];
+        }catch (Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }
+    }
 }
