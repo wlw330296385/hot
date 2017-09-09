@@ -120,9 +120,17 @@ class MemberService{
 		return $arr;
 	}
 
-
+	// 判断字段是否重复
 	public function isFieldRegister($field,$value){
 		$result = $this->memberModel->where([$field=>$value])->find();
 		return $result?1:0;
 	}
+
+
+	public function setPid($pid,$member_id){
+        $result = $this->memberModel->where(['id'=>$memberInfo['id']])->save(['pid'=>$pid],$member_id);
+        file_put_contents(ROOT_PATH.'/data/member/'.date('Y-m-d',time()).'.txt',json_encode(['success'=>['pid'=>$pid,'member_id'=>$member_id],'time'=>date('Y-m-d H:i:s',time())]));
+        return $result;
+	}
+
 }

@@ -52,10 +52,14 @@ class Coach extends Frontend{
         try{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
-            if($data['pid']){
-                
-            }
+            
             $result = $this->coachService->createCoach($data);
+            if($result['code']==100){
+                    if($this->param['pid'] && !$memberInfo['pid']){
+                        $MemberSerivce = new \app\service\MemberSerivce;
+                        $MemberSerivce->setPid($this->param['pid'],$memberInfo['id']);
+                    }
+                }
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
