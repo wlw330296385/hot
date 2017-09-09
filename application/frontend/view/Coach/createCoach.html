@@ -22,7 +22,7 @@
         .regspan {
             font-size: 12px;
             text-align: center;
-            height: 20px;
+            height: 40px;
             padding: 10px 0;
         }
     </style>
@@ -32,55 +32,33 @@
 
 <header class="mui-bar mui-bar-nav subheader header2">
     <a class="mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-    <h1 class="mui-title">完善教练信息</h1>
+    <h1 class="mui-title">注册教练身份</h1>
 </header>
 <div class="mui-content pt">
     <div class="detalis-list register">
+
         <form action="" class="whitebg">
 
             <ul class="mui-table-view list">
-                <li class="mui-table-view-cell listli detalisli listinitial">姓名<span style="color: #737373">上一页获取</span>
+                <li class="mui-table-view-cell listli detalisli">微信昵称<span style="color: #737373">{$memberInfo['nickname]}</span></li>
+                <li class="mui-table-view-cell listli detalisli">姓名<input type="text" name="username" class="input reg_user" placeholder="输入你的姓名"></li>
+                 <li class="mui-table-view-cell listli detalisli">手机号码
+                    <input type="text" name="mobile" class="reg_mobile input" placeholder="请输入手机号码">
                 </li>
-
-                <li class="mui-table-view-cell listli detalisli">身份证号码<input type="text" class="input wd66"
-                                                                             placeholder="请输入身份证号码"></li>
-                <li class="mui-table-view-cell listli detalisli line-height40">
-                    <a href="#" class="mui-navigate-right">身份证
-                        <img class="coachicon icon01" src="/static/frontend/images/yuantiao.jpg" alt="">
-                    </a>
+                <li class="mui-table-view-cell listli detalisli">短信验证码
+                    <input type="button" class="code-btn" value="获取验证码" onclick="clickButton(this)">
+                    <input type="text" class="input validate" placeholder="输入验证码" style="width: 44%;margin-top: 4px">
                 </li>
-                <li class="mui-table-view-cell listli detalisli line-height40"><a href="#" class="mui-navigate-right">个人形象照
-                    <img class="coachicon icon01" src="/static/frontend/images/yuantiao.jpg" alt="">
-                </a>
-                </li>
-                <li class="mui-table-view-cell listli detalisli line-height40"><a href="#"
-                                                                                  class="mui-navigate-right">资质证明
-                    <img class="coachicon icon01" src="/static/frontend/images/yuantiao.jpg" alt="">
-                </a>
-                </li>
-                <li class="mui-table-view-cell listli detalisli">推荐人<span style="color: #737373">推荐人</span></li>
-
-                <li class="mui-table-view-cell listli detalisli listinitial">教学工龄
-                    <input type="text" class="input"
-                           placeholder="请输入教学工龄">
-                </li>
-                <li class="mui-table-view-cell listli detalisli border-b">教学经验
-                    <div class="tips">
-                        <textarea rows="5" placeholder="填写教学经验"></textarea>
-                    </div>
-                </li>
+                 <li class="mui-table-view-cell listli detalisli border-b">推荐人<span style="color: #737373">获取推荐人</span></li>
             </ul>
-            <div class="regspan tip repassword_hint password_hint mobile_hint"></div>
-            <div class="registf">
-                <input type="checkbox" checked>
-                <label>同意大热篮球事业合伙协议</label>
-            </div>
+
+            <div class="regspan tip user_hint mobile_hint"></div>
             <div class="tjbtn">
-                <button type="button" class="mui-btn btn registerbtn2">
-                    完成
+                <button type="sumbit " class="mui-btn btn registerCoach">
+                    注册
                 </button>
             </div>
-            <p class="height20"></p>
+        
         </form>
     </div>
 
@@ -88,11 +66,7 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<!--选择器-->
-<script src="/static/frontend/js/mui.picker.min.js"></script>
-<script src="/static/frontend/js/mui.poppicker.js"></script>
-<script src="/static/frontend/js/city.data-3.js"></script>
-
+<!-- 验证 -->
 <script src="/static/frontend/libs/yzvalidate.js"></script>
 <script>
     //初始化
@@ -119,22 +93,32 @@
 
     $(function () {
 
-        $(".registerbtn2").on("click", function () {
-            mui.ajax('http://hotpaas.com/api/coach/updateCoachApi', {
-                data: {
-                   'status':1,
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: {'Content-Type': 'application/json'},
-                success: function (data) {
-                    console.log(data)
-                },
-                error: function (xhr, type, errorThrown) {
-                    console.log(type);
-                }
-            });
+        $(".registerCoach").on("click", function () {
+            var coach = $(".reg_user").val();
+            var telephone = $(".reg_mobile").val();
+            console.log(member);
+            if(member&&telephone&&validate==''){
+                alert("选项不能为空");
+                return;
+            }
+            mui.ajax("{:url('api/coach/updateCoachApi')}", {
+                    data: {
+                        'coach': coach,
+                        'telephone': telephone,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        window.location.href="{:url('coach/updateCoach')}"
+                        console.log(data)
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        console.log(type);
+                    }
+                });
+           
         })
 
     })

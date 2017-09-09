@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>教练注册</title>
+    <title>完善教练信息</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -56,7 +56,7 @@
                     </a>
                 </li>
                 <li class="mui-table-view-cell listli detalisli line-height40"><a href="#picture"
-                                                                                  class="mui-navigate-right">个人形象照
+                                                                                  class="mui-navigate-right portraits">个人形象照
                     <img class="coachicon icon01" {notempty name="coachInfo.portraits" } src="{$coachInfo.portraits}" {/notempty}alt="">
                 </a>
                 </li>
@@ -77,7 +77,7 @@
                 </li>
                 <li class="mui-table-view-cell listli detalisli">自我介绍
                     <div class="tips">
-                        <textarea rows="5" placeholder="自我介绍">{$coachInfo.introduction}</textarea>
+                        <textarea rows="5" class="introduction" placeholder="自我介绍">{$coachInfo.introduction}</textarea>
                     </div>
                 </li>
                 <li class="mui-table-view-cell listli detalisli border-b">个人宣言
@@ -96,8 +96,9 @@
                     完成
                 </button>
             </div>
-            <p class="height20"></p>
+             <p class="pass"><a href="{:url('index/index')}">[跳过，稍后完善]</a></p>
         </form>
+
         <!--上传图片-->
         <div id="picture" class="mui-popover mui-popover-action mui-popover-bottom" style="height:inherit;">
             <ul class="mui-table-view">
@@ -156,20 +157,21 @@
     $(function () {
 
         $(".registerbtn2").on("click", function () {
-            var coach_id = $(".coach_id").val();
+            var portraits = $(".portraits").val();
             var coach_year = $(".coach_year").val();
             var experience = $(".experience").val();
+            var introduction = $(".introduction").val();
             var description = $(".description").val();
-            console(123)
-            if (coach_id, coach_year, experience, description == '') {
+            if (portraits, coach_year, experience,introduction, description == '') {
                 alert("请完善信息");
                 return;
             }
-            mui.ajax('http://hotpaas.com/api/coach/updateCoachApi/coach_id/{$(coachInfo.id)}', {
+            mui.ajax("{:url('api/coach/updateCoachApi')}", {
                 data: {
-                    'coach_id': coach_id,
+                    'portraits': portraits,
                     'coach_year': coach_year,
                     'experience': experience,
+                    'introduction': introduction,
                     'description': description,
                 },
                 dataType: 'json',//服务器返回json格式数据
@@ -177,7 +179,7 @@
                 timeout: 10000,//超时时间设置为10秒；
                 headers: {'Content-Type': 'application/json'},
                 success: function (data) {
-                    window.location.href = "http://hotpaas.com/frontend/coach/registersuccess"
+                    window.location.href = "{:url('coach/registersuccess')}"
                     console.log(data)
                 },
                 error: function (xhr, type, errorThrown) {
