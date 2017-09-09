@@ -90,7 +90,7 @@ class SmsApi {
         if ( $code == 0 ) {
             return $result->showapi_res_code;
         } else {
-            return false;
+            return $result->showapi_res_body->msg;
         }
     }
 }
