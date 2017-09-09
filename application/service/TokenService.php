@@ -4,7 +4,7 @@ namespace app\service;
 
 class TokenService{
 	private $visit;
-	private $num;
+	private $data;
 
 
 
@@ -21,20 +21,24 @@ class TokenService{
      // 	return $this->visit($this->num);
      // }
 
-	public function visitTimes($limit = 30,$expire=300,$prefix = 'token'){
+	public function visitTimes($limit = 2,$expire=300,$prefix = 'token'){
 		session(['prefix'=>'token','expire'=>$expire]);
-		$this->num = session('visittime','',$prefix);
-		if(!$this->num){
-			session('visittime',1,'token');
+		$this->data = session('visittime','',$prefix);
+		if(!$this->data){
+			$this->data = ['times'=>1,'time'=>time()];
+			session('visittime',$this->data,'token');
 			return 1;
-		}else{			
-			if($this->num>$limit){
+		}else{
+
+			if($this->data['times'] > $limit && (time() - $this->data['time'])>6){
 				session(null,$prefix);
-				return false;
+				return false;die;
 			}
-			$this->num++;
-			session('visittime',$this->num,$prefix);
-			return $this->num++;
+			$times = $this->data['times'];
+			$times ++;
+			$this->data['times'] = $times;
+			session('visittime',$this->data,$prefix);
+			return $this->data['times'];
 		}
 	}
 

@@ -18,7 +18,7 @@ class Frontend extends Base{
       $this->memberInfo = session('memberInfo','','think');
   	   if(($is_login!=md5($this->memberInfo['id'].$this->memberInfo['create_time'].'hot'))||!$is_login||!$this->memberInfo){
 
-    		$this->checklogin();
+    		  $this->checklogin();
     	}
   }
  

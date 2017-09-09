@@ -8,7 +8,7 @@ use app\service\TokenService;
 
 class Base extends Controller{
 
- 
+  public $defend = 0;
 
  	public $memberInfo;
 
@@ -22,17 +22,26 @@ class Base extends Controller{
      $TokenService = new TokenService;
 
      $visits = $TokenService->visitTimes();
-
      if(!$visits){
-         $this->checklogin();
-     }       
+        $this->defend++;
+     }   
+
+     if($this->defend>1 && $this->defend<10){
+
+        $this->checklogin();
+       
+      }elseif ($this->defend > 10) {
+        $this->redirect('index/defendActivated');
+      }
+          
 
  }
 
   public function checklogin(){ 
-
-    // return json(['code'=>200,'msg'=>'请先登录']);die;
+   
     $this->redirect('index/noLogin');die;
   }
 
+
+  
 }
