@@ -15,9 +15,6 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
-    <!--选择器样式-->
-    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
-    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
     <style>
         .regspan {
             font-size: 12px;
@@ -41,42 +38,51 @@
             <ul class="mui-table-view list">
                 <li class="mui-table-view-cell listli detalisli listinitial">姓名<span style="color: #737373">{$coachInfo.coach}</span>
                 </li>
-                <li class="mui-table-view-cell listli detalisli">身份证号码<input type="text" class="input wd66"
-                                                                             placeholder="请输入身份证号码"{notempty name="identCert.cert_no"} value=" {$identCert.cert_no}"{/notempty}></li>
+                <li class="mui-table-view-cell listli detalisli">身份证号码
+                    <input type="text" class="input wd66 coach_id" placeholder="请输入身份证号码" {notempty
+                           name="identCert.cert_no" }
+                           value=" {$identCert.cert_no}" {/notempty}>
+                </li>
                 <li class="mui-table-view-cell listli detalisli line-height40">
-                    <a href="#" class="mui-navigate-right">身份证正面
-                        <img class="coachicon icon01" {notempty name="identCert.photo_positive"} src="{$identCert.photo_positive}" {/notempty} alt="">
-                    </a>
-                    <a href="#" class="mui-navigate-right">身份证反面
-                        <img class="coachicon icon01" {notempty name="identCert.photo_back"} src="{$identCert.photo_back}" {/notempty} alt="">
+                    <a href="#picture" class="mui-navigate-right">身份证正面
+                        <img class="coachicon icon01" {notempty name="identCert.photo_positive" }
+                             src="{$identCert.photo_positive}" {/notempty} alt="">
                     </a>
                 </li>
-                <li class="mui-table-view-cell listli detalisli line-height40"><a href="#" class="mui-navigate-right">个人形象照
-                    <img class="coachicon icon01" {notempty name="coachInfo.portraits"} src="{$coachInfo.portraits}" {/notempty}alt="">
+                <li class="mui-table-view-cell listli detalisli line-height40">
+                    <a href="#picture" class="mui-navigate-right">身份证反面
+                        <img class="coachicon icon01" {notempty name="identCert.photo_back" }
+                             src="{$identCert.photo_back}" {/notempty} alt="">
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli line-height40"><a href="#picture"
+                                                                                  class="mui-navigate-right">个人形象照
+                    <img class="coachicon icon01" {notempty name="coachInfo.portraits" } src="{$coachInfo.portraits}" {/notempty}alt="">
                 </a>
                 </li>
-                <li class="mui-table-view-cell listli detalisli line-height40"><a href="#"
+                <li class="mui-table-view-cell listli detalisli line-height40"><a href="#picture"
                                                                                   class="mui-navigate-right">资质证明
-                    <img class="coachicon icon01" {notempty name="coachCert.photo_positive"} src="{$coachCert.photo_positive}"{/notempty} alt="">
+                    <img class="coachicon icon01" {notempty name="coachCert.photo_positive" }
+                         src="{$coachCert.photo_positive}" {/notempty} alt="">
                 </a>
                 </li>
                 <li class="mui-table-view-cell listli detalisli listinitial">教学工龄
-                    <input type="text" class="input"
+                    <input type="text" class="input coach_year"
                            placeholder="请输入教学工龄" value="{$coachInfo.coach_year}">
                 </li>
-                <li class="mui-table-view-cell listli detalisli border-b">教学经验描述
-                    <div class="tips">
-                        <textarea rows="5" placeholder="填写教学经验">{$coachInfo.experience}</textarea>
+                <li class="mui-table-view-cell listli detalisli">教学经验描述
+                    <div class="tips" style="width: 71%">
+                        <textarea rows="5" class="experience" placeholder="填写教学经验">{$coachInfo.experience}</textarea>
                     </div>
                 </li>
-                <li class="mui-table-view-cell listli detalisli border-b">自我介绍
+                <li class="mui-table-view-cell listli detalisli">自我介绍
                     <div class="tips">
-                        <textarea rows="5" placeholder="填写教学经验">{$coachInfo.introduction}</textarea>
+                        <textarea rows="5" placeholder="自我介绍">{$coachInfo.introduction}</textarea>
                     </div>
                 </li>
                 <li class="mui-table-view-cell listli detalisli border-b">个人宣言
                     <div class="tips">
-                        <textarea rows="5" placeholder="填写教学经验">{$coachInfo.description}</textarea>
+                        <textarea rows="5" class="description" placeholder="个人宣言">{$coachInfo.description}</textarea>
                     </div>
                 </li>
             </ul>
@@ -92,59 +98,93 @@
             </div>
             <p class="height20"></p>
         </form>
+        <!--上传图片-->
+        <div id="picture" class="mui-popover mui-popover-action mui-popover-bottom" style="height:inherit;">
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell">
+                    <a href="#">拍照</a>
+                </li>
+                <li class="mui-table-view-cell">
+                    <a href="#">从手机照片选择</a>
+                </li>
+            </ul>
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell">
+                    <a href="#picture"><b>取消</b></a>
+                </li>
+            </ul>
+        </div>
     </div>
 
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<!--选择器-->
-<script src="/static/frontend/js/mui.picker.min.js"></script>
-<script src="/static/frontend/js/mui.poppicker.js"></script>
-<script src="/static/frontend/js/city.data-3.js"></script>
 
-<script src="/static/frontend/libs/yzvalidate.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
 
-    //验证码
-    function clickButton(obj) {
-        var obj = $(obj);
-        obj.attr("disabled", "disabled");
-        /*按钮倒计时*/
-        var time = 60;
-        var set = setInterval(function () {
-            obj.val(--time + "(s)");
-        }, 1000);
-        /*等待时间*/
-        setTimeout(function () {
-            obj.attr("disabled", false).val("重新获取验证码");
-            /*倒计时*/
-            clearInterval(set);
-        }, 60000);
-    }
+    //操作表
+    (function () {
+        mui('body').on('shown', '.mui-popover', function (e) {
+            //console.log('shown', e.detail.id);//detail为当前popover元素
+        });
+        mui('body').on('hidden', '.mui-popover', function (e) {
+            //console.log('hidden', e.detail.id);//detail为当前popover元素
+        });
+        var info = document.getElementById("info");
+        mui('body').on('tap', '.mui-popover-action li>a', function () {
+            var a = this,
+                parent;
+            //根据点击按钮，反推当前是哪个actionsheet
+            for (parent = a.parentNode; parent != document.body; parent = parent.parentNode) {
+                if (parent.classList.contains('mui-popover-action')) {
+                    break;
+                }
+            }
+            //关闭actionsheet
+            mui('#' + parent.id).popover('toggle');
+            info.innerHTML = "你刚点击了\"" + a.innerHTML + "\"按钮";
+        })
+    })
 
+
+    //完善教练信息
     $(function () {
 
         $(".registerbtn2").on("click", function () {
-            mui.ajax('http://hotpaas.com/api/coach/updateCoachApi/coach_id/{$coachInfo.id}', {
+            var coach_id = $(".coach_id").val();
+            var coach_year = $(".coach_year").val();
+            var experience = $(".experience").val();
+            var description = $(".description").val();
+            console(123)
+            if (coach_id, coach_year, experience, description == '') {
+                alert("请完善信息");
+                return;
+            }
+            mui.ajax('http://hotpaas.com/api/coach/updateCoachApi/coach_id/{$(coachInfo.id)}', {
                 data: {
-                   'status':1,
+                    'coach_id': coach_id,
+                    'coach_year': coach_year,
+                    'experience': experience,
+                    'description': description,
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
                 headers: {'Content-Type': 'application/json'},
                 success: function (data) {
+                    window.location.href = "http://hotpaas.com/frontend/coach/registersuccess"
                     console.log(data)
                 },
                 error: function (xhr, type, errorThrown) {
                     console.log(type);
                 }
             });
+
         })
 
     })
