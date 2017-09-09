@@ -62,7 +62,6 @@ class Coach extends Frontend{
     public function updateCoachApi(){
         try{
             $data = input('post.');
-            // $coach_id = $data['coach_id'];
             $coach_id = input('param.coach_id');
             if(!$coach_id){
                 return json(['code'=>200,'msg'=>'找不到教练信息']);

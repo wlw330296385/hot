@@ -33,7 +33,7 @@ class Login extends base{
 
     // 微信用户授权
     public function wxlogin() {
-        // session('memberInfo', null,'think');
+
         $WechatS = new WechatService();
         $userinfo = $WechatS->oauthUserinfo();
         if ($userinfo) {

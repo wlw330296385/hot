@@ -42,7 +42,11 @@ class BillService {
     }
 
     public function pubBill($data){
-        $result = $this->Bill->validate('BillVal')->save($data);
+        $validate = validate('BillVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        $result = $this->Bill->save($data);
         if($result){
             return ['code'=>100,'msg'=>'新建成功','data'=>$result];
         }else{
@@ -64,8 +68,12 @@ class BillService {
     // 编辑订单
     public function updateBill($data,$id){
         $is_pay = $this->is_pay(['id'=>$id]);
+        $validate = validate('BillVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
         if($is_pay>0){
-            $result = $this->Bill->validate('BillVal')->save($data,$id);
+            $result = $this->Bill->save($data,$id);
              if($result){
                 return ['code'=>100,'msg'=>'修改成功','data'=>$result];
             }else{

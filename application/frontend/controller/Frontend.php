@@ -7,9 +7,7 @@ class Frontend extends Base{
 	public function _initialize(){
 		parent::_initialize();
 		$this->memberInfo = session('memberInfo','','think');
-		$param = input('param.');
-		cache('param',$param);
-		cookie('param', $param);
+		
 		if(!$this->memberInfo['member']){
 			$this->nologin();
 		}else{

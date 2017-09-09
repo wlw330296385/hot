@@ -73,7 +73,11 @@ class LessonService {
         if(!$is_power){
             return ['code'=>200,'msg'=>'权限不足'];
         }
-        $result = $this->lessonModel->validate('LessonVal')->data($data)->save();
+        $validate = validate('LessonVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        $result = $this->lessonModel->data($data)->save();
         if($result){
             return ['msg' => $this->lessonModel->getError(), 'code' => 100, 'data' => $result];
         }else{

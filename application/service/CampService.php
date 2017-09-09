@@ -75,7 +75,7 @@ class CampService {
             return ['msg'=>'一个用户只能创建一个训练营','code'=>'200'];die;
         }
         $validate = validate('CampVal');
-        if(!$validate->check($$request)){
+        if(!$validate->check($request)){
             return ['msg' => $validate->getError(), 'code' => 200];
         }
         $res = $this->Camp->save($request);
