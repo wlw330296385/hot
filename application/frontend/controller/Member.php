@@ -23,9 +23,9 @@ class Member extends Frontend{
     }
 
     // 登陆成功跳转的页面
-    public function loginSuccess(){
+    public function registerSuccess(){
 
-        return view('Member/loginSuccess');
+        return view('Member/registerSuccess');
     }
     
     public function memberInfo(){
@@ -191,39 +191,6 @@ class Member extends Frontend{
         return view('Member/createBankCard');
     }
 
-
-    // 我的管理员身份训练营
-    public function myLeader(){
-        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
-        $campList = db('camp_member')->where(['member_id'=>$member_id,'type'=>3])->select();
-
-        $this->assign('campList',$campList);
-        return view('Member/myLeader');
-    }
-
-    // 我的教练身份训练营
-    public function myCoach(){
-        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
-        $campList = db('camp_member')->where(['member_id'=>$member_id,'type'=>2])->select();
-
-        $this->assign('campList',$campList);
-        return view('Member/myCoach');
-    }
-     // 我的学生身份训练营
-    public function myStudent(){
-        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
-        $campList = db('camp_member')->where(['member_id'=>$member_id,'type'=>1])->select();
-
-        $this->assign('campList',$campList);
-        return view('Member/myStudent');
-    }
-     // 我的班主任训练营
-    public function myTeacher(){
-        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
-        $campList = db('camp_member')->where(['member_id'=>$member_id,'type'=>7])->select();
-        $this->assign('campList',$campList);
-        return view('Member/myTeacher');
-    }
 
     // 我名下的训练营
     public function myCamp(){
