@@ -19,8 +19,13 @@ class Bill extends Model{
            $status = [0=>'未付款',1=>'已付款','-1'=>'申请退款','-2'=>'已退款'];
        return $status[$value];
     }
+
+    public function getGoodsTypeAttr($value){
+           $status = [1=>'课程',1=>'普通商品'];
+       return $status[$value];
+    }
     public function lesson(){
-    	return $this->hasOne('lesson','id','lesson_id',[],'left join');
+    	return $this->hasOne('lesson','id','goods_id',[],'left join');
     } 
 
 }

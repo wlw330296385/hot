@@ -18,10 +18,11 @@ class Bill extends Frontend{
     public function billInfoOfCamp(){
         $bill_id = input('param.bill_id');
         $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+
         // 课程信息
-        if($billInfo['goods_type'] == 1){
+        if($billInfo['goods_type'] == '课程'){
             $LessonService = new \app\service\LessonService;
-            $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['lesson_id']]);
+            $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
             $this->assign('lessonInfo',$lessonInfo);
             // 学生信息
             $StudentService = new \app\service\StudentService;
@@ -47,9 +48,9 @@ class Bill extends Frontend{
             $this->error('您没有权限');
         }
         // 课程信息
-        if($billInfo['goods_type'] == 1){
+        if($billInfo['goods_type'] == '课程'){
             $LessonService = new \app\service\LessonService;
-            $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['lesson_id']]);
+            $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
             $this->assign('lessonInfo',$lessonInfo);
             // 学生信息
             $StudentService = new \app\service\StudentService;
@@ -69,11 +70,13 @@ class Bill extends Frontend{
     public function billInfo(){
     	$bill_id = input('param.bill_id');
     	$billInfo = $this->BillService->getBill(['id'=>$bill_id]);
-        if($billInfo['goods_type']==1){
-            $lessonInfo = db('lesson')->where(['id'=>$billInfo['lesson_id']])->find();
+
+        if($billInfo['goods_type']=='课程'){
+            $lessonInfo = db('lesson')->where(['id'=>$billInfo['goods_id']])->find();
+            $this->assign('lessonInfo',$lessonInfo);
         }
 
-        $this->assign('lessonInfo',$lessonInfo);
+        
     	$this->assign('billInfo',$billInfo);
     	return view('Bill/billInfo');
     }

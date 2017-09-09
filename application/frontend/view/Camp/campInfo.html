@@ -56,12 +56,12 @@
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli detalisli">训练营介绍
                     <span class="about">{$campInfo.camp_introduction}
-                        <!--<a href="#">全文展示</a>-->
+                        <a href="javascript:void(0)">......全文展示</a>
                     </span>
                 </li>
             </ul>
 
-            <ul class="mui-table-view mb">
+            <ul class="mui-table-view">
                 <li class="mui-table-view-cell listli detalisli" style="line-height: 40px;">
                     <a class="mui-navigate-right"
                        href="{:url('coach/coachListOfCamp',['camp_id'=>$campInfo['id'],'type'=>4,'status'=>1])}">
@@ -102,7 +102,7 @@
             </ul>
             <p class="dropdown"><a href="{:url('lesson/lessonList',['camp_id'=>$campInfo['id']])}">更多课程...</a></p>
 
-            <div class="page-header mt">
+            <div class="page-header">
                 <span class="course" style="font-size: 14px">评论</span>
                 <span class="more">全部0个评论</span>
             </div>
@@ -152,11 +152,20 @@
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+    //展示训练营介绍全文
+    $(function () {
+        $(".about a").click( function() {
+            $(".about").css("display","block");
+            $(this).hide();
+        });
+    })
 
 </script>
 
