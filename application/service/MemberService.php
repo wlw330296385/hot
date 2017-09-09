@@ -21,7 +21,6 @@ class MemberService{
 	public function getMemberList($map){
 		$result = $this->memberModel->where($map)->select();
 		if($result){
-			session(null,'token');
 			$res = $result->toArray();
 			return $res;
 		}
@@ -51,6 +50,7 @@ class MemberService{
 		if(!$validate->check($request)){
 			return ['msg'=>$validate->getError(),'code'=>200];
 		}
+		unset($request['repassword']);
 		$result = $this->memberModel->data($request)->save();
 		if($result ===false){
 			return ['msg'=>$this->memberModel->getError(),'code'=>200];
@@ -120,17 +120,9 @@ class MemberService{
 		return $arr;
 	}
 
-	// 判断字段是否重复
+
 	public function isFieldRegister($field,$value){
 		$result = $this->memberModel->where([$field=>$value])->find();
 		return $result?1:0;
 	}
-
-
-	public function setPid($pid,$member_id){
-        $result = $this->memberModel->where(['id'=>$memberInfo['id']])->save(['pid'=>$pid],$member_id);
-        file_put_contents(ROOT_PATH.'/data/member/'.date('Y-m-d',time()).'.txt',json_encode(['success'=>['pid'=>$pid,'member_id'=>$member_id],'time'=>date('Y-m-d H:i:s',time())]));
-        return $result;
-	}
-
 }
