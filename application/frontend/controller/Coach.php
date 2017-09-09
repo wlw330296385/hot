@@ -211,13 +211,7 @@ class Coach extends Frontend{
 
     //教练员注册
     public function createCoach(){
-        $param = cache('param');
-        if(!$param['pid']){
-            $pid = 0
-        }else{
-            $pid = $param['pid'];
-        }
-        $this->assign('pid',$pid);
+        
         return view('Coach/createCoach');
     }
 

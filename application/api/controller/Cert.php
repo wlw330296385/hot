@@ -26,6 +26,8 @@ class Cert extends Frontend{
         try{
             $data = input('post.');
             $cert_id = input('param.cert_id');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
             $result = $this->CertService->updateCert($data,$cert_id);
             return json($result);
         }catch (Exception $e){

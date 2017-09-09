@@ -38,14 +38,7 @@ class Member extends Frontend{
     }
 
 
-    //添加银行卡
-    public function createBankCardApi(){
-        try{
-            
-        }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
-        }
-    }
+
 
     // 编辑个人资料
     public function updateMemberApi(){
