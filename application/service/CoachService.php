@@ -28,15 +28,12 @@ class CoachService{
 	 * 申请成为教练
 	 */
 	public function createCoach($request){
-        $validate = validate('CoachVal');
-        if(!$validate->check($request)){
-            return ['msg' => $validate->getError(), 'code' => 200];
-        }
-		$result = $this->CoachModel->save($request);
+        $coachM = new Coach();
+        $result = $coachM->save($request);
         if($result){
-            return ['code'=>100,'msg'=>'OK','data'=>$result];
+            return ['code'=>200,'msg'=>'OK','data'=>$result];
         }else{
-            return ['code'=>100,'msg'=>$this->CoachModel->getError()];
+            return ['code'=>100,'msg'=>$coachM->getError()];
         }
 	}
 
@@ -50,7 +47,7 @@ class CoachService{
         if(!$validate->check($request)){
             return ['msg' => $validate->getError(), 'code' => 200];
         }
-        $result = $this->CoachModel->save($request,$id);
+        $result = $this->CoachModel->allowField(true)->save($request, ['id' => $id]);
 
         if ($result === false) {
             return ['msg' => $this->Coach->getError(), 'code' => 200];

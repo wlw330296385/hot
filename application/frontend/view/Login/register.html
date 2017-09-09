@@ -39,12 +39,12 @@
                 <span class="regspan tip mobile_hint"></span>
             </div>
             <div class="mui-input-row">
-                <input type="text" name="password" class="mui-input-clear reg_password" placeholder="输入密码"
+                <input type="password" name="password" class="mui-input-clear reg_password" placeholder="输入密码"
                        data-input-clear="5" style="margin-bottom: 0">
                 <span class="regspan tip password_hint"></span>
             </div>
             <div class="mui-input-row">
-                <input type="text" name="password" class="mui-input-clear reg_confirm" placeholder="确认密码"
+                <input type="password" name="password" class="mui-input-clear reg_confirm" placeholder="确认密码"
                        data-input-clear="5" style="margin-bottom: 0">
                 <span class="regspan tip confirm_hint"></span>
             </div>
@@ -78,32 +78,29 @@
             var telephone = $(".reg_mobile").val();
             var password = $(".reg_password").val();
             var repassword = $(".reg_confirm").val();
-             if(member,telephone,password,repassword!==''){
-                mui.ajax("{:url('api/login/registerApi')}", {
-                    data: {
-                        'member': member,
-                        'telephone': telephone,
-                        'password': password,
-                        'repassword': repassword
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: {'Content-Type': 'application/json'},
-                    success: function (data) {
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data)
-                        window.location.href = "{:url('member/loginSuccess')}";
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-             }else{
-                return false;
-             }
-            
+            console.log("member");
+             console.log("password");
+            mui.ajax("{:url('api/login/registerApi')}", {
+                data: {
+                    'member': member,
+                    'telephone': telephone,
+                    'password': password,
+                    'repassword': repassword
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: {'Content-Type': 'application/json'},
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    //console.log(data);
+                    window.location.href = "{:url('member/registerSuccess')}";
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
         })
 
         $(".inputname").on("blur", function () {

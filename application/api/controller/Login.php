@@ -13,6 +13,12 @@ class Login extends Base{
         	$data = input('post.');
         	$memberService = new \app\service\MemberService;
         	$result = $memberService->saveMemberInfo($data);
+            if($result['code']==100){
+                if($this->param['pid'] && !$memberInfo['pid']){
+                    $MemberSerivce = new \app\service\MemberSerivce;
+                    $MemberSerivce->setPid($this->param['pid'],$memberInfo['id']);
+                }
+            }
             return json($result);
         }catch (Exception $e){
         	return json(['code'=>100,'msg'=>$e->getMessage()]);

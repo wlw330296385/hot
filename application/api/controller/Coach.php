@@ -4,7 +4,7 @@ use app\api\controller\Base;
 use app\service\CoachService;
 use app\service\GradeMemberService;
 use app\service\ScheduleService;
-class Coach extends Frontend{
+class Coach extends Base{
 	protected $coachService;
 	public function _initialize(){
 		parent::_initialize();
@@ -52,11 +52,15 @@ class Coach extends Frontend{
         try{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
-            if($data['pid']){
-                
-            }
-            $result = $this->coachService->createCoach($data);
-            return json($result);
+
+            $smsApi = new Sms();
+            $checkcode = $smsApi->checkcode($data['telephone'], $data['smscode']);
+            /*if ($checkcode['code'] != 100) { // 短信验证不通过
+                return ['code' => 100, 'msg' => $checkcode['msg'] ];
+            }*/
+            unset($data['telephone']);
+            unset($data['smscode']);
+            return  $this->coachService->createCoach($data);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }

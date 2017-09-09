@@ -21,7 +21,6 @@ class MemberService{
 	public function getMemberList($map){
 		$result = $this->memberModel->where($map)->select();
 		if($result){
-			session(null,'token');
 			$res = $result->toArray();
 			return $res;
 		}
@@ -51,6 +50,7 @@ class MemberService{
 		if(!$validate->check($request)){
 			return ['msg'=>$validate->getError(),'code'=>200];
 		}
+		unset($request['repassword']);
 		$result = $this->memberModel->data($request)->save();
 		if($result ===false){
 			return ['msg'=>$this->memberModel->getError(),'code'=>200];
