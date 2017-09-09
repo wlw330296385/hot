@@ -32,8 +32,8 @@ class MessageService{
 	}
 
 	//修改Message资料
-	public function updateMessageInfo($request,$id){
-		$result = $this->MessageModel->save($request,['id'=>$id]);
+	public function updateMessageInfo($data,$id){
+		$result = $this->MessageModel->save($data,['id'=>$id]);
 		
 		if($result ===false){
 			return ['msg'=>$this->MessageModel->getError(),'code'=>200];
@@ -43,8 +43,12 @@ class MessageService{
 	}
 
 	//新建Message
-	public function saveMessageInfo($request){
-		$result = $this->MessageModel->validate('MessageVal')->data($request)->save();
+	public function saveMessageInfo($data){
+		$validate = validate('MessageVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+		$result = $this->MessageModel->data($data)->save();
 		
 		if($result ===false){
 			return ['msg'=>$this->MessageModel->getError(),'code'=>200];

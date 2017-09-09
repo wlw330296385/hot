@@ -71,7 +71,15 @@ class Login extends Base{
 
 
     public function autoLogin(){
-
+        $id = 1;
+        $member =new \app\service\MemberService;
+        $memberInfo = $member->getMemberInfo(['id'=>$id]);
+        unset($memberInfo['password']);
+        $this->memberInfo = $memberInfo;
+        $cookie = md5($memberInfo['id'].$memberInfo['create_time'].'hot');
+        cookie('member',md5($this->memberInfo['id'].$this->memberInfo['create_time'].'hot'));   
+        $result = session('memberInfo',$memberInfo,'think');
+        return json($result);
     }
 
 

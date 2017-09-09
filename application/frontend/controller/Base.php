@@ -6,7 +6,13 @@ use think\Request;
 class Base extends Controller{
 	public $systemSetting;
 	public $memberInfo;
-	public function _initialize(){		
+	public function _initialize(){	
+		$param = input('param.');
+		if($param){
+			cache('param',$param);
+			cookie('param', $param);
+		}
+			
 		$this->systemSetting = SystemService::getSite();
 		$this->assign('systemSetting',$this->systemSetting);
 		$this->footMenu();

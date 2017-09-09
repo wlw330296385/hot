@@ -32,7 +32,7 @@ class CoachService{
         if(!$validate->check($request)){
             return ['msg' => $validate->getError(), 'code' => 200];
         }
-		$result = $this->CoachModel->validate('CoachVal')->save($request);
+		$result = $this->CoachModel->save($request);
         if($result){
             return ['code'=>100,'msg'=>'OK','data'=>$result];
         }else{
