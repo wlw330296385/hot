@@ -2,7 +2,7 @@
 namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CourtService;
-class Court extends Base{
+class Court extends Frontend{
 	protected $CourtService;
 
 	public function _initialize(){

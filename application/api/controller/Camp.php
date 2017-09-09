@@ -2,7 +2,7 @@
 namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CampService;
-class Camp extends Base{
+class Camp extends Frontend{
     protected $CampService;
 	public function _initialize(){
         $this->CampService = new CampService;
@@ -61,6 +61,8 @@ class Camp extends Base{
     public function createCampApi(){
         try{
             $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
             $result = $this->CampService->createCamp($data);
             return json($result);
         }catch(Exception $e){
