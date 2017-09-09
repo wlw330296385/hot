@@ -2,7 +2,7 @@
 namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\ExerciseService;
-class Exercise extends Base{
+class Exercise extends Frontend{
 	protected $ExerciseService;
     
 	public function _initialize(){

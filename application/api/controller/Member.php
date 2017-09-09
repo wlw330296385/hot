@@ -3,7 +3,7 @@ namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\SalaryOutService;
 use app\service\MemberService;
-class Member extends Base{
+class Member extends Frontend{
 	private $SalaryOut;
     private $MemberService;
 	public function _initialize(){

@@ -2,7 +2,7 @@
 namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\SalaryOutService;
-class SalaryOut extends Base{
+class SalaryOut extends Frontend{
 	private $SalaryOutService;
 	public function __construct(){
 		parent::__construct();

@@ -1,5 +1,5 @@
 <?php
-namespace extend;
+//namespace extend;
 class SmsApi {
     public $api_appid;
     public $api_secret;

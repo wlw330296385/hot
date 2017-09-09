@@ -2,7 +2,7 @@
 namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CampService;
-class Camp extends Base{
+class Camp extends Frontend{
     protected $CampService;
 	public function _initialize(){
         $this->CampService = new CampService;

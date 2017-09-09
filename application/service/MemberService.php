@@ -21,6 +21,7 @@ class MemberService{
 	public function getMemberList($map){
 		$result = $this->memberModel->where($map)->select();
 		if($result){
+			session(null,'token');
 			$res = $result->toArray();
 			return $res;
 		}
