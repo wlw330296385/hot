@@ -22,6 +22,13 @@ class Member extends Frontend{
         return view('Member/index');
     }
 
+    // 会员设置页面
+    public function memberSetup(){
+
+
+        return view('Member/memberSetup');
+    }
+
     // 登陆成功跳转的页面
     public function registerSuccess(){
 
