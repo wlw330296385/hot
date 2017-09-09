@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <!DOCTYPE html>
 <html>
 
@@ -21,13 +21,13 @@
 </head>
 
 <body class=whitebg>
-
-<div class="mui-content">
-    <header id="header" class="mui-bar mui-bar-nav search2">
+     <header id="header" class="mui-bar mui-bar-nav search2">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
         <h1 class="mui-title"><input type="search" class="mui-input-clear" placeholder="搜索教练关键词"></h1>
         <span class="mui-icon mui-icon-search searchicon"></span>
     </header>
+
+  
     <div class="mui-content">
         <div class="location-frame">
             <span class="location">深圳市</span>
@@ -79,21 +79,13 @@
                 </ul>
             </div>
         </div>
-    </div>
+   
 </div>
 </body>
-<script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script>
-    document.addEventListener('touchstart', function (event) {
-        // 判断默认行为是否可以被禁用
-        if (event.cancelable) {
-            // 判断默认行为是否已经被禁用
-            if (!event.defaultPrevented) {
-                event.preventDefault();
-            }
-        }
-    }, false);
+
     mui("body").on("tap", "a", function () {
         window.top.location.href = this.href;
     });
@@ -136,7 +128,7 @@
                 container: "#refreshContainer",//待刷新区域标识，querySelector能定位的css选择器均可，比如：id、.class等
                 up: {
                     height: 150,//可选.默认50.触发上拉加载拖动距离
-                    auto: true,//可选,默认false.自动上拉加载一次
+                    auto: false,//可选,默认false.自动上拉加载一次
                     contentrefresh: "正在加载...",//可选，正在加载状态时，上拉加载控件上显示的标题内容
                     contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
                     callback: function () {
@@ -163,170 +155,5 @@
 
     })
 </script>
-=======
-<!DOCTYPE html>
-<html>
 
-<head>
-    <meta charset="utf-8">
-    <title>教练列表</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <!--标准mui.css-->
-    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
-    <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
-    <!--等级星星样式-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
-</head>
-
-<body class=whitebg>
-
-<div class="mui-content">
-    <header id="header" class="mui-bar mui-bar-nav search2">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title"><input type="search" class="mui-input-clear" placeholder="搜索教练关键词"></h1>
-        <span class="mui-icon mui-icon-search searchicon"></span>
-    </header>
-    <div class="mui-content">
-        <div class="location-frame">
-            <span class="location">深圳市</span>
-            <span class="location-choise">
-                 <select>
-                    <option>全部区域</option>
-                    <option>南山区</option>
-                    <option>福田区</option>
-                    <option>罗湖区</option>
-                    <option>龙岗区</option>
-                    <option>龙华区</option>
-                    <option>宝安区</option>
-                </select>
-            </span>
-            <span class="location-choise">
-                 <select>
-                    <option>性别</option>
-                    <option>男</option>
-                    <option>女</option>
-                </select>
-            </span>
-        </div>
-
-        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list detalis-list list coach">
-                    {volist name="coachList" id="vol"}
-                    <li class="mui-table-view-cell mui-media listli list-wide">
-                        <a href="{:url('coach/coachInfo',['coach_id'=>$vol['id']])}">
-                            <img class="mui-media-object mui-pull-left coachicon"
-                                 src="{$vol.portraits}">
-                            <div class="mui-media-body wd36">
-                                {$vol.coach}<img src="{:getSex($vol['sex'])}" class="sex" alt="">
-                                <p class="mui-ellipsis">教龄:{$vol.coach_year}&nbsp;&nbsp;等级:{$vol.coach_level}</p>
-                            </div>
-                            <div class="price-frame">
-                                <div class="icons mui-inline">{$vol.star}
-                                    <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
-                                    <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
-                                    <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
-                                    <i data-index="4" class="mui-icon mui-icon-star-filled"></i>
-                                    <i data-index="5" class="mui-icon mui-icon-star-filled"></i>
-                                </div>
-                                <p class="address tr">南山区</p>
-                            </div>
-                        </a>
-                    </li>
-                    {/volist}
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-</body>
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<script>
-    document.addEventListener('touchstart', function (event) {
-        // 判断默认行为是否可以被禁用
-        if (event.cancelable) {
-            // 判断默认行为是否已经被禁用
-            if (!event.defaultPrevented) {
-                event.preventDefault();
-            }
-        }
-    }, false);
-    mui("body").on("tap", "a", function () {
-        window.top.location.href = this.href;
-    });
-
-    //滑动
-    mui('.mui-scroll-wrapper').scroll();
-    mui('body').on('shown', '.mui-popover', function (e) {
-        //console.log('shown', e.detail.id);//detail为当前popover元素
-    });
-    mui('body').on('hidden', '.mui-popover', function (e) {
-        //console.log('hidden', e.detail.id);//detail为当前popover元素
-    });
-
-
-    $(function () {
-        //搜索教练
-        $(".coachSearchBtn").on("click", function () {
-            var keyword = $(".keyword").val();
-            mui.ajax("{:url('api/coach/searchCoachListApi')}", {
-                data: {
-                    'keyword': keyword,
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: {'Content-Type': 'application/json'},
-                success: function (data) {
-                    console.log(data)
-                },
-                error: function (xhr, type, errorThrown) {
-                    console.log(type);
-                }
-            });
-        })
-
-        //获取教练列表
-        mui.init({
-            swipeBack: true, //启用右滑关闭功能
-            pullRefresh: {
-                container: "#refreshContainer",//待刷新区域标识，querySelector能定位的css选择器均可，比如：id、.class等
-                up: {
-                    height: 150,//可选.默认50.触发上拉加载拖动距离
-                    auto: true,//可选,默认false.自动上拉加载一次
-                    contentrefresh: "正在加载...",//可选，正在加载状态时，上拉加载控件上显示的标题内容
-                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                    callback: function () {
-                        mui.ajax("{:url('api/coach/getCoachListApi',['page'=>2])}", {
-                            data: {
-                                'status': 1,
-                            },
-                            dataType: 'json',//服务器返回json格式数据
-                            type: 'post',//HTTP请求类型
-                            timeout: 10000,//超时时间设置为10秒；
-                            headers: {'Content-Type': 'application/json'},
-                            success: function (data) {
-                                console.log(data)
-                            },
-                            error: function (xhr, type, errorThrown) {
-                                console.log(type);
-                            }
-                        });
-                    } //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
-                }
-
-            }
-        });
-
-    })
-</script>
->>>>>>> 7274790bba9a47a77fc36cafbe7de05782c44065
 </html>

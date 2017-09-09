@@ -74,35 +74,40 @@
     $(function () {
 
         $(".registerBtn").on("click", function () {
-            var member = '$(".reg_user").html()';
-            var telephone = '$(".reg_mobile").html()';
-            var password = '$(".reg_password").html()';
-            var repassword = '$(".reg_mobile").html()';
-            console.log("member");
-            mui.ajax("{:url('api/login/registerApi')}", {
-                data: {
-                    'member': member,
-                    'telephone': telephone,
-                    'password': password,
-                    'repassword': repassword
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: {'Content-Type': 'application/json'},
-                success: function (data) {
-                    //服务器返回响应，根据响应结果，分析是否登录成功；
-                    console.log(data)
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
+            var member = $(".reg_user").val();
+            var telephone = $(".reg_mobile").val();
+            var password = $(".reg_password").val();
+            var repassword = $(".reg_confirm").val();
+             if(member,telephone,password,repassword!==''){
+                mui.ajax("{:url('api/login/registerApi')}", {
+                    data: {
+                        'member': member,
+                        'telephone': telephone,
+                        'password': password,
+                        'repassword': repassword
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data)
+                        window.location.href = "{:url('login/loginSuccess')}";
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+             }else{
+                return false;
+             }
+            
         })
 
         $(".inputname").on("blur", function () {
-            var member = '$(".reg_user").html()';
+            var member = $(".reg_user").val();
             mui.ajax("{:url('api/login/isFieldRegisterApi')}", {
                 data: {
                     'field': 'member',
