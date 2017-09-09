@@ -32,6 +32,9 @@
             font-size: 22px !important;
             color: #FFB400;
         }
+
+
+
     </style>
 </head>
 
@@ -124,7 +127,7 @@
                                 <button id="submit"  style="display: none"></button>
                                 <div class="mui-page-content">
                                     <div id='image-list' id="question" style=display:none></div>
-                                    <div class="icons mui-inline" >
+                                    <div class="icons mui-inline stars" >
                                         <i data-index="1" class="mui-icon mui-icon-star"></i>
                                         <i data-index="2" class="mui-icon mui-icon-star"></i>
                                         <i data-index="3" class="mui-icon mui-icon-star"></i>
@@ -135,6 +138,7 @@
                             </div>
                         </li>
                         <li class="mui-col-xs-2 mui-col-sm-2">
+                        <input type="" name="">
                             <span>5分</span>
                         </li>
                     </ul>
@@ -232,5 +236,39 @@
 <script src="/static/frontend/js/mui.view.js "></script>
 <script src="/static/frontend/js/feedback.js"></script>
 <script>
+ $(function () {
+        var stars = $('.stars');
+        var Len = stars.length;
+        //遍历每个评分的容器
+        for (i = 0; i < Len; i++) {
+            //每次触发事件，清除该项父容器下所有子元素的样式所有样式
+            // function clearAll(obj) {
+            //     obj.parent().children('i').removeClass('on');
+            // }
+
+            stars.eq(i).find('i').click(function () {
+                var num = $(this).index();
+                clearAll($(this));
+                //当前包括前面的元素都加上样式
+                $(this).addClass('on').prevAll('i').addClass('on');
+                //给隐藏域input赋值
+                $(this).siblings('input').val(num);
+            });
+            stars.eq(i).find('i').mouseover(function () {
+                var num = $(this).index();
+                clearAll($(this));
+                //当前包括前面的元素都加上样式
+                $(this).addClass('on').prevAll('i').addClass('on');
+            });
+            stars.eq(i).find('i').mouseout(function () {
+                clearAll($(this));
+                //触发点击事件后input有值
+                var score = $(this).siblings('input').val();
+                for (i = 0; i < score; i++) {
+                    $(this).parent().find('i').eq(i).addClass('on');
+                }
+            });
+        }
+    })
 </script>
 </html>
