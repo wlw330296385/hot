@@ -61,6 +61,8 @@ class Camp extends Frontend{
     public function createCampApi(){
         try{
             $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
             $result = $this->CampService->createCamp($data);
             return json($result);
         }catch(Exception $e){
