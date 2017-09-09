@@ -21,14 +21,13 @@ class TokenService{
      // 	return $this->visit($this->num);
      // }
 
-	public function visitTimes($limit = 10,$expire=3600,$prefix = 'token'){
+	public function visitTimes($limit = 30,$expire=300,$prefix = 'token'){
 		session(['prefix'=>'token','expire'=>$expire]);
 		$this->num = session('visittime','',$prefix);
 		if(!$this->num){
 			session('visittime',1,'token');
 			return 1;
-		}else{
-			
+		}else{			
 			if($this->num>$limit){
 				session(null,$prefix);
 				return false;

@@ -1,7 +1,7 @@
 <?php 
 namespace app\api\controller;
 use SmsApi;
-class Login{
+class Login extends Base{
 	
     public function index() {
 
@@ -41,6 +41,7 @@ class Login{
             if($result){
             	$res = $this->wxlogin($result);
             	if($res===true){
+                    session(null,'token');
             		return json(['code'=>100,'msg'=>'登陆成功']);
             	}else{
             		return json(['code'=>200,'msg'=>'系统错误']);
@@ -74,16 +75,49 @@ class Login{
     }
 
 
+    
     // 获取手机验证码
-    public function getMobileCode(){
+    public function getMobileCodeApi(){
         try{
             $telephone = input('param.telephone');
             $SmsApi = new SmsApi;
-            $SmsApi->paramArr = [
+            $smsCode = rand(10000,99999);
+            $data = ['smsCode'=>$smsCode,'telephone'=>$telephone,'time' => time()];
+            $result = session('smsCode',$data,'think');
+            if($result){
+                $SmsApi->paramArr = [
                   'mobile' => $telephone,
-                  'content' => '',
+                  'content' => json_encode(['code'=>$smsCode,'minute'=>'5','comName'=>'HOT大热篮球']),
                   'tNum' => 'T150606060601'
-             ];
+                ];
+                $res = $SmsApi->sendsms();
+                if($res == 0){
+                    return json(['code'=>100,'msg'=>'验证码已发送']);
+                }else{
+                    return json(['code'=>200,'msg'=>$res]);
+                }
+            }else{
+                return json(['code'=>200,'msg'=>'系统错误']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 验证手机验证码
+    public function validateSmsCodeApi(){
+        try{
+            $telephone = input('param.telephone');
+            $smsCode = input('param.smsCode');
+            $data = session('smsCode','','think');
+            if(time()-$data['time']>300){
+                return json(['code'=>200,'msg'=>'验证码过期失效']);
+            }
+            if($telephone == $data['telephone'] && $smsCode = $data['smsCode']){
+                return json(['code'=>100,'msg'=>'验证码正确']);
+            }else{
+                return json(['code'=>200,'msg'=>'验证码不正确']);
+            }
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }

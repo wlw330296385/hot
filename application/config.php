@@ -32,11 +32,12 @@ return [
     'qn_domain'=>'http://ou1z1q8b2.bkt.clouddn.com/',
 	
 	// 短信通道showapi
-    'sms_appid' => '37836',
-    'sms_secret' => 'ccf5ac14e3994cd0850765326275eb41',
+    // 'sms_appid' => '37836',
+    // 'sms_secret' => 'ccf5ac14e3994cd0850765326275eb41',
 	
 	
-	
+	'sms_appid' => '43708',
+    'sms_secret' => '19a5dd4ca32b4606bc32f2b452312b69',
 
     // +----------------------------------------------------------------------
     // | 应用设置

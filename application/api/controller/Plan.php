@@ -2,7 +2,7 @@
 namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\PlanService;
-class Plan extends Base{
+class Plan extends Frontend{
 	protected $planService;
 
 	public function _initialize(){
