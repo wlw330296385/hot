@@ -74,10 +74,10 @@
     $(function () {
 
         $(".registerBtn").on("click", function () {
-            var member = '$(".reg_user").html()';
-            var telephone = '$(".reg_mobile").html()';
-            var password = '$(".reg_password").html()';
-            var repassword = '$(".reg_mobile").html()';
+            var member = $(".reg_user").val();
+            var telephone = $(".reg_mobile").val();
+            var password = $(".reg_password").val();
+            var repassword = $(".reg_confirm").val();
             console.log("member");
             mui.ajax("{:url('api/login/registerApi')}", {
                 data: {
@@ -93,6 +93,7 @@
                 success: function (data) {
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data)
+                    window.location.href = "{:url('login/loginSuccess')}";
                 },
                 error: function (xhr, type, errorThrown) {
                     //异常处理；
@@ -102,7 +103,7 @@
         })
 
         $(".inputname").on("blur", function () {
-            var member = '$(".reg_user").html()';
+            var member = $(".reg_user").val();
             mui.ajax("{:url('api/login/isFieldRegisterApi')}", {
                 data: {
                     'field': 'member',
