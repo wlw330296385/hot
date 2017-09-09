@@ -22,7 +22,12 @@ class Member extends Frontend{
         return view('Member/index');
     }
 
+    // 登陆成功跳转的页面
+    public function loginSuccess(){
 
+        return view('Member/loginSuccess');
+    }
+    
     public function memberInfo(){
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
         $memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);

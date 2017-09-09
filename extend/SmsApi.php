@@ -6,8 +6,8 @@ class SmsApi {
     public $paramArr;
 
     public function __construct() {
-        $this->api_appid = C('SMS_APPID');
-        $this->api_secret = C('SMS_SECRET');
+        $this->api_appid = config('SMS_APPID');
+        $this->api_secret = config('SMS_SECRET');
     }
 
     // 创建参数并签名处理

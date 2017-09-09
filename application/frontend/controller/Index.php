@@ -27,6 +27,7 @@ class Index extends Base{
 
 
     public function search(){
+        
         return view();
     }
 
