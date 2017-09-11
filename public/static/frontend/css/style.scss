@@ -15,6 +15,25 @@ li {
   list-style: none;
 }
 
+// mixin Style
+
+@mixin downArrow{
+  content:'\e581';
+  font-family: Muiicons;
+  font-size: inherit;
+  line-height: 1;
+  position: absolute;
+  top: 10px;
+  right:0px;
+  display: inline-block;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  text-decoration: none;
+  color: #bbb;
+  -webkit-font-smoothing: antialiased;
+  text-shadow: 0 0 black;
+}
+
 // MUI style
 
 .mui-bar-tab .mui-tab-item { color:#666; }
@@ -31,14 +50,44 @@ li {
     height:43px;
     label{
       font-size: 14px;
+      color:#737373;
+    }
+    span{
+      font-size: 14px;
+      text-align: right;
+      float:right;
+      line-height: 43px;
+      padding-right: 15px;
+      color:#737373;
     }
     input,select,textarea{
       font-size: 14px;
       text-align: right;
     }
   }
+  .select-arrow{
+    padding-right: 30px !important;
+    select{
+      width: 100%;
+    }
+  }
+  .select-arrow:after{
+    top:22px !important;
+    right:10px !important;;
+    @include downArrow;
+  }
   .mui-input-row:after{
     left:0;
+  }
+  .h-auto{
+    height:auto !important;
+    padding:10px 0;
+  }
+  img{
+    width: 40px;
+    height: 40px;
+    float: right;
+    margin-right: 35px;
   }
   .code-btn {
     float: right;
@@ -199,6 +248,7 @@ li {
   width: 83% !important;
 }
 
+
 //**************************************************
 //pbulic css
 .nofloat {
@@ -256,8 +306,8 @@ li {
 
 .tjbtn {
   height: 45px;
-  margin-left: 60px;
-  margin-right: 60px;
+  margin-left: 10%;
+  margin-right: 10%;
   .btn {
     height: 100%;
     width: 100%;
@@ -443,20 +493,7 @@ li {
     }
   }
   .location-choise:after{
-    content:'\e581';
-    font-family: Muiicons;
-    font-size: inherit;
-    line-height: 1;
-    position: absolute;
-    top: 10px;
-    right:0px;
-    display: inline-block;
-    -webkit-transform: translateY(-50%);
-    transform: translateY(-50%);
-    text-decoration: none;
-    color: #bbb;
-    -webkit-font-smoothing: antialiased;
-    text-shadow: 0 0 black;
+    @include downArrow;
   }
   .max{
     width: 50% !important;
