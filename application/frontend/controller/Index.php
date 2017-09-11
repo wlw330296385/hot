@@ -42,10 +42,12 @@ class Index extends Base{
         dump(cache('param'));
         dump(cookie('param'));*/
 
-        $WechatService = new WechatService;
-        $callback1 = url('login/wxlogin','','', true);
-        $callback2 = url('login/wxlogin');
-        dump( $WechatService -> oauthredirect($callback1) );
-        dump( $WechatService -> oauthredirect($callback2) );
+        // $WechatService = new WechatService;
+        // $callback1 = url('login/wxlogin','','', true);
+        // $callback2 = url('login/wxlogin');
+        // dump( $WechatService -> oauthredirect($callback1) );
+        // dump( $WechatService -> oauthredirect($callback2) );
+
+        return view('index/test');
     }
 }

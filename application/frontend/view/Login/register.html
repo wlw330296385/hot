@@ -33,11 +33,7 @@
                        data-input-clear="5" style="margin-bottom: 0">
                 <span class="regspan tip user_hint"></span>
             </div>
-            <div class="mui-input-row">
-                <input type="text" class="mui-input-clear reg_mobile" placeholder="输入手机号" data-input-clear="5"
-                       style="margin-bottom: 0">
-                <span class="regspan tip mobile_hint"></span>
-            </div>
+
             <div class="mui-input-row">
                 <input type="password" name="password" class="mui-input-clear reg_password" placeholder="输入密码"
                        data-input-clear="5" style="margin-bottom: 0">
@@ -47,6 +43,16 @@
                 <input type="password" name="password" class="mui-input-clear reg_confirm" placeholder="确认密码"
                        data-input-clear="5" style="margin-bottom: 0">
                 <span class="regspan tip confirm_hint"></span>
+            </div>
+
+            <div class="mui-input-row">
+                <input type="text" class="mui-input-clear reg_mobile" placeholder="输入手机号" data-input-clear="5"
+                       style="margin-bottom: 0" id="telephone">
+                       <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)">
+                <span class="regspan tip mobile_hint"></span>
+            </div>
+            <div class="mui-input-row">                
+                 <input type="text" class="validate" placeholder="输入验证码" id="code" >
             </div>
             <div class="tjbtn">
                 <button type="button" class="mui-btn btn registerBtn red_button">
@@ -64,13 +70,15 @@
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="/static/frontend/libs/yzvalidate.js"></script>
+<script src="/static/frontend/js/smsCode.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
 
-
+    var flag = false;
+    
     $(function () {
 
         $(".registerBtn").on("click", function () {
@@ -121,8 +129,68 @@
                     console.log(type);
                 }
             });
+
         })
-    })
+            
+
+            //验证短信验证码
+            $('#code').on("blur",function(){
+                var code = document.getElementById('code').value;
+                var codeReg = /^\d{5,5}$/;
+
+                console.log(code);
+                if(!codeReg.test(code)){
+                    mui.toast('请填写正确的验证码');
+                    flag = false;
+                }else{
+                    telephone = document.getElementById('telephone').value;
+                    var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/login/validateSmsCodeApi','','',true)}");
+                    if(result == 100){
+                        flag = true;
+                        mui.toast(result.msg);
+                    }else{
+                        flag = false;
+                        mui.toast(result.msg);
+                    }
+                }
+                
+            })
+
+
+
+})
+
+
+
+
+
+
+// 发送短信验证码
+function sendCode(obj){
+    telephone = document.getElementById('telephone').value;
+    var telephoneReg = /^\d{11,11}$/;
+    if(!telephoneReg.test(telephone)){
+        mui.toast('请填写正确的手机号码');
+        flag = false;
+    }else{
+        console.log(telephone);
+        var result = smsCode.getMobileCodeApi(obj,telephone,"{:url('api/login/getMobileCodeApi','','',true)}");
+        console.log(result);
+        if(result.code == 100){
+            flag = true;
+            mui.toast(result.msg);
+        }else{
+            flag = false;
+            mui.toast(result.msg);
+        }
+    }
+}
+
+
+
+   
+
+
 
 
 </script>

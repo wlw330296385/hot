@@ -8,15 +8,11 @@ class Base extends Controller{
 	public $memberInfo;
 	public function _initialize(){	
 		$paramData = input('param.');
-		if($paramData){
-			cache('param',$paramData);
-			cookie('param', $paramData);
+		if(!$paramData){
+			$paramData = ['pid'=>0];
 		}
-		$param = cache('param');
-        if(!$param){
-            $param = [];
-        }
-        $this->assign('param',$param);	
+		cache('param',$paramData);
+		cookie('param', $paramData);;
 		$this->systemSetting = SystemService::getSite();
 		$this->assign('systemSetting',$this->systemSetting);
 		$this->footMenu();
