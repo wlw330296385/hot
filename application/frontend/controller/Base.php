@@ -8,7 +8,7 @@ class Base extends Controller{
 	public $memberInfo;
 	public function _initialize(){	
 		$paramData = input('param.');
-		if(!$paramData['pid']){
+		if(empty($paramData['pid'])){
 			$paramData = ['pid'=>0];
 		}
 		cookie('param', $paramData);
