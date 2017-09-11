@@ -18,31 +18,30 @@ document.write('<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>'
             }, 60000);
 
             //访问接口
-            var postMsg = $.post({
-                url:url,
-                data:{'telephone':mobile},
-                async:false,
-                type:'post',
-                function(msg){
+            var postMsg = $.ajax({
+                url: url,
+                data: {'telephone': mobile},
+                async: false,
+                type: 'post',
+                success: function(msg) {
 
-            }})
+                }
+            });
             return postMsg.responseJSON;
-            
         },
+
         'validateSmsCodeApi':function(mobile,smsCode,url){
             //访问接口
-            var postMsg = $.post({
+            var postMsg = $.ajax({
                 url:url,
                 data:{'telephone':mobile,'smsCode':smsCode},
                 async:false,
                 type:'post',
-                function(msg){
+                success: function(msg){
 
-            }})
+                }
+            });
             return postMsg.responseJSON;
         }
     }
-
-
-
 

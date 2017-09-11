@@ -86,8 +86,9 @@
             var telephone = $(".reg_mobile").val();
             var password = $(".reg_password").val();
             var repassword = $(".reg_confirm").val();
-            console.log("member");
-             console.log("password");
+            //console.log("member");
+            //console.log("password");
+
             mui.ajax("{:url('api/login/registerApi')}", {
                 data: {
                     'member': member,
@@ -101,15 +102,20 @@
                 headers: {'Content-Type': 'application/json'},
                 success: function (data) {
                     //服务器返回响应，根据响应结果，分析是否登录成功；
-                    //console.log(data);
-                    window.location.href = "{:url('member/registerSuccess')}";
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast(data.msg);
+                    } else {
+                        mui.toast(data.msg);
+                        window.location.href = "{:url('member/registerSuccess')}";
+                    }
                 },
                 error: function (xhr, type, errorThrown) {
                     //异常处理；
                     console.log(type);
                 }
             });
-        })
+        });
 
         $(".inputname").on("blur", function () {
             var member = $(".reg_user").val();
@@ -129,14 +135,13 @@
                     console.log(type);
                 }
             });
-
-        })
+        });
             
 
             //验证短信验证码
             $('#code').on("blur",function(){
                 var code = document.getElementById('code').value;
-                var codeReg = /^\d{5,5}$/;
+                var codeReg = /^\d{6,6}$/;
 
                 console.log(code);
                 if(!codeReg.test(code)){

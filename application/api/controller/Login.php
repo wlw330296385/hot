@@ -12,10 +12,9 @@ class Login extends Base{
         try{
         	$data = input('post.');
             $param = cookie('param');
-            $data['pid'=>$param['pid']];
+            $data['pid'] = isset($param['pid']) ? $param['pid'] : 0;
         	$memberService = new \app\service\MemberService;
-        	$result = $memberService->saveMemberInfo($data);
-            return json($result);
+        	return $memberService->saveMemberInfo($data);
         }catch (Exception $e){
         	return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -89,26 +88,29 @@ class Login extends Base{
     // 获取手机验证码
     public function getMobileCodeApi(){
         try{
-            $telephone = input('param.telephone');
-            $SmsApi = new SmsApi;
-            $smsCode = rand(10000,99999);
-            $data = ['smsCode'=>$smsCode,'telephone'=>$telephone,'time' => time()];
-            $result = session('smsCode',$data,'think');
-            if($result){
-                $SmsApi->paramArr = [
-                  'mobile' => $telephone,
-                  'content' => json_encode(['code'=>$smsCode,'minute'=>'5','comName'=>'HOT大热篮球']),
-                  'tNum' => 'T150606060601'
-                ];
-                $res = $SmsApi->sendsms();
-                if($res == 0){
-                    return json(['code'=>100,'msg'=>'验证码已发送']);
-                }else{
-                    return json(['code'=>200,'msg'=>$res]);
+            $telephone = input('telephone');
+            $randstr = str_shuffle('1234567890');
+            $smscode = substr($randstr, 0, 6);
+            $content = json_encode([ 'code' => $smscode, 'minute' => 5, 'comName' => 'HOT大热篮球' ]);
+            $smsApi = new SmsApi();
+            $smsApi->paramArr = [
+                'mobile' => $telephone,
+                'content' => $content,
+                'tNum' => 'T150606060601'
+            ];
+            $sendsmsRes = $smsApi->sendsms();
+            if ($sendsmsRes == 0) {
+                $data = ['smscode' => $smscode, 'phone' => $telephone, 'content' => $content,'create_time' => time(), 'use' => '会员注册'];
+                $savesms = db('smsverify')->insert($data);
+                if (!$savesms) {
+                    return [ 'code' => 200, 'msg' => '短信验证码记录异常' ];
                 }
-            }else{
-                return json(['code'=>200,'msg'=>'系统错误']);
+
+                return [ 'code' => 100, 'msg' => '验证码已发送,请注意查收' ];
+            } else {
+                return [ 'code' => 200, 'msg' => '获取验证码失败,请重试' ];
             }
+
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
@@ -117,17 +119,20 @@ class Login extends Base{
     // 验证手机验证码
     public function validateSmsCodeApi(){
         try{
-            $telephone = input('param.telephone');
-            $smsCode = input('param.smsCode');
-            $data = session('smsCode','','think');
-            if(time()-$data['time']>300){
-                return json(['code'=>200,'msg'=>'验证码过期失效']);
+            $telephone = input('telephone');
+            $smscode = input('smsCode');
+            $smsverify = db('smsverify')->where([ 'phone' => $telephone, 'smscode' => $smscode, 'status' => 0 ])->find();
+            if (!$smsverify) {
+                return [ 'code' => 200, 'msg' => '验证码无效,请重试' ];
             }
-            if($telephone == $data['telephone'] && $smsCode = $data['smsCode']){
-                return json(['code'=>100,'msg'=>'验证码正确']);
-            }else{
-                return json(['code'=>200,'msg'=>'验证码不正确']);
+
+            if (time()-$smsverify['create_time'] > 300) {
+                return [ 'code' => 200, 'msg' => '验证码已过期,请重新获取' ];
             }
+
+            db('smsverify')->where(['id' => $smsverify['id']])->setField('status', 1);
+            return [ 'code' => 100, 'msg' => '验证通过'];
+
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }

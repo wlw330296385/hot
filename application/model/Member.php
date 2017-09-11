@@ -5,8 +5,9 @@ use traits\model\SoftDelete;
 class Member extends Model{
 	use SoftDelete;
     protected $deleteTime = 'delete_time';
+    protected $autoWriteTimestamp = true;
 	protected $readonly = [
-							'create_time',
+//							'create_time',
 							'openid',
 							'member',
 							'balance',

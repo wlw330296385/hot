@@ -20,7 +20,7 @@ function getdomain() {
 
 // 用户密码加密
 function passwd($str) {
-    return sha1(config('queue.salekey') . $str);
+    return sha1(config('salekey') . $str);
 }
 
 // 获取语言包

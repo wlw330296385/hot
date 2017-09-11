@@ -21,7 +21,6 @@ class MemberService{
 	public function getMemberList($map){
 		$result = $this->memberModel->where($map)->select();
 		if($result){
-			session(null,'token');
 			$res = $result->toArray();
 			return $res;
 		}
@@ -46,30 +45,34 @@ class MemberService{
 
 	//新建会员
 	public function saveMemberInfo($request){
-		//验证规则
-		$validate = validate('MemberVal');
-		if(!$validate->check($request)){
-			return ['msg'=>$validate->getError(),'code'=>200];
-		}
-		$result = $this->memberModel->data($request)->save();
-		if($result ===false){
-			return ['msg'=>$this->memberModel->getError(),'code'=>200];
-		}else{
-			$res = $this->saveLogin($result);
-			if($res){
-				return ['msg'=>__lang('MSG_100_SUCCESS'),'code'=>100,'data'=>$result];
-			}else{
-				return ['msg'=>'请重新登陆','code'=>100,'data'=>$result];
-			}
-			
-		}	
+		$MemberModel = new Member();
+        $request['password'] = passwd($request['password']);
+        $request['repassword'] = passwd($request['repassword']);
+        if (!isset($request['avatar'])) {
+            $request['avatar'] = '/static/default/avatar.png';
+        }
+
+        //验证规则
+		$res = $MemberModel->validate('MemberVal.add')->save($request);
+		if ($res === false) {
+		    //dump($MemberModel->getError());
+            return [ 'code' => 200, 'msg' => $MemberModel->getError() ];
+        } else {
+		    $login = $this->saveLogin($MemberModel->id);
+		    if ($login) {
+		        return ['code' => 100, 'msg' => __lang('MSG_100_SUCCESS')];
+            } else {
+		        return ['code' => 200, 'msg' => '请重新登陆'];
+            }
+
+        }
 	}
 
 	// 会员登录
 	public function login($username,$password){
 
 		$result = $this->memberModel
-				->where(['password'=>$password])
+				->where(['password'=> passwd($password) ])
 				->where(function($query) use ($username){
 						$query->where('member',$username)->whereOr('telephone',$username);
 					})
