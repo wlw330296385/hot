@@ -11,6 +11,8 @@ class Login extends Base{
     public function registerApi(){
         try{
         	$data = input('post.');
+            $param = cookie('param');
+            $data['pid'=>$param['pid']];
         	$memberService = new \app\service\MemberService;
         	$result = $memberService->saveMemberInfo($data);
             return json($result);
