@@ -7,17 +7,19 @@ class Base extends Controller{
 	public $systemSetting;
 	public $memberInfo;
 	public function _initialize(){	
-		$paramData = input('param.');
-		if(empty($paramData['pid'])){
-			$paramData = ['pid'=>0];
+		$url = cookie('url');
+		if(!$url){
+			$url = $_SERVER["REQUEST_URI"];
+			cookie('url', $url);
 		}
-		cookie('param', $paramData);
 		$this->systemSetting = SystemService::getSite();
 		$this->assign('systemSetting',$this->systemSetting);
 		$this->footMenu();
 		$this->memberInfo = session('memberInfo','' , 'think');
 		if(!$this->memberInfo){
-			$this->memberInfo = ['id'=>-1,'member'=>'游客','hp'=>0,'level'=>0,'avatar'=>'/static/default/avatar.png'];
+			// $this->memberInfo = ['id'=>-1,'member'=>'游客','hp'=>0,'level'=>0,'avatar'=>'/static/default/avatar.png'];
+			// session('memberInfo',$this->memberInfo , 'think');
+			$this->nologin();
 		}	
 		$this->assign('memberInfo',$this->memberInfo);
 	}
@@ -59,5 +61,26 @@ class Base extends Controller{
 			],
 		];
 		$this->assign('footMenu',$footMenu);
+	}
+
+	protected function nologin(){
+		$result = $this->is_weixin();
+		if($result){
+			// $WechatService = new WechatService;
+			// $callback = url('login/wxlogin','','', true);
+			// $this->redirect($WechatService -> oauthredirect($callback));
+			$this->redirect('login/wxlogin');
+		}else{
+			$this->redirect('login/login');
+		}
+	}
+
+	
+
+	// 判断是否是微信浏览器
+	function is_weixin() { 
+	    if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) { 
+	        return true; 
+	    } return false; 
 	}
 }

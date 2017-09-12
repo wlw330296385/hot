@@ -1,8 +1,8 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Frontend;
+use app\frontend\controller\Base;
 use app\service\PlanService;
-class Plan extends Frontend{
+class Plan extends Base{
 	protected $planService;
 
 	public function _initialize(){

@@ -26,6 +26,6 @@ class Wxpay extends Frontend{
 	 */
 	public function notifyUrl()
 	{
-	    
+	    return $this-input();
 	}
 }

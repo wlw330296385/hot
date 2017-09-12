@@ -33,15 +33,27 @@ class Login extends base{
 
     // 微信用户授权
     public function wxlogin() {
-
-        $WechatS = new WechatService();
+        $WechatS = new WechatService;
         $userinfo = $WechatS->oauthUserinfo();
-        // dump($userinfo);die;
         if ($userinfo) {
-            $data = ['id'=>0,'member'=>'游客','nickname'=>$userinfo['nickname'],'hp'=>0,'level'=>0,'avatar'=>$userinfo['headimgurl'],'openid'=>$userinfo['openid']];
-            session('memberInfo',$data,'think');
+            // 查询是否已注册
+            $memberInfo = db('member')->where(['openid'=>$userinfo['openid']])->find();
+            if($memberInfo){
+                session('memberInfo',$memberInfo,'think');
+                $url = cookie('url');
+                $this->redirect($url);
+            }else{
+                $data = ['id'=>0,'member'=>'游客','nickname'=>$userinfo['nickname'],'hp'=>0,'level'=>0,'avatar'=>$userinfo['headimgurl'],'openid'=>$userinfo['openid']];
+                session('memberInfo',$data,'think');
+                // $this->redirect('Login/fastRegister');
+                $url = cookie('url');
+                $this->redirect($url);
+            }
+            
+        }else{
+            $this->redirect('frontend/Index/index');
         }
-        $this->redirect('frontend/Index/index');
+        
     }
 
     public function fastRegister(){

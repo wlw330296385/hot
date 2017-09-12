@@ -52,9 +52,6 @@ class Coach extends Frontend{
         try{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
-            if($data['pid']){
-                
-            }
             $result = $this->coachService->createCoach($data);
             return json($result);
         }catch (Exception $e){

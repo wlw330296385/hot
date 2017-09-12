@@ -31,16 +31,27 @@ class Index extends Base{
         return view();
     }
 
+
+    
+
+
+    
+
     public function test(){
-       /* session(null,'think');
-        $param = input('param.');
-        cache('param',$param);
-        cookie('param', $param);
-        dump($param);
-        dump($this->memberInfo);
+
+        // $this->redirect('/frontend/index/index/pid/1');
+        dump($url = $_SERVER["REQUEST_URI"]);
+        // cookie(null);
+        // session(null,'think');
+        // $param = input('param.');
+        // cache('param',$param);
+        // cookie('param', $param);
+        // dump($param);
+        // dump($this->memberInfo);
+        session('memberInfo',['id'=>'0','openid'=>'o83291CzkRqonKdTVSJLGhYoU98Q','member'=>'woo'],'think');
         dump(session('memberInfo','','think'));
-        dump(cache('param'));
-        dump(cookie('param'));*/
+        // dump(cache('param'));
+        // dump(cookie('param'));
 
         // $WechatService = new WechatService;
         // $callback1 = url('login/wxlogin','','', true);
@@ -48,6 +59,6 @@ class Index extends Base{
         // dump( $WechatService -> oauthredirect($callback1) );
         // dump( $WechatService -> oauthredirect($callback2) );
 
-        return view('index/test');
+        return view('Index/test');
     }
 }

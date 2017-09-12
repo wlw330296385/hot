@@ -20,8 +20,9 @@ return [
     'encodingaeskey' => 'hWJMgOj45Q5wNRFmY0BRHzNz6jLsDBNKFqd11YK492s',
     'state' => 'hb',
     'mchid' =>'1488926612',
-    'key'   =>'',//注：key为商户平台设置的密钥key
-
+    'key'   =>'93a793a3b611f19008432d0032251f34',//注：key为商户平台设置的密钥key
+    'sslcert_path'=>'',
+    'sslkey_path'=>'',
     // 七牛云
     //accessKey
     'qn_accesskey' => 'OOzGcbsIECVSx8uNY7d6iy8z8j60LruYL88dCGj8',
