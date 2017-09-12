@@ -106,10 +106,14 @@ class Lesson extends Base{
     public function comfirmBill(){
         $lesson_id = input('param.lesson_id');
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
-
+        // 生成支付参数
+        $wxOptions = ['appid'=>config('appid'),'appsecret' => config('appsecret')];
+        $WechatJsPayService = new \app\service\WechatJsPayService($wxOptions);
+        $parameters = $WechatJsPayService->getParameters();
         // 生成订单号
         $billOrder = '1'.date('YmrHis',time()).rand(0000,9999);
         // 生成微信参数
+        $this->assign('parameters',$parameters);
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billOrder',$billOrder);
         return view('Lesson/comfirmBill');
@@ -151,13 +155,16 @@ class Lesson extends Base{
 
     public function lessonListOfCamp(){
         $camp_id = input('param.camp_id');
+        
         // 上架课程
         $onlineLessonList = $this->LessonService->getLessonList(['camp_id'=>$camp_id,'status'=>1]);
         // 下架课程
         $offlineLessonList = $this->LessonService->getLessonList(['camp_id'=>$camp_id,'status'=>-1]);
-
+        // 训练营信息
+        $campInfo = 
         $this->assign('onlineLessonList',$onlineLessonList);
         $this->assign('offlineLessonList',$offlineLessonList);
+        $this->assign('camp_id',$camp_id);
         return view('Lesson/lessonListOfCamp');
     }
 }

@@ -11,6 +11,7 @@
  * @date 2015-5-15 14:10
  */
 namespace app\service;
+use wechatsdk\TPwechat;
 class WechatJsPayService {
   private $appId;
   private $appSecret;
@@ -18,7 +19,7 @@ class WechatJsPayService {
   public $weObj;      //微信类实例
   public $parameters;//获取prepay_id时的请求参数
   //受理商ID，身份标识
-  public $MCHID = '';
+  public $MCHID = '1488926612';
   //商户支付密钥Key。审核通过后，在微信商户平台中查看 https://pay.weixin.qq.com
   public $KEY = '';
   //=======【JSAPI路径设置】===================================
