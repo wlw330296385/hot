@@ -106,10 +106,14 @@ class Lesson extends Base{
     public function comfirmBill(){
         $lesson_id = input('param.lesson_id');
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
-
+        // 生成支付参数
+        $wxOptions = ['appid'=>config('appid'),'appsecret' => config('appsecret')];
+        $WechatJsPayService = new \app\service\WechatJsPayService($wxOptions);
+        $parameters = $WechatJsPayService->getParameters();
         // 生成订单号
         $billOrder = '1'.date('YmrHis',time()).rand(0000,9999);
         // 生成微信参数
+        $this->assign('parameters',$parameters);
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billOrder',$billOrder);
         return view('Lesson/comfirmBill');
