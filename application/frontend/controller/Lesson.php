@@ -151,13 +151,16 @@ class Lesson extends Base{
 
     public function lessonListOfCamp(){
         $camp_id = input('param.camp_id');
+        
         // 上架课程
         $onlineLessonList = $this->LessonService->getLessonList(['camp_id'=>$camp_id,'status'=>1]);
         // 下架课程
         $offlineLessonList = $this->LessonService->getLessonList(['camp_id'=>$camp_id,'status'=>-1]);
-
+        // 训练营信息
+        $campInfo = 
         $this->assign('onlineLessonList',$onlineLessonList);
         $this->assign('offlineLessonList',$offlineLessonList);
+        $this->assign('camp_id',$camp_id);
         return view('Lesson/lessonListOfCamp');
     }
 }

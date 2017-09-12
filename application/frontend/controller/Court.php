@@ -35,8 +35,13 @@ class Court extends Frontend{
 
     public function updateCourt(){   	
     	$court_id = input('param.court_id');
+        $camp_id = input('param.camp_id');
+        $CampService = new \app\service\CampService;
+        $power = $CampService->isPower($this->memberInfo['id'],$camp_id);
+        if($power<2){
+            $this->error('请先加入一个训练营并成为管理员或者创建训练营');
+        }
 		$CourtInfo = $this->CourtService->getCourtInfo(['id'=>$court_id]);
-        // dump($CourtInfo);die;
         $mediaList = $this->CourtMediaService->getCourtMediaList(['court_id'=>$court_id]);
 		$this->assign('CourtInfo',$CourtInfo);
         $this->assign('mediaList',$mediaList);
@@ -44,7 +49,12 @@ class Court extends Frontend{
     }
 
     public function createCourt(){
-
+        $camp_id = input('param.camp_id');
+        $CampService = new \app\service\CampService;
+        $power = $CampService->isPower($this->memberInfo['id'],$camp_id);
+        if($power<2){
+            $this->error('请先加入一个训练营并成为管理员或者创建训练营');
+        }
         return view('Court/createCourt');
     }
     // 分页获取数据

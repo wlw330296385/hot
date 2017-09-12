@@ -27,7 +27,7 @@ class Grade extends Frontend{
 
 
     public function updateGrade(){
-    	$grade_id = input('grade_id');
+    	$grade_id = input('param.grade_id');
         $gradeInfo = $this->GradeService->getGradeInfo(['id'=>$grade_id]);
         // 判读权限
         $CampService = new \app\service\CampService;
