@@ -50,13 +50,13 @@
 
             <div class="mui-input-row">
                 <label>班级名称</label>
-                <span>{$gradeInfo.grade}</span>
+                <span class="gradeName">{$gradeInfo.grade}</span>
             </div>
 
              <div class="mui-input-row">
                 <a href="#" class="mui-navigate-right">
                     <label>学员名单</label>
-                    <span>{volist name="studentList" id="vol"}{$vol.student},{/volist}</span>
+                    <span class="studentList">{volist name="studentList" id="vol"}{$vol.student},{/volist}</span>
                 </a>
             </div>
 
@@ -68,20 +68,18 @@
             </div>
 
             <div class="mui-input-row">
-                <a href="#" class="mui-navigate-right">
-                      <label>训练日期</label>
-                    <span>
-                        <select class="select-row">
-                            <option>周日</option>
-                            <option>周一</option>
-                            <option>周二</option>
-                            <option>周三</option>
-                            <option>周四</option>
-                            <option>周五</option>
-                            <option>周六</option>
-                        </select>
-                    </span>
-                </a>
+                <label>训练日期</label>
+                <span class="select-arrow">
+                    <select class="select">
+                        <option>周日</option>
+                        <option>周一</option>
+                        <option>周二</option>
+                        <option>周三</option>
+                        <option>周四</option>
+                        <option>周五</option>
+                        <option>周六</option>
+                    </select>
+                </span>
             </div>
 
             <div class="mui-input-row picker btn" id="demo5" data-options='{"type":"time"}'>
@@ -107,7 +105,7 @@
 
              <div class="mui-input-row">
                 <label>具体地址</label>
-                <input type="text" value="{$gradeInfo.location}">
+                <input type="text" class="locatin" value="{$gradeInfo.location}">
             </div>
 
             <div class="mui-input-row">
@@ -121,6 +119,7 @@
                 <a href="#assistantCoach" class="mui-navigate-right">
                     <label>助理教练</label>
                     <span class="assistantCoachCont">{$gradeInfo.assistant}</span>
+                    <input type="text" name="dom" style="display: none">
                 </a>
             </div>
 
@@ -135,12 +134,12 @@
             </div>
 
             <div class="mui-input-row">
-                <label>主教基数<a href="#base"><i class="mui-icon mui-icon-info"></i></a></label>
+                <label>主教基数<a href="#mainBase"><i class="mui-icon mui-icon-info"></i></a></label>
                 <input type="text" value="{$gradeInfo.assistant_salary}">
             </div>
 
              <div class="mui-input-row">
-                <label>助教基数<a href="#base"><i class="mui-icon mui-icon-info"></i></a></label>
+                <label>助教基数<a href="#assistantBase"><i class="mui-icon mui-icon-info"></i></a></label>
                 <input type="text" value="{$gradeInfo.salary_base}">
             </div>
 
@@ -167,12 +166,12 @@
 
             <div class="mui-input-row">
                 <label>场地租金</label>
-                 <input type="text" value="{$gradeInfo.rent}">
+                 <input type="text" class="rent" value="{$gradeInfo.rent}">
             </div>
 
             <div class="mui-input-row">
                 <label>备注</label>
-                <input type="text" value="{$gradeInfo.remarks}">
+                <input type="text" class="remarks" value="{$gradeInfo.remarks}">
             </div>
 
         </form>
@@ -205,31 +204,42 @@
             </div>
         </div>
     </div>
-    <!--助教练-->
+    <!--助理教练-->
     <div id="assistantCoach" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <div class="camp-list camp-lesson-list detalis-list mt">
                     <div class="page-header">
-                        <span class="course"><strong>主教练</strong></span>
+                        <span class="course wd36"><strong>助理教练</strong></span>
+                        <span class="fr"><button class="mui-btn-blue" id="domConfirm">确认</button></span>
                     </div>
-                    <ul class="mui-table-view list">
-                        {volist name="gradecateList" id="vol"}
-                        <li class="mui-table-view-cell listli detalisli">
-                            {$vol.name}
-                            {notempty name="vol._data"}
-                                
-                                {volist name="$vol['_data']" id="v"}
-                                    <li class="mui-table-view-cell listli detalisli assistantCoach" data-id="{$v.id}">
-                                        |-{$v.name}
-                                    </li>
-                                {/volist}
-                                
-                            {/notempty}
-                        </li>
-                        {/volist}
-                    </ul>
+                    <form class="mui-input-group">
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>教练1</label>
+                            <input name="checkbox-dom" value="教练1" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>教练2</label>
+                            <input name="checkbox-dom" value="教练2" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>教练3</label>
+                            <input name="checkbox-dom" value="教练3" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>教练4</label>
+                            <input name="checkbox-dom" value="教练4" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>教练5</label>
+                            <input name="checkbox-dom" value="教练5" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>教练6</label>
+                            <input name="checkbox-dom" value="教练6" type="checkbox">
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -247,14 +257,40 @@
             </div>
         </div>
     </div>
-    <!--基数-->
-    <div id="base" class="mui-popover">
+    <!--助教底薪-->
+    <div id="salary" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <div class="camp-list camp-lesson-list detalis-list">
                     <ul class="mui-table-view list">
-                        <li class="mui-table-view-cell listli detalisli base">基数</li>
+                        <li class="mui-table-view-cell listli detalisli salary">助教底薪</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--主教基数-->
+    <div id="mainBase" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list">
+                    <ul class="mui-table-view list">
+                        <li class="mui-table-view-cell listli detalisli base">主教基数</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+     <!--助教基数-->
+    <div id="assistantBase" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list">
+                    <ul class="mui-table-view list">
+                        <li class="mui-table-view-cell listli detalisli base">助教基数</li>
                     </ul>
                 </div>
             </div>
@@ -493,11 +529,15 @@
             mui("#mainCoach").popover("toggle");
        })
          // 助教练
-        $(".assistantCoach").click(function(){
-            var assistantCoach = $(this).html();
-            $(".assistantCoachCont").html(assistantCoach);
-            mui("#assistantCoach").popover("toggle");
-       })
+        $("#domConfirm").click(function(){
+            //选择多个助教练
+            $("input[name='dom']").val($("input[name='checkbox-dom']:checked").map(function(){
+                return $(this).val()
+            }).get().join(",") );
+            $(".assistantCoachCont").text($("input[name='dom']").val());
+            mui('#assistantCoach').popover('toggle');
+        })
+       
         // 班主任
         $(".headMaster").click(function(){
             var headMaster = $(this).html();
@@ -516,6 +556,8 @@
             $(".teachingPlanCont").html(teachingPlan);
             mui("#teachingPlan").popover("toggle");
        })
+
+
     })
 
     //关闭popover
@@ -528,7 +570,18 @@
                 && target.parent('.popover').length === 0 && target.attr("id") !== "headMaster,leader") {  
                 mui("#headMaster,#leader").popover("hide");
         }  
-    });  
+    }); 
+
+
+    $(".rent").blur(function(){
+        var num =$(".rent").val();
+        if(isNaN(num)){
+            mui.toast("请填写数字");
+            return false;
+        }
+    })
+
+
 
 
 </script>
