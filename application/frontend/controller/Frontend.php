@@ -34,11 +34,11 @@ class Frontend extends Base{
 
 	protected function nologin(){
 		$result = $this->is_weixin();
-		
 		if($result){
-			$WechatService = new WechatService;
-			$callback = url('login/wxlogin','','', true);
-			$this->redirect($WechatService -> oauthredirect($callback));
+			// $WechatService = new WechatService;
+			// $callback = url('login/wxlogin','','', true);
+			// $this->redirect($WechatService -> oauthredirect($callback));
+			$this->redirect('login/wxlogin');
 		}else{
 			$this->redirect('login/login');
 		}

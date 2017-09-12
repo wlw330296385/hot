@@ -32,15 +32,19 @@ class Index extends Base{
     }
 
     public function test(){
-       /* session(null,'think');
-        $param = input('param.');
-        cache('param',$param);
-        cookie('param', $param);
-        dump($param);
-        dump($this->memberInfo);
+
+        $this->redirect('/frontend/index/index/pid/1');
+        dump($url = $_SERVER["REQUEST_URI"]);
+
+        // session(null,'think');
+        // $param = input('param.');
+        // cache('param',$param);
+        // cookie('param', $param);
+        // dump($param);
+        // dump($this->memberInfo);
         dump(session('memberInfo','','think'));
-        dump(cache('param'));
-        dump(cookie('param'));*/
+        // dump(cache('param'));
+        // dump(cookie('param'));
 
         // $WechatService = new WechatService;
         // $callback1 = url('login/wxlogin','','', true);

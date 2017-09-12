@@ -11,8 +11,10 @@ class Login extends Base{
     public function registerApi(){
         try{
         	$data = input('post.');
-            $param = cookie('param');
-            $data['pid'] = isset($param['pid']) ? $param['pid'] : 0;
+            $pid = input('param.pid');
+            if($pid){
+                $data['pid'=>$pid];
+            }
         	$memberService = new \app\service\MemberService;
         	return $memberService->saveMemberInfo($data);
         }catch (Exception $e){

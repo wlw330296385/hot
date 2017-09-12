@@ -6,7 +6,7 @@ class WechatJsPayService {
 
     protected $openid;
     protected $option;
-    protected $notify_url =  'https://m.hot-basketball.com/app/api/Wxpay/notifyUrl';
+    protected $notify_url =  'https://m.hot-basketball.com/api/Wxpay/notifyUrl';
     public function __construct(){
         $memberInfo = session('memberInfo','','think');
         $this->openid = $memberInfo['openid'];
@@ -30,7 +30,7 @@ class WechatJsPayService {
 
     protected function unifiedOrder($data=[]){
 
-        $unifiedOrder = new UnifiedOrder();
+        $unifiedOrder = new UnifiedOrder;
         $unifiedOrder->setParameter("openid",$this->openid);       // openid
         $unifiedOrder->setParameter("body",'商品订单号'+$data['order_no']);    // 商品描术
         $unifiedOrder->setParameter("out_trade_no",$data['order_no'].'_'.$unifiedOrder->createNoncestr(6));  // 商户订单号

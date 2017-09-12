@@ -7,17 +7,15 @@ class Base extends Controller{
 	public $systemSetting;
 	public $memberInfo;
 	public function _initialize(){	
-		$paramData = input('param.');
-		if(empty($paramData['pid'])){
-			$paramData = ['pid'=>0];
-		}
-		cookie('param', $paramData);
+		$url = $_SERVER["REQUEST_URI"];
+		cookie('url', $url);
 		$this->systemSetting = SystemService::getSite();
 		$this->assign('systemSetting',$this->systemSetting);
 		$this->footMenu();
 		$this->memberInfo = session('memberInfo','' , 'think');
 		if(!$this->memberInfo){
 			$this->memberInfo = ['id'=>-1,'member'=>'游客','hp'=>0,'level'=>0,'avatar'=>'/static/default/avatar.png'];
+			session('memberInfo',$this->memberInfo , 'think');
 		}	
 		$this->assign('memberInfo',$this->memberInfo);
 	}

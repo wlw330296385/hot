@@ -111,7 +111,7 @@ class Common_util_pub
 		$String = $this->formatBizQueryParaMap($Parameters, false);
 		//echo '【string1】'.$String.'</br>';
 		//签名步骤二：在string后加入KEY
-		$String = $String."&key=".config('wechat_appkey');
+		$String = $String."&key=".config('key');
 		//echo "【string2】".$String."</br>";
 		//签名步骤三：MD5加密
 		$String = md5($String);
