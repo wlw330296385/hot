@@ -212,4 +212,11 @@ class Member extends Frontend{
         $this->assign('campList',$campList);
         return view('Member/myCamp');
     }
+
+
+    public function myShare(){
+
+
+        return view('Mmeber/myShare');
+    }
 }

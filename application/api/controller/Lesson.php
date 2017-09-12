@@ -82,7 +82,6 @@ class Lesson extends Frontend{
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
-
     	
     }
 

@@ -1,9 +1,9 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Base;
+use app\frontend\controller\Frontend;
 use app\service\LessonService;
 use app\service\GradeService;
-class Lesson extends Base{
+class Lesson extends Frontend{
 	protected $LessonService;
 	protected $GradeService;
 	public function _initialize(){
@@ -106,12 +106,14 @@ class Lesson extends Base{
     public function comfirmBill(){
         $lesson_id = input('param.lesson_id');
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
-        // 生成支付参数
-        $wxOptions = ['appid'=>config('appid'),'appsecret' => config('appsecret')];
-        $WechatJsPayService = new \app\service\WechatJsPayService($wxOptions);
-        $parameters = $WechatJsPayService->getParameters();
         // 生成订单号
-        $billOrder = '1'.date('YmrHis',time()).rand(0000,9999);
+        $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
+        // 生成支付参数
+        $data = ['order_no'=>$billOrder,'amount'=>1];
+        $WechatJsPayService = new \app\service\WechatJsPayService();
+        $parameters = $WechatJsPayService->pay($data);
+        
+        // dump($parameters);die;
         // 生成微信参数
         $this->assign('parameters',$parameters);
         $this->assign('lessonInfo',$lessonInfo);

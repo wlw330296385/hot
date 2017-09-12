@@ -36,8 +36,9 @@ class Login extends base{
 
         $WechatS = new WechatService();
         $userinfo = $WechatS->oauthUserinfo();
+        // dump($userinfo);die;
         if ($userinfo) {
-            $data = ['id'=>0,'member'=>'游客','nickname'=>$userinfo['nickname'],'hp'=>0,'level'=>0,'avatar'=>$userinfo['headimgurl']];
+            $data = ['id'=>0,'member'=>'游客','nickname'=>$userinfo['nickname'],'hp'=>0,'level'=>0,'avatar'=>$userinfo['headimgurl'],'openid'=>$userinfo['openid']];
             session('memberInfo',$data,'think');
         }
         $this->redirect('frontend/Index/index');
