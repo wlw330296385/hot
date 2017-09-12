@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>班级详情页-</title>
+    <title>班级详情页</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -17,12 +17,11 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
 </head>
 
-<body class=whitebg>
-
-
+<body>
 <div class="mui-content">
 
     <div class="camp-list camp-lesson-list grade-list">
+
         <ul class="mui-table-view list mb">
             <li class="mui-table-view-cell mui-media listli">
                 <a href="javascript:;" class="mui-navigate-right">
@@ -36,9 +35,7 @@
 
         <ul class="mui-table-view list detalis-list">
             <li class="mui-table-view-cell listli detalisli">学员名单
-                <a href="#" class="mui-navigate-right" style="display: inline">
-                    <span>{volist name="studentList" id="vol"}{$vol.student}&nbsp;{/volist}</span>
-                </a>
+                <span class="mui-navigate-right" style="padding-right: 10px">{volist name="studentList" id="vol"}{$vol.student}&nbsp;{/volist}</span>
             </li>
             <li class="mui-table-view-cell listli">训练时间<span>{$gradeInfo.lesson_time}</span></li>
             <li class="mui-table-view-cell listli">训练地点<span>{$gradeInfo.court}</span></li>
@@ -50,13 +47,18 @@
             <li class="mui-table-view-cell listli">助教练<span>{$gradeInfo.assistant}</span></li>
             <li class="mui-table-view-cell listli">所属课程<span>{$gradeInfo.lesson}</span></li>
             <li class="mui-table-view-cell listli">班级类型<span>{$gradeInfo.grade}</span></li>
-            <li class="mui-table-view-cell listli">教案<span>{$gradeInfo.plan}</span></li>
+             <li class="mui-table-view-cell listli">
+                <a href="{:url('plan/planList')}" class="mui-navigate-right">
+                    教案<span>{$gradeInfo.plan}</span>
+                </a>
+            </li>
             <li class="mui-table-view-cell listli">场地租金<span>{$gradeInfo.rent}</span></li>
             <li class="mui-table-view-cell listli">备注<span>{$gradeInfo.remarks}</span></li>
         </ul>
-    </div>
-</div>
 
+    </div>
+
+</div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script>
@@ -64,8 +66,5 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-
-    //    var tottal = 20;
-    localStorage.setItem("total", total);
 </script>
 </html>
