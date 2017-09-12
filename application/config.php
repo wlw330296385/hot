@@ -19,7 +19,8 @@ return [
     'token' => 'hotbasketball',
     'encodingaeskey' => 'hWJMgOj45Q5wNRFmY0BRHzNz6jLsDBNKFqd11YK492s',
     'state' => 'hb',
-
+    'mchid' =>'1488926612',
+    'key'   =>'',//注：key为商户平台设置的密钥key
 
     // 七牛云
     //accessKey

@@ -84,22 +84,24 @@
                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
            }
         }else{
-           onBridgeReady(total_fee);
+           onBridgeReady();
         }
     }
 
-    function onBridgeReady(total_fee){
-        var wxpayparam = '{$parameters}';
-        wxpayparam = JSON.parse(wxpayparam);
-       WeixinJSBridge.invoke(
+    function onBridgeReady(){
+        var jsApiParameters = '{$parameters.data.jsApiParameters}';
+        jsApiParameters = JSON.parse(jsApiParameters);
+        console.log(jsApiParameters);
+        console.log(jsApiParameters.paySign);
+        WeixinJSBridge.invoke(
            'getBrandWCPayRequest', {
-               "appId":"wx19f60be0f2f24c31",     //公众号名称，由商户传入     
+               "appId":jsApiParameters.appId,     //公众号名称，由商户传入     
                "timeStamp":"{:time()}",         //时间戳，自1970年以来的秒数     
-               "nonceStr":wxpayparam.nonceStr, //随机串     
-               "package":wxpayparam.package,     
+               "nonceStr":jsApiParameters.nonceStr, //随机串     
+               "package":jsApiParameters.package,     
                "signType":"MD5",         //微信签名方式：     
-               "paySign":wxpayparam.paySign, //微信签名
-               'total_fee':total_fee 
+               "paySign":jsApiParameters.paySign, //微信签名
+               'payType':jsApiParameters.payType
            },
            function(res){     
                if(res.err_msg == "get_brand_wcpay_request:ok" ) {}     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
