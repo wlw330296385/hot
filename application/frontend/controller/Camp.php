@@ -1,9 +1,9 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Frontend;
+use app\frontend\controller\Base;
 use app\service\CampService;
 use think\Db;
-class Camp extends Frontend{
+class Camp extends Base{
     protected $CampService;
 	public function _initialize(){
 		parent::_initialize();

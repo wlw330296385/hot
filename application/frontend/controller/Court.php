@@ -1,9 +1,9 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Frontend;
+use app\frontend\controller\Base;
 use app\service\CourtService;
 use app\service\CourtMediaService;
-class Court extends Frontend{
+class Court extends Base{
 	protected $CourtService;
     protected $CourtMediaService;
 	public function _initialize(){

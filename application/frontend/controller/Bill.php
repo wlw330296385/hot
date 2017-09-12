@@ -2,7 +2,7 @@
 namespace app\frontend\controller;
 use app\frontend\controller\Frontend;
 use app\service\BillService;
-class Bill extends Frontend{
+class Bill extends Base{
 	protected $BillService;
 	public function _initialize(){
 		parent::_initialize();

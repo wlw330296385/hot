@@ -1,7 +1,7 @@
 <?php 
 namespace app\frontend\controller;
 use app\service\StudentService;
-use app\frontend\controller\Frontend;
+use app\frontend\controller\Base;
 use think\Db;
 /**
 * 学生控制器

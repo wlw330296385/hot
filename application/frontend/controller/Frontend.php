@@ -7,8 +7,7 @@ class Frontend extends Base{
 	public function _initialize(){
 		parent::_initialize();
 		$this->memberInfo = session('memberInfo','','think');
-		
-		if(!$this->memberInfo['member']){
+		if($this->memberInfo['id']<1){
 			$this->nologin();
 		}else{
 			$re = session('memberInfo',$this->memberInfo);

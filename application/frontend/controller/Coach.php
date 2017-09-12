@@ -1,11 +1,11 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Frontend;
+use app\frontend\controller\Base;
 use app\service\CoachService;
 use app\service\GradeMemberService;
 use app\service\ScheduleService;
 use think\Db;
-class Coach extends Frontend{
+class Coach extends Base{
 	protected $coachService;
     protected $gradeMemberService;
     protected $scheduleService;

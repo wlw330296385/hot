@@ -1,9 +1,9 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Frontend;
+use app\frontend\controller\Base;
 use app\service\LessonService;
 use app\service\GradeService;
-class Lesson extends Frontend{
+class Lesson extends Base{
 	protected $LessonService;
 	protected $GradeService;
 	public function _initialize(){
