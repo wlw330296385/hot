@@ -71,7 +71,10 @@ class Base extends Controller{
 			$this->redirect($WechatService -> oauthredirect($callback));
 		}else{
 			$memberInfo = ['id'=>-1,'member'=>'游客','hp'=>0,'level'=>0,'avatar'=>'/static/default/avatar.png','nickname'=>'游客'];
-			session('memberInfo',$memberInfo , 'think');
+			unset($memberInfo['password']);
+	    	$cookie = md5($memberInfo['id'].$memberInfo['member'].'hot');
+	    	cookie('member',md5($memberInfo['id'].$memberInfo['member'].'hot'));
+			$re = session('memberInfo',$memberInfo , 'think');
 			$url = cookie('url');
             if($re){
                 $this->redirect($url);

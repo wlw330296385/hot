@@ -8,7 +8,7 @@ class Test {
         // $this->redirect('/frontend/index/index/pid/1');
         dump($url = $_SERVER["REQUEST_URI"]);
         // cookie(null);
-        // session(null,'think');
+        session(null,'think');die;
         // $param = input('param.');
         // cache('param',$param);
         // cookie('param', $param);

@@ -14,7 +14,6 @@ class Base extends Controller{
 
 
   public function _initialize() {  	
-
       $this->gettoken();
   }
   public function gettoken(){
@@ -38,7 +37,7 @@ class Base extends Controller{
  }
 
   public function checklogin(){ 
-   
+    
     $this->redirect('index/noLogin');die;
   }
 

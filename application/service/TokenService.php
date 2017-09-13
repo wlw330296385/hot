@@ -21,7 +21,7 @@ class TokenService{
      // 	return $this->visit($this->num);
      // }
 
-	public function visitTimes($limit = 2,$expire=300,$prefix = 'token'){
+	public function visitTimes($limit = 10,$expire=300,$prefix = 'token'){
 		session(['prefix'=>'token','expire'=>$expire]);
 		$this->data = session('visittime','',$prefix);
 		if(!$this->data){
