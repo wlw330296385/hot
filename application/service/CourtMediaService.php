@@ -37,7 +37,7 @@ class CourtMediaService {
     // 编辑场地图片
     public function updateCourtMedia($data,$id){
 
-        $result = $this->CourtMediaModel->save($data,$id);
+        $result = $this->CourtMediaModel->save($data,['id'=>$id]);
         if($result){
             return ['code'=>100,'data'=>$result,'msg'=>__lang('MSG_101_SUCCESS')];
         }else{

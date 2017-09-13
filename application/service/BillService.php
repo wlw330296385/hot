@@ -73,7 +73,7 @@ class BillService {
             return ['msg' => $validate->getError(), 'code' => 200];
         }
         if($is_pay>0){
-            $result = $this->Bill->save($data,$id);
+            $result = $this->Bill->save($data,['id'=>$id]);
              if($result){
                 return ['code'=>100,'msg'=>'修改成功','data'=>$result];
             }else{

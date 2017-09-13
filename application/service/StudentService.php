@@ -46,7 +46,7 @@ class StudentService{
         if(!$validate->check($StudentVal)){
             return ['msg' => $validate->getError(), 'code' => 200];
         }
-		$result = $this->studentModel->save($data,$id);
+		$result = $this->studentModel->save($data,['id'=>$id]);
 		if($result){
 			return ['code'=>100,'msg'=>'ok','data'=>$result];
 		}else{
@@ -63,7 +63,7 @@ class StudentService{
 			return false;
 		}
 		if($id){
-			$result = $this->gradeMemberModel->save($request,$id);
+			$result = $this->gradeMemberModel->save($request,['id'=>$id]);
 		}else{
 			$result = $this->gradeMemberModel->save($request);
 		}
@@ -140,7 +140,7 @@ class StudentService{
 
     // 班级学生变动
     public function updateGradeMember($data,$id){
-        $result = $this->gradeMemberModel->save($data,$id);
+        $result = $this->gradeMemberModel->save($data,['id'=>$id]);
         if($result){
     		$res = $result->toArray();
 			return ['code'=>100,'msg'=>'ok','data'=>$res];

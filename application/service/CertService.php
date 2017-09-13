@@ -50,7 +50,7 @@ class CertService {
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 200];
         }
-        $result = $this->certModel->save($data,$id);
+        $result = $this->certModel->save($data,['id'=>$id]);
         if($result){
             return ['code'=>100,'msg'=>'创建成功','data'=>$result];
         }else{
