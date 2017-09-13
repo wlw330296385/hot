@@ -97,7 +97,7 @@ class Grade extends Frontend{
     }
 
     // 批量班级学生名单变动
-    public function updateGradeMemberApi(){
+    public function updateGradeMemberAllApi(){
          try{
             $data = input('post.');
             $id = input('param.id');
