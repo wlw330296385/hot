@@ -13,7 +13,7 @@ class Login extends Base{
         	$data = input('post.');
             $pid = input('param.pid');
             if($pid){
-                $data['pid'=>$pid];
+                $data['pid'] = $pid;
             }
         	$memberService = new \app\service\MemberService;
         	return $memberService->saveMemberInfo($data);
@@ -42,7 +42,7 @@ class Login extends Base{
         	$memberService = new \app\service\MemberService;
         	$result = $memberService->login($username,$password);
             if($result){
-            	$res = $this->wxlogin($result);
+            	$res = $this->setSession($result);
             	if($res===true){
                     session(null,'token');
             		return json(['code'=>100,'msg'=>'登陆成功']);
@@ -57,14 +57,14 @@ class Login extends Base{
     }
 
 
-    protected function wxlogin($id){
+    protected function setSession($id){
 		$member =new \app\service\MemberService;
     	$memberInfo = $member->getMemberInfo(['id'=>$id]);
     	unset($memberInfo['password']);
     	$cookie = md5($memberInfo['id'].$memberInfo['create_time'].'hot');
     	cookie('member',md5($memberInfo['id'].$memberInfo['create_time'].'hot'));    	
         $result = session('memberInfo',$memberInfo,'think');
-        if($cookie){
+        if($result){
         	return true;
         }else{
         	return false;
