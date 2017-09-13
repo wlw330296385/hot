@@ -120,7 +120,7 @@
                 }
             });
         })
-
+        var page = 1;
         //获取教练列表
         mui.init({
             swipeBack: true, //启用右滑关闭功能
@@ -132,7 +132,11 @@
                     contentrefresh: "正在加载...",//可选，正在加载状态时，上拉加载控件上显示的标题内容
                     contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
                     callback: function () {
-                        mui.ajax("{:url('api/coach/getCoachListApi',['page'=>2])}", {
+                        page++;
+                        var url  = "{:url('api/coach/getCoachListApi','','',true)}";
+                        var urlPage = url+'/page/'+page;
+                        mui.ajax({
+                            url:urlPage,
                             data: {
                                 'status': 1,
                             },
@@ -147,6 +151,8 @@
                                 console.log(type);
                             }
                         });
+                        this.endPullupToRefresh(false);
+                        // mui('#refreshContainer').pullRefresh().endPullupToRefresh();
                     } //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
                 }
 
