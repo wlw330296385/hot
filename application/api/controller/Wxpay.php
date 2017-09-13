@@ -5,13 +5,7 @@ use Think\Controller;
 use Think\Log;
 class Wxpay extends Frontend{
 
-	public function index($order_no='2017020453102495'){
-        $data=controller('base/WxPay')->payByOrderNo($order_no);
-        $this->assign('amount',$data['amount']);
-        $this->assign('order_no',$order_no);
-        $this->assign("jsApiParameters" ,$data['jsApiParameters']);
-        $this->assign('openid',$this->open_id);
-        return $this->fetch('wxpay/pay');
+	public function index(){
     }
 
 
@@ -19,6 +13,18 @@ class Wxpay extends Frontend{
     	
     }
 
+    // 获取parameters
+    public function getParametersApi(){
+        try{
+            $data = input('post.');
+            $WechatJsPayService = new \app\service\WechatJsPayService();
+            $parameters = $WechatJsPayService->pay($data);
+            return json(['code'=>100,'msg'=>'o','data'=>$parameters]);
+        }catch (Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }
+        
+    }
 
 	/**
 	 * 异步通知接口

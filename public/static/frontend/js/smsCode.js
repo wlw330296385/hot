@@ -1,6 +1,10 @@
  //验证码
 
-// document.write('<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>');  
+if (jQuery) { 
+// jQuery 已加载 
+} else { 
+    document.write('<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>');   
+}  
     var smsCode = {
         'getMobileCodeApi':function (obj,mobile,url) {
             var obj = $(obj);
