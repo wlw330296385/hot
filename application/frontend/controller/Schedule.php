@@ -71,14 +71,12 @@ class Schedule extends Base
 		}
 
 		// 教练列表
-		$coachListOfCamp = db('grade_member')
+		$memberListOfCamp = db('camp_member')
 						->where([
 						'camp_id'	=>$camp_id,
-						'grade_id'	=>$grade_id,
-						'status'	=>1
+						'status'	=>1,
 						])
-						->whereOr(['type'=>['in',[2,3,4,6,8]]])
-						->field('member,member_id,coach,coach_id')
+						->field('member,member_id')
 						->select();
 		// 班级信息
 		$GradeService = new \app\service\GradeService;		
@@ -95,7 +93,7 @@ class Schedule extends Base
 		$this->assign('studentList',$studentList);
 		$this->assign('exerciseList',$exerciseList);
 		$this->assign('gradeInfo',$gradeInfo);
-		$this->assign('coachListOfCamp',$coachListOfCamp);
+		$this->assign('memberListOfCamp',$memberListOfCamp);
 		return view('Schedule/recordSchedule');
 	}
 
