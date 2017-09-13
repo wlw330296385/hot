@@ -21,11 +21,25 @@ class Grade extends Frontend{
     public function createGradeApi(){
         try{
             $data = input('post.');
+            $studentList = $data['studentList'];
+            $gradeData = $data['gradeData'];
             $gradeData['member_id'] = $this->memberInfo['id'];
             $gradeData['member'] = $this->memberInfo['member'];
             $GradeService = new GradeService;
-            $result = $GradeService->createGrade($data);
-            return json($result);
+            $result = $GradeService->createGrade($gradeData);
+            if($result['code']==200){
+                $grade_id = $result['data'];
+                //重组上课学员
+                foreach ($studentList as $key => $value) {
+                    $studentList[$key]['grade_id'] = $grade_id;
+                    $studentList[$key]['grade'] = $gradeData['grade'];
+                }
+                $StudentService = new \app\service\StudentService;
+                $res = $StudentService->saveAllStudent($studentList);
+                return json($res);
+            }else{
+                return json($result);
+            } 
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
