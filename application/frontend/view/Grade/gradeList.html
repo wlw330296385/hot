@@ -23,13 +23,13 @@
 
         <div class="list camp-list camp-lesson-list detalis-list coach">
             <div id="segmentedControl" class="mui-segmented-control mb">
-             <a class="mui-control-item " href="#camp">训练营</a>
-             <a class="mui-control-item mui-active" href="#item2">当前班级</a>
-             <a class="mui-control-item" href="#item3">预排班级</a>
-             <a class="mui-control-item" href="">添加班级</a>
-         </div>
+               <a class="mui-control-item " href="#camp">训练营</a>
+               <a class="mui-control-item mui-active" href="#item2">当前班级</a>
+               <a class="mui-control-item" href="#item3">预排班级</a>
+               <a class="mui-control-item" href="">添加班级</a>
+           </div>
 
-         <div class="item-list">
+           <div class="item-list">
             <div id="item1" class="mui-control-content mui-active">
                 <div class="nav-list">
                     <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
@@ -114,6 +114,8 @@
     <!--训练营-->
     <div id="camp" class="mui-popover">
         <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
                 <div class="camp-list camp-lesson-list detalis-list">
                     <ul class="mui-table-view list">
                         <li class="mui-table-view-cell listli detalisli camp">大热安凯翔训练营</li>
@@ -142,25 +144,11 @@
         swipeBack: true //启用右滑关闭功能
     });
 
-    mui('body').on('shown', '.mui-popover', function (e) {
-        //console.log('shown', e.detail.id);//detail为当前popover元素
+    mui("body").on("tap", "a", function () {
+        window.top.location.href = this.href;
     });
-    mui('body').on('hidden', '.mui-popover', function (e) {
-        //console.log('hidden', e.detail.id);//detail为当前popover元素
-    });
-    var info = document.getElementById("info");
-    mui('body').on('tap', '.mui-popover-action li>a', function () {
-        var a = this,
-        parent;
-        //根据点击按钮，反推当前是哪个actionsheet
-        for (parent = a.parentNode; parent != document.body; parent = parent.parentNode) {
-            if (parent.classList.contains('mui-popover-action')) {
-                break;
-            }
-        }
-        //关闭actionsheet
-        mui('#' + parent.id).popover('toggle');
-        info.innerHTML = "你刚点击了\"" + a.innerHTML + "\"按钮";
-    })
+
+    mui('.mui-scroll-wrapper').scroll();
+
 </script>
 </html>
