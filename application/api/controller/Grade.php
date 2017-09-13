@@ -71,8 +71,8 @@ class Grade extends Frontend{
         try{
             $grade_id = input('param.grade_id');
             $data = input('post.');
-            $gradeData['member_id'] = $this->memberInfo['id'];
-            $gradeData['member'] = $this->memberInfo['member'];
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
             $GradeService = new GradeService;
             $result = $GradeService->updateGrade($data,$grade_id);
             return json($result);
