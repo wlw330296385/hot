@@ -131,13 +131,10 @@ class LessonService {
                         'status'    =>1,
                         'member_id'  =>$member_id,
                         ])
-                    ->where('type','gt','2')
-                    ->find();
-        if($is_power){
-            return true;
-        }else{
-            return false;
-        }
+                    ->value('type');
+
+        return $is_power?$is_power:0;
+    
     }
 }
 
