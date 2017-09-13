@@ -66,7 +66,12 @@
                     <span class="gradeTypeCont">{$gradeInfo.gradecate}</span>
                 </a>
             </div>
-
+            <div class="mui-input-row">
+                <a href="#gradeType" class="mui-navigate-right">
+                    <label>所属课程</label>
+                    <span class="gradeTypeCont">{$gradeInfo.lesson}</span>
+                </a>
+            </div>
             <div class="mui-input-row">
                 <label>训练日期</label>
                 <span class="select-arrow">
@@ -276,9 +281,14 @@
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <div class="camp-list camp-lesson-list detalis-list">
-                    <ul class="mui-table-view list">
-                        <li class="mui-table-view-cell listli detalisli base">主教基数</li>
-                    </ul>
+                    <div class="explain">
+                        <div class="page-header explain-title">
+                            <span class="course">主教基数说明</span>
+                        </div>
+                        <div class="explain-cont">
+                            <p>1、助教基数说明;</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -289,9 +299,14 @@
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <div class="camp-list camp-lesson-list detalis-list">
-                    <ul class="mui-table-view list">
-                        <li class="mui-table-view-cell listli detalisli base">助教基数</li>
-                    </ul>
+                    <div class="explain">
+                        <div class="page-header explain-title">
+                            <span class="course">助教基数说明</span>
+                        </div>
+                        <div class="explain-cont">
+                            <p>1、助教基数说明;</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -572,17 +587,24 @@
         }  
     }); 
 
-
-    $(".rent").blur(function(){
-        var num =$(".rent").val();
+    //检测输入是否为数字
+    $(".checkNum").blur(function(){
+        var num =$(".checkNum").val();
         if(isNaN(num)){
             mui.toast("请填写数字");
             return false;
         }
     })
 
-
-
+    //检测输入是否为汉字
+    $(".checkChinese").blur(function(){
+        var str =$(".checkChinese").val();
+        if(/^[\u4e00-\u9fa5]+$/i.test(str)){
+            mui.toast("请填写汉字");
+            return false;
+        }
+    })
+   
 
 </script>
 </html>
