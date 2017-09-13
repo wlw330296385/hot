@@ -21,7 +21,7 @@ class TokenService{
      // 	return $this->visit($this->num);
      // }
 
-	public function visitTimes($limit = 10,$expire=300,$prefix = 'token'){
+	public function visitTimes($limit = 100,$expire=300,$prefix = 'token'){
 		session(['prefix'=>'token','expire'=>$expire]);
 		$this->data = session('visittime','',$prefix);
 		if(!$this->data){
@@ -32,11 +32,16 @@ class TokenService{
 
 			if($this->data['times'] > $limit && (time() - $this->data['time'])>6){
 				session(null,$prefix);
+				dump($this->data['times']);
 				return false;die;
 			}
 			$times = $this->data['times'];
+			// dump($times);
 			$times ++;
+			// dump($this->data);
+			// dump($times);die;
 			$this->data['times'] = $times;
+
 			session('visittime',$this->data,$prefix);
 			return $this->data['times'];
 		}

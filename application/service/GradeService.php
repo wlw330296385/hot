@@ -96,4 +96,7 @@ class GradeService{
         $result = db('grade_member')->where(['grade_id'=>$grade_id,'type'=>1,'status'=>1])->page($page,$paginate)->select();
         return $result;
     }
+
+
+    
 }

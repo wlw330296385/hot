@@ -21,19 +21,11 @@ class Grade extends Frontend{
     public function createGradeApi(){
         try{
             $data = input('post.');
-            $studentList = $data['student_list'];
-            $gradeData = $data['gradeData'];
             $gradeData['member_id'] = $this->memberInfo['id'];
             $gradeData['member'] = $this->memberInfo['member'];
             $GradeService = new GradeService;
-            $result = $GradeService->createGrade($gradeData);
-            if($result['code']==200){
-                return json($result);die;
-            } 
-             // 获取上课学员
-            foreach ($studentList as $key => $value) {
-                
-            }
+            $result = $GradeService->createGrade($data);
+            return json($result);
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
@@ -54,6 +46,37 @@ class Grade extends Frontend{
             $myGradeCount = count($myGradeList);
             $gradeListCount = count($gradeList);
             return json(['code'=>100,'msg'=>'ok','data'=>['myGradeCount'=>$myGradeCount,'gradeList'=>$gradeList,'gradeListCount'=>$gradeListCount]]);
+        }catch (Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+
+    public function updateGradeApi(){
+        try{
+            $grade_id = input('param.grade_id');
+            $data = input('post.');
+            $gradeData['member_id'] = $this->memberInfo['id'];
+            $gradeData['member'] = $this->memberInfo['member'];
+            $GradeService = new GradeService;
+            $result = $GradeService->updateGrade($data,$grade_id);
+            return json($result);
+        }catch (Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+
+    // 班级学生变动
+    public function updateGradeMemberApi(){
+         try{
+            $data = input('post.');
+            $id = input('param.id');
+            $StudentService = new \app\service\StudentService;
+            $res = $StudentService->updateGradeMember($data,$id);
+            return json($result); 
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }

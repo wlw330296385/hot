@@ -36,7 +36,7 @@ class Student extends Base
 	public function updateStudentApi(){
 		try{
 			$data = input('post.');
-			$student_id = input('student_id');
+			$student_id = input('param.student_id');
 			$result = $this->studentService->updateStudent($data,$student_id);
 			return json($result);
 		}catch (Exception $e){
@@ -60,6 +60,5 @@ class Student extends Base
 		}catch(Exception $e){
 			return json(['code'=>100,'msg'=>$e->getMessage()]);
 		}
-		
 	}	
 }

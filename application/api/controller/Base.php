@@ -26,9 +26,7 @@ class Base extends Controller{
      }   
 
      if($this->defend>1 && $this->defend<10){
-
-        $this->checklogin();
-       
+        $this->checklogin();      
       }elseif ($this->defend > 10) {
         $this->redirect('index/defendActivated');
       }

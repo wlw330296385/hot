@@ -7,8 +7,9 @@ class Test {
 
         // $this->redirect('/frontend/index/index/pid/1');
         dump($url = $_SERVER["REQUEST_URI"]);
-        // cookie(null);
-        session(null,'think');die;
+        session(null);
+        cookie(null);
+        session(null,'think');echo '清空了cookie和session';die;
         // $param = input('param.');
         // cache('param',$param);
         // cookie('param', $param);
@@ -27,6 +28,12 @@ class Test {
 
     }
 
-
+     public function test(){
+        $a = ['a'=>1,'b'=>3];
+        $b = $a['b'];
+        $b++;
+        $a['b'] = $b;
+        dump($a);
+     }
 
 }
