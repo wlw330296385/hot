@@ -50,7 +50,7 @@ class CoachService{
         if(!$validate->check($request)){
             return ['msg' => $validate->getError(), 'code' => 200];
         }
-        $result = $this->CoachModel->save($request,$id);
+        $result = $this->CoachModel->save($request,['id'=>$id]);
 
         if ($result === false) {
             return ['msg' => $this->Coach->getError(), 'code' => 200];

@@ -81,7 +81,7 @@ class GradeService{
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 200];
         }
-        $result = $this->GradeModel->save($data,$id);
+        $result = $this->GradeModel->save($data,['id'=>$id]);
          if (!$result) {
             return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
         }else{
