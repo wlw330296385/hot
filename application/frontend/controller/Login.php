@@ -1,9 +1,9 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Base;
+use think\Controller;
 use app\service\WechatService;
 
-class Login extends base{
+class Login extends Controller{
 	
     public function index() {
 
@@ -31,23 +31,32 @@ class Login extends base{
         return view('Login/register');
     }
 
-    // 微信用户授权
+    // 微信用户授权回调
     public function wxlogin() {
         $WechatS = new WechatService;
-        $userinfo = $WechatS->oauthUserinfo();
+        $userinfo = $WechatS->oauthUserinfo();  
         if ($userinfo) {
             // 查询是否已注册
             $memberInfo = db('member')->where(['openid'=>$userinfo['openid']])->find();
             if($memberInfo){
-                session('memberInfo',$memberInfo,'think');
+                $re = session('memberInfo',$memberInfo,'think');
                 $url = cookie('url');
-                $this->redirect($url);
+                if($re){
+                    $this->redirect($url);
+                }else{
+                    $this->redirect('frontend/Index/index');
+                }
             }else{
-                $data = ['id'=>0,'member'=>'游客','nickname'=>$userinfo['nickname'],'hp'=>0,'level'=>0,'avatar'=>$userinfo['headimgurl'],'openid'=>$userinfo['openid']];
-                session('memberInfo',$data,'think');
-                // $this->redirect('Login/fastRegister');
+            // 未注册
+                $data = ['id'=>-1,'member'=>$userinfo['nickname'],'nickname'=>$userinfo['nickname'],'hp'=>0,'level'=>0,'avatar'=>$userinfo['headimgurl'],'openid'=>$userinfo['openid']];
+                $re = session('memberInfo',$data,'think');
                 $url = cookie('url');
-                $this->redirect($url);
+                if($re){
+                    $this->redirect($url);
+                }else{
+                    $this->redirect('frontend/Index/index');
+                }
+                
             }
             
         }else{

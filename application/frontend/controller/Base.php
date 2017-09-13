@@ -3,6 +3,7 @@ namespace app\frontend\controller;
 use think\Controller;
 use app\service\SystemService;
 use think\Request;
+use app\service\WechatService;
 class Base extends Controller{
 	public $systemSetting;
 	public $memberInfo;
@@ -15,10 +16,8 @@ class Base extends Controller{
 		$this->systemSetting = SystemService::getSite();
 		$this->assign('systemSetting',$this->systemSetting);
 		$this->footMenu();
-		$this->memberInfo = session('memberInfo','' , 'think');
-		if(!$this->memberInfo){
-			// $this->memberInfo = ['id'=>-1,'member'=>'游客','hp'=>0,'level'=>0,'avatar'=>'/static/default/avatar.png'];
-			// session('memberInfo',$this->memberInfo , 'think');
+		$this->memberInfo = session('memberInfo','','think');
+		if(!isset($this->memberInfo['id'])){
 			$this->nologin();
 		}	
 		$this->assign('memberInfo',$this->memberInfo);
@@ -65,13 +64,20 @@ class Base extends Controller{
 
 	protected function nologin(){
 		$result = $this->is_weixin();
+		// $this->redirect('Test/index');
 		if($result){
-			// $WechatService = new WechatService;
-			// $callback = url('login/wxlogin','','', true);
-			// $this->redirect($WechatService -> oauthredirect($callback));
-			$this->redirect('login/wxlogin');
+			$WechatService = new WechatService;
+			$callback = url('login/wxlogin','','', true);
+			$this->redirect($WechatService -> oauthredirect($callback));
 		}else{
-			$this->redirect('login/login');
+			$memberInfo = ['id'=>-1,'member'=>'游客','hp'=>0,'level'=>0,'avatar'=>'/static/default/avatar.png','nickname'=>'游客'];
+			session('memberInfo',$memberInfo , 'think');
+			$url = cookie('url');
+            if($re){
+                $this->redirect($url);
+            }else{
+            	$this->redirect('Index/index');
+            }
 		}
 	}
 
