@@ -65,8 +65,8 @@ class Schedule extends Base
 		$camp_id = input('param.camp_id');
 		$lesson_id = input('param.lesson_id');
 		$grade_id = input('param.grade_id');
-		$is_power = $this->recordSchedulePower();
-		if($is_power == 0){
+		$is_power = $this->scheduleService->isPower($camp_id,$this->memberInfo['id']);
+		if($is_power <2){
 			$this->error('您没有权限录课');die;
 		}
 
@@ -124,51 +124,6 @@ class Schedule extends Base
 		}
 
 		return $result;die;
-	}
-	
-	// 判断是否有录课权限|审核
-	public function recordSchedulePower(){
-		// 只要是训练营的教练都可以跨训练营录课
-		$camp_id = input('camp_id');
-		$member_id = $this->memberInfo['id'];
-		$result = 1;
-		$is_power = db('grade_member')->where([
-											'member_id'	=>$member_id,
-											'camp_id'	=>$camp_id,
-											'status'	=>1
-									])
-									->whereOr(['type'=>['in',[2,3,4,6,8]]])	
-									->find();
-		if(!$is_power){
-			$result = 0;
-		}
-
-		return $result;
-	}
-
-
-	//课时审核
-	public function recordScheduleCheckApi(){
-		$camp_id = input('camp_id');
-		$is_power = $this->recordSchedulePowerApi();
-		if($is_power == 0){
-			return json(['code'=>200,'msg'=>'权限不足']);die;
-		}
-		$schedule_id = input('schedule_id');
-		$result = db('schedule')->save(['status'=>1],$schedule_id);
-		if($result){
-			return json(['code'=>100,'msg'=>'审核成功']);die;
-		}else{
-			return json(['code'=>200,'msg'=>'审核失败']);die;
-		}
-	}
-
-
-	// 录课Api
-	public function recordScheduleApi(){
-		$data = input('post.');
-		$result = $this->scheduleService->pubSchedule($data);
-		return json($result);
 	}
 
 
