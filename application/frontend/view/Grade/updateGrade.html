@@ -67,10 +67,8 @@
                 </a>
             </div>
             <div class="mui-input-row">
-                <a href="#gradeType" class="mui-navigate-right">
-                    <label>所属课程</label>
-                    <span class="gradeTypeCont">{$gradeInfo.lesson}</span>
-                </a>
+                <label>所属课程</label>
+                <span class="gradeTypeCont">{$gradeInfo.lesson}</span>
             </div>
             <div class="mui-input-row">
                 <label>训练日期</label>
@@ -110,7 +108,7 @@
 
              <div class="mui-input-row">
                 <label>具体地址</label>
-                <input type="text" class="locatin" value="{$gradeInfo.location}">
+                <span class="locatin">{$gradeInfo.location}</span>
             </div>
 
             <div class="mui-input-row">
@@ -130,22 +128,22 @@
 
             <div class="mui-input-row">
                 <label>主教底薪<a href="#salary"><i class="mui-icon mui-icon-info"></i></a></label>
-                <input type="text" value="{$gradeInfo.coach_salary}">
+                <span>{$gradeInfo.coach_salary}</span>
             </div>
 
             <div class="mui-input-row">
                 <label>助教底薪<a href="#salary"><i class="mui-icon mui-icon-info"></i></a></label>
-                <input type="text" value="{$gradeInfo.assistant_salary}">
+                <span>{$gradeInfo.assistant_salary}</span>
             </div>
 
             <div class="mui-input-row">
                 <label>主教基数<a href="#mainBase"><i class="mui-icon mui-icon-info"></i></a></label>
-                <input type="text" value="{$gradeInfo.assistant_salary}">
+                <span>{$gradeInfo.assistant_salary}</span>
             </div>
 
              <div class="mui-input-row">
                 <label>助教基数<a href="#assistantBase"><i class="mui-icon mui-icon-info"></i></a></label>
-                <input type="text" value="{$gradeInfo.salary_base}">
+                <span>{$gradeInfo.salary_base}</span>
             </div>
 
             <div class="mui-input-row">
@@ -171,12 +169,12 @@
 
             <div class="mui-input-row">
                 <label>场地租金</label>
-                 <input type="text" class="rent" value="{$gradeInfo.rent}">
+                 <input type="text" class="checkNum" value="{$gradeInfo.rent}">
             </div>
 
             <div class="mui-input-row">
                 <label>备注</label>
-                <input type="text" class="remarks" value="{$gradeInfo.remarks}">
+                <input type="text" class="remarks checkChinese" value="{$gradeInfo.remarks}">
             </div>
 
         </form>
@@ -254,7 +252,7 @@
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <div class="camp-list camp-lesson-list detalis-list">
+                <div class="mine">
                     <ul class="mui-table-view list">
                         <li class="mui-table-view-cell listli detalisli salary">主教底薪</li>
                     </ul>
@@ -267,7 +265,7 @@
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <div class="camp-list camp-lesson-list detalis-list">
+                <div class="mine">
                     <ul class="mui-table-view list">
                         <li class="mui-table-view-cell listli detalisli salary">助教底薪</li>
                     </ul>
@@ -280,7 +278,7 @@
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <div class="camp-list camp-lesson-list detalis-list">
+                <div class="mine">
                     <div class="explain">
                         <div class="page-header explain-title">
                             <span class="course">主教基数说明</span>
@@ -298,7 +296,7 @@
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <div class="camp-list camp-lesson-list detalis-list">
+                <div class="mine">
                     <div class="explain">
                         <div class="page-header explain-title">
                             <span class="course">助教基数说明</span>
@@ -328,7 +326,7 @@
                                 
                                 {volist name="$vol['_data']" id="v"}
                                     <li class="mui-table-view-cell listli detalisli gradeType" data-id="{$v.id}">
-                                        |-{$v.name}
+                                        {$v.name}
                                     </li>
                                 {/volist}
                                 
@@ -575,21 +573,10 @@
 
     })
 
-    //关闭popover
-    $('body').on('click', function(event) {  
-        var target = $(event.target); 
-        if (!target.hasClass('popover')  
-                && target.parent('.popover-content').length === 0  
-                && target.parent('.myPopover').length === 0  
-                && target.parent('.popover-title').length === 0  
-                && target.parent('.popover').length === 0 && target.attr("id") !== "headMaster,leader") {  
-                mui("#headMaster,#leader").popover("hide");
-        }  
-    }); 
 
     //检测输入是否为数字
     $(".checkNum").blur(function(){
-        var num =$(".checkNum").val();
+        var num =$(this).val();
         if(isNaN(num)){
             mui.toast("请填写数字");
             return false;
@@ -598,8 +585,8 @@
 
     //检测输入是否为汉字
     $(".checkChinese").blur(function(){
-        var str =$(".checkChinese").val();
-        if(/^[\u4e00-\u9fa5]+$/i.test(str)){
+        var str =$(this).val();
+        if(!/^[\u4e00-\u9fa5]+$/.test(str)){
             mui.toast("请填写汉字");
             return false;
         }

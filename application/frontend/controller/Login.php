@@ -39,6 +39,9 @@ class Login extends Controller{
             // 查询是否已注册
             $memberInfo = db('member')->where(['openid'=>$userinfo['openid']])->find();
             if($memberInfo){
+                unset($memberInfo['password']);
+                $cookie = md5($memberInfo['id'].$memberInfo['member'].'hot');
+                cookie('member',md5($memberInfo['id'].$memberInfo['member'].'hot'));
                 $re = session('memberInfo',$memberInfo,'think');
                 $url = cookie('url');
                 if($re){
@@ -48,8 +51,11 @@ class Login extends Controller{
                 }
             }else{
             // 未注册
-                $data = ['id'=>-1,'member'=>$userinfo['nickname'],'nickname'=>$userinfo['nickname'],'hp'=>0,'level'=>0,'avatar'=>$userinfo['headimgurl'],'openid'=>$userinfo['openid']];
-                $re = session('memberInfo',$data,'think');
+                $memberInfo = ['id'=>-1,'member'=>$userinfo['nickname'],'nickname'=>$userinfo['nickname'],'hp'=>0,'level'=>0,'avatar'=>$userinfo['headimgurl'],'openid'=>$userinfo['openid']];
+                unset($memberInfo['password']);
+                $cookie = md5($memberInfo['id'].$memberInfo['member'].'hot');
+                cookie('member',md5($memberInfo['id'].$memberInfo['member'].'hot'));
+                $re = session('memberInfo',$memberInfo,'think');
                 $url = cookie('url');
                 if($re){
                     $this->redirect($url);

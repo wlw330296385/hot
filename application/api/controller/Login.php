@@ -61,8 +61,8 @@ class Login extends Base{
 		$member =new \app\service\MemberService;
     	$memberInfo = $member->getMemberInfo(['id'=>$id]);
     	unset($memberInfo['password']);
-    	$cookie = md5($memberInfo['id'].$memberInfo['create_time'].'hot');
-    	cookie('member',md5($memberInfo['id'].$memberInfo['create_time'].'hot'));    	
+    	$cookie = md5($memberInfo['id'].$memberInfo['member'].'hot');
+    	cookie('member',md5($memberInfo['id'].$memberInfo['member'].'hot'));    	
         $result = session('memberInfo',$memberInfo,'think');
         if($result){
         	return true;
@@ -79,8 +79,8 @@ class Login extends Base{
         $memberInfo = $member->getMemberInfo(['id'=>$id]);
         unset($memberInfo['password']);
         $this->memberInfo = $memberInfo;
-        $cookie = md5($memberInfo['id'].$memberInfo['create_time'].'hot');
-        cookie('member',md5($this->memberInfo['id'].$this->memberInfo['create_time'].'hot'));   
+        $cookie = md5($memberInfo['id'].$memberInfo['member'].'hot');
+        cookie('member',md5($this->memberInfo['id'].$this->memberInfo['member'].'hot'));   
         $result = session('memberInfo',$memberInfo,'think');
         return json($result);
     }

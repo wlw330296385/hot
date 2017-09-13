@@ -106,7 +106,8 @@ class StudentService{
     public function getStudentListOfCamp($map,$page = 1,$paginate = 10){
     	$result = $this->gradeMemberModel->where($map)->page($page,$paginate)->select();
     	if($result){
-			$res = $result->toArray();return $res;
+			$res = $result->toArray();
+			return $res;
 		}
     	return $result;
     }
@@ -120,5 +121,31 @@ class StudentService{
 			return $res;
 		}
     	return $result;
+    }
+
+
+
+
+    // 批量更新学生数据
+    public function saveAllStudent($data){
+    	$result = $this->gradeMemberModel->saveAll($data);
+    	if($result){
+    		$res = $result->toArray();
+			return ['code'=>100,'msg'=>'ok','data'=>$res];
+		}else{
+			return ['code'=>200,'msg'=>$this->gradeMemberModel->getError()];
+		}
+    }
+
+
+    // 班级学生变动
+    public function updateGradeMember($data,$id){
+        $result = $this->gradeMemberModel->save($data,$id);
+        if($result){
+    		$res = $result->toArray();
+			return ['code'=>100,'msg'=>'ok','data'=>$res];
+		}else{
+			return ['code'=>200,'msg'=>$this->gradeMemberModel->getError()];
+		}
     }
 }

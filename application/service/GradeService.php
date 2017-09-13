@@ -96,4 +96,20 @@ class GradeService{
         $result = db('grade_member')->where(['grade_id'=>$grade_id,'type'=>1,'status'=>1])->page($page,$paginate)->select();
         return $result;
     }
+
+
+    // 课程权限
+    public function isPower($camp_id,$member_id){
+        $is_power = db('camp_member')
+                    ->where([
+                        'camp_id'   =>$camp_id,
+                        'status'    =>1,
+                        'member_id'  =>$member_id,
+                        ])
+                    ->value('type');
+
+        return $is_power?$is_power:0;
+    
+    }
+
 }

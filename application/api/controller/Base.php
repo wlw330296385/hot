@@ -14,7 +14,6 @@ class Base extends Controller{
 
 
   public function _initialize() {  	
-
       $this->gettoken();
   }
   public function gettoken(){
@@ -27,9 +26,7 @@ class Base extends Controller{
      }   
 
      if($this->defend>1 && $this->defend<10){
-
-        $this->checklogin();
-       
+        $this->checklogin();      
       }elseif ($this->defend > 10) {
         $this->redirect('index/defendActivated');
       }
@@ -38,7 +35,7 @@ class Base extends Controller{
  }
 
   public function checklogin(){ 
-   
+    
     $this->redirect('index/noLogin');die;
   }
 

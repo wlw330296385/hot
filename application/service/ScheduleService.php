@@ -155,4 +155,20 @@ class ScheduleService {
 		file_put_contents(ROOT_PATH.'/data/coachlevel/'.date('Y-m-d',time()).'.txt',json_encode(['error'=>'未成功返回课流量,教练id为:'.$coach_id,'time'=>date('Y-m-d H:i:s',time())]));
 		return false;
 	}
+
+
+
+    // 课程权限
+    public function isPower($camp_id,$member_id){
+        $is_power = db('camp_member')
+                    ->where([
+                        'camp_id'   =>$camp_id,
+                        'status'    =>1,
+                        'member_id'  =>$member_id,
+                        ])
+                    ->value('type');
+
+        return $is_power?$is_power:0;
+    
+    }
 }

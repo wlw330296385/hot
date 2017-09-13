@@ -105,7 +105,7 @@ function getSex($value){
         //1=男
         return "/static/frontend/images/icon03.jpg";
     }else{
-         return "/static/frontend/images/icon04.jpg";
+        return "/static/frontend/images/icon04.jpg";
     }
 }
 
