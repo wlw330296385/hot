@@ -26,14 +26,14 @@ class Coach extends Frontend{
             $sex = input('param.sex');
             $map = ['province'=>$province,'city'=>$city,'area'=>$area];
             foreach ($map as $key => $value) {
-                if($value == ''){
+                if($value == '' && !$value && empty($value)){
                     unset($map[$key]);
                 }
             }
-            if($sex){
+            if(!empty($sex)&&$sex!=''){
                 $map['sex'] = $sex;
             }
-            if($keyword){
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['coach'] = ['LIKE','%'.$keyword.'%'];
             }
             $coachList = $this->coachService->getCoachList($map,$page);
