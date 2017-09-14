@@ -22,6 +22,7 @@ class Grade extends Base{
 
     public function createGrade(){
     	$camp_id = input('param.camp_id');
+        $lesson_id = input('param.lesson_id');
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
          // 判读权限
         $CampService = new \app\service\CampService;
@@ -29,6 +30,7 @@ class Grade extends Base{
         if($is_power < 2){
             $this->error('您没有权限');
         }
+
         //获取班级类型
         $gradecateList = $this->GradeService->getGradeCategory();
         //获取员工列表
@@ -36,8 +38,8 @@ class Grade extends Base{
         //场地列表
         $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['status'=>$camp_id]);
-        // 获取班级学生
-        $studentList = $this->GradeService->getStudentList($grade_id);
+        // 获取课程学生
+        $studentList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         // 教案列表
         $PlanService = new \app\service\PlanService;
         $planList = $PlanService->getPlanList(['camp_id'=>$camp_id,'type'=>1]);
