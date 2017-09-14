@@ -31,6 +31,9 @@
         .mui-popover {
             height: 300px;
         }
+        .mui-toast-container{
+            top: 250px
+        }
     </style>
 </head>
 
@@ -55,7 +58,8 @@
                 <div class="mui-input-row">
                     <a href="#student" class="mui-navigate-right">
                         <label>学员名单</label>
-                        <span class="studentCont">{volist name="studentList" id="vol"}{$vol.student},{/volist}</span>
+                        <span class="studentCont student">{volist name="studentList" id="vol"}{$vol.student},{/volist}</span>
+                        <input type="text" name="grade" style="display: none">
                     </a>
                 </div>
 
@@ -87,7 +91,7 @@
                 <div class="mui-input-row picker btn" id="demo5" data-options='{"type":"time"}'>
                     <a href="#" class="mui-navigate-right">
                         <label>训练时间</label>
-                        <span id="result" class="ui-alert lesson_time">00:00</span>
+                        <span id="result" class="ui-alert lesson_time"></span>
                     </a>
                 </div>
 
@@ -227,27 +231,27 @@
                     <form class="mui-input-group">
                         <div class="mui-input-row mui-checkbox mui-left">
                             <label>学员1</label>
-                            <input name="checkbox-dom" value="学员1" type="checkbox">
+                            <input name="checkbox-grade" value="学员1" type="checkbox">
                         </div>
                         <div class="mui-input-row mui-checkbox mui-left">
                             <label>学员2</label>
-                            <input name="checkbox-dom" value="学员2" type="checkbox">
+                            <input name="checkbox-grade" value="学员2" type="checkbox">
                         </div>
                         <div class="mui-input-row mui-checkbox mui-left">
                             <label>学员3</label>
-                            <input name="checkbox-dom" value="学员3" type="checkbox">
+                            <input name="checkbox-grade" value="学员3" type="checkbox">
                         </div>
                         <div class="mui-input-row mui-checkbox mui-left">
                             <label>学员4</label>
-                            <input name="checkbox-dom" value="学员4" type="checkbox">
+                            <input name="checkbox-grade" value="学员4" type="checkbox">
                         </div>
                         <div class="mui-input-row mui-checkbox mui-left">
                             <label>学员5</label>
-                            <input name="checkbox-dom" value="学员5" type="checkbox">
+                            <input name="checkbox-grade" value="学员5" type="checkbox">
                         </div>
                         <div class="mui-input-row mui-checkbox mui-left">
                             <label>学员6</label>
-                            <input name="checkbox-dom" value="学员6" type="checkbox">
+                            <input name="checkbox-grade" value="学员6" type="checkbox">
                         </div>
                     </form>
                 </div>
@@ -389,6 +393,7 @@
     </div>
     <!--班主任-->
     <div id="headMaster" class="mui-popover">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -431,6 +436,7 @@
     </div>
     <!--领队-->
     <div id="leader" class="mui-popover">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -504,16 +510,15 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-
-    //弹出菜单
-    mui('.mui-scroll-wrapper').scroll();
-
+    
+    //选择器
     (function ($, doc) {
         $.ready(function () {
             var _getParam = function (obj, param) {
-                return obj[param] || '';
+                return obj[param] && '';
             };
-
+            
+            //选择地区
             var cityPicker3 = new $.PopPicker({
                 layer: 3
             });
@@ -528,7 +533,7 @@
                 });
             }, false);
 
-            //时间
+            //选择时间
             var result = $('#result')[0];
             var btns = $('.btn');
             btns.each(function (i, btn) {
@@ -548,15 +553,18 @@
         });
     })(mui, document);
 
-     //弹出框选择
-     $(function(){
+    //弹出菜单滚动
+    mui('.mui-scroll-wrapper').scroll();
+
+    //弹出框选择
+    $(function(){
         // 学员名单
         $("#studentConfirm").click(function(){
             //选择多个学员
-            $("input[name='dom']").val($("input[name='checkbox-dom']:checked").map(function(){
+            $("input[name='grade']").val($("input[name='checkbox-grade']:checked").map(function(){
                 return $(this).val()
             }).get().join(",") );
-            $(".studentCont").text($("input[name='dom']").val());
+            $(".studentCont").text($("input[name='grade']").val());
             mui('#student').popover('toggle');
         })
         // 班级类型
@@ -605,10 +613,12 @@
             $(".teachingPlanCont").html(teachingPlan);
             mui("#teachingPlan").popover("toggle");
         })
-
-
      })
-
+     
+    // 关闭弹出菜单
+    $(".close-popover").click(function(){
+        mui($(this).parent()).popover("toggle");
+    })
 
     //检测输入是否为数字
     $(".checkNum").blur(function(){
@@ -635,8 +645,8 @@
         var  week = $(".week option:selected").text();
         var  lesson_time = $(".lesson_time").html();
         var  location = $(".location").html();
-        var  coach_salary = $(".coach_salary").val();
-        var  assistant_salary = $(".assistant_salary").val();
+        var  coach_salary = $(".coach_salary").html();
+        var  assistant_salary = $(".assistant_salary").html();
         var  salary_base = $(".salary_base").html();
         var  coach = $(".coach").html();
         var  assistant = $(".assistant").html();
@@ -644,44 +654,75 @@
         var  teacher = $(".teacher").html();
         var  plan = $(".plan").html();
         var  rent = $(".rent").val();
-        var  status = $(".rent option:selected").text();
+        var  status = $(".status option:selected").text();
         var  remarks = $(".remarks").val();
-        alert("{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}")
-        mui.ajax("{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}",{
-            data:{
-                'grade':grade,
-                'gradecate':gradecate,
-                'week':week,
-                'lesson_time':lesson_time,
-                'location':location,
-                'coach_salary':coach_salary,
-                'assistant_salary':assistant_salary,
-                'salary_base':salary_base,
-                'coach':coach,
-                'assistant':assistant,
-                'leader':leader,
-                'teacher':teacher,
-                'plan':plan,
-                'rent':rent,
-                'status':status,
-                'remarks':remarks,
-            },
-        dataType:'json',//服务器返回json格式数据
-        type:'post',//HTTP请求类型
-        timeout:10000,//超时时间设置为10秒；
-        headers:{'Content-Type':'application/json'},                  
-        success:function(data){
-            //服务器返回响应，根据响应结果，分析是否登录成功；
-            console.log(data)
-        },
-        error:function(xhr,type,errorThrown){
-            //异常处理；
-            console.log(type);
+        if(gradecate!=''&&week!=''&&lesson_time!=''&&location!=''&&coach!=''&&assistantCoach!=''&&leader!=''&&teacher!=''&&plan!=''&&rent!=''){
+            mui.ajax("{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}",{
+                data:{
+                    'grade':grade,
+                    'gradecate':gradecate,
+                    'week':week,
+                    'lesson_time':lesson_time,
+                    'location':location,
+                    'coach_salary':coach_salary,
+                    'assistant_salary':assistant_salary,
+                    'salary_base':salary_base,
+                    'coach':coach,
+                    'assistants':assistant,
+                    'leader':leader,
+                    'teacher':teacher,
+                    'plan':plan,
+                    'rent':rent,
+                    'status':status,
+                    'remarks':remarks,
+                },
+                dataType:'json',//服务器返回json格式数据
+                type:'post',//HTTP请求类型
+                timeout:10000,//超时时间设置为10秒；
+                headers:{'Content-Type':'application/json'},                  
+                success:function(data){
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data)
+                    window.location.href="{:url('grade/gradeInfoOfCamp',['grade_id'=>'$grade_id'])}"
+                    
+                },
+                error:function(xhr,type,errorThrown){
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }else{
+            mui.toast("选项不能为空");
         }
-    });
     })
-    
 
+    //班级学员批量变动（编辑可用）
+    $("#studentConfirm").click(function(){
+        var grade = $(".grade").html();
+        if(grade!=''){
+            mui.ajax("{:url('api/grade/updateGradeMemberAllApi')}",{
+                data:[
+                ['grade','grade']
+                ['grade_id','{$gradeInfo.id}']
+                ],
+                dataType:'json',//服务器返回json格式数据
+                type:'post',//HTTP请求类型
+                timeout:10000,//超时时间设置为10秒；
+                headers:{'Content-Type':'application/json'},                  
+                success:function(data){
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data)
+                },
+                error:function(xhr,type,errorThrown){
+                    //异常处理；
+                    console.log(type);
+                }
+            });
 
+        }else{
+            return false;
+            mui.toast("选项不能为空");
+        }
+    })
 </script>
 </html>

@@ -52,17 +52,19 @@
             <li class="mui-table-view-cell listli detalisli">
                 <a href="#lessonType" class="mui-navigate-right">
                     课程类型
-                    <span>{$lessonInfo.gradecate}</span>
+                    <span class="lessonTypeCont">{$lessonInfo.gradecate}</span>
                 </a>
             </li>
             <li class="mui-table-view-cell listli detalisli">
                 课程单价
                 <input type="text" class="input" value="{$lessonInfo.cost}">
             </li>
+
+            <a href="#lessonDom" class="mui-navigate-right">
             <li class="mui-table-view-cell listli detalisli">
                 课程数量
-                <input type="text" class="input" value='{volist name="$lessonInfo.doms" id="vol" }{$vol},{/volist}'>
-            </li>
+                <input type="text" class="input lessonDom" name="dom" value='{volist name="$lessonInfo.doms" id="vol" }{$vol},{/volist}'>
+            </li></a>
             <li class="mui-table-view-cell listli detalisli">
                 课程所需积分
                 <input type="text" class="input" value="{$lessonInfo.score}">
@@ -71,9 +73,8 @@
             <li class="mui-table-view-cell listli detalisli picker btn" id="demo5" data-options='{"type":"time"}'>
                 训练时间
                 <span>
-                       
-                        <font id="result" class="mui-navigate-right ui-alert">{$lessonInfo.lesson_time}</font>
-                    </span>
+                    <font id="result" class="mui-navigate-right ui-alert">{$lessonInfo.lesson_time}</font>
+                </span>
             </li>
             <li class="mui-table-view-cell listli detalisli">
                 训练日期
@@ -146,8 +147,16 @@
             </li>
         </ul>
     </div>
+
+
+
+
+
+
+
     <!--主教练-->
     <div id="bishopPopover" class="mui-popover" style="margin: 0">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -192,6 +201,7 @@
     </div>
     <!--课程类型-->
     <div id="lessonType" class="mui-popover">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -201,7 +211,7 @@
                     </div>
                     <ul class="mui-table-view list">
                     {volist name="gradeCategoryList" id="vol"}
-                        <li class="mui-table-view-cell listli detalisli">
+                        <li class="mui-table-view-cell listli detalisli lessonType">
                             {$vol.name}
                         </li>
                     {/volist}
@@ -212,6 +222,7 @@
     </div>
     <!--训练地点-->
     <div id="trainLocation" class="mui-popover">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -231,9 +242,52 @@
         </div>
     </div>
 </div>
-
+<!--课量选择-->
+    <div id="lessonDom" class="mui-popover">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course wd36"><strong>课量选择</strong></span>
+                        <span class="fr"><button class="mui-btn-blue" id="domConfirm">确认</button></span>
+                        <span class="fr"><button id="domAdd">添加</button></span>
+                    </div>
+                    <form class="mui-input-group">
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>1 课时</label>
+                            <input name="checkbox-dom" value="1" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>5 课时</label>
+                            <input name="checkbox-dom" value="5" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>10 课时</label>
+                            <input name="checkbox-dom" value="10" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>15 课时</label>
+                            <input name="checkbox-dom" value="15" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>20 课时</label>
+                            <input name="checkbox-dom" value="20" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>30 课时</label>
+                            <input name="checkbox-dom" value="30" type="checkbox">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!-- 选择器 -->
 <script src="/static/frontend/js/mui.picker.min.js"></script>
 <script src="/static/frontend/js/mui.poppicker.js"></script>
 <script src="/static/frontend/js/city.data.js"></script>
@@ -246,13 +300,6 @@
 
     //弹出菜单
     mui('.mui-scroll-wrapper').scroll();
-    mui('body').on('shown', '.mui-popover', function (e) {
-        //console.log('shown', e.detail.id);//detail为当前popover元素
-    });
-    mui('body').on('hidden', '.mui-popover', function (e) {
-        //console.log('hidden', e.detail.id);//detail为当前popover元素
-    });
-
     (function ($, doc) {
         $.init();
         $.ready(function () {
@@ -306,6 +353,85 @@
             });
 
         });
+
     })(mui, document);
+
+
+
+
+//弹出框选择
+    $(function(){
+        // 上课星期
+        $("#weekConfirm").click(function(){
+            //选择多个星期
+            $("input[name='dom']").val($("input[name='checkbox-week']:checked").map(function(){
+                return $(this).val()
+            }).get().join(",") );
+            $(".weekCont").text($("input[name='dom']").val());
+            mui('#week').popover('toggle');
+        })
+        // 课程类型
+        $(".lessonType").click(function(){
+            var lessonType = $(this).html();
+            $(".lessonTypeCont").html(lessonType);
+            mui("#lessonType").popover("toggle");
+       })
+        // 训练地点
+        $(".trainLocation").click(function(){
+            var trainLocation = $(this).html();
+            $(".trainLocationCont").html(trainLocation);
+            mui("#trainLocation").popover("toggle");
+       })
+        // 主教练
+        $(".mainCoach").click(function(){
+            var mainCoach = $(this).html();
+            $(".mainCoachCont").html(mainCoach);
+            mui("#mainCoach").popover("toggle");
+       })
+        // 助理教练
+        $(".assistantCoach").click(function(){
+            var assistantCoach = $(this).html();
+            $(".assistantCoachCont").html(assistantCoach);
+            mui("#assistantCoach").popover("toggle");
+       })
+        // 班主任
+        $(".headMaster").click(function(){
+            var headMaster = $(this).html();
+            $(".headMasterCont").html(headMaster);
+            mui("#headMaster").popover("toggle");
+       })
+        // 领队
+        $(".leader").click(function(){
+            var leader = $(this).html();
+            $(".leaderCont").html(leader);
+            mui("#leader").popover("toggle");
+       })
+
+        // 关闭弹出菜单
+        $(".close-popover").click(function(){
+            mui($(this).parent()).popover("toggle");
+        })
+        //课量选择列表确认
+        $("#domConfirm").click(function(){
+            //把所选课量串在一起，以逗号分隔
+            $("input[name='dom']").val($("input[name='checkbox-dom']:checked").map(function(){
+                return $(this).val()
+            }).get().join(",") );
+            $(".lessonDom").text($("input[name='dom']").val());
+            mui('#lessonDom').popover('toggle');
+        })
+        //添加
+
+        document.getElementById("domAdd").addEventListener('tap', function(e) {
+            e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+            var btnArray = ['确定', '取消'];
+            mui.prompt('请输入您要加入的课量：', '', '课量添加', btnArray, function(e) {
+                if (e.index == 0) {
+                    $("#lessonDom form").prepend("<div class='mui-input-row mui-checkbox mui-left'><label>" + e.value + " 课时</label><input name='checkbox-dom' value='" + e.value + "' type='checkbox'></div>");
+                }
+            })
+        });
+
+    })
 </script>
 </html>

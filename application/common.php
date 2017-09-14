@@ -103,9 +103,9 @@ function format_sex($sex_int) {
 function getSex($value){
     if($value == 1){
         //1=男
-        return "/static/frontend/images/icon03.jpg";
+        return "/static/frontend/images/male.png";
     }else{
-        return "/static/frontend/images/icon04.jpg";
+        return "/static/frontend/images/female.png";
     }
 }
 

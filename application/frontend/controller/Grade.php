@@ -21,7 +21,39 @@ class Grade extends Base{
 
 
     public function createGrade(){
-    	
+    	$camp_id = input('param.camp_id');
+        $lesson_id = input('param.lesson_id');
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+         // 判读权限
+        $CampService = new \app\service\CampService;
+        $is_power = $CampService->isPower($camp_id,$this->memberInfo['id']);
+        if($is_power < 2){
+            $this->error('您没有权限');
+        }
+
+        // 课程列表
+        $lessonList = db('lesson')->where(['camp_id'=>1,'status'=>1])->select();
+        //获取班级类型
+        $gradecateList = $this->GradeService->getGradeCategory();
+        //获取员工列表
+        $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
+        //场地列表
+        $courtService = new \app\service\CourtService;
+        $courtList = $courtService->getCourtList(['status'=>$camp_id]);
+        // 获取课程学生
+        $studentList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
+        // 教案列表
+        $PlanService = new \app\service\PlanService;
+        $planList = $PlanService->getPlanList(['camp_id'=>$camp_id,'type'=>1]);
+
+        $this->assign('lessonList',$lessonList);
+        $this->assign('planList',$planList);
+        $this->assign('courtList',$courtList);
+        $this->assign('courtListJson',json_encode($courtList));
+        $this->assign('staffList',$staffList);
+        $this->assign('gradecateList',$gradecateList);
+        $this->assign('studentList',$studentList);
+        $this->assign('campInfo',$campInfo);
     	return view('Grade/createGrade');
     }
 
@@ -29,6 +61,7 @@ class Grade extends Base{
     public function updateGrade(){
     	$grade_id = input('param.grade_id');
         $gradeInfo = $this->GradeService->getGradeInfo(['id'=>$grade_id]);
+        
         // 判读权限
         $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($gradeInfo['camp_id'],$this->memberInfo['id']);
@@ -107,7 +140,7 @@ class Grade extends Base{
     // 有权限的班级列表
     public function gradeListOfCamp(){
         $member_id = $this->memberInfo['id'];
-        $camp_id = input('camp_id');
+        $camp_id = input('param.camp_id');
         $map1 = ['camp_id'=>$camp_id,'status'=>1];
         $map0 = ['camp_id'=>$camp_id,'status'=>0]; 
         // 我的班级
@@ -116,6 +149,7 @@ class Grade extends Base{
         $myGradeList = $this->GradeService->getGradeList(['camp_id'=>$camp_id,'coach_id'=>$member_id]);
         $myCount = count($myGradeList);
         $gradeListCount = count($gradeList);
+        $this->assign('camp_id',$camp_id);
         $this->assign('gradeList',$gradeList);
         $this->assign('gradeListCount',$gradeListCount);
         $this->assign('myGradeList',$myGradeList);

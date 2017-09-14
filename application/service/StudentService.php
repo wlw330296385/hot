@@ -130,8 +130,7 @@ class StudentService{
     public function saveAllStudent($data){
     	$result = $this->gradeMemberModel->saveAll($data);
     	if($result){
-    		$res = $result->toArray();
-			return ['code'=>100,'msg'=>'ok','data'=>$res];
+			return ['code'=>100,'msg'=>'ok','data'=>$result];
 		}else{
 			return ['code'=>200,'msg'=>$this->gradeMemberModel->getError()];
 		}
@@ -142,8 +141,7 @@ class StudentService{
     public function updateGradeMember($data,$id){
         $result = $this->gradeMemberModel->save($data,['id'=>$id]);
         if($result){
-    		$res = $result->toArray();
-			return ['code'=>100,'msg'=>'ok','data'=>$res];
+			return ['code'=>100,'msg'=>'ok','data'=>$result];
 		}else{
 			return ['code'=>200,'msg'=>$this->gradeMemberModel->getError()];
 		}

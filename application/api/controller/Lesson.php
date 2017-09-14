@@ -72,6 +72,17 @@ class Lesson extends Frontend{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
+            if($data['address']){
+                $address = explode(' ', $data['address']);
+                $data['province'] = $address[0];
+                $data['city'] = $address[1];
+                if($address[2]){
+                    $data['area'] = $address[2];
+                }else{
+                    $data['area'] = $address[1];
+                }
+                
+            }
             if($lesson_id){
                 $result = $this->LessonService->updateLesson($data,$lesson_id);
             }else{
@@ -118,5 +129,17 @@ class Lesson extends Frontend{
         }
     }
 
+
+    // 获取购买了课程的没毕业的学生
+    public function getStudentListOfLessonApi(){
+        try{
+            $lesson_id = input('param.lesson_id');
+            $map = input('post');
+            $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'status'=>1])->where($map)->where('grade_id','neq','')->field('student,id')->select();
+            return json(['code'=>100,'msg'=>'获取成功','data'=>$studentList]);
+        }catch (Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }
+    }
     
 }

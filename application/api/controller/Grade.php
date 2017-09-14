@@ -25,6 +25,11 @@ class Grade extends Frontend{
             $gradeData = $data['gradeData'];
             $gradeData['member_id'] = $this->memberInfo['id'];
             $gradeData['member'] = $this->memberInfo['member'];
+            if($gradeData['assistants']){
+                $assistan_list = explode(',', $gradeData['assistants']);
+                $seria = serialize($assistan_list);
+                $gradeData['assistant'] = $seria;
+            }
             $GradeService = new GradeService;
             $result = $GradeService->createGrade($gradeData);
             if($result['code']==200){
@@ -73,6 +78,11 @@ class Grade extends Frontend{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
+            if($data['assistants']){
+                $assistan_list = explode(',', $data['assistants']);
+                $seria = serialize($assistan_list);
+                $data['assistant'] = $seria;
+            }
             $GradeService = new GradeService;
             $result = $GradeService->updateGrade($data,$grade_id);
             return json($result);
@@ -89,7 +99,7 @@ class Grade extends Frontend{
             $data = input('post.');
             $id = input('param.id');
             $StudentService = new \app\service\StudentService;
-            $res = $StudentService->updateGradeMember($data,$id);
+            $result = $StudentService->updateGradeMember($data,$id);
             return json($result); 
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
@@ -100,13 +110,13 @@ class Grade extends Frontend{
     public function updateGradeMemberAllApi(){
          try{
             $data = input('post.');
-            $id = input('param.id');
             $StudentService = new \app\service\StudentService;
-            $res = $StudentService->updateGradeMember($data,$id);
+            $result = $StudentService->saveAllStudent($data);
             return json($result); 
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
     }
+
 
 }

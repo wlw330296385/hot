@@ -28,17 +28,14 @@ class CoachService{
 	 * 申请成为教练
 	 */
 	public function createCoach($request){
-        $validate = validate('CoachVal');
-        if(!$validate->check($request)){
-            return ['msg' => $validate->getError(), 'code' => 200];
-        }
-		$result = $this->CoachModel->save($request);
+        $coachM = new Coach();
+        $result = $coachM->save($request);
         if($result){
-            return ['code'=>100,'msg'=>'OK','data'=>$result];
+            return ['code'=>200,'msg'=>'OK','data'=>$result];
         }else{
-            return ['code'=>100,'msg'=>$this->CoachModel->getError()];
+            return ['code'=>100,'msg'=>$coachM->getError()];
         }
-	}
+    }
 
 
 	/**
@@ -46,17 +43,13 @@ class CoachService{
 	 */
 	public function updateCoach($request,$id)
     {
-        $validate = validate('CoachVal');
-        if(!$validate->check($request)){
-            return ['msg' => $validate->getError(), 'code' => 200];
-        }
-        $result = $this->CoachModel->save($request,['id'=>$id]);
-
+        $model = new Coach();
+        $result = $model->validate('CoachVal')->save($request, ['id' => $id]);
         if ($result === false) {
-            return ['msg' => $this->Coach->getError(), 'code' => 200];
-        } else {
-            return ['msg' => __lang('MSG_100_SUCCESS'), 'code' => 100, 'data' => $result];
+            return ['code' => 200, 'msg' => $model->getError()];
         }
+
+        return ['code' => 100, 'msg' => __lang('MSG_100_SUCCESS')];
     }
 	
 	// 教练列表
@@ -105,8 +98,8 @@ class CoachService{
     //     return $result->toArray();
     // }
 
-    public function getCoachListPage(){
-        $result = Coach::with('member')->where($map)->order($order)->page($page,$paginate)->select();
+    public function getCoachListPage($map=[],$page=1, $paginate = 10, $order=''){
+        $result = Coach::with('member')->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
         if (!$result) {
             return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
         }
@@ -120,7 +113,7 @@ class CoachService{
 
     // 教练列表 分页
     public function getCoachList($map=[],$page=1, $paginate = 10, $order='') {
-        $result = $this->CoachModel->where($map)->order($order)->page($page,$paginate)->select();
+        $result = $this->CoachModel->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
         if($result){
             $result = $result->toArray();
             return $result;

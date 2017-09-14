@@ -57,4 +57,24 @@ class CertService {
             return ['code'=>100,'msg'=>'创建失败','data'=>$result];
         }
     }
+
+    // 保存证件
+    public function saveCert($request) {
+        $model = new Cert();
+        $map['member_id'] = $request['member_id'];
+        $map['cert_type'] = $request['cert_type'];
+        $find = $model->where($map)->find();
+        if ($find) {
+            $res = $model->save($request, $map);
+        } else {
+            $res = $model->save($request);
+        }
+
+        if ($res) {
+            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+        } else {
+            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+        return $response;
+    }
 }

@@ -77,8 +77,8 @@
                 </a>
             </div>
             <div class="mui-input-row">
-                <label>训练日期</label>
-                <span class="select-arrow">
+                <a href="#" class="mui-navigate-right">
+                <label>训练日期</label> 
                  <select class="select">
                             <option>周日</option>
                             <option>周一</option>
@@ -88,7 +88,7 @@
                             <option>周五</option>
                             <option>周六</option>
                 </select>
-                </span>
+                </a>
             </div>
             <div class="mui-input-row" id='showCityPicker3'>
                 <a href="#" class="mui-navigate-right">
@@ -160,6 +160,7 @@
 
     <!--课量选择-->
     <div id="lessonDom" class="mui-popover">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -201,6 +202,7 @@
     </div>
     <!--课程类型-->
     <div id="lessonType" class="mui-popover">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -221,6 +223,7 @@
     </div>
     <!--训练地点-->
     <div id="trainLocation" class="mui-popover">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -241,6 +244,7 @@
     </div>
     <!--主教练-->
     <div id="mainCoach" class="mui-popover">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -261,6 +265,7 @@
     </div>
     <!--助理教练-->
     <div id="assistantCoach" class="mui-popover">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -358,6 +363,50 @@
         </div>
     </div>
 
+    <!-- 上课星期 -->
+    <!-- <div id="week" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course wd36"><strong>上课星期</strong></span>
+                        <span class="fr"><button class="mui-btn-blue" id="weekConfirm">确认</button></span>
+                    </div>
+                    <form class="mui-input-group">
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>周一</label>
+                            <input name="checkbox-week" value="周一" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>周二</label>
+                            <input name="checkbox-week" value="周二" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>周三</label>
+                            <input name="checkbox-week" value="周三" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>周四</label>
+                            <input name="checkbox-week" value="周四" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>周五</label>
+                            <input name="checkbox-week" value="周五" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>周六</label>
+                            <input name="checkbox-week" value="周六" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>周日</label>
+                            <input name="checkbox-week" value="周日" type="checkbox">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> -->
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -374,12 +423,6 @@
 
     //弹出菜单
     mui('.mui-scroll-wrapper').scroll();
-    mui('body').on('shown', '.mui-popover', function (e) {
-        //console.log('shown', e.detail.id);//detail为当前popover元素
-    });
-    mui('body').on('hidden', '.mui-popover', function (e) {
-        //console.log('hidden', e.detail.id);//detail为当前popover元素
-    });
 
     (function ($, doc) {
         $.ready(function () {
@@ -437,6 +480,15 @@
 
     //弹出框选择
     $(function(){
+        // 上课星期
+        $("#weekConfirm").click(function(){
+            //选择多个星期
+            $("input[name='dom']").val($("input[name='checkbox-week']:checked").map(function(){
+                return $(this).val()
+            }).get().join(",") );
+            $(".weekCont").text($("input[name='dom']").val());
+            mui('#week').popover('toggle');
+        })
         // 课程类型
         $(".lessonType").click(function(){
             var lessonType = $(this).html();
