@@ -55,7 +55,7 @@
                 <div class="mui-input-row">
                     <a href="#student" class="mui-navigate-right">
                         <label>学员名单</label>
-                        <span class="studentCont">{volist name="studentList" id="vol"}{$vol.student},{/volist}</span>
+                        <span class="studentCont student">{volist name="studentList" id="vol"}{$vol.student},{/volist}</span>
                     </a>
                 </div>
 
@@ -646,39 +646,79 @@
         var  rent = $(".rent").val();
         var  status = $(".rent option:selected").text();
         var  remarks = $(".remarks").val();
-        alert("{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}")
-        mui.ajax("{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}",{
-            data:{
-                'grade':grade,
-                'gradecate':gradecate,
-                'week':week,
-                'lesson_time':lesson_time,
-                'location':location,
-                'coach_salary':coach_salary,
-                'assistant_salary':assistant_salary,
-                'salary_base':salary_base,
-                'coach':coach,
-                'assistant':assistant,
-                'leader':leader,
-                'teacher':teacher,
-                'plan':plan,
-                'rent':rent,
-                'status':status,
-                'remarks':remarks,
-            },
-        dataType:'json',//服务器返回json格式数据
-        type:'post',//HTTP请求类型
-        timeout:10000,//超时时间设置为10秒；
-        headers:{'Content-Type':'application/json'},                  
-        success:function(data){
-            //服务器返回响应，根据响应结果，分析是否登录成功；
-            console.log(data)
-        },
-        error:function(xhr,type,errorThrown){
-            //异常处理；
-            console.log(type);
+        console.log(status)
+
+        if(gradecate,week,lesson_time,location,coach,assistantCoach,leader,teacher,plan,rent!==''){
+            mui.ajax("{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}",{
+                data:{
+                    'grade':grade,
+                    'gradecate':gradecate,
+                    'week':week,
+                    'lesson_time':lesson_time,
+                    'location':location,
+                    'coach_salary':coach_salary,
+                    'assistant_salary':assistant_salary,
+                    'salary_base':salary_base,
+                    'coach':coach,
+                    'assistant':assistant,
+                    'leader':leader,
+                    'teacher':teacher,
+                    'plan':plan,
+                    'rent':rent,
+                    'status':status,
+                    'remarks':remarks,
+                },
+                dataType:'json',//服务器返回json格式数据
+                type:'post',//HTTP请求类型
+                timeout:10000,//超时时间设置为10秒；
+                headers:{'Content-Type':'application/json'},                  
+                success:function(data){
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data)
+                },
+                error:function(xhr,type,errorThrown){
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+
+        }else{
+            return false;
+            alert("选项不能为空");
+        }    
+    })
+
+    //班级学员批量变动（编辑可用）
+    $("#studentConfirm").click(function(){
+        var grade = $(".grade").html();
+        console.log(grade)
+        if(grade!==''){
+            mui.ajax("{:url('api/grade/updateGradeMemberAllApi')}",{
+                data:
+                    {
+                        'grade':grade,
+                        'grade_id':"{$gradeInfo.id}"
+                    }
+                ,
+                dataType:'json',//服务器返回json格式数据
+                type:'post',//HTTP请求类型
+                timeout:10000,//超时时间设置为10秒；
+                headers:{'Content-Type':'application/json'},                  
+                success:function(data){
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data)
+                },
+                error:function(xhr,type,errorThrown){
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+
+        }else{
+            return false;
+            alert("选项不能为空");
         }
-    });
+
     })
     
 
