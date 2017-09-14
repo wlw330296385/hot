@@ -28,17 +28,14 @@ class CoachService{
 	 * 申请成为教练
 	 */
 	public function createCoach($request){
-        $validate = validate('CoachVal');
-        if(!$validate->check($request)){
-            return ['msg' => $validate->getError(), 'code' => 200];
-        }
-		$result = $this->CoachModel->save($request);
+        $coachM = new Coach();
+        $result = $coachM->save($request);
         if($result){
-            return ['code'=>100,'msg'=>'OK','data'=>$result];
+            return ['code'=>200,'msg'=>'OK','data'=>$result];
         }else{
-            return ['code'=>100,'msg'=>$this->CoachModel->getError()];
+            return ['code'=>100,'msg'=>$coachM->getError()];
         }
-	}
+    }
 
 
 	/**
@@ -46,17 +43,13 @@ class CoachService{
 	 */
 	public function updateCoach($request,$id)
     {
-        $validate = validate('CoachVal');
-        if(!$validate->check($request)){
-            return ['msg' => $validate->getError(), 'code' => 200];
-        }
-        $result = $this->CoachModel->save($request,['id'=>$id]);
-
+        $model = new Coach();
+        $result = $model->validate('CoachVal')->save($request, ['id' => $id]);
         if ($result === false) {
-            return ['msg' => $this->Coach->getError(), 'code' => 200];
-        } else {
-            return ['msg' => __lang('MSG_100_SUCCESS'), 'code' => 100, 'data' => $result];
+            return ['code' => 200, 'msg' => $model->getError()];
         }
+
+        return ['code' => 100, 'msg' => __lang('MSG_100_SUCCESS')];
     }
 	
 	// 教练列表

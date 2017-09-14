@@ -26,7 +26,7 @@ class Coach extends Backend {
         $coach = CoachModel::with('member')->where(['id' => $id])->find()->toArray();
         $coach['cert'] = $coach['cert_id'] ? getCert($coach['cert_id']) : '';
         // 教练所在训练营集合
-        $coachInCamp = Db::name('grade_member')->where([ 'coach_id' => $coach['id'], 'member_id' => $coach['member_id'], 'type' => 4 ])->select();
+       $coachInCamp = Db::name('camp_member')->where([ 'member_id' => $coach['member_id'], 'type' => ['in', '2,4'] ])->select();
         $coach['_incamp'] = '';
         foreach ($coachInCamp as $k => $val) {
             $coach['_incamp'] .= $val['camp'] . ',';
