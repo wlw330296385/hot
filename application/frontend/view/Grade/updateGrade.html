@@ -511,7 +511,7 @@
     (function ($, doc) {
         $.ready(function () {
             var _getParam = function (obj, param) {
-                return obj[param] || '';
+                return obj[param] && '';
             };
 
             var cityPicker3 = new $.PopPicker({
@@ -533,7 +533,7 @@
             var btns = $('.btn');
             btns.each(function (i, btn) {
                 btn.addEventListener('tap', function () {
-                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var optionsJson = this.getAttribute('data-options') && '{}';
                     var options = JSON.parse(optionsJson);
                     var id = this.getAttribute('id');
                     var picker = new $.DtPicker(options);
@@ -646,7 +646,7 @@
         var  rent = $(".rent").val();
         var  status = $(".status option:selected").text();
         var  remarks = $(".remarks").val();
-        if(gradecate,week,lesson_time,location,coach,assistantCoach,leader,teacher,plan,rent !==''){
+        if(gradecate!=''&&week!=''&&lesson_time!=''&&location!=''&&coach!=''&&assistantCoach!=''&&leader!=''&&teacher!=''&&plan!=''&&rent!='' ){
             mui.ajax("{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}",{
                 data:{
                     'grade':grade,
@@ -674,7 +674,7 @@
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data)
                     if(data.code == 100){
-                        window.location.href="{:url('grade/gradeInfoOfCamp',['grade_id'=>'1'])}"
+                        // window.location.href="{:url('grade/gradeInfoOfCamp',['grade_id'=>'1'])}"
                     }
                 },
                 error:function(xhr,type,errorThrown){
