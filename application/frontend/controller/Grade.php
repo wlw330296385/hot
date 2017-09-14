@@ -110,7 +110,7 @@ class Grade extends Base{
     // 有权限的班级列表
     public function gradeListOfCamp(){
         $member_id = $this->memberInfo['id'];
-        $camp_id = input('camp_id');
+        $camp_id = input('param.camp_id');
         $map1 = ['camp_id'=>$camp_id,'status'=>1];
         $map0 = ['camp_id'=>$camp_id,'status'=>0]; 
         // 我的班级
@@ -119,6 +119,7 @@ class Grade extends Base{
         $myGradeList = $this->GradeService->getGradeList(['camp_id'=>$camp_id,'coach_id'=>$member_id]);
         $myCount = count($myGradeList);
         $gradeListCount = count($gradeList);
+        $this->assign('camp_id',$camp_id);
         $this->assign('gradeList',$gradeList);
         $this->assign('gradeListCount',$gradeListCount);
         $this->assign('myGradeList',$myGradeList);
