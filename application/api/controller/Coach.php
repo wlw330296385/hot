@@ -20,6 +20,7 @@ class Coach extends Frontend{
             $map = [];
             $keyword = input('param.keyword');
             $province = input('param.province');
+            $page = input('param.page')?input('param.page'):1;
             $city = input('param.city');
             $area = input('param.area');
             $sex = input('param.sex');
@@ -35,7 +36,7 @@ class Coach extends Frontend{
             if($keyword){
                 $map['coach'] = ['LIKE','%'.$keyword.'%'];
             }
-            $coachList = $this->coachService->getCoachList($map);
+            $coachList = $this->coachService->getCoachList($map,$page);
             if($coachList){
                 return json(['code'=>100,'msg'=>'OK','data'=>$coachList]);
             }else{
