@@ -21,7 +21,10 @@ class Grade extends Base{
 
 
     public function createGrade(){
-    	
+    	$camp_id = input('param.camp_id');
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+
+        $this->assign('campInfo',$campInfo);
     	return view('Grade/createGrade');
     }
 
