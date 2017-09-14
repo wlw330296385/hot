@@ -59,7 +59,7 @@
                     <a href="#student" class="mui-navigate-right">
                         <label>学员名单</label>
                         <span class="studentCont student">{volist name="studentList" id="vol"}{$vol.student},{/volist}</span>
-                        <input type="text" name="grade" style="display: none">
+                        <input type="text" name="student" style="display: none">
                     </a>
                 </div>
 
@@ -124,7 +124,7 @@
                 <div class="mui-input-row">
                     <a href="#assistantCoach" class="mui-navigate-right">
                         <label>助理教练</label>
-                        <span class="assistantCoachCont assistant">{$gradeInfo.assistant}</span>
+                        <span class="assistantCoachCont assistant">{$gradeInfo.assistants}</span>
                         <input type="text" name="dom" style="display: none">
                     </a>
                 </div>
@@ -186,12 +186,12 @@
 
             </form>
 
-
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-col-xs-12 opli bggreen editorbtn" style="color: #fff">
                     提交
                 </li>
             </ul>
+
         </div>
 
         <!--主教练-->
@@ -213,11 +213,10 @@
                 </div>
             </div>
 
-
         </div>
 
-
     </div>
+
     <!--学员名单-->
     <div id="student" class="mui-popover">
         <div class="mui-popover-arrow"></div>
@@ -231,27 +230,27 @@
                     <form class="mui-input-group">
                         <div class="mui-input-row mui-checkbox mui-left">
                             <label>学员1</label>
-                            <input name="checkbox-grade" value="学员1" type="checkbox">
+                            <input name="checkbox-student" value="学员1" type="checkbox">
                         </div>
                         <div class="mui-input-row mui-checkbox mui-left">
                             <label>学员2</label>
-                            <input name="checkbox-grade" value="学员2" type="checkbox">
+                            <input name="checkbox-student" value="学员2" type="checkbox">
                         </div>
                         <div class="mui-input-row mui-checkbox mui-left">
                             <label>学员3</label>
-                            <input name="checkbox-grade" value="学员3" type="checkbox">
+                            <input name="checkbox-student" value="学员3" type="checkbox">
                         </div>
                         <div class="mui-input-row mui-checkbox mui-left">
                             <label>学员4</label>
-                            <input name="checkbox-grade" value="学员4" type="checkbox">
+                            <input name="checkbox-student" value="学员4" type="checkbox">
                         </div>
                         <div class="mui-input-row mui-checkbox mui-left">
                             <label>学员5</label>
-                            <input name="checkbox-grade" value="学员5" type="checkbox">
+                            <input name="checkbox-student" value="学员5" type="checkbox">
                         </div>
                         <div class="mui-input-row mui-checkbox mui-left">
                             <label>学员6</label>
-                            <input name="checkbox-grade" value="学员6" type="checkbox">
+                            <input name="checkbox-student" value="学员6" type="checkbox">
                         </div>
                     </form>
                 </div>
@@ -498,14 +497,14 @@
         </div>
     </div>
     
-</body>
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<!-- 选择器 -->
-<script src="/static/frontend/js/mui.picker.min.js"></script>
-<script src="/static/frontend/js/mui.poppicker.js"></script>
-<script src="/static/frontend/js/city.data-3.js"></script>
-<script>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
@@ -561,10 +560,10 @@
         // 学员名单
         $("#studentConfirm").click(function(){
             //选择多个学员
-            $("input[name='grade']").val($("input[name='checkbox-grade']:checked").map(function(){
+            $("input[name='student']").val($("input[name='checkbox-student']:checked").map(function(){
                 return $(this).val()
             }).get().join(",") );
-            $(".studentCont").text($("input[name='grade']").val());
+            $(".studentCont").text($("input[name='student']").val());
             mui('#student').popover('toggle');
         })
         // 班级类型
@@ -614,7 +613,7 @@
             mui("#teachingPlan").popover("toggle");
         })
      })
-     
+
     // 关闭弹出菜单
     $(".close-popover").click(function(){
         mui($(this).parent()).popover("toggle");
@@ -683,7 +682,8 @@
                 success:function(data){
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data)
-                    window.location.href="{:url('grade/gradeInfoOfCamp',['grade_id'=>'$grade_id'])}"
+                    var url = "{:url('grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
+                    window.location.href=url
                     
                 },
                 error:function(xhr,type,errorThrown){
@@ -724,5 +724,6 @@
             mui.toast("选项不能为空");
         }
     })
-</script>
+    </script>
+</body>
 </html>
