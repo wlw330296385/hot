@@ -25,22 +25,22 @@ class Grade extends Base{
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
          // 判读权限
         $CampService = new \app\service\CampService;
-        $is_power = $CampService->isPower($gradeInfo['camp_id'],$this->memberInfo['id']);
+        $is_power = $CampService->isPower($camp_id,$this->memberInfo['id']);
         if($is_power < 2){
             $this->error('您没有权限');
         }
         //获取班级类型
         $gradecateList = $this->GradeService->getGradeCategory();
         //获取员工列表
-        $staffList = db('camp_member')->where(['camp_id'=>$gradeInfo['camp_id'],'status'=>1])->select();
+        $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         //场地列表
         $courtService = new \app\service\CourtService;
-        $courtList = $courtService->getCourtList(['status'=>$gradeInfo['camp_id']]);
+        $courtList = $courtService->getCourtList(['status'=>$camp_id]);
         // 获取班级学生
         $studentList = $this->GradeService->getStudentList($grade_id);
         // 教案列表
         $PlanService = new \app\service\PlanService;
-        $planList = $PlanService->getPlanList(['camp_id'=>$gradeInfo['camp_id'],'type'=>1]);
+        $planList = $PlanService->getPlanList(['camp_id'=>$camp_id,'type'=>1]);
 
         $this->assign('planList',$planList);
         $this->assign('courtList',$courtList);
