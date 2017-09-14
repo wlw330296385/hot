@@ -31,20 +31,20 @@
                 </div>
                 <div class="mui-input-row">
                     <label>密码</label>
-                    <input type="text" name="password" class="reg_password" placeholder="请输入密码">
+                    <input type="password" name="password" class="reg_password" placeholder="请输入密码">
                 </div>
                 <div class="mui-input-row">
                     <label>确认密码</label>
-                    <input type="text" name="confim" class="reg_confirm" placeholder="请确认密码">
+                    <input type="password" name="confim" class="reg_confirm" placeholder="请确认密码">
                 </div>
                 <div class="mui-input-row">
                     <label>手机号码</label>
-                    <input type="text" name="mobile" class="reg_mobile" placeholder="请输入手机号码">
+                    <input type="text" name="mobile" class="reg_mobile" placeholder="请输入手机号码" id="telephone">
                 </div>
                 <div class="mui-input-row">
                     <label>短信验证码</label>
-                    <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)" id="telephone">
-                    <input type="text" class="input" placeholder="输入验证码" style="width: 40%;" >
+                    <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)" >
+                    <input type="text" class="input reg_code" placeholder="输入验证码" style="width: 40%;" >
                 </div>
             </form>
 
@@ -61,6 +61,7 @@
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="/static/frontend/libs/yzvalidate.js"></script>
+<script src="/static/frontend/js/smsCode.js"></script>
 <script>
     //初始化
     mui.init({
@@ -71,7 +72,13 @@
         var telephone = $(".reg_mobile").val();
         var password = $(".reg_password").val();
         var repassword = $(".reg_confirm").val();
+        var smscode = $('.reg_code').val();
         if(member,telephone,password,repassword!==''){
+            if (smscode == "") {
+                mui.toast('请输入短信验证码');
+                return false;
+            }
+
             mui.ajax("{:url('api/login/registerApi')}", {
                 data: {
                     'member': member,
@@ -85,11 +92,15 @@
                 headers: {'Content-Type': 'application/json'},
                 success: function (data) {
                     //服务器返回响应，根据响应结果，分析是否登录成功；
-                    console.log(data)
-                    if(code == 100 && msg ==1){
-                        mui.toast('账号已存在');
-                    }else{
-                        window.location.href = "{:url('member/registerSuccess')}";
+                    console.log(data);
+                    if(data.code == 100){
+                        if (data.msg == 1) {
+                            mui.toast('账号已存在');    
+                        } else {
+                            window.location.href = "{:url('member/registerSuccess')}";
+                        }
+                    } else {
+                        mui.toast(data.msg);
                     }
                    
                 },
@@ -99,6 +110,7 @@
                 }
             });
         }else{
+            mui.toast('请完善所有信息');
             return false;
         }
 
@@ -116,8 +128,10 @@
                 timeout: 10000,//超时时间设置为10秒；
                 headers: {'Content-Type': 'application/json'},
                 success: function (data) {
-                    mui.toast('账号已存在');
-                    console.log(data)
+                    console.log(data);
+                    if (data.msg == 1) {
+                        mui.toast('账号已存在');
+                    } 
                 },
                 error: function (xhr, type, errorThrown) {
                     console.log(type);
