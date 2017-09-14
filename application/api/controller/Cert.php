@@ -2,7 +2,7 @@
 namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CertService;
-class Cert extends Frontend{
+class Cert extends Base{
 	protected $CertService;
 
 	public function _initialize(){
