@@ -2,6 +2,7 @@
 namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CoachService;
+use app\service\CertService;
 use app\service\GradeMemberService;
 use app\service\ScheduleService;
 class Coach extends Frontend{
