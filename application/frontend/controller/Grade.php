@@ -31,6 +31,8 @@ class Grade extends Base{
             $this->error('您没有权限');
         }
 
+        // 课程列表
+        $lessonList = db('lesson')->where(['camp_id'=>1,'status'=>1])->select();
         //获取班级类型
         $gradecateList = $this->GradeService->getGradeCategory();
         //获取员工列表
@@ -44,6 +46,7 @@ class Grade extends Base{
         $PlanService = new \app\service\PlanService;
         $planList = $PlanService->getPlanList(['camp_id'=>$camp_id,'type'=>1]);
 
+        $this->assign('lessonList',$lessonList);
         $this->assign('planList',$planList);
         $this->assign('courtList',$courtList);
         $this->assign('courtListJson',json_encode($courtList));
