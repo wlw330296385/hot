@@ -75,7 +75,7 @@ class ScheduleService {
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 200];
         }            
-        $result = $this->scheduleModel->save($data,$id);
+        $result = $this->scheduleModel->save($data,['id'=>$id]);
         if($result ===false){
             return ['msg'=>$this->scheduleModel->getError(),'code'=>200];
         }else{

@@ -42,7 +42,7 @@ class CourtService {
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 200];
         }
-        $result = $this->courtModel->save($data,$id);
+        $result = $this->courtModel->save($data,['id'=>$id]);
         if($result){
             return ['code'=>100,'data'=>$result,'msg'=>__lang('MSG_101_SUCCESS')];
         }else{

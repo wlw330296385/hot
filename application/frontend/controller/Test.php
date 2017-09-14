@@ -36,4 +36,8 @@ class Test {
         dump($a);
      }
 
+
+     public function getSession(){
+        dump(session('memberInfo','','think'));
+     }
 }

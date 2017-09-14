@@ -14,7 +14,7 @@ class Grade extends Frontend{
 
     public function index() {
 
-        
+        dump($this->memberInfo);
     }
 
 
@@ -71,8 +71,8 @@ class Grade extends Frontend{
         try{
             $grade_id = input('param.grade_id');
             $data = input('post.');
-            $gradeData['member_id'] = $this->memberInfo['id'];
-            $gradeData['member'] = $this->memberInfo['member'];
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
             $GradeService = new GradeService;
             $result = $GradeService->updateGrade($data,$grade_id);
             return json($result);
@@ -83,7 +83,7 @@ class Grade extends Frontend{
 
 
 
-    // 班级学生变动
+    // 一个班级学生名单变动
     public function updateGradeMemberApi(){
          try{
             $data = input('post.');
@@ -95,4 +95,18 @@ class Grade extends Frontend{
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
     }
+
+    // 批量班级学生名单变动
+    public function updateGradeMemberAllApi(){
+         try{
+            $data = input('post.');
+            $id = input('param.id');
+            $StudentService = new \app\service\StudentService;
+            $res = $StudentService->updateGradeMember($data,$id);
+            return json($result); 
+        }catch (Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }
+    }
+
 }
