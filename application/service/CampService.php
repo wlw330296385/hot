@@ -12,7 +12,7 @@ class CampService {
     }
 
     public function getCampList($map=[],$page = 1,$paginate = 10,$order='') {
-        $res = $this->Camp->where($map)->order($order)->page($page,$paginate)->select();
+        $res = $this->Camp->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
         if($res){
             $result = $res->toArray();
             return $result;
@@ -22,7 +22,7 @@ class CampService {
     }
 
     public function campListPage( $map=[],$page = 1,$paginate=10, $order=''){
-        $res = $this->Camp->where($map)->order($order)->page($page,$paginate)->select();
+        $res = $this->Camp->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
         
         if($res){
             $result = $res->toArray();

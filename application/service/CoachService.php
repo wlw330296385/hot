@@ -105,8 +105,8 @@ class CoachService{
     //     return $result->toArray();
     // }
 
-    public function getCoachListPage(){
-        $result = Coach::with('member')->where($map)->order($order)->page($page,$paginate)->select();
+    public function getCoachListPage($map=[],$page=1, $paginate = 10, $order=''){
+        $result = Coach::with('member')->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
         if (!$result) {
             return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
         }
@@ -120,7 +120,7 @@ class CoachService{
 
     // 教练列表 分页
     public function getCoachList($map=[],$page=1, $paginate = 10, $order='') {
-        $result = $this->CoachModel->where($map)->order($order)->page($page,$paginate)->select();
+        $result = $this->CoachModel->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
         if($result){
             $result = $result->toArray();
             return $result;
