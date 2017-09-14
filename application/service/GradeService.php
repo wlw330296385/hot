@@ -37,7 +37,12 @@ class GradeService{
         $res = $this->GradeModel->where($map)->find();
         if($res){           
             $result = $res->toArray();
-            $result['assistant_list'] = unserialize($result['assistant']);
+            if($result['assistant']){
+                $result['assistant_list'] = unserialize($result['assistant']);
+            }else{
+                $result['assistant_list'] = [];
+            }
+            
             return $result;
         }
         return $res;

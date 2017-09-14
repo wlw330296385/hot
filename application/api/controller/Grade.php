@@ -100,13 +100,13 @@ class Grade extends Frontend{
     public function updateGradeMemberAllApi(){
          try{
             $data = input('post.');
-            $id = input('param.id');
             $StudentService = new \app\service\StudentService;
-            $res = $StudentService->updateGradeMember($data,$id);
+            $res = $StudentService->saveAllStudent($data);
             return json($result); 
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
     }
+
 
 }

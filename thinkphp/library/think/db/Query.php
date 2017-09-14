@@ -1411,8 +1411,13 @@ class Query
      * @param string       $order 排序
      * @return $this
      */
-    public function order($field, $order = null)
+    //woo修改
+    public function order($field = '', $order = null)
     {
+        //woo
+        if($field == ''){
+            $field = 'id desc';
+        }
         if (!empty($field)) {
             if (is_string($field)) {
                 if (!empty($this->options['via'])) {
