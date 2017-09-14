@@ -82,14 +82,14 @@ class Lesson extends Base{
         //训练营主教练
         $camp_id = input('param.camp_id');
         // 教练列表
-        $coachList = db('camp_member')->where(['type'=>2,'camp_id'=>$camp_id,'status'=>1])->select();
+        $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         $gradeCategoryList = $this->GradeService->getGradeCategory(1);
         $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['status'=>$camp_id]);
         // dump($assitantList);die;
         $this->assign('gradeCategoryList',$gradeCategoryList);
         $this->assign('courtList',$courtList);
-        $this->assign('coachList',$coachList);
+        $this->assign('staffList',$staffList);
         return view('Lesson/createLesson');
     }
 

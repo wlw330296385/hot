@@ -40,4 +40,99 @@ class Test {
      public function getSession(){
         dump(session('memberInfo','','think'));
      }
+
+
+
+     public function getArr(){
+
+        $erwei =  [
+            [
+                'name'=>'首页',
+                'icon'=>'icon iconfont icon-hotnav-home',
+                'action'=>'index',
+                'controller'=>'Index'
+            ],
+            [
+                'name'=>'消息',
+                'icon'=>'icon iconfont icon-hotnav-news',
+                'action'=>'index',
+                'controller'=>'Message'
+            ],          
+            [
+                'name'=>'发现',
+                'icon'=>'icon iconfont icon-hotnav-find',
+                'action'=>'index',
+                'controller'=>'Mall'
+            ],
+            [
+                'name'=>'训练营',
+                'icon'=>'icon iconfont icon-hotnav-training',
+                'action'=>'index',
+                'controller'=>'Camp'
+            ],
+            [
+                'name'=>'我的',
+                'icon'=>'icon iconfont icon-hotnav-mine',
+                'action'=>'index',
+                'controller'=>'Member'
+            ],
+        ];
+
+        $sanwei=[
+                ['a'=>[
+                'name'=>'我的',
+                'icon'=>'icon iconfont icon-hotnav-mine',
+                'action'=>'index',
+                'controller'=>[
+                'name'=>'消息',
+                'icon'=>'icon iconfont icon-hotnav-news',
+                'action'=>'index',
+                'controller'=>'Message'
+            ],
+                    ],
+                'b'=>[
+                        'name'=>'训练营',
+                        'icon'=>'icon iconfont icon-hotnav-training',
+                        'action'=>'index',
+                        'controller'=>[
+                'name'=>'消息',
+                'icon'=>'icon iconfont icon-hotnav-news',
+                'action'=>'index',
+                'controller'=>'Message'
+            ],
+                    ]
+                ],
+                ['b'=>[
+                'name'=>'我的',
+                'icon'=>'icon iconfont icon-hotnav-mine',
+                'action'=>'index',
+                'controller'=>[
+                'name'=>'消息',
+                'icon'=>'icon iconfont icon-hotnav-news',
+                'action'=>'index',
+                'controller'=>'Message'
+            ],
+                    ],
+                    'b'=>[
+                        'name'=>'训练营',
+                        'icon'=>'icon iconfont icon-hotnav-training',
+                        'action'=>'index',
+                        'controller'=>[
+                'name'=>'消息',
+                'icon'=>'icon iconfont icon-hotnav-news',
+                'action'=>'index',
+                'controller'=>'Message'
+            ],
+                    ]
+                ],
+        ];
+        
+        echo "二维<br>";
+        echo json_encode($erwei);
+        dump($erwei);
+
+        echo "三维<br>";
+        echo json_encode($sanwei);
+        dump($sanwei);
+    }
 }
