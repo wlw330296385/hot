@@ -215,6 +215,20 @@ class Coach extends Base{
     }
 
     public function updateCoach(){
+       // 会员刚完成注册就执行
+        $fast = input('param.fast');
+        if ($fast) {
+            //dump($this->memberInfo);
+            $isCoach = db('coach')->where('member_id', $this->memberInfo['id'])->find();
+            if ( !$isCoach ) {
+                db('coach')->insertGetId([
+                    'member_id' => $this->memberInfo['id'],
+                    'create_time' => time()
+                ]);
+            }
+        }
+        // 会员刚完成注册就执行 end
+
         $coach_id = input('param.coach_id');
         if($coach_id){
             $coachInfo = $this->coachService->getCoachInfo(['id'=>$coach_id]);
@@ -236,7 +250,8 @@ class Coach extends Base{
                 }
             }
         }
-        
+
+
         $this->assign('coachInfo',$coachInfo);
         $this->assign('identCert',$identCert);
         $this->assign('coachCert',$coachCert);

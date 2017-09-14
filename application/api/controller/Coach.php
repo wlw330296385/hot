@@ -2,6 +2,7 @@
 namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CoachService;
+use app\service\CertService;
 use app\service\GradeMemberService;
 use app\service\ScheduleService;
 class Coach extends Frontend{
@@ -53,8 +54,15 @@ class Coach extends Frontend{
         try{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
-            $result = $this->coachService->createCoach($data);
-            return json($result);
+
+            $smsApi = new Sms();
+            $checkcode = $smsApi->checkcode($data['telephone'], $data['smscode']);
+            if ($checkcode['code'] != 100) { // 短信验证不通过
+                return ['code' => 100, 'msg' => $checkcode['msg'] ];
+            }
+            unset($data['telephone']);
+            unset($data['smscode']);
+            return  $this->coachService->createCoach($data);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -62,13 +70,49 @@ class Coach extends Frontend{
 
     public function updateCoachApi(){
         try{
-            $data = input('post.');
-            $coach_id = input('param.coach_id');
+            $coach_id = input('post.coachid') ? input('post.coachid') : input('param.coach_id');
             if(!$coach_id){
-                return json(['code'=>200,'msg'=>'找不到教练信息']);
+                return ['code'=>200,'msg'=>'找不到教练信息'];
             }
-            $result = $this->coachService->updateCoach($data,$coach_id);
-            return json($result);
+
+            $member_id = input('post.member_id');
+            // 教练数据
+            $coachdata = [
+                'coach' => input('post.coach'),
+                'member_id' => $member_id,
+                'coach_year' => input('post.coach_year'),
+                'experience' => input('post.experience'),
+                'introduction' => input('post.introduction'),
+                'portraits' => input('post.portraits'),
+                'description' => input('post.description')
+            ];
+            $coachS = new CoachService();
+            $coach = $coachS->updateCoach($coachdata, $coach_id);
+
+            // 实名数据
+            $realnamedata = [
+                'member_id' => $member_id,
+                'cert_no' => input('post.idno'),
+                'cert_type' => 1,
+                'photo_positive' => input('post.photo_positive'),
+                'photo_back' => input('post.photo_back'),
+            ];
+            // 资质证书
+            $certdata = [
+                'member_id' => $member_id,
+                'cert_no' => "",
+                'cert_type' => 3,
+                'photo_positive' => input('post.cert')
+            ];
+
+            $certS = new CertService();
+            $cert1 = $certS->saveCert($realnamedata);
+            $cert2 = $certS->saveCert($certdata);
+            if ($cert1['code'] == 100 || $cert2['code'] == 100) {
+                return json([ 'msg' => '证件信息保存出错,请重试', 'code' => 100]);
+            }
+
+            return json($coach);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
