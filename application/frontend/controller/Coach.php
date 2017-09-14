@@ -150,7 +150,6 @@ class Coach extends Base{
     public function coachList(){
         $map = input();
         $coachList = $this->coachService->getCoachList($map);
-        // dump($coachList);die;
         $this->assign('coachList',$coachList);
         return view('Coach/coachList');
     }
