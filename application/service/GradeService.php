@@ -38,9 +38,10 @@ class GradeService{
         if($res){           
             $result = $res->toArray();
             if($result['assistant']){
-                $result['assistant_list'] = unserialize($result['assistant']);
+                $assis = unserialize($result['assistant']);
+                $result['assistants'] = implode(',', $assis);
             }else{
-                $result['assistant_list'] = [];
+                 $result['assistants'] = '';
             }
             
             return $result;

@@ -61,10 +61,7 @@ class Grade extends Base{
     public function updateGrade(){
     	$grade_id = input('param.grade_id');
         $gradeInfo = $this->GradeService->getGradeInfo(['id'=>$grade_id]);
-        if($gradeInfo['assistant']){
-            $assis = unserialize($gradeInfo['assistant']);
-            $gradeInfo['assistants'] = implode(',', $assis);
-        }
+        
         // 判读权限
         $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($gradeInfo['camp_id'],$this->memberInfo['id']);
