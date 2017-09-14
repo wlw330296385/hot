@@ -7,6 +7,8 @@ class Location extends Base{
 		parent::_initialize();
 	}
 
+
+    // 获取用户地址
     public function getLocation() {
         try{
             header("Access-Control-Allow-Origin: http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=php");
@@ -18,15 +20,22 @@ class Location extends Base{
             
             $location = file_get_contents("http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js&ip=".$ip);
             $location = iconv("gb2312", "utf-8//IGNORE",$location);
-            return $location;
+            return json(['code'=>100,'msg'=>$location,'data'=>$location]);
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
 
     }
 
-
-
+    // 获取用户IP
+    public function getIP(){
+        try{
+            $ip = Request::instance()->ip();
+            return json(['code'=>100,'msg'=>$ip,'data'=>$ip]);
+        }catch (Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }
+    }
 
     
 }
