@@ -51,7 +51,7 @@ class Login extends Controller{
                 }
             }else{
             // 未注册
-                $memberInfo = ['id'=>-1,'member'=>$userinfo['nickname'],'nickname'=>$userinfo['nickname'],'hp'=>0,'level'=>0,'avatar'=>$userinfo['headimgurl'],'openid'=>$userinfo['openid']];
+                $memberInfo = ['id'=>-2,'member'=>$userinfo['nickname'],'nickname'=>$userinfo['nickname'],'hp'=>0,'level'=>0,'avatar'=>$userinfo['headimgurl'],'openid'=>$userinfo['openid']];
                 unset($memberInfo['password']);
                 $cookie = md5($memberInfo['id'].$memberInfo['member'].'hot');
                 cookie('member',md5($memberInfo['id'].$memberInfo['member'].'hot'));

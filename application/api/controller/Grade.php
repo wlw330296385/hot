@@ -101,7 +101,7 @@ class Grade extends Frontend{
          try{
             $data = input('post.');
             $StudentService = new \app\service\StudentService;
-            $res = $StudentService->saveAllStudent($data);
+            $result = $StudentService->saveAllStudent($data);
             return json($result); 
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
