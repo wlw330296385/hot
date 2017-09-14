@@ -119,7 +119,7 @@ class CoachService{
 
 
     // 教练列表 分页
-    public function getCoachList($map=[],$page=1, $paginate = 10, $order='') {
+    public function getCoachList($map=[],$page=1, $paginate = 10, $order='id DESC') {
         $result = $this->CoachModel->where($map)->order($order)->page($page,$paginate)->select();
         if($result){
             $result = $result->toArray();
