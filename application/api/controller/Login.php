@@ -48,7 +48,7 @@ class Login extends Base{
             		return json(['code'=>100,'msg'=>'登陆成功']);
             	}else{
             		return json(['code'=>200,'msg'=>'系统错误']);
-            	}            	
+            	}
             }
             return json(['code'=>200,'msg'=>'账号密码错误']);
         }catch (Exception $e){
@@ -64,10 +64,10 @@ class Login extends Base{
     	$cookie = md5($memberInfo['id'].$memberInfo['member'].'hot');
     	cookie('member',md5($memberInfo['id'].$memberInfo['member'].'hot'));    	
         $result = session('memberInfo',$memberInfo,'think');
-        if($result){
-        	return true;
-        }else{
-        	return false;
+        if ( session('memberInfo', '', 'think') ) {
+           return true;
+        } else {
+            return false;
         }
 	}
 

@@ -31,7 +31,7 @@ class CoachService{
         $coachM = new Coach();
         $result = $coachM->save($request);
         if($result){
-            return ['code'=>200,'msg'=>'OK','data'=>$result];
+            return ['code'=>200,'msg'=>'OK','data'=> $coachM->getLastInsID() ];
         }else{
             return ['code'=>100,'msg'=>$coachM->getError()];
         }

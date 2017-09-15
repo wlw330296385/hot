@@ -39,28 +39,30 @@
 
     <div class="register mt25">
         <form action="" class="mui-input-group">
+            {notempty name="memberInfo.nickname"}
             <div class="mui-input-row">
                 <label>微信昵称</label>
                 <span>
-                {notempty name="memberInfo.nickname"}{$memberInfo['nickname']}{/notempty}</span>
+                {$memberInfo['nickname']}</span>
             </div>
+            {/notempty}
             <div class="mui-input-row">
                 <label>真实姓名</label>
-                <input type="text" name="username" class="reg_user" placeholder="输入你的姓名">
+                <input type="text" name="coachname" placeholder="输入你的姓名">
             </div>
             <div class="mui-input-row">
                 <label>手机号码</label>
-                <input type="text" name="mobile" class="reg_mobile" placeholder="请输入手机号码">
+                <input id="telephone" type="text" name="mobile" class="reg_mobile" placeholder="请输入手机号码">
             </div>
             <div class="mui-input-row">
                 <label>短信验证码</label>
-                <input type="button" class="code-btn" value="获取验证码" onclick="clickButton(this)">
-                <input type="text" class="validate" placeholder="输入验证码" style="width: 40%;">
+                <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)">
+                <input id="code" type="text" name="smscode" placeholder="输入验证码" style="width: 40%;">
             </div>
-            <div class="mui-input-row">
+           <!-- <div class="mui-input-row">
                 <label>推荐人</label>
                 <span>获取推荐人</span>
-            </div>
+            </div>-->
         </form>
 
         <span class="tip-box user_hint mobile_hint"></span>
@@ -78,6 +80,7 @@
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <!-- 验证 -->
+<script src="/static/frontend/js/smsCode.js"></script>
 <script src="/static/frontend/libs/yzvalidate.js"></script>
 <script>
     //初始化
@@ -86,33 +89,99 @@
     });
 
     //验证码
-    function clickButton(obj) {
+   /* function clickButton(obj) {
         var obj = $(obj);
         obj.attr("disabled", "disabled");
-        /*按钮倒计时*/
+        /!*按钮倒计时*!/
         var time = 60;
         var set = setInterval(function () {
             obj.val(--time + "(s)");
         }, 1000);
-        /*等待时间*/
+        /!*等待时间*!/
         setTimeout(function () {
             obj.attr("disabled", false).val("重新获取验证码");
-            /*倒计时*/
+            /!*倒计时*!/
             clearInterval(set);
         }, 60000);
+    }*/
+    // 发送短信验证码
+    function sendCode(obj){
+        telephone = document.getElementById('telephone').value;
+        var telephoneReg = /^\d{11,11}$/;
+        if(!telephoneReg.test(telephone)){
+            mui.toast('请填写正确的手机号码');
+            flag = false;
+        }else{
+            var result = smsCode.getMobileCodeApi(obj,telephone,"{:url('api/login/getmobilecodeapi')}");
+            //console.log(result);
+            if(result.code == 100){
+                flag = true;
+                mui.toast(result.msg);
+            }else{
+                flag = false;
+                mui.toast(result.msg);
+            }
+        }
     }
 
+
     $(function () {
+        //验证短信验证码
+        $('#code').on("blur",function(){
+            //var code = document.getElementById('code').value;
+            var code = $(this).val();
+            var codeReg = /^\d{6,6}$/;
+
+            console.log(code);
+            if(!codeReg.test(code)){
+                mui.toast('请填写正确的验证码');
+                flag = false;
+            }else{
+                telephone = document.getElementById('telephone').value;
+                var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/login/validatesmscodeapi')}");
+                if(result == 100){
+                    flag = true;
+                    mui.toast(result.msg);
+                }else{
+                    flag = false;
+                    mui.toast(result.msg);
+                }
+            }
+
+        });
+
 
         $(".registerCoach").on("click", function () {
-            var coach = $(".reg_user").val();
+            var coach = $("input[name=coachname]").val();
             var telephone = $(".reg_mobile").val();
-            console.log(coach);
-            if(member&&telephone&&validate==''){
-                alert("选项不能为空");
-                return;
+            var smscode = $('#code').val();
+            //console.log(coach);
+            if(coach == "" || telephone == "" || smscode==""){
+                alert("请填写所有信息项");
+                return false;
             }
-            mui.ajax("{:url('api/coach/updateCoachApi')}", {'coach': coach,'telephone': telephone},
+
+            mui.ajax("{:url('api/coach/createCoachApi')}", {
+                data: {
+                    coach: coach
+                },
+                dataType: 'json',
+                type: 'post',
+                timeout: 10000,
+                success: function(res) {
+                    console.log(res);
+                    if (res.code == 100) {
+                        mui.toast(res.msg);
+                    } else {
+                        window.location.href="{:url('coach/updateCoach')}/coach_id/"+res.data;
+                    }
+                },
+                error: function(xhr, type,errorThrown) {
+                    console.log(type);
+                }
+            });
+
+            /*mui.ajax("{:url('api/coach/updateCoachApi')}", {'coach': coach,'telephone': telephone},
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
@@ -124,11 +193,9 @@
                     error: function (xhr, type, errorThrown) {
                         console.log(type);
                     }
-                });
+                });*/
            
-        })
-
-    })
-
+        });
+    });
 </script>
 </html>

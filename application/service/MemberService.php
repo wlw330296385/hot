@@ -128,4 +128,17 @@ class MemberService{
 		$result = $this->memberModel->where([$field=>$value])->find();
 		return $result?1:0;
 	}
+
+	// 查询会员是否有教练身份数据
+	public function isCoach($memberid) {
+	     $model = new Coach();
+	     $res = $model::get(['member_id'=>$memberid]);
+	     if ($res) {
+             $status = $model::get(['member_id'=>$memberid])->getData('status'); //审核状态
+	         $return = ['data' => $res->toArray(), 'check_status' => $status];
+         } else {
+	         $return = 0;
+         }
+	     return $return;
+    }
 }

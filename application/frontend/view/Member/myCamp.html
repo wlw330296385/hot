@@ -46,7 +46,13 @@
                     <p class="prompt whitebg">您没有学生身份！<a href="{:url('lesson/lessonList')}">我要报读篮球训练班</a></p>
                 {/case}
                 {case value='2'}
-                    <p class="prompt whitebg">您没有教练身份！<a href="{:url('coach/createCoach')}">申请成为教练</a></p>
+                     {if condition="$iscoach"}
+                        {eq name="iscoach.check_status" value="0"}
+                            <p class="prompt whitebg">您教练身份未通过审核<a href="{:url('coach/updatecoach')}">完善教练信息</a></p>
+                            {else/}<p class="prompt whitebg"><a href="{:url('coach/updatecoach')}">编辑教练信息</a></p>
+                        {/eq}
+                    {else/}<p class="prompt whitebg">您没有教练身份！<a href="{:url('coach/createCoach')}">申请成为教练</a></p>
+                    {/if}
                 {/case}
                 {case value='3'}
                     <p class="prompt whitebg">您没有管理员身份！<a href="#">请让您的管理员给您发送邀请</a></p>

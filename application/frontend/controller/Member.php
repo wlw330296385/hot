@@ -18,7 +18,9 @@ class Member extends Base{
             $memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);
             $this->assign('memberInfo',$memberInfo);
         }
-        
+
+        $isCoach = $this->MemberService->isCoach($this->memberInfo['id']);
+        $this->assign('coach', $isCoach);
         return view('Member/index');
     }
 
@@ -205,6 +207,16 @@ class Member extends Base{
         $type = input('param.type')?input('param.type'):4;
         if($type){
             $campList = db('camp_member')->where(['member_id'=>$member_id,'type'=>$type,'status'=>1])->select();
+
+            switch($type) {
+                case '2' : {
+                    $isCoach = $this->MemberService->isCoach($this->memberInfo['id']);
+                    $this->assign('iscoach', $isCoach);
+                    break;
+                }
+
+            }
+
         }else{
             $campList = db('camp')->where(['member_id'=>$member_id,'status'=>1])->select();
         }
