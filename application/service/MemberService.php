@@ -1,6 +1,7 @@
 <?php 
 namespace app\service;
 use app\model\Member;
+use app\model\Coach;
 use app\common\validate\MemberVal;
 class MemberService{
 	private $memberModel;	
