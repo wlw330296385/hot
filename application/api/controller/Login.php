@@ -15,6 +15,15 @@ class Login extends Base{
             if($pid){
                 $data['pid'] = $pid;
             }
+
+            $memberInfo = session('memberInfo', '', 'think');
+            // 如果有微信授权信息
+            if ($memberInfo['openid']&&$memberInfo['nickname']) {
+                $data['openid'] = $memberInfo['openid'];
+                $data['nickname'] = $memberInfo['nickname'];
+                $data['avatar'] = $memberInfo['avatar'];
+            }
+            
         	$memberService = new \app\service\MemberService;
         	return $memberService->saveMemberInfo($data);
         }catch (Exception $e){
@@ -59,11 +68,11 @@ class Login extends Base{
 
     protected function setSession($id){
 		$member =new \app\service\MemberService;
-    	$memberInfo = $member->getMemberInfo(['id'=>$id]);
-    	unset($memberInfo['password']);
-    	$cookie = md5($memberInfo['id'].$memberInfo['member'].'hot');
-    	cookie('member',md5($memberInfo['id'].$memberInfo['member'].'hot'));    	
-        $result = session('memberInfo',$memberInfo,'think');
+    	$member = $member->getMemberInfo(['id'=>$id]);
+    	unset($member['password']);
+        cookie('mid', $member['id']);
+    	cookie('member',md5($member['id'].$member['member'].config('salekey')));
+        session('memberInfo',$member,'think');
         if ( session('memberInfo', '', 'think') ) {
            return true;
         } else {

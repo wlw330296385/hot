@@ -87,33 +87,37 @@
             var repassword = $(".reg_confirm").val();
             //console.log("member");
             //console.log("password");
-
-            mui.ajax("{:url('api/login/registerApi')}", {
-                data: {
-                    'member': member,
-                    'telephone': telephone,
-                    'password': password,
-                    'repassword': repassword
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: {'Content-Type': 'application/json'},
-                success: function (data) {
-                    //服务器返回响应，根据响应结果，分析是否登录成功；
-                    console.log(data);
-                    if (data.code == 200) {
-                        mui.toast(data.msg);
-                    } else {
-                        mui.toast(data.msg);
-                        window.location.href = "{:url('member/registerSuccess')}";
+            if(member == "" || telephone =="" ||password == "" ||repassword=='' || smscode == "") {
+                mui.ajax("{:url('api/login/registerApi')}", {
+                    data: {
+                        'member': member,
+                        'telephone': telephone,
+                        'password': password,
+                        'repassword': repassword
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                        } else {
+                            //mui.toast(data.msg);
+                            window.location.href = "{:url('member/registerSuccess')}";
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
                     }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
+                });
+            }else{
+                mui.toast('请完善所有信息');
+                return false;
+            }
         });
 
         $(".inputname").on("blur", function () {
@@ -159,11 +163,11 @@
                     }
                 }
                 
-            })
+            });
 
 
 
-})
+});
 
 
 

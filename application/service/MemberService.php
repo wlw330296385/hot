@@ -1,7 +1,7 @@
 <?php 
 namespace app\service;
-use app\model\Member;
 use app\model\Coach;
+use app\model\Member;
 use app\common\validate\MemberVal;
 class MemberService{
 	private $memberModel;	
@@ -82,15 +82,16 @@ class MemberService{
 	}
 	// 会员登录状态
 	public function saveLogin($id){
-		$memberInfo = $this->getMemberInfo(['id'=>$id]);
-		$result = false;
-		if($memberInfo){
-			$cookie = md5($memberInfo['id'].$memberInfo['create_time'].'hot');
-	    	cookie('member',md5($memberInfo['id'].$memberInfo['create_time'].'hot'));    	
-	        $result = session('memberInfo',$memberInfo,'think');
-	        $result = true;
-		}	
-        return $result;
+		$member = $this->getMemberInfo(['id'=>$id]);
+        unset($member['password']);
+        cookie('mid', $member['id']);
+        cookie('member',md5($member['id'].$member['member'].config('salekey')));
+        session('memberInfo',$member,'think');
+        if ( session('memberInfo', '', 'think') ) {
+            return true;
+        } else {
+            return false;
+        }
 	}
 
 	// 获取组织列表
@@ -129,7 +130,7 @@ class MemberService{
 		$result = $this->memberModel->where([$field=>$value])->find();
 		return $result?1:0;
 	}
-
+	
 	// 查询会员是否有教练身份数据
 	public function isCoach($memberid) {
 	     $model = new Coach();
