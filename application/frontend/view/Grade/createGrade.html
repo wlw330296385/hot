@@ -235,8 +235,8 @@
                         <span class="course"><strong>班级名称</strong></span>
                     </div>
                     <ul class="mui-table-view list">
-                     {volist name="planList" id="vol"}
-                     <li class="mui-table-view-cell listli detalisli grade">
+                       {volist name="planList" id="vol"}
+                       <li class="mui-table-view-cell listli detalisli grade">
                         {$vol.outline}
                     </li>
                     {/volist}
@@ -295,8 +295,8 @@
                     <span class="course"><strong>课程类型</strong></span>
                 </div>
                 <ul class="mui-table-view list">
-                 {volist name="planList" id="vol"}
-                 <li class="mui-table-view-cell listli detalisli lessonType">
+                   {volist name="planList" id="vol"}
+                   <li class="mui-table-view-cell listli detalisli lessonType">
                     {$vol.outline}
                 </li>
                 {/volist}
@@ -703,6 +703,31 @@
         }
     })
 
+    
+    //获取课程
+    $(".lessonType").click(function(){
+        var  lessonTypeCont = $(".lessonTypeCont").html();
+        console.log(lessonTypeCont)
+        mui.ajax("{:url('api/lesson/getLessonListApi')}",{
+            data:{
+                    "lesson":lessonTypeCont
+                },
+                dataType:'json',//服务器返回json格式数据
+                type:'post',//HTTP请求类型
+                timeout:10000,//超时时间设置为10秒；
+                headers:{'Content-Type':'application/json'},                  
+                success:function(data){
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data)
+                },
+                error:function(xhr,type,errorThrown){
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+
+    })
+
     //创建班级
     $(".editorbtn").click(function(){
         var  studentList = $(".studentList").html();
@@ -722,7 +747,16 @@
         var  status = $(".status option:selected").text();
         var  remarks = $(".remarks").val();
         mui.ajax("{:url('api/grade/createGradeApi')}",{
-                data:{},
+            data:
+                [{
+                    "gradecate": gradecate,
+                    "week": week,
+                    "lesson_time": lesson_time,
+                    "location": location,
+                    "coach_salary": coach_salary,
+                    "studentList": studentList,
+                  
+                }],
                 dataType:'json',//服务器返回json格式数据
                 type:'post',//HTTP请求类型
                 timeout:10000,//超时时间设置为10秒；
