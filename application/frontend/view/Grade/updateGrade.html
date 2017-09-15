@@ -197,25 +197,25 @@
     </div>
 
 
-<!--主教练-->
-<div id="mainCoach" class="mui-popover">
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list mt">
-                <div class="page-header">
+    <!--主教练-->
+    <div id="mainCoach" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
                      <span class="course"><strong>主教练</strong></span>
-                </div>
-                <ul class="mui-table-view list">
+                 </div>
+                 <ul class="mui-table-view list">
                     {volist name="planList" id="vol"}
                     <li class="mui-table-view-cell listli detalisli mainCoach">
                      {$vol.outline}
-                    </li>
-                    {/volist}
-                </ul>
-            </div>
-        </div>
-    </div>
+                 </li>
+                 {/volist}
+             </ul>
+         </div>
+     </div>
+ </div>
 </div>    
 <!--学员名单-->
 <div id="student" class="mui-popover">
@@ -702,10 +702,12 @@
         if(grade!=''){
             mui.ajax("{:url('api/grade/updateGradeMemberAllApi')}",{
                 data:
-                [
-                ['grade','grade']
-                ['grade_id','{$gradeInfo.id}']
-                ],
+                [{ 
+                    "grade":grade
+                },
+                {
+                    "grade_id":"{$gradeInfo.id}"
+                }],
                 dataType:'json',//服务器返回json格式数据
                 type:'post',//HTTP请求类型
                 timeout:10000,//超时时间设置为10秒；
