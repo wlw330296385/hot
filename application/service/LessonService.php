@@ -58,39 +58,53 @@ class LessonService {
         $result = Lesson::where($map)->find();
         if ($result){
             $res = $result->toArray();
-            // dump($res);die;
-            $res['doms'] = unserialize($res['dom']);
+            if($res['dom']){
+                $res['doms'] = unserialize($res['dom']);
+            }else{
+                $res['doms'] = [];
+            }
+            if($res['assistant']){
+                $res['assistants'] = unserialize($res['assistant']);
+                $res['assistant_ids'] = unserialize($res['assistant_id']);
+            }else{
+                $res['assistants'] = [];
+                $res['assistants_ids'] = [];
+            }
             return $res;
         }
             return $result;
     }
 
 
-    // 发布课程
-    public function pubLession($data){
-        // 查询是否有权限
-        $is_power = $this->isPower($data['camp_id'],$data['member_id']);
-        if(!$is_power){
-            return ['code'=>200,'msg'=>'权限不足'];
-        }
-        $validate = validate('LessonVal');
-        if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
-        }
-        $result = $this->lessonModel->data($data)->save();
-        if($result){
-            return ['msg' => $this->lessonModel->getError(), 'code' => 100, 'data' => $result];
-        }else{
-            return ['msg'=>__lang('MSG_200_ERROR'), 'code' => 200];
-        }
-    }
+
 
     // 编辑课程
     public function updateLesson($data,$id){
         $is_power = $this->isPower($data['camp_id'],$data['member_id']);
-
         if(!$is_power){
             return ['code'=>200,'msg'=>'权限不足'];
+        }
+        
+        if($data['doms']){
+                $doms = explode(',', $data['doms']);
+                $seria = serialize($doms);
+                $data['dom'] = $seria;
+            }else{
+                $data['dom'] = '';
+            }
+        if($data['assistants']){
+            $doms = explode(',', $data['assistants']);
+            $seria = serialize($doms);
+            $data['assistant'] = $seria;
+        }else{
+            $data['assistant'] = '';
+        }
+        if($data['assistant_ids']){
+            $doms = explode(',', $data['assistant_ids']);
+            $seria = serialize($doms);
+            $data['assistant_id'] = $seria;
+        }else{
+            $data['assistant_id'] = '';
         }
         $validate = validate('LessonVal');
         if(!$validate->check($data)){
@@ -98,7 +112,7 @@ class LessonService {
         }
         $result = $this->lessonModel->save($data,['id'=>$id]);
         if($result){
-            return ['msg' => $this->lessonModel->getError(), 'code' => 100, 'data' => $result];
+            return ['msg' => "编辑成功", 'code' => 100, 'data' => $result];
         }else{
             return ['msg'=>__lang('MSG_200_ERROR'), 'code' => 200];
         }
@@ -106,18 +120,40 @@ class LessonService {
 
     // 新增课程
     public function createLesson($data){
+        // 查询是否有权限
         $is_power = $this->isPower($data['camp_id'],$data['member_id']);
-
         if(!$is_power){
             return ['code'=>200,'msg'=>'权限不足'];
+        }
+        if($data['doms']){
+                $doms = explode(',', $data['doms']);
+                $seria = serialize($doms);
+                $data['dom'] = $seria;
+            }else{
+                $data['dom'] = '';
+            }
+        if($data['assistants']){
+            $doms = explode(',', $data['assistants']);
+            $seria = serialize($doms);
+            $data['assistant'] = $seria;
+        }else{
+            $data['assistant'] = '';
+        }
+        if($data['assistant_ids']){
+            $doms = explode(',', $data['assistant_ids']);
+            $seria = serialize($doms);
+            $data['assistant_id'] = $seria;
+        }else{
+            $data['assistant_id'] = '';
         }
         $validate = validate('LessonVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 200];
         }
+       
         $result = $this->lessonModel->save($data);
         if($result){
-            return ['msg' => $this->lessonModel->getError(), 'code' => 100, 'data' => $result];
+            return ['msg' => '发布成功', 'code' => 100, 'data' => $result];
         }else{
             return ['msg'=>__lang('MSG_200_ERROR'), 'code' => 200];
         }

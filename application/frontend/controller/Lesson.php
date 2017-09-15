@@ -63,7 +63,7 @@ class Lesson extends Base{
             $this->error('您没有权限');
         }
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
-        $lessonInfo['doms'] = unserialize($lessonInfo['dom']);
+        
         // 教练列表
     	$staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
 
@@ -71,6 +71,7 @@ class Lesson extends Base{
         $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['status'=>$camp_id]);
         $this->assign('lessonInfo',$lessonInfo);
+        $this->assign('camp_id',$camp_id);
     	$this->assign('gradeCategoryList',$gradeCategoryList);
         $this->assign('courtList',$courtList);
     	$this->assign('staffList',$staffList);
@@ -81,12 +82,14 @@ class Lesson extends Base{
     public function createLesson(){
         //训练营主教练
         $camp_id = input('param.camp_id');
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
         // 教练列表
         $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         $gradeCategoryList = $this->GradeService->getGradeCategory(1);
         $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['status'=>$camp_id]);
         // dump($assitantList);die;
+        $this->assign('campInfo',$campInfo);
         $this->assign('gradeCategoryList',$gradeCategoryList);
         $this->assign('courtList',$courtList);
         $this->assign('staffList',$staffList);

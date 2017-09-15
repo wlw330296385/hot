@@ -28,13 +28,14 @@ class Lesson extends Frontend{
             $area = input('param.area');
             $map = ['province'=>$province,'city'=>$city,'area'=>$area];
             foreach ($map as $key => $value) {
-                if($value == ''|| empty($value) || $value!=' '){
+                if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
                 }
             }
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['lesson'] = ['LIKE','%'.$keyword.'%'];
             }
+
             $campList = $this->CampService->getLessonPage($map,$page);
             return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
         }catch(Exception $e){
@@ -104,8 +105,7 @@ class Lesson extends Frontend{
                     $data['area'] = $address[2];
                 }else{
                     $data['area'] = $address[1];
-                }
-                
+                }             
             }
             if($lesson_id){
                 $result = $this->LessonService->updateLesson($data,$lesson_id);

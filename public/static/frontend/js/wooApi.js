@@ -46,46 +46,56 @@ var wooApi = {
         },
 
 
-        // 一键获取dom下的值
-        'getData':function(domName = 'input',className = 'data',data = []){
+        // 一键获取input下的值
+        'getInputData':function(domName = 'input',className = 'data',data = []){
        
             switch(domName){
                 case 'input':
                 $(domName+"."+className).each(function(i){
                     var name = $(this).attr('name');
                     var val = $(this).val();
-                    var son = [name,val];
+                    var son = name+'='+val;
+                    data.push(son);
+                })
+                break;
+                case 'select':
+                $(domName+"."+className).each(function(i){
+                    var name = $(this).attr('name');
+                    var val = $(this).val();
+                    var son = name+'='+val;
                     data.push(son);
                 })
                 break;
                 case 'checkbox':
-                $(domName).each(function(i){
+                $(domName+"."+className).each(function(i){
                     if($(this).attr('checked')==true){
                         var name = $(this).attr('name');
                         var val = $(this).data();
-                        var son = [{name:val}];
+                        var son = name+'='+val;
                         data.push(son);
                     }
                 })
                 break;
                 case 'radio':
-                $(domName).each(function(i){
+                $(domName+"."+className).each(function(i){
                     if($(this).attr('checked')==true){
                         var name = $(this).attr('name');
                         var val = $(this).val();
-                        var son = [{name:val}];
+                        var son = name+'='+val;
                         data.push(son);
                     }
                 })
                 break;
-                default:
-                $('.'+domName).each(function(i){
-                    var name = $(this).attr('name');
-                    var val = $(this).data();
-                    var son = [{name:val}];
-                    data.push(son);
-                })
             }
+            return data;
+        },
+        'getDomData':function(className = 'data',data = []){
+            $('.'+className).each(function(i){
+                    var name = $(this).attr('name');
+                    var val = $(this).html();
+                    var son = name+'='+val;
+                    data.push(son);
+            })
             return data;
         },
 
@@ -105,4 +115,15 @@ var wooApi = {
 
             })
         },
+
+
+        //数组转对象
+        'arrTOobj':function(arr){
+            var obj = new Object();
+            for (var x in arr){
+                var split = arr[x].split('=');
+                obj[split[0] ] = split[1];
+            }
+            return obj;
+        }
     }
