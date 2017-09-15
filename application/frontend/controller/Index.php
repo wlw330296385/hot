@@ -11,7 +11,6 @@ class Index extends Base{
 	}
 
     public function index() {
-
         $page = input('param.page')?input('param.page'):1;
     	$bannerList = unserialize($this->systemSetting['banner']); 
     	// 热门课程
@@ -21,6 +20,7 @@ class Index extends Base{
     	$this->assign('bannerList',$bannerList);
     	$this->assign('hotLessonList',$hotLessonList);
     	$this->assign('sortLessonList',$sortLessonList);
+    	$this->assign('mid', cookie('mid'));
         return view('Index/index');
     }
 
@@ -48,8 +48,8 @@ class Index extends Base{
         // cookie('param', $param);
         // dump($param);
         // dump($this->memberInfo);
-        session('memberInfo',['id'=>'0','openid'=>'o83291CzkRqonKdTVSJLGhYoU98Q','member'=>'woo'],'think');
-        dump(session('memberInfo','','think'));
+        //session('memberInfo',['id'=>'0','openid'=>'o83291CzkRqonKdTVSJLGhYoU98Q','member'=>'woo'],'think');
+        //dump(session('memberInfo','','think'));
         // dump(cache('param'));
         // dump(cookie('param'));
 

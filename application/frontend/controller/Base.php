@@ -2,8 +2,10 @@
 namespace app\frontend\controller;
 use think\Controller;
 use app\service\SystemService;
+use think\Cookie;
 use think\Request;
 use app\service\WechatService;
+
 class Base extends Controller{
 	public $systemSetting;
 	public $memberInfo;
@@ -16,12 +18,25 @@ class Base extends Controller{
 		$this->systemSetting = SystemService::getSite();
 		$this->assign('systemSetting',$this->systemSetting);
 		$this->footMenu();
-		$this->memberInfo = session('memberInfo','','think');
+		/*$this->memberInfo = session('memberInfo','','think');
 		if(!isset($this->memberInfo['id'])){
 			$this->nologin();
 		}	
-		$this->assign('memberInfo',$this->memberInfo);
+		$this->assign('memberInfo',$this->memberInfo);*/
+		//$this->nologin();
+
+        //session('memberInfo', '' ,'think')
+
+        if ( !Cookie::has('mid') ) {
+            $this->nologin();
+        }
+        $this->memberInfo = session('memberInfo', '', 'think');
+        $this->assign('memberInfo', $this->memberInfo);
+        $fasturl = $this->is_weixin() ? url('login/fastRegister') : url('login/login'); //提示完善信息对话框链接
+        $this->assign('fasturl', $fasturl);
 	}
+
+
 
 	protected function footMenu(){
 		define('CONTROLLER_NAME',Request::instance()->controller());
@@ -63,9 +78,10 @@ class Base extends Controller{
 	}
 
 	protected function nologin(){
-		$result = $this->is_weixin();
+
 		// $this->redirect('Test/index');
-		if($result){
+		/*$result = $this->is_weixin();
+		 * if($result){
 			$WechatService = new WechatService;
 			$callback = url('login/wxlogin','','', true);
 			$this->redirect($WechatService -> oauthredirect($callback));
@@ -81,7 +97,31 @@ class Base extends Controller{
             }else{
             	$this->redirect('Index/index');
             }
-		}
+		}*/
+		if ($this->is_weixin()) {
+            $wechatS = new WechatService();
+            $callback = url('frontend/login/wxlogin', '', '', true);
+            $this->redirect( $wechatS->oauthredirect($callback) );
+        } else {
+		    //echo 'other';
+            Cookie::set('mid', 0);
+            $member = [
+                'id' => 0,
+                'member' => '游客',
+                'nickname' => '游客',
+                'avatar' => '/static/default/avatar.png',
+                'hp' => 0,
+                'level' => 0,
+            ];
+            cookie('mid', 0);
+            cookie('member', md5($member['id'].$member['member'].config('salekey')) );
+            session('memberInfo', $member, 'think');
+            if (session('memberInfo', '', 'think')) {
+                $this->redirect( cookie('url') );
+            } else {
+                $this->redirect('frontend/Index/index');
+            }
+        }
 	}
 
 	
@@ -89,7 +129,10 @@ class Base extends Controller{
 	// 判断是否是微信浏览器
 	function is_weixin() { 
 	    if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) { 
-	        return true; 
-	    } return false; 
+	        // 微信
+            return true;
+	    } else {
+            return false;
+        }
 	}
 }
