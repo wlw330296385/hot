@@ -27,7 +27,7 @@ class Coach extends Frontend{
             $sex = input('param.sex');
             $map = ['province'=>$province,'city'=>$city,'area'=>$area];
             foreach ($map as $key => $value) {
-                if($value == '' && !$value && empty($value)){
+                if($value == ''|| empty($value) || $value!=' '){
                     unset($map[$key]);
                 }
             }

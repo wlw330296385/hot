@@ -9,23 +9,24 @@ class Camp extends Frontend{
 		parent::_initialize();
 	}
 
-
+    // 搜索训练营
     public function searchCampApi(){
         try{
+            $map = [];
             $keyword = input('param.keyword');
             $province = input('param.province');
+            $page = input('param.page')?input('param.page'):1;
             $city = input('param.city');
             $area = input('param.area');
             $map = ['province'=>$province,'city'=>$city,'area'=>$area];
             foreach ($map as $key => $value) {
-                if($value == ''){
+                if($value == ''|| empty($value) || $value!=' '){
                     unset($map[$key]);
                 }
             }
-            if($keyword){
-                $map['camp'] = ['LIKE',"%$keyword%"];
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['camp'] = ['LIKE','%'.$keyword.'%'];
             }
-            $page = input('param.page')?input('param.page'):1;
             $campList = $this->CampService->getCampList($map,$page);
             return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
         }catch(Exception $e){

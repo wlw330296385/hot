@@ -156,7 +156,7 @@ class Lesson extends Base{
         // 下架课程
         $offlineLessonList = $this->LessonService->getLessonList(['camp_id'=>$camp_id,'status'=>-1]);
         // 训练营信息
-        $campInfo = 
+        // $campInfo = db('camp')->where(['id'=>$camp_id])->find();
         $this->assign('onlineLessonList',$onlineLessonList);
         $this->assign('offlineLessonList',$offlineLessonList);
         $this->assign('camp_id',$camp_id);

@@ -32,19 +32,19 @@
     <div class="location-frame">
         <span class="location">深圳市</span>
         <span class="location-choise">
-                 <select>
-                    <option>全部区域</option>
-                    <option>南山区</option>
-                    <option>福田区</option>
-                    <option>罗湖区</option>
-                    <option>龙岗区</option>
-                    <option>龙华区</option>
-                    <option>宝安区</option>
+                 <select id="areaSelect">
+                    <option value="0">全部区域</option>
+                    <option value="南山区">南山区</option>
+                    <option value="福田区">福田区</option>
+                    <option value="罗湖区">罗湖区</option>
+                    <option value="龙岗区">龙岗区</option>
+                    <option value="龙华区">龙华区</option>
+                    <option value="宝安区">宝安区</option>
                 </select>
             </span>
         <span class="location-choise">
                  <select id="sexSelect">
-                    <option>性别</option>
+                    <option value="0">性别</option>
                     <option value="1">男</option>
                     <option value="2">女</option>
                 </select>
@@ -101,31 +101,33 @@
 
     $(function () {
         var count = 1;
-        var keyword=' ';
+        var keyword='';
         var sSex='';
-        var sCity='';
+        var sCity='深圳市';
         var sArea='';
         //搜索教练
         $("#coachSearchBtn").on("click", function () {
             keyword = $(".keyword").val();
-            count = 1;//显示第一页
-            var page = count;
-            var gType = 1;//代表下拉刷新
-            toList(page,gType);//具体取数据的方法
+            searchToList();
         })
         //选择性别下拉
         $("#sexSelect").on("change", function () {
-            var getVal = $(this).val();
-            if(getVal!='') {
-                sSex = getVal;
-            }else{
-                sSex = '';
-            }
+            sSex = $(this).val();
+            //alert(sSex);
+            searchToList();
+        });
+        //选择地区下拉
+        $("#areaSelect").on("change", function () {
+            sArea = $(this).val();
+            searchToList();
+        });
+        //搜索、下拉刷选后触发
+        function searchToList() {
             count = 1;//显示第一页
             var page = count;
             var gType = 1;//代表下拉刷新
             toList(page,gType);//具体取数据的方法
-        });
+        }
 
         mui.init({
             swipeBack: true, //启用右滑关闭功能
@@ -171,27 +173,36 @@
         }
         //接口获取数据并追加到页面
         var toList = function(page,gType) {
-            if(keyword==''){keyword=' '}; //搜索关键字不能完全为空，否则查询为空
+            //搜索关键字不能完全为空，否则查询为空
             var url  = "{:url('api/coach/searchCoachListApi','','',true)}";
-            var urlPage = url+'/page/'+page+'/keyword/'+keyword+'/sex/'+sSex;
-            //alert(urlPage);
+//            var urlPage = url+'/page/'+page+'/city/'+sCity;
+//            if(keyword!=''){
+//                urlPage = urlPage+'/keyword/'+keyword;
+//            }
+//            if(sSex!=''&&sSex!=0){
+//                urlPage = urlPage+'/sex/'+sSex;
+//            }
+//            if(sArea!=''&&sArea!=0){
+//                urlPage = urlPage+'/area/'+sArea;
+//            }
             mui.ajax({
-                url:urlPage,
+                url:url,
                 data: {
-//                    'sex': sSex,
-//                    'city': sCity,
-//                    'area': sArea
+                    page: page,
+                    city: sCity,
+                    area: sArea,
+                    keyword: keyword
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
                 headers: {'Content-Type': 'application/json'},
-                processData:false,
+                //processData:false,
                 success: function (data) {
                     var newli='';
                     for(var i=0;i<=data.data.length-1;i++){
                         var coachSexUrl = getSexIconUrl(data.data[i].sex);
-                        newli = newli + '<li class="mui-table-view-cell mui-media listli list-wide"><a href="coachInfo/coach_id/'+data.data[i].id+'"><img class="mui-media-object mui-pull-left coachicon" src="'+data.data[i].portraits+'"><div class="mui-media-body wd36">'+data.data[i].coach+'<img src="'+coachSexUrl+'" class="sex" alt=""><p class="mui-ellipsis">教龄:'+data.data[i].coach_year+'&nbsp;&nbsp;等级:'+data.data[i].coach_level+'</p></div><div class="price-frame"><div class="icons mui-inline">'+data.data[i].star+'<i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i><i data-index="4" class="mui-icon mui-icon-star-filled"></i><i data-index="5" class="mui-icon mui-icon-star-filled"></i></div><p class="address tr">南山区</p></div></a></li>'
+                        newli = newli + '<li class="mui-table-view-cell mui-media listli list-wide"><a href="coachInfo/coach_id/'+data.data[i].id+'"><img class="mui-media-object mui-pull-left coachicon" src="'+data.data[i].portraits+'"><div class="mui-media-body wd36">'+data.data[i].coach+'<img src="'+coachSexUrl+'" class="sex" alt=""><p class="mui-ellipsis">教龄:'+data.data[i].coach_year+'&nbsp;&nbsp;等级:'+data.data[i].coach_level+'</p></div><div class="price-frame"><div class="icons mui-inline">'+data.data[i].star+'<i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i><i data-index="4" class="mui-icon mui-icon-star-filled"></i><i data-index="5" class="mui-icon mui-icon-star-filled"></i></div><p class="address tr">'+data.data[i].area+'</p></div></a></li>'
                     }
                     if(gType==1){
                         //上拉刷新

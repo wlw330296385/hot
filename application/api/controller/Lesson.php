@@ -17,6 +17,30 @@ class Lesson extends Frontend{
        
     }
 
+    // 搜索课程
+    public function searchLessonApi(){
+        try{
+            $map = [];
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $page = input('param.page')?input('param.page'):1;
+            $city = input('param.city');
+            $area = input('param.area');
+            $map = ['province'=>$province,'city'=>$city,'area'=>$area];
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value!=' '){
+                    unset($map[$key]);
+                }
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['lesson'] = ['LIKE','%'.$keyword.'%'];
+            }
+            $campList = $this->CampService->getLessonPage($map,$page);
+            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
+        }catch(Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }       
+    }
 
 
     //翻页获取课程接口

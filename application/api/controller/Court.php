@@ -10,6 +10,32 @@ class Court extends Base{
 		$this->CourtService = new CourtService;
 	}
 
+
+    // 搜索场地
+    public function searchCourtApi(){
+        try{
+            $map = [];
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $page = input('param.page')?input('param.page'):1;
+            $city = input('param.city');
+            $area = input('param.area');
+            $map = ['province'=>$province,'city'=>$city,'area'=>$area];
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value!=' '){
+                    unset($map[$key]);
+                }
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['court'] = ['LIKE','%'.$keyword.'%'];
+            }
+            $campList = $this->CampService->getCourtList($map,$page);
+            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
+        }catch(Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }       
+    }
+
     // 分页获取数据
     public function courtListApi(){
         try{

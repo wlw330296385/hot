@@ -23,7 +23,7 @@ class LessonService {
     
     // 获取所有课程
     public function getLessonList($map=[],$page = 1,$order='',$paginate = 10) {
-        $result = Lesson::where($map)->order($order)->where(['status'=>1])->page($page,$paginate)->select();
+        $result = Lesson::where($map)->order($order)->page($page,$paginate)->select();
         if($result){
             $result = $result->toarray();
             return $result;
@@ -34,7 +34,7 @@ class LessonService {
 
     // 分页获取课程
     public function getLessonPage($map=[],$page = 1 ,$paginate=10, $order=''){
-        $res = Lesson::where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
+        $res = Lesson::where($map)->order($order)->page($page,$paginate)->select();
         if($res){
             $result = $res->toArray();
             return $result;
