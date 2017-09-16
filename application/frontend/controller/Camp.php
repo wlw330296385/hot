@@ -23,9 +23,16 @@ class Camp extends Base{
     }
 
     public function createCamp(){
-
+        $step = input('step', 1);
+        $view = 'Camp/createCamp'.$step;
+        $fast = input('fast', 0);
+        $campid = input('campid');
+        $campS = new CampService();
+        $camp = $campS->getCampInfo($campid);
         
-        return view('Camp/createCamp');
+        $this->assign('fast', $fast);
+        $this->assign('camp', $camp);
+        return view($view);
     }
 
     public function campInfo(){

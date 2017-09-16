@@ -1,22 +1,24 @@
 <?php 
 namespace app\common\validate;
 use think\Validate;
-class CoachVal extends Validate{
+class CampVal extends Validate{
 
 
-	protected $rule = [
-        'coach'  =>  'require|max:60',
-        'member_id'  =>  'require|max:60',
+    protected $rule = [
+        'camp'  =>  'require|max:60|unique:camp,camp',
+        'member_id' => 'require',
+        'realname' =>  'require',
     ];
     
     protected $message = [
-        'coach.require'  =>  '用户名必须',
-        'member_id'     =>'用户名ID必须',
+        'camp.require'  =>  '请输入训练营名',
+        'camp.unique'   =>'训练营名称被占用',
+        'member_id.require' => '缺少创建人会员ID',
+        'realname.require' =>  '请输入创建者真实姓名',
     ];
     
     protected $scene = [
-        'add'   =>  ['coach'],
-        'edit'  =>  ['coach'],
+        'add'   =>  ['realname','member_id','camp'],
     ];    
 
 }
