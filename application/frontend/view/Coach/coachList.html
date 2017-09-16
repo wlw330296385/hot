@@ -33,7 +33,7 @@
         <span class="location">深圳市</span>
         <span class="location-choise">
                  <select id="areaSelect">
-                    <option value="0">全部区域</option>
+                    <option value="">全部区域</option>
                     <option value="南山区">南山区</option>
                     <option value="福田区">福田区</option>
                     <option value="罗湖区">罗湖区</option>
@@ -44,7 +44,7 @@
             </span>
         <span class="location-choise">
                  <select id="sexSelect">
-                    <option value="0">性别</option>
+                    <option value="">性别</option>
                     <option value="1">男</option>
                     <option value="2">女</option>
                 </select>
@@ -83,6 +83,7 @@
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="/static/frontend/js/common.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
 <script>
 
     mui("body").on("tap", "a", function () {
@@ -100,11 +101,35 @@
 
 
     $(function () {
+        //初始化全局变量
         var count = 1;
         var keyword='';
         var sSex='';
+        var sProvince='广东省';
         var sCity='深圳市';
         var sArea='';
+        //alert(cityData3[1].text)
+//        for(var i=0;i<=cityData3.length-1;i++){
+//            if(cityData3[i].text==sProvince){
+//                alert(cityData3[i].value);
+//                return false;
+//            }
+//        }
+
+//        $.each(cityData3, function(n1, value) {
+//            if(cityData3[n1].text==sProvince) {
+//                $.each(value, function (n2, value1) {
+//                    if(cityData3[n2].children[].text==sCity) {
+//                        $.each(value1, function (n3, value2) {
+//                            alert(n3);
+//                            alert(value2);
+//                        });
+//                    }
+//                });
+//            }
+//        });
+
+
         //搜索教练
         $("#coachSearchBtn").on("click", function () {
             keyword = $(".keyword").val();
@@ -191,6 +216,7 @@
                     page: page,
                     city: sCity,
                     area: sArea,
+                    sex: sSex,
                     keyword: keyword
                 },
                 dataType: 'json',//服务器返回json格式数据
