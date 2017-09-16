@@ -4477,7 +4477,7 @@
                     arr, i, len, mouseHandler;
     
                 input.attr( 'type', 'file' );
-                input.attr( 'capture', 'camera');
+                //input.attr( 'capture', 'camera');
                 input.attr( 'name', opts.name );
                 input.addClass('webuploader-element-invisible');
     

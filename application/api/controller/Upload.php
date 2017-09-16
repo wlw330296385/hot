@@ -16,8 +16,8 @@ class Upload {
         $return = ['error' => 0, 'success' => 1, 'status' => 1];
         $file = request()->file('file');
         if ($file) {
-            $type = input('type') ? input('type') : 'other';
-            $savePath = 'uploads'. DS . 'images' . DS . $type . DS . date('Y') . DS . date('m');
+            $usage = input('usage') ? input('usage') : 'other';
+            $savePath = 'uploads'. DS . 'images' . DS . $usage . DS . date('Y') . DS . date('m');
             $info = $file->rule('uniqid')->move(ROOT_PATH . 'public'. DS .$savePath);
             if ($info) {
                 $return['path'] = '/' . $savePath . '/' . $info->getFilename();
