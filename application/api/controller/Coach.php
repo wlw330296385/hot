@@ -27,7 +27,7 @@ class Coach extends Frontend{
             $sex = input('param.sex');
             $map = ['province'=>$province,'city'=>$city,'area'=>$area];
             foreach ($map as $key => $value) {
-                if($value == ''|| empty($value) || $value!=' '){
+                if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
                 }
             }
@@ -37,6 +37,7 @@ class Coach extends Frontend{
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['coach'] = ['LIKE','%'.$keyword.'%'];
             }
+            // dump($map);die;
             $coachList = $this->coachService->getCoachList($map,$page);
             if($coachList){
                 return json(['code'=>100,'msg'=>'OK','data'=>$coachList]);
