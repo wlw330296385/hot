@@ -5,7 +5,7 @@ use app\service\CoachService;
 use app\service\CertService;
 use app\service\GradeMemberService;
 use app\service\ScheduleService;
-class Coach extends Frontend{
+class Coach extends Base{
 	protected $coachService;
 	public function _initialize(){
 		parent::_initialize();

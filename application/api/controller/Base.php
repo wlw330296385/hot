@@ -25,11 +25,11 @@ class Base extends Controller{
         $this->defend++;
      }   
 
-     if($this->defend>1 && $this->defend<10){
-        $this->checklogin();      
-      }elseif ($this->defend > 10) {
-        $this->redirect('index/defendActivated');
-      }
+     // if($this->defend>1 && $this->defend<10){
+     //    $this->checklogin();      
+     //  }elseif ($this->defend > 10) {
+     //    $this->redirect('index/defendActivated');
+     //  }
           
 
  }

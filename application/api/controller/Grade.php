@@ -3,7 +3,7 @@ namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\GradeService;
 use app\service\GradeMemberService;
-class Grade extends Frontend{
+class Grade extends Base{
 
     protected $GradeService;
 

@@ -44,7 +44,7 @@
             <li class="mui-table-view-cell listli">选择课量
                 <span>
                     {volist name="lessonInfo['doms']" id="vol" }
-                        <button type="button" class="mui-btn mui-btn-warning">{$vol}节</button>
+                        <button type="button" class="mui-btn selectTotal" data="{$vol}" onclick="selectTotal()" >{$vol}节</button>
                     {/volist}
                     </span>
             </li>
@@ -76,11 +76,19 @@
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
 
+
+    // 预约课程和购买课程
+    
+    function selectTotal(){
+        var data = wooApi.selectLessonTotal2($(this));
+        console.log(data)
+    }
 </script>
 </html>

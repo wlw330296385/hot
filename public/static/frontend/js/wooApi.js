@@ -1,8 +1,8 @@
 
-if (jQuery) { 
-// jQuery 已加载 
+if (typeof jQuery == 'undefined') { 
+document.write('<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>');   
 } else { 
-    document.write('<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>');   
+    
 } 
 
 
@@ -125,5 +125,23 @@ var wooApi = {
                 obj[split[0] ] = split[1];
             }
             return obj;
+        },
+
+
+
+
+        // 选择课时
+        'selectLessonTotal':function(domName,className){
+            $(domName+"."+className).addClass('mui-btn-warning');
+            return $(domName+"."+className).data();
+        },
+
+
+        //选择课时
+        'selectLessonTotal2':function(dom){
+            dom.addClass('mui-btn-warning');
+            // var data = dom.attr('data');
+            var data = dom.data();
+            return data;
         }
     }
