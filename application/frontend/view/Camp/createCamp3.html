@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>训练营注册</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <!-- webuploader -->
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+</head>
+
+<body>
+<div class="mui-content pt">
+    <div id="form3" class="register" >
+        <header class="mui-bar mui-bar-nav subheader header3">
+            <a class="mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+            <h1 class="mui-title">完善训练营信息</h1>
+        </header>
+        <form action="" class="mui-input-group mt25">
+            <div class="mui-input-row ">
+                <label>训练营名称</label><span>{if condition="$camp"}{$camp.camp}{/if}</span>
+                <input type="hidden" name="camp_id" value="{$camp.id}">
+            </div>
+
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right filePicker"  onclick="add_id(1)">
+                    <label>营业执照</label>
+                    <img id="preview_1" class="coachicon icon01 upload-preview" >
+                    <input type="hidden" name="cert" value="">
+                </a>
+            </div>
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right filePicker"  onclick="add_id(2)">
+                    <label>法人身份证</label>
+                    <img id="preview_2" class="coachicon icon01 upload-preview">
+                    <input type="hidden" name="fr_idcard">
+                </a>
+            </div>
+            <div class="mui-input-row">
+                <label>法人身份证号</label>
+                <input type="text" class="input frid" placeholder="请输入身份证号码">
+            </div>
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right filePicker"  onclick="add_id(3)">
+                    <label>创建者身份证</label>
+                    <img id="preview_3" class="coachicon icon01 upload-preview" >
+                    <input type="hidden" name="cjz_idcard">
+                </a>
+            </div>
+            <div class="mui-input-row">
+                <label>创建者身份证号</label>
+                <input type="text" class="input cjzid" placeholder="请输入创建者身份证号码">
+            </div>
+            <div class="mui-input-row border-b h-auto">
+                <a class="mui-navigate-right filePicker"  onclick="add_id(4)">
+                    <label>其他证明</label>
+                    <img id="preview_4" class="coachicon icon01" >
+                    <input type="hidden" name="other_cert">
+                </a>
+            </div>
+        </form>
+        <span class="tip-box tip"></span>
+        <div class="tjbtn">
+            <button type="button" class="mui-btn btn camp-step3">完善认证信息</button>
+        </div>
+        <p class="pass"><a href="{:url('index/index')}">[ 跳过，稍后完善 ]</a></p>
+    </div>
+    <!-- #form3 end -->
+</div>
+
+
+
+
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!--选择器-->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
+<script>
+    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+</script>
+<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+
+
+    $(function() {
+
+        // 注册 step3
+        $('.camp-step3').click(function() {
+
+        });
+    });
+
+
+</script>
+</html>
