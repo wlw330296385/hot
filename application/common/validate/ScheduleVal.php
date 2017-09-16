@@ -6,7 +6,7 @@ class ScheduleVal extends Validate{
 
 	protected $rule = [
         'camp_id'           =>'require',
-        'camp'              =>'require|max:60',
+        //'camp'              =>'require|max:60',
         // 'lesson'	        =>'require',
         // 'lesson_id'         =>'require',
         'grade'             =>'require',
@@ -35,7 +35,7 @@ class ScheduleVal extends Validate{
     ];
     
     protected $scene = [
-        'add'   =>  ['camp_id','camp','grade','grade_id','coach_id','teacher_plan','teacher_plan_id','lesson_date'],
+        'add'   =>  ['camp_id','grade','grade_id','coach_id','teacher_plan','teacher_plan_id','lesson_date'],
         'edit'  =>  [],
     ];    
 
