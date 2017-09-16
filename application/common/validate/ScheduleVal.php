@@ -21,7 +21,7 @@ class ScheduleVal extends Validate{
     
     protected $message = [
         'camp_id'           =>'require',
-        'camp'              =>'require|max:60',
+        //'camp'              =>'require|max:60',
         // 'lesson'            =>'require',
         // 'lesson_id'         =>'require',
         'grade'             =>'require',
