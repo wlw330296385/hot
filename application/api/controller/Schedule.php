@@ -17,7 +17,7 @@ class Schedule extends Base
 	}
 
 	public function index(){
-
+		echo  "11";
 
 	}
 
