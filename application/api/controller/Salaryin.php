@@ -4,8 +4,8 @@ use app\api\controller\Frontend;
 use app\service\SalaryInService;
 class Salaryin extends Frontend{
 	private $SalaryInService;
-	public function __construct(){
-		parent::__construct();
+	public function _initialize(){
+		parent::_initialize();
 		$this->SalaryInService = new SalaryInService($this->memberInfo['id']);
 	}
 

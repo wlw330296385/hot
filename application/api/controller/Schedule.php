@@ -10,8 +10,9 @@ class Schedule extends Base
 	
 	protected $scheduleService;
 
-	function __construct()
+	function _initialize()
 	{
+		parent::_initialize();
 		$this->scheduleService = new ScheduleService;
 	}
 
@@ -62,16 +63,7 @@ class Schedule extends Base
 			// 只要是训练营的教练都可以跨训练营录课
 			$camp_id = input('param.camp_id');
 			$member_id = $this->memberInfo['id'];
-			$result = 1;
-			$is_power = db('grade_member')->where([
-												'member_id'	=>$member_id,
-												'camp_id'	=>$camp_id,
-												'type'		=>['or',['2,3,4,8']],
-												'status'	=>1
-										])->find();
-			if(!$is_power){
-				$result = 0;
-			}
+			$result = $this->scheduleService->is_power($camp_id,$member_id);
 			return $result;
 		}catch (Exception $e){
 			return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -85,7 +77,7 @@ class Schedule extends Base
 		try{
 			$camp_id = input('param.camp_id');
 			$is_power = $this->recordSchedulePowerApi();
-			if($is_power != 1){
+			if($is_power <3){
 				return json(['code'=>200,'msg'=>'权限不足']);die;
 			}
 			$schedule_id = input('schedule_id');
@@ -106,6 +98,8 @@ class Schedule extends Base
 	public function recordScheduleApi(){
 		try{
 			$data = input('post.');
+			$data['member_id'] = $this->memberInfo['id'];
+			$data['member'] = $this->memberInfo['member'];
 			$result = $this->scheduleService->pubSchedule($data);
 			return json($result);
 		}catch (Exception $e){

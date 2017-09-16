@@ -9,8 +9,9 @@ use app\api\controller\Base;
 class Student extends Base
 {
 	protected $studentService;
-	function __construct()
+	function _initialize()
 	{
+		parent::_initialize();
 		$this->studentService = new StudentService;
 	}
 
