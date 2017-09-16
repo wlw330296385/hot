@@ -1,11 +1,15 @@
 <?php 
-namespace api\Controller;
-
+namespace app\api\Controller;
+use app\api\controller\Base;
 use Think\Controller;
 use Think\Log;
-class Wxpay extends Frontend{
+use app\service\WechatJsPayService;
+
+class Wxpay extends Base{
 
 	public function index(){
+
+        echo "这里是wxpay的index";
     }
 
 
@@ -16,8 +20,8 @@ class Wxpay extends Frontend{
     // 获取parameters
     public function getParametersApi(){
         try{
-            $data = input('post.');
-            $WechatJsPayService = new \app\service\WechatJsPayService();
+            $data = input('param.');
+            $WechatJsPayService = new WechatJsPayService;
             $parameters = $WechatJsPayService->pay($data);
             return json(['code'=>100,'msg'=>'o','data'=>$parameters]);
         }catch (Exception $e){

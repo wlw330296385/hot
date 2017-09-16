@@ -50,15 +50,15 @@
                     </a>
                 </li>
                 <li class="mui-table-view-cell listli">课程单价<span><b class="colororange">￥{$lessonInfo.cost}</b>（元）</span></li>
-                <li class="mui-table-view-cell listli">所选课量<span><b class="colororange" id="total"></b>（节）</span></li>
+                <li class="mui-table-view-cell listli">所选课量<span><b class="colororange total"></b>（节）</span></li>
                 <li class="mui-table-view-cell listli">训练时间<span>{$lessonInfo.week} {$lessonInfo.lesson_time}</span></li>
                 <li class="mui-table-view-cell listli">训练地点<span>{$lessonInfo.location}</span></li>
                 <li class="mui-table-view-cell listli">所属地区<span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span></li>
-                <li class="mui-table-view-cell listli"><span>课程总价<b class="colororange">￥</b></span></li>
+                <li class="mui-table-view-cell listli"><span>课程总价<b class="colororange total_fee"></b></span></li>
             </ul>
 
             <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-8 opli">还需支付:<b class="colororange">￥</b></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-8 opli" >还需支付:<b class="colororange total_fee">￥</b></li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="wxpay()">立即支付</li>
             </ul>
 
@@ -75,8 +75,19 @@
         swipeBack: true //启用右滑关闭功能
     });
 
+
+
+    var total = sessionStorage.lessonTotal;
+    var total_fee = "{$lessonInfo.cost}"*total;
+    $(function(){
+        $('.total').html(total);
+        $('.total_fee').html("￥"+total_fee);
+    })
+   
+
     function wxpay(){
-        var total_fee = 1;
+        
+        console.log(total_fee);
         var bill_order = "{$billOrder}";
         if (typeof WeixinJSBridge == "undefined"){
            if( document.addEventListener ){
@@ -86,31 +97,34 @@
                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
            }
         }else{
-            var result = wooApi.asyncF("{:url('api/Wxpay/getParametersApi')}",{'order_no'=>bill_order,'amount'=>total_fee});
+            var result = wooApi.asyncF("{:url('api/wxpay/getParametersApi')}",{'order_no':bill_order,'amount':total_fee});
             if(result.code == 100){
-
+              onBridgeReady(result.data.data.jsApiParameters);
+            }else{
+              mui.toast(result.data.msg)
             } 
             console.log(result);
-            // onBridgeReady();
+            
         }
     }
 
-    function onBridgeReady(){
-        
-       //  WeixinJSBridge.invoke(
-       //     'getBrandWCPayRequest', {
-       //         "appId":jsApiParameters.appId,     //公众号名称，由商户传入     
-       //         "timeStamp":"{:time()}",         //时间戳，自1970年以来的秒数     
-       //         "nonceStr":jsApiParameters.nonceStr, //随机串     
-       //         "package":jsApiParameters.package,     
-       //         "signType":"MD5",         //微信签名方式：     
-       //         "paySign":jsApiParameters.paySign, //微信签名
-       //         'payType':jsApiParameters.payType
-       //     },
-       //     function(res){     
-       //         if(res.err_msg == "get_brand_wcpay_request:ok" ) {}     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
-       //     }
-       // ); 
+    function onBridgeReady(jsApiParameters){
+        var objJsApiParameters = JSON.parse(jsApiParameters);
+        console.log(objJsApiParameters);
+        WeixinJSBridge.invoke(
+           'getBrandWCPayRequest', {
+               "appId":objJsApiParameters.appId,     //公众号名称，由商户传入     
+               "timeStamp":"{:time()}",         //时间戳，自1970年以来的秒数     
+               "nonceStr":objJsApiParameters.nonceStr, //随机串     
+               "package":objJsApiParameters.package,     
+               "signType":"MD5",         //微信签名方式：     
+               "paySign":objJsApiParameters.paySign, //微信签名
+               'payType':objJsApiParameters.payType
+           },
+           function(res){     
+               if(res.err_msg == "get_brand_wcpay_request:ok" ) {}     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
+           }
+       ); 
     }
     
 </script>

@@ -1,6 +1,6 @@
 <?php 
 namespace app\api\controller;
-use app\api\controller\Base;
+use app\api\controller\Frontend;
 use app\service\SalaryInService;
 class Salaryin extends Frontend{
 	private $SalaryInService;

@@ -25,13 +25,13 @@ class Schedule extends Base
 	//判断录课冲突,规则:同一个训练营课程班级,在某个时间点左右2个小时之内只允许一条数据;
 	public function recordScheduleClashApi(){
 		try{
-			$lesson_id = input('lesson_id');
-			$lesson_time = input('lesson_time');
-			$grade_id = input('grade_id');
-			$camp_id = input('camp_id');
+			$lesson_id = input('param.lesson_id');
+			$lesson_time = input('param.lesson_time');
+			$grade_id = input('param.grade_id');
+			$camp_id = input('param.camp_id');
 			//前后2个小时
-			$start_time = time()-7200;
-			$end_time = time()+7200;
+			$start_time = $lesson_time-7200;
+			$end_time = $lesson_time+7200;
 			$scheduleList = db('schedule')->where([
 									'camp_id'=>$camp_id,
 									'grade_id'=>$grade_id,
@@ -60,7 +60,7 @@ class Schedule extends Base
 	public function recordSchedulePowerApi(){
 		try{
 			// 只要是训练营的教练都可以跨训练营录课
-			$camp_id = input('camp_id');
+			$camp_id = input('param.camp_id');
 			$member_id = $this->memberInfo['id'];
 			$result = 1;
 			$is_power = db('grade_member')->where([
@@ -83,7 +83,7 @@ class Schedule extends Base
 	//课时审核
 	public function recordScheduleCheckApi(){
 		try{
-			$camp_id = input('camp_id');
+			$camp_id = input('param.camp_id');
 			$is_power = $this->recordSchedulePowerApi();
 			if($is_power != 1){
 				return json(['code'=>200,'msg'=>'权限不足']);die;

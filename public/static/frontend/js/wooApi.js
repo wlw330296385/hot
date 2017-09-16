@@ -140,8 +140,8 @@ var wooApi = {
         //选择课时
         'selectLessonTotal2':function(dom){
             dom.addClass('mui-btn-warning');
-            // var data = dom.attr('data');
-            var data = dom.data();
+            var data = dom.attr('data');
+            // var data = dom.data();
             return data;
         }
     }
