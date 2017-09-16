@@ -106,7 +106,7 @@ class Schedule extends Base
 	public function recordScheduleApi(){
 		try{
 			$data = input('post.');
-			$result = $this->scheduleService->pubSchedule($data);
+			$result = $this->scheduleService->createSchedule($data);
 			return json($result);
 		}catch (Exception $e){
 			return json(['code'=>100,'msg'=>$e->getMessage()]);
