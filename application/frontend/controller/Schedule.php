@@ -94,6 +94,7 @@ class Schedule extends Base
 		$this->assign('exerciseList',$exerciseList);
 		$this->assign('gradeInfo',$gradeInfo);
 		$this->assign('memberListOfCamp',$memberListOfCamp);
+		$this->assign('campid', $camp_id);
 		return view('Schedule/recordSchedule');
 	}
 
