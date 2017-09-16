@@ -235,8 +235,8 @@
                         <span class="course"><strong>班级名称</strong></span>
                     </div>
                     <ul class="mui-table-view list">
-                       {volist name="planList" id="vol"}
-                       <li class="mui-table-view-cell listli detalisli grade">
+                     {volist name="planList" id="vol"}
+                     <li class="mui-table-view-cell listli detalisli grade">
                         {$vol.outline}
                     </li>
                     {/volist}
@@ -295,8 +295,8 @@
                     <span class="course"><strong>课程类型</strong></span>
                 </div>
                 <ul class="mui-table-view list">
-                   {volist name="planList" id="vol"}
-                   <li class="mui-table-view-cell listli detalisli lessonType">
+                 {volist name="planList" id="vol"}
+                 <li class="mui-table-view-cell listli detalisli lessonType">
                     {$vol.outline}
                 </li>
                 {/volist}
@@ -559,13 +559,8 @@
 
     //弹出菜单
     mui('.mui-scroll-wrapper').scroll();
-    mui('body').on('shown', '.mui-popover', function(e) {
-                //console.log('shown', e.detail.id);//detail为当前popover元素
-            });
-    mui('body').on('hidden', '.mui-popover', function(e) {
-                //console.log('hidden', e.detail.id);//detail为当前popover元素
-            });
-
+    
+    //选择器
     (function ($, doc) {
         $.ready(function () {
             var _getParam = function (obj, param) {
@@ -606,10 +601,10 @@
         });
     })(mui, document);
 
-     //弹出框选择
-     $(function(){
-         // 班级名称
-         $(".grade").click(function(){
+    //弹出框选择
+    $(function(){
+        // 班级名称
+        $(".grade").click(function(){
             var grade = $(this).html();
             $(".gradeCont").html(grade);
             mui("#grade").popover("toggle");
@@ -623,8 +618,8 @@
             $(".studentCont").text($("input[name='student']").val());
             mui('#student').popover('toggle');
         })
-         // 课程类型
-         $(".lessonType").click(function(){
+        // 课程类型
+        $(".lessonType").click(function(){
             var lessonType = $(this).html();
             $(".lessonTypeCont").html(lessonType);
             mui("#lessonType").popover("toggle");
@@ -647,8 +642,8 @@
             $(".mainCoachCont").html(mainCoach);
             mui("#mainCoach").popover("toggle");
         })
-         // 助教练
-         $("#domConfirm").click(function(){
+        // 助教练
+        $("#domConfirm").click(function(){
             //选择多个助教练
             $("input[name='dom']").val($("input[name='checkbox-dom']:checked").map(function(){
                 return $(this).val()
@@ -669,19 +664,19 @@
             $(".leaderCont").html(leader);
             mui("#leader").popover("toggle");
         })
-         // 教案
-         $(".teachingPlan").click(function(){
+        // 教案
+        $(".teachingPlan").click(function(){
             var teachingPlan = $(this).html();
             $(".teachingPlanCont").html(teachingPlan);
             mui("#teachingPlan").popover("toggle");
         })
 
 
-     });
+    });
 
-     
-     // 关闭弹出菜单
-     $(".close-popover").click(function(){
+
+    // 关闭弹出菜单
+    $(".close-popover").click(function(){
         mui($(this).parent()).popover("toggle");
     })
 
@@ -710,8 +705,8 @@
         console.log(lessonTypeCont)
         mui.ajax("{:url('api/lesson/getLessonListApi')}",{
             data:{
-                    "lesson":lessonTypeCont
-                },
+                "lesson":lessonTypeCont
+            },
                 dataType:'json',//服务器返回json格式数据
                 type:'post',//HTTP请求类型
                 timeout:10000,//超时时间设置为10秒；
@@ -719,6 +714,9 @@
                 success:function(data){
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data)
+                    if(data.code!=100){
+                        mui.toast(data.msg);
+                    }
                 },
                 error:function(xhr,type,errorThrown){
                     //异常处理；
@@ -748,15 +746,14 @@
         var  remarks = $(".remarks").val();
         mui.ajax("{:url('api/grade/createGradeApi')}",{
             data:
-                [{
-                    "gradecate": gradecate,
-                    "week": week,
-                    "lesson_time": lesson_time,
-                    "location": location,
-                    "coach_salary": coach_salary,
-                    "studentList": studentList,
-                  
-                }],
+            [{
+                "gradecate": gradecate,
+                "week": week,
+                "lesson_time": lesson_time,
+                "location": location,
+                "coach_salary": coach_salary,
+                "studentList": studentList,
+            }],
                 dataType:'json',//服务器返回json格式数据
                 type:'post',//HTTP请求类型
                 timeout:10000,//超时时间设置为10秒；
@@ -764,8 +761,12 @@
                 success:function(data){
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data)
-                },
-                error:function(xhr,type,errorThrown){
+                    if(data.code==100){
+                        mui.toast(data.msg)
+                    }else{
+                        mui.toast(data.msg)}
+                 },
+                 error:function(xhr,type,errorThrown){
                     //异常处理；
                     console.log(type);
                 }

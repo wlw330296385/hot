@@ -181,7 +181,7 @@
                 </div>
                 <div class="mui-input-row">
                     <label>备注</label>
-                    <input type="text" class="remarks checkChinese" value="{$gradeInfo.remarks}">
+                    <input type="text" class="remarks checkChinese" value="{$gradeInfo.remarks}" onblur="checkChinese()">
                 </div>
 
             </form>
@@ -514,7 +514,7 @@
     (function ($, doc) {
         $.ready(function () {
             var _getParam = function (obj, param) {
-                return obj[param] && '';
+                return obj[param] || '';
             };
             
             //选择地区
@@ -628,6 +628,7 @@
         }
     })
 
+
     //检测输入是否为汉字
     $(".checkChinese").blur(function(){
         var str =$(this).val();
@@ -635,8 +636,9 @@
             mui.toast("请填写汉字");
             return false;
         }
-    })
-    
+    }) 
+
+
     //更新班级
     $(".editorbtn").click(function(){
         var  grade = $(".grade").html();
@@ -682,11 +684,16 @@
                 success:function(data){
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data)
-                    var url = "{:url('grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
-                    window.location.href=url
-                    
-                },
-                error:function(xhr,type,errorThrown){
+                    if(data.code==100){
+                     var url = "{:url('grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
+                     window.location.href=url
+                 }else{
+                    mui.toast(data.msg);
+                }
+
+
+            },
+            error:function(xhr,type,errorThrown){
                     //异常处理；
                     console.log(type);
                 }
@@ -701,13 +708,7 @@
         var grade = $(".grade").html();
         if(grade!=''){
             mui.ajax("{:url('api/grade/updateGradeMemberAllApi')}",{
-                data:
-                [{ 
-                    "grade":grade
-                },
-                {
-                    "grade_id":"{$gradeInfo.id}"
-                }],
+                data:[{ "grade":grade},{"grade_id":"{$gradeInfo.id}"}],
                 dataType:'json',//服务器返回json格式数据
                 type:'post',//HTTP请求类型
                 timeout:10000,//超时时间设置为10秒；
@@ -715,6 +716,9 @@
                 success:function(data){
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data)
+                    if(data.code!=100){
+                        mui.toast(daat.msg)
+                    }
                 },
                 error:function(xhr,type,errorThrown){
                     //异常处理；
