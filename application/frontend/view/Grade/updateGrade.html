@@ -167,7 +167,7 @@
 
                 <div class="mui-input-row">
                     <label>场地租金</label>
-                    <input type="text" class="checkNum rent" value="{$gradeInfo.rent}">
+                    <input type="text" name="" class="checkNum rent" value="{$gradeInfo.rent}">
                 </div>
                 <div class="mui-input-row">
                     <label>是否预排</label>
@@ -228,30 +228,12 @@
                     <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
                 </div>
                 <form class="mui-input-group">
+                {volist name="studentList" id="vol"}
                     <div class="mui-input-row mui-checkbox mui-left">
-                        <label>学员1</label>
-                        <input name="checkbox-student" value="学员1" type="checkbox">
+                        <label>{$vol.member}</label>
+                        <input name="checkbox-student" value="{$vol.member}" type="checkbox" data-id="{$vol.member_id}">
                     </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>学员2</label>
-                        <input name="checkbox-student" value="学员2" type="checkbox">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>学员3</label>
-                        <input name="checkbox-student" value="学员3" type="checkbox">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>学员4</label>
-                        <input name="checkbox-student" value="学员4" type="checkbox">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>学员5</label>
-                        <input name="checkbox-student" value="学员5" type="checkbox">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>学员6</label>
-                        <input name="checkbox-student" value="学员6" type="checkbox">
-                    </div>
+                 {/volist}
                 </form>
             </div>
         </div>
@@ -701,6 +683,8 @@
         }else{
             mui.toast("选项不能为空");
         }
+
+       
     })
 
     //班级学员批量变动（编辑可用）
@@ -717,7 +701,7 @@
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data)
                     if(data.code!=100){
-                        mui.toast(daat.msg)
+                        mui.toast(data.msg)
                     }
                 },
                 error:function(xhr,type,errorThrown){

@@ -56,17 +56,10 @@
                         <span class="grade gradeCont"></span>
                     </a>
                 </div>
-                {volist name="lessonList" id="vol"}
-                <div class="mui-input-row">
-                    <a href="#grade" class="mui-navigate-right">
-                        <label>{$vol.lesson}</label>
-                        <span class="grade gradeCont" {$vol.id}></span>
-                    </a>
-                </div>
-                {/volist}
+
                 <div class="mui-input-row">
                     <a href="#lessonType" class="mui-navigate-right">
-                        <label>课程类型</label>
+                        <label>所属课程</label>
                         <span class="lessonTypeCont lesson"></span>
                     </a>
                 </div>
@@ -154,7 +147,7 @@
 
                 <div class="mui-input-row">
                     <label>基数<a href="#mainBase"><i class="mui-icon mui-icon-info"></i></a></label>
-                     <input type="text" name="" value="" class="salary_base checkNum">
+                    <input type="text" name="" value="" class="salary_base checkNum">
                 </div>
 
                 <div class="mui-input-row">
@@ -241,9 +234,292 @@
                     <div class="page-header">
                         <span class="course"><strong>班级名称</strong></span>
                     </div>
-                        <ul class="mui-table-view list">
-                         {volist name="planList" id="vol"}
-                         <li class="mui-table-view-cell listli detalisli grade">
+                    <ul class="mui-table-view list">
+                        {volist name="gradecateList" id="vol"}
+                        <li class="mui-table-view-cell listli detalisli grade">
+                            {$vol.name}
+                        </li>
+                        {/volist}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--课程类型-->
+    <div id="lessonType" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course"><strong>课程类型</strong></span>
+                    </div>
+                    <ul class="mui-table-view list">
+                        {volist name="lessonList" id="vol"}
+                        <li class="mui-table-view-cell listli detalisli lessonType">
+                            {$vol.lesson}
+                        </li>
+                        {/volist}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--学员名单-->
+    <div id="student" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course wd36"><strong>学员名单</strong></span>
+                        <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
+                    </div>
+                    <form class="mui-input-group">
+                        {volist name="studentList" id="vol"}
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>{$vol.member}</label>
+                            <input name="checkbox-student" value="{$vol.member}" type="checkbox" data-id="{$vol.member_id}">
+                        </div>
+                        {/volist}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--助理教练-->
+    <div id="assistantCoach" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course wd36"><strong>助理教练</strong></span>
+                        <span class="fr"><button class="mui-btn-blue" id="domConfirm">确认</button></span>
+                    </div>
+                    <form class="mui-input-group">
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>教练1</label>
+                            <input name="checkbox-dom" value="教练1" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>教练2</label>
+                            <input name="checkbox-dom" value="教练2" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>教练3</label>
+                            <input name="checkbox-dom" value="教练3" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>教练4</label>
+                            <input name="checkbox-dom" value="教练4" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>教练5</label>
+                            <input name="checkbox-dom" value="教练5" type="checkbox">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>教练6</label>
+                            <input name="checkbox-dom" value="教练6" type="checkbox">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--主教底薪-->
+    <div id="salary" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="mine">
+                    <ul class="mui-table-view list">
+                        <li class="mui-table-view-cell listli detalisli salary">主教底薪</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--助教底薪-->
+    <div id="salary" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="mine">
+                    <ul class="mui-table-view list">
+                        <li class="mui-table-view-cell listli detalisli salary">助教底薪</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--主教基数-->
+    <div id="mainBase" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="mine">
+                    <div class="explain">
+                        <div class="page-header explain-title">
+                            <span class="course">主教基数说明</span>
+                        </div>
+                        <div class="explain-cont">
+                            <p>1、助教基数说明;</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--班级类型-->
+    <div id="gradeType" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course"><strong>班级类型</strong></span>
+                    </div>
+                    <ul class="mui-table-view list">
+                        {volist name="gradecateList" id="vol"}
+                        <li class="mui-table-view-cell listli detalisli">
+                            {$vol.name}
+                            {notempty name="vol._data"}
+
+                            {volist name="$vol['_data']" id="v"}
+                            <li class="mui-table-view-cell listli detalisli gradeType" data-id="{$v.id}">
+                                {$v.name}
+                            </li>
+                            {/volist}
+
+                            {/notempty}
+                        </li>
+                        {/volist}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--训练地点-->
+    <div id="trainLocation" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course"><strong>训练地点</strong></span>
+                    </div>
+                    <ul class="mui-table-view list">
+                        {volist name="courtList" id="vol"}
+                        <li class="mui-table-view-cell listli detalisli trainLocation" data-id="{$v.id}">
+                            {$vol.court}
+                        </li>
+                        {/volist}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--班主任-->
+    <div id="headMaster" class="mui-popover">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="camp-lesson-list">
+                        <div id="segmentedControl" class="mui-segmented-control mb">
+                            <a class="mui-control-item mui-active" href="#item1">粉丝列表</a>
+                            <a class="mui-control-item" href="#item2">教练列表</a>
+                        </div>
+                    </div>
+                    <div id="item1" class="mui-control-content mui-active">
+                        <div class="mui-scroll">
+                            <ul class="mui-table-view list">
+                                {volist name="staffList" id="vol"}
+                                {lt name="$vol['type']" value="1"}
+                                <li class="mui-table-view-cell listli detalisli headMaster" data-id="{$vol.member_id}">
+                                    {$vol.member}
+                                </li>
+                                {/lt}
+                                {/volist}
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="item2" class="mui-control-content">
+                        <div class="mui-scroll">
+                            <ul class="mui-table-view list">
+                                {volist name="staffList" id="vol"}
+                                {gt name="$vol['type']" value="1"}
+                                <li class="mui-table-view-cell listli detalisli headMaster" data-id="{$vol.member_id}">
+                                    {$vol.member}
+                                </li>
+                                {/gt}
+                                {/volist}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--领队-->
+    <div id="leader" class="mui-popover">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="camp-lesson-list">
+                        <div id="segmentedControl" class="mui-segmented-control mb">
+                            <a class="mui-control-item mui-active" href="#item3">粉丝列表</a>
+                            <a class="mui-control-item" href="#item4">教练列表</a>
+                        </div>
+                    </div>
+                    <div id="item3" class="mui-control-content mui-active">
+                        <div class="mui-scroll">
+                            <ul class="mui-table-view list">
+                                {volist name="staffList" id="vol"}
+                                {lt name="$vol['type']" value="1"}
+                                <li class="mui-table-view-cell listli detalisli leader" data-id="{$vol.member_id}">
+                                    {$vol.member}
+                                </li>
+                                {/lt}
+                                {/volist}
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="item4" class="mui-control-content">
+                        <div class="mui-scroll">
+                            <ul class="mui-table-view list">
+                                {volist name="staffList" id="vol"}
+                                {gt name="$vol['type']" value="1"}
+                                <li class="mui-table-view-cell listli detalisli leader" data-id="{$vol.member_id}">
+                                    {$vol.member}
+                                </li>
+                                {/gt}
+                                {/volist}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--教案-->
+    <div id="teachingPlan" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course"><strong>教案列表</strong></span>
+                    </div>
+                    <ul class="mui-table-view list">
+                        {volist name="planList" id="vol"}
+                        <li class="mui-table-view-cell listli detalisli teachingPlan" data-id="{$v.id}">
                             {$vol.outline}
                         </li>
                         {/volist}
@@ -252,315 +528,14 @@
             </div>
         </div>
     </div>
-</div>
-<!--课程类型-->
-<div id="lessonType" class="mui-popover">
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list mt">
-                <div class="page-header">
-                    <span class="course"><strong>课程类型</strong></span>
-                </div>
-                    <ul class="mui-table-view list">
-                     {volist name="planList" id="vol"}
-                     <li class="mui-table-view-cell listli detalisli lessonType">
-                        {$vol.outline}
-                    </li>
-                    {/volist}
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-<!--学员名单-->
-<div id="student" class="mui-popover">
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list mt">
-                <div class="page-header">
-                    <span class="course wd36"><strong>学员名单</strong></span>
-                    <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
-                </div>
-                <form class="mui-input-group">
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>学员1</label>
-                        <input name="checkbox-student" value="学员1" type="checkbox">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>学员2</label>
-                        <input name="checkbox-student" value="学员2" type="checkbox">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>学员3</label>
-                        <input name="checkbox-student" value="学员3" type="checkbox">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>学员4</label>
-                        <input name="checkbox-student" value="学员4" type="checkbox">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>学员5</label>
-                        <input name="checkbox-student" value="学员5" type="checkbox">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>学员6</label>
-                        <input name="checkbox-student" value="学员6" type="checkbox">
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!--助理教练-->
-<div id="assistantCoach" class="mui-popover">
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list mt">
-                <div class="page-header">
-                    <span class="course wd36"><strong>助理教练</strong></span>
-                    <span class="fr"><button class="mui-btn-blue" id="domConfirm">确认</button></span>
-                </div>
-                <form class="mui-input-group">
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>教练1</label>
-                        <input name="checkbox-dom" value="教练1" type="checkbox">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>教练2</label>
-                        <input name="checkbox-dom" value="教练2" type="checkbox">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>教练3</label>
-                        <input name="checkbox-dom" value="教练3" type="checkbox">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>教练4</label>
-                        <input name="checkbox-dom" value="教练4" type="checkbox">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>教练5</label>
-                        <input name="checkbox-dom" value="教练5" type="checkbox">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>教练6</label>
-                        <input name="checkbox-dom" value="教练6" type="checkbox">
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!--主教底薪-->
-<div id="salary" class="mui-popover">
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="mine">
-                <ul class="mui-table-view list">
-                    <li class="mui-table-view-cell listli detalisli salary">主教底薪</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-<!--助教底薪-->
-<div id="salary" class="mui-popover">
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="mine">
-                <ul class="mui-table-view list">
-                    <li class="mui-table-view-cell listli detalisli salary">助教底薪</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-<!--主教基数-->
-<div id="mainBase" class="mui-popover">
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="mine">
-                <div class="explain">
-                    <div class="page-header explain-title">
-                        <span class="course">主教基数说明</span>
-                    </div>
-                    <div class="explain-cont">
-                        <p>1、助教基数说明;</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!--班级类型-->
-<div id="gradeType" class="mui-popover">
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list mt">
-                <div class="page-header">
-                    <span class="course"><strong>班级类型</strong></span>
-                </div>
-                <ul class="mui-table-view list">
-                    {volist name="gradecateList" id="vol"}
-                    <li class="mui-table-view-cell listli detalisli">
-                        {$vol.name}
-                        {notempty name="vol._data"}
-
-                        {volist name="$vol['_data']" id="v"}
-                        <li class="mui-table-view-cell listli detalisli gradeType" data-id="{$v.id}">
-                            {$v.name}
-                        </li>
-                        {/volist}
-
-                        {/notempty}
-                    </li>
-                    {/volist}
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-<!--训练地点-->
-<div id="trainLocation" class="mui-popover">
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list mt">
-                <div class="page-header">
-                    <span class="course"><strong>训练地点</strong></span>
-                </div>
-                <ul class="mui-table-view list">
-                    {volist name="courtList" id="vol"}
-                    <li class="mui-table-view-cell listli detalisli trainLocation" data-id="{$v.id}">
-                        {$vol.court}
-                    </li>
-                    {/volist}
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-<!--班主任-->
-<div id="headMaster" class="mui-popover">
-    <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list mt">
-                <div class="camp-lesson-list">
-                    <div id="segmentedControl" class="mui-segmented-control mb">
-                        <a class="mui-control-item mui-active" href="#item1">粉丝列表</a>
-                        <a class="mui-control-item" href="#item2">教练列表</a>
-                    </div>
-                </div>
-                <div id="item1" class="mui-control-content mui-active">
-                    <div class="mui-scroll">
-                        <ul class="mui-table-view list">
-                            {volist name="staffList" id="vol"}
-                            {lt name="$vol['type']" value="1"}
-                            <li class="mui-table-view-cell listli detalisli headMaster" data-id="{$vol.member_id}">
-                                {$vol.member}
-                            </li>
-                            {/lt}
-                            {/volist}
-                        </ul>
-                    </div>
-                </div>
-                <div id="item2" class="mui-control-content">
-                    <div class="mui-scroll">
-                        <ul class="mui-table-view list">
-                            {volist name="staffList" id="vol"}
-                            {gt name="$vol['type']" value="1"}
-                            <li class="mui-table-view-cell listli detalisli headMaster" data-id="{$vol.member_id}">
-                                {$vol.member}
-                            </li>
-                            {/gt}
-                            {/volist}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!--领队-->
-<div id="leader" class="mui-popover">
-    <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list mt">
-                <div class="camp-lesson-list">
-                    <div id="segmentedControl" class="mui-segmented-control mb">
-                        <a class="mui-control-item mui-active" href="#item3">粉丝列表</a>
-                        <a class="mui-control-item" href="#item4">教练列表</a>
-                    </div>
-                </div>
-                <div id="item3" class="mui-control-content mui-active">
-                    <div class="mui-scroll">
-                        <ul class="mui-table-view list">
-                            {volist name="staffList" id="vol"}
-                            {lt name="$vol['type']" value="1"}
-                            <li class="mui-table-view-cell listli detalisli leader" data-id="{$vol.member_id}">
-                                {$vol.member}
-                            </li>
-                            {/lt}
-                            {/volist}
-                        </ul>
-                    </div>
-                </div>
-                <div id="item4" class="mui-control-content">
-                    <div class="mui-scroll">
-                        <ul class="mui-table-view list">
-                            {volist name="staffList" id="vol"}
-                            {gt name="$vol['type']" value="1"}
-                            <li class="mui-table-view-cell listli detalisli leader" data-id="{$vol.member_id}">
-                                {$vol.member}
-                            </li>
-                            {/gt}
-                            {/volist}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!--教案-->
-<div id="teachingPlan" class="mui-popover">
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list mt">
-                <div class="page-header">
-                    <span class="course"><strong>教案列表</strong></span>
-                </div>
-                <ul class="mui-table-view list">
-                    {volist name="planList" id="vol"}
-                    <li class="mui-table-view-cell listli detalisli teachingPlan" data-id="{$v.id}">
-                        {$vol.outline}
-                    </li>
-                    {/volist}
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<!-- 选择器 -->
-<script src="/static/frontend/js/mui.picker.min.js"></script>
-<script src="/static/frontend/js/mui.poppicker.js"></script>
-<script src="/static/frontend/js/city.data-3.js"></script>
-<script>
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
@@ -679,8 +654,6 @@
             $(".teachingPlanCont").html(teachingPlan);
             mui("#teachingPlan").popover("toggle");
         })
-
-
     });
 
 
@@ -706,16 +679,13 @@
             return false;
         }
     })
-
     
-    //获取课程
+    //所属课程
     $(".lessonType").click(function(){
-        var  lessonTypeCont = $(".lessonTypeCont").html();
-        console.log(lessonTypeCont)
-        mui.ajax("{:url('api/lesson/getLessonListApi')}",{
-            data:{
-                "lesson":lessonTypeCont
-            },
+        var lesson = $(".lesson").html();
+        console.log(lesson)
+        mui.ajax("{:url('api/lesson/getStudentListOfLessonApi')}",{
+            data:{"lesson":lesson},
                 dataType:'json',//服务器返回json格式数据
                 type:'post',//HTTP请求类型
                 timeout:10000,//超时时间设置为10秒；
@@ -737,7 +707,8 @@
 
     //创建班级
     $(".editorbtn").click(function(){
-        var  studentList = $(".studentList").html();
+        var  grade = $(".grade").html();
+        var  lesson = $(".lesson").html();
         var  gradecate = $(".gradecate").html();
         var  week = $(".week option:selected").text();
         var  lesson_time = $(".lesson_time").html();
@@ -753,16 +724,31 @@
         var  rent = $(".rent").val();
         var  status = $(".status option:selected").text();
         var  remarks = $(".remarks").val();
+        console.log(lesson)
         mui.ajax("{:url('api/grade/createGradeApi')}",{
-            data:
-            [{
-                "gradecate": gradecate,
-                "week": week,
-                "lesson_time": lesson_time,
-                "location": location,
-                "coach_salary": coach_salary,
-                "studentList": studentList,
-            }],
+                data:
+                [{
+                    "gradeData": {
+                        "grade": grade,
+                        "lesson": lesson,
+                        "gradecate": gradecate,
+                        "week": week,
+                        "lesson_time": lesson_time,
+                        "location": location,
+                        "coach_salary": coach_salary,
+                        "assistant_salary": assistant_salary,
+                        "salary_base": salary_base,
+                        "coach": coach,
+                        "assistant": assistant,
+                        "leader": leader,
+                        "teacher": teacher,
+                        "plan": plan,
+                        "rent": rent,
+                        "status": status,
+                        "remarks": remarks,
+                    },
+
+                }],
                 dataType:'json',//服务器返回json格式数据
                 type:'post',//HTTP请求类型
                 timeout:10000,//超时时间设置为10秒；
@@ -774,8 +760,8 @@
                         mui.toast(data.msg)
                     }else{
                         mui.toast(data.msg)}
-                 },
-                 error:function(xhr,type,errorThrown){
+                    },
+                    error:function(xhr,type,errorThrown){
                     //异常处理；
                     console.log(type);
                 }
