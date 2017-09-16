@@ -31,7 +31,7 @@ class ScheduleService {
 		$is_power = $this->scheduleModel
                     ->where([
                         'camp_id'   =>$data['camp_id'],
-                        'grade_id'	=>$data['geade_id'],
+                        'grade_id'	=>$data['grade_id'],
                         'lesson_id'	=>$data['lesson_id'],
                         'status'    =>1,
                         'member_id'  =>$data['member_id'],

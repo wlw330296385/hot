@@ -67,6 +67,7 @@ class BillService {
 
     // 编辑订单
     public function updateBill($data,$id){
+        $memberInfo = session('memberInfo','','think');
         $is_pay = $this->is_pay(['id'=>$id]);
         $validate = validate('BillVal');
         if(!$validate->check($data)){
@@ -80,7 +81,7 @@ class BillService {
                 return ['code'=>200,'msg'=>$this->Bill->getError()];
             }            
         }else{
-            $memberInfo = session('memberInfo','think');
+            
             file_put_contents('/data/bill/'.date('Y-m-d',time()),json_encode(['data'=>$data,'memberInfo'=>$memberInfo]));
             return ['code'=>200,'msg'=>'非法操作'];
         }
@@ -100,4 +101,53 @@ class BillService {
                     // echo db('camp_member')->getlastsql();die;
         return $is_power?$is_power:0;
     }
+
+
+
+    // 订单支付
+    public function billPay($bill_order,$callback_str){
+        
+        $data = ['is_pay'=>1,'pay_time'=>time(),'callback_str'=>$callback_str];
+        dump($data);
+        $result = $this->Bill->where(['bill_order'=>$bill_order])->update($data);
+        // echo $this->Bill->getlastsql();die;
+        if($result){
+            $billInfo = $this->getBill(['bill_order'=>$bill_order]);
+            if($billInfo){
+                $balance_pay = $billInfo['balance_pay'];
+                // 返现返积分
+                $res = $this->hpReturn($billInfo['member_id'],$balance_pay);
+                return ['code'=>100,'msg'=>'支付成功'];
+            }else{
+                file_put_contents(ROOT_PATH.'data/bill/'.date('Y-m-d',time()),json_encode(['info'=>'找不到订单信息','data'=>$data,'memberInfo'=>$billInfo['member_id']]));
+                return ['code'=>200,'msg'=>'找不到订单信息'];
+            }
+        }else{
+            file_put_contents(ROOT_PATH.'data/bill/'.date('Y-m-d',time()),json_encode(['info'=>'支付失败,请联系客服','data'=>$data,]));
+            return ['code'=>200,'msg'=>'支付失败,请联系客服'];
+        }
+    }
+
+    // 递归返回hp业绩
+    public function hpReturn($member_id,$score = 0, $times = 0,$level = 2){
+        $times++;
+        $res = db('member')->where(['id'=>$member_id])->inc('score',$score)->inc('hp',$score)->update();
+            if($res){
+                if($times<= $level){
+                    $pid = db('member')->where(['id'=>$member_id])->value('pid');
+                    if($pid!=0){
+                        $this->hpReturn($pid,$score,$times);
+                    }else{
+                        return 1;
+                    }
+                }else{
+                    return 2;
+                }
+            }else{
+                file_put_contents(ROOT_PATH.'data/bill/'.date('Y-m-d',time()),json_encode(['info'=>'返现积分失败','data'=>$data,'memberInfo'=>$billInfo['member_id']]));
+                return false;
+            }
+    }
+
+    // 订单退款
 }

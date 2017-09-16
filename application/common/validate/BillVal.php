@@ -6,8 +6,8 @@ class billVal extends Validate{
 
 	protected $rule = [
         'bill_order'        =>  'require',
-        'lesson_id'	=> 'require',
-        'lesson'         => 'require',
+        'goods_id'	=> 'require',
+        'goods'         => 'require',
         'total'         =>'require',
         'price'           =>'require',
         'camp_id'           =>'require',
@@ -20,8 +20,8 @@ class billVal extends Validate{
     
     protected $message = [
         'bill_order'        =>  '订单必须',
-        'lesson_id'	=> '课程必须',
-        'lesson'      =>  '课程必须',
+        'goods_id'	=> '商品必须',
+        'goods'      =>  '商品必须',
         'camp'                  =>'所属训练营必须',
         'total'                 =>'字段必须',
         'price'                 =>'字段必须',
@@ -35,7 +35,7 @@ class billVal extends Validate{
     ];
     
     protected $scene = [
-        'add'   =>  ['bill_order','lesson_id','lesson','camp','total','price','camp_id','camp','student_id','student','member_id','member','score_pay'],
+        'add'   =>  ['bill_order','goods_id','goods','camp','total','price','camp_id','camp','student_id','student','member_id','member','score_pay'],
         'edit'  =>  ['total'],
     ];    
 
