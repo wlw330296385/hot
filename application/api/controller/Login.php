@@ -3,6 +3,10 @@ namespace app\api\controller;
 use SmsApi;
 class Login extends Base{
 	
+    public function _initialize(){
+        parent::_initialize();
+    }
+
     public function index() {
 
        

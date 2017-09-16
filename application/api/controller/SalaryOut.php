@@ -4,8 +4,8 @@ use app\api\controller\Frontend;
 use app\service\SalaryOutService;
 class SalaryOut extends Frontend{
 	private $SalaryOutService;
-	public function __construct(){
-		parent::__construct();
+	public function _initialize(){
+		parent::_initialize();
 		$this->SalaryOutService = new SalaryOutService($this->memberInfo['id']);
 	}
 

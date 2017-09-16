@@ -62,10 +62,23 @@ class Camp extends Base{
     public function createCampApi(){
         try{
             $data = input('post.');
+          /*$data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             $result = $this->CampService->createCamp($data);
-            return json($result);
+            return json($result);*/
+            //dump( input('post.') );
+            //dump($this->memberInfo);
+            $telephone = input('post.camp_telephone') ? input('post.camp_telephone') : $this->memberInfo['telephone'];
+            $data = [
+                'camp' => input('post.campname'),
+                'member_id' => $this->memberInfo['id'],
+                'type' => input('post.camptype'),
+                'realname' => input('post.creator'),
+                'camp_telephone' => $telephone
+            ];
+            $campS = new CampService();
+            return $campS->createCamp($data);
         }catch(Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }

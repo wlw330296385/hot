@@ -22,7 +22,6 @@ class WechatJsPayService {
 
     // 统一下单
     public function pay($data){
-            dump($this->openid);die;
           $unified_order = $this->unifiedOrder($data);  //统一下单
           $jsApiParameters=$this->getParameters($unified_order);
           return ['code'=>100,'msg'=>'','data'=>['order_no'=>$data['order_no'],'jsApiParameters'=>$jsApiParameters,'amount'=>$data['amount']]];
@@ -30,11 +29,11 @@ class WechatJsPayService {
 
 
     protected function unifiedOrder($data=[]){
-
         $unifiedOrder = new UnifiedOrder;
         $unifiedOrder->setParameter("openid",$this->openid);       // openid
         $unifiedOrder->setParameter("body",'商品订单号'+$data['order_no']);    // 商品描术
-        $unifiedOrder->setParameter("out_trade_no",$data['order_no'].'_'.$unifiedOrder->createNoncestr(6));  // 商户订单号
+        // $unifiedOrder->setParameter("out_trade_no",$data['order_no'].'_'.$unifiedOrder->createNoncestr(6));  // 商户订单号
+        $unifiedOrder->setParameter("out_trade_no",$data['order_no']);
         $unifiedOrder->setParameter("total_fee",$data['amount']*100);    // 总金额
         $unifiedOrder->setParameter("notify_url",$this->notify_url);  // 通知地址
         $unifiedOrder->setParameter("trade_type","JSAPI");      // 交易类型

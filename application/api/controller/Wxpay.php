@@ -7,6 +7,10 @@ use app\service\WechatJsPayService;
 
 class Wxpay extends Base{
 
+    public function _initialize(){
+        parent::_initialize();
+    }
+    
 	public function index(){
 
         echo "这里是wxpay的index";

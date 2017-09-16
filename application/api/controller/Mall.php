@@ -3,7 +3,8 @@ namespace app\api\controller;
 use app\service\MessageService;
 class Mall{
 	private $MessageService;
-	public function __construct(){
+	public function _initialize(){
+        parent::_initialize();
 		$this->MessageService = new MessageService;
 	}
 

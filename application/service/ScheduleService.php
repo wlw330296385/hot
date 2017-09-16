@@ -27,19 +27,10 @@ class ScheduleService {
 
 	// 发布课时
 	public function createSchedule($data){
-		// 查询权限
-		$is_power = $this->scheduleModel
-                    ->where([
-                        'camp_id'   =>$data['camp_id'],
-                        'grade_id'	=>$data['grade_id'],
-                        'lesson_id'	=>$data['lesson_id'],
-                        'status'    =>1,
-                        'member_id'  =>$data['member_id'],
-                        'type'      =>['in','2,3,4,6,7']
-                        ])
-                    ->find()
-                    ->toArray();
-        if(!$is_power){
+		 // 查询权限
+        $is_power = $this->isPower($data['camp_id'],$data['member_id']);
+        
+        if($is_power<2){
             return ['code'=>200,'msg'=>'权限不足'];
         }
         $validate = validate('ScheduleVal');
@@ -57,18 +48,9 @@ class ScheduleService {
     // 修改课时
     public function updateSchedule($data,$id){
         // 查询权限
-        $is_power = $this->scheduleModel
-                    ->where([
-                        'camp_id'   =>$data['camp_id'],
-                        'grade_id'  =>$data['geade_id'],
-                        'lesson_id' =>$data['lesson_id'],
-                        'status'    =>1,
-                        'member_id'  =>$data['member_id'],
-                        'type'      =>['in','2,3,4,6,7']
-                        ])
-                    ->find()
-                    ->toArray();
-        if(!$is_power){
+        $is_power = $this->isPower($data['camp_id'],$data['member_id']);
+        
+        if($is_power<2){
             return ['code'=>200,'msg'=>'权限不足'];
         }
         $validate = validate('ScheduleVal');
