@@ -54,24 +54,6 @@
     <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
         <div class="mui-scroll">
             <ul class="mui-table-view detalis-list list coach">
-                {volist name="coachList" id="vol"}
-                <li class="mui-table-view-cell mui-media listli list-wide">
-                    <a href="{:url('coach/coachInfo',['coach_id'=>$vol['id']])}">
-                        <img class="mui-media-object mui-pull-left coachicon"
-                             src="{$vol.portraits}">
-                        <div class="mui-media-body wd36">
-                            {$vol.coach}<img src="{:getSex($vol['sex'])}" class="sex" alt="">
-                            <p class="mui-ellipsis">教龄:{$vol.coach_year}&nbsp;&nbsp;等级:{$vol.coach_level}</p>
-                        </div>
-                        <div class="price-frame">
-                            <div class="icons mui-inline">{$vol.star}
-                                <i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i><i data-index="4" class="mui-icon mui-icon-star-filled"></i><i data-index="5" class="mui-icon mui-icon-star-filled"></i>
-                            </div>
-                            <p class="address tr">{$vol.area}</p>
-                        </div>
-                    </a>
-                </li>
-                {/volist}
             </ul>
         </div>
     </div>
@@ -116,18 +98,19 @@
 //            }
 //        }
 
-//        $.each(cityData3, function(n1, value) {
-//            if(cityData3[n1].text==sProvince) {
-//                $.each(value, function (n2, value1) {
-//                    if(cityData3[n2].children[].text==sCity) {
-//                        $.each(value1, function (n3, value2) {
-//                            alert(n3);
-//                            alert(value2);
-//                        });
-//                    }
-//                });
-//            }
-//        });
+//        var dataObj = eval(cityData3).data
+        $.each(cityData3, function(n1, jProvince) {
+            if(jProvince.text==sProvince) {
+                $.each(jProvince.children, function (n2, jCity) {
+                    if(jCity.text==sCity) {
+                        $.each(jCity.children, function (n3, jArea) {
+                            console.log(jArea.text);
+                       });
+                       return false;
+                    }
+                });
+            }
+        });
 
 
         //搜索教练
@@ -162,7 +145,7 @@
                 down: {
                     //下拉刷新
                     height: 50,//可选.默认50.触发下拉刷新拖动距离
-                    auto:false,//可选,默认false.自动下拉刷新一次
+                    auto:true,//可选,默认false.自动下拉刷新一次
                     contentdown : "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
                     contentover : "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
                     contentrefresh : "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
@@ -214,6 +197,7 @@
                 url:url,
                 data: {
                     page: page,
+                    province: sProvince,
                     city: sCity,
                     area: sArea,
                     sex: sSex,
