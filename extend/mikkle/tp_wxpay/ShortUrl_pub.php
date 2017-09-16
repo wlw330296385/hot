@@ -34,8 +34,8 @@ class ShortUrl_pub extends Wxpay_client_pub
             {
                 throw new SDKRuntimeException("短链接转换接口中，缺少必填参数long_url！"."<br>");
             }
-            $this->parameters["appid"] = config('wechat_appid');//公众账号ID
-            $this->parameters["mch_id"] = config('wechat_mchid');//商户号
+            $this->parameters["appid"] = config('appid');//公众账号ID
+            $this->parameters["mch_id"] = config('mchid');//商户号
             $this->parameters["nonce_str"] = $this->createNoncestr();//随机字符串
             $this->parameters["sign"] = $this->getSign($this->parameters);//签名
             return  $this->arrayToXml($this->parameters);

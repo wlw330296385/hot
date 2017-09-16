@@ -33,7 +33,7 @@ class Bill extends Frontend{
             if($id){
                 $result = $this->BillService->updateBill($data,$id);
             }else{
-                $result = $this->BillService->pubBill($data);
+                $result = $this->BillService->createBill($data);
             }
             return json($result);
         

@@ -37,8 +37,8 @@ class OrderQuery_pub extends Wxpay_client_pub
             {
                 throw new SDKRuntimeException("订单查询接口中，out_trade_no、transaction_id至少填一个！"."<br>");
             }
-            $this->parameters["appid"] = config('wechat_appid');//公众账号ID
-            $this->parameters["mch_id"] = config('wechat_mchid');//商户号
+            $this->parameters["appid"] = config('appid');//公众账号ID
+            $this->parameters["mch_id"] = config('mchid');//商户号
             $this->parameters["nonce_str"] = $this->createNoncestr();//随机字符串
             $this->parameters["sign"] = $this->getSign($this->parameters);//签名
             return  $this->arrayToXml($this->parameters);

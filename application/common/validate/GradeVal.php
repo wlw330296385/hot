@@ -16,7 +16,7 @@ class GradeVal extends Validate{
     
     protected $scene = [
         'add'   =>  ['member_id','grade'],
-        'edit'  =>  ['member_id','grade'],
+        'edit'  =>  ['grade'],
     ];    
 
 }

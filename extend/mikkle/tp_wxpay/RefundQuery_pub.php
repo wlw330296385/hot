@@ -38,8 +38,8 @@ class RefundQuery_pub extends Wxpay_client_pub
             {
                 throw new SDKRuntimeException("退款查询接口中，out_refund_no、out_trade_no、transaction_id、refund_id四个参数必填一个！"."<br>");
             }
-            $this->parameters["appid"] = config('wechat_appid');//公众账号ID
-            $this->parameters["mch_id"] = config('wechat_mchid');//商户号
+            $this->parameters["appid"] = config('appid');//公众账号ID
+            $this->parameters["mch_id"] = config('mchid');//商户号
             $this->parameters["nonce_str"] = $this->createNoncestr();//随机字符串
             $this->parameters["sign"] = $this->getSign($this->parameters);//签名
             return  $this->arrayToXml($this->parameters);

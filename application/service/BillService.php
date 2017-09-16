@@ -41,7 +41,7 @@ class BillService {
         return $result?$result:0;
     }
 
-    public function pubBill($data){
+    public function createBill($data){
         $validate = validate('BillVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 200];

@@ -22,8 +22,8 @@ class NativeCall_pub extends Wxpay_server_pub
     function createXml()
     {
         if($this->returnParameters["return_code"] == "SUCCESS"){
-            $this->returnParameters["appid"] = config('wechat_appid');//公众账号ID
-            $this->returnParameters["mch_id"] = config('wechat_mchid');//商户号
+            $this->returnParameters["appid"] = config('appid');//公众账号ID
+            $this->returnParameters["mch_id"] = config('mchid');//商户号
             $this->returnParameters["nonce_str"] = $this->createNoncestr();//随机字符串
             $this->returnParameters["sign"] = $this->getSign($this->returnParameters);//签名
         }

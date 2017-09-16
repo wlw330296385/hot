@@ -43,8 +43,8 @@ class Refund_pub extends Wxpay_client_pub
             }elseif($this->parameters["op_user_id"] == null){
                 throw new SDKRuntimeException("退款申请接口中，缺少必填参数op_user_id！"."<br>");
             }
-            $this->parameters["appid"] = config('wechat_appid');//公众账号ID
-            $this->parameters["mch_id"] = config('wechat_mchid');//商户号
+            $this->parameters["appid"] = config('appid');//公众账号ID
+            $this->parameters["mch_id"] = config('mchid');//商户号
             $this->parameters["nonce_str"] = $this->createNoncestr();//随机字符串
             $this->parameters["sign"] = $this->getSign($this->parameters);//签名
             return  $this->arrayToXml($this->parameters);
