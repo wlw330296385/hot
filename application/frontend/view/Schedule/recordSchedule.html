@@ -95,7 +95,7 @@
                 <div class="mui-input-row picker btn" id="demo5" data-options='{"type":"time"}'>
                     <a href="#" class="mui-navigate-right">
                         <label>训练时间</label>
-                        <span id="result" class="ui-alert lesson_time"></span>
+                        <span id="result" class="ui-alert lesson_time">{$gradeInfo.lesson_time}</span>
                     </a>
                 </div>
 
@@ -471,16 +471,9 @@ var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
         })
           // 添加学员
          $(".addStudent").click(function(){
-
-            // for(var i=0;i<=data.data.length-1,i++){}
-             var str = `<div class="mui-input-row mui-checkbox checkboxCont">
-                        <label>`+{$key+1}+`<span class="name">`+{$vol.student}+`</span></label>
-                        <input name="checkbox1" value="Item 3" type="checkbox">
-                     </div>`
-            }
+             var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label>{$key+1}<span class="name">{$vol.student}</span></label><input name="checkbox1" value="Item 3" type="checkbox"></div>'
             $(".operation-btn").before(str);
             mui("#addStudent").popover("toggle");
-            {$countStudentList} +1
         })
      })
 
@@ -554,8 +547,8 @@ var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data)
                     if(data.code==100){
-                       var url = "{:url('grade/gradeInfoOfCamp',['geade_id'=>$gradeInfo['id']])}";
-                       window.location.href=url
+                       // var url = "{:url('grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
+                       // window.location.href=url
                    }else{
                     mui.toast(data.msg);
                 }
