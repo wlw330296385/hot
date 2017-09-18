@@ -19,18 +19,21 @@ class Location extends Base{
             if(!$ip){
                 $ip = Request::instance()->ip();
             }
-            $s = file_get_contents("http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=json&ip=".$ip);
+            // $s = file_get_contents("http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=json&ip=".$ip);
+            $s = file_get_contents("http://ip.taobao.com/service/getIpInfo.php?ip=".$ip);
             // $location = iconv("gbk", "utf-8//IGNORE",$s);
             // $ss = iconv("gb2312", "utf-8//IGNORE",$s);
-
-            echo  $s;die;
             
             // $ss = json_decode($s);
+            // dump($ss); 
+            echo  $s;die;
+            
+           
             // preg_match('/{.+}/',$s,$r);
             // $p = array_map(function($s) {
             //      return iconv('utf-8', 'gbk', $s);
             //  }, json_decode($r[0], 1));
-            // dump($ss);
+            
             // return json(['code'=>100,'msg'=>$ss,'data'=>$s]);
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
