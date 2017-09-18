@@ -3,6 +3,7 @@ namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\LessonService;
 use app\service\GradeService;
+
 class Lesson extends Base{
 	protected $LessonService;
 	protected $GradeService;
@@ -121,20 +122,22 @@ class Lesson extends Base{
     public function comfirmBill(){
         $lesson_id = input('param.lesson_id');
         $total = input('param.total');
-        if(!$total || !$lesson_id){
+        if(!$lesson_id){
             $this->error('参数错误');
         }
+        $total = 1;
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         // 生成订单号
         $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
-        if(is_post()){
-            $amount = $total*$lessonInfo['cost'];
-            $WechatJsPayService = new WechatJsPayService;
-            $parameters = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
-            dump($parameters);die;
-        }
+  
+        $amount = $total*$lessonInfo['cost'];
+        $WechatJsPayService = new \app\service\WechatJsPayService;
+        $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
         
+        $jsApiParameters = $result['data']['jsApiParameters'];
 
+
+        $this->assign('jsApiParameters',$jsApiParameters);
 
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billOrder',$billOrder);

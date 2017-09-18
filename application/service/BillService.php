@@ -48,6 +48,23 @@ class BillService {
         }
         $result = $this->Bill->save($data);
         if($result){
+            if($data['goods_type'] == 1){
+                $is_student = db('camp_member')->where(['type'=>1,'member_id'=>$data['member_id'],'camp_id'=>$data['camp_id'],'status'=>1])->find();
+                if(!$is_student){
+                    $res = db('camp_member')->where()->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'type'=>1,'status'=>1]);
+                    if(!$res){
+                        db('log_camp_member')->save(['member_id'=>$data['member_id','member'=>$data['member'],'data'=>$data]);
+                    }
+                }
+                $is_student2 = db('grade_member')->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'status'=>1])->find();
+                if(!$is_student2){
+                    $re = db('camp_member')->where()->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'type'=>1,'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods']]);
+                    if(!$re){
+                        db('log_grade_member')->save(['member_id'=>$data['member_id','member'=>$data['member'],'data'=>$data]);
+                    }
+                }
+            }
+            
             return ['code'=>100,'msg'=>'新建成功','data'=>$result];
         }else{
             return ['code'=>200,'msg'=>$this->Bill->getError()];

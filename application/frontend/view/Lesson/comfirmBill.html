@@ -139,7 +139,7 @@
     function wxpay(){
 
       console.log(total_fee);
-      var bill_order = "{$billOrder}";
+      var bill_order = '{$billOrder}';
       if (typeof WeixinJSBridge == "undefined"){
        if( document.addEventListener ){
          document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
@@ -148,20 +148,15 @@
          document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
        }
      }else{
-      var result = wooApi.asyncF("{:url('api/wxpay/getParametersApi')}",{'order_no':bill_order,'amount':total_fee});
-      console.log(result);
-      if(result.code == 100){
-        onBridgeReady(result.data.data.jsApiParameters);
-      }else{
-        mui.toast(result.data.msg)
-      } 
 
+        onBridgeReady();
 
     }
   }
 
-  function onBridgeReady(jsApiParameters){
-    var objJsApiParameters = JSON.parse(jsApiParameters);
+  function onBridgeReady(){
+    var strJsApiParameters = '{$jsApiParameters}';
+    var objJsApiParameters = JSON.parse(strJsApiParameters);
     console.log(objJsApiParameters);
     WeixinJSBridge.invoke(
      'getBrandWCPayRequest', {

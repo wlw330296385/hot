@@ -30,6 +30,8 @@ class Bill extends Frontend{
         try{
             $id = input('get.id');
             $data = input('post.');
+            $data['member'] = $this->memberInfo['member'];
+            $data['member_id'] = $this->memberInfo['id'];
             if($id){
                 $result = $this->BillService->updateBill($data,$id);
             }else{
