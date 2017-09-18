@@ -67,8 +67,7 @@
             <li class="mui-table-view-cell mui-media mui-col-xs-4 opli"><a href="tel:{$lessonInfo.telephone}"><span
                     class="mui-icon mui-icon-phone"></span>电话咨询</a></li>
             <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bgblue" onclick="book()">预约体验</li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="buy()">
-                     购买课程</a></li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="buy()">购买课程</a></li>
         </ul>
 
     </div>
@@ -95,18 +94,16 @@
         })
     })
     
-    var url = "{:url('lesson/comfirmBill',['lesson_id'=>$lessonInfo['id']])}";
-
+    var buyUrl = "{:url('lesson/comfirmBill',['lesson_id'=>$lessonInfo['id']])}";
+    var bookUrl = "{:url('lesson/bookBill',['lesson_id'=>$lessonInfo['id']])}";
     function book(){
         var lessonTotal = sessionStorage.lessonTotal;
-
         if(lessonTotal == 0){
             alert('请先选择课量');
             return false;
             
         }else{
-            sessionStorage.lessonAction = 1;
-            window.location.href = url;
+            window.location.href = bookUrl+'/total/'+lessonTotal;
             
         }
         
@@ -119,8 +116,7 @@
             return false;
             
         }else{
-            sessionStorage.lessonAction = 2;
-            window.location.href = url;
+            window.location.href = buyUrl+'/total/'+lessonTotal;
             
         }
     }

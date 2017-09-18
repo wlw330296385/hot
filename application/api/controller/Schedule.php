@@ -100,7 +100,7 @@ class Schedule extends Base
 			$data = input('post.');
 			$data['member_id'] = $this->memberInfo['id'];
 			$data['member'] = $this->memberInfo['member'];
-			$result = $this->scheduleService->pubSchedule($data);
+			$result = $this->scheduleService->createSchedule($data);
 			return json($result);
 		}catch (Exception $e){
 			return json(['code'=>100,'msg'=>$e->getMessage()]);
