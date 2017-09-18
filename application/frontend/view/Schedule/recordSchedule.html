@@ -155,12 +155,12 @@
                 </div>
 
                 <div class="mui-input-row">
-                    <label class="wd83">主教佣金<font style="font-size: 12px">(底薪{$gradeInfo.coach_salary}+上课人数x基数{$gradeInfo.salary_base})</font></label>
+                    <label class="wd">主教佣金<font style="font-size: 12px">(底薪{$gradeInfo.coach_salary}+上课人数x基数{$gradeInfo.salary_base})</font></label>
                     <span>{$gradeInfo.coach_salary}</span>
                 </div>
 
                 <div class="mui-input-row">
-                    <label class="wd83">助教佣金 <font style="font-size: 12px">(底薪{$gradeInfo.assistant_salary}+上课人数x基数{$gradeInfo.salary_base})</font></label>
+                    <label class="wd">助教佣金 <font style="font-size: 12px">(底薪{$gradeInfo.assistant_salary}+上课人数x基数{$gradeInfo.salary_base})</font></label>
                     <span>{$gradeInfo.assistant_salary}</span>
                 </div>
 
@@ -471,14 +471,36 @@ var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
         })
           // 添加学员
          $(".addStudent").click(function(){
+
+            // for(var i=0;i<=data.data.length-1,i++){}
              var str = `<div class="mui-input-row mui-checkbox checkboxCont">
-                        <label>{$key+1}<span class="name">{$vol.student}</span></label>
+                        <label>`+{$key+1}+`<span class="name">`+{$vol.student}+`</span></label>
                         <input name="checkbox1" value="Item 3" type="checkbox">
                      </div>`
+            }
             $(".operation-btn").before(str);
             mui("#addStudent").popover("toggle");
+            {$countStudentList} +1
         })
      })
+
+     //检测输入是否为数字
+    $(".checkNum").blur(function(){
+        var num =$(this).val();
+        if(isNaN(num)){
+            mui.toast("请填写数字");
+            return false;
+        }
+    })
+
+    //检测输入是否为汉字
+    $(".checkChinese").blur(function(){
+        var str =$(this).val();
+        if(!/^[\u4e00-\u9fa5]+$/.test(str)){
+            mui.toast("请填写汉字");
+            return false;
+        }
+    })
 
     // 关闭弹出菜单
     $(".close-popover").click(function(){
@@ -499,14 +521,7 @@ var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
            $(".checkboxCont:eq("+n+")").remove();
        });
     });
-    //添加
-    // $(".add").click(function(){
-    //     var str = `<div class="mui-input-row mui-checkbox checkboxCont">
-    //     <label>{$key+1}<span class="name">{$vol.student}</span></label>
-    //     <input name="checkbox1" value="Item 3" type="checkbox">
-    // </div>`
-    // $(".operation-btn").before(str);
-// })
+
 
     //录课
     $(".operationBtn").click(function(){
@@ -522,6 +537,7 @@ var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
         mui.ajax("{:url('api/schedule/recordScheduleApi',['geade_id'=>$gradeInfo['id']])}",{
             data:{
                 'grade':grade,
+                'grade_id':"{$gradeInfo.id}",
                 'camp_id': campid,
                 'lesson_time':lesson_time,
                 'location':location,

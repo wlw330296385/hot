@@ -300,12 +300,12 @@
                         <span class="fr"><button class="mui-btn-blue" id="domConfirm">确认</button></span>
                     </div>
                     <form class="mui-input-group">
-                    {volist name="staffList" id="vol"}
+                        {volist name="staffList" id="vol"}
                         <div class="mui-input-row mui-checkbox mui-left">
                             <label>{$vol.member}</label>
                             <input name="checkbox-dom" value="{$vol.member}" type="checkbox" data-id="{$vol.member_id}">
                         </div>
-                       {/volist}
+                        {/volist}
                     </form>
                 </div>
             </div>
@@ -667,7 +667,9 @@
         var lesson = $(".lesson").html();
         console.log(lesson)
         mui.ajax("{:url('api/lesson/getStudentListOfLessonApi')}",{
-            data:{"lesson":lesson},
+            data:{
+                "lesson":lesson,
+            },
                 dataType:'json',//服务器返回json格式数据
                 type:'post',//HTTP请求类型
                 timeout:10000,//超时时间设置为10秒；
@@ -695,9 +697,9 @@
         var  week = $(".week option:selected").text();
         var  lesson_time = $(".lesson_time").html();
         var  location = $(".location").html();
-        var  coach_salary = $(".coach_salary").html();
-        var  assistant_salary = $(".assistant_salary").html();
-        var  salary_base = $(".salary_base").html();
+        var  coach_salary = $(".coach_salary").val();
+        var  assistant_salary = $(".assistant_salary").val();
+        var  salary_base = $(".salary_base").val();
         var  coach = $(".coach").html();
         var  assistant = $(".assistant").html();
         var  leader = $(".leader").html();
@@ -706,29 +708,35 @@
         var  rent = $(".rent").val();
         var  status = $(".status option:selected").text();
         var  remarks = $(".remarks").val();
-        console.log(lesson)
+        var  studentList = $(".studentList").html();
+        console.log(studentList)
+        console.log(assistant_salary)
         mui.ajax("{:url('api/grade/createGradeApi')}",{
-                data:
+            data:
                 [{
                     "gradeData": {
-                        "grade": grade,
-                        "lesson": lesson,
-                        "gradecate": gradecate,
-                        "week": week,
-                        "lesson_time": lesson_time,
-                        "location": location,
-                        "coach_salary": coach_salary,
-                        "assistant_salary": assistant_salary,
-                        "salary_base": salary_base,
-                        "coach": coach,
-                        "assistant": assistant,
-                        "leader": leader,
-                        "teacher": teacher,
-                        "plan": plan,
-                        "rent": rent,
-                        "status": status,
-                        "remarks": remarks,
+                        "grade":grade,
+                        "lesson":lesson,
+                        "gradecate":gradecate,
+                        "week":week,
+                        "lesson_time":lesson_time,
+                        "location":location,
+                        "coach_salary":coach_salary,
+                        "assistant_salary":assistant_salary,
+                        "salary_base":salary_base,
+                        "coach":coach,
+                        "assistant":assistant,
+                        "leader":leader,
+                        "teacher":teacher,
+                        "plan":plan,
+                        "rent":rent,
+                        "status":status,
+                        "remarks":remarks,
                     },
+                    "studentList":{
+                        "student":studentList
+                    }
+
                 }],
                 dataType:'json',//服务器返回json格式数据
                 type:'post',//HTTP请求类型
