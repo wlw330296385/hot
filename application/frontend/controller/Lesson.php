@@ -106,12 +106,33 @@ class Lesson extends Base{
     // }
 
     //课程订单购买页面
+    // public function comfirmBill(){
+    //     $lesson_id = input('param.lesson_id');
+    //     $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+    //     // 生成订单号
+    //     $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
+        
+    //     $this->assign('lessonInfo',$lessonInfo);
+    //     $this->assign('billOrder',$billOrder);
+    //     return view('Lesson/comfirmBill');
+    // }
+
+    //课程订单购买页面
     public function comfirmBill(){
         $lesson_id = input('param.lesson_id');
+        $total = input('param.total');
+        if(!$total || !$lesson_id){
+            $this->error('参数错误');
+        }
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         // 生成订单号
         $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
-        
+        $amount = $total*$lessonInfo['cost'];
+        $WechatJsPayService = new WechatJsPayService;
+        $parameters = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
+        dump($parameters);die;
+
+
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billOrder',$billOrder);
         return view('Lesson/comfirmBill');
