@@ -54,7 +54,7 @@ class MemberService{
         }
 
         //验证规则
-		$res = $MemberModel->validate('MemberVal.add')->save($request);
+		$res = $MemberModel->validate('MemberVal.add')->allowField(true)->save($request);
 		if ($res === false) {
 		    //dump($MemberModel->getError());
             return [ 'code' => 200, 'msg' => $MemberModel->getError() ];

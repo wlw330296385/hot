@@ -26,13 +26,17 @@ class Camp extends Base{
         $step = input('step', 1);
         $view = 'Camp/createCamp'.$step;
         $fast = input('fast', 0);
-        $campid = input('campid');
+        $campid = input('camp_id');
         $campS = new CampService();
         $camp = $campS->getCampInfo($campid);
         
         $this->assign('fast', $fast);
         $this->assign('camp', $camp);
         return view($view);
+    }
+
+    public function registerSuccess() {
+        return view('Camp/registerSuccess');
     }
 
     public function campInfo(){
@@ -250,30 +254,11 @@ class Camp extends Base{
             $this->error('您没有权限');
         }
         // 营业执照
-        $campCert = [];
-        $memberCert = [];
-        $otherCert = [];
-        $certList = db('cert')->where(['camp_id'=>$camp_id])->select();
-        foreach ($certList as $key => $value) {
-            switch ($value['cert_type']) {
-                case '1':
-                    $memberCert = $value;
-                    break;
-                case '4':
-                    $campCert = $value;
-                    break;
-                default:
-                    $otherCert[] = $value;
-                    break;
-            }
-                
-                
+        $campS = new CampService();
+        $campcert = $campS->getCampCert($camp_id);
 
-        }
-        $this->assign('memberCert',$memberCert);
-        $this->assign('otherCert',$otherCert);
-        $this->assign('campCert',$campCert);
-        $this->assign('campInfo',$campInfo); 
+        $this->assign('campInfo',$campInfo);
+        $this->assign('campcert', $campcert);
         return view('camp/campSetting');
     }
 }

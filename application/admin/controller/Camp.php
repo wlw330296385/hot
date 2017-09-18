@@ -8,6 +8,7 @@ use think\Cookie;
 use app\service\AuthService;
 use app\model\Camp as CampModel;
 use app\model\Member as MemberModel;
+use app\service\CampService;
 
 class Camp extends Backend {
     // 训练营列表
@@ -22,8 +23,9 @@ class Camp extends Backend {
     // 训练营详情
     public function show() {
         $id = input('id');
-        $camp = CampModel::get($id)->toArray();
-        $camp['cert'] = $camp['cert_id'] ? getCert($camp['cert_id']) : '';
+        $camp = CampModel::get($id)->getData();
+        $campS = new CampService();
+        $camp['cert'] = $campS->getCampCert($id);
         $camp_member = MemberModel::get(['id' => $camp['member_id']])->toArray();
         $camp_member['cert'] = $camp_member['cert_id'] ? getCert($camp_member['cert_id']) : '';
         $camp['member_info'] = $camp_member;

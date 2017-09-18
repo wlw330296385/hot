@@ -61,6 +61,7 @@ class CertService {
     // 保存证件
     public function saveCert($request) {
         $model = new Cert();
+        $map['camp_id'] = $request['camp_id'];
         $map['member_id'] = $request['member_id'];
         $map['cert_type'] = $request['cert_type'];
         $find = $model->where($map)->find();
@@ -71,9 +72,9 @@ class CertService {
         }
 
         if ($res) {
-            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+            $response = ['code' => 100, 'msg' => __lang('MSG_200')];
         } else {
-            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+            $response = ['code' => 200, 'msg' => __lang('MSG_400')];
         }
         return $response;
     }

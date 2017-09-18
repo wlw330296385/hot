@@ -24,15 +24,15 @@
 
 <body>
 <div class="mui-content pt">
-    <div id="form2" class="register">
+    <div class="register">
         <header class="mui-bar mui-bar-nav subheader header2">
             <a class="mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
             <h1 class="mui-title">完善训练营信息</h1>
         </header>
-        <form action="" class="mui-input-group mt25">
+        <form id="form2" action="" class="mui-input-group mt25">
             <div class="mui-input-row">
                 <label>训练营名称</label><span>{if condition="$camp"}{$camp.camp}{/if}</span>
-                <input type="hidden" name="camp_id" value="{$camp.id}">
+                <input type="hidden" name="campid" value="{$camp.id}">
             </div>
             <div class="mui-input-row h-auto">
                 <a class="mui-navigate-right camplogo filePicker" onclick="add_id(1)">
@@ -54,14 +54,14 @@
             </div>
             <div class="mui-input-row">
                 <label>总部地址</label>
-                <input type="text" class="input" name="address" placeholder="非机构可不填">
+                <input type="text" class="input" name="location" placeholder="非机构可不填">
             </div>
             <div class="mui-input-row" id='showCityPicker3'>
                 <a href="#" class="mui-navigate-right">
                     <label>所属地区</label>
                     <span id="cityResult3" class="ui-alert location" style="color:#737373">选择</span>
                 </a>
-                <input id="location-input" type="hidden" name="location" value="">
+                <input id="location-input" type="hidden" name="locationStr" value="">
             </div>
             <!--<div class="mui-input-row">
                 <label>电话号码</label>
@@ -134,7 +134,40 @@
 
         // 注册 step2
         $('.camp-step2').click(function() {
-            mui.ajax("{:url('api/camp/updatecamp')}")
+            var campid = $('input[name=campid]').val();
+            var logo = $('input[name=logo]').val();
+            var banner = $('input[name=banner]').val();
+            var company = $('input[name=company]').val();
+            var location_input = $('input[name=location]').val();
+            var locationStr = $('input[name=locationStr]').val();
+            var intro = $('.intro').val();
+            mui.ajax("{:url('api/camp/updatecamp')}", {
+                data: {
+                    camp_id: campid,
+                    logo: logo,
+                    banner: banner,
+                    company: company,
+                    location: location_input,
+                    locationStr: locationStr,
+                    intro: intro
+                },
+                dataType:'json',
+                type:'post',
+                timeout:10000,
+                headers:{'Content-Type':'application/json'},
+                success:function(res){
+                   //console.log(res);
+                    if (res.code == 100) {
+                        mui.toast(res.msg+',请完善训练营资质证明');
+                        location.href = "{:url('camp/createcamp', '', '', true)}/step/3/camp_id/"+res.data;
+                    } else {
+                        mui.toast(res.msg);
+                    }
+                },
+                error:function(xhr,type,errorThrown){
+                    console.log(type);
+                }
+            });
         });
 
     });

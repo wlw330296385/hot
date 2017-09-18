@@ -6,8 +6,9 @@ use traits\model\SoftDelete;
 class Camp extends Model{
 	use SoftDelete;
     protected $deleteTime = 'delete_time';
+    protected $autoWriteTimestamp = true;
     protected $readonly = [
-							"id",
+							//"id",
 						    "max_member",
 						    "total_coach",
 						    "act_coach",
@@ -21,6 +22,12 @@ class Camp extends Model{
 						    "camp_base",
 						    "type",
 						    "status",
-						    "create_time",
+						    //"create_time",
 							];
+
+    public function getStatusAttr($value)
+    {
+        $status = [0=>'未审核',1=>'正常',2=>'关闭',3=>'审核未通过'];
+        return $status[$value];
+    }
 }
