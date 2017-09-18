@@ -82,13 +82,15 @@
                         <a class="all">全选</a>
                         <a class="cancel">取消</a>
                         <a class="del">[删除]</a>
-                        <a class="mui-icon mui-icon-personadd add"></a>
+                        <a href="#addStudent" class="mui-icon mui-icon-personadd add"></a>
                     </div>
                 </form>
 
             </div>
 
             <form class="mui-input-group mt55">
+
+          
 
                 <div class="mui-input-row picker btn" id="demo5" data-options='{"type":"time"}'>
                     <a href="#" class="mui-navigate-right">
@@ -344,6 +346,23 @@
    </div>
 </div>
 
+<!-- 添加学员 -->
+<div id="addStudent" class="mui-popover">
+    <div class="mui-popover-arrow"></div>
+    <div class="mui-scroll-wrapper">
+        <div class="mui-scroll">
+            <div class="camp-list camp-lesson-list detalis-list mt">
+                <div class="page-header">
+                    <span class="course"><strong>训练地点</strong></span>
+                </div>
+                <ul class="mui-table-view list">
+                   <li class="project addStudent">训练项目</li>
+               </ul>
+           </div>
+       </div>
+   </div>
+</div>
+
 
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -351,6 +370,13 @@
 <script src="/static/frontend/js/mui.picker.min.js"></script>
 <script src="/static/frontend/js/mui.poppicker.js"></script>
 <script src="/static/frontend/js/city.data-3.js"></script>
+
+
+<script>
+var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+</script>
+<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
 <script>
     //初始化
     mui.init({
@@ -395,7 +421,6 @@
                     });
                 }, false);
             });
-
         });
     })(mui, document);
 
@@ -444,6 +469,15 @@
             $(".projectCont").html(project);
             mui("#project").popover("toggle");
         })
+          // 添加学员
+         $(".addStudent").click(function(){
+             var str = `<div class="mui-input-row mui-checkbox checkboxCont">
+                        <label>{$key+1}<span class="name">{$vol.student}</span></label>
+                        <input name="checkbox1" value="Item 3" type="checkbox">
+                     </div>`
+            $(".operation-btn").before(str);
+            mui("#addStudent").popover("toggle");
+        })
      })
 
     // 关闭弹出菜单
@@ -466,13 +500,13 @@
        });
     });
     //添加
-    $(".add").click(function(){
-        var str = `<div class="mui-input-row mui-checkbox checkboxCont">
-        <label>{$key+1}<span class="name">{$vol.student}</span></label>
-        <input name="checkbox1" value="Item 3" type="checkbox">
-    </div>`
-    $(".operation-btn").before(str);
-})
+    // $(".add").click(function(){
+    //     var str = `<div class="mui-input-row mui-checkbox checkboxCont">
+    //     <label>{$key+1}<span class="name">{$vol.student}</span></label>
+    //     <input name="checkbox1" value="Item 3" type="checkbox">
+    // </div>`
+    // $(".operation-btn").before(str);
+// })
 
     //录课
     $(".operationBtn").click(function(){
