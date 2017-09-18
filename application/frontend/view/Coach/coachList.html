@@ -24,13 +24,13 @@
 <header id="header" class="mui-bar mui-bar-nav search2">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
     <h1 class="mui-title"><input type="search" class="mui-input-clear keyword" placeholder="请输入教练员姓名"></h1>
-    <span class="mui-icon mui-icon-search searchicon" id="coachSearchBtn"></span>
+    <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
 </header>
 
 
 <div class="mui-content">
     <div class="location-frame">
-        <span class="location">深圳市</span>
+        <span class="location"></span>
         <span class="location-choise">
                  <select id="areaSelect">
                     <option value="">全部区域</option>
@@ -77,31 +77,23 @@
 
 
     $(function () {
+
         //初始化全局变量
         var count = 1;
         var keyword='';
         var sSex='';
-        var sProvince='广东省';
-        var sCity='深圳市';
         var sArea='';
-        var allArea=''
 
-        //获取当前城市各区，并推送到区域选择下拉菜单
-        $.each(cityData3, function(n1, jProvince) {
-            if(jProvince.text==sProvince) {
-                $.each(jProvince.children, function (n2, jCity) {
-                    if(jCity.text==sCity) {
-                        $.each(jCity.children, function (n3, jArea) {
-                            allArea += jArea.text +',';
-                        });
-                        if(allArea.length>0){
-                            allArea = allArea.substr(0, allArea.length - 1);
-                        }
-                        return false;
-                    }
-                });
-            }
-        });
+        //判断是否有本地存储城市
+        if(localStorage.currentCity==''||localStorage.currentCity==null){
+            var locationApiUrl = "{:url('api/Location/getLocation')}";
+            getSetLocation(locationApiUrl);
+        }else{
+            var sCity=localStorage.currentCity;
+            var sProvince=localStorage.currentProvince;
+            var allArea=localStorage.currentAreas;
+            $('.location').text(localStorage.currentCity);
+        }
 
         //生成区域选择下拉菜单
         var arrArea = allArea.split(',');
@@ -111,7 +103,7 @@
         });
         $('#areaSelect').append(selectArea);
         //搜索教练
-        $("#coachSearchBtn").on("click", function () {
+        $("#searchBtn").on("click", function () {
             keyword = $(".keyword").val();
             searchToList();
         })
