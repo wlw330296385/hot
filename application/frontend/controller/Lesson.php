@@ -127,10 +127,13 @@ class Lesson extends Base{
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         // 生成订单号
         $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
-        $amount = $total*$lessonInfo['cost'];
-        $WechatJsPayService = new WechatJsPayService;
-        $parameters = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
-        dump($parameters);die;
+        if(is_post()){
+            $amount = $total*$lessonInfo['cost'];
+            $WechatJsPayService = new WechatJsPayService;
+            $parameters = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
+            dump($parameters);die;
+        }
+        
 
 
         $this->assign('lessonInfo',$lessonInfo);
