@@ -21,7 +21,7 @@ class Grade extends Base{
     public function createGradeApi(){
         try{
             $data = input('post.');
-            $studentList = $data['studentList']['student'];
+            $studentList = $data['studentList'];
             $gradeData = $data['gradeData'];
             $gradeData['member_id'] = $this->memberInfo['id'];
             $gradeData['member'] = $this->memberInfo['member'];
