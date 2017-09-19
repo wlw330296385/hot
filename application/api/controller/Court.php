@@ -39,12 +39,18 @@ class Court extends Base{
     // 分页获取数据
     public function courtListApi(){
         try{
-            $camp_id = input('get.camp_id');
+            $camp_id = input('param.camp_id');
             $condition = input('post.');
-            $where = ['status'=>['or',[1,$camp_id]]];
-            $map = array_merge($condition,$where);
+            $where = ['camp_id'=>['or',[0,$camp_id]]];
+            if($camp_id){
+                $map = function($query) use ($condition,$camp_id){
+                    $query->where($condition)->where(['delete_time'=>null])->where(['camp_id'=>0])->whereOr(['camp_id'=>$camp_id]);
+                };
+            }else{
+                $map = $condition;
+            }
             $page = input('param.page')?input('param.page'):1;
-            $courtList = $this->CourtService->getCourtList($map,$page);
+            $result = $this->CourtService->getCourtList($map,$page);
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -54,7 +60,7 @@ class Court extends Base{
     public function updateCourtApi(){
         try{
             $data = input('post.');
-            $id = input('get.id');
+            $id = input('param.id');
             $result = $this->CourtService->updateCourt($data,$id);
             return json($result);
         }catch (Exception $e){
