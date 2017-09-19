@@ -85,7 +85,7 @@ class CampService {
             'camp_id' => $lastInsId,
             'member' => $request['realname'],
             'member_id' => $request['member_id'],
-            'remark' => '创建训练营',
+            'remarks' => '创建训练营',
             'type' => 4,
             'status' => 1,
             'create_time' => time(),

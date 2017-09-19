@@ -8,7 +8,7 @@ document.write('<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>'
 
 var wooApi = {
         //同步访问接口
-        'asyncF':function (url,data) {
+        'asyncF':function (url,data = '') {
 
             //访问接口
             var postMsg = $.ajax({

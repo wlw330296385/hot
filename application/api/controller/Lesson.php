@@ -3,7 +3,7 @@ namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\LessonService;
 use app\service\GradeService;
-class Lesson extends Frontend{
+class Lesson extends Base{
 	protected $LessonService;
 	protected $GradeService;
 	public function _initialize(){
@@ -26,7 +26,8 @@ class Lesson extends Frontend{
             $page = input('param.page')?input('param.page'):1;
             $city = input('param.city');
             $area = input('param.area');
-            $map = ['province'=>$province,'city'=>$city,'area'=>$area];
+            $gradecate_id = input('param.gradecate_id');
+            $map = ['province'=>$province,'city'=>$city,'area'=>$area,'gradecate_id'=>$gradecate_id];
             foreach ($map as $key => $value) {
                 if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
@@ -36,8 +37,8 @@ class Lesson extends Frontend{
                 $map['lesson'] = ['LIKE','%'.$keyword.'%'];
             }
 
-            $campList = $this->CampService->getLessonPage($map,$page);
-            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
+            $lessonList = $this->LessonService->getLessonPage($map,$page);
+            return json(['code'=>100,'msg'=>'OK','data'=>$lessonList]);
         }catch(Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }       
@@ -48,30 +49,29 @@ class Lesson extends Frontend{
     public function getLessonListApi(){
         
         try{
-            $type = input('param.type');
+            // $type = input('param.type');
             $map = input('post.');
             $page = input('param.page')?input('param.page'):1;
             $result = $this->LessonService->getLessonPage($map,$page);
 
-            if($result['code'] == 100){
-                $list = $result['data'];
+            if($result){
                 //在线课程
-                $dateNow = date('Y-m-d',time());
-                $onlineList = [];
+                // $dateNow = date('Y-m-d',time());
+                // $onlineList = [];
 
-                //离线课程
-                $offlineList = [];
-                foreach ($list as $key => $value) {
-                    if($value['end']<$dateNow || $value['start']>$dateNow){
-                        $offlineList[] = $value;
-                    }else{
-                        $onlineList[] = $value;
-                    }
+                // //离线课程
+                // $offlineList = [];
+                // foreach ($result as $key => $value) {
+                //     if($value['end']<$dateNow || $value['start']>$dateNow){
+                //         $offlineList[] = $value;
+                //     }else{
+                //         $onlineList[] = $value;
+                //     }
                     
-                }
-                        
+                // }
+                return json(['code'=>'100','msg'=>'获取成功','data'=>$result]);die;        
             }else{
-                return json(['code'=>'200','msg'=>$result['msg']]);die;
+                return json(['code'=>'200','msg'=>[]]);die;
             }
             switch ($type) {
                 case '1':
@@ -161,6 +161,35 @@ class Lesson extends Frontend{
             $map = input('post');
             $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'status'=>1])->where($map)->where('grade_id','neq','')->field('student,id')->select();
             return json(['code'=>100,'msg'=>'获取成功','data'=>$studentList]);
+        }catch (Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+    // 审核课程
+    public function checkLessonApi(){
+        try{
+            $camp_id = input('param.camp_id');
+            if(!$camp_id){
+                return json(['code'=>200,'msg'=>'camp_id未传参']);
+            }
+            $isPower = $this->LessonService->isPower($camp_id,$memberInfo['id']);
+
+            if($isPower<3){
+                $lesson_id = input('post.lesson_id');
+                $status = input('post.status');
+                $result = db('lesson')->save(['status'=>$status],$lesson_id);
+                if($result){
+                    return json(['code'=>100,'msg'=>'操作成功']);
+                }else{
+                    return json(['code'=>200,'msg'=>'操作失败']);
+                }
+                
+            }else{
+                return json(['code'=>200,'msg'=>'权限不足']);
+            }
+            
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }

@@ -3,15 +3,11 @@ namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CoachService;
 use app\service\CertService;
-use app\service\GradeMemberService;
-use app\service\ScheduleService;
 class Coach extends Base{
 	protected $coachService;
 	public function _initialize(){
 		parent::_initialize();
 		$this->coachService = new CoachService;
-		$this->gradeMemberService = new GradeMemberService;
-        $this->scheduleService = new ScheduleService;
 
 	}
 
@@ -84,6 +80,7 @@ class Coach extends Base{
 
             // 实名数据
             $realnamedata = [
+                'camp_id' => 0,
                 'member_id' => $member_id,
                 'cert_no' => input('post.idno'),
                 'cert_type' => 1,
@@ -92,6 +89,7 @@ class Coach extends Base{
             ];
             // 资质证书
             $certdata = [
+                'camp_id' => 0,
                 'member_id' => $member_id,
                 'cert_no' => "",
                 'cert_type' => 3,

@@ -250,6 +250,7 @@ class Camp extends Base{
         $camp_id = input('param.camp_id');
         $campInfo = $this->CampService->getCampInfo($camp_id);
         $is_power = $this->CampService->isPower($camp_id,$this->memberInfo['id']);
+
         if($is_power < 4){
             $this->error('您没有权限');
         }
@@ -259,6 +260,6 @@ class Camp extends Base{
 
         $this->assign('campInfo',$campInfo);
         $this->assign('campcert', $campcert);
-        return view('camp/campSetting');
+        return view('Camp/campSetting');
     }
 }

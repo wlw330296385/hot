@@ -106,39 +106,61 @@ class Lesson extends Base{
     // 	return view('Lesson/buyLesson');
     // }
 
-    //课程订单购买页面
+    // 课程订单购买页面
     // public function comfirmBill(){
     //     $lesson_id = input('param.lesson_id');
     //     $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+
     //     // 生成订单号
     //     $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
-        
+    //     $jsonBillInfo = [
+    //         'goods'=>$lessonInfo['lesson'],
+    //         'goods_id'=>$lessonInfo['id'],
+    //         'camp_id'=>$lessonInfo['camp_id'],
+    //         'camp'=>$lessonInfo['camp'],
+    //         'price'=>$lessonInfo['cost'],
+    //         'score_pay'=>$lessonInfo['score'],
+    //         'goods_type'=>1,
+    //         'pay_type'=>'wxpay'
+    //     ];
+    //     $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
     //     $this->assign('lessonInfo',$lessonInfo);
     //     $this->assign('billOrder',$billOrder);
     //     return view('Lesson/comfirmBill');
     // }
 
-    //课程订单购买页面
+    // 课程订单购买页面
     public function comfirmBill(){
         $lesson_id = input('param.lesson_id');
         $total = input('param.total');
         if(!$lesson_id){
             $this->error('参数错误');
         }
-        $total = 1;
+        
+        if(!$total){
+            $this->error('参数错误');
+        }
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         // 生成订单号
         $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
-  
+        $jsonBillInfo = [
+            'goods'=>$lessonInfo['lesson'],
+            'goods_id'=>$lessonInfo['id'],
+            'camp_id'=>$lessonInfo['camp_id'],
+            'camp'=>$lessonInfo['camp'],
+            'price'=>$lessonInfo['cost'],
+            'score_pay'=>$lessonInfo['score'],
+            'goods_type'=>1,
+            'pay_type'=>'wxpay'
+        ];
         $amount = $total*$lessonInfo['cost'];
         $WechatJsPayService = new \app\service\WechatJsPayService;
         $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
         
         $jsApiParameters = $result['data']['jsApiParameters'];
 
-
         $this->assign('jsApiParameters',$jsApiParameters);
-
+        $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billOrder',$billOrder);
         return view('Lesson/comfirmBill');

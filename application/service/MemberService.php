@@ -1,5 +1,6 @@
 <?php 
 namespace app\service;
+use app\model\Camp;
 use app\model\Coach;
 use app\model\Member;
 use app\common\validate\MemberVal;
@@ -132,15 +133,27 @@ class MemberService{
 	}
 	
 	// 查询会员是否有教练身份数据
-	public function isCoach($memberid) {
+	public function hasCoach($memberid) {
 	     $model = new Coach();
 	     $res = $model::get(['member_id'=>$memberid]);
 	     if ($res) {
-             $status = $model::get(['member_id'=>$memberid])->getData('status'); //审核状态
-	         $return = ['data' => $res->toArray(), 'check_status' => $status];
+             $return = $res->toArray();
+             $return['check_status'] =  $model::get(['member_id'=>$memberid])->getData('status'); //审核状态
          } else {
 	         $return = 0;
          }
 	     return $return;
+    }
+
+    public function hasCamp($memberid) {
+        $model = new Camp();
+        $res = $model::get(['member_id' => $memberid]);
+        if ($res) {
+            $return = $res->toArray();
+            $return['check_status'] = $model::get(['member_id' => $memberid])->getData('status'); //审核状态
+        }else {
+            $return = 0;
+        }
+        return $return;
     }
 }

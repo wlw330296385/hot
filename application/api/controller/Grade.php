@@ -32,7 +32,7 @@ class Grade extends Base{
             }
             $GradeService = new GradeService;
             $result = $GradeService->createGrade($gradeData);
-            if($result['code']==200){
+            if($result['code']==100){
                 $grade_id = $result['data'];
                 //重组上课学员
                 foreach ($studentList as $key => $value) {

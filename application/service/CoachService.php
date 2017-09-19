@@ -1,149 +1,147 @@
-<?php
+<?php 
 namespace app\service;
-use app\model\Camp;
-use app\common\validate\CampVal;
+use app\model\Coach;
+use app\common\validate\CoachVal;
+use app\model\GradeMember;
 use think\Db;
-class CampService {
+class CoachService{
+	private $CoachModel;
+	public function __construct(){
+		$this->CoachModel = new Coach();
+        $this->gradeMemberModel = new GradeMember;
+	}
 
-    public $Camp;
-    public function __construct()
+	/**
+	 * 查询教练信息&&关联member表
+	 */
+	public function coachInfo($map){
+        $res = Coach::with('member')->where($map)->find();
+        if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
+        }
+	}
+
+	/**
+	 * 申请成为教练
+	 */
+	public function createCoach($request){
+        $coachM = new Coach();
+        $result = $coachM->save($request);
+        if($result){
+            return ['code'=>200,'msg'=>'OK','data'=> $coachM->getLastInsID() ];
+        }else{
+            return ['code'=>100,'msg'=>$coachM->getError()];
+        }
+    }
+
+
+	/**
+	 * 教练更改资料
+	 */
+	public function updateCoach($request,$id)
     {
-        $this->Camp = new Camp();
-    }
+        $model = new Coach();
+        $result = $model->validate('CoachVal')->save($request, ['id' => $id]);
+        if ($result === false) {
+            return ['code' => 200, 'msg' => $model->getError()];
+        }
 
-    public function getCampList($map=[],$page = 1,$paginate = 10,$order='') {
-        $res = $this->Camp->where($map)->order($order)->page($page,$paginate)->select();
+        return ['code' => 100, 'msg' => __lang('MSG_100_SUCCESS')];
+    }
+	
+	// 教练列表
+	public function coachList($map=[],$page = 1,$paginate = 10, $order='') {
+	    $res = Coach::with('member')->where($map)->order($order)->page($page,$paginate)->select();
         if($res){
             $result = $res->toArray();
-            return $result;
         }else{
-            return $res;
+            $res;
         }
     }
 
-    public function campListPage( $map=[],$page = 1,$paginate=10, $order=''){
-        $res = $this->Camp->where($map)->order($order)->page($page,$paginate)->select();
-        
+    // 教练列表 分页
+    public function coachListPage( $map=[],$page = 1, $paginate = 10,$order='') {
+        $res = Coach::with('member')->where($map)->order($order)->page($page,$paginate)->select();
+        //return $result;
         if($res){
             $result = $res->toArray();
-            return $result;
         }else{
-            return $res;
+            $res;
         }
-        
     }
-
-    /**
-     * 读取资源
-     */
-    public function getCampInfo($id) {
-        $res = Camp::get($id);
-        if (!$res) {
-            return false;
-        }
-        return $res->toArray();
-    }
-
-    /**
-     * 更新资源
-     */
-    public function UpdateCamp($data,$id) {
-        $validate = validate('CampVal');
-        if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
-        }
-        $res = $this->Camp->update($data,$id);
-        if($res === false){
-            return ['msg'=>$this->Camp->getError(),'code'=>'200'];
+    
+    public function updateCoachStatus($request) {
+	    $result = Coach::update($request);
+	    if (!$result) {
+	        return [ 'msg' => __lang('MSG_200_ERROR'), 'code' => 200 ];
         }else{
-            return ['data'=>$res,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>'100'];
+            return ['msg' => __lang('MSG_100_SUCCESS'), 'code' => 100, 'data' => $result];
         }
     }
 
     public function SoftDeleteCamp($id) {
-        $res = $this->Camp->destroy($id);
-        return $res;
+        $result = Coach::destroy($id);
+        if (!$result) {
+	        return [ 'msg' => __lang('MSG_200_ERROR'), 'code' => 200 ];
+        } else {
+            return ['msg' => __lang('MSG_100_SUCCESS'), 'code' => 100, 'data' => $result];
+        }
     }
 
-    /**
-     * 创建资源
-     */
-    public function createCamp($request){
-        // 一个人只能创建一个训练营
-       /* $is_create = $this->isCreateCamp($request['member_id']);
-        if($is_create){
-            return ['msg'=>'一个用户只能创建一个训练营','code'=>'200'];die;
+
+    // // 获取训练营下的教练
+    // public function getCoahListOfCamp($map){
+    //     $result = $this->gradeMemberModel->where($map)->page($page,$paginate)->select();
+    //     return $result->toArray();
+    // }
+
+    public function getCoachListPage($map=[],$page=1, $paginate = 10, $order=''){
+        $result = Coach::with('member')->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
+        if (!$result) {
+            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
         }
-        $validate = validate('CampVal');
-        if(!$validate->check($request)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+        if ($result->isEmpty()) {
+            return [ 'msg' => __lang('MSG_000_NULL'), 'code' => 000, 'data' => []];
         }
-        $res = $this->Camp->save($request);
-        if($res === false){
-            return ['msg'=>$this->Camp->getError(),'code'=>'200'];
+        return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $result->toArray()];
+    }   
+
+
+
+    // 教练列表 分页
+    public function getCoachList($map=[],$page=1, $paginate = 10, $order='') {
+        $result = $this->CoachModel->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
+        if($result){
+            $result = $result->toArray();
+            return $result;
         }else{
-            $data = ['camp' =>$request['camp'],'camp_id'=>$res,'type'=>3,'realname'=>$request['realname'],'member_id'=>$request['member_id']];
-            $result = Db::name('camp_member')->insert($data);
-            if(!$result){
-                Camp::destroy($res);
-                return ['msg'=>Db::name('camp_member')->getError(),'code'=>'200'];
-            }
-            return ['data'=>$res,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>'100'];
-        }*/
-        //dump($request);
-        $hasCreateCamp = $this->hasCreateCamp($request['member_id']);
-        if ($hasCreateCamp) {
-            return ['code' => 200, 'msg' => '一个会员只能创建一个训练营'];
+            return $result;
         }
-        $model = new Camp();
-        $result = $model->validate('CampVal.add')->save($request);
-        if (false === $result) {
-            return ['code' => 200, 'msg' => $model->getError()];
-        }
-        $campId = $model->getLastInsID();
-        $campMemberData = [
-            'camp_id' => $campId,
-            'camp' => $request['camp'],
-            'member_id' => $request['member_id'],
-            'member' => $request['realname'],
-            'type' => 4,
-            'status' => 0,
-            'create_time' => time(),
-            'update_time' => time()
-        ];
-        $campmemberDb = Db::name('camp_member');
-        $campMemberAdd = $campmemberDb->insert($campMemberData);
-        if (!$campMemberAdd) {
-            Camp::destroy($campId);
-            return ['code' => 200, 'msg' => $campmemberDb->getError()];
-        }
-
-        return ['code' => 100, 'msg' => __lang('MSG_200'), 'data' => $campId];
-    }
-
-    /**
-     * 判断是否已拥有训练营
-     */
-
-    public function hasCreateCamp($memberid){
-       if ( Camp::get(['member_id' => $memberid]) ) {
-           return true;
-       } else {
-           return false;
-       }
+        
     }
 
 
-    /**
-     * 返回权限
-     */
-    public function isPower($camp_id,$member_id){
-        $is_power = db('camp_member')
-                    ->where(['member_id'=>$member_id,'camp_id'=>$camp_id])
-                    // ->where(function ($query) {
-                            // $query->where('type', 2)->whereor('type', 3)->whereor('type',4);})
-                    ->value('type');
-                    // echo db('camp_member')->getlastsql();die;
-        return $is_power?$is_power:0;
+    // 教练列表 分页
+    public function getCoachListOfCamp($map=[],$page = 1, $paginate = 10, $order='') {
+        $result = Db::view('camp_member','member_id,type')
+                ->view('coach','*','camp_member.member_id=coach.member_id')
+                ->where($map)
+                ->order($order)
+                ->page($page,$paginate)
+                ->select();
+        return $result;
+    }
+
+    public function getCoachInfo($map){
+        $res = $this->CoachModel->with('member')->where($map)->find();
+        if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
+        }
     }
 }
