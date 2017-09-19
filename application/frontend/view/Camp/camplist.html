@@ -21,63 +21,174 @@
 
 <body class=whitebg>
 
+<header id="header" class="mui-bar mui-bar-nav search2">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title"><input type="search" class="mui-input-clear keyword" placeholder="请输入训练营名称"></h1>
+    <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
+</header>
 
-<!--首页-->
+
 <div class="mui-content">
-
-    <!--头部搜索2-->
-    <header id="header" class="mui-bar mui-bar-nav search2">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title"><input type="search" class="mui-input-clear" placeholder="搜课程/训练营/训练地点等"></h1>
-        <span class="mui-icon mui-icon-search searchicon"></span>
-    </header>
-    <div class="mui-content">
-        <div class="location-frame">
-            <span class="location">深圳市</span>
-            <span class="location-choise">
-                <select>
-                    <option>全部区域</option>
-                    <option>南山区</option>
-                    <option>福田区</option>
-                    <option>罗湖区</option>
-                    <option>龙岗区</option>
-                    <option>龙华区</option>
-                    <option>宝安区</option>
+    <div class="location-frame">
+        <span class="location"></span>
+        <span class="location-choise">
+                 <select id="areaSelect">
+                    <option value="">全部区域</option>
                 </select>
             </span>
-        </div>
-
-
-        <ul class="mui-table-view list border-b">
-        {volist name="campList" id="vol"}
-            <li class="mui-table-view-cell mui-media listli">
-                <a href="{:url('camp/campInfo',['camp_id'=>$vol['id']])}">
-                    <img class="mui-media-object mui-pull-left" src="{$vol.logo}">
-                    <div class="mui-media-body">
-                        {$vol.camp}
-                        <p class="mui-ellipsis">已报名{$vol.total_member}&nbsp;&nbsp;已上课{$vol.total_lessons}节</p>
-                    </div>
-                    <div class="price-frame">
-                        <div class="icons mui-inline">{$vol.star}
-                            <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
-                            <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
-                            <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
-                        </div>
-                        <p class="address">{$vol.province} {$vol.city}</p>
-                    </div>
-                </a>
-            </li>
-            {/volist}
-        </ul>
     </div>
 
+    <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
+        <div class="mui-scroll">
+            <ul class="mui-table-view detalis-list list camp">
+            </ul>
+        </div>
+    </div>
+
+
+
 </div>
+
+
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/common.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
 <script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
+
+    $(function () {
+
+        //初始化全局变量
+        var count = 1;
+        var keyword='';
+        var sArea='';
+
+        //判断是否有本地存储城市
+        if(localStorage.currentCity==''||localStorage.currentCity==null){
+            var locationApiUrl = "{:url('api/Location/getLocation')}";
+            getSetLocation(locationApiUrl);
+        }else{
+            var sCity=localStorage.currentCity;
+            var sProvince=localStorage.currentProvince;
+            var allArea=localStorage.currentAreas;
+            $('.location').text(localStorage.currentCity);
+        }
+
+        //生成区域选择下拉菜单
+        var arrArea = allArea.split(',');
+        var selectArea='';
+        $.each(arrArea, function (i, areaName) {
+            selectArea += '<option value="'+areaName+'">'+areaName +'</option>';
+        });
+        $('#areaSelect').append(selectArea);
+        //搜索教练
+        $("#searchBtn").on("click", function () {
+            keyword = $(".keyword").val();
+            searchToList();
+        })
+        //选择地区下拉
+        $("#areaSelect").on("change", function () {
+            sArea = $(this).val();
+            searchToList();
+        });
+        //搜索、下拉刷选后触发
+        function searchToList() {
+            count = 1;//显示第一页
+            var page = count;
+            var gType = 1;//代表下拉刷新
+            toList(page,gType);//具体取数据的方法
+        }
+
+        mui.init({
+            swipeBack: true, //启用右滑关闭功能
+            pullRefresh: {
+                //下拉刷新上拉加载教练列表
+                container : "#refreshContainer",
+                down: {
+                    //下拉刷新
+                    height: 50,
+                    auto:true,
+                    contentdown : "下拉可以刷新",
+                    contentover : "释放立即刷新",
+                    contentrefresh : "正在刷新...",
+                    callback: pulldownRefresh
+                },
+                up: {
+                    //上拉加载
+                    height: 150,
+                    //auto:true,
+                    contentrefresh: '正在加载...',
+                    contentnomore:'没有更多数据了',
+                    callback: pullupRefresh
+                }
+            }
+        });
+        //下拉刷新具体业务实现
+        function pulldownRefresh() {
+            setTimeout(function() {
+                count = 1;//刷新并显示第一页
+                var page = count;
+                var gType = 1;//代表下拉刷新
+                toList(page,gType);//具体取数据的方法
+            }, 100);
+        }
+        //上拉加载具体业务实现
+        function pullupRefresh() {
+            setTimeout(function() {
+                count++;//翻下一页
+                var page = count;
+                var gType =2;//代表上拉加载
+                toList(page,gType);//具体取数据的方法
+            }, 100);
+        }
+        //接口获取数据并追加到页面
+        var toList = function(page,gType) {
+            //搜索关键字不能完全为空，否则查询为空
+            var url  = "{:url('api/camp/searchCampApi','','',true)}";
+            mui.ajax({
+                url:url,
+                data: {
+                    page: page,
+                    province: sProvince,
+                    city: sCity,
+                    area: sArea,
+                    keyword: keyword
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: {'Content-Type': 'application/json'},
+                //processData:false,
+                success: function (data) {
+                    var newli='';
+                    for(var i=0;i<=data.data.length-1;i++){
+                        newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="campInfo/camp_id/'+data.data[i].id+'"><img class="mui-media-object mui-pull-left" src="'+data.data[i].logo+'"><div class="mui-media-body">'+data.data[i].camp+'<p class="mui-ellipsis">已报名'+data.data[i].total_member+'&nbsp;&nbsp;已上课'+data.data[i].total_lessons+'节</p></div><div class="price-frame"><div class="icons mui-inline">'+data.data[i].star+'<i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i></div><p class="address">'+data.data[i].area+'</p></div></a></li>'
+                    }
+                    if(gType==1){
+                        //上拉刷新
+                        $("ul.camp").empty().append(newli);
+                        mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                        mui('#refreshContainer').pullRefresh().refresh(true);
+                    }else{
+                        //下拉加载 gType==2
+                        $("ul.camp").append(newli);
+                    }
+                    if(newli!=''){
+                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                    }else{
+                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                    }
+
+                },
+                error: function(xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
+
+
+    })
 </script>
 </html>

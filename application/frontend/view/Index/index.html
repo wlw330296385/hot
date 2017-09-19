@@ -162,11 +162,10 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<!--新浪获取城市位置-->
-<script src="http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js"></script>
 <!--选择器-->
 <script src="/static/frontend/js/mui.picker.min.js"></script>
 <script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/common.js"></script>
 <script src="/static/frontend/js/city.data-3.js"></script>
 <script>
     //初始化
@@ -208,19 +207,23 @@
 
 
 
-    //提示框
     $(function () {
 
+        //判断是否有本地存储城市
+        if(localStorage.currentCity==''||localStorage.currentCity==null){
+            var locationApiUrl = "{:url('api/Location/getLocation')}";
+            getSetLocation(locationApiUrl);
+        }else{
+            $(".address").text(localStorage.currentCity);
+        }
+        //localStorage.clear();
 
+        //提示框
         if ( $('input[name=mid]').val()  == 0) {
             var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
             mui.confirm('欢迎使用大热篮球服务平台，请先完善您的登陆信息，以便进行后续操作，谢谢！', '提示', btnArray);
         }
-        //定位当前城市
-        var city = remote_ip_info['city'];
-        var province = remote_ip_info['province'];
-        var area = remote_ip_info['area'];
-        $(".address").html(city);
+
     })
 
 

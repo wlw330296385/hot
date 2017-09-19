@@ -8,8 +8,9 @@ class Sms {
         try{
             $telephone = input('telephone');
             $use = input('use','会员注册');
-            $randstr = str_shuffle('1234567890');
-            $smscode = substr($randstr, 0, 6);
+            //$randstr = str_shuffle('1234567890');
+            //$smscode = substr($randstr, 0, 6);
+            $smscode = mt_rand(100000, 999999);
             $content = json_encode([ 'code' => $smscode, 'minute' => 5, 'comName' => 'HOT大热篮球' ]);
             $smsApi = new SmsApi();
             $smsApi->paramArr = [

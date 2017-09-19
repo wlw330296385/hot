@@ -32,7 +32,7 @@
         <form action="" class="mui-input-group mt25">
             <div class="mui-input-row ">
                 <label>训练营名称</label><span>{if condition="$camp"}{$camp.camp}{/if}</span>
-                <input type="hidden" name="camp_id" value="{$camp.id}">
+                <input type="hidden" name="campid" value="{$camp.id}">
             </div>
 
             <div class="mui-input-row h-auto">
@@ -51,7 +51,7 @@
             </div>
             <div class="mui-input-row">
                 <label>法人身份证号</label>
-                <input type="text" class="input frid" placeholder="请输入身份证号码">
+                <input type="text" class="input fridno" placeholder="请输入身份证号码">
             </div>
             <div class="mui-input-row h-auto">
                 <a class="mui-navigate-right filePicker"  onclick="add_id(3)">
@@ -62,7 +62,7 @@
             </div>
             <div class="mui-input-row">
                 <label>创建者身份证号</label>
-                <input type="text" class="input cjzid" placeholder="请输入创建者身份证号码">
+                <input type="text" class="input cjzidno" placeholder="请输入创建者身份证号码">
             </div>
             <div class="mui-input-row border-b h-auto">
                 <a class="mui-navigate-right filePicker"  onclick="add_id(4)">
@@ -108,7 +108,41 @@
 
         // 注册 step3
         $('.camp-step3').click(function() {
+            var campid = $('input[name=campid]').val();
+            var cert = $('input[name=cert]').val();
+            var fr_idcard = $('input[name=fr_idcard]').val();
+            var fr_idno = $('.fridno').val();
+            var cjz_idcard = $('input[name=cjz_idcard]').val();
+            var cjz_idno = $('.cjzidno').val();
+            var other_cert = $('input[name=other_cert]').val();
 
+            mui.ajax("{:url('api/camp/updatecampcert')}", {
+                data: {
+                    camp_id: campid,
+                    cert: cert,
+                    fr_idcard: fr_idcard,
+                    fr_idno: fr_idno,
+                    cjz_idcard: cjz_idcard,
+                    cjz_idno: cjz_idno,
+                    other_cert: other_cert
+                },
+                dataType:'json',
+                type:'post',
+                timeout:10000,
+                headers:{'Content-Type':'application/json'},
+                success:function(res){
+                    //console.log(res);
+                    if (res.code == 100) {
+                        mui.toast(res.msg+',等待申核');
+                        location.href = "{:url('camp/registerSuccess')}";
+                    } else {
+                        mui.toast(res.msg);
+                    }
+                },
+                error:function(xhr,type,errorThrown){
+                    console.log(type);
+                }
+            });
         });
     });
 

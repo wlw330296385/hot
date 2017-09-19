@@ -2,6 +2,8 @@
 namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CampService;
+use app\service\CertService;
+
 class Camp extends Base{
     protected $CampService;
 	public function _initialize(){
@@ -48,27 +50,79 @@ class Camp extends Base{
     }
 
 
-    public function updateCampApi(){
+    public function updateCamp(){
         try{
-            $data = input('post.');
+            /* $data = input('post.');
             $id = input('get.camp_id');
             $result = $this->CampService->updateCamp($data,$id);
-            return json($result);
+            return json($result);*/
+            //dump(input('post.'));
+            $campid = input('post.camp_id') ? input('post.camp_id') : input('param.camp_id');
+            // 训练营信息
+            $campData = [
+                'id' => $campid,
+                'logo' => input('post.logo'),
+                'banner' => input('post.banner'),
+                'company' => input('post.company'),
+                'location' => input('post.location'),
+                'camp_introduction' => input('post.intro')
+            ];
+
+            // 地区input 拆分成省 市 区 3个字段
+            if ( input('?post.locationStr') ) {
+                $locationStr = input('post.locationStr');
+                $locationArr = explode('|', $locationStr);
+                $campData['province'] = $locationArr[0];
+                $campData['city'] = $locationArr[1];
+                $campData['area'] = $locationArr[2];
+            }
+            //dump($data);
+            $campS = new CampService();
+            return $campS->updateCamp($campData);
         }catch(Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
-        }  
+        }
     }
 
-    public function createCampApi(){
+    public function updatecampcert() {
+        $campid = input('post.camp_id') ? input('post.camp_id') : input('param.camp_id');
+        // 证书信息
+        $certS = new CertService();
+        // 营业执照
+        if ( input('?post.cert') ) {
+            $cert1 = $certS->saveCert([ 'camp_id' => $campid, 'member_id' => 0, 'cert_type' => 4, 'photo_positive' => input('post.cert')]);
+            if ($cert1['code'] != 100) {
+                return ['code' => 200, 'msg' => '营业执照保存失败,请重试'];
+            }
+        }
+        // 法人
+        if ( input('?post.fr_idno') || input('?post.fr_idcard') ) {
+            $cert2 = $certS->saveCert([ 'camp_id' => $campid, 'member_id' => 0, 'cert_type' => 1,
+                'cert_no' => input('post.fr_idno'), 'photo_positive' => input('post.fr_idcard')]);
+            if ($cert2['code'] != 100) {
+                return ['code' => 200, 'msg' => '法人信息保存失败,请重试'];
+            }
+        }
+        // 创建人
+        if ( input('?post.cjz_idno') || input('?post.cjz_idcard') ) {
+            $cert3 = $certS->saveCert([ 'camp_id' => $campid, 'member_id' => $this->memberInfo['id'], 'cert_type' => 1,
+                'cert_no' => input('post.cjz_idno'), 'photo_positive' => input('post.cjz_idcard') ]);
+            if ($cert3['code'] != 100) {
+                return ['code' => 200, 'msg' => '创建人信息保存失败'];
+            }
+        }
+        // 其他证明
+        if ( input('?post.other_cert') ) {
+            $cert4 = $certS->saveCert([ 'camp_id' => $campid, 'member_id' => 0, 'cert_type' => 0, 'photo_positive' => input('post.other_cert')]);
+            if ($cert4['code'] != 100) {
+                return ['code' => 200, 'msg' => '其他证明保存失败'];
+            }
+        }
+        return ['code' => 100, 'msg' => __lang('MSG_200')];
+    }
+
+    public function createCamp(){
         try{
-            $data = input('post.');
-          /*$data = input('post.');
-            $data['member_id'] = $this->memberInfo['id'];
-            $data['member'] = $this->memberInfo['member'];
-            $result = $this->CampService->createCamp($data);
-            return json($result);*/
-            //dump( input('post.') );
-            //dump($this->memberInfo);
             $telephone = input('post.camp_telephone') ? input('post.camp_telephone') : $this->memberInfo['telephone'];
             $data = [
                 'camp' => input('post.campname'),
@@ -88,7 +142,7 @@ class Camp extends Base{
     public function isCreateCampApi(){
         try{ 
             $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];
-            $result = $this->CampService->isCreateCamp($member_id);
+            $result = $this->CampService->hasCreateCamp($member_id);
             if($result){
                 return json(['code'=>200,'msg'=>'已有训练营','data'=>$result]);
             }else{
@@ -97,5 +151,5 @@ class Camp extends Base{
         }catch(Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
-    } 
+    }
 }

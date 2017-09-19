@@ -204,18 +204,18 @@
             <div class="mui-scroll">
                 <div class="camp-list camp-lesson-list detalis-list mt">
                     <div class="page-header">
-                     <span class="course"><strong>主教练</strong></span>
-                 </div>
-                 <ul class="mui-table-view list">
+                       <span class="course"><strong>主教练</strong></span>
+                   </div>
+                   <ul class="mui-table-view list">
                     {volist name="staffList" id="vol"}
                     <li class="mui-table-view-cell listli detalisli mainCoach" data-id="{$vol.member_id}">
-                     {$vol.member}
-                 </li>
-                 {/volist}
-             </ul>
-         </div>
-     </div>
- </div>
+                       {$vol.member}
+                   </li>
+                   {/volist}
+               </ul>
+           </div>
+       </div>
+   </div>
 </div>    
 <!--学员名单-->
 <div id="student" class="mui-popover">
@@ -228,12 +228,12 @@
                     <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
                 </div>
                 <form class="mui-input-group">
-                {volist name="studentList" id="vol"}
+                    {volist name="studentList" id="vol"}
                     <div class="mui-input-row mui-checkbox mui-left">
                         <label>{$vol.member}</label>
                         <input name="checkbox-student" value="{$vol.member}" type="checkbox" data-id="{$vol.member_id}">
                     </div>
-                 {/volist}
+                    {/volist}
                 </form>
             </div>
         </div>
@@ -251,11 +251,11 @@
                 </div>
                 <form class="mui-input-group">
                     {volist name="staffList" id="vol"}
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <label>{$vol.member}</label>
-                            <input name="checkbox-dom" value="{$vol.member}" type="checkbox" data-id="{$vol.member_id}">
-                        </div>
-                       {/volist}
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>{$vol.member}</label>
+                        <input name="checkbox-dom" value="{$vol.member}" type="checkbox" data-id="{$vol.member_id}">
+                    </div>
+                    {/volist}
                 </form>
             </div>
         </div>
@@ -649,9 +649,9 @@
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data)
                     if(data.code==100){
-                     var url = "{:url('grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
-                     window.location.href=url
-                 }else{
+                       // var url = "{:url('grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
+                       // window.location.href=url
+                   }else{
                     mui.toast(data.msg);
                 }
 
@@ -666,7 +666,7 @@
             mui.toast("选项不能为空");
         }
 
-       
+
     })
 
     //班级学员批量变动（编辑可用）
@@ -674,7 +674,11 @@
         var grade = $(".grade").html();
         if(grade!=''){
             mui.ajax("{:url('api/grade/updateGradeMemberAllApi')}",{
-                data:[{ "grade":grade},{"grade_id":"{$gradeInfo.id}"}],
+                data:
+                [{
+                    "grade":grade,
+                    "grade_id":"{$gradeInfo.id}"
+                }],
                 dataType:'json',//服务器返回json格式数据
                 type:'post',//HTTP请求类型
                 timeout:10000,//超时时间设置为10秒；

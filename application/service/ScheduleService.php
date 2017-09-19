@@ -33,10 +33,10 @@ class ScheduleService {
         if($is_power<2){
             return ['code'=>200,'msg'=>'权限不足'];
         }
-        $validate = validate('ScheduleVal');
-        if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
-        }            
+        //$validate = validate('ScheduleVal');
+        //if(!$validate->check($data)){
+            //return ['msg' => $validate->getError(), 'code' => 200];
+        //}            
 		$result = $this->scheduleModel->save($data);
 		if($result ===false){
 			return ['msg'=>$this->scheduleModel->getError(),'code'=>200];

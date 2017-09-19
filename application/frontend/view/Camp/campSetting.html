@@ -73,25 +73,34 @@
                 <ul class="mui-table-view list">
                     <li class="mui-table-view-cell listli detalisli listinitial">
                         <a href="#" class="mui-navigate-right">营业执照
-                            <img class="coachicon icon01" src="{$campCert.photo_positive}" alt="">
+                            <img class="coachicon icon01" src="{$campcert.cert}" alt="">
                         </a>
                     </li>
                     <li class="mui-table-view-cell listli detalisli listinitial">
-                        <a href="#" class="mui-navigate-right">身份证
-                            <img class="coachicon icon01" src="{$memberCert.photo_positive}" alt="">
-                            <img class="coachicon icon01" src="{$memberCert.photo_back}" alt="">
+                        <a href="#" class="mui-navigate-right">法人身份证
+                            <img class="coachicon icon01" src="{$campcert.fr.photo_positive}" alt="">
                         </a>
                     </li>
                     <li class="mui-table-view-cell listli detalisli listinitial">
                         <a href="#" class="mui-navigate-right">
-                            身份证号<span class="wd52">{$memberCert.cert_no}</span>
+                            法人身份证号<span class="wd52">{$campcert.fr.cert_no}</span>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli listinitial">
+                        <a href="#" class="mui-navigate-right">创建者身份证
+                            <img class="coachicon icon01" src="{$campcert.cjz.photo_positive}" alt="">
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli listinitial">
+                        <a href="#" class="mui-navigate-right">
+                            创建者身份证号<span class="wd52">{$campcert.cjz.cert_no}</span>
                         </a>
                     </li>
                     <li class="mui-table-view-cell listli detalisli listinitial border-b">
                         <a href="#" class="mui-navigate-right">其他证明
-                        {volist name="otherCert" id="vol"}
-                            <img class="coachicon icon01" src="{$vol.photo_positive}" alt="">
-                        {/volist}
+
+                            <img class="coachicon icon01" src="{$campcert.other}" alt="">
+
                         </a>
                     </li>
                 </ul>
@@ -145,39 +154,6 @@
             }, false);
         });
     })(mui, document);
-
-    //验证码
-    function clickButton(obj) {
-        var obj = $(obj);
-        obj.attr("disabled", "disabled");
-        /*按钮倒计时*/
-        var time = 60;
-        var set = setInterval(function () {
-            obj.val(--time + "(s)");
-        }, 1000);
-        /*等待时间*/
-        setTimeout(function () {
-            obj.attr("disabled", false).val("重新获取验证码");
-            /*倒计时*/
-            clearInterval(set);
-        }, 60000);
-    }
-
-    //流程跳转
-    $(function () {
-        $(".registerbtn1").click(function () {
-            $(".form1").hide();
-            $(".form2").show();
-        });
-        $(".registerbtn2").click(function () {
-            $(".form2").hide();
-            $(".form3").show();
-        });
-        $(".registerbtn3").click(function () {
-            $(".form3").hide();
-            $(".form1").show();
-        });
-    })
 
 
 </script>
