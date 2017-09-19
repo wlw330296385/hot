@@ -19,8 +19,11 @@ class Member extends Base{
             $this->assign('memberInfo',$memberInfo);
         }
 
-        $isCoach = $this->MemberService->isCoach($this->memberInfo['id']);
-        $this->assign('coach', $isCoach);
+        $hasCoach = $this->MemberService->hasCoach($this->memberInfo['id']);
+        $hasCamp  = $this->MemberService->hasCamp($this->memberInfo['id']);
+
+        $this->assign('coach', $hasCoach);
+        $this->assign('camp', $hasCamp);
         return view('Member/index');
     }
 
@@ -210,7 +213,7 @@ class Member extends Base{
 
             switch($type) {
                 case '2' : {
-                    $isCoach = $this->MemberService->isCoach($this->memberInfo['id']);
+                    $isCoach = $this->MemberService->hasCoach($this->memberInfo['id']);
                     $this->assign('iscoach', $isCoach);
                     break;
                 }
