@@ -181,7 +181,7 @@
                 </div>
                 <div class="mui-input-row">
                     <label>备注</label>
-                    <input type="text" class="remarks checkChinese" value="{$gradeInfo.remarks}" onblur="checkChinese()">
+                    <input type="text" class="remarks checkChinese" value="{$gradeInfo.remarks}">
                 </div>
 
             </form>
@@ -649,13 +649,11 @@
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data)
                     if(data.code==100){
-                       // var url = "{:url('grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
-                       // window.location.href=url
+                       var url = "{:url('grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
+                       window.location.href=url
                    }else{
                     mui.toast(data.msg);
                 }
-
-
             },
             error:function(xhr,type,errorThrown){
                     //异常处理；
@@ -674,8 +672,7 @@
         var grade = $(".grade").html();
         if(grade!=''){
             mui.ajax("{:url('api/grade/updateGradeMemberAllApi')}",{
-                data:
-                [{
+                data:[{
                     "grade":grade,
                     "grade_id":"{$gradeInfo.id}"
                 }],
