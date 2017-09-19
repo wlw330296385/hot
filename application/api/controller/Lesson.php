@@ -26,7 +26,8 @@ class Lesson extends Base{
             $page = input('param.page')?input('param.page'):1;
             $city = input('param.city');
             $area = input('param.area');
-            $map = ['province'=>$province,'city'=>$city,'area'=>$area];
+            $gradecate_id = input('param.gradecate_id');
+            $map = ['province'=>$province,'city'=>$city,'area'=>$area,'gradecate_id'=>$gradecate_id];
             foreach ($map as $key => $value) {
                 if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
