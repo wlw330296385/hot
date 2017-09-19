@@ -33,7 +33,7 @@ class StudentService{
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 200];
         }
-		$reuslt = $this->studentModel->data($data)->save();
+		$result = $this->studentModel->data($data)->save();
 		if($result){
 			return ['code'=>100,'msg'=>'ok','data'=>$result];
 		}else{

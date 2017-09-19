@@ -8,7 +8,7 @@ class StudentVal extends Validate{
         'student'  =>  'require|max:60',
         'member'  =>  'require|max:60',
         'member_id' =>'require',
-        'emergency_telephone' =>'require|number|length:11';
+        'emergency_telephone' =>'require|number|length:11',
     ];
     
     protected $message = [

@@ -180,6 +180,7 @@
               };
               student = studentList[0].student;
               student_id = studentList[0].id;
+createBill()
               // 循环输出其他的学生
               for (var i = 1; i < studentList.length; i++) {
                   studentList[i]
@@ -249,30 +250,37 @@
         }
       })
 
+      
 
     function wxpay(){
-
-      console.log(total_fee);
-      var bill_order = '{$billOrder}';
-      if (typeof WeixinJSBridge == "undefined"){
-       if( document.addEventListener ){
-         document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
-       }else if (document.attachEvent){
-         document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
-         document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
-       }
-     }else{
-
-        onBridgeReady();
-
+        
+        console.log(total_fee);
+        var bill_order = "{$billOrder}";
+        if (typeof WeixinJSBridge == "undefined"){
+           if( document.addEventListener ){
+               document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+           }else if (document.attachEvent){
+               document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+               document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+           }
+        }else{
+            var result = wooApi.asyncF("{:url('api/wxpay/getParametersApi')}",{'order_no':bill_order,'amount':total_fee});
+            console.log(result);
+            if(result.code == 100){
+              onBridgeReady(result.data.data.jsApiParameters);
+            }else{
+              mui.toast(result.data.msg)
+            } 
+            
+            
+        }
     }
-  }
 
-  function onBridgeReady(){
-    var strJsApiParameters = '{$jsApiParameters}';
-    var objJsApiParameters = JSON.parse(strJsApiParameters);
-    WeixinJSBridge.invoke(
-     'getBrandWCPayRequest', {
+    function onBridgeReady(jsApiParameters){
+        var objJsApiParameters = JSON.parse(jsApiParameters);
+        console.log(objJsApiParameters);
+        WeixinJSBridge.invoke(
+           'getBrandWCPayRequest', {
                "appId":objJsApiParameters.appId,     //公众号名称，由商户传入     
                "timeStamp":"{:time()}",         //时间戳，自1970年以来的秒数     
                "nonceStr":objJsApiParameters.nonceStr, //随机串     
@@ -280,17 +288,15 @@
                "signType":"MD5",         //微信签名方式：     
                "paySign":objJsApiParameters.paySign, //微信签名
                'payType':objJsApiParameters.payType
-             },
-             function(res){     
-               if(res.err_msg == "get_brand_wcpay_request:ok" ) {
-                  createBill(total,JSON.stringify(res))
-               }     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
-             }
-           ); 
-  }
+           },
+           function(res){     
+               if(res.err_msg == "get_brand_wcpay_request:ok" ) {}     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
+           }
+       ); 
+    }
 
 
-//购买成功提交数据
+    //购买成功提交数据
     
     function createBill(balance_pay,callback_str){
       var remarks = $('.remarks').val();
