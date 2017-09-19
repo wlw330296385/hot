@@ -13,7 +13,6 @@ class ScheduleVal extends Validate{
         'grade_id'          =>'require',
         // 'coach'             =>'after:'.date('Y-m-d',time()),
         'coach'             =>'require',
-        //'coach'             =>'after:'.date('Y-m-d',time()),
         'coach_id'          =>'require',
         'teacher_plan'      =>'require',
         'teacher_plan_id'   =>'require',

@@ -125,7 +125,7 @@ class Lesson extends Base{
         if(!$lesson_id){
             $this->error('参数错误');
         }
-        $total = 1;
+        // $total = 1;
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         // 生成订单号
         $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
@@ -135,7 +135,6 @@ class Lesson extends Base{
         $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
         
         $jsApiParameters = $result['data']['jsApiParameters'];
-
 
         $this->assign('jsApiParameters',$jsApiParameters);
 

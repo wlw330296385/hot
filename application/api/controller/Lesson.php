@@ -3,7 +3,7 @@ namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\LessonService;
 use app\service\GradeService;
-class Lesson extends Frontend{
+class Lesson extends Base{
 	protected $LessonService;
 	protected $GradeService;
 	public function _initialize(){
@@ -36,8 +36,8 @@ class Lesson extends Frontend{
                 $map['lesson'] = ['LIKE','%'.$keyword.'%'];
             }
 
-            $campList = $this->CampService->getLessonPage($map,$page);
-            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
+            $lessonList = $this->LessonService->getLessonPage($map,$page);
+            return json(['code'=>100,'msg'=>'OK','data'=>$lessonList]);
         }catch(Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }       
