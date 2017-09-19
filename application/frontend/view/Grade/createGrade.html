@@ -60,7 +60,7 @@
                 <div class="mui-input-row">
                     <a href="#lessonType" class="mui-navigate-right">
                         <label>所属课程</label>
-                        <span class="lessonTypeCont lesson"></span>
+                        <span class="lessonTypeCont"></span>
                     </a>
                 </div>
 
@@ -256,7 +256,7 @@
                     </div>
                     <ul class="mui-table-view list">
                         {volist name="lessonList" id="vol"}
-                        <li class="mui-table-view-cell listli detalisli lessonType">
+                        <li class="mui-table-view-cell listli detalisli lessonType lesson" data-id="{$vol.id}">
                             {$vol.lesson}
                         </li>
                         {/volist}
@@ -278,9 +278,9 @@
                     </div>
                     <form class="mui-input-group">
                         {volist name="studentList" id="vol"}
-                        <div class="mui-input-row mui-checkbox mui-left">
+                        <div class="mui-input-row mui-checkbox mui-left ">
                             <label>{$vol.member}</label>
-                            <input name="checkbox-student" value="{$vol.member}" type="checkbox" data-id="{$vol.member_id}">
+                            <input name="checkbox-student" class="student" value="{$vol.member}" type="checkbox" data-id="{$vol.member_id}">
                         </div>
                         {/volist}
                     </form>
@@ -495,7 +495,7 @@
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <div class="camp-list camp-lesson-list detalis-list mt">
+                <div class="camp-list camp-lesson-list detalis-list mt ">
                     <div class="page-header">
                         <span class="course"><strong>教案列表</strong></span>
                     </div>
@@ -567,11 +567,16 @@
         });
     })(mui, document);
 
-    //弹出框选择
+
     $(function(){
+
+        //初始化全局变量
+        var student_id ='';
+        var studentList ='';
+
         // 班级名称
         $(".grade").click(function(){
-            var grade = $(this).html();
+            var grade = $(this).text();
             $(".gradeCont").html(grade);
             mui("#grade").popover("toggle");
         })
@@ -582,30 +587,45 @@
                 return $(this).val()
             }).get().join(",") );
             $(".studentCont").text($("input[name='student']").val());
+            
+            // var str = document.getElementsByName("checkbox-student");
+            // for(var i=0;i<str.length;i++){
+            //     if(str[i].type=="checkbox"){
+            //         if(str[i].checked==true){
+            //             student_id +=str[i].getAttribute("data-id");
+            //             console.log(student_id)
+            //         }
+            //     }
+            // }
+            
+            student_id =$("input[name='checkbox-student']:checked").attr("data-id");//获取学员id
+            studentList = [{"id":student_id}];//组学员id数组
+
             mui('#student').popover('toggle');
+            
         })
         // 课程类型
         $(".lessonType").click(function(){
-            var lessonType = $(this).html();
-            $(".lessonTypeCont").html(lessonType);
+            var lessonType = $(this).text();
+            $(".lessonTypeCont").text(lessonType);
             mui("#lessonType").popover("toggle");
         })
         // 班级类型
         $(".gradeType").click(function(){
-            var gradeType = $(this).html();
-            $(".gradeTypeCont").html(gradeType);
+            var gradeType = $(this).text();
+            $(".gradeTypeCont").text(gradeType);
             mui("#gradeType").popover("toggle");
         })
         // 训练地点
         $(".trainLocation").click(function(){
-            var trainLocation = $(this).html();
-            $(".trainLocationCont").html(trainLocation);
+            var trainLocation = $(this).text();
+            $(".trainLocationCont").text(trainLocation);
             mui("#trainLocation").popover("toggle");
         })
         // 主教练
         $(".mainCoach").click(function(){
-            var mainCoach = $(this).html();
-            $(".mainCoachCont").html(mainCoach);
+            var mainCoach = $(this).text();
+            $(".mainCoachCont").text(mainCoach);
             mui("#mainCoach").popover("toggle");
         })
         // 助教练
@@ -617,59 +637,53 @@
             $(".assistantCoachCont").text($("input[name='dom']").val());
             mui('#assistantCoach').popover('toggle');
         })
-
         // 班主任
         $(".headMaster").click(function(){
-            var headMaster = $(this).html();
-            $(".headMasterCont").html(headMaster);
+            var headMaster = $(this).text();
+            $(".headMasterCont").text(headMaster);
             mui("#headMaster").popover("toggle");
         })
         // 领队
         $(".leader").click(function(){
-            var leader = $(this).html();
-            $(".leaderCont").html(leader);
+            var leader = $(this).text();
+            $(".leaderCont").text(leader);
             mui("#leader").popover("toggle");
         })
         // 教案
         $(".teachingPlan").click(function(){
-            var teachingPlan = $(this).html();
-            $(".teachingPlanCont").html(teachingPlan);
+            var teachingPlan = $(this).text();
+            $(".teachingPlanCont").text(teachingPlan);
             mui("#teachingPlan").popover("toggle");
         })
-    });
 
+        // 关闭弹出菜单
+        $(".close-popover").click(function(){
+            mui($(this).parent()).popover("toggle");
+        })
 
-    // 关闭弹出菜单
-    $(".close-popover").click(function(){
-        mui($(this).parent()).popover("toggle");
-    })
+        //检测输入是否为数字
+        $(".checkNum").blur(function(){
+            var num =$(this).val();
+            if(isNaN(num)){
+                mui.toast("请填写数字");
+                return false;
+            }
+        })
 
-    //检测输入是否为数字
-    $(".checkNum").blur(function(){
-        var num =$(this).val();
-        if(isNaN(num)){
-            mui.toast("请填写数字");
-            return false;
-        }
-    })
+        //检测输入是否为汉字
+        $(".checkChinese").blur(function(){
+            var str =$(this).val();
+            if(!/^[\u4e00-\u9fa5]+$/.test(str)){
+                mui.toast("请填写汉字");
+                return false;
+            }
+        })
 
-    //检测输入是否为汉字
-    $(".checkChinese").blur(function(){
-        var str =$(this).val();
-        if(!/^[\u4e00-\u9fa5]+$/.test(str)){
-            mui.toast("请填写汉字");
-            return false;
-        }
-    })
-    
-    //所属课程
-    $(".lessonType").click(function(){
-        var lesson = $(".lesson").html();
-        console.log(lesson)
-        mui.ajax("{:url('api/lesson/getStudentListOfLessonApi')}",{
-            data:{
-                "lesson":lesson,
-            },
+        //所属课程api
+        $(".lessonType").click(function(){
+            var lesson_id = $(this).attr("data-id");
+            mui.ajax("{:url('api/lesson/getStudentListOfLessonApi')}",{
+                data:{"lesson_id":lesson_id,},
                 dataType:'json',//服务器返回json格式数据
                 type:'post',//HTTP请求类型
                 timeout:10000,//超时时间设置为10秒；
@@ -686,34 +700,29 @@
                     console.log(type);
                 }
             });
+        })
 
-    })
-
-    //创建班级
-    $(".editorbtn").click(function(){
-        var  grade = $(".grade").html();
-        var  lesson = $(".lesson").html();
-        var  gradecate = $(".gradecate").html();
-        var  week = $(".week option:selected").text();
-        var  lesson_time = $(".lesson_time").html();
-        var  location = $(".location").html();
-        var  coach_salary = $(".coach_salary").val();
-        var  assistant_salary = $(".assistant_salary").val();
-        var  salary_base = $(".salary_base").val();
-        var  coach = $(".coach").html();
-        var  assistant = $(".assistant").html();
-        var  leader = $(".leader").html();
-        var  teacher = $(".teacher").html();
-        var  plan = $(".plan").html();
-        var  rent = $(".rent").val();
-        var  status = $(".status option:selected").text();
-        var  remarks = $(".remarks").val();
-        var  studentList = $(".studentList").html();
-        console.log(studentList)
-        console.log(assistant_salary)
-        mui.ajax("{:url('api/grade/createGradeApi')}",{
-            data:
-                [{
+        //创建班级api
+        $(".editorbtn").click(function(){
+            var  grade = $(".grade").html();
+            var  lesson = $(".lesson").text();
+            var  gradecate = $(".gradecate").text();
+            var  week = $(".week option:selected").text();
+            var  lesson_time = $(".lesson_time").text();
+            var  location = $(".location").text();
+            var  coach_salary = $(".coach_salary").val();
+            var  assistant_salary = $(".assistant_salary").val();
+            var  salary_base = $(".salary_base").val();
+            var  coach = $(".coach").text();
+            var  assistant = $(".assistant").text();
+            var  leader = $(".leader").text();
+            var  teacher = $(".teacher").text();
+            var  plan = $(".plan").text();
+            var  rent = $(".rent").val();
+            var  status = $(".status option:selected").text();
+            var  remarks = $(".remarks").val();
+            mui.ajax("{:url('api/grade/createGradeApi')}",{
+                data:{
                     "gradeData": {
                         "grade":grade,
                         "lesson":lesson,
@@ -725,7 +734,7 @@
                         "assistant_salary":assistant_salary,
                         "salary_base":salary_base,
                         "coach":coach,
-                        "assistant":assistant,
+                        "assistants":assistant,
                         "leader":leader,
                         "teacher":teacher,
                         "plan":plan,
@@ -733,11 +742,8 @@
                         "status":status,
                         "remarks":remarks,
                     },
-                    "studentList":{
-                        "student":studentList
-                    }
-
-                }],
+                    "studentList":studentList
+                },
                 dataType:'json',//服务器返回json格式数据
                 type:'post',//HTTP请求类型
                 timeout:10000,//超时时间设置为10秒；
@@ -755,8 +761,13 @@
                     console.log(type);
                 }
             });
+        })
+    });
 
-    })
+
+
+
+
 </script>
 
 </body>
