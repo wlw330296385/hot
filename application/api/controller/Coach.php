@@ -3,15 +3,11 @@ namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CoachService;
 use app\service\CertService;
-use app\service\GradeMemberService;
-use app\service\ScheduleService;
 class Coach extends Base{
 	protected $coachService;
 	public function _initialize(){
 		parent::_initialize();
 		$this->coachService = new CoachService;
-		$this->gradeMemberService = new GradeMemberService;
-        $this->scheduleService = new ScheduleService;
 
 	}
 

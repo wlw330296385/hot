@@ -106,45 +106,45 @@ class Lesson extends Base{
     // 	return view('Lesson/buyLesson');
     // }
 
-    //课程订单购买页面
-    // public function comfirmBill(){
-    //     $lesson_id = input('param.lesson_id');
-    //     $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
-    //     // 生成订单号
-    //     $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
-        
-    //     $this->assign('lessonInfo',$lessonInfo);
-    //     $this->assign('billOrder',$billOrder);
-    //     return view('Lesson/comfirmBill');
-    // }
-
-    //课程订单购买页面
+    // 课程订单购买页面
     public function comfirmBill(){
         $lesson_id = input('param.lesson_id');
-        $total = input('param.total');
-        if(!$lesson_id){
-            $this->error('参数错误');
-        }
-        
-       /* if(!$total){
-            $total = 1;
-        }*/
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         // 生成订单号
         $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
-  
-        $amount = $total*$lessonInfo['cost'];
-        $WechatJsPayService = new \app\service\WechatJsPayService;
-        $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
         
-        $jsApiParameters = $result['data']['jsApiParameters'];
-
-        $this->assign('jsApiParameters',$jsApiParameters);
-
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billOrder',$billOrder);
         return view('Lesson/comfirmBill');
     }
+
+    //课程订单购买页面
+    // public function comfirmBill(){
+    //     $lesson_id = input('param.lesson_id');
+    //     $total = input('param.total');
+    //     if(!$lesson_id){
+    //         $this->error('参数错误');
+    //     }
+        
+    //     if(!$total){
+    //         $this->error('参数错误');
+    //     }
+    //     $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+    //     // 生成订单号
+    //     $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
+  
+    //     $amount = $total*$lessonInfo['cost'];
+    //     $WechatJsPayService = new \app\service\WechatJsPayService;
+    //     $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
+        
+    //     $jsApiParameters = $result['data']['jsApiParameters'];
+
+    //     $this->assign('jsApiParameters',$jsApiParameters);
+
+    //     $this->assign('lessonInfo',$lessonInfo);
+    //     $this->assign('billOrder',$billOrder);
+    //     return view('Lesson/comfirmBill');
+    // }
 
     // 购买体验课
     public function bookBill(){

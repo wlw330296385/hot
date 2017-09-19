@@ -1,18 +1,18 @@
 <?php
 namespace app\service;
-use app\model\Camp;
-use app\common\validate\CampVal;
+use app\model\Coach;
+use app\common\validate\CoachVal;
 use think\Db;
-class CampService {
+class CoachService {
 
-    public $Camp;
+    public $Coach;
     public function __construct()
     {
-        $this->Camp = new Camp();
+        $this->Coach = new Coach();
     }
 
-    public function getCampList($map=[],$page = 1,$paginate = 10,$order='') {
-        $res = $this->Camp->where($map)->order($order)->page($page,$paginate)->select();
+    public function getCoachList($map=[],$page = 1,$paginate = 10,$order='') {
+        $res = $this->Coach->where($map)->order($order)->page($page,$paginate)->select();
         if($res){
             $result = $res->toArray();
             return $result;
@@ -21,8 +21,8 @@ class CampService {
         }
     }
 
-    public function campListPage( $map=[],$page = 1,$paginate=10, $order=''){
-        $res = $this->Camp->where($map)->order($order)->page($page,$paginate)->select();
+    public function CoachListPage( $map=[],$page = 1,$paginate=10, $order=''){
+        $res = $this->Coach->where($map)->order($order)->page($page,$paginate)->select();
         
         if($res){
             $result = $res->toArray();
@@ -36,8 +36,8 @@ class CampService {
     /**
      * 读取资源
      */
-    public function getCampInfo($id) {
-        $res = Camp::get($id);
+    public function getCoachInfo($id) {
+        $res = Coach::get($id);
         if (!$res) {
             return false;
         }
@@ -47,63 +47,63 @@ class CampService {
     /**
      * 更新资源
      */
-    public function UpdateCamp($data,$id) {
-        $validate = validate('CampVal');
+    public function UpdateCoach($data,$id) {
+        $validate = validate('CoachVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 200];
         }
-        $res = $this->Camp->update($data,$id);
+        $res = $this->Coach->update($data,$id);
         if($res === false){
-            return ['msg'=>$this->Camp->getError(),'code'=>'200'];
+            return ['msg'=>$this->Coach->getError(),'code'=>'200'];
         }else{
             return ['data'=>$res,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>'100'];
         }
     }
 
-    public function SoftDeleteCamp($id) {
-        $res = $this->Camp->destroy($id);
+    public function SoftDeleteCoach($id) {
+        $res = $this->Coach->destroy($id);
         return $res;
     }
 
     /**
      * 创建资源
      */
-    public function createCamp($request){
+    public function createCoach($request){
         // 一个人只能创建一个训练营
-       /* $is_create = $this->isCreateCamp($request['member_id']);
+       /* $is_create = $this->isCreateCoach($request['member_id']);
         if($is_create){
             return ['msg'=>'一个用户只能创建一个训练营','code'=>'200'];die;
         }
-        $validate = validate('CampVal');
+        $validate = validate('CoachVal');
         if(!$validate->check($request)){
             return ['msg' => $validate->getError(), 'code' => 200];
         }
-        $res = $this->Camp->save($request);
+        $res = $this->Coach->save($request);
         if($res === false){
-            return ['msg'=>$this->Camp->getError(),'code'=>'200'];
+            return ['msg'=>$this->Coach->getError(),'code'=>'200'];
         }else{
-            $data = ['camp' =>$request['camp'],'camp_id'=>$res,'type'=>3,'realname'=>$request['realname'],'member_id'=>$request['member_id']];
-            $result = Db::name('camp_member')->insert($data);
+            $data = ['Coach' =>$request['Coach'],'Coach_id'=>$res,'type'=>3,'realname'=>$request['realname'],'member_id'=>$request['member_id']];
+            $result = Db::name('Coach_member')->insert($data);
             if(!$result){
-                Camp::destroy($res);
-                return ['msg'=>Db::name('camp_member')->getError(),'code'=>'200'];
+                Coach::destroy($res);
+                return ['msg'=>Db::name('Coach_member')->getError(),'code'=>'200'];
             }
             return ['data'=>$res,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>'100'];
         }*/
         //dump($request);
-        $hasCreateCamp = $this->hasCreateCamp($request['member_id']);
-        if ($hasCreateCamp) {
+        $hasCreateCoach = $this->hasCreateCoach($request['member_id']);
+        if ($hasCreateCoach) {
             return ['code' => 200, 'msg' => '一个会员只能创建一个训练营'];
         }
-        $model = new Camp();
-        $result = $model->validate('CampVal.add')->save($request);
+        $model = new Coach();
+        $result = $model->validate('CoachVal.add')->save($request);
         if (false === $result) {
             return ['code' => 200, 'msg' => $model->getError()];
         }
-        $campId = $model->getLastInsID();
-        $campMemberData = [
-            'camp_id' => $campId,
-            'camp' => $request['camp'],
+        $CoachId = $model->getLastInsID();
+        $CoachMemberData = [
+            'Coach_id' => $CoachId,
+            'Coach' => $request['Coach'],
             'member_id' => $request['member_id'],
             'member' => $request['realname'],
             'type' => 4,
@@ -111,22 +111,22 @@ class CampService {
             'create_time' => time(),
             'update_time' => time()
         ];
-        $campmemberDb = Db::name('camp_member');
-        $campMemberAdd = $campmemberDb->insert($campMemberData);
-        if (!$campMemberAdd) {
-            Camp::destroy($campId);
-            return ['code' => 200, 'msg' => $campmemberDb->getError()];
+        $CoachmemberDb = Db::name('Coach_member');
+        $CoachMemberAdd = $CoachmemberDb->insert($CoachMemberData);
+        if (!$CoachMemberAdd) {
+            Coach::destroy($CoachId);
+            return ['code' => 200, 'msg' => $CoachmemberDb->getError()];
         }
 
-        return ['code' => 100, 'msg' => __lang('MSG_200'), 'data' => $campId];
+        return ['code' => 100, 'msg' => __lang('MSG_200'), 'data' => $CoachId];
     }
 
     /**
      * 判断是否已拥有训练营
      */
 
-    public function hasCreateCamp($memberid){
-       if ( Camp::get(['member_id' => $memberid]) ) {
+    public function hasCreateCoach($memberid){
+       if ( Coach::get(['member_id' => $memberid]) ) {
            return true;
        } else {
            return false;
@@ -137,13 +137,13 @@ class CampService {
     /**
      * 返回权限
      */
-    public function isPower($camp_id,$member_id){
-        $is_power = db('camp_member')
-                    ->where(['member_id'=>$member_id,'camp_id'=>$camp_id])
+    public function isPower($Coach_id,$member_id){
+        $is_power = db('Coach_member')
+                    ->where(['member_id'=>$member_id,'Coach_id'=>$Coach_id])
                     // ->where(function ($query) {
                             // $query->where('type', 2)->whereor('type', 3)->whereor('type',4);})
                     ->value('type');
-                    // echo db('camp_member')->getlastsql();die;
+                    // echo db('Coach_member')->getlastsql();die;
         return $is_power?$is_power:0;
     }
 }
