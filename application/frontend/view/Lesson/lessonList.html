@@ -36,9 +36,9 @@
             </span>
         <span class="location-choise max">
                  <select id="lessonType">
-                    <option>课程类型</option>
+                    <option data-gradecate_id="">课程类型</option>
                     {volist name="gradecateList" id="vol"}
-                        <option>{$vol.name}</option>
+                        <optgroup label="{$vol.name}"></optgroup>
                         {volist name="vol._data" id="v"}
                         <option data-gradecate_id="{$v.id}">{$v.name}</option>
                     {/volist}
@@ -49,7 +49,7 @@
 
     <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
         <div class="mui-scroll">
-            <ul class="mui-table-view detalis-list list lesson">
+            <ul class="mui-table-view detalis-list list border-b lesson">
             </ul>
         </div>
     </div>
@@ -66,6 +66,10 @@
 <script src="/static/frontend/js/common.js"></script>
 <script src="/static/frontend/js/city.data-3.js"></script>
 <script>
+
+    mui("body").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
 
     $(function () {
 
@@ -100,7 +104,7 @@
         })
         //选择性别下拉
         $("#lessonType").on("change", function () {
-            sLessonType = $(this).val();
+            sLessonType = $(this).find("option:checked").attr("data-gradecate_id");
             searchToList();
         });
         //选择地区下拉
@@ -169,7 +173,7 @@
                     province: sProvince,
                     city: sCity,
                     area: sArea,
-                    gradecate: sLessonType,
+                    gradecate_id: sLessonType,
                     keyword: keyword
                 },
                 dataType: 'json',//服务器返回json格式数据
@@ -180,7 +184,7 @@
                 success: function (data) {
                     var newli='';
                     for(var i=0;i<=data.data.length-1;i++){
-                        newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="lessonInfo/lesson_id/'+data.data[i].id+'"><img class="mui-media-object mui-pull-left" src="'+data.data[i].logo+'"><div class="mui-media-body wd45">'+data.data[i].lesson+'<p class="mui-ellipsis">'+data.data[i].gradecate+'</p></div><div class="price-frame"><p class="price">￥'+data.data[i].cost+'</p><p class="address">'+data.data[i].area+'</p></div></a></li>'
+                        newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="lessonInfo/lesson_id/'+data.data[i].id+'"><img class="mui-media-object mui-pull-left" src="'+data.data[i].cover+'"><div class="mui-media-body wd45">'+data.data[i].lesson+'<p class="mui-ellipsis">'+data.data[i].gradecate+'</p></div><div class="price-frame"><p class="price">￥'+data.data[i].cost+'</p><p class="address">'+data.data[i].area+'</p></div></a></li>'
                     }
                     if(gType==1){
                         //上拉刷新
