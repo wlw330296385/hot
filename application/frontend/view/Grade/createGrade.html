@@ -704,7 +704,7 @@
 
         //创建班级api
         $(".editorbtn").click(function(){
-            var  grade = $(".grade").html();
+            var  grade = $(".grade").text();
             var  lesson = $(".lesson").text();
             var  gradecate = $(".gradecate").text();
             var  week = $(".week option:selected").text();
@@ -721,29 +721,29 @@
             var  rent = $(".rent").val();
             var  status = $(".status option:selected").text();
             var  remarks = $(".remarks").val();
-                mui.ajax("{:url('api/grade/createGradeApi')}",{
-                    data:{
-                        "gradeData": {
-                            "grade":grade,
-                            "lesson":lesson,
-                            "gradecate":gradecate,
-                            "week":week,
-                            "lesson_time":lesson_time,
-                            "location":location,
-                            "coach_salary":coach_salary,
-                            "assistant_salary":assistant_salary,
-                            "salary_base":salary_base,
-                            "coach":coach,
-                            "assistants":assistant,
-                            "leader":leader,
-                            "teacher":teacher,
-                            "plan":plan,
-                            "rent":rent,
-                            "status":status,
-                            "remarks":remarks,
-                        },
-                        "studentList":studentList
+            mui.ajax("{:url('api/grade/createGradeApi')}",{
+                data:{
+                    "gradeData": {
+                        "grade":grade,
+                        "lesson":lesson,
+                        "gradecate":gradecate,
+                        "week":week,
+                        "lesson_time":lesson_time,
+                        "location":location,
+                        "coach_salary":coach_salary,
+                        "assistant_salary":assistant_salary,
+                        "salary_base":salary_base,
+                        "coach":coach,
+                        "assistants":assistant,
+                        "leader":leader,
+                        "teacher":teacher,
+                        "plan":plan,
+                        "rent":rent,
+                        "status":status,
+                        "remarks":remarks,
                     },
+                    "studentList":studentList
+                },
                     dataType:'json',//服务器返回json格式数据
                     type:'post',//HTTP请求类型
                     timeout:10000,//超时时间设置为10秒；
@@ -754,9 +754,10 @@
                         if(data.code==100){
                             mui.toast(data.msg)
                         }else{
-                            mui.toast(data.msg)}
-                        },
-                        error:function(xhr,type,errorThrown){
+                            mui.toast(data.msg)
+                        }
+                    },
+                    error:function(xhr,type,errorThrown){
                         //异常处理；
                         console.log(type);
                     }
