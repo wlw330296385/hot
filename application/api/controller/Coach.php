@@ -80,6 +80,7 @@ class Coach extends Base{
 
             // 实名数据
             $realnamedata = [
+                'camp_id' => 0,
                 'member_id' => $member_id,
                 'cert_no' => input('post.idno'),
                 'cert_type' => 1,
@@ -88,6 +89,7 @@ class Coach extends Base{
             ];
             // 资质证书
             $certdata = [
+                'camp_id' => 0,
                 'member_id' => $member_id,
                 'cert_no' => "",
                 'cert_type' => 3,
