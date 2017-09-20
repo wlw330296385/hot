@@ -20,9 +20,11 @@ function getSexIconUrl(sexNum) {
 
 
 
-
-//获取当前定位，并本地存储
-function getSetLocation(locationApiUrl){
+//获取当前定位，并返回值
+function getLocation(locationApiUrl){
+    var city = '';
+    var province = '';
+    var allArea = '';
     mui.ajax({
         url:locationApiUrl,
         data: '',
@@ -32,39 +34,32 @@ function getSetLocation(locationApiUrl){
         headers: {'Content-Type': 'application/json'},
         success: function (data) {
             if (data.code == 0) {
-                var city = data.data.city;
-                var province = data.data.region;
-                //本地存储当前省市
-                setLocalStorage(province,city);
+                city = data.data.city;
+                province = data.data.region;
+                //获取当前城市各区，并组合成字符串存储
+                $.each(cityData3, function(n1, jProvince) {
+                    if(jProvince.text==province) {
+                        $.each(jProvince.children, function (n2, jCity) {
+                            if(jCity.text==city) {
+                                $.each(jCity.children, function (n3, jArea) {
+                                    allArea += jArea.text +',';
+                                });
+                                if(allArea.length>0){
+                                    allArea = allArea.substr(0, allArea.length - 1);
+                                }
+                                return false;
+                            }
+                        });
+                    }
+                });
             }
         },
         error: function (xhr, type, errorThrown) {
             console.log(xhr + type + errorThrown);
+            city ='深圳市';
+            province ='广东省';
+            allArea ='罗湖区,福田区,南山区,宝安区,龙岗区,龙华区,盐田区,光明新区,其他区';
         }
     });
-}
-//设置定位本地存储
-function setLocalStorage(province,city){
-    var allArea = '';
-    //本地存储当前省市
-    localStorage.currentCity=city;
-    localStorage.currentProvince=province;
-    //获取当前城市各区，并组合成字符串存储
-    $.each(cityData3, function(n1, jProvince) {
-        if(jProvince.text==province) {
-            $.each(jProvince.children, function (n2, jCity) {
-                if(jCity.text==city) {
-                    $.each(jCity.children, function (n3, jArea) {
-                        allArea += jArea.text +',';
-                    });
-                    if(allArea.length>0){
-                        allArea = allArea.substr(0, allArea.length - 1);
-                    }
-                    return false;
-                }
-            });
-        }
-    });
-    //本地存储当前城市各区
-    localStorage.currentAreas=allArea;
+    return [province,city,allArea];
 }
