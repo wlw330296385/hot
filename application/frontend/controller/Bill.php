@@ -141,16 +141,38 @@ class Bill extends Base{
         //查询是否成功支付
         $billOrder = input('bill_order');
         if(!$billOrder){
-            $billInfo = [];
+            $this->error('未查询到订单');
         }else{
             $billInfo = $this->BillService->getBill(['bill_order'=>$billOrder]);
         }       
+        if($billInfo['goods_type'] == '课程'){
+            // 课程信息
+            $lessonInfo = db('lesson')->where(['id'=>$billInfo['goods_id']])->find();
+            $this->assign('lessonInfo',$lessonInfo);
+        }
+        // dump($billInfo);die;
         $this->assign('billInfo',$billInfo);
         return view('Bill/finishBill');
     }
 
     public function finishBookBill(){
-        
+        //查询是否成功支付
+        $billOrder = input('bill_order');
+        if(!$billOrder){
+            $this->error('未查询到订单');
+        }else{
+            $billInfo = $this->BillService->getBill(['bill_order'=>$billOrder]);
+        }       
+        if($billInfo['goods_type'] == '课程'){
+            // 课程信息
+            $lessonInfo = db('lesson')->where(['id'=>$billInfo['goods_id']])->find();
+            $this->assign('lessonInfo',$lessonInfo);
+            // 学员姓名
+            $studentInfo = db('grade_member')->where(['lesson_id'=>$lessonInfo['id'],'member_id'=>$this->memberInfo['id']])->find();
+            $this->assign('studentInfo',$studentInfo);
+        }
+
+        $this->assign('billInfo',$billInfo);
         return view('Bill/finishBookBill');
     }
 }

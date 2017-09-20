@@ -30,7 +30,7 @@ var wooApi = {
             var postMsg = $.ajax({
                 url: url,
                 data: data,
-                async: false,
+                async: true,
                 type: 'post',
                 dataType:'json',
                 success: function(msg) {

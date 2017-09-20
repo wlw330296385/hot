@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>预约体检</title>
+    <title>预约体验</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -15,179 +15,106 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
-    <!--选择器样式-->
-    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
-    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
-    <style>
-        .mui-popover-arrow {
-            left: auto;
-            right: 6px;
-        }
-
-        p {
-            text-indent: 22px;
-        }
-
-        .mui-popover {
-            height: 300px;
-        }
-    </style>
 </head>
 
 <body class=whitebg>
 
-
-<!--首页-->
+<header id="header" class="mui-bar mui-bar-nav subheader">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <h1 class="mui-title">确认订单</h1>
+</header>
 <div class="mui-content">
 
-    <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">预约体检</h1>
-    </header>
-    <div class="mui-content pt">
-        <div class="list detalis-list">
-
+    <!--课程订单支付-->
+    <div class="mui-content">
+        <div class="list">
             <ul class="mui-table-view">
                 <li class="mui-table-view-cell mui-media listli mb">
                     <a href="javascript:;">
                         <img class="mui-media-object mui-pull-left" src="/static/frontend/images/shuijiao.jpg">
                         <div class="mui-media-body wd45">
-                            北头周六高年级基础班
-                            <p class="mui-ellipsis">9-12岁初级班</p>
+                            {$lessonInfo.lesson}
+                            <p class="mui-ellipsis">{$lessonInfo.gradecate}</p>
                         </div>
                         <div class="price-frame singup-num">
-                            1022人已报名
+                            {$lessonInfo.students}人已报名
                         </div>
                     </a>
                 </li>
             </ul>
 
-
-            <div class="page-header">
-                <span class="course">课程信息</span>
-            </div>
-            <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell listli detalisli">
-                    <a class="mui-navigate-right" href="#campName">
-                        训练营
-                        <span>训练营名称</span>
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell listli">
+                    <a class="mui-navigate-right">
+                        所属训练营<span class="wd66" >{$lessonInfo.camp}</span>
                     </a>
                 </li>
-                <li class="mui-table-view-cell listli detalisli">训练时间<span>周六 16:30</span></li>
-                <li class="mui-table-view-cell listli detalisli">训练地点<span>深圳湾篮球场</span></li>
-                <li class="mui-table-view-cell listli detalisli">所属地区<span>广东 深圳 南山</span></li>
+                <li class="mui-table-view-cell listli">课程单价<span><b class="colororange">￥{$lessonInfo.cost}</b>（元）</span></li>
+                <li class="mui-table-view-cell listli">所选课量<span><b class="colororange total"></b>（节）</span></li>
+                <li class="mui-table-view-cell listli">训练时间<span>{$lessonInfo.week} {$lessonInfo.lesson_time}</span></li>
+                <li class="mui-table-view-cell listli">训练地点<span>{$lessonInfo.location}</span></li>
+                <li class="mui-table-view-cell listli">所属地区<span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span></li>
+                <li class="mui-table-view-cell listli"><span>课程总价<b class="colororange total_fee"></b></span></li>
+                <li class="mui-table-view-cell listli">备注 <input type="text" name="remarks" class="remarks" value="无"></li>
             </ul>
 
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-8 opli" >还需支付:<b class="colororange total_fee">￥0</b></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="createBill()">立即体验</li>
+            </ul>
 
-            <div class="page-header">
-                <span class="course">个人信息</span>
-            </div>
-
-
-            <form action="">
-                <ul class="mui-table-view">
-                    <!--新会员预约-->
-                    <li class="mui-table-view-cell listli detalisli">
-                        学员姓名
-                        <input type="text" class="input" placeholder="输入学员姓名">
-                    </li>
-
-                    <!--老会员预约-->
-                    <li class="mui-table-view-cell listli detalisli" style="display: none">
-                        学员姓名
-                        <span class="dropdown-btn">
-                        请选择学员
-                        <i class="mui-icon mui-icon-arrowdown"></i>
-                    </span>
-                    </li>
-
-                    <li class="mui-table-view-cell listli detalisli">家长姓名
-                        <input type="text" class="input" placeholder="输入家长姓名">
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">手机号码
-                        <input type="text" class="input" placeholder="输入手机号码">
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">短信验证码
-                        <input type="button" class="code-btn" value="获取验证码" onclick="clickButton(this)">
-                        <input type="text" class="input wd45" placeholder="输入验证码">
-                    </li>
-                </ul>
-            </form>
-
-            <!--老会员（选择框中没有学员姓名）-->
-            <form action="">
-                <ul class="mui-table-view" style="">
-                    <li class="mui-table-view-cell listli detalisli">
-                        学员姓名
-                        <input type="text" class="input" placeholder="输入学员姓名">
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">家长姓名<span>习大大</span></li>
-                    <li class="mui-table-view-cell listli detalisli">手机号码<span>13254685461</span></li>
-                </ul>
-
-
-                <ul class="mui-table-view operation">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-8 opli">请确定你所选课程及个人信息无误</li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bgblue">确定预约</li>
-                </ul>
-            </form>
         </div>
     </div>
-    <!--训练营名称-->
-    <div id="campName" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <div class="camp-list camp-lesson-list detalis-list mt">
-                    <div class="page-header">
-                        <span class="course"><strong>训练营名称</strong></span>
-                    </div>
-                    <ul class="mui-table-view list">
-                        <li class="mui-table-view-cell listli detalisli">
-                            大热安凯翔训练营
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            大热安凯翔训练营
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            大热安凯翔训练营
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            大热安凯翔训练营
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            大热安凯翔训练营
-                        </li>
-                    </ul>
-                </div>
-            </div>
+
+
+      <ul class="mui-table-view list detalis-list mt55" id="oldStudent">
+         <li class="mui-table-view-cell listli">
+           学员姓名
+           <span class="select-arrow location-choise">
+            <select class="select" style="width: 22%" >
+              <option value="" id="student"></option>
+            </select>
+          </span>
+        </li>
+        <li class="mui-table-view-cell listli">家长姓名<span id="parent"></span></li>
+        <li class="mui-table-view-cell listli">手机号码<span class="width" id="emergency_telephone">{$memberInfo.telephone}</span></li>
+        
+        <button id="addBtn">添加学生</button>
+      </ul>
+      <!-- 新会员进入 -->
+      <div class="mui-input-group mt55" style="display: none;" id="addStudent">
+
+        <div class="mui-input-row">
+          <label>学员姓名</label>
+          <input type="text" class="data" value="" style="color: #737373" required name="student" placeholder="学生姓名">
         </div>
-    </div>
+
+        <div class="mui-input-row">
+          <label>家长姓名</label>
+          <input type="text" value="" class="data" style="color: #737373" required name="parent" placeholder="家长姓名">
+        </div>
+
+        <!--  <div class="mui-input-row">
+            <input type="text" class="mui-input-clear reg_mobile data" name="emergency_telephone" placeholder="输入手机号" data-input-clear="5" style="margin-bottom: 0" id="telephone" required>   
+        </div> -->
+         <!-- <div class="mui-input-row">  
+              <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)">              
+        </div>
+        <div class="mui-input-row">                
+             <input type="text" class="validate" placeholder="输入验证码" id="code">
+        </div> -->
+        <button id="submitBtn">确认</button>   <button id="giveUp">放弃添加</button>
+      </div>
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<script src="/static/frontend/js/mui.picker.min.js"></script>
+
+<script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-    function clickButton(obj) {
-        var obj = $(obj);
-        obj.attr("disabled", "disabled");
-        /*按钮倒计时*/
-        var time = 60;
-        var set = setInterval(function () {
-            obj.val(--time + "(s)");
-        }, 1000);
-        /*等待时间*/
-        setTimeout(function () {
-            obj.attr("disabled", false).val("重新获取验证码");
-            /*倒计时*/
-            clearInterval(set);
-        }, 60000);
-    }
 
     mui('.mui-scroll-wrapper').scroll();
     mui('body').on('shown', '.mui-popover', function (e) {
@@ -196,5 +123,122 @@
     mui('body').on('hidden', '.mui-popover', function (e) {
         //console.log('hidden', e.detail.id);//detail为当前popover元素
     });
+
+
+
+
+        var total = sessionStorage.lessonTotal;
+        var total_fee = "{$lessonInfo.cost}"*total;
+        var isStudent = false;
+        var student,student_id
+        var studentList = [];
+        var strBillInfo = '{$jsonBillInfo}';
+        console.log(strBillInfo);
+        var objBillInfo = JSON.parse(strBillInfo);
+        console.log(objBillInfo.goods)
+
+    $(function(){
+        $('.total').html(total);
+        $('.total_fee').html("￥"+0);
+
+
+
+        //替换学生列表
+        $('.select').on('change',function(){
+            var index = $('option:selected').index();
+             $('#student').val(studentList[index].id);
+              $('#student').text(studentList[index].student);
+              $('#parent').text(studentList[index].parent);
+              // $('#emergency_telephone').text(studentList[index].emergency_telephone);
+              student = studentList[index].student;
+              student_id = studentList[index].id;
+        })
+
+        // 添加学生
+        $('#addBtn').on('click',function(){
+            $('#oldStudent').hide();
+            $('#addStudent').show();
+        })
+
+        //放弃添加学生
+        $('#giveUp').on('click',function(){
+            $('#oldStudent').show();
+            $('#addStudent').hide();
+        })
+    })
+   
+    // 获取学生数据
+    function getStudentList(){
+      // 获取学生列表
+          var result = wooApi.asyncF("{:url('api/Student/getStudentListApi')}");
+          console.log(result);
+          if(result.code ==100){
+            if(!result.data){
+                $('#oldStudent').hide();
+                $('#addStudent').show();
+            }else{
+              studentList = result.data;
+              $('#student').val(result.data[0].id);
+              $('#student').text(result.data[0].student);
+              $('#parent').text(result.data[0].parent);
+              // $('#emergency_telephone').text(result.data[0].emergency_telephone);
+              isStudent = true;
+              // if(result.data[0].emergency_telephone>0){
+              //   isTelephone = true;
+              // };
+              student = studentList[0].student;
+              student_id = studentList[0].id;
+              // 循环输出其他的学生
+              for (var i = 1; i < studentList.length; i++) {
+                  studentList[i]
+                  var strhtml = '<option value="'+studentList[i].id+'">'+studentList[i].student+'</option>';
+                  $('.select').append(strhtml)
+              }
+            }
+              
+          }
+    }
+
+
+    // 提交学生数据
+      $('#submitBtn').on('click',function(){
+        var arrData = wooApi.getInputData();
+        var objData = wooApi.arrTOobj(arrData);
+        var url = "{:url('api/student/createStudentApi')}";
+        var ajaxResult = wooApi.asyncF(url,objData); 
+        if(ajaxResult.code == 100){
+            mui.toast(ajaxResult.msg);
+            isStudent = true;
+            location.reload() 
+        }else{
+            mui.toast(ajaxResult.msg);
+        }
+      })
+
+      // 购买成功提交数据
+    function createBill(){
+      var remarks = $('.remarks').val();
+      objBillInfo.bill_order = "{$billOrder}";
+      objBillInfo.goods_des = student+'预约体验'+objBillInfo.goods;
+      objBillInfo.total = total;
+      objBillInfo.student_id = student_id;
+      objBillInfo.student = student;
+      objBillInfo.remarks = remarks;
+      objBillInfo.balance_pay = 0;
+      objBillInfo.callback_str = 0;
+      objBillInfo.is_pay = 1;
+      console.log(objBillInfo);
+      var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
+      console.log(result);
+      mui.toast(result.msg);
+      if(result.code == 100){
+          window.location.href="{:url('frontend/bill/finishBookBill',['bill_order'=>$billOrder])}"
+      }else{
+        mui.toast(result.msg);
+      }
+    }
+
+      // 获取学生数据
+    getStudentList();
 </script>
 </html>

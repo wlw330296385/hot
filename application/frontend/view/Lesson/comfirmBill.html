@@ -15,7 +15,6 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/comfirmBill.css">
 </head>
 
 <body class=whitebg>
@@ -110,7 +109,7 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
-<script src="/static/frontend/js/smsCode.js"></script>
+<!-- <script src="/static/frontend/js/smsCode.js"></script> -->
 <script>
     //初始化
     mui.init({
@@ -233,7 +232,7 @@
     //   });
 
 
-      // 提交数据
+      // 提交学生数据
       $('#submitBtn').on('click',function(){
         var arrData = wooApi.getInputData();
         var objData = wooApi.arrTOobj(arrData);
@@ -283,7 +282,7 @@
              },
              function(res){     
                if(res.err_msg == "get_brand_wcpay_request:ok" ) {
-                  createBill(total,JSON.stringify(res));
+                  createBill(total_fee,JSON.stringify(res));
 
                }     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
              }
@@ -292,7 +291,7 @@
 
 
     //购买成功提交数据
-    function createBill(balance_pay,callback_str){
+    function createBill(total_fee,callback_str){
       var remarks = $('.remarks').val();
       objBillInfo.bill_order = "{$billOrder}";
       objBillInfo.goods_des = student+'购买'+objBillInfo.goods;
@@ -300,7 +299,7 @@
       objBillInfo.student_id = student_id;
       objBillInfo.student = student;
       objBillInfo.remarks = remarks;
-      objBillInfo.balance_pay = balance_pay;
+      objBillInfo.balance_pay = total_fee;
       objBillInfo.callback_str = callback_str;
       objBillInfo.is_pay = 1;
       console.log(objBillInfo);
@@ -308,7 +307,7 @@
       console.log(result);
       mui.toast(result.msg);
       if(result.code == 100){
-          window.location.href="{:url('frontend/bill/billInfo',['bill_id'=>"+result.data+"])}"
+          window.location.href="{:url('frontend/bill/finishBill',['bill_order'=>$billOrder])}"
       }else{
         mui.toast(result.msg);
       }

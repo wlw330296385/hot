@@ -48,11 +48,21 @@ class BillService {
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 200];
         }
+        // grade_member操作
+        $GradeMember = new GradeMember;
+        $is_student2 = $GradeMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1,'type'=>1])->find();
+        if(!$is_student2){
+            $re = $GradeMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'type'=>1,'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'type'=>$data['type']]);
+            if(!$re){
+                db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
+            }
+        }else{
+            return ['code'=>200,'msg'=>'你已经购买过课程,请不要重复购买;请联系课程管理员修改课时数量'];
+        }
         $result = $this->Bill->save($data);
         if($result){
             if($data['goods_type'] == 1){
                 $CampMember = new CampMember;
-                // camp_member操作
                 $is_student = $CampMember->where(['type'=>1,'member_id'=>$data['member_id'],'camp_id'=>$data['camp_id'],'status'=>1])->find();
                 if(!$is_student){
                     $res = $CampMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'type'=>1,'status'=>1]);
@@ -61,15 +71,6 @@ class BillService {
                     }
                 }
 
-                // grade_member操作
-                $GradeMember = new GradeMember;
-                $is_student2 = $GradeMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'status'=>1])->find();
-                if(!$is_student2){
-                    $re = $GradeMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'type'=>1,'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods']]);
-                    if(!$re){
-                        db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
-                    }
-                }
             }
             
             return ['code'=>100,'msg'=>'新建成功','data'=>$result];
