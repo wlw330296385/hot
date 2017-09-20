@@ -25,7 +25,7 @@ function getLocationApi(locationApiUrl) {
 
     if(window.localStorage){
         //判断是否有本地存储城市
-        if(localStorage.currentCity==''||localStorage.currentCity==null){
+        if(localStorage.currentCity==''||localStorage.currentCity==null||localStorage.currentCity=='undefined'){
             var city = '';
             var province = '';
             var areas = '';
