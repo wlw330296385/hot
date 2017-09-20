@@ -43,346 +43,353 @@
 </head>
 
 <body>
-<header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-    <h1 class="mui-title">训练营名称</h1>
-</header>
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <h1 class="mui-title">训练营名称</h1>
+    </header>
 
-<div class="mui-content">
+    <div class="mui-content">
 
-    <div class="camp-list camp-lesson-list detalis-list grade-list editor mt">
+        <div class="camp-list camp-lesson-list detalis-list grade-list editor mt">
 
-        <ul class="mui-table-view list mb">
-            <li class="mui-table-view-cell mui-media listli">
-                <a href="javascript:;" class="mui-navigate-right">
-                    <div class="mui-media-body wd83">
-                        <strong class="grade">{$gradeInfo.grade}</strong>
-                        <p class="mui-ellipsis camp" style="text-indent: 0" data-id="{$campid}">{$gradeInfo.camp} |
-                            {$gradeInfo.gradecate}</p>
-                    </div>
-                </a>
-            </li>
-        </ul>
-
-        <div class="page-header">
-            <span class="course">参训学员</span>
-        </div>
-
-        <div class="image-items">
-            <div class="imagef image">
-                <!--<img src=/static/frontend/images/yuantiao.jpg>-->
-                上传合照
-            </div>
-
-            <form class="mui-input-group">
-                {volist name="studentList" id="vol"}
-                <div class="mui-input-row mui-checkbox checkboxCont">
-                    <input type="" name="" value="{$key+1}"><span class="name">{$vol.student}</span>
-                    <input name="checkbox1" value="Item 3" type="checkbox">
-                </div>
-                {/volist}
-                <div class="operation-btn">
-                    <span class="mui-badge">{$countStudentList}</span>
-                    <a class="all">全选</a>
-                    <a class="cancel">取消</a>
-                    <a class="del">[删除]</a>
-                    <a href="#addStudent" class="mui-icon mui-icon-personadd add"></a>
-                </div>
-            </form>
-
-        </div>
-
-        <form class="mui-input-group mt55">
-
-
-            <div class="mui-input-row picker btn" id="demo5" data-options='{"type":"time"}'>
-                <a href="#" class="mui-navigate-right">
-                    <label>训练时间</label>
-                    <span id="result" class="ui-alert lesson_time">{$gradeInfo.lesson_time}</span>
-                </a>
-            </div>
-
-            <div class="mui-input-row">
-                <a href="#trainLocation" class="mui-navigate-right">
-                    <label>训练地点</label>
-                    <span class="trainLocationCont location">{$gradeInfo.court}</span>
-                </a>
-            </div>
-
-            <div class="mui-input-row" id='showCityPicker3'>
-                <a href="#" class="mui-navigate-right">
-                    <label>所属地区</label>
-                    <span id="cityResult3"
-                          class="ui-alert">{$gradeInfo.province} {$gradeInfo.city} {$gradeInfo.area}</span>
-                </a>
-            </div>
-
-            <div class="mui-input-row">
-                <a href="#mainCoach" class="mui-navigate-right">
-                    <label>主教练</label>
-                    <span class="mainCoachCont coach">{$gradeInfo.coach}</span>
-                </a>
-            </div>
-
-            <div class="mui-input-row">
-                <a href="#assistantCoach" class="mui-navigate-right">
-                    <label>助理教练</label>
-                    <span class="assistantCoachCont assistant">{$gradeInfo.assistants}</span>
-                    <input type="text" name="dom" style="display: none">
-                </a>
-            </div>
-
-            <div class="mui-input-row">
-                <a href="#leader" class="mui-navigate-right">
-                    <label>领队</label>
-                    <span class="leaderCont leader">{$gradeInfo.leader}</span>
-                </a>
-            </div>
-
-            <div class="mui-input-row">
-                <a href="#headMaster" class="mui-navigate-right">
-                    <label>班主任</label>
-                    <span class="headMasterCont teacher">{$gradeInfo.teacher}</span>
-                </a>
-            </div>
-
-            <div class="mui-input-row">
-                <a href="#project" class="mui-navigate-right">
-                    <label>训练项目</label>
-                    <span class="projectCont"></span>
-                </a>
-            </div>
-
-            <div class="mui-input-row">
-                <label>场地租金</label>
-                <span>{$gradeInfo.rent}</span>
-            </div>
-
-            <div class="mui-input-row">
-                <label class="wd">主教佣金<font style="font-size: 12px">(底薪{$gradeInfo.coach_salary}+上课人数x基数{$gradeInfo.salary_base})</font></label>
-                <span>{$gradeInfo.coach_salary}</span>
-            </div>
-
-            <div class="mui-input-row">
-                <label class="wd">助教佣金 <font style="font-size: 12px">(底薪{$gradeInfo.assistant_salary}+上课人数x基数{$gradeInfo.salary_base})</font></label>
-                <span>{$gradeInfo.assistant_salary}</span>
-            </div>
-
-            <div class="mui-input-row">
-                <label>备注</label>
-                <input type="text" class="remarks checkChinese" value="{$gradeInfo.remarks}" onblur="checkChinese()">
-            </div>
-
-        </form>
-
-        <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen operationBtn" style="color: #fff">
-                提交录入
-            </li>
-        </ul>
-
-    </div>
-
-
-</div>
-
-<!--主教练-->
-<div id="mainCoach" class="mui-popover">
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list">
-                <div class="page-header">
-                    <span class="course"><strong>主教练</strong></span>
-                </div>
-                <ul class="mui-table-view list">
-                    <li class="mui-table-view-cell listli detalisli mainCoach">
-                        主教练
+            <ul class="mui-table-view list mb">
+                <li class="mui-table-view-cell mui-media listli">
+                    <a href="javascript:;" class="mui-navigate-right">
+                        <div class="mui-media-body wd83">
+                            <strong class="grade">{$gradeInfo.grade}</strong>
+                            <p class="mui-ellipsis camp" style="text-indent: 0" data-id="{$campid}">{$gradeInfo.camp} |
+                                {$gradeInfo.gradecate}</p>
+                            </div>
+                        </a>
                     </li>
                 </ul>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!--助理教练-->
-<div id="assistantCoach" class="mui-popover">
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list">
                 <div class="page-header">
-                    <span class="course wd36"><strong>助理教练</strong></span>
-                    <span class="fr"><button class="mui-btn-blue" id="domConfirm">确认</button></span>
+                    <span class="course">参训学员</span>
                 </div>
-                <form class="mui-input-group">
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>教练1</label>
-                        <input name="checkbox-dom" value="教练1" type="checkbox">
+
+                <div class="image-items">
+                    <form class="mui-input-group">
+                     <!--    <div class="imagef image">
+                            上传合照
+                        </div> -->
+                        <div class="mui-input-row h-auto">
+                            <a class="portraits filePicker" onclick="add_id(3)">
+                                <label>上传合照</label>
+                                <img id="preview_3" class="coachicon icon01" src='{notempty name="coachInfo.portraits"}{$coachInfo.portraits}{/notempty}'>
+                                <input type="hidden" name="portraits" value='{notempty name="coachInfo.portraits"}{$coachInfo.portraits}{/notempty}'>
+                            </a>
+                        </div>
+                    </form>
+
+                    <form class="mui-input-group">
+                        {volist name="studentList" id="vol"}
+                        <div class="mui-input-row mui-checkbox checkboxCont">
+                            <input type="" name="" value="{$key+1}"><span class="name">{$vol.student}</span>
+                            <input name="checkbox1" value="Item 3" type="checkbox">
+                        </div>
+                        {/volist}
+                        <div class="operation-btn">
+                            <span class="mui-badge">{$countStudentList}</span>
+                            <a class="all">全选</a>
+                            <a class="cancel">取消</a>
+                            <a class="del">[删除]</a>
+                            <a href="#addStudent" class="mui-icon mui-icon-personadd add"></a>
+                        </div>
+                    </form>
+
+                </div>
+
+                <form class="mui-input-group mt55">
+
+
+                    <div class="mui-input-row picker btn" id="demo5" data-options='{"type":"time"}'>
+                        <a href="#" class="mui-navigate-right">
+                            <label>训练时间</label>
+                            <span id="result" class="ui-alert lesson_time">{$gradeInfo.lesson_time}</span>
+                        </a>
                     </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>教练2</label>
-                        <input name="checkbox-dom" value="教练2" type="checkbox">
+
+                    <div class="mui-input-row">
+                        <a href="#trainLocation" class="mui-navigate-right">
+                            <label>训练地点</label>
+                            <span class="trainLocationCont location">{$gradeInfo.court}</span>
+                        </a>
                     </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>教练3</label>
-                        <input name="checkbox-dom" value="教练3" type="checkbox">
+
+                    <div class="mui-input-row" id='showCityPicker3'>
+                        <a href="#" class="mui-navigate-right">
+                            <label>所属地区</label>
+                            <span id="cityResult3"
+                            class="ui-alert">{$gradeInfo.province} {$gradeInfo.city} {$gradeInfo.area}</span>
+                        </a>
                     </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>教练4</label>
-                        <input name="checkbox-dom" value="教练4" type="checkbox">
+
+                    <div class="mui-input-row">
+                        <a href="#mainCoach" class="mui-navigate-right">
+                            <label>主教练</label>
+                            <span class="mainCoachCont coach">{$gradeInfo.coach}</span>
+                        </a>
                     </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>教练5</label>
-                        <input name="checkbox-dom" value="教练5" type="checkbox">
+
+                    <div class="mui-input-row">
+                        <a href="#assistantCoach" class="mui-navigate-right">
+                            <label>助理教练</label>
+                            <span class="assistantCoachCont assistant">{$gradeInfo.assistants}</span>
+                            <input type="text" name="dom" style="display: none">
+                        </a>
                     </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label>教练6</label>
-                        <input name="checkbox-dom" value="教练6" type="checkbox">
+
+                    <div class="mui-input-row">
+                        <a href="#leader" class="mui-navigate-right">
+                            <label>领队</label>
+                            <span class="leaderCont leader">{$gradeInfo.leader}</span>
+                        </a>
                     </div>
+
+                    <div class="mui-input-row">
+                        <a href="#headMaster" class="mui-navigate-right">
+                            <label>班主任</label>
+                            <span class="headMasterCont teacher">{$gradeInfo.teacher}</span>
+                        </a>
+                    </div>
+
+                    <div class="mui-input-row">
+                        <a href="#project" class="mui-navigate-right">
+                            <label>训练项目</label>
+                            <span class="projectCont"></span>
+                        </a>
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>场地租金</label>
+                        <span>{$gradeInfo.rent}</span>
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label class="wd">主教佣金<font style="font-size: 12px">(底薪{$gradeInfo.coach_salary}+上课人数x基数{$gradeInfo.salary_base})</font></label>
+                        <span>{$gradeInfo.coach_salary}</span>
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label class="wd">助教佣金 <font style="font-size: 12px">(底薪{$gradeInfo.assistant_salary}+上课人数x基数{$gradeInfo.salary_base})</font></label>
+                        <span>{$gradeInfo.assistant_salary}</span>
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>备注</label>
+                        <input type="text" class="remarks checkChinese" value="{$gradeInfo.remarks}" onblur="checkChinese()">
+                    </div>
+
                 </form>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!--训练地点-->
-<div id="trainLocation" class="mui-popover">
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list">
-                <div class="page-header">
-                    <span class="course"><strong>训练地点</strong></span>
-                </div>
-                <ul class="mui-table-view list">
-                    <li class="trainLocation">asfsaf</li>
-                    <li class="trainLocation">asfsaf</li>
+                <ul class="mui-table-view operation">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen operationBtn" style="color: #fff">
+                        提交录入
+                    </li>
                 </ul>
+
             </div>
+
+
         </div>
-    </div>
-</div>
-<!--班主任-->
-<div id="headMaster" class="mui-popover">
-    <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list">
-                <div class="camp-lesson-list">
-                    <div id="" class="mui-segmented-control mb">
-                        <a class="mui-control-item mui-active" href="#item1">粉丝列表</a>
-                        <a class="mui-control-item" href="#item2">教练列表</a>
-                    </div>
-                </div>
-                <div id="item1" class="mui-control-content mui-active">
-                    <div class="mui-scroll">
+
+        <!--主教练-->
+        <div id="mainCoach" class="mui-popover">
+            <div class="mui-popover-arrow"></div>
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="camp-list camp-lesson-list detalis-list">
+                        <div class="page-header">
+                            <span class="course"><strong>主教练</strong></span>
+                        </div>
                         <ul class="mui-table-view list">
-                            <li class="mui-table-view-cell listli detalisli headMaster">
-                                粉丝列表
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div id="item2" class="mui-control-content">
-                    <div class="mui-scroll">
-                        <ul class="mui-table-view list">
-                            <li class="mui-table-view-cell listli detalisli headMaster">
-                                教练列表
+                            <li class="mui-table-view-cell listli detalisli mainCoach">
+                                主教练
                             </li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-<!--领队-->
-<div id="leader" class="mui-popover">
-    <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list">
-                <div class="camp-lesson-list">
-                    <div id="" class="mui-segmented-control mb">
-                        <a class="mui-control-item mui-active" href="#item3">粉丝列表</a>
-                        <a class="mui-control-item" href="#item4">教练列表</a>
+
+        <!--助理教练-->
+        <div id="assistantCoach" class="mui-popover">
+            <div class="mui-popover-arrow"></div>
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="camp-list camp-lesson-list detalis-list">
+                        <div class="page-header">
+                            <span class="course wd36"><strong>助理教练</strong></span>
+                            <span class="fr"><button class="mui-btn-blue" id="domConfirm">确认</button></span>
+                        </div>
+                        <form class="mui-input-group">
+                            <div class="mui-input-row mui-checkbox mui-left">
+                                <label>教练1</label>
+                                <input name="checkbox-dom" value="教练1" type="checkbox">
+                            </div>
+                            <div class="mui-input-row mui-checkbox mui-left">
+                                <label>教练2</label>
+                                <input name="checkbox-dom" value="教练2" type="checkbox">
+                            </div>
+                            <div class="mui-input-row mui-checkbox mui-left">
+                                <label>教练3</label>
+                                <input name="checkbox-dom" value="教练3" type="checkbox">
+                            </div>
+                            <div class="mui-input-row mui-checkbox mui-left">
+                                <label>教练4</label>
+                                <input name="checkbox-dom" value="教练4" type="checkbox">
+                            </div>
+                            <div class="mui-input-row mui-checkbox mui-left">
+                                <label>教练5</label>
+                                <input name="checkbox-dom" value="教练5" type="checkbox">
+                            </div>
+                            <div class="mui-input-row mui-checkbox mui-left">
+                                <label>教练6</label>
+                                <input name="checkbox-dom" value="教练6" type="checkbox">
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div id="item3" class="mui-control-content mui-active">
-                    <div class="mui-scroll">
+            </div>
+        </div>
+
+        <!--训练地点-->
+        <div id="trainLocation" class="mui-popover">
+            <div class="mui-popover-arrow"></div>
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="camp-list camp-lesson-list detalis-list">
+                        <div class="page-header">
+                            <span class="course"><strong>训练地点</strong></span>
+                        </div>
                         <ul class="mui-table-view list">
-                            <li class="mui-table-view-cell listli detalisli leader">
-                                粉丝列表
-                            </li>
+                            <li class="trainLocation">asfsaf</li>
+                            <li class="trainLocation">asfsaf</li>
                         </ul>
                     </div>
                 </div>
-                <div id="item4" class="mui-control-content">
-                    <div class="mui-scroll">
+            </div>
+        </div>
+        <!--班主任-->
+        <div id="headMaster" class="mui-popover">
+            <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
+            <div class="mui-popover-arrow"></div>
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="camp-list camp-lesson-list detalis-list">
+                        <div class="camp-lesson-list">
+                            <div id="" class="mui-segmented-control mb">
+                                <a class="mui-control-item mui-active" href="#item1">粉丝列表</a>
+                                <a class="mui-control-item" href="#item2">教练列表</a>
+                            </div>
+                        </div>
+                        <div id="item1" class="mui-control-content mui-active">
+                            <div class="mui-scroll">
+                                <ul class="mui-table-view list">
+                                    <li class="mui-table-view-cell listli detalisli headMaster">
+                                        粉丝列表
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="item2" class="mui-control-content">
+                            <div class="mui-scroll">
+                                <ul class="mui-table-view list">
+                                    <li class="mui-table-view-cell listli detalisli headMaster">
+                                        教练列表
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--领队-->
+        <div id="leader" class="mui-popover">
+            <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
+            <div class="mui-popover-arrow"></div>
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="camp-list camp-lesson-list detalis-list">
+                        <div class="camp-lesson-list">
+                            <div id="" class="mui-segmented-control mb">
+                                <a class="mui-control-item mui-active" href="#item3">粉丝列表</a>
+                                <a class="mui-control-item" href="#item4">教练列表</a>
+                            </div>
+                        </div>
+                        <div id="item3" class="mui-control-content mui-active">
+                            <div class="mui-scroll">
+                                <ul class="mui-table-view list">
+                                    <li class="mui-table-view-cell listli detalisli leader">
+                                        粉丝列表
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="item4" class="mui-control-content">
+                            <div class="mui-scroll">
+                                <ul class="mui-table-view list">
+                                    <li class="mui-table-view-cell listli detalisli leader">
+                                        教练列表
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 训练项目 -->
+        <div id="project" class="mui-popover">
+            <div class="mui-popover-arrow"></div>
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="camp-list camp-lesson-list detalis-list">
+                        <div class="page-header">
+                            <span class="course"><strong>训练地点</strong></span>
+                        </div>
                         <ul class="mui-table-view list">
-                            <li class="mui-table-view-cell listli detalisli leader">
-                                教练列表
-                            </li>
+                            <li class="project">训练项目</li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- 训练项目 -->
-<div id="project" class="mui-popover">
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list">
-                <div class="page-header">
-                    <span class="course"><strong>训练地点</strong></span>
+        <!-- 添加学员 -->
+        <div id="addStudent" class="mui-popover">
+            <div class="mui-popover-arrow"></div>
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="camp-list camp-lesson-list detalis-list">
+                        <div class="page-header">
+                            <span class="course"><strong>添加学员</strong></span>
+                        </div>
+                        <ul class="mui-table-view list detalis-list">
+                            <li class="mui-table-view-cell listli addStudent">添加01</li>
+                            <li class="mui-table-view-cell listli addStudent">添加02</li>
+                        </ul>
+                    </div>
                 </div>
-                <ul class="mui-table-view list">
-                    <li class="project">训练项目</li>
-                </ul>
             </div>
         </div>
-    </div>
-</div>
-
-<!-- 添加学员 -->
-<div id="addStudent" class="mui-popover">
-    <div class="mui-popover-arrow"></div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list">
-                <div class="page-header">
-                    <span class="course"><strong>添加学员</strong></span>
-                </div>
-                <ul class="mui-table-view list detalis-list">
-                    <li class="mui-table-view-cell listli addStudent">添加01</li>
-                    <li class="mui-table-view-cell listli addStudent">添加02</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
 
 
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<!-- 选择器 -->
-<script src="/static/frontend/js/mui.picker.min.js"></script>
-<script src="/static/frontend/js/mui.poppicker.js"></script>
-<script src="/static/frontend/js/city.data-3.js"></script>
-
-<script>
-    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
-</script>
-<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
-<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-<script>
+        <script src="/static/frontend/js/mui.min.js"></script>
+        <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+        <!-- 选择器 -->
+        <script src="/static/frontend/js/mui.picker.min.js"></script>
+        <script src="/static/frontend/js/mui.poppicker.js"></script>
+        <script src="/static/frontend/js/city.data-3.js"></script>
+        <script>
+            var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+        </script>
+        <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+        <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+        <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
@@ -579,8 +586,6 @@
                         } else {
                             mui.toast(data.msg);
                         }
-
-
                     },
                     error: function (xhr, type, errorThrown) {
                         //异常处理；
