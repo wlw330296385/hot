@@ -2,19 +2,23 @@
 window.id=0;
 function add_id(id) {
     window.id=id;
-    //console.log(window.id);
+    console.log(window.id);
 }
 
 // 初始化 webuloader
 var uploader = WebUploader.create({
     auto: true,
     server: uploadApiUrl,
-    pick: '.filePicker',
+    pick: {
+        id:'.filePicker',
+        multiple: false
+    },
     accept: {
         title: 'Images',
         extensions: 'gif,jpg,jpeg,bmp,png',
         mimeTypes: 'image/*'
-    }
+    },
+    fileNumLimit: 1,
 });
 // 预览图
 uploader.on('fileQueued', function(file) {

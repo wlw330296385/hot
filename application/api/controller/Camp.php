@@ -69,13 +69,14 @@ class Camp extends Base{
             ];
 
             // 地区input 拆分成省 市 区 3个字段
-            if ( input('?post.locationStr') ) {
-                $locationStr = input('post.locationStr');
+            $locationStr = input('post.locationStr');
+            if ($locationStr) {
                 $locationArr = explode('|', $locationStr);
                 $campData['province'] = $locationArr[0];
                 $campData['city'] = $locationArr[1];
                 $campData['area'] = $locationArr[2];
             }
+
             //dump($data);
             $campS = new CampService();
             return $campS->updateCamp($campData);
