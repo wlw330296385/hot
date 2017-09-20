@@ -148,18 +148,10 @@
                         <span class="course"><strong>请选择身份</strong></span>
                     </div>
                     <ul class="mui-table-view ">
-                        <li class="mui-table-view-cell listli detalisli join">
-                            <a class="choiseName">教练</a>
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli join">
-                            <a href="#yqpopover" class="choiseName">管理员</a>
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli join">
-                            <a href="#yqpopover" class="choiseName">创建者</a>
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli join">
-                            <a href="#yqpopover" class="choiseName">粉丝</a>
-                        </li>
+                        <li class="mui-table-view-cell listli detalisli choiseType">教练</li>
+                        <li class="mui-table-view-cell listli detalisli choiseType">管理员</li>
+                        <li class="mui-table-view-cell listli detalisli choiseType">创建者</li>
+                        <li class="mui-table-view-cell listli detalisli choiseType">粉丝</li>
                     </ul>
                 </div>
             </div>
@@ -169,11 +161,11 @@
     <div id="yqpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
             <ul class="mui-table-view operation">
-                <h5><font class="type">管理员</font><a class="mui-icon mui-icon-closeempty"></a></h5>
+                <h5><font class="type">管理员</font><a href="#yqpopover" class="mui-icon mui-icon-closeempty"></a></h5>
                 <li class="mui-table-view-cell listli">
                     <textarea rows="4" class="remarks"></textarea>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli"><a href="#" class="joinBtn">提交</a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli joinBtn">提交</li>
             </ul>
         </div>
     </div>
@@ -181,11 +173,11 @@
     <div id="pjpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
             <ul class="mui-table-view operation">
-                <h5><font class="choiseNameCont">评价我的教练</font><a class="mui-icon mui-icon-closeempty"></a></h5>
+                <h5><font class="type">评价我的教练</font><a href="#pjpopover" class="mui-icon mui-icon-closeempty"></a></h5>
                 <li class="mui-table-view-cell listli">
                     <textarea rows="4"></textarea>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli"><a href="#">提交</a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli">提交</li>
             </ul>
         </div>
     </div>
@@ -207,19 +199,20 @@
             $(".about").css("display","block");
             $(this).hide();
         });
-
-        $(".choiseName").click(function(event) {
-            event.stopPropagation();
-            var choiseName = $(this).text();
-            console.log(choiseName)
-            $(".choiseNameCont").text(choiseName);
+        
+        //选择身份申请加入
+        $(".choiseType").click(function() {
+            var choiseType = $(this).text();
+            $("#yqpopover").addClass("mui-active").css("display","block"); 
+            $(".type").text(choiseType);
+            mui('#yqpopover').popover('toggle');
         })
 
-        //训练营的身份
+        //训练营的身份api
         $(".joinBtn").click(function () {
             var type =$(".type").text();
             var remarks = $(".remarks").text();
-            mui.ajax("{:url('api/camp/applyApi')}", {
+            mui.ajax("{:url('api/CampMember/applyApi')}", {
                 data: {
                     'type': type,
                     'camp_id': "{$campInfo.id}",
@@ -233,7 +226,7 @@
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data)
                     if (data.code == 100) {
-                        mui.toast(data.msg);
+                        mui.toast("提交成功");
                     } else {
                         mui.toast(data.msg);
                     }
