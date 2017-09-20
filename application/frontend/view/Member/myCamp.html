@@ -28,20 +28,20 @@
         <ul class="mui-table-view mb">
         {volist name='campList' id="vol"}
             <li class="mui-table-view-cell listli listinitial">
-                <a href="{:url('camp/powerCamp',['camp_id'=>$vol['id'],'type'=>$type])}" class="mui-navigate-right">
-                    {$vol.camp}
-                </a>
+                {if condition="$type eq 4"}
+                    {if condition="$iscamp"}
+                        {eq name="iscamp.check_status" value="0"}
+                            <a href="{:url('camp/campsetting',['camp_id'=>$vol['camp_id']])}" class="mui-navigate-right">{$vol.camp}[{$iscamp.status}]</a>
+                        {else/}<a href="{:url('camp/powerCamp',['camp_id'=>$vol['camp_id'],'type'=>$type])}" class="mui-navigate-right">{$vol.camp}</a>
+                        {/eq}
+                    {/if}
+                {else/} <a href="{:url('camp/powerCamp',['camp_id'=>$vol['camp_id'],'type'=>$type])}" class="mui-navigate-right">{$vol.camp}</a>
+                {/if}
             </li>
         {/volist}
         </ul>
         {empty name="campList"}
             {switch name="$type"}
-                {case value='4'}
-                    <p class="prompt whitebg">您没有创建训练营！<a href="{:url('camp/createCamp')}">我要创建训练营</a></p>
-                {/case}
-                {case value='0'}
-                    <p class="prompt whitebg">您没有粉丝身份！<a href="{:url('camp/campList')}">去关注训练营成为粉丝</a></p>
-                {/case}
                 {case value='1'}
                     <p class="prompt whitebg">您没有学生身份！<a href="{:url('lesson/lessonList')}">我要报读篮球训练班</a></p>
                 {/case}
@@ -59,6 +59,9 @@
                 {/case}
                 {case value='4'}
                     <p class="prompt whitebg">您没有创建训练营！<a href="{:url('camp/createCamp')}">我要创建训练营</a></p>
+                {/case}
+                {case value='5'}
+                <p class="prompt whitebg">您没有粉丝身份！<a href="{:url('camp/campList')}">去关注训练营成为粉丝</a></p>
                 {/case}
             {/switch}
         {/empty}
