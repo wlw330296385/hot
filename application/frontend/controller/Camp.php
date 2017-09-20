@@ -201,7 +201,6 @@ class Camp extends Base{
         $camp_id = input('param.camp_id');
         $member_id = $this->memberInfo['id'];
         $power = $this->CampService->isPower($camp_id,$member_id);
-
         $campInfo = $this->CampService->getCampInfo($camp_id);
         $gradeCount = db('grade')->where(['camp_id'=>$camp_id])->count();
         $scheduleCount = db('schedule')->where(['camp_id'=>$camp_id])->count();
