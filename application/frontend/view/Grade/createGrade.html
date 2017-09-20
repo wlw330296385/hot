@@ -216,9 +216,7 @@
                     </div>
                     <ul class="mui-table-view list">
                         {volist name="staffList" id="vol"}
-                        <li class="mui-table-view-cell listli detalisli mainCoach" data-id="{$vol.member_id}">
-                            {$vol.member}
-                        </li>
+                        <li class="mui-table-view-cell listli detalisli mainCoach" data-id="{$vol.member_id}">{$vol.member}</li>
                         {/volist}
                     </ul>
                 </div>
@@ -236,9 +234,7 @@
                     </div>
                     <ul class="mui-table-view list">
                         {volist name="gradecateList" id="vol"}
-                        <li class="mui-table-view-cell listli detalisli grade">
-                            {$vol.name}
-                        </li>
+                        <li class="mui-table-view-cell listli detalisli grade">{$vol.name}</li>
                         {/volist}
                     </ul>
                 </div>
@@ -256,9 +252,7 @@
                     </div>
                     <ul class="mui-table-view list">
                         {volist name="lessonList" id="vol"}
-                        <li class="mui-table-view-cell listli detalisli lessonType lesson" data-id="{$vol.id}">
-                            {$vol.lesson}
-                        </li>
+                        <li class="mui-table-view-cell listli detalisli lessonType lesson" data-id="{$vol.id}">{$vol.lesson}</li>
                         {/volist}
                     </ul>
                 </div>
@@ -577,7 +571,7 @@
         // 班级名称
         $(".grade").click(function(){
             var grade = $(this).text();
-            $(".gradeCont").html(grade);
+            $(".gradeCont").text(grade);
             mui("#grade").popover("toggle");
         })
         // 学员名单
@@ -587,22 +581,14 @@
                 return $(this).val()
             }).get().join(",") );
             $(".studentCont").text($("input[name='student']").val());
-            
-            // student_id=new Array();
-            // $("input[name='checkbox-student']:checkbox").each(function(){ 
-            //     if($(this).checked==true){
-            //         student_id.push($(this).attr("data-id"));
-            //     }
-            // });   
-
-            // for(i=0;i<student_id.length;i++){
-            //     studentList = [{"id":student_id}];//组学员id数组e
-            // }
-
-            student_id =$("input[name='checkbox-student']:checked").attr("data-id");//获取学员id
-            studentList = [{"id":student_id}];//组学员id数组
+            //组数组
+            student_id=[];
+            $("input[name='checkbox-student']:checked").each(function(i){ 
+                var obj = $(this).attr("data-id");
+                student_id[i]={id:obj}
+            });  
+            studentList = student_id;//数组赋值给变量
             mui('#student').popover('toggle');
-
         })
         // 课程类型
         $(".lessonType").click(function(){
@@ -721,29 +707,30 @@
             var  rent = $(".rent").val();
             var  status = $(".status option:selected").text();
             var  remarks = $(".remarks").val();
-            mui.ajax("{:url('api/grade/createGradeApi')}",{
-                data:{
-                    "gradeData": {
-                        "grade":grade,
-                        "lesson":lesson,
-                        "gradecate":gradecate,
-                        "week":week,
-                        "lesson_time":lesson_time,
-                        "location":location,
-                        "coach_salary":coach_salary,
-                        "assistant_salary":assistant_salary,
-                        "salary_base":salary_base,
-                        "coach":coach,
-                        "assistants":assistant,
-                        "leader":leader,
-                        "teacher":teacher,
-                        "plan":plan,
-                        "rent":rent,
-                        "status":status,
-                        "remarks":remarks,
+            if(grade!=''&&lesson!=''&&gradecate!=''&&week!=''&&lesson_time!=''&&location!=''&&coach!=''&&assistant!=''&&leader!=''&&teacher!=''&&plan!=''&&rent!=''){
+                mui.ajax("{:url('api/grade/createGradeApi')}",{
+                    data:{
+                        "gradeData": {
+                            "grade":grade,
+                            "lesson":lesson,
+                            "gradecate":gradecate,
+                            "week":week,
+                            "lesson_time":lesson_time,
+                            "location":location,
+                            "coach_salary":coach_salary,
+                            "assistant_salary":assistant_salary,
+                            "salary_base":salary_base,
+                            "coach":coach,
+                            "assistants":assistant,
+                            "leader":leader,
+                            "teacher":teacher,
+                            "plan":plan,
+                            "rent":rent,
+                            "status":status,
+                            "remarks":remarks,
+                        },
+                        "studentList":studentList
                     },
-                    "studentList":studentList
-                },
                     dataType:'json',//服务器返回json格式数据
                     type:'post',//HTTP请求类型
                     timeout:10000,//超时时间设置为10秒；
@@ -762,6 +749,9 @@
                         console.log(type);
                     }
                 });
+            }else{
+                mui.toast("选项不能为空");
+            }
         })
     });
 
