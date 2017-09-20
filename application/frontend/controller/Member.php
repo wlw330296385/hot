@@ -210,11 +210,18 @@ class Member extends Base{
         $type = input('param.type')?input('param.type'):4;
         if($type){
             $campList = db('camp_member')->where(['member_id'=>$member_id,'type'=>$type,'status'=>1])->select();
+            //dump($campList);
 
             switch($type) {
                 case '2' : {
                     $isCoach = $this->MemberService->hasCoach($this->memberInfo['id']);
                     $this->assign('iscoach', $isCoach);
+                    break;
+                }
+                case '4' : {
+                    $hasCamp = $this->MemberService->hasCamp($this->memberInfo['id']);
+                    //dump($hasCamp);
+                    $this->assign('iscamp', $hasCamp);
                     break;
                 }
 
