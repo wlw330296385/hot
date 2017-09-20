@@ -1,9 +1,11 @@
 <?php 
 namespace app\api\controller;
 use app\api\controller\Base;
-use app\service\CampService
+use app\service\CampService;
+
+
 class CampMember extends Base{
-        protected $CampService;
+    protected $CampService;
 	public function _initialize(){
 		parent::_initialize();
         $this->CampService = new CampService;
@@ -97,4 +99,21 @@ class CampMember extends Base{
         }  
     }
    
+
+    public function getCampMemberApi(){
+        try{
+            $camp_id = input('param.camp_id');
+            $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+            $CampMember =new  \app\model\CampMember;
+            $result = $CampMember->where(['member_id'=>$member_id,'camp_id'=>$camp_id])->find();
+            if($result){
+                return json(['code'=>100,'msg'=>'OK','data'=>$result]);
+            }else{
+                return json(['code'=>200,'msg'=>'查询失败,请正确传参']);
+            }
+            
+        }catch(Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        } 
+    }
 }
