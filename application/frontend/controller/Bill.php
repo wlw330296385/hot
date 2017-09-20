@@ -87,8 +87,22 @@ class Bill extends Base{
     	$map = input('post.');
         $map['member_id'] = $member_id;
         $billList = $this->BillService->getBillList($map);
-        // dump($billList);die;
-        $billList['count'] = count($billList);
+        $count = count($billList);
+        // 已付款
+        $payCount = 0;
+        
+        $notPayCount = 0;
+        foreach ($billList as $key => $value) {
+            if($value['is_pay'] == '已付款'){
+                $payCount++;
+            }
+            if($value['is_pay'] == '未付款'){
+                $notPayCount++;
+            }
+        }
+        $this->assign('notPayCount',$notPayCount);
+        $this->assign('payCount',$payCount);
+        $this->assign('count',$count);
         $this->assign('billList',$billList);
 		return view('Bill/billList');
     }
