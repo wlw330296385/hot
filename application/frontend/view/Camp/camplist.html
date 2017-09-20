@@ -68,16 +68,13 @@
         var keyword='';
         var sArea='';
 
-        //判断是否有本地存储城市
-        if(localStorage.currentCity==''||localStorage.currentCity==null){
-            var locationApiUrl = "{:url('api/Location/getLocation')}";
-            getSetLocation(locationApiUrl);
-        }else{
-            var sCity=localStorage.currentCity;
-            var sProvince=localStorage.currentProvince;
-            var allArea=localStorage.currentAreas;
-            $('.location').text(localStorage.currentCity);
-        }
+        //获取定位省市区
+        var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
+        var sCity = getLocationTB['city'];
+        var sProvince = getLocationTB['province'];
+        var allArea = getLocationTB['area'];
+
+        $('.location').text(sCity);
 
         //生成区域选择下拉菜单
         var arrArea = allArea.split(',');
