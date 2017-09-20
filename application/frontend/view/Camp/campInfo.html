@@ -19,52 +19,49 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
 </head>
 
-<body class=whitebg>
+<body>
 
-
-<!--首页-->
-<div class="mui-content">
-
-    <!--训练营详情页-->
     <div class="mui-content">
-        <div class="list camp-list detalis-list coach">
-            <img class="cover" src="/static/frontend/images/yuantiao.jpg" alt="">
-            <ul class="mui-table-view mb" style="margin-top: -4px">
-                <li class="mui-table-view-cell mui-media listli de " style="padding:11px 15px;">
-                    <a href="javascript:;">
-                        <img class="mui-media-object mui-pull-left" src="{$campInfo.logo}">
-                        <div class="mui-media-body">
-                            {$campInfo.camp}
-                            <p class="mui-ellipsis">{$campInfo.province} {$campInfo.city} {$campInfo.area}</p>
-                        </div>
-                        <div class="price-frame camp-num">
-                            <ul>
-                                <li>
-                                    <div class="icons mui-inline">{$campInfo.star}
-                                        <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
-                                        <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
-                                        <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
-                                    </div>
-                                </li>
-                                <li class="fr">{$campInfo.total_member}人报名</li>
-                            </ul>
-                        </div>
-                    </a>
-                </li>
-            </ul>
 
-            <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell listli detalisli">训练营介绍
-                    <span class="about">{$campInfo.camp_introduction}
-                        <a href="javascript:void(0)">......全文展示</a>
-                    </span>
-                </li>
-            </ul>
+        <div class="mui-content">
+            <div class="list camp-list detalis-list coach">
+                <img class="cover" src="/static/frontend/images/yuantiao.jpg" alt="">
+                <ul class="mui-table-view mb" style="margin-top: -4px">
+                    <li class="mui-table-view-cell mui-media listli de " style="padding:11px 15px;">
+                        <a href="javascript:;">
+                            <img class="mui-media-object mui-pull-left" src="{$campInfo.logo}">
+                            <div class="mui-media-body">
+                                {$campInfo.camp}
+                                <p class="mui-ellipsis">{$campInfo.province} {$campInfo.city} {$campInfo.area}</p>
+                            </div>
+                            <div class="price-frame camp-num">
+                                <ul>
+                                    <li>
+                                        <div class="icons mui-inline">{$campInfo.star}
+                                            <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
+                                            <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
+                                            <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
+                                        </div>
+                                    </li>
+                                    <li class="fr">{$campInfo.total_member}人报名</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
 
-            <ul class="mui-table-view">
-                <li class="mui-table-view-cell listli detalisli" style="line-height: 40px;">
-                    <a class="mui-navigate-right"
-                       href="{:url('coach/coachListOfCamp',['camp_id'=>$campInfo['id'],'type'=>4,'status'=>1])}">
+                <ul class="mui-table-view mb">
+                    <li class="mui-table-view-cell listli detalisli">训练营介绍
+                        <span class="about">{$campInfo.camp_introduction}
+                            <a href="javascript:void(0)">......全文展示</a>
+                        </span>
+                    </li>
+                </ul>
+
+                <ul class="mui-table-view">
+                    <li class="mui-table-view-cell listli detalisli" style="line-height: 40px;">
+                        <a class="mui-navigate-right"
+                        href="{:url('coach/coachListOfCamp',['camp_id'=>$campInfo['id'],'type'=>4,'status'=>1])}">
                         教练
                         {volist name="coachList" id="vol"}
                         <img class="coachicon" src="{$vol.portraits}" alt="">
@@ -125,48 +122,135 @@
             <p class="dropdown mt55"><a href="#">查看16条评论...</a></p>
 
             <ul class="mui-table-view operation mt">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli">
                     <a href="tel:18507717466">
-                        <span class="mui-icon mui-icon-phone"></span>电话咨询
+                        <span class="mui-icon mui-icon-phone" style="color: #737373"></span>电话咨询
                     </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli" style="color: #737373">
+                    <a href="#pjpopover">我来评价</a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli" style="color: #737373">
+                    <a href="#join">申请加入</a>
                 </li>
             </ul>
         </div>
-    </div>
-    <div id="delete" class="mui-popover mui-popover-action mui-popover-bottom" data-backdrop="static">
 
-        <ul class="mui-table-view">
-            <li class="mui-table-view-cell">
-                <textarea id="question" class="mui-input-clear question" placeholder="说说你对教练的印象吧..."></textarea>
-            </li>
-        </ul>
-        <ul class="mui-table-view">
-            <li class="mui-table-view-cell">
-                <a href="#delete"><b>提交评价</b></a>
-            </li>
-            <li class="mui-table-view-cell">
-                <a href="#delete"><b>取消</b></a>
-            </li>
-        </ul>
     </div>
-</div>
-</body>
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<script>
+
+    <!-- 申请加入选择身份弹出框 -->
+    <div id="join" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list list">
+                    <div class="page-header">
+                        <span class="course"><strong>请选择身份</strong></span>
+                    </div>
+                    <ul class="mui-table-view ">
+                        <li class="mui-table-view-cell listli detalisli join">
+                            <a class="choiseName">教练</a>
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli join">
+                            <a href="#yqpopover" class="choiseName">管理员</a>
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli join">
+                            <a href="#yqpopover" class="choiseName">创建者</a>
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli join">
+                            <a href="#yqpopover" class="choiseName">粉丝</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 申请加入弹框 -->
+    <div id="yqpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <ul class="mui-table-view operation">
+                <h5><font class="type">管理员</font><a class="mui-icon mui-icon-closeempty"></a></h5>
+                <li class="mui-table-view-cell listli">
+                    <textarea rows="4" class="remarks"></textarea>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli"><a href="#" class="joinBtn">提交</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- 评价弹框 -->
+    <div id="pjpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <ul class="mui-table-view operation">
+                <h5><font class="choiseNameCont">评价我的教练</font><a class="mui-icon mui-icon-closeempty"></a></h5>
+                <li class="mui-table-view-cell listli">
+                    <textarea rows="4"></textarea>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli"><a href="#">提交</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
 
-    //展示训练营介绍全文
+    //弹出菜单
+    mui('.mui-scroll-wrapper').scroll();
+
     $(function () {
+        //展示训练营介绍全文
         $(".about a").click( function() {
             $(".about").css("display","block");
             $(this).hide();
         });
-    })
+
+        $(".choiseName").click(function(event) {
+            event.stopPropagation();
+            var choiseName = $(this).text();
+            console.log(choiseName)
+            $(".choiseNameCont").text(choiseName);
+        })
+
+        //训练营的身份
+        $(".joinBtn").click(function () {
+            var type =$(".type").text();
+            var remarks = $(".remarks").text();
+            mui.ajax("{:url('api/camp/applyApi')}", {
+                data: {
+                    'type': type,
+                    'camp_id': "{$campInfo.id}",
+                    'remarks': remarks,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: {'Content-Type': 'application/json'},
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data)
+                    if (data.code == 100) {
+                        mui.toast(data.msg);
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+
+        })
+    });
+
+
+
+
 
 </script>
-
+</body>
 </html>
