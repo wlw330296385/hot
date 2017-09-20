@@ -189,7 +189,7 @@
 
                 <div class="mui-input-row">
                     <label>备注</label>
-                    <input type="text" class="remarks checkChinese" value="">
+                    <input type="text" name="" class="remarks checkChinese" value="">
                 </div>
 
             </form>
@@ -216,9 +216,7 @@
                     </div>
                     <ul class="mui-table-view list">
                         {volist name="staffList" id="vol"}
-                        <li class="mui-table-view-cell listli detalisli mainCoach" data-id="{$vol.member_id}">
-                            {$vol.member}
-                        </li>
+                        <li class="mui-table-view-cell listli detalisli mainCoach" data-id="{$vol.member_id}">{$vol.member}</li>
                         {/volist}
                     </ul>
                 </div>
@@ -236,9 +234,7 @@
                     </div>
                     <ul class="mui-table-view list">
                         {volist name="gradecateList" id="vol"}
-                        <li class="mui-table-view-cell listli detalisli grade">
-                            {$vol.name}
-                        </li>
+                        <li class="mui-table-view-cell listli detalisli grade">{$vol.name}</li>
                         {/volist}
                     </ul>
                 </div>
@@ -256,9 +252,7 @@
                     </div>
                     <ul class="mui-table-view list">
                         {volist name="lessonList" id="vol"}
-                        <li class="mui-table-view-cell listli detalisli lessonType lesson" data-id="{$vol.id}">
-                            {$vol.lesson}
-                        </li>
+                        <li class="mui-table-view-cell listli detalisli lessonType lesson" data-id="{$vol.id}">{$vol.lesson}</li>
                         {/volist}
                     </ul>
                 </div>
@@ -577,7 +571,7 @@
         // 班级名称
         $(".grade").click(function(){
             var grade = $(this).text();
-            $(".gradeCont").html(grade);
+            $(".gradeCont").text(grade);
             mui("#grade").popover("toggle");
         })
         // 学员名单
@@ -587,22 +581,14 @@
                 return $(this).val()
             }).get().join(",") );
             $(".studentCont").text($("input[name='student']").val());
-            
-            // var str = document.getElementsByName("checkbox-student");
-            // for(var i=0;i<str.length;i++){
-            //     if(str[i].type=="checkbox"){
-            //         if(str[i].checked==true){
-            //             student_id +=str[i].getAttribute("data-id");
-            //             console.log(student_id)
-            //         }
-            //     }
-            // }
-            
-            student_id =$("input[name='checkbox-student']:checked").attr("data-id");//获取学员id
-            studentList = [{"id":student_id}];//组学员id数组
-
+            //组数组
+            student_id=[];
+            $("input[name='checkbox-student']:checked").each(function(i){ 
+                var obj = $(this).attr("data-id");
+                student_id[i]={id:obj}
+            });  
+            studentList = student_id;//数组赋值给变量
             mui('#student').popover('toggle');
-            
         })
         // 课程类型
         $(".lessonType").click(function(){
@@ -704,7 +690,7 @@
 
         //创建班级api
         $(".editorbtn").click(function(){
-            var  grade = $(".grade").html();
+            var  grade = $(".grade").text();
             var  lesson = $(".lesson").text();
             var  gradecate = $(".gradecate").text();
             var  week = $(".week option:selected").text();
@@ -721,46 +707,51 @@
             var  rent = $(".rent").val();
             var  status = $(".status option:selected").text();
             var  remarks = $(".remarks").val();
-            mui.ajax("{:url('api/grade/createGradeApi')}",{
-                data:{
-                    "gradeData": {
-                        "grade":grade,
-                        "lesson":lesson,
-                        "gradecate":gradecate,
-                        "week":week,
-                        "lesson_time":lesson_time,
-                        "location":location,
-                        "coach_salary":coach_salary,
-                        "assistant_salary":assistant_salary,
-                        "salary_base":salary_base,
-                        "coach":coach,
-                        "assistants":assistant,
-                        "leader":leader,
-                        "teacher":teacher,
-                        "plan":plan,
-                        "rent":rent,
-                        "status":status,
-                        "remarks":remarks,
+            if(grade!=''&&lesson!=''&&gradecate!=''&&week!=''&&lesson_time!=''&&location!=''&&coach!=''&&assistant!=''&&leader!=''&&teacher!=''&&plan!=''&&rent!=''){
+                mui.ajax("{:url('api/grade/createGradeApi')}",{
+                    data:{
+                        "gradeData": {
+                            "grade":grade,
+                            "lesson":lesson,
+                            "gradecate":gradecate,
+                            "week":week,
+                            "lesson_time":lesson_time,
+                            "location":location,
+                            "coach_salary":coach_salary,
+                            "assistant_salary":assistant_salary,
+                            "salary_base":salary_base,
+                            "coach":coach,
+                            "assistants":assistant,
+                            "leader":leader,
+                            "teacher":teacher,
+                            "plan":plan,
+                            "rent":rent,
+                            "status":status,
+                            "remarks":remarks,
+                        },
+                        "studentList":studentList
                     },
-                    "studentList":studentList
-                },
-                dataType:'json',//服务器返回json格式数据
-                type:'post',//HTTP请求类型
-                timeout:10000,//超时时间设置为10秒；
-                headers:{'Content-Type':'application/json'},                  
-                success:function(data){
-                    //服务器返回响应，根据响应结果，分析是否登录成功；
-                    console.log(data)
-                    if(data.code==100){
-                        mui.toast(data.msg)
-                    }else{
-                        mui.toast(data.msg)}
+                    dataType:'json',//服务器返回json格式数据
+                    type:'post',//HTTP请求类型
+                    timeout:10000,//超时时间设置为10秒；
+                    headers:{'Content-Type':'application/json'},                  
+                    success:function(data){
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data)
+                        if(data.code==100){
+                            mui.toast(data.msg)
+                        }else{
+                            mui.toast(data.msg)
+                        }
                     },
                     error:function(xhr,type,errorThrown){
-                    //异常处理；
-                    console.log(type);
-                }
-            });
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            }else{
+                mui.toast("选项不能为空");
+            }
         })
     });
 
