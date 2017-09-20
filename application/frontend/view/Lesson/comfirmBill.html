@@ -78,12 +78,12 @@
           </span>
         </li>
         <li class="mui-table-view-cell listli">家长姓名<span id="parent"></span></li>
-        <li class="mui-table-view-cell listli">手机号码<span class="width" id="emergency_telephone"></span></li>
+        <li class="mui-table-view-cell listli">手机号码<span class="width" id="emergency_telephone">{$memberInfo.telephone}</span></li>
         
         <button id="addBtn">添加学生</button>
       </ul>
       <!-- 新会员进入 -->
-      <div class="mui-input-group mt55" style="display: none;"" id="addStudent">
+      <div class="mui-input-group mt55" style="display: none;" id="addStudent">
 
         <div class="mui-input-row">
           <label>学员姓名</label>
@@ -95,15 +95,15 @@
           <input type="text" value="" class="data" style="color: #737373" required name="parent" placeholder="家长姓名">
         </div>
 
-         <div class="mui-input-row">
+        <!--  <div class="mui-input-row">
             <input type="text" class="mui-input-clear reg_mobile data" name="emergency_telephone" placeholder="输入手机号" data-input-clear="5" style="margin-bottom: 0" id="telephone" required>   
-        </div>
-         <div class="mui-input-row">  
+        </div> -->
+         <!-- <div class="mui-input-row">  
               <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)">              
         </div>
         <div class="mui-input-row">                
              <input type="text" class="validate" placeholder="输入验证码" id="code">
-        </div>
+        </div> -->
         <button id="submitBtn">确认</button>   <button id="giveUp">放弃添加</button>
       </div>
 </div>
@@ -118,7 +118,7 @@
     });
 
     
-    var isTelephone = false;
+    // var isTelephone = false;
     var total = sessionStorage.lessonTotal;
     var total_fee = "{$lessonInfo.cost}"*total;
     var isStudent = false;
@@ -141,7 +141,7 @@
              $('#student').val(studentList[index].id);
               $('#student').text(studentList[index].student);
               $('#parent').text(studentList[index].parent);
-              $('#emergency_telephone').text(studentList[index].emergency_telephone);
+              // $('#emergency_telephone').text(studentList[index].emergency_telephone);
               student = studentList[index].student;
               student_id = studentList[index].id;
         })
@@ -159,7 +159,7 @@
         })
     })
    
-   // 获取学生数据
+    // 获取学生数据
     function getStudentList(){
       // 获取学生列表
           var result = wooApi.asyncF("{:url('api/Student/getStudentListApi')}");
@@ -173,11 +173,11 @@
               $('#student').val(result.data[0].id);
               $('#student').text(result.data[0].student);
               $('#parent').text(result.data[0].parent);
-              $('#emergency_telephone').text(result.data[0].emergency_telephone);
+              // $('#emergency_telephone').text(result.data[0].emergency_telephone);
               isStudent = true;
-              if(result.data[0].emergency_telephone>0){
-                isTelephone = true;
-              };
+              // if(result.data[0].emergency_telephone>0){
+              //   isTelephone = true;
+              // };
               student = studentList[0].student;
               student_id = studentList[0].id;
               // 循环输出其他的学生
@@ -190,47 +190,47 @@
               
           }
     }
-    // 发送验证码
-    function sendCode(obj){
-      telephone = document.getElementById('telephone').value;
-      var telephoneReg = /^\d{11,11}$/;
-      if(!telephoneReg.test(telephone)){
-          mui.toast('请填写正确的手机号码');
-          flag = false;
-      }else{
-          console.log(telephone);
-          var result = smsCode.getMobileCodeApi(obj,telephone,"{:url('api/sms/getMobileCodeApi','','',true)}");
-          console.log(result);
-          if(result.code == 100){
-              flag = true;
-              mui.toast(result.msg);
-          }else{
-              flag = false;
-              mui.toast(result.msg);
-          }
-      }
-    }
+    // // 发送验证码
+    // function sendCode(obj){
+    //   telephone = document.getElementById('telephone').value;
+    //   var telephoneReg = /^\d{11,11}$/;
+    //   if(!telephoneReg.test(telephone)){
+    //       mui.toast('请填写正确的手机号码');
+    //       flag = false;
+    //   }else{
+    //       console.log(telephone);
+    //       var result = smsCode.getMobileCodeApi(obj,telephone,"{:url('api/sms/getMobileCodeApi','','',true)}");
+    //       console.log(result);
+    //       if(result.code == 100){
+    //           flag = true;
+    //           mui.toast(result.msg);
+    //       }else{
+    //           flag = false;
+    //           mui.toast(result.msg);
+    //       }
+    //   }
+    // }
 
-    //验证短信验证码
-      $('#code').on("blur",function(){
-          var code = document.getElementById('code').value;
-          var codeReg = /^\d{6,6}$/;
-          if(!codeReg.test(code)){
-              mui.toast('请填写正确的验证码');
-              flag = false;
-          }else{
-              telephone = document.getElementById('telephone').value;
-              var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/sms/validateSmsCodeApi','','',true)}");
-              if(result == 100){
-                  flag = true;
-                  mui.toast(result.msg);
-              }else{
-                  flag = false;
-                  mui.toast(result.msg);
-              }
-          }
+    // //验证短信验证码
+    //   $('#code').on("blur",function(){
+    //       var code = document.getElementById('code').value;
+    //       var codeReg = /^\d{6,6}$/;
+    //       if(!codeReg.test(code)){
+    //           mui.toast('请填写正确的验证码');
+    //           flag = false;
+    //       }else{
+    //           telephone = document.getElementById('telephone').value;
+    //           var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/sms/validateSmsCodeApi','','',true)}");
+    //           if(result == 100){
+    //               flag = true;
+    //               mui.toast(result.msg);
+    //           }else{
+    //               flag = false;
+    //               mui.toast(result.msg);
+    //           }
+    //       }
           
-      });
+    //   });
 
 
       // 提交数据
@@ -283,15 +283,15 @@
              },
              function(res){     
                if(res.err_msg == "get_brand_wcpay_request:ok" ) {
-                  createBill(total,JSON.stringify(res))
+                  createBill(total,JSON.stringify(res));
+
                }     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
              }
            ); 
   }
 
 
-//购买成功提交数据
-    
+    //购买成功提交数据
     function createBill(balance_pay,callback_str){
       var remarks = $('.remarks').val();
       objBillInfo.bill_order = "{$billOrder}";
@@ -300,11 +300,25 @@
       objBillInfo.student_id = student_id;
       objBillInfo.student = student;
       objBillInfo.remarks = remarks;
+      objBillInfo.balance_pay = balance_pay;
+      objBillInfo.callback_str = callback_str;
+      objBillInfo.is_pay = 1;
       console.log(objBillInfo);
       var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
       console.log(result);
+      mui.toast(result.msg);
+      if(result.code == 100){
+          window.location.href="{:url('frontend/bill/billInfo',['bill_id'=>"+result.data+"])}"
+      }else{
+        mui.toast(result.msg);
+      }
     }
     // 获取学生数据
     getStudentList();
+
+
+    function testSubmit(){
+      createBill(total_fee,'测试');
+    }
 </script>
 </html>
