@@ -11,7 +11,31 @@ class CampMember extends Base{
         $this->CampService = new CampService;
 	}
 
-    
+    // 关注训练营
+    public function focusApi(){
+        $type = input('param.type');
+        $camp_id = input('param.camp_id');
+        $remarks = input('param.remarks');
+        $campInfo = $this->CampService->getCampInfo($camp_id);
+        if(!$campInfo){
+            return json(['code'=>200,'msg'=>'不存在此训练营']);
+        }
+        if(!$type || $type>3 || $type<-1){
+            return json(['code'=>200,'msg'=>'不存在这个身份']);
+        }
+        //是否已存在身份
+        $isType = db('camp_member')->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>$camp_id,'status'=>1])->find();
+        if($isType){
+            return json(['code'=>200,'msg'=>'你已经是训练营的一员']);
+        }
+        $result = db('camp_member')->insert(['camp_id'=>$campInfo['id'],'camp'=>$campInfo['camp'],'member_id'=>$this->memberInfo['id'],'member'=>$this->memberInfo['member'],'type'=>-1,'status'=>1,'create_time'=>time()]);
+        $msg = '你已经成为该训练营的粉丝!';
+        if($result){
+            return json(['code'=>100,'msg'=>$msg]);
+        }else{
+            return json(['code'=>200,'msg'=>'申请失败']);
+        }
+    }
 
     // 申请成为训练营的某个身份
     public function applyApi(){
@@ -23,17 +47,16 @@ class CampMember extends Base{
             if(!$campInfo){
                 return json(['code'=>200,'msg'=>'不存在此训练营']);
             }
-            if(!$type ||( $type!=2 && $type!=3 && $type!=5)){
+            if(!$type ||$type>3 || $type<-1){
                 return json(['code'=>200,'msg'=>'不存在这个身份']);
             }
-            if($type == 5){
-                $result = db('camp_member')->insert(['camp_id'=>$campInfo['id'],'camp'=>$campInfo['camp'],'member_id'=>$this->memberInfo['id'],'member'=>$this->memberInfo['member'],'type'=>5,'status'=>1]);
-                $msg = '你已经成为该训练营的粉丝!';
-            }else{
-                $result = db('camp_member')->insert(['camp_id'=>$campInfo['id'],'camp'=>$campInfo['camp'],'member_id'=>$this->memberInfo['id'],'member'=>$this->memberInfo['member'],'type'=>$type,'status'=>0]);
-                $msg = '申请成功';
+            //是否已存在身份
+            $isType = db('camp_member')->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>$camp_id,'status'=>1])->find();
+            if($isType){
+                return json(['code'=>200,'msg'=>'你已经是训练营的一员']);
             }
-            
+            $result = db('camp_member')->insert(['camp_id'=>$campInfo['id'],'camp'=>$campInfo['camp'],'member_id'=>$this->memberInfo['id'],'member'=>$this->memberInfo['member'],'type'=>$type,'status'=>0,'create_time'=>time()]);
+            $msg = '申请成功';
             if($result){
                 return json(['code'=>100,'msg'=>$msg]);
             }else{
@@ -106,7 +129,7 @@ class CampMember extends Base{
     }
    
 
-    public function getCampMemberApi(){
+    public function getCampMemberApi($camp_id){
         try{
             $camp_id = input('param.camp_id');
             $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
