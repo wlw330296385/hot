@@ -38,7 +38,7 @@ class Plan extends Base{
         $planInfo = $this->PlanService->PlanOneById(['id'=>$plan_id]);
         // 判读权限
         $CampService = new \app\service\CampService;
-        $is_power = $CampService->isPower($gradeInfo['camp_id'],$this->memberInfo['id']);
+        $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
         if($is_power < 2){
             $this->error('您没有权限');
         }       
@@ -55,11 +55,22 @@ class Plan extends Base{
     	return view('Plan/updatePlan');
     }
 
+    // 添加教案
+    public function createPlan(){
+
+
+        return view('Plan/createPlan');
+    }
+
+
     // 分页获取数据
     public function planList(){
     	$camp_id = input('param.camp_id');
     	$planListOfCamp = $this->PlanService->PlanListPage(['camp_id'=>$camp_id,'type'=>1]);
     	$planListOfSys = $this->PlanService->PlanListPage(['type'=>0]);
+
+
+        $this->assign('camp_id',$camp_id);
         $this->assign('planListOfCamp',$planListOfCamp);
         $this->assign('planListOfSys',$planListOfSys);
         return view('Plan/planList');
