@@ -79,26 +79,13 @@
         var sLessonType='';
         var sArea='';
 
-        //判断浏览器是否支持有本地存储
-        if(window.localStorage){
-            //判断是否有本地存储城市
-            if(localStorage.currentCity==''||localStorage.currentCity==null){
-                var locationApiUrl = "{:url('api/Location/getLocation')}";
-                var getgetSetLocation(locationApiUrl);
+        //获取定位省市区
+        var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
+        var sCity = getLocationTB['city'];
+        var sProvince = getLocationTB['province'];
+        var allArea = getLocationTB['area'];
+        console.log(allArea);
 
-                localStorage.setItem("currentCity",city);
-                localStorage.setItem("currentProvince",province);
-                localStorage.setItem("currentAreas",allArea);
-
-            }
-            var sCity=localStorage.currentCity;
-            var sProvince=localStorage.currentProvince;
-            var allArea=localStorage.currentAreas;
-        }else{
-            var sCity='深圳市';
-            var sProvince='广东省';
-            var allArea='罗湖区,福田区,南山区,宝安区,龙岗区,龙华区,盐田区,光明新区,其他区';
-        }
         $('.location').text(sCity);
 
 

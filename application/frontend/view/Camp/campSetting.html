@@ -33,84 +33,117 @@
 
         <div class="item-list">
             <div id="item1" class="mui-control-content mui-active">
-                <ul class="mui-table-view list">
-                    <li class="mui-table-view-cell listli detalisli listinitial">训练营名称<span class="wd52">{$campInfo.camp}</span>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli listinitial">训练营创建者<span class="wd52">{$campInfo.realname}</span>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <a href="#" class="mui-navigate-right">训练营LOGO
-                            <img class="coachicon icon01" src="{$campInfo.logo}" alt="">
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli detalisli">
-                        <a href="#" class="mui-navigate-right">训练营封面
-                            <img class="coachicon icon01" src="{$campInfo.banner}" alt="">
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli listinitial">
-                        <a href="#" class="mui-navigate-right">
-                            所属公司<span>{$campInfo.company}</span>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli listinitial">
-                        <a href="#" class="mui-navigate-right">
-                            总部地址<span>{$campInfo.location}</span>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli listinitial">
-                        <a href="#" class="mui-navigate-right">
-                            所属地区<span>{$campInfo.province} {$campInfo.city} {$campInfo.area}</span>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli listinitial border-b">
-                        训练营简介
-                        <span class="mui-navigate-right wd66">{$campInfo.camp_introduction}</span>
-                    </li>
-                </ul>
-            </div>
-            <div id="item2" class="mui-control-content">
-                <ul class="mui-table-view list">
-                    <li class="mui-table-view-cell listli detalisli listinitial">
-                        <a href="#" class="mui-navigate-right">营业执照
-                            <img class="coachicon icon01" src="{$campcert.cert}" alt="">
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli listinitial">
-                        <a href="#" class="mui-navigate-right">法人身份证
-                            <img class="coachicon icon01" src="{$campcert.fr.photo_positive}" alt="">
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli listinitial">
-                        <a href="#" class="mui-navigate-right">
-                            法人身份证号<span class="wd52">{$campcert.fr.cert_no}</span>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli listinitial">
-                        <a href="#" class="mui-navigate-right">创建者身份证
-                            <img class="coachicon icon01" src="{$campcert.cjz.photo_positive}" alt="">
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli listinitial">
-                        <a href="#" class="mui-navigate-right">
-                            创建者身份证号<span class="wd52">{$campcert.cjz.cert_no}</span>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli listinitial border-b">
-                        <a href="#" class="mui-navigate-right">其他证明
 
-                            <img class="coachicon icon01" src="{$campcert.other}" alt="">
-
+                <form id="form1" action="" class="mui-input-group mt25">
+                    <div class="mui-input-row">
+                        <label>训练营名称</label><span>{$campInfo.camp}</span>
+                        <input type="hidden" name="campid" value="{$camp.id}">
+                    </div>
+                    <div class="mui-input-row h-auto">
+                        <a class="mui-navigate-right camplogo filePicker" onclick="add_id(1)">
+                            <label>训练营LOGO</label>
+                            <img id="preview_1" class="coachicon icon01 logo upload-preview">
+                            <input type="hidden" name="logo" value="{$campInfo.logo}">
                         </a>
-                    </li>
-                </ul>
+                    </div>
+                    <div class="mui-input-row h-auto">
+                        <a  class="mui-navigate-right campbanner filePicker" onclick="add_id(2)">
+                            <label>训练营封面</label>
+                            <img id="preview_2" class="coachicon icon01 banner upload-preview" >
+                            <input type="hidden" name="banner" value="{$campInfo.banner}">
+                        </a>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>所属公司</label>
+                        <input type="text" name="company" class="input company" value="{$campInfo.company}" placeholder="非机构可不填">
+                    </div>
+                    <div class="mui-input-row">
+                        <label>总部地址</label>
+                        <input type="text" class="input" name="location" value="{$campInfo.location}" placeholder="非机构可不填">
+                    </div>
+                    <div class="mui-input-row" id='showCityPicker3'>
+                        <a href="#" class="mui-navigate-right">
+                            <label>所属地区</label>
+                            <span id="cityResult3" class="ui-alert location" style="color:#737373">选择</span>
+                        </a>
+                        <input id="location-input" type="hidden" name="locationStr" value="{$campInfo.province} {$campInfo.city} {$campInfo.area}">
+                    </div>
+                    <!--<div class="mui-input-row">
+                        <label>电话号码</label>
+                        <input type="text" class="input camp_telephone">
+                    </div>-->
+                    <div class="mui-input-row h-auto">
+                        <label>训练营简介</label>
+                        <textarea rows="5" class="intro" placeholder="填写训练营简介">{$campInfo.camp_introduction}</textarea>
+                    </div>
+                </form>
+                <span class="tip-box tip"></span>
+
                 <div class="success-frame success-frame2">
                     <div class="choise-identity">
                         修改后需要重新审核认证信息，审核通过前课程的发布、展示、购买功能将停止使用
                     </div>
 
                     <div class="choise">
-                        <button type="button" class="mui-btn">提交修改</button>
+                        <button type="button" class="mui-btn" id="submit-form1">提交修改</button>
+                    </div>
+                </div>
+
+            </div>
+            <div id="item2" class="mui-control-content">
+
+                <form id="form2" action="" class="mui-input-group mt25">
+                    <div class="mui-input-row">
+                        <label>训练营名称</label><span>{$campInfo.camp}</span>
+                        <input type="hidden" name="campid" value="{$camp.id}">
+                    </div>
+
+                    <div class="mui-input-row h-auto">
+                        <a class="mui-navigate-right filePicker"  onclick="add_id(1)">
+                            <label>营业执照</label>
+                            <img id="preview_1" class="coachicon icon01 upload-preview" >
+                            <input type="hidden" name="cert" value="{$campcert.cert}">
+                        </a>
+                    </div>
+                    <div class="mui-input-row h-auto">
+                        <a class="mui-navigate-right filePicker"  onclick="add_id(2)">
+                            <label>法人身份证</label>
+                            <img id="preview_2" class="coachicon icon01 upload-preview">
+                            <input type="hidden" name="fr_idcard" value="{$campcert.fr.photo_positive}">
+                        </a>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>法人身份证号</label>
+                        <input type="text" class="input fridno" value="{$campcert.fr.cert_no}" placeholder="请输入身份证号码">
+                    </div>
+                    <div class="mui-input-row h-auto">
+                        <a class="mui-navigate-right filePicker"  onclick="add_id(3)">
+                            <label>创建者身份证</label>
+                            <img id="preview_3" class="coachicon icon01 upload-preview" >
+                            <input type="hidden" name="cjz_idcard" value="{$campcert.cjz.photo_positive}">
+                        </a>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>创建者身份证号</label>
+                        <input type="text" class="input cjzidno" value="{$campcert.cjz.cert_no}" placeholder="请输入创建者身份证号码">
+                    </div>
+                    <div class="mui-input-row border-b h-auto">
+                        <a class="mui-navigate-right filePicker"  onclick="add_id(4)">
+                            <label>其他证明</label>
+                            <img id="preview_4" class="coachicon icon01" >
+                            <input type="hidden" name="other_cert" value="{$campcert.other}">
+                        </a>
+                    </div>
+                </form>
+                <span class="tip-box tip"></span>
+
+                <div class="success-frame success-frame2">
+                    <div class="choise-identity">
+                        修改后需要重新审核认证信息，审核通过前课程的发布、展示、购买功能将停止使用
+                    </div>
+
+                    <div class="choise">
+                        <button type="button" class="mui-btn" id="submit-form2">提交修改</button>
                     </div>
                 </div>
             </div>

@@ -15,6 +15,8 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--顶部下滑菜单 menu-wrapper.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/menu.wrapper.css"/>
     <!--选择器样式-->
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
@@ -28,9 +30,9 @@
     <!--搜索-->
     <header id="header" class="mui-bar mui-bar-nav search1">
         <div class="mui-pull-left mui-icon mui-icon-location" id="showCityPicker3">
-            <span class="address" id="cityResult3">广州市</span>
+            <span class="address" id="cityResult3">大热市</span>
         </div>
-        <div class="mui-pull-left"><input type="search" class="mui-input-clear" placeholder="搜课程/训练营/训练地点等"></div>
+        <div class="mui-pull-left"><input type="search" id="search-input" class="mui-input-clear" placeholder="搜课程/训练营/训练地点等"></div>
         <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
     </header>
 
@@ -146,6 +148,76 @@
     </div>
 </div>
 
+
+<div id="menu-wrapper" class="menu-wrapper hidden">
+    <div id="menu" class="menu search">
+        <div class="search">
+            <div id="segmentedControl" class="mui-segmented-control">
+                <span class="mui-control-item mui-active choise-segment">课程</span>
+                <span class="mui-control-item choise-segment">训练营</span>
+                <span class="mui-control-item choise-segment">球队</span>
+                <span class="mui-control-item choise-segment">训练地点</span>
+                <span class="mui-control-item choise-segment">教练员</span>
+            </div>
+
+            <div class="hot-search">
+                <h4>热门搜索</h4>
+                <ul class="mui-table-view mui-grid-view mui-grid-9 hot-search-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4">
+
+                        <span class="mui-btn mui-btn-outlined">
+                            幼儿课程
+                        </span>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4">
+                        <span class="mui-btn mui-btn-outlined">
+                            幼儿课程
+                        </span>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4">
+                        <span class="mui-btn mui-btn-outlined">
+                            幼儿课程
+                        </span>
+
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4">
+                        <span class="mui-btn mui-btn-outlined">
+                            幼儿课程
+                        </span>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4">
+                        <span class="mui-btn mui-btn-outlined">
+                            幼儿课程
+                        </span>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4">
+                        <span class="mui-btn mui-btn-outlined">
+                            幼儿课程
+                        </span>
+
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4">
+                        <span class="mui-btn mui-btn-outlined">
+                            幼儿课程
+                        </span>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4">
+                        <span class="mui-btn mui-btn-outlined">
+                            幼儿课程
+                        </span>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4">
+                        <span class="mui-btn mui-btn-outlined">
+                            幼儿课程
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="menu-backdrop" class="menu-backdrop"></div>
+
 <!--底部导航-->
 {layout name="Layout/footer"}
 </body>
@@ -170,7 +242,7 @@
             };
             ///级联示例
             var cityPicker3 = new $.PopPicker({
-                layer: 3
+                layer: 2
             });
             cityPicker3.setData(cityData3);
             var showCityPickerButton = doc.getElementById('showCityPicker3');
@@ -180,6 +252,10 @@
                     cityResult3.innerText = _getParam(items[1], 'text');
                     //返回 false 可以阻止选择框的关闭
                     //return false;
+                    var areas = getAreas(_getParam(items[0], 'text'),_getParam(items[1], 'text'));
+                    localStorage.currentCity = _getParam(items[1], 'text');
+                    localStorage.currentProvince = _getParam(items[0], 'text');
+                    localStorage.currentAreas = areas;
                 });
             }, false);
         });
@@ -195,26 +271,15 @@
     });
 
 
-
     $(function () {
 
+//        localStorage.clear();
 
-      localStorage.clear();
-
-        //判断浏览器是否支持有本地存储
-//        if(window.localStorage){
-//            //判断是否有本地存储城市
-//            if(localStorage.currentCity==''||localStorage.currentCity==null){
-//                var locationApiUrl = "{:url('api/Location/getLocation')}";
-//                getSetLocation(locationApiUrl);
-//            }
-//            var sCity=localStorage.currentCity;
-//            var sProvince=localStorage.currentProvince;
-//        }else{
-//            var sCity='深圳市';
-//            var sProvince='广东省';
-//        }
-//        $(".address").text(sCity);
+        //获取定位省市区
+        var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
+        var sCity = getLocationTB['city'];
+        var sProvince = getLocationTB['province'];
+        $(".address").text(sCity);
 
 
         //提示框
@@ -223,7 +288,43 @@
             mui.confirm('欢迎使用大热篮球服务平台，请先完善您的登陆信息，以便进行后续操作，谢谢！', '提示', btnArray);
         }
 
+        $("#search-input").focus(function () {
+            toggleMenu()
+        })
+
     })
+
+    //搜索子页面
+    var menuWrapper = document.getElementById("menu-wrapper");
+    var menu = document.getElementById("menu");
+    var menuWrapperClassList = menuWrapper.classList;
+    var backdrop = document.getElementById("menu-backdrop");
+    backdrop.addEventListener('tap', toggleMenu);
+
+    var busying = false;
+    function toggleMenu() {
+        if (busying) {
+            return;
+        }
+        busying = true;
+        if (menuWrapperClassList.contains('mui-active')) {
+            document.body.classList.remove('menu-open');
+            menuWrapper.className = 'menu-wrapper fade-out-up animated';
+            menu.className = 'menu bounce-out-up animated';
+            setTimeout(function() {
+                backdrop.style.opacity = 0;
+                menuWrapper.classList.add('hidden');
+            }, 500);
+        } else {
+            document.body.classList.add('menu-open');
+            menuWrapper.className = 'menu-wrapper fade-in-down animated mui-active';
+            menu.className = 'menu bounce-in-down animated';
+            backdrop.style.opacity = 1;
+        }
+        setTimeout(function() {
+            busying = false;
+        }, 500);
+    }
 
 
 </script>
