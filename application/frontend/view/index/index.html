@@ -162,10 +162,10 @@
         </header>
         <div class="search">
             <div id="segmentedControl" class="mui-segmented-control">
-                <span class="mui-control-item mui-active choise-segment" s-table="/lesson/lessonList/">课程</span>
-                <span class="mui-control-item choise-segment" s-table="/camp/lessonList/">训练营</span>
-                <span class="mui-control-item choise-segment" s-table="/court/lessonList/">训练点</span>
-                <span class="mui-control-item choise-segment" s-table="/coach/lessonList/">教练员</span>
+                <span class="mui-control-item mui-active choise-segment" s-table="1">课程</span>
+                <span class="mui-control-item choise-segment" s-table="2">训练营</span>
+                <span class="mui-control-item choise-segment" s-table="3">训练点</span>
+                <span class="mui-control-item choise-segment" s-table="4">教练员</span>
             </div>
 
             <div class="hot-search">
@@ -267,10 +267,22 @@
             if (sKeyword == 0) {
                 mui.toast('请输入您要搜索的内容');
             }else{
+                var url = '';
                 var getType = $(".mui-segmented-control .mui-active").attr("s-table");
-                var searchUrl = getType+'?keyword='+sKeyword;
+                // switch(getType){
+                //     case 1:
+                //     url = "{:url('frontend/lesson/lessonList')}";
+                //     console.log(url);
+                //     break;
+
+                // }
+                if(getType == 1){
+                    url = "{:url('frontend/lesson/lessonList')}";
+                    console.log(url);
+                }
+                var searchUrl = url+'?keyword='+sKeyword;
                 console.log(searchUrl);
-//                window.top.location.href = searchUrl;
+               window.top.location.href = searchUrl;
             }
         })
 
