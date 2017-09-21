@@ -146,4 +146,10 @@ class StudentService{
 			return ['code'=>200,'msg'=>$this->gradeMemberModel->getError()];
 		}
     }
+
+
+    // 已上课程+1
+    public function setIncFinishedTotal($num = 1,$student_id){
+    	$this->studentModel->where(['id'=>$student_id])->setInc('finished_total',$num);
+    }
 }

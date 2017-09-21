@@ -62,6 +62,8 @@ class BillService {
         $result = $this->Bill->save($data);
         if($result){
             if($data['goods_type'] == 1){
+                //购买人数+1;
+                db('lesson')->where(['id'=>$data['goods_id']])->setInc('students');
                 $CampMember = new CampMember;
                 $is_student = $CampMember->where(['type'=>1,'member_id'=>$data['member_id'],'camp_id'=>$data['camp_id'],'status'=>1])->find();
                 if(!$is_student){
