@@ -1,6 +1,6 @@
 <?php 
 namespace app\frontend\controller;
-
+use app\service\TestService;
 class Test {
 
     public function index(){
@@ -134,5 +134,18 @@ class Test {
         echo "三维<br>";
         echo json_encode($sanwei);
         dump($sanwei);
+    }
+
+
+
+    public function service2(){
+        $data = [
+            'title'=>rand(00000,99999),
+            'content'=>rand(00000,99999),
+        ];
+        $TestService = new TestService;
+        $result = $TestService->insertMessage($data);
+        // $result = testSerivce($data);
+        dump($result);
     }
 }

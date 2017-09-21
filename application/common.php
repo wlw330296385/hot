@@ -131,3 +131,18 @@ function getOrderID(){
     $result = date('YmdHis').rand(0000,9999).$salt;
     return $result;
 }
+
+
+
+function sendMessage($data){
+    $MessageService = new \app\service\MessageService;
+    $result = $MessageService->saveMessageInfo($data);
+    return $result;
+}
+
+
+function sendMessageMember($data){
+    $MessageMemberService = new \app\service\MessageMemberService;
+    $result = $MessageMemberService->saveMessageInfo($data);
+    return $result;
+}

@@ -23,13 +23,19 @@ class CampMember extends Base{
             if(!$campInfo){
                 return json(['code'=>200,'msg'=>'不存在此训练营']);
             }
-            if(!$type || ($type>5 || $type = 4 || $type <1)){
+            if(!$type ||( $type!=2 && $type!=3 && $type!=5)){
                 return json(['code'=>200,'msg'=>'不存在这个身份']);
             }
-
-            $result = db('camp_member')->insert(['camp_id'=>$campInfo['id'],'camp'=>$campInfo['camp'],'member_id'=>$this->memberInfo['id'],'member'=>$memberInfo['member'],'type'=>$type,'status'=>0]);
+            if($type == 5){
+                $result = db('camp_member')->insert(['camp_id'=>$campInfo['id'],'camp'=>$campInfo['camp'],'member_id'=>$this->memberInfo['id'],'member'=>$this->memberInfo['member'],'type'=>5,'status'=>1]);
+                $msg = '你已经成为该训练营的粉丝!';
+            }else{
+                $result = db('camp_member')->insert(['camp_id'=>$campInfo['id'],'camp'=>$campInfo['camp'],'member_id'=>$this->memberInfo['id'],'member'=>$this->memberInfo['member'],'type'=>$type,'status'=>0]);
+                $msg = '申请成功';
+            }
+            
             if($result){
-                return json(['code'=>100,'msg'=>'申请成功']);
+                return json(['code'=>100,'msg'=>$msg]);
             }else{
                 return json(['code'=>200,'msg'=>'申请失败']);
             }
