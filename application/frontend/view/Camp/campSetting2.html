@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>训练营设置</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!-- webuploader -->
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+</head>
+
+<body class=whitebg>
+
+<div class="mui-content">
+    <div class="list camp-list camp-lesson-list detalis-list coach">
+        <div class="camp-lesson-list">
+            <div id="segmentedControl" class="mui-segmented-control mb">
+                <a class="mui-control-item" href="{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>1])}">基本信息</a>
+                <a class="mui-control-item mui-active"
+                   href="{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>2])}">认证信息</a>
+            </div>
+        </div>
+
+        <div class="item-list">
+            <form id="form2" action="" class="mui-input-group mt25">
+                <div class="mui-input-row">
+                    <label>训练营名称</label><span>{$campInfo.camp}</span>
+                    <input type="hidden" name="campid" value="{$campInfo.id}">
+                </div>
+
+                <div class="mui-input-row h-auto">
+                    <a class="mui-navigate-right filePicker" onclick="add_id(1)">
+                        <label>营业执照</label>
+                        <img id="preview_1" class="coachicon icon01 upload-preview" {notempty name="$campcert.cert"
+                             }src="{$campcert.cert}" {/notempty}>
+                        <input type="hidden" name="cert" value="{$campcert.cert}">
+                    </a>
+                </div>
+                <div class="mui-input-row h-auto">
+                    <a class="mui-navigate-right filePicker" onclick="add_id(2)">
+                        <label>法人身份证</label>
+                        <img id="preview_2" class="coachicon icon01 upload-preview" {notempty
+                             name="$campcert.fr.photo_positive" }src="{$campcert.fr.photo_positive}" {/notempty}>
+                        <input type="hidden" name="fr_idcard" value="{$campcert.fr.photo_positive}">
+                    </a>
+                </div>
+                <div class="mui-input-row">
+                    <label>法人身份证号</label>
+                    <input type="text" class="input fridno" value="{$campcert.fr.cert_no}" placeholder="请输入身份证号码">
+                </div>
+                <div class="mui-input-row h-auto">
+                    <a class="mui-navigate-right filePicker" onclick="add_id(3)">
+                        <label>创建者身份证</label>
+                        <img id="preview_3" class="coachicon icon01 upload-preview" {notempty
+                             name="$campcert.cjz.photo_positive" }src="{$campcert.cjz.photo_positive}" {/notempty}>
+                        <input type="hidden" name="cjz_idcard" value="{$campcert.cjz.photo_positive}">
+                    </a>
+                </div>
+                <div class="mui-input-row">
+                    <label>创建者身份证号</label>
+                    <input type="text" class="input cjzidno" value="{$campcert.cjz.cert_no}" placeholder="请输入创建者身份证号码">
+                </div>
+                <div class="mui-input-row border-b h-auto">
+                    <a class="mui-navigate-right filePicker" onclick="add_id(4)">
+                        <label>其他证明</label>
+                        <img id="preview_4" class="coachicon icon01 upload-preview" {notempty name="$campcert.other"
+                             }src="{$campcert.other}" {/notempty}>
+                        <input type="hidden" name="other_cert" value="{$campcert.other}">
+                    </a>
+                </div>
+            </form>
+            <span class="tip-box tip"></span>
+
+            <div class="success-frame success-frame2">
+                <div class="choise-identity">
+                    修改后需要重新审核认证信息，审核通过前课程的发布、展示、购买功能将停止使用
+                </div>
+
+                <div class="choise">
+                    <button type="button" class="mui-btn" id="submit-form2">提交修改</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!--选择器-->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/city.data.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
+<script>
+    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+</script>
+<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    mui("body").on("tap", "a.mui-control-item", function () {
+        window.top.location.href = this.href;
+    });
+
+    $(function () {
+
+        $('#submit-form2').click(function () {
+            var btnArray = ['取消', '确认'];
+            mui.confirm('修改认证资料需要重新审核', '确认要提交修改吗?', btnArray, function (e) {
+                if (e.index == 1) {
+                    var campid = $('input[name=campid]').val();
+                    var cert = $('input[name=cert]').val();
+                    var fr_idcard = $('input[name=fr_idcard]').val();
+                    var fr_idno = $('.fridno').val();
+                    var cjz_idcard = $('input[name=cjz_idcard]').val();
+                    var cjz_idno = $('.cjzidno').val();
+                    var other_cert = $('input[name=other_cert]').val();
+
+                    mui.ajax("{:url('api/camp/updatecampcert')}", {
+                        data: {
+                            camp_id: campid,
+                            cert: cert,
+                            fr_idcard: fr_idcard,
+                            fr_idno: fr_idno,
+                            cjz_idcard: cjz_idcard,
+                            cjz_idno: cjz_idno,
+                            other_cert: other_cert
+                        },
+                        dataType: 'json',
+                        type: 'post',
+                        timeout: 10000,
+                        headers: {'Content-Type': 'application/json'},
+                        success: function (res) {
+                            //console.log(res);
+                            if (res.code == 100) {
+                                location.href = "{:url('camp/editsuccess', ['edit' => 1])}";
+                            } else {
+                                mui.toast(res.msg);
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            console.log(type);
+                        }
+                    });
+                } else {
+                    return;
+                }
+            });
+        });
+    });
+
+</script>
+</html>

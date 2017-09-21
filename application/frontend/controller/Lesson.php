@@ -45,11 +45,11 @@ class Lesson extends Base{
             $map['camp_id'] = $camp_id;
         }
         $lessonList = $this->LessonService->getLessonPage($map);
-        // 课程类型
+        // // 课程类型
         $GradeService = new \app\service\GradeService;
         $gradecateList = $GradeService->getGradeCategory();
 
-        $this->assign('gradecateList',$gradecateList);
+        $this->assign('gradecateList',$gradecateList);  
         $this->assign('lessonList',$lessonList);
         return view('Lesson/lessonList');
     }
@@ -89,7 +89,6 @@ class Lesson extends Base{
         $gradeCategoryList = $this->GradeService->getGradeCategory(1);
         $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['status'=>$camp_id]);
-        // dump($assitantList);die;
         $this->assign('campInfo',$campInfo);
         $this->assign('gradeCategoryList',$gradeCategoryList);
         $this->assign('courtList',$courtList);

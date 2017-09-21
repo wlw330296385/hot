@@ -4,5 +4,5 @@ namespace app\model;
 use think\Model;
 
 class Cert extends Model {
-
+    protected $autoWriteTimestamp = true;
 }

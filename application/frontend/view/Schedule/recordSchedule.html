@@ -88,7 +88,7 @@
                     <form class="mui-input-group">
                         {volist name="studentList" id="vol"}
                         <div class="mui-input-row mui-checkbox checkboxCont">
-                            <label class="number">{$key+1}</label><font class="name">{$vol.student}</font>
+                            <label class="number">{$key+1}</label><font class="student_str">{$vol.student}</font>
                             <input name="checkbox1" value="Item 3" type="checkbox">
                         </div>
                         {/volist}
@@ -182,7 +182,7 @@
 
                     <div class="mui-input-row">
                         <label>备注</label>
-                        <input type="text" class="remarks checkChinese" value="{$gradeInfo.remarks}" onblur="checkChinese()">
+                        <input type="text" class="remarks" value="{$gradeInfo.remarks}">
                     </div>
 
                 </form>
@@ -458,7 +458,6 @@
         });
     })(mui, document);
 
-    
     //更新序号函数
     function changeIndex() {
         var i = 1;
@@ -468,45 +467,51 @@
     }
 
     $(function () {
-        // 添加学员
-        // var show_count = 50;   //要显示的条数
-        // var count = 1;         //递增的开始值
-        var length = $(".checkboxCont label").length;
-        var totalNum = $(".checkboxCont").length;
-        $("#studentConfirm").click(function () {
 
+        // 添加学员
+        var str = '';
+        var totalNum = '';
+        $("#studentConfirm").click(function () {
             //选择多个学员
-            var box = $(".addStudentList input[type=checkbox]");
-            var checked = box.filter(':checked').length;
-            // var studentName = $(".addStudentList input[type=checkbox]:checked").val();
-            var studentName =[]; 
-            $('input[name="student"]:checked').each(function(){ 
-                studentName.push($(this).val()); 
-            }); 
-            console.log(studentName)
-            console.log(checked)
-            console.log(box)
-            for(i=0;i<checked;i++){
-                var str = ' <div class="mui-input-row mui-checkbox checkboxCont"><label class="number">{$key+1}</label><font class="name">'+studentName+'</font><input name="checkbox1" value="Item 3" type="checkbox"></div>';
-                // if (length < show_count) {    //点击时候，如果当前的数字小于递增结束的条件
-                    $(".operation-btn").before(str);//在增删前按钮前加一行
-                    changeIndex();//调用-更新序号
-                // }
-            }
-            $(".mui-badge").text(totalNum);
+            $(".addStudentList input[type=checkbox]:checked").each(function() {
+                str +='<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">{$key+1}</label><font class="student_str">'+$(this).val()+'</font><input name="checkbox1" value="Item 3" type="checkbox"></div>';
+            })
+            $(".operation-btn").before(str);//在增删按钮前加一行
+            changeIndex();//调用-更新序号
             mui("#addStudent").popover("toggle");
+            //角标随checkboxCont的数量变化
+            totalNum = $(".checkboxCont").length;
+            $(".mui-badge").text(totalNum);
+        });
+
+        //全选
+        $(".all").click(function () {
+            $(".checkboxCont").find('input').prop('checked', true)
+        })
+
+        //取消全选
+        $(".cancel").click(function () {
+            $(".checkboxCont").find('input').prop('checked', false)
+        })
+
+        //删除
+        $(".del").click(function () {
+            $("input[name='checkbox1']:checked").each(function () { // 遍历选中的checkbox
+                n = $(this).parents("checkboxCont").index();  // 获取checkbox所在行的顺序
+                $(".checkboxCont:eq(" + n + ")").remove();
+            });
         });
 
         // 训练地点
         $(".trainLocation").click(function () {
-            var trainLocation = $(this).html();
-            $(".trainLocationCont").html(trainLocation);
+            var trainLocation = $(this).text();
+            $(".trainLocationCont").text(trainLocation);
             mui("#trainLocation").popover("toggle");
         })
         // 主教练
         $(".mainCoach").click(function () {
-            var mainCoach = $(this).html();
-            $(".mainCoachCont").html(mainCoach);
+            var mainCoach = $(this).text();
+            $(".mainCoachCont").text(mainCoach);
             mui("#mainCoach").popover("toggle");
         })
         // 助教练
@@ -521,20 +526,20 @@
 
         // 班主任
         $(".headMaster").click(function () {
-            var headMaster = $(this).html();
-            $(".headMasterCont").html(headMaster);
+            var headMaster = $(this).text();
+            $(".headMasterCont").text(headMaster);
             mui("#headMaster").popover("toggle");
         })
         // 领队
         $(".leader").click(function () {
-            var leader = $(this).html();
-            $(".leaderCont").html(leader);
+            var leader = $(this).text();
+            $(".leaderCont").text(leader);
             mui("#leader").popover("toggle");
         })
         // 训练项目
         $(".project").click(function () {
-            var project = $(this).html();
-            $(".projectCont").html(project);
+            var project = $(this).text();
+            $(".projectCont").text(project);
             mui("#project").popover("toggle");
         })
 
@@ -559,38 +564,26 @@
         // 关闭弹出菜单
         $(".close-popover").click(function () {
             mui($(this).parent()).popover("toggle");
+            console.log(teacher)
         })
-        //全选
-        $(".all").click(function () {
-            $(".checkboxCont").find('input').prop('checked', true)
-        })
-        //取消全选
-        $(".cancel").click(function () {
-            $(".checkboxCont").find('input').prop('checked', false)
-        })
-        //删除
-        $(".del").click(function () {
-            $("input[name='checkbox1']:checked").each(function () { // 遍历选中的checkbox
-                n = $(this).parents("checkboxCont").index();  // 获取checkbox所在行的顺序
-                $(".checkboxCont:eq(" + n + ")").remove();
-            });
-        });
-
 
         //录课
         $(".operationBtn").click(function () {
             var image =$(".image").val();
-            var grade = $(".grade").html();
-            var lesson_time = $(".lesson_time").html();
-            var location = $(".location").html();
-            var coach = $(".coach").html();
+            var grade = $(".grade").text();
+            var student_str = $(".student_str").text();
+            var lesson_time = $(".lesson_time").text();
+            var location = $(".location").text();
+            var coach = $(".coach").text();
             var campid = $('.camp').attr('data-id');
-            var assistant = $(".assistant").html();
-            var leader = $(".leader").html();
-            var teacher = $(".teacher").html();
+            var assistant = $(".assistant").text();
+            var leader = $(".leader").text();
+            var teacher = $(".teacher").text();
+            console.log(student_str)
             if (image != '' && lesson_time != '' && location != '' && coach != '' && assistant != '' && leader != '' && teacher != '') {
                 mui.ajax("{:url('api/schedule/recordScheduleApi',['geade_id'=>$gradeInfo['id']])}", {
                     data: {
+                        'student_str': student_str,
                         'grade': grade,
                         'grade_id': "{$gradeInfo.id}",
                         'camp_id': campid,

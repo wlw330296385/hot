@@ -28,7 +28,8 @@ class Court extends Base{
     }
 
     public function courtList(){
-        $courtList = $this->CourtService->getCourtList(['camp_id'=>1,'status'=>1]);
+        $camp_id = input('param.camp_id')?input('param.camp_id'):0;
+        $courtList = $this->CourtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         $this->assign('courtList',$courtList);
         return view('Court/courtList');
     }
