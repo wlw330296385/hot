@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>训练营详情页-</title>
+    <title>训练营详情页</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -17,6 +17,11 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <!--等级星星样式-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
+    <style>
+     .mui-popover {
+        height: 300px;
+    }
+</style>
 </head>
 
 <body>
@@ -127,10 +132,10 @@
                         <span class="mui-icon mui-icon-phone" style="color: #737373"></span>电话咨询
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli" style="color: #737373">
-                    <a href="#pjpopover">我来评价</a>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli" style="color: #000;border-left:1px solid #ddd">
+                    <a href="#pjpopover" class="type1Btn">我来评价</a>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli" style="color: #737373">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli" style="color: #000;border-left:1px solid #ddd">
                     <a href="#join">申请加入</a>
                 </li>
             </ul>
@@ -148,10 +153,10 @@
                         <span class="course"><strong>请选择身份</strong></span>
                     </div>
                     <ul class="mui-table-view ">
-                        <li class="mui-table-view-cell listli detalisli choiseType">教练</li>
-                        <li class="mui-table-view-cell listli detalisli choiseType">管理员</li>
-                        <li class="mui-table-view-cell listli detalisli choiseType">创建者</li>
-                        <li class="mui-table-view-cell listli detalisli choiseType">粉丝</li>
+                        <li class="mui-table-view-cell listli detalisli choiseType">学生<input type="text" name="" value="1" style="display: none"></li>
+                        <li class="mui-table-view-cell listli detalisli choiseType">教练<input type="text" name="" value="2" style="display: none"></li>
+                        <li class="mui-table-view-cell listli detalisli choiseType">管理员<input type="text" name="" value="3" style="display: none"></li>
+                        <li class="mui-table-view-cell listli detalisli choiseType">粉丝<input type="text" name="" value="5" style="display: none"></li>
                     </ul>
                 </div>
             </div>
@@ -161,7 +166,7 @@
     <div id="yqpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
             <ul class="mui-table-view operation">
-                <h5><font class="type">管理员</font><a href="#yqpopover" class="mui-icon mui-icon-closeempty"></a></h5>
+                <h5><span class="type"></span><a href="#yqpopover" class="mui-icon mui-icon-closeempty"></a></h5>
                 <li class="mui-table-view-cell listli">
                     <textarea rows="4" class="remarks"></textarea>
                 </li>
@@ -173,7 +178,7 @@
     <div id="pjpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
             <ul class="mui-table-view operation">
-                <h5><font class="type">评价我的教练</font><a href="#pjpopover" class="mui-icon mui-icon-closeempty"></a></h5>
+                <h5><span>评价我的训练营</span><a href="#pjpopover" class="mui-icon mui-icon-closeempty"></a></h5>
                 <li class="mui-table-view-cell listli">
                     <textarea rows="4"></textarea>
                 </li>
@@ -194,6 +199,7 @@
     mui('.mui-scroll-wrapper').scroll();
 
     $(function () {
+
         //展示训练营介绍全文
         $(".about a").click( function() {
             $(".about").css("display","block");
@@ -201,49 +207,50 @@
         });
         
         //选择身份申请加入
+        var type = '';
         $(".choiseType").click(function() {
+            type = $(this).find("input").val();
             var choiseType = $(this).text();
             $("#yqpopover").addClass("mui-active").css("display","block"); 
-            $(".type").text(choiseType);
+            $(".type").text("申请加入"+choiseType);
             mui('#yqpopover').popover('toggle');
         })
 
         //训练营的身份api
         $(".joinBtn").click(function () {
-            var type =$(".type").text();
-            var remarks = $(".remarks").text();
-            mui.ajax("{:url('api/CampMember/applyApi')}", {
-                data: {
-                    'type': type,
-                    'camp_id': "{$campInfo.id}",
-                    'remarks': remarks,
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: {'Content-Type': 'application/json'},
-                success: function (data) {
-                    //服务器返回响应，根据响应结果，分析是否登录成功；
-                    console.log(data)
-                    if (data.code == 100) {
-                        mui.toast("提交成功");
-                    } else {
-                        mui.toast(data.msg);
+            var remarks = $(".remarks").val();
+            if(remarks !=0){
+                mui.ajax("{:url('api/CampMember/applyApi')}", {
+                    data: {
+                        'type': type,
+                        'camp_id': "{$campInfo.id}",
+                        'remarks': remarks,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data)
+                        if (data.code == 100) {
+                            mui.toast("提交成功,待审核");
+                            mui('#yqpopover').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
                     }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-
+                });
+            }else{
+                mui.toast("请填写申请理由");
+            }
+            
         })
     });
-
-
-
-
-
-</script>
+    </script>
 </body>
 </html>
