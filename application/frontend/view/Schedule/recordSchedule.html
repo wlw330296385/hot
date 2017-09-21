@@ -470,11 +470,7 @@
 
         // 添加学员
         var str = '';
-        // var totalNum = '';
-        // totalNum += $(".checkboxCont").length;
-        // $(".mui-badge").text(totalNum);
-        // console.log(totalNum)
-
+        var totalNum = '';
         $("#studentConfirm").click(function () {
             //选择多个学员
             $(".addStudentList input[type=checkbox]:checked").each(function() {
@@ -483,9 +479,10 @@
             $(".operation-btn").before(str);//在增删按钮前加一行
             changeIndex();//调用-更新序号
             mui("#addStudent").popover("toggle");
-           
+            //角标随checkboxCont的数量变化
+            totalNum = $(".checkboxCont").length;
+            $(".mui-badge").text(totalNum);
         });
-
 
         //全选
         $(".all").click(function () {
@@ -582,6 +579,7 @@
             var assistant = $(".assistant").text();
             var leader = $(".leader").text();
             var teacher = $(".teacher").text();
+            console.log(student_str)
             if (image != '' && lesson_time != '' && location != '' && coach != '' && assistant != '' && leader != '' && teacher != '') {
                 mui.ajax("{:url('api/schedule/recordScheduleApi',['geade_id'=>$gradeInfo['id']])}", {
                     data: {
