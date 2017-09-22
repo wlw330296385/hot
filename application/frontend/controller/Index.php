@@ -20,7 +20,6 @@ class Index extends Base{
     	$this->assign('bannerList',$bannerList);
     	$this->assign('hotLessonList',$hotLessonList);
     	$this->assign('sortLessonList',$sortLessonList);
-    	$this->assign('mid', cookie('mid'));
         return view('Index/index');
     }
 

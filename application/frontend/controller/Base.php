@@ -32,6 +32,7 @@ class Base extends Controller{
         $this->assign('memberInfo', $this->memberInfo);
         $fasturl = $this->is_weixin() ? url('login/fastRegister') : url('login/login'); //提示完善信息对话框链接
         $this->assign('fasturl', $fasturl);
+        $this->assign('mid', cookie('mid'));
 	}
 
 
