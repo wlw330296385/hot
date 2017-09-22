@@ -20,6 +20,7 @@ class Court extends Base{
             $page = input('param.page')?input('param.page'):1;
             $city = input('param.city');
             $area = input('param.area');
+            $camp_id = input('param.camp_id')?input('param.camp_id'):0;
             $map = ['province'=>$province,'city'=>$city,'area'=>$area];
             foreach ($map as $key => $value) {
                 if($value == ''|| empty($value) || $value!=' '){
@@ -29,6 +30,7 @@ class Court extends Base{
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['court'] = ['LIKE','%'.$keyword.'%'];
             }
+            $map['camp_id'] = $camp_id;
             $campList = $this->CourtService->getCourtList($map,$page);
             return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
         }catch(Exception $e){

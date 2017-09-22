@@ -156,18 +156,17 @@ class CampMember extends Base{
                 $result = Db::view('camp_member','camp_id')
                     ->view('coach','*','coach.member_id=camp_member.member_id')
                     ->where(['camp_member.status'=>1,'camp_member.camp_id'=>$camp_id])
-                    ->where(['type'=>['egt',2]])
-                    ->where(['coach.coach'=>['like','%'.$keyword.'%']])
+                    ->where(['camp_member.type'=>['egt',2]])
+                    ->where(['coach.coach'=>['like','%'.$keyword.'%'],'status'=>1])
                     ->select();
             }else{
                 $result = Db::view('camp_member','camp_id')
                     ->view('coach','*','coach.member_id=camp_member.member_id')
                     ->where(['camp_member.status'=>1,'camp_member.camp_id'=>$camp_id])
-                    ->where(['type'=>['egt',2]])
+                    ->where(['camp_member.type'=>['egt',2]])
                     ->select();
             }
             
-
             return json(['code'=>100,'msg'=>'OK','data'=>$result]);        
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

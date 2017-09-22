@@ -28,18 +28,10 @@ class CoachService{
 	 * 申请成为教练
 	 */
 	public function createCoach($request){
-<<<<<<< HEAD
-        $coachM = new Coach();
-        
-        $result = $coachM->validate('CoachVal')->save($request);
-        if($result){
-            return ['code'=>200,'msg'=>'OK','data'=> $coachM->getLastInsID() ];
-=======
         $model = new Coach();
         $result = $model->validate('CoachVal')->save($request);
         if ($result === false) {
             return ['code' => 100, 'msg' => $model->getError()];
->>>>>>> d10ebe141fa4865be3e2ba391d42a05ea133403d
         }else{
             return ['code'=>200,'msg'=>'OK','data'=> $model->getLastInsID() ];
         }

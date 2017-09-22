@@ -49,11 +49,8 @@ class Coach extends Base{
 
     public function createCoachApi(){
         try{
-<<<<<<< HEAD
             $data['coach'] = input('post.coach');
             $data['member_id'] = $this->memberInfo['id'];
-            return $this->CoachService->createCoach($data);
-=======
             $member_id = input('post.member_id');
             // 教练数据
             $coachdata = [
@@ -100,7 +97,6 @@ class Coach extends Base{
                 return json([ 'msg' => '证件信息保存出错,请重试', 'code' => 100]);
             }
             return $coach;
->>>>>>> d10ebe141fa4865be3e2ba391d42a05ea133403d
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }

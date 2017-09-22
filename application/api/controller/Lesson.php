@@ -26,6 +26,7 @@ class Lesson extends Base{
             $page = input('param.page')?input('param.page'):1;
             $city = input('param.city');
             $area = input('param.area');
+            $camp_id = input('param.camp_id');
             $gradecate_id = input('param.gradecate_id');
             $map = ['province'=>$province,'city'=>$city,'area'=>$area,'gradecate_id'=>$gradecate_id];
             foreach ($map as $key => $value) {
@@ -36,7 +37,9 @@ class Lesson extends Base{
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['lesson'] = ['LIKE','%'.$keyword.'%'];
             }
-
+            if($camp_id){
+                $map['camp_id'] = $camp_id;
+            }
             $lessonList = $this->LessonService->getLessonPage($map,$page);
             return json(['code'=>100,'msg'=>'OK','data'=>$lessonList]);
         }catch(Exception $e){
