@@ -29,4 +29,26 @@ class Plan extends Base{
         }
 
     }
+
+
+    public function createPlan(){
+        try{
+            $data = input('post.');
+            $planList = $this->PlanService->createPlan($data);
+            return json($planList);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    public function updatePlan(){
+        try{
+            $plan_id = input('param.plan_id');
+            $data = input('post.');
+            $planList = $this->PlanService->updatePlan($data,$plan_id);
+            return json($planList);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }

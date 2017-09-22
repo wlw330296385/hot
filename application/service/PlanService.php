@@ -44,12 +44,12 @@ class PlanService {
     /**
      * 更新资源
      */
-    public function updatePlan($data) {
+    public function updatePlan($data,$id) {
         $validate = validate('PlanVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 200];
         }
-        $res = $this->Plan->update($data);
+        $res = $this->Plan->save($data,$id);
         if($res === false){
             return ['msg'=>$this->Plan->getError(),'code'=>'200'];
         }else{
