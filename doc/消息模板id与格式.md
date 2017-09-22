@@ -86,7 +86,7 @@ wechatService调用
 $data = [
 	"touser" => OPENID,
 	"template_id" => "ngqIpbwh8bUfcSsECmogfXcV14J0tQlEpBO27izEYtY",
-	"url" => "http://weixin.qq.com/download",
+	"url" => "http://weixin.qq.com/download/openid/$openid",
 	"topcolor":"#FF0000",
 	"data" => [
 		'first' => ['value' => 'ddddd'],

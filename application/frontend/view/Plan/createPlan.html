@@ -56,6 +56,36 @@
     </form>
 </div>
 
+
+
+
+    <!--训练项目选择-->
+    <div id="lessonDom" class="mui-popover">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course wd36"><strong>课量选择</strong></span>
+                        <span class="fr"><button class="mui-btn-blue" id="domConfirm">确认</button></span>
+                    </div>
+                    <form class="mui-input-group">
+                        {volist name="exerciseList" id="vol"}
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>1 课时</label>
+                            <input name="checkbox-dom" value="1" type="checkbox">
+                        </div>
+                        {/volist}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script>
@@ -63,6 +93,21 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+
+
+    $(function(){
+        //课量选择列表确认
+        $("#domConfirm").click(function(){
+            //把所选课量串在一起，以逗号分隔
+            $("input[name='doms']").val($("input[name='checkbox-dom']:checked").map(function(){
+                return $(this).val();
+            }).get().join(",") );
+            var doms = $("input[name='doms']").val();
+            $(".lessonDom").val(doms);
+            mui('#lessonDom').popover('toggle');
+        })
+    })
 
 </script>
 </html>

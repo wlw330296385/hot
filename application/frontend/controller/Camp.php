@@ -14,9 +14,9 @@ class Camp extends Base{
     public function index() {
         // 最新消息
         $member_id = $this->memberInfo['id'];
-        $messageList = db('message')->page(1,10)->select();
+        $messageList = db('message')->page(1,10)->select();       
         $campList = db('camp_member')->where(['member_id'=>$member_id,'status'=>1])->select();
-
+        
         $this->assign('campList',$campList);
         $this->assign('messageList',$messageList);
         return view('Camp/index');
@@ -61,8 +61,9 @@ class Camp extends Base{
     }
 
     public function campList(){
-        $map = input();
-        $campList = $this->CampService->campListPage($map);
+        // $map = input();
+        // $campList = $this->CampService->campListPage($map);
+        $campList = [];
         $this->assign('campList',$campList);
         return view('Camp/campList');
     }

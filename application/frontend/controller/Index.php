@@ -28,7 +28,7 @@ class Index extends Base{
 
     public function search(){
         
-        return view();
+        return view('Index/search');
     }
 
 
