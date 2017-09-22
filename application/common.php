@@ -146,3 +146,9 @@ function sendMessageMember($data){
     $result = $MessageMemberService->saveMessageInfo($data);
     return $result;
 }
+
+function buildqrcode($url, $size=4, $level='L') {
+//    dump($url);
+    $filename = '';
+    \QRcode::png($url, $filename, $size, $level);
+}
