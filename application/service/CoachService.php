@@ -28,12 +28,12 @@ class CoachService{
 	 * 申请成为教练
 	 */
 	public function createCoach($request){
-        $coachM = new Coach();
-        $result = $coachM->save($request);
-        if($result){
-            return ['code'=>200,'msg'=>'OK','data'=> $coachM->getLastInsID() ];
+        $model = new Coach();
+        $result = $model->validate('CoachVal')->save($request);
+        if ($result === false) {
+            return ['code' => 100, 'msg' => $model->getError()];
         }else{
-            return ['code'=>100,'msg'=>$coachM->getError()];
+            return ['code'=>200,'msg'=>'OK','data'=> $model->getLastInsID() ];
         }
     }
 
@@ -46,10 +46,10 @@ class CoachService{
         $model = new Coach();
         $result = $model->validate('CoachVal')->save($request, ['id' => $id]);
         if ($result === false) {
-            return ['code' => 200, 'msg' => $model->getError()];
+            return ['code' => 100, 'msg' => $model->getError()];
+        } else {
+            return ['code' => 200, 'msg' => __lang('MSG_100_SUCCESS')];
         }
-
-        return ['code' => 100, 'msg' => __lang('MSG_100_SUCCESS')];
     }
 	
 	// 教练列表
