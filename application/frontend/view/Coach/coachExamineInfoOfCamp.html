@@ -17,25 +17,48 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <!--等级星星样式-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
+    <style>
+        .examineBox{
+            padding: 10px;
+            background-color: #fff;
+        }
+        .examine{
+            width: 100%;
+            min-height: 40px;
+            font-size: 14px;
+            color: #737373;
+        }
+    </style>
 </head>
 
-<body class=whitebg>
+<body>
 
-<header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-    <h1 class="mui-title">教练介绍</h1>
-</header>
-<div class="mui-content">
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">教练介绍</h1>
+    </header>
+    <div class="mui-content">
 
-    <div class="list camp-list detalis-list coach">
-        <ul class="mui-table-view mb" style="margin-top: -4px">
+        <div class="list camp-list detalis-list coach">
+
+            <!-- 审核内容-->
+            <div class="examineBox mb">
+                <div class="examine"><strong>申请的内容：</strong>这里是我的申请的内容这里是我的申请的内容这里是我的申请的内容这里是我的申请的内容这里是我的申请的内容</div>
+                <div class="mui-button-row">
+                   <button class="mui-btn" type="button" onclick="return true;">同意</button>&nbsp;&nbsp;
+                   <button class="mui-btn" type="button" onclick="return false;">拒绝</button>
+               </div>
+           </div>
+
+           <ul class="mui-table-view mb">
             <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
                 <a href="javascript:;">
                     <img class="mui-media-object mui-pull-left coachicon"
-                         src="/static/frontend/images/shuijiao.jpg">
+                    src="/static/frontend/images/shuijiao.jpg">
                     <div class="mui-media-body">
                         {$coachInfo.coach}
                         <p class="mui-ellipsis">年龄:{$coachInfo.sex} 等级:{$coachInfo.coach_rank}</p>
+                        <input type="hidden" name="" data-id="{$coachInfo.id}">
                     </div>
                     <div class="price-frame camp-num">
                         <ul>
@@ -58,8 +81,8 @@
         <ul class="mui-table-view mb">
             <li class="mui-table-view-cell listli detalisli listinitial">自我介绍
                 <span class="about">{$coachInfo.introduction}
-                        <a href="#">全文展示</a>
-                    </span>
+                    <a href="#">全文展示</a>
+                </span>
             </li>
         </ul>
 
@@ -87,18 +110,18 @@
         </div>
         <ul class="mui-table-view list min-height mui-text-center">
             {volist name='commentList' id="vol" empty="暂无评论"}
-                <li class="mui-table-view-cell mui-media listli">
-                    <a href="javascript:;">
-                        <img class="mui-media-object mui-pull-left coachicon" src="{$vol.avatar}">
-                        <div class="mui-media-body">
-                            {$vol.member}
-                            <p class="mui-ellipsis">{$vol.comment}</p>
-                        </div>
-                        <div class="price-frame">
-                            <p>{$vol.create_time|date='Y-m-d',###}</p>
-                        </div>
-                    </a>
-                </li>
+            <li class="mui-table-view-cell mui-media listli">
+                <a href="javascript:;">
+                    <img class="mui-media-object mui-pull-left coachicon" src="{$vol.avatar}">
+                    <div class="mui-media-body">
+                        {$vol.member}
+                        <p class="mui-ellipsis">{$vol.comment}</p>
+                    </div>
+                    <div class="price-frame">
+                        <p>{$vol.create_time|date='Y-m-d',###}</p>
+                    </div>
+                </a>
+            </li>
             {/volist}
         </ul>
         <p class="dropdown mt55"><a href="#">查看16条评论...</a></p>
@@ -126,10 +149,7 @@
         </div>
 
     </div>
-</div>
 
-</div>
-</body>
 <script src="/static/frontend/js/mui.min.js"></script>
 
 <script>
@@ -137,30 +157,6 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-
-    // mui('body').on('shown', '.mui-popover', function (e) {
-    //     //console.log('shown', e.detail.id);//detail为当前popover元素
-    // });
-    // mui('body').on('hidden', '.mui-popover', function (e) {
-    //     //console.log('hidden', e.detail.id);//detail为当前popover元素
-    // });
-    // var info = document.getElementById("info");
-    // mui('body').on('tap', '.mui-popover-action li>a', function () {
-    //     var a = this,
-    //         parent;
-    //     //根据点击按钮，反推当前是哪个actionsheet
-    //     for (parent = a.parentNode; parent != document.body; parent = parent.parentNode) {
-    //         if (parent.classList.contains('mui-popover-action')) {
-    //             break;
-    //         }
-    //     }
-    //     //关闭actionsheet
-    //     mui('#' + parent.id).popover('toggle');
-    //     info.innerHTML = "你刚点击了\"" + a.innerHTML + "\"按钮";
-    // })
-
-    // mui("body").on("tap", "a", function () {
-    //     window.top.location.href = this.href;
-    // });
 </script>
+</body>
 </html>
