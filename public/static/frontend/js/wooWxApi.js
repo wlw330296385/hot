@@ -11,6 +11,13 @@
  *
  * @author zhaoxianlie(http://www.baidufe.com)
  */
+
+ 
+if (typeof jQuery == 'undefined') { 
+document.write('<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>');   
+} else { 
+    
+} 
 var WeixinApi = (function () { 
  
     /* 这里省略了一堆代码……下面直接看调用接口 */ 
