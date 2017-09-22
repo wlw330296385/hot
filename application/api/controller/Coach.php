@@ -4,10 +4,10 @@ use app\api\controller\Base;
 use app\service\CoachService;
 use app\service\CertService;
 class Coach extends Base{
-	protected $coachService;
+	protected $CoachService;
 	public function _initialize(){
 		parent::_initialize();
-		$this->coachService = new CoachService;
+		$this->CoachService = new CoachService;
 
 	}
 
@@ -34,7 +34,7 @@ class Coach extends Base{
                 $map['coach'] = ['LIKE','%'.$keyword.'%'];
             }
             // dump($map);die;
-            $coachList = $this->coachService->getCoachList($map,$page);
+            $coachList = $this->CoachService->getCoachList($map,$page);
             if($coachList){
                 return json(['code'=>100,'msg'=>'OK','data'=>$coachList]);
             }else{
@@ -51,7 +51,7 @@ class Coach extends Base{
         try{
             $data['coach'] = input('post.coach');
             $data['member_id'] = $this->memberInfo['id'];
-            return $this->coachService->createCoach($data);
+            return $this->CoachService->createCoach($data);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -113,7 +113,7 @@ class Coach extends Base{
         try{
             $map = input('post.');
             $page = input('param.page')?input('param.page'):1;
-            $coachList = $this->coachService->getCoachList($map,$page);
+            $coachList = $this->CoachService->getCoachList($map,$page);
             return json(['code'=>100,'msg'=>'OK','data'=>$coachList]);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -140,11 +140,13 @@ class Coach extends Base{
     public function isCoach(){
         try{
             $member_id = input('param.member_id')? input('param.member_id'):$this->memberInfo['id'];
-            $campList = Db::view('grade_member','camp_id')
-                    ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo,id,total_member,total_lessons','camp.id=grade_member.camp_id')
-                    ->where(['grade_member.member_id'=>$member_id,'grade_member.type'=>4,'grade_member.status'=>1])
-                    ->select();
-            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);        
+            $result = $this->CoachService->getCoachInfo(['member_id'=>$member_id,'status'=>1]);
+            if($result){
+                return json(['code'=>100,'msg'=>'OK','data'=>$result]);    
+            }else{
+                return json(['code'=>200,'msg'=>'OK','data'=>'']);    
+            }
+                
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }

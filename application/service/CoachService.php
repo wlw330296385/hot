@@ -29,7 +29,8 @@ class CoachService{
 	 */
 	public function createCoach($request){
         $coachM = new Coach();
-        $result = $coachM->save($request);
+        
+        $result = $coachM->validate('CoachVal')->save($request);
         if($result){
             return ['code'=>200,'msg'=>'OK','data'=> $coachM->getLastInsID() ];
         }else{

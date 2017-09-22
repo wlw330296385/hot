@@ -34,6 +34,10 @@ class Plan extends Base{
     public function createPlan(){
         try{
             $data = input('post.');
+            $data['member'] = $this->memberInfo['member'];
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['type'] = 1;
+            dump($data);
             $planList = $this->PlanService->createPlan($data);
             return json($planList);
         }catch (Exception $e){
@@ -45,6 +49,10 @@ class Plan extends Base{
         try{
             $plan_id = input('param.plan_id');
             $data = input('post.');
+            $data['member'] = $this->memberInfo['member'];
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['type'] = 1;
+
             $planList = $this->PlanService->updatePlan($data,$plan_id);
             return json($planList);
         }catch (Exception $e){

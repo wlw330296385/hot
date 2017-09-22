@@ -5,21 +5,21 @@ class PlanVal extends Validate{
 
 
 	protected $rule = [
-        'camp_id'  =>  'gt:1',
+        'camp_id'  =>  'gt:0',
         'member'	=> 'require',
         'member_id'    => 'require',
-        'camp' =>  'reqiure',
+        'camp' =>  'require',
         'outline' => 'require',
         'exercise'=>'require',
     ];
     
     protected $message = [
-        'camp_id'  =>  'require',
+        'camp_id'  =>  'camp_id 必须大于0',
         'member_id'    => 'require',
         'member'  => 'require',
-        'camp' =>  'reqiure',
-        'outline' => 'require',
-        'exercise'=>'require',
+        'camp' =>  'camp require',
+        'outline' => 'outline require',
+        'exercise'=>' exercise require',
     ];
     
     protected $scene = [

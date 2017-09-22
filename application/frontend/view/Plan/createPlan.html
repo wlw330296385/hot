@@ -17,7 +17,7 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
 </head>
 
-<body class=whitebg>
+<body id="app">
 <div class="mui-content whitebg program">
     <form class="mui-input-group editorform">
         <div class="mui-input-row">
@@ -40,9 +40,12 @@
             <label>大纲介绍:</label>
             <textarea rows="5" placeholder=""></textarea>
         </div>
-        <div class="mui-input-row height127">
-            <label>训练项目:</label>
-            <textarea rows="5" placeholder="从项目列表选择"></textarea>
+        <div class="mui-input-row">
+            <a href="#exercises" class="mui-navigate-right">
+                <label>选择训练项目</label>
+                <span class="exercises"></span>
+                <input type="hidden" name="exercise_ids" class="data" value="" >
+            </a>
         </div>
         <div class="mui-input-row">
             <label>上传视频</label>
@@ -58,54 +61,103 @@
 
 
 
-
-    <!--训练项目选择-->
-    <div id="lessonDom" class="mui-popover">
-        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
+<!--选择训练项目-->
+    <div id="exercises" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <div class="camp-list camp-lesson-list detalis-list mt">
                     <div class="page-header">
-                        <span class="course wd36"><strong>课量选择</strong></span>
+                        <span class="course wd36"><strong>训练项目</strong></span>
                         <span class="fr"><button class="mui-btn-blue" id="domConfirm">确认</button></span>
                     </div>
-                    <form class="mui-input-group">
-                        {volist name="exerciseList" id="vol"}
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <label>1 课时</label>
-                            <input name="checkbox-dom" value="1" type="checkbox">
+                    <div class="camp-lesson-list">
+                        <div class="mui-segmented-control mb">
+                            <a class="mui-control-item mui-active" href="#item1">训练营项目</a>
+                            <a class="mui-control-item" href="#item2">系统项目</a>
                         </div>
-                        {/volist}
-                    </form>
+                    </div>
+                    
+                    
+                    <div id="item1" class="mui-control-content mui-active">
+                        <!-- <div class="mui-scroll-wrapper"> -->
+                        <!-- <div class="mui-scroll"> -->
+                            {volist name="exerciseList" id="vol"} 
+                            {neq name="vol.camp_id" value="0"}
+                            <ul class="mui-table-view">
+                            <li class="mui-table-view-cell mui-collapse">
+                                <a class="mui-navigate-right" href="#">{$vol.exercise}</a>
+                                {volist name="vol._data" id="v"}
+                                <div class="mui-collapse-content">
+                                    <div class="mui-input-row mui-checkbox mui-left"> 
+                                        <label>{$v.exercise}</label>                         
+                                        <input name="checkbox-dom" value="{$v.id}" type="checkbox">                    
+                                    </div>  
+                                </div>
+                                {/volist}
+                            </li>
+                            </ul> 
+                            {/neq}
+                            {/volist}
+                        <!-- </div> -->
+                        <!-- </div> -->
+                    </div>
+                    
+                    
+                    <div id="item2" class="mui-control-content">
+                        <!-- <div class="mui-scroll-wrapper"> -->
+                        <!-- <div class="mui-scroll"> -->
+                            {volist name="exerciseList" id="vol"} 
+                            {eq name="vol.camp_id" value="0"}
+                            <ul class="mui-table-view">
+                            <li class="mui-table-view-cell mui-collapse">
+                                <a class="mui-navigate-right" href="#">{$vol.exercise}</a>
+                                {volist name="vol._data" id="v"}
+                                <div class="mui-collapse-content">
+                                    <div class="mui-input-row mui-checkbox mui-left"> 
+                                        <label>{$v.exercise}</label>                         
+                                        <input name="checkbox-dom" value="{$v.id}" type="checkbox">                    
+                                    </div>  
+                                </div>
+                                {/volist}
+                            </li>
+                            </ul> 
+                            {/eq}
+                            {/volist}
+                        </div>
+                    <!-- </div> -->
+                    <!-- </div> -->
+                
                 </div>
             </div>
         </div>
     </div>
 
 
-
-
+               
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-
-
-
     $(function(){
+         $(".mui-scroll-wrapper").scroll({
+            //bounce: false,//滚动条是否有弹力默认是true
+            //indicators: false, //是否显示滚动条,默认是true
+        });
         //课量选择列表确认
         $("#domConfirm").click(function(){
             //把所选课量串在一起，以逗号分隔
-            $("input[name='doms']").val($("input[name='checkbox-dom']:checked").map(function(){
+            $("input[name='exercise_ids']").val($("input[name='checkbox-dom']:checked").map(function(){
                 return $(this).val();
             }).get().join(",") );
-            var doms = $("input[name='doms']").val();
-            $(".lessonDom").val(doms);
-            mui('#lessonDom').popover('toggle');
+            $("input[name='exercises']").text($("input[name='checkbox-dom']:checked").map(function(){
+                return $(this).text();
+            }).get().join(",") );
         })
     })
 

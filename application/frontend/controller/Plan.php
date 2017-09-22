@@ -57,8 +57,22 @@ class Plan extends Base{
 
     // 添加教案
     public function createPlan(){
-
-
+        $camp_id = input('param.camp_id');
+        // 判读权限
+        $CampService = new \app\service\CampService;
+        $is_power = $CampService->isPower($camp_id,$this->memberInfo['id']);
+        if($is_power < 2){
+            $this->error('您没有权限');
+        }       
+        // 获取适合阶段
+        $gradecateService = new \app\service\GradeService;
+        $gradecateList = $gradecateService->getGradeCategory();
+        $exerciseService = new \app\service\ExerciseService;
+        $exerciseList = $exerciseService->getExerciseList();
+        // dump($exerciseList);die;
+        // 训练项目
+        $this->assign('exerciseList',$exerciseList);
+        $this->assign('gradecateList',$gradecateList);
         return view('Plan/createPlan');
     }
 
