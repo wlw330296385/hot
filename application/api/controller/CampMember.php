@@ -51,20 +51,23 @@ class CampMember extends Base{
                 return json(['code'=>200,'msg'=>'不存在这个身份']);
             }
             //是否已存在身份
-            $isType = db('camp_member')->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>$camp_id,'status'=>1])->find();
+            $isType = db('camp_member')->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>$camp_id])->find();
             if($isType){
-                return json(['code'=>200,'msg'=>'你已经是训练营的一员']);
+                if($isType['status'] == 1) {
+                    return json(['code'=>200,'msg'=>'你已经是训练营的一员']);
+                } else {
+                    return json(['code'=>200,'msg'=>'你已申请加入训练营,请等待审核']);
+                }
             }
             $result = db('camp_member')->insert(['camp_id'=>$campInfo['id'],'camp'=>$campInfo['camp'],'member_id'=>$this->memberInfo['id'],'member'=>$this->memberInfo['member'],'type'=>$type,'status'=>0,'create_time'=>time()]);
-            $msg = '申请成功';
             if($result){
-                return json(['code'=>100,'msg'=>$msg]);
+                return json(['code'=>100,'msg'=>'申请成功']);
             }else{
                 return json(['code'=>200,'msg'=>'申请失败']);
             }
         }catch(Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
-        }  
+        }
     }
 
     // 训练营人员审核
