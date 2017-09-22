@@ -211,13 +211,12 @@ class Coach extends Base{
 
     //教练员注册
     public function createCoach(){
-        
         return view('Coach/createCoach');
     }
 
     public function updateCoach(){
        // 会员刚完成注册就执行
-        $fast = input('param.fast');
+      /*  $fast = input('param.fast');
         if ($fast) {
             //dump($this->memberInfo);
             $isCoach = db('coach')->where('member_id', $this->memberInfo['id'])->find();
@@ -227,7 +226,7 @@ class Coach extends Base{
                     'create_time' => time()
                 ]);
             }
-        }
+        }*/
         // 会员刚完成注册就执行 end
 
         $coach_id = input('param.coach_id');

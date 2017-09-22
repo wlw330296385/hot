@@ -49,9 +49,58 @@ class Coach extends Base{
 
     public function createCoachApi(){
         try{
+<<<<<<< HEAD
             $data['coach'] = input('post.coach');
             $data['member_id'] = $this->memberInfo['id'];
             return $this->CoachService->createCoach($data);
+=======
+            $member_id = input('post.member_id');
+            // 教练数据
+            $coachdata = [
+                'coach' => input('post.coach'),
+                'member_id' => $member_id,
+                'coach_year' => input('post.coach_year'),
+                'experience' => input('post.experience'),
+                'introduction' => input('post.introduction'),
+                'portraits' => input('post.portraits'),
+                'description' => input('post.description')
+            ];
+            // 地区input 拆分成省 市 区 3个字段
+            $locationStr = input('post.locationStr');
+            if ($locationStr) {
+                $locationArr = explode('|', $locationStr);
+                $coachdata['province'] = $locationArr[0];
+                $coachdata['city'] = $locationArr[1];
+                $coachdata['area'] = $locationArr[2];
+            }
+            $coach = $this->coachService->createCoach($coachdata);
+
+            // 实名数据
+            $realnamedata = [
+                'camp_id' => 0,
+                'member_id' => $member_id,
+                'cert_no' => input('post.idno'),
+                'cert_type' => 1,
+                'photo_positive' => input('post.photo_positive'),
+                'photo_back' => input('post.photo_back'),
+            ];
+            // 资质证书
+            $certdata = [
+                'camp_id' => 0,
+                'member_id' => $member_id,
+                'cert_no' => 0,
+                'cert_type' => 3,
+                'photo_positive' => input('post.cert')
+            ];
+
+            $certS = new CertService();
+            $cert1 = $certS->saveCert($realnamedata);
+            $cert2 = $certS->saveCert($certdata);
+            if ($cert1['code'] == 100 || $cert2['code'] == 100) {
+                return json([ 'msg' => '证件信息保存出错,请重试', 'code' => 100]);
+            }
+            return $coach;
+>>>>>>> d10ebe141fa4865be3e2ba391d42a05ea133403d
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -75,6 +124,14 @@ class Coach extends Base{
                 'portraits' => input('post.portraits'),
                 'description' => input('post.description')
             ];
+            // 地区input 拆分成省 市 区 3个字段
+            $locationStr = input('post.locationStr');
+            if ($locationStr) {
+                $locationArr = explode('|', $locationStr);
+                $coachdata['province'] = $locationArr[0];
+                $coachdata['city'] = $locationArr[1];
+                $coachdata['area'] = $locationArr[2];
+            }
             $coachS = new CoachService();
             $coach = $coachS->updateCoach($coachdata, $coach_id);
 
