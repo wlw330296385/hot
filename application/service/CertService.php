@@ -72,9 +72,9 @@ class CertService {
         }
 
         if ($res) {
-            $response = ['code' => 100, 'msg' => __lang('MSG_200')];
+            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
         } else {
-            $response = ['code' => 200, 'msg' => __lang('MSG_400')];
+            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
         }
         return $response;
     }

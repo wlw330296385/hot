@@ -11,8 +11,12 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--icon扩展样式icons-extra.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
     <!--App自定义的css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <!--选择器样式-->
@@ -36,9 +40,9 @@
 </header>
 <div class="mui-content pt">
 
-
     <div class="register mt25">
         <form action="" class="mui-input-group">
+            <input type="hidden" name="memberid" value="{$mid}">
             {notempty name="memberInfo.nickname"}
             <div class="mui-input-row">
                 <label>微信昵称</label>
@@ -48,124 +52,184 @@
             {/notempty}
             <div class="mui-input-row">
                 <label>真实姓名</label>
-                <input type="text" name="coachname" placeholder="输入你的姓名">
+                <input type="text" class="input coach_name" placeholder="请输入真实姓名" value="">
             </div>
             <div class="mui-input-row">
-                <label>手机号码</label>
-                <input id="telephone" type="text" name="mobile" class="reg_mobile" placeholder="请输入手机号码">
+                <label>身份证号码</label>
+                <input type="text" class="input wd54 idno" placeholder="请输入身份证号码">
+            </div>
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right filePicker" onclick="add_id(1)">
+                    <label>身份证正面</label>
+                    <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
+                    <input type="hidden" name="photo_positive" value="">
+                </a>
+            </div>
+            <div class="mui-input-row h-auto">
+                <a  class="mui-navigate-right filePicker" onclick="add_id(2)">
+                    <label>身份证反面</label>
+                    <img id="preview_2" class="coachicon icon01 upload-preview" alt="">
+                    <input type="hidden" name="photo_back" value="">
+                </a>
+            </div>
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right portraits filePicker" onclick="add_id(3)">
+                    <label>个人形象照</label>
+                    <img id="preview_3" class="coachicon icon01 upload-preview" >
+                    <input type="hidden" name="portraits" value=''>
+                </a>
+            </div>
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right filePicker" onclick="add_id(4)">
+                    <label>资质证明</label>
+                    <img id="preview_4" class="coachicon icon01 upload-preview"  alt="">
+                    <input type="hidden" name="cert" value="">
+                </a>
+            </div>
+            <div class="mui-input-row" id='showCityPicker3'>
+                <a href="#" class="mui-navigate-right">
+                    <label>所属地区</label>
+                    <span id="cityResult3" class="ui-alert location" style="color:#737373">选择
+                        </span>
+                </a>
+                <input id="location-input" type="hidden" name="locationStr" value="">
             </div>
             <div class="mui-input-row">
-                <label>短信验证码</label>
-                <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)">
-                <input id="code" type="text" name="smscode" placeholder="输入验证码" style="width: 40%;">
+                <label>教学工龄</label>
+                <input type="text" class="input coach_year"
+                       placeholder="请输入教学工龄" value="">
             </div>
-           <!-- <div class="mui-input-row">
-                <label>推荐人</label>
-                <span>获取推荐人</span>
-            </div>-->
+            <div class="mui-input-row h-auto">
+                <label>教学经验描述</label>
+                <textarea rows="5" class="experience" placeholder="填写教学经验"></textarea>
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>自我介绍</label>
+                <textarea rows="5" class="introduction" placeholder="自我介绍"></textarea>
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>个人宣言</label>
+                <textarea rows="5" class="description" placeholder="个人宣言"></textarea>
+            </div>
         </form>
 
-        <span class="tip-box user_hint mobile_hint"></span>
-        <div class="tjbtn">
-            <button type="sumbit" class="mui-btn btn registerCoach">
-                注册
-            </button>
+        <span class="tip-box tip repassword_hint password_hint mobile_hint"></span>
+        <div class="tip-box">
+            <input type="checkbox" checked>
+            <label>同意大热篮球事业合伙协议</label>
         </div>
+        <div class="tjbtn">
+            <button type="button" class="mui-btn btn registerbtn2">注册</button>
+        </div>
+        <!--<p class="pass"><a href="{:url('index/index')}">[跳过，稍后完善]</a></p>-->
     </div>
-
 
 
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<!-- 验证 -->
-<script src="/static/frontend/js/smsCode.js"></script>
-<script src="/static/frontend/libs/yzvalidate.js"></script>
+<!--选择器-->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
+<script>
+    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+</script>
+<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
 
-    // 发送短信验证码
-    function sendCode(obj){
-        telephone = document.getElementById('telephone').value;
-        var telephoneReg = /^\d{11,11}$/;
-        if(!telephoneReg.test(telephone)){
-            mui.toast('请填写正确的手机号码');
-            flag = false;
-        }else{
-           var result = smsCode.getMobileCodeApi(obj,telephone,"{:url('api/sms/getMobileCodeApi', ['use' => '教练员注册'])}");
-            //console.log(result);
-            if(result.code == 100){
-                flag = true;
-                mui.toast(result.msg);
-            }else{
-                flag = false;
-                mui.toast(result.msg);
-            }
-        }
-    }
-
-
-    $(function () {
-        //验证短信验证码
-        $('#code').on("blur",function(){
-            //var code = document.getElementById('code').value;
-            var code = $(this).val();
-            var codeReg = /^\d{6,6}$/;
-
-            console.log(code);
-            if(!codeReg.test(code)){
-                mui.toast('请填写正确的验证码');
-                flag = false;
-            }else{
-                telephone = document.getElementById('telephone').value;
-                var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/sms/validatesmscodeapi')}");
-                if(result == 100){
-                    flag = true;
-                    mui.toast(result.msg);
-                }else{
-                    flag = false;
-                    mui.toast(result.msg);
-                }
-            }
-
+    //地区选择器
+    (function ($, doc) {
+        $.init();
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+            ///级联示例
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
+            });
+            cityPicker3.setData(cityData3);
+            var showCityPickerButton = doc.getElementById('showCityPicker3');
+            var cityResult3 = doc.getElementById('cityResult3');
+            var locationvalue = doc.getElementById('location-input');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    locationvalue.value = _getParam(items[0], 'text') + "|" + _getParam(items[1], 'text') + "|" + _getParam(items[2], 'text')
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
         });
+    })(mui, document);
 
+    //完善教练信息
+    $(function () {
 
-        $(".registerCoach").on("click", function () {
-            var coach = $("input[name=coachname]").val();
-            var telephone = $(".reg_mobile").val();
-            var smscode = $('#code').val();
-            //console.log(coach);
-            if(coach == "" || telephone == "" || smscode==""){
-                alert("请填写所有信息项");
-                return false;
+        $(".registerbtn2").on("click", function () {
+            var coachid = $('input[name=coachid]').val();
+            var memberid = $('input[name=memberid]').val();
+            var coach_name = $('.coach_name').val();
+            var coach_year = $(".coach_year").val();
+            var experience = $(".experience").val();
+            var introduction = $(".introduction").val();
+            var description = $(".description").val();
+            var locationStr = $('input[name=locationStr]').val();
+
+            var idno = $(".idno").val();
+            var portraits = $("input[name=portraits]").val();
+            var photo_positive = $('input[name=photo_positive]').val();
+            var photo_back = $('input[name=photo_back]').val();
+            var cert = $('input[name=cert]').val();
+
+            if (coach_name == "" || portraits == "" || coach_year == "" || experience == "" || introduction == "" || description == '' || locationStr=="" || portraits=="" || photo_positive=="" || photo_back=="" || cert=="") {
+                alert("请完善信息");
+                return;
             }
-
             mui.ajax("{:url('api/coach/createCoachApi')}", {
                 data: {
-                    coach: coach
+                    coachid: coachid,
+                    member_id: memberid,
+                    coach: coach_name,
+                    coach_year: coach_year,
+                    experience: experience,
+                    introduction: introduction,
+                    description: description,
+                    portraits: portraits,
+                    locationStr: locationStr,
+                    photo_positive: photo_positive,
+                    photo_back: photo_back,
+                    cert: cert,
+                    idno: idno
                 },
-                dataType: 'json',
-                type: 'post',
-                timeout: 10000,
-                success: function(res) {
-                    console.log(res);
-                    if (res.code == 100) {
-                        mui.toast(res.msg);
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: {'Content-Type': 'application/json'},
+                success: function (data) {
+
+                    console.log(data);
+                    if (data.code == 200) {
+                        window.location.href = "{:url('coach/registersuccess')}";
                     } else {
-                        window.location.href="{:url('coach/updateCoach')}/coach_id/"+res.data;
+                        mui.toast(data.msg);
                     }
                 },
-                error: function(xhr, type,errorThrown) {
+                error: function (xhr, type, errorThrown) {
                     console.log(type);
                 }
             });
-           
-        });
-    });
+
+        })
+
+    })
+
 </script>
 </html>
