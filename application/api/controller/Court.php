@@ -30,7 +30,9 @@ class Court extends Base{
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['court'] = ['LIKE','%'.$keyword.'%'];
             }
-            $map['camp_id'] = $camp_id;
+            if($camp_id){
+                $map['camp_id'] = $camp_id;
+            }
             $campList = $this->CourtService->getCourtList($map,$page);
             return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
         }catch(Exception $e){
