@@ -8,82 +8,118 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
-    <link rel="stylesheet" href="//static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="//static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="//static/frontend/css/app.css"/>
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="//static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style>
+        .tipspan{
+            font-size: 14px;
+            text-align: center;
+            display: block;
+            padding: 10px;
+            height: 41px;
+        }
+        .success{
+            padding: 20px 0;
+            width: 60%;
+            margin: 0 auto;
+        }
+        .success img{
+            width: 40px;
+            height: 40px;
+        }
+        .success span{
+            float: right;
+            line-height: 40px;
+        }
+    </style>
 </head>
 
-<body class=whitebg>
-<header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-    <h1 class="mui-title">更换手机号绑定</h1>
-</header>
-<div class="mui-content">
+<body>
 
-    <div class="list camp-list camp-lesson-list detalis-list coach">
-        <div class="the1">
-            <!--<div class="page-header">-->
-                <!--<span class="course"><b>验证原手机</b></span>-->
-            <!--</div>-->
-            <ul class="mui-table-view mb" style="overflow: hidden;">
-                <li class="mui-table-view-cell listli listinitial">
-                    <a href="#">原手机号码<span class="wd66">13526514467</span></a>
-                </li>
-                <li class="mui-table-view-cell listli detalisli">短信验证码
-                    <input type="button" class="code-btn" value="获取验证码" onclick="clickButton(this)">
-                    <input type="text" class="input" placeholder="输入验证码" style="width:44%;margin-top:5px">
-                </li>
-                <div class="tjbtn tjbtn-next">
-                    <button type="button" class="btn btn1">
-                        下一步
-                    </button>
-                </div>
-            </ul>
+    <div class="mui-content">
+
+        <!-- 第一步 -->
+        <div class="step1">
+           <header class="mui-bar mui-bar-nav subheader">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+            <h1 class="mui-title">更换手机号绑定</h1>
+        </header>
+        <div class="page-header mt44">
+            <div class="course">验证原手机</div>
+        </div>
+        <form action="" class="mui-input-group ">
+            <div class="mui-input-row">
+                <label>原手机号码</label>
+                <span>13526514467</span>
+            </div>
+
+            <div class="mui-input-row">
+                <label>短信验证码</label>
+                <input type="button" class="code-btn" value="获取验证码" >
+                <input id="code" type="text" class="input verification reg_validate" placeholder="输入验证码" style="width: 40%;">
+            </div>
+
+        </form>
+        <span class="tipspan mobile_hint validate_hint"></span>
+        <div class="tjbtn tjbtn-next">
+            <button type="button" class="btn stepBtn1">
+                下一步
+            </button>
+        </div>
+    </div>
+
+
+
+    <!-- 第二步 -->
+    <div class="step2" style="display: none;">
+       <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-icon mui-icon-left-nav mui-pull-left arrow backstep1"></a>
+        <h1 class="mui-title">更换手机号绑定</h1>
+    </header>
+    <div class="page-header mt44">
+        <div class="course">验证新手机</div>
+    </div>
+    <form action="" class="mui-input-group ">
+        <div class="mui-input-row">
+            <label>新手机号码</label>
+            <input type="text" name="" class="reg_mobile" value="" placeholder="请输入新手机号码">
         </div>
 
-        <div class="the2" style="display: none">
-            <!--<div class="page-header">-->
-                <!--<span class="course"><b>验证新手机号码</b></span>-->
-            <!--</div>-->
-            <ul class="mui-table-view mb" style="overflow: hidden;">
-                <li class="mui-table-view-cell listli listinitial">
-                    <a href="#">新手机号码<span
-                            class="mui-navigate-right wd66">13654126541</span></a>
-                </li>
-                <li class="mui-table-view-cell listli detalisli">短信验证码
-                    <input type="button" class="code-btn" value="获取验证码" onclick="clickButton(this)">
-                    <input type="text" class="input" placeholder="输入验证码" style="width:44%;margin-top:5px">
-                </li>
-                <div class="tjbtn tjbtn-next">
-                    <button type="button" class="btn btn2">
-                        确定更换
-                    </button>
-                </div>
-            </ul>
+        <div class="mui-input-row">
+            <label>短信验证码</label>
+            <input type="button" class="code-btn" value="获取验证码" >
+            <input id="code" type="text" class="input verification reg_validate" placeholder="输入验证码" style="width: 40%;">
         </div>
 
-        <div class="the3" style="display: none">
-            <!--<div class="page-header">-->
-                <!--<span class="course"><b>更换完成</b></span>-->
-            <!--</div>-->
-            <ul class="mui-table-view mb success-frame" style="overflow: hidden;">
-                <div class="choise opsuccess">
-                    <img class="fl" src="//static/frontend/images/icon01.jpg" alt="">
-                    <p class="text fr colorgreen">手机号更换成功</p>
-                </div>
-            </ul>
-        </div>
-
+    </form>
+    <span class="tipspan mobile_hint validate_hint"></span>
+    <div class="tjbtn tjbtn-next">
+        <button type="button" class="btn stepBtn2">
+            确定更换
+        </button>
     </div>
 </div>
 
-</body>
-<script src="//static/frontend/js/mui.min.js"></script>
-<script src="//static/frontend/js/jquery-3.2.1.min.js"></script>
+<div class="step3" style="display: none">
+<header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-icon mui-icon-left-nav mui-pull-left arrow backstep"></a>
+        <h1 class="mui-title">更换手机号绑定</h1>
+    </header>
+    <ul class="mui-table-view mb success-frame mt44" style="overflow: hidden;">
+        <div class="success">
+            <img src="/static/frontend/images/icon01.jpg" alt="">
+            <span class="colorgreen">手机号更换成功</span>
+        </div>
+    </ul>
+</div>
+
+</div>
+
+
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/libs/yzvalidate.js"></script>
 <script>
     //初始化
     mui.init({
@@ -91,14 +127,25 @@
     });
 
     $(function () {
-        $(".btn1").click(function () {
-            $(".the1").hide();
-            $(".the2").show();
+        // 1
+        $(".stepBtn1").click(function () {
+            $(".step1").hide();
+            $(".step2").show();
         });
-        $(".btn2").click(function () {
-            $(".the2").hide();
-            $(".the3").show();
+        $(".backstep1").click(function(){
+            $(".step2").hide();
+            $(".step1").show();
+        })
+        // 2
+        $(".stepBtn2").click(function () {
+            $(".step2").hide();
+            $(".step3").show();
+        })
+        // 3
+         $(".backstep").click(function(){
+            window.location.href="{:url('member/membersetup')}"
         })
     })
 </script>
+</body>
 </html>
