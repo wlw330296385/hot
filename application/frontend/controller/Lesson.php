@@ -70,7 +70,7 @@ class Lesson extends Base{
 
     	$gradeCategoryList = $this->GradeService->getGradeCategory(1);
         $courtService = new \app\service\CourtService;
-        $courtList = $courtService->getCourtList(['status'=>$camp_id]);
+        $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('camp_id',$camp_id);
     	$this->assign('gradeCategoryList',$gradeCategoryList);
@@ -88,7 +88,7 @@ class Lesson extends Base{
         $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         $gradeCategoryList = $this->GradeService->getGradeCategory(1);
         $courtService = new \app\service\CourtService;
-        $courtList = $courtService->getCourtList(['status'=>$camp_id]);
+        $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         $this->assign('campInfo',$campInfo);
         $this->assign('gradeCategoryList',$gradeCategoryList);
         $this->assign('courtList',$courtList);

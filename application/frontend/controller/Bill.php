@@ -58,8 +58,6 @@ class Bill extends Base{
             $this->assign('studentInfo',$studentInfo);
         }        
         
-
-
         $this->assign('power',$isPower);
         $this->assign('billInfo',$billInfo);
         return view('Bill/updateBillInfoOfCamp');

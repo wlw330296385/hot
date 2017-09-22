@@ -15,18 +15,16 @@ class Base extends Controller{
 			$url = $_SERVER["REQUEST_URI"];
 			cookie('url', $url);
 		}
+		$pid = input('param.pid');
+		if($pid){
+			cookie('pid',$pid);
+		}else{
+			cookie('pid',0);
+		}
 		$this->systemSetting = SystemService::getSite();
 		$this->assign('systemSetting',$this->systemSetting);
 		$this->footMenu();
-		/*$this->memberInfo = session('memberInfo','','think');
-		if(!isset($this->memberInfo['id'])){
-			$this->nologin();
-		}	
-		$this->assign('memberInfo',$this->memberInfo);*/
-		//$this->nologin();
-
-        //session('memberInfo', '' ,'think')
-
+		
         if ( !Cookie::has('mid') ) {
             $this->nologin();
         }

@@ -42,6 +42,7 @@ class Court extends Base{
             $camp_id = input('param.camp_id')?input('param.camp_id'):0;
             $map = input('post.');
             $map['camp_id'] = $camp_id;
+            $map['status'] = 1;
             // $where = ['camp_id'=>['or',[0,$camp_id]]];
             // if($camp_id){
             //     $map = function($query) use ($condition,$camp_id){

@@ -39,7 +39,7 @@ class Grade extends Base{
         $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         //场地列表
         $courtService = new \app\service\CourtService;
-        $courtList = $courtService->getCourtList(['status'=>$camp_id]);
+        $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         // 获取课程学生
         $studentList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         // 教案列表
@@ -74,7 +74,7 @@ class Grade extends Base{
         $staffList = db('camp_member')->where(['camp_id'=>$gradeInfo['camp_id'],'status'=>1])->select();
         //场地列表
         $courtService = new \app\service\CourtService;
-        $courtList = $courtService->getCourtList(['status'=>$gradeInfo['camp_id']]);
+        $courtList = $courtService->getCourtList(['camp_id'=>$gradeInfo['camp_id'],'status'=>1]);
     	// 获取班级学生
     	$studentList = $this->GradeService->getStudentList($grade_id);
         // 教案列表
