@@ -3,6 +3,7 @@ namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\MemberService;
 use app\service\StudentService;
+use app\service\WechatService;
 use think\Db;
 class Member extends Base{
     private $MemberService;
@@ -237,10 +238,18 @@ class Member extends Base{
     }
 
 
-    public function myShare(){
+    public function share(){
+        $memberid = $this->memberInfo['id'];
+        $callback = url('Frontend/Index/index', ['pid' => $memberid], '', true);
+        $wechatS = new WechatService();
+        $url = $wechatS->oauthredirect($callback);
+        $qrcodeimg = buildqrcode($url) ;
+        $member_name = !empty($this->memberInfo['nickname']) ? $this->memberInfo['nickname'] : $this->memberInfo['member'];
 
 
-        return view('Mmeber/myShare');
+        $this->assign('qrcodeimg', $qrcodeimg);
+        $this->assign('membername', $member_name);
+        return view('Member/myShare');
     }
 
 

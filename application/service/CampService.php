@@ -51,9 +51,9 @@ class CampService {
         $model = new Camp();
         $result = $model->validate('CampVal.edit')->isUpdate(true)->save($request);
         if (false === $result) {
-            return ['code' => 200, 'msg' => $model->getError()];
+            return ['code' => 100, 'msg' => $model->getError()];
         } else {
-            return ['code' => 100, 'msg' => __lang('MSG_200'), 'data' => $request['id']];
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $request['id']];
         }
 
     }
@@ -69,12 +69,12 @@ class CampService {
     public function createCamp($request){
         // 一个人只能创建一个训练营
         if ( $this->hasCreateCamp($request['member_id']) ){
-            return [ 'msg' => '一个会员只能创建一个训练营', 'code' => 200 ];
+            return [ 'msg' => '一个会员只能创建一个训练营', 'code' => 100 ];
         }
         $model = new Camp();
         $result = $model->validate('CampVal.add')->save($request);
         if ( false === $result ) {
-            return ['code' => 200, 'msg' => $model->getError()];
+            return ['code' => 100, 'msg' => $model->getError()];
         }
         // 保存camp_member 关联记录
         //dump($model->getLastInsID());
@@ -94,9 +94,9 @@ class CampService {
         $addCampMember = $campMemberDb->insert($campMemberData);
         if (!$addCampMember) {
             Camp::destroy($lastInsId);
-            return ['msg' => __lang('MSG_403'), 'code' => 200];
+            return ['msg' => __lang('MSG_403'), 'code' => 100];
         }
-        return [ 'code' => 100, 'msg' => __lang('MSG_200'), 'data' => $lastInsId ];
+        return [ 'code' => 200, 'msg' => __lang('MSG_200'), 'data' => $lastInsId ];
     }
 
     /**

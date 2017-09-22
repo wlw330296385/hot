@@ -65,6 +65,7 @@ class CertService {
         $map['member_id'] = $request['member_id'];
         $map['cert_type'] = $request['cert_type'];
         $find = $model->where($map)->find();
+
         if ($find) {
             $res = $model->save($request, $map);
         } else {

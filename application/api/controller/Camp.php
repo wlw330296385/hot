@@ -81,7 +81,7 @@ class Camp extends Base{
             $campS = new CampService();
             return $campS->updateCamp($campData);
         }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -92,37 +92,37 @@ class Camp extends Base{
         // 营业执照
         if ( input('?post.cert') ) {
             $cert1 = $certS->saveCert([ 'camp_id' => $campid, 'member_id' => 0, 'cert_type' => 4, 'photo_positive' => input('post.cert')]);
-            if ($cert1['code'] != 100) {
-                return ['code' => 200, 'msg' => '营业执照保存失败,请重试'];
+            if ($cert1['code'] != 200) {
+                return ['code' => 100, 'msg' => '营业执照保存失败,请重试'];
             }
         }
         // 法人
         if ( input('?post.fr_idno') || input('?post.fr_idcard') ) {
             $cert2 = $certS->saveCert([ 'camp_id' => $campid, 'member_id' => 0, 'cert_type' => 1,
                 'cert_no' => input('post.fr_idno'), 'photo_positive' => input('post.fr_idcard')]);
-            if ($cert2['code'] != 100) {
-                return ['code' => 200, 'msg' => '法人信息保存失败,请重试'];
+            if ($cert2['code'] != 200) {
+                return ['code' => 100, 'msg' => '法人信息保存失败,请重试'];
             }
         }
         // 创建人
         if ( input('?post.cjz_idno') || input('?post.cjz_idcard') ) {
             $cert3 = $certS->saveCert([ 'camp_id' => $campid, 'member_id' => $this->memberInfo['id'], 'cert_type' => 1,
                 'cert_no' => input('post.cjz_idno'), 'photo_positive' => input('post.cjz_idcard') ]);
-            if ($cert3['code'] != 100) {
-                return ['code' => 200, 'msg' => '创建人信息保存失败'];
+            if ($cert3['code'] != 200) {
+                return ['code' => 100, 'msg' => '创建人信息保存失败'];
             }
         }
         // 其他证明
         if ( input('?post.other_cert') ) {
             $cert4 = $certS->saveCert([ 'camp_id' => $campid, 'member_id' => 0, 'cert_type' => 0, 'photo_positive' => input('post.other_cert')]);
-            if ($cert4['code'] != 100) {
-                return ['code' => 200, 'msg' => '其他证明保存失败'];
+            if ($cert4['code'] != 200) {
+                return ['code' => 100, 'msg' => '其他证明保存失败'];
             }
         }
 
         db('camp')->where('id', $campid)->setField('status', 0);
 
-        return ['code' => 100, 'msg' => __lang('MSG_200')];
+        return ['code' => 200, 'msg' => __lang('MSG_200')];
     }
 
     public function createCamp(){
@@ -138,7 +138,7 @@ class Camp extends Base{
             $campS = new CampService();
             return $campS->createCamp($data);
         }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     } 
 
