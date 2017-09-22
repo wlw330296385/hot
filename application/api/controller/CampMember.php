@@ -128,8 +128,8 @@ class CampMember extends Base{
         }  
     }
    
-
-    public function getCampMemberApi($camp_id){
+    // 获取一条记录
+    public function getCampMemberApi(){
         try{
             $camp_id = input('param.camp_id');
             $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
@@ -145,4 +145,23 @@ class CampMember extends Base{
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         } 
     }
+
+
+    // 用户是否拥有教练身份
+    public function isCoach(){
+        try{
+            $camp_id = input('param.camp_id');
+            $member_id = input('param.member_id')? input('param.member_id'):$this->memberInfo['id'];
+            $campList = Db::view('grade_member','camp_id,member_id')
+                    ->view('coach','','camp.id=grade_member.camp_id')
+                    ->where(['grade_member.member_id'=>$member_id,'grade_member.status'=>1,'camp_id'=>$camp_id])
+                    ->where([''])
+                    ->select();
+            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);        
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
 }
