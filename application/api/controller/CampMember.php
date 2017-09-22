@@ -152,7 +152,7 @@ class CampMember extends Base{
         try{
             $camp_id = input('param.camp_id');
             $keyword = input('param.keyword');
-            if($keyword){
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $result = Db::view('camp_member','camp_id')
                     ->view('coach','*','coach.member_id=camp_member.member_id')
                     ->where(['camp_member.status'=>1,'camp_member.camp_id'=>$camp_id])
