@@ -49,10 +49,11 @@ class Member extends Base{
 
     // 完善会员资料
     public function updateMember(){
+        $html_name = input('param.html_name')?input('param.html_name'):'updateMember';
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
         $memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);  
         $this->assign('memberInfo',$memberInfo);
-        return view('Member/updateMember');
+        return view('Member/'.$html_name);
     }
     public function photoAlbum(){
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
@@ -241,4 +242,7 @@ class Member extends Base{
 
         return view('Mmeber/myShare');
     }
+
+
+
 }

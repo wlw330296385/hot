@@ -160,7 +160,7 @@ class CampMember extends Base{
                     ->view('coach','*','coach.member_id=camp_member.member_id')
                     ->where(['camp_member.status'=>1,'camp_member.camp_id'=>$camp_id])
                     ->where(['camp_member.type'=>['egt',2]])
-                    ->where(['coach.coach'=>['like','%'.$keyword.'%'],'status'=>1])
+                    ->where(['coach.coach'=>['like','%'.$keyword.'%'],'coach.status'=>1])
                     ->select();
             }else{
                 $result = Db::view('camp_member','camp_id')
