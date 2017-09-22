@@ -17,7 +17,7 @@ class Coach extends Model {
 
 
     public function getStatusAttr($value){
-    	$status = [-1=>'禁用',0=>'待审核',1=>'正常',2=>'不通过'];
+    	$status = [-1=>'禁用',0=>'待审核',1=>'审核通过',2=>'审核不通过'];
     	return $status[$value];
     }
 

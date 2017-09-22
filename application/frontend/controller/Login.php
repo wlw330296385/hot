@@ -88,11 +88,11 @@ class Login extends Controller{
                 }
             } else {
                 $member = [
-                    'id' => -1,
+                    'id' => 0,
                     'openid' => $userinfo['openid'],
                     'member' => $userinfo['nickname'],
                     'nickname' => $userinfo['nickname'],
-                    'avatar' => strtr($userinfo['headimgurl'], 'http://', 'https://'),
+                    'avatar' => str_replace("http://", "https://", $userinfo['headimgurl']),
                     'hp' => 0,
                     'level' => 0,
                     'telephone' =>'',
