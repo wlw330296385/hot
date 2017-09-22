@@ -247,6 +247,8 @@ class Camp extends Base{
     }
 
     public function campSetting(){
+         $step = input('param.step', 1);
+        $view = 'Camp/campSetting'.$step;
         $camp_id = input('param.camp_id');
         $campInfo = $this->CampService->getCampInfo($camp_id);
         $is_power = $this->CampService->isPower($camp_id,$this->memberInfo['id']);
@@ -260,6 +262,12 @@ class Camp extends Base{
 
         $this->assign('campInfo',$campInfo);
         $this->assign('campcert', $campcert);
-        return view('Camp/campSetting');
+        return view($view);
+    }
+
+    public function editsuccess() {
+        $edit = input('param.edit', 0);
+        $this->assign('edit', $edit);
+        return view('Camp/editsuccess');
     }
 }

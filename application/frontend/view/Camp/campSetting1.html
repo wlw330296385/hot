@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>训练营设置</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <!-- webuploader -->
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+</head>
+
+<body class=whitebg>
+
+<div class="mui-content">
+    <div class="list camp-list camp-lesson-list detalis-list coach">
+        <div class="camp-lesson-list">
+            <div id="segmentedControl" class="mui-segmented-control mb">
+                <a class="mui-control-item mui-active" href="{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>1])}">基本信息</a>
+                <a class="mui-control-item" href="{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>2])}">认证信息</a>
+            </div>
+        </div>
+
+        <div class="item-list">
+
+
+            <form id="form1" action="" class="mui-input-group mt25">
+                <div class="mui-input-row">
+                    <label>训练营名称</label><span>{$campInfo.camp}</span>
+                    <input type="hidden" name="campid" value="{$campInfo.id}">
+                </div>
+                <div class="mui-input-row h-auto">
+                    <a href="javascript:void(0)" class="mui-navigate-right camplogo filePicker" onclick="add_id(1)">
+                        <label>训练营LOGO</label>
+                        <img id="preview_1" class="coachicon icon01 logo upload-preview" {notempty name="campInfo.logo"}src="{$campInfo.logo}"{/notempty} >
+                        <input type="hidden" name="logo" value="{$campInfo.logo}">
+                    </a>
+                </div>
+
+                <div class="mui-input-row h-auto">
+                    <a href="javascript:void(0)" class="mui-navigate-right campbanner filePicker" onclick="add_id(2)">
+                        <label>训练营封面</label>
+                        <img id="preview_2" class="coachicon icon01 banner upload-preview" {notempty name="campInfo.banner"}src="{$campInfo.banner}"{/notempty} >
+                        <input type="hidden" name="banner" value="{$campInfo.banner}">
+                    </a>
+                </div>
+
+                <div class="mui-input-row">
+                    <label>所属公司</label>
+                    <input type="text" name="company" class="input company" value="{$campInfo.company}" placeholder="非机构可不填">
+                </div>
+                <div class="mui-input-row">
+                    <label>总部地址</label>
+                    <input type="text" class="input" name="location" value="{$campInfo.location}" placeholder="非机构可不填">
+                </div>
+                <div class="mui-input-row" id='showCityPicker3'>
+                    <a href="#" class="mui-navigate-right">
+                        <label>所属地区</label>
+                        <span id="cityResult3" class="ui-alert location" style="color:#737373">{if condition="$campInfo['province'] || $campInfo['city'] || $campInfo['area']"}{$campInfo.province}  {$campInfo.city}  {$campInfo.area}{else/}选择{/if}
+                        </span>
+                    </a>
+                    <input id="location-input" type="hidden" name="locationStr" value="{if condition='$campInfo.province'}{$campInfo.province}|{/if}{if condition='$campInfo.city'}{$campInfo.city}|{/if}{if condition='$campInfo.area'}{$campInfo.area}{/if}">
+                </div>
+
+                <div class="mui-input-row h-auto">
+                    <label>训练营简介</label>
+                    <textarea rows="5" class="intro" placeholder="填写训练营简介">{$campInfo.camp_introduction}</textarea>
+                </div>
+            </form>
+            <span class="tip-box tip"></span>
+
+            <div class="success-frame success-frame2">
+
+                <div class="choise">
+                    <button type="button" class="mui-btn" id="submit-form1">提交修改</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!--选择器-->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/city.data.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
+<script>
+    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'banner'])}";
+</script>
+<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    mui("body").on("tap", "a.mui-control-item", function () {
+        window.top.location.href = this.href;
+    });
+
+    //选择器
+    (function ($, doc) {
+        $.init();
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+            ///级联示例
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
+            });
+            cityPicker3.setData(cityData3);
+            var showCityPickerButton = doc.getElementById('showCityPicker3');
+            var cityResult3 = doc.getElementById('cityResult3');
+            var locationvalue = doc.getElementById('location-input');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    locationvalue.value = _getParam(items[0], 'text') + "|" + _getParam(items[1], 'text') + "|" + _getParam(items[2], 'text')
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+        });
+    })(mui, document);
+
+    $(function() {
+
+        $('#submit-form1').click(function() {
+            var campid = $('input[name=campid]').val();
+            var logo = $('input[name=logo]').val();
+            var banner = $('input[name=banner]').val();
+            var company = $('input[name=company]').val();
+            var location_input = $('input[name=location]').val();
+            var locationStr = $('input[name=locationStr]').val();
+            var intro = $('.intro').val();
+            mui.ajax("{:url('api/camp/updatecamp')}", {
+                data: {
+                    camp_id: campid,
+                    logo: logo,
+                    banner: banner,
+                    company: company,
+                    location: location_input,
+                    locationStr: locationStr,
+                    intro: intro
+                },
+                dataType:'json',
+                type:'post',
+                timeout:10000,
+                headers:{'Content-Type':'application/json'},
+                success:function(res){
+                    //console.log(res);
+                    if (res.code == 100) {
+                       location.href = "{:url('camp/editsuccess')}";
+                    } else {
+                        mui.toast(res.msg);
+                    }
+                },
+                error:function(xhr,type,errorThrown){
+                    console.log(type);
+                }
+            });
+        });
+    });
+</script>
+</html>

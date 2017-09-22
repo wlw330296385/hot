@@ -119,6 +119,9 @@ class Camp extends Base{
                 return ['code' => 200, 'msg' => '其他证明保存失败'];
             }
         }
+
+        db('camp')->where('id', $campid)->setField('status', 0);
+
         return ['code' => 100, 'msg' => __lang('MSG_200')];
     }
 
