@@ -2,7 +2,7 @@
 namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CampService;
-
+use think\Db;
 
 class CampMember extends Base{
     protected $CampService;
@@ -147,16 +147,16 @@ class CampMember extends Base{
     }
 
 
-    // 用户是否拥有教练身份
-    public function isCoach(){
+    // 获取有教练身份的训练营员工
+    public function getCoachListApi(){
         try{
             $camp_id = input('param.camp_id');
-            $member_id = input('param.member_id')? input('param.member_id'):$this->memberInfo['id'];
-            $campList = Db::view('grade_member','camp_id,member_id')
-                    ->view('coach','','camp.id=grade_member.camp_id')
-                    ->where(['grade_member.member_id'=>$member_id,'grade_member.status'=>1,'camp_id'=>$camp_id])
-                    ->where([''])
+            $campList = Db::view('camp_member','camp_id,member_id')
+                    ->view('coach','coach','coach.member_id=camp_member.member_id')
+                    ->where(['camp_member.status'=>1,'camp_member.camp_id'=>$camp_id])
+                    ->where(['type'=>['egt',2]])
                     ->select();
+
             return json(['code'=>100,'msg'=>'OK','data'=>$campList]);        
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
