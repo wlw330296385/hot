@@ -32,10 +32,10 @@ class MemberService{
 	//修改会员资料
 	public function updateMemberInfo($request,$id){
 		//验证规则
-		// $validate = validate('MemberVal');
-		// if(!$validate->scene('edit')->check($request)){
-		// 	return ['msg'=>$validate->getError(),'code'=>200];
-		// }
+		$validate = validate('MemberVal');
+		if(!$validate->scene('edit')->check($request)){
+			return ['msg'=>$validate->getError(),'code'=>200];
+		}
 
 		$result = $this->memberModel->allowField(true)->save($request,['id'=>$id]);
 		if($result ===false){

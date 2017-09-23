@@ -58,7 +58,7 @@ class Base extends Controller{
 				'name'=>'发现',
 				'icon'=>'icon iconfont icon-hotnav-find',
 				'action'=>'index',
-				'controller'=>'Mall'
+				'controller'=>'Find'
 			],
 			[
 				'name'=>'训练营',
