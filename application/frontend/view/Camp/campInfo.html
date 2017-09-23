@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>训练营详情页</title>
+    <title>训练营详情</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -130,7 +130,7 @@
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli" style="color: #000;border-left:1px solid #ddd">
-                    <a href="#pjpopover" class="type1Btn">我来评价</a>
+                    <a href="#pjpopover">我来评价</a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli" style="color: #000;border-left:1px solid #ddd">
                     <a href="#join">申请加入</a>
@@ -179,7 +179,7 @@
                 <li class="mui-table-view-cell listli">
                     <textarea rows="4"></textarea>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli">提交</li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="commentSubmit">提交</li>
             </ul>
         </div>
     </div>
@@ -206,11 +206,29 @@
         //选择身份申请加入
         var type = '';
         $(".choiseType").click(function() {
-            type = $(this).find("input").val();
-            var choiseType = $(this).text();
-            $("#yqpopover").addClass("mui-active").css("display","block"); 
-            $(".type").text("申请加入"+choiseType);
-            mui('#yqpopover').popover('toggle');
+            if ( "{$memberInfo.id}"<=0) {
+                var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+                mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
+            }else{
+                //弹出申请加入菜单
+                type = $(this).find("input").val();
+                var choiseType = $(this).text();
+                $("#yqpopover").addClass("mui-active").css("display","block");
+                $(".type").text("申请加入"+choiseType);
+                mui('#yqpopover').popover('toggle');
+            }
+        })
+
+        //评价功能
+        $("#commentSubmit").click(function() {
+            //判断是否登陆会员
+            if ( "{$memberInfo.id}"<=0) {
+                var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+                mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
+            }else{
+                //判断是否该训练营学生
+
+            }
         })
 
         //训练营的身份api
