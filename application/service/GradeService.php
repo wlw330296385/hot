@@ -77,7 +77,7 @@ class GradeService{
          if (!$result) {
             return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
         }else{
-             return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $result];
+             return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $this->GradeModel->id];
         }
     }
 
