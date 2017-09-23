@@ -30,29 +30,40 @@
                 <span>钱包余额￥{$memberInfo['balance']}</span>
             </li>
             <li class="mui-table-view-cell listli listinitial">
-                提现金额<input type="text" class="input" placeholder="￥0.00">
+                提现金额<input type="text" class="data" name="salary" placeholder="￥0.00">
             </li>
-            <li class="mui-table-view-cell listli listinitial">
+            <input type="hidden" name="tid" class="data" value="{$tid}">
+
+            <li class="mui-table-view-cell mui-collapse listli listinitial">
                 <a href="#" class="mui-navigate-right bankcard">
-                    到账银行<span>{$bankcardList.0.bank}({$bankcardList.0.bank_card|substr=-4})</span>
+                    到账
+                    账号{if condition="$bankcardList"}<span>{$bankcardList.0.bank}({$bankcardList.0.bank_card|substr=-4})</span>
+                    <input type="hidden" name="bank_card" class="data" value="{$bankcardList.0.bank_card}">
+                    <input type="hidden" name="bank" class="data" value="{$bankcardList.0.bank}">
+                    <input type="hidden" name="bank_type" class="data" value="{$bankcardList.0.bank_type}">
+                    <input type="hidden" name="realname" class="data" value="{$bankcardList.0.realname}">               
+                    {/if}
                 </a>
+                <div class="mui-collapse-content">
+                    <ul class="mui-table-view"">
+                        {volist name="bankcardList" id="vol"}
+                            <li class="mui-table-view-cell item-list listli listinitial bankcard_select" data-bank-card="{$vol.bank_card}" data-bank="{$vol.bank}" data-bank-type ="{$vol.bank_type}" data-bank="{$vol.bank}" data-realname ="{$vol.realname}" >
+                                <div class="list-cont">
+                                    <h4>{$vol.bank}({$vol.bank_card|substr=-4})</h4>
+                                    <p>提现手续费0.1%</p>
+                                </div>
+                            </li> {/volist}
+
+                            <li class="mui-table-view-cell listli listinitial border-b">
+                                <a href="{:url('member/createBankCard')}">添加新账号</a>
+                            </li>
+                        </ul>
+                </div>
             </li>
            
-            <ul class="mui-table-view bankcard-body" style="display: none">
-            {volist name="bankcardList" id="vol"}
-                <li class="mui-table-view-cell item-list listli listinitial">
-                    <div class="list-cont">
-                        <h4>{$vol.bank}({$vol.bank_card|substr=-4})</h4>
-                        <p>提现手续费0.1%</p>
-                    </div>
-                </li> {/volist}
-
-                <li class="mui-table-view-cell listli listinitial border-b">
-                    <a href="{:url('member/createBankCard')}">添加新银行卡</a>
-                </li>
-            </ul>
+            
             <div class="tjbtn tjbtn-next">
-                <button type="button" class="btn btn1">
+                <button type="button" class="btn btn1 " id="submitBtn">
                     提现
                 </button>
             </div>
@@ -63,6 +74,7 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
 <script>
     //初始化
     mui.init({
@@ -71,9 +83,54 @@
     mui('body').on('tap', 'a', function () {
         window.top.location.href = this.href;
     });
-    mui('body').on('tap', '.bankcard', function () {
-    $(".bankcard-body").show();
-    $(".sxf").hide();
-    });
+
+var ok = true;
+    $(function(){
+        var bankcard = $('.bankcard span').text();
+
+        $('.bankcard_select').on('click',function(){
+            console.log(bankcard);
+            bankcard = $(this).children().find('h4').text();
+            $('.bankcard span').text(bankcard);
+            $('input[name=bank_card]').val($(this).attr('data-bank-card'));
+            $('input[name=bank_type]').val($(this).attr('data-bank-type'));
+            $('input[name=bank]').val($(this).attr('data-bank'));
+            $('input[name=realname]').val($(this).attr('data-realname'));
+        })
+
+        $('#submitBtn').on('click',function(){
+            var data1 = wooApi.getInputData();
+            var objData = wooApi.arrTOobj(data1);
+            if(!objData.salary){
+                mui.toast('请输入金额');
+                ok = false
+                return false;
+            }else{
+                ok = true;
+            }
+            if(ok == true){
+                var result = wooApi.asyncF("{:url('api/SalaryOut/applySalaryOut')}",objData);
+                alert(result.msg)
+                if(result.code == 100){
+                    window.location.href="{:url('member/mywallet')}";
+                }
+            }else{
+                mui.toast('请核对金额和账号是否正确');
+            }
+            
+        })
+
+
+        // 提现金额
+        $('input[name=salary]').on('keyup',function(){
+            if( parseFloat($(this).val()) <0){
+                mui.toast('提现金额不能小于0');
+                return false;
+            }else if(parseFloat($(this).val())> parseFloat("{$memberInfo['balance']}") ){
+                ok = true;
+                $(this).val("{$memberInfo['balance']}");
+            }
+        })
+    })
 </script>
 </html>

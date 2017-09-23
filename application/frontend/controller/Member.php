@@ -158,7 +158,7 @@ class Member extends Base{
         $tid = getTID($this->memberInfo['id']);
         //银行卡列表
         $bankcardList = db('bankcard')->where(['member_id'=>$this->memberInfo['id']])->select();
-
+        
         $this->assign('bankcardList',$bankcardList);
         $this->assign('tid',$tid);
         $this->assign('ident',$ident);
