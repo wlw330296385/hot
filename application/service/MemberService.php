@@ -33,7 +33,7 @@ class MemberService{
 	public function updateMemberInfo($request,$id){
 		//验证规则
 		$validate = validate('MemberVal');
-		if(!$validate->check($request)){
+		if(!$validate->scene('edit')->check($request)){
 			return ['msg'=>$validate->getError(),'code'=>200];
 		}
 
