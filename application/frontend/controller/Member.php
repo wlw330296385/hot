@@ -158,7 +158,7 @@ class Member extends Base{
         $tid = getTID($this->memberInfo['id']);
         //银行卡列表
         $bankcardList = db('bankcard')->where(['member_id'=>$this->memberInfo['id']])->select();
-        
+
         $this->assign('bankcardList',$bankcardList);
         $this->assign('tid',$tid);
         $this->assign('ident',$ident);
@@ -180,7 +180,8 @@ class Member extends Base{
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
         $SalaryInService = new \app\service\SalaryInService($member_id);
         $salaryinList = $SalaryInService->getSalaryInList(['member_id'=>$member_id]);
-        $salaryoutList = db('salary_out')->where(['member_id'=>$member_id])->select();
+        $SalaryOutService = new \app\service\SalaryOutService($member_id);
+        $salaryoutList = $SalaryOutService->getSalaryOutList(['member_id'=>$this->memberInfo['id']]);
 
         $this->assign('salaryoutList',$salaryoutList);
         $this->assign('salaryinList',$salaryinList);
