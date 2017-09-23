@@ -59,7 +59,15 @@ class CampMember extends Base{
                     return json(['code'=>200,'msg'=>'你已申请加入训练营,请等待审核']);
                 }
             }
-            $result = db('camp_member')->insert(['camp_id'=>$campInfo['id'],'camp'=>$campInfo['camp'],'member_id'=>$this->memberInfo['id'],'member'=>$this->memberInfo['member'],'type'=>$type,'status'=>0,'create_time'=>time()]);
+            $result = db('camp_member')->insert([
+                'camp_id'=>$campInfo['id'],
+                'camp'=>$campInfo['camp'],
+                'member_id'=>$this->memberInfo['id'],
+                'member'=>$this->memberInfo['member'],
+                'remarks' => $remarks,
+                'type'=>$type,
+                'status'=>0,
+                'create_time'=>time()]);
             if($result){
                 return json(['code'=>100,'msg'=>'申请成功']);
             }else{
@@ -75,27 +83,27 @@ class CampMember extends Base{
         try{
             $id = input('param.id');
             $status = input('param.status');
-            if(!$id || !$status || ($status!=1|| $status!=-1)){
-                return json(['code'=>200,'msg'=>'请正确传参']);
+            if(!$id || !$status){
+                return json(['code'=>100,'msg'=>'缺少传入参数']);
             }
             $campMemberInfo = db('camp_member')->where(['id'=>$id,'status'=>0])->find();
             if(!$campMemberInfo){
-                return json(['code'=>200,'msg'=>'不存在该申请']);
+                return json(['code'=>100,'msg'=>'不存在该申请']);
             }
             $isPower = $this->CampService->isPower($campMemberInfo['camp_id'],$this->memberInfo['id']);
 
-            if($isPower<3 && $type>2){
+            if($isPower<3){
                 return json(['code'=>200,'msg'=>'您没有这个权限']);
             }
 
-            $result = db('camp_member')->where(['id'=>$id])->update(['status'=>1]);
+            $result = db('camp_member')->where(['id'=>$id])->update(['status'=>$status, 'update_time' => time()]);
             if($result){
-                return json(['code'=>100,'msg'=>'操作成功']);
+                return json(['code'=>200,'msg'=>'操作成功']);
             }else{
-                return json(['code'=>200,'msg'=>'操作失败']);
+                return json(['code'=>100,'msg'=>'操作失败']);
             }
         }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }  
     }
 

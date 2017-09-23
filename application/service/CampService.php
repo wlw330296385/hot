@@ -44,6 +44,16 @@ class CampService {
         return $res->toArray();
     }
 
+    public function getOneCamp($map) {
+        $res = Camp::get($map);
+        if (!$res) {
+            return false;
+        }
+        $result = $res->toArray(); 
+        $result['check_status'] = $res->getData('status');
+        return $result;
+    }
+
     /**
      * 更新资源
      */
@@ -112,7 +122,6 @@ class CampService {
         }
     }
 
-
     /**
      * 返回权限
      */
@@ -159,5 +168,10 @@ class CampService {
             }
         }
         return $campCert;
+    }
+
+    // 训练营的教练
+    public function coachlistOfcamp($campid) {
+
     }
 }

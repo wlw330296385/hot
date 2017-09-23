@@ -27,7 +27,7 @@ class Camp extends Model{
 
     public function getStatusAttr($value)
     {
-        $status = [0=>'待审核',1=>'审核通过',2=>'关闭',3=>'审核不通过'];
+        $status = [0=>'待审核',1=>'已审核',2=>'关闭',3=>'未通过'];
         return $status[$value];
     }
 }
