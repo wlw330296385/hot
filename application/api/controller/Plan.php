@@ -37,7 +37,6 @@ class Plan extends Base{
             $data['member'] = $this->memberInfo['member'];
             $data['member_id'] = $this->memberInfo['id'];
             $data['type'] = 1;
-            dump($data);
             $planList = $this->PlanService->createPlan($data);
             return json($planList);
         }catch (Exception $e){

@@ -31,15 +31,16 @@
         </div>
         <div class="mui-input-row">
             <label>适合阶段:</label>
-            <select placeholder="小学基础/小学增强/等阶段" class="data" name="grade_category_ids" value="">
+            <select placeholder="小学基础/小学增强/等阶段" class="data" name="grade_category_id" value="" id="gradecate_id">
                 {volist name="gradecateList" id="vol"}
                     <optgroup label="{$vol.name}">
                 {volist name="vol._data" id="v"}
-                    <option value ="{$v.id}"  data-name="grade_categorys" data="{$v.name}">{$v.name}</option>
+                    <option value ="{$v.id}" >{$v.name}</option>
                 {/volist}
                 </optgroup>
               {/volist}
             </select>
+            <input type="hidden" name="grade_category" value="" id="grade_category" class="data" >
         </div>
         <div class="mui-input-row">
             <label>大纲名称:</label>
@@ -47,7 +48,7 @@
         </div>
         <div class="mui-input-row height127">
             <label>大纲介绍:</label>
-            <textarea rows="5" placeholder="" class="domData" name="outline_detail"></textarea>
+            <textarea rows="5" placeholder="" class="data" name="outline_detail"></textarea>
         </div>
         <div class="mui-input-row">
             <a href="#exercises" class="mui-navigate-right">
@@ -60,7 +61,7 @@
             <label>上传视频</label>
         </div>
         <p>
-            <input type="radio" checked="1" value="1" name="is_open" class="data">是否对外开放
+            <input type="checkbox" value="1" name="is_open" class="data" checked >是否对外开放
         </p>
         <div class="tjbtn">
             <button type=button class='btn' id="submitBtn" >提交</button>
@@ -176,13 +177,40 @@
             }).get().join(",") );
             mui('#exercises').popover('toggle');
         })
+
+        // 课程类型更改选择
+        $('#gradecate_id').on('change',function(){
+            var index = $(this).selectedIndex;
+            
+            var option = $('#gradecate_id option:selected');
+            $('#grade_category').val(option.text());
+        })
+
+
+        // 是否开放
+        $('input[name=is_open]').on('change',function(){
+            console.log($(this).val());
+            if(($(this).val())==1){
+                $(this).val(0)
+            }else{
+                $(this).val(1)
+            }
+        })
     })
 
     $('#submitBtn').on('click',function(){
         var data1 = wooApi.getInputData();
         var data2 = wooApi.getInputData('select','data',data1);
         var data3 = wooApi.getDomData('domData',data2);
-        console.log(data3);
+        var data4 = wooApi.getInputData('textarea','data',data3);
+        var objData = wooApi.arrTOobj(data4)
+        var result = wooApi.asyncF("{:url('api/plan/createPlan')}",objData);
+        console.log(result);
+        if(result.code == 100){
+            mui.toast(result.msg)
+        }else{
+            mui.toast(result.msg)
+        }
     })
 
 

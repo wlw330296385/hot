@@ -18,13 +18,17 @@ class Plan extends Base{
 
     public function planInfo(){
     	$plan_id = input('param.plan_id');
-    	$planInfo = $this->PlanService->PlanOneById(['id'=>$plan_id]);
-        $planInfo['exerciseList'] = unserialize($planInfo['exercise']);
+    	$planInfo = $this->PlanService->getPlanInfo(['id'=>$plan_id]);
         // 判读权限
         $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
-        
-
+        $ExerciseService = new \app\service\ExerciseService;
+        $exerciseList = $ExerciseService->getExerciseList();
+        $pids = db('exercise')->where(['id'=>['in',$planInfo['exercise_ids']]])->column('pid');
+        $arrIds = unserialize($planInfo['exercise_id']);
+        $ids = array_merge($arrIds,$pids);
+        $this->assign('ids',$ids);
+        $this->assign('exerciseList',$exerciseList);
         $this->assign('power',$is_power);
         $this->assign('planInfo',$planInfo);
     	return view('Plan/planInfo');
@@ -33,9 +37,8 @@ class Plan extends Base{
 
     //编辑项目
     public function updatePlan(){
-    	
     	$plan_id = input('param.plan_id');
-        $planInfo = $this->PlanService->PlanOneById(['id'=>$plan_id]);
+        $planInfo = $this->PlanService->getPlanInfo(['id'=>$plan_id]);
         // 判读权限
         $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
@@ -45,8 +48,8 @@ class Plan extends Base{
         // 获取适合阶段
         $gradecateService = new \app\service\GradeService;
         $gradecateList = $gradecateService->getGradeCategory();
-        $exerciseService = new \app\service\ExerciseService;
-        $exerciseList = $exerciseService->getExerciseList();
+        $ExerciseService = new \app\service\ExerciseService;
+        $exerciseList = $ExerciseService->getExerciseList();
         // 训练项目
         $this->assign('exerciseList',$exerciseList);
         $this->assign('gradecateList',$gradecateList);

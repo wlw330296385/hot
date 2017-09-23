@@ -45,6 +45,8 @@ class Member extends Frontend{
         try{
             $member_id = $this->memberInfo['id'];
             $data = input('post.');
+            $data['member_id'] = $member_id;
+            $data['member'] = $this->memberInfo['member'];
             $result = $this->MemberService->updateMemberInfo($data,$member_id);
             return json($result);
         }catch (Exception $e){

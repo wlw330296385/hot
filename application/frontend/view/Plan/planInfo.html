@@ -48,16 +48,22 @@
         </div>
         <div class="program-view4 border-b">
             <h5>训练项目:</h5>
-            {volist name="$planInfo.exerciseList" id="vol"}
-            <div class="mui-row">
-                <dl class="mui-col-sm-6 mui-col-xs-6">
-                    <dt>{$vol.name}</dt>
-                    {volist name='vol._data' id="v"}
-                    <dd>{$v.name}</dd>
-                    {/volist}
-                </dl>
-            </div>
-            {/volist}
+            <?php 
+            foreach($exerciseList as $key => $vol){
+                if(in_array($vol['id'],$ids)){
+                    echo '<div class="mui-row"><dl class="mui-col-sm-6 mui-col-xs-6"><dt>'.$vol['name'].'</dt>';
+                        if($vol['_data']){
+                        foreach($vol['_data'] as $key=>$value){
+                            if(in_array($vol['id'],$ids)){
+                                echo '<dd>'.$v['name'].'</dd>';
+                            }
+                        }
+                    }
+                    echo '</dl></div>';    
+                }
+
+            }; 
+             ?>
         </div>
         <div class="program-view5 border-b">
             <div class="image-items">

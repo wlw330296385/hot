@@ -62,12 +62,8 @@ var wooApi = {
                 $(domName+"."+className).each(function(i){
                     var name = $(this).attr('name');
                     var val = $(this).val();
-                    var name1 = $(this).attr('data-name');
-                    var val1 = $(this).attr('data');
-                    var son1 = name1+'='+val1;
                     var son = name+'='+val;
                     data.push(son);
-                    data.push(son1);
                 })
                 break;
                 case 'checkbox':
@@ -88,6 +84,14 @@ var wooApi = {
                         var son = name+'='+val;
                         data.push(son);
                     }
+                })
+                break;
+                default :
+                $(domName+"."+className).each(function(i){
+                    var name = $(this).attr('name');
+                    var val = $(this).val();
+                    var son = name+'='+val;
+                    data.push(son);
                 })
                 break;
             }
