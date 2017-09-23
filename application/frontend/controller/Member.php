@@ -3,6 +3,7 @@ namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\MemberService;
 use app\service\StudentService;
+use app\service\WechatService;
 use think\Db;
 class Member extends Base{
     private $MemberService;
@@ -49,10 +50,11 @@ class Member extends Base{
 
     // 完善会员资料
     public function updateMember(){
+        $html_name = input('param.html_name')?input('param.html_name'):'updateMember';
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
         $memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);  
         $this->assign('memberInfo',$memberInfo);
-        return view('Member/updateMember');
+        return view('Member/'.$html_name);
     }
     public function photoAlbum(){
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
@@ -236,9 +238,20 @@ class Member extends Base{
     }
 
 
-    public function myShare(){
+    public function share(){
+        $memberid = $this->memberInfo['id'];
+        $callback = url('Frontend/Index/index', ['pid' => $memberid], '', true);
+        $wechatS = new WechatService();
+        $url = $wechatS->oauthredirect($callback);
+        $qrcodeimg = buildqrcode($url) ;
+        $member_name = !empty($this->memberInfo['nickname']) ? $this->memberInfo['nickname'] : $this->memberInfo['member'];
 
 
-        return view('Mmeber/myShare');
+        $this->assign('qrcodeimg', $qrcodeimg);
+        $this->assign('membername', $member_name);
+        return view('Member/myShare');
     }
+
+
+
 }

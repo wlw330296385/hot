@@ -90,7 +90,7 @@
                 </div>
             </li>
             <li class="mui-table-view-cell listli listinitial">
-                <div class="mui-navigate-right goConfirm">
+                <div class="mui-navigate-right goConfirm" data-href="{:url('member/share')}">
                     邀请好友
                 </div>
             </li>
@@ -148,8 +148,6 @@
 
     <!--底部导航-->
 {layout name="Layout/footer"}
-
-<input type="hidden" name="mid" value="{$mid}">
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
@@ -170,7 +168,7 @@
         //搜索子页：搜索提交
         $(".goConfirm").click(function () {
             var goUrl = $(this).attr("data-href");
-            if ( $('input[name=mid]').val()  == 0) {
+            if ( "{$memberInfo.id}"<=0) {
                 var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
                 mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
             }else{

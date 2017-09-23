@@ -70,7 +70,10 @@ class Plan extends Base{
         $exerciseService = new \app\service\ExerciseService;
         $exerciseList = $exerciseService->getExerciseList();
         // dump($exerciseList);die;
-        // 训练项目
+        // 训练营信息
+        $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
+
+        $this->assign('campInfo',$campInfo);
         $this->assign('exerciseList',$exerciseList);
         $this->assign('gradecateList',$gradecateList);
         return view('Plan/createPlan');

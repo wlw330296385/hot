@@ -147,8 +147,29 @@ function sendMessageMember($data){
     return $result;
 }
 
-function buildqrcode($url, $size=4, $level='L') {
+function buildqrcode($url, $size=4, $level='L')
+{
 //    dump($url);
-    $filename = '';
-    \QRcode::png($url, $filename, $size, $level);
+
+    $savePath = ROOT_PATH . 'public/uploads/images/qrcode/' . date('Y') .'/'. date('m') .'/';
+    $webPath = '/uploads/images/qrcode/' . date('Y') .'/'. date('m') . '/';
+
+    if (!file_exists($savePath)) {
+        mkdir($savePath, 0777, true);
+    }
+    //$qr=new \phpqrcode\QRcode();
+    //\QRcode::png($url, $filename, $level,$size);
+    $filename = $savePath . DS . date('His').md5($url) . '.png';
+    \think\Loader::import('phpqrcode.phpqrcode');
+    $qrcodeObj = new \phpqrcode\QRcode();
+    if (isset($url)) {
+        $qrcodeObj::png($url, $filename, $level,$size);
+    }
+    //dump( $savePath . basename($filename) );
+    if ( file_exists($savePath . basename($filename) ) ) {
+        return $webPath.basename($filename);
+    } else {
+        return false;
+    }
 }
+
