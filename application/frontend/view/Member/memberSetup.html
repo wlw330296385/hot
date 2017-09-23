@@ -74,73 +74,73 @@
             transition-duration: .0s;
         }
         .mui-navbar .mui-bar .mui-title {
-            display: inline-block;
-            width: auto;
-        }
-        .mui-page-shadow {
-            position: absolute;
-            right: 100%;
-            top: 0;
-            width: 16px;
-            height: 100%;
-            z-index: -1;
-            content: '';
-        }
-        .mui-page-shadow {
-            background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
-            background: linear-gradient(to right, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
-        }
-        .mui-navbar-inner.mui-transitioning,
-        .mui-navbar-inner .mui-transitioning {
-            -webkit-transition: opacity 300ms ease, -webkit-transform 300ms ease;
-            transition: opacity 300ms ease, transform 300ms ease;
-        }
-        .mui-page {
-            display: none;
-        }
-        .mui-pages .mui-page {
-            display: block;
-        }
+         margin-left: 0 !important;
+     }
+     .mui-page-shadow {
+        position: absolute;
+        right: 100%;
+        top: 0;
+        width: 16px;
+        height: 100%;
+        z-index: -1;
+        content: '';
+    }
+    .mui-page-shadow {
+        background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
+        background: linear-gradient(to right, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
+    }
+    .mui-navbar-inner.mui-transitioning,
+    .mui-navbar-inner .mui-transitioning {
+        -webkit-transition: opacity 300ms ease, -webkit-transform 300ms ease;
+        transition: opacity 300ms ease, transform 300ms ease;
+    }
+    .mui-page {
+        display: none;
+    }
+    .mui-pages .mui-page {
+        display: block;
+    }
 
-        .mui-table-view span.mui-pull-right {
-            color: #999;
-        }
-        .mui-table-view-divider {
-            background-color: #efeff4;
-            font-size: 14px;
-        }
-        .mui-table-view-divider:before,
-        .mui-table-view-divider:after {
-            height: 0;
-        }
+    .mui-table-view span.mui-pull-right {
+        color: #999;
+    }
+    .mui-table-view-divider {
+        background-color: #efeff4;
+        font-size: 14px;
+    }
+    .mui-table-view-divider:before,
+    .mui-table-view-divider:after {
+        height: 0;
+    }
 
-        .mui-fullscreen {
-            position: fixed;
-            z-index: 20;
-            background-color: #000;
-        }
-       /*·····*/
-       .tipspan{
-            font-size: 14px;
-            text-align: center;
-            display: block;
-            padding: 10px;
-            height: 41px;
-        }
-        .success{
-            padding: 20px 0;
-            width: 60%;
-            margin: 0 auto;
-        }
-        .success img{
-            width: 40px;
-            height: 40px;
-        }
-        .success span{
-            float: right;
-            line-height: 40px;
-        }
-    </style>
+    .mui-fullscreen {
+        position: fixed;
+        z-index: 20;
+        background-color: #000;
+    }
+    /*·····*/
+    .tipspan{
+        font-size: 14px;
+        text-align: center;
+        display: block;
+        padding: 10px;
+        height: 41px;
+    }
+    .success{
+        padding: 20px 0;
+        width: 60%;
+        margin: 0 auto;
+    }
+    .success img{
+        width: 40px;
+        height: 40px;
+    }
+    .success span{
+        float: right;
+        line-height: 40px;
+    }
+    .mui-f
+</style>
 </head>
 
 <body class="mui-fullscreen">
@@ -347,18 +347,19 @@
         <div class="mui-page-content">
             <div class="mui-scroll-wrapper">
                 <div class="mui-scroll">
-                    <form action="" class="mui-input-group">
+                    <form action="" class="mui-input-group" style="overflow: hidden;">
                         <div class="mui-input-row">
                             <label>邮箱地址</label>
-                            <input type="text" name="email" class="reg_email" data-id={$memberInfo.id} placeholder="{$memberInfo['email']}">
+                            <input type="text" name="email" class="reg_email" data-id={$memberInfo.id} placeholder="{$memberInfo['email']}" required pattern="/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/">
+                        </div>
+                        <span class="tipspan email_hint email_hint"></span>
+                        <div class="tjbtn tjbtn-next">
+                            <button type="button" class="btn emailBtn">
+                                修改
+                            </button>
                         </div>
                     </form>
-                    <span class="tipspan email_hint email_hint"></span>
-                    <div class="tjbtn tjbtn-next">
-                        <button type="button" class="btn emailBtn">
-                            修改
-                        </button>
-                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -470,15 +471,15 @@
         });
         // 步骤2
         $(".stepBtn2").click(function () {
-           var reg_mobile =$(".reg_mobile").val();
-           if ((/^1[34578]\d{9}$/).test($(".reg_mobile").val())) {
-                $('.mobile_hint').text("");
-                $(".step2").hide();
-                $(".step3").show();
-            } else {
-                $('.mobile_hint').text("请输入正确的手机格式").css("color", "red");
-            }
-        });
+         var reg_mobile =$(".reg_mobile").val();
+         if ((/^1[34578]\d{9}$/).test($(".reg_mobile").val())) {
+            $('.mobile_hint').text("");
+            $(".step2").hide();
+            $(".step3").show();
+        } else {
+            $('.mobile_hint').text("请输入正确的手机格式").css("color", "red");
+        }
+    });
         // 返回1
         $(".backstep1").click(function(){
             $(".step2").hide();
@@ -492,30 +493,30 @@
         // 修改邮箱
         $(".emailBtn").click(function(){
             var email =$(".reg_email").val();
-            if(!/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/.test(email)){
-                $(".email_hint").text("请输入正确的邮箱格式").css("color", "red");
-            }else{
+            if(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/.test(email)){
                 $('.email_hint').text("");
                 mui.ajax("{:url('api/member/updateMemberApi')}", {
-                data: {
-                    'email': email
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: {'Content-Type': 'application/json'},
-                success: function (data) {
-                    console.log(data)
-                    if (data.code == 100) {
-                        mui.toast(data.msg);
-                        viewApi.back();       
+                    data: {
+                        'email': email
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        console.log(data)
+                        if (data.code == 100) {
+                            mui.toast(data.msg);
+                            viewApi.back();       
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        console.log(data);
                     }
-                },
-                error: function (xhr, type, errorThrown) {
-                    console.log(data);
-                }
-            }); 
-        }
+                }); 
+            }else{
+                $(".email_hint").text("请输入正确的邮箱格式").css("color", "red");
+            }
 
         // 修改密码
         $(".passwordBtn").click(function(){
@@ -548,9 +549,10 @@
                 $(".password_hint").text("请输入正确的手机格式").css("color", "red");
             }
         })
+
     })
 
-    </script>
+</script>
 
 </body>
 
