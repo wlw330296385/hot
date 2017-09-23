@@ -26,7 +26,7 @@ class MemberVal extends Validate{
     
     protected $scene = [
         'add'   =>  ['member','telephone','password'],
-        'edit'  =>  ['email','telephone'],
+        'edit'  =>  [],
     ];    
 
 }
