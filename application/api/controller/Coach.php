@@ -70,7 +70,8 @@ class Coach extends Base{
                 $coachdata['city'] = $locationArr[1];
                 $coachdata['area'] = $locationArr[2];
             }
-            $coach = $this->coachService->createCoach($coachdata);
+            $coachS = new CoachService();
+            $coach = $coachS->createCoach($coachdata);
 
             // 实名数据
             $realnamedata = [
