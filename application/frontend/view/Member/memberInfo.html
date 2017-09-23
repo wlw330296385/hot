@@ -238,7 +238,7 @@
                         </div>
                         <div class="mui-input-row">
                             <label>学员ID</label>
-                            <input type="text" name="" value="{$memberInfo['id']}">
+                            <span>{$memberInfo['id']}</span>
                         </div>
                         <div class="mui-input-row">
                             <label>姓名</label>
@@ -267,8 +267,8 @@
                         <span id="result" class="ui-alert birthday">{$memberInfo['birthday']}</span>
                     </div>
                     <div class="mui-input-row" id='showCityPicker3'>
-                        <label>所属地区</label><span id="cityResult3"
-                        class="ui-alert location">{$memberInfo['province']}{$memberInfo['city']}{$memberInfo['area']}</span>
+                        <label>所属地区</label>
+                        <span id="cityResult3" class="ui-alert location">{$memberInfo['province']} {$memberInfo['city']} {$memberInfo['area']}</span>
                     </div>
                     <div class="mui-input-row">
                         <label>注册日期</label>
@@ -360,39 +360,47 @@
 
         //个人信息编辑
         $(".successBtn").click(function(){
-            var member =$(".member").val();
-            var sex =$(".sex").val();
-            var height =$(".height").val();
-            var weight =$(".weight").val();
-            var birthday =$(".birthday").text();
-            var location =$(".location").text();
-            console.log(height)
-            if(member!='' && sex!='' && height!='' && weight!='' && birthday!='' && location!=''){
-                mui.ajax("{:url('api/member/updateMemberApi')}", {
-                    data: {
-                        'member': member,
-                        'sex': sex,
-                        'height': height,
-                        'weight': weight,
-                        'birthday': birthday,
-                        'location': location
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: {'Content-Type': 'application/json'},
-                    success: function (data) {
-                        console.log(data)
-                        if (data.code == 100) {
-                            mui.toast(data.msg);
-                            viewApi.back();
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        console.log(data);
+            var btnArray = ['取消', '确认'];
+            mui.confirm('是否确认修改？','', btnArray, function(e) {
+                if (e.index == 1) {
+                    var member =$("#editor .member").val();
+                    var sex =$("#editor .sex").val();
+                    var height =$("#editor .height").val();
+                    var weight =$("#editor .weight").val();
+                    var birthday =$("#editor .birthday").text();
+                    var location =$("#editor .location").text();
+                    if(member!=''&&sex!=''&& height!=''&& weight!=''&& birthday!=''&&location!=''){
+                        mui.ajax("{:url('api/member/updateMemberApi')}", {
+                            data: {
+                                'member': member,
+                                'sex': sex,
+                                'height': height,
+                                'weight': weight,
+                                'birthday': birthday,
+                                'location': location
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: {'Content-Type': 'application/json'},
+                            success: function (data) {
+                                console.log(data)
+                                mui.toast(data.msg)
+                                viewApi.back();
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                console.log(data);
+                                mui.toast("网络异常,请稍候再试");
+                            }
+                        }); 
+                    }else{
+                        mui.toast("请完善信息")
                     }
-                }); 
-            }
+                } else {
+                    return;
+                }
+            })
+
         })
 
     </script>
