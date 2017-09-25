@@ -12,9 +12,15 @@ class SalaryOut extends Model{
 
     protected $readonly = ['create_time'];
 
-    public function lesson(){
-    	return $this->hasOne('lesson','id','lesson_id',[],'left join');
-    } 
+    public function getBankTypeAttr($value){
+    	$BankType = ['1'=>'银行卡',2=>'支付宝'];
+    	return $BankType[$value];
+    }
+
+    public function getStatusAttr($value){
+    	$BankType = ['0'=>'申请中',1=>'已支付',2=>'被取消'];
+    	return $BankType[$value];
+    }
 
 }
 

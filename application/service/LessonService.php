@@ -153,7 +153,7 @@ class LessonService {
        
         $result = $this->lessonModel->save($data);
         if($result){
-            return ['msg' => '发布成功', 'code' => 100, 'data' => $result];
+            return ['msg' => '发布成功', 'code' => 100, 'data' => $this->lessonModel->id];
         }else{
             return ['msg'=>__lang('MSG_200_ERROR'), 'code' => 200];
         }
