@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>教练管理</title>
+    <title>场地管理</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -15,49 +15,34 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
 </head>
 
-<body>
-<!--头部搜索2-->
-<header id="header" class="mui-bar mui-bar-nav" style="border-bottom: solid 1px #e3e3e3;">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-    <h1 class="mui-title" style="text-align: left;font-size: 14px;">教练列表</h1>
-    <a href="{:url('camp/coachListOfCamp', ['status' => 0, 'camp_id' => $campInfo.id])}" class="mui-pull-right " style="font-size: 14px;line-height: 44px;color:#000">教练申请</a>
-</header>
+<body class="whitebg">
 
 <div class="mui-content">
 
-    <div class="mui-indexed-list-search mui-input-row mui-search">
-        <input type="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="">
-        <span class="mui-icon mui-icon-clear mui-hidden"></span>
-        <span class="mui-placeholder"><span class="mui-icon mui-icon-search"></span><span>搜索教练</span></span>
+    <div class="list camp-list camp-lesson-list detalis-list coach">
+        <div class="camp-lesson-list">
+            <div id="segmentedControl" class="mui-segmented-control mb">
+                <a class="mui-control-item mui-active" href="#item1">已审核</a>
+                <a class="mui-control-item" href="#item2">未审核</a>
+                <a class="mui-control-item" href="{:url('court/createCourt',['camp_id'=>$camp_id])}">添加场地</a>
+            </div>
+
+            <div class="item-list">
+                <div id="item1" class="mui-control-content mui-active">
+                    <ul class="mui-table-view list court1">
+                    </ul>
+                </div>
+                <div id="item2" class="mui-control-content">
+                    <ul class="mui-table-view list court0">
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <ul class="mui-table-view list coach">
-        {empty name="coachlist"}
-        <li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>
-        {else/}
-        {volist name="coachlist" id="vo"}
-        <li class="mui-table-view-cell mui-media listli list-wide">
-            <a href="{:url('frontend/coach/coachinfo', ['coach_id' => $vo['id']])}">
-                <img class="mui-media-object mui-pull-left coachicon" src="{$vo.portraits}">
-                <div class="mui-media-body wd36">{$vo.coach}
-                    <img src="{$vo.sex|getSex}" class="sex" alt="">
-                    <p class="mui-ellipsis">教龄:{$vo.coach_year} &nbsp;&nbsp;等级:{$vo.coach_level} </p>
-                </div>
-                <div class="price-frame">
-                    <div class="icons mui-inline">{$vo.star}
-                        <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
-                        <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
-                        <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
-                        <i data-index="4" class="mui-icon mui-icon-star-filled"></i>
-                        <i data-index="5" class="mui-icon mui-icon-star-filled"></i>
-                    </div>
-                    <p class="address tr">{$vo.area}</p>
-                </div>
-            </a>
-        </li>
-        {/volist}
-        {/empty}
-    </ul>
+
+    <!--底部导航-->
+    {layout name="Layout/footer"}
 
 </div>
 
@@ -79,18 +64,18 @@
         //搜索教练
         $("#searchBtn").on("click", function () {
             keyword = $(".keyword").val();
-            toCoachList(keyword);
+            toCourthList(keyword);
         })
 
         //获取训练营教练列表
-        toCoachList(keyword);
+        toCourtList(keyword);
     });
 
 
 
     //训练营教练列表接口获取数据并追加到页面
-    var toCoachList = function(keyword) {
-        var url  = "{:url('api/camp_member/getCoachListApi','','',true)}";
+    var toCourtList = function(keyword) {
+        var url  = "{:url('api/court/searchCourtApi','','',true)}";
         var campID = "{$campInfo.id}";
         mui.ajax({
             url:url,
