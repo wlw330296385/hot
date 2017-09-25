@@ -34,40 +34,7 @@ class Login extends Controller{
     // 微信用户授权回调
     public function wxlogin() {
         $WechatS = new WechatService;
-        $userinfo = $WechatS->oauthUserinfo();  
-        /*if ($userinfo) {
-            // 查询是否已注册
-            $memberInfo = db('member')->where(['openid'=>$userinfo['openid']])->find();
-            if($memberInfo){
-                unset($memberInfo['password']);
-                $cookie = md5($memberInfo['id'].$memberInfo['member'].'hot');
-                cookie('member',md5($memberInfo['id'].$memberInfo['member'].'hot'));
-                $re = session('memberInfo',$memberInfo,'think');
-                $url = cookie('url');
-                if($re){
-                    $this->redirect($url);
-                }else{
-                    $this->redirect('frontend/Index/index');
-                }
-            }else{
-            // 未注册
-                $memberInfo = ['id'=>-2,'member'=>$userinfo['nickname'],'nickname'=>$userinfo['nickname'],'hp'=>0,'level'=>0,'avatar'=>$userinfo['headimgurl'],'openid'=>$userinfo['openid']];
-                unset($memberInfo['password']);
-                $cookie = md5($memberInfo['id'].$memberInfo['member'].'hot');
-                cookie('member',md5($memberInfo['id'].$memberInfo['member'].'hot'));
-                $re = session('memberInfo',$memberInfo,'think');
-                $url = cookie('url');
-                if($re){
-                    $this->redirect($url);
-                }else{
-                    $this->redirect('frontend/Index/index');
-                }
-                
-            }
-            
-        }else{
-            $this->redirect('frontend/Index/index');
-        }*/
+        $userinfo = $WechatS->oauthUserinfo();
         if ($userinfo) {
             $isMember = db('member')->where(['openid' => $userinfo['openid']])->find();
             if ($isMember) {
@@ -79,7 +46,7 @@ class Login extends Controller{
                     $url = cookie('url');
                     if($url){
                         cookie('url',null);
-                        $this->redirect( cookie('url') );
+                        $this->redirect( $url );
                     }else{
                         $this->redirect('frontend/Index/index');
                     }
@@ -125,7 +92,7 @@ class Login extends Controller{
                     $url = cookie('url');
                     if($url){
                         cookie('url',null);
-                        $this->redirect( cookie('url') );
+                        $this->redirect( $url );
                     }else{
                         $this->redirect('frontend/Index/index');
                     }
