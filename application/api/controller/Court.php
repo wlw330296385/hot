@@ -40,6 +40,35 @@ class Court extends Base{
         }       
     }
 
+    // 翻页搜索场地
+    public function searchCourtByPageApi(){
+        try{
+            $map = [];
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $page = input('param.page')?input('param.page'):1;
+            $city = input('param.city');
+            $area = input('param.area');
+            $camp_id = input('param.camp_id')?input('param.camp_id'):0;
+            $map = ['province'=>$province,'city'=>$city,'area'=>$area];
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value!=' '){
+                    unset($map[$key]);
+                }
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['court'] = ['LIKE','%'.$keyword.'%'];
+            }
+            if($camp_id){
+                $map['camp_id'] = $camp_id;
+            }
+            $campList = $this->CourtService->getCourtListbyPage($map,$page);
+            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
+        }catch(Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }       
+    }
+
     // 分页获取数据
     public function courtListApi(){
         try{

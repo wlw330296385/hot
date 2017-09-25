@@ -200,10 +200,12 @@
                 <div class="page-header">
                     <span class="course"><strong>训练地点</strong></span>
                 </div>
-                <ul class="mui-table-view list">
-                    {volist name="courtList" id="vol"}
-                    <li class="mui-table-view-cell listli detalisli trainLocation" data-id="{$vol.id}" data-location="{$vol.location}">{$vol.court}</li>
-                    {/volist}
+                <div class="mui-indexed-list-search mui-input-row mui-search">
+                    <input type="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="">
+                    <span class="mui-icon mui-icon-clear mui-hidden"></span>
+                    <span class="mui-placeholder"><span class="mui-icon mui-icon-search"></span><span>请输入场地名称搜索</span></span>
+                </div>
+                <ul class="mui-table-view list courtlist">
                 </ul>
             </div>
         </div>
@@ -458,13 +460,13 @@
             mui("#lessonType").popover("toggle");
         })
         // 训练地点
-        $(".trainLocation").click(function(){
+        $(".courtlist").on('click','li.trainLocation',function(){
             var trainLocation = $(this).html();
             var id= $(this).attr('data-id');
             $(".court_id").val(id);
             var location = $(this).attr('data-location');
             $(".location").val(location);
-            $(".trainLocationCont").html(trainLocation);
+            $(".trainLocationCont").text(trainLocation);
             mui("#trainLocation").popover("toggle");
         })
         // 主教练
@@ -534,7 +536,9 @@
             })
         });
 
-
+        //获取训练营场地表
+        var courtKeyword = '';
+        toCourtList(courtKeyword);
         
     })
 
@@ -553,5 +557,46 @@
                 window.top.location.href = goUrl;
             }
         }
+
+
+
+    //训练营场地列表接口获取数据并追加到页面
+    var toCourtList = function(keyword) {
+        var url  = "{:url('api/court/searchCourtApi','','',true)}";
+        var campID = "{$campInfo.id}";
+        mui.ajax({
+            url:url,
+            data: {
+                //camp_id:campID,
+                keyword:keyword
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+                if (data.code == 100) {
+                    var newli = '';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        newli = newli + '<li class="mui-table-view-cell listli detalisli trainLocation" data-id="' + data.data[i].id + '" data-location="' + data.data[i].location + '">' + data.data[i].court + '</li>'
+                    }
+                    $("ul.courtlist").empty();
+                    if(newli==''){
+                        var createCount = "{:url('court/createcourt')}";
+                        newli = '<li class="mui-text-center"><p>没有查找到场地数据哦</p><a href="'+createCount+'" class="mui-btn mui-btn-primary">添加场地</a></li>'  ///// 添加场地按钮///////////////////////////////////////////////
+                    }
+                    $("ul.courtlist").append(newli);
+
+                }else{
+                    mui.toast('数据获取失败,请稍候再试');
+                }
+            },
+            error: function(xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+            }
+        });
+    };
+
     </script>
     </html>
