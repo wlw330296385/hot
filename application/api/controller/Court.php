@@ -96,6 +96,8 @@ class Court extends Base{
         try{
             $data = input('post.');
             $id = input('param.id');
+            $data['member'] = $this->memberInfo['member'];
+            $data['member_id'] = $this->memberInfo['id'];
             $result = $this->CourtService->updateCourt($data,$id);
             return json($result);
         }catch (Exception $e){
@@ -106,6 +108,8 @@ class Court extends Base{
     public function createCourtApi(){
         try{
             $data = input('post.');
+            $data['member'] = $this->memberInfo['member'];
+            $data['member_id'] = $this->memberInfo['id'];
             $result = $this->CourtService->createCourt($data);
             return json($result);   
         }catch (Exception $e){

@@ -16,7 +16,7 @@ class CourtMediaService {
     // }
 
     // 场地分页
-    public function getCourtMediaList($map=[], $order='', $field='*', $paginate=10){
+    public function getCourtMediaList($map=[], $order='', $field='*',$page=1, $paginate=10){
         $result = CourtMedia::where($map)->field($field)->order($order)->page($page,$paginate)->select();
         if($result){           
             $result = $result;
