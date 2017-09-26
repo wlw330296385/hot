@@ -13,15 +13,11 @@ class CampMember extends Base{
 
     // 关注训练营
     public function focusApi(){
-        $type = input('param.type');
         $camp_id = input('param.camp_id');
         $remarks = input('param.remarks');
         $campInfo = $this->CampService->getCampInfo($camp_id);
         if(!$campInfo){
             return json(['code'=>200,'msg'=>'不存在此训练营']);
-        }
-        if(!$type || $type>3 || $type<-1){
-            return json(['code'=>200,'msg'=>'不存在这个身份']);
         }
         //是否已存在身份
         $isType = db('camp_member')->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>$camp_id,'status'=>1])->find();
