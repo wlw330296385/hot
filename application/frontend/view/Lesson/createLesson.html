@@ -531,8 +531,8 @@
             if(ajaxResult.code){
                 mui.toast(ajaxResult.msg);
                 console.log(ajaxResult.data)
-//                var goUrl = "{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/'+ajaxResult.data;
-//                window.top.location.href = goUrl;
+                var goUrl = "{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/'+ajaxResult.data;
+                window.top.location.href = goUrl;
             }
         }
 
@@ -625,11 +625,12 @@
     var toFansList = function(keyword) {
         var url  = "{:url('api/camp_member/getCampMemberListApi','','',true)}";
         var campID = "{$campInfo.id}";
-        var typeID = -1;
+        var typeID = "-1";
         mui.ajax({
             url:url,
             data: {
-                camp_id:campID
+                camp_id:campID,
+                type:typeID
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型

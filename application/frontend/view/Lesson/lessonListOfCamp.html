@@ -24,15 +24,15 @@
     <div class="list camp-list camp-lesson-list detalis-list coach">
         <div class="camp-lesson-list">
             <div id="segmentedControl" class="mui-segmented-control mb">
-                <a class="mui-control-item mui-active" href="#item2">上架课程</a>
-                <a class="mui-control-item" href="#item3">下架课程</a>
+                <a class="mui-control-item mui-active" href="#">上架课程</a>
+                <a class="mui-control-item" href="#">下架课程</a>
                 <a class="mui-control-item" href="{:url('lesson/createLesson',['camp_id'=>$camp_id])}">添加课程</a>
             </div>
 
-            <div class="item-list mui-scroll-wrapper" id="refreshContainer">
-                <div id="item2" class="mui-control-content mui-scroll mui-active">
-                    <ul class="mui-table-view list lesson1">
-                    {volist name="onlineLessonList" id="vol"}
+            <div class="item-list">
+                <div id="item2" class="mui-control-content mui-active">
+                    <ul class="mui-table-view list">
+                        {volist name="onlineLessonList" id="vol"}
                         <li class="mui-table-view-cell mui-media listli">
                             <a href="{:url('lesson/LessonInfoOfCamp',['lesson_id'=>$vol['id'],'camp_id'=>$vol['camp_id']])}" class="mui-navigate-right">
                                 <div class="mui-media-body">
@@ -41,12 +41,12 @@
                                 </div>
                             </a>
                         </li>
-                    {/volist}
+                        {/volist}
                     </ul>
                 </div>
-                <div id="item3" class="mui-control-content mui-scroll">
-                    <ul class="mui-table-view list lesson0">
-                    {volist name="offlineLessonList" id="vol"}
+                <div id="item3" class="mui-control-content">
+                    <ul class="mui-table-view list">
+                        {volist name="offlineLessonList" id="vol"}
                         <li class="mui-table-view-cell mui-media listli">
                             <a href="{:url('lesson/LessonInfoOfCamp',['lesson_id'=>$vol['id']])}" class="mui-navigate-right">
                                 <div class="mui-media-body">
@@ -55,7 +55,7 @@
                                 </div>
                             </a>
                         </li>
-                    {/volist}
+                        {/volist}
                     </ul>
                 </div>
             </div>
@@ -69,6 +69,9 @@
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/common.js"></script>
 <script>
     //初始化
     mui.init({
@@ -83,7 +86,7 @@
 
         //初始化全局变量
         var count = 1;
-
+        var status=1;
 
         mui.init({
             swipeBack: true, //启用右滑关闭功能
@@ -115,7 +118,7 @@
                 count = 1;//刷新并显示第一页
                 var page = count;
                 var gType = 1;//代表下拉刷新
-                toList(page,gType);//具体取数据的方法
+                toList(page,gType,status);//具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现
@@ -124,14 +127,14 @@
                 count++;//翻下一页
                 var page = count;
                 var gType =2;//代表上拉加载
-                toList(page,gType);//具体取数据的方法
+                toList(page,gType,status);//具体取数据的方法
             }, 100);
         }
         //接口获取数据并追加到页面
         var toList = function(page,gType,status) {
             //搜索关键字不能完全为空，否则查询为空
-            var url  = "{:url('api/lesson/searchLessonApi','','',true)}";
-            var campID = "{$campInfo.id}";
+            var url  = "{:url('api/lesson/getLessonApi','','',true)}";
+            var campID = "{$camp_id}";
             mui.ajax({
                 url:url,
                 data: {
