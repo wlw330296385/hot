@@ -20,7 +20,7 @@ class CampMember extends Model {
 
 
     public function getTypeAttr($value){
-         $status = [1-=>'粉丝',1=>'学生',2=>'教练',3=>'管理员',4=>'创建者'];
+         $status = [-1=>'粉丝',1=>'学生',2=>'教练',3=>'管理员',4=>'创建者',5=>'其他'];
         return $status[$value];
     }
 }

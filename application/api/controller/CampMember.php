@@ -182,5 +182,21 @@ class CampMember extends Base{
         }
     }
 
-    
+    //自定义获取训练营身份列表
+    public function getCampMemberListApi(){
+        try{
+            $map = input();
+            $map['member_id'] = $this->memberInfo['id'];
+            $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+            $CampMember =new  \app\model\CampMember;
+            $result = $CampMember->where($map)->select();
+            if($result){
+                return json(['code'=>100,'msg'=>'OK','data'=>$result]);
+            }else{
+                return json(['code'=>200,'msg'=>'查询失败,请正确传参']);
+            }
+        }catch(Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }
+    }
 }
