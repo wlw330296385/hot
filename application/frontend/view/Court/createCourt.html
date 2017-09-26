@@ -9,106 +9,207 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
 </head>
 
 <body>
 
-<div class="mui-content">
+    <div class="mui-content">
 
-    <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">添加训练营场地</h1>
-    </header>
-    <div class="mui-content pt">
-        <div class="register mt25">
-            <form action="" class="mui-input-group">
+        <header id="header" class="mui-bar mui-bar-nav subheader">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+            <h1 class="mui-title">添加训练营场地</h1>
+        </header>
+        <div class="mui-content pt">
+            <div class="register">
+                <form action="" class="mui-input-group">
                     <div class="mui-input-row"><label>场地名称</label>
-                        <input type="text" class="" placeholder="请输入训练场地名称">
+                        <input type="text" class="court" placeholder="请输入训练场地名称">
                     </div>
 
-                    <div class="mui-input-row"><label>所属地区</label>
-                        <input type="text" class="" placeholder="">
-                    </div>
-
-                    <div class="mui-input-row"><label>具体地址</label>
-                        <input type="text" class="" placeholder="请输入具体地址">
-                    </div>
-
-                    <div class="mui-input-row"><label>地图位置</label>
-                        <input type="text" class="" placeholder="">
-                    </div>
-
-                    <div class="mui-input-row"><label>营业时间</label>
-                        <input type="text" class="" placeholder="请输入营业时间">
-                    </div>
-
-                    <div class="mui-input-row"><label>联系电话</label>
-                        <input type="text" class="" placeholder="请输入咨询电话">
-                    </div>
-
-                    <div class="mui-input-row"><label>联系人</label>
-                        <input type="text" class="" placeholder="请输入咨询电话">
-                    </div>
-
-                    <div class="mui-input-row"><label>散场(一次)</label>
-                        <input type="text" class="" placeholder="请输入散场价格">
-                    </div>
-
-                    <div class="mui-input-row"><label>半场包场(每小时)</label>
-                        <input type="text" class="" placeholder="请输入半场价格">
-                    </div>
-
-                    <div class="mui-input-row"><label>全场包场(每小时)</label>
-                        <input type="text" class="" placeholder="请输入全场价格">
-                    </div>
-
-                    <div class="mui-input-row"><label>场地类型</label>
-                        <input type="checkbox" name="outdoors" value="室内" />室内
-                        <input type="checkbox" name="outdoors" value="室外" />室外
-                        <input type="checkbox" name="outdoors" value="室内|室外" />室内|室外
-                     </div>
-
-                    <div class="mui-input-row"><label>温馨提示</label>
-                        <textarea>1、篮球场包场2小时起订 /n 2、周一至周五的18:00至20:00，20:00至22:00为固定时间段预定\n3、如退订请提前12小时联系场馆客服人员</textarea>
-                    </div>
-
-                    <div class="mui-input-row h-auto">
-                        <a href="#" class="mui-navigate-right"><label>场地环境</label>
-                            <!--上传照片后的界面-->
-                            <img class="coachicon icon01" src="/static/frontend/images/yuantiao.jpg" alt="">
-                            <!--<span>上传</span>-->
+                    <div class="mui-input-row" id='showCityPicker3'>
+                        <a href="#" class="mui-navigate-right">
+                            <label>所属地区</label>
+                            <span id="cityResult3" class="ui-alert province"></span>
                         </a>
                     </div>
 
-                <span class="tip-box">此处显示验证提示</span>
-                
-                <div class="tip-box mt55">
-                    <label>提交后平台审核通过方为生效</label>
-                </div>
+                    <div class="mui-input-row h-auto"><label>具体地址</label>
+                        <textarea rows="2" class="location" placeholder="请输入具体地址"></textarea> 
+                    </div>
 
-                <ul class="mui-table-view operation list">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff">提交场地</li>
-                </ul>
+                    <!-- <div class="mui-input-row">
+                        <a href="#" class="mui-navigate-right">
+                            <label>地图位置</label>
+                        </a>
+                        <input type="text" class="mui-navigate-right" placeholder="">
+                    </div> -->
 
-            </form>
+                    <div class="mui-input-row h-auto"><label>营业时间</label>
+                        <textarea rows="2" class="open_time" placeholder="请输入营业时间"></textarea> 
+                    </div>
+
+                    <div class="mui-input-row"><label>联系电话</label>
+                        <input type="text" class="contract" placeholder="请输入联系电话">
+                    </div>
+
+                    <div class="mui-input-row"><label>联系人</label>
+                        <input type="text" class="principal" placeholder="请输入联系人">
+                    </div>
+
+                    <div class="mui-input-row"><label>散场(一次)</label>
+                        <input type="text" class="chip_rent checkNum" placeholder="请输入散场价格">
+                    </div>
+
+                    <div class="mui-input-row"><label>半场包场(每小时)</label>
+                        <input type="text" class="half_rent checkNum" placeholder="请输入半场价格">
+                    </div>
+
+                    <div class="mui-input-row"><label>全场包场(每小时)</label>
+                    <input type="text" class="full_rent checkNum" placeholder="请输入全场价格">
+                    </div>
+
+                    <div class="mui-input-row"><label>场地类型</label>
+                        <span>
+                            <input type="radio" class="outdoors" name="outdoors" value="0" />室内
+                            <input type="radio" class="outdoors" name="outdoors" value="1" />室外
+                            <input type="radio" class="outdoors" name="outdoors" value="3" />室内|室外
+                        </span>
+                    </div>
+
+                    <div class="mui-input-row h-auto"><label>温馨提示</label>
+                        <textarea rows="5" class="remarks" placeholder="温馨提示内容"></textarea>
+                    </div>
+
+                    <div class="mui-input-row h-auto mt55">
+                        <a class="mui-navigate-right portraits filePicker" onclick="add_id(3)">
+                            <label>场地环境</label>
+                            <img id="preview_3" class="coachicon icon01 upload-preview" >
+                            <input type="hidden" name="portraits" value=''>
+                        </a>
+                    </div>
+<!-- 
+                    <span class="tip-box">此处显示验证提示</span>
+
+                    <div class="tip-box mt55">
+                        <label>提交后平台审核通过方为生效</label>
+                    </div> -->
+
+                    <ul class="mui-table-view operation list">
+                        <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen createBtn" style="color: #fff">提交场地</li>
+                    </ul>
+
+                </form>
+            </div>
         </div>
+
     </div>
 
-</div>
-
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<script>
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+    //选择器
+    (function ($, doc) {
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
+            });
+            cityPicker3.setData(cityData3);
+            var showCityPickerButton = doc.getElementById('showCityPicker3');
+            var cityResult3 = doc.getElementById('cityResult3');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+        });
+    })(mui, document);
+
+    //检测输入是否为数字
+    $(".checkNum").blur(function(){
+        var num =$(this).val();
+        if(isNaN(num)){
+            mui.toast("请填写数字");
+            return false;
+        }
+    })
+
+    //创建场地
+    $(".createBtn").click(function(){
+        var  court = $(".court").val();
+        var  location = $(".location").val();
+        var  open_time = $(".open_time").val();
+        var  contract = $(".contract").val();
+        var  principal = $(".principal").val();
+        var  outdoors = $("input:radio:checked").val();
+        var  chip_rent = $(".chip_rent").val();
+        var  half_rent = $(".half_rent").val();
+        var  full_rent = $(".full_rent").val();
+        var  remarks = $(".remarks").val();
+        console.log(outdoors)
+        if(court!=''&&location!=''&&open_time!=''&&contract!=''&&principal!=''&&chip_rent!=''&&half_rent!=''&&full_rent!=''&&outdoors!=''){
+            mui.ajax("{:url('api/court/createCourtApi')}",{
+                data:{
+                    "court":court,
+                    "location":location,
+                    "open_time":open_time,
+                    "contract":contract,
+                    "principal":principal,
+                    "chip_rent":chip_rent,
+                    "half_rent":half_rent,
+                    "full_rent":full_rent,
+                    "outdoors":outdoors,
+                    "remarks":remarks
+                },
+                    dataType:'json',//服务器返回json格式数据
+                    type:'post',//HTTP请求类型
+                    timeout:10000,//超时时间设置为10秒；
+                    headers:{'Content-Type':'application/json'},                  
+                    success:function(data){
+                        //服务器返回响应，根据响应结果，分析是否登录成功；w
+                        console.log(data)
+                        if(data.code==100){
+                            mui.toast(data.msg)
+                            window.location.href="{:url('court/courtinfo')}"
+                        }else{
+                            mui.toast(data.msg)
+                        }
+                    },
+                    error:function(xhr,type,errorThrown){
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+        }else{
+            mui.toast("选项不能为空");
+        }
+    })
 </script>
 </body>
 </html>

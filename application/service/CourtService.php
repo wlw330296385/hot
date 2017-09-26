@@ -18,10 +18,10 @@ class CourtService {
     }
 
     // 场地分页
-    public function getCourtPage($map=[], $order='', $field='*', $paginate=10){
-        $result = Court::where($map)->field($field)->order($order)->page($page,$paginate)->select();
+    public function getCourtListbyPage($map=[], $order='', $field='*', $paginate=10){
+        $result = Court::where($map)->field($field)->order($order)->paginate($paginate);
         if($result){           
-            $result = $result;
+            $result = $result->toArray();
         }
         return $result;
     }

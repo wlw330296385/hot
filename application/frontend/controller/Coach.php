@@ -235,7 +235,7 @@ class Coach extends Base{
         }else{
             $coachInfo = $this->coachService->getCoachInfo(['member_id'=>$this->memberInfo['id']]);
         }
-        $certList = db('cert')->where(['member_id'=>$this->memberInfo['id']])->select();
+        $certList = db('cert')->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>0])->select();
         $identCert = [];
         $coachCert = [];
         if($certList){
@@ -250,7 +250,7 @@ class Coach extends Base{
                 }
             }
         }
-
+        //dump($identCert);
 
         $this->assign('coachInfo',$coachInfo);
         $this->assign('identCert',$identCert);

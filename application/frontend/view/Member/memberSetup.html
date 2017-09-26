@@ -222,13 +222,6 @@
                     <!-- 第一步 -->
                     <div class="step1">
 
-                       <!--  <div class="mui-navbar-inner mui-bar mui-bar-nav">
-                            <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
-                                <span class="mui-icon mui-icon-left-nav"></span>
-                            </button>
-                            <h1 class="mui-title">更换手机号绑定</h1>
-                        </div> -->
-
                         <div class="page-header">
                             <div class="course">验证原手机</div>
                         </div>
@@ -236,13 +229,13 @@
                         <form action="" class="mui-input-group ">
                             <div class="mui-input-row">
                                 <label>原手机号码</label>
-                                <span>13526514467</span>
+                                <span class="telephone">{$memberInfo['telephone']}</span>
                             </div>
 
                             <div class="mui-input-row">
                                 <label>短信验证码</label>
-                                <input type="button" class="code-btn" value="获取验证码" >
-                                <input id="code" type="text" class="input verification reg_validate" placeholder="输入验证码" style="width: 40%;">
+                                <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)" >
+                                <input id="code" type="text" class="input reg_code" placeholder="输入验证码" style="width: 40%;" >
                             </div>
                         </form>
 
@@ -258,12 +251,6 @@
 
                     <!-- 第二步 -->
                     <div class="step2" style="display: none;">
-
-                       <!--  <header class="mui-bar mui-bar-nav subheader">
-                            <a class="mui-icon mui-icon-left-nav mui-pull-left arrow backstep1"></a>
-                            <h1 class="mui-title">更换手机号绑定</h1>
-                        </header> -->
-
                         <div class="page-header">
                             <div class="course">验证新手机</div>
                         </div>
@@ -271,13 +258,13 @@
                         <form action="" class="mui-input-group ">
                             <div class="mui-input-row">
                                 <label>新手机号码</label>
-                                <input type="text" name="" class="reg_mobile" value="" placeholder="请输入新手机号码">
+                                <input type="text" name="" class="newtelephone reg_mobile" value="" placeholder="请输入新手机号码">
                             </div>
 
                             <div class="mui-input-row">
                                 <label>短信验证码</label>
-                                <input type="button" class="code-btn" value="获取验证码" >
-                                <input id="code" type="text" class="input verification reg_validate" placeholder="输入验证码" style="width: 40%;">
+                                <input type="button" class="code-btn" value="获取验证码" onclick="sendNewCode(this)" >
+                                <input id="newcode" type="text" class="input reg_newcode" placeholder="输入验证码" style="width: 40%;" >
                             </div>
                         </form>
 
@@ -292,11 +279,6 @@
 
                     <!-- 第三步 -->
                     <div class="step3" style="display: none">
-
-                        <!-- <header class="mui-bar mui-bar-nav subheader">
-                            <a class="mui-icon mui-icon-left-nav mui-pull-left arrow backstep"></a>
-                            <h1 class="mui-title">更换手机号绑定</h1>
-                        </header> -->
 
                         <ul class="mui-table-view " style="overflow: hidden;">
                             <div class="success">
@@ -409,6 +391,7 @@
     <script src="/static/frontend/js/mui.view.js "></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/libs/yzvalidate.js"></script>
+    <script src="/static/frontend/js/smsCode.js"></script>
     <script>
         mui.init();
         //初始化单页view
@@ -427,78 +410,138 @@
                 }
             };
         })(mui);
-
-        //退出登陆
-        $("#logout").on("click", function () {
-            console.log(123)
-            mui.ajax("{:url('api/Member/logout')}", {
-                data: '',
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: {'Content-Type': 'application/json'},
-                success: function (data) {
-                    if (data.code == 100) {
-                        mui.toast(data.msg);
-                        window.location.href = "{:url('login/login')}";
+        
+        $(function(){
+            //退出登陆
+            $("#logout").on("click", function () {
+                console.log(123)
+                mui.ajax("{:url('api/Member/logout')}", {
+                    data: '',
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        if (data.code == 100) {
+                            mui.toast(data.msg);
+                            window.location.href = "{:url('login/login')}";
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        console.log(xhr + type + errorThrown);
                     }
-                },
-                error: function (xhr, type, errorThrown) {
-                    console.log(xhr + type + errorThrown);
+                });
+            })
+
+            //登录切换
+            $(".otherbtn").click(function () {
+                $(".loginbox").show();
+                $(".otherbox").hide();
+                $(".logo").addClass("logo1")
+            })
+
+            // 修改手机号
+            // 步骤1
+            $(".stepBtn1").click(function () {
+                var validate =$(".reg_validate").val();
+                var smsCode = $('.reg_code').val();
+                if(/^\d{6}$/.test(validate)){
+                    $('.validate_hint').text("");
+                    $(".step1").hide();
+                    $(".step2").show();
+                }else{
+                    $(".validate_hint").text("请输入正确的验证码").css("color", "red");
                 }
             });
-        })
+            // 步骤2
+            $(".stepBtn2").click(function () {
+                var reg_mobile =$(".reg_mobile").val();
+                var smsNewCode = $('.reg_newcode').val();
+                if(/^1[34578]\d{9}$/.test(reg_mobile)){
+                    mui.ajax("{:url('api/member/updateMemberApi')}", {
+                        data: {
+                            'telephone': reg_mobile
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: {'Content-Type': 'application/json'},
+                        success: function (data) {
+                            console.log(data)
+                            if (data.code == 100) {
+                                mui.toast(data.msg);
+                                $(".step2").hide();
+                                $(".step3").show();
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            console.log(data);
+                        }
+                    }); 
+                }else{
+                    $(".mobile_hint").text("请输入正确的手机格式").css("color", "red");
+                }
+                
+                // if ((/^1[34578]\d{9}$/).test($(".reg_mobile").val())) {
+                //     $('.mobile_hint').text("");
+                //     $(".step2").hide();
+                //     $(".step3").show();
+                // } else {
+                //     $('.mobile_hint').text("请输入正确的手机格式").css("color", "red");
+                // }
+            });
+            
+            // 返回1
+            $(".backstep1").click(function(){
+                $(".step2").hide();
+                $(".step1").show();
+            });
+            // 返回2
+            $(".backstep").click(function(){
+                window.location.href="{:url('member/membersetup')}"
+            });
 
-        //登录切换
-        $(".otherbtn").click(function () {
-            $(".loginbox").show();
-            $(".otherbox").hide();
-            $(".logo").addClass("logo1")
-        })
+             // 修改邮箱
+             $(".emailBtn").click(function(){
+                var email =$(".reg_email").val();
+                if(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/.test(email)){
+                    $('.email_hint').text("");
+                    mui.ajax("{:url('api/member/updateMemberApi')}", {
+                        data: {
+                            'email': email
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: {'Content-Type': 'application/json'},
+                        success: function (data) {
+                            console.log(data)
+                            if (data.code == 100) {
+                                mui.toast(data.msg);
+                                viewApi.back();       
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            console.log(data);
+                        }
+                    }); 
+                }else{
+                    $(".email_hint").text("请输入正确的邮箱格式").css("color", "red");
+                }
+            });
 
-        // 修改手机号
-        // 步骤1
-        $(".stepBtn1").click(function () {
-            var validate =$(".reg_validate").val();
-            if(!/^\d{6}$/.test(validate)){
-                $(".validate_hint").text("请输入正确的验证码").css("color", "red");
-            }else{
-                $('.validate_hint').text("");
-                $(".step1").hide();
-                $(".step2").show();
-            }
-
-        });
-        // 步骤2
-        $(".stepBtn2").click(function () {
-         var reg_mobile =$(".reg_mobile").val();
-         if ((/^1[34578]\d{9}$/).test($(".reg_mobile").val())) {
-            $('.mobile_hint').text("");
-            $(".step2").hide();
-            $(".step3").show();
-        } else {
-            $('.mobile_hint').text("请输入正确的手机格式").css("color", "red");
-        }
-    });
-        // 返回1
-        $(".backstep1").click(function(){
-            $(".step2").hide();
-            $(".step1").show();
-        });
-        // 返回2
-        $(".backstep").click(function(){
-            window.location.href="{:url('member/membersetup')}"
-        });
-
-        // 修改邮箱
-        $(".emailBtn").click(function(){
-            var email =$(".reg_email").val();
-            if(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/.test(email)){
-                $('.email_hint').text("");
-                mui.ajax("{:url('api/member/updateMemberApi')}", {
-                    data: {
-                        'email': email
-                    },
+             // 修改密码
+             $(".passwordBtn").click(function(){
+                var password =$(".reg_password").val();
+                var newpassword =$(".reg_newpassword").val();
+                var confirm =$(".reg_confirm").val();
+                if(/^[a-z0-9_-]{6,16}$/.test(password)&&/^[a-z0-9_-]{6,16}$/.test(newpassword)&&newpassword==confirm){
+                    $('.password_hint').text("");
+                    $('.confirm_hint').text("");
+                    mui.ajax("{:url('api/member/updateMemberApi')}", {
+                        data: {
+                            'password': password
+                        },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
@@ -507,52 +550,108 @@
                         console.log(data)
                         if (data.code == 100) {
                             mui.toast(data.msg);
-                            viewApi.back();       
+                            viewApi.back();
                         }
                     },
                     error: function (xhr, type, errorThrown) {
                         console.log(data);
                     }
                 }); 
-            }else{
-                $(".email_hint").text("请输入正确的邮箱格式").css("color", "red");
-            }
-
-        // 修改密码
-        $(".passwordBtn").click(function(){
-            var password =$(".reg_password").val();
-            var newpassword =$(".reg_newpassword").val();
-            var confirm =$(".reg_confirm").val();
-            if(/^[a-z0-9_-]{6,16}$/.test(password)){
-                $('.password_hint').text("");
-                mui.ajax("{:url('api/member/updateMemberApi')}", {
-                    data: {
-                        'password': password
-                    },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: {'Content-Type': 'application/json'},
-                success: function (data) {
-                    console.log(data)
-                    if (data.code == 100) {
-                        mui.toast(data.msg);
-                        window.location.href="{:url('member/membersetup')}";
+                    
+                }else{
+                    if(newpassword!=confirm){
+                        $(".confirm_hint").text("两次密码不正确").css("color", "red");
+                    }else{
+                        $(".password_hint").text("请输入6-16位的密码").css("color", "red");
                     }
-                },
-                error: function (xhr, type, errorThrown) {
-                    console.log(data);
                 }
-            }); 
-                
+            })
+
+             //验证短信验证码
+             $('#code').on("blur",function(){
+                var code = document.getElementById('code').value;
+                var codeReg = /^\d{6,6}$/;
+                //console.log(code);
+                if(!codeReg.test(code)){
+                    mui.toast('请填写正确的验证码');
+                    flag = false;
+                }else{
+                    telephone = $(".telephone").text();
+                    console.log(telephone)
+                    var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/sms/validateSmsCodeApi','','',true)}");
+                    if(result == 100){
+                        flag = true;
+                        mui.toast(result.msg);
+                    }else{
+                        flag = false;
+                        mui.toast(result.msg);
+                    }
+                }
+            });
+
+             $('#newcode').on("blur",function(){
+                var newcode = document.getElementById('newcode').value;
+                var codeReg = /^\d{6,6}$/;
+                //console.log(code);
+                if(!codeReg.test(newcode)){
+                    mui.toast('请填写正确的验证码');
+                    flag = false;
+                }else{
+                    newtelephone = $(".newtelephone").val();
+                    console.log(newtelephone)
+                    var result = smsNewCode.validateSmsCodeApi(newtelephone,newcode,"{:url('api/sms/validateSmsCodeApi','','',true)}");
+                    if(result == 100){
+                        flag = true;
+                        mui.toast(result.msg);
+                    }else{
+                        flag = false;
+                        mui.toast(result.msg);
+                    }
+                }
+
+            });
+         })
+
+        // 发送短信验证码
+        function sendCode(obj){
+            telephone = $(".telephone").text();
+            var telephoneReg = /^\d{11,11}$/;
+            if(!telephoneReg.test(telephone)){
+                mui.toast('请填写正确的手机号码');
+                flag = false;
             }else{
-                $(".password_hint").text("请输入正确的手机格式").css("color", "red");
+                var result = smsCode.getMobileCodeApi(obj,telephone,"{:url('api/sms/getMobileCodeApi','','',true)}");
+                if(result.code == 100){
+                    flag = true;
+                    mui.toast(result.msg);
+                }else{
+                    flag = false;
+                    mui.toast(result.msg);
+
+                }
             }
-        })
+        }
 
-    })
+        function sendNewCode(obj){
+            newtelephone = $(".newtelephone").val();
+            var telephoneReg = /^\d{11,11}$/;
+            if(!telephoneReg.test(newtelephone)){
+                mui.toast('请填写正确的手机号码');
+                flag = false;
+            }else{
+                var result = smsCode.getMobileCodeApi(obj,newtelephone,"{:url('api/sms/getMobileCodeApi','','',true)}");
+                if(result.code == 100){
+                    flag = true;
+                    mui.toast(result.msg);
+                }else{
+                    flag = false;
+                    mui.toast(result.msg);
 
-</script>
+                }
+            }
+        }
+
+    </script>
 
 </body>
 

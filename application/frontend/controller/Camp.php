@@ -7,9 +7,11 @@ use app\service\ScheduleService;
 use think\Db;
 class Camp extends Base{
     protected $CampService;
+    protected $CoachService;
 	public function _initialize(){
 		parent::_initialize();
         $this->CampService = new CampService;
+        $this->CoachService = new CoachService;
 	}
 
 
@@ -242,7 +244,7 @@ class Camp extends Base{
         $type = input('param.type')?input('param.type'):2;
         $status = input('param.status')?input('param.status'):1;
         $map = ['camp_member.camp_id'=>$camp_id,'camp_member.type'=>$type,'camp_member.status'=>$status];
-        $coachList = $this->coachService->getCoachListOfCamp($map);
+        $coachList = $this->CoachService->getCoachListOfCamp($map);
         $this->assign('campInfo',$campInfo); 
         $this->assign('coachList',$coachList);
         return view('Camp/coachListOfCamp');
