@@ -67,8 +67,10 @@ class Court extends Base{
     public function updateCourtApi(){
         try{
             $data = input('post.');
-            $id = input('param.id');
-            $result = $this->CourtService->updateCourt($data,$id);
+            $court_id = input('param.court_id');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $result = $this->CourtService->updateCourt($data,$court_id);
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -78,6 +80,21 @@ class Court extends Base{
     public function createCourtApi(){
         try{
             $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $result = $this->CourtService->createCourt($data);
+            return json($result);   
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+    public function ownCourtApi(){
+        try{
+            $data = input('param.court_id');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
             $result = $this->CourtService->createCourt($data);
             return json($result);   
         }catch (Exception $e){
