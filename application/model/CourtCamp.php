@@ -19,6 +19,6 @@ class CourtCamp extends Model {
 
 
     public function court(){
-        return $this->hasOne('court','court_id','id');
+        return $this->hasOne('court','id','court_id');
     }
 }

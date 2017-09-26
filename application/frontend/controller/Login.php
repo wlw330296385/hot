@@ -83,7 +83,7 @@ class Login extends Controller{
                     'flow'  =>0,
                     'balance'   =>0,
                     'remarks'   =>0,
-
+                    'hot_id'=>00000000,
                 ];
                 cookie('mid', 0);
                 cookie('member', md5($member['id'].$member['member'].config('salekey')) );
