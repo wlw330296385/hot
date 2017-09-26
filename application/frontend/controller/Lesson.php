@@ -207,7 +207,7 @@ class Lesson extends Base{
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('power',$power);
-        return view('Lesson/LessonInfoOfCamp');
+        return view('Lesson/lessonInfoOfCamp');
     }
 
 
