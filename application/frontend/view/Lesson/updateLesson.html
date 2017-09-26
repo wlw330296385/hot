@@ -18,6 +18,7 @@
     <!--选择器样式-->
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
     <style>
         .mui-popover-arrow {
             left: auto;
@@ -164,6 +165,15 @@
                     <input type="hidden" name="teacher_id" value="" class="data teacher_id">
                 </a>
             </div>
+
+            <div class="mui-input-row h-auto mt55">
+                <a class="portraits filePicker" onclick="add_id(1)">
+                    <label>课程封面</label>
+                    <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
+                    <input type="hidden" name="cover" value='' class="data">
+                </a>
+            </div>
+
             <div class="mui-input-row mt55">
                 <label>备注</label>
                 <input type="text" class="input data" value="{$lessonInfo.remarks}" name="remarks">
@@ -388,6 +398,11 @@
 <script src="/static/frontend/js/city.data-3.js"></script>
 <script src="/static/frontend/js/wooApi.js"></script>
 <script>
+    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'court'])}";
+</script>
+<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+<script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
@@ -546,7 +561,7 @@
             var ajaxResult = wooApi.asyncF(url,objData); 
             if(ajaxResult.code){
                 mui.toast(ajaxResult.msg);
-                var goUrl = "{:url('lesson/lessoninfo')}"+'/lesson_id/'+ajaxResult.data;
+                var goUrl = "{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/'+ajaxResult.data+'/camp_id/{$lessonInfo.camp_id}';
                 window.top.location.href = goUrl;
             }
         }
