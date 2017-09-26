@@ -35,7 +35,7 @@ class Lesson extends Base{
                 }
             }
             if($map['keyword']){
-                unset()
+                unset($map['keyword']);
             }
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['lesson'] = ['LIKE','%'.$keyword.'%'];
