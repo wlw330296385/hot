@@ -341,4 +341,19 @@ class Camp extends Base{
         $this->assign('coachInfo',$coachInfo);
         return view('Camp/coachapply');
     }
+
+
+    // 训练营的场地列表
+    public function courtListOfCamp(){
+        $camp_id = input('param.camp_id')?input('param.camp_id'):0;
+        // $CourtService = new \app\service\CourtService;
+        // $courtList = $CourtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
+        // $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
+        
+        // dump($courtList);die;
+        // $this->assign('campInfo',$campInfo);
+        // $this->assign('courtList',$courtList);
+        $this->assign('camp_id',$camp_id);
+        return view('Camp/courtListOfCamp');
+    }
 }
