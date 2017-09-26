@@ -238,7 +238,7 @@ class Camp extends Base{
         return view('Camp/coachCamp');
     }
 
-     public function coachListOfCamp(){
+    /* public function coachListOfCamp(){
         $camp_id = input('param.camp_id');
         $campInfo = $this->CampService->getCampInfo($camp_id);
         $type = input('param.type')?input('param.type'):2;
@@ -248,7 +248,7 @@ class Camp extends Base{
         $this->assign('campInfo',$campInfo); 
         $this->assign('coachList',$coachList);
         return view('Camp/coachListOfCamp');
-    }
+    }*/
 
     // 训练营设置
     public function campSetting(){
@@ -278,8 +278,8 @@ class Camp extends Base{
     }
 
     // 训练营教练列表
-    public function coachlist() {
-        $camp_id = input('campid');
+    public function coachListOfCamp() {
+        $camp_id = input('camp_id');
         $status = input('status', 1);
         if ($camp_id) {
             $map['camp_member.camp_id'] = $camp_id;
@@ -297,11 +297,11 @@ class Camp extends Base{
             ->view('coach','*','coach.member_id=camp_member.member_id')
             ->where($map)
             ->select();
-        //dump($list);
+//        dump($list);
 
         $this->assign('coachlist', $list);
         $this->assign('camp_id', $camp_id);
-        $view = $status ? 'Camp/coachlist' : 'Camp/coachapplylist';
+        $view = $status ? 'Camp/coachListOfCamp' : 'Camp/coachapplylist';
         return view($view);
     }
 
@@ -342,6 +342,85 @@ class Camp extends Base{
         return view('Camp/coachapply');
     }
 
+    // 训练营下教练档案
+    public function coachInfoOfcamp(){
+        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        $coach_id = input('param.coach_id');
+        $camp_id = input('param.camp_id');
+
+
+        $coachS = new CoachService();
+        if(!$coach_id){
+            // 获取教练档案
+            $coachInfo = $coachS->getCoachInfo(['member_id'=>$member_id]);
+            $coach_id = $coachInfo['id'];
+        }else{
+            $coachInfo =$coachS->getCoachInfo(['id'=>$coach_id]);
+        }
+        //教练的班级
+        $GradeService = new \app\service\GradeService;
+        $gradeOfCoachList = $GradeService->getGradeList(['coach_id'=>$member_id,'camp_id'=>$camp_id]);
+        // 教练的证件
+        $cert = db('cert')->where(['member_id'=>$member_id, 'camp_id' => 0])->select();
+        $identCert = [];
+        $coachCert = [];
+        foreach ($cert as $key => $value) {
+            if($value['cert_type'] == 1){
+                $identCert = $value;
+            }
+
+            if($value['cert_type'] == 3){
+                $coachCert = $value;
+            }
+        }
+        //获取教练的课量
+        $m = input('m')?input('m'):date('m');
+        $y = input('y')?input('y'):date('Y');
+        $begin_m = mktime(0,0,0,$m,1,$y);
+        $end_m = mktime(23,59,59,$m,30,$y)-1;
+        $begin_y = mktime(0,0,0,1,1,$y);
+        $end_y = mktime(23,59,59,12,30,$y)-1;
+
+        $scheduleS = new ScheduleService();
+        $monthScheduleOfCoachList = $scheduleS->getScheduleList([
+                'coach_id'=>$member_id,
+                // 'type'=>1,
+                'camp_id'=>$camp_id,
+                'create_time'=>['BETWEEN',[$begin_m,$end_m]]
+            ]);
+
+        $monthScheduleOfCoach = count($monthScheduleOfCoachList);
+        $yearScheduleOfCoachList = $scheduleS->getScheduleList([
+                'coach_id'=>$member_id,
+                // 'type'=>1,
+                'camp_id'=>$camp_id,
+                'create_time'=>['BETWEEN',[$begin_y,$end_y]]
+            ]);
+        $yearScheduleOfCoach = count($yearScheduleOfCoachList);
+        //教练工资
+        $SalaryInService = new \app\service\SalaryInService($member_id);
+        $salaryList = $SalaryInService->getSalaryInList(['member_id'=>$member_id,'type'=>1,'camp_id'=>$camp_id]);
+        // 平均月薪
+        $averageSalaryByMonth = $SalaryInService->getAverageSalaryByMonth($member_id,$camp_id);
+        // 平均年薪
+        $averageSalaryByYear = $SalaryInService->getAverageSalaryByYear($member_id,$camp_id);
+        // dump($salaryList);die;
+        $this->assign('monthScheduleOfCoachList',$monthScheduleOfCoachList);//教练当月的课量
+        $this->assign('monthScheduleOfCoach',$monthScheduleOfCoach);//当月课量数量
+        $this->assign('gradeOfCoachList',$gradeOfCoachList);//教练班级
+
+        $this->assign('yearScheduleOfCoachList',$yearScheduleOfCoachList);//当年课量
+        $this->assign('yearScheduleOfCoach',$yearScheduleOfCoach);//当年课量数量
+        $this->assign('y',$y);
+        $this->assign('m',$m);
+        $this->assign('salaryList',$salaryList);
+        $this->assign('coachInfo',$coachInfo);
+        $this->assign('identCert',$identCert);
+        $this->assign('coachCert',$coachCert);
+        $this->assign('averageSalaryByMonth',$averageSalaryByMonth);
+        $this->assign('averageSalaryByYear',$averageSalaryByYear);
+        return view('Camp/coachInfoOfCamp');
+    }
 
     // 训练营的场地列表
     public function courtListOfCamp(){
@@ -349,11 +428,12 @@ class Camp extends Base{
         // $CourtService = new \app\service\CourtService;
         // $courtList = $CourtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         // $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
-        
+
         // dump($courtList);die;
         // $this->assign('campInfo',$campInfo);
         // $this->assign('courtList',$courtList);
         $this->assign('camp_id',$camp_id);
         return view('Camp/courtListOfCamp');
     }
+
 }
