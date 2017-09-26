@@ -41,7 +41,7 @@ class Court extends Base{
     }
 
     // 分页获取数据
-    public function courtListApi(){
+    public function getCourtListApi(){
         try{
             $camp_id = input('param.camp_id')?input('param.camp_id'):0;
             $map = input('post.');
