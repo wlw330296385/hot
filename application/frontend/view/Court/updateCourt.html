@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="mui-input-row"><label>所属地区</label>
-                    <input type="text" class="" name="" value="{$CourtInfo.province} {$CourtInfo.city} {$CourtInfo.area}">
+                    <input type="text" class="province city area" name="" value="{$CourtInfo.province} {$CourtInfo.city} {$CourtInfo.area}">
                 </div>
 
                 <div class="mui-input-row"><label>具体地址</label>
@@ -110,6 +110,10 @@
     //场地编辑
     $(".updateBtn").click(function(){
         var  court = $(".court").val();
+        var  court_id = "{$CourtInfo.id}";
+        var  province = "{$CourtInfo.province}";
+        var  city = "{$CourtInfo.city}";
+        var  area = "{$CourtInfo.area}";
         var  location = $(".location").val();
         var  open_time = $(".open_time").val();
         var  contract = $(".contract").val();
@@ -120,11 +124,14 @@
         var  full_rent = $(".full_rent").val();
         var  remarks = $(".remarks").val();
         console.log(outdoors)
-        if(court!=''&&province!=''&&location!=''&&open_time!=''&&contract!=''&&principal!=''&&chip_rent!=''&&half_rent!=''&&full_rent!=''&&outdoors!=''){
-            mui.ajax("{:url('api/court/updateCourtApi')}",{
+        if(court!=''&&location!=''&&open_time!=''&&contract!=''&&principal!=''&&chip_rent!=''&&half_rent!=''&&full_rent!=''&&outdoors!=''){
+            mui.ajax("{:url('api/court/updateCourtApi',['court_id'=>$CourtInfo['id']])}",{
                 data:{
                     "court":court,
-                    "court_id":"{$CourtInfo.id}",
+                    "court_id":court_id,
+                    "province":province,
+                    "city":city,
+                    "area":area,
                     "location":location,
                     "open_time":open_time,
                     "contract":contract,
