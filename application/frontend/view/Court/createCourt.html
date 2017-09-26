@@ -16,6 +16,30 @@
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
 
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+    <style>
+        .previewList{
+            overflow: hidden;
+            padding: 0 10px;
+        }
+        .previewList li{
+            float: left;
+            width: 17%;
+            position: relative;
+            display: flex;
+            margin-right: 8px;
+        }
+        .previewList i {
+            position: absolute;
+            top: 0;
+            right: 0;
+            color: #f00;
+        }
+        .previewList img {
+         width: 55px;
+         height: 55px;
+         margin-right: 0
+     }
+ </style>
 </head>
 
 <body>
@@ -87,12 +111,18 @@
                         <textarea rows="5" class="remarks" placeholder="温馨提示内容"></textarea>
                     </div>
 
-                    <div class="mui-input-row h-auto mt55">
+                    <div class="mui-input-row h-auto ">
                         <a class="mui-navigate-right portraits filePicker" onclick="add_id(1)">
                             <label>场地环境</label>
                             <img id="preview_1" class="coachicon icon01 upload-preview" >
                             <input type="hidden" name="portraits" value='' class="covers">
                         </a>
+                    </div>
+
+                    <div class="mui-input-row h-auto mt55">
+                        <ul class="previewList">
+                        
+                        </ul>
                     </div>
 
                     <ul class="mui-table-view operation list">
@@ -115,7 +145,7 @@
         var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'court'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
     <script>
     //初始化
     mui.init({
@@ -127,8 +157,8 @@
     var getCity ='';
     var getArea = '';
     (function ($, doc) {
-       $.init();
-       $.ready(function () {
+     $.init();
+     $.ready(function () {
         _getParam = function (obj, param) {
             return obj[param] || '';
         };
@@ -150,7 +180,7 @@
                 });
         }, false);
     });
-   })(mui, document);
+ })(mui, document);
 
     //检测输入是否为数字
     $(".checkNum").blur(function(){
@@ -177,6 +207,7 @@
         var  full_rent = $(".full_rent").val();
         var  remarks = $(".remarks").val();
         var  covers = $(".covers").val();
+        console.log(covers)
         if(court!=''&&location!=''&&open_time!=''&&contract!=''&&principal!=''&&chip_rent!=''&&half_rent!=''&&full_rent!=''&&outdoors!=''){
             mui.ajax("{:url('api/court/createCourtApi')}",{
                 data:{

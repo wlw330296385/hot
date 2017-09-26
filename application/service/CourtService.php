@@ -52,13 +52,13 @@ class CourtService {
 
     // 获取训练营下的场地列表
     public function getCourtListOfCamp($map = [],$paginate = 10){
-        $result = $this->CourtCamp::with('court')->where($map)->paginate($paginate);
+        $result = $this->CourtCamp->court()->where($map)->paginate($paginate);
         if($result){           
             $res = $result->toArray();
             // dump($res);die;
                 foreach ($res['data'] as $key => $value) {
-                    if($value['court']['cover']){
-                        $res['data'][$key]['court']['covers'] = unserialize($value['court']['cover']);
+                    if($value['cover']){
+                        $res['data'][$key]['covers'] = unserialize($value['cover']);
                     }
                 }
             
