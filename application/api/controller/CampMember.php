@@ -163,22 +163,20 @@ class CampMember extends Base{
         try{
             $camp_id = input('param.camp_id');
             $keyword = input('param.keyword');
+            $status = input('param.status', 1);
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
-                $result = Db::view('camp_member','camp_id')
-                    ->view('coach','*','coach.member_id=camp_member.member_id')
-                    ->where(['camp_member.status'=>1,'camp_member.camp_id'=>$camp_id])
-                    ->where(['camp_member.type'=>['egt',2]])
-                    ->where(['coach.coach'=>['like','%'.$keyword.'%'],'coach.status'=>1])
-                    ->select();
-            }else{
-                $result = Db::view('camp_member','camp_id')
-                    ->view('coach','*','coach.member_id=camp_member.member_id')
-                    ->where(['camp_member.status'=>1,'camp_member.camp_id'=>$camp_id])
-                    ->where(['camp_member.type'=>['egt',2]])
-                    ->select();
+                $map['coach.coach'] = ['like', "$keyword"];
+                $map['coach.status'] = 1;
             }
-            
-            return json(['code'=>100,'msg'=>'OK','data'=>$result]);        
+
+            $map['camp_id'] = $camp_id;
+            $map['camp_member.status'] = $status;
+            $map['camp_member.type'] = ['egt', 2];
+            $list= Db::view('camp_member','camp_id')
+                ->view('coach','*','coach.member_id=camp_member.member_id')
+                ->where($map)
+                ->select();
+            return ['code' => 100, 'msg' => __lang('MSG_201'), 'data' => $list];
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
