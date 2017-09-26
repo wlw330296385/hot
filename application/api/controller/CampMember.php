@@ -190,10 +190,9 @@ class CampMember extends Base{
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['member'] = ['LIKE','%'.$keyword.'%'];
             }
-            $map['member_id'] = $this->memberInfo['id'];
-            $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
             $CampMember = new  \app\model\CampMember;
             $result = $CampMember->where($map)->paginate(10);
+            // echo $CampMember->getlastsql();die;
             if($result){
                 return json(['code'=>100,'msg'=>'OK','data'=>$result]);
             }else{

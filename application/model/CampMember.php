@@ -4,6 +4,7 @@ use think\Model;
 use traits\model\SoftDelete;
 class CampMember extends Model {
     use SoftDelete;
+    protected $table = 'camp_member';
     protected $deleteTime = 'delete_time';
 	protected $autoWriteTimestamp = true;
     protected $readonly = [
