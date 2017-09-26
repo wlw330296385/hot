@@ -68,7 +68,7 @@ class LessonService {
                 $res['assistant_ids'] = unserialize($res['assistant_id']);
             }else{
                 $res['assistants'] = [];
-                $res['assistants_ids'] = [];
+                $res['assistant_ids'] = [];
             }
             return $res;
         }
