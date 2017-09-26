@@ -20,7 +20,7 @@ class Lesson extends Base{
     // 搜索课程
     public function searchLessonApi(){
         try{
-            $map = [];
+            $map = input('post.');
             $keyword = input('param.keyword');
             $province = input('param.province');
             $page = input('param.page')?input('param.page'):1;
@@ -34,7 +34,7 @@ class Lesson extends Base{
                     unset($map[$key]);
                 }
             }
-            if($map['keyword']){
+            if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
