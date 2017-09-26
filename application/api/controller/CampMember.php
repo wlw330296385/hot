@@ -181,11 +181,16 @@ class CampMember extends Base{
     //自定义获取训练营身份列表
     public function getCampMemberListApi(){
         try{
-            $map = input();
+            $map = input('post.');
+            $page = input('param.page')?input('param.page'):1;
+            $keyword = input('param.keyword');
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['member'] = ['LIKE','%'.$keyword.'%'];
+            }
             $map['member_id'] = $this->memberInfo['id'];
             $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
-            $CampMember =new  \app\model\CampMember;
-            $result = $CampMember->where($map)->select();
+            $CampMember = new  \app\model\CampMember;
+            $result = $CampMember->where($map)->paginate($page,10);
             if($result){
                 return json(['code'=>100,'msg'=>'OK','data'=>$result]);
             }else{
