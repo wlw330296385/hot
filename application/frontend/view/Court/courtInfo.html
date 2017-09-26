@@ -28,45 +28,38 @@
                 <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
                 <div class="mui-slider-item mui-slider-item-duplicate">
                     <a href="#">
-                        <img src="/static/frontend/images/cbd.jpg">
+                        <img src="{$courtInfo['covers'][0]}">
                     </a>
                 </div>
                 <!-- 第一张 -->
+                {volist name="courtInfo.covers" id="vol"}
                 <div class="mui-slider-item">
-                    <a href="#">
-                        <img src="/static/frontend/images/shuijiao.jpg">
+                    <a href="">
+                        <img src="{$vol}">
                     </a>
                 </div>
-                <!-- 第二张 -->
-                <div class="mui-slider-item">
-                    <a href="#">
-                        <img src="/static/frontend/images/muwu.jpg">
-                    </a>
-                </div>
-                <!-- 第三张 -->
-                <div class="mui-slider-item">
-                    <a href="#">
-                        <img src="/static/frontend/images/cbd.jpg">
-                    </a>
-                </div>
+                {/volist}
                 <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
                 <div class="mui-slider-item mui-slider-item-duplicate">
                     <a href="#">
-                        <img src="/static/frontend/images/shuijiao.jpg">
+                        <img src="{$courtInfo['covers'][0]}">
                     </a>
                 </div>
             </div>
             <div class="mui-slider-indicator">
-                <div class="mui-indicator mui-active"></div>
-                <div class="mui-indicator"></div>
-                <div class="mui-indicator"></div>
+                {volist name="courtInfo.covers" id="vol"}
+                <div class="mui-indicator {if condition='$key' value=0} mui-active{/if}"></div>
+                {/volist}
             </div>
         </div>
 
         <div class="list detalis-list">
             <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell listli detalisli">{$courtInfo.court}
+                <li class="mui-table-view-cell listli detalisli">{$courtInfo.court} <h4>{$courtInfo.outdoors}</h4> 
+
+                    {gt name="power" value="2" }
                     <span class="wd58"><a href="{:url('court/updateCourt')}">编辑</a></span>
+                    {/gt}
                 </li>
             </ul>
             <ul class="mui-table-view">

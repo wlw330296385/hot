@@ -20,10 +20,15 @@ class Court extends Base{
 
     public function courtInfo(){
     	$court_id = input('param.court_id');
+        $camp_id = input('param.camp_id');
+        $CampService = new \app\service\CampService;
+        $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
+        if($power<2){
+            $this->error('请先加入一个训练营并成为管理员或者创建训练营');
+        }
     	$courtInfo = $this->CourtService->getCourtInfo(['id'=>$court_id]);
-        $mediaList = db('court_media')->where(['court_id'=>$court_id])->limit(3)->select();
+        $this->assign('power',$power);
         $this->assign('courtInfo',$courtInfo);
-        $this->assign('mediaList',$mediaList);
     	return view('Court/courtInfo');
     }
 
