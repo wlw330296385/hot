@@ -14,13 +14,12 @@ class Court extends Base{
     // 搜索场地
     public function searchCourtApi(){
         try{
-            $map = [];
+            $map = input('post.');
             $keyword = input('param.keyword');
             $province = input('param.province');
             $page = input('param.page')?input('param.page'):1;
             $city = input('param.city');
             $area = input('param.area');
-            $camp_id = input('param.camp_id')?input('param.camp_id'):0;
             $map = ['province'=>$province,'city'=>$city,'area'=>$area];
             foreach ($map as $key => $value) {
                 if($value == ''|| empty($value) || $value!=' '){
@@ -29,9 +28,6 @@ class Court extends Base{
             }
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['court'] = ['LIKE','%'.$keyword.'%'];
-            }
-            if($camp_id){
-                $map['camp_id'] = $camp_id;
             }
             $campList = $this->CourtService->getCourtList($map,$page);
             return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
@@ -66,16 +62,28 @@ class Court extends Base{
 
     //获取训练营下的场地列表
     public function getCourtListOfCampApi(){
-        $result = $this->CourtService->getCourtListOfCamp([]);
-        dump($result);
+        $map = input('post.');
+        $result = $this->CourtService->getCourtListOfCamp($map);
+        if($result){
+            return json(['code'=>100,'msg'=>"OK",'data'=>$result]);
+        }else{
+            return json(['code'=>200,'msg'=>"OK",'data'=>$result]);
+        }
     }
 
     public function updateCourtApi(){
         try{
             $data = input('post.');
             $court_id = input('param.court_id');
+            $camp_id = input('param.camp_id');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
+            // 权限
+            $CampService = new \app\service\CampService;
+            $power = $CampService->isPower($camp_id,$$this->memberInfo['member']);
+            if($power<2){
+                return json(['code'=>100,'msg'=>'权限不足']);
+            }
             $result = $this->CourtService->updateCourt($data,$court_id);
             return json($result);
         }catch (Exception $e){
@@ -86,8 +94,15 @@ class Court extends Base{
     public function createCourtApi(){
         try{
             $data = input('post.');
+            $camp_id = input('param.camp_id');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
+            // 权限
+            $CampService = new \app\service\CampService;
+            $power = $CampService->isPower($camp_id,$$this->memberInfo['member']);
+            if($power<2){
+                return json(['code'=>100,'msg'=>'权限不足']);
+            }
             $result = $this->CourtService->createCourt($data);
             return json($result);   
         }catch (Exception $e){
@@ -95,13 +110,14 @@ class Court extends Base{
         }
     }
 
-
+     // 把场地添加到自己的库
     public function ownCourtApi(){
         try{
-            $data = input('param.court_id');
+            $court_id = input('param.court_id');
+            $camp_id = input('param.camp_id');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-            $result = $this->CourtService->createCourt($data);
+            $result = $this->CourtService->ownCourt($court_id,$camp_id);
             return json($result);   
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

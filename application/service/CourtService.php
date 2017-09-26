@@ -14,7 +14,13 @@ class CourtService {
     public function getCourtList($map=[],$page = 1,$paginate = 10, $order='', $field='*'){
         $result = Court::where($map)->field($field)->order($order)->page($page,$paginate)->select();
         if($result){           
-            $result = $result->toArray();
+            $res = $result->toArray();
+            foreach ($res as $key => $value) {
+                if($value['cover']){
+                    $res[$key]['covers'] = unserialize($value['cover']);
+                }
+            }
+            return $res;
         }
         return $result;
     }
@@ -45,10 +51,18 @@ class CourtService {
 
 
     // 获取训练营下的场地列表
-    public function getCourtListOfCamp($map = []){
-        $result = $this->CourtCamp->court()->where($map)->select();
+    public function getCourtListOfCamp($map = [],$paginate = 10){
+        $result = $this->CourtCamp::with('court')->where($map)->paginate($paginate);
         if($result){           
-            $result = $result->toArray();
+            $res = $result->toArray();
+            // dump($res);die;
+                foreach ($res['data'] as $key => $value) {
+                    if($value['court']['cover']){
+                        $res['data'][$key]['court']['covers'] = unserialize($value['court']['cover']);
+                    }
+                }
+            
+            return $res;
         }
         return $result;
     }
@@ -88,4 +102,28 @@ class CourtService {
             return ['code'=>200,'msg'=>$this->courtModel->getError()];
         }
     }
+
+
+    // 把场地添加到自己的库
+    public function ownCourt($court_id,$camp_id){
+        $is_own = $this->CourtCamp->where(['court_id'=>$court_id,'camp_id'=>$camp_id])->find();
+        if($is_own){
+            return ['code'=>200,'msg'=>"重复添加"];
+        }
+        $courtInfoOBJ = $this->courtModel->where(['id'=>$court_id,'camp_id'=>0,'status'=>1])->find();
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+        if(!$courtInfoOBJ || !$campInfo){
+            return ['code'=>200,'msg'=>"查询不到该场地或者训练营"];
+        }else{
+            $courtInfo = $courtInfoOBJ->toArray();
+            $data = ['camp_id'=>$camp_id,'court_id'=>$court_id,'court'=>$courtInfo['court'],'camp'=>$campInfo['camp']];
+            $res = $this->CourtCamp->save($data);
+            if($res){
+                return ['code'=>100,'msg'=>"添加成功"];
+            }else{
+                return ['code'=>200,'msg'=>"添加失败"];
+            }
+        }
+    }
+
 }

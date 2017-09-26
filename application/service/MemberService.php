@@ -47,9 +47,12 @@ class MemberService{
 
 	//新建会员
 	public function saveMemberInfo($request){
+		// 生成一个随机id
+		$hot_id = $this->getHotID();
 		$MemberModel = new Member();
         $request['password'] = passwd($request['password']);
         $request['repassword'] = passwd($request['repassword']);
+        $request['hot_id'] = $hot_id;
         if (!isset($request['avatar'])) {
             $request['avatar'] = '/static/default/avatar.png';
         }
@@ -69,6 +72,19 @@ class MemberService{
 
         }
 	}
+
+	// 生成一个随机id
+	private function getHotID(){
+		$hot_id = 10000000+rand(00000001,99999999);
+		$MemberModel = new Member();
+		$is_hot = $MemberModel->where(['hot_id'=>$hot_id])->find();
+		if($is_hot){
+			$this->getHotID();
+		}else{
+			return $hot_id;
+		}
+	}
+
 
 	// 会员登录
 	public function login($username,$password){

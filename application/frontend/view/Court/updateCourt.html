@@ -33,7 +33,6 @@
 
                 <div class="mui-input-row" id='showCityPicker3'><label>所属地区</label>
                     <span id="cityResult3" class="ui-alert" style="color: #000">{$CourtInfo.province} {$CourtInfo.city} {$CourtInfo.area}</span>
-                    <!-- <input type="text" id="cityResult3" class="ui-aler province city area" name="" value="{$CourtInfo.province} {$CourtInfo.city} {$CourtInfo.area}"> -->
                 </div>
 
                 <div class="mui-input-row"><label>具体地址</label>
@@ -72,7 +71,7 @@
                     <span>
                         <input type="radio" class="outdoors" name="outdoors" value="0" {:getChecked(0,$CourtInfo['outdoors'])}/>室内
                         <input type="radio" class="outdoors" name="outdoors" value="1" {:getChecked(1,$CourtInfo['outdoors'])}/>室外
-                        <input type="radio" class="outdoors" name="outdoors" value="2" {:getChecked(2,$CourtInfo['outdoors'])}/>室内|室外
+                        <input type="radio" class="outdoors" name="outdoors" value="3" {:getChecked(2,$CourtInfo['outdoors'])}/>室内|室外
                     </span>
                 </div>
 
@@ -116,7 +115,9 @@
     });
 
     //选择器
-    var get = ''; 
+    var getProvince ='';
+    var getCity ='';
+    var getArea ='';
     (function ($, doc) {
         $.init();
         $.ready(function () {
@@ -160,7 +161,6 @@
         var  full_rent = $(".full_rent").val();
         var  remarks = $(".remarks").val();
         var  covers = $(".covers").val();
-        console.log(outdoors)
         if(court!=''&&location!=''&&open_time!=''&&contract!=''&&principal!=''&&chip_rent!=''&&half_rent!=''&&full_rent!=''&&outdoors!=''){
             mui.ajax("{:url('api/court/updateCourtApi',['court_id'=>$CourtInfo['id']])}",{
                 data:{
@@ -185,11 +185,11 @@
                     timeout:10000,//超时时间设置为10秒；
                     headers:{'Content-Type':'application/json'},                  
                     success:function(data){
-                        //服务器返回响应，根据响应结果，分析是否登录成功；w
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data)
                         if(data.code==100){
                             mui.toast(data.msg);
-                            // setTimeout(window.location.href="{:url('court/courtinfo')}",1000);
+                            setTimeout(window.location.href="{:url('court/courtinfo')}",1000);
                         }else{
                             mui.toast(data.msg)
                         }

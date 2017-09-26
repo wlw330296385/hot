@@ -34,6 +34,9 @@ class Lesson extends Base{
                     unset($map[$key]);
                 }
             }
+            if($map['keyword']){
+                unset()
+            }
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['lesson'] = ['LIKE','%'.$keyword.'%'];
             }
@@ -52,41 +55,14 @@ class Lesson extends Base{
     public function getLessonListApi(){
         
         try{
-            // $type = input('param.type');
             $map = input('post.');
             $page = input('param.page')?input('param.page'):1;
             $result = $this->LessonService->getLessonPage($map,$page);
-
             if($result){
-                //在线课程
-                // $dateNow = date('Y-m-d',time());
-                // $onlineList = [];
-
-                // //离线课程
-                // $offlineList = [];
-                // foreach ($result as $key => $value) {
-                //     if($value['end']<$dateNow || $value['start']>$dateNow){
-                //         $offlineList[] = $value;
-                //     }else{
-                //         $onlineList[] = $value;
-                //     }
-                    
-                // }
                 return json(['code'=>'100','msg'=>'获取成功','data'=>$result]);die;        
             }else{
                 return json(['code'=>'200','msg'=>[]]);die;
             }
-            switch ($type) {
-                case '1':
-                    return json(['code'=>100,'msg'=>'success','data'=>$onlineList]);die;
-                    break;
-                case '2':
-                    return json(['code'=>100,'msg'=>'success','data'=>$onlineList]);die;
-                    break;
-                default:
-                    return json(['code'=>200,'msg'=>'???']);die;
-                    break;
-            }   
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
