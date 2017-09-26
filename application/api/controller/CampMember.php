@@ -184,5 +184,5 @@ class CampMember extends Base{
         }
     }
 
-
+    
 }
