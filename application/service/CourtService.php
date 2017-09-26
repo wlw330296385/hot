@@ -55,9 +55,10 @@ class CourtService {
         $result = $this->CourtCamp::with('court')->where($map)->paginate($paginate);
         if($result){           
             $res = $result->toArray();
+            // dump($res);die;
                 foreach ($res['data'] as $key => $value) {
                     if($value['court']['cover']){
-                        $res[$key]['court']['covers'] = unserialize($value['court']['cover']);
+                        $res['data'][$key]['court']['covers'] = unserialize($value['court']['cover']);
                     }
                 }
             

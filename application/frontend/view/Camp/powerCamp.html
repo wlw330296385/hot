@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>训练营首页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body class="whitebg">
+
+<div class="mui-content">
+
+    <div id="tabbar" class="mui-control-content mui-active coach">
+        <!--操作模块-->
+        <div class="coach-info">
+            <ul class="mui-table-view mui-grid-view mui-grid-9">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12">
+                    <a href="#">
+                        <span class="mui-icon mui-icon-contact"></span>
+                        <div class="mui-media-body">{$memberInfo['member']}</div>
+                    </a>
+                </li>
+            </ul>
+            <p class="coachid">ID:{$memberInfo['hot_id']}</p>
+        </div>
+        <!--图文导航-->
+        <div class="page-header">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"
+               style="color: #737373;font-size: 21px"></a>
+            <span class="more">{$campInfo['camp']}</span>
+        </div>
+        <div class="nav-list">
+            <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                    <a href="#">
+                        <span>课时</span>
+                        <div class="mui-media-body num">{$scheduleCount}</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                    <a href="#">
+                        <span>班级</span>
+                        <div class="mui-media-body num">{$gradeCount}</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                    <a href="#">
+                        <span>课程</span>
+                        <div class="mui-media-body num">{$lessonCount}</div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+
+        <!--操作模块-->
+        <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module">
+        
+     
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{:url('camp/campInfo',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-hotbasketball-course"></span>
+                    <div class="mui-media-body">训练营介绍</div>
+                </a>
+            </li>
+
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{:url('lesson/lessonList',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-hothome-course"></span>
+                    <div class="mui-media-body">课程列表</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+
+            {gt name="power" value="1"}
+                <a href="{:url('grade/gradeListOfCamp',['camp_id'=>$campInfo['id']])}">
+            {else /}
+                <a href="{:url('grade/gradeList',['camp_id'=>$campInfo['id']])}">
+            {/gt}
+                    <span class="icon iconfont icon-hotbasketball-class1"></span>
+                    <div class="mui-media-body">班级</div>
+                </a>
+            </li>
+     
+           {gt name="power" value="1"} 
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{:url('grade/gradeListWeek',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-hotbasketball-Lesson1"></span>
+                    <div class="mui-media-body">录课</div>
+                </a>
+            </li>
+            
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{:url('student/studentListOfCamp',['camp_id'=>$campInfo['id'],'type'=>5])}">
+                    <span class="icon iconfont icon-hotnav-mine"></span>
+                    <div class="mui-media-body">体验生管理</div>
+                </a>
+            </li>
+             <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{:url('schedule/scheduleList',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-hotbasketball-class"></span>
+                    <div class="mui-media-body">课时管理</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{:url('lesson/lessonListOfCamp',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-hotbasketball-Lesson1"></span>
+                    <div class="mui-media-body">课程管理</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{:url('bill/billList',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-hotpc-Mall"></span>
+                    <div class="mui-media-body">订单管理</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{:url('plan/planList',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-hotbasketball-Lesson"></span>
+                    <div class="mui-media-body">教案管理</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{:url('student/studentListOfCamp',['camp_id'=>$campInfo['id'],'type'=>1])}">
+                    <span class="icon iconfont icon-hotbasketball-Experi"></span>
+                    <div class="mui-media-body">学员管理</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{:url('camp/coachListOfCamp',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-hotbasketball-coach"></span>
+                    <div class="mui-media-body">教练列表</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{:url('salaryin/salaryOfCamp',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-hotbasketball-wage"></span>
+                    <div class="mui-media-body">工资列表</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{:url('camp/courtListOfCamp',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-hotpc-Amateurevents"></span>
+                    <div class="mui-media-body">场地管理</div>
+                </a>
+            </li>
+            
+            {/gt}
+            {eq name="power" value="4"} 
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{:url('camp/campSetting',['camp_id'=>$campInfo['id']])}">
+                    <span class="mui-icon mui-icon-more"></span>
+                    <div class="mui-media-body">训练营设置</div>
+                </a>
+            </li>
+            {/eq}
+        </ul>
+
+    </div>
+
+
+
+
+</div>
+{layout name="Layout/footer"}
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+</script>
+</html>

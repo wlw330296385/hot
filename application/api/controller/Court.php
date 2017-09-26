@@ -63,7 +63,7 @@ class Court extends Base{
     //获取训练营下的场地列表
     public function getCourtListOfCampApi(){
         $map = input('post.');
-        $result = $this->CourtService->getCourtListOfCamp([]);
+        $result = $this->CourtService->getCourtListOfCamp($map);
         if($result){
             return json(['code'=>100,'msg'=>"OK",'data'=>$result]);
         }else{
