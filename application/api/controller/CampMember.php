@@ -55,6 +55,10 @@ class CampMember extends Base{
                     return json(['code'=>200,'msg'=>'你已申请加入训练营,请等待审核']);
                 }
             }
+            $status = 0;
+            if($type == -1){
+                $status = 1;
+            }
             $result = db('camp_member')->insert([
                 'camp_id'=>$campInfo['id'],
                 'camp'=>$campInfo['camp'],
@@ -62,7 +66,7 @@ class CampMember extends Base{
                 'member'=>$this->memberInfo['member'],
                 'remarks' => $remarks,
                 'type'=>$type,
-                'status'=>0,
+                'status'=>$status,
                 'create_time'=>time()]);
             if($result){
                 return json(['code'=>100,'msg'=>'申请成功']);
@@ -182,7 +186,6 @@ class CampMember extends Base{
     public function getCampMemberListApi(){
         try{
             $map = input('post.');
-            $page = input('param.page')?input('param.page'):1;
             $keyword = input('param.keyword');
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['member'] = ['LIKE','%'.$keyword.'%'];
@@ -190,7 +193,7 @@ class CampMember extends Base{
             $map['member_id'] = $this->memberInfo['id'];
             $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
             $CampMember = new  \app\model\CampMember;
-            $result = $CampMember->where($map)->paginate($page,10);
+            $result = $CampMember->where($map)->paginate(10);
             if($result){
                 return json(['code'=>100,'msg'=>'OK','data'=>$result]);
             }else{
