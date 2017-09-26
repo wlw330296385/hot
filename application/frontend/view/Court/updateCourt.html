@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
 </head>
 
@@ -28,8 +31,8 @@
                     <input type="text" class="court" name="" value="{$CourtInfo.court}">
                 </div>
 
-                <div class="mui-input-row"><label>所属地区</label>
-                    <input type="text" class="province city area" name="" value="{$CourtInfo.province} {$CourtInfo.city} {$CourtInfo.area}">
+                <div class="mui-input-row" id='showCityPicker3'><label>所属地区</label>
+                    <span id="cityResult3" class="ui-alert" style="color: #000">{$CourtInfo.province} {$CourtInfo.city} {$CourtInfo.area}</span>
                 </div>
 
                 <div class="mui-input-row"><label>具体地址</label>
@@ -68,7 +71,7 @@
                     <span>
                         <input type="radio" class="outdoors" name="outdoors" value="0" {:getChecked(0,$CourtInfo['outdoors'])}/>室内
                         <input type="radio" class="outdoors" name="outdoors" value="1" {:getChecked(1,$CourtInfo['outdoors'])}/>室外
-                        <input type="radio" class="outdoors" name="outdoors" value="2" {:getChecked(2,$CourtInfo['outdoors'])}/>室内|室外
+                        <input type="radio" class="outdoors" name="outdoors" value="3" {:getChecked(2,$CourtInfo['outdoors'])}/>室内|室外
                     </span>
                 </div>
 
@@ -77,11 +80,11 @@
                 </div>
                 
                 <div class="mui-input-row h-auto mt55">
-                    <a class="portraits filePicker" onclick="add_id(3)">
+                    <a class="portraits filePicker" onclick="add_id(1)">
                         <label>场地环境</label>
                         {volist name="mediaList" id="v"}
-                        <img id="preview_3" class="coachicon icon01 upload-preview" src="{$v.url}" alt="">
-                        <input type="hidden" name="portraits" value=''>
+                        <img id="preview_1" class="coachicon icon01 upload-preview" src="{$v.url}" alt="">
+                        <input type="hidden" name="portraits" value='' class="covers">
                         {/volist}
                     </a>
                 </div>
@@ -96,8 +99,12 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
     <script>
-        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'court'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -107,13 +114,43 @@
         swipeBack: true //启用右滑关闭功能
     });
 
+    //选择器
+    var getProvince ='';
+    var getCity ='';
+    var getArea ='';
+    (function ($, doc) {
+        $.init();
+        $.ready(function () {
+            _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
+            });
+            cityPicker3.setData(cityData3);
+            var showCityPickerButton = doc.getElementById('showCityPicker3');
+            var cityResult3 = doc.getElementById('cityResult3');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                    getProvince = _getParam(items[0], 'text');
+                    getCity = _getParam(items[1], 'text');
+                    getArea = _getParam(items[2], 'text');
+                });
+            }, false);
+        });
+    })(mui, document);
+
     //场地编辑
     $(".updateBtn").click(function(){
         var  court = $(".court").val();
         var  court_id = "{$CourtInfo.id}";
-        var  province = "{$CourtInfo.province}";
-        var  city = "{$CourtInfo.city}";
-        var  area = "{$CourtInfo.area}";
+        var  province = getProvince;
+        var  city = getCity;
+        var  area = getArea;
         var  location = $(".location").val();
         var  open_time = $(".open_time").val();
         var  contract = $(".contract").val();
@@ -123,15 +160,15 @@
         var  half_rent = $(".half_rent").val();
         var  full_rent = $(".full_rent").val();
         var  remarks = $(".remarks").val();
-        console.log(outdoors)
+        var  covers = $(".covers").val();
         if(court!=''&&location!=''&&open_time!=''&&contract!=''&&principal!=''&&chip_rent!=''&&half_rent!=''&&full_rent!=''&&outdoors!=''){
             mui.ajax("{:url('api/court/updateCourtApi',['court_id'=>$CourtInfo['id']])}",{
                 data:{
                     "court":court,
                     "court_id":court_id,
-                    "province":province,
-                    "city":city,
-                    "area":area,
+                    "province":getProvince,
+                    "city":getCity,
+                    "area":getArea,
                     "location":location,
                     "open_time":open_time,
                     "contract":contract,
@@ -140,18 +177,19 @@
                     "half_rent":half_rent,
                     "full_rent":full_rent,
                     "outdoors":outdoors,
-                    "remarks":remarks
+                    "remarks":remarks,
+                    "covers":covers
                 },
                     dataType:'json',//服务器返回json格式数据
                     type:'post',//HTTP请求类型
                     timeout:10000,//超时时间设置为10秒；
                     headers:{'Content-Type':'application/json'},                  
                     success:function(data){
-                        //服务器返回响应，根据响应结果，分析是否登录成功；w
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data)
                         if(data.code==100){
                             mui.toast(data.msg);
-                            window.location.href="{:url('court/courtinfo')}"
+                            setTimeout(window.location.href="{:url('court/courtinfo')}",1000);
                         }else{
                             mui.toast(data.msg)
                         }
