@@ -25,7 +25,7 @@ class LessonService {
     public function getLessonList($map=[],$page = 1,$order='',$paginate = 10) {
         $result = Lesson::where($map)->order($order)->page($page,$paginate)->select();
         if($result){
-            $result = $result->toarray();
+            $result = $result->toArray();
             return $result;
         }else{
             return $result;
@@ -35,12 +35,13 @@ class LessonService {
     // 分页获取课程
     public function getLessonPage($map=[],$page = 1 ,$paginate=10, $order=''){
         $res = Lesson::where($map)->order($order)->page($page,$paginate)->select();
-        if($res){
-            $result = $res->toArray();
-            return $result;
-        }else{
-            return $res;
+        if (!$res) {
+            return json(['code' => 200, 'msg' => __lang('MSG_400')]);
         }
+        if ($res->isEmpty()) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000'), 'data' => []]);
+        }
+        return json(['code' => 100, 'msg' => __lang('MSG_201'), 'data' => $res->toArray()]);
     }
 
     // 软删除
