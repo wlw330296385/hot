@@ -3,6 +3,7 @@ namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CampService;
 use think\Db;
+use think\Exception;
 
 class CampMember extends Base{
     protected $CampService;
@@ -172,7 +173,7 @@ class CampMember extends Base{
             $map['camp_id'] = $camp_id;
             $map['camp_member.status'] = $status;
             $map['camp_member.type'] = ['egt', 2];
-            $list= Db::view('camp_member','camp_id')
+            $list= Db::view('camp_member',['id' => 'campmemberid','camp_id'])
                 ->view('coach','*','coach.member_id=camp_member.member_id')
                 ->where($map)
                 ->select();
@@ -200,6 +201,33 @@ class CampMember extends Base{
             }
         }catch(Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    /** 解除训练营-人员关联 2017/09/27
+     * $id: input('campmemberid') camp_member表主键
+     * @return array|\think\response\Json
+     */
+    public function removerelationship() {
+        try {
+            $id = input('campmemberid');
+            $model = new \app\model\CampMember();
+            $campmember = $model->where(['id' => $id])->find();
+            $campS = new CampService();
+            $power = $campS->isPower($campmember['camp_id'], $this->memberInfo['id']);
+            if ($power < 3) {
+                return ['code' => 200, 'msg' => '您没有这个权限'];
+            }
+            $campmember->status = -1;
+            $result = $campmember->save();
+            if ($result) {
+                $response = json(['code' => 100, 'msg' => __lang('MSG_200'), 'data' => $result]);
+            } else {
+                $response = json(['code' => 200, 'msg' => __lang('MSG_400')]);
+            }
+            return $response;
+        } catch (Exception $e) {
+            return json(['code' => 200, 'msg' => $e->getMessage()]);
         }
     }
 }

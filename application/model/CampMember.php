@@ -7,11 +7,11 @@ class CampMember extends Model {
     protected $table = 'camp_member';
     protected $deleteTime = 'delete_time';
 	protected $autoWriteTimestamp = true;
-    protected $readonly = [
-                            'create_time',
-                            'status',
-                            'type',
-                            ];
+    // protected $readonly = [
+    //                         'create_time',
+    //                         'status',
+    //                         'type',
+    //                         ];
 
 
     public function getStatusAttr($value){
