@@ -74,4 +74,11 @@ class Court extends Base{
     	return json($result);
     }
 
+    public function searchCourtList(){
+
+        $camp_id = input('param.camp_id');
+
+        $this->assign('camp_id',$camp_id);
+        return view('Court/searchCourtList');
+    }
 }

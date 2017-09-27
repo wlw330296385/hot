@@ -361,7 +361,7 @@ class Camp extends Base{
         $GradeService = new \app\service\GradeService;
         $gradeOfCoachList = $GradeService->getGradeList(['coach_id'=>$member_id,'camp_id'=>$camp_id]);
         // 教练的证件
-        $cert = db('cert')->where(['member_id'=>$member_id, 'camp_id' => 0])->select();
+        $cert = db('cert')->where(['member_id'=>$member_id])->select();
         $identCert = [];
         $coachCert = [];
         foreach ($cert as $key => $value) {
@@ -378,7 +378,7 @@ class Camp extends Base{
             $identCert['cert_no'] = '未认证';
         }
         if(empty($coachCert)){
-            $coachCert = ['photo_positive'=>'','photo_back'=>''];
+            $coachCert = ['photo_positive'=>'/static/frontend/images/uploadDefault.jpg','photo_back'=>'/static/frontend/images/uploadDefault.jpg'];
         }
         //获取教练的课量
         $m = input('m')?input('m'):date('m');

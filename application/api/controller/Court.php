@@ -80,7 +80,7 @@ class Court extends Base{
             $data['member'] = $this->memberInfo['member'];
             // 权限
             $CampService = new \app\service\CampService;
-            $power = $CampService->isPower($camp_id,$$this->memberInfo['member']);
+            $power = $CampService->isPower($camp_id,$this->memberInfo['member']);
             if($power<2){
                 return json(['code'=>100,'msg'=>'权限不足']);
             }
@@ -99,7 +99,7 @@ class Court extends Base{
             $data['member'] = $this->memberInfo['member'];
             // 权限
             $CampService = new \app\service\CampService;
-            $power = $CampService->isPower($camp_id,$$this->memberInfo['member']);
+            $power = $CampService->isPower($camp_id,$this->memberInfo['member']);
             if($power<2){
                 return json(['code'=>100,'msg'=>'权限不足']);
             }

@@ -57,7 +57,7 @@
             <p class="test">没搜到此地?</p>
 
             <div class="tjbtn">
-                <button type="submit" class="btn"><a href="#"  style="color: #fff">我来新建</a></button>
+                <button type="submit" class="btn"><a href="{:url('court/createCourt',['camp_id'=>$camp_id])}"  style="color: #fff">我来新建</a></button>
             </div>
         </div>
 
@@ -65,6 +65,9 @@
 
 
     <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/common.js"></script>
     <script>
 
         mui("body").on("tap", "a", function () {
@@ -184,7 +187,7 @@
                     var newli='';
                     for(var i=0;i<=data.data.length-1;i++){
                         var urls = "{:url('court/courtInfo')}"+'/court_id/'+data.data[i].id;
-                        newli = newli + '<li class="mui-table-view-cell mui-media listli list-wide"><a href="'+urls+'"><img class="mui-media-object mui-pull-left " src="'+data.data[i].cover+'"><div class="mui-media-body wd52">'+data.data[i].court+'<p class="mui-ellipsis">'+data.data[i].location+'</p></div><div class="price-frame singup-num">'+data.data[i].area+'</div></a></li>'
+                        newli = newli + '<li class="mui-table-view-cell mui-media listli list-wide"><a href="'+urls+'"><img class="mui-media-object mui-pull-left " src="'+data.data[i].covers[0]+'"><div class="mui-media-body wd52">'+data.data[i].court+'<p class="mui-ellipsis">'+data.data[i].location+'</p></div><div class="price-frame singup-num">'+data.data[i].area+'</div></a></li>'
                     }
                     if(gType==1){
                         //上拉刷新
