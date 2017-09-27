@@ -14,7 +14,6 @@
     <!--选择器样式-->
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
     <style>
         .mui-views,
         .mui-view,
@@ -78,9 +77,9 @@
             transition-duration: .0s;
         }
         .mui-navbar .mui-bar .mui-title {
-           margin-left: 0 !important;
-       }
-       .mui-page-shadow {
+         margin-left: 0 !important;
+     }
+     .mui-page-shadow {
         position: absolute;
         right: 100%;
         top: 0;
@@ -199,7 +198,7 @@
                                 <label>出生日期</label><span class="birthday">{$memberInfo['birthday']}</span>
                             </div>
                             <div class="mui-input-row">
-                                <label>所属地区</label><span class="location">{$memberInfo['province']}{$memberInfo['city']}{$memberInfo['area']}</span>
+                                <label>所属地区</label><span>{$memberInfo['province']}{$memberInfo['city']}{$memberInfo['area']}</span>
                             </div>
                             <div class="mui-input-row">
                                 <label>注册日期</label><span class="">{$memberInfo['create_time']}</span>
@@ -234,11 +233,7 @@
                     <form action="" class="mui-input-group archives2 mb">
 
                         <div class="mui-input-row h-auto">
-                            <a class="mui-navigate-right filePicker" onclick="add_id(1)">
-                                <label>头像</label>
-                                <img id="preview_1" class="coachicon icon01 upload-preview" src="{$memberInfo['avatar']}"  alt="">
-                                <input type="hidden" name="" value="" class="cover">
-                            </a>
+                            <label>头像</label><img src="{$memberInfo['avatar']}" alt="头像" style="margin-right: 18px">
                         </div>
                         <div class="mui-input-row">
                             <label>学员ID</label>
@@ -246,7 +241,7 @@
                         </div>
                         <div class="mui-input-row">
                             <label>姓名</label>
-                            <input type="text" name="" class="member editor" value="{$memberInfo['member']}">
+                            <input type="text" name="" class="member editor" value="{$memberInfo['member']}" style="color: #737373">
                         </div>
                         <div class="mui-input-row">
                             <label>性别</label>
@@ -257,21 +252,21 @@
                                 </select>
                             </span>
                         </div>
-                        <div class="mui-input-row" id="showUserPicker">
+                        <div class="mui-input-row" id="showUserPickerHeight">
                             <label>身高</label>
-                            <span id='userResult' class="height editor ui-alert" data-options='{"type":"text","beginText":2000,"endText":2023}'>{$memberInfo['height']}</span>
+                            <span id='userResulth' class="height editor ui-alert">{$memberInfo['height']}</span>
                         </div>
-                        <div class="mui-input-row">
+                        <div class="mui-input-row" id="showUserPickerWeight">
                             <label>体重</label>
-                            <input type="text" name="" class="weight editor" value="{$memberInfo['weight']}">
+                            <span id='userResultw' class="weight editor ui-alert">{$memberInfo['weight']}</span>
                         </div>
-                        <div class="mui-input-row btn1" id="demo2" data-options='{"type":"date","beginYear":2000,"endYear":2023}'>
+                        <div class="mui-input-row btn1" id="demo2" data-options='{"type":"date","beginYear":1850,"endYear":2023}'>
                             <label>出生日期</label>
                             <span id="result" class="ui-alert birthday">{$memberInfo['birthday']}</span>
                         </div>
                         <div class="mui-input-row" id='showCityPicker3'>
                             <label>所属地区</label>
-                            <span id="cityResult3" class="ui-alert location">{$memberInfo['province']} {$memberInfo['city']} {$memberInfo['area']}</span>
+                            <span id="cityResult3" class="ui-alert">{$memberInfo['province']} {$memberInfo['city']} {$memberInfo['area']}</span>
                         </div>
                         <div class="mui-input-row">
                             <label>注册日期</label>
@@ -291,11 +286,6 @@
 
     <script src="/static/frontend/js/mui.min.js "></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <script>
-        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
-    </script>
-    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
     <!-- 窗体切换 -->
     <script src="/static/frontend/js/mui.view.js "></script>
     <!--选择器-->
@@ -303,14 +293,13 @@
     <script src="/static/frontend/js/mui.poppicker.js"></script>
     <script src="/static/frontend/js/city.data-3.js"></script>
     <script src="/static/frontend/js/height.data.js"></script>
-    
+    <script src="/static/frontend/js/weight.data.js"></script>
     <script>
         mui.init();
         //初始化单页view
         var viewApi = mui('#app').view({
             defaultPage: '#setting'
         });
-        $(".filePicker div").eq(2).css("width","100%")
 
         //初始化单页的区域滚动
         mui('.mui-scroll-wrapper').scroll();
@@ -328,6 +317,9 @@
         })(mui);
 
         // 选择器
+        var getProvince = '';
+        var getCity = '';
+        var getArea = '';
         (function ($, doc) {
             $.init();
             $.ready(function () {
@@ -335,15 +327,28 @@
                     return obj[param] || '';
                 };
 
-            //普通示例
-            var userPicker = new $.PopPicker();
-            userPicker.setData(heightData);
+            //身高选择
+            var userPickerh = new $.PopPicker();
+            userPickerh.setData(heightData);
 
-            var showUserPickerButton = doc.getElementById('showUserPicker');
-            var userResult = doc.getElementById('userResult');
+            var showUserPickerButton = doc.getElementById('showUserPickerHeight');
+            var userResulth = doc.getElementById('userResulth');
             showUserPickerButton.addEventListener('tap', function(event) {
-                userPicker.show(function(items) {
-                    userResult.innerText = JSON.stringify(items[0].text);
+                userPickerh.show(function(items) {
+                    userResulth.innerText = _getParam(items[0], 'text');
+                            //返回 false 可以阻止选择框的关闭
+                            //return false;
+                        });
+            }, false);
+             //体重选择
+             var userPickerw = new $.PopPicker();
+             userPickerw.setData(weightData);
+
+             var showUserPickerButton = doc.getElementById('showUserPickerWeight');
+             var userResultw = doc.getElementById('userResultw');
+             showUserPickerButton.addEventListener('tap', function(event) {
+                userPickerw.show(function(items) {
+                    userResultw.innerText = _getParam(items[0], 'text');
                             //返回 false 可以阻止选择框的关闭
                             //return false;
                         });
@@ -360,6 +365,9 @@
                     cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
                     //返回 false 可以阻止选择框的关闭
                     //return false;
+                    getProvince = _getParam(items[0], 'text');
+                    getCity = _getParam(items[1], 'text');
+                    getArea = _getParam(items[2], 'text');
                 });
             }, false);
 
@@ -390,12 +398,10 @@
                 if (e.index == 1) {
                     var member =$("#editor .member").val();
                     var sex =$("#editor .sex option:selected").val();
-                    var height =$("#editor .height").val();
-                    var weight =$("#editor .weight").val();
+                    var height =$("#editor .height").text();
+                    var weight =$("#editor .weight").text();
                     var birthday =$("#editor .birthday").text();
-                    var location =$("#editor .location").text();
-                    console.log(sex)
-                    if(member!=''&&sex!=''&& height!=''&& weight!=''&& birthday!=''&&location!=''){
+                    if(member!=''&&sex!=''&& height!=''&& weight!=''&& birthday!=''&& getProvince!=''&&getCity!=''&&getArea!=''){
                         mui.ajax("{:url('api/member/updateMemberApi')}", {
                             data: {
                                 'member': member,
@@ -403,7 +409,9 @@
                                 'height': height,
                                 'weight': weight,
                                 'birthday': birthday,
-                                'location': location
+                                'province': getProvince,
+                                'city': getCity,
+                                'area': getArea,
                             },
                             dataType: 'json',//服务器返回json格式数据
                             type: 'post',//HTTP请求类型
