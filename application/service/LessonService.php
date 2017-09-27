@@ -16,9 +16,9 @@ class LessonService {
     public function lessonCategory() {
         $category = Db::name('lesson_category')->where(['status' => 1])->field(['id', 'name', 'pid'])->select();
         if (!$category)
-            return ['msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200];
+            return ['msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 100];
 
-        return ['msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $category];
+        return ['msg' => __lang('MSG_101_SUCCESS'), 'code' => 200, 'data' => $category];
     }
     
     // 获取所有课程
@@ -36,21 +36,21 @@ class LessonService {
     public function getLessonPage($map=[],$page = 1 ,$paginate=10, $order=''){
         $res = Lesson::where($map)->order($order)->page($page,$paginate)->select();
         if (!$res) {
-            return json(['code' => 200, 'msg' => __lang('MSG_400')]);
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
         if ($res->isEmpty()) {
-            return json(['code' => 100, 'msg' => __lang('MSG_000'), 'data' => []]);
+            return json(['code' => 200, 'msg' => __lang('MSG_000'), 'data' => []]);
         }
-        return json(['code' => 100, 'msg' => __lang('MSG_201'), 'data' => $res->toArray()]);
+        return json(['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $res->toArray()]);
     }
 
     // 软删除
     public function SoftDeleteLesson($id) {
         $result = Lesson::destroy($id);
         if (!$result) {
-            return [ 'msg' => __lang('MSG_200_ERROR'), 'code' => 200 ];
+            return [ 'msg' => __lang('MSG_400'), 'code' => 100 ];
         } else {
-            return ['msg' => __lang('MSG_100_SUCCESS'), 'code' => 100, 'data' => $result];
+            return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $result];
         }
     }
 
@@ -88,7 +88,7 @@ class LessonService {
     public function updateLesson($data,$id){
         $is_power = $this->isPower($data['camp_id'],$data['member_id']);
         if($is_power<2){
-            return ['code'=>200,'msg'=>'权限不足'];
+            return ['code'=>100,'msg'=> __lang('MSG_403')];
         }
         
         if($data['doms']){
@@ -114,13 +114,13 @@ class LessonService {
         }
         $validate = validate('LessonVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
         $result = $this->lessonModel->save($data,['id'=>$id]);
         if($result){
-            return ['msg' => "编辑成功", 'code' => 100, 'data' => $result];
+            return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $result];
         }else{
-            return ['msg'=>__lang('MSG_200_ERROR'), 'code' => 200];
+            return ['msg'=>__lang('MSG_400'), 'code' => 100];
         }
     }
 
@@ -129,7 +129,7 @@ class LessonService {
         // 查询是否有权限
         $is_power = $this->isPower($data['camp_id'],$data['member_id']);
         if($is_power<2){
-            return ['code'=>200,'msg'=>'权限不足'];
+            return ['code'=>100,'msg'=>__lang('MSG_403')];
         }
         if($data['doms']){
                 $doms = explode(',', $data['doms']);
@@ -154,14 +154,14 @@ class LessonService {
         }
         $validate = validate('LessonVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
        
         $result = $this->lessonModel->save($data);
         if($result){
-            return ['msg' => '发布成功', 'code' => 100, 'data' => $this->lessonModel->id];
+            return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->lessonModel->id];
         }else{
-            return ['msg'=>__lang('MSG_200_ERROR'), 'code' => 200];
+            return ['msg'=>__lang('MSG_400'), 'code' => 100];
         }
     }
 

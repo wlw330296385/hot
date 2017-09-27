@@ -27,9 +27,9 @@ class Wxpay extends Base{
             $data = input('param.');
             $WechatJsPayService = new WechatJsPayService;
             $parameters = $WechatJsPayService->pay($data);
-            return json(['code'=>100,'msg'=>'o','data'=>$parameters]);
+            return json(['code'=>200,'msg'=>'ok','data'=>$parameters]);
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
         
     }

@@ -32,17 +32,17 @@ class ScheduleService {
         $is_power = $this->isPower($data['camp_id'],$data['member_id']);
         
         if($is_power<2){
-            return ['code'=>200,'msg'=>'权限不足'];
+            return ['code'=>100,'msg'=>__lang('MSG_403')];
         }
         $validate = validate('ScheduleVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }            
 		$result = $this->scheduleModel->save($data);
 		if($result ===false){
-			return ['msg'=>$this->scheduleModel->getError(),'code'=>200];
+			return ['msg'=>$this->scheduleModel->getError(),'code'=>100];
 		}else{
-			return ['msg'=>__lang('MSG_100_SUCCESS'),'code'=>100,'data'=>$result];
+			return ['msg'=>__lang('MSG_200'),'code'=>200,'data'=>$result];
 		}
 	}
 
@@ -52,17 +52,17 @@ class ScheduleService {
         $is_power = $this->isPower($data['camp_id'],$data['member_id']);
         
         if($is_power<2){
-            return ['code'=>200,'msg'=>'权限不足'];
+            return ['code'=>100,'msg'=>>__lang('MSG_403')];
         }
         $validate = validate('ScheduleVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }            
         $result = $this->scheduleModel->save($data,['id'=>$id]);
         if($result ===false){
-            return ['msg'=>$this->scheduleModel->getError(),'code'=>200];
+            return ['msg'=>$this->scheduleModel->getError(),'code'=>100];
         }else{
-            return ['msg'=>__lang('MSG_100_SUCCESS'),'code'=>100,'data'=>$result];
+            return ['msg'=>__lang('MSG_200'),'code'=>200,'data'=>$result];
         }
     }
 
@@ -161,19 +161,19 @@ class ScheduleService {
         $ScheduleComment = new \app\model\ScheduleComment;
         $validate = validate('ScheduleCommentVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
         $isSchedule = $ScheduleComment->where(['member_id'=>$data['member_id'],'schedule_id'=>$data['schedule_id']])->find();
         if($isSchedule){
-            return ['code'=>200,'msg'=>'一个人只能评论一次'];
+            return ['code'=>100,'msg'=>'一个人只能评论一次'];
         }else{
             $result = $ScheduleComment->save($data);
             if($result){
                 // 计算总评分
                 
-                return ['code'=>100,'msg'=>'评论成功'];
+                return ['code'=>200,'msg'=>'评论成功'];
             }else{
-                return ['code'=>200,'msg'=>'评论失败'];
+                return ['code'=>100,'msg'=>'评论失败'];
             }
         }
 

@@ -39,9 +39,9 @@ class RebateService {
         $data['status'] = 0;
         $result = $this->Rebate->save($data);
         if($result){
-            return ['code'=>100,'msg'=>'申请成功','data'=>$data];
+            return ['code'=>200,'msg'=>'申请成功','data'=>$data];
         }else{
-            return ['code'=>200,'msg'=>'申请失败','data'=>$data];
+            return ['code'=>100,'msg'=>'申请失败','data'=>$data];
         }
     }
 }

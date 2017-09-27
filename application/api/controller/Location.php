@@ -36,7 +36,7 @@ class Location extends Base{
             
             // return json(['code'=>100,'msg'=>$ss,'data'=>$s]);
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
 
     }
@@ -45,9 +45,9 @@ class Location extends Base{
     public function getIP(){
         try{
             $ip = Request::instance()->ip();
-            return json(['code'=>100,'msg'=>$ip,'data'=>$ip]);
+            return json(['code'=>200,'msg'=>$ip,'data'=>$ip]);
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 

@@ -193,9 +193,9 @@ class CampService {
         }
         $result = $CampCommentModel->save($data);
         if($result){
-            return ['msg' => "评论成功", 'code' => 100];
+            return ['msg' => "评论成功", 'code' => 200];
         }else{
-            return ['msg' =>"评论失败", 'code' => 200];
+            return ['msg' =>"评论失败", 'code' => 100];
         }
     }
 }

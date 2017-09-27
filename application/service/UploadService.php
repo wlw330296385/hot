@@ -26,9 +26,9 @@ class UploadService {
         $uploadMgr = new UploadManager();
         list($ret, $err) = $uploadMgr->putFile($token, $key, $filePath);
         if ($err !== null) {
-            return ['err' => 1, 'code' => 200, 'msg' => $err, 'data' => ''];
+            return ['err' => 1, 'code' => 100, 'msg' => $err, 'data' => ''];
         } else {
-            return ['err' => 0, 'code' => 100, 'msg' => __lang('MSG_101_SUCCESS'), 'data' => $domain.$ret['key']];
+            return ['err' => 0, 'code' => 200, 'msg' => __lang('MSG_200'), 'data' => $domain.$ret['key']];
         }
     }
 

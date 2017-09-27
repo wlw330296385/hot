@@ -39,9 +39,9 @@ class CourtMediaService {
 
         $result = $this->CourtMediaModel->save($data,['id'=>$id]);
         if($result){
-            return ['code'=>100,'data'=>$result,'msg'=>__lang('MSG_101_SUCCESS')];
+            return ['code'=>200,'data'=>$result,'msg'=>__lang('MSG_200')];
         }else{
-            return ['code'=>200,'msg'=>$this->CourtMediaModel->getError()];
+            return ['code'=>100,'msg'=>$this->CourtMediaModel->getError()];
         }
     }
 
@@ -49,9 +49,9 @@ class CourtMediaService {
     public function createCourtMedia($data){
         $result = $this->CourtMediaModel->save($data);
         if($result){
-            return ['code'=>100,'data'=>$result,'msg'=>__lang('MSG_101_SUCCESS')];
+            return ['code'=>200,'data'=>$result,'msg'=>__lang('MSG_200')];
         }else{
-            return ['code'=>200,'msg'=>$this->CourtMediaModel->getError()];
+            return ['code'=>100,'msg'=>$this->CourtMediaModel->getError()];
         }
     }
 }

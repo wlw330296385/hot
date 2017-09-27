@@ -51,7 +51,7 @@ class Student extends Base
 			$member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
 			$result = $this->studentService->getStudentList(['member_id'=>$member_id]);
 			if($result){
-				return json(['data'=>$result,'code'=>100,'msg'=>'ok']);
+				return json(['data'=>$result,'code'=>200,'msg'=>'ok']);
 			}else{
 				return json(['code'=>100,'msg'=>'没数据了']);
 			}

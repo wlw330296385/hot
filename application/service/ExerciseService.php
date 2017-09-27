@@ -34,9 +34,9 @@ class ExerciseService {
         $res = $model->save($data);
         //dump($res);
         if (!$res)
-            return ['msg' => __lang('MSG_200_ERROR'), 'code' => 200];
+            return ['msg' => __lang('MSG_400'), 'code' => 100];
 
-        return ['msg' => __lang('MSG_100_SUCCESS'), 'code' => 100, 'data' => $res];
+        return ['msg' => __lang('MSG_200'), 'code' => 100, 'data' => $res];
     }
 
     // 更新 训练项目数据
@@ -44,17 +44,17 @@ class ExerciseService {
         $model = new Exercise();
         $res = $model->save($data, $condi);
         if (!$res)
-            return ['msg' => __lang('MSG_200_ERROR'), 'code' => 200];
+            return ['msg' => __lang('MSG_400'), 'code' => 100];
 
-        return ['msg' => __lang('MSG_100_SUCCESS'), 'code' => 100, 'data' => $res];
+        return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $res];
     }
 
     public function createExercise($data){
         $result = $this->exerciseModel->save($data);
         if($result){
-            return ['code'=>100,'msg'=>__lang('MSG_101_SUCCESS'),'data'=>$result];
+            return ['code'=>200,'msg'=>__lang('MSG_200'),'data'=>$result];
         }else{
-            return ['code'=>200,'msg'=>__lang('MSG_201_DBNOTFOUND')];
+            return ['code'=>100,'msg'=>__lang('MSG_400')];
         }
     }
 

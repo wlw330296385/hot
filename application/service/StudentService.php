@@ -35,22 +35,22 @@ class StudentService{
         }
 		$result = $this->studentModel->data($data)->save();
 		if($result){
-			return ['code'=>100,'msg'=>'ok','data'=>$result];
+			return ['code'=>200,'msg'=>'ok','data'=>$result];
 		}else{
-			return ['code'=>200,'msg'=>$this->studentModel->getError()];
+			return ['code'=>100,'msg'=>$this->studentModel->getError()];
 		}
 	}
 
 	public function updateStudent($data,$id){
 		$validate = validate('CampVal');
         if(!$validate->check($StudentVal)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
 		$result = $this->studentModel->save($data,['id'=>$id]);
 		if($result){
-			return ['code'=>100,'msg'=>'ok','data'=>$result];
+			return ['code'=>200,'msg'=>'ok','data'=>$result];
 		}else{
-			return ['code'=>200,'msg'=>$this->studentModel->getError()];
+			return ['code'=>100,'msg'=>$this->studentModel->getError()];
 		}
 	}
 	/**
@@ -130,9 +130,9 @@ class StudentService{
     public function saveAllStudent($data){
     	$result = $this->gradeMemberModel->saveAll($data);
     	if($result){
-			return ['code'=>100,'msg'=>'ok','data'=>$result];
+			return ['code'=>200,'msg'=>'ok','data'=>$result];
 		}else{
-			return ['code'=>200,'msg'=>$this->gradeMemberModel->getError()];
+			return ['code'=>100,'msg'=>$this->gradeMemberModel->getError()];
 		}
     }
 
@@ -141,9 +141,9 @@ class StudentService{
     public function updateGradeMember($data,$id){
         $result = $this->gradeMemberModel->save($data,['id'=>$id]);
         if($result){
-			return ['code'=>100,'msg'=>'ok','data'=>$result];
+			return ['code'=>200,'msg'=>'ok','data'=>$result];
 		}else{
-			return ['code'=>200,'msg'=>$this->gradeMemberModel->getError()];
+			return ['code'=>100,'msg'=>$this->gradeMemberModel->getError()];
 		}
     }
 

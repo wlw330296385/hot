@@ -71,13 +71,13 @@ class GradeService{
     public function createGrade($data){
         $validate = validate('GradeVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
         $result = $this->GradeModel->save($data);
          if (!$result) {
-            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
+            return [ 'msg' => __lang('MSG_400'), 'code' => 100 ];
         }else{
-             return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $this->GradeModel->id];
+             return [ 'msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->GradeModel->id];
         }
     }
 
@@ -85,13 +85,13 @@ class GradeService{
     public function updateGrade($data,$id){
         $validate = validate('GradeVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
         $result = $this->GradeModel->save($data,['id'=>$id]);
          if (!$result) {
-            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
+            return [ 'msg' => __lang('MSG_400'), 'code' =>100 ];
         }else{
-             return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $result];
+             return [ 'msg' => __lang('MSG_200'), 'code' => 200, 'data' => $result];
         }
     }
    
