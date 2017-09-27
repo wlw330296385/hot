@@ -45,21 +45,18 @@ class Camp extends Base{
 
     public function campInfo(){
         $camp_id = input('param.camp_id');
-        // 教练员
-        $coachList = Db::view('camp_member','member_id')
-                    ->view('coach','portraits,star','coach.member_id = camp_member.member_id')
-                    ->where(['camp_id'=>$camp_id,'type'=>2])
-                    ->order('coach.star')
-                    ->limit(5)
-                    ->select();
-        $lessonList = db('lesson')->where(['camp_id'=>1,'status'=>1])->select();
+ 
+        $lessonList = db('lesson')->where(['camp_id'=>1,'status'=>1])->limit(5)->select();
         $lessonCount = count($lessonList);
-        $commentList = db('camp_comment')->where(['camp_id'=>$camp_id])->select();
+        $commentList = $this->CampService->getCampCommentListByPage(['camp_id'=>$camp_id]);
         $campInfo = $this->CampService->getCampInfo($camp_id);
-        $this->assign('commentList',$commentList);
+        // 查询是否跟训练营有关系
+        $isPower = $this->CampService->isPower($camp_id,$this->memberInfo['id']);
+
+        $this->assign('isPower',$isPower);
+        $this->assign('commentList',$commentList['data']);
         $this->assign('lessonCount',$lessonCount);
         $this->assign('lessonList',$lessonList);
-        $this->assign('coachList',$coachList);
         $this->assign('campInfo',$campInfo);
         return view('Camp/campInfo');
     }

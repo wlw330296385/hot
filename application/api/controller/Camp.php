@@ -166,7 +166,23 @@ class Camp extends Base{
             $data['avatar'] = $this->memberInfo['avatar'];
 
             $result = $this->CampService->createCampComment($data);
-            return $result;
+            return json($result);
+        }catch(Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+    // 获取评论列表
+    public function getCampCommentListByPage(){
+        try{ 
+            $map = input('post.');
+            $result = $this->CampService->getCampCommentListByPage($map);
+            if($result){
+                return json(['code'=>100,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>200,'msg'=>'传参错误']);
+            }
         }catch(Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
