@@ -373,6 +373,13 @@ class Camp extends Base{
                 $coachCert = $value;
             }
         }
+        // dump($identCert);die;
+        if(empty($identCert)){
+            $identCert['cert_no'] = '未认证';
+        }
+        if(empty($coachCert)){
+            $coachCert = ['photo_positive'=>'','photo_back'=>''];
+        }
         //获取教练的课量
         $m = input('m')?input('m'):date('m');
         $y = input('y')?input('y'):date('Y');
