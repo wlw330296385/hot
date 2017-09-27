@@ -11,7 +11,7 @@ var wooApi = {
         'asyncF':function (url,data = '') {
 
             //访问接口
-            var postMsg = $.ajax({
+            var postMsgF = $.ajax({
                 url: url,
                 data: data,
                 async: false,
@@ -21,13 +21,13 @@ var wooApi = {
 
                 }
             });
-            return postMsg.responseJSON;
+            return postMsgF.responseJSON;
         },
         //异步访问接口
         'asyncT':function (url,data) {
 
             //访问接口
-            var postMsg = $.ajax({
+            var postMsgT = $.ajax({
                 url: url,
                 data: data,
                 async: true,
@@ -37,7 +37,7 @@ var wooApi = {
 
                 }
             });
-            return postMsg.responseJSON;
+            return postMsgT.responseJSON;
         },
         // 一键获取已有变量
         'getJson':function(str){
@@ -97,7 +97,7 @@ var wooApi = {
             }
             return data;
         },
-        'getDomData':function(className = 'data',data = []){
+        'getDomData':function(className = 'domData',data = []){
             $('.'+className).each(function(i){
                     var name = $(this).attr('name');
                     var val = $(this).html();

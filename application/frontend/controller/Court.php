@@ -23,9 +23,6 @@ class Court extends Base{
         $camp_id = input('param.camp_id');
         $CampService = new \app\service\CampService;
         $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
-        if($power<2){
-            $this->error('请先加入一个训练营并成为管理员或者创建训练营');
-        }
     	$courtInfo = $this->CourtService->getCourtInfo(['id'=>$court_id]);
         $this->assign('power',$power);
         $this->assign('courtInfo',$courtInfo);

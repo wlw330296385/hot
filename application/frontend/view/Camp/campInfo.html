@@ -67,9 +67,9 @@
                     <li class="mui-table-view-cell listli detalisli" style="line-height: 40px;">
                         <a class="mui-navigate-right" id="coachlist"
                         href="{:url('coach/coachListOfCamp',['camp_id'=>$campInfo['id']])}/?campname={$campInfo.camp}">
-                        教练
-                    </a>
-                </li>
+                        
+                        </a>
+                    </li>
                 <li class="mui-table-view-cell listli detalisli">课量<span>已上{$campInfo.total_schedule}课时</span></li>
                 <li class="mui-table-view-cell listli detalisli">班级<span>全部{$campInfo.total_grade}个班级</span></li>
                 <li class="mui-table-view-cell listli detalisli">
@@ -115,7 +115,7 @@
                             <p class="mui-ellipsis">{$vol.comment}</p>
                         </div>
                         <div class="price-frame">
-                            <p>{$vol.create_time|date='Y-m-d',###}</p>
+                            <p>{$vol.create_time}</p>
                         </div>
                     </a>
                 </li>
@@ -129,9 +129,11 @@
                         <span class="mui-icon mui-icon-phone"></span>电话咨询
                     </a>
                 </li>
+                {neq name="isPower" value='0'}
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli">
                     <a href="#pjpopover">我来评价</a>
                 </li>
+                {/neq}
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli">
                     <a href="#join">申请加入</a>
                 </li>
@@ -177,7 +179,10 @@
             <ul class="mui-table-view operation">
                 <h5><span>评价我的训练营</span><a href="#pjpopover" class="mui-icon mui-icon-closeempty"></a></h5>
                 <li class="mui-table-view-cell listli">
-                    <textarea rows="4"></textarea>
+                    <textarea rows="4" name="comment" class="data"></textarea>
+                    <input type="hidden" name="camp_id" value="{$campInfo['id']}" class="data" >
+                    <input type="hidden" name="camp" value="{$campInfo['camp']}" class="data" >
+
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="commentSubmit">提交</li>
             </ul>
@@ -186,6 +191,7 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script>
     //初始化
     mui.init({
@@ -220,14 +226,15 @@
         })
 
         //评价功能
-        $("#commentSubmit").click(function() {
+        $("#commentSubmit").on('click',function() {
             //判断是否登陆会员
-            if ( "{$memberInfo.id}"<=0) {
-                var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
-                mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
-            }else{
-                //判断是否该训练营学生
-
+            var data1 = wooApi.getInputData();
+            var data2 = wooApi.getInputData('textarea','data',data1);
+            var objData = wooApi.arrTOobj(data2);
+            var result = wooApi.asyncF("{:url('api/camp/createCampCommentApi')}",objData);
+            if(result){
+                mui.toast(result.msg);
+                mui('#pjpopover').popover('toggle');
             }
         })
 

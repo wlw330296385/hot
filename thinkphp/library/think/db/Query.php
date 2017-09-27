@@ -1414,10 +1414,8 @@ class Query
     //woo修改
     public function order($field = '', $order = null)
     {
-        //woo
-        if($field == ''){
-            $field = 'id desc';
-        }
+        
+        
         if (!empty($field)) {
             if (is_string($field)) {
                 if (!empty($this->options['via'])) {
@@ -1442,6 +1440,9 @@ class Query
             } else {
                 $this->options['order'][] = $field;
             }
+        }else{
+        //woo
+            $this->options['order'] = ['id'=>'desc'];
         }
         return $this;
     }
