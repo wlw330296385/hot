@@ -74,8 +74,7 @@ class CourtService {
             return ['msg' => $validate->getError(), 'code' => 200];
         }
         if($data['covers']){
-            $seri = explode(',', $data['covers']);
-            $data['cover'] = serialize($seri);
+            $data['cover'] = serialize($data['covers']);
         }
         $result = $this->courtModel->save($data,['id'=>$id]);
         if($result){
@@ -92,8 +91,7 @@ class CourtService {
             return ['msg' => $validate->getError(), 'code' => 200];
         }
         if($data['covers']){
-            $seri = explode(',', $data['covers']);
-            $data['cover'] = serialize($seri);
+            $data['cover'] = serialize($data['covers']);
         }
         $result = $this->courtModel->save($data);
         if($result){

@@ -65,14 +65,19 @@ class LessonService {
             }
             if($res['assistant']){
                 $res['assistants'] = unserialize($res['assistant']);
-                $res['assistant_ids'] = unserialize($res['assistant_id']);
             }else{
                 $res['assistants'] = [];
+            }
+
+            if($res['assistant_id']){
+                $res['assistant_ids'] = unserialize($res['assistant_id']);
+            }else{
                 $res['assistant_ids'] = [];
             }
             return $res;
-        }
+        }else{
             return $result;
+        }
     }
 
 
@@ -81,7 +86,7 @@ class LessonService {
     // 编辑课程
     public function updateLesson($data,$id){
         $is_power = $this->isPower($data['camp_id'],$data['member_id']);
-        if(!$is_power){
+        if($is_power<2){
             return ['code'=>200,'msg'=>'权限不足'];
         }
         
@@ -122,7 +127,7 @@ class LessonService {
     public function createLesson($data){
         // 查询是否有权限
         $is_power = $this->isPower($data['camp_id'],$data['member_id']);
-        if(!$is_power){
+        if($is_power<2){
             return ['code'=>200,'msg'=>'权限不足'];
         }
         if($data['doms']){

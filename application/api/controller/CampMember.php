@@ -52,7 +52,7 @@ class CampMember extends Base{
                 if($isType['status'] == 1) {
                     return json(['code'=>200,'msg'=>'你已经是训练营的一员']);
                 } else {
-                    return json(['code'=>200,'msg'=>'你已申请加入训练营,请等待审核']);
+                    return json(['code'=>100,'msg'=>'你已申请加入训练营,请等待审核']);
                 }
             }
             $status = 0;

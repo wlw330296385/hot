@@ -55,6 +55,8 @@
                 <form action="" class="mui-input-group">
                     <div class="mui-input-row"><label>场地名称</label>
                         <input type="text" class="court" placeholder="请输入训练场地名称">
+                        <input type="hidden" name="camp_id" value="{$campInfo['id']}">
+                        <input type="hidden" name="camp" value="{$campInfo['camp']}">
                     </div>
 
                     <div class="mui-input-row" id='showCityPicker3'>
@@ -121,7 +123,9 @@
 
                     <div class="mui-input-row h-auto mt55">
                         <ul class="previewList">
-                        
+                        <!--     <li><i id='del'>X</i><img id='img' src="/static/frontend/images/1.jpg"></li>
+                            <li><i id='del'>X</i><img id='img' src="/static/frontend/images/2.jpg"></li>
+                             <li><i id='del'>X</i><img id='img' src="/static/frontend/images/3.jpg"></li> -->
                         </ul>
                     </div>
 
@@ -206,11 +210,8 @@
         var  half_rent = $(".half_rent").val();
         var  full_rent = $(".full_rent").val();
         var  remarks = $(".remarks").val();
-        var  covers = $(".covers").val();
-        covers = $(".previewList li").find("img").each(function(){
-            $(this).src;
-        }.join(","))
-        console.log(covers)
+        var  camp_id ="{$campInfo['id']}"
+        var  camp ="{$campInfo['camp']}"
         if(court!=''&&location!=''&&open_time!=''&&contract!=''&&principal!=''&&chip_rent!=''&&half_rent!=''&&full_rent!=''&&outdoors!=''){
             mui.ajax("{:url('api/court/createCourtApi')}",{
                 data:{
@@ -227,7 +228,9 @@
                     "full_rent":full_rent,
                     "outdoors":outdoors,
                     "remarks":remarks,
-                    "covers":covers
+                    "covers":covers,
+                    "camp_id":camp_id,
+                    "camp":camp
                 },
                     dataType:'json',//服务器返回json格式数据
                     type:'post',//HTTP请求类型

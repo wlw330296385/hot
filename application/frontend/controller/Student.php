@@ -102,9 +102,11 @@ class Student extends Base
 					->limit(20)
 					->select();
 			$this->assign('studenListOffLine',$studenListOffLine);
-			return view();
+			return view('Student/studentListOfCamp');
+		}else{
+			return view('Student/expStudentListOfCamp');
 		}
-		return view('Student/expStudentListOfCamp');
+		
 	}
 	
 	public function createStudentApi(){
