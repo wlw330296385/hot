@@ -5,6 +5,7 @@ namespace app\service;
 use app\model\Schedule;
 use think\Db;
 use app\common\validate\ScheduleVal;
+use app\common\validate\ScheduleCommentVal;
 class ScheduleService {
 
 	protected $scheduleModel;
@@ -33,10 +34,10 @@ class ScheduleService {
         if($is_power<2){
             return ['code'=>200,'msg'=>'权限不足'];
         }
-        //$validate = validate('ScheduleVal');
-        //if(!$validate->check($data)){
-            //return ['msg' => $validate->getError(), 'code' => 200];
-        //}            
+        $validate = validate('ScheduleVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }            
 		$result = $this->scheduleModel->save($data);
 		if($result ===false){
 			return ['msg'=>$this->scheduleModel->getError(),'code'=>200];
@@ -152,5 +153,29 @@ class ScheduleService {
 
         return $is_power?$is_power:0;
     
+    }
+
+
+    // 可是评分
+    public function starSchedule($data){
+        $ScheduleComment = new \app\model\ScheduleComment;
+        $validate = validate('ScheduleCommentVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        $isSchedule = $ScheduleComment->where(['member_id'=>$data['member_id'],'schedule_id'=>$data['schedule_id']])->find();
+        if($isSchedule){
+            return ['code'=>200,'msg'=>'一个人只能评论一次'];
+        }else{
+            $result = $ScheduleComment->save($data);
+            if($result){
+                // 计算总评分
+                
+                return ['code'=>100,'msg'=>'评论成功'];
+            }else{
+                return ['code'=>200,'msg'=>'评论失败'];
+            }
+        }
+
     }
 }

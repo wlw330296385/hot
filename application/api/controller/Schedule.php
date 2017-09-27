@@ -80,7 +80,7 @@ class Schedule extends Base
 			if($is_power <3){
 				return json(['code'=>200,'msg'=>'权限不足']);die;
 			}
-			$schedule_id = input('schedule_id');
+			$schedule_id = input('param.schedule_id');
 			$result = db('schedule')->save(['status'=>1],$schedule_id);
 			if($result){
 				return json(['code'=>100,'msg'=>'审核成功']);die;
@@ -107,4 +107,27 @@ class Schedule extends Base
 		}
 
 	}
+
+	// 课时评分
+	public function starScheduleApi(){
+		try{
+			$camp_id = input('param.camp_id');
+			$is_power = $this->recordSchedulePowerApi();
+			if($is_power <3){
+				return json(['code'=>200,'msg'=>'权限不足']);die;
+			}
+			$data = input('post.');
+			$data['member_id'] = $this->memberInfo['id'];
+			$data['member'] = $this->memberInfo['member'];
+			$data['star'] = $data['attitude']+$data['profession']+$data['teaching_attitude']+$data['teaching_quality'];
+			if($result){
+				return json(['code'=>100,'msg'=>'审核成功']);die;
+			}else{
+				return json(['code'=>200,'msg'=>'审核失败']);die;
+			}
+		}catch (Exception $e){
+			return json(['code'=>100,'msg'=>$e->getMessage()]);
+		}
+	}
+
 }

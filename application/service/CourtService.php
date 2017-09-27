@@ -18,6 +18,8 @@ class CourtService {
             foreach ($res as $key => $value) {
                 if($value['cover']){
                     $res[$key]['covers'] = unserialize($value['cover']);
+                }else{
+                    $res[$key]['covers'] = [];
                 }
             }
             return $res;
@@ -41,6 +43,8 @@ class CourtService {
             $res = $result->toArray();
             if($res['cover']){
                 $res['covers'] = unserialize($res['cover']);
+            }else{
+                $res['covers'] = [];
             }
             return $res;
         }else{
@@ -59,6 +63,8 @@ class CourtService {
                 foreach ($res['data'] as $key => $value) {
                     if($value['cover']){
                         $res['data'][$key]['covers'] = unserialize($value['cover']);
+                    }else{
+                        $res['data'][$key]['covers'] = [];
                     }
                 }
             
@@ -75,6 +81,8 @@ class CourtService {
         }
         if($data['covers']){
             $data['cover'] = serialize($data['covers']);
+        }else{
+             $data['cover'] = '';
         }
         $result = $this->courtModel->save($data,['id'=>$id]);
         if($result){
@@ -92,6 +100,8 @@ class CourtService {
         }
         if($data['covers']){
             $data['cover'] = serialize($data['covers']);
+        }else{
+            $data['cover'] = '';
         }
         $result = $this->courtModel->save($data);
         if($result){

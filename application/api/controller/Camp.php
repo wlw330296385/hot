@@ -142,7 +142,7 @@ class Camp extends Base{
         }
     } 
 
-
+    // 是否以创建训练营
     public function isCreateCampApi(){
         try{ 
             $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];
@@ -152,6 +152,21 @@ class Camp extends Base{
             }else{
                 return json(['code'=>100,'msg'=>'没有训练营','data'=>'']);
             }
+        }catch(Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 训练营评论
+    public function createCampCommentApi(){
+        try{ 
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $data['avatar'] = $this->memberInfo['avatar'];
+
+            $result = $this->CampService->createCampComment($data);
+            return $result;
         }catch(Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }

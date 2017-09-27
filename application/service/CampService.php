@@ -3,6 +3,7 @@ namespace app\service;
 use app\model\Camp;
 use app\common\validate\CampVal;
 use think\Db;
+use app\common\validate\CampComemntVal;
 class CampService {
 
     public $Camp;
@@ -173,5 +174,21 @@ class CampService {
     // 训练营的教练
     public function coachlistOfcamp($campid) {
 
+    }
+
+
+    // 训练营评论
+    public function createCampComment($data){
+        $CampComemntModel = new \app\model\CampComemnt;
+        $validate = validate('CampComemntVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        $result = $CampComemntModel->save($data);
+        if($result){
+            return ['msg' => "评论成功", 'code' => 100];
+        }else{
+            return ['msg' =>"评论失败", 'code' => 200];
+        }
     }
 }
