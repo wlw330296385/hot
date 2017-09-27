@@ -18,7 +18,7 @@
     <!--选择器样式-->
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
     <style>
         .mui-popover-arrow {
             left: auto;
@@ -142,36 +142,36 @@
         <div class="mui-input-row">
             <a href="#assistantCoach" class="mui-navigate-right">
                 <label>助理教练</label>
-                <span class="assistantCoachCont domData" name="assistants">选填</span>
+                <span class="assistantCoachCont domData" name="assistants"></span>
                 <input type="hidden" name="assistant_ids" value="" class="data assistant_ids">
             </a>
         </div>
         <div class="mui-input-row">
             <a href="#leader" class="mui-navigate-right">
                 <label>领队</label>
-                <span class="leaderCont domData" name="leader">选填</span>
+                <span class="leaderCont domData" name="leader"></span>
                 <input type="hidden" name="leader_id" value="" class="data leader_id">
             </a>
         </div>
         <div class="mui-input-row">
             <a href="#headMaster" class="mui-navigate-right">
                 <label>班主任</label>
-                <span class="headMasterCont domData" name="teacher">选填</span>
+                <span class="headMasterCont domData" name="teacher"></span>
                 <input type="hidden" name="teacher_id" value="" class="data teacher_id">
             </a>
         </div>
 
         <div class="mui-input-row h-auto mt55">
             <a class="portraits filePicker" onclick="add_id(1)">
-                <label>场地环境</label>
+                <label>课程封面</label>
                 <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
-                <input type="hidden" name="portraits" value='' class="covers">
+                <input type="hidden" name="cover" value='' class="data">
             </a>
         </div>
 
         <div class="mui-input-row mt55">
             <label>备注</label>
-            <input type="text" class="input data" value="">
+            <input type="text" name="remarks" class="input data" value="">
         </div>
     </form>
 
@@ -540,13 +540,15 @@
         datas = wooApi.getInputData('select','data',data);
             // 获取其他标签值
             arrData = wooApi.getDomData('domData',datas);
+            console.log(arrData)
             var objData = wooApi.arrTOobj(arrData);
+            console.log(objData)
             var url = "{:url('api/lesson/updateLessonApi')}";
-            var ajaxResult = wooApi.asyncF(url,objData); 
+            var ajaxResult = wooApi.asyncF(url,objData);
             if(ajaxResult.code){
                 mui.toast(ajaxResult.msg);
                 console.log(ajaxResult.data)
-                var goUrl = "{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/'+ajaxResult.data;
+                var goUrl = "{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/'+ajaxResult.data+'/camp_id/{$campInfo.id}';
                 window.top.location.href = goUrl;
             }
         }
