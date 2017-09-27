@@ -40,7 +40,7 @@
         </div>
         <div id="offlineLessonList" class="mui-scroll-wrapper mui-control-content">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b lesson">
+                <ul class="mui-table-view detalis-list list border-b lesson0">
                 </ul>
             </div>
         </div>
@@ -65,8 +65,8 @@
     $(function () {
 
         //初始化全局变量
-        var count = 1;
-        var status = 1;
+        var onCount = 1;
+        var offCount = 1;
 
         mui('#onlineLessonList').pullRefresh({
             down: {
@@ -76,7 +76,7 @@
                 contentdown : "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
                 contentover : "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
                 contentrefresh : "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                callback: pulldownRefresh
+                callback: pulldownRefreshOn
             },
             up: {
                 //上拉加载
@@ -84,27 +84,65 @@
                 //auto:true,//可选,默认false.自动上拉加载一次
                 contentrefresh: '正在加载...',
                 contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                callback: pullupRefresh
+                callback: pullupRefreshOn
             }
         });
 
-        //下拉刷新具体业务实现
-        function pulldownRefresh() {
+        mui('#offlineLessonList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto:true,//可选,默认false.自动下拉刷新一次
+                contentdown : "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover : "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh : "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOff
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOff
+            }
+        });
+
+        //下拉刷新具体业务实现（上架）
+        function pulldownRefreshOn() {
             setTimeout(function() {
-                console.log()
-                count = 1;//刷新并显示第一页
-                var page = count;
+                onCount = 1;//刷新并显示第一页
+                var page = onCount;
                 var gType = 1;//代表下拉刷新
-                toList(page,gType,status);//具体取数据的方法
+                toList('onlineLessonList',page,gType,1);//具体取数据的方法
             }, 100);
         }
-        //上拉加载具体业务实现
-        function pullupRefresh() {
+        //上拉加载具体业务实现（上架）
+        function pullupRefreshOn() {
             setTimeout(function() {
-                count++;//翻下一页
-                var page = count;
+                onCount++;//翻下一页
+                var page = onCount;
                 var gType =2;//代表上拉加载
-                toList(page,gType,status);//具体取数据的方法
+                toList('onlineLessonList',page,gType,1);//具体取数据的方法
+            }, 100);
+        }
+
+        //下拉刷新具体业务实现（下架）
+        function pulldownRefreshOff() {
+            setTimeout(function() {
+                offCount = 1;//刷新并显示第一页
+                var page = offCount;
+                var gType = 1;//代表下拉刷新
+                toList('offlineLessonList',page,gType,0);//具体取数据的方法
+            }, 100);
+        }
+        //上拉加载具体业务实现（下架）
+        function pullupRefreshOff() {
+            setTimeout(function() {
+                offCount++;//翻下一页
+                var page = offCount;
+                var gType =2;//代表上拉加载
+                toList('offlineLessonList',page,gType,0);//具体取数据的方法
             }, 100);
         }
 
@@ -112,7 +150,7 @@
     })
 
     //接口获取数据并追加到页面
-    var toList = function(page,gType,status) {
+    var toList = function(wList,page,gType,status) {
         //搜索关键字不能完全为空，否则查询为空
         var url  = "{:url('api/lesson/getLessonListApi','','',true)}"+'/page/'+page;
         var campID = "{$camp_id}";
@@ -137,25 +175,25 @@
                     }
                     if(gType==1){
                         //上拉刷新
-                        $("ul.lesson1").empty().append(newli);
-                        mui('#onlineLessonList').pullRefresh().endPulldownToRefresh();
-                        mui('#onlineLessonList').pullRefresh().refresh(true);
+                        $("ul.lesson"+status).empty().append(newli);
+                        mui('#'+wList).pullRefresh().endPulldownToRefresh();
+                        mui('#'+wList).pullRefresh().refresh(true);
                     }else{
                         //下拉加载 gType==2
-                        $("ul.lesson1").append(newli);
+                        $("ul.lesson"+status).append(newli);
                     }
                 }
 
                 if(newli!=''){
-                    mui('#onlineLessonList').pullRefresh().endPullupToRefresh(false);
+                    mui('#'+wList).pullRefresh().endPullupToRefresh(false);
                 }else{
-                    mui('#onlineLessonList').pullRefresh().endPullupToRefresh(true);
+                    mui('#'+wList).pullRefresh().endPullupToRefresh(true);
                 }
 
             },
             error: function(xhr, type, errerThrown) {
                 mui.toast('网络异常,请稍候再试');
-                mui('#onlineLessonList').pullRefresh().endPullupToRefresh(true);
+                mui('#'+wList).pullRefresh().endPullupToRefresh(true);
             }
         });
     };
