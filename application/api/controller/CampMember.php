@@ -18,19 +18,19 @@ class CampMember extends Base{
         $remarks = input('param.remarks');
         $campInfo = $this->CampService->getCampInfo($camp_id);
         if(!$campInfo){
-            return json(['code'=>200,'msg'=>'不存在此训练营']);
+            return json(['code'=>100,'msg'=>'不存在此训练营']);
         }
         //是否已存在身份
         $isType = db('camp_member')->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>$camp_id,'status'=>1])->find();
         if($isType){
-            return json(['code'=>200,'msg'=>'你已经是训练营的一员']);
+            return json(['code'=>100,'msg'=>'你已经是训练营的一员']);
         }
         $result = db('camp_member')->insert(['camp_id'=>$campInfo['id'],'camp'=>$campInfo['camp'],'member_id'=>$this->memberInfo['id'],'member'=>$this->memberInfo['member'],'type'=>-1,'status'=>1,'create_time'=>time()]);
         $msg = '你已经成为该训练营的粉丝!';
         if($result){
-            return json(['code'=>100,'msg'=>$msg]);
+            return json(['code'=>200,'msg'=>$msg]);
         }else{
-            return json(['code'=>200,'msg'=>'申请失败']);
+            return json(['code'=>100,'msg'=>'申请失败']);
         }
     }
 
@@ -42,16 +42,16 @@ class CampMember extends Base{
             $remarks = input('param.remarks');
             $campInfo = $this->CampService->getCampInfo($camp_id);
             if(!$campInfo){
-                return json(['code'=>200,'msg'=>'不存在此训练营']);
+                return json(['code'=>100,'msg'=>'不存在此训练营']);
             }
             if(!$type ||$type>3 || $type<-1){
-                return json(['code'=>200,'msg'=>'不存在这个身份']);
+                return json(['code'=>100,'msg'=>'不存在这个身份']);
             }
             //是否已存在身份
             $isType = db('camp_member')->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>$camp_id])->find();
             if($isType){
                 if($isType['status'] == 1) {
-                    return json(['code'=>200,'msg'=>'你已经是训练营的一员']);
+                    return json(['code'=>100,'msg'=>'你已经是训练营的一员']);
                 } else {
                     return json(['code'=>100,'msg'=>'你已申请加入训练营,请等待审核']);
                 }
@@ -70,12 +70,12 @@ class CampMember extends Base{
                 'status'=>$status,
                 'create_time'=>time()]);
             if($result){
-                return json(['code'=>100,'msg'=>'申请成功']);
+                return json(['code'=>200,'msg'=>'申请成功']);
             }else{
-                return json(['code'=>200,'msg'=>'申请失败']);
+                return json(['code'=>100,'msg'=>'申请失败']);
             }
         }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -85,7 +85,7 @@ class CampMember extends Base{
             $id = input('param.id');
             $status = input('param.status');
             if(!$id || !$status){
-                return json(['code'=>100,'msg'=>'缺少传入参数']);
+                return json(['code'=>100,'msg'=>__lang('MSG_402')]);
             }
             $campMemberInfo = db('camp_member')->where(['id'=>$id,'status'=>0])->find();
             if(!$campMemberInfo){
@@ -94,14 +94,14 @@ class CampMember extends Base{
             $isPower = $this->CampService->isPower($campMemberInfo['camp_id'],$this->memberInfo['id']);
 
             if($isPower<3){
-                return json(['code'=>200,'msg'=>'您没有这个权限']);
+                return json(['code'=>100,'msg'=>__lang('MSG_403')]);
             }
 
             $result = db('camp_member')->where(['id'=>$id])->update(['status'=>$status, 'update_time' => time()]);
             if($result){
-                return json(['code'=>200,'msg'=>'操作成功']);
+                return json(['code'=>200,'msg'=>__lang('MSG_200')]);
             }else{
-                return json(['code'=>100,'msg'=>'操作失败']);
+                return json(['code'=>100,'msg'=>>__lang('MSG_400')]);
             }
         }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -116,27 +116,27 @@ class CampMember extends Base{
             $id = input('param.id');
             $type = input('param.type');
             if(!$id || !$type || ($type!=2|| $type!=5||$type!=3)){
-                return json(['code'=>200,'msg'=>'请正确传参']);
+                return json(['code'=>200,'msg'=>__lang('MSG_402')]);
             }
 
             $campMemberInfo = db('camp_member')->where(['id'=>$id,'status'=>1])->find();
             if(!$campMemberInfo){
-                return json(['code'=>200,'msg'=>'不存在该人员']);
+                return json(['code'=>100,'msg'=>'不存在该人员']);
             }
             $isPower = $this->CampService->isPower($campMemberInfo['camp_id'],$this->memberInfo['id']);
 
             if($isPower<4){
-                return json(['code'=>200,'msg'=>'您没有这个权限']);
+                return json(['code'=>100,'msg'=>__lang('MSG_403')]);
             }
 
             $result = db('camp_member')->where(['id'=>$id])->update(['type'=>$type]);
             if($result){
-                return json(['code'=>100,'msg'=>'操作成功']);
+                return json(['code'=>200,'msg'=>__lang('MSG_200')]);
             }else{
-                return json(['code'=>200,'msg'=>'操作失败']);
+                return json(['code'=>100,'msg'=>__lang('MSG_400')]);
             }
         }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }  
     }
    
@@ -148,13 +148,13 @@ class CampMember extends Base{
             $CampMember =new  \app\model\CampMember;
             $result = $CampMember->where(['member_id'=>$member_id,'camp_id'=>$camp_id])->find();
             if($result){
-                return json(['code'=>100,'msg'=>'OK','data'=>$result]);
+                return json(['code'=>200,'msg'=>'OK','data'=>$result]);
             }else{
-                return json(['code'=>200,'msg'=>'查询失败,请正确传参']);
+                return json(['code'=>100,'msg'=>__lang('MSG_402').__lang('MSG_403')]);
             }
             
         }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         } 
     }
 
@@ -177,7 +177,7 @@ class CampMember extends Base{
                 ->view('coach','*','coach.member_id=camp_member.member_id')
                 ->where($map)
                 ->select();
-            return ['code' => 100, 'msg' => __lang('MSG_201'), 'data' => $list];
+            return ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $list];
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -195,9 +195,9 @@ class CampMember extends Base{
             $result = $CampMember->where($map)->paginate(10);
             // echo $CampMember->getlastsql();die;
             if($result){
-                return json(['code'=>100,'msg'=>'OK','data'=>$result]);
+                return json(['code'=>200,'msg'=>'OK','data'=>$result]);
             }else{
-                return json(['code'=>200,'msg'=>'查询失败,请正确传参']);
+                return json(['code'=>100,'msg'=>__lang('MSG_402').__lang('MSG_403')]);
             }
         }catch(Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
@@ -214,24 +214,24 @@ class CampMember extends Base{
             $model = new \app\model\CampMember();
             $campmember = $model->where(['id' => $id])->find();
             if ($campmember->getData('type')==4 && $campmember->member_id == $this->memberInfo['id']) {
-                return json(['code' => 200, 'msg' => '你是营主不能删除自己']);
+                return json(['code' => 100, 'msg' => '你是营主不能删除自己']);
             }
             
             $campS = new CampService();
             $power = $campS->isPower($campmember['camp_id'], $this->memberInfo['id']);
             if ($power < 3) {
-                return ['code' => 200, 'msg' => '您没有这个权限'];
+                return ['code' => 100, 'msg' => __lang('MSG_403')];
             }
             $campmember->status = -1;
             $result = $campmember->save();
             if ($result) {
-                $response = json(['code' => 100, 'msg' => __lang('MSG_200'), 'data' => $result]);
+                $response = json(['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $result]);
             } else {
-                $response = json(['code' => 200, 'msg' => __lang('MSG_400')]);
+                $response = json(['code' => 100, 'msg' => __lang('MSG_400')]);
             }
             return $response;
         } catch (Exception $e) {
-            return json(['code' => 200, 'msg' => $e->getMessage()]);
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
 }

@@ -33,7 +33,7 @@ class CoachService{
         if ($result === false) {
             return ['code' => 100, 'msg' => $model->getError()];
         }else{
-            return ['code'=>200,'msg'=>'OK','data'=> $model->getLastInsID() ];
+            return ['code'=>200,'msg'=>__lang('MSG_200'),'data'=> $model->getLastInsID() ];
         }
     }
 
@@ -48,7 +48,7 @@ class CoachService{
         if ($result === false) {
             return ['code' => 100, 'msg' => $model->getError()];
         } else {
-            return ['code' => 200, 'msg' => __lang('MSG_100_SUCCESS')];
+            return ['code' => 200, 'msg' => __lang('MSG_200')];
         }
     }
 	
@@ -76,18 +76,18 @@ class CoachService{
     public function updateCoachStatus($request) {
 	    $result = Coach::update($request);
 	    if (!$result) {
-	        return [ 'msg' => __lang('MSG_200_ERROR'), 'code' => 200 ];
+	        return [ 'msg' => __lang('MSG_400'), 'code' => 100 ];
         }else{
-            return ['msg' => __lang('MSG_100_SUCCESS'), 'code' => 100, 'data' => $result];
+            return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $result];
         }
     }
 
     public function SoftDeleteCamp($id) {
         $result = Coach::destroy($id);
         if (!$result) {
-	        return [ 'msg' => __lang('MSG_200_ERROR'), 'code' => 200 ];
+	        return [ 'msg' => __lang('MSG_400'), 'code' => 100 ];
         } else {
-            return ['msg' => __lang('MSG_100_SUCCESS'), 'code' => 100, 'data' => $result];
+            return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $result];
         }
     }
 
@@ -101,12 +101,12 @@ class CoachService{
     public function getCoachListPage($map=[],$page=1, $paginate = 10, $order=''){
         $result = Coach::with('member')->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
         if (!$result) {
-            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
+            return [ 'msg' => __lang('MSG_401'), 'code' => 100 ];
         }
         if ($result->isEmpty()) {
-            return [ 'msg' => __lang('MSG_000_NULL'), 'code' => 000, 'data' => []];
+            return [ 'msg' => __lang('MSG_000'), 'code' => 200, 'data' => []];
         }
-        return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $result->toArray()];
+        return [ 'msg' => __lang('MSG_201'), 'code' => 200, 'data' => $result->toArray()];
     }   
 
 

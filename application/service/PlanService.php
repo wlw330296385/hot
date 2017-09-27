@@ -56,14 +56,14 @@ class PlanService {
             $data['exercise'] = serialize($arrSeri);
         }
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
         
         $res = $this->Plan->save($data,$id);
         if($res === false){
-            return ['msg'=>$this->Plan->getError(),'code'=>'200'];
+            return ['msg'=>$this->Plan->getError(),'code'=>100];
         }else{
-            return ['data'=>$res,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>'100'];
+            return ['data'=>$res,'msg'=>__lang('MSG_200'),'code'=>200];
         }
     }
 
@@ -87,14 +87,14 @@ class PlanService {
             $data['exercise'] = serialize($arrSeri);
         }
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
         
         $res = $this->Plan->save($data);
         if($res === false){
-            return ['msg'=>$this->Plan->getError(),'code'=>'200'];
+            return ['msg'=>$this->Plan->getError(),'code'=>100];
         }else{
-            return ['data'=>$res,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>'100'];
+            return ['data'=>$res,'msg'=>__lang('MSG_200'),'code'=>200];
         }
     }
 

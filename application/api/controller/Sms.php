@@ -23,16 +23,16 @@ class Sms {
                 $data = ['smscode' => $smscode, 'phone' => $telephone, 'content' => $content,'create_time' => time(), 'use' => $use];
                 $savesms = db('smsverify')->insert($data);
                 if (!$savesms) {
-                    return [ 'code' => 200, 'msg' => '短信验证码记录异常' ];
+                    return [ 'code' => 100, 'msg' => '短信验证码记录异常' ];
                 }
 
-                return [ 'code' => 100, 'msg' => '验证码已发送,请注意查收' ];
+                return [ 'code' => 200, 'msg' => '验证码已发送,请注意查收' ];
             } else {
-                return [ 'code' => 200, 'msg' => '获取验证码失败,请重试' ];
+                return [ 'code' => 100, 'msg' => '获取验证码失败,请重试' ];
             }
 
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -43,18 +43,18 @@ class Sms {
             $smscode = input('smsCode');
             $smsverify = db('smsverify')->where([ 'phone' => $telephone, 'smscode' => $smscode, 'status' => 0 ])->find();
             if (!$smsverify) {
-                return [ 'code' => 200, 'msg' => '验证码无效,请重试' ];
+                return [ 'code' => 100, 'msg' => '验证码无效,请重试' ];
             }
 
             if (time()-$smsverify['create_time'] > 300) {
-                return [ 'code' => 200, 'msg' => '验证码已过期,请重新获取' ];
+                return [ 'code' => 100, 'msg' => '验证码已过期,请重新获取' ];
             }
 
             db('smsverify')->where(['id' => $smsverify['id']])->setField('status', 1);
-            return [ 'code' => 100, 'msg' => '验证通过'];
+            return [ 'code' => 200, 'msg' => '验证通过'];
 
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 }

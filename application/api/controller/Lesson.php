@@ -3,6 +3,8 @@ namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\LessonService;
 use app\service\GradeService;
+use think\Exception;
+
 class Lesson extends Base{
 	protected $LessonService;
 	protected $GradeService;
@@ -49,9 +51,9 @@ class Lesson extends Base{
             }
 
             $lessonList = $this->LessonService->getLessonPage($map,$page);
-            return json(['code'=>100,'msg'=>'OK','data'=>$lessonList]);
+            return json(['code'=>200,'msg'=>'OK','data'=>$lessonList]);
         }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }       
     }
 
@@ -61,15 +63,17 @@ class Lesson extends Base{
         
         try{
             $map = input('post.');
-            $page = input('param.page')?input('param.page'):1;
-            $result = $this->LessonService->getLessonPage($map,$page);
-            if($result){
-                return json(['code'=>'100','msg'=>'获取成功','data'=>$result]);die;        
+            $page = input('param.page', 1);
+            $lessonS = new LessonService();
+            return $lessonS->getLessonPage($map, $page);
+            /*$result = $this->LessonService->getLessonPage($map,$page);
+             * if($result){
+                return json(['code'=>'100','msg'=>__lang('MSG_200'),'data'=>$result]);
             }else{
-                return json(['code'=>'200','msg'=>[]]);die;
-            }
+                return json(['code'=>'200','msg'=>__lang('MSG_401')]);
+            }*/
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
 		    	
     }
@@ -100,7 +104,7 @@ class Lesson extends Base{
 
             return json($result);
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     	
     }
@@ -110,9 +114,9 @@ class Lesson extends Base{
         try{
             $lesson_id = input('param.lesson_id');
             $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->where('grade_id','neq','')->field('student,id')->select();
-            return json(['code'=>100,'msg'=>'获取成功','data'=>$studentList]);
+            return json(['code'=>200,'msg'=>__lang('MSG_201'),'data'=>$studentList]);
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -121,9 +125,9 @@ class Lesson extends Base{
         try{
             $lesson_id = input('param.lesson_id');
             $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>4])->field('student,id')->select();
-            return json(['code'=>100,'msg'=>'获取成功','data'=>$studentList]);
+            return json(['code'=>200,'msg'=>__lang('MSG_201'),'data'=>$studentList]);
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -132,9 +136,9 @@ class Lesson extends Base{
         try{
             $lesson_id = input('param.lesson_id');
             $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->where('grade_id','neq','')->field('student,id')->select();
-            return json(['code'=>100,'msg'=>'获取成功','data'=>$studentList]);
+            return json(['code'=>200,'msg'=>__lang('MSG_201'),'data'=>$studentList]);
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -145,7 +149,7 @@ class Lesson extends Base{
             $lesson_id = input('param.lesson_id');
             $map = input('post');
             $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'status'=>1])->where($map)->where('grade_id','neq','')->field('student,id')->select();
-            return json(['code'=>100,'msg'=>'获取成功','data'=>$studentList]);
+            return json(['code'=>100,'msg'=>__lang('MSG_201'),'data'=>$studentList]);
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
@@ -157,7 +161,7 @@ class Lesson extends Base{
         try{
             $camp_id = input('param.camp_id');
             if(!$camp_id){
-                return json(['code'=>200,'msg'=>'camp_id未传参']);
+                return json(['code'=>100,'msg'=>'camp_id未传参']);
             }
             $isPower = $this->LessonService->isPower($camp_id,$memberInfo['id']);
 
@@ -166,18 +170,33 @@ class Lesson extends Base{
                 $status = input('post.status');
                 $result = db('lesson')->save(['status'=>$status],$lesson_id);
                 if($result){
-                    return json(['code'=>100,'msg'=>'操作成功']);
+                    return json(['code'=>200,'msg'=>__lang('MSG_200')]);
                 }else{
-                    return json(['code'=>200,'msg'=>'操作失败']);
+                    return json(['code'=>100,'msg'=>__lang('MSG_400')]);
                 }
                 
             }else{
-                return json(['code'=>200,'msg'=>'权限不足']);
+                return json(['code'=>100,'msg'=>__lang('MSG_403')]);
             }
             
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
-    
+
+    // 课程上下架/删除 2017/09/27
+    public function removelesson() {
+        try {
+            $lessonid = input('param.lessonid');
+            $action = input('param.action');
+            if (!$action) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+
+            dump($lessonid);
+            dump($action);
+        } catch(Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 }

@@ -17,9 +17,9 @@ class Salaryin extends Frontend{
             $result = $this->SalaryInService->getReabteByMonth('8',2);
             $avreageMonthSalary = $this->SalaryInService->getAverageSalaryByMonth(2);
             $averageYearSalary = $this->SalaryInService->getAverageSalaryByYear(2); 
-            return json(['code'=>100,'msg'=>'ok','data'=>['avreageMonthSalary'=>$avreageMonthSalary,'averageYearSalary'=>$averageYearSalary]]);
+            return json(['code'=>200,'msg'=>'ok','data'=>['avreageMonthSalary'=>$avreageMonthSalary,'averageYearSalary'=>$averageYearSalary]]);
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -41,9 +41,9 @@ class Salaryin extends Frontend{
             $levelAward = $this->SalaryInService->getSalaryByMonth($startInt,$endInt,$member_id);
             $rankAward  = $this->SalaryInService->getSalaryByMonth($startInt,$endInt,$member_id);   
             $totalSalary = $rebateIn+$scheduleIn+$sellsIn+$levelAward+$rankAward;
-            return json(['code'=>100,'msg'=>'ok','data'=>['rebateIn'=>$rebateIn,'scheduleIn'=>$scheduleIn,'sellsIn'=>$sellsIn,'levelAward'=>$levelAward,'rankAward'=>$rankAward,'totalSalary'=>$totalSalary]]);
+            return json(['code'=>200,'msg'=>'ok','data'=>['rebateIn'=>$rebateIn,'scheduleIn'=>$scheduleIn,'sellsIn'=>$sellsIn,'levelAward'=>$levelAward,'rankAward'=>$rankAward,'totalSalary'=>$totalSalary]]);
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -59,9 +59,9 @@ class Salaryin extends Frontend{
             $endInt = strtotime($end);
             $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];
             $salaryList = $this->Salaryin->getSalaryList($startInt,$endInt,['member_id'=>$member_id],$page);
-            return json(['code'=>100,'msg'=>'ok','data'=>$salaryList]);
+            return json(['code'=>200,'msg'=>'ok','data'=>$salaryList]);
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }        
     }
 

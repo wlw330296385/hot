@@ -46,7 +46,7 @@ class BillService {
     public function createBill($data){
         $validate = validate('BillVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
         // grade_member操作
         $GradeMember = new GradeMember;
@@ -57,7 +57,7 @@ class BillService {
                 db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
             }
         }else{
-            return ['code'=>200,'msg'=>'你已经购买过课程,请不要重复购买;请联系课程管理员修改课时数量'];
+            return ['code'=>100,'msg'=>'你已经购买过课程,请不要重复购买;请联系课程管理员修改课时数量'];
         }
         $result = $this->Bill->save($data);
         if($result){
@@ -75,9 +75,9 @@ class BillService {
 
             }
             
-            return ['code'=>100,'msg'=>'新建成功','data'=>$result];
+            return ['code'=>200,'msg'=>'新建成功','data'=>$result];
         }else{
-            return ['code'=>200,'msg'=>$this->Bill->getError()];
+            return ['code'=>100,'msg'=>$this->Bill->getError()];
         }
     }
     
@@ -103,13 +103,13 @@ class BillService {
         if($is_pay == 0){
             $result = $this->Bill->save($data,['id'=>$id]);
              if($result){
-                return ['code'=>100,'msg'=>'修改成功','data'=>$result];
+                return ['code'=>200,'msg'=>'修改成功','data'=>$result];
             }else{
-                return ['code'=>200,'msg'=>$this->Bill->getError()];
+                return ['code'=>100,'msg'=>$this->Bill->getError()];
             }            
         }else{
             // file_put_contents('/data/bill/'.date('Y-m-d',time()),json_encode(['data'=>$data,'memberInfo'=>$memberInfo]));
-            return ['code'=>200,'msg'=>'非法操作'];
+            return ['code'=>100,'msg'=>'非法操作'];
         }
 
     }
@@ -139,13 +139,13 @@ class BillService {
             if($billInfo){
                 $balance_pay = $billInfo['balance_pay'];
                 // 返现返积分
-                return ['code'=>100,'msg'=>'支付成功'];
+                return ['code'=>200,'msg'=>'支付成功'];
             }else{
-                return ['code'=>200,'msg'=>'找不到订单信息'];
+                return ['code'=>100,'msg'=>'找不到订单信息'];
             }
             
         }else{
-            return ['code'=>200,'msg'=>'支付失败,请联系客服'];
+            return ['code'=>100,'msg'=>'支付失败,请联系客服'];
         }
     }
 

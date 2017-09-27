@@ -41,7 +41,7 @@ class Login extends Base{
         	$value = input('post.value');
         	$memberService = new \app\service\MemberService;
         	$result = $memberService->isFieldRegister($field,$value);
-            return json(['code'=>100,'msg'=>$result]);
+            return json(['code'=>200,'msg'=>$result]);
         }catch (Exception $e){
         	return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -58,14 +58,14 @@ class Login extends Base{
             	$res = $this->setSession($result);
             	if($res===true){
                     session(null,'token');
-            		return json(['code'=>100,'msg'=>'登陆成功']);
+            		return json(['code'=>200,'msg'=>'登陆成功']);
             	}else{
-            		return json(['code'=>200,'msg'=>'系统错误']);
+            		return json(['code'=>100,'msg'=>'系统错误']);
             	}
             }
-            return json(['code'=>200,'msg'=>'账号密码错误']);
+            return json(['code'=>100,'msg'=>'账号密码错误']);
         }catch (Exception $e){
-        	return json(['code'=>200,'msg'=>$e->getMessage()]);
+        	return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 

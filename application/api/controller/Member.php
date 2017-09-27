@@ -49,7 +49,7 @@ class Member extends Frontend{
             $result = $this->MemberService->updateMemberInfo($data,$member_id);
             return json($result);
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }  
     }
 
@@ -59,9 +59,9 @@ class Member extends Frontend{
         try{
             cookie('member',null);       
             $result = session(null, 'think');
-            return json(['code'=>100,'msg'=>'注销成功']);
+            return json(['code'=>200,'msg'=>'注销成功']);
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
 
     }

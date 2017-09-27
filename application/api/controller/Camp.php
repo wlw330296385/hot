@@ -30,9 +30,9 @@ class Camp extends Base{
                 $map['camp'] = ['LIKE','%'.$keyword.'%'];
             }
             $campList = $this->CampService->getCampList($map,$page);
-            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
+            return json(['code'=>200,'msg'=>'OK','data'=>$campList]);
         }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }       
     }
 
@@ -42,10 +42,10 @@ class Camp extends Base{
             $page = input('param.page')?input('param.page'):1;
             $campList = $this->CampService->getCampList($map,$page);
 
-            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
+            return json(['code'=>200,'msg'=>'OK','data'=>$campList]);
 
         }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }  
     }
 
@@ -153,7 +153,7 @@ class Camp extends Base{
                 return json(['code'=>100,'msg'=>'没有训练营','data'=>'']);
             }
         }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -168,7 +168,7 @@ class Camp extends Base{
             $result = $this->CampService->createCampComment($data);
             return json($result);
         }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -179,12 +179,12 @@ class Camp extends Base{
             $map = input('post.');
             $result = $this->CampService->getCampCommentListByPage($map);
             if($result){
-                return json(['code'=>100,'msg'=>'获取成功','data'=>$result]);
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
             }else{
-                return json(['code'=>200,'msg'=>'传参错误']);
+                return json(['code'=>100,'msg'=>'传参错误']);
             }
         }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 }
