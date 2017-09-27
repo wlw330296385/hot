@@ -213,6 +213,10 @@ class CampMember extends Base{
             $id = input('campmemberid');
             $model = new \app\model\CampMember();
             $campmember = $model->where(['id' => $id])->find();
+            if ($campmember->getData('type')==4 && $campmember->member_id == $this->memberInfo['id']) {
+                return json(['code' => 200, 'msg' => '你是营主不能删除自己']);
+            }
+            
             $campS = new CampService();
             $power = $campS->isPower($campmember['camp_id'], $this->memberInfo['id']);
             if ($power < 3) {
