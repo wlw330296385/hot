@@ -14,6 +14,7 @@
     <!--选择器样式-->
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
     <style>
         .mui-views,
         .mui-view,
@@ -180,7 +181,7 @@
                                 <label>头像</label><img src="{$memberInfo['avatar']}" alt="头像" style="margin-right: 18px">
                             </div>
                             <div class="mui-input-row">
-                                <label>学员ID</label><span>{$memberInfo['id']}</span>
+                                <label>学员ID</label><span>{$memberInfo['hot_id']}</span>
                             </div>
                             <div class="mui-input-row">
                                 <label>姓名</label><span class="name">{$memberInfo['member']}</span>
@@ -231,14 +232,17 @@
             <div class="mui-scroll-wrapper">
                 <div class="mui-scroll">
                     <form action="" class="mui-input-group archives2 mb">
+
                         <div class="mui-input-row h-auto">
-                            <a href="#picture" class="mui-navigate-right">
-                                <label>头像</label><img class="coachicon" src="/static/frontend/images/yuantiao.jpg" alt="头像">
+                            <a class="mui-navigate-right filePicker" onclick="add_id(1)">
+                                <label>头像</label>
+                                <img id="preview_1" class="coachicon icon01 upload-preview" src="{$memberInfo['avatar']}"  alt="">
+                                <input type="hidden" name="" value="" class="cover">
                             </a>
                         </div>
                         <div class="mui-input-row">
                             <label>学员ID</label>
-                            <span>{$memberInfo['id']}</span>
+                            <span>{$memberInfo['hot_id']}</span>
                         </div>
                         <div class="mui-input-row">
                             <label>姓名</label>
@@ -247,59 +251,66 @@
                         <div class="mui-input-row">
                             <label>性别</label>
                             <span class="editor">
-                               <select class="sex">
-                                <option>{$memberInfo['sex']}</option>
-                                <option>男</option>
-                                <option>女</option>
-                            </select>
-                        </span>
+                                <select class="sex">
+                                    <option value="1">男</option>
+                                    <option value="2">女</option>
+                                </select>
+                            </span>
+                        </div>
+                        <div class="mui-input-row" id="showUserPicker">
+                            <label>身高</label>
+                            <span id='userResult' class="height editor ui-alert" data-options='{"type":"text","beginText":2000,"endText":2023}'>{$memberInfo['height']}</span>
+                        </div>
+                        <div class="mui-input-row">
+                            <label>体重</label>
+                            <input type="text" name="" class="weight editor" value="{$memberInfo['weight']}">
+                        </div>
+                        <div class="mui-input-row btn1" id="demo2" data-options='{"type":"date","beginYear":2000,"endYear":2023}'>
+                            <label>出生日期</label>
+                            <span id="result" class="ui-alert birthday">{$memberInfo['birthday']}</span>
+                        </div>
+                        <div class="mui-input-row" id='showCityPicker3'>
+                            <label>所属地区</label>
+                            <span id="cityResult3" class="ui-alert location">{$memberInfo['province']} {$memberInfo['city']} {$memberInfo['area']}</span>
+                        </div>
+                        <div class="mui-input-row">
+                            <label>注册日期</label>
+                            <span class="">{$memberInfo['create_time']}</span>
+                        </div>
+                    </form>
+                    <div class="tjbtn tjbtn-next">
+                        <button type="button" class="btn successBtn">
+                            完成
+                        </button>
                     </div>
-                    <div class="mui-input-row">
-                        <label>身高</label>
-                        <input type="text" name="" class="height editor" value="{$memberInfo['height']}">
-                    </div>
-                    <div class="mui-input-row">
-                        <label>体重</label>
-                        <input type="text" name="" class="weight editor" value="{$memberInfo['weight']}">
-                    </div>
-                    <div class="mui-input-row btn1" id="demo2" data-options='{"type":"date","beginYear":1990,"endYear":2013}'>
-                        <label>出生日期</label>
-                        <span id="result" class="ui-alert birthday">{$memberInfo['birthday']}</span>
-                    </div>
-                    <div class="mui-input-row" id='showCityPicker3'>
-                        <label>所属地区</label>
-                        <span id="cityResult3" class="ui-alert location">{$memberInfo['province']} {$memberInfo['city']} {$memberInfo['area']}</span>
-                    </div>
-                    <div class="mui-input-row">
-                        <label>注册日期</label>
-                        <span class="">{$memberInfo['create_time']}</span>
-                    </div>
-                </form>
-                <div class="tjbtn tjbtn-next">
-                    <button type="button" class="btn successBtn">
-                        完成
-                    </button>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
-<script src="/static/frontend/js/mui.min.js "></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<!-- 窗体切换 -->
-<script src="/static/frontend/js/mui.view.js "></script>
-<!--选择器-->
-<script src="/static/frontend/js/mui.picker.min.js"></script>
-<script src="/static/frontend/js/mui.poppicker.js"></script>
-<script src="/static/frontend/js/city.data-3.js"></script>
-<script>
-    mui.init();
+    <script src="/static/frontend/js/mui.min.js "></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <!-- 窗体切换 -->
+    <script src="/static/frontend/js/mui.view.js "></script>
+    <!--选择器-->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script src="/static/frontend/js/height.data.js"></script>
+    
+    <script>
+        mui.init();
         //初始化单页view
         var viewApi = mui('#app').view({
             defaultPage: '#setting'
         });
+        $(".filePicker div").eq(2).css("width","100%")
 
         //初始化单页的区域滚动
         mui('.mui-scroll-wrapper').scroll();
@@ -323,6 +334,20 @@
                 var _getParam = function (obj, param) {
                     return obj[param] || '';
                 };
+
+            //普通示例
+            var userPicker = new $.PopPicker();
+            userPicker.setData(heightData);
+
+            var showUserPickerButton = doc.getElementById('showUserPicker');
+            var userResult = doc.getElementById('userResult');
+            showUserPickerButton.addEventListener('tap', function(event) {
+                userPicker.show(function(items) {
+                    userResult.innerText = JSON.stringify(items[0].text);
+                            //返回 false 可以阻止选择框的关闭
+                            //return false;
+                        });
+            }, false);
             ///级联示例
             var cityPicker3 = new $.PopPicker({
                 layer: 3
@@ -364,11 +389,12 @@
             mui.confirm('是否确认修改？','', btnArray, function(e) {
                 if (e.index == 1) {
                     var member =$("#editor .member").val();
-                    var sex =$("#editor .sex").val();
+                    var sex =$("#editor .sex option:selected").val();
                     var height =$("#editor .height").val();
                     var weight =$("#editor .weight").val();
                     var birthday =$("#editor .birthday").text();
                     var location =$("#editor .location").text();
+                    console.log(sex)
                     if(member!=''&&sex!=''&& height!=''&& weight!=''&& birthday!=''&&location!=''){
                         mui.ajax("{:url('api/member/updateMemberApi')}", {
                             data: {
@@ -386,7 +412,7 @@
                             success: function (data) {
                                 console.log(data)
                                 mui.toast(data.msg)
-                                viewApi.back();
+                                // viewApi.back();
                             },
                             error: function (xhr, type, errorThrown) {
                                 console.log(data);
