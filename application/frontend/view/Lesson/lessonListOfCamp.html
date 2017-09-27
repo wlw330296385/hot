@@ -19,9 +19,9 @@
 
 <body class="whitebg">
 
-<header id="header" class="mui-bar mui-bar-nav">
+<header id="header" class="mui-bar mui-bar-nav for-tab">
     <div class="camp-lesson-list">
-        <div id="segmentedControl" class="mui-segmented-control mb">
+        <div class="mui-segmented-control mb">
             <a class="mui-control-item mui-active" href="#onlineLessonList">上架课程</a>
             <a class="mui-control-item" href="#offlineLessonList">下架课程</a>
             <a class="mui-control-item" href="{:url('lesson/createLesson',['camp_id'=>$camp_id])}">添加课程</a>
@@ -31,22 +31,20 @@
 
 <div class="mui-content">
 
-        <div id="onlineLessonList" class="mui-control-content mui-scroll-wrapper mui-active">
+    <div class="tab-pullRefresh">
+        <div id="onlineLessonList" class="mui-scroll-wrapper mui-control-content mui-active">
             <div class="mui-scroll">
                 <ul class="mui-table-view detalis-list list border-b lesson1">
                 </ul>
             </div>
         </div>
-        <div id="offlineLessonList" class="mui-control-content mui-scroll-wrapper">
+        <div id="offlineLessonList" class="mui-scroll-wrapper mui-control-content">
             <div class="mui-scroll">
                 <ul class="mui-table-view detalis-list list border-b lesson">
                 </ul>
             </div>
         </div>
-
-
-    <!--底部导航-->
-    {layout name="Layout/footer"}
+    </div>
 
 </div>
 </body>
@@ -69,13 +67,12 @@
         //初始化全局变量
         var count = 1;
         var status = 1;
-        toList(count,2,status);
 
         mui('#onlineLessonList').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
-                auto:false,//可选,默认false.自动下拉刷新一次
+                auto:true,//可选,默认false.自动下拉刷新一次
                 contentdown : "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
                 contentover : "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
                 contentrefresh : "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
@@ -94,6 +91,7 @@
         //下拉刷新具体业务实现
         function pulldownRefresh() {
             setTimeout(function() {
+                console.log()
                 count = 1;//刷新并显示第一页
                 var page = count;
                 var gType = 1;//代表下拉刷新
@@ -130,21 +128,24 @@
             headers: {'Content-Type': 'application/json'},
             //processData:false,
             success: function (data) {
-                var newli='';
 
-                for(var i=0;i<=data.data.length-1;i++){
-                    var urls = "{:url('lesson/LessonInfoOfCamp')}"+'/lesson_id/'+data.data[i].id+'/camp_id/'+campID;
-                    newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="'+urls+'"><img class="mui-media-object mui-pull-left" src="'+data.data[i].cover+'"><div class="mui-media-body wd45">'+data.data[i].lesson+'<p class="mui-ellipsis">'+data.data[i].gradecate+'</p></div><div class="price-frame"><p class="price">￥'+data.data[i].cost+'</p><p class="address">'+data.data[i].area+'</p></div></a></li>'
+                var newli='';
+                if (data.code == 100) {
+                    for(var i=0;i<=data.data.length-1;i++){
+                        var urls = "{:url('lesson/LessonInfoOfCamp')}"+'/lesson_id/'+data.data[i].id+'/camp_id/'+campID;
+                        newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="'+urls+'"><img class="mui-media-object mui-pull-left" src="'+data.data[i].cover+'"><div class="mui-media-body wd45">'+data.data[i].lesson+'<p class="mui-ellipsis">'+data.data[i].gradecate+'</p></div><div class="price-frame"><p class="price">￥'+data.data[i].cost+'</p><p class="address">'+data.data[i].area+'</p></div></a></li>'
+                    }
+                    if(gType==1){
+                        //上拉刷新
+                        $("ul.lesson1").empty().append(newli);
+                        mui('#onlineLessonList').pullRefresh().endPulldownToRefresh();
+                        mui('#onlineLessonList').pullRefresh().refresh(true);
+                    }else{
+                        //下拉加载 gType==2
+                        $("ul.lesson1").append(newli);
+                    }
                 }
-                if(gType==1){
-                    //上拉刷新
-                    $("ul.lesson1").empty().append(newli);
-                    mui('#onlineLessonList').pullRefresh().endPulldownToRefresh();
-                    mui('#onlineLessonList').pullRefresh().refresh(true);
-                }else{
-                    //下拉加载 gType==2
-                    $("ul.lesson1").append(newli);
-                }
+
                 if(newli!=''){
                     mui('#onlineLessonList').pullRefresh().endPullupToRefresh(false);
                 }else{
