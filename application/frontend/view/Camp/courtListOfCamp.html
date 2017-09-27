@@ -14,74 +14,154 @@
     <!--等级星星样式-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
 </head>
-
 <body class="whitebg">
+
+
+
+<header id="header" class="mui-bar mui-bar-nav for-tab">
+    <div class="camp-lesson-list">
+        <div class="mui-segmented-control mb">
+            <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"></a>
+            <a class="mui-control-item mui-active" href="#onCourtList">已审核</a>
+            <a class="mui-control-item" href="#offCourtList">未审核</a>
+            <a class="mui-control-item" href="{:url('court/searchCourtList',['camp_id'=>$camp_id])}">添加场地</a>
+        </div>
+    </div>
+</header>
 
 <div class="mui-content">
 
-    <div class="list camp-list camp-lesson-list detalis-list court">
-        <div class="camp-lesson-list">
-            <div id="segmentedControl" class="mui-segmented-control mb">
-                <a class="mui-control-item mui-active" href="#item1">已审核</a>
-                <a class="mui-control-item" href="#item2">未审核</a>
-                <a class="mui-control-item" href="{:url('court/searchCourtList',['camp_id'=>$camp_id])}">添加场地</a>
+    <div class="tab-pullRefresh">
+        <div id="onCourtList" class="mui-scroll-wrapper mui-control-content mui-active">
+            <div class="mui-scroll">
+                <ul class="mui-table-view detalis-list list border-b court1">
+                </ul>
             </div>
-
-            <div class="item-list">
-                <div id="item1" class="mui-control-content mui-active">
-                    <ul class="mui-table-view list court1">
-
-                    </ul>
-                </div>
-                <div id="item2" class="mui-control-content">
-                    <ul class="mui-table-view list court0">
-                    </ul>
-                </div>
+        </div>
+        <div id="offCourtList" class="mui-scroll-wrapper mui-control-content">
+            <div class="mui-scroll">
+                <ul class="mui-table-view detalis-list list border-b court0">
+                </ul>
             </div>
         </div>
     </div>
 
-
-    <!--底部导航-->
-    {layout name="Layout/footer"}
-
 </div>
+</body>
 
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="/static/frontend/js/wooApi.js"></script>
 <script src="/static/frontend/js/common.js"></script>
+
+
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-
-    $(function () {
-
-        var keyword='';
-        $('.keyword').val(keyword);
-
-        //搜索教练
-        $("#searchBtn").on("click", function () {
-            keyword = $(".keyword").val();
-            toCourthList(keyword);
-        })
-
-        //获取训练营教练列表
-        toCourtList(keyword);
+    mui("body").on("tap","a",function(){
+        window.top.location.href=this.href;
     });
 
 
+    $(function () {
 
-    //训练营教练列表接口获取数据并追加到页面
-    var toCourtList = function(keyword) {
-        var url  = "{:url('api/court/getCourtListOfCampApi','','',true)}"+'/keyword/'+keyword;
+        //初始化全局变量
+        var onCount = 1;
+        var offCount = 1;
+
+        mui('#onCourtList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto:true,//可选,默认false.自动下拉刷新一次
+                contentdown : "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover : "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh : "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOn
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOn
+            }
+        });
+
+        mui('#offCourtList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto:true,//可选,默认false.自动下拉刷新一次
+                contentdown : "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover : "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh : "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOff
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOff
+            }
+        });
+
+        //下拉刷新具体业务实现（上架）
+        function pulldownRefreshOn() {
+            setTimeout(function() {
+                onCount = 1;//刷新并显示第一页
+                var page = onCount;
+                var gType = 1;//代表下拉刷新
+                toList('onCourtList',page,gType,1);//具体取数据的方法
+            }, 100);
+        }
+        //上拉加载具体业务实现（上架）
+        function pullupRefreshOn() {
+            setTimeout(function() {
+                onCount++;//翻下一页
+                var page = onCount;
+                var gType =2;//代表上拉加载
+                toList('onCourtList',page,gType,1);//具体取数据的方法
+            }, 100);
+        }
+
+        //下拉刷新具体业务实现（下架）
+        function pulldownRefreshOff() {
+            setTimeout(function() {
+                offCount = 1;//刷新并显示第一页
+                var page = offCount;
+                var gType = 1;//代表下拉刷新
+                toList('offCourtList',page,gType,0);//具体取数据的方法
+            }, 100);
+        }
+        //上拉加载具体业务实现（下架）
+        function pullupRefreshOff() {
+            setTimeout(function() {
+                offCount++;//翻下一页
+                var page = offCount;
+                var gType =2;//代表上拉加载
+                toList('offCourtList',page,gType,0);//具体取数据的方法
+            }, 100);
+        }
+
+
+    })
+
+    //接口获取数据并追加到页面
+    var toList = function(wList,page,gType,status) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url  = "{:url('api/court/getCourtListOfCampApi','','',true)}";
         var campID = "{$camp_id}";
         mui.ajax({
             url:url,
             data: {
-                camp_id:campID,
+                camp_id: campID,
+                status: status
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -89,43 +169,42 @@
             headers: {'Content-Type': 'application/json'},
             //processData:false,
             success: function (data) {
-                console.log(data);
+
+                var newli='';
                 if (data.code == 100) {
-                    var newli1 = '';
-                    var newli2 = '';
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                    for(var i=0;i<=data.data.length-1;i++){
                         var urls = "{:url('court/courtInfo')}" + '/court_id/' + data.data.data[i].id+'/camp_id/'+data.data.data[i].camp_id;
-                        if(data.data.data[i].status == "审核通过"){
-                            newli1 += '<li class="mui-table-view-cell mui-media listli list-wide"><a href="'+urls+'"><img class="mui-media-object mui-pull-left " src="'+ data.data.data[i].covers[0]+'"><div class="mui-media-body wd52">'+ data.data.data[i].court+'<p class="mui-ellipsis">'+ data.data.data[i].location+'</p></div><div class="price-frame singup-num">'+ data.data.data[i].area+'</div></a></li>';
+                        newli = newli + '<li class="mui-table-view-cell mui-media listli list-wide"><a href="'+urls+'"><img class="mui-media-object mui-pull-left " src="'+ data.data.data[i].covers[0]+'"><div class="mui-media-body wd52">'+ data.data.data[i].court+'<p class="mui-ellipsis">'+ data.data.data[i].location+'</p></div><div class="price-frame singup-num">'+ data.data.data[i].area+'</div></a></li>';
+                    }
+                    if(gType==1){
+                        //上拉刷新
+                        $("ul.court"+status).empty().append(newli);
+                        mui('#'+wList).pullRefresh().endPulldownToRefresh();
+                        mui('#'+wList).pullRefresh().refresh(true);
+                        if(newli=='') {
+                            $("ul.court"+status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
                         }
-                        if(data.data.data[i].status == "未审核"){
-                            newli2 += '<li class="mui-table-view-cell mui-media listli list-wide"><a href="'+urls+'"><img class="mui-media-object mui-pull-left " src="'+ data.data.data[i].covers[0]+'"><div class="mui-media-body wd52">'+ data.data.data[i].court+'<p class="mui-ellipsis">'+ data.data.data[i].location+'</p></div><div class="price-frame singup-num">'+ data.data.data[i].area+'</div></a></li>';
-                        }
+                    }else{
+                        //下拉加载 gType==2
+                        $("ul.court"+status).append(newli);
                     }
-                    $("ul.court1").empty();
-                    if(newli1==''){
-                        newli1 = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
-                    }
-                    $("ul.court1").append(newli1);
-
-
-
-                    $("ul.court2").empty();
-                    if(newli1==''){
-                        newli1 = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
-                    }
-                    $("ul.court2").append(newli2);
-
-
                 }else{
                     mui.toast('数据获取失败,请稍候再试');
                 }
+
+                if(newli!=''){
+                    mui('#'+wList).pullRefresh().endPullupToRefresh(false);
+                }else{
+                    mui('#'+wList).pullRefresh().endPullupToRefresh(true);
+                }
+
             },
             error: function(xhr, type, errerThrown) {
                 mui.toast('网络异常,请稍候再试');
+                mui('#'+wList).pullRefresh().endPullupToRefresh(true);
             }
         });
     };
 </script>
-</body>
+
 </html>
