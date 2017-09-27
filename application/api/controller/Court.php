@@ -97,6 +97,7 @@ class Court extends Base{
             $camp_id = input('param.camp_id');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
+            // dump($data);die;
             // 权限
             $CampService = new \app\service\CampService;
             $power = $CampService->isPower($camp_id,$this->memberInfo['member']);

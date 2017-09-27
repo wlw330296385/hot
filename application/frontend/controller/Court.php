@@ -62,6 +62,8 @@ class Court extends Base{
         if($power<2){
             $this->error('请先加入一个训练营并成为管理员或者创建训练营');
         }
+        $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
+        $this->assign('campInfo',$campInfo);
         return view('Court/createCourt');
     }
     // 分页获取数据
