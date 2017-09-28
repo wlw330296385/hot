@@ -17,94 +17,123 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
 </head>
 
-<body class=whitebg>
+<body>
 
-<div class="mui-content">
+    <div class="mui-content">
 
-    <div class="list camp-list camp-lesson-list detalis-list coach">
-        <div class="camp-lesson-list">
-            <div id="segmentedControl" class="mui-segmented-control mb">
-                <a class="mui-control-item" href="#item1">录课</a>
-                <a class="mui-control-item mui-active" href="#item2">我的课时</a>
-                <a class="mui-control-item" href="#item3">训练营</a>
+        <div class="list camp-list camp-lesson-list detalis-list coach">
+
+            <div class="camp-lesson-list">
+                <div id="segmentedControl" class="mui-segmented-control mb">
+                    <a class="mui-control-item" href="#item1">录课</a>
+                    <a class="mui-control-item mui-active" href="#item2">我的课时</a>
+                    <a class="mui-control-item" href="#item3">训练营</a>
+                </div>
             </div>
-        </div>
-        <div class="nav-list">
-            <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
-                    <span>本月课量</span>
-                    <div class="mui-media-body">23</div>
-                </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
-                    <span>本年课量</span>
-                    <div class="mui-media-body">35</div>
-                </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
-                    <span>总课量</span>
-                    <div class="mui-media-body">352</div>
-                </a></li>
-            </ul>
-        </div>
 
-        <ul class="mui-table-view mui-text-center">
-            <li class="mui-table-view-cell">
-                <ul class="mui-row table">
-                    <li class="mui-col-xs-2">状态</li>
-                    <li class="mui-col-xs-4">上课时间</li>
-                    <li class="mui-col-xs-4">上课人数</li>
+            <div class="nav-list">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
+                        <span>本月课量</span>
+                        <div class="mui-media-body">23</div>
+                    </a></li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
+                        <span>本年课量</span>
+                        <div class="mui-media-body">35</div>
+                    </a></li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
+                        <span>总课量</span>
+                        <div class="mui-media-body">352</div>
+                    </a></li>
                 </ul>
-            </li>
-            {volist name="scheduleList" id="vol"}
-            <li class="mui-table-view-cell">
-                <a class="mui-navigate-right" href="{:url('schedule/scheduleInfo',['schedule_id'=>$vol['id'],'camp_id'=>$vol['camp_id']])}">
+            </div>
+
+            <ul id="OA_task_schedulist" class="mui-table-view mui-text-center">
+
+                <li class="mui-table-view-cell">
                     <ul class="mui-row table">
-                        <li class="mui-col-xs-2"><i class="mui-icon mui-icon-checkmarkempty"></i></li>
-                        <li class="mui-col-xs-4">{$vol.lesson_time}</li>
-                        <li class="mui-col-xs-4">{$vol.grade}</li>
-                        <li class="mui-col-xs-4">{$vol.students}</li>
+                        <li class="mui-col-xs-2">状态</li>
+                        <li class="mui-col-xs-4">日期</li>
+                        <li class="mui-col-xs-4">班级</li>
+                        <li class="mui-col-xs-2">人数</li>
                     </ul>
-                </a>
-            </li>
-            {/volist}
-        </ul>
+                </li>
+
+                {volist name="scheduleList" id="vol"}
+               
+                    <li class="mui-table-view-cell">
+                        <div class="mui-slider-right mui-disabled">
+                            <span class="mui-btn mui-btn-red">删除</span>
+                        </div>
+                        <div class="mui-slider-handle">
+                         <a href="{:url('schedule/scheduleInfo',['schedule_id'=>$vol['id'],'camp_id'=>$vol['camp_id']])}" style="display: block;">
+                            <ul class="mui-row table">
+                                <li class="mui-col-sm-2 mui-col-xs-2"><i class="mui-icon mui-icon-checkmarkempty"></i></li>
+                                <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.lesson_date}</li>
+                                <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.grade}</li>
+                                <li class="mui-col-sm-2 mui-col-xs-2 ">{$vol.students}</li>
+                            </ul>
+                            </a>
+                        </div>
+                    </li>
+                
+                {/volist}
+
+            </ul>
+
+        </div>
 
     </div>
 
-</div>
+    <!--底部导航-->
+    {layout name="Layout/footer"}
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>  
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
 
-<!--底部导航-->
-{layout name="Layout/footer"}
+         //拖拽后显示操作图标，点击操作图标删除元素；
+         $('#OA_task_schedulist').on('tap', '.mui-btn', function(event) {
+            var elem = this;
+            var li = elem.parentNode.parentNode;
+            var btnArray = ['确认', '取消'];
+            var url  = "{:url('api/schedule/removeschedule')}";
+            var scheduleid = $(this).attr("data-id");
+            mui.confirm('确认删除该课时？', '提示', btnArray, function(e) {
+                if (e.index == 0) {
+                    mui.ajax({
+                        url:url,
+                        data: {
+                            "scheduleid":scheduleid
+                        },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            console.log(data);
+                            li.parentNode.removeChild(li);
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function(xhr, type, errerThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                    }
+                });
 
-</div>
+                } else {
+                    setTimeout(function() {
+                        $.swipeoutClose(li);
+                    }, 0);
+                }
+            });
+        });
+    </script>
 </body>
-<script src="/static/frontend/js/mui.min.js"></script>
-<!--等级星星样式-->
-<script src="/static/frontend/js/feedback.js"></script>
-<script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
-
-    mui('body').on('shown', '.mui-popover', function (e) {
-        //console.log('shown', e.detail.id);//detail为当前popover元素
-    });
-    mui('body').on('hidden', '.mui-popover', function (e) {
-        //console.log('hidden', e.detail.id);//detail为当前popover元素
-    });
-    var info = document.getElementById("info");
-    mui('body').on('tap', '.mui-popover-action li>a', function () {
-        var a = this,
-            parent;
-        //根据点击按钮，反推当前是哪个actionsheet
-        for (parent = a.parentNode; parent != document.body; parent = parent.parentNode) {
-            if (parent.classList.contains('mui-popover-action')) {
-                break;
-            }
-        }
-        //关闭actionsheet
-        mui('#' + parent.id).popover('toggle');
-        info.innerHTML = "你刚点击了\"" + a.innerHTML + "\"按钮";
-    })
-</script>
 </html>
