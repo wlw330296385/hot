@@ -57,7 +57,12 @@ class Lesson extends Base{
             if( isset($map['page']) ){
                 unset($map['page']);
             }
-            return $this->LessonService->getLessonPage($map,$page);
+            $result = $this->LessonService->getLessonList($map,$page);
+            if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
         }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }       
@@ -100,7 +105,12 @@ class Lesson extends Base{
             if( isset($map['page']) ){
                 unset($map['page']);
             }
-            return $this->LessonService->getLessonListByPage($map);
+            $result = $this->LessonService->getLessonListByPage($map);
+            if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
         }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }       
@@ -114,13 +124,12 @@ class Lesson extends Base{
             $map = input('post.');
             $page = input('param.page', 1);
             $lessonS = new LessonService();
-            return $lessonS->getLessonPage($map, $page);
-            /*$result = $this->LessonService->getLessonPage($map,$page);
-             * if($result){
-                return json(['code'=>'100','msg'=>__lang('MSG_200'),'data'=>$result]);
+            $result =  $lessonS->getLessonList($map, $page);
+            if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
-                return json(['code'=>'200','msg'=>__lang('MSG_401')]);
-            }*/
+                return json(['code'=>100,'msg'=>'ok']);
+            }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }

@@ -37,8 +37,12 @@ class Camp extends Base{
             if( isset($map['page']) ){
                 unset($map['page']);
             }
-            $campList = $this->CampService->getCampList($map,$page);
-            return json(['code'=>200,'msg'=>'OK','data'=>$campList]);
+            $result = $this->CampService->getCampList($map,$page);
+             if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
         }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }       
@@ -69,8 +73,12 @@ class Camp extends Base{
             if( isset($map['page']) ){
                 unset($map['page']);
             }
-            $campList = $this->CampService->getCampListByPage($map);
-            return json(['code'=>200,'msg'=>'OK','data'=>$campList]);
+            $result = $this->CampService->getCampListByPage($map);
+             if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
         }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }       
@@ -80,9 +88,13 @@ class Camp extends Base{
         try{
             $map = input('post.');
             $page = input('param.page')?input('param.page'):1;
-            $campList = $this->CampService->getCampList($map,$page);
+            $result = $this->CampService->getCampList($map,$page);
 
-            return json(['code'=>200,'msg'=>'OK','data'=>$campList]);
+             if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
 
         }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

@@ -37,8 +37,12 @@ class Court extends Base{
             if( isset($map['page']) ){
                 unset($map['page']);
             }
-            $campList = $this->CourtService->getCourtList($map,$page);
-            return json(['code'=>200,'msg'=>'OK','data'=>$campList]);
+            $result = $this->CourtService->getCourtList($map,$page);
+             if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
         }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }       
@@ -61,7 +65,11 @@ class Court extends Base{
             // }
 
             $result = $this->CourtService->getCourtList($map);
-            return json($result);
+            if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -92,7 +100,11 @@ class Court extends Base{
                 unset($map['page']);
             }
             $result = $this->CourtService->getCourtListbyPage($map);
-            return json($result);
+             if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }

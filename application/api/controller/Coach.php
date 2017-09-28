@@ -213,8 +213,12 @@ class Coach extends Base{
         try{
             $map = input('post.');
             $page = input('param.page')?input('param.page'):1;
-            $coachList = $this->CoachService->getCoachList($map,$page);
-            return json(['code'=>200,'msg'=>'OK','data'=>$coachList]);
+            $result = $this->CoachService->getCoachList($map,$page);
+             if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
