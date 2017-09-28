@@ -31,7 +31,9 @@ class Lesson extends Base{
             $camp_id = input('param.camp_id');
             $gradecate_id = input('param.gradecate_id');
             $hot = input('param.hot');
-            $map = ['province'=>$province,'city'=>$city,'area'=>$area,'gradecate_id'=>$gradecate_id];
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
             foreach ($map as $key => $value) {
                 if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
@@ -49,7 +51,12 @@ class Lesson extends Base{
             if ($hot) {
                 $map['hot'] = 1;
             }
-
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
             return $this->LessonService->getLessonPage($map,$page);
         }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

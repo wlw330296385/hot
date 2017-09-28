@@ -132,7 +132,6 @@ class CampService {
                     // ->where(function ($query) {
                             // $query->where('type', 2)->whereor('type', 3)->whereor('type',4);})
                     ->value('type');
-                    // echo db('camp_member')->getlastsql();die;
         return $is_power?$is_power:0;
     }
 

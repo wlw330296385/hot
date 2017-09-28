@@ -53,6 +53,25 @@ class CourtService {
         
     }
 
+    // 关联场地详情
+    public function getCourtInfoWithCourtCamp($court_id,$camp_id) {
+        $result = Db::view('court','*')
+                ->view('court_camp',['camp_id'=>'campid','court_id'=>'courtid'],'court_camp.court_id = court.id and court_camp.camp_id='.$camp_id,'LEFT')
+                ->where(['court.id'=>$court_id])
+                ->find();
+
+
+        if($result){           
+            if($result['cover']){
+                $result['covers'] = unserialize($result['cover']);
+            }else{
+                $result['covers'] = [];
+            }
+            
+        }
+        return $result;
+    }
+
 
     // 获取训练营下的场地列表
     public function getCourtListOfCamp($map = [],$paginate = 10){

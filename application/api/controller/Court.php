@@ -15,24 +15,28 @@ class Court extends Base{
     public function searchCourtApi(){
         try{
             $map = input('post.');
-            dump($map);
             $keyword = input('param.keyword');
             $province = input('param.province');
             $page = input('param.page')?input('param.page'):1;
             $city = input('param.city');
             $area = input('param.area');
-            $map = ['province'=>$province,'city'=>$city,'area'=>$area];
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
             foreach ($map as $key => $value) {
-                dump($value);
                 if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
                 }
             }
-            dump($map);
             if(!empty($keyword)&&$keyword != ' '&&$keyword != '' && $keyword!=NULL){
                 $map['court'] = ['LIKE','%'.$keyword.'%'];
             }
-            dump($map);die;
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
             $campList = $this->CourtService->getCourtList($map,$page);
             return json(['code'=>200,'msg'=>'OK','data'=>$campList]);
         }catch(Exception $e){
@@ -109,10 +113,6 @@ class Court extends Base{
             $CampService = new \app\service\CampService;
             $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
             if($power<2){
-<<<<<<< HEAD
-
-=======
->>>>>>> 0ec803d7e429db0a2f6ae0363c4744b35cf6fbd4
                 return json(['code'=>100,'msg'=>__lang('MSG_403')]);
             }
             $result = $this->CourtService->createCourt($data);

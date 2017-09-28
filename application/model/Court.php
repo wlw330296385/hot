@@ -13,4 +13,8 @@ class Court extends Model {
 		$status = [-1=>'已拒绝',0=>'待审核',1=>'审核通过'];
 		return $status[$value];
     }
+
+    public function court_camp(){
+        return $this->hasOne('court_camp','id','camp_id');
+    }
 }
