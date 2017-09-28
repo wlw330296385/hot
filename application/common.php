@@ -145,6 +145,7 @@ function sendMessageMember($data){
     return $result;
 }
 
+// 生成二维码图片
 function buildqrcode($url, $size=4, $level='L')
 {
 //    dump($url);
@@ -169,5 +170,15 @@ function buildqrcode($url, $size=4, $level='L')
     } else {
         return false;
     }
+}
+
+/** 获取会员在训练营的身份角色
+ * @param $camp_id 训练营id
+ * @param $member_id 会员id
+ * @return int|mixed -1:粉丝 1:学生 2:教练 3:管理员 4:创建人
+ */
+function getCampPower($camp_id, $member_id) {
+    $powertype = db('camp_member')->where(['camp_id' => $camp_id, 'member_id' => $member_id, 'status' => 1])->value('type');
+    return $powertype ? $powertype : 0;
 }
 
