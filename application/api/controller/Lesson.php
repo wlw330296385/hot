@@ -115,8 +115,7 @@ class Lesson extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }       
     }
-
-
+    
     //翻页获取课程接口
     public function getLessonListApi(){
         
