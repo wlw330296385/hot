@@ -101,7 +101,7 @@ class CampMember extends Base{
             if($result){
                 return json(['code'=>200,'msg'=>__lang('MSG_200')]);
             }else{
-                return json(['code'=>100,'msg'=>>__lang('MSG_400')]);
+                return json(['code'=>100,'msg'=>__lang('MSG_400')]);
             }
         }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

@@ -71,12 +71,11 @@ class Coach extends Base{
                 $coachCert = $value;
             }
         }
-        dump($identCert);die;
         if(empty($identCert)){
             $identCert['cert_no'] = '未认证';
         }
         if(empty($$coachCert)){
-            $coachCert = ['photo_positive'=>'','photo_back'=>''];
+            $coachCert = ['photo_positive'=>'/static/frontend/images/uploadDefault.jpg','photo_back'=>'/static/frontend/images/uploadDefault.jpg'];
         }
         //获取教练的课量
         $m = input('m')?input('m'):date('m');

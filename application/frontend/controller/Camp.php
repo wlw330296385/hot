@@ -18,8 +18,9 @@ class Camp extends Base{
     public function index() {
         // 最新消息
         $member_id = $this->memberInfo['id'];
-        $messageList = db('message')->page(1,10)->select();       
-        $campList = db('camp_member')->where(['member_id'=>$member_id,'status'=>1])->select();
+        $messageList = db('message')->page(1,10)->select();
+        $CampMember = new \app\model\CampMember; 
+        $campList = $CampMember->where(['member_id'=>$member_id,'status'=>1])->select();
         
         $this->assign('campList',$campList);
         $this->assign('messageList',$messageList);

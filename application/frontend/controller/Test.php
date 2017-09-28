@@ -148,4 +148,12 @@ class Test {
         // $result = testSerivce($data);
         dump($result);
     }
+
+
+
+    public function seri(){
+        $data = serialize(['/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg']);
+
+        dump($data);
+    }
 }

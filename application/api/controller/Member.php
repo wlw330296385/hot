@@ -57,8 +57,40 @@ class Member extends Frontend{
     // 注销登录
     public function logout(){
         try{
-            cookie('member',null);       
-            $result = session(null, 'think');
+                 
+             $member = [
+                    'id' => 0,
+                    'openid' => '',
+                    'member' => 'youke',
+                    'nickname' => '游客',
+                    'avatar' => '',
+                    'hp' => 0,
+                    'level' => 0,
+                    'telephone' =>'',
+                    'email' =>'',
+                    'realname'  =>'',
+                    'province'  =>'',
+                    'city'  =>'',
+                    'area'  =>'',
+                    'location'  =>'',
+                    'sex'   =>0,
+                    'height'    =>0,
+                    'weight'    =>0,
+                    'charater'  =>'',
+                    'shoe_code' =>0,
+                    'birthday'  =>'0000-00-00',
+                    'create_time'=>0,
+                    'pid'   =>0,
+                    'hp'    =>0,
+                    'cert_id'   =>0,
+                    'score' =>0,
+                    'flow'  =>0,
+                    'balance'   =>0,
+                    'remarks'   =>0,
+                    'hot_id'=>00000000,
+                ];
+            cookie('member',$member);  
+            $result = session('memberInfo',$member,'think');
             return json(['code'=>200,'msg'=>'注销成功']);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

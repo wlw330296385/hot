@@ -82,7 +82,7 @@ class CourtService {
         if($data['covers']){
             $data['cover'] = serialize($data['covers']);
         }else{
-             $data['cover'] = '';
+             $data['cover'] = serialize(['/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg']);
         }
         $result = $this->courtModel->save($data,['id'=>$id]);
         if($result){
@@ -101,15 +101,11 @@ class CourtService {
         if($data['covers']){
             $data['cover'] = serialize($data['covers']);
         }else{
-            $data['cover'] = '';
+            $data['cover'] = serialize(['/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg']);;
         }
         $result = $this->courtModel->save($data);
         if($result){
-<<<<<<< HEAD
-            return ['code'=>100,'data'=>$this->courtModel->id,'msg'=>"ok"];
-=======
             return ['code'=>200,'data'=>$result,'msg'=>__lang('MSG_200')];
->>>>>>> 8ff2bbb5696b8afe7ff08a86c2bbbf7b9015a781
         }else{
             return ['code'=>100,'msg'=>$this->courtModel->getError()];
         }

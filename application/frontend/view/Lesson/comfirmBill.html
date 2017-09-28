@@ -72,7 +72,7 @@
            学员姓名
            <span class="select-arrow location-choise">
             <select class="select" style="width: 22%" >
-              <option value="" id="student"></option>
+              <option value="" class="student"></option>
             </select>
           </span>
         </li>
@@ -156,6 +156,10 @@
             $('#oldStudent').show();
             $('#addStudent').hide();
         })
+
+
+        // 获取学生数据
+        getStudentList();
     })
    
     // 获取学生数据
@@ -163,14 +167,15 @@
       // 获取学生列表
           var result = wooApi.asyncF("{:url('api/Student/getStudentListApi')}");
           console.log(result);
-          if(result.code ==100){
+          if(result.code == 200){
             if(!result.data){
                 $('#oldStudent').hide();
                 $('#addStudent').show();
             }else{
               studentList = result.data;
-              $('#student').val(result.data[0].id);
-              $('#student').text(result.data[0].student);
+              console.log(result.data);
+              $('.student').val(result.data[0].id);
+              $('.student').text(result.data[0].student);
               $('#parent').text(result.data[0].parent);
               // $('#emergency_telephone').text(result.data[0].emergency_telephone);
               isStudent = true;
@@ -187,8 +192,8 @@
               }
             }
               
-          }
     }
+  }
     // // 发送验证码
     // function sendCode(obj){
     //   telephone = document.getElementById('telephone').value;
@@ -239,7 +244,7 @@
         var url = "{:url('api/student/createStudentApi')}";
         var ajaxResult = wooApi.asyncF(url,objData); 
         console.log(ajaxResult);
-        if(ajaxResult.code == 100){
+        if(ajaxResult.code == 200){
             mui.toast(ajaxResult.msg);
             isStudent = true;
             location.reload() 
@@ -306,14 +311,13 @@
       var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
       console.log(result);
       mui.toast(result.msg);
-      if(result.code == 100){
+      if(result.code == 200){
           window.location.href="{:url('frontend/bill/finishBill',['bill_order'=>$billOrder])}"
       }else{
         mui.toast(result.msg);
       }
     }
-    // 获取学生数据
-    getStudentList();
+    
 
 
     function testSubmit(){

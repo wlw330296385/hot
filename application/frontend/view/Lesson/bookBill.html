@@ -172,7 +172,7 @@
       // 获取学生列表
           var result = wooApi.asyncF("{:url('api/Student/getStudentListApi')}");
           console.log(result);
-          if(result.code ==100){
+          if(result.code ==200){
             if(!result.data){
                 $('#oldStudent').hide();
                 $('#addStudent').show();
@@ -206,7 +206,7 @@
         var objData = wooApi.arrTOobj(arrData);
         var url = "{:url('api/student/createStudentApi')}";
         var ajaxResult = wooApi.asyncF(url,objData); 
-        if(ajaxResult.code == 100){
+        if(ajaxResult.code == 200){
             mui.toast(ajaxResult.msg);
             isStudent = true;
             location.reload() 
@@ -231,7 +231,7 @@
       var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
       console.log(result);
       mui.toast(result.msg);
-      if(result.code == 100){
+      if(result.code == 200){
           window.location.href="{:url('frontend/bill/finishBookBill',['bill_order'=>$billOrder])}"
       }else{
         mui.toast(result.msg);

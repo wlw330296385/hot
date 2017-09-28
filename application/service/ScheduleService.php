@@ -52,7 +52,7 @@ class ScheduleService {
         $is_power = $this->isPower($data['camp_id'],$data['member_id']);
         
         if($is_power<2){
-            return ['code'=>100,'msg'=>>__lang('MSG_403')];
+            return ['code'=>100,'msg'=>__lang('MSG_403')];
         }
         $validate = validate('ScheduleVal');
         if(!$validate->check($data)){

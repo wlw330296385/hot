@@ -33,7 +33,6 @@ class Coach extends Base{
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['coach'] = ['LIKE','%'.$keyword.'%'];
             }
-            // dump($map);die;
             $coachList = $this->CoachService->getCoachList($map,$page);
             if($coachList){
                 return json(['code'=>200,'msg'=>'OK','data'=>$coachList]);
