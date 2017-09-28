@@ -52,6 +52,45 @@ class Coach extends Base{
         }
     }
 
+    // 获取教练分页
+    public function getCoachListByPageApi(){
+        try{
+            $map = input('post.');
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $city = input('param.city');
+            $area = input('param.area');
+            $sex = input('param.sex');
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value==' '){
+                    unset($map[$key]);
+                }
+            }
+            if(!empty($sex)&&$sex!=''){
+                $map['sex'] = $sex;
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['coach'] = ['LIKE','%'.$keyword.'%'];
+            } 
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+            $coachList = $this->CoachService->getCoachListByPage($map);
+            if($coachList){
+                return json(['code'=>200,'msg'=>'OK','data'=>$coachList]);
+            }else{
+                return json(['code'=>100,'msg'=>'OK','data'=>'']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
 
     public function createCoachApi(){

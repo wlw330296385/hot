@@ -33,15 +33,13 @@ class LessonService {
     }
 
     // 分页获取课程
-    public function getLessonPage($map=[],$page = 1 ,$paginate=10, $order=''){
-        $res = Lesson::where($map)->order($order)->page($page,$paginate)->select();
-        if (!$res) {
-            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+    public function getLessonListByPage($map=[], $order='',$paginate=10){
+        $res = Lesson::where($map)->order($order)->paginate($$paginate);
+        if($res){
+            return $res->toArray();
+        }else{
+            return $res;
         }
-        if ($res->isEmpty()) {
-            return json(['code' => 200, 'msg' => __lang('MSG_000'), 'data' => []]);
-        }
-        return json(['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $res->toArray()]);
     }
 
     // 软删除

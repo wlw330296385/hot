@@ -152,4 +152,18 @@ class StudentService{
     public function setIncFinishedTotal($num = 1,$student_id){
     	$this->studentModel->where(['id'=>$student_id])->setInc('finished_total',$num);
     }
+
+
+    // 准哥要的
+
+	public function getStudentListByPage($map=[], $order='', $paginate=10) {
+	    $result =  $this->studentModel->where($map)->order($order)->paginate($paginate);
+	    if($res){           
+	        $res = $result->toArray();
+	        return $res;
+	    }else{
+	        return $result;
+	    }
+        
+    }
 }

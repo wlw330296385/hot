@@ -22,8 +22,8 @@ class CampService {
         }
     }
 
-    public function campListPage( $map=[],$page = 1,$paginate=10, $order=''){
-        $res = $this->Camp->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
+    public function getCampListByPage( $map=[], $order='',$paginate=10){
+        $res = $this->Camp->where($map)->where(['status'=>1])->order($order)->paginate($paginate);
         
         if($res){
             $result = $res->toArray();

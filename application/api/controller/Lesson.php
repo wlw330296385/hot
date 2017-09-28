@@ -63,6 +63,49 @@ class Lesson extends Base{
         }       
     }
 
+    // 搜索课程
+    public function getLessonListByPageApi(){
+        try{
+            $map = input('post.');
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $city = input('param.city');
+            $area = input('param.area');
+            $camp_id = input('param.camp_id');
+            $gradecate_id = input('param.gradecate_id');
+            $hot = input('param.hot');
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value==' '){
+                    unset($map[$key]);
+                }
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['lesson'] = ['LIKE','%'.$keyword.'%'];
+            }
+            if($camp_id){
+                $map['camp_id'] = $camp_id;
+            }
+            if ($hot) {
+                $map['hot'] = 1;
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+            return $this->LessonService->getLessonListByPage($map);
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }       
+    }
+
 
     //翻页获取课程接口
     public function getLessonListApi(){

@@ -24,12 +24,15 @@ class GradeService{
     }
 
     // 班级分页
-    public function getGradePage($map=[],$page = 1, $order='', $paginate=10) {
-        $result =  Grade::where($map)->order($order)->page($page,$paginate)->select();
-        if($result){           
-            $result = $result->toArray();
+    public function getGradeListByPage($map=[], $order='', $paginate=10) {
+        $result =  Grade::where($map)->order($order)->paginate($paginate);
+        if($res){           
+            $res = $result->toArray();
+            return $res;
+        }else{
+            return $result;
         }
-        return $result;
+        
     }
 
     // 一个班级

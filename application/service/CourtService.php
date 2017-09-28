@@ -60,7 +60,6 @@ class CourtService {
                 ->where(['court.id'=>$court_id])
                 ->find();
 
-
         if($result){           
             if($result['cover']){
                 $result['covers'] = unserialize($result['cover']);
@@ -75,15 +74,14 @@ class CourtService {
 
     // 获取训练营下的场地列表
     public function getCourtListOfCamp($map = [],$paginate = 10){
-        $result = $this->CourtCamp->court()->where($map)->paginate($paginate);
+        $result = $this->CourtCamp->with('court')->where($map)->paginate($paginate);
         if($result){           
             $res = $result->toArray();
-            // dump($res);die;
                 foreach ($res['data'] as $key => $value) {
-                    if($value['cover']){
-                        $res['data'][$key]['covers'] = unserialize($value['cover']);
+                    if($value['court']['cover']){
+                        $res['data'][$key]['court']['covers'] = unserialize($value['court']['cover']);
                     }else{
-                        $res['data'][$key]['covers'] = [];
+                        $res['data'][$key]['court']['covers'] = [];
                     }
                 }
             

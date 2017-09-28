@@ -18,6 +18,41 @@ class Student extends Base
 	public function index(){
 	}
 
+	public function getStudentListByPageApi(){
+		try{
+			$map = input('post.');
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $city = input('param.city');
+            $area = input('param.area');
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value==' '){
+                    unset($map[$key]);
+                }
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != '' && $keyword!=NULL){
+                $map['court'] = ['LIKE','%'.$keyword.'%'];
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+			$result = $this->studentService->getStudentListByPage($map);
+			if($result){
+				return json(['data'=>$result,'code'=>200,'msg'=>'ok']);
+			}else{
+				return json(['code'=>200,'msg'=>'没数据了']);
+			}
+		}catch(Exception $e){
+			return json(['code'=>100,'msg'=>$e->getMessage()]);
+		}
+	}
+
 
 	public function createStudentApi(){
 		try{
