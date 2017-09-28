@@ -36,9 +36,9 @@ class MessageService{
 		$result = $this->MessageModel->save($data,['id'=>$id]);
 		
 		if($result ===false){
-			return ['msg'=>$this->MessageModel->getError(),'code'=>200];
+			return ['msg'=>$this->MessageModel->getError(),'code'=>100];
 		}else{
-			return ['msg'=>__lang('MSG_100_SUCCESS'),'code'=>100,'data'=>$result];
+			return ['msg'=>__lang('MSG_200'),'code'=>200,'data'=>$result];
 		}	
 	}
 
@@ -46,14 +46,14 @@ class MessageService{
 	public function saveMessageInfo($data){
 		$validate = validate('MessageVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
 		$result = $this->MessageModel->data($data)->save();
 		
 		if($result ===false){
-			return ['msg'=>$this->MessageModel->getError(),'code'=>200];
+			return ['msg'=>$this->MessageModel->getError(),'code'=>100];
 		}else{
-			return ['msg'=>__lang('MSG_100_SUCCESS'),'code'=>100,'data'=>$result];
+			return ['msg'=>__lang('MSG_200'),'code'=>200,'data'=>$result];
 		}	
 	}
 }

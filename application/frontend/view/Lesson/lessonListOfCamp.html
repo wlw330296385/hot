@@ -31,14 +31,12 @@
         <div class="tab-pullRefresh">
             <div id="onlineLessonList" class="mui-scroll-wrapper mui-control-content mui-active">
                 <div class="mui-scroll">
-                    <ul id="OA_task_lesson1" class="mui-table-view detalis-list list border-b lesson1">
-                    </ul>
+                    <ul class="mui-table-view detalis-list list border-b lesson1 OA_task_lesson"></ul>
                 </div>
             </div>
             <div id="offlineLessonList" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
-                <ul id="OA_task_lesson0" class="mui-table-view detalis-list list border-b lesson0">
-                    </ul>
+                    <ul class="mui-table-view detalis-list list border-b lesson0 OA_task_lesson"></ul>
                 </div>
             </div>
         </div>
@@ -165,16 +163,25 @@
             success: function (data) {
 
                 var newli='';
-                if (data.code == 100) {
+                if (data.code == 200) {
                     for(var i=0;i<=data.data.length-1;i++){
                         var urls = "{:url('lesson/LessonInfoOfCamp')}"+'/lesson_id/'+data.data[i].id+'/camp_id/'+campID;
-                        newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="'+urls+'"><div class="mui-slider-right mui-disabled"><a class="mui-btn mui-btn-red">删除</a></div><div class="mui-slider-handle"><img class="mui-media-object mui-pull-left" src="'+data.data[i].cover+'"><div class="mui-media-body wd45">'+data.data[i].lesson+'<p class="mui-ellipsis">'+data.data[i].gradecate+'</p></div><div class="price-frame"><p class="price">￥'+data.data[i].cost+'</p><p class="address">'+data.data[i].area+'</p></div></div></a></li>'
+                        newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="'+urls+'">';
+                        if (status ==1) {
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="'+data.data[i].id+'"><a class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</a><a class="mui-btn mui-btn-red" data-action="del">删除</a></div>';
+                        } else {
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="'+data.data[i].id+'"><a class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</a><a class="mui-btn mui-btn-red" data-action="del">删除</a></div>';
+                        }
+                        newli += '<div class="mui-slider-handle"><img class="mui-media-object mui-pull-left" src="'+data.data[i].cover+'"><div class="mui-media-body wd45">'+data.data[i].lesson+'<p class="mui-ellipsis">'+data.data[i].gradecate+'</p></div><div class="price-frame"><p class="price">￥'+data.data[i].cost+'</p><p class="address">'+data.data[i].area+'</p></div></div></a></li>'
                     }
                     if(gType==1){
                         //上拉刷新
                         $("ul.lesson"+status).empty().append(newli);
                         mui('#'+wList).pullRefresh().endPulldownToRefresh();
                         mui('#'+wList).pullRefresh().refresh(true);
+                        if(newli=='') {
+                            $("ul.lesson"+status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        }
                     }else{
                         //下拉加载 gType==2
                         $("ul.lesson"+status).append(newli);
@@ -196,35 +203,40 @@
     };
 
     //拖拽后显示操作图标，点击操作图标删除元素；
-    $('#OA_task_lesson0').on('tap', '.mui-btn', function(event) {
+    $('.OA_task_lesson').on('tap', '.mui-btn', function(event) {
         var elem = this;
         var li = elem.parentNode.parentNode;
         var btnArray = ['确认', '取消'];
-        mui.confirm('确认删除该课程？', '提示', btnArray, function(e) {
+        var txt = elem.innerHTML;
+        var lessonid = elem.parentNode.getAttribute('data-id');
+        var action = elem.getAttribute('data-action');
+        mui.confirm('确认该课程'+txt+'?', '提示', btnArray, function(e) {
             if (e.index == 0) {
-                li.parentNode.removeChild(li);
+                //li.parentNode.removeChild(li);
+                var apiurl = "{:url('api/lesson/removelesson')}";
+                mui.ajax(apiurl, {
+                    data: {
+                        lessonid: lessonid,
+                        action: action
+                    },
+                    dataType: 'json',
+                    type: 'post',
+                    headers: {'Content-Type':'application/json'},
+                    success: function(data) {
+
+                    },
+                    error: function(xhr, type, errotThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                    }
+                });
             } else {
                 setTimeout(function() {
-                    $.swipeoutClose(li);
+                    mui.swipeoutClose(li);
                 }, 0);
             }
         });
     });
 
-    $('#OA_task_lesson1').on('tap', '.mui-btn', function(event) {
-        var elem = this;
-        var li = elem.parentNode.parentNode;
-        var btnArray = ['确认', '取消'];
-        mui.confirm('确认删除该课程？', '提示', btnArray, function(e) {
-            if (e.index == 0) {
-                li.parentNode.removeChild(li);
-            } else {
-                setTimeout(function() {
-                    $.swipeoutClose(li);
-                }, 0);
-            }
-        });
-    });
 
 </script>
 </html>

@@ -294,13 +294,17 @@
             headers: {'Content-Type': 'application/json'},
             //processData:false,
             success: function (data) {
-                var newli='';
-                for(var i=0;i<=data.data.length-1;i++){
-                    newli = newli + '<img class="coachicon" src="'+data.data[i].portraits+'" alt="'+data.data[i].coach+'">'
-                    console.log(data.data[i].portraits)
-                    if(i>=4){ return false }
+                if (data.code == 200) {
+                    var newli='';
+                    for(var i=0;i<=data.data.length-1;i++){
+                        newli = newli + '<img class="coachicon" src="'+data.data[i].portraits+'" alt="'+data.data[i].coach+'">'
+                        console.log(data.data[i].portraits)
+                        if(i>=4){ return false }
+                    }
+                    $("#coachlist").append(newli);
+                }else{
+                    mui.toast('训练营教练列表获取失败,请稍候再试');
                 }
-                $("#coachlist").append(newli);
             },
             error: function(xhr, type, errerThrown) {
                 mui.toast('网络异常,请稍候再试');

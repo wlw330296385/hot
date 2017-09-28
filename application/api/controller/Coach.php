@@ -36,7 +36,7 @@ class Coach extends Base{
             // dump($map);die;
             $coachList = $this->CoachService->getCoachList($map,$page);
             if($coachList){
-                return json(['code'=>100,'msg'=>'OK','data'=>$coachList]);
+                return json(['code'=>200,'msg'=>'OK','data'=>$coachList]);
             }else{
                 return json(['code'=>100,'msg'=>'OK','data'=>'']);
             }
@@ -107,7 +107,7 @@ class Coach extends Base{
         try{
             $coach_id = input('post.coachid') ? input('post.coachid') : input('param.coach_id');
             if(!$coach_id){
-                return ['code'=>200,'msg'=>'找不到教练信息'];
+                return ['code'=>100,'msg'=>'找不到教练信息'];
             }
 
             $member_id = input('post.member_id');
@@ -168,7 +168,7 @@ class Coach extends Base{
             $map = input('post.');
             $page = input('param.page')?input('param.page'):1;
             $coachList = $this->CoachService->getCoachList($map,$page);
-            return json(['code'=>100,'msg'=>'OK','data'=>$coachList]);
+            return json(['code'=>200,'msg'=>'OK','data'=>$coachList]);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -183,7 +183,7 @@ class Coach extends Base{
                     ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo,id,total_member,total_lessons','camp.id=grade_member.camp_id')
                     ->where(['grade_member.member_id'=>$member_id,'grade_member.type'=>4,'grade_member.status'=>1])
                     ->select();
-            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);        
+            return json(['code'=>200,'msg'=>'OK','data'=>$campList]);        
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -196,7 +196,7 @@ class Coach extends Base{
             $member_id = input('param.member_id')? input('param.member_id'):$this->memberInfo['id'];
             $result = $this->CoachService->getCoachInfo(['member_id'=>$member_id,'status'=>1]);
             if($result){
-                return json(['code'=>100,'msg'=>'OK','data'=>$result]);    
+                return json(['code'=>200,'msg'=>'OK','data'=>$result]);    
             }else{
                 return json(['code'=>200,'msg'=>'OK','data'=>'']);    
             }

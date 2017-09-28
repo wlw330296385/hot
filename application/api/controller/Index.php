@@ -10,7 +10,7 @@ class Index extends Base{
 	}
 
 	public function noLogin(){
-		return json(['code'=>400,'msg'=>'请重新登录']);die;
+		return json(['code'=>100,'msg'=>'请重新登录']);die;
 	}
 
 	public function defendActivated(){

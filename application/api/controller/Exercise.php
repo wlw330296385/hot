@@ -16,9 +16,9 @@ class Exercise extends Base{
         try{
             $result = $this->ExerciseService->getExerciseList();
             if($result){
-                return json(['data'=>$result,'code'=>100,'msg'=>'OK']);
+                return json(['data'=>$result,'code'=>200,'msg'=>'OK']);
             }else{
-                return json(['code'=>200,'msg'=>'未获取到数据']);
+                return json(['code'=>100,'msg'=>'未获取到数据']);
             }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

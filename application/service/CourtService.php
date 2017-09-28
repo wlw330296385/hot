@@ -77,7 +77,7 @@ class CourtService {
     public function updateCourt($data,$id){
         $validate = validate('CourtVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
         if($data['covers']){
             $data['cover'] = serialize($data['covers']);
@@ -86,9 +86,9 @@ class CourtService {
         }
         $result = $this->courtModel->save($data,['id'=>$id]);
         if($result){
-            return ['code'=>100,'data'=>$result,'msg'=>__lang('MSG_101_SUCCESS')];
+            return ['code'=>100,'data'=>$result,'msg'=>__lang('MSG_200')];
         }else{
-            return ['code'=>200,'msg'=>$this->courtModel->getError()];
+            return ['code'=>100,'msg'=>$this->courtModel->getError()];
         }
     }
 
@@ -96,7 +96,7 @@ class CourtService {
     public function createCourt($data){
         $validate = validate('CourtVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
         if($data['covers']){
             $data['cover'] = serialize($data['covers']);
@@ -105,9 +105,13 @@ class CourtService {
         }
         $result = $this->courtModel->save($data);
         if($result){
+<<<<<<< HEAD
             return ['code'=>100,'data'=>$this->courtModel->id,'msg'=>"ok"];
+=======
+            return ['code'=>200,'data'=>$result,'msg'=>__lang('MSG_200')];
+>>>>>>> 8ff2bbb5696b8afe7ff08a86c2bbbf7b9015a781
         }else{
-            return ['code'=>200,'msg'=>$this->courtModel->getError()];
+            return ['code'=>100,'msg'=>$this->courtModel->getError()];
         }
     }
 
@@ -116,20 +120,20 @@ class CourtService {
     public function ownCourt($court_id,$camp_id){
         $is_own = $this->CourtCamp->where(['court_id'=>$court_id,'camp_id'=>$camp_id])->find();
         if($is_own){
-            return ['code'=>200,'msg'=>"重复添加"];
+            return ['code'=>100,'msg'=>"重复添加"];
         }
         $courtInfoOBJ = $this->courtModel->where(['id'=>$court_id,'camp_id'=>0,'status'=>1])->find();
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
         if(!$courtInfoOBJ || !$campInfo){
-            return ['code'=>200,'msg'=>"查询不到该场地或者训练营"];
+            return ['code'=>100,'msg'=>"查询不到该场地或者训练营"];
         }else{
             $courtInfo = $courtInfoOBJ->toArray();
             $data = ['camp_id'=>$camp_id,'court_id'=>$court_id,'court'=>$courtInfo['court'],'camp'=>$campInfo['camp']];
             $res = $this->CourtCamp->save($data);
             if($res){
-                return ['code'=>100,'msg'=>"添加成功"];
+                return ['code'=>200,'msg'=>__lang('MSG_200')];
             }else{
-                return ['code'=>200,'msg'=>"添加失败"];
+                return ['code'=>100,'msg'=>__lang('MSG_400')];
             }
         }
     }

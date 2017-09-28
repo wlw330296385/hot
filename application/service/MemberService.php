@@ -34,14 +34,14 @@ class MemberService{
 		//验证规则
 		$validate = validate('MemberVal');
 		if(!$validate->scene('edit')->check($request)){
-			return ['msg'=>$validate->getError(),'code'=>200];
+			return ['msg'=>$validate->getError(),'code'=>100];
 		}
 
 		$result = $this->memberModel->allowField(true)->save($request,['id'=>$id]);
 		if($result ===false){
-			return ['msg'=>$this->memberModel->getError(),'code'=>200];
+			return ['msg'=>$this->memberModel->getError(),'code'=>100];
 		}else{
-			return ['msg'=>__lang('MSG_100_SUCCESS'),'code'=>100,'data'=>$result];
+			return ['msg'=>__lang('MSG_200'),'code'=>200,'data'=>$result];
 		}	
 	}
 
@@ -61,13 +61,13 @@ class MemberService{
 		$res = $MemberModel->validate('MemberVal.add')->allowField(true)->save($request);
 		if ($res === false) {
 		    //dump($MemberModel->getError());
-            return [ 'code' => 200, 'msg' => $MemberModel->getError() ];
+            return [ 'code' => 100, 'msg' => $MemberModel->getError() ];
         } else {
 		    $login = $this->saveLogin($MemberModel->id);
 		    if ($login) {
-		        return ['code' => 100, 'msg' => __lang('MSG_100_SUCCESS')];
+		        return ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
-		        return ['code' => 200, 'msg' => '请重新登陆'];
+		        return ['code' => 100, 'msg' => '请重新登陆'];
             }
 
         }

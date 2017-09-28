@@ -30,9 +30,9 @@ class Court extends Base{
                 $map['court'] = ['LIKE','%'.$keyword.'%'];
             }
             $campList = $this->CourtService->getCourtList($map,$page);
-            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
+            return json(['code'=>200,'msg'=>'OK','data'=>$campList]);
         }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }       
     }
 
@@ -65,9 +65,11 @@ class Court extends Base{
         $map = input('post.');
         $result = $this->CourtService->getCourtListOfCamp($map);
         if($result){
-            return json(['code'=>100,'msg'=>"OK",'data'=>$result]);
-        }else{
             return json(['code'=>200,'msg'=>"OK",'data'=>$result]);
+        }else{
+            // 不知道为什么判断成功失败都写一样
+            // return json(['code'=>200,'msg'=>"OK",'data'=>$result]);
+            return json(['code'=>100,'msg'=>__lang('MSG_401')]);
         }
     }
 
@@ -82,7 +84,7 @@ class Court extends Base{
             $CampService = new \app\service\CampService;
             $power = $CampService->isPower($camp_id,$this->memberInfo['member']);
             if($power<2){
-                return json(['code'=>100,'msg'=>'权限不足']);
+                return json(['code'=>100,'msg'=>__lang('MSG_403')]);
             }
             $result = $this->CourtService->updateCourt($data,$court_id);
             return json($result);
@@ -102,7 +104,11 @@ class Court extends Base{
             $CampService = new \app\service\CampService;
             $power = $CampService->isPower($camp_id,$this->memberInfo['member']);
             if($power<2){
+<<<<<<< HEAD
                 return json(['code'=>200,'msg'=>'权限不足']);
+=======
+                return json(['code'=>100,'msg'=>__lang('MSG_403')]);
+>>>>>>> 8ff2bbb5696b8afe7ff08a86c2bbbf7b9015a781
             }
             $result = $this->CourtService->createCourt($data);
             return json($result);   
