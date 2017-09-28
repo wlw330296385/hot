@@ -50,8 +50,7 @@ class Lesson extends Base{
                 $map['hot'] = 1;
             }
 
-            $lessonList = $this->LessonService->getLessonPage($map,$page);
-            return json(['code'=>200,'msg'=>'OK','data'=>$lessonList]);
+            return $this->LessonService->getLessonPage($map,$page);
         }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }       
