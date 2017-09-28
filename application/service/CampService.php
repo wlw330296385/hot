@@ -22,7 +22,7 @@ class CampService {
         }
     }
 
-    public function getCampListByPage( $map=[], $order='',$paginate=10){
+    public function getCampListByPage( $map=[],$paginate=10, $order=''){
         $res = $this->Camp->where($map)->where(['status'=>1])->order($order)->paginate($paginate);
         
         if($res){
