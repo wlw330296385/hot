@@ -78,8 +78,8 @@ class Grade extends Base{
             if( isset($map['page']) ){
                 unset($map['page']);
             }
-            $myGradeList = $this->GradeService->getGradeList($map,$page);
-            return json(['code'=>200,'msg'=>'ok','data'=>['myGradeCount'=>$myGradeCount,'gradeList'=>$gradeList,'gradeListCount'=>$gradeListCount]]);
+            $result = $this->GradeService->getGradeList($map,$page);
+            return json(['code'=>200,'msg'=>'ok','data'=>$result]);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
