@@ -23,7 +23,17 @@ class Court extends Base{
         $camp_id = input('param.camp_id');
         $CampService = new \app\service\CampService;
         $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
+        $isCourt = -1;
+        // 是否是自己的场地
+        if($camp_id>0){
+            $courtCamp = db('court_camp')->where(['camp_id'=>1,'court_id'=>$court_id])->find();
+            if(!$courtCamp){
+                $isCourt = 1;
+            }
+        }
     	$courtInfo = $this->CourtService->getCourtInfo(['id'=>$court_id]);
+
+        $this->assign('isCourt',$isCourt);
         $this->assign('power',$power);
         $this->assign('courtInfo',$courtInfo);
     	return view('Court/courtInfo');
