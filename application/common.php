@@ -26,17 +26,9 @@ function passwd($str) {
 // 获取语言包
 function __lang($name, $vars = [], $lang = '') {
     $Lang = new \think\Lang;
-    $Lang::load(APP_PATH . '/lang/' . $Lang::detect() . '/msg.php');
+    $Lang::setAllowLangList(['zh-cn']);
+    $Lang::load(APP_PATH . 'lang/' . $Lang::detect() . '/msg.php');
     return $Lang::get($name, $vars, $lang);
-}
-
-// view层 获取证件
-function getCert($cert_id) {
-    $Cert = new \app\service\CertService();
-    $res = $Cert->CertOneById($cert_id);
-    if (!$res) return ;
-
-    return $res;
 }
 
 /** 返回多级栏目

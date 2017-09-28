@@ -181,25 +181,21 @@ class Court extends Base{
     // 场地上下架/删除 2017/9/28
     public function removecourt() {
         try {
-            $courtid = input('param.courtid');
+            $courtcampid = input('param.courtcampid');
+            $campid = input('param.campid');
             $action = input('param.action');
             if (!$action) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
 
-            $courtS = new CourtService();
-            $court = $courtS->getCourtInfo(['id' => $courtid]);
-            if (!$court) {
-                return json(['code' => 100, 'msg' => '没有此场地']);
-            }
-
-            $camppower = getCampPower($court['camp_id'], $this->memberInfo['id']);
+            $camppower = getCampPower($campid, $this->memberInfo['id']);
             if ($camppower < 3) { //管理员以上可操作
                 return json(['code' => 100, 'msg' => __lang('MSG_403')]);
             }
 
             // 删除场地-训练营关联关系
-            $result = $courtS->delCourtCamp($court['id'], $court['camp_id']);
+            $courtS = new CourtService();
+            $result = $courtS->delCourtCamp($courtcampid);
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
