@@ -46,6 +46,7 @@ class CourtService {
             }else{
                 $res['covers'] = [];
             }
+            $res['status_num'] = $result->getData('status');
             return $res;
         }else{
             return $result;
@@ -75,15 +76,15 @@ class CourtService {
 
     // 获取训练营下的场地列表
     public function getCourtListOfCamp($map = [],$paginate = 10){
-        $result = $this->CourtCamp->court()->where($map)->paginate($paginate);
+        $result = $this->CourtCamp->with('court')->where($map)->paginate($paginate);
         if($result){           
             $res = $result->toArray();
-            // dump($res);die;
+//             dump($res);die;
                 foreach ($res['data'] as $key => $value) {
-                    if($value['cover']){
-                        $res['data'][$key]['covers'] = unserialize($value['cover']);
+                    if($value['court']['cover']){
+                        $res['data'][$key]['court']['covers'] = unserialize($value['court']['cover']);
                     }else{
-                        $res['data'][$key]['covers'] = [];
+                        $res['data'][$key]['court']['covers'] = [];
                     }
                 }
             
@@ -153,4 +154,19 @@ class CourtService {
         }
     }
 
+    // 删除court_camp 2017/09/28
+    public function delCourtCamp($court_id, $camp_id) {
+        $model = new CourtCamp();
+        $find = $model->where(['court_id' => $court_id, 'camp_id' => $camp_id])->find();
+        if (!$find) {
+            return ['code' => 100, 'msg' => '场地训练营关联'.__lang('MSG_401'), 'data' => $find];
+        }
+        
+        $execute = $model::destroy($find['id']);
+        if (!$execute) {
+            return ['code' => 100, 'msg' => '删除训练营场地'.__lang('MSG_400'), 'data' => $execute];
+        } else {
+            return ['code' => 200, 'msg' => '删除训练营场地'.__lang('MSG_200'), 'data' => $execute];
+        }
+    }
 }
