@@ -252,7 +252,7 @@
                     </div>
                     <ul class="mui-table-view list">
                         {volist name="lessonList" id="vol"}
-                        <li class="mui-table-view-cell listli detalisli lessonType lesson" data-id="{$vol.id}">{$vol.lesson}</li>
+                        <li class="mui-table-view-cell listli detalisli lessonType lesson"  data-id="{$vol.id}">{$vol.lesson}</li>
                         {/volist}
                     </ul>
                 </div>
@@ -270,13 +270,8 @@
                         <span class="course wd36"><strong>学员名单</strong></span>
                         <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
                     </div>
-                    <form class="mui-input-group">
-                        {volist name="studentList" id="vol"}
-                        <div class="mui-input-row mui-checkbox mui-left ">
-                            <label>{$vol.member}</label>
-                            <input name="checkbox-student" class="student" value="{$vol.member}" type="checkbox" data-id="{$vol.member_id}">
-                        </div>
-                        {/volist}
+                    <form id="newdiv" class="mui-input-group">
+
                     </form>
                 </div>
             </div>
@@ -575,7 +570,7 @@
             mui("#grade").popover("toggle");
         })
         // 学员名单
-        $("#studentConfirm").click(function(){
+        $("#studentConfirm").on('click',function(){
             //选择多个学员
             $("input[name='student']").val($("input[name='checkbox-student']:checked").map(function(){
                 return $(this).val()
@@ -589,7 +584,10 @@
             });  
             studentList = student_id;//数组赋值给变量
             mui('#student').popover('toggle');
+            // console.log(studentList)
         })
+
+
         // 课程类型
         $(".lessonType").click(function(){
             var lessonType = $(this).text();
@@ -677,8 +675,12 @@
                 success:function(data){
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data)
-                    if(data.code!=100){
-                        mui.toast(data.msg);
+                    var div = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="'+ data.data[i].id +'"></div>'
+                        }
+                        $("#newdiv").append(div);
                     }
                 },
                 error:function(xhr,type,errorThrown){
@@ -707,6 +709,7 @@
             var  rent = $(".rent").val();
             var  status = $(".status option:selected").text();
             var  remarks = $(".remarks").val();
+
             if(grade!=''&&lesson!=''&&gradecate!=''&&week!=''&&lesson_time!=''&&location!=''&&coach!=''&&assistant!=''&&leader!=''&&teacher!=''&&plan!=''&&rent!=''){
                 mui.ajax("{:url('api/grade/createGradeApi')}",{
                     data:{

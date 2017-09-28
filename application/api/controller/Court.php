@@ -86,7 +86,7 @@ class Court extends Base{
             $data['member'] = $this->memberInfo['member'];
             // 权限
             $CampService = new \app\service\CampService;
-            $power = $CampService->isPower($camp_id,$this->memberInfo['member']);
+            $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
             if($power<2){
                 return json(['code'=>100,'msg'=>__lang('MSG_403')]);
             }
@@ -103,12 +103,16 @@ class Court extends Base{
             $camp_id = input('param.camp_id');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
+
             // dump($data);die;
             // 权限
             $CampService = new \app\service\CampService;
-            $power = $CampService->isPower($camp_id,$this->memberInfo['member']);
+            $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
             if($power<2){
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0ec803d7e429db0a2f6ae0363c4744b35cf6fbd4
                 return json(['code'=>100,'msg'=>__lang('MSG_403')]);
             }
             $result = $this->CourtService->createCourt($data);
