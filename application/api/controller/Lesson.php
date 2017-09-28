@@ -50,8 +50,7 @@ class Lesson extends Base{
                 $map['hot'] = 1;
             }
 
-            $lessonList = $this->LessonService->getLessonPage($map,$page);
-            return json(['code'=>200,'msg'=>'OK','data'=>$lessonList]);
+            return $this->LessonService->getLessonPage($map,$page);
         }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }       
@@ -149,9 +148,9 @@ class Lesson extends Base{
             $lesson_id = input('param.lesson_id');
             $map = input('post');
             $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'status'=>1])->where($map)->where('grade_id','neq','')->field('student,id')->select();
-            return json(['code'=>100,'msg'=>__lang('MSG_201'),'data'=>$studentList]);
+            return json(['code'=>200,'msg'=>__lang('MSG_201'),'data'=>$studentList]);
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 

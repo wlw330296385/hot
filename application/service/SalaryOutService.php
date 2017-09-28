@@ -45,4 +45,4 @@ class SalaryOutService {
             return ['code'=>100,'msg'=>'申请失败','data'=>$data];
         }
     }
-}
+}   
