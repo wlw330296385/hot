@@ -45,7 +45,7 @@ class Camp extends Base{
     }
 
     // 搜索训练营
-    public function searchCampApi(){
+    public function getCampListByPageApi(){
         try{
             $map = input('post.');
             $keyword = input('param.keyword');
