@@ -102,7 +102,7 @@ class Court extends Base{
             $CampService = new \app\service\CampService;
             $power = $CampService->isPower($camp_id,$this->memberInfo['member']);
             if($power<2){
-                return json(['code'=>100,'msg'=>'权限不足']);
+                return json(['code'=>200,'msg'=>'权限不足']);
             }
             $result = $this->CourtService->createCourt($data);
             return json($result);   

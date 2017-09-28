@@ -204,9 +204,10 @@ class Coach extends Base{
         $commentList = db('coach_comment')->where(['coach_id'=>$coach_id])->select();
         //所属训练营
         $campList = Db::view('camp_member','camp_id')
-                    ->view('camp','logo','camp.id=camp_member.camp_id')
-                    ->where(['camp_member.member_id'=>$this->memberInfo['id'],'camp_member.type'=>4,'camp_member.status'=>1])
+                    ->view('camp','*','camp.id = camp_member.camp_id')
+                    ->where(['camp_member.member_id'=>$this->memberInfo['id'],'camp_member.type'=>2,'camp_member.status'=>1])
                     ->select();
+
         $this->assign('campList',$campList);
         $this->assign('commentList',$commentList);
         $this->assign('scheduleCount',$scheduleCount);

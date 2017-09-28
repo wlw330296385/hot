@@ -105,7 +105,7 @@ class CourtService {
         }
         $result = $this->courtModel->save($data);
         if($result){
-            return ['code'=>100,'data'=>$result,'msg'=>__lang('MSG_101_SUCCESS')];
+            return ['code'=>100,'data'=>$this->courtModel->id,'msg'=>"ok"];
         }else{
             return ['code'=>200,'msg'=>$this->courtModel->getError()];
         }

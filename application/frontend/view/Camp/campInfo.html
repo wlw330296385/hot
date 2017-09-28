@@ -129,11 +129,9 @@
                         <span class="mui-icon mui-icon-phone"></span>电话咨询
                     </a>
                 </li>
-                {neq name="isPower" value='0'}
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli">
                     <a href="#pjpopover">我来评价</a>
                 </li>
-                {/neq}
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli">
                     <a href="#join">申请加入</a>
                 </li>
@@ -229,8 +227,10 @@
         $("#commentSubmit").on('click',function() {
             //判断是否登陆会员
             var data1 = wooApi.getInputData();
-            var data2 = wooApi.getInputData('textarea','data',data1);
-            var objData = wooApi.arrTOobj(data2);
+            // var data2 = wooApi.getInputData('textarea','data',data1);
+            var comment = $('textarea.data').val();
+            var objData = wooApi.arrTOobj(data1);
+            objData.comment = comment;
             var result = wooApi.asyncF("{:url('api/camp/createCampCommentApi')}",objData);
             if(result){
                 mui.toast(result.msg);

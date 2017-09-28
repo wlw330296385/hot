@@ -159,8 +159,8 @@ class Camp extends Base{
             $coachInfo = db('coach')->where(['id'=>$coach_id])->find();
             $member_id = $coachInfo['member_id'];
         }
-        $campList = Db::view('camp_member','camp_id,member_id')
-                        ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo','camp.id=camp_member.camp_id')
+        $campList = Db::view('camp_member','camp_id,member_id,type,status')
+                        ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo,id','camp.id=camp_member.camp_id')
                         ->where(['camp_member.member_id'=>$member_id,'camp_member.type'=>2,'camp_member.status'=>1])
                         ->select();
         $this->assign('campList',$campList);
