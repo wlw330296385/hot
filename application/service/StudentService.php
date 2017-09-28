@@ -31,7 +31,7 @@ class StudentService{
 	public function createStudent($data){
 		$validate = validate('StudentVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
 		$result = $this->studentModel->data($data)->save();
 		if($result){

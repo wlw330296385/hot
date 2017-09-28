@@ -89,10 +89,8 @@ function getYearInterval($min,$max){
 
 // 格式化输出性别
 function format_sex($sex_int) {
-    $str = '未知';
-    if ($sex_int) {
-        $str = $sex_int == 2 ? '女' : '男';
-    }
+    $str = '';
+    $str = $sex_int == 2 ? '女' : '男';
     return $str;
 }
 
