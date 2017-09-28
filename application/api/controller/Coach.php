@@ -14,14 +14,16 @@ class Coach extends Base{
     // 搜索教练
     public function searchCoachListApi(){
         try{
-            $map = [];
+            $map = input('post.');
             $keyword = input('param.keyword');
             $province = input('param.province');
             $page = input('param.page')?input('param.page'):1;
             $city = input('param.city');
             $area = input('param.area');
             $sex = input('param.sex');
-            $map = ['province'=>$province,'city'=>$city,'area'=>$area];
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
             foreach ($map as $key => $value) {
                 if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
@@ -32,6 +34,12 @@ class Coach extends Base{
             }
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['coach'] = ['LIKE','%'.$keyword.'%'];
+            } 
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
             }
             $coachList = $this->CoachService->getCoachList($map,$page);
             if($coachList){

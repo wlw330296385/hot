@@ -75,6 +75,7 @@ class LessonService {
             }else{
                 $res['assistant_ids'] = [];
             }
+            $res['status_num'] = $result->getData('status');
             return $res;
         }else{
             return $result;
@@ -176,7 +177,17 @@ class LessonService {
                     ->value('type');
 
         return $is_power?$is_power:0;
-    
+    }
+
+    // 修改课程上架/下架状态 2017/09/28
+    public function updateLessonStatus($lessonid, $status) {
+        $model = new Lesson();
+        $res = $model->update(['id' => $lessonid, 'status' => $status]);
+        if (!$res) {
+            return [ 'code' => 100, 'msg' => __lang('MSG_400'), 'data' => $model->getError() ];
+        } else {
+            return [ 'code' => 200, 'msg' => __lang('MSG_200'), 'data' => $res ];
+        }
     }
 }
 

@@ -20,14 +20,22 @@ class Court extends Base{
             $page = input('param.page')?input('param.page'):1;
             $city = input('param.city');
             $area = input('param.area');
-            $map = ['province'=>$province,'city'=>$city,'area'=>$area];
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
             foreach ($map as $key => $value) {
-                if($value == ''|| empty($value) || $value!=' '){
+                if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
                 }
             }
-            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != '' && $keyword!=NULL){
                 $map['court'] = ['LIKE','%'.$keyword.'%'];
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
             }
             $campList = $this->CourtService->getCourtList($map,$page);
             return json(['code'=>200,'msg'=>'OK','data'=>$campList]);

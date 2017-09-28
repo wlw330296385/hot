@@ -31,7 +31,9 @@ class Lesson extends Base{
             $camp_id = input('param.camp_id');
             $gradecate_id = input('param.gradecate_id');
             $hot = input('param.hot');
-            $map = ['province'=>$province,'city'=>$city,'area'=>$area,'gradecate_id'=>$gradecate_id];
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
             foreach ($map as $key => $value) {
                 if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
@@ -49,7 +51,12 @@ class Lesson extends Base{
             if ($hot) {
                 $map['hot'] = 1;
             }
-
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
             return $this->LessonService->getLessonPage($map,$page);
         }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -193,8 +200,41 @@ class Lesson extends Base{
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
 
-            dump($lessonid);
-            dump($action);
+            $lessonS = new LessonService();
+            $lesson = $lessonS->getLessonInfo(['id' => $lessonid]);
+            if (!$lesson) {
+                return json(['code' => 100, 'msg' => '没有此课程']);
+            }
+
+            $camppower = getCampPower($lesson['camp_id'], $this->memberInfo['id']);
+            if ($camppower < 1) { //教练以上可操作
+                return json([ 'code' => 100, 'msg' => __lang('MSG_403') ]);
+            }
+
+            switch ($lesson['status_num']) {
+                case "1": {
+                    if ($action == 'editstatus') {
+                        // 下架课程
+                        $response = $lessonS->updateLessonStatus($lesson['id'], -1);
+                        return json($response);
+                    } else {
+                        $response = $lessonS->SoftDeleteLesson($lesson['id']);
+                        return json($response);
+                    }
+                    break;
+                }
+                case "-1": {
+                    if ($action == 'editstatus') {
+                        // 下架课程
+                        $response = $lessonS->updateLessonStatus($lesson['id'], 1);
+                        return json($response);
+                    } else {
+                        $response = $lessonS->SoftDeleteLesson($lesson['id']);
+                        return json($response);
+                    }
+                    break;
+                }
+            }
         } catch(Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }

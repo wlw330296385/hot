@@ -54,7 +54,7 @@ class Student extends Base
 			if($result){
 				return json(['data'=>$result,'code'=>200,'msg'=>'ok']);
 			}else{
-				return json(['code'=>100,'msg'=>'没数据了']);
+				return json(['code'=>200,'msg'=>'没数据了']);
 			}
 		}catch(Exception $e){
 			return json(['code'=>100,'msg'=>$e->getMessage()]);
