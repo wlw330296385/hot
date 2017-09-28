@@ -193,8 +193,41 @@ class Lesson extends Base{
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
 
-            dump($lessonid);
-            dump($action);
+            $lessonS = new LessonService();
+            $lesson = $lessonS->getLessonInfo(['id' => $lessonid]);
+            if (!$lesson) {
+                return json(['code' => 100, 'msg' => '没有此课程']);
+            }
+
+            $camppower = getCampPower($lesson['camp_id'], $this->memberInfo['id']);
+            if ($camppower < 1) { //教练以上可操作
+                return json([ 'code' => 100, 'msg' => __lang('MSG_403') ]);
+            }
+
+            switch ($lesson['status_num']) {
+                case "1": {
+                    if ($action == 'editstatus') {
+                        // 下架课程
+                        $response = $lessonS->updateLessonStatus($lesson['id'], -1);
+                        return json($response);
+                    } else {
+                        $response = $lessonS->SoftDeleteLesson($lesson['id']);
+                        return json($response);
+                    }
+                    break;
+                }
+                case "-1": {
+                    if ($action == 'editstatus') {
+                        // 下架课程
+                        $response = $lessonS->updateLessonStatus($lesson['id'], 1);
+                        return json($response);
+                    } else {
+                        $response = $lessonS->SoftDeleteLesson($lesson['id']);
+                        return json($response);
+                    }
+                    break;
+                }
+            }
         } catch(Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
