@@ -332,7 +332,7 @@
                     <form action="" class="mui-input-group" style="overflow: hidden;">
                         <div class="mui-input-row">
                             <label>邮箱地址</label>
-                            <input type="text" name="email" class="reg_email" data-id={$memberInfo.id} placeholder="{$memberInfo['email']}" required pattern="/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/">
+                            <input type="text" name="email" class="reg_email" data-id="{$memberInfo.id}" placeholder="{$memberInfo['email']}">
                         </div>
                         <span class="tipspan email_hint email_hint"></span>
                         <div class="tjbtn tjbtn-next">
@@ -412,6 +412,7 @@
         })(mui);
         
         $(function(){
+
             //退出登陆
             $("#logout").on("click", function () {
                 console.log(123)
@@ -440,6 +441,7 @@
                 $(".logo").addClass("logo1")
             })
 
+            var url = "{:url('api/member/updateMemberApi')}";
             // 修改手机号
             // 步骤1
             $(".stepBtn1").click(function () {
@@ -458,7 +460,8 @@
                 var reg_mobile =$(".reg_mobile").val();
                 var smsNewCode = $('.reg_newcode').val();
                 if(/^1[34578]\d{9}$/.test(reg_mobile)){
-                    mui.ajax("{:url('api/member/updateMemberApi')}", {
+                    mui.ajax({
+                        url:url,
                         data: {
                             'telephone': reg_mobile
                         },
@@ -506,7 +509,8 @@
                 var email =$(".reg_email").val();
                 if(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/.test(email)){
                     $('.email_hint').text("");
-                    mui.ajax("{:url('api/member/updateMemberApi')}", {
+                    mui.ajax({
+                        url:url,
                         data: {
                             'email': email
                         },
@@ -518,7 +522,7 @@
                             console.log(data)
                             if (data.code == 200) {
                                 mui.toast(data.msg);
-                                viewApi.back();       
+                                setTimeout(viewApi.back(),2500);       
                             }
                         },
                         error: function (xhr, type, errorThrown) {
@@ -530,7 +534,7 @@
                 }
             });
 
-             // 修改密码
+            // 修改密码
              $(".passwordBtn").click(function(){
                 var password =$(".reg_password").val();
                 var newpassword =$(".reg_newpassword").val();
@@ -538,9 +542,10 @@
                 if(/^[a-z0-9_-]{6,16}$/.test(password)&&/^[a-z0-9_-]{6,16}$/.test(newpassword)&&newpassword==confirm){
                     $('.password_hint').text("");
                     $('.confirm_hint').text("");
-                    mui.ajax("{:url('api/member/updateMemberApi')}", {
+                    mui.ajax({
+                        url:url,
                         data: {
-                            'password': password
+                            'password': newpassword
                         },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -550,7 +555,7 @@
                         console.log(data)
                         if (data.code == 200) {
                             mui.toast(data.msg);
-                            viewApi.back();
+                            setTimeout(viewApi.back(),2500);
                         }
                     },
                     error: function (xhr, type, errorThrown) {
@@ -567,89 +572,89 @@
                 }
             })
 
-             //验证短信验证码
-             $('#code').on("blur",function(){
-                var code = document.getElementById('code').value;
-                var codeReg = /^\d{6,6}$/;
-                //console.log(code);
-                if(!codeReg.test(code)){
-                    mui.toast('请填写正确的验证码');
-                    flag = false;
-                }else{
-                    telephone = $(".telephone").text();
-                    console.log(telephone)
-                    var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/sms/validateSmsCodeApi','','',true)}");
-                    if(result == 200){
-                        flag = true;
-                        mui.toast(result.msg);
-                    }else{
-                        flag = false;
-                        mui.toast(result.msg);
-                    }
-                }
-            });
+            //  //验证短信验证码
+            //  $('#code').on("blur",function(){
+            //     var code = document.getElementById('code').value;
+            //     var codeReg = /^\d{6,6}$/;
+            //     //console.log(code);
+            //     if(!codeReg.test(code)){
+            //         mui.toast('请填写正确的验证码');
+            //         flag = false;
+            //     }else{
+            //         telephone = $(".telephone").text();
+            //         console.log(telephone)
+            //         var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/sms/validateSmsCodeApi','','',true)}");
+            //         if(result == 200){
+            //             flag = true;
+            //             mui.toast(result.msg);
+            //         }else{
+            //             flag = false;
+            //             mui.toast(result.msg);
+            //         }
+            //     }
+            // });
 
-             $('#newcode').on("blur",function(){
-                var newcode = document.getElementById('newcode').value;
-                var codeReg = /^\d{6,6}$/;
-                //console.log(code);
-                if(!codeReg.test(newcode)){
-                    mui.toast('请填写正确的验证码');
-                    flag = false;
-                }else{
-                    newtelephone = $(".newtelephone").val();
-                    console.log(newtelephone)
-                    var result = smsNewCode.validateSmsCodeApi(newtelephone,newcode,"{:url('api/sms/validateSmsCodeApi','','',true)}");
-                    if(result == 200){
-                        flag = true;
-                        mui.toast(result.msg);
-                    }else{
-                        flag = false;
-                        mui.toast(result.msg);
-                    }
-                }
+         //     $('#newcode').on("blur",function(){
+         //        var newcode = document.getElementById('newcode').value;
+         //        var codeReg = /^\d{6,6}$/;
+         //        //console.log(code);
+         //        if(!codeReg.test(newcode)){
+         //            mui.toast('请填写正确的验证码');
+         //            flag = false;
+         //        }else{
+         //            newtelephone = $(".newtelephone").val();
+         //            console.log(newtelephone)
+         //            var result = smsNewCode.validateSmsCodeApi(newtelephone,newcode,"{:url('api/sms/validateSmsCodeApi','','',true)}");
+         //            if(result == 200){
+         //                flag = true;
+         //                mui.toast(result.msg);
+         //            }else{
+         //                flag = false;
+         //                mui.toast(result.msg);
+         //            }
+         //        }
 
-            });
+         //    });
          })
 
         // 发送短信验证码
-        function sendCode(obj){
-            telephone = $(".telephone").text();
-            var telephoneReg = /^\d{11,11}$/;
-            if(!telephoneReg.test(telephone)){
-                mui.toast('请填写正确的手机号码');
-                flag = false;
-            }else{
-                var result = smsCode.getMobileCodeApi(obj,telephone,"{:url('api/sms/getMobileCodeApi','','',true)}");
-                if(result.code == 200){
-                    flag = true;
-                    mui.toast(result.msg);
-                }else{
-                    flag = false;
-                    mui.toast(result.msg);
+        // function sendCode(obj){
+        //     telephone = $(".telephone").text();
+        //     var telephoneReg = /^\d{11,11}$/;
+        //     if(!telephoneReg.test(telephone)){
+        //         mui.toast('请填写正确的手机号码');
+        //         flag = false;
+        //     }else{
+        //         var result = smsCode.getMobileCodeApi(obj,telephone,"{:url('api/sms/getMobileCodeApi','','',true)}");
+        //         if(result.code == 200){
+        //             flag = true;
+        //             mui.toast(result.msg);
+        //         }else{
+        //             flag = false;
+        //             mui.toast(result.msg);
 
-                }
-            }
-        }
+        //         }
+        //     }
+        // }
 
-        function sendNewCode(obj){
-            newtelephone = $(".newtelephone").val();
-            var telephoneReg = /^\d{11,11}$/;
-            if(!telephoneReg.test(newtelephone)){
-                mui.toast('请填写正确的手机号码');
-                flag = false;
-            }else{
-                var result = smsCode.getMobileCodeApi(obj,newtelephone,"{:url('api/sms/getMobileCodeApi','','',true)}");
-                if(result.code == 200){
-                    flag = true;
-                    mui.toast(result.msg);
-                }else{
-                    flag = false;
-                    mui.toast(result.msg);
+        // function sendNewCode(obj){
+        //     newtelephone = $(".newtelephone").val();
+        //     var telephoneReg = /^\d{11,11}$/;
+        //     if(!telephoneReg.test(newtelephone)){
+        //         mui.toast('请填写正确的手机号码');
+        //         flag = false;
+        //     }else{
+        //         var result = smsCode.getMobileCodeApi(obj,newtelephone,"{:url('api/sms/getMobileCodeApi','','',true)}");
+        //         if(result.code == 200){
+        //             flag = true;
+        //             mui.toast(result.msg);
+        //         }else{
+        //             flag = false;
+        //             mui.toast(result.msg);
 
-                }
-            }
-        }
+        //         }
+        //     }
+        // }
 
     </script>
 
