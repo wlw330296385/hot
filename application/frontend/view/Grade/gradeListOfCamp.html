@@ -20,69 +20,69 @@
 <body class=whitebg>
 
 
-<header id="header" class="mui-bar mui-bar-nav for-tab">
-    <div class="camp-lesson-list">
-        <div class="mui-segmented-control mb">
-            <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"></a>
-            <a class="mui-control-item mui-active" href="#onGradeList">当前班级</a>
-            <a class="mui-control-item" href="#offGradeList">预排班级</a>
-            <a class="mui-control-item" href="{:url('grade/createGrade',['camp_id'=>$camp_id])}">添加班级</a>
-        </div>
-    </div>
-</header>
-
-<div class="mui-content">
-
-    <div class="nav-list">
-        <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
-                <a href="#">
-                    <span>我的班级</span>
-                    <div class="mui-media-body">{$myCount}</div>
-                </a>
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
-                <a href="#">
-                    <span>训练营班级</span>
-                    <div class="mui-media-body">{$gradeListCount}</div>
-                </a>
-            </li>
-        </ul>
-    </div>
-
-    <div class="tab-pullRefresh">
-        <!--当前班级 -->
-        <div id="onGradeList" class="mui-scroll-wrapper mui-control-content mui-active">
-            <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list grade1">
-                </ul>
+    <header id="header" class="mui-bar mui-bar-nav for-tab">
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control mb">
+                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"></a>
+                <a class="mui-control-item mui-active" href="#onGradeList">当前班级</a>
+                <a class="mui-control-item" href="#offGradeList">预排班级</a>
+                <a class="mui-control-item" href="{:url('grade/createGrade',['camp_id'=>$camp_id])}">添加班级</a>
             </div>
         </div>
-        <!-- 预排班级 -->
-        <div id="offGradeList" class="mui-scroll-wrapper mui-control-content">
-            <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list grade0">
-                </ul>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="nav-list">
+            <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
+                    <a href="#">
+                        <span>我的班级</span>
+                        <div class="mui-media-body">{$myCount}</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
+                    <a href="#">
+                        <span>训练营班级</span>
+                        <div class="mui-media-body">{$gradeListCount}</div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-pullRefresh">
+            <!--当前班级 -->
+            <div id="onGradeList" class="mui-scroll-wrapper mui-control-content mui-active" style="top: 125px">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list grade1 OA_task_grade">
+                    </ul>
+                </div>
+            </div>
+            <!-- 预排班级 -->
+            <div id="offGradeList" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list grade0 OA_task_grade">
+                    </ul>
+                </div>
             </div>
         </div>
+
     </div>
 
-</div>
-
-</body>
-
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<script src="/static/frontend/js/wooApi.js"></script>
-<script src="/static/frontend/js/common.js"></script>
 
 
-<script>
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+
+
+    <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-    mui("body").on("tap","a",function(){
+    mui("body").on("click","a",function(){
         window.top.location.href=this.href;
     });
 
@@ -194,10 +194,22 @@
 
                 var newli='';
                 if (data.code == 200) {
-                    for(var i=0;i<=data.data.length-1;i++){
+                    for (var i = 0; i <= data.data.length - 1; i++) {
                         var urls = "{:url('grade/gradeInfoOfCamp')}" + '/grade_id/' + data.data[i].id+'/camp_id/'+data.data[i].camp_id;
-                        newli +=  '<li class="mui-table-view-cell mui-media listli"><a href="'+urls+'" class="mui-navigate-right"><div class="mui-media-body wd"><strong>'+ data.data[i].grade+'</strong><p class="mui-ellipsis">'+ data.data[i].gradecate+' | '+ data.data[i].court+'</p></div></a></li>';
+                        newli += '<li class="mui-table-view-cell mui-media listli">';
+                        if (status == 1) {
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><a class="mui-btn mui-btn-grey" data-action="editstatus">设为预排</a><a class="mui-btn mui-btn-red" data-action="del">删除</a></div>';
+                        } else {
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><a class="mui-btn mui-btn-grey" data-action="editstatus">设为当前</a><a class="mui-btn mui-btn-red" data-action="del">删除</a></div>';
+                        }
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><div class="mui-media-body wd"><strong>'+ data.data[i].grade+'</strong><p class="mui-ellipsis">'+ data.data[i].gradecate+' | '+ data.data[i].court+'</p></div></a></div>';
+                        newli += '</li>';
                     }
+
+                    // for(var i=0;i<=data.data.length-1;i++){
+                    //     var urls = "{:url('grade/gradeInfoOfCamp')}" + '/grade_id/' + data.data[i].id+'/camp_id/'+data.data[i].camp_id;
+                    //     newli +=  '<li class="mui-table-view-cell mui-media listli" ><div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><a class="mui-btn mui-btn-red" data-action="del">删除</a></div><div class="mui-slider-handle"><a href="'+urls+'" ><div class="mui-media-body wd"><strong>'+ data.data[i].grade+'</strong><p class="mui-ellipsis">'+ data.data[i].gradecate+' | '+ data.data[i].court+'</p></div></a></div></li>';
+                    // }
                     if(gType==1){
                         //上拉刷新
                         $("ul.grade"+status).empty().append(newli);
@@ -227,6 +239,46 @@
             }
         });
     };
-</script>
 
+    //拖拽后显示操作图标，点击操作图标删除元素；
+    $('.OA_task_grade').on('tap', '.mui-btn', function (event) {
+        var elem = this;
+        var li = elem.parentNode.parentNode;
+        var btnArray = ['确认', '取消'];
+        var txt = elem.innerHTML;
+        var gradeid = elem.parentNode.getAttribute('data-id');
+        var action = elem.getAttribute('data-action');
+        mui.confirm('确认该班级' + txt + '?', '提示', btnArray, function (e) {
+            if (e.index == 0) {
+                var apiurl = "{:url('api/grade/removegrade')}";
+                mui.ajax(apiurl, {
+                    data: {
+                        gradeid: gradeid,
+                        action: action
+                    },
+                    dataType: 'json',
+                    type: 'post',
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        //console.log(data);
+                        if (data.code == 200) {
+                            li.parentNode.removeChild(li);
+                            location.reload();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errotThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                    }
+                });
+            } else {
+                setTimeout(function () {
+                    mui.swipeoutClose(li);
+                }, 0);
+            }
+        });
+    });
+</script>
+</body>
 </html>
