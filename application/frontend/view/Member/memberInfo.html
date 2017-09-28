@@ -186,7 +186,7 @@
                                 <label>姓名</label><span class="name">{$memberInfo['member']}</span>
                             </div>
                             <div class="mui-input-row">
-                                <label>性别</label><span class="sex">{$memberInfo['sex']}</span>
+                                <label>性别</label><span class="sex">{$memberInfo['sex']|format_sex}</span>
                             </div>
                             <div class="mui-input-row">
                                 <label>身高</label><span class="height">{$memberInfo['height']}cm</span>
@@ -201,7 +201,7 @@
                                 <label>所属地区</label><span>{$memberInfo['province']}{$memberInfo['city']}{$memberInfo['area']}</span>
                             </div>
                             <div class="mui-input-row">
-                                <label>注册日期</label><span class="">{$memberInfo['create_time']}</span>
+                                <label>注册时间</label><span class="">{$memberInfo['create_time']}</span>
                             </div>
                         </form>
                         <div class="page-header">
@@ -247,8 +247,8 @@
                             <label>性别</label>
                             <span class="editor">
                                 <select class="sex">
-                                    <option value="1">男</option>
-                                    <option value="2">女</option>
+                                    <option value="1" {eq name="$memberInfo.sex" value="1"}selected{/eq}>男</option>
+                                    <option value="2" {eq name="$memberInfo.sex" value="2"}selected{/eq}>女</option>
                                 </select>
                             </span>
                         </div>
@@ -269,7 +269,7 @@
                             <span id="cityResult3" class="ui-alert">{$memberInfo['province']} {$memberInfo['city']} {$memberInfo['area']}</span>
                         </div>
                         <div class="mui-input-row">
-                            <label>注册日期</label>
+                            <label>注册时间</label>
                             <span class="">{$memberInfo['create_time']}</span>
                         </div>
                     </form>
@@ -401,7 +401,7 @@
                     var height =$("#editor .height").text();
                     var weight =$("#editor .weight").text();
                     var birthday =$("#editor .birthday").text();
-                    if(member!=''&&sex!=''&& height!=''&& weight!=''&& birthday!=''&& getProvince!=''&&getCity!=''&&getArea!=''){
+                    if(member!=''&&sex!=''&& height!=''&& weight!=''&& birthday!=''){
                         mui.ajax("{:url('api/member/updateMemberApi')}", {
                             data: {
                                 'member': member,
@@ -420,7 +420,8 @@
                             success: function (data) {
                                 console.log(data)
                                 mui.toast(data.msg)
-                                  setTimeout(viewApi.back(),1000);
+                                  setTimeout(viewApi.back(),2500);
+                                  location.reload();
                             },
                             error: function (xhr, type, errorThrown) {
                                 console.log(data);
