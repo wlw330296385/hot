@@ -34,13 +34,13 @@
     <div class="tab-pullRefresh">
         <div id="onCourtList" class="mui-scroll-wrapper mui-control-content mui-active">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list court1">
+                <ul class="mui-table-view detalis-list list court1 OA_task_court">
                 </ul>
             </div>
         </div>
         <div id="offCourtList" class="mui-scroll-wrapper mui-control-content">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list court0">
+                <ul class="mui-table-view detalis-list list court-1 OA_task_court">
                 </ul>
             </div>
         </div>
@@ -60,7 +60,7 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-    mui("body").on("tap","a",function(){
+    mui("body").on("click","a",function(){
         window.top.location.href=this.href;
     });
 
@@ -136,7 +136,7 @@
                 offCount = 1;//刷新并显示第一页
                 var page = offCount;
                 var gType = 1;//代表下拉刷新
-                toList('offCourtList',page,gType,0);//具体取数据的方法
+                toList('offCourtList',page,gType,-1);//具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现（下架）
@@ -145,7 +145,7 @@
                 offCount++;//翻下一页
                 var page = offCount;
                 var gType =2;//代表上拉加载
-                toList('offCourtList',page,gType,0);//具体取数据的方法
+                toList('offCourtList',page,gType,-1);//具体取数据的方法
             }, 100);
         }
 
@@ -173,8 +173,8 @@
                 var newli='';
                 if (data.code == 200) {
                     for(var i=0;i<=data.data.data.length-1;i++){
-                        var urls = "{:url('court/courtInfo')}" + '/court_id/' + data.data.data[i].id+'/camp_id/'+data.data.data[i].camp_id;
-                        newli +=  '<li class="mui-table-view-cell mui-media listli list-wide"><a href="'+urls+'"><img class="mui-media-object mui-pull-left " src="'+ data.data.data[i].covers[0]+'"><div class="mui-media-body wd52">'+ data.data.data[i].court+'<p class="mui-ellipsis">'+ data.data.data[i].location+'</p></div><div class="price-frame singup-num">'+ data.data.data[i].area+'</div></a></li>';
+                        var urls = "{:url('court/courtInfo')}" + '/court_id/' + data.data.data[i].court.id+'/camp_id/'+data.data.data[i].court.camp_id;
+                        newli +=  '<li class="mui-table-view-cell mui-media listli list-wide"><div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].court.id + '"><a class="mui-btn mui-btn-red" data-action="del">删除</a></div><div class="mui-slider-handle"><a href="'+urls+'"><img class="mui-media-object mui-pull-left " src="'+ data.data.data[i].court.covers[0]+'"><div class="mui-media-body wd52">'+ data.data.data[i].court.court+'<p class="mui-ellipsis">'+ data.data.data[i].court.location+'</p></div><div class="price-frame singup-num">'+ data.data.data[i].court.area+'</div></a></div></li>';
                     }
                     if(gType==1){
                         //上拉刷新
@@ -205,6 +205,46 @@
             }
         });
     };
+
+    //拖拽后显示操作图标，点击操作图标删除元素；
+    $('.OA_task_court').on('tap', '.mui-btn', function (event) {
+        var elem = this;
+        var li = elem.parentNode.parentNode;
+        var btnArray = ['确认', '取消'];
+        var txt = elem.innerHTML;
+        var courtid = elem.parentNode.getAttribute('data-id');
+        var action = elem.getAttribute('data-action');
+        mui.confirm('确认该场地' + txt + '?', '提示', btnArray, function (e) {
+            if (e.index == 0) {
+                var apiurl = "{:url('api/court/removecourt')}";
+                mui.ajax(apiurl, {
+                    data: {
+                        courtid: courtid,
+                        action: action
+                    },
+                    dataType: 'json',
+                    type: 'post',
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        //console.log(data);
+                        if (data.code == 200) {
+                            li.parentNode.removeChild(li);
+                            location.reload();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errotThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                    }
+                });
+            } else {
+                setTimeout(function () {
+                    mui.swipeoutClose(li);
+                }, 0);
+            }
+        });
+    });
 </script>
 
 </html>
