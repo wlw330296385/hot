@@ -50,48 +50,36 @@
             <ul class="mui-table-view mb" style="margin-top: -4px">
                 <li class="mui-table-view-cell mui-media" style="padding:15px 15px;">
                     <a href="javascript:;">
-<<<<<<< HEAD
                         <div class="mui-media-body">
                             {$courtInfo.court}
-                            <p class="mui-ellipsis">{$courtInfo.outdoors}</p>
+                            
+                            <p class="mui-ellipsis">{switch name="courtInfo.outdoors"}{case value="1"}室内{/case}
+                                {case value="2"}室外{/case}
+                                {default /}室内|室外{/switch}
+                            </p>
+
                         </div>
                         {eq name="button" value="2" }
+                        <a href="{:url('court/updateCourt',['court_id'=>$courtInfo['id']])}" class="mui-btn mui-btn-primary">
                         <div class="price-frame camp-num">
                             <ul>
                                 <li class="fr">
                                     
-                                    <span class="more"><a href="{:url('court/updateCourt',['court_id'=>$courtInfo['id']])}">编辑</a></span>
+                                    <span class="more">编辑</span>
                                 </li>
                             </ul>
                         </div>
+                    </a>
                         {/eq}
                         {eq name="button" value="1"}
                         <div class="price-frame camp-num" onclick="addCourt({$courtInfo['id']})">
                             <ul>
                                 <li class="fr">
-                                    <span class="more">添加到训练营的场地库</span>
+                                    <span  class="mui-btn mui-btn-primary">添加到我的训练营</span>
                                 </li>
                             </ul>
                         </div>
                         {/eq}
-=======
-                        <div class="price-frame camp-num">
-                            <ul>
-                                <li class="fr">
-                                    <a href="" class="mui-btn mui-btn-primary" id="addToCamp">添加到训练营</a>
-                                    {gt name="power" value="2" }
-                                    <span class="more">
-                                        <a href="{:url('court/updateCourt')}">编辑</a>
-                                    </span>
-                                    {/gt}
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="mui-media-body">
-                            {$courtInfo.court}
-                            <p class="mui-ellipsis">{$courtInfo.outdoors}</p>
-                        </div>
->>>>>>> d25a460ecbd99d56a836d4a679316b59bd038017
                     </a>
                 </li>
             </ul>
