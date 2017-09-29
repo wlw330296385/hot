@@ -65,9 +65,6 @@ class Student extends Base
 		// 历史课时
 		$totalSchedule = db('bill')->where(['camp_id'=>$camp_id,'student_id'=>$student_id])->sum('total');
 
-		//全部课时
-		// $allSchedule = db('bill')->where(['camp_id'=>$camp_id,'student_id'=>$student_id])->sum('total');
-
 		$this->assign('totalSchedule',$totalSchedule);
 		$this->assign('restSchedule',$restSchedule);
 		$this->assign('campInfo',$campInfo);

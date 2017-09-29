@@ -104,10 +104,20 @@ class Grade extends Base{
     }
 
     public function gradeInfoOfCamp(){
-        $grade_id = input('grade_id');
+        $grade_id = input('param.grade_id');
+        $camp_id = input('param.camp_id')?input('param.camp_id'):0;
         $gradeInfo = $this->GradeService->getGradeInfo(['id'=>$grade_id]);
         // 班级同学
         $studentList = $this->GradeService->getStudentList($grade_id);
+        $updateGrade = 0;
+        // 权限判断
+        $CampService = new \app\service\CampService;
+        $is_power = $CampService->isPower($camp_id,$this->memberInfo['id']);
+        if($is_power > 2){
+            $updateGrade = 1;
+        }
+
+        $this->assign('updateGrade',$updateGrade);
         $this->assign('studentList',$studentList);
         $this->assign('gradeInfo',$gradeInfo);
         return view('Grade/gradeInfoOfCamp');

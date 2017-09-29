@@ -227,6 +227,12 @@ class Camp extends Base{
         }else{
             $studentList = [];
         }
+        $Grade = new \app\model\Grade;
+        $leaderList = $Grade->where(['camp_id'=>$camp_id,'leader_id'=>$this->memberInfo['id']])->select();
+
+        $teacherList = $Grade->where(['camp_id'=>$camp_id,'teacher_id'=>$this->memberInfo['id']])->select();
+        $this->assign('teacherList',$teacherList);
+        $this->assign('leaderList',$leaderList);
         $this->assign('studentList',$studentList);
         $this->assign('campInfo',$campInfo); 
         return view('Camp/clientOfcamp');
