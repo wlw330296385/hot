@@ -44,7 +44,7 @@ class Schedule extends Base
 
 	// 课时详情
 	public function scheduleInfo(){
-		$schedule_id = input('schedule_id');
+		$schedule_id = input('param.schedule_id');
 		$scheduleInfo = $this->scheduleService->getScheduleInfo(['id'=>$schedule_id]);
 		$studentList = $this->scheduleService->getStudentList($schedule_id);
 		$commentList = $this->scheduleService->getCommentList($schedule_id);
@@ -53,6 +53,17 @@ class Schedule extends Base
 				$commentList[$key]['member'] = '匿名用户';
 			}
 		}
+		$updateSchedule = 0;
+		// 是否已被审核通过
+		if($scheduleInfo['status'] == 0){
+			// 判断权限
+			$isPower = $this->scheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
+			if($isPower>=2){
+				$updateSchedule = 1;
+			}
+		}
+
+		$this->assign('updateSchedule',$updateSchedule);
 		$this->assign('studentList',$studentList);
 		$this->assign('scheduleInfo',$scheduleInfo);
 		$this->assign('commentList',$commentList);
@@ -129,7 +140,20 @@ class Schedule extends Base
 
 	// 编辑课时
 	public function updateSchedule(){
-		
+		$schedule_id = input('param.schedule_id');
+		$scheduleInfo = $this->scheduleService->getScheduleInfo(['id'=>$schedule_id]);
+		$updateSchedule = 0;
+		// 是否已被审核通过
+		if($scheduleInfo['status'] == 0){
+			// 判断权限
+			$isPower = $this->scheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
+			if($isPower>=2){
+				$updateSchedule = 1;
+			}
+		}
+
+		$this->assign('updateSchedule',$updateSchedule);
+		$this->assign('scheduleInfo',$scheduleInfo);
 		return view('Schedule/updateSchedule');
 	}
 
