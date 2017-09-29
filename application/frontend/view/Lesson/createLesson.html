@@ -557,7 +557,7 @@
 
     //训练营场地列表接口获取数据并追加到页面
     var toCourtList = function(keyword,page) {
-        var url  = "{:url('api/court/searchCourtApi','','',true)}";
+        var url  = "{:url('api/court/getCourtListByPageApi','','',true)}";
         var campID = "{$campInfo.id}";
         mui.ajax({
             url:url,
@@ -574,8 +574,8 @@
             success: function (data) {
                 if (data.code == 200) {
                     var newli = '';
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        newli = newli + '<li class="mui-table-view-cell listli detalisli trainLocation" data-id="' + data.data[i].id + '" data-location="' + data.data[i].location + '">' + data.data[i].court + '</li>'
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        newli = newli + '<li class="mui-table-view-cell listli detalisli trainLocation" data-id="' + data.data.data[i].id + '" data-location="' + data.data.data[i].location + '">' + data.data.data[i].court + '</li>'
                     }
                     $("ul.courtlist").empty();
                     if(newli==''){
@@ -597,12 +597,13 @@
 
     //教练列表接口获取数据并追加到页面
     var toCoachList = function(keyword) {
-        var url  = "{:url('api/camp_member/getCoachListApi','','',true)}";
+        var url  = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}";
         var campID = "{$campInfo.id}";
         mui.ajax({
             url:url,
             data: {
                 camp_id:campID,
+                type:2,
                 keyword:keyword
             },
             dataType: 'json',//服务器返回json格式数据
@@ -614,9 +615,9 @@
                 if (data.code == 200) {
                     var newli = ''; //主教练单选
                     var newliAS = ''; //助理教练多选
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="'+data.data[i].member_id+'">'+data.data[i].coach+'</li>'
-                        newliAS = newliAS + '<div class="mui-input-row mui-checkbox mui-left"><label class="label" data-id="'+data.data[i].member_id+'">'+data.data[i].coach+'</label><input name="checkbox-assistant" value="'+data.data[i].coach+'" type="checkbox"></div>'
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="'+data.data.data[i].member_id+'">'+data.data.data[i].coach.coach+'</li>'
+                        newliAS = newliAS + '<div class="mui-input-row mui-checkbox mui-left"><label class="label" data-id="'+data.data.data[i].member_id+'">'+data.data.data[i].coach.coach+'</label><input name="checkbox-assistant" value="'+data.data.data[i].coach.coach+'" type="checkbox"></div>'
                     }
                     $("ul.coach").empty();
                     $(".coachAS").empty();
@@ -640,7 +641,7 @@
 
     //粉丝列表接口获取数据并追加到页面
     var toFansList = function(keyword) {
-        var url  = "{:url('api/camp_member/getCampMemberListApi','','',true)}";
+        var url  = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}";
         var campID = "{$campInfo.id}";
         var typeID = "-1";
         mui.ajax({
