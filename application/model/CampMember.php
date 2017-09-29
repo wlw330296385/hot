@@ -24,4 +24,10 @@ class CampMember extends Model {
          $status = [-1=>'粉丝',1=>'学生',2=>'教练',3=>'管理员',4=>'创建者',5=>'其他'];
         return $status[$value];
     }
+
+
+
+    public function coach(){
+        return $this->hasOne('coach','member_id','member_id',[],'LEFT');
+    }
 }

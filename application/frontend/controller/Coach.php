@@ -206,7 +206,9 @@ class Coach extends Base{
                     ->view('camp','*','camp.id = camp_member.camp_id')
                     ->where(['camp_member.member_id'=>$this->memberInfo['id'],'camp_member.type'=>2,'camp_member.status'=>1])
                     ->select();
+        $myCampList = db('camp_member')->where(['type'=>['gt',2],'status'=>1,'member_id'=>$this->memberInfo['id']])->select();
 
+        $this->assign('myCampList',$myCampList);
         $this->assign('campList',$campList);
         $this->assign('commentList',$commentList);
         $this->assign('scheduleCount',$scheduleCount);

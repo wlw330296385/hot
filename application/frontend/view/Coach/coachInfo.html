@@ -106,7 +106,7 @@
             <ul class="mui-table-view operation mt">
                 <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><a href="#comment" class="typeBtn1">我要评价</a>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><a href="#comment" class="typeBtn2">邀请加入</a>
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><a href="#invate" class="typeBtn2">邀请加入</a>
                 </li>
             </ul>
 
@@ -114,7 +114,7 @@
             <div id="comment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
                 <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
                     <ul class="mui-table-view operation">
-                        <h5><span class="title">评价我的教练</span><a href="#comment" class="mui-icon mui-icon-closeempty"></a></h5>
+                        <h5><span class="title">评价教练</span><a href="#comment" class="mui-icon mui-icon-closeempty"></a></h5>
                         <li class="mui-table-view-cell listli">
                             <textarea rows="4"></textarea>
                         </li>
@@ -129,6 +129,26 @@
 
     </div>
 
+
+    <!--邀请加入-->
+    <div id="invate" class="mui-popover">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course"><strong>邀请ta到我的训练营</strong></span>
+                    </div>
+                    <ul class="mui-table-view list">
+                        {volist name="myCampList" id="vol"}
+                        <li class="mui-table-view-cell listli detalisli camp" data-id="{$vol.camp_id}">{$vol.camp}</li>
+                        {/volist}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 
@@ -157,12 +177,30 @@
         });
 
         $("#comment").click(function(){
-            var  title = "邀请加入";
-            $(".title").text(title);
+            
+        })
+
+
+
+        // 邀请ta
+        $(".camp").click(function(){
+            var camp = $(this).html();
+            $(".typeBtn2").html('已邀请加入'+camp);
+            var camp_id= $(this).attr('data-id');
+            mui.confirm('确认邀请该教练加入'+camp+'吗?','邀请教练加入训练营',['不','是'],function(action){
+                if(action.index == 1){
+                    
+                }
+            })
         })
 
     });
 
+
+// 关闭弹出菜单
+        $(".close-popover").click(function(){
+            mui($(this).parent()).popover("toggle");
+        })
     // mui('body').on('shown', '.mui-popover', function (e) {
     //     //console.log('shown', e.detail.id);//detail为当前popover元素
     // });

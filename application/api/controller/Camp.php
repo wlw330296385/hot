@@ -216,7 +216,8 @@ class Camp extends Base{
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             $data['avatar'] = $this->memberInfo['avatar'];
-
+            // 是否有关系
+            
             $result = $this->CampService->createCampComment($data);
             return json($result);
         }catch(Exception $e){

@@ -52,18 +52,10 @@ class CoachService{
         }
     }
 	
-	// 教练列表
-	public function coachList($map=[],$page = 1,$paginate = 10, $order='') {
-	    $res = Coach::with('member')->where($map)->order($order)->page($page,$paginate)->select();
-        if($res){
-            $result = $res->toArray();
-        }else{
-            $res;
-        }
-    }
+
 
     // 教练列表 分页
-    public function coachListByPage( $map=[],$order='',$paginate = 10) {
+    public function getCoachListByPage( $map=[],$order='',$paginate = 10) {
         $res = Coach::with('member')->where($map)->order($order)->paginate($paginate);
         if($res){
             $result = $res->toArray();
@@ -91,31 +83,13 @@ class CoachService{
     }
 
 
-    // // 获取训练营下的教练
-    // public function getCoahListOfCamp($map){
-    //     $result = $this->gradeMemberModel->where($map)->page($page,$paginate)->select();
-    //     return $result->toArray();
-    // }
-
-    public function getCoachListPage($map=[],$page=1, $paginate = 10, $order=''){
-        $result = Coach::with('member')->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
-        if (!$result) {
-            return [ 'msg' => __lang('MSG_401'), 'code' => 100 ];
-        }
-        if ($result->isEmpty()) {
-            return [ 'msg' => __lang('MSG_000'), 'code' => 200, 'data' => []];
-        }
-        return [ 'msg' => __lang('MSG_201'), 'code' => 200, 'data' => $result->toArray()];
-    }   
-
-
 
     // 教练列表 分页
     public function getCoachList($map=[],$page=1, $paginate = 10, $order='') {
-        $result = $this->CoachModel->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
+        $result = $this->CoachModel->where($map)->order($order)->page($page,$paginate)->select();
         if($result){
-            $result = $result->toArray();
-            return $result;
+            $res = $result->toArray();
+            return $res;
         }else{
             return $result;
         }
@@ -131,6 +105,18 @@ class CoachService{
                 ->order($order)
                 ->page($page,$paginate)
                 ->select();
+        return $result;
+    }
+
+
+
+     // 教练列表 分页
+    public function getCoachListOfCampByPage($map=[], $order='', $paginate = 10) {
+        $result = Db::view('camp_member','member_id,type')
+                ->view('coach','*','camp_member.member_id=coach.member_id')
+                ->where($map)
+                ->order($order)
+                ->paginate($paginate);
         return $result;
     }
 

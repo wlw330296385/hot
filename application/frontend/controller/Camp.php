@@ -216,6 +216,16 @@ class Camp extends Base{
         return view('Camp/powerCamp');
     }
 
+    // 非管理员的camp菜单
+    public function clientOfcamp(){
+        $camp_id = input('param.camp_id');
+        $campInfo = $this->CampService->getCampInfo($camp_id);
+        $CampMember = new \app\model\CampMember;
+        
+        $this->assign('campInfo',$campInfo); 
+        return view('Camp/clientOfcamp');
+    }
+
     // 教练的camp菜单
     public function coachCamp(){
         $camp_id = input('param.camp_id');

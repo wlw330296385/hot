@@ -4,6 +4,7 @@ use app\model\Camp;
 use app\common\validate\CampVal;
 use think\Db;
 use app\common\validate\CampCommentVal;
+use app\model\CampMember;
 class CampService {
 
     public $Camp;
@@ -79,10 +80,10 @@ class CampService {
      */
     public function createCamp($request){
         // 一个人只能创建一个训练营
-        if ( $this->hasCreateCamp($request['member_id']) ){
-            return [ 'msg' => '一个会员只能创建一个训练营', 'code' => 100 ];
-        }
-        $model = new Camp();
+        // if ( $this->hasCreateCamp($request['member_id']) ){
+        //     return [ 'msg' => '一个会员只能创建一个训练营', 'code' => 100 ];
+        // }
+        $model = new Camp;
         $result = $model->validate('CampVal.add')->save($request);
         if ( false === $result ) {
             return ['code' => 100, 'msg' => $model->getError()];
@@ -115,7 +116,7 @@ class CampService {
      */
 
     public function hasCreateCamp($member_id){
-        $res = Camp::get(['member_id' => $member_id, 'status' => ['neq', 1]]);
+        $res = Camp::get(['member_id' => $member_id]);
         if ($res) {
             return $res->toArray();
         } else {
@@ -196,5 +197,12 @@ class CampService {
         }else{
             return ['msg' =>"评论失败", 'code' => 100];
         }
+    }
+
+
+    public function getCampMemberInfo($map){
+        $CampMemberModel = new CampMember;
+        $isMember = $this->CampService->where($map)->find();
+        return $isMember;
     }
 }

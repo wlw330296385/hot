@@ -183,7 +183,33 @@ class CampMember extends Base{
         }
     }
 
-    //自定义获取训练营身份列表
+    //自定义获取训练营身份列表有页码
+    public function getCampMemberListByPageApi(){
+        try{
+            $map = input('post.');
+            $keyword = input('param.keyword');
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['member'] = ['LIKE','%'.$keyword.'%'];
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+            $CampMember = new  \app\model\CampMember;
+            $result = $CampMember->with('coach')->where($map)->paginate(10);
+            if($result){
+                return json(['code'=>200,'msg'=>'OK','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>__lang('MSG_402').__lang('MSG_403')]);
+            }
+        }catch(Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    //自定义获取训练营身份列表有页码
     public function getCampMemberListApi(){
         try{
             $map = input('post.');
@@ -191,9 +217,15 @@ class CampMember extends Base{
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['member'] = ['LIKE','%'.$keyword.'%'];
             }
+            $page = input('param.page');
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
             $CampMember = new  \app\model\CampMember;
-            $result = $CampMember->where($map)->paginate(10);
-            // echo $CampMember->getlastsql();die;
+            $result = $CampMember->with('coach')->where($map)->page($page,10)->select();
             if($result){
                 return json(['code'=>200,'msg'=>'OK','data'=>$result]);
             }else{
@@ -234,4 +266,17 @@ class CampMember extends Base{
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+
+
+    // 邀请加入训练营
+    public function invate(){
+        $data = input('post.');
+        $isMember = $this->CampService->getCampMemberInfo($data);
+        if($isMember){
+            return json(['msg'=>'他已经申请加入训练题']);
+        }
+    }
+
+
+
 }
