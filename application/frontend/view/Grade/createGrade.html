@@ -151,7 +151,7 @@
                 <div class="mui-input-row">
                     <a href="#leader" class="mui-navigate-right">
                         <label>领队</label>
-                        <span class="leaderCont leader"></span>
+                        <span class="leaderCont"></span>
                     </a>
                 </div>
 
@@ -178,9 +178,9 @@
                     <label>是否预排</label>
                     <span class="select-arrow status">
                         <select class="select">
-                            <option>预排</option>
-                            <option>正常</option>
-                            <option>下架</option>
+                            <option value="0">预排</option>
+                            <option value="1">正常</option>
+                            <option value="2">下架</option>
                         </select>
                     </span>
                 </div>
@@ -213,7 +213,7 @@
                         <span class="course"><strong>主教练</strong></span>
                     </div>
                     <ul class="mui-table-view list">
-                        {volist name="staffList" id="vol"}
+                        {volist name="coachlist" id="vol"}
                         <li class="mui-table-view-cell listli detalisli mainCoach" data-id="{$vol.member_id}">{$vol.member}</li>
                         {/volist}
                     </ul>
@@ -270,7 +270,7 @@
                         <span class="fr"><button class="mui-btn-blue" id="domConfirm">确认</button></span>
                     </div>
                     <form class="mui-input-group">
-                        {volist name="staffList" id="vol"}
+                        {volist name="coachlist" id="vol"}
                         <div class="mui-input-row mui-checkbox mui-left">
                             <label>{$vol.member}</label>
                             <input name="checkbox-dom" value="{$vol.member}" type="checkbox" data-id="{$vol.member_id}">
@@ -364,9 +364,9 @@
                         <span class="course"><strong>训练地点</strong></span>
                     </div>
                     <ul class="mui-table-view list">
-                        {volist name="courtList" id="vol"}
+                        {volist name="courtList.data" id="vol"}
                         <li class="mui-table-view-cell listli detalisli trainLocation" data-id="{$v.id}">
-                            {$vol.court}
+                            {$vol.court.court}
                         </li>
                         {/volist}
                     </ul>
@@ -627,16 +627,8 @@
                 mui.toast("请填写数字");
                 return false;
             }
-        })
+        });
 
-        //检测输入是否为汉字
-        $(".checkChinese").blur(function(){
-            var str =$(this).val();
-            if(!/^[\u4e00-\u9fa5]+$/.test(str)){
-                mui.toast("请填写汉字");
-                return false;
-            }
-        })
 
         //所属课程api
         $(".lessonType").click(function(){
@@ -678,31 +670,31 @@
             var  salary_base = $(".salary_base").val();
             var  coach = $(".coach").text();
             var  assistant = $(".assistant").text();
-            var  leader = $(".leader").text();
+            var  leader = $(".leaderCont").text();
             var  teacher = $(".teacher").text();
             var  plan = $(".plan").text();
             var  rent = $(".rent").val();
-            var  status = $(".status option:selected").text();
+            var  status = $(".status option:selected").val();
             var  remarks = $(".remarks").val();
-
-            if(grade!=''&&lesson!=''&&gradecate!=''&&week!=''&&lesson_time!=''&&location!=''&&coach!=''&&assistant!=''&&leader!=''&&teacher!=''&&plan!=''&&rent!=''){
+            console.log(leader);
+//            if(grade!=''&&lesson!=''&&gradecate!=''&&week!=''&&lesson_time!=''&&location!=''&&coach!=''&&assistant!=''&&leader!=''&&teacher!=''&&plan!=''&&rent!=''){
                 mui.ajax("{:url('api/grade/createGradeApi')}",{
                     data:{
                         "gradeData": {
-                            "grade":grade,
+                            "grade": grade,
                             "lesson":lesson,
-                            "gradecate":gradecate,
+                            "gradecate": $.trim(gradecate),
                             "week":week,
                             "lesson_time":lesson_time,
-                            "location":location,
+                            "location":$.trim(location),
                             "coach_salary":coach_salary,
                             "assistant_salary":assistant_salary,
                             "salary_base":salary_base,
                             "coach":coach,
                             "assistants":assistant,
-                            "leader":leader,
-                            "teacher":teacher,
-                            "plan":plan,
+                            "leader":$.trim(leader),
+                            "teacher":$.trim(teacher),
+                            "plan":$.trim(plan),
                             "rent":rent,
                             "status":status,
                             "remarks":remarks,
@@ -727,9 +719,9 @@
                         console.log(type);
                     }
                 });
-            }else{
-                mui.toast("选项不能为空");
-            }
+//            }else{
+//                mui.toast("选项不能为空");
+//            }
         })
     });
 
