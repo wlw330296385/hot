@@ -192,7 +192,7 @@ class Lesson extends Base{
     public function getInactiveStudentsApi(){
         try{
             $lesson_id = input('param.lesson_id');
-            $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->where('grade_id','neq','')->field('student,id')->select();
+            $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->field('student,id')->select();
             return json(['code'=>200,'msg'=>__lang('MSG_201'),'data'=>$studentList]);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
