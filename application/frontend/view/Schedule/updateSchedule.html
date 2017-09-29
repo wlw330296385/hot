@@ -8,24 +8,26 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
-    <link rel="stylesheet" href="../../static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/app.css"/>
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="../../static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <!--选择器样式-->
-    <link href="../../static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
-    <link href="../../static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
     <style>
-        .mui-popover-arrow {
+        .mui-input-row a.mui-navigate-right {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .mui-popover-arrow {;
             left: auto;
             right: 6px;
         }
 
-        p {
-            text-indent: 22px;
+        .mui-popover {
+            height: 300px;
         }
 
         .mui-popover {
@@ -34,396 +36,354 @@
     </style>
 </head>
 
-<body class=whitebg>
+<body>
 
-<header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-    <h1 class="mui-title">训练营名称</h1>
-</header>
-<div class="mui-content">
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <h1 class="mui-title">训练营名称</h1>
+    </header>
 
-    <div class="camp-list camp-lesson-list detalis-list grade-list mt">
-        <ul class="mui-table-view list">
-            <li class="mui-table-view-cell listli detalisli">
-                班级名称
-                <span>北头周六高年级基础班</span>
-            </li>
-            <li class="mui-table-view-cell listli detalisli">
-                <a href="#lessonType" class="mui-navigate-right">
-                    课程类型
-                    <span>小学高年级基础班</span>
-                </a>
-            </li>
-            <li class="mui-table-view-cell listli detalisli picker btn" id="demo5" data-options='{"type":"time"}'>
-                训练时间
-                <span>
-                        <select class="select">
-                            <option>周日</option>
-                            <option>周一</option>
-                            <option>周二</option>
-                            <option>周三</option>
-                            <option>周四</option>
-                            <option>周五</option>
-                            <option>周六</option>
-                        </select>
-                        <font id="result" class="mui-navigate-right ui-alert">16:30</font>
-                    </span>
-            </li>
-            <li class="mui-table-view-cell listli detalisli">
-                <a href="#trainLocation" class="mui-navigate-right">
-                    训练地点
-                    <span>深圳湾篮球场</span>
-                </a>
-            </li>
-            <li class="mui-table-view-cell listli detalisli" id='showCityPicker3'>
-                <a href="#" class="mui-navigate-right">
-                    所属地区
-                    <span id='cityResult3' class="ui-alert">广东 深圳 南山</span>
-                </a>
-            </li>
+    <div class="mui-content">
 
-            <li class="mui-table-view-cell listli detalisli">
-                具体地址
-                <input type="text" class="input" value="后海粤海街道100号体育中心">
-            </li>
-            <li class="mui-table-view-cell listli detalisli" id="showCityPicker">
-                <a href="#" class="mui-navigate-right">
-                    人数范围
-                    <span id="cityResult" class="ui-alert">6-12人</span>
-                </a>
-            </li>
-            <li class="mui-table-view-cell listli detalisli">
-                <a href="#bishopPopover" class="mui-navigate-right">
-                    主教练
-                    <span>陈麦克</span>
-                </a>
-            </li>
-            <li class="mui-table-view-cell listli detalisli">
-                <a href="#bishopPopover" class="mui-navigate-right">
-                    助理教练
-                    <span></span>
-                </a>
-            </li>
-            <li class="mui-table-view-cell listli detalisli">
-                <a href="#bishopPopover" class="mui-navigate-right">
-                    领队
-                    <span>陈麦克</span>
-                </a>
-            </li>
-            <li class="mui-table-view-cell listli detalisli">
-                <a href="#bishopPopover" class="mui-navigate-right">
-                    班主任
-                    <span>张乔丹</span>
-                </a>
-            </li>
-            <li class="mui-table-view-cell listli detalisli">
-                <a href="#teachingPlan" class="mui-navigate-right">
-                    教案
-                    <span>教案名称：点进去教案列表</span>
-                </a>
-            </li>
-            <li class="mui-table-view-cell listli detalisli">
-                备注
-                <input type="text" class="input" value="巴拉巴拉巴拉">
-            </li>
-        </ul>
-
-        <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff">
-                提交
-            </li>
-        </ul>
-    </div>
-
-    <!--主教练-->
-    <div id="bishopPopover" class="mui-popover" style="margin: 0">
-        <div class="mui-popover-arrow"></div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <div class="camp-list camp-lesson-list detalis-list mt">
-                    <div class="camp-lesson-list">
-                        <div id="segmentedControl" class="mui-segmented-control mb">
-                            <a class="mui-control-item mui-active" href="#item1">粉丝列表</a>
-                            <a class="mui-control-item" href="#item2">教练列表</a>
-                        </div>
-                    </div>
-                    <div id="item1" class="mui-control-content mui-active">
-                        <div class="mui-scroll">
-                            <ul class="mui-table-view list">
-                                <li class="mui-table-view-cell listli detalisli">
-                                    陈麦克
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    陈麦克
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    陈麦克
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    陈麦克
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    陈麦克
-                                    <span>添加</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div id="item2" class="mui-control-content">
-                        <div class="mui-scroll">
-                            <ul class="mui-table-view list">
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    郑海霞
-                                    <span>添加</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
+       <form class="mui-input-group">
+        <div class="mui-input-row">
+            <label>班级名称</label>
+            <input type="text" name="checkbox-dom" value="北头周六高年级基础班" >
         </div>
-    </div>
-    <!--课程类型-->
-    <div id="lessonType" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <div class="camp-list camp-lesson-list detalis-list mt">
-                    <div class="page-header">
-                        <span class="course"><strong>课程类型</strong></span>
-                    </div>
-                    <ul class="mui-table-view list">
-                        <li class="mui-table-view-cell listli detalisli">
-                            小学高年级基础班
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            小学高年级基础班
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            小学高年级基础班
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            小学高年级基础班
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            小学高年级基础班
-                        </li>
-                    </ul>
-                </div>
-            </div>
+        <div class="mui-input-row">
+            <a href="#lessonType" class="mui-navigate-right">
+                <label>课程类型</label>
+                <span>小学高年级基础班</span>
+            </a>
         </div>
-    </div>
-    <!--班级类型-->
-    <div id="gradeType" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <div class="camp-list camp-lesson-list detalis-list mt">
-                    <div class="page-header">
-                        <span class="course"><strong>班级类型</strong></span>
-                    </div>
-                    <ul class="mui-table-view list">
-                        <li class="mui-table-view-cell listli detalisli">
-                            小学高年级基础班
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            小学高年级基础班
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            小学高年级基础班
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            小学高年级基础班
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            小学高年级基础班
-                        </li>
-                    </ul>
-                </div>
-            </div>
+        <div class="mui-input-row picker btn" id="demo5" data-options='{"type":"time"}'>
+            <a href="#" class="mui-navigate-right">
+                <label>训练时间</label>
+                <span id="result" class="ui-alert lesson_time"></span>
+            </a>
         </div>
-    </div>
-    <!--训练地点-->
-    <div id="trainLocation" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <div class="camp-list camp-lesson-list detalis-list mt">
-                    <div class="page-header">
-                        <span class="course"><strong>训练地点</strong></span>
-                    </div>
-                    <ul class="mui-table-view list">
-                        <li class="mui-table-view-cell listli detalisli">
-                            深圳湾篮球场
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            深圳湾篮球场
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            深圳湾篮球场
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            深圳湾篮球场
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            深圳湾篮球场
-                        </li>
-                    </ul>
-                </div>
-            </div>
+
+        <div class="mui-input-row">
+            <a href="#trainLocation" class="mui-navigate-right">
+                <label>训练地点</label>
+                <span class="trainLocationCont location"></span>
+            </a>
         </div>
-    </div>
-    <!--教案-->
-    <div id="teachingPlan" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
+
+        <div class="mui-input-row" id='showCityPicker3'>
+            <a href="#" class="mui-navigate-right">
+                <label>所属地区</label>
+                <span id="cityResult3" class="ui-alert"></span>
+            </a>
+        </div>
+
+        <div class="mui-input-row">
+            <a href="#mainCoach" class="mui-navigate-right">
+                <label>主教练</label>
+                <span class="mainCoachCont coach"></span>
+            </a>
+        </div>
+
+        <div class="mui-input-row">
+            <a href="#assistantCoach" class="mui-navigate-right">
+                <label>助理教练</label>
+                <span class="assistantCoachCont assistant"></span>
+                <input type="text" name="dom" style="display: none">
+            </a>
+        </div>
+
+        <div class="mui-input-row">
+            <a href="#leader" class="mui-navigate-right">
+                <label>领队</label>
+                <span class="leaderCont leader"></span>
+            </a>
+        </div>
+
+        <div class="mui-input-row">
+            <a href="#headMaster" class="mui-navigate-right">
+                <label>班主任</label>
+                <span class="headMasterCont teacher"></span>
+            </a>
+        </div>
+
+        <div class="mui-input-row">
+            <a href="#project" class="mui-navigate-right">
+                <label>训练项目</label>
+                <span class="projectCont"></span>
+            </a>
+        </div>
+
+        <div class="mui-input-row">
+            <label>场地租金</label>
+            <input type="text" name="" value="" class="" placeholder="请输入场地租金">
+        </div>
+
+        <div class="mui-input-row">
+            <label style="width:74%">主教佣金<font style="font-size: 12px">(底薪+人数x基数)x主教人数</font></label>
+            <input type="text" name="" value="" placeholder="主教佣金" style="width: 26%">
+        </div>
+
+        <div class="mui-input-row">
+            <label style="width:74%">助教佣金<font style="font-size: 12px">(底薪+人数x基数)x助教人数)</font></label>
+            <input type="text" name="" value="" placeholder="助教佣金" style="width: 26%">
+        </div>
+
+        <div class="mui-input-row mt55">
+            <label>备注</label>
+            <input type="text" class="remarks" value="" placeholder="请输入你的备注信息">
+        </div>
+    </form>
+
+    <ul class="mui-table-view operation">
+        <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff">
+            提交
+        </li>
+    </ul>
+
+</div>
+
+<!--主教练-->
+<div id="mainCoach" class="mui-popover">
+    <div class="mui-popover-arrow"></div>
+    <div class="mui-scroll-wrapper">
+        <div class="mui-scroll">
+            <div class="camp-list camp-lesson-list detalis-list">
                 <div class="page-header">
-                    <span class="course"><strong>教案列表</strong></span>
+                    <span class="course"><strong>主教练</strong></span>
                 </div>
                 <ul class="mui-table-view list">
-                    <li class="mui-table-view-cell listli detalisli">
-                        <input type="checkbox">
-                        陈麦克
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <input type="checkbox">
-                        陈麦克
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <input type="checkbox">
-                        陈麦克
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <input type="checkbox">
-                        陈麦克
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <input type="checkbox">
-                        陈麦克
+                    <li class="mui-table-view-cell listli detalisli mainCoach">
+                        主教练
                     </li>
                 </ul>
             </div>
         </div>
-
     </div>
-
 </div>
 
-</body>
-<script src="../../static/frontend/js/mui.min.js"></script>
-<script src="../../static/frontend/js/mui.picker.min.js"></script>
-<script src="../../static/frontend/js/mui.poppicker.js"></script>
-<script src="../../static/frontend/js/city.data.js"></script>
-<script src="../../static/frontend/js/city.data-3.js"></script>
+<!--助理教练-->
+<div id="assistantCoach" class="mui-popover">
+    <div class="mui-popover-arrow"></div>
+    <div class="mui-scroll-wrapper">
+        <div class="mui-scroll">
+            <div class="camp-list camp-lesson-list detalis-list">
+                <div class="page-header">
+                    <span class="course wd36"><strong>助理教练</strong></span>
+                    <span class="fr"><button class="mui-btn-blue" id="domConfirm">确认</button></span>
+                </div>
+                <form class="mui-input-group">
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>教练1</label>
+                        <input name="checkbox-dom" value="教练1" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>教练2</label>
+                        <input name="checkbox-dom" value="教练2" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>教练3</label>
+                        <input name="checkbox-dom" value="教练3" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>教练4</label>
+                        <input name="checkbox-dom" value="教练4" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>教练5</label>
+                        <input name="checkbox-dom" value="教练5" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>教练6</label>
+                        <input name="checkbox-dom" value="教练6" type="checkbox">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--训练地点-->
+<div id="trainLocation" class="mui-popover">
+    <div class="mui-popover-arrow"></div>
+    <div class="mui-scroll-wrapper">
+        <div class="mui-scroll">
+            <div class="camp-list camp-lesson-list detalis-list mt">
+                <div class="page-header">
+                    <span class="course"><strong>训练地点</strong></span>
+                </div>
+                <div class="mui-indexed-list-search mui-input-row mui-search">
+                    <input type="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="">
+                    <span class="mui-icon mui-icon-clear mui-hidden"></span>
+                    <span class="mui-placeholder"><span class="mui-icon mui-icon-search"></span><span>请输入场地名称搜索</span></span>
+                </div>
+                <ul class="mui-table-view list courtlist">
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!--班主任-->
+<div id="headMaster" class="mui-popover">
+    <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
+    <div class="mui-popover-arrow"></div>
+    <div class="mui-scroll-wrapper">
+        <div class="mui-scroll">
+            <div class="camp-list camp-lesson-list detalis-list">
+                <div class="camp-lesson-list">
+                    <div id="" class="mui-segmented-control mb">
+                        <a class="mui-control-item mui-active" href="#item1">粉丝列表</a>
+                        <a class="mui-control-item" href="#item2">教练列表</a>
+                    </div>
+                </div>
+                <div id="item1" class="mui-control-content mui-active">
+                    <div class="mui-scroll">
+                        <ul class="mui-table-view list">
+                            <li class="mui-table-view-cell listli detalisli headMaster">
+                                粉丝列表
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="item2" class="mui-control-content">
+                    <div class="mui-scroll">
+                        <ul class="mui-table-view list">
+                            <li class="mui-table-view-cell listli detalisli headMaster">
+                                教练列表
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--领队-->
+<div id="leader" class="mui-popover">
+    <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
+    <div class="mui-popover-arrow"></div>
+    <div class="mui-scroll-wrapper">
+        <div class="mui-scroll">
+            <div class="camp-list camp-lesson-list detalis-list">
+                <div class="camp-lesson-list">
+                    <div id="" class="mui-segmented-control mb">
+                        <a class="mui-control-item mui-active" href="#item3">粉丝列表</a>
+                        <a class="mui-control-item" href="#item4">教练列表</a>
+                    </div>
+                </div>
+                <div id="item3" class="mui-control-content mui-active">
+                    <div class="mui-scroll">
+                        <ul class="mui-table-view list">
+                            <li class="mui-table-view-cell listli detalisli leader">
+                                粉丝列表
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="item4" class="mui-control-content">
+                    <div class="mui-scroll">
+                        <ul class="mui-table-view list">
+                            <li class="mui-table-view-cell listli detalisli leader">
+                                教练列表
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 训练项目 -->
+<div id="project" class="mui-popover">
+    <div class="mui-popover-arrow"></div>
+    <div class="mui-scroll-wrapper">
+        <div class="mui-scroll">
+            <div class="camp-list camp-lesson-list detalis-list">
+                <div class="page-header">
+                    <span class="course"><strong>训练地点</strong></span>
+                </div>
+                <ul class="mui-table-view list">
+                    <li class="project">训练项目</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--学员名单-->
+<div id="addStudent" class="mui-popover">
+    <div class="mui-popover-arrow"></div>
+    <div class="mui-scroll-wrapper">
+        <div class="mui-scroll">
+            <div class="camp-list camp-lesson-list detalis-list mt">
+                <div class="page-header">
+                    <span class="course wd36"><strong>学员名单</strong></span>
+                    <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
+                </div>
+                <form class="mui-input-group addStudentList">
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/static/frontend/js/mui.min.js"></script>
+<!-- 选择器 -->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
 <script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
 
-    //弹出菜单
-    mui('.mui-scroll-wrapper').scroll();
-    mui('body').on('shown', '.mui-popover', function (e) {
-        //console.log('shown', e.detail.id);//detail为当前popover元素
-    });
-    mui('body').on('hidden', '.mui-popover', function (e) {
-        //console.log('hidden', e.detail.id);//detail为当前popover元素
-    });
+        //弹出菜单
+        mui('.mui-scroll-wrapper').scroll();
 
-    (function ($, doc) {
-        $.init();
-        $.ready(function () {
-            var _getParam = function (obj, param) {
-                return obj[param] || '';
-            };
-            //级联示例
-            var cityPicker = new $.PopPicker({
-                layer: 2
-            });
-            cityPicker.setData(cityData);
-            var showCityPickerButton = doc.getElementById('showCityPicker');
-            var cityResult = doc.getElementById('cityResult');
-            showCityPickerButton.addEventListener('tap', function (event) {
-                cityPicker.show(function (items) {
-                    cityResult.innerText = items[0].text + "-" + items[1].text;
-                    //返回 false 可以阻止选择框的关闭
-                    //return false;
+        (function ($, doc) {
+            $.init();
+            $.ready(function () {
+                var _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+
+                ///级联示例
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
                 });
-            }, false);
-            ///级联示例
-            var cityPicker3 = new $.PopPicker({
-                layer: 3
-            });
-            cityPicker3.setData(cityData3);
-            var showCityPickerButton = doc.getElementById('showCityPicker3');
-            var cityResult3 = doc.getElementById('cityResult3');
-            showCityPickerButton.addEventListener('tap', function (event) {
-                cityPicker3.show(function (items) {
-                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
-                    //返回 false 可以阻止选择框的关闭
-                    //return false;
-                });
-            }, false);
-
-            //时间
-            var result = $('#result')[0];
-            var btns = $('.btn');
-            btns.each(function (i, btn) {
-                btn.addEventListener('tap', function () {
-                    var optionsJson = this.getAttribute('data-options') || '{}';
-                    var options = JSON.parse(optionsJson);
-                    var id = this.getAttribute('id');
-                    var picker = new $.DtPicker(options);
-
-                    picker.show(function (rs) {
-                        result.innerText = rs.text;
-                        picker.dispose();
+                cityPicker3.setData(cityData3);
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
                     });
                 }, false);
-            });
 
-        });
-    })(mui, document);
-</script>
+                //时间
+                var result = $('#result')[0];
+                var btns = $('.btn');
+                btns.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+
+                        picker.show(function (rs) {
+                            result.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+
+            });
+        })(mui, document);
+    </script>
+</body>
 </html>
