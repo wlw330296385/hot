@@ -142,17 +142,18 @@ class Schedule extends Base
 	public function updateSchedule(){
 		$schedule_id = input('param.schedule_id');
 		$scheduleInfo = $this->scheduleService->getScheduleInfo(['id'=>$schedule_id]);
-		$updateSchedule = 0;
 		// 是否已被审核通过
-		if($scheduleInfo['status'] == 0){
+		if($scheduleInfo['status'] != 0){
 			// 判断权限
+			$this->error('已审核的课时不允许修改');
+			
+		}else{
 			$isPower = $this->scheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
-			if($isPower>=2){
-				$updateSchedule = 1;
+			if($isPower<2){
+				$this->error('你没有权限修改课时');
 			}
 		}
 
-		$this->assign('updateSchedule',$updateSchedule);
 		$this->assign('scheduleInfo',$scheduleInfo);
 		return view('Schedule/updateSchedule');
 	}
