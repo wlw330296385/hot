@@ -127,6 +127,10 @@ class Schedule extends Base
 		return $result;die;
 	}
 
-
+	// 编辑课时
+	public function updateSchedule(){
+		
+		return view('Schedule/updateSchedule');
+	}
 
 }
