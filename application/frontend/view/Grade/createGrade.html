@@ -51,10 +51,8 @@
             <form action="" class="mui-input-group">
 
                 <div class="mui-input-row">
-                    <a href="#grade" class="mui-navigate-right">
-                        <label>班级名称</label>
-                        <span class="grade gradeCont"></span>
-                    </a>
+                    <label>班级名称</label>
+                    <input type="text" name="" class="grade gradeCont" value="" placeholder="请输入班级名称">
                 </div>
 
                 <div class="mui-input-row">
@@ -117,7 +115,7 @@
 
                 <div class="mui-input-row">
                     <label>具体地址</label>
-                    <input type="text" name="" value="" class="locatin checkChinese"></span>
+                    <input type="text" name="" value="" class="locatin checkChinese" placeholder="请输入具体地址"></span>
                 </div>
 
                 <div class="mui-input-row">
@@ -137,17 +135,17 @@
 
                 <div class="mui-input-row">
                     <label>主教底薪<a href="#salary"><i class="mui-icon mui-icon-info"></i></a></label>
-                    <input type="text" name="" value="" class="coach_salary checkNum">
+                    <input type="text" name="" value="" class="coach_salary checkNum" placeholder="请输入主教底薪">
                 </div>
 
                 <div class="mui-input-row">
                     <label>助教底薪<a href="#salary"><i class="mui-icon mui-icon-info"></i></a></label>
-                    <input type="text" name="" value="" class="assistant_salary checkNum">
+                    <input type="text" name="" value="" class="assistant_salary checkNum" placeholder="请输入助教底薪">
                 </div>
 
                 <div class="mui-input-row">
                     <label>基数<a href="#mainBase"><i class="mui-icon mui-icon-info"></i></a></label>
-                    <input type="text" name="" value="" class="salary_base checkNum">
+                    <input type="text" name="" value="" class="salary_base checkNum" placeholder="请输入基数">
                 </div>
 
                 <div class="mui-input-row">
@@ -173,7 +171,7 @@
 
                 <div class="mui-input-row">
                     <label>场地租金</label>
-                    <input type="text" class="checkNum rent" value="">
+                    <input type="text" class="checkNum rent" value="" placeholder="请输入场地租金">
                 </div>
 
                 <div class="mui-input-row">
@@ -189,7 +187,7 @@
 
                 <div class="mui-input-row">
                     <label>备注</label>
-                    <input type="text" name="" class="remarks checkChinese" value="">
+                    <input type="text" name="" class="remarks checkChinese" value="" placeholder="请输入你的备注信息">
                 </div>
 
             </form>
@@ -223,24 +221,7 @@
             </div>
         </div>
     </div>
-    <!--班级名称-->
-    <div id="grade" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <div class="camp-list camp-lesson-list detalis-list mt">
-                    <div class="page-header">
-                        <span class="course"><strong>班级名称</strong></span>
-                    </div>
-                    <ul class="mui-table-view list">
-                        {volist name="gradecateList" id="vol"}
-                        <li class="mui-table-view-cell listli detalisli grade">{$vol.name}</li>
-                        {/volist}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <!--课程类型-->
     <div id="lessonType" class="mui-popover">
         <div class="mui-popover-arrow"></div>
@@ -562,13 +543,7 @@
         //初始化全局变量
         var student_id ='';
         var studentList ='';
-
-        // 班级名称
-        $(".grade").click(function(){
-            var grade = $(this).text();
-            $(".gradeCont").text(grade);
-            mui("#grade").popover("toggle");
-        })
+        
         // 学员名单
         $("#studentConfirm").on('click',function(){
             //选择多个学员
@@ -692,7 +667,7 @@
 
         //创建班级api
         $(".editorbtn").click(function(){
-            var  grade = $(".grade").text();
+            var  grade = $(".grade").val();
             var  lesson = $(".lesson").text();
             var  gradecate = $(".gradecate").text();
             var  week = $(".week option:selected").text();
