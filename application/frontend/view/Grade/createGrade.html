@@ -41,7 +41,7 @@
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-        <h1 class="mui-title">{$campInfo.camp}</h1>
+        <h1 class="mui-title" data-id="{$campInfo.id}">{$campInfo.camp}</h1>
     </header>
 
     <div class="mui-content">
@@ -59,6 +59,7 @@
                     <a href="#lessonType" class="mui-navigate-right">
                         <label>所属课程</label>
                         <span class="lessonTypeCont"></span>
+                        <input type="hidden" name="lesson_id" value="">
                     </a>
                 </div>
 
@@ -74,6 +75,7 @@
                     <a href="#gradeType" class="mui-navigate-right">
                         <label>班级类型</label>
                         <span class="gradeTypeCont gradecate"></span>
+                        <input type="hidden" name="gradecate_id">
                     </a>
                 </div>
 
@@ -103,6 +105,7 @@
                     <a href="#trainLocation" class="mui-navigate-right">
                         <label>训练地点</label>
                         <span class="trainLocationCont location"></span>
+                        <input type="hidden" name="court_id">
                     </a>
                 </div>
 
@@ -122,6 +125,7 @@
                     <a href="#mainCoach" class="mui-navigate-right">
                         <label>主教练</label>
                         <span class="mainCoachCont coach"></span>
+                        <input type="hidden" name="coach_id">
                     </a>
                 </div>
 
@@ -130,6 +134,7 @@
                         <label>助理教练</label>
                         <span class="assistantCoachCont assistant"></span>
                         <input type="text" name="dom" style="display: none">
+                        <input type="hidden" name="assistant_id">
                     </a>
                 </div>
 
@@ -152,6 +157,7 @@
                     <a href="#leader" class="mui-navigate-right">
                         <label>领队</label>
                         <span class="leaderCont"></span>
+                        <input type="hidden" name="leader_id">
                     </a>
                 </div>
 
@@ -159,6 +165,7 @@
                     <a href="#headMaster" class="mui-navigate-right">
                         <label>班主任</label>
                         <span class="headMasterCont teacher"></span>
+                        <input type="hidden" name="teacher_id">
                     </a>
                 </div>
 
@@ -166,6 +173,7 @@
                     <a href="#teachingPlan" class="mui-navigate-right">
                         <label>教案</label>
                         <span class="teachingPlanCont plan"></span>
+                        <input type="hidden" name="plan_ids">
                     </a>
                 </div>
 
@@ -564,53 +572,69 @@
 
 
         // 课程类型
+        var lesson_id = '';
         $(".lessonType").click(function(){
             var lessonType = $(this).text();
+            lesson_id = $(this).attr("data-id");
             $(".lessonTypeCont").text(lessonType);
             mui("#lessonType").popover("toggle");
         })
         // 班级类型
+        var gradecate_id = "";
         $(".gradeType").click(function(){
             var gradeType = $(this).text();
+            gradecate_id = $(this).attr("data-id");
             $(".gradeTypeCont").text(gradeType);
             mui("#gradeType").popover("toggle");
         })
         // 训练地点
+        var gradecate_id= "";
         $(".trainLocation").click(function(){
             var trainLocation = $(this).text();
+             gradecate_id = $(this).attr("data-id");
             $(".trainLocationCont").text(trainLocation);
             mui("#trainLocation").popover("toggle");
         })
         // 主教练
+        var coach_id= "";
         $(".mainCoach").click(function(){
             var mainCoach = $(this).text();
+             coach_id = $(this).attr("data-id");
             $(".mainCoachCont").text(mainCoach);
             mui("#mainCoach").popover("toggle");
         })
         // 助教练
+        var assistant_id= "";
         $("#domConfirm").click(function(){
             //选择多个助教练
             $("input[name='dom']").val($("input[name='checkbox-dom']:checked").map(function(){
                 return $(this).val()
             }).get().join(",") );
             $(".assistantCoachCont").text($("input[name='dom']").val());
+             assistant_id = $(this).attr("data-id");
             mui('#assistantCoach').popover('toggle');
         })
         // 班主任
+        var teacher_id= "";
         $(".headMaster").click(function(){
             var headMaster = $(this).text();
+             teacher_id = $(this).attr("data-id");
             $(".headMasterCont").text(headMaster);
             mui("#headMaster").popover("toggle");
         })
         // 领队
+        var leader_id= "";
         $(".leader").click(function(){
             var leader = $(this).text();
+             leader_id = $(this).attr("data-id");
             $(".leaderCont").text(leader);
             mui("#leader").popover("toggle");
         })
         // 教案
+        var plan_ids= "";
         $(".teachingPlan").click(function(){
             var teachingPlan = $(this).text();
+            plan_ids = $(this).attr("data-id");
             $(".teachingPlanCont").text(teachingPlan);
             mui("#teachingPlan").popover("toggle");
         })
@@ -660,7 +684,7 @@
         //创建班级api
         $(".editorbtn").click(function(){
             var  grade = $(".grade").val();
-            var  lesson = $(".lesson").text();
+            var  lesson = $(".lessonTypeCont").text();
             var  gradecate = $(".gradecate").text();
             var  week = $(".week option:selected").text();
             var  lesson_time = $(".lesson_time").text();
@@ -676,14 +700,16 @@
             var  rent = $(".rent").val();
             var  status = $(".status option:selected").val();
             var  remarks = $(".remarks").val();
-            console.log(leader);
+            console.log(lesson_id);
 //            if(grade!=''&&lesson!=''&&gradecate!=''&&week!=''&&lesson_time!=''&&location!=''&&coach!=''&&assistant!=''&&leader!=''&&teacher!=''&&plan!=''&&rent!=''){
                 mui.ajax("{:url('api/grade/createGradeApi')}",{
                     data:{
                         "gradeData": {
                             "grade": grade,
                             "lesson":lesson,
+                            "lesson_id":lesson_id,
                             "gradecate": $.trim(gradecate),
+                            "gradecate_id": gradecate_id,
                             "week":week,
                             "lesson_time":lesson_time,
                             "location":$.trim(location),
@@ -691,10 +717,13 @@
                             "assistant_salary":assistant_salary,
                             "salary_base":salary_base,
                             "coach":coach,
+                            "coach_id":coach_id,
                             "assistants":assistant,
                             "leader":$.trim(leader),
+                            "leader_id":leader_id,
                             "teacher":$.trim(teacher),
                             "plan":$.trim(plan),
+                            "plan_ids": plan,
                             "rent":rent,
                             "status":status,
                             "remarks":remarks,
