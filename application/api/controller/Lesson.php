@@ -205,7 +205,9 @@ class Lesson extends Base{
         try{
             $lesson_id = input('param.lesson_id');
             $map = input('post');
-            $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'status'=>1])->where($map)->where('grade_id','neq','')->field('student,id')->select();
+            $map['lesson_id'] = $lesson_id;
+            $map['status'] = 1;
+            $studentList = db('grade_member')->where($map)->field('student,id')->select();
             return json(['code'=>200,'msg'=>__lang('MSG_201'),'data'=>$studentList]);
             
         }catch (Exception $e){

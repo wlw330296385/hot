@@ -93,9 +93,15 @@ class Login extends Base{
         dump($memberInfo);
         unset($memberInfo['password']);
         $this->memberInfo = $memberInfo;
+<<<<<<< HEAD
         $cookie = md5($memberInfo['id'].$memberInfo['member'].'hot');
         cookie('member',md5($this->memberInfo['id'].$this->memberInfo['member'].'hot'));
         session('memberInfo',$memberInfo,'think');
+=======
+//        $cookie = md5($memberInfo['id'].$memberInfo['member'].'hot');
+        cookie('member',md5($this->memberInfo['id'].$this->memberInfo['member'].config('salekey')));
+        session('memberInfo',$memberInfo);
+>>>>>>> e82354d8d45cab0cd2497fb83e583003f5053a56
         if ( session('?memberInfo') ) {
             return json( session('memberInfo', '','think') );
         }
