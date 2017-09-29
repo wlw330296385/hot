@@ -235,7 +235,7 @@ class Camp extends Base{
         $this->assign('leaderList',$leaderList);
         $this->assign('studentList',$studentList);
         $this->assign('campInfo',$campInfo); 
-        return view('Camp/clientOfcamp');
+        return view('Camp/clientOfCamp');
     }
 
     // 教练的camp菜单
