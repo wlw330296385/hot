@@ -10,6 +10,6 @@ class Message extends Base{
 
     public function index() {
   
-        echo "暂未开放";
+        return view('Message/index');
     }
 }

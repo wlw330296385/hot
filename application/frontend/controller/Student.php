@@ -28,45 +28,51 @@ class Student extends Base
 		$campInfo = db('camp')->where(['id'=>$camp_id])->find();
 		// 学生信息
 		$studentInfo = $this->studentService->getStudentInfo(['id'=>$student_id]);
-		//学生的班级
-		// $studentGradeList = $this->studentService->getStudentGradeList(['student_id'=>$student_id,'camp_id'=>$camp_id,'type'=>1,'status'=>1]);	
-		$studentGradeList = Db::view('grade_member','grade_id')
+		//学生的班级	
+		$studentGradeList = Db::view('grade_member','grade_id,rest_schedule')
 							->view('grade','*','grade.id=grade_member.grade_id')
-							->where(['grade_member.student_id'=>$student_id,'grade_member.camp_id'=>$camp_id,'grade_member.type'=>$type,'grade_member.status'=>1])
+							->where([
+								'grade_member.student_id'=>$student_id,
+								'grade_member.camp_id'=>$camp_id,
+								'grade_member.type'=>$type,
+								'grade_member.status'=>1
+							])
 							->select();
+		// 剩余课量
+		$restSchedule = 0;
+		foreach ($studentGradeList as $key => $value) {
+								$restSchedule+=$value['rest_schedule'];
+							}					
 		// 学生课量
-		// $studentScheduleList = $this->studentService->getStudentScheduleList(['user_id'=>$student_id,'camp_id'=>$camp_id,'type'=>0]);
 		$studentScheduleList = Db::view('schedule_member','*')
 								->view('schedule','students,leave','schedule.id=schedule_member.schedule_id')
-								->where(['schedule_member.user_id'=>$student_id,'schedule_member.type'=>$type,'schedule_member.status'=>1])	
-								->select();				
+								->where([
+									'schedule_member.user_id'=>$student_id,
+									// 'schedule_member.type'=>$type,
+									'schedule_member.status'=>1
+								])	
+								->select();	
+				
 		// 学生订单
 		$billService = new \app\service\BillService;
-		$studentBillList = $billService->getBillList(['student_id'=>$student_id,'camp_id'=>$camp_id,'status'=>1]);
+		$studentBillList = $billService->getBillList(['student_id'=>$student_id,'camp_id'=>$camp_id]);
 		$totalBill = count($studentBillList);
 		// 未付款订单
 		$notPayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>0,'status'=>1]);
 		//退款订单 
 		$repayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>['lt',0],'status'=>1]);
 		$payBill = $totalBill - $notPayBill;
-		// 剩余课时
-		$restSchedule = db('grade_member')->where(['student_id'=>$student_id,'type'=>$type,'camp_id'=>$camp_id,'status'=>1])->sum('rest_schedule');
 		// 历史课时
 		$totalSchedule = db('bill')->where(['camp_id'=>$camp_id,'student_id'=>$student_id])->sum('total');
-		//全部课时
-		$allSchedule = Db::view('grade_member','lesson_id')
-						->view('bill','*','grade_member.lesson_id=bill.lesson_id')
-						->where(['grade_member.student_id'=>$student_id,'grade_member.camp_id'=>$camp_id,'grade_member.type'=>$type,'grade_member.status'=>1])
-						->sum('total');
 
-		
-		$this->assign('restSchedule',$restSchedule);
+		//全部课时
+		// $allSchedule = db('bill')->where(['camp_id'=>$camp_id,'student_id'=>$student_id])->sum('total');
+
 		$this->assign('totalSchedule',$totalSchedule);
-		$this->assign('allSchedule',$allSchedule);
+		$this->assign('restSchedule',$restSchedule);
 		$this->assign('campInfo',$campInfo);
 		$this->assign('studentInfo',$studentInfo);
 		$this->assign('studentGradeList',$studentGradeList);
-		// dump($studentBillList);die;
 		$this->assign('notPayBill',$notPayBill);
 		$this->assign('payBill',$payBill);
 		$this->assign('repayBill',$repayBill);
