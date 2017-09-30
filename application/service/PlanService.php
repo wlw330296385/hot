@@ -21,8 +21,8 @@ class PlanService {
         }
     }
 
-    public function PlanListPage( $map=[],$page = 1,$paginate=10, $order=''){
-        $res = $this->Plan->where($map)->whereOr(['type'=>0])->order($order)->page($page,$paginate)->select();
+    public function getPlanListByPage( $map=[], $order='',$paginate=10){
+        $res = $this->Plan->where($map)->whereOr(['type'=>0])->order($order)->paginate($paginate);
         if($res){
             $result = $res->toArray();
             return $result;
