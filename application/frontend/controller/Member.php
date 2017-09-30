@@ -22,7 +22,6 @@ class Member extends Base{
 
         $hasCoach = $this->MemberService->hasCoach($this->memberInfo['id']);
         $hasCamp  = $this->MemberService->hasCamp($this->memberInfo['id']);
-
         $this->assign('coach', $hasCoach);
         $this->assign('camp', $hasCamp);
         return view('Member/index');

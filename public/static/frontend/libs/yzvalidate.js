@@ -1,9 +1,8 @@
-// user
 var user_Boolean = false;
 var password_Boolean = false;
 var varconfirm_Boolean = false;
-var emaile_Boolean = false;
 var Mobile_Boolean = false;
+//user
 $('.reg_user').blur(function () {
     if ((/^[a-z0-9_-]{4,8}$/).test($(".reg_user").val())) {
         $('.user_hint').html("").css("color","green");
@@ -31,23 +30,20 @@ $('.reg_confirm').blur(function () {
         $('.confirm_hint').html("").css("color","green");
         varconfirm_Boolean = true;
     } else {
-        $('.confirm_hint').html("确认密码").css("color", "red");
+        $('.confirm_hint').html("两次密码输入不一致").css("color", "red");
         varconfirm_Boolean = false;
     }
 });
 
-
-// Email
-$('.reg_email').blur(function () {
-    if ((/^[a-z\d]+(\.[a-z\d]+)*@([\da-z](-[\da-z])?)+(\.{1,2}[a-z]+)+$/).test($(".reg_email").val())) {
-        $('.email_hint').html("✔").css("color", "green");
-        emaile_Boolean = true;
-    } else {
-        $('.email_hint').html("×").css("color", "red");
-        emaile_Boolean = false;
+ // Email
+ $(".reg_email").blur(function(){
+    var email =$(this).val();
+    if(!/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/.test(email)){
+        $(".email_hint").text("请输入正确的邮箱格式").css("color", "red");
+    }else{
+        $('.email_hint').text("");
     }
-});
-
+})
 
 // Mobile
 $('.reg_mobile').blur(function () {
@@ -60,12 +56,15 @@ $('.reg_mobile').blur(function () {
     }
 });
 
-
-// click
-// $('.red_button').click(function () {
-//     if (user_Boolean && password_Boolea && varconfirm_Boolean && emaile_Boolean && Mobile_Boolean == true) {
-//         alert("注册成功");
-//     } else {
-//         alert("请完善信息");
+// Validate
+// $(".reg_validate").blur(function(){
+//     var validate =$(this).val();
+//     if(!/^\d{6}$/.test(validate)){
+//         $(".validate_hint").text("请输入正确的验证码").css("color", "red");
+//         return false;
+//     }else{
+//         $('.validate_hint').text("");
+//         return true;
 //     }
-// });
+// })
+
