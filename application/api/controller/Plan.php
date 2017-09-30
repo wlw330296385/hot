@@ -16,14 +16,29 @@ class Plan extends Base{
     }
 
 
+    public function planListNoPageApi(){
+        try{
+            $map = input('post.');
+            $PlanModel = new \app\model\Plan;
+            $result = $PlanModel->where($map)->select();
+            if($result){
+                return json(['code'=>200,'data'=>$result->toArray(),'msg'=>'ok']);
+            }else{
+                return json(['code'=>100,'msg'=>'没有教案']);
+            }
+            
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
 
+    } 
 
     public function planListApi(){
         try{
             $map = input('post.');
             $page = input('param.page')?input('param.page'):1;
-            $planList = $this->PlanService->PlanListPage($map,$page);
-            return json($planList);
+            $result = $this->PlanService->getPlanList($map,$page);
+            return json(['code'=>200,'data'=>$result,'msg'=>'ok']);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -31,7 +46,19 @@ class Plan extends Base{
     }
 
 
-    public function createPlan(){
+    public function getPlanListByPageApi(){
+        try{
+            $map = input('post.');
+            $page = input('param.page')?input('param.page'):1;
+            $result = $this->PlanService->getPlanListByPage($map,$page);
+            return json(['code'=>200,'data'=>$result,'msg'=>'ok']);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+    public function createPlanApi(){
         try{
             $data = input('post.');
             $data['member'] = $this->memberInfo['member'];
@@ -44,7 +71,7 @@ class Plan extends Base{
         }
     }
 
-    public function updatePlan(){
+    public function updatePlanApi(){
         try{
             $plan_id = input('param.plan_id');
             $data = input('post.');

@@ -149,9 +149,9 @@ class Schedule extends Base
 			
 		}else{
 			$isPower = $this->scheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
-			if($isPower<2){
-				$this->error('你没有权限修改课时');
-			}
+			// if($isPower<2){
+			// 	$this->error('你没有权限修改课时');
+			// }
 		}
 
 		$this->assign('scheduleInfo',$scheduleInfo);

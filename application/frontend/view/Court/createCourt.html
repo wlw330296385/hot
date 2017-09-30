@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html>
 
@@ -262,4 +263,270 @@
     })
 </script>
 </body>
+=======
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>添加场地</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+    <style>
+        .previewList{
+            overflow: hidden;
+            padding: 0 10px;
+        }
+        .previewList li{
+            float: left;
+            width: 17%;
+            position: relative;
+            display: flex;
+            margin-right: 8px;
+        }
+        .previewList i {
+            position: absolute;
+            top: 0;
+            right: 0;
+            color: #f00;
+        }
+        .previewList img {
+         width: 55px;
+         height: 55px;
+         margin-right: 0
+     }
+ </style>
+</head>
+
+<body>
+
+    <div class="mui-content">
+
+        <header id="header" class="mui-bar mui-bar-nav subheader">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+            <h1 class="mui-title">添加训练营场地</h1>
+        </header>
+        <div class="mui-content pt">
+            <div class="register">
+                <form action="" class="mui-input-group">
+                    <div class="mui-input-row"><label>场地名称</label>
+                        <input type="text" class="court" placeholder="请输入训练场地名称">
+                        <input type="hidden" name="camp_id" value="{$campInfo['id']}">
+                        <input type="hidden" name="camp" value="{$campInfo['camp']}">
+                    </div>
+
+                    <div class="mui-input-row" id='showCityPicker3'>
+                        <a href="#" class="mui-navigate-right">
+                            <label>所属地区</label>
+                            <span id="cityResult3" class="ui-alert province city area"></span>
+                        </a>
+                    </div>
+
+                    <div class="mui-input-row h-auto"><label>具体地址</label>
+                        <textarea rows="2" class="location" placeholder="请输入具体地址"></textarea> 
+                    </div>
+
+                    <div class="mui-input-row h-auto"><label>营业时间</label>
+                        <textarea rows="2" class="open_time" placeholder="请输入营业时间"></textarea> 
+                    </div>
+
+                    <div class="mui-input-row"><label>联系电话</label>
+                        <input type="text" class="contract" placeholder="请输入联系电话">
+                    </div>
+
+                    <div class="mui-input-row"><label>联系人</label>
+                        <input type="text" class="principal" placeholder="请输入联系人">
+                    </div>
+
+                    <div class="mui-input-row"><label>散场（次）</label>
+                        <input type="text" class="chip_rent checkNum" placeholder="请输入散场价格">
+                    </div>
+
+                    <div class="mui-input-row"><label>包半场（小时)</label>
+                        <input type="text" class="half_rent checkNum" placeholder="请输入半场价格">
+                    </div>
+
+                    <div class="mui-input-row"><label>包全场（小时）</label>
+                        <input type="text" class="full_rent checkNum" placeholder="请输入全场价格">
+                    </div>
+
+                    <div class="mui-input-row">
+                        <a href="#" class="mui-navigate-right">
+                            <label>场地类型</label>
+                            <span class="select-row">
+                            <select class="data" name="outdoors" class="outdoors">
+                                <option value="1">室外</option>
+                                <option value="0">室内</option>
+                                <option value="2">室内|室外</option>
+                            </select>
+                    </span>
+                        </a>
+                    </div>
+
+                    <div class="mui-input-row h-auto"><label>温馨提示</label>
+                        <textarea rows="5" class="remarks" placeholder="温馨提示内容"></textarea>
+                    </div>
+
+                    <div class="mui-input-row h-auto ">
+                        <a class="mui-navigate-right portraits filePicker" onclick="add_id(1)">
+                            <label>场地环境</label>
+                            <img id="preview_1" class="coachicon icon01 upload-preview" >
+                            <input type="hidden" name="portraits" value='' class="covers">
+                        </a>
+                    </div>
+
+                    <div class="mui-input-row h-auto mt55">
+                        <ul class="previewList">
+                        <!--     <li><i id='del'>X</i><img id='img' src="/static/frontend/images/1.jpg"></li>
+                            <li><i id='del'>X</i><img id='img' src="/static/frontend/images/2.jpg"></li>
+                             <li><i id='del'>X</i><img id='img' src="/static/frontend/images/3.jpg"></li> -->
+                        </ul>
+                    </div>
+
+                    <ul class="mui-table-view operation list">
+                        <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen createBtn" style="color: #fff">提交场地</li>
+                    </ul>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'court'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+    <script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    //选择器
+    var getProvince ='';
+    var getCity ='';
+    var getArea = '';
+    (function ($, doc) {
+     $.init();
+     $.ready(function () {
+        _getParam = function (obj, param) {
+            return obj[param] || '';
+        };
+
+        var cityPicker3 = new $.PopPicker({
+            layer: 3
+        });
+        cityPicker3.setData(cityData3);
+        var showCityPickerButton = doc.getElementById('showCityPicker3');
+        var cityResult3 = doc.getElementById('cityResult3');
+        showCityPickerButton.addEventListener('tap', function (event) {
+            cityPicker3.show(function (items) {
+                cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                    getProvince = _getParam(items[0], 'text');
+                    getCity = _getParam(items[1], 'text');
+                    getArea = _getParam(items[2], 'text');
+                });
+        }, false);
+    });
+ })(mui, document);
+
+    //检测输入是否为数字
+    $(".checkNum").blur(function(){
+        var num =$(this).val();
+        if(isNaN(num)){
+            mui.toast("请填写数字");
+            return false;
+        }
+    })
+
+
+    //创建场地
+    $(".createBtn").click(function(){
+        var covers =[];
+        $(".previewList img").each(function(){
+            covers.push($(this).attr('src'));
+        }).get().join(",");
+        // 上面获取图片地址
+        var  court = $(".court").val();
+        var  province = getProvince;
+        var  city = getCity;
+        var  area = getArea;
+        var  location = $(".location").val();
+        var  open_time = $(".open_time").val();
+        var  contract = $(".contract").val();
+        var  principal = $(".principal").val();
+        var  outdoors = $(".outdoors").val();
+        var  chip_rent = $(".chip_rent").val();
+        var  half_rent = $(".half_rent").val();
+        var  full_rent = $(".full_rent").val();
+        var  remarks = $(".remarks").val();
+        var  camp_id ="{$campInfo['id']}";
+        var  camp ="{$campInfo['camp']}";
+        if(court!=''&&location!=''&&open_time!=''&&contract!=''&&principal!=''&&chip_rent!=''&&half_rent!=''&&full_rent!=''&&outdoors!=''){
+            mui.ajax("{:url('api/court/createCourtApi')}",{
+                data:{
+                    "court":court,
+                    "province":getProvince,
+                    "city":getCity,
+                    "area":getArea,
+                    "location":location,
+                    "open_time":open_time,
+                    "contract":contract,
+                    "principal":principal,
+                    "chip_rent":chip_rent,
+                    "half_rent":half_rent,
+                    "full_rent":full_rent,
+                    "outdoors":outdoors,
+                    "remarks":remarks,
+                    "covers":covers,
+                    "camp_id":camp_id,
+                    "camp":camp
+                },
+                    dataType:'json',//服务器返回json格式数据
+                    type:'post',//HTTP请求类型
+                    timeout:10000,//超时时间设置为10秒；
+                    headers:{'Content-Type':'application/json'},                  
+                    success:function(data){
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data)
+                        if(data.code==200){
+                            mui.toast(data.msg);
+//                            setTimeout(window.location.href="{:url('court/courtinfo',['camp_id'=>$campInfo['id']])}"+'/court_id/'+data.data,1000);
+                            setTimeout(window.location.href="{:url('camp/courtlistofcamp#onCourtList',['camp_id'=>$campInfo['id']])}",1000);
+                        }else{
+                            mui.toast(data.msg)
+                        }
+                    },
+                    error:function(xhr,type,errorThrown){
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+        }else{
+            mui.toast("选项不能为空");
+        }
+    })
+</script>
+</body>
+>>>>>>> 2e4fb5be3a8d302c804e2ce85b1d57e72bf2b360
 </html>
