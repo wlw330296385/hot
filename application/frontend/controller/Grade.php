@@ -41,7 +41,7 @@ class Grade extends Base{
         $coachlist = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1, 'type' => 2])->select();
         //场地列表
         $courtService = new \app\service\CourtService;
-//        $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
+        //$courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         $courtList = $courtService->getCourtListOfCamp(['camp_id'=>$camp_id]);
         // 获取课程学生
         $studentList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
@@ -169,13 +169,12 @@ class Grade extends Base{
             $coach_id = db('coach')->where(['member_id'=>$this->memberInfo['id'],'status'=>1])->value('id');
         }
         $week = input('param.week');
-        if(!$camp_id){
-            $gradeList = db('grade')->where(['coach_id'=>$coach_id])->where('week','like',"%$week%")->select();
-        }else{
-            $gradeList = db('grade')->where(['coach_id'=>$coach_id,'camp_id'=>$camp_id])->where('week','like',"%$week%")->select();    
-        }
-        $this->assign('gradeList',$gradeList);
         
+        $myGradeList = db('grade')->where(['coach_id'=>$coach_id,'camp_id'=>$camp_id])->where('week','like',"%$week%")->select();    
+        $campGradeList = db('grade')->where(['camp_id'=>$camp_id])->where('week','like',"%$week%")->select();
+
+        $this->assign('myGradeList',$myGradeList);    
+        $this->assign('campGradeList',$campGradeList);
         return view('Grade/gradeListWeek');
     }
 

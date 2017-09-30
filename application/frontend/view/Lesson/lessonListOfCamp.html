@@ -153,7 +153,7 @@
     //接口获取数据并追加到页面
     var toList = function (wList, page, gType, status) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/lesson/getLessonListApi','','',true)}" + '/page/' + page;
+        var url = "{:url('api/lesson/getLessonListByPageApi','','',true)}" + '/?page=' + page;
         var campID = "{$camp_id}";
         mui.ajax({
             url: url,
@@ -170,15 +170,15 @@
 
                 var newli = '';
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('lesson/LessonInfoOfCamp')}" + '/lesson_id/' + data.data[i].id + '/camp_id/' + campID;
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        var urls = "{:url('lesson/LessonInfoOfCamp')}" + '/lesson_id/' + data.data.data[i].id + '/camp_id/' + campID;
                         newli += '<li class="mui-table-view-cell mui-media listli">';
                         if (status == 1) {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         } else {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd45">' + data.data[i].lesson + '<p class="mui-ellipsis">' + data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥' + data.data[i].cost + '</p><p class="address">' + data.data[i].area + '</p></div></a></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '"><div class="mui-media-body wd45">' + data.data.data[i].lesson + '<p class="mui-ellipsis">' + data.data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥' + data.data.data[i].cost + '</p><p class="address">' + data.data.data[i].area + '</p></div></a></div>';
                         newli += '</li>';
                     }
                 }

@@ -11,9 +11,8 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
-    <!--等级星星样式-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
 </head>
+
 <body class="whitebg">
 
     <header id="header" class="mui-bar mui-bar-nav for-tab">
@@ -32,20 +31,19 @@
         <div class="tab-pullRefresh">
             <div id="onCourtList" class="mui-scroll-wrapper mui-control-content mui-active">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list court1 OA_task_court">
-                    </ul>
+                    <ul class="mui-table-view detalis-list list court1 OA_task_court"></ul>
                 </div>
             </div>
             <div id="offCourtList" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list court0 OA_task_court">
-                    </ul>
+                    <ul class="mui-table-view detalis-list list court0 OA_task_court"></ul>
                 </div>
             </div>
         </div>
 
     </div>
 
+</body>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -152,7 +150,7 @@
     //接口获取数据并追加到页面
     var toList = function(wList,page,gType,status) {
         //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/court/getCourtListOfCampApi','','',true)}";
+        var url  = "{:url('api/court/getCourtListByPageApi','','',true)}" + '/page/' + page;
         var campID = "{$camp_id}";
         mui.ajax({
             url:url,
@@ -173,20 +171,18 @@
                         var urls = "{:url('court/courtInfo')}" + '/court_id/' + data.data.data[i].court.id+'/camp_id/'+data.data.data[i].court.camp_id;
                         newli +=  '<li class="mui-table-view-cell mui-media listli list-wide"><div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del">删除</span></div><div class="mui-slider-handle"><a href="'+urls+'"><img class="mui-media-object mui-pull-left " src="'+ data.data.data[i].court.covers[0]+'"><div class="mui-media-body wd52">'+ data.data.data[i].court.court+'<p class="mui-ellipsis">'+ data.data.data[i].court.location+'</p></div><div class="price-frame singup-num">'+ data.data.data[i].court.area+'</div></a></div></li>';
                     }
-                    if(gType==1){
-                        //上拉刷新
-                        $("ul.court"+status).empty().append(newli);
-                        mui('#'+wList).pullRefresh().endPulldownToRefresh();
-                        mui('#'+wList).pullRefresh().refresh(true);
-                        if(newli=='') {
-                            $("ul.court"+status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
-                        }
-                    }else{
-                        //下拉加载 gType==2
-                        $("ul.court"+status).append(newli);
+                }
+                if(gType==1){
+                    //上拉刷新
+                    $("ul.court"+status).empty().append(newli);
+                    mui('#'+wList).pullRefresh().endPulldownToRefresh();
+                    mui('#'+wList).pullRefresh().refresh(true);
+                    if(newli=='') {
+                        $("ul.court"+status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
                     }
                 }else{
-                    mui.toast('数据获取失败,请稍候再试');
+                    //下拉加载 gType==2
+                    $("ul.court"+status).append(newli);
                 }
 
                 if(newli!=''){
@@ -245,5 +241,4 @@
         });
     });
 </script>
-</body>
 </html>

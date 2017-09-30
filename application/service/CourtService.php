@@ -122,8 +122,21 @@ class CourtService {
         }else{
             $data['cover'] = serialize(['/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg']);;
         }
-        $result = $this->courtModel->save($data);
+        $model = new Court();
+        $result = $model->allowField(true)->save($data);
         if($result){
+            $dataCourtCamp = [
+                'court_id' => $model->id,
+                'court' => $data['court'],
+                'camp_id' => $data['camp_id'],
+                'camp' => $data['camp'],
+                'status' => 1
+            ];
+            $addCourtCamp = CourtCamp::create($dataCourtCamp);
+            if (!$addCourtCamp) {
+                return ['code' => 100, 'msg' => '添加训练营场地关联'.__lang('MSG_400')];
+            }
+
             return ['code'=>200,'data'=>$result,'msg'=>__lang('MSG_200')];
         }else{
             return ['code'=>100,'msg'=>$this->courtModel->getError()];

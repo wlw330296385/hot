@@ -2,6 +2,7 @@
 namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CourtService;
+use think\Db;
 class Court extends Base{
 	protected $CourtService;
 
@@ -49,22 +50,15 @@ class Court extends Base{
     }
 
     // 分页获取数据
-    public function getCourtListApi(){
+    public function getCourtListNoPageApi(){
         try{
             $camp_id = input('param.camp_id')?input('param.camp_id'):0;
-            $map = input('post.');
-            $map['camp_id'] = $camp_id;
-            $map['status'] = 1;
-            // $where = ['camp_id'=>['or',[0,$camp_id]]];
-            // if($camp_id){
-            //     $map = function($query) use ($condition,$camp_id){
-            //         $query->where($condition)->where(['delete_time'=>null])->where(['camp_id'=>0])->whereOr(['camp_id'=>$camp_id]);
-            //     };
-            // }else{
-            //     $map = $condition;
-            // }
 
-            $result = $this->CourtService->getCourtList($map);
+//            $result = db('court_camp')->where(['camp_id'=>$camp_id])->select();
+            $result = Db::view('court_camp', ['id', 'court_id', 'court', 'camp_id', 'camp'])
+                ->view('court', ['id' => 'courtid', 'location'], 'court.id=court_camp.court_id')
+                ->where(['camp_id' => $camp_id])
+                ->select();
             if($result){
                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
@@ -74,7 +68,7 @@ class Court extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
-    // 分页获取数据
+    // 分页获取数据（带分页、有页码）
     public function getCourtListByPageApi(){
         try{
             $map = input('post.');
@@ -110,7 +104,7 @@ class Court extends Base{
         }
     }
 
-    //获取训练营下的场地列表
+    //获取训练营下的场地列表（带分页）
     public function getCourtListOfCampApi(){
         $map = input('post.');
         $result = $this->CourtService->getCourtListOfCamp($map);
