@@ -1,10 +1,12 @@
 <?php
 namespace app\model;
 use think\Model;
-
+use traits\model\SoftDelete;
 class Court extends Model {
 
-
+	use SoftDelete;
+    protected $deleteTime = 'delete_time';
+    protected $autoWriteTimestamp = true;
 	public function getOutdoorsAttr($value){
 		$outdoor = [0=>'室内',1=>'室外',2=>'室内|室外'];
 		return $outdoor[$value];

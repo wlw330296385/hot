@@ -55,9 +55,13 @@
                 <li class="mui-table-view-cell mui-media listli">
                     <a href="javascript:;" class="mui-navigate-right">
                         <div class="mui-media-body wd83">
-                            <strong class="grade">{$gradeInfo.grade}</strong>
-                            <p class="mui-ellipsis camp" style="text-indent: 0" data-id="{$campid}">{$gradeInfo.camp} |
-                                {$gradeInfo.gradecate}</p>
+                            <strong class="grade">{$gradeInfo.grade}{$gradeInfo.id}</strong>
+                            <p class="mui-ellipsis camp" style="text-indent: 0" data-id="{$campid}">{$gradeInfo.camp} | {$gradeInfo.gradecate}</p>
+                            <input type="hidden" name="camp_id" value="{$gradeInfo.camp_id}">
+                            <input type="hidden" name="grade_id" value="{$gradeInfo.grade_id}">
+                            <input type="hidden" name="camp_id" value="{$gradeInfo.camp_id}">
+                            <input type="hidden" name="camp_id" value="{$gradeInfo.camp_id}">
+                            <input type="hidden" name="camp_id" value="{$gradeInfo.camp_id}">
                             </div>
                         </a>
                     </li>
@@ -76,7 +80,7 @@
                             <a class="portraits filePicker" onclick="add_id(3)">
                                 <label>上传合照</label>
                                 <img id="preview_3" class="coachicon icon01" src='{notempty name="coachInfo.portraits"}{$coachInfo.portraits}{/notempty}'>
-                                <input type="hidden" class="image" name="portraits" value='{notempty name="coachInfo.portraits"}{$coachInfo.portraits}{/notempty}'>
+                                <input type="hidden" class="cover" name="portraits" value='{notempty name="coachInfo.portraits"}{$coachInfo.portraits}{/notempty}'>
                             </a>
                         </div>
                     </form>
@@ -110,17 +114,16 @@
                     </div>
 
                     <div class="mui-input-row">
-                        <a href="#trainLocation" class="mui-navigate-right">
+                        <a href="#trainCourt" class="mui-navigate-right">
                             <label>训练地点</label>
-                            <span class="trainLocationCont location">{$gradeInfo.court}</span>
+                            <span class="trainCourtCont">{$gradeInfo.court}</span>
                         </a>
                     </div>
 
                     <div class="mui-input-row" id='showCityPicker3'>
                         <a href="#" class="mui-navigate-right">
                             <label>所属地区</label>
-                            <span id="cityResult3"
-                            class="ui-alert">{$gradeInfo.province} {$gradeInfo.city} {$gradeInfo.area}</span>
+                            <span id="cityResult3" class="ui-alert">{$gradeInfo.province} {$gradeInfo.city} {$gradeInfo.area}</span>
                         </a>
                     </div>
 
@@ -128,6 +131,7 @@
                         <a href="#mainCoach" class="mui-navigate-right">
                             <label>主教练</label>
                             <span class="mainCoachCont coach">{$gradeInfo.coach}</span>
+                            <input type="hidden" name="coach_id" value="{$gradeInfo.coach_id}">
                         </a>
                     </div>
 
@@ -136,6 +140,7 @@
                             <label>助理教练</label>
                             <span class="assistantCoachCont assistant">{$gradeInfo.assistants}</span>
                             <input type="text" name="dom" style="display: none">
+                            <input type="hidden" name="assistant_id" value="{$gradeInfo.assistant_id}">
                         </a>
                     </div>
 
@@ -162,22 +167,22 @@
 
                     <div class="mui-input-row">
                         <label>场地租金</label>
-                        <input type="text" name="" value="" class="" placeholder="请输入场地租金">
+                        <input type="text" name="" value="{$gradeInfo.rent}" class="rent">
                     </div>
 
                     <div class="mui-input-row">
                         <label style="width:74%">主教佣金<font style="font-size: 12px">(底薪+人数x基数)x主教人数</font></label>
-                        <input type="text" name="" value="" placeholder="主教佣金" style="width: 26%">
+                        <input type="text" name="" value="{$gradeInfo.coach_salary}"  style="width: 26%">
                     </div>
 
                     <div class="mui-input-row">
                         <label style="width:74%">助教佣金<font style="font-size: 12px">(底薪+人数x基数)x助教人数)</font></label>
-                        <input type="text" name="" value="" placeholder="助教佣金" style="width: 26%">
+                        <input type="text" name="" value="{$gradeInfo.assistant_salary}" style="width: 26%">
                     </div>
 
                     <div class="mui-input-row">
                         <label>备注</label>
-                        <input type="text" class="remarks" value="" placeholder="请输入你的备注信息">
+                        <input type="text" class="remarks" value="{$gradeInfo.remarks}">
                     </div>
 
                 </form>
@@ -198,14 +203,11 @@
             <div class="mui-popover-arrow"></div>
             <div class="mui-scroll-wrapper">
                 <div class="mui-scroll">
-                    <div class="camp-list camp-lesson-list detalis-list">
+                    <div class="camp-list camp-lesson-list detalis-list mt">
                         <div class="page-header">
-                            <span class="course"><strong>主教练</strong></span>
+                            <span class="course"><strong>教练列表</strong></span>
                         </div>
-                        <ul class="mui-table-view list">
-                            <li class="mui-table-view-cell listli detalisli mainCoach">
-                                主教练
-                            </li>
+                        <ul class="mui-table-view list mainCoach coach">
                         </ul>
                     </div>
                 </div>
@@ -254,7 +256,7 @@
         </div>
 
         <!--训练地点-->
-        <div id="trainLocation" class="mui-popover">
+        <div id="trainCourt" class="mui-popover">
             <div class="mui-popover-arrow"></div>
             <div class="mui-scroll-wrapper">
                 <div class="mui-scroll">
@@ -268,130 +270,136 @@
                             <span class="mui-placeholder"><span class="mui-icon mui-icon-search"></span><span>请输入场地名称搜索</span></span>
                         </div>
                         <ul class="mui-table-view list courtlist">
-                        </ul>
-                    </div>
+                           <li class="mui-table-view-cell listli detalisli trainCourt">训练地点</li>
+                    </ul>
                 </div>
             </div>
         </div>
-        <!--班主任-->
-        <div id="headMaster" class="mui-popover">
-            <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
-            <div class="mui-popover-arrow"></div>
-            <div class="mui-scroll-wrapper">
-                <div class="mui-scroll">
-                    <div class="camp-list camp-lesson-list detalis-list">
-                        <div class="camp-lesson-list">
-                            <div id="" class="mui-segmented-control mb">
-                                <a class="mui-control-item mui-active" href="#item1">粉丝列表</a>
-                                <a class="mui-control-item" href="#item2">教练列表</a>
-                            </div>
-                        </div>
-                        <div id="item1" class="mui-control-content mui-active">
-                            <div class="mui-scroll">
-                                <ul class="mui-table-view list">
-                                    <li class="mui-table-view-cell listli detalisli headMaster">
-                                        粉丝列表
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div id="item2" class="mui-control-content">
-                            <div class="mui-scroll">
-                                <ul class="mui-table-view list">
-                                    <li class="mui-table-view-cell listli detalisli headMaster">
-                                        教练列表
-                                    </li>
-                                </ul>
-                            </div>
+    </div>
+    <!--班主任-->
+    <div id="headMaster" class="mui-popover">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list">
+                    <div class="camp-lesson-list">
+                        <div id="" class="mui-segmented-control mb">
+                            <a class="mui-control-item mui-active" href="#item1">粉丝列表</a>
+                            <a class="mui-control-item" href="#item2">教练列表</a>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <!--领队-->
-        <div id="leader" class="mui-popover">
-            <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
-            <div class="mui-popover-arrow"></div>
-            <div class="mui-scroll-wrapper">
-                <div class="mui-scroll">
-                    <div class="camp-list camp-lesson-list detalis-list">
-                        <div class="camp-lesson-list">
-                            <div id="" class="mui-segmented-control mb">
-                                <a class="mui-control-item mui-active" href="#item3">粉丝列表</a>
-                                <a class="mui-control-item" href="#item4">教练列表</a>
-                            </div>
+                    <div id="item1" class="mui-control-content mui-active">
+                        <div class="mui-scroll">
+                            <ul class="mui-table-view list">
+                                <li class="mui-table-view-cell listli detalisli headMaster">
+                                    粉丝列表
+                                </li>
+                            </ul>
                         </div>
-                        <div id="item3" class="mui-control-content mui-active">
-                            <div class="mui-scroll">
-                                <ul class="mui-table-view list">
-                                    <li class="mui-table-view-cell listli detalisli leader">
-                                        粉丝列表
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div id="item4" class="mui-control-content">
-                            <div class="mui-scroll">
-                                <ul class="mui-table-view list">
-                                    <li class="mui-table-view-cell listli detalisli leader">
-                                        教练列表
-                                    </li>
-                                </ul>
-                            </div>
+                    </div>
+                    <div id="item2" class="mui-control-content">
+                        <div class="mui-scroll">
+                            <ul class="mui-table-view list">
+                                <li class="mui-table-view-cell listli detalisli headMaster">
+                                    教练列表
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- 训练项目 -->
-        <div id="project" class="mui-popover">
-            <div class="mui-popover-arrow"></div>
-            <div class="mui-scroll-wrapper">
-                <div class="mui-scroll">
-                    <div class="camp-list camp-lesson-list detalis-list">
-                        <div class="page-header">
-                            <span class="course"><strong>训练地点</strong></span>
+    </div>
+    <!--领队-->
+    <div id="leader" class="mui-popover">
+        <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list">
+                    <div class="camp-lesson-list">
+                        <div id="" class="mui-segmented-control mb">
+                            <a class="mui-control-item mui-active" href="#item3">粉丝列表</a>
+                            <a class="mui-control-item" href="#item4">教练列表</a>
                         </div>
-                        <ul class="mui-table-view list">
-                            <li class="project">训练项目</li>
-                        </ul>
+                    </div>
+                    <div id="item3" class="mui-control-content mui-active">
+                        <div class="mui-scroll">
+                            <ul class="mui-table-view list">
+                                <li class="mui-table-view-cell listli detalisli leader">
+                                    粉丝列表
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="item4" class="mui-control-content">
+                        <div class="mui-scroll">
+                            <ul class="mui-table-view list">
+                                <li class="mui-table-view-cell listli detalisli leader">
+                                    教练列表
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!--学员名单-->
-        <div id="addStudent" class="mui-popover">
-            <div class="mui-popover-arrow"></div>
-            <div class="mui-scroll-wrapper">
-                <div class="mui-scroll">
-                    <div class="camp-list camp-lesson-list detalis-list mt">
-                        <div class="page-header">
-                            <span class="course wd36"><strong>学员名单</strong></span>
-                            <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
-                        </div>
-                        <form class="mui-input-group addStudentList">
-
-                        </form>
+    <!-- 训练项目 -->
+    <div id="project" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list">
+                    <div class="page-header">
+                        <span class="course"><strong>训练项目</strong></span>
                     </div>
+                    <ul class="mui-table-view list">
+                        <li class="mui-table-view-cell listli detalisli project">
+                            训练项目
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!--学员名单-->
+    <div id="addStudent" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list mt">
+                    <div class="page-header">
+                        <span class="course wd36"><strong>学员名单</strong></span>
+                        <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
+                    </div>
+                    <form class="mui-input-group addStudentList">
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>学员</label>
+                            <input name="checkbox-dom" value="学员" type="checkbox">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
-        <script src="/static/frontend/js/mui.min.js"></script>
-        <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-        <!-- 选择器 -->
-        <script src="/static/frontend/js/mui.picker.min.js"></script>
-        <script src="/static/frontend/js/mui.poppicker.js"></script>
-        <script src="/static/frontend/js/city.data-3.js"></script>
-        <script>
-            var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
-        </script>
-        <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
-        <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-        <script>
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
@@ -401,6 +409,9 @@
     mui('.mui-scroll-wrapper').scroll();
 
     //选择器
+    var getProvince = '';
+    var getCity = '';
+    var getArea = '';
     (function ($, doc) {
         $.ready(function () {
             var _getParam = function (obj, param) {
@@ -419,6 +430,9 @@
                     cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
                     //返回 false 可以阻止选择框的关闭
                     //return false;
+                    getProvince = _getParam(items[0], 'text');
+                    getCity = _getParam(items[1], 'text');
+                    getArea = _getParam(items[2], 'text');
                 });
             }, false);
 
@@ -451,8 +465,6 @@
 
     $(function () {
 
-
-
         //全选
         $(".all").click(function () {
             $(".checkboxCont").find('input').prop('checked', true)
@@ -472,10 +484,10 @@
         });
 
         // 训练地点
-        $(".trainLocation").click(function () {
-            var trainLocation = $(this).text();
-            $(".trainLocationCont").text(trainLocation);
-            mui("#trainLocation").popover("toggle");
+        $(".trainCourt").click(function () {
+            var trainCourt = $(this).text();
+            $(".trainCourtCont").text(trainCourt);
+            mui("#trainCourt").popover("toggle");
         })
         // 主教练
         $(".mainCoach").click(function () {
@@ -533,15 +545,65 @@
         // 关闭弹出菜单
         $(".close-popover").click(function () {
             mui($(this).parent()).popover("toggle");
-            console.log(teacher)
         })
 
+        // 添加学员
+        var str = '';
+        var totalNum = '';
+        $("#studentConfirm").click(function () {
+            //选择多个学员
+            $(".addStudentList input[type=checkbox]:checked").each(function() {
+                str +='<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font class="student_str">'+$(this).val()+'</font><input name="checkbox1" value="Item 3" type="checkbox"></div>';
+            })
+            // $(".operation-btn").before(str);//在增删按钮前加一行
+            $(".box").append(str);//在增删按钮前加一行
+            changeIndex();//调用-更新序号
+            mui("#addStudent").popover("toggle");
+            //角标随checkboxCont的数量变化
+            totalNum = $(".checkboxCont").length;
+            $(".mui-badge").text(totalNum);
+        });
+        
         //获取学员列表
-        $(".add").click(function () {
-            var lesson_id ="{$gradeInfo.lesson_id}";
-            mui.ajax("{:url('api/lesson/getActiveLessonStudentsApi')}", {
+        toScheduleList();
+
+        //录课
+        $(".operationBtn").click(function () {
+            var cover =$(".cover").val();
+            var campid = $('.camp').attr('data-id');
+            var grade = $(".grade").text();
+            var court = $(".trainCourtCont").text();
+            var student_str = $(".student_str").text();
+            var lesson_time = $(".lesson_time").text();
+            var coach = $(".mainCoachCont").text();
+            var assistant = $(".assistantCoachCont").text();
+            var leader = $(".leaderCont").text();
+            var teacher = $(".headMasterCont").text();
+            var rent = $(".rent").val();
+            var remarks = $(".remarks").val();
+            // if (image != '' && lesson_time != '' && location != '' && coach != '' && assistant != '' && leader != '' && teacher != '') {
+            //     return false;
+            // }
+            mui.ajax("{:url('api/schedule/recordScheduleApi',['grade_id'=>$gradeInfo['id']])}", {
                 data: {
-                    'lesson_id': lesson_id,
+                    'cover':cover,
+                    'student_str': student_str,
+                    'grade': grade,
+                    'grade_id': "{$gradeInfo.id}",
+                    'camp_id': campid,
+                    'lesson_time': lesson_time,
+                    'court': court,
+                    'province': getProvince,
+                    'city': getCity,
+                    'area': getArea,
+                    'coach': coach,
+                    'coach_id': "{$memberInfo.id}",
+                    'assistant': assistant,
+                    'leader': leader,
+                    'teacher': teacher,
+                    'teacher_id': "{$memberInfo.id}",
+                    'rent': rent,
+                    'remarks': remarks,
                 },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -550,72 +612,7 @@
                     success: function (data) {
                         //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data)
-                        var div = '';
                         if (data.code == 200) {
-                            // 添加学员
-                            var str = '';
-                            var totalNum = '';
-                            $("#studentConfirm").click(function () {
-                                //选择多个学员
-                                $(".addStudentList input[type=checkbox]:checked").each(function() {
-                                    str +='<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font class="student_str">'+$(this).val()+'</font><input name="checkbox1" value="Item 3" type="checkbox"></div>';
-                                })
-                                // $(".operation-btn").before(str);//在增删按钮前加一行
-                                $(".box").append(str);//在增删按钮前加一行
-                                changeIndex();//调用-更新序号
-                                mui("#addStudent").popover("toggle");
-                                //角标随checkboxCont的数量变化
-                                totalNum = $(".checkboxCont").length;
-                                $(".mui-badge").text(totalNum);
-                            });
-                            for (var i = 0; i <= data.data.length - 1; i++) {
-                                div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="'+ data.data[i].id +'"></div>'
-                            }
-                            $(".addStudentList").append(div);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-        })
-
-        //录课
-        $(".operationBtn").click(function () {
-            var image =$(".image").val();
-            var grade = $(".grade").text();
-            var student_str = $(".student_str").text();
-            var lesson_time = $(".lesson_time").text();
-            var location = $(".location").text();
-            var coach = $(".coach").text();
-            var campid = $('.camp').attr('data-id');
-            var assistant = $(".assistant").text();
-            var leader = $(".leader").text();
-            var teacher = $(".teacher").text();
-            console.log(student_str)
-            if (image != '' && lesson_time != '' && location != '' && coach != '' && assistant != '' && leader != '' && teacher != '') {
-                mui.ajax("{:url('api/schedule/recordScheduleApi',['geade_id'=>$gradeInfo['id']])}", {
-                    data: {
-                        'student_str': student_str,
-                        'grade': grade,
-                        'grade_id': "{$gradeInfo.id}",
-                        'camp_id': campid,
-                        'lesson_time': lesson_time,
-                        'location': location,
-                        'coach': coach,
-                        'assistants': assistant,
-                        'leader': leader,
-                        'teacher': teacher,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: {'Content-Type': 'application/json'},
-                    success: function (data) {
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data)
-                        if (data.code == 100) {
                             // var url = "{:url('grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
                             // window.location.href=url
                         } else {
@@ -627,12 +624,36 @@
                         console.log(type);
                     }
                 });
-            } else {
-                mui.toast("选项不能为空");
-            }
         })
-
     })
+
+    //获取学员列表
+    var toScheduleList = function() {
+        var lesson_id ="{$gradeInfo.lesson_id}";
+        mui.ajax("{:url('api/lesson/getActiveLessonStudentsApi')}", {
+            data: {'lesson_id': lesson_id,},
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            success: function (data) {
+            //服务器返回响应，根据响应结果，分析是否登录成功；
+            console.log(data)
+            var div = '';
+            if (data.code == 200) {
+                for (var i = 0; i <= data.data.length - 1; i++) {
+                    div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="'+ data.data[i].id +'"></div>'
+                }
+                $(".addStudentList").append(div);
+            }
+        },
+        error: function (xhr, type, errorThrown) {
+                //异常处理；
+                console.log(type);
+            }
+        });
+    };
+
 
 
 </script>

@@ -52,7 +52,7 @@ class Coach extends Base{
         }
     }
 
-    // 获取教练分页
+    // 获取教练分页(有页码)
     public function getCoachListByPageApi(){
         try{
             $map = input('post.');
@@ -92,6 +92,21 @@ class Coach extends Base{
         }
     }
 
+    //获取教练列表（没分页、没查询）
+    public function getCoachListApi(){
+        try{
+            $map = input('post.');
+            $page = input('param.page')?input('param.page'):1;
+            $result = $this->CoachService->getCoachList($map,$page);
+             if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
     public function createCoachApi(){
         try{
@@ -209,21 +224,6 @@ class Coach extends Base{
         }
     }
 
-    public function getCoachListApi(){
-        try{
-            $map = input('post.');
-            $page = input('param.page')?input('param.page'):1;
-            $result = $this->CoachService->getCoachList($map,$page);
-             if($result){
-               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
-            }else{
-                return json(['code'=>100,'msg'=>'ok']);
-            }
-        }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }
-    }
-
 
     // 获取教练下的训练营
     public function campListOfCoachApi(){
@@ -256,32 +256,33 @@ class Coach extends Base{
         }
     }
 
-    public function getCoachListOfCampByPageApi(){
-         try{
-            $map = input('post.');
-            
-            $result = $this->CoachService->getCoachListOfCampByPage($map);
-             if($result){
-               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
-            }else{
-                return json(['code'=>100,'msg'=>'ok']);
-            }
-        }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }
-    }
-
-    public function getCoachListOfCampApi(){
-         try{
-            $map = input('post.');
-            $result = $this->CoachService->getCoachListOfCamp($map);
-             if($result){
-               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
-            }else{
-                return json(['code'=>100,'msg'=>'ok']);
-            }
-        }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }
-    }
+//
+//    public function getCoachListOfCampByPageApi(){
+//         try{
+//            $map = input('post.');
+//
+//            $result = $this->CoachService->getCoachListOfCampByPage($map);
+//             if($result){
+//               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+//            }else{
+//                return json(['code'=>100,'msg'=>'ok']);
+//            }
+//        }catch (Exception $e){
+//            return json(['code'=>100,'msg'=>$e->getMessage()]);
+//        }
+//    }
+//
+//    public function getCoachListOfCampApi(){
+//         try{
+//            $map = input('post.');
+//            $result = $this->CoachService->getCoachListOfCamp($map);
+//             if($result){
+//               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+//            }else{
+//                return json(['code'=>100,'msg'=>'ok']);
+//            }
+//        }catch (Exception $e){
+//            return json(['code'=>100,'msg'=>$e->getMessage()]);
+//        }
+//    }
 }
