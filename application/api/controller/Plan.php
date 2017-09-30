@@ -58,7 +58,7 @@ class Plan extends Base{
     }
 
 
-    public function createPlan(){
+    public function createPlanApi(){
         try{
             $data = input('post.');
             $data['member'] = $this->memberInfo['member'];
@@ -71,7 +71,7 @@ class Plan extends Base{
         }
     }
 
-    public function updatePlan(){
+    public function updatePlanApi(){
         try{
             $plan_id = input('param.plan_id');
             $data = input('post.');
