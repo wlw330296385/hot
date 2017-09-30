@@ -1,11 +1,14 @@
 <?php 
 namespace app\service;
 use app\model\Message;
+use app\model\MessageMember;
 use app\common\validate\MessageVal;
 class MessageService{
 	private $MessageModel;	
+	private $MessageMemberModel;
 	public function __construct(){
 		$this->MessageModel = new Message;
+		$this->MessageMemberModel = new MessageMember;
 	}
 	// 获取Message
 	public function getMessageInfo($map){
@@ -20,9 +23,28 @@ class MessageService{
 		
 	}
 
-	//获取资源列表
+	//获取个人消息列表
+	public function getMessageMemberList($map,$page = 1 ,$paginate=10){
+		$result = $this->MessageMemberModel
+				->where($map)
+				// ->page($page,$paginate)
+				->select();
+		if($result){
+			$res = $result->toArray();
+			return $result;
+		}else{
+			return $res;
+		}
+	}
+
+
+	// 获取系统消息列表
 	public function getMessageList($map,$page = 1 ,$paginate=10){
-		$result = $this->MessageModel->where($map)->page($page,$paginate)->select();
+		$result = $this->MessageModel
+				->where($map)
+				->whereOr(['is_system'=>1])
+				// ->page($page,$paginate)
+				->select();
 		if($result){
 			$res = $result->toArray();
 			return $result;

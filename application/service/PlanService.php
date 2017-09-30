@@ -47,13 +47,13 @@ class PlanService {
     public function updatePlan($data,$id) {
         $validate = validate('PlanVal');
         if($data['exercise_ids']){
-            $arrSeri = explode(',', $data['exercise_ids']);
-            $data['exercise_id'] = serialize($arrSeri);
+            $exercise_ids = explode(',', $data['exercise_ids']);
+            $data['exercise_id'] = serialize($exercise_ids);
         }
 
         if($data['exercises']){
-            $arrSeri = explode(',', $data['exercises']);
-            $data['exercise'] = serialize($arrSeri);
+            $exercises = explode(',', $data['exercises']);
+            $data['exercise'] = serialize($exercises);
         }
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
@@ -78,13 +78,13 @@ class PlanService {
     public function createPlan($data){
         $validate = validate('PlanVal');
         if($data['exercise_ids']){
-            $arrSeri = explode(',', $data['exercise_ids']);
-            $data['exercise_id'] = serialize($arrSeri);
+            $exercise_ids = explode(',', $data['exercise_ids']);
+            $data['exercise_id'] = serialize($exercise_ids);
         }
 
         if($data['exercises']){
-            $arrSeri = explode(',', $data['exercises']);
-            $data['exercise'] = serialize($arrSeri);
+            $exercises = explode(',', $data['exercises']);
+            $data['exercise'] = serialize($exercises);
         }
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
