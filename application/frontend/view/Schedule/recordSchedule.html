@@ -9,10 +9,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <!--选择器样式-->
@@ -48,7 +44,7 @@
 <body>
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-        <h1 class="mui-title">训练营名称</h1>
+        <h1 class="mui-title">{$gradeInfo.camp}</h1>
     </header>
 
     <div class="mui-content">
@@ -91,13 +87,12 @@
                     </form>
 
                     <form class="mui-input-group">
-                        {volist name="studentList" id="vol"}
-                        <div class="mui-input-row mui-checkbox checkboxCont">
-                            <label class="number">{$key+1}</label><font class="student_str">{$vol.student}</font>
-                            <input name="checkbox1" value="Item 3" type="checkbox">
+                        <div class="box">
+                            <div class="mui-input-row mui-checkbox checkboxCont">
+                                <label class="number">0</label><font class="student_str">请添加学员</font>
+                                <input name="checkbox1" value="Item 3" type="checkbox">
+                            </div>
                         </div>
-                        {/volist}
-
                         <div class="operation-btn">
                             <span class="mui-badge">{$countStudentList}</span>
                             <a class="all">全选</a>
@@ -172,22 +167,22 @@
 
                     <div class="mui-input-row">
                         <label>场地租金</label>
-                        <span>{$gradeInfo.rent}</span>
+                        <input type="text" name="" value="" class="" placeholder="请输入场地租金">
                     </div>
 
                     <div class="mui-input-row">
-                        <label class="wd">主教佣金<font style="font-size: 12px">(底薪{$gradeInfo.coach_salary}+上课人数x基数{$gradeInfo.salary_base})</font></label>
-                        <span>{$gradeInfo.coach_salary}</span>
+                        <label style="width:74%">主教佣金<font style="font-size: 12px">(底薪+人数x基数)x主教人数</font></label>
+                        <input type="text" name="" value="" placeholder="主教佣金" style="width: 26%">
                     </div>
 
                     <div class="mui-input-row">
-                        <label class="wd">助教佣金 <font style="font-size: 12px">(底薪{$gradeInfo.assistant_salary}+上课人数x基数{$gradeInfo.salary_base})</font></label>
-                        <span>{$gradeInfo.assistant_salary}</span>
+                        <label style="width:74%">助教佣金<font style="font-size: 12px">(底薪+人数x基数)x助教人数)</font></label>
+                        <input type="text" name="" value="" placeholder="助教佣金" style="width: 26%">
                     </div>
 
                     <div class="mui-input-row">
                         <label>备注</label>
-                        <input type="text" class="remarks" value="{$gradeInfo.remarks}">
+                        <input type="text" class="remarks" value="" placeholder="请输入你的备注信息">
                     </div>
 
                 </form>
@@ -268,13 +263,16 @@
             <div class="mui-popover-arrow"></div>
             <div class="mui-scroll-wrapper">
                 <div class="mui-scroll">
-                    <div class="camp-list camp-lesson-list detalis-list">
+                    <div class="camp-list camp-lesson-list detalis-list mt">
                         <div class="page-header">
                             <span class="course"><strong>训练地点</strong></span>
                         </div>
-                        <ul class="mui-table-view list">
-                            <li class="trainLocation">asfsaf</li>
-                            <li class="trainLocation">asfsaf</li>
+                        <div class="mui-indexed-list-search mui-input-row mui-search">
+                            <input type="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="">
+                            <span class="mui-icon mui-icon-clear mui-hidden"></span>
+                            <span class="mui-placeholder"><span class="mui-icon mui-icon-search"></span><span>请输入场地名称搜索</span></span>
+                        </div>
+                        <ul class="mui-table-view list courtlist">
                         </ul>
                     </div>
                 </div>
@@ -379,22 +377,7 @@
                             <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
                         </div>
                         <form class="mui-input-group addStudentList">
-                            <div class="mui-input-row mui-checkbox mui-left">
-                                <label>学员1</label>
-                                <input name="student" value="学员1" type="checkbox">
-                            </div>
-                            <div class="mui-input-row mui-checkbox mui-left">
-                                <label>学员2</label>
-                                <input name="student" value="学员2" type="checkbox">
-                            </div>
-                            <div class="mui-input-row mui-checkbox mui-left">
-                                <label>学员3</label>
-                                <input name="student" value="学员3" type="checkbox">
-                            </div>
-                            <div class="mui-input-row mui-checkbox mui-left">
-                                <label>学员4</label>
-                                <input name="student" value="学员4" type="checkbox">
-                            </div>
+
                         </form>
                     </div>
                 </div>
@@ -473,21 +456,7 @@
 
     $(function () {
 
-        // 添加学员
-        var str = '';
-        var totalNum = '';
-        $("#studentConfirm").click(function () {
-            //选择多个学员
-            $(".addStudentList input[type=checkbox]:checked").each(function() {
-                str +='<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">{$key+1}</label><font class="student_str">'+$(this).val()+'</font><input name="checkbox1" value="Item 3" type="checkbox"></div>';
-            })
-            $(".operation-btn").before(str);//在增删按钮前加一行
-            changeIndex();//调用-更新序号
-            mui("#addStudent").popover("toggle");
-            //角标随checkboxCont的数量变化
-            totalNum = $(".checkboxCont").length;
-            $(".mui-badge").text(totalNum);
-        });
+
 
         //全选
         $(".all").click(function () {
@@ -570,6 +539,51 @@
         $(".close-popover").click(function () {
             mui($(this).parent()).popover("toggle");
             console.log(teacher)
+        })
+
+        //获取学员列表
+        $(".add").click(function () {
+            var lesson_id ="{$gradeInfo.lesson_id}";
+            mui.ajax("{:url('api/lesson/getActiveLessonStudentsApi')}", {
+                data: {
+                    'lesson_id': lesson_id,
+                },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data)
+                        var div = '';
+                        if (data.code == 200) {
+                            // 添加学员
+                            var str = '';
+                            var totalNum = '';
+                            $("#studentConfirm").click(function () {
+                                //选择多个学员
+                                $(".addStudentList input[type=checkbox]:checked").each(function() {
+                                    str +='<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font class="student_str">'+$(this).val()+'</font><input name="checkbox1" value="Item 3" type="checkbox"></div>';
+                                })
+                                // $(".operation-btn").before(str);//在增删按钮前加一行
+                                $(".box").append(str);//在增删按钮前加一行
+                                changeIndex();//调用-更新序号
+                                mui("#addStudent").popover("toggle");
+                                //角标随checkboxCont的数量变化
+                                totalNum = $(".checkboxCont").length;
+                                $(".mui-badge").text(totalNum);
+                            });
+                            for (var i = 0; i <= data.data.length - 1; i++) {
+                                div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="'+ data.data[i].id +'"></div>'
+                            }
+                            $(".addStudentList").append(div);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
         })
 
         //录课
