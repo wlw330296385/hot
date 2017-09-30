@@ -1,14 +1,15 @@
+// user
 var user_Boolean = false;
 var password_Boolean = false;
 var varconfirm_Boolean = false;
+var emaile_Boolean = false;
 var Mobile_Boolean = false;
-//user
 $('.reg_user').blur(function () {
-    if ((/^[a-z0-9_-]{4,8}$/).test($(".reg_user").val())) {
+    if ((/^[a-z0-9_-]{6,15}$/).test($(".reg_user").val())) {
         $('.user_hint').html("").css("color","green");
         user_Boolean = true;
     } else {
-        $('.user_hint').html("请输入4-8位的英文或数字").css("color", "red");
+        $('.user_hint').html("请输入6-15位的英文或数字").css("color", "red");
         user_Boolean = false;
     }
 });
@@ -30,20 +31,23 @@ $('.reg_confirm').blur(function () {
         $('.confirm_hint').html("").css("color","green");
         varconfirm_Boolean = true;
     } else {
-        $('.confirm_hint').html("两次密码输入不一致").css("color", "red");
+        $('.confirm_hint').html("确认密码").css("color", "red");
         varconfirm_Boolean = false;
     }
 });
 
- // Email
- $(".reg_email").blur(function(){
-    var email =$(this).val();
-    if(!/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/.test(email)){
-        $(".email_hint").text("请输入正确的邮箱格式").css("color", "red");
-    }else{
-        $('.email_hint').text("");
+
+// Email
+$('.reg_email').blur(function () {
+    if ((/^[a-z\d]+(\.[a-z\d]+)*@([\da-z](-[\da-z])?)+(\.{1,2}[a-z]+)+$/).test($(".reg_email").val())) {
+        $('.email_hint').html("✔").css("color", "green");
+        emaile_Boolean = true;
+    } else {
+        $('.email_hint').html("×").css("color", "red");
+        emaile_Boolean = false;
     }
-})
+});
+
 
 // Mobile
 $('.reg_mobile').blur(function () {
@@ -56,15 +60,12 @@ $('.reg_mobile').blur(function () {
     }
 });
 
-// Validate
-// $(".reg_validate").blur(function(){
-//     var validate =$(this).val();
-//     if(!/^\d{6}$/.test(validate)){
-//         $(".validate_hint").text("请输入正确的验证码").css("color", "red");
-//         return false;
-//     }else{
-//         $('.validate_hint').text("");
-//         return true;
-//     }
-// })
 
+// click
+// $('.red_button').click(function () {
+//     if (user_Boolean && password_Boolea && varconfirm_Boolean && emaile_Boolean && Mobile_Boolean == true) {
+//         alert("注册成功");
+//     } else {
+//         alert("请完善信息");
+//     }
+// });

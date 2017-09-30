@@ -85,6 +85,18 @@ $(document).on( 'click', '#del', function() {
     $(this).parent().remove()
 });
 
-
+var covers ='';
+$(function(){
+    covers =[];
+    $(document).ready(function(){
+        $(".createBtn").on('click',function(){
+            $(".previewList img").each(function(){
+                covers.push($(this).attr('src'));
+            }).get().join(",")
+            console.log(covers)
+        })
+    })
+    
+})
 
 
