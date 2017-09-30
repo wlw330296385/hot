@@ -22,8 +22,8 @@ class Plan extends Base{
         try{
             $map = input('post.');
             $page = input('param.page')?input('param.page'):1;
-            $planList = $this->PlanService->PlanListPage($map,$page);
-            return json($planList);
+            $result = $this->PlanService->PlanListPage($map,$page);
+            return json(['code'=>200,'msg'=>$result]);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
