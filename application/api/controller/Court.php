@@ -104,7 +104,7 @@ class Court extends Base{
         }
     }
 
-    //获取训练营下的场地列表
+    //获取训练营下的场地列表（带分页）
     public function getCourtListOfCampApi(){
         $map = input('post.');
         $page = input('param.page', 1);
