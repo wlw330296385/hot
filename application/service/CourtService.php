@@ -73,23 +73,20 @@ class CourtService {
     }
 
 
-    // 获取训练营下的场地列表
-    public function getCourtListOfCamp($map = [],$paginate = 10){
-        $result = $this->CourtCamp->with('court')->where($map)->paginate($paginate);
-
-        if($result){
-            $res = $result->toArray();
-            foreach ($res['data'] as $key => $value) {
-                if($value['court']['cover']){
-                    $res['data'][$key]['court']['covers'] = unserialize($value['court']['cover']);
-                }else{
-                    $res['data'][$key]['court']['covers'] = [];
-                }
+    // 获取训练营下的场地列表 (带分页参数)
+    public function getCourtListOfCamp($map = [], $page=1, $limit=10){
+        $courtstatus = $map['status'];
+        unset($map['status']);
+        $list = Db::view('court_camp',['id', 'camp_id', 'camp', 'court_id', 'court'])
+            ->view('court', ['cover', 'status'=>'courtisopen', 'location', 'area'], 'court.id=court_camp.court_id')
+            ->where(['courtisopen' => $courtstatus, 'camp_id' => $map['camp_id'], 'court_camp.delete_time' => ['EXP', 'IS NULL']])
+            ->limit(5)->page($page)->select();
+        foreach ($list as $key => $value) {
+            if ($value['cover']) {
+                $list[$key]['covers'] = unserialize($value['cover']);
             }
-            
-            return $res;
         }
-        return $result;
+        return $list;
     }
 
     // 编辑场地
@@ -122,8 +119,21 @@ class CourtService {
         }else{
             $data['cover'] = serialize(['/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg']);;
         }
-        $result = $this->courtModel->save($data);
+        $model = new Court();
+        $result = $model->allowField(true)->save($data);
         if($result){
+            $dataCourtCamp = [
+                'court_id' => $model->id,
+                'court' => $data['court'],
+                'camp_id' => $data['camp_id'],
+                'camp' => $data['camp'],
+                'status' => 1
+            ];
+            $addCourtCamp = CourtCamp::create($dataCourtCamp);
+            if (!$addCourtCamp) {
+                return ['code' => 100, 'msg' => '添加训练营场地关联'.__lang('MSG_400')];
+            }
+
             return ['code'=>200,'data'=>$result,'msg'=>__lang('MSG_200')];
         }else{
             return ['code'=>100,'msg'=>$this->courtModel->getError()];

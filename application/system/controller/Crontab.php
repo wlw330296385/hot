@@ -270,15 +270,13 @@ class Crontab extends Controller {
             foreach ($schedules as $key => $value) {
                 if($value['type'] == 1){
                     $this->studentInc($value['user_id'],'finished_scheduel',1);
-
+                    $this->gradeMemberRestScheduleDec($value['user_id']);
                 }
                 if($value['type'] == 2){
                     // 主教练的课量+1
                     $this->coachInc($value['coach_id'],'schedule_flow',1);
                     $this->coachInc($value['coach_id'],'student_flow',$value['students']);
                 }
-                
-
             }
         });
     }
