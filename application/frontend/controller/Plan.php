@@ -97,9 +97,5 @@ class Plan extends Base{
     }
 
 
-    public function planListApi(){
-        $map = input('post.');
-        $planList = $this->PlanService->PlanListPage($map,10);
-        return json($planList);
-    }
+   
 }
