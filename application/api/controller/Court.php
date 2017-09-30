@@ -104,9 +104,22 @@ class Court extends Base{
         }
     }
 
-    //获取训练营下的场地列表（带分页）
+    //获取训练营下的场地列表
     public function getCourtListOfCampApi(){
         $map = input('post.');
+        $page = input('param.page', 1);
+        $result = $this->CourtService->getCourtListOfCamp($map, $page);
+        if($result){
+            return json(['code'=>200,'msg'=>"OK",'data'=>$result]);
+        }else{
+            // 不知道为什么判断成功失败都写一样
+            // return json(['code'=>200,'msg'=>"OK",'data'=>$result]);
+            return json(['code'=>100,'msg'=>__lang('MSG_401')]);
+        }
+    }
+
+    //获取训练营下的场地列表（有分页页码）
+    public function getCourtListOfCampPageApi(){
         $result = $this->CourtService->getCourtListOfCamp($map);
         if($result){
             return json(['code'=>200,'msg'=>"OK",'data'=>$result]);

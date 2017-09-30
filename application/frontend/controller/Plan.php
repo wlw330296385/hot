@@ -86,8 +86,8 @@ class Plan extends Base{
     // 分页获取数据
     public function planList(){
     	$camp_id = input('param.camp_id');
-    	$planListOfCamp = $this->PlanService->PlanListPage(['camp_id'=>$camp_id,'type'=>1]);
-    	$planListOfSys = $this->PlanService->PlanListPage(['type'=>0]);
+    	$planListOfCamp = $this->PlanService->getPlanList(['camp_id'=>$camp_id,'type'=>1]);
+    	$planListOfSys = $this->PlanService->getPlanList(['type'=>0]);
 
 
         $this->assign('camp_id',$camp_id);
