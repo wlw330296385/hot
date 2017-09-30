@@ -34,7 +34,7 @@ class LessonService {
 
     // 分页获取课程
     public function getLessonListByPage($map=[], $order='',$paginate=10){
-        $res = Lesson::where($map)->order($order)->paginate($$paginate);
+        $res = Lesson::where($map)->order($order)->paginate($paginate);
         if($res){
             return $res->toArray();
         }else{

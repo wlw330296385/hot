@@ -22,7 +22,7 @@
                href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"></a>
             <a class="mui-control-item mui-active" href="#onlineLessonList">上架课程</a>
             <a class="mui-control-item" href="#offlineLessonList">下架课程</a>
-            <a class="mui-control-item" onclick="javascript:window.location.href='{:url('lesson/createLesson',['camp_id'=>$camp_id])}'">添加课程</a>
+            <a class="mui-control-item" href="{:url('lesson/createLesson',['camp_id'=>$camp_id])}">添加课程</a>
         </div>
     </div>
 
@@ -55,8 +55,9 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-    mui("body").on("tap", "a", function () {
-        window.top.location.href = this.href;
+
+    mui("body").on("tap","a",function(){
+        window.top.location.href=this.href;
     });
 
 
@@ -173,9 +174,9 @@
                         var urls = "{:url('lesson/LessonInfoOfCamp')}" + '/lesson_id/' + data.data[i].id + '/camp_id/' + campID;
                         newli += '<li class="mui-table-view-cell mui-media listli">';
                         if (status == 1) {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><a class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</a><a class="mui-btn mui-btn-red" data-action="del">删除</a></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         } else {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><a class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</a><a class="mui-btn mui-btn-red" data-action="del">删除</a></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         }
                         newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd45">' + data.data[i].lesson + '<p class="mui-ellipsis">' + data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥' + data.data[i].cost + '</p><p class="address">' + data.data[i].area + '</p></div></a></div>';
                         newli += '</li>';
@@ -209,7 +210,7 @@
     };
 
     //拖拽后显示操作图标，点击操作图标删除元素；
-    $('.OA_task_lesson').on('click', '.mui-btn', function (event) {
+    $('.OA_task_lesson').on('tap', '.mui-btn', function (event) {
         var elem = this;
         var li = elem.parentNode.parentNode;
         var btnArray = ['确认', '取消'];

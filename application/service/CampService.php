@@ -80,9 +80,9 @@ class CampService {
      */
     public function createCamp($request){
         // 一个人只能创建一个训练营
-        // if ( $this->hasCreateCamp($request['member_id']) ){
-        //     return [ 'msg' => '一个会员只能创建一个训练营', 'code' => 100 ];
-        // }
+        if ( $this->hasCreateCamp($request['member_id']) ){
+            return [ 'msg' => '一个会员只能创建一个训练营', 'code' => 100 ];
+        }
         $model = new Camp;
         $result = $model->validate('CampVal.add')->save($request);
         if ( false === $result ) {
