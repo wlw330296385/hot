@@ -231,6 +231,35 @@ class Crontab extends Controller {
         });
     }
 
+
+
+    // 循环当天课时记录,并且执行教练课量,训练营评分,教练评分
+    public function schedulerebate(){
+        // 获取当天课时
+        // 当天开始时间&结束时间
+        $t = time();
+        $start_time = mktime(0,0,0,date("m",$t),date("d",$t),date("Y",$t));
+        $end_time = mktime(23,59,59,date("m",$t),date("d",$t),date("Y",$t));
+        $map['status'] = 1;
+        $map['create_time'] = ['BETWEEN',[$start_time,$end_time]];
+        Db::name('schedule')->where($map)->chunk(50,function($schedules){
+            foreach ($schedules as $key => $value) {
+                // 主教练的课量+1
+                $this->coachInc($value['coach_id'],'schedule_flow',1);
+                $this->coachInc($value['coach_id'],'student_flow',$value['students']);
+                // 副教练的课量+1
+                $assistant_ids = unserialize($value['assistant_id']);
+                foreach ($assistant_ids as $k => $val) {
+                    $this->coachInc($val,'schedule_flow',1);
+                    $this->coachInc($val,'student_flow',$value['students']);
+                }
+            }
+        });
+    }
+
+    // 循环课程评价的评分
+
+
     // 获取教练信息
     protected function getCoachMember($coach_id) {
         $member = Db::view('coach', ['id' => 'coach_id', 'member_id'])
@@ -308,4 +337,25 @@ class Crontab extends Controller {
         }
         return $tree;
     }
+
+
+
+    protected function coachInc($member_id,$incField,$inc = 1){
+        $result = db('coach')->where(['member_id'=>$member_id])->setInc($incField,$inc);
+        if($result){
+            file_put_contents(ROOT_PATH.'data/schedule/'.date('Y-m-d',time()).'.txt',json_encode(['success'=>['coach_member_id'=>$member_id,'filed'=>$incField,'inc'=>$inc],'time'=>date('Y-m-d H:i:s',time())]).PHP_EOL, FILE_APPEND  );
+        } else {
+            file_put_contents(ROOT_PATH.'data/schedule/'.date('Y-m-d',time()).'.txt',json_encode(['error'=>['coach_member_id'=>$member_id,'filed'=>$incField,'inc'=>$inc],'time'=>date('Y-m-d H:i:s',time())]).PHP_EOL, FILE_APPEND  );
+        }
+    }
+
+    protected function studentInc($member_id,$incField,$inc = 1){
+        $result = db('student')->where(['member_id'=>$member_id])->setInc($incField,$inc);
+        if($result){
+            file_put_contents(ROOT_PATH.'data/schedule/'.date('Y-m-d',time()).'.txt',json_encode(['success'=>['student_member_id'=>$member_id,'filed'=>$incField,'inc'=>$inc],'time'=>date('Y-m-d H:i:s',time())]).PHP_EOL, FILE_APPEND  );
+        } else {
+            file_put_contents(ROOT_PATH.'data/schedule/'.date('Y-m-d',time()).'.txt',json_encode(['error'=>['student_member_id'=>$member_id,'filed'=>$incField,'inc'=>$inc],'time'=>date('Y-m-d H:i:s',time())]).PHP_EOL, FILE_APPEND  );
+        }
+    }
+
 }

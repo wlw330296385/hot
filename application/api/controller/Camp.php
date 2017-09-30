@@ -240,4 +240,26 @@ class Camp extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+    // 获取热门课程
+    public function getHotCampList(){
+        $province = input('param.province');
+        $city = input('param.city');
+        $map['province']=$province;
+        $map['city'] = $city;
+        $map['hot'] = 1;
+        foreach ($map as $key => $value) {
+            if($value == ''|| empty($value) || $value==' '){
+                unset($map[$key]);
+            }
+        }
+        $result = $this->CampService->getCampList($map,1);
+        if($result){
+            shuffle($result);
+            return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+        }else{
+            return json(['code'=>100,'msg'=>'传参错误']);
+        }
+
+    }
 }

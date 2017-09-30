@@ -159,14 +159,14 @@ class CampMember extends Base{
     }
 
 
-    // 获取有教练身份的训练营员工
+    // 获取有教练身份的训练营员工（没分页、可模糊查询）
     public function getCoachListApi(){
         try{
             $camp_id = input('param.camp_id');
             $keyword = input('param.keyword');
             $status = input('param.status', 1);
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
-                $map['coach.coach'] = ['like', "$keyword"];
+                $map['coach.coach'] = ['LIKE','%'.$keyword.'%'];
                 $map['coach.status'] = 1;
             }
 
@@ -183,7 +183,7 @@ class CampMember extends Base{
         }
     }
 
-    //自定义获取训练营身份列表有页码
+    //自定义获取训练营身份列表分页（有页码）
     public function getCampMemberListByPageApi(){
         try{
             $map = input('post.');
@@ -209,7 +209,7 @@ class CampMember extends Base{
         }
     }
 
-    //自定义获取训练营身份列表有页码
+    //自定义获取训练营身份列表有分页
     public function getCampMemberListApi(){
         try{
             $map = input('post.');

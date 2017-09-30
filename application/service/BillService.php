@@ -77,7 +77,12 @@ class BillService {
                 }
 
             }
-            
+            // 训练营的余额增加
+            $setting = db('setting')->find();
+            $ress = db('camp')->where(['id'=>$data['camp_id'])->setInc('balance',$data['balance_pay']*(1-$setting['sysrebate']));
+            if($ress){
+                db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$setting['sysrebate']),'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time()]);
+            }
             return ['code'=>200,'msg'=>'新建成功','data'=>$result];
         }else{
             return ['code'=>100,'msg'=>$this->Bill->getError()];

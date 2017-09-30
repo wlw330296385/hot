@@ -557,14 +557,13 @@
 
     //训练营场地列表接口获取数据并追加到页面
     var toCourtList = function(keyword,page) {
-        var url  = "{:url('api/court/getCourtListByPageApi','','',true)}";
+        var url  = "{:url('api/court/getCourtListApi','','',true)}";
         var campID = "{$campInfo.id}";
         mui.ajax({
             url:url,
             data: {
                 page:page,
-                camp_id:campID,
-                keyword:keyword
+                camp_id:campID
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -575,7 +574,7 @@
                 if (data.code == 200) {
                     var newli = '';
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        newli = newli + '<li class="mui-table-view-cell listli detalisli trainLocation" data-id="' + data.data.data[i].id + '" data-location="' + data.data.data[i].location + '">' + data.data.data[i].court + '</li>'
+                        newli = newli + '<li class="mui-table-view-cell listli detalisli trainLocation" data-id="' + data.data.data[i].court.id + '" data-location="' + data.data.data[i].court.location + '">' + data.data.data[i].court.court + '</li>'
                     }
                     $("ul.courtlist").empty();
                     if(newli==''){
@@ -597,7 +596,7 @@
 
     //教练列表接口获取数据并追加到页面
     var toCoachList = function(keyword) {
-        var url  = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}";
+        var url  = "{:url('api/camp_member/getCoachListApi','','',true)}";
         var campID = "{$campInfo.id}";
         mui.ajax({
             url:url,
@@ -615,9 +614,9 @@
                 if (data.code == 200) {
                     var newli = ''; //主教练单选
                     var newliAS = ''; //助理教练多选
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="'+data.data.data[i].member_id+'">'+data.data.data[i].coach.coach+'</li>'
-                        newliAS = newliAS + '<div class="mui-input-row mui-checkbox mui-left"><label class="label" data-id="'+data.data.data[i].member_id+'">'+data.data.data[i].coach.coach+'</label><input name="checkbox-assistant" value="'+data.data.data[i].coach.coach+'" type="checkbox"></div>'
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="'+data.data[i].member_id+'">'+data.data[i].coach+'</li>'
+                        newliAS = newliAS + '<div class="mui-input-row mui-checkbox mui-left"><label class="label" data-id="'+data.data[i].member_id+'">'+data.data[i].coach+'</label><input name="checkbox-assistant" value="'+data.data[i].coach+'" type="checkbox"></div>'
                     }
                     $("ul.coach").empty();
                     $(".coachAS").empty();
