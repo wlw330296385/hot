@@ -44,31 +44,31 @@ class Base extends Controller{
 		$footMenu =  [
 			[
 				'name'=>'首页',
-				'icon'=>'icon iconfont icon-hotnav-home',
+				'icon'=>'icon iconfont icon-m-Home',
 				'action'=>'index',
 				'controller'=>'Index'
 			],
 			[
 				'name'=>'消息',
-				'icon'=>'icon iconfont icon-hotnav-news',
+				'icon'=>'icon iconfont icon-m-news',
 				'action'=>'index',
 				'controller'=>'Message'
 			],			
 			[
 				'name'=>'发现',
-				'icon'=>'icon iconfont icon-hotnav-find',
+				'icon'=>'icon iconfont icon-m-Find',
 				'action'=>'index',
 				'controller'=>'Find'
 			],
 			[
 				'name'=>'训练营',
-				'icon'=>'icon iconfont icon-hotnav-training',
+				'icon'=>'icon iconfont icon-m-TrainingCamp2',
 				'action'=>'index',
 				'controller'=>'Camp'
 			],
 			[
 				'name'=>'我的',
-				'icon'=>'icon iconfont icon-hotnav-mine',
+				'icon'=>'icon iconfont icon-m-mine',
 				'action'=>'index',
 				'controller'=>'Member'
 			],
