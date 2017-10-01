@@ -75,12 +75,17 @@ class CourtService {
 
     // 获取训练营下的场地列表 (带分页参数)
     public function getCourtListOfCamp($map = [], $page=1, $limit=10){
-        $courtstatus = $map['status'];
-        unset($map['status']);
+        if (array_key_exists('status', $map)) {
+            $map['courtisopen'] = $map['status'];
+            unset($map['status']);
+        }
+        $map['court_camp.delete_time'] = ['EXP', 'IS NULL'];
+
         $list = Db::view('court_camp',['id', 'camp_id', 'camp', 'court_id', 'court'])
             ->view('court', ['cover', 'status'=>'courtisopen', 'location', 'area'], 'court.id=court_camp.court_id')
-            ->where(['courtisopen' => $courtstatus, 'camp_id' => $map['camp_id'], 'court_camp.delete_time' => ['EXP', 'IS NULL']])
+            ->where($map)
             ->limit(5)->page($page)->select();
+
         foreach ($list as $key => $value) {
             if ($value['cover']) {
                 $list[$key]['covers'] = unserialize($value['cover']);

@@ -87,14 +87,13 @@ class Login extends Base{
 
 
     public function autoLogin(){
-        $id = input('param.id')?input('param.id'):1;
+        $id = input('param.id',1);
         $member =new \app\service\MemberService;
         $memberInfo = $member->getMemberInfo(['id'=>$id]);
-        dump($memberInfo);
         unset($memberInfo['password']);
         $this->memberInfo = $memberInfo;
-        $cookie = md5($memberInfo['id'].$memberInfo['member'].'hot');
-        cookie('member',md5($this->memberInfo['id'].$this->memberInfo['member'].'hot'));
+        cookie('mid', $memberInfo['id']);
+        cookie('member',md5($memberInfo['id'].$memberInfo['member'].config('salekey')));
         session('memberInfo',$memberInfo,'think');
 
         if ( session('?memberInfo') ) {

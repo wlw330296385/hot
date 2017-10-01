@@ -130,7 +130,7 @@ class StudentService{
     public function saveAllStudent($data){
     	$result = $this->gradeMemberModel->saveAll($data);
     	if($result){
-			return ['code'=>200,'msg'=>'ok','data'=>$result];
+			return ['code'=>200,'msg'=>__lang('MSG_200'),'data'=>$result];
 		}else{
 			return ['code'=>100,'msg'=>$this->gradeMemberModel->getError()];
 		}

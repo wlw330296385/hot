@@ -114,6 +114,7 @@ class Grade extends Base{
         $studentList = $this->GradeService->getStudentList($grade_id);
         $this->assign('studentList',$studentList);
         $this->assign('gradeInfo',$gradeInfo);
+        $this->assign('updateGrade', 1);
         return view('Grade/gradeInfoOfCamp');
     }
 
