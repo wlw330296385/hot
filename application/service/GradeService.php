@@ -40,6 +40,7 @@ class GradeService{
         $res = $this->GradeModel->where($map)->find();
         if($res){           
             $result = $res->toArray();
+            $result['status_num'] = $res->getData('status');
             if($result['assistant']){
                 $assis = unserialize($result['assistant']);
                 $result['assistants'] = implode(',', $assis);
@@ -119,6 +120,20 @@ class GradeService{
 
         return $is_power?$is_power:0;
     
+    }
+
+    // 修改班级status字段 2017/10/2
+    public function updateGradeStatus($gradeid, $status=0) {
+        $model = new Grade();
+        $result = $model->update(['id' => $gradeid, 'status' => $status]);
+//        dump($result);
+        return $result->toArray();
+    }
+
+    // (软)删除班级 2017/10/2
+    public function delGrade($id) {
+        $result = Grade::destroy($id);
+        return $result;
     }
 
 }
