@@ -20,8 +20,8 @@
 <body class="whitebg">
 
 <div class="mui-content">
+    <div id="tabbar" class="mui-control-content mui-active coach"  style="margin-bottom:60px;">
 
-    <div id="tabbar" class="mui-control-content mui-active coach">
         <!--操作模块-->
         <div class="coach-info">
             <ul class="mui-table-view mui-grid-view mui-grid-9">
@@ -40,10 +40,34 @@
             <span class="more">{$campInfo['camp']}</span>
         </div>
 
+
+        <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module" style="margin:0px;">
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{:url('camp/campInfo',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-m-TrainingCamp1"></span>
+                    <div class="mui-media-body">训练营介绍</div>
+                </a>
+            </li>
+
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{:url('lesson/lessonList')}?camp_id={$campInfo['id']}&camp_name={$campInfo['camp']}">
+                    <span class="icon iconfont icon-m-Courselist"></span>
+                    <div class="mui-media-body">课程列表</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{:url('coach/coachListOfCamp',['camp_id'=>$campInfo['id']])}/?campname={$campInfo.camp}">
+                    <span class="icon iconfont icon-m-Lessonmanagement"></span>
+                    <div class="mui-media-body">教练成员</div>
+                </a>
+            </li>
+        </ul>
+
+
         <div class="page-header">
             <span class="course"><b>学员</b></span>
         </div>
-        <ul class="mui-table-view list detalis-list mt55">
+        <ul class="mui-table-view list detalis-list">
             {volist name="studentList" id="vol"  empty="<li class='mui-table-view-cell listli listinitial'>暂无</li>"}
             <li class="mui-table-view-cell listli listinitial ">
                 <a class="mui-navigate-right" href="{:url('student/studentInfoOfCamp',['type'=>1,'student_id'=>$vol['student_id'],'camp_id'=>$vol['camp_id']])}">
@@ -56,7 +80,7 @@
         <div class="page-header">
             <span class="course"><b>领队</b></span>
         </div>
-        <ul class="mui-table-view list detalis-list mt55">
+        <ul class="mui-table-view list detalis-list">
             {volist name="leaderList" id="vol"   empty="<li class='mui-table-view-cell listli listinitial'>暂无</li>"}
             <li class="mui-table-view-cell listli listinitial ">
                 <a class="mui-navigate-right" href="{:url('grade/gradeInfoOfCamp',['grade_id'=>$vol['id'],'camp_id'=>$vol['camp_id']])}">
@@ -69,7 +93,7 @@
         <div class="page-header">
             <span class="course"><b>班主任</b></span>
         </div>
-        <ul class="mui-table-view list detalis-list mt55">
+        <ul class="mui-table-view list detalis-list">
             {volist name="teacherList" id="vol"  empty="<li class='mui-table-view-cell listli listinitial'>暂无</li>"}
             <li class="mui-table-view-cell listli listinitial ">
                 <a class="mui-navigate-right" href="{:url('grade/gradeInfoOfCamp',['grade_id'=>$vol['id'],'camp_id'=>$vol['camp_id']])}">
@@ -82,11 +106,11 @@
         <div class="page-header">
             <span class="course"><b>粉丝</b></span>
         </div>
-        <ul class="mui-table-view list detalis-list mt55">
+        <ul class="mui-table-view list detalis-list">
               <li class="mui-table-view-cell listli listinitial ">暂无</li>
         </ul>
 
-
+    </div>
 </div>
 {layout name="Layout/footer"}
 </body>

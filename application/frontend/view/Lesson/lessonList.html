@@ -52,7 +52,7 @@
         </div>
     </div>
 
-
+    <input type="hidden" name="campID" class="campID" />
 
 </div>
 
@@ -78,6 +78,8 @@
         var sArea='';
         var keyword=wooApi.GetQueryString('keyword');
         $('.keyword').val(keyword);
+        var campID=wooApi.GetQueryString('camp_id');
+        var campName=wooApi.GetQueryString('camp_name');
 
         //获取定位省市区
         var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
@@ -85,7 +87,11 @@
         var sProvince = getLocationTB['province'];
         var allArea = getLocationTB['area'];
         $('.location').text(sCity);
-
+        if(campName!=''&&campName!=null){
+            $('.location').text(campName);
+            $('.keyword').attr('placeholder','请输入'+campName+'课程名称');
+            $("#areaSelect").parent().hide();
+        }
 
 
         //生成区域选择下拉菜单
@@ -98,6 +104,7 @@
         //搜索教练
         $("#searchBtn").on("click", function () {
             keyword = $(".keyword").val();
+            campID='';
             searchToList();
         })
         //选择性别下拉
@@ -115,7 +122,7 @@
             count = 1;//显示第一页
             var page = count;
             var gType = 1;//代表下拉刷新
-            toList(page,gType);//具体取数据的方法
+            toList(page,gType,campID);//具体取数据的方法
         }
 
         mui.init({
@@ -148,7 +155,7 @@
                 count = 1;//刷新并显示第一页
                 var page = count;
                 var gType = 1;//代表下拉刷新
-                toList(page,gType);//具体取数据的方法
+                toList(page,gType,campID);//具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现
@@ -157,21 +164,23 @@
                 count++;//翻下一页
                 var page = count;
                 var gType =2;//代表上拉加载
-                toList(page,gType);//具体取数据的方法
+                toList(page,gType,campID);//具体取数据的方法
             }, 100);
         }
         //接口获取数据并追加到页面
-        var toList = function(page,gType) {
+        var toList = function(page,gType,campID) {
             //搜索关键字不能完全为空，否则查询为空
             var url  = "{:url('api/lesson/searchLessonApi','','',true)}";
             mui.ajax({
                 url:url,
                 data: {
                     page: page,
+                    status:1,
                     province: sProvince,
                     city: sCity,
                     area: sArea,
                     gradecate_id: sLessonType,
+                    camp_id: campID,
                     keyword: keyword
                 },
                 dataType: 'json',//服务器返回json格式数据
