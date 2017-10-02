@@ -20,6 +20,16 @@
     <!--选择器样式-->
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <!--自定义多色图标icon.js-->
+    <script src="/static/frontend/iconfont/iconfont.js"></script>
+    <style type="text/css">
+        .coloricon {
+            width: 2.3em; height: 2.3em;
+            vertical-align: -0.7em;
+            fill: currentColor;
+            overflow: hidden;
+        }
+    </style>
 </head>
 
 <body class="mt44">
@@ -73,27 +83,37 @@
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a
                         href="{:url('lesson/lessonList')}">
-                    <span><i class="icon iconfont icon-m-course"></i></span>
+                    <svg class="coloricon" aria-hidden="true">
+                        <use xlink:href="#icon-m-course"></use>
+                    </svg>
                     <div class="mui-media-body">课程</div>
                 </a></li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a
                         href="{:url('camp/campList')}">
-                    <span><i class="icon iconfont icon-m-TrainingCamp"></i></span>
+                    <svg class="coloricon" aria-hidden="true">
+                        <use xlink:href="#icon-m-TrainingCamp"></use>
+                    </svg>
                     <div class="mui-media-body">训练营</div>
                 </a></li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a
                         href="{:url('coach/coachList')}">
-                    <span><i class="icon iconfont icon-m-coach"></i></span>
+                    <svg class="coloricon" aria-hidden="true">
+                        <use xlink:href="#icon-m-coach"></use>
+                    </svg>
                     <div class="mui-media-body">教练</div>
                 </a></li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a
                         href="{:url('court/courtList')}">
-                    <span><i class="icon iconfont icon-m-Trainingpoints"></i></span>
+                    <svg class="coloricon" aria-hidden="true">
+                        <use xlink:href="#icon-m-Trainingpoints"></use>
+                    </svg>
                     <div class="mui-media-body">训练点</div>
                 </a></li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli"><a href="#"
                                                                                              onclick="alert('暂未开放')">
-                    <span><i class="icon iconfont icon-m-Aboutwar"></i></span>
+                    <svg class="coloricon" aria-hidden="true">
+                        <use xlink:href="#icon-m-Aboutwar"></use>
+                    </svg>
                     <div class="mui-media-body">约战</div>
                 </a></li>
             </ul>
@@ -211,6 +231,10 @@
                     localStorage.currentCity = _getParam(items[1], 'text');
                     localStorage.currentProvince = _getParam(items[0], 'text');
                     localStorage.currentAreas = areas;
+                    //获取热门课程
+                    toLessonList(localStorage.currentCity,localStorage.currentProvince);
+                    //获取热门训练营
+                    toCampList(localStorage.currentCity,localStorage.currentProvince);
                 });
             }, false);
         });
@@ -334,12 +358,14 @@
                         if(i>=3){ break; }
                     }
                     if(newli==''){
-                        newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有相关数据哦</p></li>'
+                        newli = '<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>'
                     }
                     $("ul#hot-lesson").html(newli);
 
                 }else{
-                    mui.toast('数据获取失败,请稍候再试');
+                    newli = '<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>';
+                    $("ul#hot-lesson").html(newli);
+                    //mui.toast('数据获取失败,请稍候再试');
                 }
 
             },
@@ -373,12 +399,14 @@
                         if(i>=3){ break; }
                     }
                     if(newli==''){
-                        newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有相关数据哦</p></li>'
+                        newli = '<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>'
                     }
                     $("ul#hot-camp").html(newli);
 
                 }else{
-                    mui.toast('数据获取失败,请稍候再试');
+                    newli = '<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>';
+                    $("ul#hot-camp").html(newli);
+                    //mui.toast('数据获取失败,请稍候再试');
                 }
 
             },
