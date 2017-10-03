@@ -20,7 +20,7 @@
 <body class=whitebg>
 <div class="mui-content">
 
-    <div class="list camp-list camp-lesson-list detalis-list coach mt">
+    <div class="list camp-list detalis-list mt">
         <div class="camp-lesson-list">
             <div id="segmentedControl" class="mui-segmented-control mb">
                 <a class="mui-control-item mui-active" href="#item1">教案</a>
@@ -32,10 +32,10 @@
                 <ul class="mui-table-view">
                     <li class="mui-table-view-cell">
                         <div class="mui-segmented-control seg-control">
-                            <a class="mui-control-item mui-active" href="#item3">训练营</a>
-                            <a class="mui-control-item" href="#item4">平台</a>
+                            <a class="mui-control-item" href="#item4">平台教案</a>
+                            <a class="mui-control-item mui-active" href="#item3">自定义教案</a>
+                            <a class="mui-control-item" href="{:url('plan/createPlan',['camp_id'=>$camp_id])}">添加教案</a>
                         </div>
-                        <a href="{:url('plan/createPlan',['camp_id'=>$camp_id])}"><span class="date mui-navigate-right" style="padding-top: 4px">添加教案</span></a>
                     </li>
                     <div class="item-list">
                         <div id="item3" class="mui-control-content mui-active">
@@ -76,10 +76,10 @@
                 <ul class="mui-table-view mb">
                     <li class="mui-table-view-cell">
                         <div class="mui-segmented-control seg-control">
-                            <a class="mui-control-item mui-active" href="#item5">训练营</a>
-                            <a class="mui-control-item" href="#item6">平台</a>
+                            <a class="mui-control-item" href="#item6">平台项目</a>
+                            <a class="mui-control-item mui-active" href="#item5">自定义项目</a>
+                            <a class="mui-control-item" href="{:url('plan/createPlan',['camp_id'=>$camp_id])}">添加项目</a>
                         </div>
-                        <a href="{:url('plan/createPlan',['camp_id'=>$camp_id])}"><span class="date mui-navigate-right" style="padding-top: 4px">添加项目</span></a>
                     </li>
                 </ul>
                 <div class="item-list">
@@ -154,6 +154,9 @@
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
+    });
+    mui("body").on("tap","a",function(){
+        window.top.location.href=this.href;
     });
 </script>
 </html>
