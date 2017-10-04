@@ -82,13 +82,14 @@ class Schedule extends Base
 		}
 
 		// 教练列表
-		$memberListOfCamp = db('camp_member')
-						->where([
-						'camp_id'	=>$camp_id,
-						'status'	=>1,
-						])
-						->field('member,member_id')
-						->select();
+		$map['camp_id'] = $camp_id;
+        $map['camp_member.status'] = 1;
+        $map['camp_member.type'] = ['egt', 2];
+		$coachListOfCamp= Db::view('camp_member',['id' => 'campmemberid','camp_id'])
+                ->view('coach','*','coach.member_id=camp_member.member_id')
+                ->where($map)
+                ->select();
+        dump($memberListOfCamp);die;        
 		// 班级信息
 		$GradeService = new \app\service\GradeService;		
 		$gradeInfo = $GradeService->getGradeInfo(['id'=>$grade_id]);
@@ -104,39 +105,11 @@ class Schedule extends Base
 		$this->assign('studentList',$studentList);
 		$this->assign('exerciseList',$exerciseList);
 		$this->assign('gradeInfo',$gradeInfo);
-		$this->assign('memberListOfCamp',$memberListOfCamp);
+		$this->assign('coachListOfCamp',$coachListOfCamp);
 		$this->assign('campid', $camp_id);
 		return view('Schedule/recordSchedule');
 	}
 
-	//判断录课冲突,规则:同一个训练营课程班级,在某个时间点左右2个小时之内只允许一条数据;
-	public function recordScheduleClashApi(){
-		$lesson_id = input('lesson_id');
-		$lesson_time = input('lesson_time');
-		$grade_id = input('grade_id');
-		$camp_id = input('camp_id');
-		//前后2个小时
-		$start_time = time()-7200;
-		$end_time = time()+7200;
-		$scheduleList = db('schedule')->where([
-								'camp_id'=>$camp_id,
-								'grade_id'=>$grade_id,
-								'lesson_id'=>$lesson_id,
-								// 'lesson_time'=>['BETWEEN',[$start_time,$end_time]]
-								])->select();
-		$result = 1;
-		if(!$scheduleList){
-			$result = 0;
-		}else{
-			foreach ($scheduleList as $key => $value) {
-				if($value['lesson_time']>$start_time && $value['lesson_time']<$end_time){
-					$result = 0;
-				}
-			}
-		}
-
-		return $result;die;
-	}
 
 	// 编辑课时
 	public function updateSchedule(){
