@@ -31,14 +31,12 @@ class PlanService {
         }
     }
 
-    /**
-     * 读取资源
-     */
-    public function PlanOneById($id) {
-        $res = $this->Plan->get($id)->toArray();
+
+    public function getPlanInfo($map) {
+        $res = $this->Plan->where($map)->find();
         if (!$res) return false;
         
-        return $res;
+        return $res->toArray();
     }
 
     /**

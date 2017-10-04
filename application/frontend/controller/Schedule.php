@@ -85,25 +85,39 @@ class Schedule extends Base
 		$map['camp_id'] = $camp_id;
         $map['camp_member.status'] = 1;
         $map['camp_member.type'] = ['egt', 2];
-		$coachListOfCamp= Db::view('camp_member',['id' => 'campmemberid','camp_id'])
+		$coachListOfCamp = Db::view('camp_member',['id' => 'campmemberid','camp_id'])
                 ->view('coach','*','coach.member_id=camp_member.member_id')
                 ->where($map)
                 ->select();
-        dump($memberListOfCamp);die;        
+        // 粉丝列表
+        $fanListOfCamp = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1,'type'=>-1])->select();
+
 		// 班级信息
 		$GradeService = new \app\service\GradeService;		
 		$gradeInfo = $GradeService->getGradeInfo(['id'=>$grade_id]);
 
-		// 训练项目
-		$ExerciseService = new \app\service\ExerciseService;
-		$exerciseList = $ExerciseService->getExerciseListOfCamp($camp_id);
-
+		// 教案
+		$PlanService = new \app\service\PlanService;
+		$planInfo = $PlanService->getPlanInfo(['id'=>$gradeInfo['plan_id']]);
+		if($planInfo){
+			$planInfo['exerciseList'] = [
+										'exercise'=> unserialize($planInfo['exercise']),
+										'exercise_id'=>unserialize($planInfo['exercise_id'])
+									];
+		}else{
+			$planInfo['exerciseList'] = [
+										'exercise'=>[],
+										'exercise_id'=>[]
+									];
+		}
+		
 		// 班级学生
 		$studentList = db('grade_member')->where(['grade_id'=>$grade_id,'status'=>1,'type'=>1])->select();
 		$countStudentList = count($studentList);
+
+		$this->assign('fanListOfCamp',$fanListOfCamp);
 		$this->assign('countStudentList',$countStudentList);
-		$this->assign('studentList',$studentList);
-		$this->assign('exerciseList',$exerciseList);
+		$this->assign('planInfo',$planInfo);
 		$this->assign('gradeInfo',$gradeInfo);
 		$this->assign('coachListOfCamp',$coachListOfCamp);
 		$this->assign('campid', $camp_id);
