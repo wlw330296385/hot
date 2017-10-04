@@ -174,3 +174,16 @@ function getCampPower($camp_id, $member_id) {
     return $powertype ? $powertype : 0;
 }
 
+// 获取会员表的openid字段
+function getMemberOpenid($memberid) {
+    $memberS = new \app\service\MemberService();
+    $member = $memberS->getMemberInfo(['id' => $memberid]);
+    if (!$member) {
+        return false;
+    }
+    if ( !$member['openid'] ) {
+        return false;
+    } else {
+        return $member['openid'];
+    }
+}
