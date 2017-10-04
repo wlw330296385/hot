@@ -2,6 +2,7 @@
 // 训练营
 namespace app\admin\controller;
 use app\admin\controller\base\Backend;
+use app\service\WechatService;
 use think\Db;
 use think\Validate;
 use think\Cookie;
@@ -13,7 +14,7 @@ use app\service\CampService;
 class Camp extends Backend {
     // 训练营列表
     public function index() {
-        $list = CampModel::paginate(15);
+        $list = CampModel::order('id desc')->paginate(15);
         $breadcrumb = ['title' => '训练营管理', 'ptitle' => '训练营模块'];
         $this->assign( 'breadcrumb', $breadcrumb );
         $this->assign('list', $list);
@@ -27,9 +28,8 @@ class Camp extends Backend {
         $campS = new CampService();
         $camp['cert'] = $campS->getCampCert($id);
         $camp_member = MemberModel::get(['id' => $camp['member_id']])->toArray();
-        $camp_member['cert'] = $camp_member['cert_id'] ? getCert($camp_member['cert_id']) : '';
+//        $camp_member['cert'] = $camp_member['cert_id'] ? getCert($camp_member['cert_id']) : '';
         $camp['member_info'] = $camp_member;
-
         $breadcrumb = ['title' => '训练营详情', 'ptitle' => '训练营模块'];
         $this->assign( 'breadcrumb', $breadcrumb );
         $this->assign('camp', $camp);
@@ -68,7 +68,7 @@ class Camp extends Backend {
             $Auth = new AuthService();
             if ( $execute ) {
                 $Auth->record('训练营id:'. $id .' 修改平台备注 成功');
-                $this->success(__lang('MSG_100_SUCCESS'), 'camp/index');
+                $this->success(__lang('MSG_200'), 'camp/index');
             } else {
                 $Auth->record('训练营id:'. $id .' 修改平台备注 失败');
                 $this->error(__lang('MSG_200_ERROR'));
@@ -83,35 +83,61 @@ class Camp extends Backend {
             $memberid = input('memberid');
             $status = input('status');
             $sys_remarks = input('sys_remarks');
-            $data = [
+
+            $execute = Db::name('camp')->update([
                 'id' => $campid,
                 'status' => $status,
                 'sys_remarks' => $sys_remarks,
                 'update_time' => time()
-            ];
-            $execute = Db::name('camp')->update($data);
+            ]);
 
             $Auth = new AuthService();
             if ( $execute ) {
-                $no = '';
+                $memberopenid = getMemberOpenid($memberid);
                 if ($status == 3) {
-                    $no = '不';
+                    $checkstr = '审核未通过';
+                    $remark = '点击进入修改完善资料';
+                    $url = url('frontend/camp/campsetting', ['camp_id' => $campid, 'openid' => $memberopenid], '', true);
+                } else {
+                    $checkstr = '审核已通过';
+                    $remark = '点击进入训练营进行操作吧';
+                    $url = url('frontend/camp/powercamp', ['camp_id' => $campid, 'openid' => $memberopenid], '', true);
                 }
 
-                // update grade_member status
-                Db::name('grade_member')->where([
-                    'camp_id' => $campid,
+                $sendTemplateData = [
+                    'touser' => $memberopenid,
+                    'template_id' => 'xohb4WrWcaDosmQWQL27-l-zNgnMc03hpPORPjVjS88',
+                    'url' => $url,
+                    'data' => [
+                        'first' => ['value' => '您好,您所提交的训练营注册申请 '.$checkstr],
+                        'keyword1' => ['value' => $checkstr],
+                        'keyword2' => ['value' => date('Y年m月d日 H时i分')],
+                        'remark' => ['value' => $remark]
+                    ]
+                ];
+                $wechatS = new WechatService();
+                $sendTemplateResult = $wechatS->sendTemplate($sendTemplateData);
+                if ($sendTemplateResult) {
+                    $log_sendTemplateData['status'] = 1;
+                } else {
+                    $log_sendTemplateData['status'] = 0;
+                }
+                $log_sendTemplateData = [
+                    'wxopenid' => $memberopenid,
                     'member_id' => $memberid,
-                    'type' => 3,
-                ])->setField('status' ,1 );
+                    'url' => $sendTemplateData['url'],
+                    'content' => serialize($sendTemplateData),
+                    'create_time' => time()
+                ];
+                db('log_sendtemplatemsg')->insert($log_sendTemplateData);
 
-                $doing = '审核训练营id: '. $campid .' 审核'. $no .'通过 成功';
+                $doing = '审核训练营id: '. $campid .'审核操作:'. $checkstr .'成功';
                 $Auth->record($doing);
-                $response = [ 'status' => 1, 'msg' => __lang('MSG_100_SUCCESS'), 'goto' => url('camp/index') ];
+                $response = [ 'status' => 1, 'msg' => __lang('MSG_200'), 'goto' => url('camp/index') ];
             } else {
                 $doing = '审核训练营id: '. $campid .' 审核操作 失败';
                 $Auth->record($doing);
-                $response = [ 'status' => 0, 'msg' => __lang('MSG_200_ERROR') ];
+                $response = [ 'status' => 0, 'msg' => __lang('MSG_400') ];
             }
             return $response;
         }
@@ -125,10 +151,10 @@ class Camp extends Backend {
         $Auth = new AuthService();
         if ( $result ) {
             $Auth->record('训练营id:'. $id .' 软删除 成功');
-            $this->success(__lang('MSG_100_SUCCESS'), 'camp/index');
+            $this->success(__lang('MSG_200'), 'camp/index');
         } else {
             $Auth->record('训练营id:'. $id .' 软删除 失败');
-            $this->error(__lang('MSG_200_ERROR'));
+            $this->error(__lang('MSG_400'));
         }
     }
 
@@ -142,9 +168,9 @@ class Camp extends Backend {
             Cookie::set('camp_id', $camp['id'], ['prefix' => 'curcamp_']);
             Cookie::set('camp', $camp['camp'], ['prefix' => 'curcamp_']);
 
-            $this->success(__lang('MSG_100_SUCCESS'));
+            $this->success(__lang('MSG_200'));
         } else {
-            $this->error(__lang('MSG_200_ERROR'));
+            $this->error(__lang('MSG_400'));
         }
     }
 
@@ -153,7 +179,7 @@ class Camp extends Backend {
         if ($curcamp) {
             Cookie::clear('curcamp_');
 
-            $this->success(__lang('MSG_100_SUCCESS'));
+            $this->success(__lang('MSG_200'));
         }
     }
 }
