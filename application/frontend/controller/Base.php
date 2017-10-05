@@ -2,6 +2,7 @@
 namespace app\frontend\controller;
 use think\Controller;
 use app\service\SystemService;
+use app\service\MemberService;
 use think\Cookie;
 use think\Request;
 use app\service\WechatService;
@@ -9,7 +10,18 @@ use app\service\WechatService;
 class Base extends Controller{
 	public $systemSetting;
 	public $memberInfo;
-	public function _initialize(){	
+	public function _initialize(){
+	    // 从模板消息url进入 带有openid字段 保存会员登录信息
+	    if ( input('?param.openid') ) {
+            $memberS = new MemberService();
+            $member = $memberS->getMemberInfo(['openid' => input('param.openid')]);
+            if ($member) {
+                cookie('mid', $member['id']);
+                cookie('member', md5($member['id'].$member['member'].config('salekey')) );
+                session('memberInfo', $member, 'think');
+            }
+        }
+
 		$url = cookie('url');
 		if(!$url){
 			$url = $_SERVER["REQUEST_URI"];
@@ -28,6 +40,7 @@ class Base extends Controller{
         if ( !Cookie::has('mid') ) {
             $this->nologin();
         }
+
         $this->memberInfo = session('memberInfo', '', 'think');
         $this->assign('memberInfo', $this->memberInfo);
         $fasturl = $this->is_weixin() ? url('login/fastRegister') : url('login/login'); //提示完善信息对话框链接

@@ -9,13 +9,14 @@
             </div>
             <form class="form-horizontal coach-form" method="post" action="{:url('coach/edit')}">
                 <input type="hidden" id="coach-id" name="id" value="{$coach.id}">
+                <input type="hidden" name="member_id" value="{$coach.member_id}">
                 {:token()}
                 <div class="box-body">
                     <div class="form-group">
                         <div class="col-sm-2 control-label">教练名称</div>
                         <div class="col-sm-5">
                             <input type="hidden" name="coach" value="{$coach.member.member}">
-                            {$coach.member.realname}
+                            {$coach.coach}
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
@@ -27,19 +28,29 @@
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
+                        <div class="col-sm-2 control-label">身份证</div>
+                        <div class="col-sm-5">
+                            {notempty name="coach.cert.idcert"}
+                            <img src="{$coach.cert.idcert.photo_positive}" class="img-thumbnail" alt="">
+                            <p>身份证号: {$coach.cert.idcert.cert_no}</p>
+                            {/notempty}
+                        </div>
+                        <div class="col-sm-5">
+                            {notempty name="coach.cert.idcert"}
+                            {notempty name="coach.cert.idcert.photo_back"}
+                            <img src="{$coach.cert.idcert.photo_back}" class="img-thumbnail" alt="">
+                            {/notempty}
+                            {/notempty}
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <div class="col-sm-2 control-label">资质证书</div>
                         <div class="col-sm-5">
-                            {notempty name="coach.cert_id"}
-                            <img src="{$coach.cert.photo_positive}" class="img-thumbnail" alt="">
+                            {notempty name="coach.cert.coachcert"}
+                            <img src="{$coach.cert.coachcert.photo_positive}" class="img-thumbnail" alt="">
                             {/notempty}
                         </div>
-                        <div class="col-sm-5">
-                            {notempty name="coach.cert_id"}
-                            {notempty name="cert.photo_back"}
-                            <img src="{coach.cert.photo_back}" class="img-thumbnail" alt="">
-                            {/notempty}
-                            {/notempty}
-                        </div>
+                        <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-2 control-label">形象照</div>
@@ -102,7 +113,7 @@
                     <div class="form-group">
                         <div class="col-sm-2 control-label">课程流量</div>
                         <div class="col-sm-5">
-                            <input type="text" name="lesson_flow" value="{$coach.lesson_flow}">
+                            <input type="text" name="lesson_flow" value="{$coach.schedule_flow}">
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
@@ -146,12 +157,12 @@
                     <div class="form-group">
                         <div class="col-sm-2"></div>
                         <div class="col-sm-10">
-                            {if condition="$coach.status neq '正常'"}
+                            {eq name="coach.status_num" value="0"}
                             <button type="button" class="btn btn-success" onclick="check(1);">审核通过</button>
                             <button type="button" class="btn btn-default" onclick="check(2);">审核不通过</button>
                             {else/}
                             <button type="button" class="btn btn-info" onclick="check(3);">修改教练信息</button>
-                            {/if}
+                            {/eq}
                         </div>
                     </div>
                 </div>
@@ -305,13 +316,14 @@
 <script>
     "use strict";
     function check(code) {
-        var coach = $('#coach-id').val();
+        var coachid = $('#coach-id').val();
         var sremarks_txt = $("textarea[name='sys_remarks']").val();
+        var member_id = $("input[name=member_id]").val();
         switch ( code ) {
             case 1:
                 var msg = '确定审核通过?';
                 if ( confirm(msg) === true ) {
-                    sendpost(coach, code, '');
+                    sendpost(coachid, code, '', member_id);
                 }
                 break;
             case 3:
@@ -324,18 +336,19 @@
                         alert('请输入平台备注');
                         return;
                     }
-                    sendpost(coach, code, sremarks_txt);
+                    sendpost(coachid, code, sremarks_txt, member_id);
                 }
                 break;
         }
     }
 
-    function sendpost(coach, code, sremarks) {
+    function sendpost(coachid, code, sremarks, member_id) {
         var serverurl = "{:url('coach/audit')}";
         $.post(serverurl, {
-            coach: coach,
+            coach: coachid,
             code: code,
-            sys_remarks: sremarks
+            sys_remarks: sremarks,
+            member_id: member_id
         }, function(res) {
             console.log(res);
             alert(res.msg);

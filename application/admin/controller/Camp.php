@@ -28,7 +28,6 @@ class Camp extends Backend {
         $campS = new CampService();
         $camp['cert'] = $campS->getCampCert($id);
         $camp_member = MemberModel::get(['id' => $camp['member_id']])->toArray();
-//        $camp_member['cert'] = $camp_member['cert_id'] ? getCert($camp_member['cert_id']) : '';
         $camp['member_info'] = $camp_member;
         $breadcrumb = ['title' => '训练营详情', 'ptitle' => '训练营模块'];
         $this->assign( 'breadcrumb', $breadcrumb );
@@ -117,11 +116,6 @@ class Camp extends Backend {
                 ];
                 $wechatS = new WechatService();
                 $sendTemplateResult = $wechatS->sendTemplate($sendTemplateData);
-                if ($sendTemplateResult) {
-                    $log_sendTemplateData['status'] = 1;
-                } else {
-                    $log_sendTemplateData['status'] = 0;
-                }
                 $log_sendTemplateData = [
                     'wxopenid' => $memberopenid,
                     'member_id' => $memberid,
@@ -129,6 +123,11 @@ class Camp extends Backend {
                     'content' => serialize($sendTemplateData),
                     'create_time' => time()
                 ];
+                if ($sendTemplateResult) {
+                    $log_sendTemplateData['status'] = 1;
+                } else {
+                    $log_sendTemplateData['status'] = 0;
+                }
                 db('log_sendtemplatemsg')->insert($log_sendTemplateData);
 
                 $doing = '审核训练营id: '. $campid .'审核操作:'. $checkstr .'成功';
