@@ -162,7 +162,7 @@
         </div>
 
         <div class="mui-input-row h-auto mt55">
-            <a class="portraits filePicker" onclick="add_id(1)">
+            <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                 <label>课程封面</label>
                 <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
                 <input type="hidden" name="cover" value='' class="data">
@@ -281,7 +281,6 @@
 </div>
 <!--班主任-->
 <div id="headMaster" class="mui-popover" style="margin: 0">
-    <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
     <div class="mui-popover-arrow"></div>
     <div class="page-header">
         <span class="course wd36"><strong>班主任选择</strong></span>
@@ -293,10 +292,13 @@
             </div>
         </div>
         <div id="item1" class="mui-control-content mui-active">
-            <div class="mui-indexed-list-search mui-input-row mui-search">
-                <input type="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="">
-                <span class="mui-icon mui-icon-clear mui-hidden"></span>
-                <span class="mui-placeholder"><span class="mui-icon mui-icon-search"></span><span>请输入粉丝名称搜索</span></span>
+            <div class="popover-search">
+                <span class="mui-icon mui-icon-search">
+                    <input type="search" class="mui-input-clear keyword" placeholder="请输入粉丝名称搜索">
+                    <span class="mui-icon mui-icon-clear mui-hidden"></span>
+                    <span id="searchBtn">搜索</span>
+                </span>
+
             </div>
             <div class="mui-scroll-wrapper" style="top:40px !important;">
                 <div class="mui-scroll">
@@ -316,7 +318,6 @@
 </div>
 <!--领队-->
 <div id="leader" class="mui-popover" style="margin: 0">
-    <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
     <div class="mui-popover-arrow"></div>
     <div class="page-header">
         <span class="course wd36"><strong>领队选择</strong></span>
@@ -421,6 +422,10 @@
     })(mui, document);
 
     $(function(){
+        // 关闭弹出菜单
+        $("body").on('click','.mui-backdrop',function(){
+            mui(".mui-popover.mui-active").popover("toggle");
+        })
         // 上课星期
         $("#weekConfirm").click(function(){
             //选择多个星期
@@ -490,10 +495,6 @@
             mui("#leader").popover("toggle");
         })
 
-        // 关闭弹出菜单
-        $(".close-popover").click(function(){
-            mui($(this).parent()).popover("toggle");
-        })
         //课量选择列表确认
         $("#domConfirm").click(function(){
             //把所选课量串在一起，以逗号分隔
