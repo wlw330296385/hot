@@ -276,7 +276,7 @@
 </div>
 <!--班主任-->
 <div id="headMaster" class="mui-popover" style="margin: 0">
-    <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
+    <!--<div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>-->
     <div class="mui-popover-arrow"></div>
     <div class="page-header">
         <span class="course wd36"><strong>选择班主任</strong></span>
@@ -315,7 +315,7 @@
 </div>
 <!--领队-->
 <div id="leader" class="mui-popover" style="margin: 0">
-    <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
+    <!--<div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>-->
     <div class="mui-popover-arrow"></div>
     <div class="page-header">
         <span class="course wd36"><strong>选择领队</strong></span>
@@ -380,6 +380,10 @@
             //bounce: false,//滚动条是否有弹力默认是true
             indicators: true //是否显示滚动条,默认是true
         });
+        // 关闭弹出菜单
+        $("body").on('tap','.mui-backdrop',function(){
+            mui(".mui-popover.mui-active").popover("toggle");
+        })
     })(mui);
 
     (function ($, doc) {
@@ -425,12 +429,8 @@
 
     $(function(){
         // 关闭弹出菜单
-        $(".close-popover").click(function(){
-            mui($(this).parent()).popover("toggle");
-        })
-        // 关闭弹出菜单 手机端无效果
-//        $("body").on('click','.mui-backdrop',function(){
-//            mui(".mui-popover.mui-active").popover("toggle");
+//        $(".close-popover").click(function(){
+//            mui($(this).parent()).popover("toggle");
 //        })
         // 上课星期
         $("#weekConfirm").click(function(){
