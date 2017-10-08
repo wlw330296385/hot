@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>训练营-课程编辑/添加-</title>
+    <title>添加课程</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -24,13 +24,8 @@
             left: auto;
             right: 6px;
         }
-
         p {
             text-indent: 22px;
-        }
-
-        .mui-popover {
-            height: 300px;
         }
         .mui-input-row a{
            display: table;
@@ -281,9 +276,10 @@
 </div>
 <!--班主任-->
 <div id="headMaster" class="mui-popover" style="margin: 0">
+    <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
     <div class="mui-popover-arrow"></div>
     <div class="page-header">
-        <span class="course wd36"><strong>班主任选择</strong></span>
+        <span class="course wd36"><strong>选择班主任</strong></span>
     </div>
         <div class="camp-lesson-list">
             <div class="mui-segmented-control">
@@ -293,13 +289,18 @@
         </div>
         <div id="item1" class="mui-control-content mui-active">
             <div class="pop-search">
-                    <input type="search" class="keyword" placeholder="请输入粉丝名称搜索">
-                    <span class="mui-icon mui-icon-search searchicon" id="searchHN"></span>
+                    <input type="search" class="keywordHM" placeholder="请输入粉丝名称搜索">
+                    <span class="mui-icon mui-icon-search searchicon" id="searchHM"></span>
             </div>
             <div class="mui-scroll-wrapper" style="top:40px !important;">
                 <div class="mui-scroll">
                 <ul class="mui-table-view list headMaster fans">
                 </ul>
+                    <ul class="mui-pager">
+                        <li><a href="#" class="prev_page">上一页</a></li>
+                        <li><span class="currPage">0</span>/<span class="totalPage">0</span></li>
+                        <li><a href="#" class="next_page">下一页</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -314,9 +315,10 @@
 </div>
 <!--领队-->
 <div id="leader" class="mui-popover" style="margin: 0">
+    <div class="close-popover"><span class="mui-icon mui-icon-close"></span></div>
     <div class="mui-popover-arrow"></div>
     <div class="page-header">
-        <span class="course wd36"><strong>领队选择</strong></span>
+        <span class="course wd36"><strong>选择领队</strong></span>
     </div>
                 <div class="camp-lesson-list">
                     <div class="mui-segmented-control">
@@ -326,12 +328,17 @@
                 </div>
                 <div id="item11" class="mui-control-content mui-active">
                     <div class="pop-search">
-                        <input type="search" class="keyword" placeholder="请输入粉丝名称搜索">
-                        <span class="mui-icon mui-icon-search searchicon" id="searchHN"></span>
+                        <input type="search" class="keywordLD" placeholder="请输入粉丝名称搜索">
+                        <span class="mui-icon mui-icon-search searchicon" id="searchLD"></span>
                     </div>
                     <div class="mui-scroll-wrapper" style="top:40px !important;">
                         <div class="mui-scroll">
                             <ul class="mui-table-view list leader fans">
+                            </ul>
+                            <ul class="mui-pager">
+                                <li><a href="#" class="prev_page">上一页</a></li>
+                                <li><span class="currPage">0</span>/<span class="totalPage">0</span></li>
+                                <li><a href="#" class="next_page">下一页</a></li>
                             </ul>
                         </div>
                     </div>
@@ -418,9 +425,13 @@
 
     $(function(){
         // 关闭弹出菜单
-        $("body").on('click','.mui-backdrop',function(){
-            mui(".mui-popover.mui-active").popover("toggle");
+        $(".close-popover").click(function(){
+            mui($(this).parent()).popover("toggle");
         })
+        // 关闭弹出菜单 手机端无效果
+//        $("body").on('click','.mui-backdrop',function(){
+//            mui(".mui-popover.mui-active").popover("toggle");
+//        })
         // 上课星期
         $("#weekConfirm").click(function(){
             //选择多个星期
@@ -512,16 +523,69 @@
             })
         });
 
-        var page = 1;
         //获取训练营场地表
-        var courtKeyword = '';
-        toCourtList(courtKeyword)
+        toCourtList()
         //获取训练营教练列表
-        var coachKeyword = '';
-        toCoachList(coachKeyword);
+        toCoachList();
         //获取训练营教练列表
         var fansKeyword = '';
-        toFansList(fansKeyword);
+        var wFans = '';
+        var pageHM = 1;
+        var pageLD = 1;
+        toFansList(fansKeyword,wFans,1);
+
+        //搜索班主任粉丝
+        $("#searchHM").on("click", function () {
+            var keyword = $(".keywordHM").val();
+            var pageHM = 1;
+            toFansList(keyword,"headMaster",pageHM);
+        })
+        //搜索领队粉丝
+        $("#searchLD").on("click", function () {
+            var keyword = $(".keywordLD").val();
+            var pageLD = 1;
+            toFansList(keyword,"leader",pageLD);
+        })
+        //领队粉丝弹出框页码控制
+        $("#leader").on('click','.next_page',function(){
+            var getTotalPage  = $("#leader .totalPage").text();
+            pageLD++;
+            if(pageLD>getTotalPage){
+                mui.toast("已经最后一页了");
+            }else{
+                var keyword = $(".keywordLD").val();
+                toFansList(keyword,"leader",pageLD);
+            }
+        })
+        $("#leader").on('click','.prev_page',function(){
+            pageLD--;
+            if(pageLD<1){
+                mui.toast("已经是第一页了");
+            }else{
+                var keyword = $(".keywordLD").val();
+                toFansList(keyword,"leader",pageLD);
+            }
+        })
+        //班主任粉丝弹出框页码控制
+        $("#headMaster").on('click','.next_page',function(){
+            var getTotalPage  = $("#headMaster .totalPage").text();
+            pageHM++;
+            if(pageHM>getTotalPage){
+                mui.toast("已经最后一页了");
+            }else{
+                var keyword = $(".keywordHM").val();
+                toFansList(keyword,"headMaster",pageHM);
+            }
+        })
+        $("#headMaster").on('click','.prev_page',function(){
+            pageHM--;
+            if(pageHM<1){
+                mui.toast("已经是第一页了");
+            }else{
+                var keyword = $(".keywordHM").val();
+                toFansList(keyword,"headMaster",pageHM);
+            }
+        })
         
     })
 
@@ -547,7 +611,7 @@
 
 
     //训练营场地列表接口获取数据并追加到页面
-    var toCourtList = function(keyword,page) {
+    var toCourtList = function() {
         var url  = "{:url('api/court/getCourtListNoPageApi','','',true)}";
         var campID = "{$campInfo.id}";
         mui.ajax({
@@ -585,15 +649,14 @@
 
 
     //教练列表接口获取数据并追加到页面
-    var toCoachList = function(keyword) {
+    var toCoachList = function() {
         var url  = "{:url('api/camp_member/getCoachListApi','','',true)}";
         var campID = "{$campInfo.id}";
         mui.ajax({
             url:url,
             data: {
                 camp_id:campID,
-                type:2,
-                keyword:keyword
+                type:2
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -629,15 +692,25 @@
 
 
     //粉丝列表接口获取数据并追加到页面
-    var toFansList = function(keyword) {
+    var toFansList = function(keyword,wFans,page) {
         var url  = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}";
         var campID = "{$campInfo.id}";
         var typeID = "-1";
+        var wFansList = "ul.fans";
+        var currPage = ".currPage";
+        var totalPage = ".totalPage";
+        if(keyword!=''&&wFans!=''){
+            wFansList = "#"+wFans+" ul.fans";
+            currPage = "#"+wFans+" .currPage";
+            totalPage = "#"+wFans+" .totalPage";
+        }
         mui.ajax({
             url:url,
             data: {
                 camp_id:campID,
-                type:typeID
+                type:typeID,
+                page:page,
+                keyword:keyword
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -646,17 +719,17 @@
             //processData:false,
             success: function (data) {
                 if (data.code == 200) {
-                    var newli = ''; //主教练单选
-                    var newliAS = ''; //助理教练多选
+                    var newli = '';
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="'+data.data.data[i].member_id+'">'+data.data.data[i].member+'</li>'
                     }
-                    $("ul.fans").empty();
+                    $(wFansList).empty();
                     if(newli==''){
                         newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
                     }
-                    $("ul.fans").append(newli);
-
+                    $(wFansList).append(newli);
+                    $(currPage).text(data.data.current_page);
+                    $(totalPage).text(data.data.last_page);
                 }else{
                     mui.toast('数据获取失败,请稍候再试');
                 }
