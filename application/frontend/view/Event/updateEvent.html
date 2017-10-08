@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>训练营-活动编辑-</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
+    <style>
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+
+        p {
+            text-indent: 22px;
+        }
+
+        .mui-popover {
+            height: 300px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header id="header" class="mui-bar mui-bar-nav subheader">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+    <h1 class="mui-title">{$eventInfo.camp}</h1>
+</header>
+<div class="mui-content pt">
+
+    <div class="camp-list camp-lesson-list detalis-list" style="margin-top: 4px">
+
+        <form action="" class="mui-input-group">
+            <div class="mui-input-row">
+                <label>活动名称</label>
+                <input type="text" name="event" class="input data" value="{$eventInfo.event}">
+                <input type="hidden" name="camp_id" class="data" value="{$eventInfo.camp_id}">
+                <input type="hidden" name="camp" class="data" value="{$eventInfo.camp}">
+            </div>
+            <div class="mui-input-row">
+                <a href="#eventType" class="mui-navigate-right">
+                    <label>活动类型</label>
+                    <span class="select-row">
+                        <select id="eventType">
+                            <option data-eventcate_id="">活动类型</option>
+                            <option data-eventcate_id="1">团队建设</option>
+                            <option data-eventcate_id="2">校园活动</option>
+                            <option data-eventcate_id="2">亲子教育</option>
+                            <option data-eventcate_id="2">社交娱乐</option>
+                            <option data-eventcate_id="2">学习交流</option>
+                        </select>
+                        </span>
+                </a>
+            </div>
+            <div class="mui-input-row">
+                <label>活动单价</label>
+                <input type="text" class="input data" name="cost" value="{$eventInfo.cost}">
+            </div>
+            <div class="mui-input-row">
+                <label>活动所需积分</label>
+                <input type="text" class="input data" value="{$eventInfo.score}">
+            </div>
+            <div class="mui-input-row picker btn" id="demo5" data-options='{"type":"time"}'>
+                <a href="#" class="mui-navigate-right">
+                    <label>活动时间</label>
+                    <span>
+                        <font id="result" class="mui-navigate-right ui-alert domData" name="event_time">{$eventInfo.event_time}</font>
+                    </span>
+                </a>
+            </div>
+            <div class="mui-input-row" id='showCityPicker3'>
+                <a href="#" class="mui-navigate-right">
+                    <label>所属地区</label>
+                    <span id="cityResult3" class="ui-alert domData" name="address">{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span>
+                </a>
+            </div>
+            <div class="mui-input-row">
+                <a href="#trainLocation" class="mui-navigate-right">
+                    <label>活动地点</label>
+                    <input type="text" name="location" value="{$eventInfo.location}" class="data location">
+                </a>
+            </div>
+
+            <div class="mui-input-row h-auto" >
+                <label>最少活动人数</label>
+                <div class="mui-numbox">
+                    <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+                    <input class="mui-input-numbox data" type="number" name="min" value="{$eventInfo.min}">
+                    <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+                </div>
+            </div>
+            <div class="mui-input-row h-auto" >
+                <label>最多活动人数</label>
+                <div class="mui-numbox">
+                    <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+                    <input class="mui-input-numbox data" type="number" name="max"  value="{$eventInfo.max}">
+                    <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+                </div>
+            </div>
+
+            <div class="mui-input-row h-auto mt55">
+                <a class="portraits filePicker" onclick="add_id(1)">
+                    <label>活动封面</label>
+                    <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
+                    <input type="hidden" name="cover" value='' class="data">
+                </a>
+            </div>
+
+            <div class="mui-input-row mt55">
+                <label>活动封面</label>
+                <input type="text" class="input data" value="{$eventInfo.remarks}" name="remarks">
+            </div>
+
+        </form>
+
+        <ul class="mui-table-view operation" onclick="submitAction()">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff">
+                提交
+            </li>
+        </ul>
+    </div>
+
+
+        </div>
+    </div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!-- 选择器 -->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/city.data.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script>
+    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'court'])}";
+</script>
+<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    //弹出菜单
+    mui('.mui-scroll-wrapper').scroll();
+    (function ($, doc) {
+        $.init();
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+
+            ///级联示例
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
+            });
+            cityPicker3.setData(cityData3);
+            var showCityPickerButton = doc.getElementById('showCityPicker3');
+            var cityResult3 = doc.getElementById('cityResult3');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+
+            //时间
+            var result = $('#result')[0];
+            var btns = $('.btn');
+            btns.each(function (i, btn) {
+                btn.addEventListener('tap', function () {
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var id = this.getAttribute('id');
+                    var picker = new $.DtPicker(options);
+
+                    picker.show(function (rs) {
+                        result.innerText = rs.text;
+                        picker.dispose();
+                    });
+                }, false);
+            });
+
+        });
+
+    })(mui, document);
+
+
+
+
+    //弹出框选择
+    $(function(){
+
+        // 活动类型
+        $(".eventType").click(function(){
+            var eventType = $(this).html();
+            
+            $(".eventTypeCont").html(eventType);
+            var id= $(this).attr('data-id');
+            $(".eventcate_id").val(id);
+            mui("#eventType").popover("toggle");
+        })
+
+        // 关闭弹出菜单
+        $(".close-popover").click(function(){
+            mui($(this).parent()).popover("toggle");
+        })
+
+
+    })
+
+    // 获取数据并进行提交
+        function submitAction(){
+            var data = wooApi.getInputData('input','data');
+            datas = wooApi.getInputData('select','data',data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData',datas);
+            var objData = wooApi.arrTOobj(arrData);
+
+            var url = "{:url('api/event/updateEventApi',['event_id'=>$eventInfo['id']])}";
+            var ajaxResult = wooApi.asyncF(url,objData); 
+            if(ajaxResult.code){
+                mui.toast(ajaxResult.msg);
+                var goUrl = "{:url('event/eventinfoOfCamp')}"+'/event_id/'+ajaxResult.data+'/camp_id/{$eventInfo.camp_id}';
+                window.top.location.href = goUrl;
+            }
+        }
+
+</script>
+</html>
