@@ -67,11 +67,12 @@ class BillService {
             if($data['goods_type'] == 1){
                 //购买人数+1;
                 db('lesson')->where(['id'=>$data['goods_id']])->setInc('students');
+                db('camp')->where(['id'=>$data['camp_id']])->setInc('total_member');
                 // 发送个人消息
                 $MessageService = new \app\service\MessageService;
                 $MessageData = [
                     "touser" => session('memberInfo.openid'),
-                    "template_id" => config('wxTemplate.successBill'),
+                    "template_id" => config('wxTemplateID.successBill'),
                     "url" => url('frontend/bill/billInfo',['bill_id'=>$this->Bill->id],'',true),
                     "topcolor"=>"#FF0000",
                     "data" => [
@@ -84,22 +85,39 @@ class BillService {
                     ]
                 ];
                 //给训练营营主发送消息
-                 $MessageCampData = [
-                    "touser" => '',
-                    "template_id" => config('wxTemplate.successBill'),
-                    "url" => url('frontend/bill/billInfo',['bill_id'=>$this->Bill->id],'',true),
-                    "topcolor"=>"#FF0000",
-                    "data" => [
-                        'first' => ['value' => '课程'.$data['goods'].'已被购买,请及时处理'],
-                        'keyword1' => ['value' => $data['student']],
-                        'keyword2' => ['value' => $data['bill_order']],
-                        'keyword3' => ['value' => $data['balance_pay']],
-                        'keyword4' => ['value' => $data['goods_des']],
-                        'remark' => ['value' => '大热篮球']
-                    ]
-                ];
-                $MessageService->sendMessageMember($MessageData);
-                $MessageService->sendCampMessage($MessageCampData);
+                if($data['balance_pay'] == 0){
+                    $MessageCampData = [
+                        "touser" => '',
+                        "template_id" => config('wxTemplateID.successBill'),
+                        "url" => url('frontend/bill/billInfo',['bill_id'=>$this->Bill->id],'',true),
+                        "topcolor"=>"#FF0000",
+                        "data" => [
+                            'first' => ['value' => '课程'.$data['goods'].'已被申请体验,请及时处理'],
+                            'keyword1' => ['value' => $data['student']],
+                            'keyword2' => ['value' => $data['bill_order']],
+                            'keyword3' => ['value' => $data['balance_pay']],
+                            'keyword4' => ['value' => $data['goods_des']],
+                            'remark' => ['value' => '大热篮球']
+                        ]
+                    ];
+                }else{
+                    $MessageCampData = [
+                        "touser" => '',
+                        "template_id" => config('wxTemplateID.successBill'),
+                        "url" => url('frontend/bill/billInfo',['bill_id'=>$this->Bill->id],'',true),
+                        "topcolor"=>"#FF0000",
+                        "data" => [
+                            'first' => ['value' => '课程'.$data['goods'].'已被购买,请及时处理'],
+                            'keyword1' => ['value' => $data['student']],
+                            'keyword2' => ['value' => $data['bill_order']],
+                            'keyword3' => ['value' => $data['balance_pay']],
+                            'keyword4' => ['value' => $data['goods_des']],
+                            'remark' => ['value' => '大热篮球']
+                        ]
+                    ];
+                }
+                $MessageService->sendMessageMember($data['member_id'],$MessageData);
+                $MessageService->sendCampMessage($data['camp_id'],$MessageCampData);
                 $CampMember = new CampMember;
                 $is_student = $CampMember->where(['type'=>1,'member_id'=>$data['member_id'],'camp_id'=>$data['camp_id'],'status'=>1])->find();
                 if(!$is_student){

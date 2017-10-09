@@ -50,4 +50,21 @@ class Message{
     		return json(['code'=>200,'msg'=>$e->getMassege()]);
     	}
     }
+
+
+
+    // 设置消息状态
+    public function setMessageStatus(){
+        try{
+            $message_id = input('message_id');
+            $messageInfo = $this->MessageService->getMessageInfo(['id'=>$message_id]);
+            if($messageInfo){
+                return json(['code'=>100,'msg'=>'','data'=>$messageInfo]);
+            }else{
+                return json(['code'=>200,'msg'=>'没有数据了']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMassege()]);
+        }
+    }
 }

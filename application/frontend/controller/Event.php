@@ -10,33 +10,44 @@ class Event extends Base{
 
     public function index() {
   
-        return view('Find/index');
+        return view('Event/index');
     }
 
 
-    public function test1() {
+    public function comfirmBill() {
   
-        return view('Find/test1');
+        return view('Event/comfirmBill');
     }
 
-    public function test2() {
+    public function createEvent() {
   
-        return view('Find/test2');
+        return view('Event/createEvent');
     }
 
-    public function test3() {
+    public function eventInfo() {
   
-        return view('Find/test3');
+        return view('Event/eventInfo');
     }
 
-    public function test4() {
+    public function eventInfoOfCamp() {
   
-        return view('Find/test4');
+        return view('Event/eventInfoOfCamp');
     }
 
-    public function test5() {
+    public function eventList() {
   
-        return view('Find/test5');
+        return view('Event/eventList');
     }
+
+    public function eventListOfCamp() {
+  
+        return view('Event/eventListOfCamp');
+    }
+
+    public function updateEvent() {
+  
+        return view('Event/updateEvent');
+    }
+    
 
 }

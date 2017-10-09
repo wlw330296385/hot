@@ -24,7 +24,7 @@ class MessageService{
 	}
 
 	//获取个人消息列表
-	public function getMessageMemberList($map,$page = 1 ,$paginate=10){
+	public function getMessageMemberList($map = [],$page = 1 ,$paginate=10){
 		$result = $this->MessageMemberModel
 				->where($map)
 				// ->page($page,$paginate)
@@ -38,24 +38,52 @@ class MessageService{
 	}
 
 	// 发送个人消息
-	public function sendMessageMember($data){
-		
-		$WechatService = new \app\service\WechatService();
-        $result = $WechatService->sendTemplate($data);
-        if($result){
-        	$res = $this->MessageMemberModel->save(['title'=>$data['data']['first'],'content'=>'用户名'.$data['data']['keyword1'].'\n 订单编号'.$data['data']['keyword2'].'\n 金额'.$data['data']['keyword3'].'\n 商品信息'.$data['data']['keyword4'].'\n 订单编号']);
+	public function sendMessageMember($member_id,$data){
+
+		$res = $this->MessageMemberModel->save([
+        					'title'=>$data['data']['first']['value'],
+        					'content'=>'用户名:'.$data['data']['keyword1']['value'].'<br /> 订单编号:'.$data['data']['keyword2']['value'].'<br /> 金额:'.$data['data']['keyword3']['value'].'<br /> 商品信息:'.$data['data']['keyword4']['value'].'<br /> 订单编号:',
+        					'member_id'=>$member_id,
+        					'url'=>$data['url']
+        					]
+        				);
+        if($res){
+        	$WechatService = new \app\service\WechatService();
+        	$result = $WechatService->sendTemplate($data);
+        	return true;
         }
+        return false;
 	}
 
 	// 给训练营的营主发送消息
-	public function sendCampMessage($data){
+	public function sendCampMessage($camp_id,$data){
 		// 获取训练营的营主openid
-		
+		$memberIDs = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->where('type','egt',3)->column('member_id');
+		$memberList = db('member')->where('id','in',$memberIDs)->select();
+		$MessageData = [];
+		foreach ($memberList as $key => $value) {
+			$MessageData[] = [
+        					'title'=>$data['data']['first']['value'],
+        					'content'=>'用户名:'.$data['data']['keyword1']['value'].'<br /> 订单编号:'.$data['data']['keyword2']['value'].'<br /> 金额:'.$data['data']['keyword3']['value'].'<br /> 商品信息:'.$data['data']['keyword4']['value'].'<br /> 订单编号:',
+        					'member_id'=>$value['id'],
+        					'url'=>$data['url']
+        					];
+        	if($value['openid']){
+        		$data['touser'] = $value['openid'];
+        		$WechatService = new \app\service\WechatService();
+        		$result = $WechatService->sendTemplate($data);
+        	}
+		}
+		$res = $this->MessageMemberModel->saveAll($MessageData);
+		if($res){
+			return true;
+		}
+		return false;
 	}
 
 
 	// 获取系统消息列表
-	public function getMessageList($map,$page = 1 ,$paginate=10){
+	public function getMessageList($map = [],$page = 1 ,$paginate=10){
 		$result = $this->MessageModel
 				->where($map)
 				->whereOr(['is_system'=>1])
