@@ -42,7 +42,7 @@ class MessageService{
 
 		$res = $this->MessageMemberModel->save([
         					'title'=>$data['data']['first']['value'],
-        					'content'=>'用户名:'.$data['data']['keyword1']['value'].'<br /> 订单编号:'.$data['data']['keyword2']['value'].'<br /> 金额:'.$data['data']['keyword3']['value'].'<br /> 商品信息:'.$data['data']['keyword4']['value'].'<br /> 订单编号:',
+        					'content'=>'用户名:'.$data['data']['keyword1']['value'].'<br /> 订单编号:'.$data['data']['keyword2']['value'].'<br /> 金额:'.$data['data']['keyword3']['value'].'<br /> 商品信息:'.$data['data']['keyword4']['value'],
         					'member_id'=>$member_id,
         					'url'=>$data['url']
         					]
@@ -57,25 +57,27 @@ class MessageService{
 
 	// 给训练营的营主发送消息
 	public function sendCampMessage($camp_id,$data){
-		// 获取训练营的营主openid
-		$memberIDs = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->where('type','egt',3)->column('member_id');
-		$memberList = db('member')->where('id','in',$memberIDs)->select();
-		$MessageData = [];
-		foreach ($memberList as $key => $value) {
-			$MessageData[] = [
+		
+
+		$res = $this->MessageModel->save([
         					'title'=>$data['data']['first']['value'],
-        					'content'=>'用户名:'.$data['data']['keyword1']['value'].'<br /> 订单编号:'.$data['data']['keyword2']['value'].'<br /> 金额:'.$data['data']['keyword3']['value'].'<br /> 商品信息:'.$data['data']['keyword4']['value'].'<br /> 订单编号:',
-        					'member_id'=>$value['id'],
+        					'content'=>'用户名:'.$data['data']['keyword1']['value'].'<br /> 订单编号:'.$data['data']['keyword2']['value'].'<br /> 金额:'.$data['data']['keyword3']['value'].'<br /> 商品信息:'.$data['data']['keyword4']['value'],
+        					'camp_id'=>$camp_id,
+        					'is_system'=>2,
         					'url'=>$data['url']
-        					];
-        	if($value['openid']){
-        		$data['touser'] = $value['openid'];
-        		$WechatService = new \app\service\WechatService();
-        		$result = $WechatService->sendTemplate($data);
-        	}
-		}
-		$res = $this->MessageMemberModel->saveAll($MessageData);
+        					]);
 		if($res){
+			// 获取训练营的营主openid
+			$memberIDs = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->where('type','egt',3)->column('member_id');
+			$memberList = db('member')->where('id','in',$memberIDs)->select();
+			// 发送模板消息
+			foreach ($memberList as $key => $value) {
+	        	if($value['openid']){
+	        		$data['touser'] = $value['openid'];
+	        		$WechatService = new \app\service\WechatService();
+	        		$result = $WechatService->sendTemplate($data);
+	        	}
+			}
 			return true;
 		}
 		return false;
@@ -91,9 +93,9 @@ class MessageService{
 				->select();
 		if($result){
 			$res = $result->toArray();
-			return $result;
-		}else{
 			return $res;
+		}else{
+			return $result;
 		}
 	}
 

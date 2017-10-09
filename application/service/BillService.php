@@ -119,7 +119,7 @@ class BillService {
                 $MessageService->sendMessageMember($data['member_id'],$MessageData);
                 $MessageService->sendCampMessage($data['camp_id'],$MessageCampData);
                 $CampMember = new CampMember;
-                $is_student = $CampMember->where(['type'=>1,'member_id'=>$data['member_id'],'camp_id'=>$data['camp_id'],'status'=>1])->find();
+                $is_student = $CampMember->where(['member_id'=>$data['member_id'],'camp_id'=>$data['camp_id'],'status'=>1])->where('type','egt',1)->find();
                 if(!$is_student){
                     $res = $CampMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'type'=>1,'status'=>1]);
                     if(!$res){

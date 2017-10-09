@@ -10,12 +10,15 @@ class Message extends Base{
 	}
 
     public function index() {
-      $camp_id = input('param.camp_id');
-      if($camp_id){
-          $messageList = $this->MessageService->getMessageList(['camp_id'=>$camp_id]);
-      }else{
-          $messageList = $this->MessageService->getMessageList();
-      }
+
+      $campIDs = db('camp_member')
+                ->where(['member_id'=>$this->memberInfo['id'],'status'=>1])
+                ->where('type','gt',2)
+                ->column('camp_id');
+
+
+    $messageList = $this->MessageService->getMessageList(['camp_id'=>['in',$campIDs]]);
+
   		$messageMemberList = $this->MessageService->getMessageMemberList(['member_id'=>$this->memberInfo['id']]);
   		
   		

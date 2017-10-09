@@ -310,9 +310,10 @@
       console.log(objBillInfo);
       var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
       console.log(result);
-      mui.toast(result.msg);
       if(result.code == 200){
-          window.location.href="{:url('frontend/bill/finishBill',['bill_order'=>$billOrder])}"
+        mui.alert('欢迎加入本训练营，您的课程购买已完成，请留意课程消息及公告。','购买成功','确定',function(){
+            window.location.href="{:url('frontend/lesson/lessonList')}?camp_id={$lessonInfo.camp_id}";
+          });
       }else{
         mui.toast(result.msg);
       }
