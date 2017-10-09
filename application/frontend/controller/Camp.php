@@ -47,7 +47,7 @@ class Camp extends Base{
     public function campInfo(){
         $camp_id = input('param.camp_id');
  
-        $lessonList = db('lesson')->where(['camp_id'=>1,'status'=>1])->limit(5)->select();
+        $lessonList = db('lesson')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         $lessonCount = count($lessonList);
         $commentList = $this->CampService->getCampCommentListByPage(['camp_id'=>$camp_id]);
         $campInfo = $this->CampService->getCampInfo($camp_id);

@@ -158,6 +158,7 @@ class LessonService {
        
         $result = $this->lessonModel->save($data);
         if($result){
+            db('camp')->where(['id'=>$data['camp_id']])->setInc('total_lessons');
             return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->lessonModel->id];
         }else{
             return ['msg'=>__lang('MSG_400'), 'code' => 100];

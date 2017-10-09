@@ -138,7 +138,7 @@ class CourtService {
             if (!$addCourtCamp) {
                 return ['code' => 100, 'msg' => '添加训练营场地关联'.__lang('MSG_400')];
             }
-
+            db('camp')->where(['id'=>$data['camp_id']])->setInc('camp_base');
             return ['code'=>200,'data'=>$result,'msg'=>__lang('MSG_200')];
         }else{
             return ['code'=>100,'msg'=>$this->courtModel->getError()];

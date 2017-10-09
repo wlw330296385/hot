@@ -40,6 +40,7 @@ class ScheduleService {
         }            
 		$result = $this->scheduleModel->save($data);
 		if($result ===false){
+            db('camp')->where(['id'=>$data['camp_id']])->setInc('total_schedule');
 			return ['msg'=>$this->scheduleModel->getError(),'code'=>100];
 		}else{
 			return ['msg'=>__lang('MSG_200'),'code'=>200,'data'=>$result];

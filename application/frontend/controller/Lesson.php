@@ -140,6 +140,7 @@ class Lesson extends Base{
             $this->error('参数错误');
         }
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+
         // 生成订单号
         $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
         $jsonBillInfo = [

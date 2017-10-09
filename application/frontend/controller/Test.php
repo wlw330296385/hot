@@ -156,4 +156,25 @@ class Test {
 
         dump($data);
     }
+
+
+    public function sendMSG(){
+        $data = [
+            "touser" => session('memberInfo.openid'),
+            "template_id" => "oB1u_CWLR0h9HE4CpszWjFE-9dFAQ89aufv7C1y-NyU",
+            "url" => url('frontend/bill/billInfo',['bill_id'=>1],'',true),
+            "topcolor"=>"#FF0000",
+            "data" => [
+                'first' => ['value' => '你训练营的课程已被购买,请及时处理'],
+                'keyword1' => ['value' => session('memberInfo.member')],
+                'keyword2' => ['value' => '订单编号'],
+                'keyword3' => ['value' => '99元'],
+                'keyword4' => ['value' => '商品信息'],
+                'remark' => ['value' => '大热篮球']
+            ]
+        ];
+        $w = new \app\service\WechatService();
+        $res = $w->sendTemplate($data);
+        dump($res);           
+    }
 }

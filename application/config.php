@@ -37,6 +37,18 @@ return [
 	'sms_appid' => '45842',
     'sms_secret' => '9b3c9e8899a7484890ab1c100a8fca82',
 
+
+
+    // 模板消息
+    'wxTemplateID' => [
+        'successBill' => 'oB1u_CWLR0h9HE4CpszWjFE-9dFAQ89aufv7C1y-NyU',//支付成功
+        'successJoin' => 'aOTMBdZbOKo8fFEKS5HWNaw9Gu-2c8ASTOcXlL6129Q',//申请加入
+        'successQiut' => 'ZeiTfOWQG2lPbLqZ6zj0Y8_UePEqB4htq9r1PEfTCUQ',//成员退出
+        'successRefund' => 'MHLQONFLdMBSEGQS2AW06V3sFV5zEXQYq_iqbPJpAgQ',//申请退款成功
+        'successCheck' => 'xohb4WrWcaDosmQWQL27-l-zNgnMc03hpPORPjVjS88',//审核通过
+        'errorCheck' => '   z03wxEVbhiEnXChfnBKEYhpYpCvIMLEPq0912RGgrQg',//未通过认证
+    ]
+
     // +----------------------------------------------------------------------
     // | 应用设置
     // +----------------------------------------------------------------------
