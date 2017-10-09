@@ -140,7 +140,7 @@ class BillService {
         $is_pay = $this->is_pay(['id'=>$id]);
         $validate = validate('BillVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
         if($is_pay == 0){
             $result = $this->Bill->save($data,['id'=>$id]);

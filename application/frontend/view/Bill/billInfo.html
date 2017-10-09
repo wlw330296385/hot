@@ -9,51 +9,57 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
 </head>
 
 <body class=whitebg>
-<header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回订单列表</span></a>
-</header>
-<div class="mui-content">
 
-    <div class="list camp-list camp-lesson-list detalis-list grade-list coach mt">
-       
-                    改!!!!!!!!!!!!!!!!!
-                    
-   
-        <div class="page-header">
-            <span class="course"><strong>订单信息</strong></span>
-        </div>
-        <ul class="mui-table-view list detalis-list mb">
-            <li class="mui-table-view-cell listli">订单号<span>{$billInfo.bill_order}</span></li>
-            <li class="mui-table-view-cell listli">支付方式<span>{$billInfo.pay_type}</span></li>
-            <li class="mui-table-view-cell listli">订单时间<span>{$billInfo.create_time}</span></li>
-        </ul>
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回订单列表</span></a>
+        <input type="hidden" name="bill_id" value="{$billInfo.id}">
+        <input type="hidden" name="camp" value="{$billInfo.camp}">
+        <input type="hidden" name="camp_id" value="{$billInfo.camp_id}">
+        <input type="hidden" name="student" value="{$billInfo.student}">
+        <input type="hidden" name="student_id" value="{$billInfo.student_id}">
+        <input type="hidden" name="member" value="{$billInfo.member}">
+        <input type="hidden" name="member_id" value="{$billInfo.member_id}">
+        <input type="hidden" name="score_pay" value="{$billInfo.score_pay}">
+        <input type="hidden" name="balance_pay" value="{$billInfo.balance_pay}">
+    </header>
 
-        <div class="page-header">
-            <span class="course"><strong>商品信息</strong></span>
-        </div>
-        <ul class="mui-table-view list detalis-list mb">
-            <li class="mui-table-view-cell listli">商品号<span>{$billInfo.goods_id}</span></li>
-            <li class="mui-table-view-cell listli">商品类型<span>{$billInfo.goods_type}</span></li>
-            <li class="mui-table-view-cell listli border-b">商品描述<span>{$billInfo.goods_des}</span></li>
-        </ul>
+    <div class="mui-content">
+
+        <div class="list camp-list camp-lesson-list detalis-list grade-list coach mt">
+
+            <div class="page-header">
+                <span class="course"><strong>订单信息</strong></span>
+            </div>
+            <ul class="mui-table-view list detalis-list mb">
+                <li class="mui-table-view-cell listli">订单号<span class="bill_order">{$billInfo.bill_order}</span></li>
+                <li class="mui-table-view-cell listli">支付方式<span>{$billInfo.pay_type}</span></li>
+                <li class="mui-table-view-cell listli">订单时间<span>{$billInfo.create_time}</span></li>
+            </ul>
+
+            <div class="page-header">
+                <span class="course"><strong>商品信息</strong></span>
+            </div>
+            <ul class="mui-table-view list detalis-list mb">
+                <li class="mui-table-view-cell listli">商品名称<span class="goods">{$billInfo.goods}</span><input type="hidden" name="goods_id" value="{$billInfo.goods_id}"></li>
+                <li class="mui-table-view-cell listli">商品单价<span class="price">{$billInfo.price}</span></li>
+                <li class="mui-table-view-cell listli">商品数量<span class="total">{$billInfo.total}</span></li>
+                <li class="mui-table-view-cell listli">商品类型<span class="goods_type">{$billInfo.goods_type}</span></li>
+                <li class="mui-table-view-cell listli border-b">商品描述<span class="goods_des">{$billInfo.goods_des}</span></li>
+            </ul>
 
 
-        {switch name="billInfo.is_pay"}
-        {case  value="未付款"}
-        <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%;">
-            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><span
+            {switch name="billInfo.is_pay"}
+            {case  value="未付款"}
+            <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%;">
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><span
                     class="mui-icon mui-icon-phone"></span>电话咨询
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen"
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen"
                 style="color:#fff;border-left: 1px solid #ccc;"><a href="#delete">确认支付</a>
             </li>
         </ul>
@@ -61,46 +67,112 @@
         {case  value="已付款"}
         <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%;">
             <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><span
-                    class="mui-icon mui-icon-phone"></span>电话咨询
+                class="mui-icon mui-icon-phone"></span>电话咨询
             </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"
-                style="color:#000;border-left: 1px solid #ccc;"><a href="#delete">申请退款</a>
+            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli "
+            style="color:#000;border-left: 1px solid #ccc;"><a href="#delete">申请退款</a>
+        </li>
+    </ul>
+
+    <div id="delete" class="mui-popover mui-popover-action mui-popover-bottom actionsheet" style="margin-bottom: 0">
+        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+
+          <ul class="mui-table-view mui-text-left operation">
+            <h5 class="mui-text-left">退款申请<a class="mui-icon mui-icon-closeempty" href="#delete"></a></h5>
+            <div class="mui-input-row" style="font-size: 14px;color: #737373">
+                <label>退款金额:</label>
+                <input type="text" name="" class="colororange mui-text-left" value="" placeholder="请输入退款金额" style="font-size: 14px;">
+            </div>
+            <li class="mui-table-view-cell">
+                <textarea id="question" class="mui-input-clear question" placeholder="请在此处填写申请退款的原因..." value=""></textarea>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli tjBtn" style="background:#59b200"  disabled="true"><a href="#" >提交申请</a>
             </li>
         </ul>
 
-
-        <div id="delete" class="mui-popover mui-popover-action mui-popover-bottom actionsheet" style="margin-bottom: 0">
-            <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
-                <ul class="mui-table-view mui-text-left operation">
-                    <h5 class="mui-text-left">退款申请<a class="mui-icon mui-icon-closeempty" href="#delete"></a></h5>
-                    <p>退款金额:<font class="colororange">￥2000</font>&nbsp;&nbsp;(根据协议xxxxxxxx)</p>
-                    <p>退款说明</p>
-                    <li class="mui-table-view-cell">
-                        <textarea id="question" class="mui-input-clear question" placeholder="请填写申请退款的原因..."></textarea>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" style="background:#59b200"><a href="#">提交申请</a>
-                    </li>
-                </ul>
-
-            </div>
-        </div>
-        {/case}
-        {case  value="申请退款"}
-            退款中
-        {/case}
-        {case  value="已退款"}
-            已退款
-        {/case}
-       {/switch}
     </div>
+</div>
+{/case}
+{case  value="申请退款"}
+退款中
+{/case}
+{case  value="已退款"}
+已退款
+{/case}
+{/switch}
+</div>
 
 </div>
-</body>
+
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+    // 申请退款
+    $(".tjBtn").click(function(){
+        var bill_id = $("input[name=bill_id]").val();
+        var bill_order = $(".bill_order").text();
+        var goods_id = $("input[name=goods_id]").val();
+        var goods = $(".goods").text();
+        var camp = $("input[name=camp]").val();
+        var camp_id = $("input[name=camp_id]").val();
+        var total = $(".total").text();
+        var price = $(".price").text();
+        var student = $("input[name=student]").val();
+        var student_id = $("input[name=student_id]").val();
+        var member = $("input[name=member]").val();
+        var member_id = $("input[name=member_id]").val();
+        var score_pay = $("input[name=score_pay]").val();
+        var goods_type = $(".goods_type").text();
+        var balance_pay = $("input[name=balance_pay]").val();
+        var goods_des = $(".goods_des").text();
+        var remarks = $(".question").val();
+        if(remarks==''){
+            mui.toast("请填写退款原因")
+            return false;
+        }
+        mui.ajax("{:url('api/bill/updateBillApi')}",{
+            data:{
+                "bill_id":bill_id,
+                "bill_order":bill_order,
+                "goods":goods,
+                "goods_id":goods_id,
+                "camp":camp,
+                "camp_id":camp_id,
+                "total":total,
+                "price":price,
+                "student":student,
+                "student_id":student_id,
+                "member":member,
+                "member_id":member_id,
+                "score_pay":score_pay,
+                "goods_type":goods_type,
+                "goods_des":goods_des,
+                "balance_pay":balance_pay,
+                "is_pay":-1,
+                "remarks":remarks
+            },
+            dataType:'json',//服务器返回json格式数据
+            type:'post',//HTTP请求类型
+            timeout:10000,//超时时间设置为10秒；
+            headers:{'Content-Type':'application/json'},                  
+            success:function(data){ 
+                //服务器返回响应，根据响应结果，分析是否登录成功；
+                console.log(data)
+                mui.toast("提交成功");
+                mui('#delete').popover('toggle');
+
+            },
+            error:function(xhr,type,errorThrown){
+                //异常处理；
+                console.log(type);
+            }
+        });
+    })
 </script>
+</body>
 </html>
