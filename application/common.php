@@ -187,3 +187,10 @@ function getMemberOpenid($memberid) {
         return $member['openid'];
     }
 }
+
+// 数字验证码 用于server-sent事件 生成guid
+function get_code($length=6) {
+    $min = pow(10 , ($length - 1));
+    $max = pow(10, $length) - 1;
+    return rand($min, $max);
+}
