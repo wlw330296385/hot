@@ -2,6 +2,9 @@
 namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\MemberService;
+use app\service\WechatService;
+use think\Exception;
+
 class Member extends Frontend{
 	private $SalaryOut;
     private $MemberService;
@@ -95,6 +98,29 @@ class Member extends Frontend{
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
+    }
 
+    // 更换微信 绑定二维码
+    public function changewxqrcode() {
+        try {
+            $member = $this->memberInfo;
+            //dump($member);
+            if (!$member) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            $wechatS = new WechatService();
+            $guid = sha1(get_code(12));
+            $url = $wechatS->oauthredirect( url('frontend/wechat/bindwx', ['memberid' => $member['id'], 'guid' => $guid], '', true) );
+            //dump($url);
+            $qrcode = buildqrcode($url);
+            $sseurl = url('frontend/wechat/bindwxsse', ['guid' => $guid], '', true);
+            $response = [
+                'qrcode' => $qrcode,
+                'sseurl' => $sseurl
+            ];
+            return json(['code' => 200, 'data' => $response]);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
     }
 }
