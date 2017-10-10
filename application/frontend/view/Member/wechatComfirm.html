@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <title>微信修改绑定确认</title>
@@ -15,50 +14,87 @@
 
 <body>
 
-    <div class="mui-content">
+<div class="mui-content">
 
-        <div class="mui-navbar-inner mui-bar mui-bar-nav">
-            <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
-                <span class="mui-icon mui-icon-left-nav"></span>
-            </button>
-            <h1 class="mui-center mui-title">微信修改绑定确认</h1>
-        </div>
-        
-        <div class="mt44">
-            <div class="page-header">
-                <span class="course"><b>用户信息</b></span>
-            </div>
-            <form action="" class="mui-input-group" style="overflow: hidden;">
-                <div class="mui-input-row">
-                    <label>原微信号</label>
-                    <span class="">原微信号</span>
-                </div>
-                <div class="mui-input-row">
-                    <label>新微信号</label>
-                    <span class="">新微信号</span>
-                </div>
-                <div class="mui-input-row">
-                    <label>昵称</label>
-                    <span class="">昵称</span>
-                </div>
-                <div class="tjbtn tjbtn-next">
-                    <button type="button" class="btn emailBtn">
-                        确认修改
-                    </button>
-                </div>
-            </form>
-        </div>
-        
+    <div class="mui-navbar-inner mui-bar mui-bar-nav">
+        <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+            <span class="mui-icon mui-icon-left-nav"></span>
+        </button>
+        <h1 class="mui-center mui-title">微信修改绑定确认</h1>
     </div>
 
+    <div class="mt44">
+        <div class="page-header">
+            <span class="course"><b>会员信息</b></span>
+        </div>
+        <form action="" class="mui-input-group" style="overflow: hidden;">
+            <input type="hidden" name="memberid" value="{$member.id}">
+            <input type="hidden" name="newopenid" value="{$newwx.openid}">
+            <input type="hidden" name="guid" value="{$guid}">
+            <div class="mui-input-row">
+                <label>会员 ID</label>
+                <span class="">{$member.hot_id}</span>
+            </div>
+            <div class="mui-input-row">
+                <label>昵称</label>
+                <span class="">{$member.member}</span>
+            </div>
+            <div class="mui-input-row">
+                <label>原微信号</label>
+                <span class="">{$member.nickname}</span>
+            </div>
+            <div class="mui-input-row">
+                <label>新微信号</label>
+                <span class="">{$newwx.nickname}</span>
+            </div>
+            <div class="tjbtn tjbtn-next">
+                <button type="button" class="btn sub-btn">确认修改</button>
+            </div>
+        </form>
+    </div>
 
-    <script src="/static/frontend/js/mui.min.js "></script>
-    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <script>
-        mui.init();
+</div>
+
+
+<script src="/static/frontend/js/mui.min.js "></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script>
+    mui.init();
     //初始化单页view
+
+    $(function() {
+        $('.sub-btn').click(function() {
+            mui.confirm('确认更换微信号码', '提示', ['确认', '取消'], function(e) {
+                if (e.index == 0) {
+                    var memberid = $('input[name=memberid]').val();
+                    var newopenid= $('input[name=newopenid]').val();
+                    var guid = $('input[name=guid]').val();
+                    mui.ajax("{:url('api/Member/changewx')}", {
+                        data: {
+                            memberid: memberid,
+                            newopenid: newopenid,
+                            guid: guid
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: {'Content-Type': 'application/json'},
+                        success: function (res) {
+                            console.log(res);
+                            if (res.code == 200) {
+                                mui.toast(res.msg);
+                            } else {
+                                mui.toast(res.msg);
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            console.log(xhr + type + errorThrown);
+                        }
+                    });
+                }
+            })
+        });
+    });
 </script>
-
 </body>
-
 </html>
