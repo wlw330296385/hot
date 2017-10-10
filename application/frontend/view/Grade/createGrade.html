@@ -118,7 +118,7 @@
 
                 <div class="mui-input-row">
                     <label>具体地址</label>
-                    <input type="text" name="" value="" class="location checkChinese" placeholder="请输入具体地址"></span>
+                    <input type="text" name="" value="" class="location checkChinese" placeholder="请输入具体地址">
                 </div>
 
                 <div class="mui-input-row">
@@ -598,15 +598,43 @@
         })
        // 助理教练
        $("#assistantConfirm").click(function(){
-        $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function(){
-            return $(this).val()
-        }).get().join(",") );
-        $(".assistantCoachCont").text($("input[name='assistant_ids']").val());
-        var id= $(".label").attr('data-id');
-        $(".assistant_ids").val(id);
-        mui('#assistantCoach').popover('toggle');
-        console.log(id)
-    })
+            $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function(){
+                return $(this).val()
+            }).get().join(",") );
+            console.log($("input[name='assistant_ids']").val())
+            $(".assistantCoachCont").text($("input[name='assistant_ids']").val());
+            var id= $(".label").attr('data-id');
+            $(".assistant_ids").val(id);
+            mui('#assistantCoach').popover('toggle');
+            console.log(id)
+        })
+
+       // 班主任
+        $(".headMaster").on('click','li',function(){
+            var headMaster = $(this).html();
+            $(".headMasterCont").html(headMaster);
+            var id= $(this).attr('data-id');
+            $(".teacher_id").val(id);
+            mui("#headMaster").popover("toggle");
+        })
+        // 领队
+        $(".leader").on('click','li',function(){
+            var leader = $(this).html();
+            $(".leaderCont").html(leader); 
+            var id= $(this).attr('data-id');
+            $(".leader_id").val(id);
+            mui("#leader").popover("toggle");
+        })
+
+
+         //获取训练营教练列表
+        toCoachList();
+        //获取训练营教练列表
+        var fansKeyword = '';
+        var wFans = '';
+        var pageHM = 1;
+        var pageLD = 1;
+        toFansList(fansKeyword,wFans,1);
         //搜索班主任粉丝
         $("#searchHM").on("click", function () {
             var keyword = $(".keywordHM").val();
@@ -639,22 +667,7 @@
                 toFansList(keyword,"leader",pageLD);
             }
         })
-        // 班主任
-        $(".headMaster").on('click','li',function(){
-            var headMaster = $(this).html();
-            $(".headMasterCont").html(headMaster);
-            var id= $(this).attr('data-id');
-            $(".teacher_id").val(id);
-            mui("#headMaster").popover("toggle");
-        })
-        // 领队
-        $(".leader").on('click','li',function(){
-            var leader = $(this).html();
-            $(".leaderCont").html(leader); 
-            var id= $(this).attr('data-id');
-            $(".leader_id").val(id);
-            mui("#leader").popover("toggle");
-        })
+        
         //班主任粉丝弹出框页码控制
         $("#headMaster").on('click','.next_page',function(){
             var getTotalPage  = $("#headMaster .totalPage").text();
@@ -675,6 +688,7 @@
                 toFansList(keyword,"headMaster",pageHM);
             }
         })
+
         // 教案
         var plan_ids= "";
         $(".teachingPlan").click(function(){
@@ -693,14 +707,7 @@
             }
         });
 
-        //获取训练营教练列表
-        toCoachList();
-        //获取训练营教练列表
-        var fansKeyword = '';
-        var wFans = '';
-        var pageHM = 1;
-        var pageLD = 1;
-        toFansList(fansKeyword,wFans,1);
+   
 
         //所属课程api
         $(".lessonType").click(function(){
@@ -736,25 +743,30 @@
             var  area = getArea;
             var  grade = $(".grade").val();
             var  lesson = $(".lessonTypeCont").text();
+            var  lesson_id = $('input[name=lesson_id]').val();
             var  gradecate = $(".gradecate").text();
+            var  gradecate_id = $('input[name=gradecate_id]').val();
             var  week = $(".week option:selected").text();
             var  court = $.trim($('.trainLocationCont').text());
             var  court_id = $('input[name=court_id]').val();
             var  lesson_time = $(".lesson_time").text();
-            var  location = $(".location").text();
+            var  location = $(".location").val();
             var  coach_salary = $(".coach_salary").val();
             var  assistant_salary = $(".assistant_salary").val();
             var  salary_base = $(".salary_base").val();
-            var  coach = $(".coach").text();
-            var  assistant = $(".assistant").text();
+            var  coach = $(".mainCoachCont").text();
+            var  coach_id = $('input[name=coach_id]').val();
+            var  assistant = $(".assistantCoachCont").text();
+            var  assistant_id = $('input[name=assistant_ids]').val();
             var  leader = $(".leaderCont").text();
-            var  teacher = $(".teacher").text();
+            var  leader_id = $('input[name=leader_id]').val();
+            var  teacher = $(".headMasterCont").text();
             var  teacher_id = $('input[name=teacher_id]').val();
             var  plan = $(".plan").text();
             // var  rent = $(".rent").val();
             var  status = $(".status option:selected").val();
             var  remarks = $(".remarks").val();
-            if(grade!=''&&lesson!=''&&gradecate!=''&&week!=''&&lesson_time!=''&&location!=''&&coach!=''&&assistant!=''&&leader!=''&&teacher!=''){
+            // if(grade!=''&&lesson!=''&&gradecate!=''&&week!=''&&lesson_time!=''&&location!=''&&court!=''&&coach!=''&&assistant!=''&&teacher!=''){
                 mui.ajax("{:url('api/grade/createGradeApi')}",{
                     data:{
                         "gradeData": {
@@ -779,6 +791,7 @@
                            "coach":coach,
                            "coach_id":coach_id,
                            "assistants":assistant,
+                           "assistant_id":assistant_id,
                            "leader":$.trim(leader),
                            "leader_id":leader_id,
                            "teacher_id": teacher_id,
@@ -810,9 +823,9 @@
                     console.log(type);
                 }
             });
-            } else{
-                mui.toast("选项不能为空");
-            }
+            // } else{
+            //     mui.toast("选项不能为空");
+            // }
         })
 
     });
