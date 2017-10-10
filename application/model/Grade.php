@@ -13,7 +13,7 @@ class Grade extends Model {
 
 
     public function getStatusAttr($value){
-    	$status = [0=>'预排班级',1=>'当前班级', 2 => '下架班级'];
+    	$status = [-1=>'预排班级',1=>'当前班级', 2 => '下架班级'];
     	return $status[$value];
     }
 

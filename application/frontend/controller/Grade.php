@@ -127,6 +127,7 @@ class Grade extends Base{
                     ->where(['grade_member.status'=>1])
                     ->where(['grade_member.camp_id'=>$camp_id])
                     ->where(['grade.camp_id'=>$camp_id])
+                    ->where('grade.delete_time',null)
                     ->select();
         $countMyGrade = 0;
         foreach ($gradeList as $key => $value) {

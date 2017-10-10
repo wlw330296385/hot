@@ -11,21 +11,21 @@ class Message extends Base{
 
     public function index() {
 
-      $campIDs = db('camp_member')
-                ->where(['member_id'=>$this->memberInfo['id'],'status'=>1])
-                ->where('type','gt',2)
-                ->column('camp_id');
+        $campIDs = db('camp_member')
+                  ->where(['member_id'=>$this->memberInfo['id'],'status'=>1])
+                  ->where('type','gt',2)
+                  ->column('camp_id');
 
 
-    $messageList = $this->MessageService->getMessageList(['camp_id'=>['in',$campIDs]]);
+        $messageList = $this->MessageService->getMessageList(['camp_id'=>['in',$campIDs]]);
 
-  		$messageMemberList = $this->MessageService->getMessageMemberList(['member_id'=>$this->memberInfo['id']]);
-  		
-  		
+    		$messageMemberList = $this->MessageService->getMessageMemberList(['member_id'=>$this->memberInfo['id']]);
+    		
+    		
 
 
-  		$this->assign('messageMemberList',$messageMemberList);
-  		$this->assign('messageList',$messageList);
+    		$this->assign('messageMemberList',$messageMemberList);
+    		$this->assign('messageList',$messageList);
         return view('Message/index');
     }
 }

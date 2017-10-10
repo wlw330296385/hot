@@ -76,10 +76,10 @@ class BillService {
                     "url" => url('frontend/bill/billInfo',['bill_id'=>$this->Bill->id],'',true),
                     "topcolor"=>"#FF0000",
                     "data" => [
-                        'first' => ['value' => '您已购买了课程'.$data['goods']],
+                        'first' => ['value' => '订单支付成功通知'],
                         'keyword1' => ['value' => $data['student']],
                         'keyword2' => ['value' => $data['bill_order']],
-                        'keyword3' => ['value' => $data['balance_pay']],
+                        'keyword3' => ['value' => $data['balance_pay'].'元'],
                         'keyword4' => ['value' => $data['goods_des']],
                         'remark' => ['value' => '大热篮球']
                     ]
@@ -92,10 +92,10 @@ class BillService {
                         "url" => url('frontend/bill/billInfo',['bill_id'=>$this->Bill->id],'',true),
                         "topcolor"=>"#FF0000",
                         "data" => [
-                            'first' => ['value' => '课程'.$data['goods'].'已被申请体验,请及时处理'],
+                            'first' => ['value' => '体验课预约申请成功'],
                             'keyword1' => ['value' => $data['student']],
                             'keyword2' => ['value' => $data['bill_order']],
-                            'keyword3' => ['value' => $data['balance_pay']],
+                            'keyword3' => ['value' => $data['balance_pay'].'元'],
                             'keyword4' => ['value' => $data['goods_des']],
                             'remark' => ['value' => '大热篮球']
                         ]
@@ -107,10 +107,10 @@ class BillService {
                         "url" => url('frontend/bill/billInfo',['bill_id'=>$this->Bill->id],'',true),
                         "topcolor"=>"#FF0000",
                         "data" => [
-                            'first' => ['value' => '课程'.$data['goods'].'已被购买,请及时处理'],
+                            'first' => ['value' => '订单支付成功通知'],
                             'keyword1' => ['value' => $data['student']],
                             'keyword2' => ['value' => $data['bill_order']],
-                            'keyword3' => ['value' => $data['balance_pay']],
+                            'keyword3' => ['value' => $data['balance_pay'].'元'],
                             'keyword4' => ['value' => $data['goods_des']],
                             'remark' => ['value' => '大热篮球']
                         ]
