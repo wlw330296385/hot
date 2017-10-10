@@ -59,7 +59,7 @@
                     <a href="#lessonType" class="mui-navigate-right">
                         <label>所属课程</label>
                         <span class="lessonTypeCont">请先选择课程，后选择学员</span>
-                        <input type="hidden" name="lesson_id" value="">
+                        <input type="hidden" name="lesson_id" class="lesson_id data" value="">
                     </a>
                 </div>
 
@@ -75,7 +75,7 @@
                     <a href="#gradeType" class="mui-navigate-right">
                         <label>班级类型</label>
                         <span class="gradeTypeCont gradecate"></span>
-                        <input type="hidden" name="gradecate_id">
+                        <input type="hidden" name="gradecate_id" class="gradecate_id data" value="">
                     </a>
                 </div>
 
@@ -124,7 +124,7 @@
                 <div class="mui-input-row">
                     <a href="#mainCoach" class="mui-navigate-right">
                         <label>主教练</label>
-                        <span class="mainCoachCont domData" name="coach" ></span>
+                        <span class="mainCoachCont domData" name="coach"></span>
                         <input type="hidden" name="coach_id" value="" class="data coach_id">
                     </a>
                 </div>
@@ -166,13 +166,13 @@
                     </a>
                 </div>
 
-                <div class="mui-input-row">
+            <!--     <div class="mui-input-row">
                     <a href="#teachingPlan" class="mui-navigate-right">
                         <label>教案</label>
                         <span class="teachingPlanCont plan">（选填）</span>
                         <input type="hidden" name="plan_ids">
                     </a>
-                </div>
+                </div> -->
 
                 <!-- <div class="mui-input-row">
                     <label>场地租金</label>
@@ -443,7 +443,7 @@
         </div>
     </div>
     <!--教案-->
-    <div id="teachingPlan" class="mui-popover">
+<!--     <div id="teachingPlan" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
             <span class="course"><strong>教案列表</strong></span>
@@ -460,7 +460,7 @@
                 </ul>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -568,6 +568,7 @@
         $(".lessonType").click(function(){
             var lessonType = $(this).text();
             lesson_id = $(this).attr("data-id");
+            $(".lesson_id").val(lesson_id);
             $(".lessonTypeCont").text(lessonType);
             mui("#lessonType").popover("toggle");
         })
@@ -575,7 +576,8 @@
         var gradecate_id = "";
         $(".gradeType").click(function(){
             var gradeType = $(this).text();
-            gradecate_id = $(this).attr("data-id");
+            gradecate_id= $(this).attr('data-id');
+            $(".gradecate_id").val(gradecate_id);
             $(".gradeTypeCont").text(gradeType);
             mui("#gradeType").popover("toggle");
         })
@@ -690,13 +692,13 @@
         })
 
         // 教案
-        var plan_ids= "";
-        $(".teachingPlan").click(function(){
-            var teachingPlan = $(this).text();
-            plan_ids = $(this).attr("data-id");
-            $(".teachingPlanCont").text(teachingPlan);
-            mui("#teachingPlan").popover("toggle");
-        })
+        // var plan_ids= "";
+        // $(".teachingPlan").click(function(){
+        //     var teachingPlan = $(this).text();
+        //     plan_ids = $(this).attr("data-id");
+        //     $(".teachingPlanCont").text(teachingPlan);
+        //     mui("#teachingPlan").popover("toggle");
+        // })
 
         //检测输入是否为数字
         $(".checkNum").blur(function(){
