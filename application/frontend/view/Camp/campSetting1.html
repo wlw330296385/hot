@@ -56,7 +56,10 @@
                         <input type="hidden" name="banner" value="{$campInfo.banner}">
                     </a>
                 </div>
-
+                <div class="mui-input-row">
+                    <label>联系电话</label>
+                    <input type="tel" class="input camp_telephone" value="{$campInfo.camp_telephone}">
+                </div>
                 <div class="mui-input-row">
                     <label>所属公司</label>
                     <input type="text" name="company" class="company" value="{$campInfo.company}" placeholder="非机构可不填">
@@ -147,6 +150,7 @@
             var location_input = $('input[name=location]').val();
             var locationStr = $('input[name=locationStr]').val();
             var intro = $('.intro').val();
+            var camp_telephone = $('.camp_telephone').val();
             mui.ajax("{:url('api/camp/updatecamp')}", {
                 data: {
                     camp_id: campid,
@@ -155,7 +159,8 @@
                     company: company,
                     location: location_input,
                     locationStr: locationStr,
-                    intro: intro
+                    intro: intro,
+                    camp_telephone: camp_telephone
                 },
                 dataType:'json',
                 type:'post',

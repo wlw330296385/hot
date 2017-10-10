@@ -114,6 +114,7 @@ class Camp extends Base{
             $campData = [
                 'id' => $campid,
                 'logo' => input('post.logo'),
+                'camp_telephone' => input('post.camp_telephone'),
                 'banner' => input('post.banner'),
                 'company' => input('post.company'),
                 'location' => input('post.location'),
@@ -185,7 +186,7 @@ class Camp extends Base{
                 'member_id' => $this->memberInfo['id'],
                 'type' => input('post.camptype'),
                 'realname' => input('post.creator'),
-                'camp_telephone' => $telephone
+                //'camp_telephone' => $telephone
             ];
             $campS = new CampService();
             return $campS->createCamp($data);
