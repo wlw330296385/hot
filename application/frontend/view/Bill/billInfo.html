@@ -20,21 +20,26 @@
 
 <body class=whitebg>
 
-    <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回订单列表</span></a>
-        <input type="hidden" name="bill_id" value="{$billInfo.id}">
-        <input type="hidden" name="camp" value="{$billInfo.camp}">
-        <input type="hidden" name="camp_id" value="{$billInfo.camp_id}">
-        <input type="hidden" name="student" value="{$billInfo.student}">
-        <input type="hidden" name="student_id" value="{$billInfo.student_id}">
-        <input type="hidden" name="member" value="{$billInfo.member}">
-        <input type="hidden" name="member_id" value="{$billInfo.member_id}">
-        <input type="hidden" name="score_pay" value="{$billInfo.score_pay}">
-        <input type="hidden" name="balance_pay" value="{$billInfo.balance_pay}">
-    </header>
+    <!-- <header id="header" class="mui-bar mui-bar-nav subheader"> -->
+    <!-- <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return"></span></a> -->
+    <input type="hidden" name="bill_id" value="{$billInfo.id}">
+    <input type="hidden" name="camp" value="{$billInfo.camp}">
+    <input type="hidden" name="camp_id" value="{$billInfo.camp_id}">
+    <input type="hidden" name="student" value="{$billInfo.student}">
+    <input type="hidden" name="student_id" value="{$billInfo.student_id}">
+    <input type="hidden" name="member" value="{$billInfo.member}">
+    <input type="hidden" name="member_id" value="{$billInfo.member_id}">
+    <input type="hidden" name="score_pay" value="{$billInfo.score_pay}">
+    <input type="hidden" name="balance_pay" value="{$billInfo.balance_pay}">
+    <!-- </header> -->
 
     <div class="mui-content">
-
+        <div class="mui-navbar-inner mui-bar mui-bar-nav">
+            <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+                <span class="mui-icon mui-icon-left-nav"></span>
+            </button>
+            <h1 class="mui-title" style="font-size: 14px">您的订单已支付成功，请等待回复</h1>
+        </div>
         <div class="list camp-list camp-lesson-list detalis-list grade-list coach mt">
 
             <div class="page-header">
@@ -42,60 +47,62 @@
             </div>
             <ul class="mui-table-view list detalis-list mb">
                 <li class="mui-table-view-cell listli">订单号<span class="bill_order">{$billInfo.bill_order}</span></li>
+                <li class="mui-table-view-cell listli">订单日期<span>{$billInfo.create_time}</span></li>
+                <li class="mui-table-view-cell listli">支付人<span></span></li>
+                <li class="mui-table-view-cell listli">交易金额<span></span></li>
                 <li class="mui-table-view-cell listli">支付方式<span>{$billInfo.pay_type}</span></li>
-                <li class="mui-table-view-cell listli">订单时间<span>{$billInfo.create_time}</span></li>
             </ul>
 
             <div class="page-header">
                 <span class="course"><strong>商品信息</strong></span>
             </div>
-            <ul class="mui-table-view list detalis-list mb">
-                <li class="mui-table-view-cell listli">商品名称<span class="goods">{$billInfo.goods}</span><input type="hidden" name="goods_id" value="{$billInfo.goods_id}"></li>
-                <li class="mui-table-view-cell listli">商品单价<span class="price">{$billInfo.price}</span></li>
-                <li class="mui-table-view-cell listli">商品数量<span class="total">{$billInfo.total}</span></li>
-                <li class="mui-table-view-cell listli">商品类型<span class="goods_type">{$billInfo.goods_type}</span></li>
-                <li class="mui-table-view-cell listli border-b">商品描述<span class="goods_des">{$billInfo.goods_des}</span></li>
-            </ul>
+            <ul class="mui-table-view list detalis-list mb mt55">
+               <li class="mui-table-view-cell listli">商品类型<span class="goods_type">{$billInfo.goods_type}</span></li>
+               <li class="mui-table-view-cell listli">商品名称<span class="goods">{$billInfo.goods}</span><input type="hidden" name="goods_id" value="{$billInfo.goods_id}"></li>
+               <li class="mui-table-view-cell listli">商品数量<span class="total">{$billInfo.total}</span></li>
+               <li class="mui-table-view-cell listli">商品单价<span class="price">{$billInfo.price}</span></li>
+               <li class="mui-table-view-cell listli border-b">商品描述<span class="goods_des">{$billInfo.goods_des}</span></li>
+           </ul>
 
 
-            {switch name="billInfo.is_pay"}
-            {case  value="未付款"}
-            <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%;">
-                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><span
-                    class="mui-icon mui-icon-phone"></span>电话咨询
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen"
-                style="color:#fff;border-left: 1px solid #ccc;"><a href="#delete">确认支付</a>
-            </li>
-        </ul>
-        {/case}
-        {case  value="已付款"}
-        <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%;">
+           {switch name="billInfo.is_pay"}
+           {case  value="未付款"}
+           <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%;">
             <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><span
                 class="mui-icon mui-icon-phone"></span>电话咨询
             </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli "
-            style="color:#000;border-left: 1px solid #ccc;"><a href="#delete">申请退款</a>
+            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen"
+            style="color:#fff;border-left: 1px solid #ccc;"><a href="#delete">确认支付</a>
+        </li>
+    </ul>
+    {/case}
+    {case  value="已付款"}
+    <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%;">
+        <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><span
+            class="mui-icon mui-icon-phone"></span>电话咨询
+        </li>
+        <li class="mui-table-view-cell mui-media mui-col-xs-6 opli "
+        style="color:#000;border-left: 1px solid #ccc;"><a href="#delete">申请退款</a>
+    </li>
+</ul>
+
+<div id="delete" class="mui-popover mui-popover-action mui-popover-bottom actionsheet" style="margin-bottom: 0">
+    <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+
+      <ul class="mui-table-view mui-text-left operation">
+        <h5 class="mui-text-left">退款申请<a class="mui-icon mui-icon-closeempty" href="#delete"></a></h5>
+        <div class="mui-input-row" style="font-size: 14px;color: #737373">
+            <label>退款金额:</label>
+            <input type="text" name="" class="colororange mui-text-left refundamount" value="" placeholder="请填写退款金额" style="font-size: 14px;">
+        </div>
+        <li class="mui-table-view-cell">
+            <textarea id="question" class="mui-input-clear question" placeholder="请在此处填写申请退款的原因..." value=""></textarea>
+        </li>
+        <li class="mui-table-view-cell mui-media mui-col-xs-12 opli tjBtn" style="background:#59b200"  disabled="true"><a href="#" >提交申请</a>
         </li>
     </ul>
 
-    <div id="delete" class="mui-popover mui-popover-action mui-popover-bottom actionsheet" style="margin-bottom: 0">
-        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
-
-          <ul class="mui-table-view mui-text-left operation">
-            <h5 class="mui-text-left">退款申请<a class="mui-icon mui-icon-closeempty" href="#delete"></a></h5>
-            <div class="mui-input-row" style="font-size: 14px;color: #737373">
-                <label>退款金额:</label>
-                <input type="text" name="" class="colororange mui-text-left refundamount" value="" placeholder="请填写退款金额" style="font-size: 14px;">
-            </div>
-            <li class="mui-table-view-cell">
-                <textarea id="question" class="mui-input-clear question" placeholder="请在此处填写申请退款的原因..." value=""></textarea>
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli tjBtn" style="background:#59b200"  disabled="true"><a href="#" >提交申请</a>
-            </li>
-        </ul>
-
-    </div>
+</div>
 </div>
 {/case}
 {case  value="申请退款"}
