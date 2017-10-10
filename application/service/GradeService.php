@@ -14,11 +14,11 @@ class GradeService{
 
     // 班级列表
     public function getGradeList($map=[],$page = 1, $order='',$p=10) {
-        $result = [];
+        $result = false;
         $res = Grade::where($map)->order($order)->page($page,$p)->select();
-        if($res){           
-            $res = $res->toArray();
-            $result = $res;
+        // echo Grade::getlastsql();
+        if($res){   
+            $result = $res->toArray();
         }
         return $result;
     }

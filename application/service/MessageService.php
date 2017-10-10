@@ -15,13 +15,28 @@ class MessageService{
 		$result = $this->MessageModel->where($map)->find();
 		if($result){
 			$res = $result->toArray();
-			return $result;
-		}else{
 			return $res;
+		}else{
+			return $result;
 		}
 		
 		
 	}
+
+	//个人消息
+	public function getMessageMemberInfo($map){
+		$result = $this->MessageMemberModel->where($map)->find();
+		if($result){
+			$res = $result->toArray();
+			return $res;
+		}else{
+			return $result;
+		}
+		
+		
+	}
+
+
 
 	//获取个人消息列表
 	public function getMessageMemberList($map = [],$page = 1 ,$paginate=10){
@@ -31,9 +46,9 @@ class MessageService{
 				->select();
 		if($result){
 			$res = $result->toArray();
-			return $result;
-		}else{
 			return $res;
+		}else{
+			return $result;
 		}
 	}
 
@@ -111,17 +126,27 @@ class MessageService{
 	}
 
 	//新建系统Message
-	public function saveMessageInfo($data){
+	public function saveMessageInfo($data,$templateData){
 		$validate = validate('MessageVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
 		$result = $this->MessageModel->data($data)->save();
-		
+		// 循环发送模板消息
+
 		if($result ===false){
 			return ['msg'=>$this->MessageModel->getError(),'code'=>100];
 		}else{
 			return ['msg'=>__lang('MSG_200'),'code'=>200,'data'=>$result];
 		}	
 	}
+
+
+	// 删除消息
+	public function removeMessageMember($map){
+		$result = $this->MessageMemberModel->delete($map);
+		return $result;
+	}
+
+
 }

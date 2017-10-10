@@ -68,37 +68,18 @@ class Member extends Base{
             case 'schedule':
                 $studentAlbumList = [];
                 $coachAlbumList =[];
-                // $coachScheduleIDs = db('schedule_member')
-                //                     ->where(['type'=>1,'user_id'=>$coach_id])
-                //                     ->column('schedule_id');
-                // if($coachScheduleIDs){
-                //     $coachAlbumList = db('schedule_media')
-                //                 ->where('schedule_id','in',$coachScheduleIDs)
-                //                 ->limit('10')
-                //                 ->select();
-                // }
-                
-                // $studentScheduleIDs = db('schedule_member')
-                //                     ->where(['type'=>1])
-                //                     ->where('user_id','IN',$student_id)
-                //                     ->column('schedule_id');
-                // if($studentScheduleIDs){
-                //     $studentAlbumList = db('schedule_media')
-                //                 // ->field("*,(create_time,'%Y%m') months")
-                //                 ->where(['schedule_id','IN',$studentScheduleIDs])
-                //                 ->limit('10')
-                //                 ->select();
-                // }                    
+                   
                 $coachAlbumList = Db::view('schedule_member','schedule_id,schedule')
                                 ->view('schedule_media','url,create_time','schedule_member.schedule_id = schedule_media.schedule_id')
                                 ->where(['schedule_member.type'=>1,'schedule_member.user_id'=>$coach_id])
+                                ->order('schedule_member.id desc')
                                 ->select();
                  $studentAlbumList = Db::view('schedule_member','schedule_id,schedule')    
                                    ->view('schedule_media','url,create_time','schedule_member.schedule_id = schedule_media.schedule_id')
                                     ->where(['schedule_member.type'=>0])
                                     ->where('schedule_member.user_id','IN',$student_id)
-                                    ->select();            
-                // dump($coachAlbumList);die;                
+                                    ->order('schedule_member.id desc')
+                                    ->select();                  
                 //合并数组
                 $albumList = array_merge($studentAlbumList,$coachAlbumList);
                 break;

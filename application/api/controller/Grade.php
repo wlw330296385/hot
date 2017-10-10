@@ -51,7 +51,6 @@ class Grade extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
 
-    	
     }
 
 
@@ -71,7 +70,7 @@ class Grade extends Base{
                     unset($map[$key]);
                 }
             }
-            $map['status'] = input('status',0);
+            $map['status'] = input('status',1);
             if(!empty($keyword)&&$keyword != ' '&&$keyword != '' && $keyword!=NULL){
                 $map['court'] = ['LIKE','%'.$keyword.'%'];
             }
@@ -81,6 +80,7 @@ class Grade extends Base{
             if( isset($map['page']) ){
                 unset($map['page']);
             }
+            
             $result = $this->GradeService->getGradeList($map,$page);
             return json(['code'=>200,'msg'=>'ok','data'=>$result]);
         }catch (Exception $e){
