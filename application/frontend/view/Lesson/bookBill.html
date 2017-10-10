@@ -26,85 +26,101 @@
 <div class="mui-content">
 
     <!--课程订单支付-->
-    <div class="mui-content">
-        <div class="list">
-            <ul class="mui-table-view">
-                <li class="mui-table-view-cell mui-media listli mb">
-                    <a href="javascript:;">
-                        <img class="mui-media-object mui-pull-left" src="/static/frontend/images/shuijiao.jpg">
-                        <div class="mui-media-body wd45">
-                            {$lessonInfo.lesson}
-                            <p class="mui-ellipsis">{$lessonInfo.gradecate}</p>
-                        </div>
-                        <div class="price-frame singup-num">
-                            {$lessonInfo.students}人已报名
-                        </div>
+    <div class="list">
+        <ul class="mui-table-view">
+            <li class="mui-table-view-cell mui-media listli mb">
+                <a href="javascript:;">
+                    <img class="mui-media-object mui-pull-left" src="/static/frontend/images/shuijiao.jpg">
+                    <div class="mui-media-body wd45">
+                        {$lessonInfo.lesson}
+                        <p class="mui-ellipsis">{$lessonInfo.gradecate}</p>
+                    </div>
+                    <div class="price-frame singup-num">
+                        {$lessonInfo.students}人已报名
+                    </div>
+                </a>
+            </li>
+        </ul>
+
+        <ul class="mui-table-view border-b4">
+            <li class="mui-table-view-cell listli">
+                <a class="mui-navigate-right">
+                    所属训练营<span class="wd66" >{$lessonInfo.camp}</span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli">课程单价<span><b class="colororange">￥{$lessonInfo.cost}</b>（元）</span></li>
+            <li class="mui-table-view-cell listli">所选课量<span><b class="colororange total"></b>（节）</span></li>
+            <li class="mui-table-view-cell listli">训练时间<span>{$lessonInfo.week} {$lessonInfo.lesson_time}</span></li>
+            <li class="mui-table-view-cell listli">训练地点<span>{$lessonInfo.location}</span></li>
+            <li class="mui-table-view-cell listli">所属地区<span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span></li>
+            <li class="mui-table-view-cell listli"><span>课程总价<b class="colororange total_fee"></b></span></li>
+        </ul>
+        <div class="mui-input-group mb44">
+
+            <div id="oldStudent">
+                <div class="page-header mb mt">
+                    <span class="title">体验生信息</span>
+                    <span class="fr"><button id="addBtn">添加学生</button></span>
+                </div>
+                <div class="mui-input-row">
+                    <a href="#" class="mui-navigate-right">
+                        <label>学员姓名</label>
+                        <span class="select-row">
+                        <select class="selectStudent">
+                          <option value="" id="student"></option>
+                        </select>
+                    </span>
                     </a>
-                </li>
-            </ul>
+                </div>
+                <div class="mui-input-row">
+                    <label>家长姓名</label>
+                    <span id="parent"></span>
+                </div>
+                <div class="mui-input-row">
+                    <label>手机号码</label>
+                    <span class="width" id="emergency_telephone">{$memberInfo.telephone}</span>
+                </div>
 
-            <ul class="mui-table-view">
-                <li class="mui-table-view-cell listli">
-                    <a class="mui-navigate-right">
-                        所属训练营<span class="wd66" >{$lessonInfo.camp}</span>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell listli">课程单价<span><b class="colororange">￥{$lessonInfo.cost}</b>（元）</span></li>
-                <li class="mui-table-view-cell listli">所选课量<span><b class="colororange total"></b>（节）</span></li>
-                <li class="mui-table-view-cell listli">训练时间<span>{$lessonInfo.week} {$lessonInfo.lesson_time}</span></li>
-                <li class="mui-table-view-cell listli">训练地点<span>{$lessonInfo.location}</span></li>
-                <li class="mui-table-view-cell listli">所属地区<span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span></li>
-                <li class="mui-table-view-cell listli"><span>课程总价<b class="colororange total_fee"></b></span></li>
-                <li class="mui-table-view-cell listli">备注 <input type="text" name="remarks" class="remarks" value="无"></li>
-            </ul>
+            </div>
 
-            <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-8 opli" >还需支付:<b class="colororange total_fee">￥0</b></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="createBill()">立即体验</li>
-            </ul>
+            <!-- 新会员进入 -->
+            <div style="display: none;" id="addStudent">
+                <div class="page-header mb mt">
+                    <span class="title">体验生信息</span>
+                    <span class="fr"><button id="submitBtn">确认</button> &nbsp;  <button id="giveUp">放弃添加</button></span>
+                </div>
+                <div class="mui-input-row">
+                    <label>学员姓名</label>
+                    <input type="text" class="data" value="" style="color: #737373" required name="student" placeholder="学生姓名">
+                </div>
 
+                <div class="mui-input-row">
+                    <label>家长姓名</label>
+                    <input type="text" value="" class="data" style="color: #737373" required name="parent" placeholder="家长姓名">
+                </div>
+                <!--  <div class="mui-input-row">
+                    <input type="text" class="mui-input-clear reg_mobile data" name="emergency_telephone" placeholder="输入手机号" data-input-clear="5" style="margin-bottom: 0" id="telephone" required>
+                </div> -->
+                <!-- <div class="mui-input-row">
+                     <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)">
+               </div>
+               <div class="mui-input-row">
+                    <input type="text" class="validate" placeholder="输入验证码" id="code">
+               </div> -->
+            </div>
+
+            <div class="mui-input-row h-auto">
+                <label>备注</label>
+                <textarea rows="5" name="remarks" class="remarks" placeholder="预约留言"></textarea>
+            </div>
         </div>
     </div>
 
+    <ul class="mui-table-view operation">
+        <li class="mui-table-view-cell mui-media mui-col-xs-8 opli" >还需支付:<b class="colororange total_fee">￥0</b></li>
+        <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="createBill()">立即体验</li>
+    </ul>
 
-      <ul class="mui-table-view list detalis-list mt55" id="oldStudent">
-         <li class="mui-table-view-cell listli">
-           学员姓名
-           <span class="select-arrow location-choise">
-            <select class="select" style="width: 22%" >
-              <option value="" id="student"></option>
-            </select>
-          </span>
-        </li>
-        <li class="mui-table-view-cell listli">家长姓名<span id="parent"></span></li>
-        <li class="mui-table-view-cell listli">手机号码<span class="width" id="emergency_telephone">{$memberInfo.telephone}</span></li>
-        
-        <button id="addBtn">添加学生</button>
-      </ul>
-      <!-- 新会员进入 -->
-      <div class="mui-input-group mt55" style="display: none;" id="addStudent">
-
-        <div class="mui-input-row">
-          <label>学员姓名</label>
-          <input type="text" class="data" value="" style="color: #737373" required name="student" placeholder="学生姓名">
-        </div>
-
-        <div class="mui-input-row">
-          <label>家长姓名</label>
-          <input type="text" value="" class="data" style="color: #737373" required name="parent" placeholder="家长姓名">
-        </div>
-
-        <!--  <div class="mui-input-row">
-            <input type="text" class="mui-input-clear reg_mobile data" name="emergency_telephone" placeholder="输入手机号" data-input-clear="5" style="margin-bottom: 0" id="telephone" required>   
-        </div> -->
-         <!-- <div class="mui-input-row">  
-              <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)">              
-        </div>
-        <div class="mui-input-row">                
-             <input type="text" class="validate" placeholder="输入验证码" id="code">
-        </div> -->
-        <button id="submitBtn">确认</button>   <button id="giveUp">放弃添加</button>
-      </div>
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
@@ -144,7 +160,7 @@
 
 
         //替换学生列表
-        $('.select').on('change',function(){
+        $('.selectStudent').on('change',function(){
             var index = $('option:selected').index();
              $('#student').val(studentList[index].id);
               $('#student').text(studentList[index].student);
@@ -155,13 +171,13 @@
         })
 
         // 添加学生
-        $('#addBtn').on('click',function(){
+        $('#addBtn').on('click','',function(){
             $('#oldStudent').hide();
             $('#addStudent').show();
         })
 
         //放弃添加学生
-        $('#giveUp').on('click',function(){
+        $('#giveUp').on('click','',function(){
             $('#oldStudent').show();
             $('#addStudent').hide();
         })
@@ -192,7 +208,7 @@
               for (var i = 1; i < studentList.length; i++) {
                   studentList[i]
                   var strhtml = '<option value="'+studentList[i].id+'">'+studentList[i].student+'</option>';
-                  $('.select').append(strhtml)
+                  $('.selectStudent').append(strhtml)
               }
             }
               

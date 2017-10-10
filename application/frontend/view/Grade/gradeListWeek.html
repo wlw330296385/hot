@@ -11,25 +11,93 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style>
+        .camp-lesson-list{
+            position: fixed;
+            top: 0;
+            z-index: 10;
+        }
+    </style>
 </head>
 
 <body class=whitebg>
 
     <div class="mui-content">
 
-        <div id="tabbar-week-one" class="mui-control-content mui-active">
-            <div class="list camp-list camp-lesson-list detalis-list coach">
+        <!-- <div id="一" class="mui-control-content mui-active"> -->
+        <div class="list camp-list detalis-list coach">
+            <div class="camp-lesson-list">
+                <div  class="mui-segmented-control mb">
+                    <a class="mui-control-item mui-action-back" href="{:url('camp/index')}">返回首页</a>
+                    <a class="mui-control-item mui-active" href="#item1">我的班级</a>
+                    <a class="mui-control-item" href="#item2">训练营</a>
+                </div>
+            </div>
+
+            <div class="item-list mt44">
+                <div id="item1" class="mui-control-content mui-active">
+                    <div class="whitebg card-list">
+                        {volist name="myGradeList" id="vol"}
+                        
+                        <div class="mui-card">
+                            <input type="hidden" name="week" value="{$vol.week}">
+                            <div class="mui-card-header">
+                                <div class="card-left"><span class="time">{$vol.lesson_time}</span>{$vol.location}</div>
+                            </div>
+                            <div class="mui-card-content">
+                                <div class="mui-card-content-inner">
+                                    <h4>{$vol.grade} <span class="name">{$vol.coach}</span></h4>
+                                </div>
+                            </div>
+                            <div class="mui-card-footer">{$vol.gradecate}
+                                <a style="color:red;"
+                                href="{:url('schedule/recordSchedule',['grade_id'=>$vol['id'],'lesson_id'=>$vol['lesson_id'],'camp_id'=>$vol['camp_id']])}">录课</a>
+                            </div>
+                        </div>
+
+                        {/volist}
+                    </div>
+                </div>
+                <div id="item2" class="mui-control-content">
+                    <div class="whitebg card-list">
+                        {volist name="campGradeList" id="vol"}
+                        
+                        <div class="mui-card">
+                            <input type="hidden" name="week" value="{$vol.week}">
+                            <div class="mui-card-header">
+                                <div class="card-left"><span class="time">{$vol.lesson_time}</span> {$vol.location}</div>
+                            </div>
+                            <div class="mui-card-content">
+                                <div class="mui-card-content-inner">
+                                    <h4>{$vol.grade} <span class="name">{$vol.coach}</span></h4>
+                                </div>
+                            </div>
+                            <div class="mui-card-footer">{$vol.gradecate}
+                                <a style="color:red;"
+                                href="{:url('schedule/recordSchedule',['grade_id'=>$vol['id'],'lesson_id'=>$vol['lesson_id'],'camp_id'=>$vol['camp_id']])}">录课</a>
+                            </div>
+                        </div>
+
+                        {/volist}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- </div> -->
+
+       <!--  <div id="二" class="mui-control-content">
+            <div class="list camp-list detalis-list coach">
                 <div class="camp-lesson-list">
                     <div id="segmentedControl" class="mui-segmented-control mb">
-                        <a class="mui-control-item mui-action-back" href="{:url('camp/index')}">返回</a>
-                        <a class="mui-control-item mui-active" href="#item2">我的班级</a>
-                        <a class="mui-control-item" href="#item1">训练营</a>
+                        <a class="mui-control-item" href="{:url('camp/index')}">返回首页</a>
+                        <a class="mui-control-item mui-active" href="#item3">我的班级</a>
+                        <a class="mui-control-item" href="#item4">训练营</a>
                     </div>
                 </div>
 
 
-                <div class="item-list">
-                    <div id="item2" class="mui-control-content mui-active">
+                <div class="item-list mt44">
+                    <div id="item3" class="mui-control-content mui-active">
                         <div class="whitebg card-list">
                             {volist name="myGradeList" id="vol"}
                             <div class="mui-card">
@@ -50,7 +118,7 @@
                             {/volist}
                         </div>
                     </div>
-                    <div id="item1" class="mui-control-content">
+                    <div id="item4" class="mui-control-content">
                         <div class="whitebg card-list">
                             {volist name="campGradeList" id="vol"}
                             <div class="mui-card">
@@ -74,19 +142,19 @@
                 </div>
             </div>
         </div>
-        <div id="tabbar-week-two" class="mui-control-content">
-            <div class="list camp-list camp-lesson-list detalis-list coach">
+        <div id="三" class="mui-control-content">
+            <div class="list camp-list  detalis-list coach">
                 <div class="camp-lesson-list">
                     <div id="segmentedControl" class="mui-segmented-control mb">
                         <a class="mui-control-item" href="{:url('camp/index')}">返回首页</a>
-                        <a class="mui-control-item mui-active" href="#item2">我的班级</a>
-                        <a class="mui-control-item" href="#item1">训练营</a>
+                        <a class="mui-control-item mui-active" href="#item5">我的班级</a>
+                        <a class="mui-control-item" href="#item6">训练营</a>
                     </div>
                 </div>
 
 
-                <div class="item-list">
-                    <div id="item2" class="mui-control-content mui-active">
+                <div class="item-list mt44">
+                    <div id="item5" class="mui-control-content mui-active">
                         <div class="whitebg card-list">
                             {volist name="myGradeList" id="vol"}
                             <div class="mui-card">
@@ -107,7 +175,7 @@
                             {/volist}
                         </div>
                     </div>
-                    <div id="item1" class="mui-control-content">
+                    <div id="item6" class="mui-control-content">
                         <div class="whitebg card-list">
                             {volist name="campGradeList" id="vol"}
                             <div class="mui-card">
@@ -131,19 +199,19 @@
                 </div>
             </div>
         </div>
-        <div id="tabbar-week-three" class="mui-control-content">
-            <div class="list camp-list camp-lesson-list detalis-list coach">
+        <div id="四" class="mui-control-content">
+            <div class="list camp-list detalis-list coach">
                 <div class="camp-lesson-list">
                     <div id="segmentedControl" class="mui-segmented-control mb">
                         <a class="mui-control-item" href="{:url('camp/index')}">返回首页</a>
-                        <a class="mui-control-item mui-active" href="#item2">我的班级</a>
-                        <a class="mui-control-item" href="#item1">训练营</a>
+                        <a class="mui-control-item mui-active" href="#item7">我的班级</a>
+                        <a class="mui-control-item" href="#item8">训练营</a>
                     </div>
                 </div>
 
 
-                <div class="item-list">
-                    <div id="item2" class="mui-control-content mui-active">
+                <div class="item-list mt44">
+                    <div id="item7" class="mui-control-content mui-active">
                         <div class="whitebg card-list">
                             {volist name="myGradeList" id="vol"}
                             <div class="mui-card">
@@ -164,7 +232,7 @@
                             {/volist}
                         </div>
                     </div>
-                    <div id="item1" class="mui-control-content">
+                    <div id="item8" class="mui-control-content">
                         <div class="whitebg card-list">
                             {volist name="campGradeList" id="vol"}
                             <div class="mui-card">
@@ -188,19 +256,19 @@
                 </div>
             </div>
         </div>
-        <div id="tabbar-week-four" class="mui-control-content">
-            <div class="list camp-list camp-lesson-list detalis-list coach">
+        <div id="五" class="mui-control-content">
+            <div class="list camp-list detalis-list coach">
                 <div class="camp-lesson-list">
                     <div id="segmentedControl" class="mui-segmented-control mb">
                         <a class="mui-control-item" href="{:url('camp/index')}">返回首页</a>
-                        <a class="mui-control-item mui-active" href="#item2">我的班级</a>
-                        <a class="mui-control-item" href="#item1">训练营</a>
+                        <a class="mui-control-item mui-active" href="#item9">我的班级</a>
+                        <a class="mui-control-item" href="#item10">训练营</a>
                     </div>
                 </div>
 
 
-                <div class="item-list">
-                    <div id="item2" class="mui-control-content mui-active">
+                <div class="item-list mt44">
+                    <div id="item9" class="mui-control-content mui-active">
                         <div class="whitebg card-list">
                             {volist name="myGradeList" id="vol"}
                             <div class="mui-card">
@@ -221,64 +289,7 @@
                             {/volist}
                         </div>
                     </div>
-                    <div id="item1" class="mui-control-content">
-                        <div class="whitebg card-list">
-                            {volist name="campGradeList" id="vol"}
-                            <div class="mui-card">
-                                <div class="mui-card-header">
-                                    <div class="card-left"><span class="time">{$vol.lesson_time}</span> {$vol.location}</div>
-                                </div>
-                                <div class="mui-card-content">
-                                    <div class="mui-card-content-inner">
-                                        <h4>{$vol.grade} <span class="name">{$vol.coach}</span></h4>
-                                    </div>
-                                </div>
-                                <div class="mui-card-footer">{$vol.gradecate}
-                                    <a style="color:red;"
-                                    href="{:url('schedule/recordSchedule',['grade_id'=>$vol['id'],'lesson_id'=>$vol['lesson_id'],'camp_id'=>$vol['camp_id']])}">录课</a>
-                                </div>
-                            </div>
-
-                            {/volist}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="tabbar-week-fird" class="mui-control-content">
-            <div class="list camp-list camp-lesson-list detalis-list coach">
-                <div class="camp-lesson-list">
-                    <div id="segmentedControl" class="mui-segmented-control mb">
-                        <a class="mui-control-item" href="{:url('camp/index')}">返回首页</a>
-                        <a class="mui-control-item mui-active" href="#item2">我的班级</a>
-                        <a class="mui-control-item" href="#item1">训练营</a>
-                    </div>
-                </div>
-
-
-                <div class="item-list">
-                    <div id="item2" class="mui-control-content mui-active">
-                        <div class="whitebg card-list">
-                            {volist name="myGradeList" id="vol"}
-                            <div class="mui-card">
-                                <div class="mui-card-header">
-                                    <div class="card-left"><span class="time">{$vol.lesson_time}</span> {$vol.location}</div>
-                                </div>
-                                <div class="mui-card-content">
-                                    <div class="mui-card-content-inner">
-                                        <h4>{$vol.grade} <span class="name">{$vol.coach}</span></h4>
-                                    </div>
-                                </div>
-                                <div class="mui-card-footer">{$vol.gradecate}
-                                    <a style="color:red;"
-                                    href="{:url('schedule/recordSchedule',['grade_id'=>$vol['id'],'lesson_id'=>$vol['lesson_id'],'camp_id'=>$vol['camp_id']])}">录课</a>
-                                </div>
-                            </div>
-
-                            {/volist}
-                        </div>
-                    </div>
-                    <div id="item1" class="mui-control-content">
+                    <div id="item10" class="mui-control-content">
                         <div class="whitebg card-list">
                             {volist name="campGradeList" id="vol"}
                             <div class="mui-card">
@@ -302,19 +313,19 @@
                 </div>
             </div>       
         </div>
-        <div id="tabbar-week-six" class="mui-control-content">
-            <div class="list camp-list camp-lesson-list detalis-list coach">
+        <div id="六" class="mui-control-content">
+            <div class="list camp-list detalis-list coach">
                 <div class="camp-lesson-list">
                     <div id="segmentedControl" class="mui-segmented-control mb">
                         <a class="mui-control-item" href="{:url('camp/index')}">返回首页</a>
-                        <a class="mui-control-item mui-active" href="#item2">我的班级</a>
-                        <a class="mui-control-item" href="#item1">训练营</a>
+                        <a class="mui-control-item mui-active" href="#item11">我的班级</a>
+                        <a class="mui-control-item" href="#item12">训练营</a>
                     </div>
                 </div>
 
 
-                <div class="item-list">
-                    <div id="item2" class="mui-control-content mui-active">
+                <div class="item-list mt44">
+                    <div id="item11" class="mui-control-content mui-active">
                         <div class="whitebg card-list">
                             {volist name="myGradeList" id="vol"}
                             <div class="mui-card">
@@ -335,7 +346,7 @@
                             {/volist}
                         </div>
                     </div>
-                    <div id="item1" class="mui-control-content">
+                    <div id="item12" class="mui-control-content">
                         <div class="whitebg card-list">
                             {volist name="campGradeList" id="vol"}
                             <div class="mui-card">
@@ -359,19 +370,18 @@
                 </div>
             </div>
         </div>
-        <div id="tabbar-week-seven" class="mui-control-content">
-            <div class="list camp-list camp-lesson-list detalis-list coach">
+        <div id="日" class="mui-control-content">
+            <div class="list camp-list detalis-list coach">
                 <div class="camp-lesson-list">
                     <div id="segmentedControl" class="mui-segmented-control mb">
                         <a class="mui-control-item" href="{:url('camp/index')}">返回首页</a>
-                        <a class="mui-control-item mui-active" href="#item2">我的班级</a>
-                        <a class="mui-control-item" href="#item1">训练营</a>
+                        <a class="mui-control-item mui-active" href="#item13">我的班级</a>
+                        <a class="mui-control-item" href="#item14">训练营</a>
                     </div>
                 </div>
 
-
-                <div class="item-list">
-                    <div id="item2" class="mui-control-content mui-active">
+                <div class="item-list mt44">
+                    <div id="item13" class="mui-control-content mui-active">
                         <div class="whitebg card-list">
                             {volist name="myGradeList" id="vol"}
                             <div class="mui-card">
@@ -392,7 +402,7 @@
                             {/volist}
                         </div>
                     </div>
-                    <div id="item1" class="mui-control-content">
+                    <div id="item14" class="mui-control-content">
                         <div class="whitebg card-list">
                             {volist name="campGradeList" id="vol"}
                             <div class="mui-card">
@@ -409,20 +419,19 @@
                                     href="{:url('schedule/recordSchedule',['grade_id'=>$vol['id'],'lesson_id'=>$vol['lesson_id'],'camp_id'=>$vol['camp_id']])}">录课</a>
                                 </div>
                             </div>
-
                             {/volist}
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!--训练营-->
         <div id="camp" class="mui-popover">
             <div class="mui-popover-arrow"></div>
             <div class="mui-scroll-wrapper">
                 <div class="mui-scroll">
-                    <div class="camp-list camp-lesson-list detalis-list">
+                    <div class="camp-list detalis-list">
                         <ul class="mui-table-view list">
                         </ul>
                     </div>
@@ -434,32 +443,33 @@
 
     <!--底部导航-->
     <nav class="mui-bar mui-bar-tab schedule-list weeklist">
-        <a class="mui-tab-item mui-active" href="#  tabbar-week-one">
-            <span class="mui-tab-label">一</span>
+        <a class="mui-tab-item mui-active" id="one" href="#一">
+            <span class="mui-tab-label weeksel">周一</span>
         </a>
-        <a class="mui-tab-item" href="#tabbar-week-two">
-            <span class="mui-tab-label">二</span>
+        <a class="mui-tab-item" href="#二">
+            <span class="mui-tab-label weeksel">周二</span>
         </a>
-        <a class="mui-tab-item" href="#tabbar-week-three">
-            <span class="mui-tab-label">三</span>
+        <a class="mui-tab-item" href="#三">
+            <span class="mui-tab-label weeksel">周三</span>
         </a>
-        <a class="mui-tab-item" href="#tabbar-week-four">
-            <span class="mui-tab-label">四</span>
+        <a class="mui-tab-item" href="#四">
+            <span class="mui-tab-label weeksel">周四</span>
         </a>
-        <a class="mui-tab-item" href="#tabbar-week-fird">
-            <span class="mui-tab-label">五</span>
+        <a class="mui-tab-item" href="#五">
+            <span class="mui-tab-label weeksel">周五</span>
         </a>
-        <a class="mui-tab-item" href="#tabbar-week-six">
-            <span class="mui-tab-label">六</span>
+        <a class="mui-tab-item" href="#六">
+            <span class="mui-tab-label weeksel">周六</span>
         </a>
-        <a class="mui-tab-item" href="#tabbar-week-seven">
-            <span class="mui-tab-label">日</span>
+        <a class="mui-tab-item" id="Sunday" href="#日">
+            <span class="mui-tab-label weeksel">周日</span>
         </a>
     </nav>
 
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script>
     //初始化
     mui.init({
@@ -471,5 +481,22 @@
     });
 
     mui('.mui-scroll-wrapper').scroll();
+
+
+    $(function(){
+        mui("body").on("tap", "#Sunday", function () {
+            filterGrade("周日");
+        });
+    })
+
+    function filterGrade(week) {
+        var selectGrade;
+        selectGrade = $("input[name=week]:contains('"+week+"')").parent();
+        var weekGrade = "";
+        selectGrade.each(function () {
+            weekGrade = weekGrade + '<div>'+$(this).html()+'</div>';
+        });
+        selectGrade.parent().append(weekGrade);
+    }
 </script>
 </html>
