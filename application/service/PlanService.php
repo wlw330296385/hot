@@ -32,12 +32,7 @@ class PlanService {
     }
 
 
-    public function getPlanInfo($map) {
-        $res = $this->Plan->where($map)->find();
-        if (!$res) return false;
-        
-        return $res->toArray();
-    }
+
 
     /**
      * 更新资源
