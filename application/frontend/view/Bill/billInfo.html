@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style>
+        label{
+            padding: 13px 15px !important;
+        }
+    </style>
 </head>
 
 <body class=whitebg>
@@ -81,7 +86,7 @@
             <h5 class="mui-text-left">退款申请<a class="mui-icon mui-icon-closeempty" href="#delete"></a></h5>
             <div class="mui-input-row" style="font-size: 14px;color: #737373">
                 <label>退款金额:</label>
-                <input type="text" name="" class="colororange mui-text-left" value="" placeholder="请输入退款金额" style="font-size: 14px;">
+                <input type="text" name="" class="colororange mui-text-left refundamount" value="" placeholder="请填写退款金额" style="font-size: 14px;">
             </div>
             <li class="mui-table-view-cell">
                 <textarea id="question" class="mui-input-clear question" placeholder="请在此处填写申请退款的原因..." value=""></textarea>
@@ -130,9 +135,11 @@
         var goods_type = $(".goods_type").text();
         var balance_pay = $("input[name=balance_pay]").val();
         var goods_des = $(".goods_des").text();
+        var refundamount = $(".refundamount").val();
         var remarks = $(".question").val();
-        if(remarks==''){
-            mui.toast("请填写退款原因")
+        console.log(refundamount)
+        if(refundamount==''&&remarks==''){
+            mui.toast("请填写退款金额和原因");
             return false;
         }
         mui.ajax("{:url('api/bill/updateBillApi')}",{
@@ -154,6 +161,7 @@
                 "goods_des":goods_des,
                 "balance_pay":balance_pay,
                 "is_pay":-1,
+                "refundamount":refundamount,
                 "remarks":remarks
             },
             dataType:'json',//服务器返回json格式数据
