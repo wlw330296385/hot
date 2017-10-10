@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <title>个人资料</title>
@@ -305,7 +304,8 @@
                         <div class="choise-identity" style="padding-bottom: 20px;padding-top: 30px;">
                             请用新的微信扫描二维码，成功扫描后当前账号将自动退出
                         </div>
-                        <img id="bindwxqrcode" alt="大热篮球" data-sse="">
+                        <img id="bindwxqrcode" alt="大热篮球" data-url="">
+                        <input id="wxsse" type="hidden" name="wxsse">
                         <div class="choise">
                             <p>此二维码两分钟后失效</p>
                         </div>
@@ -421,7 +421,8 @@
                 console.log(res);
                 if (res.code == 200) {
                     $('#bindwxqrcode').attr('src', res.data.qrcode);
-                    $('#bindwxqrcode').attr('data-sse', res.data.sseurl);
+                    $('#bindwxqrcode').attr('data-url', res.data.url);
+                    $("#wxsse").val(res.data.sseurl).change();
                 } else {
                     mui.toast(res.msg);
                 }
@@ -430,19 +431,20 @@
                 console.log(xhr + type + errorThrown);
             }
         });
-
-        /* var sseurl = $('#bindwxqrcode').attr('data-sse');
-         if (sseurl != "") {
-         if ( typeof(EventSource) !== "undefined" ) {
-         var source = new EventSource(sseurl);
-         source.onmessage = function(event) {
-         console.log(event);
-         }
-         }
-         }*/
     });
 
     $(function () {
+        $('#wxsse').on("change", function() {
+            //console.log($(this).val());
+             var sseurl = $(this).val();
+             var source = new EventSource(sseurl);
+             source.onmessage = function(event) {
+                 console.log(event.data);
+                 alert(event.data);
+                 source.close();
+             }
+        });
+
         //退出登陆
         $("#logout").on("click", function () {
             mui.ajax("{:url('api/Member/logout')}", {
