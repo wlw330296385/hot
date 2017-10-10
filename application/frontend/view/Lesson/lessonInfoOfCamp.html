@@ -43,7 +43,7 @@
 
         <ul class="mui-table-view list">
             <li class="mui-table-view-cell listli">课程单价<span>￥{$lessonInfo.cost}/课时</span></li>
-            <li class="mui-table-view-cell listli">课程数量<span>{$lessonInfo.total}节</span></li>
+            <li class="mui-table-view-cell listli">课程数量<span class="courseDoms">{volist name="$lessonInfo.doms" id="vol" }{$vol},{/volist}</span></li>
             <li class="mui-table-view-cell listli">课程所需积分<span class="width">{$lessonInfo.score}积分</span></li>
             <li class="mui-table-view-cell listli">训练时间<span>{$lessonInfo.week} {$lessonInfo.lesson_time}</span></li>
             <li class="mui-table-view-cell listli">所属地区<span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span></li>
@@ -51,7 +51,13 @@
             <li class="mui-table-view-cell listli">具体地址<span>{$lessonInfo.location}</span></li>
             <li class="mui-table-view-cell listli">人数范围<span>{$lessonInfo.min}-{$lessonInfo.max}人</span></li>
             <li class="mui-table-view-cell listli">主教练<span>{$lessonInfo.coach}</span></li>
-            <li class="mui-table-view-cell listli">助理教练<span>{$lessonInfo.assistant}</span></li>
+            <li class="mui-table-view-cell listli">助理教练<span><?php   foreach($lessonInfo['assistants'] as $key =>$value){
+                    if($value == end($lessonInfo['assistants'])){
+                    echo $value;
+                }else{
+                echo $value.',';
+            }
+            }         ?></span></li>
             <li class="mui-table-view-cell listli">领队<span>{$lessonInfo.leader}</span></li>
             <li class="mui-table-view-cell listli">班主任<span>{$lessonInfo.teacher}</span></li>
             <li class="mui-table-view-cell listli">备注<span>{$lessonInfo.remarks}</span></li>
@@ -61,10 +67,16 @@
 
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+    $(function(){
+        var cDoms = $(".courseDoms").text();
+        cDoms = cDoms.substring(0,cDoms.length-1);
+        $(".courseDoms").text(cDoms);
+    })
 </script>
 </html>
