@@ -162,12 +162,15 @@
     //接口获取数据并追加到页面
     var toList = function (wList, page, gType, status) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/student/getStudentListByPageApi','','',true)}" + '/?page=' + page;
+        var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}";
         var campID = "{$camp_id}";
+        var typeID = "1";
         mui.ajax({
             url: url,
             data: {
                 camp_id: campID,
+                type:typeID,
+                page:page,
                 status: status
             },
             dataType: 'json',//服务器返回json格式数据
@@ -188,7 +191,7 @@
                         } else {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为在营</span></div>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].student_avatar + '"><div class="mui-media-body wd45">' + data.data.data[i].student + '<img src="'+studentSexUrl+'" /><p class="mui-ellipsis">学员ID' + data.data.data[i].student_id + '</p></div></a></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].student_avatar + '"><div class="mui-media-body wd45">' + data.data.data[i].member + ' <img src="'+studentSexUrl+'" /><p class="mui-ellipsis">学员ID：' + data.data.data[i].member_id + '</p></div></a></div>';
                         newli += '</li>';
                     }
                 }

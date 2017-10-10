@@ -97,7 +97,8 @@ class Student extends Base
 					->where(['grade_member.camp_id'=>$camp_id,'grade_member.type'=>$type,'grade_member.status'=>1])
 					->limit(20)
 					->select();				
-		$this->assign('studenList',$studenList);	
+		$this->assign('studenList',$studenList);
+        $this->assign('camp_id',$camp_id);
 		if($type==1){
 			$studenListOffLine = Db::view('grade_member','student_id,grade,grade_id,camp_id,lesson,lesson_id')
 					->view('student','*','student.id=grade_member.student_id')
