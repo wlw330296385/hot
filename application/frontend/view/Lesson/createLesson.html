@@ -42,25 +42,25 @@
         <form action="" class="mui-input-group">
             <div class="mui-input-row">
                 <label>课程名称</label>
-                <input type="text" name="lesson" class="data" value="" placeholder="请填写课程名称">
+                <input type="text" name="lesson" class="data dataVal" value="" placeholder="请填写课程名称">
                 <input type="hidden" name="camp_id" class="data" value="{$campInfo.id}">
                 <input type="hidden" name="camp" class="data" value="{$campInfo.camp}">
             </div>
             <div class="mui-input-row">
                 <a href="#lessonType" class="mui-navigate-right">
                     <label>课程类型</label>
-                    <span class="lessonTypeCont domData" name="gradecate"></span>
+                    <span class="lessonTypeCont domData dataSpan" name="gradecate"></span>
                     <input type="hidden" name="gradecate_id" class="gradecate_id data" value="">
                 </a>
             </div>
             <div class="mui-input-row">
                 <label>课程单价</label>
-                <input type="text" class="data" value="" name="cost" data-field="cost" placeholder="请填写课程单价">
+                <input type="text" class="data dataVal" value="" name="cost" data-field="cost" placeholder="请填写课程单价">
             </div>
             <div class="mui-input-row">
                 <a href="#lessonDom" class="mui-navigate-right">
                     <label>课程数量</label>
-                    <span class="lessonDom"></span>
+                    <span class="lessonDom dataSpan"></span>
                     <input type="hidden" name="doms" class="data" value="" >
                 </a>
             </div>
@@ -71,7 +71,7 @@
             <div class="mui-input-row picker btn" id="demo5" data-options='{"type":"time"}'>
                <a href="#" class="mui-navigate-right">
                    <label>训练时间</label>
-                   <span id="result" class="ui-alert domData" name="lesson_time" ></span>
+                   <span id="result" class="ui-alert domData dataSpan" name="lesson_time" ></span>
                </a>
            </div>
            <div class="mui-input-row">
@@ -93,13 +93,13 @@
         <div class="mui-input-row" id='showCityPicker3'>
             <a href="#" class="mui-navigate-right">
                 <label>所属地区</label>
-                <span id="cityResult3" class="ui-alert domData" name="address" ></span>
+                <span id="cityResult3" class="ui-alert domData dataSpan" name="address" ></span>
             </a>
         </div>
         <div class="mui-input-row">
             <a href="#trainLocation" class="mui-navigate-right">
                 <label>训练地点</label>
-                <span class="trainLocationCont domData" name="court"  ></span>
+                <span class="trainLocationCont domData dataSpan" name="court"  ></span>
                 <input type="hidden" name="court_id" value="" class="data court_id">
                 <input type="hidden" name="location" value="" class="data location">
             </a>
@@ -114,7 +114,7 @@
            <label>最少开课人数</label>
            <div class="mui-numbox">
             <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-            <input class="mui-input-numbox data" type="number" name="min"  value="" >
+            <input class="mui-input-numbox data dataVal" type="number" name="min"  value="" >
             <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
         </div>
         </div>
@@ -122,35 +122,35 @@
             <label>最多开课人数</label>
             <div class="mui-numbox">
                 <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                <input class="mui-input-numbox data" type="number" name="max" value="" >
+                <input class="mui-input-numbox data dataVal" type="number" name="max" value="" >
                 <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
             </div>
         </div>
         <div class="mui-input-row">
             <a href="#mainCoach" class="mui-navigate-right">
                 <label>主教练</label>
-                <span class="mainCoachCont domData" name="coach" ></span>
+                <span class="mainCoachCont domData dataSpan" name="coach" ></span>
                 <input type="hidden" name="coach_id" value="" class="data coach_id">
             </a>
         </div>
         <div class="mui-input-row">
             <a href="#assistantCoach" class="mui-navigate-right">
                 <label>助理教练</label>
-                <span class="assistantCoachCont domData" name="assistants"></span>
+                <span class="assistantCoachCont domData" name="assistants">（选填）</span>
                 <input type="hidden" name="assistant_ids" value="" class="data assistant_ids">
             </a>
         </div>
         <div class="mui-input-row">
             <a href="#leader" class="mui-navigate-right">
                 <label>领队</label>
-                <span class="leaderCont domData" name="leader"></span>
+                <span class="leaderCont domData" name="leader">（选填）</span>
                 <input type="hidden" name="leader_id" value="" class="data leader_id">
             </a>
         </div>
         <div class="mui-input-row">
             <a href="#headMaster" class="mui-navigate-right">
                 <label>班主任</label>
-                <span class="headMasterCont domData" name="teacher"></span>
+                <span class="headMasterCont domData" name="teacher">（选填）</span>
                 <input type="hidden" name="teacher_id" value="" class="data teacher_id">
             </a>
         </div>
@@ -158,14 +158,14 @@
         <div class="mui-input-row h-auto">
             <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                 <label>课程封面</label>
-                <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
+                <img id="preview_1" class="coachicon icon01 upload-preview dataImg" alt="" src="">
                 <input type="hidden" name="cover" value='' class="data">
             </a>
         </div>
 
        <div class="mui-input-row mt55">
                 <label>备注</label>
-                <input type="text" name="remarks" class="input data" placeholder="请输入备注信息">
+                <input type="text" name="remarks" class="input data" placeholder="（选填）">
             </div>
 
         </form>
@@ -592,8 +592,12 @@
 
     // 获取数据并进行提交
     function submitAction(){
-        var data = wooApi.getInputData('input','data');
-        datas = wooApi.getInputData('select','data',data);
+        var dataVal = $(".dataVal").val();
+        var dataSpan = $(".dataSpan").text();
+        var dataImg = $(".dataImg").attr('src');
+        if(dataVal!=''&&dataSpan!=''&&dataImg!=''){
+            var data = wooApi.getInputData('input','data');
+            datas = wooApi.getInputData('select','data',data);
             // 获取其他标签值
             arrData = wooApi.getDomData('domData',datas);
             console.log(arrData)
@@ -605,9 +609,13 @@
                 mui.toast(ajaxResult.msg);
                 console.log(ajaxResult.data)
                 var goUrl = "{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/'+ajaxResult.data+'/camp_id/{$campInfo.id}';
-                window.top.location.href = goUrl;
+                setTimeout(window.top.location.href = goUrl,2500);
             }
+        }else{
+            mui.toast("请填写课程信息");
         }
+        
+    }
 
 
 
