@@ -55,10 +55,11 @@ class CourtService {
     }
 
     // 关联场地详情
-    public function getCourtInfoWithCourtCamp($court_id,$camp_id) {
+    public function getCourtInfoWithCourtCamp($court_id,$camp_id,$order="court_camp.id desc") {
         $result = Db::view('court','*')
                 ->view('court_camp',['camp_id'=>'campid','court_id'=>'courtid'],'court_camp.court_id = court.id and court_camp.camp_id='.$camp_id,'LEFT')
                 ->where(['court.id'=>$court_id])
+                ->order($order)
                 ->find();
 
         if($result){           
@@ -74,7 +75,7 @@ class CourtService {
 
 
     // 获取训练营下的场地列表 (带分页参数)
-    public function getCourtListOfCamp($map = [], $page=1, $limit=10){
+    public function getCourtListOfCamp($map = [], $page=1, $limit=10,$order = 'court_camp.id desc'){
         if (array_key_exists('status', $map)) {
             $map['courtisopen'] = $map['status'];
             unset($map['status']);
@@ -84,7 +85,7 @@ class CourtService {
         $list = Db::view('court_camp',['id', 'camp_id', 'camp', 'court_id', 'court'])
             ->view('court', ['cover', 'status'=>'courtisopen', 'location', 'area'], 'court.id=court_camp.court_id')
             ->where($map)
-            ->limit(5)->page($page)->select();
+            ->limit(5)->order($order)->page($page)->select();
 
         foreach ($list as $key => $value) {
             if ($value['cover']) {
