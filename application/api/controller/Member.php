@@ -143,32 +143,43 @@ class Member extends Base{
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
 
+            // 查询会员数据
             $memberS = new MemberService();
             $member = $memberS->getMemberInfo(['id' => $memberid]);
             if (!$member) {
                 return json(['code' => 100, 'msg' => '会员信息' . __lang('MSG_401')]);
-            }
-            
-            $ismember = $memberS->getMemberInfo(['openid' => $newopenid]);
-            if ($ismember) {
-                return json(['code' => 100, 'msg' => '更换的微信号已是会员,不能更换']);
             }
 
             if ($member['openid'] == $newopenid) {
                 return json(['code' => 100, 'msg' => '请使用新的微信号进行绑定']);
             }
 
-
             $newwx = cache('userinfo_' . $newopenid);
             if (!$newwx) {
                 return json(['code' => 100, 'msg' => '信息过期,请重新扫码']);
             }
 
+            // 新微信号 已有会员数据 清理微信openid
+            $ismember = $memberS->getMemberInfo(['openid' => $newopenid]);
+            if ($ismember) {
+//                return json(['code' => 100, 'msg' => '更换的微信号已是会员,不能更换']);
+                $cleanmemberopenid = db('member')->update([
+                    'id' => $ismember['id'],
+                    'openid' => '',
+                    'update_time' => time()
+                ]);
+                if (!$cleanmemberopenid) {
+                    return json(['code' => 100, 'msg' => '新微信号的会员解绑'.__lang('MSG_400')]);
+                }
+            }
+
+            // 更换微信号绑定
             $updateMember = db('member')->update([
                 'id' => $member['id'],
                 'openid' => $newwx['openid'],
                 'nickname' => $newwx['nickname'],
                 'avatar' => str_replace("http://", "https://", $newwx['headimgurl']),
+                'update_time' => time()
             ]);
 
             if (!$updateMember) {
