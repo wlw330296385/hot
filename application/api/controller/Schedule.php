@@ -8,12 +8,12 @@ use app\service\ScheduleService;
 class Schedule extends Base
 {
 	
-	protected $scheduleService;
+	protected $ScheduleService;
 
 	function _initialize()
 	{
 		parent::_initialize();
-		$this->scheduleService = new ScheduleService;
+		$this->ScheduleService = new ScheduleService;
 	}
 
 	public function index(){
@@ -63,7 +63,7 @@ class Schedule extends Base
 			// 只要是训练营的教练都可以跨训练营录课
 			$camp_id = input('param.camp_id');
 			$member_id = $this->memberInfo['id'];
-			$result = $this->scheduleService->is_power($camp_id,$member_id);
+			$result = $this->ScheduleService->is_power($camp_id,$member_id);
 			return $result;
 		}catch (Exception $e){
 			return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -100,7 +100,7 @@ class Schedule extends Base
 			$data = input('post.');
 			$data['member_id'] = $this->memberInfo['id'];
 			$data['member'] = $this->memberInfo['member'];
-			$result = $this->scheduleService->createSchedule($data);
+			$result = $this->ScheduleService->createSchedule($data);
 			return json($result);
 		}catch (Exception $e){
 			return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -130,4 +130,15 @@ class Schedule extends Base
 		}
 	}
 
+
+	//获取列表有page
+	public function getScheduleListByPageApi(){
+		try{
+			$map = input('post.');
+			$result = $this->ScheduleService->getScheduleListByPage($map);
+			return json($result);
+		}catch (Exception $e){
+			return json(['code'=>100,'msg'=>$e->getMessage()]);
+		}
+	}
 }

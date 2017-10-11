@@ -26,6 +26,15 @@ class ScheduleService {
         }
 	}
 
+    public function getScheduleListByPage($map = [],$paginate = 10,$order = ''){
+        $result = $this->scheduleModel->where($map)->order($order)->paginate($paginate);
+        if($result){
+            return $result->toArray();
+        }else{
+            return $result;
+        }
+    }
+
 	// 发布课时
 	public function createSchedule($data){
 		 // 查询权限

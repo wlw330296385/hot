@@ -171,14 +171,21 @@ class Grade extends Base{
         if(!$coach_id){
             $coach_id = db('coach')->where(['member_id'=>$this->memberInfo['id'],'status'=>1])->value('id');
         }
-        $week = input('param.week');
+        if(!$coach_id){
+            $coach_id = '';
+        }
+        // $week = input('param.week');
+        // if(!$coach_id){
+        //     $myGradeList = [];
+        // }else{
+        //     $myGradeList = db('grade')->where(['coach_id'=>$coach_id,'camp_id'=>$camp_id])->where('week','like',"%$week%")->select();
+        // }
         
-        $myGradeList = db('grade')->where(['coach_id'=>$coach_id,'camp_id'=>$camp_id])->where('week','like',"%$week%")->select();
-        $campGradeList = db('grade')->where(['camp_id'=>$camp_id])->where('week','like',"%$week%")->select();
-
+        // $campGradeList = db('grade')->where(['camp_id'=>$camp_id])->where('week','like',"%$week%")->select();
+        $this->assign('coach_id',$coach_id);
         $this->assign('camp_id',$camp_id);
-        $this->assign('myGradeList',$myGradeList);    
-        $this->assign('campGradeList',$campGradeList);
+        // $this->assign('myGradeList',$myGradeList);    
+        // $this->assign('campGradeList',$campGradeList);
         return view('Grade/gradeListWeek');
     }
 
