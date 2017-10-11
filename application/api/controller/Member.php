@@ -7,14 +7,8 @@ use app\service\MemberService;
 use app\service\WechatService;
 use think\Exception;
 
-<<<<<<< HEAD
 class Member extends Base{
 	private $SalaryOut;
-=======
-class Member extends Frontend
-{
-    private $SalaryOut;
->>>>>>> ef927b3b3d6c2a845347ba5e5fdeb892c95d88a5
     private $MemberService;
 
     public function _initialize()
