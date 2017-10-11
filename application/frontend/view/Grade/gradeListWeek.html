@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>周课表</title>
+    <title>训练营周课表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -17,10 +17,13 @@
             top: 0;
             z-index: 10;
         }
+        .cWeek{
+            display: none;
+        }
     </style>
 </head>
 
-<body class=whitebg>
+<body>
 
     <div class="mui-content">
 
@@ -30,55 +33,14 @@
                 <div  class="mui-segmented-control mb">
                     <a class="mui-control-item mui-action-back" href="{:url('camp/index')}">返回</a>
                     <a class="mui-control-item mui-active" href="#item1">我的班级</a>
-                    <a class="mui-control-item" href="#item2">训练营</a>
+                    <a class="mui-control-item" href="#item2">全部班级</a>
                 </div>
             </div>
 
             <div class="item-list mt44">
                 <div id="item1" class="mui-control-content mui-active">
-                    <div class="whitebg card-list">
-                        {volist name="myGradeList" id="vol"}
-                        
-                        <div class="mui-card">
-                            <input type="hidden" name="week" value="{$vol.week}">
-                            <div class="mui-card-header">
-                                <div class="card-left"><span class="time">{$vol.lesson_time}</span>{$vol.location}</div>
-                            </div>
-                            <div class="mui-card-content">
-                                <div class="mui-card-content-inner">
-                                    <h4>{$vol.grade} <span class="name">{$vol.coach}</span></h4>
-                                </div>
-                            </div>
-                            <div class="mui-card-footer">{$vol.gradecate}
-                                <a style="color:red;"
-                                href="{:url('schedule/recordSchedule',['grade_id'=>$vol['id'],'lesson_id'=>$vol['lesson_id'],'camp_id'=>$vol['camp_id']])}">录课</a>
-                            </div>
-                        </div>
+                    <div id="gradeList" class="card-list">
 
-                        {/volist}
-                    </div>
-                </div>
-                <div id="item2" class="mui-control-content">
-                    <div class="whitebg card-list">
-                        {volist name="campGradeList" id="vol"}
-                        
-                        <div class="mui-card">
-                            <input type="hidden" name="week" value="{$vol.week}">
-                            <div class="mui-card-header">
-                                <div class="card-left"><span class="time">{$vol.lesson_time}</span> {$vol.location}</div>
-                            </div>
-                            <div class="mui-card-content">
-                                <div class="mui-card-content-inner">
-                                    <h4>{$vol.grade} <span class="name">{$vol.coach}</span></h4>
-                                </div>
-                            </div>
-                            <div class="mui-card-footer">{$vol.gradecate}
-                                <a style="color:red;"
-                                href="{:url('schedule/recordSchedule',['grade_id'=>$vol['id'],'lesson_id'=>$vol['lesson_id'],'camp_id'=>$vol['camp_id']])}">录课</a>
-                            </div>
-                        </div>
-
-                        {/volist}
                     </div>
                 </div>
             </div>
@@ -91,33 +53,17 @@
 
     <!--底部导航-->
     <nav class="mui-bar mui-bar-tab schedule-list weeklist">
-        <a class="mui-tab-item mui-active" id="one" href="#一">
-            <span class="mui-tab-label weeksel">周一</span>
-        </a>
-        <a class="mui-tab-item" href="#二">
-            <span class="mui-tab-label weeksel">周二</span>
-        </a>
-        <a class="mui-tab-item" href="#三">
-            <span class="mui-tab-label weeksel">周三</span>
-        </a>
-        <a class="mui-tab-item" href="#四">
-            <span class="mui-tab-label weeksel">周四</span>
-        </a>
-        <a class="mui-tab-item" href="#五">
-            <span class="mui-tab-label weeksel">周五</span>
-        </a>
-        <a class="mui-tab-item" href="#六">
-            <span class="mui-tab-label weeksel">周六</span>
-        </a>
-        <a class="mui-tab-item" id="Sunday" href="#日">
-            <span class="mui-tab-label weeksel">周日</span>
-        </a>
+        <div class="mui-tab-item w1 mui-active">周一</div>
+        <div class="mui-tab-item w2">周二</div>
+        <div class="mui-tab-item w3">周三</div>
+        <div class="mui-tab-item w4">周四</div>
+        <div class="mui-tab-item w5">周五</div>
+        <div class="mui-tab-item w6">周六</div>
+        <div class="mui-tab-item w0">周日</div>
     </nav>
 
     <!--隐藏列表：全部班级-->
-    <div id="sourceList">
-
-    </div>
+    <div id="sourceList" style="display: none;"></div>
 
 
 </div>
@@ -134,9 +80,29 @@
 
         //获取训练营班级列表
         toGradeList();
+
+        //获取当日是周几，并触发对应周几菜单
+        var currDate =  new Date();
+        var getWeekCn = $(".weeklist w"+currDate.getDay()).text();
+
+        //点选周几事件
+        $(".weeklist").on('click','div',function(){
+            var getWeek = $(this).text();
+            filterTeam(getWeek);
+        })
     });
 
-
+    //刷选周一至周日的球队，并置于对应位置
+    var filterTeam = function(week) {
+        var selectTeam;
+        selectTeam = $("#sourceList .cWeek:contains('"+week+"')").parent();
+        var weekTeam = "";
+        selectTeam.each(function () {
+            weekTeam += '<div class="mui-card">'+$(this).html()+'</div>';
+        });
+        $("#gradeList").empty();
+        $("#gradeList").append(weekTeam);
+    }
 
     //训练营教练列表接口获取数据并追加到页面
     var toGradeList = function() {
@@ -157,7 +123,7 @@
                     var newli = '';
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('schedule/recordSchedule')}" + '/grade_id/' + data.data.data[i].id + '/lesson_id/' + data.data.data[i].lesson_id + '/camp_id/' + data.data.data[i].camp_id;
-                        newli = newli + '<div class="mui-card">input type="hidden" name="week" value="' + data.data.data[i].week + '"><div class="mui-card-header"><div class="card-left"><span class="time">' + data.data.data[i].lesson_time + '</span> ' + data.data.data[i].location + '</div></div><div class="mui-card-content"><div class="mui-card-content-inner"><h4>' + data.data.data[i].grade + ' <span class="name"> ' + data.data.data[i].coach + '</span></h4></div></div><div class="mui-card-footer">' + data.data.data[i].gradecate + '<a href="'+urls+'">录课</a></div></div>'
+                        newli = newli + '<div class="mui-card"><span class="cWeek">' + data.data.data[i].week + '</span><div class="mui-card-header"><div class="card-left"><span class="time">' + data.data.data[i].lesson_time + '</span> ' + data.data.data[i].location + '</div></div><div class="mui-card-content"><div class="mui-card-content-inner"><h4>' + data.data.data[i].grade + ' <span class="name"> ' + data.data.data[i].coach + '</span></h4></div></div><div class="mui-card-footer">' + data.data.data[i].gradecate + '<a href="'+urls+'">录课</a></div></div>'
                     }
                     $("#sourceList").empty();
                     if(newli==''){
