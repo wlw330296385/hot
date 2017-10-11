@@ -22,6 +22,7 @@ class Message extends Base{
     		$campIDs = db('camp_member')
                   ->where(['member_id'=>$this->memberInfo['id'],'status'=>1])
                   ->where('type','gt',2)
+                  ->where('delete_time',null)
                   ->column('camp_id');
             $messageList = $this->MessageService->getMessageList(['camp_id'=>['in',$campIDs]]);
             if($status){
@@ -109,5 +110,8 @@ class Message extends Base{
         }
     }
 
-    
+    //获取未读消息数量
+    public function getUnReadMessageApi(){
+        
+    }
 }

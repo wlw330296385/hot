@@ -54,50 +54,6 @@ class Lesson extends Base{
         return view('Lesson/lessonList');
     }
 
-    //编辑课程
-    public function updateLesson(){
-    	//训练营主教练
-    	$camp_id = input('param.camp_id');
-        $lesson_id = input('param.lesson_id');
-        $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
-        if($is_power<2){
-            $this->error('您没有权限');
-        }
-        $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
-        
-        // 教练列表
-    	$staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
-
-    	$gradeCategoryList = $this->GradeService->getGradeCategory(1);
-        $courtService = new \app\service\CourtService;
-        $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
-        $this->assign('lessonInfo',$lessonInfo);
-        $this->assign('camp_id',$camp_id);
-    	$this->assign('gradeCategoryList',$gradeCategoryList);
-        $this->assign('courtList',$courtList);
-    	$this->assign('staffList',$staffList);
-    	return view('Lesson/updateLesson');
-    }
-
-    // 添加课程|发布课程
-    public function createLesson(){
-        //训练营主教练
-        $camp_id = input('param.camp_id');
-        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
-        // 教练列表
-        $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
-        $gradeCategoryList = $this->GradeService->getGradeCategory(1);
-        $courtService = new \app\service\CourtService;
-        $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
-        $this->assign('campInfo',$campInfo);
-        $this->assign('gradeCategoryList',$gradeCategoryList);
-        $this->assign('courtList',$courtList);
-        $this->assign('staffList',$staffList);
-        return view('Lesson/createLesson');
-    }
-
-
-
     // 购买课程
     // public function buyLesson(){
     //     $studentInfo = db('student')->where(['member_id'=>$this->memberInfo['id']])->select();        

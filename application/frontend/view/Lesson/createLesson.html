@@ -606,10 +606,10 @@
             var url = "{:url('api/lesson/updateLessonApi')}";
             var ajaxResult = wooApi.asyncF(url,objData);
             if(ajaxResult.code){
-                mui.toast(ajaxResult.msg);
                 console.log(ajaxResult.data)
-                var goUrl = "{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/'+ajaxResult.data+'/camp_id/{$campInfo.id}';
-                setTimeout(window.top.location.href = goUrl,2500);
+                 mui.alert((ajaxResult.msg,'提交成功','确定',function(){
+                    window.location.href="{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/'+ajaxResult.data+'/camp_id/{$campInfo.id}';
+                  });
             }
         }else{
             mui.toast("请填写课程信息");

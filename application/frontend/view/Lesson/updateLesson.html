@@ -610,11 +610,9 @@
         var url = "{:url('api/lesson/updateLessonApi',['lesson_id'=>$lessonInfo['id']])}";
         var ajaxResult = wooApi.asyncF(url,objData);
         if(ajaxResult.code){
-            mui.toast(ajaxResult.msg);
-            // console.log(ajaxResult.data)
-            // var goUrl = "{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/'+ajaxResult.data+'/camp_id/{$lessonInfo.camp_id}';
-            var goUrl = "{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/{$lessonInfo.id}/camp_id/{$lessonInfo.camp_id}';
-            setTimeout(window.top.location.href = goUrl,2000);
+            mui.alert((ajaxResult.msg,'修改成功','确定',function(){
+            window.location.href="{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/{$lessonInfo.id}/camp_id/{$lessonInfo.camp_id}';
+          });
         }
     }
 

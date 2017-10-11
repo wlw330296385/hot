@@ -25,8 +25,8 @@ class LessonService {
     public function getLessonList($map=[],$page = 1,$order='',$paginate = 10) {
         $result = Lesson::where($map)->order($order)->page($page,$paginate)->select();
         if($result){
-            $result = $result->toArray();
-            return $result;
+            $res = $result->toArray();
+            return $res;
         }else{
             return $result;
         }
@@ -117,7 +117,7 @@ class LessonService {
         }
         $result = $this->lessonModel->save($data,['id'=>$id]);
         if($result){
-            return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $result];
+            return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->lessonModel->id];
         }else{
             return ['msg'=>__lang('MSG_400'), 'code' => 100];
         }
