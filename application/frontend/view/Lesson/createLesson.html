@@ -136,21 +136,21 @@
         <div class="mui-input-row">
             <a href="#assistantCoach" class="mui-navigate-right">
                 <label>助理教练</label>
-                <span class="assistantCoachCont domData dataSpan" name="assistants"></span>
+                <span class="assistantCoachCont domData" name="assistants">（选填）</span>
                 <input type="hidden" name="assistant_ids" value="" class="data assistant_ids">
             </a>
         </div>
         <div class="mui-input-row">
             <a href="#leader" class="mui-navigate-right">
                 <label>领队</label>
-                <span class="leaderCont domData" name="leader"></span>
+                <span class="leaderCont domData" name="leader">（选填）</span>
                 <input type="hidden" name="leader_id" value="" class="data leader_id">
             </a>
         </div>
         <div class="mui-input-row">
             <a href="#headMaster" class="mui-navigate-right">
                 <label>班主任</label>
-                <span class="headMasterCont domData dataSpan" name="teacher"></span>
+                <span class="headMasterCont domData" name="teacher">（选填）</span>
                 <input type="hidden" name="teacher_id" value="" class="data teacher_id">
             </a>
         </div>
@@ -158,14 +158,14 @@
         <div class="mui-input-row h-auto">
             <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                 <label>课程封面</label>
-                <img id="preview_1" class="coachicon icon01 upload-preview dataSpan" alt="">
+                <img id="preview_1" class="coachicon icon01 upload-preview dataImg" alt="" src="">
                 <input type="hidden" name="cover" value='' class="data">
             </a>
         </div>
 
        <div class="mui-input-row mt55">
                 <label>备注</label>
-                <input type="text" name="remarks" class="input data" placeholder="请输入备注信息">
+                <input type="text" name="remarks" class="input data" placeholder="（选填）">
             </div>
 
         </form>
@@ -594,7 +594,8 @@
     function submitAction(){
         var dataVal = $(".dataVal").val();
         var dataSpan = $(".dataSpan").text();
-        if(dataVal!=''&&dataSpan!=''){
+        var dataImg = $(".dataImg").attr('src');
+        if(dataVal!=''&&dataSpan!=''&&dataImg!=''){
             var data = wooApi.getInputData('input','data');
             datas = wooApi.getInputData('select','data',data);
             // 获取其他标签值
