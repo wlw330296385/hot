@@ -26,7 +26,7 @@ class GradeService{
     // 班级分页
     public function getGradeListByPage($map=[], $order='', $paginate=10) {
         $result =  Grade::where($map)->order($order)->paginate($paginate);
-        if($res){           
+        if($result){
             $res = $result->toArray();
             return $res;
         }else{
