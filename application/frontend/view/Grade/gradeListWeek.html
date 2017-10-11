@@ -483,19 +483,22 @@
     mui('.mui-scroll-wrapper').scroll();
 
 
-    mui("body").on("tap", "#Sunday", function () {
-        var selectGrade;
-        selectGrade = $("input[name=week]").val();
-        console.log(selectGrade)
-            // var weekGrade = "";
-            // selectGrade.each(function () {
-            //     weekGrade = weekGrade + '<div>'+$(this).html()+'</div>';
-            // });
-            // selectGrade.parent().append(weekGrade);
-    });
+    // mui("body").on("tap", "#Sunday", function () {
 
-    // function filterGrade(week) {
+    // });
 
-    // }
+   //刷选周一至周日的球队，并置于对应位置
+    function filterTeam(week) {
+        
+        var selectTeam;
+        selectTeam = $("#sourceList .cWeek:contains('"+week+"')").parent();
+        var weekTeam = "";
+        selectTeam.each(function () {
+            weekTeam = weekTeam + '<div>'+$(this).html()+'</div>';
+        });
+        
+        $(".wList .title:contains('"+week+"')").next(".team").append(weekTeam);
+        
+    }
 </script>
 </html>
