@@ -123,16 +123,17 @@ class Grade extends Base{
     public function updateGradeApi(){
         try{
             $grade_id = input('param.grade_id');
-            $data = input('post.');
-            $data['member_id'] = $this->memberInfo['id'];
-            $data['member'] = $this->memberInfo['member'];
-            if($data['assistants']){
-                $assistan_list = explode(',', $data['assistants']);
+            $data = input('post.');        
+            $data['gradeData']['member_id'] = $this->memberInfo['id'];
+            $data['gradeData']['member'] = $this->memberInfo['member'];
+            if($data['gradeData']['assistants']){
+                $assistan_list = explode(',', $data['gradeData']['assistants']);
                 $seria = serialize($assistan_list);
-                $data['assistant'] = $seria;
+                $data['gradeData']['assistant'] = $seria;
             }
+            // dump($data);
             $GradeService = new GradeService;
-            $result = $GradeService->updateGrade($data,$grade_id);
+            $result = $GradeService->updateGrade($data['gradeData'],$data['gradeData']['grade_id']);
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
