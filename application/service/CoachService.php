@@ -2,6 +2,7 @@
 namespace app\service;
 use app\model\Coach;
 use app\common\validate\CoachVal;
+use app\model\Grade;
 use app\model\GradeMember;
 use think\Db;
 class CoachService{
@@ -126,6 +127,17 @@ class CoachService{
             $result = $res->toArray();
             return $result;
         }else{
+            return $res;
+        }
+    }
+
+    // 教练所在在线班级列表
+    public function onlinegradelist($coach_id, $camp_id) {
+        $model = new Grade();
+        $res = $model->where(['camp_id' => $camp_id,'coach_id' => $coach_id, 'status' => 1])->select();
+        if ($res) {
+            return $res->toArray();
+        } else {
             return $res;
         }
     }

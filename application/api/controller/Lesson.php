@@ -264,6 +264,13 @@ class Lesson extends Base{
                 return json([ 'code' => 100, 'msg' => __lang('MSG_403') ]);
             }
 
+            // 教练身份 只能操作自己创建的课程
+            if ($camppower==2) {
+                if($lesson['member_id'] != $this->memberInfo['id']) {
+                    return json([ 'code' => 100, 'msg' => __lang('MSG_403').',只能操作自己发布的课程' ]);
+                }
+            }
+
             switch ($lesson['status_num']) {
                 case "1": {
                     if ($action == 'editstatus') {

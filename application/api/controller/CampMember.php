@@ -1,7 +1,10 @@
 <?php 
 namespace app\api\controller;
 use app\api\controller\Base;
+use app\model\MessageMember;
 use app\service\CampService;
+use app\service\CoachService;
+use app\service\WechatService;
 use think\Db;
 use think\Exception;
 
@@ -250,13 +253,63 @@ class CampMember extends Base{
             }
             
             $campS = new CampService();
+            // 操作权限
             $power = $campS->isPower($campmember['camp_id'], $this->memberInfo['id']);
             if ($power < 3) {
-                return ['code' => 100, 'msg' => __lang('MSG_403')];
+                return json(['code' => 100, 'msg' => __lang('MSG_403')]);
             }
+
+            // 删教练 检查是否在营有在线班级
+            if ($campmember->getData('type') == 2) {
+                $coachS = new CoachService();
+                $grade = $coachS->onlinegradelist($campmember['member_id'], $campmember['camp_id']);
+                if ($grade) {
+                    return json(['code' => 100, 'msg' => '该教练有在线班级,需先下架或删除班级记录']);
+                }
+            }
+
             $campmember->status = -1;
             $result = $campmember->save();
             if ($result) {
+                $memberopenid = getMemberOpenid($campmember['member_id']);
+                // 发送模板消息
+                $sendTemplateData = [
+                    'touser' => $memberopenid,
+                    'template_id' => 'anBmKL68Y99ZhX3SVNyyX6hrtzhlDW3RrB-vB6_GmqM',
+                    'url' => url('frontend/index/index', '', '', true),
+                    'data' => [
+                        'first' => ['value' => '您好, 您所在的'. $campmember['camp'] .'的'. $campmember['type'].'身份被移除了'],
+                        'keyword1' => ['value' => $campmember['member']],
+                        'keyword2' => ['value' => '训练营营主或管理员移除'],
+                        'keyword3' => ['value' => date('Y年m月d日 H时i分')]
+                    ]
+                ];
+                $wechatS = new WechatService();
+                $sendTemplateResult = $wechatS->sendTemplate($sendTemplateData);
+                $log_sendTemplateData = [
+                    'wxopenid' => $memberopenid,
+                    'member_id' => $campmember['member_id'],
+                    'url' => $sendTemplateData['url'],
+                    'content' => serialize($sendTemplateData),
+                    'create_time' => time()
+                ];
+                if ($sendTemplateResult) {
+                    $log_sendTemplateData['status'] = 1;
+                } else {
+                    $log_sendTemplateData['status'] = 0;
+                }
+                db('log_sendtemplatemsg')->insert($log_sendTemplateData);
+
+                // 发送站内消息
+                $modelMessageMember = new MessageMember();
+                $modelMessageMember->save([
+                    'title' => $sendTemplateData['data']['first']['value'],
+                    'content' => $sendTemplateData['data']['first']['value'],
+                    'member_id' => $campmember['member_id'],
+                    'status' => 1,
+                    'url' => $sendTemplateData['url']
+                ]);
+
                 $response = json(['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $result]);
             } else {
                 $response = json(['code' => 100, 'msg' => __lang('MSG_400')]);
