@@ -137,12 +137,21 @@ class Bill extends Base{
     
     public function finishBill(){
         //查询是否成功支付
-        $billOrder = input('bill_order');
+        $billOrder = input('param.bill_order');
         if(!$billOrder){
             $this->error('未查询到订单');
         }else{
             $billInfo = $this->BillService->getBill(['bill_order'=>$billOrder]);
-        }       
+        }     
+        // 判断权限
+        $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
+        if($isPower > 1){
+            $title = "您有课程被购买,请及时跟进";
+        }else{
+            $title = "您的订单已支付成功";
+        }
+        $this->assign('title',$title);
+
         if($billInfo['goods_type'] == '课程'){
             // 课程信息
             $lessonInfo = db('lesson')->where(['id'=>$billInfo['goods_id']])->find();
@@ -155,12 +164,23 @@ class Bill extends Base{
 
     public function finishBookBill(){
         //查询是否成功支付
-        $billOrder = input('bill_order');
+        $billOrder = input('param.bill_order');
         if(!$billOrder){
             $this->error('未查询到订单');
         }else{
             $billInfo = $this->BillService->getBill(['bill_order'=>$billOrder]);
-        }       
+        }  
+
+         // 判断权限
+        $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
+
+        if($isPower > 1){
+            $title = "您的体验课被预约申请,请及时跟进";
+        }else{
+            $title = "您的体验课预约成功,请等待回复";
+        }
+        $this->assign('title',$title);
+
         if($billInfo['goods_type'] == '课程'){
             // 课程信息
             $lessonInfo = db('lesson')->where(['id'=>$billInfo['goods_id']])->find();
