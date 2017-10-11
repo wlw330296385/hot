@@ -68,6 +68,7 @@
                 <label>课程所需积分</label>
                 <input type="text" class="data" value="" name="score">
             </div>-->
+
             <div class="mui-input-row picker btn" id="demo5" data-options='{"type":"time"}'>
                 <a href="#" class="mui-navigate-right">
                     <label>训练时间</label>
@@ -105,6 +106,11 @@
                     <input type="hidden" name="location" value="{$lessonInfo.location}" class="data location">
                 </a>
             </div>
+
+            <div class="mui-input-row">
+                    <label>具体地址</label>
+                    <input type="text" name="" value="" class="location checkChinese" value="{$lessonInfo.location}">
+                </div>
 
             <div class="mui-input-row h-auto" >
                 <label>最少开课人数</label>
@@ -439,10 +445,7 @@
         cDoms = cDoms.substring(0,cDoms.length-1);
         $(".lessonDom").text(cDoms);
         $("input[name=doms]").val(cDoms);
-        // 关闭弹出菜单
-//        $(".close-popover").click(function(){
-//            mui($(this).parent()).popover("toggle");
-//        })
+
         // 上课星期
         $("#weekConfirm").click(function(){
             //选择多个星期
@@ -489,11 +492,6 @@
             $(".assistant_ids").val(id);
             mui('#assistantCoach').popover('toggle');
             console.log(id)
-            // var assistantCoach = $(this).html();
-            // $(".assistantCoachCont").html(assistantCoach);
-            // var id= $(this).attr('data-id');
-            // $(".assistant_ids").val(id);
-            // mui("#assistantCoach").popover("toggle");
         })
         // 班主任
         $(".headMaster").on('click','li',function(){
@@ -613,9 +611,10 @@
         var ajaxResult = wooApi.asyncF(url,objData);
         if(ajaxResult.code){
             mui.toast(ajaxResult.msg);
-            console.log(ajaxResult.data)
-            var goUrl = "{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/'+ajaxResult.data+'/camp_id/{$lessonInfo.camp_id}';
-            window.top.location.href = goUrl;
+            // console.log(ajaxResult.data)
+            // var goUrl = "{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/'+ajaxResult.data+'/camp_id/{$lessonInfo.camp_id}';
+            var goUrl = "{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/{$lessonInfo.id}/camp_id/{$lessonInfo.camp_id}';
+            setTimeout(window.top.location.href = goUrl,2000);
         }
     }
 
