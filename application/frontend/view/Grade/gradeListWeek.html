@@ -23,7 +23,7 @@
     </style>
 </head>
 
-<body>
+<body class="mt44">
 
     <div class="mui-content">
 
@@ -32,14 +32,19 @@
             <div class="camp-lesson-list">
                 <div  class="mui-segmented-control mb">
                     <a class="mui-control-item mui-action-back" href="{:url('camp/index')}">返回</a>
-                    <a class="mui-control-item mui-active" href="#item1">我的班级</a>
-                    <a class="mui-control-item" href="#item2">全部班级</a>
+                    <a class="mui-control-item" href="#myGrade">我的班级</a>
+                    <a class="mui-control-item mui-active" href="#allGrade">全部班级</a>
                 </div>
             </div>
 
-            <div class="item-list mt44">
-                <div id="item1" class="mui-control-content mui-active">
-                    <div id="gradeList" class="card-list">
+            <div class="item-list">
+                <div id="myGrade" class="mui-control-content">
+                    <div class="card-list">
+
+                    </div>
+                </div>
+                <div id="allGrade" class="mui-control-content mui-active">
+                    <div class="card-list">
 
                     </div>
                 </div>
@@ -81,27 +86,32 @@
         //获取训练营班级列表
         toGradeList();
 
-        //获取当日是周几，并触发对应周几菜单
+        //获取当日是周几，并定位相应列表
         var currDate =  new Date();
-        var getWeekCn = $(".weeklist w"+currDate.getDay()).text();
+        var getWeekToday = $(".weeklist").find(".w"+currDate.getDay()).text();
+        $(".weeklist").find(".mui-tab-item").removeClass("mui-active");
+        $(".weeklist").find(".w"+currDate.getDay()).addClass("mui-active");
+        filterTeam(getWeekToday);
 
         //点选周几事件
-        $(".weeklist").on('click','div',function(){
+        $(".weeklist").on('tap','div',function(){
             var getWeek = $(this).text();
             filterTeam(getWeek);
         })
+
     });
 
     //刷选周一至周日的球队，并置于对应位置
     var filterTeam = function(week) {
         var selectTeam;
         selectTeam = $("#sourceList .cWeek:contains('"+week+"')").parent();
+//        selectTeam = $("#sourceList .cWeek:contains('"+week+"')").filter(function(index){return $(this).find().text()==""}).parent();
         var weekTeam = "";
         selectTeam.each(function () {
             weekTeam += '<div class="mui-card">'+$(this).html()+'</div>';
         });
-        $("#gradeList").empty();
-        $("#gradeList").append(weekTeam);
+        $(".item-list .mui-active .card-list").empty();
+        $(".item-list .mui-active .card-list").append(weekTeam);
     }
 
     //训练营教练列表接口获取数据并追加到页面
