@@ -37,6 +37,7 @@ class Student extends Base
 								'grade_member.type'=>$type,
 								'grade_member.status'=>1
 							])
+							->order('grade_member.id desc')
 							->select();
 		// 剩余课量
 		$restSchedule = 0;
@@ -51,6 +52,7 @@ class Student extends Base
 									// 'schedule_member.type'=>$type,
 									'schedule_member.status'=>1
 								])	
+								->order('schedule_member.id desc')
 								->select();	
 				
 		// 学生订单
@@ -95,6 +97,7 @@ class Student extends Base
 		$studenList = Db::view('grade_member','student_id,grade,grade_id,camp_id,lesson,lesson_id')
 					->view('student','*','student.id=grade_member.student_id')
 					->where(['grade_member.camp_id'=>$camp_id,'grade_member.type'=>$type,'grade_member.status'=>1])
+					->order('grade_member.id desc')
 					->limit(20)
 					->select();				
 		$this->assign('studenList',$studenList);
@@ -103,6 +106,7 @@ class Student extends Base
 			$studenListOffLine = Db::view('grade_member','student_id,grade,grade_id,camp_id,lesson,lesson_id')
 					->view('student','*','student.id=grade_member.student_id')
 					->where(['grade_member.camp_id'=>$camp_id,'grade_member.type'=>4,'grade_member.status'=>1])
+					->order('grade_member.id desc')
 					->limit(20)
 					->select();
 			$this->assign('studenListOffLine',$studenListOffLine);

@@ -88,6 +88,7 @@ class Schedule extends Base
 		$coachListOfCamp = Db::view('camp_member',['id' => 'campmemberid','camp_id'])
                 ->view('coach','*','coach.member_id=camp_member.member_id')
                 ->where($map)
+                ->order('camp_member.id desc')
                 ->select();
         // 粉丝列表
         $fanListOfCamp = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1,'type'=>-1])->select();

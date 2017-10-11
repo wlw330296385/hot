@@ -68,13 +68,29 @@ class Bill extends Base{
     public function billInfo(){
     	$bill_id = input('param.bill_id');
     	$billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+        // 判断权限
+        $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
+        if($isPower > 1){
+            if($billInfo['balance_pay'] == 0){
+                $title = "您的体验课程预约成功, 请等待回复";
+            }else{
+                $title = "您的订单已支付成功";
+            }
+            
+        }else{
+            if($billInfo['balance_pay'] == 0){
+                $title = "您有体验课程被预约, 请及时跟进";
+            }else{
+               $title = "您有课程被购买, 请及时跟进";
+            }
+            
+        }
 
         if($billInfo['goods_type']=='课程'){
             $lessonInfo = db('lesson')->where(['id'=>$billInfo['goods_id']])->find();
             $this->assign('lessonInfo',$lessonInfo);
         }
-
-        
+        $this->assign('title',$title);    
     	$this->assign('billInfo',$billInfo);
     	return view('Bill/billInfo');
     }

@@ -128,6 +128,7 @@ class Grade extends Base{
                     ->where(['grade_member.camp_id'=>$camp_id])
                     ->where(['grade.camp_id'=>$camp_id])
                     ->where('grade.delete_time',null)
+                    ->order('grade_member.id desc')
                     ->select();
         $countMyGrade = 0;
         foreach ($gradeList as $key => $value) {
@@ -187,6 +188,7 @@ class Grade extends Base{
         $gradeList = Db::view('grade_member','grade_id')
                     ->view('grade','location,camp,grade,week,lesson_time','grade_member.grade_id=grade.id')
                     ->where(['grade_member.type'=>1,'grade_member.member_id'=>$member_id,'grade_member.status'=>1])
+                    ->order('grade_member.id desc')
                     ->select();
         $this->assign('gradeList',$gradeList);  
         return view('Grade/gradeCalendar');

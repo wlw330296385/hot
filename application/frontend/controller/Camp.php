@@ -138,10 +138,12 @@ class Camp extends Base{
         $actCampList = Db::view('camp_member','camp_id,member_id')
                         ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo','camp.id=camp_member.camp_id')
                         ->where(['camp_member.member_id'=>$member_id,'camp_member.type'=>1,'camp_member.status'=>1])
+                        ->order('camp_member.id desc')
                         ->select();
         $restCampList = Db::view('camp_member','camp_id')
                         ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo','camp.id=camp_member.camp_id')
                         ->where(['camp_member.member_id'=>$member_id,'camp_member.type'=>1,'camp_member.status'=>2])
+                        ->order('camp_member.id desc')
                         ->select();
         $this->assign('actCampList',$actCampList);
         $this->assign('restCampList',$restCampList);
@@ -163,6 +165,7 @@ class Camp extends Base{
         $campList = Db::view('camp_member','camp_id,member_id,type,status')
                         ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo,id','camp.id=camp_member.camp_id')
                         ->where(['camp_member.member_id'=>$member_id,'camp_member.type'=>2,'camp_member.status'=>1])
+                        ->order('camp_member.id desc')
                         ->select();
         $this->assign('campList',$campList);
         return view('Camp/campListOfCoach');
@@ -175,6 +178,7 @@ class Camp extends Base{
                             ->view('coach','star,coach,coach_level,lesson_flow,portraits','coach.member_id=camp_member.member_id')
                             ->view('member','sex,birthday','coach.member_id=member.id')
                             ->where(['camp_member.camp_id'=>$camp_id,'camp_member.type'=>2,'camp_member.status'=>0])
+                            ->order('camp_member.id desc')
                             ->select();
         // 计算年龄
         foreach ($applyListOfCoach as $key => $value) {
@@ -316,6 +320,7 @@ class Camp extends Base{
         $list= Db::view('camp_member','camp_id')
             ->view('coach','*','coach.member_id=camp_member.member_id')
             ->where($map)
+            ->order('camp_member.id desc')
             ->select();
 //        dump($list);
 
@@ -350,6 +355,7 @@ class Camp extends Base{
         $campList = Db::view('camp_member','camp_id')
             ->view('camp','logo','camp.id=camp_member.camp_id')
             ->where(['camp_member.member_id'=>$coachInfo['member_id'], 'camp_member.type'=> 2,'camp_member.status'=>1])
+            ->order('camp_member.id desc')
             ->select();
 
         $this->assign('campmember', $campmember);

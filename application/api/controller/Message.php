@@ -42,11 +42,6 @@ class Message extends Base{
     }
 
 
-
-
-
-
-
     // 获取消息详情
     public function getMessageInfoApi(){
     	try{
