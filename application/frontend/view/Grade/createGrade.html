@@ -9,10 +9,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <!--选择器样式-->
@@ -118,7 +114,7 @@
 
                 <div class="mui-input-row">
                     <label>具体地址</label>
-                    <input type="text" name="" value="" class="location checkChinese" placeholder="请输入具体地址">
+                    <input type="text" name="" value="" class="location checkChinese" placeholder="（选填）">
                 </div>
 
                 <div class="mui-input-row">
@@ -131,7 +127,7 @@
                 <div class="mui-input-row">
                     <a href="#assistantCoach" class="mui-navigate-right">
                         <label>助理教练</label>
-                        <span class="assistantCoachCont domData" name="assistants"></span>
+                        <span class="assistantCoachCont domData" name="assistants">（选填）</span>
                         <input type="hidden" name="assistant_ids" value="" class="data assistant_ids">
                     </a>
                 </div>
@@ -161,7 +157,7 @@
                 <div class="mui-input-row">
                     <a href="#headMaster" class="mui-navigate-right">
                         <label>班主任</label>
-                        <span class="headMasterCont domData" name="teacher"></span>
+                        <span class="headMasterCont domData" name="teacher">（选填）</span>
                         <input type="hidden" name="teacher_id" value="" class="data teacher_id">
                     </a>
                 </div>
@@ -183,9 +179,8 @@
                     <label>是否预排</label>
                     <span class="select-arrow status">
                         <select class="select">
-                            <option value="0">预排</option>
+                            <option value="-1">预排</option>
                             <option value="1">正常</option>
-                            <option value="2">下架</option>
                         </select>
                     </span>
                 </div>
@@ -600,25 +595,25 @@
         })
        // 助理教练
        $("#assistantConfirm").click(function(){
-            $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function(){
-                return $(this).val()
-            }).get().join(",") );
-            console.log($("input[name='assistant_ids']").val())
-            $(".assistantCoachCont").text($("input[name='assistant_ids']").val());
-            var id= $(".label").attr('data-id');
-            $(".assistant_ids").val(id);
-            mui('#assistantCoach').popover('toggle');
-            console.log(id)
-        })
+        $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function(){
+            return $(this).val()
+        }).get().join(",") );
+        console.log($("input[name='assistant_ids']").val())
+        $(".assistantCoachCont").text($("input[name='assistant_ids']").val());
+        var id= $(".label").attr('data-id');
+        $(".assistant_ids").val(id);
+        mui('#assistantCoach').popover('toggle');
+        console.log(id)
+    })
 
        // 班主任
-        $(".headMaster").on('click','li',function(){
-            var headMaster = $(this).html();
-            $(".headMasterCont").html(headMaster);
-            var id= $(this).attr('data-id');
-            $(".teacher_id").val(id);
-            mui("#headMaster").popover("toggle");
-        })
+       $(".headMaster").on('click','li',function(){
+        var headMaster = $(this).html();
+        $(".headMasterCont").html(headMaster);
+        var id= $(this).attr('data-id');
+        $(".teacher_id").val(id);
+        mui("#headMaster").popover("toggle");
+    })
         // 领队
         $(".leader").on('click','li',function(){
             var leader = $(this).html();
@@ -630,7 +625,7 @@
 
 
          //获取训练营教练列表
-        toCoachList();
+         toCoachList();
         //获取训练营教练列表
         var fansKeyword = '';
         var wFans = '';
@@ -709,7 +704,7 @@
             }
         });
 
-   
+
 
         //所属课程api
         $(".lessonType").click(function(){
@@ -764,42 +759,42 @@
             var  leader_id = $('input[name=leader_id]').val();
             var  teacher = $(".headMasterCont").text();
             var  teacher_id = $('input[name=teacher_id]').val();
-            var  plan = $(".plan").text();
+            // var  plan = $(".plan").text();
             // var  rent = $(".rent").val();
             var  status = $(".status option:selected").val();
             var  remarks = $(".remarks").val();
-            // if(grade!=''&&lesson!=''&&gradecate!=''&&week!=''&&lesson_time!=''&&location!=''&&court!=''&&coach!=''&&assistant!=''&&teacher!=''){
+            if(grade!=''&&lesson!=''&&gradecate!=''&&week!=''&&lesson_time!=''&&court!=''&&coach!=''){
                 mui.ajax("{:url('api/grade/createGradeApi')}",{
                     data:{
                         "gradeData": {
-                           "province":getProvince,
-                           "city":getCity,
-                           "area":getArea,
-                           "camp_id":"{$campInfo.id}",
-                           "camp" : "{$campInfo.camp}",
-                           "grade": grade,
-                           "lesson":lesson,
-                           "lesson_id":lesson_id,
-                           "gradecate": $.trim(gradecate),
-                           "gradecate_id": gradecate_id,
-                           "court": court,
-                           "court_id" : court_id,
-                           "week":week,
-                           "lesson_time":lesson_time,
-                           "location":$.trim(location),
-                           "coach_salary":coach_salary,
-                           "assistant_salary":assistant_salary,
-                           "salary_base":salary_base,
-                           "coach":coach,
-                           "coach_id":coach_id,
-                           "assistants":assistant,
-                           "assistant_id":assistant_id,
-                           "leader":$.trim(leader),
-                           "leader_id":leader_id,
-                           "teacher_id": teacher_id,
-                           "teacher":$.trim(teacher),
-                           "plan":$.trim(plan),
-                           "plan_ids": plan,
+                         "province":getProvince,
+                         "city":getCity,
+                         "area":getArea,
+                         "camp_id":"{$campInfo.id}",
+                         "camp" : "{$campInfo.camp}",
+                         "grade": grade,
+                         "lesson":lesson,
+                         "lesson_id":lesson_id,
+                         "gradecate": $.trim(gradecate),
+                         "gradecate_id": gradecate_id,
+                         "court": court,
+                         "court_id" : court_id,
+                         "week":week,
+                         "lesson_time":lesson_time,
+                         "location":$.trim(location),
+                         "coach_salary":coach_salary,
+                         "assistant_salary":assistant_salary,
+                         "salary_base":salary_base,
+                         "coach":coach,
+                         "coach_id":coach_id,
+                         "assistants":assistant,
+                         "assistant_id":assistant_id,
+                         "leader":$.trim(leader),
+                         "leader_id":leader_id,
+                         "teacher_id": teacher_id,
+                         "teacher":$.trim(teacher),
+                         // "plan":$.trim(plan),
+                         // "plan_ids": plan,
                            // "rent":rent,
                            "status":status,
                            "remarks":remarks
@@ -814,23 +809,23 @@
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data);
                     if(data.code==200){
-                        mui.toast('创建班级'+data.msg);
-                        setTimeout(window.location.href="{:url('grade/gradelistofcamp', ['camp_id'=>$campInfo['id']])}", 3000);
-                    }else{
-                        mui.toast(data.msg);
-                    }
-                },
-                error:function(xhr,type,errorThrown){
+                       mui.alert('创建班级成功。','提示','确定',function(){
+                          setTimeout(window.location.href="{:url('grade/gradelistofcamp', ['camp_id'=>$campInfo['id']])}", 3000)});
+                   }else{
+                    mui.toast(data.msg);
+                }
+            },
+            error:function(xhr,type,errorThrown){
                     //异常处理；
                     console.log(type);
                 }
             });
-            // } else{
-            //     mui.toast("选项不能为空");
-            // }
+            } else{
+                mui.toast("选项不能为空");
+            }
         })
 
-    });
+});
 
     //教练列表接口获取数据并追加到页面
     var toCoachList = function() {
