@@ -172,7 +172,7 @@ class Grade extends Base{
         }
         $week = input('param.week');
         
-        $myGradeList = db('grade')->where(['coach_id'=>$coach_id,'camp_id'=>$camp_id])->where('week','like',"%$week%")->select();    
+        $myGradeList = db('grade')->where(['coach_id'=>$coach_id,'camp_id'=>$camp_id])->where('week','like',"%$week%")->select();
         $campGradeList = db('grade')->where(['camp_id'=>$camp_id])->where('week','like',"%$week%")->select();
 
         $this->assign('myGradeList',$myGradeList);    
