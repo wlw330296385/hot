@@ -151,7 +151,9 @@ class Base extends Controller{
             cookie('member', md5($member['id'].$member['member'].config('salekey')) );
             session('memberInfo', $member, 'think');
             if (session('memberInfo', '', 'think')) {
-                $this->redirect( cookie('url') );
+            	$url = cookie('url');
+            	cookie('url',null);
+                $this->redirect( $url );
             } else {
                 $this->redirect('frontend/Index/index');
             }
