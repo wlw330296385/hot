@@ -117,7 +117,8 @@ class LessonService {
         }
         $result = $this->lessonModel->save($data,['id'=>$id]);
         if($result){
-            return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->lessonModel->id];
+            // return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->lessonModel->id];
+            return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $id];
         }else{
             return ['msg'=>__lang('MSG_400'), 'code' => 100];
         }
