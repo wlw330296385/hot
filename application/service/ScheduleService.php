@@ -28,6 +28,7 @@ class ScheduleService {
 
     public function getScheduleListByPage($map = [],$paginate = 10,$order = ''){
         $result = $this->scheduleModel->where($map)->order($order)->paginate($paginate);
+        // echo $this->scheduleModel->getlastsql();die;
         if($result){
             return $result->toArray();
         }else{
