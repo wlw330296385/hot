@@ -330,6 +330,134 @@ class CampMember extends Base{
         }
     }
 
+    // 训练营学生列表
+    public function campstudentlist() {
+        try {
+            $map = input('param.');
+            if ( isset($map['page']) ) {
+                unset($map['page']);
+            }
+            $keyword = input('param.keyword');
+            if ( !empty($keyword) && $keyword != "" && $keyword != " " ) {
+                $map['student'] = ['like', "%$keyword%"];
+                unset($map['keyword']);
+            }
+            $map['type'] = input('param.type', 1);
+            $page = input('param.page', 1);
+            $list = Db::view('camp_member')
+                ->view('student', ['id' => 'studentid', 'member_id', 'student', 'student_sex', 'student_avatar'], 'student.member_id=camp_member.member_id')
+                ->where($map)->page($page, 10)->select();
+            if (empty($list)) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $list]);
+            }
+        } catch(Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 
+    // 训练营学生列表 带页码
+    public function campstudentpage() {
+        try {
+            $map = input('param.');
+            if ( isset($map['page']) ) {
+                unset($map['page']);
+            }
+            $keyword = input('param.keyword');
+            if ( !empty($keyword) && $keyword != "" && $keyword != " " ) {
+                $map['student'] = ['like', "%$keyword%"];
+                unset($map['keyword']);
+            }
+            $map['type'] = input('param.type', 1);
+            $list = Db::view('camp_member')
+                ->view('student', ['id' => 'studentid', 'member_id', 'student', 'student_sex', 'student_avatar'], 'student.member_id=camp_member.member_id')
+                ->where($map)->paginate(10);
+            //dump($list);
+            if ( $list->isEmpty() ) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $list->toArray()]);
+            }
+        } catch(Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 
+    // 训练营未操作学生
+    public function pendstudentlist() {
+        try {
+            $map = input('param.');
+            $page = input('param.page', 1);
+            //$map['type'] = input('param.type', 1);
+            if ( isset($map['page']) ) {
+                unset($map['page']);
+            }
+            $keyword = input('param.keyword');
+            if ( !empty($keyword) && $keyword != "" && $keyword != " " ) {
+                $where['grade_member.student'] = ['like', "%$keyword%"];
+                unset($map['keyword']);
+            }
+            if ( isset($map['status']) ) {
+                $where['grade_member.status'] = $map['status'];
+            }
+
+            $where['grade_member.camp_id'] = $map['camp_id'];
+            $where['grade_id'] = 0;
+            $list = Db::view('grade_member')
+                ->view('student', ['id' => 'studentid', 'member_id', 'student', 'student_sex', 'student_avatar'], 'student.member_id=grade_member.member_id')
+                ->where($where)->page($page, 10)->select();
+            if (empty($list)) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $list]);
+            }
+        } catch(Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 训练营 学生在营/离营操作
+    public function removestudent() {
+        try {
+            $campmemberid = input('param.campmemberid');
+            $action = input('param.action');
+            if (!$action) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            $model = new \app\model\CampMember();
+            $campmember = $model->where(['id' => $campmemberid])->find();
+            $power = getCampPower($campmember['camp_id'], $this->memberInfo['id']);
+            if ($power < 3) { // 管理员以上才能操作
+                return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+            }
+
+            switch ($campmember->getData('status')) {
+                case "1" : {
+                    if ($action == 'editstatus') {
+                        $res= $model->save(['status' => -1], ['id' => $campmember['id']]);
+                        if (!$res) {
+                            return json([ 'code' => 100, 'msg' => __lang('MSG_400'), 'data' => $model->getError() ]);
+                        } else {
+                            return json([ 'code' => 200, 'msg' => __lang('MSG_200'), 'data' => $res ]);
+                        }
+                    }
+                    break;
+                }
+                case "-1" : {
+                    if ($action == 'editstatus') {
+                        $res= $model->save(['status' => 1], ['id' => $campmember['id']]);
+                        if (!$res) {
+                            return json([ 'code' => 100, 'msg' => __lang('MSG_400'), 'data' => $model->getError() ]);
+                        } else {
+                            return json([ 'code' => 200, 'msg' => __lang('MSG_200'), 'data' => $res ]);
+                        }
+                    }
+                    break;
+                }
+            }
+        } catch(Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 }
