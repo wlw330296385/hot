@@ -30,6 +30,7 @@ class Schedule extends Base
 			$lesson_time = input('param.lesson_time');
 			$grade_id = input('param.grade_id');
 			$camp_id = input('param.camp_id');
+			$lesson_time = strtotime($lesson_time);
 			//前后2个小时
 			$start_time = $lesson_time-7200;
 			$end_time = $lesson_time+7200;
@@ -37,7 +38,7 @@ class Schedule extends Base
 									'camp_id'=>$camp_id,
 									'grade_id'=>$grade_id,
 									'lesson_id'=>$lesson_id,
-									// 'lesson_time'=>['BETWEEN',[$start_time,$end_time]]
+									'lesson_time'=>['BETWEEN',[$start_time,$end_time]]
 									])->select();
 			$result = 1;
 			if(!$scheduleList){
@@ -100,6 +101,7 @@ class Schedule extends Base
 			$data = input('post.');
 			$data['member_id'] = $this->memberInfo['id'];
 			$data['member'] = $this->memberInfo['member'];
+			$data['lesson_time'] = strtotime($data['lesson_time_date']);
 			$result = $this->ScheduleService->createSchedule($data);
 			return json($result);
 		}catch (Exception $e){
@@ -152,7 +154,7 @@ class Schedule extends Base
 			$map = input('post.');
 			$beginINT = strtotime($begin);
 			$endINT = strtotime($end);
-			$map['create_time'] = ['BETWEEN',[$beginINT,$endINT]];
+			$map['lesson_time'] = ['BETWEEN',[$beginINT,$endINT]];
 			$result = $this->ScheduleService->getScheduleListByPage($map);
 			return json($result);
 		}catch (Exception $e){

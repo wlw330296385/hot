@@ -3,12 +3,14 @@ namespace app\service;
 use app\model\Grade;
 use think\Db;
 use app\common\GradeVal;
+use app\model\GradeMember;
 class GradeService{
 
     private $GradeModel;
 
     public function __construct(){
         $this->GradeModel = new Grade;
+
     }
 
 
@@ -47,7 +49,12 @@ class GradeService{
             }else{
                  $result['assistants'] = '';
             }
-            
+            if($result['assistant_id']){
+                $assis = unserialize($result['assistant_id']);
+                $result['assistant_ids'] = implode(',', $assis);
+            }else{
+                 $result['assistant_ids'] = '';
+            }
             return $result;
         }
         return $res;
@@ -77,6 +84,17 @@ class GradeService{
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
+
+        if($data['assistants']){
+                $assistan_list = explode(',', $data['assistants']);
+                $seria = serialize($assistan_list);
+                $data['assistant'] = $seria;
+            }
+        if($data['assistant_ids']){
+            $assistan_list = explode(',', $data['assistant_ids']);
+            $seria = serialize($assistan_list);
+            $data['assistant_id'] = $seria;
+        }
         $result = $this->GradeModel->save($data);
          if (!$result) {
             return [ 'msg' => __lang('MSG_400'), 'code' => 100 ];
@@ -92,6 +110,16 @@ class GradeService{
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
+        if($data['assistants']){
+                $assistan_list = explode(',', $data['assistants']);
+                $seria = serialize($assistan_list);
+                $data['assistant'] = $seria;
+            }
+        if($data['assistant_ids']){
+            $assistan_list = explode(',', $data['assistant_ids']);
+            $seria = serialize($assistan_list);
+            $data['assistant_id'] = $seria;
+        }
         $result = $this->GradeModel->save($data,['id'=>$id]);
          if (!$result) {
             return [ 'msg' => __lang('MSG_400'), 'code' =>100 ];
@@ -102,10 +130,17 @@ class GradeService{
    
 
 
-    // 获取学生列表
+     // 获取学生列表
      public function getStudentList($grade_id,$page = 1,$paginate = 10){
-        $result = db('grade_member')->where(['grade_id'=>$grade_id,'type'=>1,'status'=>1])->page($page,$paginate)->select();
-        return $result;
+        $result = GradeMember::where(['grade_id'=>$grade_id,'status'=>1])
+                // ->page($page,$paginate)
+                ->select();
+        if($result){
+            $res = $result->toArray();
+            return $res;
+        }else{
+            return $result;
+        }
     }
 
 

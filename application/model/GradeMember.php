@@ -17,6 +17,11 @@ class GradeMember extends Model {
         $status = [0=>'待审核',1=>'正常',2=>'退出',3=>'被开除',4=>'已毕业'];
         return $status[$value];
     }
+
+    public function getTypeAttr($value){
+        $type = [1=>'正式生',2=>'体验生'];
+         return $type[$value];
+    }
     // 关联训练营
     public function camp(){
     	return $this->hasOne('camp','id','camp_id',[],'left join');

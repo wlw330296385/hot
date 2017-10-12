@@ -44,7 +44,7 @@ class Grade extends Base{
         //$courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         $courtList = $courtService->getCourtListOfCamp(['camp_id'=>$camp_id]);
         // 获取课程学生
-        $studentList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
+        $students = db('grade_member')->where(['camp_id'=>$camp_id,'status'=>1,'lesson_id'=>$lesson_id])->select();
         // 教案列表
         $PlanService = new \app\service\PlanService;
         $planList = $PlanService->getPlanList(['camp_id'=>$camp_id,'type'=>1]);
@@ -56,7 +56,7 @@ class Grade extends Base{
         $this->assign('staffList',$staffList);
         $this->assign('coachlist', $coachlist);
         $this->assign('gradecateList',$gradecateList);
-        $this->assign('studentList',$studentList);
+        $this->assign('students',$students);
         $this->assign('campInfo',$campInfo);
     	return view('Grade/createGrade');
     }
@@ -80,18 +80,19 @@ class Grade extends Base{
         $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['camp_id'=>$gradeInfo['camp_id'],'status'=>1]);
     	// 获取班级学生
-    	$studentList = $this->GradeService->getStudentList($grade_id);
+    	$students = $this->GradeService->getStudentList($grade_id);
+
         // 教案列表
         $PlanService = new \app\service\PlanService;
         $planList = $PlanService->getPlanList(['camp_id'=>$gradeInfo['camp_id'],'type'=>1]);
-
+        // dump($gradeInfo);die;
         $this->assign('planList',$planList);
         $this->assign('courtList',$courtList);
         $this->assign('courtListJson',json_encode($courtList));
         $this->assign('staffList',$staffList);
         $this->assign('gradecateList',$gradecateList);
         $this->assign('gradeInfo',$gradeInfo);
-        $this->assign('studentList',$studentList);
+        $this->assign('students',$students);
     	return view('Grade/updateGrade');
     }
 

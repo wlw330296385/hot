@@ -65,8 +65,8 @@
                 <div class="mui-input-row">
                     <a href="#student" class="mui-navigate-right">
                         <label>学员名单</label>
-                        <span class="studentCont student studentList domData">{volist name="studentList" id="vol"}{$vol.student},{/volist}</span>
-                        <input type="hidden" name="student" value="">
+                        <span class="studentCont students domData" name="students">{volist name="students" id="vol"}{$vol.student},{/volist}</span>
+                        <input type="hidden" name="student_ids" class="student_ids data" value='{volist name="students" id="vol"}{$vol.student_id},{/volist}'>
                     </a>
                 </div>
 
@@ -82,14 +82,14 @@
                     <label>训练日期</label>
                     <span class="select-arrow week">
                         <select class="select data">
-                            <option {eq name="gradeInfo.week" value="周日"}selected{/eq}>周日</option>
-                            <option {eq name="gradeInfo.week" value="周一"}selected{/eq}>周一</option>
-                            <option {eq name="gradeInfo.week" value="周二"}selected{/eq}>周二</option>
-                            <option {eq name="gradeInfo.week" value="周三"}selected{/eq}>周三</option>
-                            <option {eq name="gradeInfo.week" value="周四"}selected{/eq}>周四</option>
-                            <option {eq name="gradeInfo.week" value="周五"}selected{/eq}>周五</option>
-                            <option {eq name="gradeInfo.week" value="周六"}selected{/eq}>周六</option>
-                            </select>
+                            <option value="周日" {eq name="gradeInfo.week" value="周日"}selected{/eq}>周日</option>
+                            <option value="周一" {eq name="gradeInfo.week" value="周一"}selected{/eq}>周一</option>
+                            <option value="周二" {eq name="gradeInfo.week" value="周二"}selected{/eq}>周二</option>
+                            <option value="周三" {eq name="gradeInfo.week" value="周三"}selected{/eq}>周三</option>
+                            <option value="周四" {eq name="gradeInfo.week" value="周四"}selected{/eq}>周四</option>
+                            <option value="周五" {eq name="gradeInfo.week" value="周五"}selected{/eq}>周五</option>
+                            <option value="周六" {eq name="gradeInfo.week" value="周六"}selected{/eq}>周六</option>
+                        </select>
                     </span>
                 </div>
 
@@ -135,8 +135,8 @@
                 <div class="mui-input-row">
                     <a href="#assistantCoach" class="mui-navigate-right">
                         <label>助理教练</label>
-                        <span class="assistantCoachCont domData" name="assistants">{$gradeInfo.assistants}</span>
-                        <input type="hidden" name="assistant_ids" value="{$gradeInfo.assistant_id}" class="data assistant_ids">
+                        <span class="assistantCoachCont domData" name="assistants">{volist name="gradeInfo.assistants" id="vol"}{$vol.coach},{/volist}</span>
+                        <input type="hidden" name="assistant_ids" value="{volist name='{volist name="gradeInfo.assistant_ids" id="vol"}{$vol.id},{/volist}' class="data assistant_ids">
                     </a>
                 </div>
 
@@ -174,8 +174,8 @@
                     <label>是否预排</label>
                     <span class="select-arrow status">
                         <select class="select data">
-                            <option value="-1">预排</option>
-                            <option value="1">正常</option>
+                            <option value="-1" {eq name="gradeInfo.status_num" value="-1"}selected{/eq}>预排</option>
+                            <option value="1" {eq name="gradeInfo.status_num" value="1"}selected{/eq}>正常</option>
                         </select>
                     </span>
                 </div>
@@ -523,6 +523,16 @@
 
     $(function(){
 
+
+
+        var cDoms = $(".students").text();
+        cDoms = cDoms.substring(0,cDoms.length-1);
+        $(".students").text(cDoms);
+        var cDoms2 = $(".student_ids").text();
+        cDoms2 = cDoms2.substring(0,cDoms2.length-1);
+        $(".student_ids").text(cDoms2);
+
+
         //初始化全局变量
         var student_id ='';
         var studentList ='';
@@ -702,11 +712,12 @@
             var  teacher_id = $('input[name=teacher_id]').val();
             var  status = $(".status option:selected").val();
             var  remarks = $(".remarks").val();
+            var  students = $(".students").text();
+            var  student_ids = $('input[name=student_ids]').val();
             console.log(assistant);
             console.log(assistant_id);
             mui.ajax("{:url('api/grade/updateGradeApi')}",{
                 data:{
-                    "gradeData": {
                        "province":province,
                        "city":city,
                        "area":area,
@@ -726,15 +737,15 @@
                        "coach":coach,
                        "coach_id":coach_id,
                        "assistants":assistant,
-                       "assistant_id":assistant_id,
+                       "assistant_ids":assistant_id,
                        "leader":$.trim(leader),
                        "leader_id":leader_id,
                        "teacher_id": teacher_id,
                        "teacher":$.trim(teacher),
                        "status":status,
-                       "remarks":remarks
-                   },
-                   "studentList":studentList
+                       "remarks":remarks,
+                       "students":students,
+                        "student_ids": student_ids
                },
                 dataType:'json',//服务器返回json格式数据
                 type:'post',//HTTP请求类型

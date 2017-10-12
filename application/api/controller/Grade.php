@@ -20,38 +20,7 @@ class Grade extends Base{
     }
 
 
-    public function createGradeApi(){
-        try{
-            $data = input('post.');
-            $studentList = $data['studentList'];
-            $gradeData = $data['gradeData'];
-            $gradeData['member_id'] = $this->memberInfo['id'];
-            $gradeData['member'] = $this->memberInfo['member'];
-            if($gradeData['assistants']){
-                $assistan_list = explode(',', $gradeData['assistants']);
-                $seria = serialize($assistan_list);
-                $gradeData['assistant'] = $seria;
-            }
-            $GradeService = new GradeService;
-            $result = $GradeService->createGrade($gradeData);
-            if($result['code']==200){
-                $grade_id = $result['data'];
-                //重组上课学员
-                foreach ($studentList as $key => $value) {
-                    $studentList[$key]['grade_id'] = $grade_id;
-                    $studentList[$key]['grade'] = $gradeData['grade'];
-                }
-                $StudentService = new \app\service\StudentService;
-                $res = $StudentService->saveAllStudent($studentList);
-                return json($res);
-            }else{
-                return json($result);
-            } 
-        }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }
-
-    }
+    
 
 
     public function getGradeListApi(){
@@ -123,24 +92,46 @@ class Grade extends Base{
     public function updateGradeApi(){
         try{
             $grade_id = input('param.grade_id');
-            $data = input('post.');        
-            $data['gradeData']['member_id'] = $this->memberInfo['id'];
-            $data['gradeData']['member'] = $this->memberInfo['member'];
-            if($data['gradeData']['assistants']){
-                $assistan_list = explode(',', $data['gradeData']['assistants']);
-                $seria = serialize($assistan_list);
-                $data['gradeData']['assistant'] = $seria;
-            }
-            // dump($data);
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $students = $data['students'];
             $GradeService = new GradeService;
-            $result = $GradeService->updateGrade($data['gradeData'],$data['gradeData']['grade_id']);
-            return json($result);
+            $result = $GradeService->updateGrade($data,$data['grade_id']);
+            if($result['code']==200){
+                $grade_id = $result['data'];
+                $StudentService = new \app\service\StudentService;
+                $res = $StudentService->saveAllStudent($students,$grade_id,$data['grade']);
+                return json($res);
+            }else{
+                return json($result);
+            }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
+    public function createGradeApi(){
+        try{
+            $data = input('post.');
+            $students = $data['students'];
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $GradeService = new GradeService;
+            $result = $GradeService->createGrade($data);
+            if($result['code']==200){
+                $grade_id = $result['data'];
+                $StudentService = new \app\service\StudentService;
+                $res = $StudentService->saveAllStudent($students,$grade_id,$data['grade']);
+                return json($res);
+            }else{
+                return json($result);
+            } 
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
 
+    }
 
     // 一个班级学生名单变动
     public function updateGradeMemberApi(){
