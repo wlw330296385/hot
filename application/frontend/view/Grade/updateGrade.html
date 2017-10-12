@@ -69,8 +69,7 @@
                 <a href="#student" class="mui-navigate-right">
                     <label>学员名单</label>
                     <span class="studentCont students domData" name="students">{volist name="studentList" id="vol"}{$vol.student},{/volist}</span>
-                    <input type="hidden" name="student_ids" class="student_ids data" value="{volist name="studentList"
-                    id="vol"}{$vol.student_id},{/volist}">
+         
                 </a>
             </div>
 
@@ -126,8 +125,7 @@
 
             <div class="mui-input-row">
                 <label>具体地址</label>
-                <input type="text" name="" value="{$gradeInfo.location}" class="location data">
-                <input type="hidden" name="location" value="" class="data location">
+                <input type="text" name="jtlocation" value="{$gradeInfo.location}" class="jtlocation data">
             </div>
 
             <div class="mui-input-row">
@@ -544,7 +542,7 @@
             $("input[name='checkbox-student']:checked").each(function (i) {
                 var id = $(this).attr("data-id");
                 var student = $(this).val();
-                studentList[i] = {id:id,student:student}
+                studentList[i] = {student_id:id,student:student}
             });
             console.log(studentList)
             mui('#student').popover('toggle');
@@ -699,7 +697,7 @@
             var court = $.trim($('.trainLocationCont').text());
             var court_id = $('input[name=court_id]').val();
             var lesson_time = $(".lesson_time").text();
-            var location = $(".location").val();
+            var jtlocation = $('.jtlocation').val();
             var coach_salary = $(".coach_salary").val();
             var assistant_salary = $(".assistant_salary").val();
             var salary_base = $(".salary_base").val();
@@ -713,8 +711,34 @@
             var teacher_id = $('input[name=teacher_id]').val();
             var status = $(".status option:selected").val();
             var remarks = $(".remarks").val();
-            // var students = $(".students").text();
-            // var student_ids = $('input[name=student_ids]').val();
+            console.log(province)
+            console.log(city)
+            console.log(area)
+            console.log(grade)
+            console.log(lesson)
+            console.log(lesson_id)
+            console.log(gradecate)
+            console.log(gradecate_id)
+            console.log(week)
+            console.log(court)
+            console.log(court_id)
+            console.log(lesson_time)
+            console.log(jtlocation)
+            console.log(coach_salary)
+            console.log(assistant_salary)
+            console.log(salary_base)
+            console.log(coach)
+            console.log(coach_id)
+            console.log(assistant)
+            console.log(assistant_id)
+            console.log(leader)
+            console.log(leader_id)
+            console.log(teacher)
+            console.log(teacher_id)
+            console.log(status)
+            console.log(remarks)
+            var students = $(".students").text();
+            var student_ids = $('input[name=student_ids]').val();
             mui.ajax("{:url('api/grade/updateGradeApi')}", {
                 data: {
                     "gradeData": {
@@ -733,7 +757,7 @@
                         "court_id": court_id,
                         "week": week,
                         "lesson_time": lesson_time,
-                        "location": $.trim(location),
+                        "location": $.trim(jtlocation),
                         "coach_salary": coach_salary,
                         "assistant_salary": assistant_salary,
                         "salary_base": salary_base,
