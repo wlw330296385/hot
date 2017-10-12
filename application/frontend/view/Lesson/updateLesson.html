@@ -484,12 +484,13 @@
         })
         // 助理教练
         $("#assistantConfirm").click(function(){
-            $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function(){
+            $("input[name='assistant']").val($("input[name='checkbox-assistant']:checked").map(function(){
                 return $(this).val()
             }).get().join(",") );
-            $(".assistantCoachCont").text($("input[name='assistant_ids']").val());
-            var id= $(".label").attr('data-id');
-            $(".assistant_ids").val(id);
+            $(".assistantCoachCont").text($("input[name='assistant']").val());
+            console.log($("input[name='assistant']").val())
+            // var id= $(".label").attr('data-id');
+            // $(".assistant_ids").val(id);
             mui('#assistantCoach').popover('toggle');
             console.log(id)
         })
@@ -610,9 +611,9 @@
         var url = "{:url('api/lesson/updateLessonApi',['lesson_id'=>$lessonInfo['id']])}";
         var ajaxResult = wooApi.asyncF(url,objData);
         if(ajaxResult.code){
-            mui.alert((ajaxResult.msg,'修改成功','确定',function(){
+            mui.alert(ajaxResult.msg,'修改成功','确定',function(){
             window.location.href="{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/{$lessonInfo.id}/camp_id/{$lessonInfo.camp_id}';
-          });
+          })
         }
     }
 

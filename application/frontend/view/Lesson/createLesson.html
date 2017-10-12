@@ -99,7 +99,7 @@
         <div class="mui-input-row">
             <a href="#trainLocation" class="mui-navigate-right">
                 <label>训练地点</label>
-                <span class="trainLocationCont domData dataSpan" name="court"  ></span>
+                <span class="trainLocationCont domData dataSpan" name="court"></span>
                 <input type="hidden" name="court_id" value="" class="data court_id">
                 <input type="hidden" name="location" value="" class="data location">
             </a>
@@ -509,6 +509,7 @@
                 return $(this).val();
             }).get().join(",") );
             var doms = $("input[name='doms']").val();
+            console.log($("input[name='doms']").val())
             $(".lessonDom").html(doms);
             mui('#lessonDom').popover('toggle');
         })
@@ -607,7 +608,7 @@
             var ajaxResult = wooApi.asyncF(url,objData);
             if(ajaxResult.code){
                 console.log(ajaxResult.data)
-                 mui.alert((ajaxResult.msg,'提交成功','确定',function(){
+                 mui.alert(ajaxResult.msg,'提交成功','确定',function(){
                     window.location.href="{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/'+ajaxResult.data+'/camp_id/{$campInfo.id}';
                   });
             }
