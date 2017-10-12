@@ -398,6 +398,9 @@ class CampMember extends Base{
                 $where['grade_member.student'] = ['like', "%$keyword%"];
                 unset($map['keyword']);
             }
+            if ( isset($map['status']) ) {
+                $where['grade_member.status'] = $map['status'];
+            }
 
             $where['grade_member.camp_id'] = $map['camp_id'];
             $where['grade_id'] = 0;
