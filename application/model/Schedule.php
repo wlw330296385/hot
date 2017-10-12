@@ -8,7 +8,7 @@ class Schedule extends Model{
 	protected $type = [
         'status'    =>  'integer',
     ];
-
+    protected $autoWriteTimestamp = true;
 
     protected $readonly = ['create_time'];
 

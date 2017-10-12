@@ -63,7 +63,7 @@ class Schedule extends Base
 			// 只要是训练营的教练都可以跨训练营录课
 			$camp_id = input('param.camp_id');
 			$member_id = $this->memberInfo['id'];
-			$result = $this->ScheduleService->is_power($camp_id,$member_id);
+			$result = $this->ScheduleService->isPower($camp_id,$member_id);
 			return $result;
 		}catch (Exception $e){
 			return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -76,8 +76,8 @@ class Schedule extends Base
 	public function recordScheduleCheckApi(){
 		try{
 			$camp_id = input('param.camp_id');
-			$is_power = $this->recordSchedulePowerApi();
-			if($is_power <3){
+			$isPower = $this->recordSchedulePowerApi();
+			if($isPower <3){
 				return json(['code'=>100,'msg'=>__lang('MSG_403')]);
 			}
 			$schedule_id = input('param.schedule_id');
@@ -113,13 +113,14 @@ class Schedule extends Base
 		try{
 			$camp_id = input('param.camp_id');
 			$is_power = $this->recordSchedulePowerApi();
-			if($is_power <3){
+			if($is_power >1){
 				return json(['code'=>100,'msg'=>__lang('MSG_403')]);
 			}
 			$data = input('post.');
 			$data['member_id'] = $this->memberInfo['id'];
 			$data['member'] = $this->memberInfo['member'];
 			$data['star'] = $data['attitude']+$data['profession']+$data['teaching_attitude']+$data['teaching_quality'];
+			$result = $this->ScheduleService->starSchedule($data);
 			if($result){
 				return json(['code'=>200,'msg'=>'审核成功']);
 			}else{
@@ -135,6 +136,23 @@ class Schedule extends Base
 	public function getScheduleListByPageApi(){
 		try{
 			$map = input('post.');
+			$result = $this->ScheduleService->getScheduleListByPage($map);
+			return json($result);
+		}catch (Exception $e){
+			return json(['code'=>100,'msg'=>$e->getMessage()]);
+		}
+	}
+
+
+	//获取开始时间和结束时间的列表带page
+	public function getScheduleListBetweenTimeByPageApi(){
+		try{
+			$begin = input('param.begin');
+			$end = input('param.end');
+			$map = input('post.');
+			$beginINT = strtotime($begin);
+			$endINT = strtotime($end);
+			$map['create_time'] = ['BETWEEN',[$beginINT,$endINT]];
 			$result = $this->ScheduleService->getScheduleListByPage($map);
 			return json($result);
 		}catch (Exception $e){

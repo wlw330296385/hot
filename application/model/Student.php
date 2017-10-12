@@ -10,6 +10,7 @@ class Student extends Model{
     						'total_lession',
     						'finished_total',
     					];
+    protected $autoWriteTimestamp = true;
 
 
 
