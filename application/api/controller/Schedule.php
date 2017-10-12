@@ -141,4 +141,19 @@ class Schedule extends Base
 			return json(['code'=>100,'msg'=>$e->getMessage()]);
 		}
 	}
+
+
+	public function getScheduleListBetweenTimeByPageApi(){
+		try{
+			$begin = input('param.begin');
+			$end = input('param.end');
+			$beginINT = strtotime($begin);
+			$endINT = strtotime($end);
+			$map = ['create_time'=>['BETWEEN',[$beginINT,$endINT]]];
+			$result = $this->ScheduleService->getScheduleListByPage($map);
+			return json($result);
+		}catch (Exception $e){
+			return json(['code'=>100,'msg'=>$e->getMessage()]);
+		}
+	}
 }
