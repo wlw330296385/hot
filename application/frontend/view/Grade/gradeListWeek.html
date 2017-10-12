@@ -17,8 +17,11 @@
             top: 0;
             z-index: 10;
         }
-        .cWeek{
+        .hideOpt{
             display: none;
+        }
+        .nodata{
+            padding-top:80px;
         }
     </style>
 </head>
@@ -103,15 +106,41 @@
 
     //刷选周一至周日的球队，并置于对应位置
     var filterTeam = function(week) {
-        var selectTeam;
-        selectTeam = $("#sourceList .cWeek:contains('"+week+"')").parent();
-        selectTeam = $("#sourceList .cWeek:contains('"+week+"')").filter(function(index){return $(this).find().text()==""}).parent();
-        var weekTeam = "";
-        selectTeam.each(function () {
-            weekTeam += '<div class="mui-card">'+$(this).html()+'</div>';
+
+        //清空列表
+        $(".item-list .card-list").empty();
+
+        //帅选对应周几的列表
+        var allTeamList = "";
+        var selectAll;
+        selectAll = $("#sourceList .cWeek:contains('"+week+"')").parent().parent();
+        selectAll.each(function () {
+            allTeamList += '<div class="mui-card">'+$(this).html()+'</div>';
         });
-        $(".item-list .mui-active .card-list").empty();
-        $(".item-list .mui-active .card-list").append(weekTeam);
+        if(allTeamList==""){
+            allTeamList = '<div class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>'+week+'没有的班级哦</p></div>'
+        }
+        //重新推送数据全部班级
+        $("#allGrade .card-list").append(allTeamList);
+
+        //帅选对应周几对应教练（我的）列表
+        var currCoachID = "{$memberInfo.id}";
+        var myTeamList = "";
+        if(currCoachID!=""){
+            var selectMy;
+            selectMy = $("#sourceList .cWeek:contains('"+week+"')").parent().parent().filter(function(index){
+                return $(this).find(".cID").text()==currCoachID
+            });
+            selectMy.each(function () {
+                myTeamList += '<div class="mui-card">'+$(this).html()+'</div>';
+            });
+            console.log(myTeamList)
+        }
+        if(myTeamList==""){
+            myTeamList = '<div class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>'+week+'没有你的班级哦</p></div>'
+        }
+        //重新推送数据我的班级
+        $("#myGrade .card-list").append(myTeamList);
     }
 
     //训练营教练列表接口获取数据并追加到页面
@@ -133,7 +162,7 @@
                     var newli = '';
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('schedule/recordSchedule')}" + '/grade_id/' + data.data.data[i].id + '/lesson_id/' + data.data.data[i].lesson_id + '/camp_id/' + data.data.data[i].camp_id;
-                        newli = newli + '<div class="mui-card"><span class="cWeek">' + data.data.data[i].week + '</span><div class="mui-card-header"><div class="card-left"><span class="time">' + data.data.data[i].lesson_time + '</span> ' + data.data.data[i].location + '</div></div><div class="mui-card-content"><div class="mui-card-content-inner"><h4>' + data.data.data[i].grade + ' <span class="name"> ' + data.data.data[i].coach + '</span></h4></div></div><div class="mui-card-footer">' + data.data.data[i].gradecate + '<a href="'+urls+'">录课</a></div></div>'
+                        newli = newli + '<div class="mui-card"><div class="hideOpt"><span class="cWeek">' + data.data.data[i].week + '</span><span class="cID">' + data.data.data[i].coach_id + '</span><span class="aID">' + data.data.data[i].assistant_id + '</span></div><div class="mui-card-header"><div class="card-left"><span class="time">' + data.data.data[i].lesson_time + '</span> ' + data.data.data[i].location + '</div></div><div class="mui-card-content"><div class="mui-card-content-inner"><h4>' + data.data.data[i].grade + ' <span class="name"> ' + data.data.data[i].coach + '</span></h4></div></div><div class="mui-card-footer">' + data.data.data[i].gradecate + '<a href="'+urls+'">录课</a></div></div>'
                     }
                     $("#sourceList").empty();
                     if(newli==''){
