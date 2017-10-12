@@ -65,8 +65,8 @@
                 <div class="mui-input-row">
                     <a href="#student" class="mui-navigate-right">
                         <label>学员名单</label>
-                        <span class="studentCont student studentList domData">{volist name="studentList" id="vol"}{$vol.student},{/volist}</span>
-                        <input type="hidden" name="student" value="">
+                        <span class="studentCont students domData" name="students">{volist name="students" id="vol"}{$vol.student},{/volist}</span>
+                        <input type="hidden" name="student_ids" class="student_ids data" value="{volist name="students" id="vol"}{$vol.student_id},{/volist}">
                     </a>
                 </div>
 
@@ -96,7 +96,7 @@
                 <div class="mui-input-row picker btn" id="demo5" data-options='{"type":"time"}'>
                     <a href="#" class="mui-navigate-right">
                         <label>训练时间</label>
-                        <span id="result" class="ui-alert lesson_time domData"> </span>
+                        <span id="result" class="ui-alert lesson_time domData">{$gradeInfo.lesson_time}</span>
                     </a>
                 </div>
 
@@ -523,6 +523,16 @@
 
     $(function(){
 
+
+
+        var cDoms = $(".students").text();
+        cDoms = cDoms.substring(0,cDoms.length-1);
+        $(".students").text(cDoms);
+        var cDoms2 = $(".student_ids").text();
+        cDoms2 = cDoms2.substring(0,cDoms2.length-1);
+        $(".student_ids").text(cDoms2);
+
+
         //初始化全局变量
         var student_id ='';
         var studentList ='';
@@ -702,6 +712,8 @@
             var  teacher_id = $('input[name=teacher_id]').val();
             var  status = $(".status option:selected").val();
             var  remarks = $(".remarks").val();
+            var  students = $(".students").text();
+            var  student_ids = $('input[name=student_ids]').val();
             console.log(assistant);
             console.log(assistant_id);
             mui.ajax("{:url('api/grade/updateGradeApi')}",{
@@ -732,7 +744,9 @@
                        "teacher_id": teacher_id,
                        "teacher":$.trim(teacher),
                        "status":status,
-                       "remarks":remarks
+                       "remarks":remarks,
+                        "students":students,
+                        "student_ids": student_ids
                    },
                    "studentList":studentList
                },
