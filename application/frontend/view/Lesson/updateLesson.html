@@ -81,13 +81,13 @@
                     <label>训练日期</label>
                     <span class="select-row">
                     <select class="data" name="week">
-                        <option value="周日">周日</option>
-                        <option value="周一">周一</option>
-                        <option value="周二">周二</option>
-                        <option value="周三">周三</option>
-                        <option value="周四">周四</option>
-                        <option value="周五">周五</option>
-                        <option value="周六">周六</option>
+                        <option {eq name="lessonInfo.week" value="周日"}selected{/eq}>周日</option>
+                        <option {eq name="lessonInfo.week" value="周一"}selected{/eq}>周一</option>
+                        <option {eq name="lessonInfo.week" value="周二"}selected{/eq}>周二</option>
+                        <option {eq name="lessonInfo.week" value="周三"}selected{/eq}>周三</option>
+                        <option {eq name="lessonInfo.week" value="周四"}selected{/eq}>周四</option>
+                        <option {eq name="lessonInfo.week" value="周五"}selected{/eq}>周五</option>
+                        <option {eq name="lessonInfo.week" value="周六"}selected{/eq}>周六</option>
                     </select>
                 </span>
                 </a>
@@ -483,17 +483,29 @@
             mui("#mainCoach").popover("toggle");
         })
         // 助理教练
+        // $("#assistantConfirm").click(function(){
+        //     $("input[name='assistant']").val($("input[name='checkbox-assistant']:checked").map(function(){
+        //         return $(this).val()
+        //     }).get().join(",") );
+        //     $(".assistantCoachCont").text($("input[name='assistant']").val());
+        //     console.log($("input[name='assistant']").val())
+        //     // var id= $(".label").attr('data-id');
+        //     // $(".assistant_ids").val(id);
+        //     mui('#assistantCoach').popover('toggle');
+        //     console.log(id)
+        // })
+
+         // 助理教练
         $("#assistantConfirm").click(function(){
-            $("input[name='assistant']").val($("input[name='checkbox-assistant']:checked").map(function(){
+            $(".assistantCoachCont").text($("input[name='checkbox-assistant']:checked").map(function(){
                 return $(this).val()
             }).get().join(",") );
-            $(".assistantCoachCont").text($("input[name='assistant']").val());
-            console.log($("input[name='assistant']").val())
-            // var id= $(".label").attr('data-id');
-            // $(".assistant_ids").val(id);
+            $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function(){
+                return $(this).attr('data-id');
+            }).get().join(",") );
             mui('#assistantCoach').popover('toggle');
-            console.log(id)
         })
+
         // 班主任
         $(".headMaster").on('click','li',function(){
             var headMaster = $(this).html();
@@ -610,6 +622,7 @@
         console.log(objData)
         var url = "{:url('api/lesson/updateLessonApi',['lesson_id'=>$lessonInfo['id']])}";
         var ajaxResult = wooApi.asyncF(url,objData);
+        console.log(ajaxResult);
         if(ajaxResult.code){
             mui.alert(ajaxResult.msg,'修改成功','确定',function(){
             window.location.href="{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/{$lessonInfo.id}/camp_id/{$lessonInfo.camp_id}';
