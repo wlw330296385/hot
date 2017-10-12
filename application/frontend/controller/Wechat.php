@@ -30,18 +30,17 @@ class Wechat extends Controller {
 
     // 扫描更换二维码 server-sent监听
     public function bindwxsse() {
-        header('Content-Type: text/event-stream; charset=utf-8');
-        header('Cache-Control: no-cache');
-        header("Expires: 0");
+//        header('Content-Type: text/event-stream; charset=utf-8');
+//        header('Cache-Control: no-cache');
+//        header("Expires: 0");
         $guid = input('guid');
 //        $time = date('r');
 //        echo "data: The server time is: {$time}\n\n";
         $info = Cache::get('memberchangewx_'.$guid) ? Cache::get('memberchangewx_'.$guid) : '0';
         if ($info != '0') {
-            echo "event: message"."\n";
-            echo "data: 绑定成功\n\n";
             Cache::rm('memberchangewx_'.$guid);
+            return json(['code'=> 200, 'msg' => __lang('MSG_200')]);
         }
-        flush();
+//        flush();
     }
 }

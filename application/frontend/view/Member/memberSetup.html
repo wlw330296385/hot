@@ -291,7 +291,7 @@
 
 <div id="wechat" class="mui-page">
     <div class="mui-navbar-inner mui-bar mui-bar-nav">
-        <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+        <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left stop-wxtimer">
             <span class="mui-icon mui-icon-left-nav"></span>
         </button>
         <h1 class="mui-center mui-title">修改微信绑定</h1>
@@ -434,15 +434,30 @@
     });
 
     $(function () {
-        $('#wxsse').on("change",'', function() {
+        $('#wxsse').on("change", '', function() {
             //console.log($(this).val());
              var sseurl = $(this).val();
-             var source = new EventSource(sseurl);
-             source.onmessage = function(event) {
-                 console.log(event.data);
-                 alert(event.data);
-                 source.close();
-             }
+//             var source = new EventSource(sseurl);
+//             source.onmessage = function(event) {
+//                 console.log(event.data);
+//                 alert(event.data);
+//                 source.close();
+//             }
+            var wxtimer = setInterval(function(){
+                $.ajax({
+                    async: true,
+                    type: "POST",
+                    url: sseurl,
+                    dataType: "json",
+                    success: function(res) {
+                        console.log(res);
+                        if (res.code==200) {
+                            clearInterval(wxtimer);
+                        }
+                    }
+                })
+            }, 1000);
+
         });
 
         //退出登陆
