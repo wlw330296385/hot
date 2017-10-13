@@ -74,7 +74,7 @@
                     <span class="studentCont students">{volist name="students" id="vol"}{$vol.student},{/volist}</span>
                     <div id="hideStList">
                     {volist name="students" id="vol"}
-                    <input type="hidden"  data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" >
+                    <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" >
                     {/volist}
                     </div>
                 </a>
@@ -522,6 +522,19 @@
         //初始化全局变量
         var studentList = [];
 
+        //学员列表相关初始值
+        $(".stdList").each(function (i) {
+            var id = $(this).attr("data-id");
+            var student_id = $(this).attr("data-student_id");
+            var student = $(this).attr("data-student");
+            studentList[i] = {student:student,student_id: student_id,id:id};
+            $("#newdiv").find("input[name='checkbox-student']").filter(function(index){
+                return $(this).attr("data-student_id")==student_id
+            }).attr("checked","checked");
+            console.log(studentList)
+        });
+
+
         // 学员名单
         $("#studentConfirm").on('tap', function () {
            //选择多个学员
@@ -542,7 +555,7 @@
                  var student_id = $(this).attr("data-student_id");
                  var student = $(this).val();
                  studentList[i] = {student:student,student_id: student_id,id:id}
-                 inputList += '<input type="hidden"  data-id="'+id+'" data-student="'+student+'" data-student_id="'+student_id+'" >';
+                 inputList += '<input type="hidden" class="stdList" data-id="'+id+'" data-student="'+student+'" data-student_id="'+student_id+'" >';
                  studentNames += student+','
             });
             $("#hideStList").empty();
@@ -684,17 +697,6 @@
                 return false;
             }
         });
-
-
-
-
-        //学员列表数组
-        // studentList = [];
-        // $("input[name='checkbox-student']:checked").each(function (i) {
-        //     var id = $(this).attr("data-id");
-        //     var student = $(this).val();
-        //     studentList[i] = {student_id: id,student:student}
-        // });
 
 
 
