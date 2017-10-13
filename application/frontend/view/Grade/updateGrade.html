@@ -69,7 +69,7 @@
                 <a href="#student" class="mui-navigate-right">
                     <label>学员名单</label>
                     <span class="studentCont students domData" name="students">{volist name="students" id="vol"}{$vol.student},{/volist}</span>
-                    <input type="hidden" name="student_id" value="{volist name="students" id="vol"}{$vol.id},{/volist}">
+                    <input type="hidden" name="student_ids" value="{volist name="students" id="vol"}{$vol.id},{/volist}">
                     <input type="hidden" name="students" value="{volist name="students" id="vol"}{$vol.student},{/volist}">
                 </a>
             </div>
@@ -540,11 +540,11 @@
             }).get().join(","));
             $(".studentCont").text($("input[name='students']").val());
 
-            $("input[name='student_id']").val($("input[name='checkbox-student']:checked").map(function () {
+            $("input[name='student_ids']").val($("input[name='checkbox-student']:checked").map(function () {
                 return $(this).attr('data-id');
             }).get().join(","));
 
-            console.log($("input[name='student_id']").val())
+            console.log($("input[name='student_ids']").val())
             console.log($("input[name='students']").val())
             mui('#student').popover('toggle');
         })
@@ -687,7 +687,7 @@
             var city = getCity || $('input[name=city]').val();
             var area = getArea || $('input[name=area]').val();
             var students = $('input[name=students]').val();
-            var student_id = $('input[name=student_id]').val();
+            var student_ids = $('input[name=student_ids]').val();
             var camp = $('input[name=camp]').val();
             var camp_id = $('input[name=camp_id]').val();
             var grade = $(".grade").val();
@@ -721,7 +721,7 @@
             console.log(lesson)
             console.log(lesson_id)
             console.log(students)
-            console.log(student_id)
+            console.log(student_ids)
             console.log(gradecate)
             console.log(gradecate_id)
             console.log(week)
@@ -754,8 +754,8 @@
                         "camp": camp,
                         "grade": grade,
                         "grade_id": grade_id,
-                        "students": students,
-                        "student_id": student_id,
+                        // "students": students,
+                        // "student_id": student_id,
                         "lesson": lesson,
                         "lesson_id": lesson_id,
                         "gradecate": $.trim(gradecate),
@@ -778,8 +778,8 @@
                         "teacher": $.trim(teacher),
                         "status": status,
                         "remarks": remarks,
-                        // "students": students,
-                        // "student_ids": student_ids
+                        "students": students,
+                        "student_ids": student_ids
                     }
                     // "studentList": studentList
                 },
