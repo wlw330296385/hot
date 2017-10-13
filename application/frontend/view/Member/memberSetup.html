@@ -291,7 +291,8 @@
 
 <div id="wechat" class="mui-page">
     <div class="mui-navbar-inner mui-bar mui-bar-nav">
-        <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left stop-wxtimer">
+        <button type="button"
+                class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left stop-wxtimer">
             <span class="mui-icon mui-icon-left-nav"></span>
         </button>
         <h1 class="mui-center mui-title">修改微信绑定</h1>
@@ -433,35 +434,40 @@
         });
     });
 
-    $(function () {
-        $('#wxsse').on("change", '', function() {
-            //console.log($(this).val());
-             var sseurl = $(this).val();
-//             var source = new EventSource(sseurl);
-//             source.onmessage = function(event) {
-//                 console.log(event.data);
-//                 alert(event.data);
-//                 source.close();
-//             }
-            var wxtimer = setInterval(function(){
-                $.ajax({
-                    async: true,
-                    type: "POST",
-                    url: sseurl,
-                    dataType: "json",
-                    success: function(res) {
-                        console.log(res);
-                        if (res.code==200) {
-                            clearInterval(wxtimer);
-                        }
-                    }
-                })
-            }, 1000);
+    // 监听 修改微信绑定操作结果
+    var changewxTimer;
+    function changewxTime() {
+        //var today = new Date();
+        //console.log("the time is:"+today.toString());
+        var sseurl = document.getElementById('wxsse').value;
+        $.ajax({
+            async: true,
+            type: "POST",
+            url: sseurl,
+            dataType: "json",
+            success: function (res) {
+                console.log(res);
+                if (res.code == 200) {
+                    clearInterval(changewxTimer);
+                    mui.toast('会员已成功绑定新微信号,请重新登录平台');
+                    setTimeout(location.href="{:url('frontend/index/index')}", 3000);
+                }
+            }
+        })
+    }
+    // 返回个人设置view 关闭计时器
+    mui('.mui-bar').on('tap', '.stop-wxtimer', function () {
+        clearInterval(changewxTimer);
+    });
 
+    $(function () {
+        // 开启监听计时器
+        $('#wxsse').on("change", '', function () {
+            changewxTimer = setInterval(changewxTime, 3000);
         });
 
         //退出登陆
-        $("#logout").on("click",'', function () {
+        $("#logout").on("click", '', function () {
             mui.ajax("{:url('api/Member/logout')}", {
                 data: '',
                 dataType: 'json',//服务器返回json格式数据
