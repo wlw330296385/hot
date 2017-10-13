@@ -98,7 +98,10 @@
     var bookUrl = "{:url('lesson/bookBill',['lesson_id'=>$lessonInfo['id']])}";
 
     function book(){
-
+        if("{$isPower}">1){
+            mui.alert('不允许购买自身训练营下的课程');
+            return false;
+        }
         if ( "{$memberInfo.id}"<=0) {
             var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
             mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
@@ -111,7 +114,10 @@
     }
 
     function buy(){
-
+        if("{$isPower}">1){
+            mui.alert('不允许购买自身训练营下的课程');
+            return false;
+        }
         if ( "{$memberInfo.id}"<=0) {
             var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
             mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);

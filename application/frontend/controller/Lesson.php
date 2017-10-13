@@ -32,7 +32,10 @@ class Lesson extends Base{
     public function lessonInfo(){
     	$lesson_id = input('param.lesson_id');
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
-        $this->assign('lessonInfoJson',json_encode($lessonInfo));
+        $isPower = $this->LessonService->isPower($lessonInfo['camp_id'],$this->memberInfo['id']);
+        // dump($isPower);die;
+
+        $this->assign('isPower',$isPower);
         $this->assign('lessonInfo',$lessonInfo);
         return view('Lesson/lessonInfo');
     }
