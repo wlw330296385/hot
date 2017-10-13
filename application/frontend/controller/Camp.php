@@ -469,4 +469,13 @@ class Camp extends Base{
         return view('Camp/courtListOfCamp');
     }
 
+    // 训练营-教务人员列表
+    public function teachlistofcamp() {
+        $camp_id = input('camp_id', 0);
+        $status = input('status', 1);
+        $this->assign('camp_id',$camp_id);
+        $view = $status ? 'Camp/teachlistOfCamp' : 'Camp/teachapplylist';
+        return view($view);
+    }
+
 }

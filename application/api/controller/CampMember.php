@@ -4,6 +4,7 @@ use app\api\controller\Base;
 use app\model\MessageMember;
 use app\service\CampService;
 use app\service\CoachService;
+use app\service\MessageService;
 use app\service\WechatService;
 use think\Db;
 use think\Exception;
@@ -52,28 +53,44 @@ class CampMember extends Base{
             }
             //是否已存在身份
             $isType = db('camp_member')->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>$camp_id])->find();
-            if($isType){
-                if($isType['status'] == 1) {
-                    return json(['code'=>100,'msg'=>'你已经是训练营的一员']);
+            if($isType) {
+                if ($type > $isType['type']) {  // 升级身份
+                    $data['id'] = $isType['id'];
                 } else {
-                    return json(['code'=>100,'msg'=>'你已申请加入训练营,请等待审核']);
+                    if ($isType['status'] == 1) {
+                        return json(['code' => 100, 'msg' => '你已经是训练营的一员']);
+                    } else {
+                        return json(['code' => 100, 'msg' => '你已申请加入训练营,请等待审核']);
+                    }
                 }
             }
+            // 必须要有教练资格
+            if ($type == 2) {
+                $coachS = new CoachService();
+                $coach = $coachS->coachInfo(['member_id' => $this->memberInfo['id']]);
+                if (!$coach && $coach['status_num'] != 1) {
+                    return json(['code' => 101, 'msg' => '请先注册教练资格', 'goto' => url('frontend/coach/createcoach')]);
+                }
+            }
+
             $status = 0;
             if($type == -1){
                 $status = 1;
             }
-            $result = db('camp_member')->insert([
+            $data = [
                 'camp_id'=>$campInfo['id'],
                 'camp'=>$campInfo['camp'],
                 'member_id'=>$this->memberInfo['id'],
                 'member'=>$this->memberInfo['member'],
                 'remarks' => $remarks,
                 'type'=>$type,
-                'status'=>$status,
-                'create_time'=>time()]);
+                'status'=>$status
+            ];
+
+            $model = new \app\model\CampMember();
+            $result = $model->save($data);
             if($result){
-                return json(['code'=>200,'msg'=>'申请成功']);
+                return json(['code'=>200,'msg'=>'申请成功', 'insid' => $model->id]);
             }else{
                 return json(['code'=>100,'msg'=>'申请失败']);
             }

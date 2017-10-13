@@ -114,19 +114,6 @@ class MessageService{
 		}
 	}
 
-	// 获取系统消息列表
-	public function getMessageMemberListByPage($map = [],$paginate=10){
-		$result = $this->MessageModel
-				->where($map)
-				->paginate($paginate);
-		if($result){
-			$res = $result->toArray();
-			return $res;
-		}else{
-			return $result;
-		}
-	}
-
 	//修改系统Message资料
 	public function updateMessageInfo($data,$id){
 		$result = $this->MessageModel->save($data,['id'=>$id]);
@@ -161,5 +148,49 @@ class MessageService{
 		return $result;
 	}
 
-
+    // 发送消息给管理员/营主-申请加入训练营审核
+    public function campJoinAudit($data, $camp_id) {
+	    if (!$camp_id) {
+	        return ['code' => 100, 'msg' => __lang('MSG_402')];
+        }
+        $receivers = db('camp_member')->where(['camp_id' => $camp_id, 'status' => 1, 'type' => ['egt', 3] ])->select();
+        $wechatS = new WechatService();
+	    foreach ($receivers as $receiver) {
+            db('message')->insert([
+                'title' => $data['title'],
+                'content' => $data['content'],
+                'url' => $data['url'],
+                'is_system' => 2,
+                'create_time' => time(),
+                'status' => 1,
+                'isread' => 1,
+                'member_id' => $receiver['member_id']
+            ]);
+            $sendTemplateData = [
+                'touser' => getMemberOpenid($receiver['member_id']),
+                'template_id' => 'aOTMBdZbOKo8fFEKS5HWNaw9Gu-2c8ASTOcXlL6129Q',
+                'url' => $data['url'],
+                'data' => [
+                    'first' => ['value' => $data['title']],
+                    'keyword1' => ['value' => $data['member']],
+                    'keyword2' => ['value' => $data['jointime']],
+                    'remark' => ['value' => '点击进入操作']
+                ]
+            ];
+            $sendTemplateResult = $wechatS->sendTemplate($sendTemplateData);
+            $log_sendTemplateData = [
+                'wxopenid' => getMemberOpenid($receiver['member_id']),
+                'member_id' => $receiver['member_id'],
+                'url' => $data['url'],
+                'content' => serialize($sendTemplateData),
+                'create_time' => time()
+            ];
+            if ($sendTemplateResult) {
+                $log_sendTemplateData['status'] = 1;
+            } else {
+                $log_sendTemplateData['status'] = 0;
+            }
+            db('log_sendtemplatemsg')->insert($log_sendTemplateData);
+        }
+    }
 }

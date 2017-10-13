@@ -19,6 +19,7 @@ class CoachService{
         $res = Coach::with('member')->where($map)->find();
         if($res){
             $result = $res->toArray();
+            $result['status_num'] = $res->getData('status');
             return $result;
         }else{
             return $res;

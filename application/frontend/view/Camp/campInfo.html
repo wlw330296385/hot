@@ -254,10 +254,20 @@
                     headers: {'Content-Type': 'application/json'},
                     success: function (data) {
                         //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data)
-                        if (data.code == 100) {
+                        console.log(data);
+                        if (data.code == 200) {
                             mui.toast("提交成功,待审核");
                             mui('#yqpopover').popover('toggle');
+                            mui.post("{:url('api/message/campjoinaudit')}", {id: data.insid}, function(res){
+                                console.log(res);
+                            }, 'json');
+                        } else if (data.code != 200 && data.code != 100) {
+                            mui('#yqpopover').popover('toggle');
+                            mui.confirm('', data.msg, ['取消', '立即前往'], function(e) {
+                                if (e.index == 1) {
+                                    window.location.href = data.goto;
+                                }
+                            });
                         } else {
                             mui.toast(data.msg);
                         }
