@@ -540,11 +540,11 @@
             var id = $(this).attr("data-id");
             var student_id = $(this).attr("data-student_id");
             var student = $(this).attr("data-student");
-            studentList[i] = {student:student,student_id: student_id,id:id};
-            $("#newdiv").find("input[name='checkbox-student']").attr("checked","checked");
+            studentList[i] = {student: student, student_id: student_id, id: id};
             console.log(studentList)
         });
-
+        //弹出框默认值
+        iniStudentValue()
 
         // 学员名单
         $("#studentConfirm").on('tap', function () {
@@ -723,7 +723,21 @@
                     })
                 }
              })
-        })
+    })
+
+
+
+    //学员列表相关初始值
+    var iniStudentValue = function() {
+        $(".stdList").each(function (i) {
+            var id = $(this).attr("data-id");
+            var student_id = $(this).attr("data-student_id");
+            var student = $(this).attr("data-student");
+            $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
+                return $(this).attr("data-student_id") == student_id
+            }).attr("checked", "checked");
+        });
+    };
 
      //训练营场地列表接口获取数据并追加到页面
     var toCourtList = function() {
