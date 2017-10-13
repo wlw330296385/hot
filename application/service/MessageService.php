@@ -114,6 +114,19 @@ class MessageService{
 		}
 	}
 
+	// 获取系统消息列表
+	public function getMessageMemberListByPage($map = [],$paginate=10){
+		$result = $this->MessageModel
+				->where($map)
+				->paginate($paginate);
+		if($result){
+			$res = $result->toArray();
+			return $res;
+		}else{
+			return $result;
+		}
+	}
+
 	//修改系统Message资料
 	public function updateMessageInfo($data,$id){
 		$result = $this->MessageModel->save($data,['id'=>$id]);
