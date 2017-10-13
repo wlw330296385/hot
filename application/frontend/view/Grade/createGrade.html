@@ -33,6 +33,9 @@
         .mui-toast-container {
             top: 250px
         }
+        .pdr{
+            padding-right: 30px !important;
+        }
     </style>
 </head>
 
@@ -51,21 +54,21 @@
 
             <div class="mui-input-row">
                 <label>班级名称</label>
-                <input type="text" name="" class="grade gradeCont" value="" placeholder="请输入班级名称">
+                <input type="text" class="gradeCont" value="" placeholder="请输入班级名称">
             </div>
 
             <div class="mui-input-row">
                 <a href="#lessonType" class="mui-navigate-right">
                     <label>所属课程</label>
-                    <span class="lessonTypeCont">请先选择课程，后选择学员</span>
-                    <input type="hidden" name="lesson_id" class="lesson_id data" value="">
+                    <input type="text" value="" class="lessonTypeCont pdr" placeholder="请先选择课程，后选择学员">
+                    <input type="hidden" name="lesson_id" class="lesson_id" value="">
                 </a>
             </div>
 
             <div class="mui-input-row">
                 <a href="#student" class="mui-navigate-right">
                     <label>学员名单</label>
-                    <span class="studentCont student studentList"></span>
+                    <span class="studentCont"></span>
                     <input type="hidden" name="student_ids" value="">
                     <input type="hidden" name="students" value="">
                 </a>
@@ -74,8 +77,8 @@
             <div class="mui-input-row">
                 <a href="#gradeType" class="mui-navigate-right">
                     <label>班级类型</label>
-                    <span class="gradeTypeCont gradecate"></span>
-                    <input type="hidden" name="gradecate_id" class="gradecate_id data" value="">
+                    <span class="gradeTypeCont"></span>
+                    <input type="hidden" name="gradecate_id" class="gradecate gradecate_id" value="">
                 </a>
             </div>
 
@@ -104,9 +107,9 @@
              <div class="mui-input-row">
                 <a href="#trainLocation" class="mui-navigate-right">
                     <label>训练地点</label>
-                    <span class="trainLocationCont domData dataSpan" name="court"></span>
-                    <input type="hidden" name="court_id" value="" class="data court_id">
-                    <input type="hidden" name="location" value="" class="data location">
+                    <span class="trainLocationCont"></span>
+                    <input type="hidden" name="court_id" value="" class="court_id">
+                    <input type="hidden" name="location" value="" class="location">
                 </a>
             </div>
 
@@ -125,44 +128,44 @@
             <div class="mui-input-row">
                 <a href="#mainCoach" class="mui-navigate-right">
                     <label>主教练</label>
-                    <span class="mainCoachCont domData" name="coach"></span>
-                    <input type="hidden" name="coach_id" value="" class="data coach_id">
+                    <input type="text" value="" class="mainCoachCont pdr">
+                    <input type="hidden" name="coach_id" value="" class="coach_id">
                 </a>
             </div>
             <div class="mui-input-row">
                 <a href="#assistantCoach" class="mui-navigate-right">
                     <label>助理教练</label>
-                    <span class="assistantCoachCont domData" name="assistants">（选填）</span>
-                    <input type="hidden" name="assistant_ids" value="" class="data assistant_ids">
+                    <input type="text" value="" class="assistantCoachCont pdr" placeholder="（选填）">
+                    <input type="hidden" name="assistant_ids" class="assistant_ids" value="">
                 </a>
             </div>
 
             <div class="mui-input-row">
                 <label>主教底薪<a href="#coach_salary"><i class="mui-icon mui-icon-info"></i></a></label>
-                <input type="text" name="" value="" class="coach_salary checkNum" placeholder="请输入主教底薪">
+                <input type="text" class="coach_salary checkNum" value="" placeholder="请输入主教底薪">
             </div>
 
             <div class="mui-input-row">
                 <label>助教底薪<a href="#assistantSalary"><i class="mui-icon mui-icon-info"></i></a></label>
-                <input type="text" name="" value="" class="assistant_salary checkNum" placeholder="请输入助教底薪">
+                <input type="text" class="assistant_salary checkNum" value="" placeholder="请输入助教底薪">
             </div>
 
             <div class="mui-input-row">
                 <label>提成基数<a href="#mainBase"><i class="mui-icon mui-icon-info"></i></a></label>
-                <input type="text" name="" value="" class="salary_base checkNum" placeholder="请输入提成基数">
+                <input type="text" class="salary_base checkNum" value="" placeholder="请输入提成基数">
             </div>
 
             <div class="mui-input-row">
                 <a href="#leader" class="mui-navigate-right">
                     <label>领队</label>
-                    <span class="leaderCont domData" name="leader">（选填）</span>
-                    <input type="hidden" name="leader_id" value="" class="data leader_id">
+                    <input type="text" value="" class="leaderCont pdr" placeholder="（选填）">
+                    <input type="hidden" name="leader_id" class="leader_id" value="">
                 </a>
             </div>
             <div class="mui-input-row">
                 <a href="#headMaster" class="mui-navigate-right">
                     <label>班主任</label>
-                    <span class="headMasterCont domData" name="teacher">（选填）</span>
+                    <input type="text" value="" class="headMasterCont pdr" placeholder="（选填）">
                     <input type="hidden" name="teacher_id" value="" class="data teacher_id">
                 </a>
             </div>
@@ -192,7 +195,7 @@
 
             <div class="mui-input-row">
                 <label>备注</label>
-                <input type="text" name="" class="remarks checkChinese" value="" placeholder="（选填）">
+                <input type="text" class="remarks checkChinese" value="" placeholder="（选填）">
             </div>
 
         </form>
@@ -216,8 +219,7 @@
         <div class="mui-scroll">
             <ul class="mui-table-view list">
                 {volist name="lessonList" id="vol"}
-                <li class="mui-table-view-cell listli detalisli lessonType lesson" data-id="{$vol.id}">{$vol.lesson}
-                </li>
+                <li class="mui-table-view-cell listli detalisli lessonType lesson" data-id="{$vol.id}">{$vol.lesson}</li>
                 {/volist}
             </ul>
         </div>
@@ -331,18 +333,8 @@
 
             <ul class="mui-table-view list">
                 {volist name="gradecateList" id="vol"}
-                <li class="mui-table-view-cell listli detalisli">
-                    {$vol.name}
-                    {notempty name="vol._data"}
-
-                    {volist name="$vol['_data']" id="v"}
-                <li class="mui-table-view-cell listli detalisli gradeType" data-id="{$v.id}">
-                    {$v.name}
-                </li>
-                {/volist}
-
-                {/notempty}
-                </li>
+                <li class="mui-table-view-cell listli detalisli">{$vol.name}{notempty name="vol._data"}{volist name="$vol['_data']" id="v"}
+                <li class="mui-table-view-cell listli detalisli gradeType" data-id="{$v.id}">{$v.name}</li>{/volist}{/notempty}</li>
                 {/volist}
             </ul>
         </div>
@@ -540,11 +532,12 @@
 
         // 学员名单
         $("#studentConfirm").on('click', function () {
-            //选择多个学员
+            //学员取值
             $("input[name='students']").val($("input[name='checkbox-student']:checked").map(function () {
                 return $(this).val()
             }).get().join(","));
             $(".studentCont").text($("input[name='students']").val());
+            // 学员取id
             $("input[name='student_ids']").val($("input[name='checkbox-student']:checked").map(function () {
                 return $(this).attr('data-id');
             }).get().join(","));
@@ -568,7 +561,7 @@
             var lessonType = $(this).text();
             lesson_id = $(this).attr("data-id");
             $(".lesson_id").val(lesson_id);
-            $(".lessonTypeCont").text(lessonType);
+            $(".lessonTypeCont").val(lessonType);
             mui("#lessonType").popover("toggle");
         })
         // 班级类型
@@ -593,7 +586,7 @@
         // 主教练
         $(".mainCoach").on('click', 'li', function () {
             var mainCoach = $(this).text();
-            $(".mainCoachCont").text(mainCoach);
+            $(".mainCoachCont").val(mainCoach);
             var id = $(this).attr('data-id');
             $(".coach_id").val(id);
             mui("#mainCoach").popover("toggle");
@@ -601,7 +594,7 @@
 
         // 助理教练
         $("#assistantConfirm").click(function () {
-            $(".assistantCoachCont").text($("input[name='checkbox-assistant']:checked").map(function () {
+            $(".assistantCoachCont").val($("input[name='checkbox-assistant']:checked").map(function () {
                 return $(this).val()
             }).get().join(","));
             $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function () {
@@ -612,16 +605,16 @@
 
         // 班主任
         $(".headMaster").on('click', 'li', function () {
-            var headMaster = $(this).html();
-            $(".headMasterCont").html(headMaster);
+            var headMaster = $(this).text();
+            $(".headMasterCont").val(headMaster);
             var id = $(this).attr('data-id');
             $(".teacher_id").val(id);
             mui("#headMaster").popover("toggle");
         })
         // 领队
         $(".leader").on('click', 'li', function () {
-            var leader = $(this).html();
-            $(".leaderCont").html(leader);
+            var leader = $(this).text();
+            $(".leaderCont").val(leader);
             var id = $(this).attr('data-id');
             $(".leader_id").val(id);
             mui("#leader").popover("toggle");
@@ -739,15 +732,15 @@
 
         //创建班级api
         $(".editorbtn").click(function () {
-            var province = getProvince || $('input[name=province]').val();
-            var city = getCity || $('input[name=city]').val();
-            var area = getArea || $('input[name=area]').val();
-            var grade = $(".grade").val();
+            var province = getProvince 
+            var city = getCity 
+            var area = getArea 
+            var grade = $(".gradeCont").val();
             var students = $('input[name=students]').val();
-            var student_ids = $('input[name=student_ids]').val();
-            var lesson = $(".lessonTypeCont").text();
+            var student_ids= $('input[name=student_ids]').val();
+            var lesson = $(".lessonTypeCont").val();
             var lesson_id = $('input[name=lesson_id]').val();
-            var gradecate = $(".gradecate").text();
+            var gradecate = $(".gradeTypeCont").text();
             var gradecate_id = $('input[name=gradecate_id]').val();
             var week = $(".week option:selected").text();
             var court = $.trim($('.trainLocationCont').text());
@@ -757,13 +750,13 @@
             var coach_salary = $(".coach_salary").val();
             var assistant_salary = $(".assistant_salary").val();
             var salary_base = $(".salary_base").val();
-            var coach = $(".mainCoachCont").text();
+            var coach = $(".mainCoachCont").val();
             var coach_id = $('input[name=coach_id]').val();
-            var assistant = $(".assistantCoachCont").text();
-            var assistant_id = $('input[name=assistant_ids]').val();
-            var leader = $(".leaderCont").text();
+            var assistants = $(".assistantCoachCont").val();
+            var assistant_ids = $('input[name=assistant_ids]').val();
+            var leader = $(".leaderCont").val();
             var leader_id = $('input[name=leader_id]').val();
-            var teacher = $(".headMasterCont").text();
+            var teacher = $(".headMasterCont").val();
             var teacher_id = $('input[name=teacher_id]').val();
             var status = $(".status option:selected").val();
             var remarks = $(".remarks").val();
@@ -787,15 +780,15 @@
             console.log(salary_base)
             console.log(coach)
             console.log(coach_id)
-            console.log(assistant)
-            console.log(assistant_id)
+            console.log(assistants)
+            console.log(assistant_ids)
             console.log(leader)
             console.log(leader_id)
             console.log(teacher)
             console.log(teacher_id)
             console.log(status)
             console.log(remarks)
-            if (grade != '' && lesson != '' && gradecate != '' && week != '' && lesson_time != '' && court != '' && coach != '') {
+            if (students != '' && grade != '' && lesson != '' && gradecate != '' && week != '' && lesson_time != '' && court != '' && coach != '') {
                 mui.ajax("{:url('api/grade/createGradeApi')}", {
                     data: {
                         "gradeData": {
@@ -821,8 +814,8 @@
                             "salary_base": salary_base,
                             "coach": coach,
                             "coach_id": coach_id,
-                            "assistants": assistant,
-                            "assistant_id": assistant_id,
+                            "assistants": assistants,
+                            "assistant_id": assistant_ids,
                             "leader": $.trim(leader),
                             "leader_id": leader_id,
                             "teacher_id": teacher_id,
