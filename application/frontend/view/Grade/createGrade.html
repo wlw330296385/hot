@@ -66,7 +66,6 @@
                 <a href="#student" class="mui-navigate-right">
                     <label>学员名单</label>
                     <span class="studentCont student studentList"></span>
-                    <input type="hidden" name="student" value="">
                     <input type="hidden" name="student_id" value="">
                     <input type="hidden" name="students" value="">
                 </a>
@@ -542,19 +541,24 @@
         // 学员名单
         $("#studentConfirm").on('click', function () {
             //选择多个学员
-            $("input[name='student']").val($("input[name='checkbox-student']:checked").map(function () {
+            $("input[name='students']").val($("input[name='checkbox-student']:checked").map(function () {
                 return $(this).val()
             }).get().join(","));
-            $(".studentCont").text($("input[name='student']").val());
+            $(".studentCont").text($("input[name='students']").val());
+            $("input[name='student_id']").val($("input[name='checkbox-student']:checked").map(function () {
+                return $(this).attr('data-id');
+            }).get().join(","));
+            console.log($("input[name='student_id']").val())
+            console.log($("input[name='students']").val())
 
             //学员列表数组
-            studentList = [];
-            $("input[name='checkbox-student']:checked").each(function (i) {
-                var id = $(this).attr("data-id");
-                var student = $(this).val();
-                studentList[i] = {student_id: id,student:student}
-            });
-            console.log(studentList)
+            // studentList = [];
+            // $("input[name='checkbox-student']:checked").each(function (i) {
+            //     var id = $(this).attr("data-id");
+            //     var student = $(this).val();
+            //     studentList[i] = {student_id: id,student:student}
+            // });
+            // console.log(studentList)
             mui('#student').popover('toggle');
         })
 
@@ -739,6 +743,8 @@
             var city = getCity || $('input[name=city]').val();
             var area = getArea || $('input[name=area]').val();
             var grade = $(".grade").val();
+            var students = $('input[name=students]').val();
+            var student_id = $('input[name=student_id]').val();
             var lesson = $(".lessonTypeCont").text();
             var lesson_id = $('input[name=lesson_id]').val();
             var gradecate = $(".gradecate").text();
@@ -767,6 +773,8 @@
             console.log(grade)
             console.log(lesson)
             console.log(lesson_id)
+            console.log(students)
+            console.log(student_id)
             console.log(gradecate)
             console.log(gradecate_id)
             console.log(week)
@@ -787,7 +795,7 @@
             console.log(teacher_id)
             console.log(status)
             console.log(remarks)
-            if (studentList!=''&&grade != '' && lesson != '' && gradecate != '' && week != '' && lesson_time != '' && court != '' && coach != '') {
+            if (grade != '' && lesson != '' && gradecate != '' && week != '' && lesson_time != '' && court != '' && coach != '') {
                 mui.ajax("{:url('api/grade/createGradeApi')}", {
                     data: {
                         "gradeData": {
@@ -799,6 +807,8 @@
                             "grade": grade,
                             "lesson": lesson,
                             "lesson_id": lesson_id,
+                            "students": students,
+                            "student_id": student_id,
                             "gradecate": $.trim(gradecate),
                             "gradecate_id": gradecate_id,
                             "court": court,
@@ -822,8 +832,8 @@
                             // "rent":rent,
                             "status": status,
                             "remarks": remarks
-                        },
-                        "studentList":studentList
+                        }
+                        // "studentList":studentList
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
