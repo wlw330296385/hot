@@ -95,12 +95,11 @@ class Grade extends Base{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-            dump($data);die;
+            // dump($grade_id);die;
             $GradeService = new GradeService;
             $result = $GradeService->updateGrade($data,$data['grade_id']);
             if($result['code']==200){
                 if($data['studentData']){
-                    $grade_id = $result['data'];
                     $studentData = json_decode($data['studentData'],true);
                     $StudentService = new \app\service\StudentService;
                     $res = $StudentService->saveAllStudent($studentData,$grade_id,$data['grade']);
