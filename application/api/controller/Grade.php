@@ -116,16 +116,12 @@ class Grade extends Base{
             
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-            $students = $data['students'];
-            $student_ids = $data['student_ids'];
-            unset($data['students']);
-            unset($data['student_ids']);
             $GradeService = new GradeService;
             $result = $GradeService->createGrade($data);
             if($result['code']==200){
                 $grade_id = $result['data'];
                 $StudentService = new \app\service\StudentService;
-                $res = $StudentService->saveAllStudent($students,$student_ids,$grade_id,$data['grade']);
+                $res = $StudentService->saveAllStudent($data['studentData'],$grade_id,$data['grade']);
                 return json($res);
             }else{
                 return json($result);

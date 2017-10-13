@@ -152,7 +152,6 @@ class Lesson extends Base{
                     $data['area'] = $address[1];
                 }             
             }
-            $data['status'] = -1;
             if($lesson_id){
                 $result = $this->LessonService->updateLesson($data,$lesson_id);
             }else{

@@ -19,16 +19,16 @@ class billVal extends Validate{
     ];
     
     protected $message = [
-        'bill_order'        =>  '订单必须',
+        'bill_order'        =>  '缺少订单号',
         'goods_id'	=> '商品必须',
         'goods'      =>  '商品必须',
-        'camp'                  =>'所属训练营必须',
-        'total'                 =>'字段必须',
-        'price'                 =>'字段必须',
+        'camp'                  =>'缺少训练营',
+        'total'                 =>'缺少总价',
+        'price'                 =>'缺少单价',
         'camp_id'                  =>'字段必须',
         'camp'           =>'训练营',
-        'student_id'              =>'student_id字段必须',
-        'student'                  =>'student字段必须',
+        'student_id'              =>'请先添加学生并且注意点[确认添加]按钮',
+        'student'                  =>'请先添加学生姓名并且注意点[确认添加]按钮',
         'member_id'                  =>'member_id字段必须',
         'member'                 =>'member字段必须',
         'score_pay'     =>'score_pay.require'

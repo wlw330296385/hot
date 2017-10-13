@@ -105,8 +105,19 @@ class Message extends Base{
         }
     }
 
-    //获取未读消息数量
+    //获取个人未读消息数量
     public function getUnReadMessageApi(){
-        
+        try{
+            
+            $result = $this->MessageService->removeMessageMember(['id'=>$message_id,'member_id'=>$this->memberInfo['id']]);
+            if($result){
+                return json(['code'=>100,'msg'=>'删除成功']);
+            }else{
+                return json(['code'=>200,'msg'=>'没有这条消息']);
+            }
+            
+        }catch (Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMassege()]);
+        }
     }
 }

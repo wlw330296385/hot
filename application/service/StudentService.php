@@ -135,7 +135,7 @@ class StudentService{
             $StudentData[$key]['student_id'] = $student_ids[$key];
             $studentData[$key]['student'] = $students[$key];
         }
-    	$result = $this->gradeMemberModel->saveAll($data);
+    	$result = $this->gradeMemberModel->saveAll($studentData);
     	if($result){
 			return ['code'=>200,'msg'=>__lang('MSG_200'),'data'=>$result];
 		}else{
