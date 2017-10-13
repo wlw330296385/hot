@@ -707,15 +707,15 @@
                 // 获取其他标签值
                 arrData = wooApi.getDomData('domData',datas);
                 var objData = wooApi.arrTOobj(arrData);
-                // var studentData = [{student:1,student_id:1,id:1},{student:2,student_id:2,id:2}];
+                // var studentList = [{student:1,student_id:1,id:1},{student:2,student_id:2,id:2}];
                 objData.studentData = JSON.stringify(studentList);
                 console.log(studentList);
-                console.log(objData.studentData );return;
+                // console.log(objData.studentData );return;
                 var url = "{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}";
                 var ajaxResult = wooApi.asyncF(url,objData);
                 if(ajaxResult.code == 200){
                     mui.alert(ajaxResult.msg,'修改成功','确定',function(){
-                    window.location.href="{:url('api/grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
+                    window.location.href="{:url('frontend/grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
                   })
                 }else{
                     mui.alert(ajaxResult.msg,'修改失败','确定',function(){
