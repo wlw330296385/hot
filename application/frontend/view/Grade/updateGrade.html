@@ -522,15 +522,26 @@
         //初始化全局变量
         var studentList = [];
 
+        //获取训练营场地表
+        toCourtList();
+        //获取课程学员列表
+        toLessonList();
+        //获取训练营教练列表
+        toCoachList();
+        //获取训练营粉丝列表
+        var fansKeyword = '';
+        var wFans = '';
+        var pageHM = 1;
+        var pageLD = 1;
+        toFansList(fansKeyword, wFans, 1);
+
         //学员列表相关初始值
         $(".stdList").each(function (i) {
             var id = $(this).attr("data-id");
             var student_id = $(this).attr("data-student_id");
             var student = $(this).attr("data-student");
             studentList[i] = {student:student,student_id: student_id,id:id};
-            $("#newdiv").find("input[name='checkbox-student']").filter(function(index){
-                return $(this).attr("data-student_id")==student_id
-            }).attr("checked","checked");
+            $("#newdiv").find("input[name='checkbox-student']").attr("checked","checked");
             console.log(studentList)
         });
 
@@ -622,18 +633,7 @@
             mui("#leader").popover("toggle");
             console.log(id)
         })
-        //获取训练营场地表
-        toCourtList()
-        //获取课程学员列表
-        toLessonList();
-        //获取训练营教练列表
-        toCoachList();
-        //获取训练营教练列表
-        var fansKeyword = '';
-        var wFans = '';
-        var pageHM = 1;
-        var pageLD = 1;
-        toFansList(fansKeyword, wFans, 1);
+
         //搜索班主任粉丝
         $("#searchHM").on("click", function () {
             var keyword = $(".keywordHM").val();
