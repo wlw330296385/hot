@@ -53,14 +53,14 @@
 
             <div class="mui-input-row">
                 <label>班级名称</label>
-                <input type="text" name="grade" class="grade gradeCont domData" value="{$gradeInfo.grade}">
+                <input type="text" name="grade" class="grade gradeCont data" value="{$gradeInfo.grade}">
                 <input type="hidden" name="grade_id" class="grade_id data" value="{$gradeInfo.id}">
             </div>
 
             <div class="mui-input-row">
                 <a href="#lessonType" class="mui-navigate-right">
                     <label>所属课程</label>
-                    <span class="lesson lessonTypeCont domData">{$gradeInfo.lesson}</span>
+                    <span class="lesson lessonTypeCont domData" name="lesson">{$gradeInfo.lesson}</span>
                     <input type="hidden" name="lesson_id" class="lesson_id data" value="{$gradeInfo.lesson_id}">
                 </a>
             </div>
@@ -68,16 +68,17 @@
             <div class="mui-input-row">
                 <a href="#student" class="mui-navigate-right">
                     <label>学员名单</label>
-                    <span class="studentCont students domData" name="students">{volist name="students" id="vol"}{$vol.student},{/volist}</span>
-                    <input type="hidden" name="student_ids" value="{volist name="students" id="vol"}{$vol.id},{/volist}">
-                    <input type="hidden" name="students" value="{volist name="students" id="vol"}{$vol.student},{/volist}">
+                    <span class="studentCont students">{volist name="students" id="vol"}{$vol.student},{/volist}</span>
+                    {volist name="students" id="vol"}
+                    <input type="hidden"  data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" >
+                    {/volist}
                 </a>
             </div>
 
             <div class="mui-input-row">
                 <a href="#gradeType" class="mui-navigate-right">
                     <label>班级类型</label>
-                    <span class="gradeTypeCont gradecate domData">{$gradeInfo.gradecate}</span>
+                    <span class="gradeTypeCont gradecate domData" name="gradecate">{$gradeInfo.gradecate}</span>
                     <input type="hidden" name="gradecate_id" class="gradecate_id data"
                            value="{$gradeInfo.gradecate_id}">
                 </a>
@@ -86,7 +87,7 @@
             <div class="mui-input-row">
                 <label>训练日期</label>
                 <span class="select-arrow week">
-                        <select class="select data">
+                        <select class="select data" name="week">
                             <option value="周日" {eq name="gradeInfo.week" value="周日" }selected{/eq}>周日</option>
                             <option value="周一" {eq name="gradeInfo.week" value="周一" }selected{/eq}>周一</option>
                             <option value="周二" {eq name="gradeInfo.week" value="周二" }selected{/eq}>周二</option>
@@ -101,7 +102,7 @@
             <div class="mui-input-row picker btn" id="demo5" data-options='{"type":"time"}'>
                 <a href="#" class="mui-navigate-right">
                     <label>训练时间</label>
-                    <span id="result" class="ui-alert lesson_time domData">{$gradeInfo.lesson_time}</span>
+                    <span id="result" class="ui-alert lesson_time domData" name="lesson_time">{$gradeInfo.lesson_time}</span>
                 </a>
             </div>
 
@@ -109,24 +110,19 @@
                 <a href="#trainLocation" class="mui-navigate-right">
                     <label>训练地点</label>
                     <span class="trainLocationCont domData" name="court" data-id="{$gradeInfo.court_id}">{$gradeInfo.court}</span>
-                    <input type="hidden" name="court_id" value="{$gradeInfo.court_id}" class="data court_id">
-                    <input type="hidden" name="location" value="{$gradeInfo.location}" class="data location">
                 </a>
             </div>
 
             <div class="mui-input-row" id='showCityPicker3'>
                 <a href="#" class="mui-navigate-right">
                     <label>所属地区</label>
-                    <span id="cityResult3" class="ui-alert domData">{$gradeInfo.province}&nbsp;{$gradeInfo.city}&nbsp;{$gradeInfo.area}</span>
-                    <input type="hidden" name="province" value="{$gradeInfo.province}">
-                    <input type="hidden" name="city" value="{$gradeInfo.city}">
-                    <input type="hidden" name="area" value="{$gradeInfo.area}">
+                    <span id="cityResult3" class="ui-alert domData" name="address" >{$gradeInfo.province} {$gradeInfo.city} {$gradeInfo.area}</span>
                 </a>
             </div>
 
             <div class="mui-input-row">
                 <label>具体地址</label>
-                <input type="text" name="jtlocation" value="{$gradeInfo.location}" class="jtlocation data">
+                <input type="text" name="location" value="{$gradeInfo.location}" class="location data">
             </div>
 
             <div class="mui-input-row">
@@ -140,8 +136,8 @@
                 <a href="#assistantCoach" class="mui-navigate-right">
                     <label>助理教练</label>
                     <span class="assistantCoachCont domData" name="assistants">{$gradeInfo.assistants}</span>
-                    <input type="hidden" name="assistant_ids" value="{$gradeInfo.assistant_id}"
-                           class="data assistant_ids">
+                    <input type="hidden" name="assistant_ids" value="{$gradeInfo.assistant_ids}"
+                           class="data">
                 </a>
             </div>
 
@@ -152,12 +148,12 @@
 
             <div class="mui-input-row">
                 <label>助教底薪<a href="#assistantSalary"><i class="mui-icon mui-icon-info"></i></a></label>
-                <input type="text" name="assistant_salary" class="assistant_salary" value="{$gradeInfo.assistant_salary}">
+                <input type="text" name="assistant_salary" class="assistant_salary data" value="{$gradeInfo.assistant_salary}">
             </div>
 
             <div class="mui-input-row">
                 <label>提成基数<a href="#mainBase"><i class="mui-icon mui-icon-info"></i></a></label>
-                <input type="text" name="salary_base" class="salary_base" value="{$gradeInfo.salary_base}">
+                <input type="text" name="salary_base" class="salary_base data" value="{$gradeInfo.salary_base}">
                
             </div>
 
@@ -179,16 +175,16 @@
             <div class="mui-input-row">
                 <label>是否预排</label>
                 <span class="select-arrow status">
-                        <select class="select data">
-                            <option value="-1" {eq name="gradeInfo.status_num" value="-1" }selected{/eq}>预排</option>
-                            <option value="1" {eq name="gradeInfo.status_num" value="1" }selected{/eq}>正常</option>
-                        </select>
-                    </span>
+                    <select class="select data" name="status">
+                        <option value="-1" {eq name="gradeInfo.status_num" value="-1" }selected{/eq}>预排</option>
+                        <option value="1" {eq name="gradeInfo.status_num" value="1" }selected{/eq}>正常</option>
+                    </select>
+                </span>
             </div>
 
             <div class="mui-input-row">
                 <label>备注</label>
-                <input type="text" name="" class="remarks checkChinese data" value="{$gradeInfo.remarks}">
+                <input type="text" name="reamarks" class="remarks checkChinese data" value="{$gradeInfo.remarks}">
             </div>
 
         </form>
@@ -519,8 +515,6 @@
 
 
     $(function () {
-
-
         var cDoms = $(".students").text();
         cDoms = cDoms.substring(0, cDoms.length - 1);
         $(".students").text(cDoms);
@@ -533,15 +527,15 @@
         var studentList = '';
 
         // 学员名单
-        $("#studentConfirm").on('click', function () {
+        $("#studentConfirm").on('tap', function () {
            //选择多个学员
             $("input[name='students']").val($("input[name='checkbox-student']:checked").map(function () {
                 return $(this).val()
             }).get().join(","));
             $(".studentCont").text($("input[name='students']").val());
 
-            $("input[name='student_ids']").val($("input[name='checkbox-student']:checked").map(function () {
-                return $(this).attr('data-id');
+            $("input[name='student_data']").val($("input[name='checkbox-student']:checked").map(function () {
+                return $(this).attr('data');
             }).get().join(","));
 
             console.log($("input[name='student_ids']").val())
@@ -681,134 +675,29 @@
         });
 
 
-        //创建班级api
-        $(".editorbtn").click(function () {
-            var province = getProvince || $('input[name=province]').val();
-            var city = getCity || $('input[name=city]').val();
-            var area = getArea || $('input[name=area]').val();
-            var students = $('input[name=students]').val();
-            var student_ids = $('input[name=student_ids]').val();
-            var camp = $('input[name=camp]').val();
-            var camp_id = $('input[name=camp_id]').val();
-            var grade = $(".grade").val();
-            var grade_id = $('input[name=grade_id]').val();
-            var lesson = $(".lessonTypeCont").text();
-            var lesson_id = $('input[name=lesson_id]').val();
-            var gradecate = $(".gradecate").text();
-            var gradecate_id = $('input[name=gradecate_id]').val();
-            var week = $(".week option:selected").text();
-            var court = $.trim($('.trainLocationCont').text());
-            var court_id = $('input[name=court_id]').val();
-            var lesson_time = $(".lesson_time").text();
-            var jtlocation = $('.jtlocation').val();
-            var coach_salary = $(".coach_salary").val();
-            var assistant_salary = $(".assistant_salary").val();
-            var salary_base = $(".salary_base").val();
-            var coach = $(".mainCoachCont").text();
-            var coach_id = $('input[name=coach_id]').val();
-            var assistant = $(".assistantCoachCont").text();
-            var assistant_id = $('input[name=assistant_ids]').val();
-            var leader = $(".leaderCont").text();
-            var leader_id = $('input[name=leader_id]').val();
-            var teacher = $(".headMasterCont").text();
-            var teacher_id = $('input[name=teacher_id]').val();
-            var status = $(".status option:selected").val();
-            var remarks = $(".remarks").val();
-            console.log(province)
-            console.log(city)
-            console.log(area)
-            console.log(grade)
-            console.log(lesson)
-            console.log(lesson_id)
-            console.log(students)
-            console.log(student_ids)
-            console.log(gradecate)
-            console.log(gradecate_id)
-            console.log(week)
-            console.log(court)
-            console.log(court_id)
-            console.log(lesson_time)
-            console.log(jtlocation)
-            console.log(coach_salary)
-            console.log(assistant_salary)
-            console.log(salary_base)
-            console.log(coach)
-            console.log(coach_id)
-            console.log(assistant)
-            console.log(assistant_id)
-            console.log(leader)
-            console.log(leader_id)
-            console.log(teacher)
-            console.log(teacher_id)
-            console.log(status)
-            console.log(remarks)
-            // var students = $(".students").text();
-            // var student_ids = $('input[name=student_ids]').val();
-            mui.ajax("{:url('api/grade/updateGradeApi')}", {
-                data: {
-                    "gradeData": {
-                        "province": province,
-                        "city": city,
-                        "area": area,
-                        "camp_id": camp_id,
-                        "camp": camp,
-                        "grade": grade,
-                        "grade_id": grade_id,
-                        // "students": students,
-                        // "student_id": student_id,
-                        "lesson": lesson,
-                        "lesson_id": lesson_id,
-                        "gradecate": $.trim(gradecate),
-                        "gradecate_id": gradecate_id,
-                        "court": court,
-                        "court_id": court_id,
-                        "week": week,
-                        "lesson_time": lesson_time,
-                        "location": $.trim(jtlocation),
-                        "coach_salary": coach_salary,
-                        "assistant_salary": assistant_salary,
-                        "salary_base": salary_base,
-                        "coach": coach,
-                        "coach_id": coach_id,
-                        "assistants": assistant,
-                        "assistant_id": assistant_id,
-                        "leader": $.trim(leader),
-                        "leader_id": leader_id,
-                        "teacher_id": teacher_id,
-                        "teacher": $.trim(teacher),
-                        "status": status,
-                        "remarks": remarks,
-                        "students": students,
-                        "student_ids": student_ids
-                    }
-                    // "studentList": studentList
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: {'Content-Type': 'application/json'},
-                success: function (data) {
-                    //服务器返回响应，根据响应结果，分析是否登录成功；
-                    console.log(data);
-                    if (data.code == 200) {
-                        mui.alert('您的班级内容已修改成功。', '提示', '确定', function () {
-                            // var url = "{:url('grade/gradeInfoOfCamp')"+'/grade_id/{$gradeInfo.id}/camp_id/{$gradeInfo.camp_id}';
-                            var url = "{:url('grade/gradeInfoOfCamp')}" + '/grade_id/{$gradeInfo.id}/camp_id/{$gradeInfo.camp_id}';
-                            setTimeout(window.location.href = url,2000)
-                        });
-                    } else {
-                        mui.toast(data.msg);
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
+            //编辑班级
+             $(".editorbtn").on('tap',function(){
+                var data = wooApi.getInputData('input','data');
+                datas = wooApi.getInputData('select','data',data);
+                // 获取其他标签值
+                arrData = wooApi.getDomData('domData',datas);
+                var objData = wooApi.arrTOobj(arrData);
+                var studentData = [{student:1,student_id:1,id:1},{student:2,student_id:2,id:2}];
+                objData.studentData = studentData;
+                console.log(objData);return;
+                var url = "{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}";
+                var ajaxResult = wooApi.asyncF(url,objData);
+                if(ajaxResult.code == 200){
+                    mui.alert(ajaxResult.msg,'修改成功','确定',function(){
+                    window.location.href="{:url('api/grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
+                  })
+                }else{
+                    mui.alert(ajaxResult.msg,'修改失败','确定',function(){
+
+                    })
                 }
-            });
-
+             })
         })
-
-    });
 
      //训练营场地列表接口获取数据并追加到页面
     var toCourtList = function() {
@@ -867,7 +756,7 @@
                 var div = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"></div>'
+                        div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' +data.data[i].id+'"  data-student_id="' +data.data[i].student_id+ '" data-student="' +data.data[i].student+'"></div>'
                     }
                     $("#newdiv").append(div);
 

@@ -95,13 +95,12 @@ class Grade extends Base{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-            $students = $data['students'];
             $GradeService = new GradeService;
             $result = $GradeService->updateGrade($data,$data['grade_id']);
             if($result['code']==200){
                 $grade_id = $result['data'];
                 $StudentService = new \app\service\StudentService;
-                $res = $StudentService->saveAllStudent($students,$grade_id,$data['grade']);
+                $res = $StudentService->saveAllStudent($data['studentData'],$grade_id,$data['grade']);
                 return json($res);
             }else{
                 return json($result);
@@ -114,15 +113,19 @@ class Grade extends Base{
     public function createGradeApi(){
         try{
             $data = input('post.');
-            $students = $data['students'];
+            
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
+            $students = $data['students'];
+            $student_ids = $data['student_ids'];
+            unset($data['students']);
+            unset($data['student_ids']);
             $GradeService = new GradeService;
             $result = $GradeService->createGrade($data);
             if($result['code']==200){
                 $grade_id = $result['data'];
                 $StudentService = new \app\service\StudentService;
-                $res = $StudentService->saveAllStudent($students,$grade_id,$data['grade']);
+                $res = $StudentService->saveAllStudent($students,$student_ids,$grade_id,$data['grade']);
                 return json($res);
             }else{
                 return json($result);

@@ -181,7 +181,7 @@ class Lesson extends Base{
     public function getEduatedStudentsApi(){
         try{
             $lesson_id = input('param.lesson_id');
-            $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>4])->field('student,id')->select();
+            $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>4])->select();
             return json(['code'=>200,'msg'=>__lang('MSG_201'),'data'=>$studentList]);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -192,7 +192,7 @@ class Lesson extends Base{
     public function getInactiveStudentsApi(){
         try{
             $lesson_id = input('param.lesson_id');
-            $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->field('student,id')->select();
+            $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->select();
             return json(['code'=>200,'msg'=>__lang('MSG_201'),'data'=>$studentList]);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -207,7 +207,7 @@ class Lesson extends Base{
             $map = input('post');
             $map['lesson_id'] = $lesson_id;
             $map['status'] = 1;
-            $studentList = db('grade_member')->where($map)->field('student,id')->select();
+            $studentList = db('grade_member')->where($map)->select();
             return json(['code'=>200,'msg'=>__lang('MSG_201'),'data'=>$studentList]);
             
         }catch (Exception $e){

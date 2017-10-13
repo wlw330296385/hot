@@ -49,6 +49,7 @@ class GradeService{
             }else{
                  $result['assistants'] = '';
             }
+
             if($result['assistant_id']){
                 $assis = unserialize($result['assistant_id']);
                 $result['assistant_ids'] = implode(',', $assis);

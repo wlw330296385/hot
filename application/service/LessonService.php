@@ -63,15 +63,17 @@ class LessonService {
                 $res['doms'] = [];
             }
             if($res['assistant']){
-                $res['assistants'] = unserialize($res['assistant']);
+                $pieces = unserialize($res['assistant']);
+                $res['assistants'] = implode(',', $pieces);
             }else{
-                $res['assistants'] = [];
+                $res['assistants'] = '';
             }
 
             if($res['assistant_id']){
-                $res['assistant_ids'] = unserialize($res['assistant_id']);
+                $pieces = unserialize($res['assistant_id']);
+                $res['assistant_ids'] = implode(',', $pieces);
             }else{
-                $res['assistant_ids'] = [];
+                $res['assistant_ids'] = '';
             }
             $res['status_num'] = $result->getData('status');
             return $res;
