@@ -33,6 +33,9 @@
         .mui-toast-container {
             top: 250px
         }
+        #hideStList{
+            display: none;
+        }
     </style>
 </head>
 
@@ -69,9 +72,11 @@
                 <a href="#student" class="mui-navigate-right">
                     <label>学员名单</label>
                     <span class="studentCont students">{volist name="students" id="vol"}{$vol.student},{/volist}</span>
+                    <div id="hideStList">
                     {volist name="students" id="vol"}
                     <input type="hidden"  data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" >
                     {/volist}
+                    </div>
                 </a>
             </div>
 
@@ -460,12 +465,6 @@
         })
     })(mui);
 
-    // var cDoms = $(".lessonDom").text();
-    //     cDoms = cDoms.substring(0,cDoms.length-1);
-    //     $(".lessonDom").text(cDoms);
-    //     $("input[name=doms]").val(cDoms);
-
-
     //选择器
     var getProvince = '';
     var getCity = '';
@@ -518,28 +517,40 @@
         var cDoms = $(".students").text();
         cDoms = cDoms.substring(0, cDoms.length - 1);
         $(".students").text(cDoms);
-        var cDoms2 = $(".student_ids").text();
-        cDoms2 = cDoms2.substring(0, cDoms2.length - 1);
-        $(".student_ids").text(cDoms2);
 
 
         //初始化全局变量
-        var studentList = '';
+        var studentList = [];
 
         // 学员名单
         $("#studentConfirm").on('tap', function () {
            //选择多个学员
-            $("input[name='students']").val($("input[name='checkbox-student']:checked").map(function () {
-                return $(this).val()
-            }).get().join(","));
-            $(".studentCont").text($("input[name='students']").val());
+//            $("input[name='students']").val($("input[name='checkbox-student']:checked").map(function () {
+//                return $(this).val()
+//            }).get().join(","));
+//            $(".studentCont").text($("input[name='students']").val());
+//
+//            $("input[name='student_data']").val($("input[name='checkbox-student']:checked").map(function () {
+//                return $(this).attr('data');
+//            }).get().join(","));
 
-            $("input[name='student_data']").val($("input[name='checkbox-student']:checked").map(function () {
-                return $(this).attr('data');
-            }).get().join(","));
-
-            console.log($("input[name='student_ids']").val())
-            console.log($("input[name='students']").val())
+            var inputList="";
+            var studentNames="";
+            studentList=[];
+            $("input[name='checkbox-student']:checked").each(function (i) {
+                 var id = $(this).attr("data-id");
+                 var student_id = $(this).attr("data-student_id");
+                 var student = $(this).val();
+                 studentList[i] = {student:student,student_id: student_id,id:id}
+                 inputList += '<input type="hidden"  data-id="'+id+'" data-student="'+student+'" data-student_id="'+student_id+'" >';
+                 studentNames += student+','
+            });
+            $("#hideStList").empty();
+            $("#hideStList").html(inputList);
+            $(".students").text(studentNames.substring(0, studentNames.length - 1))
+            console.log(inputList)
+            console.log(studentList)
+            console.log(studentNames)
             mui('#student').popover('toggle');
         })
 
@@ -673,6 +684,18 @@
                 return false;
             }
         });
+
+
+
+
+        //学员列表数组
+        // studentList = [];
+        // $("input[name='checkbox-student']:checked").each(function (i) {
+        //     var id = $(this).attr("data-id");
+        //     var student = $(this).val();
+        //     studentList[i] = {student_id: id,student:student}
+        // });
+
 
 
             //编辑班级
