@@ -27,6 +27,9 @@
             display: table;
             width: 100%;
         }
+        .mui-navigate-right input[type='text']{
+            padding-right: 30px !important;
+        }
     </style>
 </head>
 
@@ -58,7 +61,7 @@
                 <input type="text" class="data" value="{$lessonInfo.cost}" name="cost" data-field="cost" placeholder="请填写课程单价">
             </div>
             <div class="mui-input-row">
-                <a href="#lessonDom" class="mui-navigate-right">
+                <a href="#lessonDom" id="setLessonDom" class="mui-navigate-right">
                     <label>课程数量</label>
                     <span class="lessonDom">{volist name="$lessonInfo.doms" id="vol" }{$vol},{/volist}</span>
                     <input type="hidden" name="doms" class="data" value='{volist name="$lessonInfo.doms" id="vol" }{$vol},{/volist}' >
@@ -136,23 +139,23 @@
                 </a>
             </div>
             <div class="mui-input-row">
-                <a href="#assistantCoach" class="mui-navigate-right">
+                <a href="#assistantCoach" id="setAsCoach" class="mui-navigate-right">
                     <label>助理教练</label>
-                    <span class="assistantCoachCont domData" name="assistants">{$lessonInfo['assistants']}</span>
+                    <input type="text" name="assistants" value="{$lessonInfo['assistants']}" class="data assistants" placeholder="选填">
                     <input type="hidden" name="assistant_ids" value="{$lessonInfo['assistant_ids']}" class="data assistant_ids">
                 </a>
             </div>
             <div class="mui-input-row">
                 <a href="#leader" class="mui-navigate-right">
                     <label>领队</label>
-                    <span class="leaderCont domData" name="leader">{$lessonInfo.leader}</span>
+                    <input type="text" name="leader" value="{$lessonInfo['leader']}" class="data" placeholder="选填">
                     <input type="hidden" name="leader_id" value="{$lessonInfo.leader_id}" class="data leader_id">
                 </a>
             </div>
             <div class="mui-input-row">
                 <a href="#headMaster" class="mui-navigate-right">
                     <label>班主任</label>
-                    <span class="headMasterCont domData" name="teacher">{$lessonInfo.teacher}</span>
+                    <input type="text" name="teacher" value="{$lessonInfo['teacher']}" class="data" placeholder="选填">
                     <input type="hidden" name="teacher_id" value="{$lessonInfo.teacher_id}" class="data teacher_id">
                 </a>
             </div>
@@ -291,6 +294,7 @@
     <div class="mui-popover-arrow"></div>
     <div class="page-header">
         <span class="course wd36"><strong>选择班主任</strong></span>
+        <span class="fr"><button class="mui-btn" id="teacherDel">清除</button></span>
     </div>
     <div class="camp-lesson-list">
         <div class="mui-segmented-control">
@@ -330,6 +334,7 @@
     <div class="mui-popover-arrow"></div>
     <div class="page-header">
         <span class="course wd36"><strong>选择领队</strong></span>
+        <span class="fr"><button class="mui-btn" id="leaderDel">清除</button></span>
     </div>
     <div class="camp-lesson-list">
         <div class="mui-segmented-control">
@@ -439,10 +444,39 @@
 
     $(function(){
 
+        //去除课量最尾逗号
         var cDoms = $(".lessonDom").text();
         cDoms = cDoms.substring(0,cDoms.length-1);
         $(".lessonDom").text(cDoms);
-        $("input[name=doms]").val(cDoms);
+        $("input[name='doms']").val(cDoms);
+
+        //复选框赋值
+        $("#setAsCoach").on('tap','', function () {
+            //每次打开先清空所有选择
+            $("input[name='checkbox-assistant']").prop("checked",false);
+            //然后遍历出对应所选
+            var str = $("input[name='assistant_ids']").val();
+            var s=str.split(',')
+            for(var i = 0;i<s.length;i++){
+                $("input[name='checkbox-assistant']").filter(function (index) {
+                    return $(this).attr("data-id") == s[i]
+                }).prop("checked",true);
+            }
+        });
+        $("#setLessonDom").on('tap','', function () {
+            //每次打开先清空所有选择
+            $("input[name='checkbox-dom']").prop("checked",false);
+            //然后遍历出对应所选
+            var str = $("input[name='doms']").val();
+            var s=str.split(',')
+            for(var i = 0;i<s.length;i++){
+                $("input[name='checkbox-dom']").filter(function (index) {
+                    return $(this).val() == s[i]
+                }).prop("checked",true);
+            }
+        });
+
+
 
         // 上课星期
         $("#weekConfirm").click(function(){
@@ -495,8 +529,8 @@
 
          // 助理教练
         $("#assistantConfirm").click(function(){
-            $(".assistantCoachCont").text($("input[name='checkbox-assistant']:checked").map(function(){
-                return $(this).val()
+            $("input[name='assistants']").val($("input[name='checkbox-assistant']:checked").map(function(){
+                return $(this).val();
             }).get().join(",") );
             $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function(){
                 return $(this).attr('data-id');
@@ -506,18 +540,30 @@
 
         // 班主任
         $(".headMaster").on('click','li',function(){
-            var headMaster = $(this).html();
-            $(".headMasterCont").html(headMaster);
+            var teacher = $(this).text();
+            $("input[name='teacher']").val(teacher);
             var id= $(this).attr('data-id');
             $(".teacher_id").val(id);
             mui("#headMaster").popover("toggle");
         })
+        //清除班主任
+        $("#teacherDel").on('tap','',function(){
+            $("input[name='teacher']").val("");
+            $(".teacher_id").val("");
+            mui("#headMaster").popover("toggle");
+        })
         // 领队
         $(".leader").on('click','li',function(){
-            var leader = $(this).html();
-            $(".leaderCont").html(leader);
+            var leader = $(this).text();
+            $("input[name='leader']").val(leader);
             var id= $(this).attr('data-id');
             $(".leader_id").val(id);
+            mui("#leader").popover("toggle");
+        })
+        //清除领队
+        $("#leaderDel").on('tap','',function(){
+            $("input[name='leader']").val("");
+            $(".leader_id").val("");
             mui("#leader").popover("toggle");
         })
 
@@ -528,7 +574,7 @@
                 return $(this).val();
             }).get().join(",") );
             var doms = $("input[name='doms']").val();
-            $(".lessonDom").html(doms);
+            $(".lessonDom").text(doms);
             mui('#lessonDom').popover('toggle');
         })
         //添加
@@ -688,7 +734,7 @@
                     var newliAS = ''; //助理教练多选
                     for (var i = 0; i <= data.data.length - 1; i++) {
                         newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="'+data.data[i].member_id+'">'+data.data[i].coach+'</li>'
-                        newliAS = newliAS + '<div class="mui-input-row mui-checkbox mui-left"><label class="label" data-id="'+data.data[i].member_id+'">'+data.data[i].coach+'</label><input name="checkbox-assistant" value="'+data.data[i].coach+'" type="checkbox"></div>'
+                        newliAS = newliAS + '<div class="mui-input-row mui-checkbox mui-left"><label class="label">'+data.data[i].coach+'</label><input name="checkbox-assistant" data-id="'+data.data[i].member_id+'" value="'+data.data[i].coach+'" type="checkbox"></div>'
                     }
                     $("ul.coach").empty();
                     $(".coachAS").empty();

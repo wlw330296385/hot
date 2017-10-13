@@ -27,6 +27,9 @@
            display: table;
            width: 100%;
        }
+        .mui-navigate-right input[type='text']{
+            padding-right: 30px !important;
+        }
    </style>
 </head>
 
@@ -136,21 +139,21 @@
         <div class="mui-input-row">
             <a href="#assistantCoach" class="mui-navigate-right">
                 <label>助理教练</label>
-                <span class="assistantCoachCont domData" name="assistants">（选填）</span>
+                <input type="text" name="assistants" value="" class="data assistants" placeholder="选填">
                 <input type="hidden" name="assistant_ids" value="" class="data assistant_ids">
             </a>
         </div>
         <div class="mui-input-row">
             <a href="#leader" class="mui-navigate-right">
                 <label>领队</label>
-                <span class="leaderCont domData" name="leader">（选填）</span>
+                <input type="text" name="leader" value="" class="data" placeholder="选填">
                 <input type="hidden" name="leader_id" value="" class="data leader_id">
             </a>
         </div>
         <div class="mui-input-row">
             <a href="#headMaster" class="mui-navigate-right">
                 <label>班主任</label>
-                <span class="headMasterCont domData" name="teacher">（选填）</span>
+                <input type="text" name="teacher" value="" class="data" placeholder="选填">
                 <input type="hidden" name="teacher_id" value="" class="data teacher_id">
             </a>
         </div>
@@ -279,6 +282,7 @@
     <div class="mui-popover-arrow"></div>
     <div class="page-header">
         <span class="course wd36"><strong>选择班主任</strong></span>
+        <span class="fr"><button class="mui-btn" id="teacherDel">清除</button></span>
     </div>
         <div class="camp-lesson-list">
             <div class="mui-segmented-control">
@@ -318,6 +322,7 @@
     <div class="mui-popover-arrow"></div>
     <div class="page-header">
         <span class="course wd36"><strong>选择领队</strong></span>
+        <span class="fr"><button class="mui-btn" id="leaderDel">清除</button></span>
     </div>
     <div class="camp-lesson-list">
         <div class="mui-segmented-control">
@@ -482,7 +487,7 @@
        //  })
         // 助理教练
         $("#assistantConfirm").click(function(){
-            $(".assistantCoachCont").text($("input[name='checkbox-assistant']:checked").map(function(){
+            $("input[name='assistants']").val($("input[name='checkbox-assistant']:checked").map(function(){
                 return $(this).val()
             }).get().join(",") );
             $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function(){
@@ -490,20 +495,33 @@
             }).get().join(",") );
             mui('#assistantCoach').popover('toggle');
         })
+
         // 班主任
         $(".headMaster").on('click','li',function(){
-            var headMaster = $(this).html();
-            $(".headMasterCont").html(headMaster);
+            var teacher = $(this).text();
+            $("input[name='teacher']").val(teacher);
             var id= $(this).attr('data-id');
             $(".teacher_id").val(id);
             mui("#headMaster").popover("toggle");
         })
+        //清除班主任
+        $("#teacherDel").on('tap','',function(){
+            $("input[name='teacher']").val("");
+            $(".teacher_id").val("");
+            mui("#headMaster").popover("toggle");
+        })
         // 领队
         $(".leader").on('click','li',function(){
-            var leader = $(this).html();
-            $(".leaderCont").html(leader); 
+            var leader = $(this).text();
+            $("input[name='leader']").val(leader);
             var id= $(this).attr('data-id');
             $(".leader_id").val(id);
+            mui("#leader").popover("toggle");
+        })
+        //清除领队
+        $("#leaderDel").on('tap','',function(){
+            $("input[name='leader']").val("");
+            $(".leader_id").val("");
             mui("#leader").popover("toggle");
         })
 
@@ -515,7 +533,7 @@
             }).get().join(",") );
             var doms = $("input[name='doms']").val();
             console.log($("input[name='doms']").val())
-            $(".lessonDom").html(doms);
+            $(".lessonDom").text(doms);
             mui('#lessonDom').popover('toggle');
         })
         //添加
@@ -684,7 +702,7 @@
                     var newliAS = ''; //助理教练多选
                     for (var i = 0; i <= data.data.length - 1; i++) {
                         newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="'+data.data[i].member_id+'">'+data.data[i].coach+'</li>'
-                        newliAS = newliAS + '<div class="mui-input-row mui-checkbox mui-left"><label class="label" data-id="'+data.data[i].member_id+'">'+data.data[i].coach+'</label><input name="checkbox-assistant" data-id="'+data.data[i].member_id+'" value="'+data.data[i].coach+'" type="checkbox"></div>'
+                        newliAS = newliAS + '<div class="mui-input-row mui-checkbox mui-left"><label class="label">'+data.data[i].coach+'</label><input name="checkbox-assistant" data-id="'+data.data[i].member_id+'" value="'+data.data[i].coach+'" type="checkbox"></div>'
                     }
                     $("ul.coach").empty();
                     $(".coachAS").empty();
