@@ -105,9 +105,22 @@ class Message extends Base{
         }
     }
 
-    //获取未读消息数量
-    public function getUnReadMessageApi(){
+    //获取个人消息列表
+    public function getUnReadMessageMmeberListApi()
+    {
+        try {
+            $map = input('post.');
+            $map['member_id'] = $this->memberInfo['id'];
+            $result = $this->MessageService->getMessageMemberListByPage($map);
+            if ($result) {
+                return json(['code' => 100, 'msg' => '获取成功', 'data' => $result]);
+            } else {
+                return json(['code' => 200, 'msg' => '没有这条消息']);
+            }
 
+        } catch (Exception $e) {
+            return json(['code' => 200, 'msg' => $e->getMassege()]);
+        }
     }
 
 
@@ -122,14 +135,14 @@ class Message extends Base{
         $campmember['type_num'] = $campmemberObj->getData('type');
         if ($campmember['type_num'] > 1) {
             if ($campmember['type_num'] == 3) {
-                $url = url('frontend/camp/teachlistofcamp', ['camp_id' => $campmember['camp_id'], 'status' => 0], '',true);
+                $baseurl = 'frontend/camp/teachlistofcamp';
             } else  {
-                $url = url('frontend/camp/coachlistofcamp', ['camp_id' => $campmember['camp_id'], 'status' => 0], '',true);
+                $baseurl = 'frontend/camp/coachlistofcamp';
             }
             $data = [
                 'title' => '加入训练营申请',
                 'content' => '会员 '.$campmember['member'].'申请加入'. $campmember['camp'] .' 成为 '. $campmember['type'] .', 请及时处理',
-                'url' => $url,
+                'baseurl' => $baseurl,
                 'member' => $campmember['member'],
                 'jointime' => $campmember['create_time']
             ];
