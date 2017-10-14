@@ -23,6 +23,9 @@
         .nodata{
             padding-top:80px;
         }
+        .nodata .icon{
+            color:#CCC;
+        }
     </style>
 </head>
 
@@ -89,12 +92,6 @@
         //获取训练营班级列表
         toGradeList();
 
-        //获取当日是周几，并定位相应列表
-        var currDate =  new Date();
-        var getWeekToday = $(".weeklist").find(".w"+currDate.getDay()).text();
-        $(".weeklist").find(".mui-tab-item").removeClass("mui-active");
-        $(".weeklist").find(".w"+currDate.getDay()).addClass("mui-active");
-        filterTeam(getWeekToday);
 
         //点选周几事件
         $(".weeklist").on('tap','div',function(){
@@ -106,7 +103,6 @@
 
     //刷选周一至周日的球队，并置于对应位置
     var filterTeam = function(week) {
-
         //清空列表
         $(".item-list .card-list").empty();
 
@@ -169,6 +165,14 @@
                         newli = '<div class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有查找到数据哦</p></div>'
                     }
                     $("#sourceList").append(newli);
+
+                    //获取当日是周几，并定位相应列表
+                    var currDate =  new Date();
+                    var getWeekToday = $(".weeklist").find(".w"+currDate.getDay()).text();
+                    console.log(getWeekToday)
+                    $(".weeklist").find(".mui-tab-item").removeClass("mui-active");
+                    $(".weeklist").find(".w"+currDate.getDay()).addClass("mui-active");
+                    filterTeam(getWeekToday);
 
                 }else{
                     mui.toast('数据获取失败,请稍候再试');
