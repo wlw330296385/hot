@@ -302,11 +302,12 @@ class Lesson extends Base{
 
     public function getHotLessonListApi(){
         try{
-            $province = input('param.province');
-            $city = input('param.city');
-            $map['province']=$province;
-            $map['city'] = $city;
-            $map['hot'] = ['egt',1];
+            $map = input('post.');
+            // $province = input('param.province');
+            // $city = input('param.city');
+            // $map['province']=$province;
+            // $map['city'] = $city;
+            // $map['hot'] = ['egt',1];
             foreach ($map as $key => $value) {
                 if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
