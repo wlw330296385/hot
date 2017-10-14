@@ -75,6 +75,8 @@
                             <input type="hidden" name="grade_id" value="{$gradeInfo.id}">
                             <input type="hidden" name="lesson" value="{$gradeInfo.lesson}">
                             <input type="hidden" name="lesson_id" value="{$gradeInfo.lesson_id}">
+                            <input type="hidden" name="grade_category" value="{$gradeInfo.gradecate}">
+                            <input type="hidden" name="grade_category_id" value="{$gradeInfo.gradecate_id}">
                         </div>
                     </a>
                 </li>
@@ -90,10 +92,8 @@
                     <div class="mui-input-row h-auto">
                         <a class="portraits filePicker" onclick="add_id(3)">
                             <label>上传合照</label>
-                            <img id="preview_3" class="coachicon icon01"
-                            src='{notempty name="coachInfo.portraits"}{$coachInfo.portraits}{/notempty}'>
-                            <input type="hidden" class="cover" name="portraits"
-                            value='{notempty name="coachInfo.portraits"}{$coachInfo.portraits}{/notempty}'>
+                            <img id="preview_3" class="coachicon icon01">
+                            <input type="hidden" class="cover" name="portraits" value="">
                         </a>
                     </div>
                 </form>
@@ -698,81 +698,85 @@
             var remarks = $(".remarks").val();
             var coach_salary = $(".coach_salary").val();
             var assistant_salary = $(".assistant_salary").val();
-            console.log(cover)
-            console.log(province)
-            console.log(city)
-            console.log(area)
-            console.log(grade)
-            console.log(grade_id)
-            console.log(lesson)
-            console.log(lesson_id)
-            console.log(court)
-            console.log(court_id)
-            console.log(lesson_time)
-            console.log(coach)
-            console.log(coach_id)
-            console.log(assistants)
-            console.log(assistant_ids)
-            console.log(leader)
-            console.log(leader_id)
-            console.log(teacher)
-            console.log(teacher_id)
-            console.log(coach_salary)
-            console.log(assistant_salary)
-            console.log(remarks)
-            console.log(students)
-            // if(lesson_time=='' || court=='' || coach==''){
-            //     mui.toast("请完善信息");
-            //     return;
-            // }
-            // mui.ajax("{:url('api/schedule/recordScheduleApi',['grade_id'=>$gradeInfo['id']])}", {
-            //     data: {
-            //         'cover':cover,
-            //         'students': students,
-            //         "province":province,
-            //         "city":city,
-            //         "area":area,
-            //         'grade': grade,
-            //         'grade_id': grade_id,
-            //         'camp':camp,
-            //         'camp_id': campid,
-            //         'lesson':lesson,
-            //         'lesson_id': lesson_id,
-            //         'lesson_time': lesson_time,
-            //         'court': court,
-            //         'court_id': court_id,
-            //         'coach': coach,
-            //         'coach_id':coach_id,
-            //         'assistants': assistants,
-            //         'assistant_ids': assistant_ids,
-            //         'leader': leader,
-            //         'leader_id': leader_id,
-            //         'teacher': teacher,
-            //         'teacher_id': teacher_id,
-            //         'coach_salary':coach_salary,
-            //         'assistant_salary':assistant_salary,
-            //         'remarks': remarks,
-            //         "studentList":studentList
-            //         },
-            //         dataType: 'json',//服务器返回json格式数据
-            //         type: 'post',//HTTP请求类型
-            //         timeout: 10000,//超时时间设置为10秒；
-            //         headers: {'Content-Type': 'application/json'},
-            //         success: function (data) {
-            //             //服务器返回响应，根据响应结果，分析是否登录成功；
-            //             console.log(data)
-            //             if (data.code == 200) {
-            //                 mui.alert('录课成功成功。','提示','确定',function(){
-            //                     setTimeout(window.location.href="{:url('schedule/schedulelist',['camp_id'=>$campid])}",2000)});
-            //             } else {
-            //                 mui.toast(data.msg);
-            //             }
-            //         },
-            //         error: function (xhr, type, errorThrown) {
-            //         //异常处理；
-            //         console.log(type);
-            //     }
-            // });
+            var grade_category_id = $('input[name=grade_category_id]').val();
+            var grade_category = $('input[name=grade_category]').val();
+//            console.log(cover)
+//            console.log(province)
+//            console.log(city)
+//            console.log(area)
+//            console.log(grade)
+//            console.log(grade_id)
+//            console.log(lesson)
+//            console.log(lesson_id)
+//            console.log(court)
+//            console.log(court_id)
+//            console.log(lesson_time)
+//            console.log(coach)
+//            console.log(coach_id)
+//            console.log(assistants)
+//            console.log(assistant_ids)
+//            console.log(leader)
+//            console.log(leader_id)
+//            console.log(teacher)
+//            console.log(teacher_id)
+//            console.log(coach_salary)
+//            console.log(assistant_salary)
+//            console.log(remarks)
+//            console.log(students)
+             if(lesson_time=='' || court=='' || coach==''){
+                 mui.toast("请完善信息");
+                 return;
+             }
+             mui.ajax("{:url('api/schedule/recordScheduleApi',['grade_id'=>$gradeInfo['id']])}", {
+                 data: {
+                     'cover':cover,
+                     'students': students,
+                     "province":province,
+                     "city":city,
+                     "area":area,
+                     'grade': grade,
+                     'grade_id': grade_id,
+                     'camp':camp,
+                     'camp_id': campid,
+                     'lesson':lesson,
+                     'lesson_id': lesson_id,
+                     'lesson_time': lesson_time,
+                     'court': court,
+                     'court_id': court_id,
+                     'coach': coach,
+                     'coach_id':coach_id,
+                     'assistant': assistants,
+                     'assistant_id': assistant_ids,
+                     'leader': leader,
+                     'leader_id': leader_id,
+                     'teacher': teacher,
+                     'teacher_id': teacher_id,
+                     'coach_salary':coach_salary,
+                     'assistant_salary':assistant_salary,
+                     'remarks': remarks,
+                     'grade_category_id': grade_category_id,
+                     'grade_category': grade_category,
+                     "studentList":studentList
+                     },
+                     dataType: 'json',//服务器返回json格式数据
+                     type: 'post',//HTTP请求类型
+                     timeout: 10000,//超时时间设置为10秒；
+                     headers: {'Content-Type': 'application/json'},
+                     success: function (data) {
+                         //服务器返回响应，根据响应结果，分析是否登录成功；
+                         console.log(data);
+                         if (data.code == 200) {
+                             mui.alert('录课成功成功。','提示','确定',function(){
+                                 setTimeout(window.location.href="{:url('schedule/schedulelist',['camp_id'=>$campid])}",2000)});
+                         } else {
+                             mui.toast(data.msg);
+                         }
+                     },
+                     error: function (xhr, type, errorThrown) {
+                     //异常处理；
+                     console.log(type);
+                 }
+             });
         })
 
 })
@@ -866,13 +870,13 @@
                     var newli = ''; //主教练单选
                     var newliAS = ''; //助理教练多选
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].member_id + '">' + data.data[i].coach + '</li>'
-                        newliAS = newliAS + '<div class="mui-input-row mui-checkbox mui-left"><label class="label" data-id="' + data.data[i].member_id + '">' + data.data[i].coach + '</label><input name="checkbox-assistant" data-id="' + data.data[i].member_id + '" value="' + data.data[i].coach + '" type="checkbox"></div>'
+                        newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '">' + data.data[i].coach + '</li>'
+                        newliAS = newliAS + '<div class="mui-input-row mui-checkbox mui-left"><label class="label" data-id="' + data.data[i].id + '">' + data.data[i].coach + '</label><input name="checkbox-assistant" data-id="' + data.data[i].id + '" value="' + data.data[i].coach + '" type="checkbox"></div>'
                     }
                     $("ul.coach").empty();
                     $(".coachAS").empty();
                     if (newli == '') {
-                        newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
+                        newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>';
                         newliAS = newli
                     }
                     $("ul.coach").append(newli);
