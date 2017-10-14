@@ -33,8 +33,16 @@
         .mui-toast-container {
             top: 250px
         }
-        .pdr{
+        #hideStList{
+            display: none;
+        }
+        .mui-navigate-right input[type='text']{
             padding-right: 30px !important;
+        }
+        #newdiv .tips{
+            font-size: 12px;
+            color: #AAAAAA;
+            line-height:normal;
         }
     </style>
 </head>
@@ -49,43 +57,46 @@
 <div class="mui-content">
 
     <div class="camp-list camp-lesson-list detalis-list grade-list mt55">
-
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}"/>
         <form action="" class="mui-input-group">
 
             <div class="mui-input-row">
                 <label>班级名称</label>
-                <input type="text" class="gradeCont" value="" placeholder="请输入班级名称">
+                <input type="text" name="grade" class="grade gradeCont data" value="" placeholder="请输入班级名称">
             </div>
 
             <div class="mui-input-row">
                 <a href="#lessonType" class="mui-navigate-right">
                     <label>所属课程</label>
-                    <input type="text" value="" class="lessonTypeCont pdr" placeholder="请先选择课程，后选择学员">
-                    <input type="hidden" name="lesson_id" class="lesson_id" value="">
+                    <input type="text" value="" name="lesson" class="lessonTypeCont data" placeholder="请先选择课程，后选择学员">
+                    <input type="hidden" name="lesson_id" class="lesson_id data" value="">
                 </a>
             </div>
 
             <div class="mui-input-row">
-                <a href="#student" class="mui-navigate-right">
+                <a href="#student" id="setStudentCBox" class="mui-navigate-right">
                     <label>学员名单</label>
-                    <span class="studentCont"></span>
-                    <input type="hidden" name="student_ids" value="">
-                    <input type="hidden" name="students" value="">
+                    <span class="studentCont students">{volist name="students" id="vol"}{$vol.student},{/volist}</span>
+                    <div id="hideStList">
+                        {volist name="students" id="vol"}
+                        <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" >
+                        {/volist}
+                    </div>
                 </a>
             </div>
 
             <div class="mui-input-row">
                 <a href="#gradeType" class="mui-navigate-right">
                     <label>班级类型</label>
-                    <span class="gradeTypeCont"></span>
-                    <input type="hidden" name="gradecate_id" class="gradecate gradecate_id" value="">
+                    <span class="gradeTypeCont gradecate domData" name="gradecate"></span>
+                    <input type="hidden" name="gradecate_id" class="gradecate_id data" value="">
                 </a>
             </div>
 
             <div class="mui-input-row">
                 <label>训练日期</label>
                 <span class="select-arrow week">
-                        <select class="select">
+                        <select class="select data" name="week">
                             <option>周日</option>
                             <option>周一</option>
                             <option>周二</option>
@@ -100,72 +111,71 @@
             <div class="mui-input-row picker btn" id="demo5" data-options='{"type":"time"}'>
                 <a href="#" class="mui-navigate-right">
                     <label>训练时间</label>
-                    <span id="result" class="ui-alert lesson_time"></span>
+                    <span id="result" class="ui-alert lesson_time domData" name="lesson_time"></span>
                 </a>
             </div>
 
-             <div class="mui-input-row">
+            <div class="mui-input-row">
                 <a href="#trainLocation" class="mui-navigate-right">
                     <label>训练地点</label>
-                    <span class="trainLocationCont"></span>
-                    <input type="hidden" name="court_id" value="" class="court_id">
-                    <input type="hidden" name="location" value="" class="location">
+                    <span class="trainLocationCont domData" name="court" data-id=""></span>
                 </a>
             </div>
 
             <div class="mui-input-row" id='showCityPicker3'>
                 <a href="#" class="mui-navigate-right">
                     <label>所属地区</label>
-                    <span id="cityResult3" class="ui-alert"></span>
+                    <span id="cityResult3" class="ui-alert domData" name="address" ></span>
                 </a>
             </div>
 
             <div class="mui-input-row">
                 <label>具体地址</label>
-                <input type="text" name="jtlocation" value="" class="jtlocation checkChinese" placeholder="（选填）">
+                <input type="text" name="location" value="" class="location data" placeholder="（选填）">
             </div>
 
             <div class="mui-input-row">
                 <a href="#mainCoach" class="mui-navigate-right">
                     <label>主教练</label>
-                    <input type="text" value="" class="mainCoachCont pdr">
-                    <input type="hidden" name="coach_id" value="" class="coach_id">
+                    <span class="mainCoachCont domData" name="coach"></span>
+                    <input type="hidden" name="coach_id" value="" class="data coach_id">
                 </a>
             </div>
             <div class="mui-input-row">
-                <a href="#assistantCoach" class="mui-navigate-right">
+                <a href="#assistantCoach" id="setAsCoach" class="mui-navigate-right">
                     <label>助理教练</label>
-                    <input type="text" value="" class="assistantCoachCont pdr" placeholder="（选填）">
-                    <input type="hidden" name="assistant_ids" class="assistant_ids" value="">
+                    <input type="text" name="assistants" value="" class="data assistants" placeholder="选填">
+                    <input type="hidden" name="assistant_ids" value="" class="data">
                 </a>
             </div>
 
             <div class="mui-input-row">
                 <label>主教底薪<a href="#coach_salary"><i class="mui-icon mui-icon-info"></i></a></label>
-                <input type="text" class="coach_salary checkNum" value="" placeholder="请输入主教底薪">
+                <input type="text" name="coach_salary" class="coach_salary checkNum data" value="" placeholder="请输入主教底薪">
             </div>
 
             <div class="mui-input-row">
                 <label>助教底薪<a href="#assistantSalary"><i class="mui-icon mui-icon-info"></i></a></label>
-                <input type="text" class="assistant_salary checkNum" value="" placeholder="请输入助教底薪">
+                <input type="text" name="assistant_salary" class="assistant_salary checkNum data" value="" placeholder="请输入助教底薪">
             </div>
 
             <div class="mui-input-row">
                 <label>提成基数<a href="#mainBase"><i class="mui-icon mui-icon-info"></i></a></label>
-                <input type="text" class="salary_base checkNum" value="" placeholder="请输入提成基数">
+                <input type="text" name="salary_base" class="salary_base checkNum data" value="" placeholder="请输入提成基数">
+
             </div>
 
             <div class="mui-input-row">
                 <a href="#leader" class="mui-navigate-right">
                     <label>领队</label>
-                    <input type="text" value="" class="leaderCont pdr" placeholder="（选填）">
-                    <input type="hidden" name="leader_id" class="leader_id" value="">
+                    <input type="text" name="leader" value="" class="data" placeholder="选填">
+                    <input type="hidden" name="leader_id" value="" class="data leader_id">
                 </a>
             </div>
             <div class="mui-input-row">
                 <a href="#headMaster" class="mui-navigate-right">
                     <label>班主任</label>
-                    <input type="text" value="" class="headMasterCont pdr" placeholder="（选填）">
+                    <input type="text" name="teacher" value="" class="data" placeholder="选填">
                     <input type="hidden" name="teacher_id" value="" class="data teacher_id">
                 </a>
             </div>
@@ -184,18 +194,18 @@
             </div> -->
 
             <div class="mui-input-row">
-                <label>是否预排</label>
+                <label>生效状态</label>
                 <span class="select-arrow status">
-                        <select class="select">
-                            <option value="-1">预排</option>
-                            <option value="1">正常</option>
-                        </select>
-                    </span>
+                    <select class="select data" name="status">
+						<option value="1">当前（立即生效）</option>
+                        <option value="-1">预排（预备生效）</option>
+                    </select>
+                </span>
             </div>
 
             <div class="mui-input-row">
                 <label>备注</label>
-                <input type="text" class="remarks checkChinese" value="" placeholder="（选填）">
+                <input type="text" name="reamarks" class="remarks checkChinese data" value="" placeholder="（选填）">>
             </div>
 
         </form>
@@ -333,8 +343,18 @@
 
             <ul class="mui-table-view list">
                 {volist name="gradecateList" id="vol"}
-                <li class="mui-table-view-cell listli detalisli">{$vol.name}{notempty name="vol._data"}{volist name="$vol['_data']" id="v"}
-                <li class="mui-table-view-cell listli detalisli gradeType" data-id="{$v.id}">{$v.name}</li>{/volist}{/notempty}</li>
+                <li class="mui-table-view-cell listli detalisli">
+                    {$vol.name}
+                    {notempty name="vol._data"}
+
+                    {volist name="$vol['_data']" id="v"}
+                <li class="mui-table-view-cell listli detalisli gradeType" data-id="{$v.id}">
+                    {$v.name}
+                </li>
+                {/volist}
+
+                {/notempty}
+                </li>
                 {/volist}
             </ul>
         </div>
@@ -358,6 +378,7 @@
     <div class="mui-popover-arrow"></div>
     <div class="page-header">
         <span class="course wd36"><strong>选择班主任</strong></span>
+        <span class="fr"><button class="mui-btn" id="teacherDel">清除</button></span>
     </div>
     <div class="camp-lesson-list">
         <div class="mui-segmented-control">
@@ -396,6 +417,7 @@
     <div class="mui-popover-arrow"></div>
     <div class="page-header">
         <span class="course wd36"><strong>选择领队</strong></span>
+        <span class="fr"><button class="mui-btn" id="leaderDel">清除</button></span>
     </div>
     <div class="camp-lesson-list">
         <div class="mui-segmented-control">
@@ -455,6 +477,8 @@
 <script src="/static/frontend/js/mui.picker.min.js"></script>
 <script src="/static/frontend/js/mui.poppicker.js"></script>
 <script src="/static/frontend/js/city.data-3.js"></script>
+<script src="/static/frontend/js/common.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
 <script>
     //初始化
     mui.init({
@@ -475,7 +499,6 @@
             mui(".mui-popover.mui-active").popover("toggle");
         })
     })(mui);
-
 
     //选择器
     var getProvince = '';
@@ -525,49 +548,87 @@
     })(mui, document);
 
 
+
     $(function () {
 
         //初始化全局变量
-        var studentList = '';
+        var studentList = [];
+
+        //获取训练营场地表
+        toCourtList();
+        //获取训练营教练列表
+        toCoachList();
+        //获取训练营粉丝列表
+        var fansKeyword = '';
+        var wFans = '';
+        var pageHM = 1;
+        var pageLD = 1;
+        toFansList(fansKeyword, wFans, 1);
+
+        //学员列表复选框赋值
+        $("#setStudentCBox").on('tap','', function () {
+            //每次打开先清空所有选择
+            $("input[name='checkbox-student']").prop("checked",false);
+            //然后遍历出对应所选
+            $(".stdList").each(function (i) {
+                var id = $(this).attr("data-id");
+                var student_id = $(this).attr("data-student_id");
+                var student = $(this).attr("data-student");
+                $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
+                    return $(this).attr("data-student_id") == student_id
+                }).prop("checked",true);
+            });
+        });
+        //复选框赋值
+        $("#setAsCoach").on('tap','', function () {
+            //每次打开先清空所有选择
+            $("input[name='checkbox-assistant']").prop("checked",false);
+            //然后遍历出对应所选
+            var str = $("input[name='assistant_ids']").val();
+            var s=str.split(',')
+            for(var i = 0;i<s.length;i++){
+                $("input[name='checkbox-assistant']").filter(function (index) {
+                    return $(this).attr("data-id") == s[i]
+                }).prop("checked",true);
+            }
+        });
 
         // 学员名单
-        $("#studentConfirm").on('click', function () {
-            //学员取值
-            $("input[name='students']").val($("input[name='checkbox-student']:checked").map(function () {
-                return $(this).val()
-            }).get().join(","));
-            $(".studentCont").text($("input[name='students']").val());
-            // 学员取id
-            $("input[name='student_ids']").val($("input[name='checkbox-student']:checked").map(function () {
-                return $(this).attr('data-id');
-            }).get().join(","));
-            console.log($("input[name='student_ids']").val())
-            console.log($("input[name='students']").val())
+        $("#studentConfirm").on('tap','', function () {
+            //选择多个学员
+//            $("input[name='students']").val($("input[name='checkbox-student']:checked").map(function () {
+//                return $(this).val()
+//            }).get().join(","));
+//            $(".studentCont").text($("input[name='students']").val());
+//
+//            $("input[name='student_data']").val($("input[name='checkbox-student']:checked").map(function () {
+//                return $(this).attr('data');
+//            }).get().join(","));
 
-            //学员列表数组
-            // studentList = [];
-            // $("input[name='checkbox-student']:checked").each(function (i) {
-            //     var id = $(this).attr("data-id");
-            //     var student = $(this).val();
-            //     studentList[i] = {student_id: id,student:student}
-            // });
-            // console.log(studentList)
+            var inputList="";
+            var studentNames="";
+            studentList=[];
+            $("input[name='checkbox-student']:checked").each(function (i) {
+                var id = $(this).attr("data-id");
+                var student_id = $(this).attr("data-student_id");
+                var student = $(this).val();
+                studentList[i] = {student:student,student_id: student_id,id:id}
+                inputList += '<input type="hidden" class="stdList" data-id="'+id+'" data-student="'+student+'" data-student_id="'+student_id+'" >';
+                studentNames += student+','
+            });
+            $("#hideStList").empty();
+            $("#hideStList").html(inputList);
+            $(".students").text(studentNames.substring(0, studentNames.length - 1))
+            console.log(inputList)
+            console.log(studentList)
+            console.log(studentNames)
             mui('#student').popover('toggle');
         })
 
-        // 课程类型
-        var lesson_id = '';
-        $(".lessonType").click(function () {
-            var lessonType = $(this).text();
-            lesson_id = $(this).attr("data-id");
-            $(".lesson_id").val(lesson_id);
-            $(".lessonTypeCont").val(lessonType);
-            mui("#lessonType").popover("toggle");
-        })
         // 班级类型
         var gradecate_id = "";
         $(".gradeType").click(function () {
-            var gradeType = $(this).text();
+            var gradeType = $.trim($(this).text());
             gradecate_id = $(this).attr('data-id');
             $(".gradecate_id").val(gradecate_id);
             $(".gradeTypeCont").text(gradeType);
@@ -586,17 +647,16 @@
         // 主教练
         $(".mainCoach").on('click', 'li', function () {
             var mainCoach = $(this).text();
-            $(".mainCoachCont").val(mainCoach);
+            $(".mainCoachCont").text(mainCoach);
             var id = $(this).attr('data-id');
             $(".coach_id").val(id);
             mui("#mainCoach").popover("toggle");
         })
-
         // 助理教练
         $("#assistantConfirm").click(function () {
-            $(".assistantCoachCont").val($("input[name='checkbox-assistant']:checked").map(function () {
-                return $(this).val()
-            }).get().join(","));
+            $("input[name='assistants']").val($("input[name='checkbox-assistant']:checked").map(function(){
+                return $(this).val();
+            }).get().join(",") );
             $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function () {
                 return $(this).attr('data-id');
             }).get().join(","));
@@ -604,32 +664,34 @@
         })
 
         // 班主任
-        $(".headMaster").on('click', 'li', function () {
-            var headMaster = $(this).text();
-            $(".headMasterCont").val(headMaster);
-            var id = $(this).attr('data-id');
+        $(".headMaster").on('click','li',function(){
+            var teacher = $(this).text();
+            $("input[name='teacher']").val(teacher);
+            var id= $(this).attr('data-id');
             $(".teacher_id").val(id);
             mui("#headMaster").popover("toggle");
         })
+        //清除班主任
+        $("#teacherDel").on('tap','',function(){
+            $("input[name='teacher']").val("");
+            $(".teacher_id").val("");
+            mui("#headMaster").popover("toggle");
+        })
         // 领队
-        $(".leader").on('click', 'li', function () {
+        $(".leader").on('click','li',function(){
             var leader = $(this).text();
-            $(".leaderCont").val(leader);
-            var id = $(this).attr('data-id');
+            $("input[name='leader']").val(leader);
+            var id= $(this).attr('data-id');
             $(".leader_id").val(id);
             mui("#leader").popover("toggle");
         })
+        //清除领队
+        $("#leaderDel").on('tap','',function(){
+            $("input[name='leader']").val("");
+            $(".leader_id").val("");
+            mui("#leader").popover("toggle");
+        })
 
-        //获取训练营场地表
-        toCourtList()
-        //获取训练营教练列表
-        toCoachList();
-        //获取训练营教练列表
-        var fansKeyword = '';
-        var wFans = '';
-        var pageHM = 1;
-        var pageLD = 1;
-        toFansList(fansKeyword, wFans, 1);
         //搜索班主任粉丝
         $("#searchHM").on("click", function () {
             var keyword = $(".keywordHM").val();
@@ -684,14 +746,6 @@
             }
         })
 
-        // 教案
-        // var plan_ids= "";
-        // $(".teachingPlan").click(function(){
-        //     var teachingPlan = $(this).text();
-        //     plan_ids = $(this).attr("data-id");
-        //     $(".teachingPlanCont").text(teachingPlan);
-        //     mui("#teachingPlan").popover("toggle");
-        // })
 
         //检测输入是否为数字
         $(".checkNum").blur(function () {
@@ -702,12 +756,12 @@
             }
         });
 
-
         //所属课程api
         $(".lessonType").click(function () {
+            var lessonType = $(this).text();
             var lesson_id = $(this).attr("data-id");
             mui.ajax("{:url('api/lesson/getStudentListOfLessonApi')}", {
-                data: {"lesson_id": lesson_id,},
+                data: {"lesson_id": lesson_id},
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
@@ -716,10 +770,17 @@
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data)
                     var div = '';
+                    var fbm = '';
+                    var tys = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"></div>'
+                            fbm = '';
+                            tys = '';
+                            if(data.data[i].grade_id==0){ fbm = '<span class="tips">[ 未分配 ]</span>' }
+                            if(data.data[i].type==2){ tys = '<span class="tips">[ 体验生 ]</span>' }
+                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + fbm + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' +data.data[i].id+'" data-student_id="' +data.data[i].student_id+ '" data-student="' +data.data[i].student+'"></div>'
                         }
+                        $("#newdiv").empty();
                         $("#newdiv").append(div);
                     }
                 },
@@ -728,133 +789,77 @@
                     console.log(type);
                 }
             });
+
+            $(".lesson_id").val(lesson_id);
+            $(".lessonTypeCont").val(lessonType);
+            mui('#lessonType').popover('toggle');
         })
 
-        //创建班级api
-        $(".editorbtn").click(function () {
-            var province = getProvince 
-            var city = getCity 
-            var area = getArea 
-            var grade = $(".gradeCont").val();
-            var students = $('input[name=students]').val();
-            var student_ids= $('input[name=student_ids]').val();
-            var lesson = $(".lessonTypeCont").val();
-            var lesson_id = $('input[name=lesson_id]').val();
-            var gradecate = $(".gradeTypeCont").text();
-            var gradecate_id = $('input[name=gradecate_id]').val();
-            var week = $(".week option:selected").text();
-            var court = $.trim($('.trainLocationCont').text());
-            var court_id = $('input[name=court_id]').val();
-            var lesson_time = $(".lesson_time").text();
-            var jtlocation = $(".jtlocation").val();
-            var coach_salary = $(".coach_salary").val();
-            var assistant_salary = $(".assistant_salary").val();
-            var salary_base = $(".salary_base").val();
-            var coach = $(".mainCoachCont").val();
-            var coach_id = $('input[name=coach_id]').val();
-            var assistants = $(".assistantCoachCont").val();
-            var assistant_ids = $('input[name=assistant_ids]').val();
-            var leader = $(".leaderCont").val();
-            var leader_id = $('input[name=leader_id]').val();
-            var teacher = $(".headMasterCont").val();
-            var teacher_id = $('input[name=teacher_id]').val();
-            var status = $(".status option:selected").val();
-            var remarks = $(".remarks").val();
-            console.log(province)
-            console.log(city)
-            console.log(area)
-            console.log(grade)
-            console.log(lesson)
-            console.log(lesson_id)
-            console.log(students)
-            console.log(student_ids)
-            console.log(gradecate)
-            console.log(gradecate_id)
-            console.log(week)
-            console.log(court)
-            console.log(court_id)
-            console.log(lesson_time)
-            console.log(jtlocation)
-            console.log(coach_salary)
-            console.log(assistant_salary)
-            console.log(salary_base)
-            console.log(coach)
-            console.log(coach_id)
-            console.log(assistants)
-            console.log(assistant_ids)
-            console.log(leader)
-            console.log(leader_id)
-            console.log(teacher)
-            console.log(teacher_id)
-            console.log(status)
-            console.log(remarks)
-            if (students != '' && grade != '' && lesson != '' && gradecate != '' && week != '' && lesson_time != '' && court != '' && coach != '') {
-                mui.ajax("{:url('api/grade/createGradeApi')}", {
-                    data: {
-                        "gradeData": {
-                            "province": getProvince,
-                            "city": getCity,
-                            "area": getArea,
-                            "camp_id": "{$campInfo.id}",
-                            "camp": "{$campInfo.camp}",
-                            "grade": grade,
-                            "lesson": lesson,
-                            "lesson_id": lesson_id,
-                            "students": students,
-                            "student_ids": student_ids,
-                            "gradecate": $.trim(gradecate),
-                            "gradecate_id": gradecate_id,
-                            "court": court,
-                            "court_id": court_id,
-                            "week": week,
-                            "lesson_time": lesson_time,
-                            "location": $.trim(jtlocation),
-                            "coach_salary": coach_salary,
-                            "assistant_salary": assistant_salary,
-                            "salary_base": salary_base,
-                            "coach": coach,
-                            "coach_id": coach_id,
-                            "assistants": assistants,
-                            "assistant_id": assistant_ids,
-                            "leader": $.trim(leader),
-                            "leader_id": leader_id,
-                            "teacher_id": teacher_id,
-                            "teacher": $.trim(teacher),
-                            // "plan":$.trim(plan),
-                            // "plan_ids": plan,
-                            // "rent":rent,
-                            "status": status,
-                            "remarks": remarks
-                        }
-                        // "studentList":studentList
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: {'Content-Type': 'application/json'},
-                    success: function (data) {
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.alert('创建班级成功。', '提示', '确定', function () {
-                                setTimeout(window.location.href = "{:url('grade/gradelistofcamp', ['camp_id'=>$campInfo['id']])}", 3000)
-                            });
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            } else {
-                mui.toast("选项不能为空");
+
+        //创建班级
+        $(".editorbtn").on('tap','',function(){
+            var data = wooApi.getInputData('input','data');
+            datas = wooApi.getInputData('select','data',data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData',datas);
+            var objData = wooApi.arrTOobj(arrData);
+            // var studentList = [{student:1,student_id:1,id:1},{student:2,student_id:2,id:2}];
+            objData.studentData = JSON.stringify(studentList);
+//            console.log(studentList);
+//             console.log(objData );
+//             return false;
+            var url = "{:url('api/grade/createGradeApi')}";
+            var ajaxResult = wooApi.asyncF(url,objData);
+            if(ajaxResult.code == 200){
+                mui.alert(ajaxResult.msg,'创建成功','确定',function(){
+                    window.location.href="{:url('frontend/grade/gradelistofcamp',['camp_id'=>$campInfo['id']])}";
+                })
+            }else{
+                mui.alert(ajaxResult.msg,'创建失败','确定',function(){
+
+                })
             }
         })
 
-    });
+    })
 
+
+    //训练营场地列表接口获取数据并追加到页面
+    var toCourtList = function() {
+        var url  = "{:url('api/court/getCourtListNoPageApi','','',true)}";
+        var campID = "{$campInfo.id}";
+        mui.ajax({
+            url:url,
+            data: {
+                camp_id:campID
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+                if (data.code == 200) {
+                    var newli = '';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        newli = newli + '<li class="mui-table-view-cell listli detalisli trainLocation" data-id="' + data.data[i].court_id + '" data-location="' + data.data[i].location + '">' + data.data[i].court + '</li>'
+                    }
+                    $("ul.courtlist").empty();
+                    if(newli==''){
+                        var createCount = "{:url('/frontend/court/createcourt/camp_id/')}"+campID;
+                        newli = '<li class="mui-text-center"><p>没有查找到场地数据哦</p><a href="'+createCount+'" class="mui-btn mui-btn-primary">添加场地</a></li>'  ///// 添加场地按钮///////////////////////////////////////////////
+                    }
+                    $("ul.courtlist").append(newli);
+
+                }else{
+                    mui.toast('数据获取失败,请稍候再试');
+                }
+            },
+            error: function(xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+            }
+        });
+    };
     //教练列表接口获取数据并追加到页面
     var toCoachList = function () {
         var url = "{:url('api/camp_member/getCoachListApi','','',true)}";
@@ -875,8 +880,8 @@
                     var newli = ''; //主教练单选
                     var newliAS = ''; //助理教练多选
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].member_id + '">' + data.data[i].coach + '</li>'
-                        newliAS = newliAS + '<div class="mui-input-row mui-checkbox mui-left"><label class="label" data-id="' + data.data[i].member_id + '">' + data.data[i].coach + '</label><input name="checkbox-assistant" data-id="' + data.data[i].member_id + '" value="' + data.data[i].coach + '" type="checkbox"></div>'
+                        newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '">' + data.data[i].coach + '</li>'
+                        newliAS = newliAS + '<div class="mui-input-row mui-checkbox mui-left"><label class="label" data-id="' + data.data[i].id + '">' + data.data[i].coach + '</label><input name="checkbox-assistant" data-id="' + data.data[i].id + '" value="' + data.data[i].coach + '" type="checkbox"></div>'
                     }
                     $("ul.coach").empty();
                     $(".coachAS").empty();
@@ -896,7 +901,6 @@
             }
         });
     };
-
     //粉丝列表接口获取数据并追加到页面
     var toFansList = function (keyword, wFans, page) {
         var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}";
@@ -945,42 +949,7 @@
             }
         });
     };
-    //训练营场地列表接口获取数据并追加到页面
-    var toCourtList = function() {
-        var url  = "{:url('api/court/getCourtListNoPageApi','','',true)}";
-        var campID = "{$campInfo.id}";
-        mui.ajax({
-            url:url,
-            data: {
-                camp_id:campID
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: {'Content-Type': 'application/json'},
-            //processData:false,
-            success: function (data) {
-                if (data.code == 200) {
-                    var newli = '';
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        newli = newli + '<li class="mui-table-view-cell listli detalisli trainLocation" data-id="' + data.data[i].court_id + '" data-location="' + data.data[i].location + '">' + data.data[i].court + '</li>'
-                    }
-                    $("ul.courtlist").empty();
-                    if(newli==''){
-                        var createCount = "{:url('/frontend/court/createcourt/camp_id/')}"+campID;
-                        newli = '<li class="mui-text-center"><p>没有查找到场地数据哦</p><a href="'+createCount+'" class="mui-btn mui-btn-primary">添加场地</a></li>'  ///// 添加场地按钮///////////////////////////////////////////////
-                    }
-                    $("ul.courtlist").append(newli);
 
-                }else{
-                    mui.toast('数据获取失败,请稍候再试');
-                }
-            },
-            error: function(xhr, type, errerThrown) {
-                mui.toast('网络异常,请稍候再试');
-            }
-        });
-    };
 
 </script>
 

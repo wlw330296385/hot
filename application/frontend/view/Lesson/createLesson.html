@@ -48,7 +48,6 @@
                 <input type="text" name="lesson" class="data dataVal" value="" placeholder="请填写课程名称">
                 <input type="hidden" name="camp_id" class="data" value="{$campInfo.id}">
                 <input type="hidden" name="camp" class="data" value="{$campInfo.camp}">
-                <input type="hidden" name="status" class="data" value="-1">
             </div>
             <div class="mui-input-row">
                 <a href="#lessonType" class="mui-navigate-right">
@@ -168,6 +167,16 @@
             </a>
         </div>
 
+        <div class="mui-input-row">
+            <label>是否上架</label>
+            <span class="select-arrow status">
+                <select class="select data" name="status">
+                    <option value="1">上架</option>
+                    <option value="-1">下架</option>
+                </select>
+            </span>
+        </div>
+
        <div class="mui-input-row mt55">
                 <label>备注</label>
                 <input type="text" name="remarks" class="input data" placeholder="（选填）">
@@ -193,7 +202,10 @@
         <div class="mui-scroll">
                 <ul class="mui-table-view list">
                     {volist name="gradeCategoryList" id="vol"}
-                    <li class="mui-table-view-cell listli detalisli lessonType" data-id="{$vol.id}">{$vol.name}</li>
+                    <!--<li class="mui-table-view-cell listli detalisli lessonType" data-id="{$vol.id}">{$vol.name}</li>-->
+                    {volist name="$vol['_data']" id="vo"}
+                    <li class="mui-table-view-cell listli detalisli lessonType" data-id="{$vo.id}">{$vo.name}</li>
+                    {/volist}
                     {/volist}
                 </ul>
         </div>
@@ -703,8 +715,8 @@
                     var newli = ''; //主教练单选
                     var newliAS = ''; //助理教练多选
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="'+data.data[i].member_id+'">'+data.data[i].coach+'</li>'
-                        newliAS = newliAS + '<div class="mui-input-row mui-checkbox mui-left"><label class="label">'+data.data[i].coach+'</label><input name="checkbox-assistant" data-id="'+data.data[i].member_id+'" value="'+data.data[i].coach+'" type="checkbox"></div>'
+                        newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="'+data.data[i].id+'">'+data.data[i].coach+'</li>'
+                        newliAS = newliAS + '<div class="mui-input-row mui-checkbox mui-left"><label class="label">'+data.data[i].coach+'</label><input name="checkbox-assistant" data-id="'+data.data[i].id+'" value="'+data.data[i].coach+'" type="checkbox"></div>'
                     }
                     $("ul.coach").empty();
                     $(".coachAS").empty();
