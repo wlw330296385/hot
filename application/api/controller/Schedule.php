@@ -1,149 +1,165 @@
 <?php 
-namespace app\frontend\controller;
-use app\frontend\controller\Base;
+namespace app\api\controller;
+use app\api\controller\Base;
 use app\service\ScheduleService;
-use think\Db;
 /**
 * 课时表类
 */
 class Schedule extends Base
 {
 	
-	protected $scheduleService;
+	protected $ScheduleService;
 
 	function _initialize()
 	{
 		parent::_initialize();
-		$this->scheduleService = new ScheduleService;
+		$this->ScheduleService = new ScheduleService;
 	}
 
 	public function index(){
-		return view('Schedule/index');
+		echo  "11";
 
 	}
 
-	// 课时列表
-    public function scheduleList(){
-    	$map = input();
-    	$map = $map?$map:[];
-    	$scheduleList = $this->scheduleService->getscheduleList($map);
-    	$start_time = mktime(0,0,0,date('m',time()),1,date('Y',time()));
-    	$end_time = time();
-    	// 本年课量
 
-    	// 本月课量
-    	$scheduleOfMonth = $this->scheduleService->countSchedules([]);
-    	//总课量
-    	$myCount = 1;
-    	$scheduleListCount = count('$scheduleList');
-    	$this->assign('myCount',$myCount);
-  		$this->assign('scheduleList',$scheduleList);
-  		$this->assign('scheduleListCount',$scheduleListCount);
-		return view('Schedule/scheduleList');
-    }
 
-	// 课时详情
-	public function scheduleInfo(){
-		$schedule_id = input('param.schedule_id');
-		$scheduleInfo = $this->scheduleService->getScheduleInfo(['id'=>$schedule_id]);
-		$studentList = $this->scheduleService->getStudentList($schedule_id);
-		$commentList = $this->scheduleService->getCommentList($schedule_id);
-		foreach ($commentList as $key => $value) {
-			if($value['anonymous'] == 0){
-				$commentList[$key]['member'] = '匿名用户';
+	//判断录课冲突,规则:同一个训练营课程班级,在某个时间点左右2个小时之内只允许一条数据;
+	public function recordScheduleClashApi(){
+		try{
+			$lesson_id = input('param.lesson_id');
+			$lesson_time = input('param.lesson_time');
+			$grade_id = input('param.grade_id');
+			$camp_id = input('param.camp_id');
+			$lesson_time = strtotime($lesson_time);
+			//前后2个小时
+			$start_time = $lesson_time-7200;
+			$end_time = $lesson_time+7200;
+			$scheduleList = db('schedule')->where([
+									'camp_id'=>$camp_id,
+									'grade_id'=>$grade_id,
+									'lesson_id'=>$lesson_id,
+									'lesson_time'=>['BETWEEN',[$start_time,$end_time]]
+									])->select();
+			$result = 1;
+			if(!$scheduleList){
+				$result = 0;
+			}else{
+				foreach ($scheduleList as $key => $value) {
+					if($value['lesson_time']>$start_time && $value['lesson_time']<$end_time){
+						$result = 0;
+					}
+				}
 			}
+
+			return $result;
+		}catch (Exception $e){
+			return json(['code'=>100,'msg'=>$e->getMessage()]);
 		}
-		$updateSchedule = 0;
-		// 是否已被审核通过
-		if($scheduleInfo['status'] == 0){
-			// 判断权限
-			$isPower = $this->scheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
-			if($isPower>=2){
-				$updateSchedule = 1;
+
+	}
+	
+	// 判断是否有录课权限|审核
+	public function recordSchedulePowerApi(){
+		try{
+			// 只要是训练营的教练都可以跨训练营录课
+			$camp_id = input('param.camp_id');
+			$member_id = $this->memberInfo['id'];
+			$result = $this->ScheduleService->isPower($camp_id,$member_id);
+			return $result;
+		}catch (Exception $e){
+			return json(['code'=>100,'msg'=>$e->getMessage()]);
+		}
+
+	}
+
+
+	//课时审核
+	public function recordScheduleCheckApi(){
+		try{
+			$camp_id = input('param.camp_id');
+			$isPower = $this->recordSchedulePowerApi();
+			if($isPower <3){
+				return json(['code'=>100,'msg'=>__lang('MSG_403')]);
 			}
+			$schedule_id = input('param.schedule_id');
+			$result = db('schedule')->save(['status'=>1],$schedule_id);
+			if($result){
+				return json(['code'=>200,'msg'=>'审核成功']);
+			}else{
+				return json(['code'=>100,'msg'=>'审核失败']);
+			}
+		}catch (Exception $e){
+			return json(['code'=>100,'msg'=>$e->getMessage()]);
 		}
 
-		$this->assign('updateSchedule',$updateSchedule);
-		$this->assign('studentList',$studentList);
-		$this->assign('scheduleInfo',$scheduleInfo);
-		$this->assign('commentList',$commentList);
-		return view('Schedule/scheduleInfo');
 	}
 
 
-	// 录课界面
-	public function recordSchedule(){
-		$camp_id = input('param.camp_id');
-		$lesson_id = input('param.lesson_id');
-		$grade_id = input('param.grade_id');
-		$is_power = $this->scheduleService->isPower($camp_id,$this->memberInfo['id']);
-		if($is_power <2){
-			$this->error('您没有权限录课');
+	// 录课Api
+	public function recordScheduleApi(){
+		try{
+			$data = input('post.');
+			$data['member_id'] = $this->memberInfo['id'];
+			$data['member'] = $this->memberInfo['member'];
+			$data['lesson_time'] = strtotime($data['lesson_time']);
+			$data['student_str'] = serialize($data['studentList']);
+			$result = $this->ScheduleService->createSchedule($data);
+			return json($result);
+		}catch (Exception $e){
+			return json(['code'=>100,'msg'=>$e->getMessage()]);
 		}
 
-		// 教练列表
-		$map['camp_id'] = $camp_id;
-        $map['camp_member.status'] = 1;
-        $map['camp_member.type'] = ['egt', 2];
-		$coachListOfCamp = Db::view('camp_member',['id' => 'campmemberid','camp_id'])
-                ->view('coach','*','coach.member_id=camp_member.member_id')
-                ->where($map)
-                ->order('camp_member.id desc')
-                ->select();
-        // 粉丝列表
-        $fanListOfCamp = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1,'type'=>-1])->select();
+	}
 
-		// 班级信息
-		$GradeService = new \app\service\GradeService;		
-		$gradeInfo = $GradeService->getGradeInfo(['id'=>$grade_id]);
-
-		// 教案
-		$PlanService = new \app\service\PlanService;
-		$planInfo = $PlanService->getPlanInfo(['id'=>$gradeInfo['plan_id']]);
-		if($planInfo){
-			$planInfo['exerciseList'] = [
-										'exercise'=> unserialize($planInfo['exercise']),
-										'exercise_id'=>unserialize($planInfo['exercise_id'])
-									];
-		}else{
-			$planInfo['exerciseList'] = [
-										'exercise'=>[],
-										'exercise_id'=>[]
-									];
+	// 课时评分
+	public function starScheduleApi(){
+		try{
+			$camp_id = input('param.camp_id');
+			$is_power = $this->recordSchedulePowerApi();
+			if($is_power >1){
+				return json(['code'=>100,'msg'=>__lang('MSG_403')]);
+			}
+			$data = input('post.');
+			$data['member_id'] = $this->memberInfo['id'];
+			$data['member'] = $this->memberInfo['member'];
+			$data['star'] = $data['attitude']+$data['profession']+$data['teaching_attitude']+$data['teaching_quality'];
+			$result = $this->ScheduleService->starSchedule($data);
+			if($result){
+				return json(['code'=>200,'msg'=>'审核成功']);
+			}else{
+				return json(['code'=>100,'msg'=>'审核失败']);
+			}
+		}catch (Exception $e){
+			return json(['code'=>100,'msg'=>$e->getMessage()]);
 		}
-		
-		// 班级学生
-		$studentList = db('grade_member')->where(['grade_id'=>$grade_id,'status'=>1,'type'=>1])->select();
-		$countStudentList = count($studentList);
-
-		$this->assign('fanListOfCamp',$fanListOfCamp);
-		$this->assign('countStudentList',$countStudentList);
-		$this->assign('planInfo',$planInfo);
-		$this->assign('gradeInfo',$gradeInfo);
-		$this->assign('coachListOfCamp',$coachListOfCamp);
-		$this->assign('campid', $camp_id);
-		return view('Schedule/recordSchedule');
 	}
 
 
-	// 编辑课时
-	public function updateSchedule(){
-		$schedule_id = input('param.schedule_id');
-		$scheduleInfo = $this->scheduleService->getScheduleInfo(['id'=>$schedule_id]);
-		// 是否已被审核通过
-		if($scheduleInfo['status'] != 0){
-			// 判断权限
-			$this->error('已审核的课时不允许修改');
-			
-		}else{
-			$isPower = $this->scheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
-			// if($isPower<2){
-			// 	$this->error('你没有权限修改课时');
-			// }
+	//获取列表有page
+	public function getScheduleListByPageApi(){
+		try{
+			$map = input('post.');
+			$result = $this->ScheduleService->getScheduleListByPage($map);
+			return json(['code' => 200, 'msg'=> __lang('MSG_201'),'data'=>$result]);
+		}catch (Exception $e){
+			return json(['code'=>100,'msg'=>$e->getMessage()]);
 		}
-
-		$this->assign('scheduleInfo',$scheduleInfo);
-		return view('Schedule/updateSchedule');
 	}
 
+
+	//获取开始时间和结束时间的列表带page
+	public function getScheduleListBetweenTimeByPageApi(){
+		try{
+			$begin = input('param.begin');
+			$end = input('param.end');
+			$map = input('post.');
+			$beginINT = strtotime($begin);
+			$endINT = strtotime($end);
+			$map['lesson_time'] = ['BETWEEN',[$beginINT,$endINT]];
+			$result = $this->ScheduleService->getScheduleListByPage($map);
+			return json(['code' => 200, 'msg'=> __lang('MSG_201'),'data'=>$result]);
+		}catch (Exception $e){
+			return json(['code'=>100,'msg'=>$e->getMessage()]);
+		}
+	}
 }
