@@ -101,7 +101,8 @@ class Schedule extends Base
 			$data = input('post.');
 			$data['member_id'] = $this->memberInfo['id'];
 			$data['member'] = $this->memberInfo['member'];
-			$data['lesson_time'] = strtotime($data['lesson_time_date']);
+			$data['lesson_time'] = strtotime($data['lesson_time']);
+			$data['student_str'] = serialize($data['studentList']);
 			$result = $this->ScheduleService->createSchedule($data);
 			return json($result);
 		}catch (Exception $e){
@@ -139,7 +140,7 @@ class Schedule extends Base
 		try{
 			$map = input('post.');
 			$result = $this->ScheduleService->getScheduleListByPage($map);
-			return json($result);
+			return json(['code' => 200, 'msg'=> __lang('MSG_201'),'data'=>$result]);
 		}catch (Exception $e){
 			return json(['code'=>100,'msg'=>$e->getMessage()]);
 		}
@@ -156,7 +157,7 @@ class Schedule extends Base
 			$endINT = strtotime($end);
 			$map['lesson_time'] = ['BETWEEN',[$beginINT,$endINT]];
 			$result = $this->ScheduleService->getScheduleListByPage($map);
-			return json($result);
+			return json(['code' => 200, 'msg'=> __lang('MSG_201'),'data'=>$result]);
 		}catch (Exception $e){
 			return json(['code'=>100,'msg'=>$e->getMessage()]);
 		}

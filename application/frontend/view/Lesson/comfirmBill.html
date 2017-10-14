@@ -26,7 +26,6 @@
 <div class="mui-content">
 
     <!--课程订单支付-->
-    <div class="mui-content">
         <div class="list">
             <ul class="mui-table-view">
                 <li class="mui-table-view-cell mui-media listli mb">
@@ -55,56 +54,76 @@
                 <li class="mui-table-view-cell listli">训练地点<span>{$lessonInfo.location}</span></li>
                 <li class="mui-table-view-cell listli">所属地区<span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span></li>
                 <li class="mui-table-view-cell listli"><span>课程总价<b class="colororange total_fee"></b></span></li>
-                <li class="mui-table-view-cell listli">备注 <input type="text" name="remarks" class="remarks" value="无"></li>
             </ul>
 
+            <div class="mui-input-group mb44">
+
+                <div id="oldStudent">
+                    <div class="page-header mb mt">
+                        <span class="title">体验生信息</span>
+                        <span class="fr"><button id="addBtn" class="mui-btn mui-btn-blue">添加学生</button></span>
+                    </div>
+                    <div class="mui-input-row">
+                        <a href="#" class="mui-navigate-right">
+                            <label>学员姓名</label>
+                            <span class="select-row">
+                        <select class="selectStudent">
+                          <option value="" id="student"></option>
+                        </select>
+                    </span>
+                        </a>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>家长姓名</label>
+                        <span id="parent"></span>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>手机号码</label>
+                        <span class="width" id="emergency_telephone">{$memberInfo.telephone}</span>
+                    </div>
+
+                </div>
+
+                <!-- 新会员进入 -->
+                <div style="display: none;" id="addStudent">
+                    <div class="page-header mb mt">
+                        <span class="title">体验生信息</span>
+                        <span class="fr"><button id="giveUp">取消添加</button> &nbsp;  <button id="submitBtn" class="mui-btn mui-btn-blue">确认</button></span>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>学员姓名</label>
+                        <input type="text" class="data" value="" style="color: #737373" required name="student" placeholder="学生姓名">
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>家长姓名</label>
+                        <input type="text" value="" class="data" style="color: #737373" required name="parent" placeholder="家长姓名">
+                    </div>
+                    <!--  <div class="mui-input-row">
+                        <input type="text" class="mui-input-clear reg_mobile data" name="emergency_telephone" placeholder="输入手机号" data-input-clear="5" style="margin-bottom: 0" id="telephone" required>
+                    </div> -->
+                    <!-- <div class="mui-input-row">
+                         <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)">
+                   </div>
+                   <div class="mui-input-row">
+                        <input type="text" class="validate" placeholder="输入验证码" id="code">
+                   </div> -->
+                </div>
+
+                <div class="mui-input-row h-auto">
+                    <label>备注</label>
+                    <textarea rows="5" name="remarks" class="remarks" placeholder="购买留言"></textarea>
+                </div>
+            </div>
+
+        </div>
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-8 opli" >还需支付:<b class="colororange total_fee">￥</b></li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="wxpay()">立即支付</li>
             </ul>
 
-        </div>
-    </div>
 
 
-      <ul class="mui-table-view list detalis-list mt55" id="oldStudent">
-         <li class="mui-table-view-cell listli">
-           学员姓名
-           <span class="select-arrow location-choise">
-            <select class="select" style="width: 22%" >
-              <option value="" id="student"></option>
-            </select>
-          </span>
-        </li>
-        <li class="mui-table-view-cell listli">家长姓名<span id="parent"></span></li>
-        <li class="mui-table-view-cell listli">手机号码<span class="width" id="emergency_telephone">{$memberInfo.telephone}</span></li>
-        
-        <button id="addBtn">添加学生</button>
-      </ul>
-      <!-- 新会员进入 -->
-      <div class="mui-input-group mt55" style="display: none;" id="addStudent">
-
-        <div class="mui-input-row">
-          <label>学员姓名</label>
-          <input type="text" class="data" value="" style="color: #737373" required name="student" placeholder="学生姓名">
-        </div>
-
-        <div class="mui-input-row">
-          <label>家长姓名</label>
-          <input type="text" value="" class="data" style="color: #737373" required name="parent" placeholder="家长姓名">
-        </div>
-
-        <!--  <div class="mui-input-row">
-            <input type="text" class="mui-input-clear reg_mobile data" name="emergency_telephone" placeholder="输入手机号" data-input-clear="5" style="margin-bottom: 0" id="telephone" required>   
-        </div> -->
-         <!-- <div class="mui-input-row">  
-              <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)">              
-        </div>
-        <div class="mui-input-row">                
-             <input type="text" class="validate" placeholder="输入验证码" id="code">
-        </div> -->
-        <button id="submitBtn">确认</button>   <button id="giveUp">放弃添加</button>
-      </div>
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
@@ -133,67 +152,68 @@
         $('.total_fee').html("￥"+total_fee);
 
 
-
         //替换学生列表
-        $('.select').on('change',function(){
+        $('.selectStudent').on('change',function(){
             var index = $('option:selected').index();
-             $('#student').val(studentList[index].id);
-              $('#student').text(studentList[index].student);
-              $('#parent').text(studentList[index].parent);
-              // $('#emergency_telephone').text(studentList[index].emergency_telephone);
-              student = studentList[index].student;
-              student_id = studentList[index].id;
+            $('#student').val(studentList[index].id);
+            $('#student').text(studentList[index].student);
+            $('#parent').text(studentList[index].parent);
+            // $('#emergency_telephone').text(studentList[index].emergency_telephone);
+            student = studentList[index].student;
+            student_id = studentList[index].id;
         })
 
         // 添加学生
-        $('#addBtn').on('click',function(){
+        $('#addBtn').on('click','',function(){
             $('#oldStudent').hide();
             $('#addStudent').show();
         })
 
         //放弃添加学生
-        $('#giveUp').on('click',function(){
+        $('#giveUp').on('click','',function(){
             $('#oldStudent').show();
             $('#addStudent').hide();
         })
 
-
         // 获取学生数据
         getStudentList();
+
     })
-   
+
+
+
     // 获取学生数据
     function getStudentList(){
-      // 获取学生列表
-          var result = wooApi.asyncF("{:url('api/Student/getStudentListApi')}");
-          console.log(result);
-          if(result.code == 200){
+        // 获取学生列表
+        var result = wooApi.asyncF("{:url('api/Student/getStudentListApi')}");
+        console.log(result);
+        if(result.code ==200){
             if(!result.data){
                 $('#oldStudent').hide();
                 $('#addStudent').show();
             }else{
-              studentList = result.data;
-              console.log(result.data);
-              $('#student').val(result.data[0].id);
-              $('#student').text(result.data[0].student);
-              $('#parent').text(result.data[0].parent);
-              // $('#emergency_telephone').text(result.data[0].emergency_telephone);
-              isStudent = true;
-              // if(result.data[0].emergency_telephone>0){
-              //   isTelephone = true;
-              // };
-              student = studentList[0].student;
-              student_id = studentList[0].id;
-              // 循环输出其他的学生
-              for (var i = 1; i < studentList.length; i++) {
-                  studentList[i]
-                  var strhtml = '<option value="'+studentList[i].id+'">'+studentList[i].student+'</option>';
-                  $('.select').append(strhtml)
-              }
+                studentList = result.data;
+                $('#student').val(result.data[0].id);
+                $('#student').text(result.data[0].student);
+                $('#parent').text(result.data[0].parent);
+                // $('#emergency_telephone').text(result.data[0].emergency_telephone);
+                isStudent = true;
+                // if(result.data[0].emergency_telephone>0){
+                //   isTelephone = true;
+                // };
+                student = studentList[0].student;
+                student_id = studentList[0].id;
+                // 循环输出其他的学生
+                for (var i = 1; i < studentList.length; i++) {
+                    studentList[i]
+                    var strhtml = '<option value="'+studentList[i].id+'">'+studentList[i].student+'</option>';
+                    $('.selectStudent').append(strhtml)
+                }
             }
-              
+
+        }
     }
-  }
+
     // // 发送验证码
     // function sendCode(obj){
     //   telephone = document.getElementById('telephone').value;
@@ -318,7 +338,7 @@
         mui.toast(result.msg);
       }
     }
-    
+
 
 
     function testSubmit(){
