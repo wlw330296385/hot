@@ -9,7 +9,7 @@ class Lesson extends Model{
     //protected $readonly = ['create_time'];
 
     public function getStatusAttr($value){
-        $status = [0=>'已结束',1=>'上架', -1 => '下架'];
+        $status = [0=>'未审核',1=>'上架', -1 => '下架'];
         return $status[$value];
     }
 	// 关联场地表

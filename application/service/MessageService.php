@@ -116,9 +116,10 @@ class MessageService{
 
     // 获取系统消息列表
     public function getMessageMemberListByPage($map = [],$paginate=10){
-        $result = $this->MessageModel
+        $result = $this->MessageMemberModel
             ->where($map)
             ->paginate($paginate);
+            echo $this->MessageModel->getlastsql();
         if($result){
             $res = $result->toArray();
             return $res;
