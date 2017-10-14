@@ -51,12 +51,15 @@ class BillService {
         // grade_member操作
         $GradeMember = new GradeMember;
         $is_student2 = $GradeMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->find();
+
         if(!$is_student2){
-            $re = $GradeMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'type'=>1,'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'type'=>$data['type']]);
+        // 添加一条学生数据
+            $re = $GradeMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'type'=>$data['type']]);
             if(!$re){
                 db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
             }
         }else{
+        // 课量增加
             $re = $GradeMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->setInc('rest_schedule',$data['total']);
             if(!$re){
                 db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
@@ -121,6 +124,7 @@ class BillService {
                 $CampMember = new CampMember;
                 $is_student = $CampMember->where(['member_id'=>$data['member_id'],'camp_id'=>$data['camp_id'],'status'=>1])->where('type','egt',1)->find();
                 if(!$is_student){
+                    // camp_member添加一条数据
                     $res = $CampMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'type'=>1,'status'=>1]);
                     if(!$res){
                         db('log_camp_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);

@@ -14,12 +14,12 @@ class Index extends Base{
         $page = input('param.page')?input('param.page'):1;
     	$bannerList = unserialize($this->systemSetting['banner']); 
     	// 热门课程
-    	$hotLessonList = $this->LessonService->getLessonList([],$page,'hot ASC',4);
+    	// $hotLessonList = $this->LessonService->getLessonList([],$page,'hot ASC',4);
     	//推荐课程
-    	$sortLessonList = $this->LessonService->getLessonList([],$page,'sort ASC',4);
+    	// $sortLessonList = $this->LessonService->getLessonList([],$page,'sort ASC',4);
     	$this->assign('bannerList',$bannerList);
-    	$this->assign('hotLessonList',$hotLessonList);
-    	$this->assign('sortLessonList',$sortLessonList);
+    	// $this->assign('hotLessonList',$hotLessonList);
+    	// $this->assign('sortLessonList',$sortLessonList);
         return view('Index/index');
     }
 
