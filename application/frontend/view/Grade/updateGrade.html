@@ -39,6 +39,10 @@
         .mui-navigate-right input[type='text']{
             padding-right: 30px !important;
         }
+        #newdiv .tips{
+            color: #AAAAAA;
+            line-height:normal;
+        }
     </style>
 </head>
 
@@ -611,7 +615,7 @@
         // 班级类型
         var gradecate_id = "";
         $(".gradeType").click(function () {
-            var gradeType = $(this).text();
+            var gradeType = $.trim($(this).text());
             gradecate_id = $(this).attr('data-id');
             $(".gradecate_id").val(gradecate_id);
             $(".gradeTypeCont").text(gradeType);
@@ -822,10 +826,16 @@
             headers: {'Content-Type': 'application/json'},
             //processData:false,
             success: function (data) {
-                var div = '';
                 if (data.code == 200) {
+                    var div = '';
+                    var fbm = '';
+                    var tys = '';
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' +data.data[i].id+'"  data-student_id="' +data.data[i].student_id+ '" data-student="' +data.data[i].student+'"></div>'
+                        fbm = '';
+                        tys = '';
+                        if(data.data[i].grade_id==0){ fbm = '<span class="tips">[ 未分配 ]</span>' }
+                        if(data.data[i].type==2){ tys = '<span class="tips">[ 体验生 ]</span>' }
+                        div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + fbm + tys  + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' +data.data[i].id+'"  data-student_id="' +data.data[i].student_id+ '" data-student="' +data.data[i].student+'"></div>'
                     }
                     $("#newdiv").append(div);
 

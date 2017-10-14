@@ -39,6 +39,11 @@
         .mui-navigate-right input[type='text']{
             padding-right: 30px !important;
         }
+        #newdiv .tips{
+            font-size: 12px;
+            color: #AAAAAA;
+            line-height:normal;
+        }
     </style>
 </head>
 
@@ -63,7 +68,7 @@
             <div class="mui-input-row">
                 <a href="#lessonType" class="mui-navigate-right">
                     <label>所属课程</label>
-                    <input type="text" value="" name="lesson" class="lessonTypeCont lesson data" placeholder="请先选择课程，后选择学员">
+                    <input type="text" value="" name="lesson" class="lessonTypeCont data" placeholder="请先选择课程，后选择学员">
                     <input type="hidden" name="lesson_id" class="lesson_id data" value="">
                 </a>
             </div>
@@ -146,7 +151,7 @@
 
             <div class="mui-input-row">
                 <label>主教底薪<a href="#coach_salary"><i class="mui-icon mui-icon-info"></i></a></label>
-                <input type="text" class="coach_salary checkNum data" value="" placeholder="请输入主教底薪">
+                <input type="text" name="coach_salary" class="coach_salary checkNum data" value="" placeholder="请输入主教底薪">
             </div>
 
             <div class="mui-input-row">
@@ -623,7 +628,7 @@
         // 班级类型
         var gradecate_id = "";
         $(".gradeType").click(function () {
-            var gradeType = $(this).text();
+            var gradeType = $.trim($(this).text());
             gradecate_id = $(this).attr('data-id');
             $(".gradecate_id").val(gradecate_id);
             $(".gradeTypeCont").text(gradeType);
@@ -751,9 +756,9 @@
             }
         });
 
-
         //所属课程api
         $(".lessonType").click(function () {
+            var lessonType = $(this).text();
             var lesson_id = $(this).attr("data-id");
             mui.ajax("{:url('api/lesson/getStudentListOfLessonApi')}", {
                 data: {"lesson_id": lesson_id},
@@ -765,9 +770,15 @@
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data)
                     var div = '';
+                    var fbm = '';
+                    var tys = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' +data.data[i].id+'" data-grade_id="+data.data[i].grade_id+" data-type="+data.data[i].type+" data-student_id="' +data.data[i].student_id+ '" data-student="' +data.data[i].student+'"></div>'
+                            fbm = '';
+                            tys = '';
+                            if(data.data[i].grade_id==0){ fbm = '<span class="tips">[ 未分配 ]</span>' }
+                            if(data.data[i].type==2){ tys = '<span class="tips">[ 体验生 ]</span>' }
+                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + fbm + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' +data.data[i].id+'" data-student_id="' +data.data[i].student_id+ '" data-student="' +data.data[i].student+'"></div>'
                         }
                         $("#newdiv").empty();
                         $("#newdiv").append(div);
@@ -778,6 +789,9 @@
                     console.log(type);
                 }
             });
+
+            $(".lesson_id").val(lesson_id);
+            $(".lessonTypeCont").val(lessonType);
             mui('#lessonType').popover('toggle');
         })
 
@@ -791,9 +805,9 @@
             var objData = wooApi.arrTOobj(arrData);
             // var studentList = [{student:1,student_id:1,id:1},{student:2,student_id:2,id:2}];
             objData.studentData = JSON.stringify(studentList);
-            console.log(studentList);
-             console.log(objData.studentData );
-             return false;
+//            console.log(studentList);
+//             console.log(objData );
+//             return false;
             var url = "{:url('api/grade/createGradeApi')}";
             var ajaxResult = wooApi.asyncF(url,objData);
             if(ajaxResult.code == 200){
