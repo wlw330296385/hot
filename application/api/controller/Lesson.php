@@ -313,7 +313,7 @@ class Lesson extends Base{
                     unset($map[$key]);
                 }
             }
-            $result = $this->LessonService->getLessonList($map,1);
+            $result = $this->LessonService->getLessonList($map);
             if($result){
                 shuffle($result);
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);

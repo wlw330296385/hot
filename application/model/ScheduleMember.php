@@ -6,13 +6,11 @@ class ScheduleMember extends Model {
     use SoftDelete;
     protected $deleteTime = 'delete_time';
 	protected $autoWriteTimestamp = true;
-    protected $readonly = [
-                            'create_time',
-                            'status',
-                            'type',
-                            ];
-
-
+//    protected $readonly = [
+//                            'create_time',
+//                            'status',
+//                            'type',
+//                            ];
 
     // 关联member
     public function member(){
