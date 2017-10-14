@@ -26,6 +26,7 @@ class Schedule extends Base
     public function scheduleList(){
     	$map = input();
     	$map = $map?$map:[];
+    	$camp_id = input('camp_id');
     	$scheduleList = $this->scheduleService->getscheduleList($map);
     	$start_time = mktime(0,0,0,date('m',time()),1,date('Y',time()));
     	$end_time = time();
@@ -39,6 +40,7 @@ class Schedule extends Base
     	$this->assign('myCount',$myCount);
   		$this->assign('scheduleList',$scheduleList);
   		$this->assign('scheduleListCount',$scheduleListCount);
+  		$this->assign('camp_id', $camp_id);
 		return view('Schedule/scheduleList');
     }
 
