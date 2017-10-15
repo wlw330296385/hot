@@ -2,6 +2,7 @@
 namespace app\frontend\controller;
 use think\Controller;
 use app\service\WechatService;
+use think\Cookie;
 
 class Login extends Controller{
 	
@@ -43,8 +44,8 @@ class Login extends Controller{
                 cookie('member', md5($isMember['id'].$isMember['member'].config('salekey')));
                 session('memberInfo', $isMember, 'think');
                 if (session('memberInfo', '', 'think')) {
-                    $url = cookie('url');
-                    if($url){
+                    if( Cookie::has('url') ){
+                        $url = cookie('url');
                         cookie('url',null);
                         $this->redirect( $url );
                     }else{
@@ -89,14 +90,13 @@ class Login extends Controller{
                 cookie('member', md5($member['id'].$member['member'].config('salekey')) );
                 session('memberInfo', $member, 'think');
                 if (session('memberInfo', '', 'think')) {
-                    $url = cookie('url');
-                    if($url){
+                    if( Cookie::has('url') ){
+                        $url = cookie('url');
                         cookie('url',null);
                         $this->redirect( $url );
                     }else{
                         $this->redirect('frontend/Index/index');
                     }
-                    
                 } else {
                     $this->redirect('frontend/Index/index');
                 }

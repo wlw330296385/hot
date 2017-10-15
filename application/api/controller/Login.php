@@ -12,6 +12,7 @@ class Login extends Base{
        
     }
 
+    // 注册会员
     public function registerApi(){
         try{
         	$data = input('post.');
@@ -29,7 +30,17 @@ class Login extends Base{
             }
             
         	$memberService = new \app\service\MemberService;
-        	return $memberService->saveMemberInfo($data);
+        	$response = $memberService->saveMemberInfo($data);
+        	if ($response['code'] ==200) {
+        	    $lasturl = cookie('url');
+        	    if ($lasturl && $lasturl != '/frontend') { // 记录最后访问地址, 注册成功返回该页面
+                    $response['goto'] = $lasturl;
+                    cookie('url', null);
+                } else {
+                    $response['goto'] = url('frontend/member/registerSuccess');
+                }
+            }
+            return $response;
         }catch (Exception $e){
         	return json(['code'=>100,'msg'=>$e->getMessage()]);
         }

@@ -69,7 +69,6 @@ class MemberService{
             } else {
 		        return ['code' => 100, 'msg' => '请重新登陆'];
             }
-
         }
 	}
 

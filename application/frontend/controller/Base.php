@@ -24,8 +24,9 @@ class Base extends Controller{
 
 		$url = cookie('url');
 		if(!$url){
-			$url = $_SERVER["REQUEST_URI"];
-			cookie('url', $url);
+//			$url = $_SERVER["REQUEST_URI"];
+//			cookie('url', $url);
+            cookie('url', \request()->url(), 1800);
 		}
 		$pid = input('param.pid');
 		if($pid){
