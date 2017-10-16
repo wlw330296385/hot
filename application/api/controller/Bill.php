@@ -17,12 +17,23 @@ class Bill extends Frontend{
             $map = input('post.');
             $page = input('param.page')?input('param.page'):1;
             $result = $this->BillService->getBillList($map,$page);
-            $billList = $result['data'];
-            $billList['count'] = count($billList);
-            return json(['code'=>200,'data'=>$billList,'msg'=>'OK']);       
+
+            $result['count'] = count($result);
+            return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }   	
+    }
+
+    //获取订单列表带page
+    public function getBillListByPageApi(){
+        try{
+            $map = input('post.');
+            $result = $this->BillService->getBillListByPage($map);
+            return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
     }
 
     //编辑|添加订单接口

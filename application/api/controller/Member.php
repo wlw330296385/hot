@@ -198,4 +198,10 @@ class Member extends Base{
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+
+
+    //提现
+    public function withdrawApi(){
+        
+    }
 }

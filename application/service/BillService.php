@@ -38,6 +38,18 @@ class BillService {
         }
     }
 
+    // 获取订单列表
+    public function getBillListByPage($map,$paginate = 10){
+        $result = $this->Bill->where($map)->paginate($paginate);
+        
+        if($result){
+            $res = $result->toArray();
+            return $res;
+        }else{
+            return $result;
+        }
+    }
+
     public function billCount($map){
         $result = $this->Bill->where($map)->count();
         return $result?$result:0;
