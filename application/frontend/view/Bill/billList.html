@@ -118,14 +118,13 @@
 
     $(function () {
         var postData = {};
-        postData.status = 1;
-        console.log(postData);
+        //console.log(postData);
         //初始化全局变量
         var Count1 = 1;
         var Count0 = 1;
         var Count01 = 1;
         var Count02 = 1;
-        var campID=wooApi.GetQueryString('camp_id');
+        var campID = wooApi.GetQueryString('camp_id');
         var member_id = wooApi.GetQueryString('member_id');
         if(campID){
             postData.camp_id = campID;
@@ -133,7 +132,7 @@
         if(member_id){
             postData.member_id = member_id;
         }
-        console.log(postData);
+        //console.log(postData);
         //已付款订单
         mui('#bill1').pullRefresh({
             down: {
@@ -160,7 +159,8 @@
                 Count1 = 1;//刷新并显示第一页
                 var page = Count1;
                 var gType = 1;//代表下拉刷新
-                toList('bill1',page,gType,postData);//具体取数据的方法
+                postData.status = 1;
+                toList('bill1',page,gType,postData,1);//具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现（上架）
@@ -169,7 +169,8 @@
                 Count1++;//翻下一页
                 var page = Count1;
                 var gType =2;//代表上拉加载
-                toList('bill1',page,gType,postData);//具体取数据的方法
+                postData.status = 1;
+                toList('bill1',page,gType,postData,1);//具体取数据的方法
             }, 100);
         }
 
@@ -200,7 +201,7 @@
                 var page = Count0;
                 var gType = 1;//代表下拉刷新
                 postData.status = 0;
-                toList('bill0',page,gType,postData);//具体取数据的方法
+                toList('bill0',page,gType,postData,0);//具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现（上架）
@@ -210,7 +211,7 @@
                 var page = Count0;
                 var gType =2;//代表上拉加载
                 postData.status = 0;
-                toList('bill0',page,gType,postData);//具体取数据的方法
+                toList('bill0',page,gType,postData,0);//具体取数据的方法
             }, 100);
         }
 
@@ -242,7 +243,7 @@
                 var page = Count01;
                 var gType = 1;//代表下拉刷新
                 postData.status = -1;
-                toList('bill-1',page,gType,postData);//具体取数据的方法
+                toList('bill-1',page,gType,postData,-1);//具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现（上架）
@@ -252,7 +253,7 @@
                 var page = Count01;
                 var gType =2;//代表上拉加载
                 postData.status = -1;
-                toList('bill-1',page,gType,postData);//具体取数据的方法
+                toList('bill-1',page,gType,postData,-1);//具体取数据的方法
             }, 100);
         }
 
@@ -284,7 +285,7 @@
                 var page = Count02;
                 var gType = 1;//代表下拉刷新
                 postData.status = -2;
-                toList('bill-2',page,gType,postData);//具体取数据的方法
+                toList('bill-2',page,gType,postData,-2);//具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现（上架）
@@ -294,15 +295,15 @@
                 var page = Count02;
                 var gType =2;//代表上拉加载
                 postData.status = -2
-                toList('bill-2',page,gType,postData);//具体取数据的方法
+                toList('bill-2',page,gType,postData,-2);//具体取数据的方法
             }, 100);
         }
 
     })
 
     //接口获取数据并追加到页面
-    var toList = function(wList,page,gType,postData) {
-        console.log(postData);
+    var toList = function(wList,page,gType,postData,status) {
+        console.log(postData);  /////// 两处打印的结果不一样，所以必须另外给status值
         //搜索关键字不能完全为空，否则查询为空
         var url  = "{:url('api/bill/getBillListByPageApi','','',true)}?page="+page;
         mui.ajax({
@@ -314,7 +315,7 @@
             headers: {'Content-Type': 'application/json'},
             //processData:false,
             success: function (data) {
-
+                console.log(postData);  /////// 两处打印的结果不一样，所以必须另外给status值
                 var newli='';
                 if (data.code == 200) {
                     for(var i=0;i<=data.data.data.length-1;i++){
