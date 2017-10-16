@@ -107,7 +107,20 @@ class Login extends Controller{
     }
 
     public function fastRegister(){
-
+        $WechatS = new WechatService;
+        $userinfo = $WechatS->oauthUserinfo();
+        if ($userinfo) {
+            $member = [
+                'openid' => $userinfo['openid'],
+                'nickname' => $userinfo['nickname'],
+                'avatar' => str_replace("http://", "https://", $userinfo['headimgurl']),
+            ];
+            cookie('mid', 0);
+            //cookie('member', md5($member['id'].$member['member'].config('salekey')) );
+            session('memberInfo', $member, 'think');
+        }
+//        dump( cookie('url') );
+//        dump( session('memberInfo') );
         return view('Login/fastRegister');
     }
 }

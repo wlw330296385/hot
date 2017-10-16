@@ -65,7 +65,7 @@ class MemberService{
         } else {
 		    $login = $this->saveLogin($MemberModel->id);
 		    if ($login) {
-		        return ['code' => 200, 'msg' => __lang('MSG_200')];
+		        return ['code' => 200, 'msg' => __lang('MSG_200'), ''];
             } else {
 		        return ['code' => 100, 'msg' => '请重新登陆'];
             }

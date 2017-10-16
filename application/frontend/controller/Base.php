@@ -44,7 +44,9 @@ class Base extends Controller{
 
         $this->memberInfo = session('memberInfo', '', 'think');
         $this->assign('memberInfo', $this->memberInfo);
-        $fasturl = $this->is_weixin() ? url('login/fastRegister') : url('login/login'); //提示完善信息对话框链接
+        $wechatS = new WechatService();
+        $fastRegisterInwx = $wechatS->oauthredirect(  url('login/fastRegister', '', '', true) );
+        $fasturl = $this->is_weixin() ? $fastRegisterInwx : url('login/login'); //提示完善信息对话框链接
         $this->assign('fasturl', $fasturl);
         $this->assign('mid', cookie('mid'));
 	}

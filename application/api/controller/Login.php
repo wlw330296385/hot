@@ -22,15 +22,20 @@ class Login extends Base{
             }
 
             $memberInfo = session('memberInfo', '', 'think');
+            $memberS = new \app\service\MemberService;
             // 如果有微信授权信息
             if (isset($memberInfo['openid'])) {
-                $data['openid'] = $memberInfo['openid'];
-                $data['nickname'] = $memberInfo['nickname'];
-                $data['avatar'] = $memberInfo['avatar'];
+                $isMember = $memberS->getMemberInfo(['openid' => $memberInfo['openid']]);
+                if ($isMember) {
+                    return ['code' => 100, 'msg' => '您的微信号已注册成为会员'];
+                } else {
+                    $data['openid'] = $memberInfo['openid'];
+                    $data['nickname'] = $memberInfo['nickname'];
+                    $data['avatar'] = $memberInfo['avatar'];
+                }
             }
-            
-        	$memberService = new \app\service\MemberService;
-        	$response = $memberService->saveMemberInfo($data);
+
+        	$response = $memberS->saveMemberInfo($data);
         	if ($response['code'] ==200) {
         	    $lasturl = cookie('url');
         	    if ($lasturl && $lasturl != '/frontend') { // 记录最后访问地址, 注册成功返回该页面
