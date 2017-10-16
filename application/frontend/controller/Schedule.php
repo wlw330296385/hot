@@ -48,7 +48,11 @@ class Schedule extends Base
 	public function scheduleInfo(){
 		$schedule_id = input('param.schedule_id');
 		$scheduleInfo = $this->scheduleService->getScheduleInfo(['id'=>$schedule_id]);
-		$studentList = $this->scheduleService->getStudentList($schedule_id);
+//		$studentList = $this->scheduleService->getStudentList($schedule_id);
+        $studentList = [];
+        if ($scheduleInfo['student_str']) {
+            $studentList = unserialize($scheduleInfo['student_str']);
+        }
 		$commentList = $this->scheduleService->getCommentList($schedule_id);
 		foreach ($commentList as $key => $value) {
 			if($value['anonymous'] == 0){

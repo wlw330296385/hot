@@ -255,9 +255,10 @@
                 var newli = '';
                 var newAllLi = '';
                 if (data.code == 200) {
-
+                    var newDate = new Date();
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + campID;
+                        var lession_time = newDate.toLocaleString(data.data.data[i].lesson_time);
                         // 已审，未审内容
                         newli += '<li class="mui-table-view-cell mui-media">';
                         if (status == 1) {
@@ -265,10 +266,10 @@
                         } else {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为已审</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + data.data.data[i].lesson_time + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a></div>';
                         newli += '</li>';
                         // 全部内容
-                        newAllLi = newAllLi + '<li class="mui-table-view-cell mui-media"><a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + data.data.data[i].lesson_time + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a></li>';
+                        newAllLi = newAllLi + '<li class="mui-table-view-cell mui-media"><a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a></li>';
                     }
                 }
 

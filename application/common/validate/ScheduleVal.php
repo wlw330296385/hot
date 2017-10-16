@@ -15,7 +15,7 @@ class ScheduleVal extends Validate{
         'coach_id'          =>'require',
         // 'plan'              =>'require',
         // 'plan_id'           =>'require',
-        'lesson_date'       =>'require',
+//        'lesson_date'       =>'require',
         'lesson_time'       =>'require',
     ];
     
@@ -30,12 +30,14 @@ class ScheduleVal extends Validate{
         'coach_id'          =>'coach_id.require',
         // 'plan'              =>'plan.require',
         // 'plan_id'           =>'plan_id.require',
-        'lesson_date'       =>'lesson_date.require',
+//        'lesson_date'       =>'lesson_date.require',
         'lesson_time'       =>'lesson_time.require',
     ];
     
     protected $scene = [
-        'add'   =>  ['camp_id','grade','coach','grade_id','coach_id','teacher_plan','teacher_plan_id','lesson_date'],
+        'add'   =>  ['camp_id','grade','coach','grade_id','coach_id',
+//            'teacher_plan','teacher_plan_id','lesson_date'
+        ],
         'edit'  =>  [],
     ];    
 
