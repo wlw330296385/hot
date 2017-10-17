@@ -205,4 +205,10 @@ class CampService {
         $isMember = $this->CampService->where($map)->find();
         return $isMember;
     }
+
+    // 训练营审核状态 1:正常 0：未审核
+    public function getCampcheck($camp_id) {
+        $camp = Camp::get($camp_id);
+        return $camp->getData('status');
+    }
 }

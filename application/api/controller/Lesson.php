@@ -1,6 +1,7 @@
 <?php 
 namespace app\api\controller;
 use app\api\controller\Base;
+use app\service\CampService;
 use app\service\LessonService;
 use app\service\GradeService;
 use think\Exception;
@@ -252,12 +253,12 @@ class Lesson extends Base{
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
 
+
             $lessonS = new LessonService();
             $lesson = $lessonS->getLessonInfo(['id' => $lessonid]);
             if (!$lesson) {
                 return json(['code' => 100, 'msg' => '没有此课程']);
             }
-
             $camppower = getCampPower($lesson['camp_id'], $this->memberInfo['id']);
             if ($camppower < 1) { //教练以上可操作
                 return json([ 'code' => 100, 'msg' => __lang('MSG_403') ]);
@@ -269,7 +270,7 @@ class Lesson extends Base{
                     return json([ 'code' => 100, 'msg' => __lang('MSG_403').',只能操作自己发布的课程' ]);
                 }
             }
-
+            $campS = new CampService();
             switch ($lesson['status_num']) {
                 case "1": {
                     if ($action == 'editstatus') {
@@ -284,7 +285,12 @@ class Lesson extends Base{
                 }
                 case "-1": {
                     if ($action == 'editstatus') {
-                        // 下架课程
+                        // 上架课程
+                        $campstatus = $campS->getCampcheck($lesson['camp_id']);
+                        if (!$campstatus) {
+                            return json(['code' => 100, 'msg' => '训练营尚未审核，课程不能上架']);
+                        }
+
                         $response = $lessonS->updateLessonStatus($lesson['id'], 1);
                         return json($response);
                     } else {
