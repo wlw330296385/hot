@@ -9,10 +9,18 @@ class GradeMemberService{
 	}
 
 
-	public function getList($map){
-		$result = GradeMember::where($map)->select();
-		if($result){
-            $result = $result->toArray();
+	public function getGradeMemberList($map,$page = 1,$paginate = 10){
+		$result = GradeMember::where($map)->page($page,$paginate)->select();
+		 if($result){
+            return $result->toArray();
+        }
+        return $result;
+    }
+
+    public function getGradeMemberListByPage($map,$paginate = 10){
+        $result = GradeMember::where($map)->paginate($paginate);
+        if($result){
+            return $result->toArray();
         }
         return $result;
     }

@@ -111,6 +111,24 @@ class Schedule extends Base
 
 	}
 
+	// 编辑课时Api
+	public function updateScheduleApi(){
+		try{
+			$schedule_id = input('param.schedule_id');
+			$data = input('post.');
+			$data['member_id'] = $this->memberInfo['id'];
+			$data['member'] = $this->memberInfo['member'];
+			$data['lesson_time'] = strtotime($data['lesson_time']);
+			$data['student_str'] = serialize($data['studentList']);
+			$result = $this->ScheduleService->updateSchedule($data,$schedule_id);
+			return json($result);
+		}catch (Exception $e){
+			return json(['code'=>100,'msg'=>$e->getMessage()]);
+		}
+
+	}
+
+
 	// 课时评分
 	public function starScheduleApi(){
 		try{
