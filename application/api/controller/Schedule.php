@@ -180,4 +180,42 @@ class Schedule extends Base
 			return json(['code'=>100,'msg'=>$e->getMessage()]);
 		}
 	}
+
+	// 操作课时 设为已申/删除
+	public function removeschedule() {
+	    $scheduleid = input('scheduleid');
+	    $action = input('action');
+	    if (!$scheduleid || !$action) {
+	        return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+
+        $scheduleS = new ScheduleService();
+        $schedule = $scheduleS->getScheduleInfo(['id' => $scheduleid]);
+        if (!$schedule) {
+            return json(['code' => 100, 'msg' => '课时'.__lang('MSG_404')]);
+        }
+        //dump($schedule);
+        if ($schedule['status'] != 0) {
+            return ['code' => 100, 'msg' => '该课时记录已审核，不能操作了'];
+        }
+
+        if ($action =='editstatus') {
+            // 审核课时
+            $res = $scheduleS->saveScheduleMember($scheduleid);
+            if ($res) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+            return json($response);
+        } else {
+            $res = $scheduleS->delSchedule($scheduleid);
+            if ($res) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+            return json($response);
+        }
+    }
 }

@@ -129,6 +129,10 @@ class ScheduleService
             return ['code' => 100, 'msg' => '课时' . __lang('MSG_404')];
         }
         $res = false;
+        $update = db('schedule')->where('id', $schedule_id)->update(['status' => 1,'update_time' => time()]);
+        if (!$update) {
+            return ['code' => 100, 'msg' => '课时记录更新' . __lang('MSG_400')];
+        }
         $model = new ScheduleMember();
         // 记录学员
         $students = unserialize($schedule['student_str']);
@@ -170,8 +174,8 @@ class ScheduleService
             array_push($coachDatalist, $datatmp);
             unset($datatmp);
         }
-        $assistantIdArray = explode(',', $schedule['assistant_id']);
-        $assistantArray = explode(',', $schedule['assistant']);
+        $assistantIdArray = unserialize($schedule['assistant_id']) ;
+        $assistantArray = unserialize($schedule['assistant']);
         foreach ($assistantIdArray as $key => $val) {
             if ($val) {
                 $datatmp = [
@@ -189,17 +193,14 @@ class ScheduleService
                 unset($datatmp);
             }
         }
+        
         $savecoachResult = $model->saveAll($coachDatalist);
         if (!$savecoachResult) {
             return ['code' => 100, 'msg' => '记录学员教练数据异常，请重试'];
         }
 
         $res = true;
-        if ($res) {
-            return ['code' => 200, 'msg' => __lang('MSG_200')];
-        } else {
-            return ['code' => 100, 'msg' => __lang('MSG_400')];
-        }
+        return $res;
     }
 
     //查看一条课时信息
@@ -339,5 +340,10 @@ class ScheduleService
             }
         }
 
+    }
+
+    // 删除课时
+    public function delSchedule($id) {
+        return Schedule::destroy($id);
     }
 }
