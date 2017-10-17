@@ -111,7 +111,7 @@ class Schedule extends Base
 
 	}
 
-	// 录课Api
+	// 编辑课时Api
 	public function updateScheduleApi(){
 		try{
 			$schedule_id = input('param.schedule_id');

@@ -80,11 +80,20 @@ class ScheduleService
     // 修改课时
     public function updateSchedule($data, $id)
     {
-        // 查询权限
-        $is_power = $this->isPower($data['camp_id'], $data['member_id']);
+        
+        $scheduleInfo = $this->scheduleService->getScheduleInfo(['id'=>$id]);
+        // 是否已被审核通过
+        if($scheduleInfo['status'] == 1){
+            // 判断权限
+            return ['code' => 100, 'msg' => '已审核通过的课时不允许编辑'];
+            
+        }else{
+            // 查询权限
+            $is_power = $this->isPower($data['camp_id'], $data['member_id']);
 
-        if ($is_power < 2) {
-            return ['code' => 100, 'msg' => __lang('MSG_403')];
+            if ($is_power < 2) {
+                return ['code' => 100, 'msg' => __lang('MSG_403')];
+            }
         }
         if($data['assistants']){
             $doms = explode(',', $data['assistants']);
