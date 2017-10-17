@@ -43,17 +43,17 @@ class Login extends Controller{
                 cookie('mid', $isMember['id']);
                 cookie('member', md5($isMember['id'].$isMember['member'].config('salekey')));
                 session('memberInfo', $isMember, 'think');
-                if (session('memberInfo', '', 'think')) {
-                    if( Cookie::has('url') ){
-                        $url = cookie('url');
-                        cookie('url',null);
-                        $this->redirect( $url );
-                    }else{
-                        $this->redirect('frontend/Index/index');
-                    }
-                } else {
+                // if (session('memberInfo', '', 'think')) {
+                    // if( Cookie::has('url') ){
+                        // $url = cookie('url');
+                        // cookie('url',null);
+                        // $this->redirect( $url );
+                    // }else{
+                        // $this->redirect('frontend/Index/index');
+                    // }
+                // } else {
                     $this->redirect('frontend/Index/index');
-                }
+                // }
             } else {
                 $member = [
                     'id' => 0,
@@ -89,17 +89,17 @@ class Login extends Controller{
                 cookie('mid', 0);
                 cookie('member', md5($member['id'].$member['member'].config('salekey')) );
                 session('memberInfo', $member, 'think');
-                if (session('memberInfo', '', 'think')) {
-                    if( Cookie::has('url') ){
-                        $url = cookie('url');
-                        cookie('url',null);
-                        $this->redirect( $url );
-                    }else{
+                // if (session('memberInfo', '', 'think')) {
+                    // if( Cookie::has('url') ){
+                        // $url = cookie('url');
+                        // cookie('url',null);
+                        // $this->redirect( $url );
+                    // }else{
                         $this->redirect('frontend/Index/index');
-                    }
-                } else {
+                    // }
+                // } else {
                     $this->redirect('frontend/Index/index');
-                }
+                // }
             }
         } else {
             $this->redirect('frontend/index/index');
