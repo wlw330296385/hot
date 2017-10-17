@@ -18,7 +18,7 @@ class GradeMemberService{
     }
 
     public function getGradeMemberListByPage($map,$paginate = 10){
-        $result = GradeMember::where($map)->paginate($paginate);
+        $result = GradeMember::with('student')->where($map)->paginate($paginate);
         if($result){
             return $result->toArray();
         }
