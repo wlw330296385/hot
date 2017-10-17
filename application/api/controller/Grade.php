@@ -116,17 +116,19 @@ class Grade extends Base{
 
     public function createGradeApi(){
         try{
-            $data = input('post.');
-            
+            $data = input('post.'); 
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             $GradeService = new GradeService;
             $result = $GradeService->createGrade($data);
             if($result['code']==200){
                 $grade_id = $result['data'];
-                $StudentService = new \app\service\StudentService;
-                $res = $StudentService->saveAllStudent($data['studentData'],$grade_id,$data['grade']);
-                return json($res);
+               if($data['studentData']){
+                    $studentData = json_decode($data['studentData'],true);
+                    $StudentService = new \app\service\StudentService;
+                    $res = $StudentService->saveAllStudent($studentData,$grade_id,$data['grade']);
+                    return json($res);
+                }
             }else{
                 return json($result);
             } 
