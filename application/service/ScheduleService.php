@@ -49,7 +49,20 @@ class ScheduleService
         if ($is_power < 2) {
             return ['code' => 100, 'msg' => __lang('MSG_403')];
         }
-
+        if($data['assistants']){
+            $doms = explode(',', $data['assistants']);
+            $seria = serialize($doms);
+            $data['assistant'] = $seria;
+        }else{
+            $data['assistant'] = '';
+        }
+        if($data['assistant_ids']){
+            $doms = explode(',', $data['assistant_ids']);
+            $seria = serialize($doms);
+            $data['assistant_id'] = $seria;
+        }else{
+            $data['assistant_id'] = '';
+        }
         $validate = validate('ScheduleVal');
         if (!$validate->check($data)) {
             return ['msg' => $validate->getError(), 'code' => 100];
@@ -72,6 +85,20 @@ class ScheduleService
 
         if ($is_power < 2) {
             return ['code' => 100, 'msg' => __lang('MSG_403')];
+        }
+        if($data['assistants']){
+            $doms = explode(',', $data['assistants']);
+            $seria = serialize($doms);
+            $data['assistant'] = $seria;
+        }else{
+            $data['assistant'] = '';
+        }
+        if($data['assistant_ids']){
+            $doms = explode(',', $data['assistant_ids']);
+            $seria = serialize($doms);
+            $data['assistant_id'] = $seria;
+        }else{
+            $data['assistant_id'] = '';
         }
         $validate = validate('ScheduleVal');
         if (!$validate->check($data)) {
@@ -170,7 +197,26 @@ class ScheduleService
     public function getScheduleInfo($map)
     {
         $result = $this->scheduleModel->where($map)->find();
-        return $result ? $result->toArray() : false;
+        if($result){
+            $res = $result->toArray();
+            if($res['assistant']){
+                $pieces = unserialize($res['assistant']);
+                $res['assistants'] = implode(',', $pieces);
+            }else{
+                $res['assistants'] = '';
+            }
+
+            if($res['assistant_id']){
+                $pieces = unserialize($res['assistant_id']);
+                $res['assistant_ids'] = implode(',', $pieces);
+            }else{
+                $res['assistant_ids'] = '';
+            }
+            return $res;
+        }else{
+            return $result;
+        }
+        // return $result ? $result->toArray() : false;
     }
 
     // 统计课时数量
