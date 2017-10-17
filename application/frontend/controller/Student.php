@@ -94,22 +94,9 @@ class Student extends Base
 	public function studentListOfCamp(){
 		$camp_id = input('param.camp_id');
 		$type = input('param.type')?input('param.type'):1;
-		$studenList = Db::view('grade_member','student_id,grade,grade_id,camp_id,lesson,lesson_id')
-					->view('student','*','student.id=grade_member.student_id')
-					->where(['grade_member.camp_id'=>$camp_id,'grade_member.type'=>$type,'grade_member.status'=>1])
-					->order('grade_member.id desc')
-					->limit(20)
-					->select();				
-		$this->assign('studenList',$studenList);
+					
         $this->assign('camp_id',$camp_id);
 		if($type==1){
-			$studenListOffLine = Db::view('grade_member','student_id,grade,grade_id,camp_id,lesson,lesson_id')
-					->view('student','*','student.id=grade_member.student_id')
-					->where(['grade_member.camp_id'=>$camp_id,'grade_member.type'=>4,'grade_member.status'=>1])
-					->order('grade_member.id desc')
-					->limit(20)
-					->select();
-			$this->assign('studenListOffLine',$studenListOffLine);
 			return view('Student/studentListOfCamp');
 		}else{
 			return view('Student/expStudentListOfCamp');
