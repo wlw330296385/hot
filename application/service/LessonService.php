@@ -76,9 +76,6 @@ class LessonService {
             }else{
                 $res['assistant_ids'] = '';
             }
-            if($res['student_str']){
-                $res['student_strs'] = unserialize($res['student_str']);
-            }
             $res['status_num'] = $result->getData('status');
             return $res;
         }else{

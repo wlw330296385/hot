@@ -221,6 +221,9 @@ class ScheduleService
             }else{
                 $res['assistant_ids'] = '';
             }
+            if($res['student_str']){
+                $res['student_strs'] = unserialize($res['student_str']);
+            }
             return $res;
         }else{
             return $result;
