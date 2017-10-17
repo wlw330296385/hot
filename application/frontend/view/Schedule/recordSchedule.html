@@ -51,6 +51,10 @@
         .pdr {
             padding-right: 30px !important;
         }
+        #newdiv .tips{
+            color: #AAAAAA;
+            line-height:normal;
+        }
     </style>
 </head>
 
@@ -105,11 +109,11 @@
                         </div>
                     </div>
                     <div class="operation-btn">
-                        <span class="mui-badge">{$countStudentList}</span>
+                        <span class="mui-badge">0</span>
                         <a class="all">全选</a>
                         <a class="cancel">取消</a>
                         <a class="del">[删除]</a>
-                        <a href="#addStudent" class="mui-icon mui-icon-personadd add"></a>
+                        <a href="#addStudent" id="setStudentCBox" class="mui-icon mui-icon-personadd add"></a>
                     </div>
                 </form>
 
@@ -152,7 +156,7 @@
                 </div>
 
                 <div class="mui-input-row">
-                    <a href="#assistantCoach" class="mui-navigate-right">
+                    <a href="#assistantCoach" id="setAsCoach" class="mui-navigate-right setAsCoach">
                         <label>助理教练</label>
                         <input type="text" value="{$gradeInfo.assistants}" class="assistantCoachCont pdr" placeholder="（选填）">
                         <input type="hidden" name="assistant_ids" value='{$gradeInfo.assistant_ids}' class="assistant_ids">
@@ -362,12 +366,9 @@
     </div>
     <div class="mui-scroll-wrapper">
         <div class="mui-scroll">
-            <div class="camp-list camp-lesson-list detalis-list mt">
+        <form id="newdiv" class="mui-input-group addStudentList">
 
-                <form class="mui-input-group addStudentList">
-
-                </form>
-            </div>
+            </form>
         </div>
     </div>
 </div>
@@ -474,7 +475,6 @@
 
     $(function () {
 
-
         //全选
         $(".all").click(function () {
             $(".checkboxCont").find('input').prop('checked', true)
@@ -504,24 +504,59 @@
             mui("#trainLocation").popover("toggle");
         })
         // 主教练
+        var mainCoachCont = '';
+        var assistantCoachCont = '';
         $(".mainCoach").on('click', 'li', function () {
             var mainCoach = $(this).text();
             $(".mainCoachCont").val(mainCoach);
             var id = $(this).attr('data-id');
+            mainCoachCont = $(this).attr('data-id');
+            console.log(mainCoachCont)
             $(".coach_id").val(id);
+            // if(assistantCoachCont.indexOf(mainCoachCont)>=0){
+            //     alert("主教和助教不能是同一人");
+            //     return false;
+            // }
             mui("#mainCoach").popover("toggle");
         })
 
         // 助理教练
         $("#assistantConfirm").click(function () {
+            if(assistantCoachCont.indexOf(mainCoachCont)>0){
+                alert("主教和助教不能是同一人");
+                return false;
+            }
             $(".assistantCoachCont").val($("input[name='checkbox-assistant']:checked").map(function () {
-                return $(this).val()
+                return $(this).val();
             }).get().join(","));
             $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function () {
                 return $(this).attr('data-id');
-            }).get().join(","));
+            }).get());
+
+            // console.log(assistantCoachCont)
+            // console.log(assistantCoachCont.indexOf(mainCoachCont));
+
+            // assistantCoachCont = $("input[name='assistant_ids']").val();
+            // if(assistantCoachCont.indexOf(mainCoachCont)>=0){
+            //     alert("主教和助教不能是同一人");
+            //     return ;
+            // }
+            
             mui('#assistantCoach').popover('toggle');
         })
+        // $(".setAsCoach").on('tap','',function(){
+        //     $('.coachAS .mui-input-row').each(function(){
+        //         if ( assistantCoachCont == mainCoachCont ) {
+        //             $('input[name=checkbox-assistant]').parent().remove();
+        //         }
+        //     });
+        // })
+
+        // var all = assistantCoachCont;
+        // var h = mainCoachCont;
+        // document.write(all.indexOf(h) + "<br />")
+        // document.write(assistantCoachCont)
+        // document.write(mainCoachCont)
         // 班主任
         $(".headMaster").on('click', 'li', function () {
             var headMaster = $(this).text();
@@ -563,17 +598,47 @@
             }
         })
 
+        //学员列表复选框赋值
+        $("#setStudentCBox").on('tap','', function () {
+            //每次打开先清空所有选择
+            $("input[name='checkbox-student']").prop("checked",false);
+            //然后遍历出对应所选
+            $(".stdList").each(function (i) {
+                var id = $(this).attr("data-id");
+                var student_id = $(this).attr("data-student_id");
+                var student = $(this).attr("data-student");
+                $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
+                    return $(this).attr("data-student_id") == student_id
+                }).prop("checked",true);
+            });
+        });
+        //复选框赋值
+        // $("#setAsCoach").on('tap','', function () {
+        //     //每次打开先清空所有选择
+        //     $("input[name='checkbox-assistant']").prop("checked",false);
+        //     //然后遍历出对应所选
+        //     var str = $("input[name='assistant_ids']").val();
+        //     var s=str.split(',')
+        //     for(var i = 0;i<s.length;i++){
+        //         $("input[name='checkbox-assistant']").filter(function (index) {
+        //             return $(this).attr("data-id") == s[i]
+        //         }).prop("checked",true);
+        //     }
+        // });
+
 
         var str = '';
         var totalNum='';
         var studentList = '';
-         //角标随checkboxCont的数量变化
-         $(document).on( 'click', '.del', function() {
+        var student = '';
+        //角标随checkboxCont的数量变化
+        $(document).on( 'click', '.del', function() {
            totalNum = $(".checkboxCont").length;
            $(".mui-badge").text(totalNum);
        });
 
-         $("#studentConfirm").on('click',function(){
+        $("#studentConfirm").on('click',function(){
+        
             //插入学员列表html
             $(".addStudentList input[type=checkbox]:checked").each(function() {
                 str +='<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>'+$(this).val()+'</font><input name="student" value="Item 3" type="checkbox"></div>';
@@ -582,6 +647,8 @@
             $("input[name='student']").val($("input[name='checkbox-student']:checked").map(function () {
                 return $(this).val()
             }).get().join(","));
+            student = $("input[name='student']").val();
+
             $(".box").append(str);//在增删按钮前加一行
 
             //学员列表数组
@@ -591,7 +658,6 @@
                 var student = $(this).val();
                 studentList[i] = {student_id: id,student:student}
             });
-
 
             console.log(studentList)
 
@@ -824,18 +890,24 @@
             timeout: 10000,//超时时间设置为10秒；
             headers: {'Content-Type': 'application/json'},
             success: function (data) {
-                //服务器返回响应，根据响应结果，分析是否登录成功；
-                console.log(data)
-                var div = '';
-                if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"></div>'
-                    }
-                    $(".addStudentList").empty();
-                    $(".addStudentList").append(div);
-                }
-            },
-            error: function (xhr, type, errorThrown) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data)
+                    var div = '';
+                    var fbm = '';
+                    var tys = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            fbm = '';
+                            tys = '';
+                            if(data.data[i].grade_id==0){ fbm = '<span class="tips">[ 未分配 ]</span>' }
+                                if(data.data[i].type==2){ tys = '<span class="tips">[ 体验生 ]</span>' }
+                                    div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + fbm + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' +data.data[i].id+'" data-student_id="' +data.data[i].student_id+ '" data-student="' +data.data[i].student+'"></div>'
+                            }
+                            $("#newdiv").empty();
+                            $("#newdiv").append(div);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
                 //异常处理；
                 console.log(type);
             }
