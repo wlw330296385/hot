@@ -21,6 +21,9 @@ class Bill extends Frontend{
             if($balancePay == 1){
                 $map['balance_pay'] = ['gt',0];
             }
+            if($balancePay == -1){
+                $map['balance_pay'] = 0;
+            }
             $result['count'] = count($result);
             return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
         }catch (Exception $e){
@@ -35,6 +38,9 @@ class Bill extends Frontend{
             $balancePay = input('param.balancePay');
             if($balancePay == 1){
                 $map['balance_pay'] = ['gt',0];
+            }
+            if($balancePay == -1){
+                $map['balance_pay'] = 0;
             }
             $result = $this->BillService->getBillListByPage($map);
             return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
