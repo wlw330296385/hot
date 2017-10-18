@@ -81,7 +81,7 @@ class ScheduleService
     public function updateSchedule($data, $id)
     {
         
-        $scheduleInfo = $this->scheduleService->getScheduleInfo(['id'=>$id]);
+        $scheduleInfo = $this->getScheduleInfo(['id'=>$id]);
         // 是否已被审核通过
         if($scheduleInfo['status'] == 1){
             // 判断权限

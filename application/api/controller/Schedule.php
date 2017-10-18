@@ -30,7 +30,7 @@ class Schedule extends Base
 			$lesson_time = input('param.lesson_time');
 			$grade_id = input('param.grade_id');
 			$camp_id = input('param.camp_id');
-			$lesson_time = strtotime($lesson_time);
+			$lesson_time = strtotime($lesson_time);		
 			//前后2个小时
 			$start_time = $lesson_time-7200;
 			$end_time = $lesson_time+7200;
@@ -40,13 +40,14 @@ class Schedule extends Base
 									'lesson_id'=>$lesson_id,
 									'lesson_time'=>['BETWEEN',[$start_time,$end_time]]
 									])->select();
+		
 			$result = 1;
 			if(!$scheduleList){
 				$result = 0;
 			}else{
 				foreach ($scheduleList as $key => $value) {
 					if($value['lesson_time']>$start_time && $value['lesson_time']<$end_time){
-						$result = 0;
+						$result = 1;
 					}
 				}
 			}

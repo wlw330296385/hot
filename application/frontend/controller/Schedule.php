@@ -147,7 +147,11 @@ class Schedule extends Base
 				$this->error('你没有权限修改课时');
 			}
 		}
-
+ 		$studentList = [];
+        if ($scheduleInfo['student_str']) {
+            $studentList = unserialize($scheduleInfo['student_str']);
+        }
+		$this->assign('studentList',$studentList);
 		$this->assign('scheduleInfo',$scheduleInfo);
 		return view('Schedule/updateSchedule');
 	}
