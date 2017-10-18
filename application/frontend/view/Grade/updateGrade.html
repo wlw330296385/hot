@@ -147,7 +147,7 @@
             <div class="mui-input-row">
                 <a href="#assistantCoach" id="setAsCoach" class="mui-navigate-right">
                     <label>助理教练</label>
-                    <input type="text" name="assistants" value="{$gradeInfo.assistants}" class="data assistants" placeholder="选填">
+                    <input type="text" name="assistants" value="{$gradeInfo.assistants}" class="data assistants assistantCoachCont" placeholder="选填">
                     <input type="hidden" name="assistant_ids" value="{$gradeInfo.assistant_ids}" class="data">
                 </a>
             </div>
@@ -632,21 +632,67 @@
             mui("#trainLocation").popover("toggle");
         })
         // 主教练
+        // $(".mainCoach").on('click', 'li', function () {
+        //     var mainCoach = $(this).text();
+        //     $(".mainCoachCont").text(mainCoach);
+        //     var id = $(this).attr('data-id');
+        //     $(".coach_id").val(id);
+        //     mui("#mainCoach").popover("toggle");
+        // })
+        // // 助理教练
+        // $("#assistantConfirm").click(function () {
+        //     $("input[name='assistants']").val($("input[name='checkbox-assistant']:checked").map(function(){
+        //         return $(this).val();
+        //     }).get().join(",") );
+        //     $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function () {
+        //         return $(this).attr('data-id');
+        //     }).get().join(","));
+        //     mui('#assistantCoach').popover('toggle');
+        // })
+        // 
+        // // 主教练
+        var mainCoachCont = '';
+        var assistantCoachCont = '';
+        var mainCoachContAction = $("input[name=coach_id]").val();
+        var assistantCoachContAction = $("input[name='assistant_ids']").val();
+
         $(".mainCoach").on('click', 'li', function () {
             var mainCoach = $(this).text();
-            $(".mainCoachCont").text(mainCoach);
             var id = $(this).attr('data-id');
+            mainCoachCont = $(this).attr('data-id');
             $(".coach_id").val(id);
-            mui("#mainCoach").popover("toggle");
+            console.log(mainCoachCont)
+            // 判断主教主教不能为同一人
+           if((assistantCoachCont||assistantCoachContAction).indexOf(mainCoachCont)>=0){
+                mui.alert("主教和助教不能是同一人");
+                return;
+            }else{
+               $(".mainCoachCont").text(mainCoach);
+           }
+           mui("#mainCoach").popover("toggle");
         })
+
         // 助理教练
         $("#assistantConfirm").click(function () {
-            $("input[name='assistants']").val($("input[name='checkbox-assistant']:checked").map(function(){
-                return $(this).val();
-            }).get().join(",") );
+
+            // 取id值的集合
             $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function () {
                 return $(this).attr('data-id');
             }).get().join(","));
+            
+            assistantCoachCont = $("input[name='assistant_ids']").val();
+
+            // 判断主教主教不能为同一人
+            if(assistantCoachCont.indexOf(mainCoachCont||mainCoachContAction)>=0){
+                mui.alert("主教和助教不能是同一人");
+                return;
+            }else{
+                // 取text值得集合
+                $(".assistantCoachCont").val($("input[name='checkbox-assistant']:checked").map(function () {
+                    return $(this).val();
+                }).get().join(","));
+            }
+            
             mui('#assistantCoach').popover('toggle');
         })
 

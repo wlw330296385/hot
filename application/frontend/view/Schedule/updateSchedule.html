@@ -52,7 +52,7 @@
             padding-right: 30px !important;
         }
         #newdiv .tips{
-            color: #aaa;
+            color: #AAAAAA;
             line-height:normal;
         }
     </style>
@@ -94,21 +94,16 @@
                     <div class="mui-input-row h-auto">
                         <a class="portraits filePicker" onclick="add_id(3)">
                             <label>上传合照</label>
-                            <img id="preview_3" class="coachicon icon01" src="{$scheduleInfo.cover}">
-                            <input type="hidden" class="cover" name="portraits" value="{$scheduleInfo.cover}">
+                            <img id="preview_3" class="coachicon icon01">
+                            <input type="hidden" class="cover" name="portraits" value="">
                         </a>
                     </div>
                 </form>
 
                 <form class="mui-input-group">
-                    <div class="mui-input-row">
-                        <label>学员名单</label>
-                    </div>
                     <div class="box">
-                        <div id="hideStList">
-                            {volist name="studentList" id="vol"}
-                            <input type="hidden" class="stdList" data-id="{$vol.student_id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" >
-                            {/volist}
+                        <div class="mui-input-row">
+                            <label>学员名单</label>
                         </div>
                     </div>
                     <div class="operation-btn">
@@ -127,7 +122,7 @@
                 <div class="mui-input-row picker btn" id="demo3" data-options='{"value":"2015-10-10 10:10","beginYear":2010,"endYear":2020}'>
                     <a href="#" class="mui-navigate-right">
                         <label>训练时间</label>
-                        <span id="result" class="ui-alert lesson_time pdct">{$scheduleInfo.lesson_time |date="Y-m-d H:i",###}</span>
+                        <span id="result" class="ui-alert lesson_time pdct">{$scheduleInfo.lesson_time|date="Y-m-d H:i",###}</span>
                     </a>
                 </div>
 
@@ -159,7 +154,7 @@
                 </div>
 
                 <div class="mui-input-row">
-                    <a href="#assistantCoach" id="setAsCoach" class="mui-navigate-right setAsCoach">
+                    <a href="#assistantCoach" id="setAsCoach" class="mui-navigate-right">
                         <label>助理教练</label>
                         <input type="text" value="{$scheduleInfo.assistants}" class="assistantCoachCont pdr" placeholder="（选填）">
                         <input type="hidden" name="assistant_ids" value='{$scheduleInfo.assistant_ids}' class="assistant_ids">
@@ -182,7 +177,7 @@
                     </a>
                 </div>
 
-                <div class="mui-input-row">
+                 <div class="mui-input-row">
                     <label>主教底薪</label>
                     <input type="text" class="coach_salary" value="{$scheduleInfo.coach_salary}">
                 </div>
@@ -328,35 +323,35 @@
         </div>
     </div>
 
-    <!--学员名单-->
-    <div id="addStudent" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course wd36"><strong>学员名单</strong></span>
-            <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <form id="newdiv" class="mui-input-group addStudentList">
+<!--学员名单-->
+<div id="addStudent" class="mui-popover">
+    <div class="mui-popover-arrow"></div>
+    <div class="page-header">
+        <span class="course wd36"><strong>学员名单</strong></span>
+        <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
+    </div>
+    <div class="mui-scroll-wrapper">
+        <div class="mui-scroll">
+        <form id="newdiv" class="mui-input-group addStudentList">
 
-                </form>
-            </div>
+            </form>
         </div>
     </div>
+</div>
 
 
-    <script src="/static/frontend/js/mui.min.js"></script>
-    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <!-- 选择器 -->
-    <script src="/static/frontend/js/mui.picker.min.js"></script>
-    <script src="/static/frontend/js/mui.poppicker.js"></script>
-    <script src="/static/frontend/js/city.data-3.js"></script>
-    <script>
-        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
-    </script>
-    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-    <script>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!-- 选择器 -->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
+<script>
+    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+</script>
+<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+<script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
@@ -536,6 +531,12 @@
             $(".leader_id").val(id);
             mui("#leader").popover("toggle");
         })
+        // 训练项目
+        // $(".plan").click(function () {
+        //     var plan = $(this).text();
+        //     $(".planCont").text(plan);
+        //     mui("#plan").popover("toggle");
+        // })
 
         //检测输入是否为数字
         $(".checkNum").blur(function () {
@@ -555,15 +556,6 @@
             }
         })
 
-        //学员
-        // $(".box .checkboxCont").each(function (i) {
-        //     var boxli = $(".checkboxCont").length;
-        //     var boxdiv = '';
-        //     for(var i = 0;i<4;i++){
-        //         boxdiv = boxdiv + '<div class="mui-input-row mui-checkbox mui-left"><label></label><input name="checkbox-student" class="student" value="" type="checkbox" data-id="" data-student_id="" data-student=""></div>'
-        //     }
-        //     $(".box").append(boxdiv)
-        // });
         //学员列表复选框赋值
         $("#setStudentCBox").on('tap','', function () {
             //每次打开先清空所有选择
@@ -578,7 +570,7 @@
                 }).prop("checked",true);
             });
         });
-        // 复选框赋值
+        //复选框赋值
         $("#setAsCoach").on('tap','', function () {
             //每次打开先清空所有选择
             $("input[name='checkbox-assistant']").prop("checked",false);
@@ -592,28 +584,25 @@
             }
         });
 
+
         var str = '';
         var totalNum='';
         var studentList = '';
-        var student = '';
         //角标随checkboxCont的数量变化
         $(document).on( 'click', '.del', function() {
            totalNum = $(".checkboxCont").length;
            $(".mui-badge").text(totalNum);
        });
 
-
         $("#studentConfirm").on('click',function(){
-
             //插入学员列表html
             $(".addStudentList input[type=checkbox]:checked").each(function() {
-                str +='<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>'+$(this).val()+'</font><input name="student" value="'+$(this).attr("data-id")+'" type="checkbox" class="st"></div>';
+                str +='<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>'+$(this).val()+'</font><input name="student" value="Item 3" type="checkbox"></div>';
             })
             // 学员取值
             $("input[name='student']").val($("input[name='checkbox-student']:checked").map(function () {
                 return $(this).val()
             }).get().join(","));
-            $(".box").empty();
             $(".box").append(str);//在增删按钮前加一行
 
             //学员列表数组
@@ -702,10 +691,8 @@
             }
         })
 
-
-
-        // 提交录课修改 
-        $(".operationBtn").on("click",'', function () {
+        //录课
+        $(".operationBtn").click(function () {
             var province = getProvince || $('input[name=province]').val();
             var city = getCity || $('input[name=city]').val();
             var area = getArea || $('input[name=area]').val();
@@ -733,8 +720,6 @@
             var assistant_salary = $(".assistant_salary").val();
             var grade_category_id = $('input[name=grade_category_id]').val();
             var grade_category = $('input[name=grade_category]').val();
-            console.log(camp)
-            console.log(campid)
             console.log(cover)
             console.log(province)
             console.log(city)
@@ -759,7 +744,11 @@
             console.log(remarks)
             console.log(students)
             console.log(studentList)
-            mui.ajax("{:url('api/schedule/updateScheduleApi')}"+'/grade_id/{$scheduleInfo.grade_id}/schedule_id/{$scheduleInfo.id}', {
+            if(lesson_time=='' || court=='' || coach==''){
+               mui.toast("请完善信息");
+               return;
+           }
+           mui.ajax("{:url('api/schedule/updateScheduleApi')}"+'/grade_id/{$scheduleInfo.grade_id}/schedule_id/{$scheduleInfo.id}', {
                data: {
                    'cover':cover,
                    'students': students,
@@ -798,7 +787,7 @@
                          //服务器返回响应，根据响应结果，分析是否登录成功；
                          console.log(data);
                          if (data.code == 200) {
-                           mui.alert('修改成功。','提示','确定',function(){
+                           mui.alert('修改成功  ','提示','确定',function(){
                                setTimeout(window.location.href="{:url('schedule/schedulelist',['camp_id'=>$scheduleInfo.camp_id])}",3000)});
                        } else {
                            mui.toast(data.msg);
@@ -809,9 +798,8 @@
                      console.log(type);
                  }
              });
-        });
-
-})
+       });
+    })
 
 
     //获取学员列表
@@ -979,6 +967,33 @@
             }
         });
     };
+
+
+    //获取教案列表
+    // var toPlanList = function() {
+    //     mui.ajax("{:url('api/plan/planListNoPageApi')}", {
+    //         data: {},
+    //         dataType: 'json',//服务器返回json格式数据
+    //         type: 'post',//HTTP请求类型
+    //         timeout: 10000,//超时时间设置为10秒；
+    //         headers: {'Content-Type': 'application/json'},
+    //         success: function (data) {
+    //         //服务器返回响应，根据响应结果，分析是否登录成功；
+    //         console.log(data)
+    //         var plandiv = '';
+    //         if (data.code == 200) {
+    //             for (var i = 0; i <= data.data.length - 1; i++) {
+    //                 plandiv = plandiv + '<li class="mui-table-view-cell listli detalisli plan">'+dada.data[i].plan+'/li>'
+    //             }
+    //             $(".addStudentList").append(plandiv);
+    //         }
+    //     },
+    //     error: function (xhr, type, errorThrown) {
+    //             //异常处理；
+    //             console.log(type);
+    //         }
+    //     });
+    // };
 
 </script>
 </body>
