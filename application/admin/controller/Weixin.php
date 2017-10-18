@@ -17,7 +17,7 @@ class Weixin extends Backend {
                     [
                         'name' => '大热篮球平台',
                         'type' => 'view',
-                        'url' => $WechatS->oauthRedirect(url('frontend/login/wxlogin', '', '', true))
+                        'url' => $WechatS->oauthRedirect(url('frontend/index/wxindex', '', '', true))
                     ]
                 ]
             ];
