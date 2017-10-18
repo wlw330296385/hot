@@ -366,7 +366,7 @@
     </div>
     <div class="mui-scroll-wrapper">
         <div class="mui-scroll">
-        <form id="newdiv" class="mui-input-group addStudentList">
+            <form id="newdiv" class="mui-input-group addStudentList">
 
             </form>
         </div>
@@ -508,55 +508,43 @@
         var assistantCoachCont = '';
         $(".mainCoach").on('click', 'li', function () {
             var mainCoach = $(this).text();
-            $(".mainCoachCont").val(mainCoach);
             var id = $(this).attr('data-id');
             mainCoachCont = $(this).attr('data-id');
-            console.log(mainCoachCont)
             $(".coach_id").val(id);
-            // if(assistantCoachCont.indexOf(mainCoachCont)>=0){
-            //     alert("主教和助教不能是同一人");
-            //     return false;
-            // }
-            mui("#mainCoach").popover("toggle");
-        })
+
+            // 判断主教主教不能为同一人
+            if(assistantCoachCont.indexOf(mainCoachCont)>=0){
+                mui.alert("主教和助教不能是同一人");
+                return;
+            }else{
+             $(".mainCoachCont").val(mainCoach);
+         }
+         mui("#mainCoach").popover("toggle");
+     })
 
         // 助理教练
         $("#assistantConfirm").click(function () {
-            if(assistantCoachCont.indexOf(mainCoachCont)>0){
-                alert("主教和助教不能是同一人");
-                return false;
-            }
-            $(".assistantCoachCont").val($("input[name='checkbox-assistant']:checked").map(function () {
-                return $(this).val();
-            }).get().join(","));
+
+            // 取id值的集合
             $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function () {
                 return $(this).attr('data-id');
-            }).get());
+            }).get().join(","));
+            assistantCoachCont = $("input[name='assistant_ids']").val();
 
-            // console.log(assistantCoachCont)
-            // console.log(assistantCoachCont.indexOf(mainCoachCont));
+            // 判断主教主教不能为同一人
+            if(assistantCoachCont.indexOf(mainCoachCont)>=0){
+                mui.alert("主教和助教不能是同一人");
+                return;
+            }else{
+                // 取text值得集合
+                $(".assistantCoachCont").val($("input[name='checkbox-assistant']:checked").map(function () {
+                    return $(this).val();
+                }).get().join(","));
+            }
 
-            // assistantCoachCont = $("input[name='assistant_ids']").val();
-            // if(assistantCoachCont.indexOf(mainCoachCont)>=0){
-            //     alert("主教和助教不能是同一人");
-            //     return ;
-            // }
-            
             mui('#assistantCoach').popover('toggle');
         })
-        // $(".setAsCoach").on('tap','',function(){
-        //     $('.coachAS .mui-input-row').each(function(){
-        //         if ( assistantCoachCont == mainCoachCont ) {
-        //             $('input[name=checkbox-assistant]').parent().remove();
-        //         }
-        //     });
-        // })
 
-        // var all = assistantCoachCont;
-        // var h = mainCoachCont;
-        // document.write(all.indexOf(h) + "<br />")
-        // document.write(assistantCoachCont)
-        // document.write(mainCoachCont)
         // 班主任
         $(".headMaster").on('click', 'li', function () {
             var headMaster = $(this).text();
@@ -598,34 +586,19 @@
             }
         })
 
-        //学员列表复选框赋值
-        $("#setStudentCBox").on('tap','', function () {
+        // 复选框赋值
+        $("#setAsCoach").on('tap','', function () {
             //每次打开先清空所有选择
-            $("input[name='checkbox-student']").prop("checked",false);
+            $("input[name='checkbox-assistant']").prop("checked",false);
             //然后遍历出对应所选
-            $(".stdList").each(function (i) {
-                var id = $(this).attr("data-id");
-                var student_id = $(this).attr("data-student_id");
-                var student = $(this).attr("data-student");
-                $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
-                    return $(this).attr("data-student_id") == student_id
+            var str = $("input[name='assistant_ids']").val();
+            var s=str.split(',')
+            for(var i = 0;i<s.length;i++){
+                $("input[name='checkbox-assistant']").filter(function (index) {
+                    return $(this).attr("data-id") == s[i]
                 }).prop("checked",true);
-            });
+            }
         });
-        //复选框赋值
-        // $("#setAsCoach").on('tap','', function () {
-        //     //每次打开先清空所有选择
-        //     $("input[name='checkbox-assistant']").prop("checked",false);
-        //     //然后遍历出对应所选
-        //     var str = $("input[name='assistant_ids']").val();
-        //     var s=str.split(',')
-        //     for(var i = 0;i<s.length;i++){
-        //         $("input[name='checkbox-assistant']").filter(function (index) {
-        //             return $(this).attr("data-id") == s[i]
-        //         }).prop("checked",true);
-        //     }
-        // });
-
 
         var str = '';
         var totalNum='';
@@ -637,17 +610,21 @@
            $(".mui-badge").text(totalNum);
        });
 
+
         $("#studentConfirm").on('click',function(){
-        
+
+            // $(".box .checkboxCont").each(function(){
+            //     checkboxContId= $(this).find("input[name='student']").val();
+            //     console.log(checkboxContId)
+            // })
             //插入学员列表html
             $(".addStudentList input[type=checkbox]:checked").each(function() {
-                str +='<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>'+$(this).val()+'</font><input name="student" value="Item 3" type="checkbox"></div>';
+                str +='<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>'+$(this).val()+'</font><input name="student" value="'+$(this).attr("data-id")+'" type="checkbox" class="st"></div>';
             })
             // 学员取值
             $("input[name='student']").val($("input[name='checkbox-student']:checked").map(function () {
                 return $(this).val()
             }).get().join(","));
-            student = $("input[name='student']").val();
 
             $(".box").append(str);//在增删按钮前加一行
 
@@ -737,8 +714,10 @@
             }
         })
 
-        //录课
-        $(".operationBtn").click(function () {
+
+
+        // 提交录课 
+        $(".operationBtn").on("click",'', function () {
             var province = getProvince || $('input[name=province]').val();
             var city = getCity || $('input[name=city]').val();
             var area = getArea || $('input[name=area]').val();
@@ -766,6 +745,7 @@
             var assistant_salary = $(".assistant_salary").val();
             var grade_category_id = $('input[name=grade_category_id]').val();
             var grade_category = $('input[name=grade_category]').val();
+            console.log(campid)
             console.log(cover)
             console.log(province)
             console.log(city)
@@ -790,41 +770,59 @@
             console.log(remarks)
             console.log(students)
             console.log(studentList)
-            if(lesson_time=='' || court=='' || coach==''){
+            if(lesson_time =='' || court =='' || coach =='' || province =='' || city == '' || area == ''){
                mui.toast("请完善信息");
                return;
            }
-           mui.ajax("{:url('api/schedule/recordScheduleApi',['grade_id'=>$gradeInfo['id']])}", {
-               data: {
-                   'cover':cover,
-                   'students': students,
-                   "province":province,
-                   "city":city,
-                   "area":area,
-                   'grade': grade,
-                   'grade_id': grade_id,
-                   'camp':camp,
-                   'camp_id': campid,
-                   'lesson':lesson,
-                   'lesson_id': lesson_id,
-                   'lesson_time': lesson_time,
-                   'court': court,
-                   'court_id': court_id,
-                   'coach': coach,
-                   'coach_id':coach_id,
-                   'assistants': assistants,
-                   'assistant_ids': assistant_ids,
-                   'leader': leader,
-                   'leader_id': leader_id,
-                   'teacher': teacher,
-                   'teacher_id': teacher_id,
-                   'coach_salary':coach_salary,
-                   'assistant_salary':assistant_salary,
-                   'remarks': remarks,
-                   'grade_category_id': grade_category_id,
-                   'grade_category': grade_category,
-                   "studentList":studentList
-               },
+           // 判断课时冲突(2个小时内只允许一条数据)
+           mui.ajax("{:url('api/schedule/recordScheduleClashApi')}", {
+            data: {
+                'camp_id': campid,
+                'grade_id': grade_id,
+                'lesson_id': lesson_id,
+                'lesson_time': lesson_time
+            },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: {'Content-Type': 'application/json'},
+                success: function (data) {
+                    console.log(data);
+                    if (data==1) {
+                        mui.alert('2个小时内只允许一条同时间数据','提示','确定');
+                    }else{
+                        // 录课
+                        mui.ajax("{:url('api/schedule/recordScheduleApi',['grade_id'=>$gradeInfo['id']])}", {
+                           data: {
+                               'cover':cover,
+                               'students': students,
+                               "province":province,
+                               "city":city,
+                               "area":area,
+                               'grade': grade,
+                               'grade_id': grade_id,
+                               'camp':camp,
+                               'camp_id': campid,
+                               'lesson':lesson,
+                               'lesson_id': lesson_id,
+                               'lesson_time': lesson_time,
+                               'court': court,
+                               'court_id': court_id,
+                               'coach': coach,
+                               'coach_id':coach_id,
+                               'assistants': assistants,
+                               'assistant_ids': assistant_ids,
+                               'leader': leader,
+                               'leader_id': leader_id,
+                               'teacher': teacher,
+                               'teacher_id': teacher_id,
+                               'coach_salary':coach_salary,
+                               'assistant_salary':assistant_salary,
+                               'remarks': remarks,
+                               'grade_category_id': grade_category_id,
+                               'grade_category': grade_category,
+                               "studentList":studentList
+                           },
                      dataType: 'json',//服务器返回json格式数据
                      type: 'post',//HTTP请求类型
                      timeout: 10000,//超时时间设置为10秒；
@@ -844,38 +842,16 @@
                      console.log(type);
                  }
              });
+                    }
+
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(type);
+                }
+            });
        });
 
-        //判断课时冲突(2个小时内只允许一条数据)
-        // $(".operationBtn").on("click",'', function () {
-        //     var campid = $('.camp').attr('data-id');
-        //     var grade_id = $("input[name=grade_id]").val();
-        //     var lesson_id = $("input[name=lesson_id]").val();
-        //     var lesson_time = $(".lesson_time").text();
-        //     mui.ajax("{:url('api/schedule/recordScheduleClashApi')}", {
-        //         data: {
-        //             'campid': campid,
-        //             'grade_id': grade_id,
-        //             'lesson_id': lesson_id,
-        //             'lesson_time': lesson_time
-        //         },
-        //         dataType: 'json',//服务器返回json格式数据
-        //         type: 'post',//HTTP请求类型
-        //         timeout: 10000,//超时时间设置为10秒；
-        //         headers: {'Content-Type': 'application/json'},
-        //         success: function (data) {
-        //             if (data.msg) {
-        //                 mui.alert('录课成功。','提示','确定');
-        //             }
-        //             //console.log(data)
-        //         },
-        //         error: function (xhr, type, errorThrown) {
-        //             console.log(type);
-        //         }
-        //     });
-        // });
-
-    })
+})
 
 
     //获取学员列表
