@@ -71,7 +71,7 @@
 
     //训练营教练列表接口获取数据并追加到页面
     var toCoachList = function(keyword) {
-        var url  = "{:url('api/camp_member/getCoachListApi','','',true)}";
+        var url  = "{:url('api/camp_member/teachlist','','',true)}";
         var campID = "{$camp_id}";
         mui.ajax({
             url:url,
@@ -91,8 +91,8 @@
                     var newli = '';
                     for (var i = 0; i <= data.data.length - 1; i++) {
                         var coachSexUrl = getSexIconUrl(data.data[i].sex);
-                        var urls = "{:url('camp/coachInfoOfCamp')}" + '/coach_id/' + data.data[i].id + '/camp_id/'+campID;
-                        newli += '<li class="mui-table-view-cell mui-media listli list-wide"><div class="mui-slider-right mui-disabled"><span class="mui-btn mui-btn-red" data-id="'+data.data[i].campmemberid+'">删除</span></div><div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body wd36">' + data.data[i].coach + '<img src="' + coachSexUrl + '" class="sex" alt=""><p class="mui-ellipsis">教龄:' + data.data[i].coach_year + '&nbsp;&nbsp;等级:' + data.data[i].coach_level + '</p></div><div class="price-frame"><div class="icons mui-inline">' + data.data[i].star + '<i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i><i data-index="4" class="mui-icon mui-icon-star-filled"></i><i data-index="5" class="mui-icon mui-icon-star-filled"></i></div><p class="address tr">' + data.data[i].area + '</p></div></div></a></li>'
+                        var urls = "{:url('camp/teachInfoOfCamp')}" + '/member_id/' + data.data[i].member_id + '/camp_id/'+campID;
+                        newli += '<li class="mui-table-view-cell mui-media listli list-wide"><div class="mui-slider-right mui-disabled"><span class="mui-btn mui-btn-red" data-id="'+data.data[i].campmemberid+'">删除</span></div><div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '"><div class="mui-media-body wd36">' + data.data[i].member + '<img src="' + coachSexUrl + '" class="sex" alt=""></div><p class="address tr">' + data.data[i].area + '</p></div></div></a></li>'
                     }
                     $("ul.coach").empty();
                     if(newli==''){
@@ -117,7 +117,7 @@
         var btnArray = ['确认', '取消'];
         var url  = "{:url('api/campMember/removerelationship')}";
         var campmemberid = $(this).attr("data-id");
-        mui.confirm('确认删除该教练？', '提示', btnArray, function(e) {
+        mui.confirm('确认删除该教务吗？', '提示', btnArray, function(e) {
             if (e.index == 0) {
                 mui.ajax({
                     url:url,

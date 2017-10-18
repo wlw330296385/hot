@@ -1,8 +1,10 @@
 <?php 
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
+use app\model\CampMember;
 use app\service\CampService;
 use app\service\CoachService;
+use app\service\MemberService;
 use app\service\ScheduleService;
 use think\Db;
 class Camp extends Base{
@@ -476,6 +478,20 @@ class Camp extends Base{
         $this->assign('camp_id',$camp_id);
         $view = $status ? 'Camp/teachlistOfCamp' : 'Camp/teachapplylist';
         return view($view);
+    }
+
+    // 训练营-教务人员详情
+    public function teachinfoofcamp() {
+        $member_id = input('member_id');
+        $camp_id = input('camp_id');
+
+        $memberS = new MemberService();
+        $member = $memberS->getMemberInfo(['id' => $member_id]);
+        $campmember = $memberS->campmemberInfo(['member_id'=>$member_id, 'camp_id'=>$camp_id]);
+
+        $this->assign('memberInfo', $member);
+        $this->assign('campmember', $campmember);
+        return view('Camp/teachInfoOfCamp');
     }
 
 }

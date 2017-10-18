@@ -477,4 +477,37 @@ class CampMember extends Base{
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+
+    // 训练营教务人员列表
+    public function teachlist() {
+        try {
+            $map = input('param.');
+            $keyword = input('param.keyword');
+            if ( !empty($keyword) && $keyword != ' ' && $keyword != '' ) {
+                $map['member'] = ['like', "%$keyword%"];
+                unset($map['keyword']);
+            }
+            if ( isset($map['page']) ) {
+                unset($map['page']);
+            }
+            $page = input('param.page', 1);
+
+
+            $list = Db::view('camp_member', ['id'=>'campmemberid','camp_id', 'member_id', 'status'])
+                ->view('member', ['id','member', 'sex', 'avatar','province', 'city', 'area'], 'camp_member.member_id=member.id', 'LEFT')
+                ->where([ 'camp_member.camp_id' => $map['camp_id'], 'camp_member.type' => 3, 'camp_member.status' => $map['status'] ])
+                ->page($page, 10)
+                //->fetchSql(true)
+                ->select();
+
+            //dump($list);
+            if (empty($list)) {
+                return json(['code' => 200, 'msg' => __lang('MSG_000'), 'data'=>[]]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $list]);
+            }
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 }

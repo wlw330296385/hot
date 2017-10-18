@@ -1,6 +1,7 @@
 <?php 
 namespace app\service;
 use app\model\Camp;
+use app\model\CampMember;
 use app\model\Coach;
 use app\model\Member;
 use app\common\validate\MemberVal;
@@ -110,35 +111,35 @@ class MemberService{
         }
 	}
 
-	// 获取组织列表
-	public function getMyGroup($member_id){
-		$result = [];
-		$pidArr = $this->memberModel->where(['pid'=>$member_id])->select();
-		if($pidArr){
-			$arr = $pidArr->toArray();
-			$arr['count'] = 1;
-			$result = $this->getGroupTree($arr,0,$arr['count']);
-		}
-		return $result;
-	}
+    // 获取组织列表
+    public function getMyGroup($member_id){
+        $result = [];
+        $pidArr = $this->memberModel->where(['pid'=>$member_id])->select();
+        if($pidArr){
+            $arr = $pidArr->toArray();
+            $arr['count'] = 1;
+            $result = $this->getGroupTree($arr,0,$arr['count']);
+        }
+        return $result;
+    }
 
 
-	private function getGroupTree($arr,$times,$count){
-		$times++;
-		if($times < 3) {
-			foreach ($arr as $key => $value) {
-				$result = $this->memberModel->where(['pid'=>$value['id']])->select();
-				if(!empty($result->toArray())){
-					$count++;
-					$arr[$key]['groupList'] = $result->toArray();
-					$arr[$key]['count'] = count($result->toArray());
-					$arr['count'] = $count;
-					$arr[$key]['groupList'] = $this->getGroupTree($arr[$key]['groupList'],$times,$count);
-				}
-			}
-		}	
-		return $arr;
-	}
+    private function getGroupTree($arr,$times,$count){
+        $times++;
+        if($times < 3) {
+            foreach ($arr as $key => $value) {
+                $result = $this->memberModel->where(['pid'=>$value['id']])->select();
+                if(!empty($result->toArray())){
+                    $count++;
+                    $arr[$key]['groupList'] = $result->toArray();
+                    $arr[$key]['count'] = count($result->toArray());
+                    $arr['count'] = $count;
+                    $arr[$key]['groupList'] = $this->getGroupTree($arr[$key]['groupList'],$times,$count);
+                }
+            }
+        }
+        return $arr;
+    }
 
 
 	public function isFieldRegister($field,$value){
@@ -169,5 +170,18 @@ class MemberService{
             $return = 0;
         }
         return $return;
+    }
+    
+    // 会员在训练营的身份关联
+    public function campmemberInfo($map) {
+	    $campmember = CampMember::get($map);
+	    if ($campmember) {
+	        $res = $campmember->toArray();
+	        $res['status_num'] = $campmember->getData('status');
+	        $res['type_num'] = $campmember->getData('type');
+	        return $res;
+        } else {
+	        return 0;
+        }
     }
 }

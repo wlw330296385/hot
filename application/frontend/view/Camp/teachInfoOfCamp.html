@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>教务档案</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style>
+        .examineBox{
+            padding: 10px;
+            background-color: #fff;
+        }
+        .examine{
+            width: 100%;
+            min-height: 40px;
+            font-size: 14px;
+            color: #737373;
+        }
+    </style>
+</head>
+
+<body class=whitebg>
+<header id="header" class="mui-bar mui-bar-nav subheader">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回教务列表</span></a>
+</header>
+<div class="mui-content">
+
+    <div class="list camp-list camp-lesson-list detalis-list coach mt">
+        {eq name="campmember.status_num" value="0"}
+        <!-- 审核内容-->
+        <div class="examineBox mb">
+            <input id="campmemberid" type="hidden" value="{$campmember.id}">
+            <div class="examine"><strong>申请的内容：</strong>{$campmember.remarks}</div>
+            <div class="mui-button-row">
+                <button class="mui-btn" type="button" onclick="check_status(1)">同意</button>&nbsp;&nbsp;
+                <button class="mui-btn" type="button" onclick="check_status(-2)">拒绝</button>
+            </div>
+        </div>
+        {/eq}
+
+        <ul class="mui-table-view list detalis-list" style="margin-top: -4px">
+            <li class="mui-table-view-cell mui-media listli list-wide">
+                <a href="javascript:;">
+                    <img class="mui-media-object mui-pull-left coachicon"
+                         src="{$memberInfo['avatar']}">
+                    <div class="mui-media-body">
+                        {$memberInfo['member']}<img src="{:getSex($memberInfo['sex'])}" class="sex" alt="">
+                        <p class="mui-ellipsis"></p>
+                    </div>
+                    <div class="price-frame camp-num">
+                        <ul>
+                            <li class="fr">ID:{$memberInfo.hot_id}</li>
+                        </ul>
+                    </div>
+                </a>
+            </li>
+        </ul>
+
+        <div class="item-list">
+            <div id="item1" class="mui-control-content mui-active">
+                <ul class="mui-table-view list detalis-list mt55">
+                    <li class="mui-table-view-cell listli">学员姓名<span>{$memberInfo['member']}</span></li>
+                    <li class="mui-table-view-cell listli">性别<span>{switch name="$memberInfo.sex" }
+                                                            {case value="0" }女{/case}
+                                                            {case value="1"}男{/case}
+                                                            {default /}未知
+                                                        {/switch}</span></li>
+                    <li class="mui-table-view-cell listli">出生日期<span>{$memberInfo['birthday']}</span></li>
+                    <li class="mui-table-view-cell listli">身高<span>{$memberInfo['height']}cm</span></li>
+                    <li class="mui-table-view-cell listli">体重<span>{$memberInfo['weight']}KG</span></li>
+                    <li class="mui-table-view-cell listli">鞋码<span>{$memberInfo['shoe_code']}cm</span></li>
+                    <li class="mui-table-view-cell listli">所属地区<span>{$memberInfo['province']} {$memberInfo['city']} {$memberInfo['area']}</span></li>
+                    <li class="mui-table-view-cell listli">注册日期<span>{$memberInfo['create_time']}</span></li>
+                    <li class="mui-table-view-cell listli">性格特征<span>{$memberInfo['charater']}</span></li>
+                    <li class="mui-table-view-cell listli">手机号码<span>{$memberInfo['telephone']}</span></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+    function check_status(value) {
+        var campmemberid = document.getElementById('campmemberid').value;
+
+        mui.ajax("{:url('api/CampMember/ApproveApplyApi')}", {
+            data : {
+                id: campmemberid,
+                status: value
+            },
+            dataType:'json',//服务器返回json格式数据
+            type:'post',//HTTP请求类型
+            timeout:10000,//超时时间设置为10秒；
+            headers:{'Content-Type':'application/json'},
+            success:function(res){
+                //console.log(res);
+                if (res.code == 200) {
+                    mui.toast(res.msg);
+                    window.location.href = "{:url('frontend/camp/teachListOfCamp')}/camp_id/{$campmember.camp_id}";
+                } else {
+                    mui.toast(res.msg);
+                }
+            },
+            error:function(xhr,type,errorThrown){
+                //异常处理；
+                console.log(type);
+                mui.toast('网络异常');
+            }
+        });
+    }
+</script>
+</html>
