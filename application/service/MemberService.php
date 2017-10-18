@@ -116,26 +116,25 @@ class MemberService{
 		$pidArr = $this->memberModel->where(['pid'=>$member_id])->select();
 		if($pidArr){
 			$arr = $pidArr->toArray();
-			$result = $this->getGroupTree($arr,0);
+			$arr['count'] = 1;
+			$result = $this->getGroupTree($arr,0,$arr['count']);
 		}
 		return $result;
 	}
 
 
-	private function getGroupTree($arr,$times){
+	private function getGroupTree($arr,$times,$count){
 		$times++;
-		if($times < 4) {
+		if($times < 3) {
 			foreach ($arr as $key => $value) {
 				$result = $this->memberModel->where(['pid'=>$value['id']])->select();
-				$arr[$key]['groupList'] = $result->toArray();
-				$arr[$key]['count'] = count($result->toArray());
-				// if($times<3){
-				// 	foreach ($arr[$key]['groupList'] as $k => $val) {
-				// 	$result = $this->memberModel->where(['pid'=>$val['id']])->select();
-				// 	$arr[$key]['groupList'][$key]['groupList'] = $result->toArray();
-				// 	}
-				// }
-				$arr[$key]['groupList'] = $this->getGroupTree($arr[$key]['groupList'],$times);
+				if(!empty($result->toArray())){
+					$count++;
+					$arr[$key]['groupList'] = $result->toArray();
+					$arr[$key]['count'] = count($result->toArray());
+					$arr['count'] = $count;
+					$arr[$key]['groupList'] = $this->getGroupTree($arr[$key]['groupList'],$times,$count);
+				}
 			}
 		}	
 		return $arr;

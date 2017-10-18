@@ -24,22 +24,57 @@ class Message extends Base{
                   ->where('type','gt',2)
                   ->where('delete_time',null)
                   ->column('camp_id');
-            $messageList = $this->MessageService->getMessageList(['camp_id'=>['in',$campIDs]]);
-            if($status){
-                $messageMemberList = $this->MessageService->getMessageMemberList(['member_id'=>$this->memberInfo['id'],'status'=>$status]);
-            }else{
-                $messageMemberList = $this->MessageService->getMessageMemberList(['member_id'=>$this->memberInfo['id']]);
-            }
-            
+            $messageList = $this->MessageService->getMessageList(['camp_id'=>['in',$campIDs],'status'=>$status]);
 	    	if($messageList){
-	    		return json(['code'=>100,'msg'=>'OK','data'=>['messagelist'=>$messageList,'messageMemberList'=>$messageMemberList]]);
+	    		return json(['code'=>200,'msg'=>'OK','data'=>$messageList]);
 	    	}else{
-	    		return json(['code'=>200,'msg'=>'OK']);
+	    		return json(['code'=>100,'msg'=>'OK']);
 	    	}
 	    }catch(Exception $e){
-	    	return json(['code'=>200,'msg'=>$e->getMassege()]);
+	    	return json(['code'=>100,'msg'=>$e->getMassege()]);
 	    }
     }
+
+    // 获取系统消息列表
+    public function getMessageListByPageApi(){
+        try{
+            $status = input('param.status');
+            $campIDs = db('camp_member')
+                  ->where(['member_id'=>$this->memberInfo['id'],'status'=>1])
+                  ->where('type','gt',2)
+                  ->where('delete_time',null)
+                  ->column('camp_id');
+            $messageList = $this->MessageService->getMessageListByPage(['camp_id'=>['in',$campIDs],'status'=>$status]);
+            if($messageList){
+                return json(['code'=>200,'msg'=>'OK','data'=>$messageList]);
+            }else{
+                return json(['code'=>100,'msg'=>'OK']);
+            }
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMassege()]);
+        }
+    }
+
+    // 获取全部个人消息getMessageListByPageApi带page
+    public function getMessageMemberListByPageApi(){
+        try{
+            $status = input('param.status');
+            if($status){
+                $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id'],'status'=>$status]);
+            }else{
+                $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id']]);
+            }
+            
+            if($messageMemberList){
+                return json(['code'=>200,'msg'=>'OK','data'=>$messageMemberList]);
+            }else{
+                return json(['code'=>100,'msg'=>'OK']);
+            }
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMassege()]);
+        }
+    }
+
 
 
     // 获取消息详情
@@ -48,12 +83,12 @@ class Message extends Base{
     		$message_id = input('param.message_id');
     		$messageInfo = $this->MessageService->getMessageInfo(['id'=>$message_id]);
     		if($messageInfo){
-    			return json(['code'=>100,'msg'=>'','data'=>$messageInfo]);
+    			return json(['code'=>200,'msg'=>'','data'=>$messageInfo]);
     		}else{
-    			return json(['code'=>200,'msg'=>'没有这条消息']);
+    			return json(['code'=>100,'msg'=>'没有这条消息']);
     		}
     	}catch (Exception $e){
-    		return json(['code'=>200,'msg'=>$e->getMassege()]);
+    		return json(['code'=>100,'msg'=>$e->getMassege()]);
     	}
     }
 
@@ -79,13 +114,13 @@ class Message extends Base{
             $status = input('param.status');
             $result = db('message_member')->where(['id'=>$message_id,'member_id'=>$this->memberInfo['id']])->update(['status'=>$status]);
             if($result){
-                return json(['code'=>100,'msg'=>'设置成功']);
+                return json(['code'=>200,'msg'=>'设置成功']);
             }else{
-                return json(['code'=>200,'msg'=>'没有这条消息']);
+                return json(['code'=>100,'msg'=>'没有这条消息']);
             }
             
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMassege()]);
+            return json(['code'=>100,'msg'=>$e->getMassege()]);
         }
     }
 
@@ -95,13 +130,13 @@ class Message extends Base{
             $message_id = input('param.message_id');
             $result = $this->MessageService -> removeMessageMember(['id'=>$message_id,'member_id'=>$this->memberInfo['id']]);
             if($result){
-                return json(['code'=>100,'msg'=>'删除成功']);
+                return json(['code'=>200,'msg'=>'删除成功']);
             }else{
-                return json(['code'=>200,'msg'=>'没有这条消息']);
+                return json(['code'=>100,'msg'=>'没有这条消息']);
             }
             
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMassege()]);
+            return json(['code'=>100,'msg'=>$e->getMassege()]);
         }
     }
 
@@ -113,13 +148,13 @@ class Message extends Base{
             $map['member_id'] = $this->memberInfo['id'];
             $result = $this->MessageService->getMessageMemberListByPage($map);
             if ($result) {
-                return json(['code' => 100, 'msg' => '获取成功', 'data' => $result]);
+                return json(['code' => 200, 'msg' => '获取成功', 'data' => $result]);
             } else {
-                return json(['code' => 200, 'msg' => '没有这条消息']);
+                return json(['code' => 100, 'msg' => '没有这条消息']);
             }
 
         } catch (Exception $e) {
-            return json(['code' => 200, 'msg' => $e->getMassege()]);
+            return json(['code' => 100, 'msg' => $e->getMassege()]);
         }
     }
 

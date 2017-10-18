@@ -24,7 +24,7 @@ class Wxpay extends Base{
     // 获取parameters
     public function getParametersApi(){
         try{
-            $data = input('param.');
+            $data = input('post.');
             $WechatJsPayService = new WechatJsPayService;
             $parameters = $WechatJsPayService->pay($data);
             return json(['code'=>200,'msg'=>'ok','data'=>$parameters]);

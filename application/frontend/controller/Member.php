@@ -114,9 +114,8 @@ class Member extends Base{
         $memberInfo = db('member')->find(['id'=>$member_id]);
         $myGroupList = $this->MemberService->getMyGroup($member_id);
         // dump($myGroupList);die;
-        $count = count($myGroupList,1);
         $this->assign('memberInfo',$memberInfo);
-        $this->assign('count',$count);
+        
         $this->assign('myGroupList',$myGroupList);
         return view('Member/myGroup');
     }
