@@ -53,43 +53,54 @@ class MessageService{
 	}
 
 
+    // 发送个人消息
+    public function sendMessageMember($member_id,$messageData,$saveData){
 
-	// 发送个人消息
-	public function sendMessageMember($member_id,$messageData,$saveData){
-
-		$res = $this->MessageMemberModel->save($saveData);
+        $res = $this->MessageMemberModel->save($saveData);
         if($res){
-        	$WechatService = new \app\service\WechatService();
-        	$result = $WechatService->sendTemplate($messageData);
-        	return true;
+            $WechatService = new \app\service\WechatService();
+            $result = $WechatService->sendTemplate($messageData);
+            if($result){
+                $logData = ['wxopenid'=>$messageData['touser'],'member_id'=>$saveData['member_id'],'status'=>1,'content'=>serialize($messageData)];
+                $this->insertLog($logData);
+            }else{
+                $logData = ['wxopenid'=>$messageData['touser'],'member_id'=>$saveData['member_id'],'status'=>0,'content'=>serialize($messageData)];
+                $this->insertLog($logData);
+            }
+            return true;
         }
         return false;
-	}
+    }
 
-	// 给训练营的营主|管理员发送消息
-	public function sendCampMessage($camp_id,$messageData,$saveData){
-		
-			$saveallData = [];
-			// 获取训练营的营主openid
-			$memberIDs = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->where('type','egt',3)->column('member_id');
-			$memberList = db('member')->where('id','in',$memberIDs)->select();
-			// 发送模板消息
-			foreach ($memberList as $key => $value) {
-	        	if($value['openid']){
-	        		$messageData['touser'] = $value['openid'];
-	        		$WechatService = new \app\service\WechatService();
-	        		$result = $WechatService->sendTemplate($messageData);
-	        	}
-	        	$saveallData[] = $saveData;
-	        	$saveallData[]['member_id'] = $value['id'];
-			}
-			$res = $this->MessageModel->saveAll($saveallData);
-			if($res){
-				return true;
-			}
-			return false;
-	}
-
+    // 给训练营的营主|管理员发送消息
+    public function sendCampMessage($camp_id,$messageData,$saveData){
+        $saveallData = [];
+        // 获取训练营的营主openid
+        $memberIDs = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->where('type','egt',3)->column('member_id');
+        $memberList = db('member')->where('id','in',$memberIDs)->select();
+        // 发送模板消息
+        foreach ($memberList as $key => $value) {
+            if($value['openid']){
+                $messageData['touser'] = $value['openid'];
+                $WechatService = new \app\service\WechatService();
+                $result = $WechatService->sendTemplate($messageData);
+                if($result){
+                    $logData = ['wxopenid'=>$value['openid'],'member_id'=>$value['id'],'status'=>1,'content'=>serialize($messageData)];
+                    $this->insertLog($logData);
+                }else{
+                    $logData = ['wxopenid'=>$value['openid'],'member_id'=>$value['id'],'status'=>0,'content'=>serialize($messageData)];
+                    $this->insertLog($logData);
+                }
+            }
+            $saveallData[$key] = $saveData;
+            $saveallData[$key]['member_id'] = $value['id'];
+        }
+        $res = $this->MessageMemberModel->saveAll($saveallData);
+        if($res){
+            return true;
+        }
+        return false;
+    }
 
 	// 获取系统消息列表
 	public function getMessageListByPage($map = [] ,$paginate=10){
@@ -152,6 +163,12 @@ class MessageService{
 		return $result;
 	}
 
+    // 消息记录封装
+    private function insertLog($data){
+        $LogSendtemplatemsg = new \app\model\LogSendtemplatemsg;
+        $LogSendtemplatemsg->save($data);
+    }
+
     // 发送消息给管理员/营主-申请加入训练营审核
     public function campJoinAudit($data, $camp_id) {
 	    if (!$camp_id) {
@@ -166,7 +183,7 @@ class MessageService{
                 'template_id' => 'aOTMBdZbOKo8fFEKS5HWNaw9Gu-2c8ASTOcXlL6129Q',
                 'url' =>  url($data['baseurl'], ['camp_id' => $camp_id, 'status' => 0, 'openid' => $memberopenid], '', true),
                 'data' => [
-                    'first' => ['value' => $data['title']],
+                    'first' => ['value' => $data['content']],
                     'keyword1' => ['value' => $data['member']],
                     'keyword2' => ['value' => $data['jointime']],
                     'remark' => ['value' => '点击进入操作']
@@ -187,16 +204,57 @@ class MessageService{
             }
             db('log_sendtemplatemsg')->insert($log_sendTemplateData);
 
-            db('message')->insert([
+            db('message_member')->insert([
                 'title' => $data['title'],
                 'content' => $data['content'],
                 'url' => $sendTemplateData['url'],
-                'is_system' => 2,
+                'member_id' => $receiver['member_id'],
                 'create_time' => time(),
-                'status' => 1,
-                'isread' => 1,
-                'member_id' => $receiver['member_id']
+                'status' => 1
             ]);
         }
+    }
+
+    // 发送消息给申请人-申请加入训练营审核结果
+    public function campJoinAuditResult($data, $member_id) {
+        if (!$member_id) {
+            return ['code' => 100, 'msg' => __lang('MSG_402')];
+        }
+        $wechatS = new WechatService();
+        $memberopenid = getMemberOpenid($member_id);
+        $sendTemplateData = [
+            'touser' => $memberopenid,
+            'template_id' => 'xohb4WrWcaDosmQWQL27-l-zNgnMc03hpPORPjVjS88',
+            'url' =>  $data['url'],
+            'data' => [
+                'first' => ['value' => $data['content']],
+                'keyword1' => ['value' => $data['checkstr']],
+                'keyword2' => ['value' => $data['audittime']],
+                'remark' => ['value' => '点击进入操作']
+            ]
+        ];
+        $sendTemplateResult = $wechatS->sendTemplate($sendTemplateData);
+        $log_sendTemplateData = [
+            'wxopenid' => $sendTemplateData['touser'],
+            'member_id' => $member_id,
+            'url' => $sendTemplateData['url'],
+            'content' => serialize($sendTemplateData),
+            'create_time' => time()
+        ];
+        if ($sendTemplateResult) {
+            $log_sendTemplateData['status'] = 1;
+        } else {
+            $log_sendTemplateData['status'] = 0;
+        }
+        db('log_sendtemplatemsg')->insert($log_sendTemplateData);
+
+        db('message_member')->insert([
+            'title' => $data['title'],
+            'content' => $data['content'],
+            'url' => $sendTemplateData['url'],
+            'member_id' => $member_id,
+            'create_time' => time(),
+            'status' => 1
+        ]);
     }
 }
