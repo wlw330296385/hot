@@ -11,11 +11,6 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
-    <style>
-        .mui-media {
-            border-bottom: 1px solid #ddd;
-        }
-    </style>
 </head>
 
 <body>
@@ -39,15 +34,15 @@
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
                         <span>本月课量</span>
-                        <div class="mui-media-body curmonthcount">0</div>
+                        <div class="mui-media-body curmonthcount">{$scheduleCount.month}</div>
                     </a></li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
                         <span>本年课量</span>
-                        <div class="mui-media-body">0</div>
+                        <div class="mui-media-body">{$scheduleCount.year}</div>
                     </a></li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
                         <span>总课量</span>
-                        <div class="mui-media-body curmonthcount">0</div>
+                        <div class="mui-media-body">{$scheduleCount.sum}</div>
                     </a></li>
                 </ul>
                 <ul class="mui-table-view mui-text-center border-b">
@@ -222,9 +217,6 @@
                 toList('campSceheduleList', page, gType);//具体取数据的方法
             }, 100);
         }
-
-        toScheduleTotal(curmonthcount);
-        
     })
 
     // 切换tab显示隐藏所需内容
@@ -241,7 +233,6 @@
     });
 
 
-    var datatotal = '';
 
     //接口获取数据并追加到页面
     var toList = function (wList, page, gType, status) {
@@ -260,25 +251,24 @@
             headers: {'Content-Type': 'application/json'},
             //processData:false,
             success: function (data) {
-                console.log(data.data.total)
+
                 var newli = '';
                 var newAllLi = '';
                 if (data.code == 200) {
-                    var newDate = new Date(); 
+                    var newDate = new Date();
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + campID;
                         var lession_time = newDate.toLocaleString(data.data.data[i].lesson_time);
                         // 已审，未审内容
-                        newli += '<a href="' + urls + '"><li class="mui-table-view-cell mui-media">';
+                        newli += '<li class="mui-table-view-cell mui-media">';
                         if (status!=1) {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为已审</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
-
-                            newli += '<div class="mui-slider-handle"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time  + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></div>';
+                            newli += '<div class="mui-slider-handle"><a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time  + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a></div>';
                         } else {
-                            newli += '<ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time  + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul>';
+                            newli += '<a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time  + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a>';
                         }
 
-                        newli += '</li></a>';
+                        newli += '</li>';
                         // 全部内容
                         newAllLi = newAllLi + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></li></a>';
                     }
@@ -302,7 +292,6 @@
                 } else {
                     //下拉加载 gType==2
                     $(".schedule" + status).append(newli);
-                    $(".scheduleAll").append(newAllLi);
                 }
 
                 if (newli != '' || newAllLi != '') {
@@ -361,7 +350,6 @@
             }
         });
     });
-
 
     // var curmonthbegin = new Date() // 2017-10-1 0:00
     // var curmonthend = new Date() // 2017-10-30 23:59
