@@ -107,7 +107,7 @@ class Message extends Base{
     }
 
     // 设置个人消息状态
-    public function setMessageMemberStatus(){
+    public function setMessageMemberStatusApi(){
         try{
             $message_id = input('param.message_id');
             $status = input('param.status');
@@ -120,6 +120,15 @@ class Message extends Base{
             
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMassege()]);
+        }
+    }
+
+    // 设置系统消息状态(旧)
+    public function setMessageStatusApi(){
+        try{
+                        
+        }catch (Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMassege()]);
         }
     }
 
