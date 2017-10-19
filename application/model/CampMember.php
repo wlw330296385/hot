@@ -15,7 +15,7 @@ class CampMember extends Model {
 
 
     public function getStatusAttr($value){
-        $status = [0=>'待审核',1=>'正常',2=>'退出',-1=>'被辞退',3=>'已毕业'];
+        $status = [0=>'待审核',1=>'正常',2=>'退出',-1=>'被辞退',3=>'已毕业','-2'=>'被拒绝'];
         return $status[$value];
     }
 
