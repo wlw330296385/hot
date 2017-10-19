@@ -99,13 +99,12 @@ class BillService {
                         'remark' => ['value' => '大热篮球']
                     ]
                 ];
-                // $saveData = [
-                //                 'title'=>"订单支付成功-{$data['goods']}",
-                //                 'content'=>"订单号: $data['bill_order']<br/>支付金额: $data['balance_pay']元<br/>支付学生信息:$data['student']",
-                //                 'url'=>url('frontend/bill/billInfo',['id'=>$this->Bill->id]),
-                //                 'member_id'=>$data['member_id']
-                //             ];
-                //             dump($saveData);die;
+                $saveData = [
+                                'title'=>"订单支付成功-{$data['goods']}",
+                                'content'=>"订单号: {$data['bill_order']}<br/>支付金额: {$data['balance_pay']}元<br/>支付学生信息:{$data['student']}",
+                                'url'=>url('frontend/bill/billInfo',['id'=>$this->Bill->id]),
+                                'member_id'=>$data['member_id']
+                            ];
                 //给训练营营主发送消息
                 if($data['balance_pay'] == 0){
                     $MessageCampData = [
@@ -122,11 +121,11 @@ class BillService {
                             'remark' => ['value' => '大热篮球']
                         ]
                     ];
-                    // $MessageCampSaveData = [
-                    //             'title'=>"预约体验申请-$data['goods']",
-                    //             'content'=>"订单号: $data['bill_order']<br/>支付金额: $data['balance_pay']元<br/>申请学生:$data['student']<br/>申请理由: $data['remarks']",
-                    //             'url'=>url('frontend/bill/billInfoOfCamp',['id'=>$this->Bill->id])
-                    //         ];
+                    $MessageCampSaveData = [
+                                'title'=>"预约体验申请-{$data['goods']}",
+                                'content'=>"订单号: {$data['bill_order']}<br/>支付金额: {$data['balance_pay']}元<br/>申请学生:{$data['student']}<br/>申请理由: {$data['remarks']}",
+                                'url'=>url('frontend/bill/billInfoOfCamp',['id'=>$this->Bill->id])
+                            ];
                 }else{
                     $MessageCampData = [
                         "touser" => '',
@@ -142,11 +141,11 @@ class BillService {
                             'remark' => ['value' => '大热篮球']
                         ]
                     ];
-                    // $MessageCampSaveData = [
-                    //             'title'=>"购买课程-$data['goods']",
-                    //             'content'=>"订单号: $data['bill_order']<br/>支付金额: $data['balance_pay']元<br/>购买学生:$data['student']<br/>购买理由: $data['remarks']",
-                    //             'url'=>url('frontend/bill/billInfoOfCamp',['id'=>$this->Bill->id])
-                    //         ];
+                    $MessageCampSaveData = [
+                                'title'=>"购买课程-{$data['goods']}",
+                                'content'=>"订单号: {$data['bill_order']}<br/>支付金额: {$data['balance_pay']}元<br/>购买学生:{$data['student']}<br/>购买理由: {$data['remarks']}",
+                                'url'=>url('frontend/bill/billInfoOfCamp',['id'=>$this->Bill->id])
+                            ];
                 }
                 $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
                 $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
@@ -219,11 +218,11 @@ class BillService {
                                 'remark' => ['value' => '大热篮球']
                             ]
                         ];
-                        // $saveData = [
-                        //         'title'=>"退款申请-$billInfo['goods']",
-                        //         'content'=>"订单号: $billInfo['bill_order']<br/>退款金额: $billInfo['balance_pay']元<br/>退款理由:$billInfo['remarks']",
-                        //         'url'=>url('frontend/bill/billInfoOfCamp',$map)
-                        //     ];
+                        $saveData = [
+                                'title'=>"退款申请-{$billInfo['goods']}",
+                                'content'=>"订单号: {$billInfo['bill_order']}<br/>退款金额: {$billInfo['balance_pay']}元<br/>退款理由:{$billInfo['remarks']}",
+                                'url'=>url('frontend/bill/billInfoOfCamp',$map)
+                            ];
                         $MessageService->sendCampMessage($billInfo['camp_id'],$MessageCampData,$saveData);
                     }
 

@@ -55,7 +55,7 @@ class MessageService{
 
 
 	// 发送个人消息
-	public function sendMessageMember($member_id,$data,$messageData,$saveData){
+	public function sendMessageMember($member_id,$messageData,$saveData){
 
 		$res = $this->MessageMemberModel->save($saveData);
         if($res){
