@@ -66,16 +66,29 @@ class BillService {
 
         if(!$is_student2){
         // 添加一条学生数据
-            $re = $GradeMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'type'=>$data['type'],'avatar'=>$data['avatar']]);
-            if(!$re){
-                db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
+            if($data['balance_pay']>0){
+                $re = $GradeMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'type'=>$data['type'],'avatar'=>$data['avatar']]);
+                if(!$re){
+                    db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
+                }
+            }else{
+                // 体验课学生课量为0
+               $re = $GradeMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>0,'type'=>$data['type'],'avatar'=>$data['avatar']]);
+                if(!$re){
+                    db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
+                } 
             }
+            
         }else{
-        // 课量增加
-            $re = $GradeMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->setInc('rest_schedule',$data['total']);
-            if(!$re){
-                db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
+            // 课量增加
+            // 只有正式学生课量增加
+            if($data['balance_pay']>0){
+                $re = $GradeMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->setInc('rest_schedule',$data['total']);
+                if(!$re){
+                    db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
+                }
             }
+            
         }
         $result = $this->Bill->save($data);
         if($result){
@@ -254,7 +267,7 @@ class BillService {
                         }
                         if($billInfo['goods_type'] == '课程'){
                             // 查询剩余课时
-                            $grade_member = db('grade_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1])->find();
+                            $grade_member = db('grade_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->find();
                             if(!$grade_member || $grade_member['rest_schedule']<1){
                                 return ['code'=>100,'msg'=>'该学生已上完课,不允许退款'];
                             }
