@@ -62,11 +62,12 @@ class Message extends Base{
             if($status){
                 $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id'],'status'=>$status]);
             }else{
-                $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id']);
-            if($messageMemberList){
-                return json(['code'=>200,'msg'=>'OK','data'=>$messageMemberList]);
-            }else{
-                return json(['code'=>100,'msg'=>'OK']);
+                $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id']]);
+                if($messageMemberList){
+                    return json(['code'=>200,'msg'=>'OK','data'=>$messageMemberList]);
+                }else{
+                    return json(['code'=>100,'msg'=>'OK']);
+                }
             }
         }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMassege()]);
@@ -105,7 +106,7 @@ class Message extends Base{
         }
     }
 
-    // 设置消息状态
+    // 设置个人消息状态
     public function setMessageMemberStatus(){
         try{
             $message_id = input('param.message_id');
@@ -138,23 +139,7 @@ class Message extends Base{
         }
     }
 
-    //获取个人消息列表
-    public function getUnReadMessageMmeberListApi()
-    {
-        try {
-            $map = input('post.');
-            $map['member_id'] = $this->memberInfo['id'];
-            $result = $this->MessageService->getMessageMemberListByPage($map);
-            if ($result) {
-                return json(['code' => 200, 'msg' => '获取成功', 'data' => $result]);
-            } else {
-                return json(['code' => 100, 'msg' => '没有这条消息']);
-            }
 
-        } catch (Exception $e) {
-            return json(['code' => 100, 'msg' => $e->getMassege()]);
-        }
-    }
 
 
     //

@@ -74,18 +74,6 @@ class Bill extends Frontend{
     }
 
 
-    public function updateBillInfoOfCampApi(){
-        try{
-            $camp_id = input('param.camp_id');
-            // 判断权限
-            $isPower = $this->BillService->isPower($camp_id,$this->memberInfo['id']);
-            if($isPower<3){
-                return json(['code'=>100,'msg'=>__lang('MSG_403')]);
-            }
-            return json(['code'=>200,'data'=>$billList,'msg'=>'OK']);       
-        }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }   
-    }
+   
     
 }
