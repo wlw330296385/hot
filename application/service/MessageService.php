@@ -55,49 +55,39 @@ class MessageService{
 
 
 	// 发送个人消息
-	public function sendMessageMember($member_id,$data){
+	public function sendMessageMember($member_id,$messageData,$saveData){
 
-		$res = $this->MessageMemberModel->save([
-        					'title'=>$data['data']['first']['value'],
-        					'content'=>'用户名:'.$data['data']['keyword1']['value'].'<br /> 订单编号:'.$data['data']['keyword2']['value'].'<br /> 金额:'.$data['data']['keyword3']['value'].'<br /> 商品信息:'.$data['data']['keyword4']['value'],
-        					'member_id'=>$member_id,
-        					'url'=>$data['url']
-        					]
-        				);
+		$res = $this->MessageMemberModel->save($saveData);
         if($res){
         	$WechatService = new \app\service\WechatService();
-        	$result = $WechatService->sendTemplate($data);
+        	$result = $WechatService->sendTemplate($messageData);
         	return true;
         }
         return false;
 	}
 
-	// 给训练营的营主发送消息
-	public function sendCampMessage($camp_id,$data){
+	// 给训练营的营主|管理员发送消息
+	public function sendCampMessage($camp_id,$messageData,$saveData){
 		
-
-		$res = $this->MessageModel->save([
-        					'title'=>$data['data']['first']['value'],
-        					'content'=>'用户名:'.$data['data']['keyword1']['value'].'<br /> 订单编号:'.$data['data']['keyword2']['value'].'<br /> 金额:'.$data['data']['keyword3']['value'].'<br /> 商品信息:'.$data['data']['keyword4']['value'],
-        					'camp_id'=>$camp_id,
-        					'is_system'=>2,
-        					'url'=>$data['url']
-        					]);
-		if($res){
+			$saveallData = [];
 			// 获取训练营的营主openid
 			$memberIDs = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->where('type','egt',3)->column('member_id');
 			$memberList = db('member')->where('id','in',$memberIDs)->select();
 			// 发送模板消息
 			foreach ($memberList as $key => $value) {
 	        	if($value['openid']){
-	        		$data['touser'] = $value['openid'];
+	        		$messageData['touser'] = $value['openid'];
 	        		$WechatService = new \app\service\WechatService();
-	        		$result = $WechatService->sendTemplate($data);
+	        		$result = $WechatService->sendTemplate($messageData);
 	        	}
+	        	$saveallData[] = $saveData;
+	        	$saveallData[]['member_id'] = $value['id'];
 			}
-			return true;
-		}
-		return false;
+			$res = $this->MessageModel->saveAll($saveallData);
+			if($res){
+				return true;
+			}
+			return false;
 	}
 
 

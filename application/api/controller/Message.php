@@ -19,12 +19,7 @@ class Message extends Base{
     public function getMessageListApi(){
     	try{
             $status = input('param.status');
-    		$campIDs = db('camp_member')
-                  ->where(['member_id'=>$this->memberInfo['id'],'status'=>1])
-                  ->where('type','gt',2)
-                  ->where('delete_time',null)
-                  ->column('camp_id');
-            $messageList = $this->MessageService->getMessageList(['camp_id'=>['in',$campIDs],'status'=>$status]);
+            $messageList = $this->MessageService->getMessageList(['status'=>$status]);
 	    	if($messageList){
 	    		return json(['code'=>200,'msg'=>'OK','data'=>$messageList]);
 	    	}else{
@@ -39,12 +34,7 @@ class Message extends Base{
     public function getMessageListByPageApi(){
         try{
             $status = input('param.status');
-            $campIDs = db('camp_member')
-                  ->where(['member_id'=>$this->memberInfo['id'],'status'=>1])
-                  ->where('type','gt',2)
-                  ->where('delete_time',null)
-                  ->column('camp_id');
-            $messageList = $this->MessageService->getMessageListByPage(['camp_id'=>['in',$campIDs],'status'=>$status]);
+            $messageList = $this->MessageService->getMessageListByPage(['status'=>$status]);
             if($messageList){
                 return json(['code'=>200,'msg'=>'OK','data'=>$messageList]);
             }else{
