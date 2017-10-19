@@ -61,6 +61,13 @@ class MessageService{
         if($res){
         	$WechatService = new \app\service\WechatService();
         	$result = $WechatService->sendTemplate($messageData);
+        	if($result){
+    			$logData = ['wxopenid'=>$messageData['touser'],'member_id'=>$saveData['member_id'],'status'=>1,'content'=>serialize($messageData)];
+    			$this->insertLog($logData);
+    		}else{
+    			$logData = ['wxopenid'=>$messageData['touser'],'member_id'=>$saveData['member_id'],'status'=>0,'content'=>serialize($messageData)];
+    			$this->insertLog($logData);
+    		}
         	return true;
         }
         return false;
@@ -79,11 +86,18 @@ class MessageService{
 	        		$messageData['touser'] = $value['openid'];
 	        		$WechatService = new \app\service\WechatService();
 	        		$result = $WechatService->sendTemplate($messageData);
+	        		if($result){
+	        			$logData = ['wxopenid'=>$value['openid'],'member_id'=>$value['id'],'status'=>1,'content'=>serialize($messageData)];
+	        			$this->insertLog($logData);
+	        		}else{
+		    			$logData = ['wxopenid'=>$value['openid'],'member_id'=>$value['id'],'status'=>0,'content'=>serialize($messageData)];
+		    			$this->insertLog($logData);
+		    		}
 	        	}
-	        	$saveallData[] = $saveData;
-	        	$saveallData[]['member_id'] = $value['id'];
+	        	$saveallData[$key] = $saveData;
+	        	$saveallData[$key]['member_id'] = $value['id'];
 			}
-			$res = $this->MessageModel->saveAll($saveallData);
+			$res = $this->MessageMemberModel->saveAll($saveallData);
 			if($res){
 				return true;
 			}
@@ -198,5 +212,13 @@ class MessageService{
                 'member_id' => $receiver['member_id']
             ]);
         }
+    }
+
+
+
+    // 消息记录封装
+    private function insertLog($data){
+    	$LogSendtemplatemsg = new \app\model\LogSendtemplatemsg;
+    	$LogSendtemplatemsg->save($data);
     }
 }

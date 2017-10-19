@@ -18,7 +18,7 @@ class Bill extends Base{
     public function billInfoOfCamp(){
         $bill_id = input('param.bill_id');
         $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
-
+        $lessonInfo = [];
         // 课程信息
         if($billInfo['goods_type'] == '课程'){
             $LessonService = new \app\service\LessonService;
@@ -27,12 +27,11 @@ class Bill extends Base{
             // 学生信息
             $StudentService = new \app\service\StudentService;
             $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
-            $this->assign('studentInfo',$studentInfo);
         }        
         // 判断权限
         $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
 
-
+        $this->assign('studentInfo',$studentInfo);
         $this->assign('power',$isPower);
         $this->assign('billInfo',$billInfo);
         return view('Bill/billInfoOfCamp');

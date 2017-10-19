@@ -42,6 +42,7 @@ class Bill extends Frontend{
             if($balancePay == -1){
                 $map['balance_pay'] = 0;
             }
+            $map['member_id'] = $this->memberInfo['id'];
             $result = $this->BillService->getBillListByPage($map);
             return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
         }catch (Exception $e){

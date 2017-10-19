@@ -30,7 +30,7 @@ class Message extends Base{
 	    }
     }
 
-    // 获取系统消息列表
+    // 获取系统消息列表带page
     public function getMessageListByPageApi(){
         try{
             $status = input('param.status');

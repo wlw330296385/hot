@@ -102,7 +102,7 @@ class BillService {
                 $saveData = [
                                 'title'=>"订单支付成功-{$data['goods']}",
                                 'content'=>"订单号: {$data['bill_order']}<br/>支付金额: {$data['balance_pay']}元<br/>支付学生信息:{$data['student']}",
-                                'url'=>url('frontend/bill/billInfo',['id'=>$this->Bill->id]),
+                                'url'=>url('frontend/bill/billInfo',['bill_id'=>$this->Bill->id]),
                                 'member_id'=>$data['member_id']
                             ];
                 //给训练营营主发送消息
@@ -124,7 +124,8 @@ class BillService {
                     $MessageCampSaveData = [
                                 'title'=>"预约体验申请-{$data['goods']}",
                                 'content'=>"订单号: {$data['bill_order']}<br/>支付金额: {$data['balance_pay']}元<br/>申请学生:{$data['student']}<br/>申请理由: {$data['remarks']}",
-                                'url'=>url('frontend/bill/billInfoOfCamp',['id'=>$this->Bill->id])
+                                'member_id'=>$data['member_id'],
+                                'url'=>url('frontend/bill/billInfoOfCamp',['bill_id'=>$this->Bill->id],'',true)
                             ];
                 }else{
                     $MessageCampData = [
@@ -144,7 +145,8 @@ class BillService {
                     $MessageCampSaveData = [
                                 'title'=>"购买课程-{$data['goods']}",
                                 'content'=>"订单号: {$data['bill_order']}<br/>支付金额: {$data['balance_pay']}元<br/>购买学生:{$data['student']}<br/>购买理由: {$data['remarks']}",
-                                'url'=>url('frontend/bill/billInfoOfCamp',['id'=>$this->Bill->id])
+                                'member_id'=>$data['member_id'],
+                                'url'=>url('frontend/bill/billInfoOfCamp',['bill_id'=>$this->Bill->id],'',true)
                             ];
                 }
                 $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
