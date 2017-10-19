@@ -112,32 +112,39 @@ class MemberService{
 	}
 
     // 获取组织列表
-    public function getMyGroup($member_id){
+    public function getMyGroup($map){
         $result = [];
-        $pidArr = $this->memberModel->where(['pid'=>$member_id])->select();
-        if($pidArr){
-            $arr = $pidArr->toArray();
-            $arr['count'] = 1;
-            $result = $this->getGroupTree($arr,0,$arr['count']);
-        }
-        return $result;
+        $result = $this->memberModel->where($map)->find();
+        $arr = $result->toArray();
+        $arr['groupList'] = [];
+        $arr['count'] = 0;
+        $arr = $this->getGroupTree($arr,0,0);  
+        $arr['count'] = $this->count;
+ 		
+        return $arr;
     }
 
-
+    private $count = 0;
     private function getGroupTree($arr,$times,$count){
+    	
         $times++;
         if($times < 3) {
-            foreach ($arr as $key => $value) {
-                $result = $this->memberModel->where(['pid'=>$value['id']])->select();
-                if(!empty($result->toArray())){
-                    $count++;
-                    $arr[$key]['groupList'] = $result->toArray();
-                    $arr[$key]['count'] = count($result->toArray());
-                    $arr['count'] = $count;
-                    $arr[$key]['groupList'] = $this->getGroupTree($arr[$key]['groupList'],$times,$count);
-                }
+        	$result = $this->memberModel->where(['pid'=>$arr['id']])->select()->toArray();     
+        	if(!empty($result)){
+	            foreach ($result as $key => $value) {
+	            $count ++; 
+	                    $this->count = $count;
+	                    $arr['groupList'][$key]['count'] = count($result);
+	                    $arr['groupList'][$key] = $this->getGroupTree($value,$times,$count);
+	                    $arr['count'] = count($result);
+	                }
+            }else{
+                	$arr['groupList'] = [];
+	            	$arr['count'] = 0;
             }
+            
         }
+        
         return $arr;
     }
 

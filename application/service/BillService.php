@@ -99,6 +99,13 @@ class BillService {
                         'remark' => ['value' => '大热篮球']
                     ]
                 ];
+                // $saveData = [
+                //                 'title'=>"订单支付成功-{$data['goods']}",
+                //                 'content'=>"订单号: $data['bill_order']<br/>支付金额: $data['balance_pay']元<br/>支付学生信息:$data['student']",
+                //                 'url'=>url('frontend/bill/billInfo',['id'=>$this->Bill->id]),
+                //                 'member_id'=>$data['member_id']
+                //             ];
+                //             dump($saveData);die;
                 //给训练营营主发送消息
                 if($data['balance_pay'] == 0){
                     $MessageCampData = [
@@ -115,6 +122,11 @@ class BillService {
                             'remark' => ['value' => '大热篮球']
                         ]
                     ];
+                    // $MessageCampSaveData = [
+                    //             'title'=>"预约体验申请-$data['goods']",
+                    //             'content'=>"订单号: $data['bill_order']<br/>支付金额: $data['balance_pay']元<br/>申请学生:$data['student']<br/>申请理由: $data['remarks']",
+                    //             'url'=>url('frontend/bill/billInfoOfCamp',['id'=>$this->Bill->id])
+                    //         ];
                 }else{
                     $MessageCampData = [
                         "touser" => '',
@@ -130,9 +142,14 @@ class BillService {
                             'remark' => ['value' => '大热篮球']
                         ]
                     ];
+                    // $MessageCampSaveData = [
+                    //             'title'=>"购买课程-$data['goods']",
+                    //             'content'=>"订单号: $data['bill_order']<br/>支付金额: $data['balance_pay']元<br/>购买学生:$data['student']<br/>购买理由: $data['remarks']",
+                    //             'url'=>url('frontend/bill/billInfoOfCamp',['id'=>$this->Bill->id])
+                    //         ];
                 }
-                $MessageService->sendMessageMember($data['member_id'],$MessageData);
-                $MessageService->sendCampMessage($data['camp_id'],$MessageCampData);
+                $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
+                $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
                 $CampMember = new CampMember;
                 $is_student = $CampMember->where(['member_id'=>$data['member_id'],'camp_id'=>$data['camp_id'],'status'=>1])->where('type','egt',1)->find();
                 if(!$is_student){
@@ -170,28 +187,48 @@ class BillService {
 
     // 用户编辑订单
     public function updateBill($data,$map){
-        $billInfo = $this->getBill($map);               
-            switch ($data['action']) {
-            // 退款操作
-                case '1':
-                    if($billInfo['status'] != 1){
-                        return ['code'=>100,'msg'=>'该订单状态不支持退款申请'];
-                    }else{
-                        if($billInfo['goods_type'] == 1){
-                            // 查询剩余课时
-                            $grade_member = db('grade_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1])->find();
-                            if($grade_member['rest_schedule'] < 1){
-                                return ['code'=>100,'msg'=>'您已上完课,不允许退款了'];
-                            }
-                        }
-                        $updateData = ['status'=>-1,'remarks'=>$data['remarks']];
-                        $result = $this->Bill->save($updateData,$map);
-                        if($result){
-                            // 发送消息给训练营管理员和营主
-                            
+        $billInfo = $this->getBill($map);   
+        $MessageService = new \app\service\MessageService;            
+        switch ($data['action']) {
+        // 退款操作
+            case '1':
+                if($billInfo['status'] != 1){
+                    return ['code'=>100,'msg'=>'该订单状态不支持退款申请'];
+                }else{
+                    if($billInfo['goods_type'] == 1){
+                        // 查询剩余课时
+                        $grade_member = db('grade_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1])->find();
+                        if($grade_member['rest_schedule'] < 1){
+                            return ['code'=>100,'msg'=>'您已上完课,不允许退款了'];
                         }
                     }
-                    break;
+                    $updateData = ['status'=>-1,'remarks'=>$data['remarks']];
+                    $result = $this->Bill->save($updateData,$map);
+                    if($result){
+                        // 发送消息给训练营管理员和营主
+                        $MessageCampData = [
+                            "touser" => '',
+                            "template_id" => config('wxTemplateID.successRefund'),
+                            "url" => url('frontend/bill/billInfo',$map,'',true),
+                            "topcolor"=>"#FF0000",
+                            "data" => [
+                                'first' => ['value' => '['.$billInfo['goods'].']收到一笔申请退款'],
+                                'keyword1' => ['value' => $billInfo['bill_order']],
+                                'keyword2' => ['value' => $billInfo['balance_pay'].'元'],
+                                'keyword3' => ['value' => $billInfo['remarks']],
+                                'remark' => ['value' => '大热篮球']
+                            ]
+                        ];
+                        // $saveData = [
+                        //         'title'=>"退款申请-$billInfo['goods']",
+                        //         'content'=>"订单号: $billInfo['bill_order']<br/>退款金额: $billInfo['balance_pay']元<br/>退款理由:$billInfo['remarks']",
+                        //         'url'=>url('frontend/bill/billInfoOfCamp',$map)
+                        //     ];
+                        $MessageService->sendCampMessage($billInfo['camp_id'],$MessageCampData,$saveData);
+                    }
+
+                }
+                break;
             // 修改价格和数量
                 case '2':
                     if($billInfo['status'] != 0){
