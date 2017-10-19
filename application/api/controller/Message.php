@@ -62,9 +62,7 @@ class Message extends Base{
             if($status){
                 $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id'],'status'=>$status]);
             }else{
-                $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id']]);
-            }
-            
+                $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id']);
             if($messageMemberList){
                 return json(['code'=>200,'msg'=>'OK','data'=>$messageMemberList]);
             }else{

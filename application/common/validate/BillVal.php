@@ -36,7 +36,7 @@ class billVal extends Validate{
     
     protected $scene = [
         'add'   =>  ['bill_order','goods_id','goods','camp','total','price','camp_id','camp','student_id','student','member_id','member','score_pay'],
-        'edit'  =>  ['total'],
+        'edit'  =>  [],
     ];    
 
 }

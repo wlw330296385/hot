@@ -65,8 +65,8 @@
            </ul>
 
 
-           {switch name="billInfo.is_pay"}
-           {case  value="未付款"}
+           {switch name="billInfo.status"}
+           {case  value="0"}
            <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%;">
             <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><span
                 class="mui-icon mui-icon-phone"></span>电话咨询
@@ -76,7 +76,7 @@
         </li>
     </ul>
     {/case}
-    {case  value="已付款"}
+    {case  value="1"}
     <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%;">
         <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><span
             class="mui-icon mui-icon-phone"></span>电话咨询
@@ -91,8 +91,7 @@
       <ul class="mui-table-view mui-text-left operation">
         <h5 class="mui-text-left">退款申请<a class="mui-icon mui-icon-closeempty" href="#delete"></a></h5>
         <div class="mui-input-row" style="font-size: 14px;color: #737373">
-            <label>退款金额:</label>
-            <input type="text" name="" class="colororange mui-text-left refundamount" value="" placeholder="请填写退款金额" style="font-size: 14px;">
+            
         </div>
         <li class="mui-table-view-cell">
             <textarea id="question" class="mui-input-clear question" placeholder="请在此处填写申请退款的原因..." value=""></textarea>
@@ -104,10 +103,10 @@
 </div>
 </div>
 {/case}
-{case  value="申请退款"}
+{case  value="-1"}
 退款中
 {/case}
-{case  value="已退款"}
+{case  value="-2"}
 已退款
 {/case}
 {/switch}
@@ -125,60 +124,33 @@
 
     // 申请退款
     $(".tjBtn").click(function(){
-        var bill_id = $("input[name=bill_id]").val();
-        var bill_order = $(".bill_order").text();
-        var goods_id = $("input[name=goods_id]").val();
-        var goods = $(".goods").text();
-        var camp = $("input[name=camp]").val();
-        var camp_id = $("input[name=camp_id]").val();
-        var total = $(".total").text();
-        var price = $(".price").text();
-        var student = $("input[name=student]").val();
-        var student_id = $("input[name=student_id]").val();
-        var member = $("input[name=member]").val();
-        var member_id = $("input[name=member_id]").val();
-        var score_pay = $("input[name=score_pay]").val();
-        var goods_type = $(".goods_type").text();
-        var balance_pay = $("input[name=balance_pay]").val();
-        var goods_des = $(".goods_des").text();
-        var refundamount = $(".refundamount").val();
         var remarks = $(".question").val();
-        console.log(refundamount)
-        if(refundamount==''&&remarks==''){
-            mui.toast("请填写退款金额和原因");
+        if(remarks==''){
+            mui.toast("请填写退款理由");
             return false;
         }
-        mui.ajax("{:url('api/bill/updateBillApi')}",{
+        mui.ajax("{:url('api/bill/updateBillApi',['bill_id'=>$billInfo['id']])}",{
             data:{
-                "bill_id":bill_id,
-                "bill_order":bill_order,
-                "goods":goods,
-                "goods_id":goods_id,
-                "camp":camp,
-                "camp_id":camp_id,
-                "total":total,
-                "price":price,
-                "student":student,
-                "student_id":student_id,
-                "member":member,
-                "member_id":member_id,
-                "score_pay":score_pay,
-                "goods_type":goods_type,
-                "goods_des":goods_des,
-                "balance_pay":balance_pay,
-                "is_pay":-1,
-                "refundamount":refundamount,
-                "remarks":remarks
+                "remarks":remarks,
+                'action':1,
             },
             dataType:'json',//服务器返回json格式数据
             type:'post',//HTTP请求类型
             timeout:10000,//超时时间设置为10秒；
             headers:{'Content-Type':'application/json'},                  
-            success:function(data){ 
+            success:function(result){ 
                 //服务器返回响应，根据响应结果，分析是否登录成功；
-                console.log(data)
-                mui.toast("提交成功");
-                mui('#delete').popover('toggle');
+                if(result.code == 200){
+                    mui.alert('',result.msg,'确定',function(){
+                        location.reload();
+                    });
+                }else{
+                    mui.alert('',result.msg,'确定',function(){
+                    });
+                }
+                
+                
+
 
             },
             error:function(xhr,type,errorThrown){

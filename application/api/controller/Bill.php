@@ -56,13 +56,13 @@ class Bill extends Frontend{
     //编辑|添加订单接口
     public function updateBillApi(){
         try{
-            $id = input('get.id');
+            $bill_id = input('param.bill_id');
             $data = input('post.');
             $data['member'] = $this->memberInfo['member'];
             $data['member_id'] = $this->memberInfo['id'];
             $data['avatar'] = $this->memberInfo['avatar'];
-            if($id){
-                $result = $this->BillService->updateBill($data,$id);
+            if($bill_id){
+                $result = $this->BillService->updateBill($data,['id'=>$bill_id]);
             }else{
                 $result = $this->BillService->createBill($data);
             }

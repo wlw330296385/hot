@@ -66,7 +66,7 @@ class BillService {
 
         if(!$is_student2){
         // 添加一条学生数据
-            $re = $GradeMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'type'=>$data['type']]);
+            $re = $GradeMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'type'=>$data['type'],'avatar'=>$data['avatar']]);
             if(!$re){
                 db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
             }
@@ -158,7 +158,7 @@ class BillService {
     }
     
     //判断订单付款金额
-    public function isPay($id){
+    public function isPay($map){
         $result = $this->Bill->where($map)->find();
         if($result){
             return $result['is_pay'];
@@ -169,24 +169,72 @@ class BillService {
     }
 
     // 用户编辑订单
-    public function updateBill($data,$id){
-        $memberInfo = session('memberInfo','','think');
-        $is_pay = $this->is_pay(['id'=>$id]);
-        $validate = validate('BillVal');
-        if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 100];
-        }
-        if($is_pay == 0){
-            $result = $this->Bill->save($data,['id'=>$id]);
-             if($result){
-                return ['code'=>200,'msg'=>'修改成功','data'=>$result];
+    public function updateBill($data,$map){
+        $billInfo = $this->getBill($map);               
+            switch ($data['action']) {
+            // 退款操作
+                case '1':
+                    if($billInfo['status'] != 1){
+                        return ['code'=>100,'msg'=>'该订单状态不支持退款申请'];
+                    }else{
+                        if($billInfo['goods_type'] == 1){
+                            // 查询剩余课时
+                            $grade_member = db('grade_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1])->find();
+                            if($grade_member['rest_schedule'] < 1){
+                                return ['code'=>100,'msg'=>'您已上完课,不允许退款了'];
+                            }
+                        }
+                        $updateData = ['status'=>-1,'remarks'=>$data['remarks']];
+                        $result = $this->Bill->save($updateData,$map);
+                        if($result){
+                            // 发送消息给训练营管理员和营主
+                            
+                        }
+                    }
+                    break;
+            // 修改价格和数量
+                case '2':
+                    if($billInfo['status'] != 0){
+                        return ['code'=>100,'msg'=>'只有未付款订单才可以修改价格和数量'];
+                    }else{
+                        $updateData = ['remarks'=>$data['remarks'],'total'=>$data['total'],'price'=>$data['price']];
+                        $result = $this->Bill->save($updateData,$map);
+                        if($result){
+                            // 发送消息给用户
+
+                        }
+                    }
+                    break;
+            //同意退款 
+                case '3':
+                        if($billInfo['status']!= -1){
+                            return ['code'=>100,'msg'=>'该订单状态不支持该操作'];
+                        }   
+                        $isPower = $this->isPower($billInfo['camp_id'],$memberInfo['id']);
+                        if($isPower<3){
+                            return ['code'=>100,'msg'=>'您没有这个权限'];
+                        }
+                        if($billInfo['goods_type'] == 1){
+                            // 查询剩余课时
+                            $grade_member = db('grade_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1])->find();
+                            if(!$grade_member || $grade_member['rest_schedule']<1){
+                                return ['code'=>100,'msg'=>'该学生已上完课,不允许退款'];
+                            }
+                            $updateData = ['refundamount'=>$grade_member['rest_schedule']*$billInfo['price'],'status'=>-2];
+                        }
+                        $result = $this->Bill->save($updateData,$map);
+                    break;
+            //其他   
+                default:
+                    return ['code'=>100,'msg'=>'非法操作'];
+                    break;
+            }
+
+            if($result){
+                return ['code'=>200,'msg'=>'操作成功'];
             }else{
-                return ['code'=>100,'msg'=>$this->Bill->getError()];
-            }            
-        }else{
-            // file_put_contents('/data/bill/'.date('Y-m-d',time()),json_encode(['data'=>$data,'memberInfo'=>$memberInfo]));
-            return ['code'=>100,'msg'=>'非法操作'];
-        }
+                return ['code'=>100,'msg'=>'操作失败,请检查网络或者刷新页面重新尝试'];
+            }
 
     }
 
