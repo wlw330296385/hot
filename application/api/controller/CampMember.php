@@ -112,9 +112,11 @@ class CampMember extends Base{
                 return json(['code'=>100,'msg'=>'不存在该申请']);
             }
             $isPower = $this->CampService->isPower($campMemberInfo['camp_id'],$this->memberInfo['id']);
-
-            if($isPower<3){
+            if($isPower<2){
                 return json(['code'=>100,'msg'=>__lang('MSG_403')]);
+            }
+            if ($campMemberInfo['status'] != 0) {
+                return json(['code' => 100, 'msg' => '该申请已操作，无须重复操作']);
             }
 
             $result = db('camp_member')->where(['id'=>$id])->update(['status'=>$status, 'update_time' => time()]);
@@ -483,24 +485,25 @@ class CampMember extends Base{
         try {
             $map = input('param.');
             $keyword = input('param.keyword');
-            if ( !empty($keyword) && $keyword != ' ' && $keyword != '' ) {
-                $map['member'] = ['like', "%$keyword%"];
+            if ( !empty($keyword) && $keyword != "" && $keyword != " " ) {
+                $where['member.member'] = ['like', "%$keyword%"];
                 unset($map['keyword']);
             }
             if ( isset($map['page']) ) {
                 unset($map['page']);
             }
             $page = input('param.page', 1);
-
-
+            $where['camp_member.camp_id'] = $map['camp_id'];
+            $where['camp_member.type'] = 3;
+            $where['camp_member.status'] = $map['status'];
             $list = Db::view('camp_member', ['id'=>'campmemberid','camp_id', 'member_id', 'status'])
-                ->view('member', ['id','member', 'sex', 'avatar','province', 'city', 'area'], 'camp_member.member_id=member.id', 'LEFT')
-                ->where([ 'camp_member.camp_id' => $map['camp_id'], 'camp_member.type' => 3, 'camp_member.status' => $map['status'] ])
+                ->view('member', ['id','member','sex', 'avatar','province', 'city', 'area'], 'camp_member.member_id=member.id', 'LEFT')
+                ->where($where)
                 ->page($page, 10)
-                //->fetchSql(true)
+//                ->fetchSql(true)
                 ->select();
 
-            //dump($list);
+//            dump($list);
             if (empty($list)) {
                 return json(['code' => 200, 'msg' => __lang('MSG_000'), 'data'=>[]]);
             } else {

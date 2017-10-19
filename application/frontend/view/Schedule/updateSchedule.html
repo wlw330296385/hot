@@ -428,14 +428,6 @@
         });
     })(mui, document);
 
-    //更新序号函数
-    function changeIndex() {
-        var i = 1;
-        $(".checkboxCont").each(function () { //循环checkboxCont
-            $(this).find("label").text(i++);//更新序号
-        });
-    }
-
     //弹出框滚动必须写在mui专用的初始化
     (function ($) {
         $(".mui-scroll-wrapper").scroll({
@@ -447,6 +439,14 @@
             mui(".mui-popover.mui-active").popover("toggle");
         })
     })(mui);
+
+    //更新学员序号
+    function changeIndex() {
+        var i = 1;
+        $(".checkboxCont").each(function () { //循环checkboxCont
+            $(this).find("label").text(i++);//更新序号
+        });
+    }
 
     $(function () {
 
@@ -478,54 +478,51 @@
             $(".trainLocationCont").text(trainLocation);
             mui("#trainLocation").popover("toggle");
         })
-        // 主教练
-        var mainCoachCont = '';
-        var assistantCoachCont = '';
-        var mainCoachContAction = $("input[name=coach_id]").val();
-        var assistantCoachContAction = $("input[name='assistant_ids']").val();
 
+        // 主教练
         $(".mainCoach").on('click', 'li', function () {
             var mainCoach = $(this).text();
             var id = $(this).attr('data-id');
-            mainCoachCont = $(this).attr('data-id');
+            var mainCoachCont = $(this).attr('data-id');
             $(".coach_id").val(id);
-            console.log(mainCoachCont)
-            // 判断主教主教不能为同一人
-            if ((assistantCoachCont||assistantCoachContAction).indexOf(mainCoachCont)>=0){
-                mui.alert("主教和助教不能是同一人");
-                return;
-            }else {
-                $(".mainCoachCont").val(mainCoach);
-            }
-           mui("#mainCoach").popover("toggle");
+
+            //主教助教重复判断 
+            var assistantid = $("input[name='assistant_ids']").val();
+            var assistantArray=assistantid.split(',');
+            for(var i=0; i<assistantArray.length; i++){ 
+                if(assistantArray[i] == mainCoachCont) {
+                    mui.alert("主教和助教不能为同一人");
+                    return;
+                } else {
+                    $(".mainCoachCont").val(mainCoach);
+                }
+            } 
+
+            mui("#mainCoach").popover("toggle");
         })
 
         // 助理教练
         $("#assistantConfirm").click(function () {
-
             // 取id值的集合
             $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function () {
                 return $(this).attr('data-id');
             }).get().join(","));
 
-            assistantCoachCont = $("input[name='assistant_ids']").val();
-            console.log(assistantCoachCont)
+            //主教助教重复判断
+            var coachid = $("input[name='coach_id']").val();
+            var assistantid = $("input[name='assistant_ids']").val();
+            var assistantArray=assistantid.split(',');
+            for(var i=0; i<assistantArray.length; i++){ 
+                if(assistantArray[i] == coachid) {
+                    mui.alert("主教和助教不能为同一人");
+                    return;
+                } else {
+                    $(".assistantCoachCont").val($("input[name='checkbox-assistant']:checked").map(function () {
+                        return $(this).val();
+                    }).get().join(","));
+                }
+            } 
 
-            // 判断主教主教不能为同一人
-            if(assistantCoachCont.indexOf(mainCoachCont||mainCoachContAction)>=0){
-                mui.alert("主教和助教不能是同一人");
-                return;
-            }else{
-                // 取text值得集合
-                $(".assistantCoachCont").val($("input[name='checkbox-assistant']:checked").map(function () {
-                    return $(this).val();
-                }).get().join(","));
-
-                // 取id值的集合
-                $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function () {
-                    return $(this).attr('data-id');
-                }).get().join(","));
-            }
             mui('#assistantCoach').popover('toggle');
         })
 
@@ -545,12 +542,6 @@
             $(".leader_id").val(id);
             mui("#leader").popover("toggle");
         })
-        // 训练项目
-        // $(".plan").click(function () {
-        //     var plan = $(this).text();
-        //     $(".planCont").text(plan);
-        //     mui("#plan").popover("toggle");
-        // })
 
         //检测输入是否为数字
         $(".checkNum").blur(function () {
@@ -591,6 +582,7 @@
             //然后遍历出对应所选
             var str = $("input[name='assistant_ids']").val();
             var s=str.split(',')
+            console.log(s.length)
             for(var i = 0;i<s.length;i++){
                 $("input[name='checkbox-assistant']").filter(function (index) {
                     return $(this).attr("data-id") == s[i]
@@ -607,8 +599,6 @@
            totalNum = $(".checkboxCont").length;
            $(".mui-badge").text(totalNum);
         });
-
-
 
         $("#studentConfirm").on('click',function(){
             //插入学员列表html
@@ -817,7 +807,7 @@
        });
     })
 
-
+        
     //获取学员列表
     var toScheduleList = function () {
         var lesson_id = "{$scheduleInfo.lesson_id}";
