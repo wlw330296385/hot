@@ -41,7 +41,7 @@ class BillService {
     // 获取订单列表
     public function getBillListByPage($map,$paginate = 10){
         $result = $this->Bill->where($map)->paginate($paginate);
-        
+
         if($result){
             $res = $result->toArray();
             return $res;
@@ -248,11 +248,11 @@ class BillService {
                         if($billInfo['status']!= -1){
                             return ['code'=>100,'msg'=>'该订单状态不支持该操作'];
                         }   
-                        $isPower = $this->isPower($billInfo['camp_id'],$memberInfo['id']);
+                        $isPower = $this->isPower($billInfo['camp_id'],session('memberInfo.id'));
                         if($isPower<3){
                             return ['code'=>100,'msg'=>'您没有这个权限'];
                         }
-                        if($billInfo['goods_type'] == 1){
+                        if($billInfo['goods_type'] == '课程'){
                             // 查询剩余课时
                             $grade_member = db('grade_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1])->find();
                             if(!$grade_member || $grade_member['rest_schedule']<1){
@@ -261,6 +261,32 @@ class BillService {
                             $updateData = ['refundamount'=>$grade_member['rest_schedule']*$billInfo['price'],'status'=>-2];
                         }
                         $result = $this->Bill->save($updateData,$map);
+                        // dump($this->Bill->getId());die;
+                        if($result){
+                            //发送信息给用户
+                            $MessageData = [
+                                "touser" => session('memberInfo.openid'),
+                                "template_id" => config('wxTemplateID.successCheck'),
+                                "url" => url('frontend/bill/billInfo',['bill_id'=>$billInfo['id']],'',true),
+                                "topcolor"=>"#FF0000",
+                                "data" => [
+                                    'first' => ['value' => "{$billInfo['goods']}退款申请已被同意"],
+                                    'keyword1' => ['value' => '您的退款申请已被同意'],
+                                    'keyword2' => ['value' => date('Y-m-d H:i:s',time())],
+                                    'remark' => ['value' => '退款完成需要2-3个工作日到账,如有疑问,请联系客服']
+                                ]
+                            ];
+                            $saveData = [
+                                            'title'=>"{$billInfo['goods']}退款申请已被同意",
+                                            'content'=>"订单号: {$billInfo['bill_order']}<br/>支付金额: {$billInfo['balance_pay']}元<br/>支付信息:{$billInfo['student']}",
+                                            'url'=>url('frontend/bill/billInfo',['bill_id'=>$billInfo['id']],'',true),
+                                            'member_id'=>$data['member_id']
+                                        ];
+
+                            $MessageService->sendMessageMember($billInfo['member_id'],$MessageData,$saveData); 
+
+
+                        }
                     break;
             //其他   
                 default:

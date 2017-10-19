@@ -114,24 +114,28 @@
     mui("body").on("tap","a",function(){
         window.top.location.href=this.href;
     });
-
+    var postData = {};
+    var campID = wooApi.GetQueryString('camp_id');
+    var member_id = wooApi.GetQueryString('member_id');
+    var toUrl ;
+    if(campID){
+        postData.camp_id = campID;
+        toUrl = "{:url('bill/billInfoOfCamp')}"
+    }
+    if(member_id){
+        postData.member_id = member_id;
+        toUrl = "{:url('bill/billInfo')}";
+    }
 
     $(function () {
-        var postData = {};
+
         //console.log(postData);
         //初始化全局变量
         var Count1 = 1;
         var Count0 = 1;
         var Count01 = 1;
         var Count02 = 1;
-        var campID = wooApi.GetQueryString('camp_id');
-        var member_id = wooApi.GetQueryString('member_id');
-        if(campID){
-            postData.camp_id = campID;
-        }
-        if(member_id){
-            postData.member_id = member_id;
-        }
+
         //console.log(postData);
         //已付款订单
         mui('#bill1').pullRefresh({
@@ -319,7 +323,7 @@
                 var newli='';
                 if (data.code == 200) {
                     for(var i=0;i<=data.data.data.length-1;i++){
-                        var urls = "{:url('bill/billInfo')}" + '/bill_id/' + data.data.data[i].id;
+                        var urls = toUrl+ '/bill_id/' + data.data.data[i].id;
                         newli +=  '<li class="mui-table-view-cell listli"><a href="'+urls+'"><ul class="mui-row table  item-list"><li class="mui-col-sm-10 mui-col-xs-10"><div class="list-cont1">' + data.data.data[i].goods_des + '<p>' + data.data.data[i].create_time + '</p></div></li><li class="mui-col-sm-2 mui-col-xs-2">' + data.data.data[i].balance_pay + '</li></ul></a></li>';
                     }
                     $('#count-'+wList).text(data.data.total);
