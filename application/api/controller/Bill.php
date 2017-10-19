@@ -16,7 +16,7 @@ class Bill extends Frontend{
         try{
             $map = input('post.');
             $page = input('param.page')?input('param.page'):1;
-            $result = $this->BillService->getBillList($map,$page);
+            
             $balancePay = input('param.balancePay');
             if($balancePay == 1){
                 $map['balance_pay'] = ['gt',0];
@@ -25,6 +25,7 @@ class Bill extends Frontend{
                 $map['balance_pay'] = 0;
             }
             $result['count'] = count($result);
+            $result = $this->BillService->getBillList($map,$page);
             return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -42,7 +43,8 @@ class Bill extends Frontend{
             if($balancePay == -1){
                 $map['balance_pay'] = 0;
             }
-            $map['member_id'] = $this->memberInfo['id'];
+            // $map['member_id'] = $this->memberInfo['id'];
+
             $result = $this->BillService->getBillListByPage($map);
             return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
         }catch (Exception $e){

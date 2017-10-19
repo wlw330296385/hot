@@ -7,6 +7,8 @@ use app\model\ScheduleMember;
 use think\Db;
 use app\common\validate\ScheduleVal;
 use app\common\validate\ScheduleCommentVal;
+use think\helper\Time;
+
 class ScheduleService
 {
 
@@ -233,10 +235,17 @@ class ScheduleService
     }
 
     // 统计课时数量
-    public function countSchedules($map)
-    {
-        $result = $this->scheduleModel->where($map)->count();
-        return $result ? $result : 0;
+    public function countSchedules($camp_id) {
+        $model = new Schedule();
+        $count = [];
+        $map['camp_id'] = $camp_id;
+        $monthcount = $model->where($map)
+            ->whereTime('lesson_time', 'month')->count();
+        $yearcount = $model->where($map)
+            ->whereTime('lesson_time', 'year')->count();
+        $sumcount = $model->where($map)->count();
+        $count = ['month' => $monthcount, 'year' => $yearcount, 'sum' => $sumcount];
+        return $count;
     }
 
     // 获得课时评论

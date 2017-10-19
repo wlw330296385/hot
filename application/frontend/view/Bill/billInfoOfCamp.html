@@ -19,7 +19,7 @@
 
 <body class=whitebg>
 <header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回订单列表</span></a>
+    <a class=" mui-icon mui-icon-left-nav mui-pull-left arrow" href="{:url('frontend/bill/billList',['camp_id'=>$billInfo['camp_id']])}"><span class="return">返回订单列表</span></a>
 </header>
 <div class="mui-content">
 
@@ -33,9 +33,10 @@
 
                     </div>
                     <div class="price-frame"><p>{$billInfo['is_pay']}</p>
-                        <span>合计：<font class="colororange">￥0.00</font></span>
+                        <span>合计：<font class="colororange">￥{$billInfo.balance_pay}</font></span>
                         <p class="nump">订单ID:{$billInfo.bill_order}</p>
                     </div>
+
                 </a>
             </li>
         </ul>
@@ -51,7 +52,7 @@
             <li class="mui-table-view-cell listli">人数范围<span>{$lessonInfo.min}-{$lessonInfo.max}人</span></li>
             <li class="mui-table-view-cell listli">主教练<span>{$lessonInfo.coach}</span></li>
             
-            <li class="mui-table-view-cell listli">助理教练<span>{$lessonInfo.assistant}</span></li>
+            <li class="mui-table-view-cell listli">助理教练<span>{$lessonInfo.assistants}</span></li>
             <li class="mui-table-view-cell listli">领队<span>{$lessonInfo.leader}</span></li>
             <li class="mui-table-view-cell listli">班主任<span>{$lessonInfo.teacher}</span></li>
             <li class="mui-table-view-cell listli">备注<span>{$billInfo.remarks}</span></li>
@@ -60,31 +61,66 @@
         <div class="page-header">
             <span class="course"><strong>个人信息</strong></span>
         </div>
-        <ul class="mui-table-view list detalis-list">
+        <ul class="mui-table-view list detalis-list mt55">
             <li class="mui-table-view-cell listli">学员姓名<span>{$studentInfo.student}</span></li>
             <li class="mui-table-view-cell listli">家长姓名<span>{$studentInfo.parent}</span></li>
             <li class="mui-table-view-cell listli">手机号码<span class="width">{$studentInfo.emergency_telephone}</span></li>
         </ul>
 
-        {eq name="$billInfo['is_pay']" value="未付款"}
-        
-        {gt name="power" value="2"}
-            <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%">
+        {gt name="power" value="2"}       
+        <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%">
+        {switch name="$billInfo['status']" }
+        {case value="0" }
                 <a href="{:url('bill/updateBillInfoOfCamp',['bill_id'=>$billInfo['id']])}">
                     <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff">修改</li>
                 </a>
-            </ul>
-        {/gt}
-        {/eq}
+
+        {/case}
+        {case value="1" }
+        
+                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff">已付款</li>
+
+        {/case}
+        {case value="-1" }
+        
+                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" id="agreeRefund">同意退款</li>
+            
+        
+        {/case}   
+        {case value="-2" }
+        
+                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff">已退款<span><b class="">￥{$billInfo.refundamount}</b>元</span></li>
+            
+        
+        {/case} 
+        {/switch}
+    </ul>
+    {/gt}
     </div>
 
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+    $(function(){
+        $('#agreeRefund').on('click',function(){
+            result = wooApi.asyncF("{:url('api/bill/updateBillApi',['bill_id'=>$billInfo['id']])}",{action:3});
+            if(result.code == 200){
+                 mui.alert('',result.msg,'确定',function(){
+                    location.reload();
+                 });
+            }else{
+                mui.alert(result.msg);
+            }
+        })
+    })
+
 </script>
 </html>

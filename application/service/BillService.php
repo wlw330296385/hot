@@ -41,7 +41,7 @@ class BillService {
     // 获取订单列表
     public function getBillListByPage($map,$paginate = 10){
         $result = $this->Bill->where($map)->paginate($paginate);
-        
+
         if($result){
             $res = $result->toArray();
             return $res;
@@ -66,16 +66,29 @@ class BillService {
 
         if(!$is_student2){
         // 添加一条学生数据
-            $re = $GradeMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'type'=>$data['type'],'avatar'=>$data['avatar']]);
-            if(!$re){
-                db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
+            if($data['balance_pay']>0){
+                $re = $GradeMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'type'=>$data['type'],'avatar'=>$data['avatar']]);
+                if(!$re){
+                    db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
+                }
+            }else{
+                // 体验课学生课量为0
+               $re = $GradeMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>0,'type'=>$data['type'],'avatar'=>$data['avatar']]);
+                if(!$re){
+                    db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
+                } 
             }
+            
         }else{
-        // 课量增加
-            $re = $GradeMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->setInc('rest_schedule',$data['total']);
-            if(!$re){
-                db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
+            // 课量增加
+            // 只有正式学生课量增加,并且状态强制改为正式学生
+            if($data['balance_pay']>0){
+                $re = $GradeMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->setInc('rest_schedule',$data['total']);
+                if(!$re){
+                    db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
+                }
             }
+            
         }
         $result = $this->Bill->save($data);
         if($result){
@@ -110,7 +123,7 @@ class BillService {
                     $MessageCampData = [
                         "touser" => '',
                         "template_id" => config('wxTemplateID.successBill'),
-                        "url" => url('frontend/bill/billInfo',['bill_id'=>$this->Bill->id],'',true),
+                        "url" => url('frontend/bill/billInfoOfCamp',['bill_id'=>$this->Bill->id],'',true),
                         "topcolor"=>"#FF0000",
                         "data" => [
                             'first' => ['value' => '体验课预约申请成功'],
@@ -131,7 +144,7 @@ class BillService {
                     $MessageCampData = [
                         "touser" => '',
                         "template_id" => config('wxTemplateID.successBill'),
-                        "url" => url('frontend/bill/billInfo',['bill_id'=>$this->Bill->id],'',true),
+                        "url" => url('frontend/bill/billInfoOfCamp',['bill_id'=>$this->Bill->id],'',true),
                         "topcolor"=>"#FF0000",
                         "data" => [
                             'first' => ['value' => '订单支付成功通知'],
@@ -210,7 +223,7 @@ class BillService {
                         $MessageCampData = [
                             "touser" => '',
                             "template_id" => config('wxTemplateID.successRefund'),
-                            "url" => url('frontend/bill/billInfo',$map,'',true),
+                            "url" => url('frontend/bill/billInfoOfCamp',$map,'',true),
                             "topcolor"=>"#FF0000",
                             "data" => [
                                 'first' => ['value' => '['.$billInfo['goods'].']收到一笔申请退款'],
@@ -248,19 +261,66 @@ class BillService {
                         if($billInfo['status']!= -1){
                             return ['code'=>100,'msg'=>'该订单状态不支持该操作'];
                         }   
-                        $isPower = $this->isPower($billInfo['camp_id'],$memberInfo['id']);
+                        $isPower = $this->isPower($billInfo['camp_id'],session('memberInfo.id'));
                         if($isPower<3){
                             return ['code'=>100,'msg'=>'您没有这个权限'];
                         }
-                        if($billInfo['goods_type'] == 1){
+                        if($billInfo['goods_type'] == '课程'){
                             // 查询剩余课时
-                            $grade_member = db('grade_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1])->find();
+                            $grade_member = db('grade_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->find();
                             if(!$grade_member || $grade_member['rest_schedule']<1){
                                 return ['code'=>100,'msg'=>'该学生已上完课,不允许退款'];
                             }
-                            $updateData = ['refundamount'=>$grade_member['rest_schedule']*$billInfo['price'],'status'=>-2];
+                            $refundTotal = ($grade_member['rest_schedule']<$billInfo['total'])?$grade_member['rest_schedule']:$billInfo['total'];
+
+
+                            $updateData = [
+                                'refundamount'=>($refundTotal*$billInfo['price']),
+                                'status'=>-2,
+                                'remarks' => "您的剩余课时为{$grade_member['rest_schedule']}, 您的订单总数量为{$billInfo['total']},因此退您{$refundTotal}节课的钱"
+                            ]; 
+                            $result = $this->Bill->save($updateData,$map);
+                            if($result){
+                                // 剩余课时的变化
+                                $rest_schedule = $grade_member['rest_schedule']-$refundTotal;
+                                if($rest_schedule == 0){
+                                    db('grade_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule,'status'=>4]);
+                                }else{
+                                    db('grade_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule]);
+                                }
+                            }
+                        }else{
+                            // 其他订单
+
                         }
-                        $result = $this->Bill->save($updateData,$map);
+                       
+                        
+                        if($result){
+                            
+                            //发送信息给用户
+                            $MessageData = [
+                                "touser" => session('memberInfo.openid'),
+                                "template_id" => config('wxTemplateID.successCheck'),
+                                "url" => url('frontend/bill/billInfo',['bill_id'=>$billInfo['id']],'',true),
+                                "topcolor"=>"#FF0000",
+                                "data" => [
+                                    'first' => ['value' => "{$billInfo['goods']}退款申请已被同意"],
+                                    'keyword1' => ['value' => '您的退款申请已被同意'],
+                                    'keyword2' => ['value' => date('Y-m-d H:i:s',time())],
+                                    'remark' => ['value' => '退款完成需要2-3个工作日到账,如有疑问,请联系客服']
+                                ]
+                            ];
+                            $saveData = [
+                                            'title'=>"{$billInfo['goods']}退款申请已被同意",
+                                            'content'=>"订单号: {$billInfo['bill_order']}<br/>支付金额: {$billInfo['balance_pay']}元<br/>支付信息:{$billInfo['student']}",
+                                            'url'=>url('frontend/bill/billInfo',['bill_id'=>$billInfo['id']],'',true),
+                                            'member_id'=>$data['member_id']
+                                        ];
+
+                            $MessageService->sendMessageMember($billInfo['member_id'],$MessageData,$saveData); 
+
+
+                        }
                     break;
             //其他   
                 default:

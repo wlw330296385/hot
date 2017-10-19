@@ -48,8 +48,8 @@
             <ul class="mui-table-view list detalis-list mb">
                 <li class="mui-table-view-cell listli">订单号<span class="bill_order">{$billInfo.bill_order}</span></li>
                 <li class="mui-table-view-cell listli">订单日期<span>{$billInfo.create_time}</span></li>
-                <li class="mui-table-view-cell listli">支付人<span></span></li>
-                <li class="mui-table-view-cell listli">交易金额<span></span></li>
+                <li class="mui-table-view-cell listli">支付人<span>{$billInfo.member}</span></li>
+                <li class="mui-table-view-cell listli">交易金额<span>{$billInfo.balance_pay}</span></li>
                 <li class="mui-table-view-cell listli">支付方式<span>{$billInfo.pay_type}</span></li>
             </ul>
 
@@ -129,7 +129,7 @@
             mui.toast("请填写退款理由");
             return false;
         }
-        mui.ajax("{:url('api/bill/updateBillApi',['bill_id'=>$billInfo['id']])}",{
+        mui.ajax("{:url('api/bill/updateBillApi',['bill_id'=>$billInfo['id'],'member_id'=>$memberInfo['id']])}",{
             data:{
                 "remarks":remarks,
                 'action':1,

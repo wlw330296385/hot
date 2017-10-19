@@ -28,18 +28,11 @@ class Schedule extends Base
     	$map = $map?$map:[];
     	$camp_id = input('camp_id');
     	$scheduleList = $this->scheduleService->getscheduleList($map);
-    	$start_time = mktime(0,0,0,date('m',time()),1,date('Y',time()));
-    	$end_time = time();
-    	// 本年课量
 
-    	// 本月课量
-    	$scheduleOfMonth = $this->scheduleService->countSchedules([]);
-    	//总课量
-    	$myCount = 1;
-    	$scheduleListCount = count('$scheduleList');
-    	$this->assign('myCount',$myCount);
+        // 课时统计
+        $scheduleCount = $this->scheduleService->countSchedules($camp_id);
+    	$this->assign('scheduleCount',$scheduleCount);
   		$this->assign('scheduleList',$scheduleList);
-  		$this->assign('scheduleListCount',$scheduleListCount);
   		$this->assign('camp_id', $camp_id);
 		return view('Schedule/scheduleList');
     }
