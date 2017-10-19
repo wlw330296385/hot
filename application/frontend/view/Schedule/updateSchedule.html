@@ -94,7 +94,7 @@
                     <div class="mui-input-row h-auto">
                         <a class="portraits filePicker" onclick="add_id(3)">
                             <label>上传合照</label>
-                            <img id="preview_3" class="coachicon icon01">
+                            <img id="preview_3" src="{$scheduleInfo.cover}">
                             <input type="hidden" class="cover" name="portraits" value="">
                         </a>
                     </div>
@@ -105,9 +105,12 @@
                         <div class="mui-input-row">
                             <label>学员名单</label>
                         </div>
+                        {foreach name="studentList" item="vol"}
+                        <div class="mui-input-row mui-checkbox checkboxCont"><label class="number">{$key+1}</label><font>{$vol.student}</font><input name="student" value="{$vol.student_id}" type="checkbox"></div>
+                        {/foreach}
                     </div>
                     <div class="operation-btn">
-                        <span class="mui-badge">0</span>
+                        <span class="mui-badge">{$scheduleInfo.students}</span>
                         <a class="all">全选</a>
                         <a class="cancel">取消</a>
                         <a class="del">[删除]</a>
@@ -386,6 +389,12 @@
             var cityPicker3 = new $.PopPicker({
                 layer: 3
             });
+
+            // 设置默认值
+            cityPicker3.pickers[0].setSelectedIndex(18);
+            cityPicker3.pickers[1].setSelectedIndex(2);
+            cityPicker3.pickers[2].setSelectedIndex(2);
+            
             cityPicker3.setData(cityData3);
             var showCityPickerButton = doc.getElementById('showCityPicker3');
             var cityResult3 = doc.getElementById('cityResult3');
@@ -482,12 +491,12 @@
             $(".coach_id").val(id);
             console.log(mainCoachCont)
             // 判断主教主教不能为同一人
-            if((assistantCoachCont||assistantCoachContAction).indexOf(mainCoachCont)>=0){
+            if ((assistantCoachCont||assistantCoachContAction).indexOf(mainCoachCont)>=0){
                 mui.alert("主教和助教不能是同一人");
                 return;
-            }else{
-               $(".mainCoachCont").val(mainCoach);
-           }
+            }else {
+                $(".mainCoachCont").val(mainCoach);
+            }
            mui("#mainCoach").popover("toggle");
         })
 
@@ -498,8 +507,9 @@
             $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function () {
                 return $(this).attr('data-id');
             }).get().join(","));
-            
+
             assistantCoachCont = $("input[name='assistant_ids']").val();
+            console.log(assistantCoachCont)
 
             // 判断主教主教不能为同一人
             if(assistantCoachCont.indexOf(mainCoachCont||mainCoachContAction)>=0){
@@ -510,8 +520,12 @@
                 $(".assistantCoachCont").val($("input[name='checkbox-assistant']:checked").map(function () {
                     return $(this).val();
                 }).get().join(","));
+
+                // 取id值的集合
+                $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function () {
+                    return $(this).attr('data-id');
+                }).get().join(","));
             }
-            
             mui('#assistantCoach').popover('toggle');
         })
 
@@ -592,7 +606,9 @@
         $(document).on( 'click', '.del', function() {
            totalNum = $(".checkboxCont").length;
            $(".mui-badge").text(totalNum);
-       });
+        });
+
+
 
         $("#studentConfirm").on('click',function(){
             //插入学员列表html
@@ -603,6 +619,7 @@
             $("input[name='student']").val($("input[name='checkbox-student']:checked").map(function () {
                 return $(this).val()
             }).get().join(","));
+            $(".box").empty();
             $(".box").append(str);//在增删按钮前加一行
 
             //学员列表数组
@@ -622,7 +639,6 @@
 
             str = '';
         })
-
 
 
         //获取学员列表
