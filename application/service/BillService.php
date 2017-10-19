@@ -110,7 +110,7 @@ class BillService {
                     $MessageCampData = [
                         "touser" => '',
                         "template_id" => config('wxTemplateID.successBill'),
-                        "url" => url('frontend/bill/billInfo',['bill_id'=>$this->Bill->id],'',true),
+                        "url" => url('frontend/bill/billInfoOfCamp',['bill_id'=>$this->Bill->id],'',true),
                         "topcolor"=>"#FF0000",
                         "data" => [
                             'first' => ['value' => '体验课预约申请成功'],
@@ -131,7 +131,7 @@ class BillService {
                     $MessageCampData = [
                         "touser" => '',
                         "template_id" => config('wxTemplateID.successBill'),
-                        "url" => url('frontend/bill/billInfo',['bill_id'=>$this->Bill->id],'',true),
+                        "url" => url('frontend/bill/billInfoOfCamp',['bill_id'=>$this->Bill->id],'',true),
                         "topcolor"=>"#FF0000",
                         "data" => [
                             'first' => ['value' => '订单支付成功通知'],
@@ -210,7 +210,7 @@ class BillService {
                         $MessageCampData = [
                             "touser" => '',
                             "template_id" => config('wxTemplateID.successRefund'),
-                            "url" => url('frontend/bill/billInfo',$map,'',true),
+                            "url" => url('frontend/bill/billInfoOfCamp',$map,'',true),
                             "topcolor"=>"#FF0000",
                             "data" => [
                                 'first' => ['value' => '['.$billInfo['goods'].']收到一笔申请退款'],
