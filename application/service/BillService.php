@@ -81,7 +81,7 @@ class BillService {
             
         }else{
             // 课量增加
-            // 只有正式学生课量增加
+            // 只有正式学生课量增加,并且状态强制改为正式学生
             if($data['balance_pay']>0){
                 $re = $GradeMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->setInc('rest_schedule',$data['total']);
                 if(!$re){
@@ -271,11 +271,32 @@ class BillService {
                             if(!$grade_member || $grade_member['rest_schedule']<1){
                                 return ['code'=>100,'msg'=>'该学生已上完课,不允许退款'];
                             }
-                            $updateData = ['refundamount'=>$grade_member['rest_schedule']*$billInfo['price'],'status'=>-2];
+                            $refundTotal = ($grade_member['rest_schedule']<$billInfo['total'])?$grade_member['rest_schedule']:$billInfo['total'];
+
+
+                            $updateData = [
+                                'refundamount'=>($refundTotal*$billInfo['price']),
+                                'status'=>-2,
+                                'remarks' => "您的剩余课时为{$grade_member['rest_schedule']}, 您的订单总数量为{$billInfo['total']},因此退您{$refundTotal}节课的钱"
+                            ]; 
+                            $result = $this->Bill->save($updateData,$map);
+                            if($result){
+                                // 剩余课时的变化
+                                $rest_schedule = $grade_member['rest_schedule']-$refundTotal;
+                                if($rest_schedule == 0){
+                                    db('grade_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule,'status'=>4]);
+                                }else{
+                                    db('grade_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule]);
+                                }
+                            }
+                        }else{
+                            // 其他订单
+
                         }
-                        $result = $this->Bill->save($updateData,$map);
-                        // dump($this->Bill->getId());die;
+                       
+                        
                         if($result){
+                            
                             //发送信息给用户
                             $MessageData = [
                                 "touser" => session('memberInfo.openid'),
