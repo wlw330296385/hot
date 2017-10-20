@@ -127,7 +127,37 @@
                     }
                 });
             }
-        })
+        });
+
+        $(".systemMsg").on("tap",'.mui-navigate-right', function () {
+            var msgID = $(this).attr("msg_id");
+            var msgStatus = $(this).attr("msg_status");
+            var msgTap = $(this);
+            if(msgStatus==1){
+                var apiurl = "{:url('api/message/setMessageStatus')}";
+                mui.ajax(apiurl, {
+                    data: {
+                        message_id: msgID,
+                        status: 2
+                    },
+                    dataType: 'json',
+                    type: 'post',
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        //console.log(data);
+                        if (data.code == 200) {
+                            msgTap.find(".coloricon").html($("#coloricon").html());
+                            msgTap.attr("msg_status","2");
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errotThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                    }
+                });
+            }
+        });
 
         //初始化全局变量
         var onCount = 1;
@@ -279,8 +309,8 @@
 
                 var newli = '';
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        newli += '<li class="mui-table-view-cell mui-collapse listli"><a class="mui-navigate-right" msg_status="'+data.data.data[i].status+'" msg_id="'+data.data.data[i].id+'" href="#"><svg class="coloricon" aria-hidden="true"><use xlink:href="#icon-m-Notice'+data.data.data[i].status+'"></use></svg><p>'+data.data.data[i].title+'</p><p>'+data.data.data[i].create_time+'</p></a><div class="mui-collapse-content"><a href="'+data.data.data[i].url+'"><p>'+data.data.data[i].content+'</p></a></div></li>';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        newli += '<li class="mui-table-view-cell mui-collapse listli"><a class="mui-navigate-right" msg_status="'+data.data[i].isread+'" msg_id="'+data.data[i].id+'" href="#"><svg class="coloricon" aria-hidden="true"><use xlink:href="#icon-m-Notice'+data.data[i].isread+'"></use></svg><p>'+data.data[i].title+'</p><p>'+data.data[i].create_time+'</p></a><div class="mui-collapse-content"><a href="'+data.data[i].url+'"><p>'+data.data[i].content+'</p></a></div></li>';
                     }
                 }
                 if (gType == 1) {

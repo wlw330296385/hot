@@ -24,11 +24,13 @@ class Message extends Base{
         }
     }
 
-    // 获取系统消息列表带page
+    // 获取系统消息列表
     public function getMessageListByPageApi(){
         try{
             $status = input('param.status');
-            $messageList = $this->MessageService->getMessageListByPage(['status'=>$status]);
+            $page = input('param.page', 1);
+            $map['member_id'] = $this->memberInfo['id'];
+            $messageList = $this->MessageService->getMessageList($map, $page);
             if($messageList){
                 return json(['code'=>200,'msg'=>'OK','data'=>$messageList]);
             }else{
@@ -92,7 +94,7 @@ class Message extends Base{
     }
 
     // 设置消息状态
-    public function setMessageMemberStatus(){
+    public function setMessageMemberStatusApi(){
         try{
             $message_id = input('param.message_id');
             $status = input('param.status');
@@ -103,6 +105,22 @@ class Message extends Base{
                 return json(['code'=>100,'msg'=>'没有这条消息']);
             }
             
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMassege()]);
+        }
+    }
+
+    public function setMessageStatus(){
+        try{
+            $message_id = input('param.message_id');
+            $status = input('param.status');
+            $result = db('message_read')->where(['id'=>$message_id,'member_id'=>$this->memberInfo['id']])->update(['isread'=>$status, 'update_time' => time()]);
+            if($result){
+                return json(['code'=>200,'msg'=>'设置成功']);
+            }else{
+                return json(['code'=>100,'msg'=>'没有这条消息']);
+            }
+
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMassege()]);
         }
