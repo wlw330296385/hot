@@ -511,26 +511,40 @@
             $(".trainLocationCont").text(trainLocation);
             mui("#trainLocation").popover("toggle");
         })
+
+        // 判断所选助教是否存在
+        $(".coachAS").on('click','.mui-checkbox',function(){
+            var mainID = $(".coach_id").val();
+            var asID = $(this).find("input[name='checkbox-assistant']").attr('data-id');
+            var asName = $(this).find("input[name='checkbox-assistant']").val();
+            if(asID==mainID){
+                mui.alert(asName+"已是主教练，请不要重复选择！");
+                $(this).find("input[name='checkbox-assistant']").prop("checked",false);
+                return;
+            }
+        })
+
         // 主教练
-        $(".mainCoach").on('click', 'li', function () {
+        $(".mainCoach").on('click','li',function(){
             var mainCoach = $(this).text();
-            var id = $(this).attr('data-id');
-            var mainCoachCont = $(this).attr('data-id');
-            $(".coach_id").val(id);
-
-            //主教助教重复判断 
-            var assistantid = $("input[name='assistant_ids']").val();
-            var assistantArray=assistantid.split(',');
-            for(var i=0; i<assistantArray.length; i++){ 
-                if(assistantArray[i] == mainCoachCont) {
-                    mui.alert("主教和助教不能为同一人");
-                    return;
-                } else {
-                    $(".mainCoachCont").val(mainCoach);
+            var id= $(this).attr('data-id');
+            var asID = '';
+            var isStop='No'
+            /// 判断所选主教是否存在助教栏
+            $("#assistantCoach input[name='checkbox-assistant']:checked").each(function () {
+                asID = $(this).attr('data-id');
+                if(asID==id){
+                    mui.alert(mainCoach+"已是助教，请不要重复选择！");
+                    $(this).find("input[name='checkbox-assistant']").prop("checked",false);
+                    isStop='Yes';
+                    return false;
                 }
-            } 
-
-            mui("#mainCoach").popover("toggle");
+            });
+            if(isStop=='No') {
+                $(".mainCoachCont").text(mainCoach);
+                $(".coach_id").val(id);
+                mui("#mainCoach").popover("toggle");
+            }
         })
 
         // 助理教练
@@ -539,22 +553,9 @@
             $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function () {
                 return $(this).attr('data-id');
             }).get().join(","));
-
-            //主教助教重复判断
-            var coachid = $("input[name='coach_id']").val();
-            var assistantid = $("input[name='assistant_ids']").val();
-            var assistantArray=assistantid.split(',');
-            for(var i=0; i<assistantArray.length; i++){ 
-                if(assistantArray[i] == coachid) {
-                    mui.alert("主教和助教不能为同一人");
-                    return;
-                } else {
-                    $(".assistantCoachCont").val($("input[name='checkbox-assistant']:checked").map(function () {
-                        return $(this).val();
-                    }).get().join(","));
-                }
-            } 
-
+            $(".assistantCoachCont").val($("input[name='checkbox-assistant']:checked").map(function () {
+                return $(this).val();
+            }).get().join(","));
             mui('#assistantCoach').popover('toggle');
         })
         // 班主任
@@ -597,6 +598,7 @@
                 return false;
             }
         })
+
 
         // 复选框赋值
         $("#setAsCoach").on('tap','', function () {
