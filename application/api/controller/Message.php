@@ -28,9 +28,10 @@ class Message extends Base{
     public function getMessageListByPageApi(){
         try{
             $status = input('param.status');
-            $page = input('param.page', 1);
+            //$page = input('param.page', 1);
             $map['member_id'] = $this->memberInfo['id'];
-            $messageList = $this->MessageService->getMessageList($map, $page);
+//            $map = [];
+            $messageList = $this->MessageService->getMessageList($map);
             if($messageList){
                 return json(['code'=>200,'msg'=>'OK','data'=>$messageList]);
             }else{
@@ -114,7 +115,13 @@ class Message extends Base{
         try{
             $message_id = input('param.message_id');
             $status = input('param.status');
-            $result = db('message_read')->where(['id'=>$message_id,'member_id'=>$this->memberInfo['id']])->update(['isread'=>$status, 'update_time' => time()]);
+//             $result = db('message_read')->where(['id'=>$message_id,'member_id'=>$this->memberInfo['id']])->update(['isread'=>$status, 'update_time' => time()]);
+            $result = db('message_read')->insert([
+                'message_id' => $message_id,
+                'member_id' => $this->memberInfo['id'],
+                'isread' => 2,
+                'create_time' => time()
+            ]);
             if($result){
                 return json(['code'=>200,'msg'=>'设置成功']);
             }else{

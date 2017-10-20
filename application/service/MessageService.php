@@ -115,32 +115,22 @@ class MessageService
     }
 
     // 获取系统消息列表
-    public function getMessageList($map = [], $page)
+    public function getMessageList($map = [], $paginate = 10)
     {
-//		$result = $this->MessageModel
-//				->where($map)
-//				->whereOr(['is_system'=>1])
-//				->paginate($paginate);
-//		if($result){
-//			$res = $result->toArray();
-//			return $res;
-//		}else{
-//			return $result;
-//		}
-        $result = Db::view('message', ['id' => 'messageid', 'title', 'content', 'url', 'create_time'])
-            ->view('message_read', ['id', 'member_id', 'isread'], 'message_read.message_id=message.id','LEFT')
-            ->where($map)
-            //->fetchSql(true)
-            ->page($page, 10)
-            ->select();
-//        dump($result);
-        if ($result) {
-            foreach ($result as $key => $val) {
-                $result[$key]['create_time'] = date('Y-m-d H:i:s', $val['create_time']);
+		$result = Message::where(['status' => 1])->paginate($paginate);
+		if ($result) {
+		    $list= $result->toArray();
+		    foreach ($list['data'] as $key => $val) {
+		        $messageRead = db('message_read')->where(['message_id' => $val['id'], 'member_id' => $map['member_id'], 'isread' => 2])->find();
+		        if ($messageRead) {
+                    $list['data'][$key]['isread'] = 2;
+                } else {
+                    $list['data'][$key]['isread'] = 1;
+                }
             }
-            return $result;
+		    return $list;
         } else {
-            return $result;
+		    return $result;
         }
     }
 
