@@ -1,70 +1,81 @@
-<?php 
+<?php
+
 namespace app\service;
+
 use app\model\Message;
 use app\model\MessageMember;
 use app\common\validate\MessageVal;
-class MessageService{
-	private $MessageModel;	
-	private $MessageMemberModel;
-	public function __construct(){
-		$this->MessageModel = new Message;
-		$this->MessageMemberModel = new MessageMember;
-	}
-	// 获取Message
-	public function getMessageInfo($map){
-		$result = $this->MessageModel->where($map)->find();
-		if($result){
-			$res = $result->toArray();
-			return $res;
-		}else{
-			return $result;
-		}
-		
-		
-	}
+use think\Db;
 
-	//个人消息
-	public function getMessageMemberInfo($map){
-		$result = $this->MessageMemberModel->where($map)->find();
-		if($result){
-			$res = $result->toArray();
-			return $res;
-		}else{
-			return $result;
-		}
-		
-		
-	}
+class MessageService
+{
+    private $MessageModel;
+    private $MessageMemberModel;
+
+    public function __construct()
+    {
+        $this->MessageModel = new Message;
+        $this->MessageMemberModel = new MessageMember;
+    }
+
+    // 获取Message
+    public function getMessageInfo($map)
+    {
+        $result = $this->MessageModel->where($map)->find();
+        if ($result) {
+            $res = $result->toArray();
+            return $res;
+        } else {
+            return $result;
+        }
 
 
+    }
 
-	//获取个人消息列表
-	public function getMessageMemberList($map = [],$page = 1 ,$paginate=10){
-		$result = $this->MessageMemberModel
-				->where($map)
-				->page($page,$paginate)
-				->select();
-		if($result){
-			$res = $result->toArray();
-			return $res;
-		}else{
-			return $result;
-		}
-	}
+    //个人消息
+    public function getMessageMemberInfo($map)
+    {
+        $result = $this->MessageMemberModel->where($map)->find();
+        if ($result) {
+            $res = $result->toArray();
+            return $res;
+        } else {
+            return $result;
+        }
+
+
+    }
+
+
+    //获取个人消息列表
+    public function getMessageMemberList($map = [], $page = 1, $paginate = 10)
+    {
+        $result = $this->MessageMemberModel
+            ->where($map)
+            ->page($page, $paginate)
+            ->select();
+        if ($result) {
+            $res = $result->toArray();
+            return $res;
+        } else {
+            return $result;
+        }
+    }
 
 
     // 发送个人消息
-    public function sendMessageMember($member_id,$messageData,$saveData){
+    public function sendMessageMember($member_id, $messageData, $saveData)
+    {
 
         $res = $this->MessageMemberModel->save($saveData);
-        if($res){
+        if ($res) {
             $WechatService = new \app\service\WechatService();
             $result = $WechatService->sendTemplate($messageData);
-            if($result){
-                $logData = ['wxopenid'=>$messageData['touser'],'member_id'=>$saveData['member_id'],'status'=>1,'content'=>serialize($messageData)];
+            if ($result) {
+                $logData = ['wxopenid' => $messageData['touser'], 'member_id' => $saveData['member_id'], 'status' => 1, 'content' => serialize($messageData)];
                 $this->insertLog($logData);
-            }else{
-                $logData = ['wxopenid'=>$messageData['touser'],'member_id'=>$saveData['member_id'],'status'=>0,'content'=>serialize($messageData)];
+            } else {
+                $logData = ['wxopenid' => $messageData['touser'], 'member_id' => $saveData['member_id'], 'status' => 0, 'content' => serialize($messageData)];
                 $this->insertLog($logData);
             }
             return true;
@@ -73,22 +84,23 @@ class MessageService{
     }
 
     // 给训练营的营主|管理员发送消息
-    public function sendCampMessage($camp_id,$messageData,$saveData){
+    public function sendCampMessage($camp_id, $messageData, $saveData)
+    {
         $saveallData = [];
         // 获取训练营的营主openid
-        $memberIDs = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->where('type','egt',3)->column('member_id');
-        $memberList = db('member')->where('id','in',$memberIDs)->select();
+        $memberIDs = db('camp_member')->where(['camp_id' => $camp_id, 'status' => 1])->where('type', 'egt', 3)->column('member_id');
+        $memberList = db('member')->where('id', 'in', $memberIDs)->select();
         // 发送模板消息
         foreach ($memberList as $key => $value) {
-            if($value['openid']){
+            if ($value['openid']) {
                 $messageData['touser'] = $value['openid'];
                 $WechatService = new \app\service\WechatService();
                 $result = $WechatService->sendTemplate($messageData);
-                if($result){
-                    $logData = ['wxopenid'=>$value['openid'],'member_id'=>$value['id'],'status'=>1,'content'=>serialize($messageData)];
+                if ($result) {
+                    $logData = ['wxopenid' => $value['openid'], 'member_id' => $value['id'], 'status' => 1, 'content' => serialize($messageData)];
                     $this->insertLog($logData);
-                }else{
-                    $logData = ['wxopenid'=>$value['openid'],'member_id'=>$value['id'],'status'=>0,'content'=>serialize($messageData)];
+                } else {
+                    $logData = ['wxopenid' => $value['openid'], 'member_id' => $value['id'], 'status' => 0, 'content' => serialize($messageData)];
                     $this->insertLog($logData);
                 }
             }
@@ -96,92 +108,104 @@ class MessageService{
             $saveallData[$key]['member_id'] = $value['id'];
         }
         $res = $this->MessageMemberModel->saveAll($saveallData);
-        if($res){
+        if ($res) {
             return true;
         }
         return false;
     }
 
-	// 获取系统消息列表
-	public function getMessageListByPage($map = [] ,$paginate=10){
-		$result = $this->MessageModel
-				->where($map)
-				->whereOr(['is_system'=>1])
-				->paginate($paginate);
-		if($result){
-			$res = $result->toArray();
-			return $res;
-		}else{
-			return $result;
-		}
-	}
+    // 获取系统消息列表
+    public function getMessageList($map = [], $paginate = 10)
+    {
+		$result = Message::where(['status' => 1])->paginate($paginate);
+		if ($result) {
+		    $list= $result->toArray();
+		    foreach ($list['data'] as $key => $val) {
+		        $messageRead = db('message_read')->where(['message_id' => $val['id'], 'member_id' => $map['member_id'], 'isread' => 2])->find();
+		        if ($messageRead) {
+                    $list['data'][$key]['isread'] = 2;
+                } else {
+                    $list['data'][$key]['isread'] = 1;
+                }
+            }
+		    return $list;
+        } else {
+		    return $result;
+        }
+    }
 
     // 获取个人消息列表
-    public function getMessageMemberListByPage($map = [],$paginate=10){
+    public function getMessageMemberListByPage($map = [], $paginate = 10)
+    {
         $result = $this->MessageMemberModel
             ->where($map)
             ->paginate($paginate);
-        if($result){
+        if ($result) {
             $res = $result->toArray();
             return $res;
-        }else{
+        } else {
             return $result;
         }
     }
 
-	//修改系统Message资料
-	public function updateMessageInfo($data,$id){
-		$result = $this->MessageModel->save($data,['id'=>$id]);
-		
-		if($result ===false){
-			return ['msg'=>$this->MessageModel->getError(),'code'=>100];
-		}else{
-			return ['msg'=>__lang('MSG_200'),'code'=>200,'data'=>$result];
-		}	
-	}
+    //修改系统Message资料
+    public function updateMessageInfo($data, $id)
+    {
+        $result = $this->MessageModel->save($data, ['id' => $id]);
 
-	//新建系统Message
-	public function saveMessageInfo($data,$templateData){
-		$validate = validate('MessageVal');
-        if(!$validate->check($data)){
+        if ($result === false) {
+            return ['msg' => $this->MessageModel->getError(), 'code' => 100];
+        } else {
+            return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $result];
+        }
+    }
+
+    //新建系统Message
+    public function saveMessageInfo($data, $templateData)
+    {
+        $validate = validate('MessageVal');
+        if (!$validate->check($data)) {
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-		$result = $this->MessageModel->data($data)->save();
-		// 循环发送模板消息
+        $result = $this->MessageModel->data($data)->save();
+        // 循环发送模板消息
 
-		if($result ===false){
-			return ['msg'=>$this->MessageModel->getError(),'code'=>100];
-		}else{
-			return ['msg'=>__lang('MSG_200'),'code'=>200,'data'=>$result];
-		}	
-	}
+        if ($result === false) {
+            return ['msg' => $this->MessageModel->getError(), 'code' => 100];
+        } else {
+            return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $result];
+        }
+    }
 
 
-	// 删除消息
-	public function removeMessageMember($map){
-		$result = $this->MessageMemberModel->delete($map);
-		return $result;
-	}
+    // 删除消息
+    public function removeMessageMember($map)
+    {
+        $result = $this->MessageMemberModel->delete($map);
+        return $result;
+    }
 
     // 消息记录封装
-    private function insertLog($data){
+    private function insertLog($data)
+    {
         $LogSendtemplatemsg = new \app\model\LogSendtemplatemsg;
         $LogSendtemplatemsg->save($data);
     }
 
     // 发送消息给管理员/营主-申请加入训练营审核
-    public function campJoinAudit($data, $camp_id) {
-	    if (!$camp_id) {
-	        return ['code' => 100, 'msg' => __lang('MSG_402')];
+    public function campJoinAudit($data, $camp_id)
+    {
+        if (!$camp_id) {
+            return ['code' => 100, 'msg' => __lang('MSG_402')];
         }
-        $receivers = db('camp_member')->where(['camp_id' => $camp_id, 'status' => 1, 'type' => ['egt', 3] ])->select();
+        $receivers = db('camp_member')->where(['camp_id' => $camp_id, 'status' => 1, 'type' => ['egt', 3]])->select();
         $wechatS = new WechatService();
-	    foreach ($receivers as $receiver) {
+        foreach ($receivers as $receiver) {
             $memberopenid = getMemberOpenid($receiver['member_id']);
             $sendTemplateData = [
                 'touser' => $memberopenid,
                 'template_id' => 'aOTMBdZbOKo8fFEKS5HWNaw9Gu-2c8ASTOcXlL6129Q',
-                'url' =>  url($data['baseurl'], ['camp_id' => $camp_id, 'status' => 0, 'openid' => $memberopenid], '', true),
+                'url' => url($data['baseurl'], ['camp_id' => $camp_id, 'status' => 0, 'openid' => $memberopenid], '', true),
                 'data' => [
                     'first' => ['value' => $data['content']],
                     'keyword1' => ['value' => $data['member']],
@@ -216,7 +240,8 @@ class MessageService{
     }
 
     // 发送消息给申请人-申请加入训练营审核结果
-    public function campJoinAuditResult($data, $member_id) {
+    public function campJoinAuditResult($data, $member_id)
+    {
         if (!$member_id) {
             return ['code' => 100, 'msg' => __lang('MSG_402')];
         }
@@ -225,7 +250,7 @@ class MessageService{
         $sendTemplateData = [
             'touser' => $memberopenid,
             'template_id' => 'xohb4WrWcaDosmQWQL27-l-zNgnMc03hpPORPjVjS88',
-            'url' =>  $data['url'],
+            'url' => $data['url'],
             'data' => [
                 'first' => ['value' => $data['content']],
                 'keyword1' => ['value' => $data['checkstr']],
