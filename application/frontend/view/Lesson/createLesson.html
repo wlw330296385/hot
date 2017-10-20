@@ -500,7 +500,7 @@
             if(asID==mainID){
                 mui.alert(asName+"已是主教练，请不要重复选择！");
                 $(this).find("input[name='checkbox-assistant']").prop("checked",false);
-                return;
+                return false;
             }
         })
 
@@ -508,12 +508,23 @@
          $(".mainCoach").on('click','li',function(){
              var mainCoach = $(this).text();
              var id= $(this).attr('data-id');
+             var asID = '';
+             var isStop='No'
              /// 判断所选主教是否存在助教栏
-             /// 判断所选主教是否存在助教栏
-
-             $(".mainCoachCont").text(mainCoach);
-             $(".coach_id").val(id);
-             mui("#mainCoach").popover("toggle");
+             $("#assistantCoach input[name='checkbox-assistant']:checked").each(function () {
+                 asID = $(this).attr('data-id');
+                 if(asID==id){
+                     mui.alert(mainCoach+"已是助教，请不要重复选择！");
+                     $(this).find("input[name='checkbox-assistant']").prop("checked",false);
+                     isStop='Yes';
+                     return false;
+                 }
+             });
+             if(isStop=='No') {
+                 $(".mainCoachCont").text(mainCoach);
+                 $(".coach_id").val(id);
+                 mui("#mainCoach").popover("toggle");
+             }
          })
        
         // // 助理教练

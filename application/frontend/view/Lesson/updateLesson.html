@@ -458,18 +458,13 @@
         $(".lessonDom").text(cDoms);
         $("input[name='doms']").val(cDoms);
 
+
         //复选框赋值
         $("#setAsCoach").on('tap','', function () {
             //每次打开先清空所有选择
             $("input[name='checkbox-assistant']").prop("checked",false);
             //然后遍历出对应所选
-            var str = $("input[name='assistant_ids']").val();
-            var s=str.split(',')
-            for(var i = 0;i<s.length;i++){
-                $("input[name='checkbox-assistant']").filter(function (index) {
-                    return $(this).attr("data-id") == s[i]
-                }).prop("checked",true);
-            }
+            toAssistantCheckbox();
         });
         $("#setLessonDom").on('tap','', function () {
             //每次打开先清空所有选择
@@ -516,21 +511,6 @@
         })
 
 
-
-        //复选框赋值
-        $("#setAsCoach").on('tap','', function () {
-            //每次打开先清空所有选择
-            $("input[name='checkbox-assistant']").prop("checked",false);
-            //然后遍历出对应所选
-            var str = $("input[name='assistant_ids']").val();
-            var s=str.split(',')
-            for(var i = 0;i<s.length;i++){
-                $("input[name='checkbox-assistant']").filter(function (index) {
-                    return $(this).attr("data-id") == s[i]
-                }).prop("checked",true);
-            }
-        });
-
         // 判断所选助教是否存在
         $(".coachAS").on('click','.mui-checkbox',function(){
             var mainID = $(".coach_id").val();
@@ -547,14 +527,26 @@
         $(".mainCoach").on('click','li',function(){
             var mainCoach = $(this).text();
             var id= $(this).attr('data-id');
+            var asID = '';
+            var isStop='No'
             /// 判断所选主教是否存在助教栏
-            /// 判断所选主教是否存在助教栏
-
-            $(".mainCoachCont").text(mainCoach);
-            $(".coach_id").val(id);
-            mui("#mainCoach").popover("toggle");
+            /// 给助教复选框赋值确保有效判断
+            toAssistantCheckbox();
+            $("#assistantCoach input[name='checkbox-assistant']:checked").each(function () {
+                asID = $(this).attr('data-id');
+                if(asID==id){
+                    mui.alert(mainCoach+"已是助教，请不要重复选择！");
+                    $(this).find("input[name='checkbox-assistant']").prop("checked",false);
+                    isStop='Yes';
+                    return false;
+                }
+            });
+            if(isStop=='No') {
+                $(".mainCoachCont").text(mainCoach);
+                $(".coach_id").val(id);
+                mui("#mainCoach").popover("toggle");
+            }
         })
-
 
 
         // 助理教练
@@ -705,6 +697,20 @@
         }
     }
 
+
+
+    //根据默助教遍历出对应所选
+    var toAssistantCheckbox = function(){
+        var str = $("input[name='assistant_ids']").val();
+        var s=str.split(',')
+        console.log(str)
+        for(var i = 0;i<s.length;i++){
+            console.log(0)
+            $("input[name='checkbox-assistant']").filter(function (index) {
+                return $(this).attr("data-id") == s[i]
+            }).prop("checked",true);
+        }
+    }
 
     //训练营场地列表接口获取数据并追加到页面
     var toCourtList = function() {
