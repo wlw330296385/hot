@@ -288,6 +288,21 @@ class BillService {
                                 }else{
                                     db('grade_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule]);
                                 }
+                                //训练营余额减少
+                                $setting = db('setting')->find();
+                                $campResult = db('camp')->where(['id'=>$billInfo['camp_id']])->setDec('balance',$refundTotal*$billInfo['price']*(1-$setting['sysrebate']));
+                                if($campResult){
+                                    db('income')->insert([
+                                                        'camp_id'=>$billInfo['camp_id'],
+                                                        'lesson_id'=>$billInfo['goods_id'],
+                                                        'lesson'=>$billInfo['goods'],
+                                                        'camp'=>$billInfo['camp'],
+                                                        'member_id'=>$billInfo['member_id'],
+                                                        'member'=>$billInfo['student'],
+                                                        'create_time'=>time(),
+                                                        'income'=>-($refundTotal*$billInfo['price']*(1-$setting['sysrebate'])),
+                                                    ]);
+                                }
                             }
                         }else{
                             // 其他订单
