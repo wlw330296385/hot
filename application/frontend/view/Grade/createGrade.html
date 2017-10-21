@@ -84,6 +84,7 @@
                         <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" >
                         {/volist}
                     </div>
+                    <input type="hidden" name="students" class="students data" value="">
                 </a>
             </div>
 
@@ -515,6 +516,12 @@
             var cityPicker3 = new $.PopPicker({
                 layer: 3
             });
+
+            // 设置默认值
+            cityPicker3.pickers[0].setSelectedIndex(18);
+            cityPicker3.pickers[1].setSelectedIndex(2);
+            cityPicker3.pickers[2].setSelectedIndex(2);
+            
             cityPicker3.setData(cityData3);
             var showCityPickerButton = doc.getElementById('showCityPicker3');
             var cityResult3 = doc.getElementById('cityResult3');
@@ -624,8 +631,14 @@
             console.log(inputList)
             console.log(studentList)
             console.log(studentNames)
+
+            //班级成员
+            $("input[name=students]").val(studentList.length)
+            console.log($("input[name=students]").val());
             mui('#student').popover('toggle');
         })
+
+
 
         // 班级类型
         var gradecate_id = "";
