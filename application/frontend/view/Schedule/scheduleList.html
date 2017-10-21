@@ -258,7 +258,7 @@
                     var newDate = new Date();
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + campID;
-                        var lession_time = newDate.toLocaleString(data.data.data[i].lesson_time);
+                        var lession_time = data.data.data[i].lesson_time;
                         // 已审，未审内容
                         newli += '<li class="mui-table-view-cell mui-media">';
                         if (status!=1) {
@@ -331,6 +331,14 @@
                         //console.log(data);
                         if (data.code == 200) {
                             mui.toast(data.msg);
+                            if (action === 'editstatus') {
+                                mui.post("{:url('api/schedule/sendschedule')}", {
+                                    scheduleid: scheduleid
+                                }, function(res) {
+                                    console.log(res);
+                                }, 'json');
+                            }
+
                             setTimeout(function () {
                                 li.parentNode.removeChild(li);
                                 location.reload();

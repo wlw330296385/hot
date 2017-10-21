@@ -4,10 +4,10 @@ namespace app\service;
 
 use app\model\Schedule;
 use app\model\ScheduleMember;
+use app\model\Student;
 use think\Db;
 use app\common\validate\ScheduleVal;
 use app\common\validate\ScheduleCommentVal;
-use think\helper\Time;
 
 class ScheduleService
 {
@@ -37,7 +37,11 @@ class ScheduleService
         $result = $this->scheduleModel->where($map)->order($order)->paginate($paginate);
         // echo $this->scheduleModel->getlastsql();die;
         if ($result) {
-            return $result->toArray();
+            $list = $result->toArray();
+            foreach ($list['data'] as $key => $val) {
+                $list['data'][$key]['lesson_time'] = date('Y-m-d H:i', $val['lesson_time']);
+            }
+            return $list;
         } else {
             return $result;
         }
@@ -354,5 +358,19 @@ class ScheduleService
     // 删除课时
     public function delSchedule($id) {
         return Schedule::destroy($id);
+    }
+
+    public function getScheduleStudentMemberList($schedule_id) {
+        $schedulemember = ScheduleMember::where(['schedule_id' => $schedule_id, 'type' => 1])->select()->toArray();
+
+        $list = [];
+        foreach ($schedulemember as $key => $val) {
+            $student = Student::where(['id' => $val['user_id']])->find()->toArray();
+            $list[$key] = [
+                'member_id' => $student['member_id'],
+                'openid' => getMemberOpenid($student['member_id'])
+            ];
+        }
+        return $list;
     }
 }

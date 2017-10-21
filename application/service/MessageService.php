@@ -282,4 +282,56 @@ class MessageService
             'status' => 1
         ]);
     }
+
+    // 发送最新课时通知
+    public function sendschedule($data, $members) {
+        if (!is_array($members)) {
+            return ['code' => 100, 'msg' => __lang('MSG_402')];
+        }
+        $res = false;
+        $wechatS = new WechatService();
+        foreach ($members as $k => $val) {
+            $sendTemplateData = [
+                'touser' => $val['openid'],
+                'template_id' => '_ld4qtOLJA1vl-oh0FxCliMK1tbGD0nOTq7Z4OmeFCE',
+                'url' => $data['url'].'/openid/'.$val['openid'],
+                'data' => [
+                    'first' => ['value' => $data['content']],
+                    'keyword1' => ['value' => $data['title']],
+                    'keyword2' => ['value' => $data['lesson_time']],
+                    'remark' => ['value' => '点击进入查看详细，并进行评价']
+                ]
+            ];
+//            dump($sendTemplateData);
+            $sendTemplateResult = $wechatS->sendTemplate($sendTemplateData);
+            $log_sendTemplateData = [
+                'wxopenid' => $sendTemplateData['touser'],
+                'member_id' => $val['member_id'],
+                'url' => $sendTemplateData['url'],
+                'content' => serialize($sendTemplateData),
+                'create_time' => time()
+            ];
+            if ($sendTemplateResult) {
+                $log_sendTemplateData['status'] = 1;
+            } else {
+                $log_sendTemplateData['status'] = 0;
+            }
+            db('log_sendtemplatemsg')->insert($log_sendTemplateData);
+
+            db('message_member')->insert([
+                'title' => $data['title'],
+                'content' => $data['content'],
+                'url' => $sendTemplateData['url'],
+                'member_id' => $val['member_id'],
+                'create_time' => time(),
+                'status' => 1
+            ]);
+        }
+        $res = true;
+        if ($res) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 }

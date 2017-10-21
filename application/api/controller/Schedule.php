@@ -1,6 +1,7 @@
 <?php 
 namespace app\api\controller;
 use app\api\controller\Base;
+use app\service\MessageService;
 use app\service\ScheduleService;
 /**
 * 课时表类
@@ -218,5 +219,31 @@ class Schedule extends Base
             }
             return json($response);
         }
+    }
+
+    // 发送课时结果消息给学员
+    public function sendschedule() {
+        $scheduleid = input('scheduleid');
+        $scheduleS = new ScheduleService();
+        $members = $scheduleS->getScheduleStudentMemberList($scheduleid);
+        dump($members);
+        $schedule = $scheduleS->getScheduleInfo(['id' => $scheduleid]);
+//        dump($schedule);
+
+        $templateData = [
+            'title' => $schedule['grade'].'最新课时',
+            'content' => '您参加的'.$schedule['camp'].'-'.$schedule['lesson'].'-'.$schedule['grade'].'班级 发布最新课时',
+            'lesson_time' => date('Y-m-d H:i', $schedule['lesson_time']),
+            'url' => url('frontend/schedule/scheduleinfo', ['schedule_id' => $schedule['id'], 'camp_id' => $schedule['camp_id']], '', true)
+        ];
+        //dump($templateData);
+        $messageS = new MessageService();
+        $res = $messageS->sendschedule($templateData, $members);
+        if ($res) {
+            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+        } else {
+            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+        return json($response);
     }
 }
