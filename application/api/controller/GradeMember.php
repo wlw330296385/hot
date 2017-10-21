@@ -56,6 +56,7 @@ class GradeMember extends Base{
         }
     }
 
+
     // 获取与课程|班级|训练营相关的学生|体验生-不带page
     public function getGradeMemberListNoPageApi(){
         try{
@@ -78,6 +79,7 @@ class GradeMember extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
 
 
 }
