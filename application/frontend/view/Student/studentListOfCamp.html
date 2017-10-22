@@ -25,9 +25,9 @@
         <div class="mui-segmented-control mb">
             <a class="mui-control-item mui-icon mui-icon-left-nav"
                href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"></a>
-            <a class="mui-control-item mui-active" href="#onlineStudentList">在营</a>
-            <a class="mui-control-item" href="#offlineStudentList">离营</a>
-            <a class="mui-control-item" href="#pendingStudentList">待处理</a>
+            <a class="mui-control-item mui-active" search-id="sOn" href="#onlineStudentList">在营</a>
+            <a class="mui-control-item" search-id="sOff" href="#offlineStudentList">离营</a>
+            <a class="mui-control-item" search-id="sPend" href="#pendingStudentList">待处理</a>
         </div>
     </div>
 
@@ -37,17 +37,29 @@
 <div class="mui-content">
 
     <div class="tab-pullRefresh">
-        <div id="onlineStudentList" class="mui-scroll-wrapper mui-control-content mui-active">
+        <div class="basic-search" id="sOn">
+            <input type="search" class="keywordOn" placeholder="请输入在营学员名称">
+            <span class="mui-icon mui-icon-search searchicon" id="searchBtnOn"></span>
+        </div>
+        <div class="basic-search" id="sOff" style="display: none;">
+            <input type="search" class="keywordOff" placeholder="请输入离营学员名称">
+            <span class="mui-icon mui-icon-search searchicon" id="searchBtnOff"></span>
+        </div>
+        <div class="basic-search" id="sPend" style="display: none;">
+            <input type="search" class="keywordPend" placeholder="请输入未处理学员名称">
+            <span class="mui-icon mui-icon-search searchicon" id="searchBtnPend"></span>
+        </div>
+        <div id="onlineStudentList" class="mui-control-content mui-scroll-wrapper mui-active" style="top:90px">
             <div class="mui-scroll">
                 <ul class="mui-table-view coach list border-b student1 OA_task_student"></ul>
             </div>
         </div>
-        <div id="offlineStudentList" class="mui-scroll-wrapper mui-control-content">
+        <div id="offlineStudentList" class="mui-control-content mui-scroll-wrapper" style="top:90px">
             <div class="mui-scroll">
                 <ul class="mui-table-view coach list border-b student-1 OA_task_student"></ul>
             </div>
         </div>
-        <div id="pendingStudentList" class="mui-scroll-wrapper mui-control-content">
+        <div id="pendingStudentList" class="mui-control-content mui-scroll-wrapper" style="top:90px">
             <div class="mui-scroll">
                 <ul class="mui-table-view coach list border-b student-p"></ul>
             </div>
@@ -81,6 +93,46 @@
         var onCount = 1;
         var offCount = 1;
         var pendCount = 1;
+        var keywordOn='';
+        $('.keywordOn').val(keywordOn);
+        var keywordOff='';
+        $('.keywordOff').val(keywordOff);
+        var keywordPend='';
+        $('.keywordPend').val(keywordPend);
+
+        //搜索
+        $("#searchBtnOn").on("tap",'', function () {
+            keywordOn = $(".keywordOn").val();
+            //toList('idName', page, gType, status, keywordOn);
+            toList('onlineStudentList', 1, 1, 1, keywordOn);
+        })
+        $("#searchBtnOff").on("tap",'', function () {
+            keywordOff = $(".keywordOff").val();
+            toList('offlineStudentList', 1, 1, 1, keywordOff);
+        })
+        $("#searchBtnPend").on("tap",'', function () {
+            keywordPend = $(".keywordPend").val();
+            toPendList('pendingStudentList', 1, 1, 1, keywordPend);
+        })
+        $(".keywordOn").on("blur",'', function () {
+            keywordOn = $(this).val();
+            toList('onlineStudentList', 1, 1, 1, keywordOn);
+        })
+        $(".keywordOff").on("blur",'', function () {
+            keywordOff = $(this).val();
+            toList('offlineStudentList', 1, 1, 1, keywordOff);
+        })
+        $(".keywordPend").on("blur",'', function () {
+            keywordPend = $(this).val();
+            toPendList('pendingStudentList', 1, 1, 1, keywordPend);
+        })
+
+        //切换tab的同时切换搜索框
+        $(".mui-control-item").on("tap",'', function () {
+            var seachID = $(this).attr("search-id");
+            $(".basic-search").hide();
+            $("#"+seachID).show();
+        })
 
         mui('#onlineStudentList').pullRefresh({
             down: {
@@ -108,7 +160,7 @@
                 onCount = 1;//刷新并显示第一页
                 var page = onCount;
                 var gType = 1;//代表下拉刷新
-                toList('onlineStudentList', page, gType, 1);//具体取数据的方法
+                toList('onlineStudentList', page, gType, 1, keywordOn);//具体取数据的方法
             }, 100);
         }
 
@@ -118,7 +170,7 @@
                 onCount++;//翻下一页
                 var page = onCount;
                 var gType = 2;//代表上拉加载
-                toList('onlineStudentList', page, gType, 1);//具体取数据的方法
+                toList('onlineStudentList', page, gType, 1, keywordOn);//具体取数据的方法
             }, 100);
         }
 
@@ -148,7 +200,7 @@
                 offCount = 1;//刷新并显示第一页
                 var page = offCount;
                 var gType = 1;//代表下拉刷新
-                toList('offlineStudentList', page, gType, -1);//具体取数据的方法
+                toList('offlineStudentList', page, gType, -1, keywordOff);//具体取数据的方法
             }, 100);
         }
 
@@ -158,7 +210,7 @@
                 offCount++;//翻下一页
                 var page = offCount;
                 var gType = 2;//代表上拉加载
-                toList('offlineStudentList', page, gType, -1);//具体取数据的方法
+                toList('offlineStudentList', page, gType, -1, keywordOff);//具体取数据的方法
             }, 100);
         }
 
@@ -188,7 +240,7 @@
                 pendCount = 1;//刷新并显示第一页
                 var page = pendCount;
                 var gType = 1;//代表下拉刷新
-                toPendList(page, gType);//具体取数据的方法
+                toPendList('pendingStudentList', page, gType, 1, keywordPend);//具体取数据的方法
             }, 100);
         }
 
@@ -198,7 +250,7 @@
                 pendCount++;//翻下一页
                 var page = pendCount;
                 var gType = 2;//代表上拉加载
-                toPendList(page, gType);//具体取数据的方法
+                toPendList('pendingStudentList', page, gType, 1, keywordPend);//具体取数据的方法
             }, 100);
         }
 
@@ -206,16 +258,16 @@
     })
 
     //接口获取数据并追加到页面
-    var toList = function (wList, page, gType, status) {
+    var toList = function (wList, page, gType, status, keyword) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/camp_member/campstudentlist','','',true)}?page="+page;
+        var url  = "{:url('api/grade_member/getGradeMemberListOfCampByPageApi','','',true)}?page="+page+"&keyword="+keyword;
         var campID = "{$camp_id}";
         var typeID = 1;
         mui.ajax({
             url: url,
             data: {
                 camp_id: campID,
-                type:typeID,
+                type: typeID,
                 status: status
             },
             dataType: 'json',//服务器返回json格式数据
@@ -227,16 +279,16 @@
 
                 var newli = '';
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data[i].studentid + '/camp_id/' + campID;
-                        var studentSexUrl = getSexIconUrl(data.data[i].student_sex);
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
+                        var studentSexUrl = getSexIconUrl(data.data.data[i].student.student_sex);
                         newli += '<li class="mui-table-view-cell mui-media listli">';
                         if (status == 1) {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为离营</span></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为离营</span></div>';
                         } else {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为在营</span></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为在营</span></div>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].student_avatar + '"><div class="mui-media-body wd45">' + data.data[i].student + ' <img src="'+studentSexUrl+'" /><p class="mui-ellipsis">学员ID：' + data.data[i].studentid + '</p></div></a></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].student.student_avatar + '"><div class="mui-media-body wd45">' + data.data.data[i].student.student + ' <img src="'+studentSexUrl+'" /><p class="mui-ellipsis">学员ID：' + data.data.data[i].student_id + '</p></div></a></div>';
                         newli += '</li>';
                     }
                 }
@@ -310,15 +362,17 @@
 
 
     //训练营训练营未分配班级学生
-    var toPendList = function(page,gType) {
-        var url  = "{:url('api/camp_member/pendstudentlist','','',true)}?page="+page;
+    var toPendList = function (wList, page, gType, status, keyword) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url  = "{:url('api/grade_member/getGradeMemberListOfCampByPageApi','','',true)}?page="+page+"&keyword="+keyword;
         var campID = "{$camp_id}";
         mui.ajax({
-            url:url,
+            url: url,
             data: {
-                camp_id:campID,
-                type:1,
-                status: 1
+                camp_id: campID,
+                type: 1,
+                grade_id: 0,
+                status: status
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -326,38 +380,49 @@
             headers: {'Content-Type': 'application/json'},
             //processData:false,
             success: function (data) {
+
                 var newli = '';
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('grade/gradeListOfCamp')}" + '/camp_id/' + campID;
-                        var studentSexUrl = getSexIconUrl(data.data[i].student_sex);
-                        newli += '<li class="mui-table-view-cell mui-media listli"><div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].student_avatar + '"><div class="mui-media-body wd45">' + data.data[i].student + ' <img src="'+studentSexUrl+'" /><p class="mui-ellipsis">学员ID：' + data.data[i].studentid + '</p></div></a></div></li>';
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
+                        var studentSexUrl = getSexIconUrl(data.data.data[i].student.student_sex);
+                        newli += '<li class="mui-table-view-cell mui-media listli">';
+                        if (status == 1) {
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为离营</span></div>';
+                        } else {
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为在营</span></div>';
+                        }
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].student.student_avatar + '"><div class="mui-media-body wd45">' + data.data.data[i].student.student + ' <img src="'+studentSexUrl+'" /><p class="mui-ellipsis">学员ID：' + data.data.data[i].student_id + '</p></div></a></div>';
+                        newli += '</li>';
                     }
                 }
                 if (gType == 1) {
                     //上拉刷新
-                    $(".student-p").empty().append(newli);
-                    mui('#pendingStudentList').pullRefresh().endPulldownToRefresh();
-                    mui('#pendingStudentList').pullRefresh().refresh(true);
+                    $("ul.student-p").empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
                     if (newli == '') {
-                        $(".student-p").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        $("ul.student-p").append('<li class="nodata"><p>没有相关数据哦</p></li>');
                     }
                 } else {
                     //下拉加载 gType==2
-                    $(".student-p").append(newli);
+                    $("ul.student-p").append(newli);
                 }
 
                 if (newli != '') {
-                    mui('#pendingStudentList').pullRefresh().endPullupToRefresh(false);
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
                 } else {
-                    mui('#pendingStudentList').pullRefresh().endPullupToRefresh(true);
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
                 }
+
             },
-            error: function(xhr, type, errerThrown) {
+            error: function (xhr, type, errerThrown) {
                 mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
             }
         });
     };
+
 
 </script>
 </html>

@@ -20,18 +20,18 @@ class ScheduleVal extends Validate{
     ];
     
     protected $message = [
-        'camp_id'           =>'camp_id.require',
+        'camp_id'           =>'没有指定训练营编号',
         //'camp'              =>'require|max:60',
-        'lesson'            =>'lesson.require',
-        'lesson_id'         =>'lesson_id.require',
-        'grade'             =>'grade.require',
-        'grade_id'          =>'grade_id.require',
-        'coach'             =>'coach.require',
-        'coach_id'          =>'coach_id.require',
+        'lesson'            =>'没有指定课程',
+        'lesson_id'         =>'没有指定课程编号',
+        'grade'             =>'没有指定班级',
+        'grade_id'          =>'没有指定班级编号',
+        'coach'             =>'主教练必选',
+        'coach_id'          =>'没有相应主教练编号',
         // 'plan'              =>'plan.require',
         // 'plan_id'           =>'plan_id.require',
 //        'lesson_date'       =>'lesson_date.require',
-        'lesson_time'       =>'lesson_time.require',
+        'lesson_time'       =>'课时时间必填',
     ];
     
     protected $scene = [

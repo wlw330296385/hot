@@ -10,7 +10,7 @@ class GradeVal extends Validate{
     ];
     
     protected $message = [
-        'grade.require'  =>  '训练营名必须',
+        'grade.require'  =>  '班级名称必填',
         'member_id.require'	=> '创建者必须',
     ];
     

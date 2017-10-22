@@ -110,13 +110,8 @@ class Member extends Base{
 
     // 我的组织
     public function myGroup(){
-        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
-        $memberInfo = db('member')->find(['id'=>$member_id]);
-        $myGroupList = $this->MemberService->getMyGroup($member_id);
-        // dump($myGroupList);die;
-        $count = count($myGroupList,1);
-        $this->assign('memberInfo',$memberInfo);
-        $this->assign('count',$count);
+        $hot_id = input('param.hot_id')?input('param.hot_id'):$this->memberInfo['hot_id'];
+        $myGroupList = $this->MemberService->getMyGroup(['hot_id'=>$hot_id]);
         $this->assign('myGroupList',$myGroupList);
         return view('Member/myGroup');
     }

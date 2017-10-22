@@ -19,7 +19,6 @@ class CoachService{
         $res = Coach::with('member')->where($map)->find();
         if($res){
             $result = $res->toArray();
-            $result['status_num'] = $res->getData('status');
             return $result;
         }else{
             return $res;
@@ -100,7 +99,7 @@ class CoachService{
 
 
     // 教练列表 分页
-    public function getCoachListOfCamp($map=[],$page = 1, $paginate = 10, $order='camp_member.id desc') {
+    public function getCoachListOfCamp($map=[],$page = 1, $paginate = 10, $order='') {
         $result = Db::view('camp_member','member_id,type')
                 ->view('coach','*','camp_member.member_id=coach.member_id')
                 ->where($map)
@@ -113,7 +112,7 @@ class CoachService{
 
 
      // 教练列表 分页
-    public function getCoachListOfCampByPage($map=[], $order='camp_member.id desc', $paginate = 10) {
+    public function getCoachListOfCampByPage($map=[], $order='', $paginate = 10) {
         $result = Db::view('camp_member','member_id,type')
                 ->view('coach','*','camp_member.member_id=coach.member_id')
                 ->where($map)

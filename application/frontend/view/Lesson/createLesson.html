@@ -138,9 +138,9 @@
             </a>
         </div>
         <div class="mui-input-row">
-            <a href="#assistantCoach" class="mui-navigate-right">
+            <a href="#assistantCoach" id="setAsCoach" class="mui-navigate-right">
                 <label>助理教练</label>
-                <input type="text" name="assistants" value="" class="data assistants" placeholder="选填">
+                <input type="text" name="assistants" value="" class="data assistants assistantCoachCont" placeholder="选填">
                 <input type="hidden" name="assistant_ids" value="" class="data assistant_ids">
             </a>
         </div>
@@ -476,35 +476,68 @@
             $(".trainLocationCont").text(trainLocation);
             mui("#trainLocation").popover("toggle");
         })
+
+
+        //复选框赋值
+        $("#setAsCoach").on('tap','', function () {
+            //每次打开先清空所有选择
+            $("input[name='checkbox-assistant']").prop("checked",false);
+            //然后遍历出对应所选
+            var str = $("input[name='assistant_ids']").val();
+            var s=str.split(',')
+            for(var i = 0;i<s.length;i++){
+                $("input[name='checkbox-assistant']").filter(function (index) {
+                    return $(this).attr("data-id") == s[i]
+                }).prop("checked",true);
+            }
+        });
+
+        // 判断所选助教是否存在
+        $(".coachAS").on('click','.mui-checkbox',function(){
+            var mainID = $(".coach_id").val();
+            var asID = $(this).find("input[name='checkbox-assistant']").attr('data-id');
+            var asName = $(this).find("input[name='checkbox-assistant']").val();
+            if(asID==mainID){
+                mui.alert(asName+"已是主教练，请不要重复选择！");
+                $(this).find("input[name='checkbox-assistant']").prop("checked",false);
+                return false;
+            }
+        })
+
         // 主教练
-        $(".mainCoach").on('click','li',function(){
-            var mainCoach = $(this).text();
-            $(".mainCoachCont").text(mainCoach);
-            var id= $(this).attr('data-id');
-            $(".coach_id").val(id);
-            mui("#mainCoach").popover("toggle");
-        })
-       // 助理教练
-       // $("#assistantConfirm").click(function(){
-       //  $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function(){
-       //      return $(this).val()
-       //  }).get().join(",") );
-       //  $(".assistantCoachCont").text($("input[name='assistant_ids']").val());
-       //  var id= $(".label").attr('data-id');
-       //  $(".assistant_ids").val(id);
-       //  mui('#assistantCoach').popover('toggle');
-       //  console.log(id)
-       //  })
-        // 助理教练
-        $("#assistantConfirm").click(function(){
-            $("input[name='assistants']").val($("input[name='checkbox-assistant']:checked").map(function(){
-                return $(this).val()
-            }).get().join(",") );
-            $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function(){
-                return $(this).attr('data-id');
-            }).get().join(",") );
-            mui('#assistantCoach').popover('toggle');
-        })
+         $(".mainCoach").on('click','li',function(){
+             var mainCoach = $(this).text();
+             var id= $(this).attr('data-id');
+             var asID = '';
+             var isStop='No'
+             /// 判断所选主教是否存在助教栏
+             $("#assistantCoach input[name='checkbox-assistant']:checked").each(function () {
+                 asID = $(this).attr('data-id');
+                 if(asID==id){
+                     mui.alert(mainCoach+"已是助教，请不要重复选择！");
+                     $(this).find("input[name='checkbox-assistant']").prop("checked",false);
+                     isStop='Yes';
+                     return false;
+                 }
+             });
+             if(isStop=='No') {
+                 $(".mainCoachCont").text(mainCoach);
+                 $(".coach_id").val(id);
+                 mui("#mainCoach").popover("toggle");
+             }
+         })
+       
+        // // 助理教练
+         $("#assistantConfirm").click(function(){
+             $("input[name='assistants']").val($("input[name='checkbox-assistant']:checked").map(function(){
+                 return $(this).val()
+             }).get().join(",") );
+             $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function(){
+                 return $(this).attr('data-id');
+             }).get().join(",") );
+             mui('#assistantCoach').popover('toggle');
+         })
+
 
         // 班主任
         $(".headMaster").on('click','li',function(){
@@ -641,7 +674,7 @@
             var ajaxResult = wooApi.asyncF(url,objData);
             if(ajaxResult.code){
                 console.log(ajaxResult.data)
-                 mui.alert(ajaxResult.msg,'提交成功','确定',function(){
+                 mui.alert('',ajaxResult.msg,'确定',function(){
                     window.location.href="{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/'+ajaxResult.data+'/camp_id/{$campInfo.id}';
                   });
             }

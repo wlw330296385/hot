@@ -16,7 +16,7 @@ class Bill extends Frontend{
         try{
             $map = input('post.');
             $page = input('param.page')?input('param.page'):1;
-            $result = $this->BillService->getBillList($map,$page);
+            
             $balancePay = input('param.balancePay');
             if($balancePay == 1){
                 $map['balance_pay'] = ['gt',0];
@@ -25,6 +25,7 @@ class Bill extends Frontend{
                 $map['balance_pay'] = 0;
             }
             $result['count'] = count($result);
+            $result = $this->BillService->getBillList($map,$page);
             return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -42,6 +43,8 @@ class Bill extends Frontend{
             if($balancePay == -1){
                 $map['balance_pay'] = 0;
             }
+            // $map['member_id'] = $this->memberInfo['id'];
+
             $result = $this->BillService->getBillListByPage($map);
             return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
         }catch (Exception $e){
@@ -56,13 +59,13 @@ class Bill extends Frontend{
     //编辑|添加订单接口
     public function updateBillApi(){
         try{
-            $id = input('get.id');
+            $bill_id = input('param.bill_id');
             $data = input('post.');
             $data['member'] = $this->memberInfo['member'];
             $data['member_id'] = $this->memberInfo['id'];
             $data['avatar'] = $this->memberInfo['avatar'];
-            if($id){
-                $result = $this->BillService->updateBill($data,$id);
+            if($bill_id){
+                $result = $this->BillService->updateBill($data,['id'=>$bill_id]);
             }else{
                 $result = $this->BillService->createBill($data);
             }
@@ -74,18 +77,6 @@ class Bill extends Frontend{
     }
 
 
-    public function updateBillInfoOfCampApi(){
-        try{
-            $camp_id = input('param.camp_id');
-            // 判断权限
-            $isPower = $this->BillService->isPower($camp_id,$this->memberInfo['id']);
-            if($isPower<3){
-                return json(['code'=>100,'msg'=>__lang('MSG_403')]);
-            }
-            return json(['code'=>200,'data'=>$billList,'msg'=>'OK']);       
-        }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }   
-    }
+   
     
 }

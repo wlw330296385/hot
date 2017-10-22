@@ -25,6 +25,14 @@ class GradeMemberService{
         return $result;
     }
 
+    public function getGradeMemberListOfCampByPage($map,$paginate = 10){
+        $result = GradeMember::with('student')->distinct('true')->field('student_id')->where($map)->paginate($paginate);
+        if($result){
+            return $result->toArray();
+        }
+        return $result;
+    }
+
     //获取教练拥有的班级
     public function getGradeOfCoach($map){
     	$res = GradeMember::with('grade')->where($map)->select();

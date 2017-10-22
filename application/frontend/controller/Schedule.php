@@ -28,18 +28,11 @@ class Schedule extends Base
     	$map = $map?$map:[];
     	$camp_id = input('camp_id');
     	$scheduleList = $this->scheduleService->getscheduleList($map);
-    	$start_time = mktime(0,0,0,date('m',time()),1,date('Y',time()));
-    	$end_time = time();
-    	// 本年课量
 
-    	// 本月课量
-    	$scheduleOfMonth = $this->scheduleService->countSchedules([]);
-    	//总课量
-    	$myCount = 1;
-    	$scheduleListCount = count('$scheduleList');
-    	$this->assign('myCount',$myCount);
+        // 课时统计
+        $scheduleCount = $this->scheduleService->countSchedules($camp_id);
+    	$this->assign('scheduleCount',$scheduleCount);
   		$this->assign('scheduleList',$scheduleList);
-  		$this->assign('scheduleListCount',$scheduleListCount);
   		$this->assign('camp_id', $camp_id);
 		return view('Schedule/scheduleList');
     }
@@ -120,6 +113,7 @@ class Schedule extends Base
 		
 		// 班级学生
 		$studentList = db('grade_member')->where(['grade_id'=>$grade_id,'status'=>1,'type'=>1])->select();
+//		dump($studentList);
 		$countStudentList = count($studentList);
 
 		$this->assign('fanListOfCamp',$fanListOfCamp);
@@ -128,6 +122,7 @@ class Schedule extends Base
 		$this->assign('gradeInfo',$gradeInfo);
 		$this->assign('coachListOfCamp',$coachListOfCamp);
 		$this->assign('campid', $camp_id);
+		$this->assign('studentList', $studentList);
 		return view('Schedule/recordSchedule');
 	}
 
@@ -147,7 +142,11 @@ class Schedule extends Base
 				$this->error('你没有权限修改课时');
 			}
 		}
-
+ 		$studentList = [];
+        if ($scheduleInfo['student_str']) {
+            $studentList = unserialize($scheduleInfo['student_str']);
+        }
+		$this->assign('studentList',$studentList);
 		$this->assign('scheduleInfo',$scheduleInfo);
 		return view('Schedule/updateSchedule');
 	}

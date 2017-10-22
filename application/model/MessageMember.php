@@ -10,9 +10,9 @@ class MessageMember extends Model {
 
     protected $autoWriteTimestamp = true;
 
-    public function getStatusAttr($value){
-        $status = [1=>'未读',2=>'已读'];
-        return $status[$value];
-    }
+    // public function getStatusAttr($value){
+    //     $status = [1=>'未读',2=>'已读'];
+    //     return $status[$value];
+    // }
 
 }

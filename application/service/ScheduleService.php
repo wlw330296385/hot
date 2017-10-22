@@ -4,9 +4,11 @@ namespace app\service;
 
 use app\model\Schedule;
 use app\model\ScheduleMember;
+use app\model\Student;
 use think\Db;
 use app\common\validate\ScheduleVal;
 use app\common\validate\ScheduleCommentVal;
+
 class ScheduleService
 {
 
@@ -35,7 +37,11 @@ class ScheduleService
         $result = $this->scheduleModel->where($map)->order($order)->paginate($paginate);
         // echo $this->scheduleModel->getlastsql();die;
         if ($result) {
-            return $result->toArray();
+            $list = $result->toArray();
+            foreach ($list['data'] as $key => $val) {
+                $list['data'][$key]['lesson_time'] = date('Y-m-d H:i', $val['lesson_time']);
+            }
+            return $list;
         } else {
             return $result;
         }
@@ -81,7 +87,7 @@ class ScheduleService
     public function updateSchedule($data, $id)
     {
         
-        $scheduleInfo = $this->scheduleService->getScheduleInfo(['id'=>$id]);
+        $scheduleInfo = $this->getScheduleInfo(['id'=>$id]);
         // 是否已被审核通过
         if($scheduleInfo['status'] == 1){
             // 判断权限
@@ -233,10 +239,17 @@ class ScheduleService
     }
 
     // 统计课时数量
-    public function countSchedules($map)
-    {
-        $result = $this->scheduleModel->where($map)->count();
-        return $result ? $result : 0;
+    public function countSchedules($camp_id) {
+        $model = new Schedule();
+        $count = [];
+        $map['camp_id'] = $camp_id;
+        $monthcount = $model->where($map)
+            ->whereTime('lesson_time', 'month')->count();
+        $yearcount = $model->where($map)
+            ->whereTime('lesson_time', 'year')->count();
+        $sumcount = $model->where($map)->count();
+        $count = ['month' => $monthcount, 'year' => $yearcount, 'sum' => $sumcount];
+        return $count;
     }
 
     // 获得课时评论
@@ -345,5 +358,19 @@ class ScheduleService
     // 删除课时
     public function delSchedule($id) {
         return Schedule::destroy($id);
+    }
+
+    public function getScheduleStudentMemberList($schedule_id) {
+        $schedulemember = ScheduleMember::where(['schedule_id' => $schedule_id, 'type' => 1])->select()->toArray();
+
+        $list = [];
+        foreach ($schedulemember as $key => $val) {
+            $student = Student::where(['id' => $val['user_id']])->find()->toArray();
+            $list[$key] = [
+                'member_id' => $student['member_id'],
+                'openid' => getMemberOpenid($student['member_id'])
+            ];
+        }
+        return $list;
     }
 }

@@ -219,7 +219,7 @@ class Grade extends Base{
                     return $response;
                     break;
                 }
-                case 0: {
+                case -1: {
                     // 操作预排班级
                     if ($action == 'editstatus') {
                         $res = $gradeS->updateGradeStatus($grade['id'], 1);

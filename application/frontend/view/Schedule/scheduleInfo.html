@@ -12,21 +12,22 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <style>
-        .pingjia {
-            padding: 0 15px;
-            text-align: left;
+        .scoreCont {
+           background-color: #fff;
         }
-
-        .pingjia .mui-icon-star {
-            font-size: 22px;
+        .scoreStart {
+            width: 90%;
+            padding: 15px;
+            margin: 0 auto;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
         }
-
-        .marginlr {
-            margin: 0 20px;
+        .mui-page-content .mui-icon-star{
+            font-size: 20px !important;
         }
-
-        .mui-icon-star-filled {
-            font-size: 22px !important;
+        .mui-icon-star-filled{
+            font-size: 20px !important;
             color: #FFB400;
         }
     </style>
@@ -34,212 +35,183 @@
 
 <body>
 
+    <div class="mui-content">
+        <div class="camp-list camp-lesson-list grade-list coach">
 
-<div class="mui-content">
-
-    <div class="camp-list camp-lesson-list grade-list coach">
-
-        <ul class="mui-table-view list mb">
-            <li class="mui-table-view-cell mui-media listli">
-                <a href="{:url('schedule/updateschedule',['schedule_id'=>$scheduleInfo['id'],'camp_id'=>$scheduleInfo['camp_id']])}"
-                   class="mui-navigate-right">
+            <ul class="mui-table-view list mb">
+                <li class="mui-table-view-cell mui-media listli">
+                    {eq name="updateSchedule" value="1"}
+                    <a href="{:url('schedule/updateschedule',['schedule_id'=>$scheduleInfo['id'],'camp_id'=>$scheduleInfo['camp_id']])}" class="mui-navigate-right">
+                        <div class="mui-media-body wd">
+                            <strong>{$scheduleInfo.grade}</strong><font class="state">[{$scheduleInfo.status}]</font>
+                            <p class="mui-ellipsis">{$scheduleInfo.camp} | {$scheduleInfo.lesson}</p>
+                        </div>
+                        <div class="price-frame">
+                            <span>编辑</span>
+                            <p class="nump">{$scheduleInfo.students}/队员</p>
+                        </div>
+                    </a>
+                    {else/}
                     <div class="mui-media-body wd">
                         <strong>{$scheduleInfo.grade}</strong><font class="state">[{$scheduleInfo.status}]</font>
                         <p class="mui-ellipsis">{$scheduleInfo.camp} | {$scheduleInfo.lesson}</p>
                     </div>
                     <div class="price-frame">
-                        <span>编辑</span>
                         <p class="nump">{$scheduleInfo.students}/队员</p>
                     </div>
-                </a>
-            </li>
-        </ul>
-
-        <ul class="mui-table-view list detalis-list mb">
-            <li class="mui-table-view-cell listli">训练时间<span>{$scheduleInfo.lesson_time|date="Y-m-d H:i",###}</span></li>
-            <li class="mui-table-view-cell listli detalisli">学员名单
-                <span>{volist name="studentList" id="vol"}{$vol.student}&nbsp;{/volist}</span>
-            </li>
-            <li class="mui-table-view-cell listli">所属课程<span>{$scheduleInfo.lesson}</span></li>
-            <li class="mui-table-view-cell listli">课程类型<span>{$scheduleInfo.grade}</span></li>
-            <li class="mui-table-view-cell listli">训练地点<span>{$scheduleInfo.court}</span></li>
-            <li class="mui-table-view-cell listli">所属地区<span>{$scheduleInfo.province}&nbsp;{$scheduleInfo.city}&nbsp;{$scheduleInfo.area}</span>
-            </li>
-            <li class="mui-table-view-cell listli">主教练<span>{$scheduleInfo.coach}</span></li>
-            <li class="mui-table-view-cell listli">助教练<span>{$scheduleInfo.assistants}</span></li>
-            <li class="mui-table-view-cell listli">领队<span>{$scheduleInfo.coach}</span></li>
-            <li class="mui-table-view-cell listli">班主任<span>{$scheduleInfo.teacher}</span></li>
-            <li class="mui-table-view-cell listli">主教底薪<span>{$scheduleInfo.coach_salary}</span></li>
-            <li class="mui-table-view-cell listli">助教底薪<span>{$scheduleInfo.assistant_salary}</span></li>
-
-            <!-- <li class="mui-table-view-cell listli">场地租金<span>{$scheduleInfo.rent}</span></li> -->
-            <!--   <li class="mui-table-view-cell listli">训练项目
-                  <span>手拉手运球，直线往返运球，Z字型换手运球，S字型运球，弧线运球</span>
-              </li> -->
-            <li class="mui-table-view-cell listli">备注<span>{$scheduleInfo.remarks}</span></li>
-        </ul>
-
-        <div class="page-header mt">
-            <span class="course"><b>学员评价</b></span>
-        </div>
-
-        <ul class="mui-table-view list mui-text-center min-height">
-            {volist name='commentList' id="vol" empty="暂无评论"}
-            <li class="mui-table-view-cell mui-media listli">
-                <a href="javascript:;">
-                    <img class="mui-media-object mui-pull-left coachicon" src="">
-                    <div class="mui-media-body">
-                        {$vol.member}
-                        <p class="mui-ellipsis">{$vol.comment}</p>
-                    </div>
-                    <div class="price-frame">
-                        <p>{$vol.create_time|date='Y-m-d',###}</p>
-                    </div>
-                </a>
-            </li>
-            {/volist}
-        </ul>
-
-        <p class="dropdown mt55"><a href="#">查看更多评论</a></p>
-
-        <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli">
-                <span class="mui-icon mui-icon-phone"></span>电话咨询
-            </li>
-            <a href="#score">
-                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"
-                    style="color:#000;border-left: 1px solid #ccc;">
-                    <span class="mui-icon mui-icon-star mui-icon-star-filled"></span>我要评分
-                </li>
-            </a>
-        </ul>
-    </div>
-
-    <div id="score" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
-            <ul class="mui-table-view operation" style="max-height: 470px;">
-                <h5 class="mui-text-left">我要评价<a class="mui-icon mui-icon-closeempty" href="#score"></a></h5>
-                <li class=" mui-table-view-cell listli marginlr">
-                    <ul class="mui-row pingjia">
-                        <li class="mui-col-xs-3 mui-col-sm-3">态度</li>
-                        <li class="mui-col-xs-7 mui-col-sm-7">
-                            <div id="feedback">
-                                <button id="submit" style="display: none"></button>
-                                <div class="mui-page-content">
-                                    <div id='image-list' id="question" style="display:none"></div>
-                                    <div class="icons mui-inline stars num1">
-                                        <i data-index="1" class="mui-icon mui-icon-star"></i>
-                                        <i data-index="2" class="mui-icon mui-icon-star"></i>
-                                        <i data-index="3" class="mui-icon mui-icon-star"></i>
-                                        <i data-index="4" class="mui-icon mui-icon-star"></i>
-                                        <i data-index="5" class="mui-icon mui-icon-star"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="mui-col-xs-2 mui-col-sm-2 fen">
-                            <span class="fenshu">5分</span>
-                        </li>
-                    </ul>
-                </li>
-                <li class=" mui-table-view-cell listli marginlr">
-                    <ul class="mui-row pingjia">
-                        <li class="mui-col-xs-3 mui-col-sm-3">专业</li>
-                        <li class="mui-col-xs-7 mui-col-sm-7">
-                            <div class="icons mui-inline">
-                                <i data-index="1" class="mui-icon mui-icon-star"></i>
-                                <i data-index="2" class="mui-icon mui-icon-star"></i>
-                                <i data-index="3" class="mui-icon mui-icon-star"></i>
-                                <i data-index="4" class="mui-icon mui-icon-star"></i>
-                                <i data-index="5" class="mui-icon mui-icon-star"></i>
-                            </div>
-                        </li>
-                        <li class="mui-col-xs-2 mui-col-sm-2">
-                            <span class="fenshu">5分</span>
-                        </li>
-                    </ul>
-                </li>
-                <li class=" mui-table-view-cell listli marginlr">
-                    <ul class="mui-row pingjia">
-                        <li class="mui-col-xs-3 mui-col-sm-3">教学态度</li>
-                        <li class="mui-col-xs-7 mui-col-sm-7">
-                            <div class="icons mui-inline">
-                                <i data-index="1" class="mui-icon mui-icon-star"></i>
-                                <i data-index="2" class="mui-icon mui-icon-star"></i>
-                                <i data-index="3" class="mui-icon mui-icon-star"></i>
-                                <i data-index="4" class="mui-icon mui-icon-star"></i>
-                                <i data-index="5" class="mui-icon mui-icon-star"></i>
-                            </div>
-                        </li>
-                        <li class="mui-col-xs-2 mui-col-sm-2 fen">
-                            <span class="fenshu">5分</span>
-                        </li>
-                    </ul>
-                </li>
-                <li class=" mui-table-view-cell listli marginlr">
-                    <ul class="mui-row pingjia">
-                        <li class="mui-col-xs-3 mui-col-sm-3">教学质量</li>
-                        <li class="mui-col-xs-7 mui-col-sm-7">
-                            <div class="icons mui-inline">
-                                <i data-index="1" class="mui-icon mui-icon-star"></i>
-                                <i data-index="2" class="mui-icon mui-icon-star"></i>
-                                <i data-index="3" class="mui-icon mui-icon-star"></i>
-                                <i data-index="4" class="mui-icon mui-icon-star"></i>
-                                <i data-index="5" class="mui-icon mui-icon-star"></i>
-                            </div>
-                        </li>
-                        <li class="mui-col-xs-2 mui-col-sm-2">
-                            <span class="fenshu">5分</span>
-                        </li>
-                    </ul>
-                </li>
-                <li class=" mui-table-view-cell listli marginlr">
-                    <ul class="mui-row pingjia">
-                        <li class="mui-col-xs-3 mui-col-sm-3">教学质量</li>
-                        <li class="mui-col-xs-7 mui-col-sm-7">
-                            <div class="icons mui-inline">
-                                <i data-index="1" class="mui-icon mui-icon-star"></i>
-                                <i data-index="2" class="mui-icon mui-icon-star"></i>
-                                <i data-index="3" class="mui-icon mui-icon-star"></i>
-                                <i data-index="4" class="mui-icon mui-icon-star"></i>
-                                <i data-index="5" class="mui-icon mui-icon-star"></i>
-                            </div>
-                        </li>
-                        <li class="mui-col-xs-2 mui-col-sm-2">
-                            <span>5分</span>
-                        </li>
-                    </ul>
-                </li>
-                <li class=" mui-table-view-cell listli marginlr">
-                    <textarea placeholder=“感谢您的评价，顺便写点意见吧></textarea>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" style="background:#59b200 "><a href="#">提交评价</a>
+                    {/eq}
                 </li>
             </ul>
+
+            <ul class="mui-table-view list detalis-list mb">
+                <li class="mui-table-view-cell listli">训练时间<span>{$scheduleInfo.lesson_time|date="Y-m-d H:i",###}</span></li>
+                <li class="mui-table-view-cell listli detalisli">学员名单<span>{volist name="studentList" id="vol"}{$vol.student},{/volist}</span></li>
+                <li class="mui-table-view-cell listli">所属课程<span>{$scheduleInfo.lesson}</span></li>
+                <li class="mui-table-view-cell listli">课程类型<span>{$scheduleInfo.grade}</span></li>
+                <li class="mui-table-view-cell listli">训练地点<span>{$scheduleInfo.court}</span></li>
+                <li class="mui-table-view-cell listli">所属地区<span>{$scheduleInfo.province}&nbsp;{$scheduleInfo.city}&nbsp;{$scheduleInfo.area}</span></li>
+                <li class="mui-table-view-cell listli">主教练<span>{$scheduleInfo.coach}</span></li>
+                <li class="mui-table-view-cell listli">助教练<span>{$scheduleInfo.assistants}</span></li>
+                <li class="mui-table-view-cell listli">领队<span>{$scheduleInfo.coach}</span></li>
+                <li class="mui-table-view-cell listli">班主任<span>{$scheduleInfo.teacher}</span></li>
+                <li class="mui-table-view-cell listli">主教底薪<span>{$scheduleInfo.coach_salary}</span></li>
+                <li class="mui-table-view-cell listli">助教底薪<span>{$scheduleInfo.assistant_salary}</span></li>
+                <li class="mui-table-view-cell listli">备注<span>{$scheduleInfo.remarks}</span></li>
+            </ul>
+
+            <div class="page-header mt">
+                <span class="course"><b>学员评价</b></span>
+            </div>
+
+            <ul class="mui-table-view list mui-text-center min-height">
+                {volist name='commentList' id="vol" empty="暂无评论"}
+                <li class="mui-table-view-cell mui-media listli">
+                    <a href="javascript:;">
+                        <img class="mui-media-object mui-pull-left coachicon" src="">
+                        <div class="mui-media-body">
+                            {$vol.member}
+                            <p class="mui-ellipsis">{$vol.comment}</p>
+                        </div>
+                        <div class="price-frame">
+                            <p>{$vol.create_time|date='Y-m-d',###}</p>
+                        </div>
+                    </a>
+                </li>
+                {/volist}
+            </ul>
+
+            <p class="dropdown mt55"><a href="#">查看更多评论</a></p>
+
+            {eq name="updateSchedule" value="0"}
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli">
+                    <span class="mui-icon mui-icon-phone"></span>电话咨询
+                </li>
+                <a href="#score">
+                        <li class="mui-table-view-cell mui-media mui-col-xs-6 opli" style="color:#000;border-left: 1px solid #ccc;">
+                        <span class="mui-icon mui-icon-star mui-icon-star-filled"></span>我要评分
+                    </li>
+                </a>
+            </ul>
+            {/eq}
         </div>
     </div>
 
-</div>
+    <!-- 弹出框-评分内容 -->
+    <div id="score" class="mui-popover mui-popover-action mui-popover-bottom actionsheet" style="height: 438px;">
+        <div class="scoreCont">
 
+            <h5 class="mui-text-left">我要评价<a class="mui-icon mui-icon-closeempty" href="#score"></a></h5>
+            <button id="submit" style="display: none"></button>
+            <div id='image-list' id="question" style="display:none"></div>
 
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<script src="/static/frontend/js/mui.view.js "></script>
-<script src="/static/frontend/js/feedback.js"></script>
-<script>
-    mui.init();
-    // $(document).ready(function(){
-    //   $(".num1 i").click(function(){
-    //      var length =$(".num1 .mui-icon-star-filled").length;
-    //      $(".fenshu").text(length + "分")
-    //   })
-    // })
+            <div class="mui-row scoreStart">
+                <div class="mui-col-xs-3 mui-col-sm-3">教学气氛</div>
+                <div class="mui-col-xs-7 mui-col-sm-7">
+                    <div class="mui-page-content">
+                        
+                        <div class="icons mui-inline">
+                            <i data-index="1" class="mui-icon mui-icon-star"></i>
+                            <i data-index="2" class="mui-icon mui-icon-star"></i>
+                            <i data-index="3" class="mui-icon mui-icon-star"></i>
+                            <i data-index="4" class="mui-icon mui-icon-star"></i>
+                            <i data-index="5" class="mui-icon mui-icon-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="mui-col-xs-2 mui-col-sm-2"><span>0</span>分</div>
+            </div>
 
-    mui('.icons').on('click', 'i', function () {
-        var index = parseInt(this.getAttribute("data-index"));//获取当前元素的索引值
-        $(this).parent().parent().siblings().children().text(index + "分")
-    })
+            <div class="mui-row scoreStart">
+                <div class="mui-col-xs-3 mui-col-sm-3">课堂纪律</div>
+                <div class="mui-col-xs-7 mui-col-sm-7">
+                    <div class="mui-page-content">
+                        <div class="icons mui-inline">
+                            <i data-index="1" class="mui-icon mui-icon-star"></i>
+                            <i data-index="2" class="mui-icon mui-icon-star"></i>
+                            <i data-index="3" class="mui-icon mui-icon-star"></i>
+                            <i data-index="4" class="mui-icon mui-icon-star"></i>
+                            <i data-index="5" class="mui-icon mui-icon-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="mui-col-xs-2 mui-col-sm-2"><span>0</span>分</div>
+            </div>
 
-</script>
+            <div class="mui-row scoreStart">
+                <div class="mui-col-xs-3 mui-col-sm-3">技术指导</div>
+                <div class="mui-col-xs-7 mui-col-sm-7">
+                    <div class="mui-page-content">
+                        <div class="icons mui-inline">
+                            <i data-index="1" class="mui-icon mui-icon-star"></i>
+                            <i data-index="2" class="mui-icon mui-icon-star"></i>
+                            <i data-index="3" class="mui-icon mui-icon-star"></i>
+                            <i data-index="4" class="mui-icon mui-icon-star"></i>
+                            <i data-index="5" class="mui-icon mui-icon-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="mui-col-xs-2 mui-col-sm-2"><span>0</span>分</div>
+            </div>
+
+            <div class="mui-row scoreStart">
+                <div class="mui-col-xs-3 mui-col-sm-3">工作态度</div>
+                <div class="mui-col-xs-7 mui-col-sm-7">
+                    <div class="mui-page-content">
+                        <div class="icons mui-inline">
+                            <i data-index="1" class="mui-icon mui-icon-star"></i>
+                            <i data-index="2" class="mui-icon mui-icon-star"></i>
+                            <i data-index="3" class="mui-icon mui-icon-star"></i>
+                            <i data-index="4" class="mui-icon mui-icon-star"></i>
+                            <i data-index="5" class="mui-icon mui-icon-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="mui-col-xs-2 mui-col-sm-2"><span>0</span>分</div>
+            </div>
+            <div class="mui-row scoreStart" style="border-bottom: 0;">
+                <textarea rows="3" placeholder="感谢您的评价，顺便写点意见吧" style="font-size: 14px"></textarea>
+            </div>
+            
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" style="border-radius: 0">提交</li>
+            </ul>  
+        </div>
+    </div>
+
+     <script src="/static/frontend/js/mui.min.js"></script>
+     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+     <script src="/static/frontend/js/mui.view.js "></script>
+     <script src="/static/frontend/js/feedback.js"></script>
+     <script>
+        mui.init();
+
+        // 教练评分
+        mui('.icons').on('tap', 'i', function () {
+            var index = parseInt(this.getAttribute("data-index"));//获取当前元素的索引值
+            $(this).parent().parent().parent().siblings().children().text(index);
+        })
+
+    </script>
 </body>
 </html>

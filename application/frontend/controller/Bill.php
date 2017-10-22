@@ -18,7 +18,8 @@ class Bill extends Base{
     public function billInfoOfCamp(){
         $bill_id = input('param.bill_id');
         $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
-
+        $lessonInfo = [];
+        $studentInfo = [];
         // 课程信息
         if($billInfo['goods_type'] == '课程'){
             $LessonService = new \app\service\LessonService;
@@ -27,12 +28,11 @@ class Bill extends Base{
             // 学生信息
             $StudentService = new \app\service\StudentService;
             $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
-            $this->assign('studentInfo',$studentInfo);
         }        
         // 判断权限
         $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
-
-
+        // dump($isPower);die;
+        $this->assign('studentInfo',$studentInfo);
         $this->assign('power',$isPower);
         $this->assign('billInfo',$billInfo);
         return view('Bill/billInfoOfCamp');
@@ -42,6 +42,7 @@ class Bill extends Base{
     public function updateBillInfoOfCamp(){
         $bill_id = input('param.bill_id');
         $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+        $lessonInfo = [];
         // 判断权限
         $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
         if($isPower<3){
@@ -51,13 +52,13 @@ class Bill extends Base{
         if($billInfo['goods_type'] == '课程'){
             $LessonService = new \app\service\LessonService;
             $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
-            $this->assign('lessonInfo',$lessonInfo);
+           
             // 学生信息
             $StudentService = new \app\service\StudentService;
             $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
             $this->assign('studentInfo',$studentInfo);
         }        
-        
+        $this->assign('lessonInfo',$lessonInfo);
         $this->assign('power',$isPower);
         $this->assign('billInfo',$billInfo);
         return view('Bill/updateBillInfoOfCamp');
@@ -68,29 +69,17 @@ class Bill extends Base{
     public function billInfo(){
     	$bill_id = input('param.bill_id');
     	$billInfo = $this->BillService->getBill(['id'=>$bill_id]);
-        // 判断权限
-        $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
-        if($isPower > 1){
-            if($billInfo['balance_pay'] == 0){
-                $title = "您的体验课程预约成功, 请等待回复";
-            }else{
-                $title = "您的订单已支付成功";
-            }
-            
-        }else{
-            if($billInfo['balance_pay'] == 0){
-                $title = "您有体验课程被预约, 请及时跟进";
-            }else{
-               $title = "您有课程被购买, 请及时跟进";
-            }
-            
-        }
-
+        $lessonInfo = [];
         if($billInfo['goods_type']=='课程'){
-            $lessonInfo = db('lesson')->where(['id'=>$billInfo['goods_id']])->find();
-            $this->assign('lessonInfo',$lessonInfo);
+            $LessonService = new \app\service\LessonService;
+            $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
+            
+            // 学生信息
+            $StudentService = new \app\service\StudentService;
+            $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
+            $this->assign('studentInfo',$studentInfo);
         }
-        $this->assign('title',$title);    
+        $this->assign('lessonInfo',$lessonInfo);
     	$this->assign('billInfo',$billInfo);
     	return view('Bill/billInfo');
     }

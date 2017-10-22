@@ -9,37 +9,59 @@ class Message extends Base{
 		$this->MessageService = new MessageService;
 	}
 
-    public function index() {
-        
-    }
-
-
-
     // 获取全部个人消息和系统消息列表
     public function getMessageListApi(){
-    	try{
+        try{
             $status = input('param.status');
-    		$campIDs = db('camp_member')
-                  ->where(['member_id'=>$this->memberInfo['id'],'status'=>1])
-                  ->where('type','gt',2)
-                  ->where('delete_time',null)
-                  ->column('camp_id');
-            $messageList = $this->MessageService->getMessageList(['camp_id'=>['in',$campIDs]]);
-            if($status){
-                $messageMemberList = $this->MessageService->getMessageMemberList(['member_id'=>$this->memberInfo['id'],'status'=>$status]);
+            $messageList = $this->MessageService->getMessageList(['status'=>$status]);
+            if($messageList){
+                return json(['code'=>200,'msg'=>'OK','data'=>$messageList]);
             }else{
-                $messageMemberList = $this->MessageService->getMessageMemberList(['member_id'=>$this->memberInfo['id']]);
+                return json(['code'=>100,'msg'=>'OK']);
+            }
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMassege()]);
+        }
+    }
+
+    // 获取系统消息列表
+    public function getMessageListByPageApi(){
+        try{
+            $status = input('param.status');
+            //$page = input('param.page', 1);
+            $map['member_id'] = $this->memberInfo['id'];
+//            $map = [];
+            $messageList = $this->MessageService->getMessageList($map);
+            if($messageList){
+                return json(['code'=>200,'msg'=>'OK','data'=>$messageList]);
+            }else{
+                return json(['code'=>100,'msg'=>'OK']);
+            }
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMassege()]);
+        }
+    }
+
+    // 获取全部个人消息getMessageListByPageApi带page
+    public function getMessageMemberListByPageApi(){
+        try{
+            $status = input('param.status');
+            if($status){
+                $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id'],'status'=>$status]);
+            }else{
+                $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id']]);
             }
             
-	    	if($messageList){
-	    		return json(['code'=>100,'msg'=>'OK','data'=>['messagelist'=>$messageList,'messageMemberList'=>$messageMemberList]]);
-	    	}else{
-	    		return json(['code'=>200,'msg'=>'OK']);
-	    	}
-	    }catch(Exception $e){
-	    	return json(['code'=>200,'msg'=>$e->getMassege()]);
-	    }
+            if($messageMemberList){
+                return json(['code'=>200,'msg'=>'OK','data'=>$messageMemberList]);
+            }else{
+                return json(['code'=>100,'msg'=>'OK']);
+            }
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMassege()]);
+        }
     }
+
 
 
     // 获取消息详情
@@ -48,12 +70,12 @@ class Message extends Base{
     		$message_id = input('param.message_id');
     		$messageInfo = $this->MessageService->getMessageInfo(['id'=>$message_id]);
     		if($messageInfo){
-    			return json(['code'=>100,'msg'=>'','data'=>$messageInfo]);
+    			return json(['code'=>200,'msg'=>'','data'=>$messageInfo]);
     		}else{
-    			return json(['code'=>200,'msg'=>'没有这条消息']);
+    			return json(['code'=>100,'msg'=>'没有这条消息']);
     		}
     	}catch (Exception $e){
-    		return json(['code'=>200,'msg'=>$e->getMassege()]);
+    		return json(['code'=>100,'msg'=>$e->getMassege()]);
     	}
     }
 
@@ -73,19 +95,41 @@ class Message extends Base{
     }
 
     // 设置消息状态
-    public function setMessageMemberStatus(){
+    public function setMessageMemberStatusApi(){
         try{
             $message_id = input('param.message_id');
             $status = input('param.status');
             $result = db('message_member')->where(['id'=>$message_id,'member_id'=>$this->memberInfo['id']])->update(['status'=>$status]);
             if($result){
-                return json(['code'=>100,'msg'=>'设置成功']);
+                return json(['code'=>200,'msg'=>'设置成功']);
             }else{
-                return json(['code'=>200,'msg'=>'没有这条消息']);
+                return json(['code'=>100,'msg'=>'没有这条消息']);
             }
             
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMassege()]);
+            return json(['code'=>100,'msg'=>$e->getMassege()]);
+        }
+    }
+
+    public function setMessageStatus(){
+        try{
+            $message_id = input('param.message_id');
+            $status = input('param.status');
+//             $result = db('message_read')->where(['id'=>$message_id,'member_id'=>$this->memberInfo['id']])->update(['isread'=>$status, 'update_time' => time()]);
+            $result = db('message_read')->insert([
+                'message_id' => $message_id,
+                'member_id' => $this->memberInfo['id'],
+                'isread' => 2,
+                'create_time' => time()
+            ]);
+            if($result){
+                return json(['code'=>200,'msg'=>'设置成功']);
+            }else{
+                return json(['code'=>100,'msg'=>'没有这条消息']);
+            }
+
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMassege()]);
         }
     }
 
@@ -95,13 +139,13 @@ class Message extends Base{
             $message_id = input('param.message_id');
             $result = $this->MessageService -> removeMessageMember(['id'=>$message_id,'member_id'=>$this->memberInfo['id']]);
             if($result){
-                return json(['code'=>100,'msg'=>'删除成功']);
+                return json(['code'=>200,'msg'=>'删除成功']);
             }else{
-                return json(['code'=>200,'msg'=>'没有这条消息']);
+                return json(['code'=>100,'msg'=>'没有这条消息']);
             }
             
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMassege()]);
+            return json(['code'=>100,'msg'=>$e->getMassege()]);
         }
     }
 
@@ -113,18 +157,18 @@ class Message extends Base{
             $map['member_id'] = $this->memberInfo['id'];
             $result = $this->MessageService->getMessageMemberListByPage($map);
             if ($result) {
-                return json(['code' => 100, 'msg' => '获取成功', 'data' => $result]);
+                return json(['code' => 200, 'msg' => '获取成功', 'data' => $result]);
             } else {
-                return json(['code' => 200, 'msg' => '没有这条消息']);
+                return json(['code' => 100, 'msg' => '没有这条消息']);
             }
 
         } catch (Exception $e) {
-            return json(['code' => 200, 'msg' => $e->getMassege()]);
+            return json(['code' => 100, 'msg' => $e->getMassege()]);
         }
     }
 
 
-    //
+    // 申请加入训练营 发送消息
     public function campjoinaudit() {
         $id =input('param.id');
         $campmemberObj = \app\model\CampMember::get($id);
@@ -141,7 +185,7 @@ class Message extends Base{
             }
             $data = [
                 'title' => '加入训练营申请',
-                'content' => '会员 '.$campmember['member'].'申请加入'. $campmember['camp'] .' 成为 '. $campmember['type'] .', 请及时处理',
+                'content' => '会员 '.$campmember['member'].'申请加入'. $campmember['camp'] .' 成为 '. $campmember['type'] .'，请及时处理',
                 'baseurl' => $baseurl,
                 'member' => $campmember['member'],
                 'jointime' => $campmember['create_time']
@@ -150,6 +194,45 @@ class Message extends Base{
             $messageS = new MessageService();
             $messageS->campJoinAudit($data, $campmember['camp_id']);
         }
-       
+    }
+
+    // 加入训练营
+    public function campjoinauditresult() {
+        $id = input('param.id');
+        $campmemberObj = \app\model\CampMember::get($id);
+        if (!$campmemberObj) {
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+        }
+        $campmember = $campmemberObj->toArray();
+        $campmember['type_num'] = $campmemberObj->getData('type');
+        $campmember['status_num'] = $campmemberObj->getData('status');
+        if ($campmember['type_num'] > 1) {
+            $url = '';
+            $checkstr = '';
+            switch ($campmember['status_num']) {
+                case "1" : {
+                    $url = url('frontend/camp/powercamp', ['camp_id' => $campmember['camp_id']], '', true);
+                    $checkstr = '审核通过';
+                    break;
+                }
+                case "-2": {
+                    $url = url('frontend/message/index', '', '', true);
+                    $checkstr = '被拒绝';
+                    break;
+                }
+            }
+
+            $data = [
+                'title' => '加入训练营申请结果',
+                'content' => '您好，您申请加入'. $campmember['camp'] .' 成为 '. $campmember['type'] . $checkstr,
+                'url' => $url,
+                'member' => $campmember['member'],
+                'audittime' => $campmember['update_time'],
+                'checkstr' => $checkstr
+            ];
+
+            $messageS = new MessageService();
+            $messageS->campJoinAuditResult($data, $campmember['member_id']);
+        }
     }
 }

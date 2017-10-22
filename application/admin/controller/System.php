@@ -14,7 +14,7 @@ class System extends Backend {
         $breadcrumb = ['title' => '系统设置'];
         $this->assign( 'breadcrumb', $breadcrumb );
         $this->assign('banner', $banner);
-        return view();
+        return view('System/index');
     }
 
     // 设置平台信息

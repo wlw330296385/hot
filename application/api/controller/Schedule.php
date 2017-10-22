@@ -1,6 +1,7 @@
 <?php 
 namespace app\api\controller;
 use app\api\controller\Base;
+use app\service\MessageService;
 use app\service\ScheduleService;
 /**
 * 课时表类
@@ -30,7 +31,7 @@ class Schedule extends Base
 			$lesson_time = input('param.lesson_time');
 			$grade_id = input('param.grade_id');
 			$camp_id = input('param.camp_id');
-			$lesson_time = strtotime($lesson_time);
+			$lesson_time = strtotime($lesson_time);		
 			//前后2个小时
 			$start_time = $lesson_time-7200;
 			$end_time = $lesson_time+7200;
@@ -40,13 +41,14 @@ class Schedule extends Base
 									'lesson_id'=>$lesson_id,
 									'lesson_time'=>['BETWEEN',[$start_time,$end_time]]
 									])->select();
+		
 			$result = 1;
 			if(!$scheduleList){
 				$result = 0;
 			}else{
 				foreach ($scheduleList as $key => $value) {
 					if($value['lesson_time']>$start_time && $value['lesson_time']<$end_time){
-						$result = 0;
+						$result = 1;
 					}
 				}
 			}
@@ -217,5 +219,31 @@ class Schedule extends Base
             }
             return json($response);
         }
+    }
+
+    // 发送课时结果消息给学员
+    public function sendschedule() {
+        $scheduleid = input('scheduleid');
+        $scheduleS = new ScheduleService();
+        $members = $scheduleS->getScheduleStudentMemberList($scheduleid);
+        dump($members);
+        $schedule = $scheduleS->getScheduleInfo(['id' => $scheduleid]);
+//        dump($schedule);
+
+        $templateData = [
+            'title' => $schedule['grade'].'最新课时',
+            'content' => '您参加的'.$schedule['camp'].'-'.$schedule['lesson'].'-'.$schedule['grade'].'班级 发布最新课时',
+            'lesson_time' => date('Y-m-d H:i', $schedule['lesson_time']),
+            'url' => url('frontend/schedule/scheduleinfo', ['schedule_id' => $schedule['id'], 'camp_id' => $schedule['camp_id']], '', true)
+        ];
+        //dump($templateData);
+        $messageS = new MessageService();
+        $res = $messageS->sendschedule($templateData, $members);
+        if ($res) {
+            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+        } else {
+            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+        return json($response);
     }
 }
