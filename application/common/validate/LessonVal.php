@@ -22,14 +22,14 @@ class LessonVal extends Validate{
         'lesson.require'        =>  '课程名必须',
         'gradecate.require'	=> '课程类型必须',
         'cost.require'      =>'费用必须',
-        'dom'                 =>'dom字段必须',
-        'coach'                 =>'coach字段必须',
-        'week'                  =>'week字段必须',
+        'dom'                 =>'缺少必填项目',
+        'coach'                 =>'主教练必填',
+        'week'                  =>'周期（星期几）必填',
         'lesson_time'           =>'发布时间大于当前时间',
-        'province'              =>'province字段必须',
-        'city'                  =>'city字段必须',
-        'area'                  =>'area字段必须',
-        'court'                 =>'court字段必须',
+        'province'              =>'省份必填',
+        'city'                  =>'城市必填',
+        'area'                  =>'区县必填',
+        'court'                 =>'训练点必填',
     ];
     
     protected $scene = [

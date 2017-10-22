@@ -25,12 +25,12 @@ class billVal extends Validate{
         'camp'                  =>'缺少训练营',
         'total'                 =>'缺少总价',
         'price'                 =>'缺少单价',
-        'camp_id'                  =>'字段必须',
+        'camp_id'                  =>'没指定训练营',
         'camp'           =>'训练营',
-        'student_id'              =>'请先添加学生并且注意点[确认添加]按钮',
-        'student'                  =>'请先添加学生姓名并且注意点[确认添加]按钮',
-        'member_id'                  =>'member_id字段必须',
-        'member'                 =>'member字段必须',
+        'student_id'              =>'请先添加学生，并且注意点【确认添加】按钮',
+        'student'                  =>'请先添加学生姓名，并且注意点【确认添加】按钮',
+        'member_id'                  =>'没指定会员号',
+        'member'                 =>'没指定会员名称',
         'score_pay'     =>'score_pay.require'
     ];
     
