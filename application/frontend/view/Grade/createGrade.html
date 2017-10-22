@@ -44,6 +44,11 @@
             color: #AAAAAA;
             line-height:normal;
         }
+        .weekList label{
+            width: 60%;
+        }
+        .weekList .weektime{
+        }
     </style>
 </head>
 
@@ -84,6 +89,7 @@
                         <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" >
                         {/volist}
                     </div>
+                    <input type="hidden" name="students" class="students data" value="">
                 </a>
             </div>
 
@@ -96,24 +102,16 @@
             </div>
 
             <div class="mui-input-row">
-                <label>训练日期</label>
-                <span class="select-arrow week">
-                        <select class="select data" name="week">
-                            <option>周日</option>
-                            <option>周一</option>
-                            <option>周二</option>
-                            <option>周三</option>
-                            <option>周四</option>
-                            <option>周五</option>
-                            <option>周六</option>
-                        </select>
-                    </span>
+                <a href="#weekSelect" id="setWeek" class="mui-navigate-right">
+                    <label>训练周期</label>
+                    <input type="text" name="week" value="" class="data week" placeholder="">
+                </a>
             </div>
 
-            <div class="mui-input-row picker btn" id="demo5" data-options='{"type":"time"}'>
-                <a href="#" class="mui-navigate-right">
+            <div class="mui-input-row">
+                <a href="#weekSelect" id="setTime" class="mui-navigate-right">
                     <label>训练时间</label>
-                    <span id="result" class="ui-alert lesson_time domData" name="lesson_time"></span>
+                    <span class="ui-alert lesson_time domData" name="lesson_time"></span>
                 </a>
             </div>
 
@@ -124,16 +122,16 @@
                 </a>
              </div>
 
+            <div class="mui-input-row">
+                <label>具体地址</label>
+                <input type="text" name="location" value="" class="location data" placeholder="选填">
+            </div>
+
             <div class="mui-input-row" id='showCityPicker3'>
                 <a href="#" class="mui-navigate-right">
                     <label>所属地区</label>
                     <span id="cityResult3" class="ui-alert domData" name="address" ></span>
                 </a>
-            </div>
-
-            <div class="mui-input-row">
-                <label>具体地址</label>
-                <input type="text" name="location" value="" class="location data" placeholder="（选填）">
             </div>
 
             <div class="mui-input-row">
@@ -146,24 +144,24 @@
             <div class="mui-input-row">
                 <a href="#assistantCoach" id="setAsCoach" class="mui-navigate-right">
                     <label>助理教练</label>
-                    <input type="text" name="assistants" value="" class="data assistants" placeholder="选填">
+                    <input type="text" name="assistants" value="" class="data assistants assistantCoachCont" placeholder="选填">
                     <input type="hidden" name="assistant_ids" value="" class="data">
                 </a>
             </div>
 
             <div class="mui-input-row">
                 <label>主教底薪<a href="#coach_salary"><i class="mui-icon mui-icon-info"></i></a></label>
-                <input type="text" name="coach_salary" class="coach_salary checkNum data" value="" placeholder="请输入主教底薪">
+                <input type="number" name="coach_salary" class="coach_salary data" value="" placeholder="请输入主教底薪">
             </div>
 
             <div class="mui-input-row">
                 <label>助教底薪<a href="#assistantSalary"><i class="mui-icon mui-icon-info"></i></a></label>
-                <input type="text" name="assistant_salary" class="assistant_salary checkNum data" value="" placeholder="请输入助教底薪">
+                <input type="number" name="assistant_salary" class="assistant_salary data" value="" placeholder="请输入助教底薪">
             </div>
 
             <div class="mui-input-row">
                 <label>提成基数<a href="#mainBase"><i class="mui-icon mui-icon-info"></i></a></label>
-                <input type="text" name="salary_base" class="salary_base checkNum data" value="" placeholder="请输入提成基数">
+                <input type="number" name="salary_base" class="salary_base data" value="" placeholder="请输入提成基数">
 
             </div>
 
@@ -250,6 +248,49 @@
 
             <form id="newdiv" class="mui-input-group">
 
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--周期选择-->
+<div id="weekSelect" class="mui-popover">
+    <div class="mui-popover-arrow"></div>
+    <div class="page-header">
+        <span class="course"><strong>请选择训练周期</strong></span>
+        <span class="fr"><button class="mui-btn-blue" id="weekConfirm">确认</button></span>
+    </div>
+    <div class="mui-scroll-wrapper">
+        <div class="mui-scroll">
+            <form class="mui-input-group weekList">
+                <div class="mui-input-row mui-checkbox mui-left"><label class="label">周一</label>
+                    <span class="weektime btn" id="week1" data-options='{"type":"time"}'>请选择时间</span>
+                    <input name="checkbox-week" value="周一" type="checkbox">
+                </div>
+                <div class="mui-input-row mui-checkbox mui-left"><label class="label">周二</label>
+                    <span class="weektime btn" id="week2" data-options='{"type":"time"}'>00:00</span>
+                    <input name="checkbox-week" value="周二" type="checkbox">
+                </div>
+                <div class="mui-input-row mui-checkbox mui-left"><label class="label">周三</label>
+                    <span class="weektime btn" id="week3" data-options='{"type":"time"}'>00:00</span>
+                    <input name="checkbox-week" value="周三" type="checkbox">
+                </div>
+                <div class="mui-input-row mui-checkbox mui-left"><label class="label">周四</label>
+                    <span class="weektime btn" id="week4" data-options='{"type":"time"}'>00:00</span>
+                    <input name="checkbox-week" value="周四" type="checkbox">
+                </div>
+                <div class="mui-input-row mui-checkbox mui-left"><label class="label">周五</label>
+                    <span class="weektime btn" id="week5" data-options='{"type":"time"}'>00:00</span>
+                    <input name="checkbox-week" value="周五" type="checkbox">
+                </div>
+                <div class="mui-input-row mui-checkbox mui-left"><label class="label">周六</label>
+                    <span class="weektime btn" id="week6" data-options='{"type":"time"}'>00:00</span>
+                    <input name="checkbox-week" value="周六" type="checkbox">
+                </div>
+                <div class="mui-input-row mui-checkbox mui-left"><label class="label">周日</label>
+                    <span class="weektime btn" id="week7" data-options='{"type":"time"}'>00:00</span>
+                    <input name="checkbox-week" value="周日" type="checkbox">
+                </div>
             </form>
         </div>
     </div>
@@ -515,6 +556,12 @@
             var cityPicker3 = new $.PopPicker({
                 layer: 3
             });
+
+            // 设置默认值
+            cityPicker3.pickers[0].setSelectedIndex(18);
+            cityPicker3.pickers[1].setSelectedIndex(2);
+            cityPicker3.pickers[2].setSelectedIndex(2);
+            
             cityPicker3.setData(cityData3);
             var showCityPickerButton = doc.getElementById('showCityPicker3');
             var cityResult3 = doc.getElementById('cityResult3');
@@ -530,7 +577,8 @@
             }, false);
 
             //时间
-            var result = $('#result')[0];
+            //var result = $('#result')[0];
+            var result = $(".weektime");
             var btns = $('.btn');
             btns.each(function (i, btn) {
                 btn.addEventListener('tap', function () {
@@ -540,7 +588,8 @@
                     var picker = new $.DtPicker(options);
 
                     picker.show(function (rs) {
-                        result.innerText = rs.text;
+                        //result.innerText = rs.text;
+                        result[i].innerText = rs.text;
                         picker.dispose();
                     });
                 }, false);
@@ -573,15 +622,15 @@
             $("input[name='checkbox-student']").prop("checked",false);
             //然后遍历出对应所选
             $(".stdList").each(function (i) {
-                var id = $(this).attr("data-id");
+                //var id = $(this).attr("data-id");
                 var student_id = $(this).attr("data-student_id");
-                var student = $(this).attr("data-student");
+                //var student = $(this).attr("data-student");
                 $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
                     return $(this).attr("data-student_id") == student_id
                 }).prop("checked",true);
             });
         });
-        //复选框赋值
+        //助教复选框赋值
         $("#setAsCoach").on('tap','', function () {
             //每次打开先清空所有选择
             $("input[name='checkbox-assistant']").prop("checked",false);
@@ -592,6 +641,23 @@
                 $("input[name='checkbox-assistant']").filter(function (index) {
                     return $(this).attr("data-id") == s[i]
                 }).prop("checked",true);
+            }
+        });
+
+        //训练周期复选框赋值
+        $("#setWeek,#setTime").on('tap','', function () {
+            //每次打开先清空所有选择
+            $("input[name='checkbox-week']").prop("checked",false);
+            $(".weektime").text("00:00");
+            //然后遍历出对应所选
+            var str = $("input[name='week']").val();
+            var s=str.split(',');
+            var strTime = $(".lesson_time").text();
+            var st=strTime.split(',')
+            for(var i = 0;i<s.length;i++){
+                $("input[name='checkbox-week']").filter(function (index) {
+                    return $(this).val() == s[i]
+                }).prop("checked",true).parent().find(".weektime").text(st[i]);
             }
         });
 
@@ -624,8 +690,14 @@
             console.log(inputList)
             console.log(studentList)
             console.log(studentNames)
+
+            //班级成员
+            $("input[name=students]").val(studentList.length)
+            console.log($("input[name=students]").val());
             mui('#student').popover('toggle');
         })
+
+
 
         // 班级类型
         var gradecate_id = "";
@@ -646,24 +718,63 @@
             $(".trainLocationCont").text(trainLocation);
             mui("#trainLocation").popover("toggle");
         })
+
+        // 判断所选助教是否存在
+        $(".coachAS").on('click','.mui-checkbox',function(){
+            var mainID = $(".coach_id").val();
+            var asID = $(this).find("input[name='checkbox-assistant']").attr('data-id');
+            var asName = $(this).find("input[name='checkbox-assistant']").val();
+            if(asID==mainID){
+                mui.alert(asName+"已是主教练，请不要重复选择！");
+                $(this).find("input[name='checkbox-assistant']").prop("checked",false);
+                return;
+            }
+        })
+
         // 主教练
-        $(".mainCoach").on('click', 'li', function () {
+        $(".mainCoach").on('click','li',function(){
             var mainCoach = $(this).text();
-            $(".mainCoachCont").text(mainCoach);
-            var id = $(this).attr('data-id');
-            $(".coach_id").val(id);
-            mui("#mainCoach").popover("toggle");
+            var id= $(this).attr('data-id');
+            var asID = '';
+            var isStop='No'
+            /// 判断所选主教是否存在助教栏
+            $("#assistantCoach input[name='checkbox-assistant']:checked").each(function () {
+                asID = $(this).attr('data-id');
+                if(asID==id){
+                    mui.alert(mainCoach+"已是助教，请不要重复选择！");
+                    $(this).find("input[name='checkbox-assistant']").prop("checked",false);
+                    isStop='Yes';
+                    return false;
+                }
+            });
+            if(isStop=='No') {
+                $(".mainCoachCont").text(mainCoach);
+                $(".coach_id").val(id);
+                mui("#mainCoach").popover("toggle");
+            }
         })
         // 助理教练
-        $("#assistantConfirm").click(function () {
-            $("input[name='assistants']").val($("input[name='checkbox-assistant']:checked").map(function(){
+         $("#assistantConfirm").click(function () {
+             $("input[name='assistants']").val($("input[name='checkbox-assistant']:checked").map(function(){
+                 return $(this).val();
+             }).get().join(",") );
+             $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function () {
+                 return $(this).attr('data-id');
+             }).get().join(","));
+             mui('#assistantCoach').popover('toggle');
+         })
+        // 选择周期确认
+        $("#weekConfirm").click(function () {
+            $("input[name='week']").val($("input[name='checkbox-week']:checked").map(function(){
                 return $(this).val();
             }).get().join(",") );
-            $("input[name='assistant_ids']").val($("input[name='checkbox-assistant']:checked").map(function () {
-                return $(this).attr('data-id');
-            }).get().join(","));
-            mui('#assistantCoach').popover('toggle');
+            $(".lesson_time").text($("input[name='checkbox-week']:checked").parent().find(".weektime").map(function(){
+                return $(this).text();
+            }).get().join(",") );
+            mui('#weekSelect').popover('toggle');
         })
+
+
 
         // 班主任
         $(".headMaster").on('click','li',function(){
@@ -749,14 +860,7 @@
         })
 
 
-        //检测输入是否为数字
-        $(".checkNum").blur(function () {
-            var num = $(this).val();
-            if (isNaN(num)) {
-                mui.toast("请填写数字");
-                return false;
-            }
-        });
+
 
         //所属课程api
         $(".lessonType").click(function () {
@@ -800,26 +904,39 @@
 
         //创建班级
         $(".editorbtn").on('tap','',function(){
-            var data = wooApi.getInputData('input','data');
-            datas = wooApi.getInputData('select','data',data);
-            // 获取其他标签值
-            arrData = wooApi.getDomData('domData',datas);
-            var objData = wooApi.arrTOobj(arrData);
-            // var studentList = [{student:1,student_id:1,id:1},{student:2,student_id:2,id:2}];
-            objData.studentData = JSON.stringify(studentList);
-//            console.log(studentList);
-//             console.log(objData );
-//             return false;
-            var url = "{:url('api/grade/createGradeApi')}";
-            var ajaxResult = wooApi.asyncF(url,objData);
-            if(ajaxResult.code == 200){
-                mui.alert(ajaxResult.msg,'创建成功','确定',function(){
-                    window.location.href="{:url('frontend/grade/gradelistofcamp',['camp_id'=>$campInfo['id']])}";
-                })
-            }else{
-                mui.alert(ajaxResult.msg,'创建失败','确定',function(){
 
-                })
+            //检测提成和基数输入是否为数字
+            var noPass="";
+            //检查是否输入班级名称
+            if($('input[name="grade"]').val()==""){
+                noPass+="班级名称必须填写！！"
+            }
+
+            if(noPass!=""){
+                mui.toast(noPass);
+                return false;
+            }else{
+                var data = wooApi.getInputData('input','data');
+                datas = wooApi.getInputData('select','data',data);
+                // 获取其他标签值
+                arrData = wooApi.getDomData('domData',datas);
+                var objData = wooApi.arrTOobj(arrData);
+                // var studentList = [{student:1,student_id:1,id:1},{student:2,student_id:2,id:2}];
+                objData.studentData = JSON.stringify(studentList);
+    //            console.log(studentList);
+    //             console.log(objData );
+    //             return false;
+                var url = "{:url('api/grade/createGradeApi')}";
+                var ajaxResult = wooApi.asyncF(url,objData);
+                if(ajaxResult.code == 200){
+                    mui.alert(ajaxResult.msg,'创建成功','确定',function(){
+                        window.location.href="{:url('frontend/grade/gradelistofcamp',['camp_id'=>$campInfo['id']])}";
+                    })
+                }else{
+                    mui.alert(ajaxResult.msg,'创建失败','确定',function(){
+
+                    })
+                }
             }
         })
 
