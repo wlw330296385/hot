@@ -125,7 +125,14 @@ class Grade extends Base{
 
     public function createGradeApi(){
         try{
-            $data = input('post.'); 
+            $data = input('post.');
+            $GradeService = new GradeService;
+            // 检查同训练营是否存在同名班级
+            $hasgrade = $GradeService->getGradeInfo(['grade' => $data['grade'],'camp_id' => $data['camp_id']]);
+            if ($hasgrade) {
+                return json(['code' => 100, 'msg' => '训练营已存在同名班级,请填写其他班级名称']);
+            }
+
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             if($data['address']){
@@ -138,7 +145,6 @@ class Grade extends Base{
                     $data['area'] = $address[1];
                 }             
             }
-            $GradeService = new GradeService;
             $result = $GradeService->createGrade($data);
             if($result['code']==200){
                 $grade_id = $result['data'];
@@ -150,7 +156,7 @@ class Grade extends Base{
                 }
             }else{
                 return json($result);
-            } 
+            }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -203,10 +209,10 @@ class Grade extends Base{
             }
 
             switch ( $grade['status_num'] ) {
-                case 1 : {
+                case "1" : {
                     // 操作当前班级
                     if ($action == 'editstatus') {
-                        $res = $gradeS->updateGradeStatus($grade['id'], 0);
+                        $res = $gradeS->updateGradeStatus($grade['id'], -1);
                         if ($res) {
                             $response = json(['code' => 200, 'msg' => __lang('MSG_200')]);
                         } else {
@@ -219,7 +225,7 @@ class Grade extends Base{
                     return $response;
                     break;
                 }
-                case -1: {
+                case "-1": {
                     // 操作预排班级
                     if ($action == 'editstatus') {
                         $res = $gradeS->updateGradeStatus($grade['id'], 1);
