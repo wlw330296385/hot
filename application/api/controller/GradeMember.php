@@ -54,42 +54,6 @@ class GradeMember extends Base{
         }
     }
 
-
-    // 获取购买了课程的学生
-    public function getActiveLessonStudentsApi(){
-        try{
-            $lesson_id = input('param.lesson_id');
-            $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->where('grade_id','neq','')->field('student,id')->select();
-            return json(['code'=>200,'msg'=>__lang('MSG_201'),'data'=>$studentList]);
-        }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }
-    }
-
-    // 获取毕业学生
-    public function getEduatedStudentsApi(){
-        try{
-            $lesson_id = input('param.lesson_id');
-            $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>4])->select();
-            return json(['code'=>200,'msg'=>__lang('MSG_201'),'data'=>$studentList]);
-        }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }
-    }
-
-    // 获取没有被分配班级的学生
-    public function getInactiveStudentsApi(){
-        try{
-            $lesson_id = input('param.lesson_id');
-            $studentList = db('grade_member')->where(['lesson_id'=>$lesson_id,'type'=>1,'status'=>1])->select();
-            return json(['code'=>200,'msg'=>__lang('MSG_201'),'data'=>$studentList]);
-        }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }
-    }
-
-
-  
    
     // 获取与课程|班级|训练营相关的学生|体验生-不带page
     public function getGradeMemberListNoPageApi(){
