@@ -18,11 +18,12 @@
     <!--等级星星样式-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
     <style>
-        .examineBox{
+        .examineBox {
             padding: 10px;
             background-color: #fff;
         }
-        .examine{
+
+        .examine {
             width: 100%;
             min-height: 40px;
             font-size: 14px;
@@ -33,53 +34,39 @@
 
 <body>
 
-    <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">教练介绍</h1>
-    </header>
-    <div class="mui-content">
+<header id="header" class="mui-bar mui-bar-nav subheader">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <h1 class="mui-title">教练介绍</h1>
+</header>
+<div class="mui-content">
 
-        <div class="list camp-list detalis-list coach">
+    <div class="list camp-list detalis-list coach">
 
-            <!-- 审核内容-->
-            <div class="examineBox mb">
-                <input id="campmemberid" type="hidden" value="{$campmember.id}">
-                <div class="examine"><strong>申请的内容：</strong>{$campmember.remarks}</div>
-                <div class="mui-button-row">
-                   <button class="mui-btn" type="button" onclick="check_status(1)">同意</button>&nbsp;&nbsp;
-                   <button class="mui-btn" type="button" onclick="check_status(-2)">拒绝</button>
-               </div>
-           </div>
+        <!-- 审核内容-->
+        <div class="examineBox mb">
+            <input id="campmemberid" type="hidden" value="{$campmember.id}">
+            <div class="examine"><strong>申请的内容：</strong>{$campmember.remarks}</div>
+            <div class="mui-button-row">
+                <button class="mui-btn" type="button" onclick="check_status(1)">同意</button>&nbsp;&nbsp;
+                <button class="mui-btn" type="button" onclick="check_status(-2)">拒绝</button>
+            </div>
+        </div>
 
-           <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                <a href="javascript:;">
-                    <img class="mui-media-object mui-pull-left coachicon"
-                    src="{$coachInfo.portraits}">
-                    <div class="mui-media-body">
-                        {$coachInfo.coach}
-                        <p class="mui-ellipsis">教龄:{$coachInfo.coach_year} 等级:{$coachInfo.coach_rank}</p>
-                        <input type="hidden" name="" data-id="{$coachInfo.id}">
-                    </div>
-                    <div class="price-frame camp-num">
-                        <ul>
-                            <li>
-                                <div class="icons mui-inline">
-                                    <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
-                                    <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
-                                    <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
-                                    <i data-index="4" class="mui-icon mui-icon-star-filled"></i>
-                                    <i data-index="5" class="mui-icon mui-icon-star-filled"></i>
-                                </div>
-                            </li>
-                            <li class="fr">{$coachInfo.member.province} {$coachInfo.member.city} {$coachInfo.member.area}</li>
-                        </ul>
-                    </div>
+        <ul class="mui-table-view list detalis-list mt55">
+            <li class="mui-table-view-cell listli">教练ID<span>{$coachInfo['id']}</span></li>
+            <li class="mui-table-view-cell listli">手机号码<span>{$memberInfo['telephone']}</span></li>
+            <li class="mui-table-view-cell listli">电子邮箱<span>{$memberInfo['email']}</span></li>
+            <li class="mui-table-view-cell listli">真实姓名<span>{$memberInfo['realname']}</span></li>
+            <li class="mui-table-view-cell listli">所属地区<span>{$memberInfo['province']} {$memberInfo['city']} {$memberInfo['area']}</span>
+            </li>
+            <li class="mui-table-view-cell listli">身份证号<span>{$identCert['cert_no']}</span></li>
+            <li class="mui-table-view-cell listli detalisli border-b">
+                <a href="#" class="mui-navigate-right">
+                    认证资料
+                    <img class="coachicon icon01" src="{$coachCert.photo_positive}" alt="" style="width: 60px">
+                    <img class="coachicon icon01" src="{$coachCert.photo_back}" alt="" style="width: 60px">
                 </a>
             </li>
-        </ul>
-
-        <ul class="mui-table-view mb">
             <li class="mui-table-view-cell listli detalisli listinitial">自我介绍
                 <span class="about">{$coachInfo.introduction}
                     <a href="#">全文展示</a>
@@ -87,75 +74,43 @@
             </li>
         </ul>
 
-        <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell listli detalisli " style="line-height: 40px;">
-                <a class="mui-navigate-right" href="{:url('camp/campListOfCoach',['coach_id'=>$coachInfo['id']])}">
-                    所属训练营
-                    {volist name="campList" id="vol"}
-                    <img class="coachicon" src="{$vol.logo}" alt="">
-                    {/volist}
-                </a>
-            </li>
-            <li class="mui-table-view-cell listli detalisli">个人认证
-                <span>
-                    <img class="rzicon" src="/static/frontend/images/icon05.jpg">证书认证&nbsp;&nbsp;&nbsp;
-                    <img class="rzicon" src="/static/frontend/images/icon05.jpg">身份认证
-                </span>
-            </li>
-            <li class="mui-table-view-cell listli detalisli listinitial">课量<span>执教过{$scheduleCount}课时</span></li>
-            <li class="mui-table-view-cell listli detalisli listinitial">学员<span>执教过{$studentCount}个学生</span></li>
-            <li class="mui-table-view-cell listli detalisli listinitial">班级<span>执教{$gradeCount}个班级</span></li>
-        </ul>
-        <div class="page-header">
-            <span class="course">学员评价</span>
-        </div>
-        <ul class="mui-table-view list min-height mui-text-center">
-            {volist name='commentList' id="vol" empty="暂无评论"}
-            <li class="mui-table-view-cell mui-media listli">
-                <a href="javascript:;">
-                    <img class="mui-media-object mui-pull-left coachicon" src="{$vol.avatar}">
-                    <div class="mui-media-body">
-                        {$vol.member}
-                        <p class="mui-ellipsis">{$vol.comment}</p>
-                    </div>
-                    <div class="price-frame">
-                        <p>{$vol.create_time|date='Y-m-d',###}</p>
-                    </div>
-                </a>
-            </li>
-            {/volist}
-        </ul>
-        <p class="dropdown mt55"><a href="#">查看16条评论...</a></p>
-
+        <!-- <ul class="mui-table-view mb">
+             <li class="mui-table-view-cell listli detalisli">个人认证
+                 <span>
+                     <img class="rzicon" src="/static/frontend/images/icon05.jpg">证书认证&nbsp;&nbsp;&nbsp;
+                     <img class="rzicon" src="/static/frontend/images/icon05.jpg">身份认证
+                 </span>
+             </li>
+         </ul>-->
 
     </div>
 
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
 
-    //$(function() {
+        //$(function() {
         function check_status(value) {
             var campmemberid = document.getElementById('campmemberid').value;
 
             mui.ajax("{:url('api/CampMember/ApproveApplyApi')}", {
-                data : {
+                data: {
                     id: campmemberid,
                     status: value
                 },
-                dataType:'json',//服务器返回json格式数据
-                type:'post',//HTTP请求类型
-                timeout:10000,//超时时间设置为10秒；
-                headers:{'Content-Type':'application/json'},
-                success:function(res){
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: {'Content-Type': 'application/json'},
+                success: function (res) {
                     //console.log(res);
                     if (res.code == 200) {
                         mui.toast(res.msg);
-                        mui.post("{:url('api/message/campjoinauditresult')}", {id: campmemberid}, function(res){
+                        mui.post("{:url('api/message/campjoinauditresult')}", {id: campmemberid}, function (res) {
                             console.log(res);
                         }, 'json');
                         window.location.href = "{:url('frontend/camp/coachListOfCamp')}/camp_id/{$campmember.camp_id}";
@@ -163,14 +118,15 @@
                         mui.toast(res.msg);
                     }
                 },
-                error:function(xhr,type,errorThrown){
+                error: function (xhr, type, errorThrown) {
                     //异常处理；
                     console.log(type);
                     mui.toast('网络异常');
                 }
             });
         }
-    //})
-</script>
+
+        //})
+    </script>
 </body>
 </html>
