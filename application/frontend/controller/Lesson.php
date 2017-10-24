@@ -3,6 +3,7 @@ namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\LessonService;
 use app\service\GradeService;
+use app\service\WechatService;
 
 class Lesson extends Base{
 	protected $LessonService;
@@ -30,13 +31,22 @@ class Lesson extends Base{
 
     // 可编辑
     public function lessonInfo(){
+        $this->checkopenid();
     	$lesson_id = input('param.lesson_id');
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+        $lessonInfo['cover'] = request()->root(true) . $lessonInfo['cover'];
         $isPower = $this->LessonService->isPower($lessonInfo['camp_id'],$this->memberInfo['id']);
-        // dump($isPower);die;
+
+        $shareurl = request()->url(true);
+        $wechatS = new WechatService();
+//        $shareurl = $wechatS->oauthredirect($shareurl);
+        $jsapi = $wechatS->jsapi($shareurl);
 
         $this->assign('isPower',$isPower);
         $this->assign('lessonInfo',$lessonInfo);
+        $this->assign('shareurl', $shareurl);
+        $this->assign('jsapi', $jsapi);
+        $this->assign('memberInfo', $this->memberInfo);
         return view('Lesson/lessonInfo');
     }
 

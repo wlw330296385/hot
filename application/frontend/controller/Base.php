@@ -77,13 +77,13 @@ class Base extends Controller{
 				'controller'=>'Find'
 			],
 			[
-				'name'=>'训练营',
+				'name'=>'我的',
 				'icon'=>'icon iconfont icon-m-TrainingCamp2',
 				'action'=>'index',
 				'controller'=>'Camp'
 			],
 			[
-				'name'=>'我的',
+				'name'=>'个人',
 				'icon'=>'icon iconfont icon-m-mine',
 				'action'=>'index',
 				'controller'=>'Member'
@@ -174,4 +174,95 @@ class Base extends Controller{
             return false;
         }
 	}
+
+    // 用户openid是否有会员信息
+    public function checkopenid() {
+        if (cookie('openid')) {
+            $openid = cookie('openid');
+            $memberS = new MemberService();
+            $memberInfo = $memberS->getMemberInfo(['openid' => $openid]);
+            if ($memberInfo) {
+                unset($memberInfo['password']);
+                cookie('mid', $memberInfo['id']);
+                cookie('member', md5($memberInfo['id'].$memberInfo['member'].config('salekey')) );
+                session('memberInfo', $memberInfo, 'think');
+                $this->memberInfo = $memberInfo;
+                return json(['code' => 200, 'msg' => 1, 'data' => $memberInfo]);
+            } else {
+                $userinfo = cache('userinfo_'.$openid);
+                $member = [
+                    'id' => 0,
+                    'openid' => $userinfo['openid'],
+                    'member' => $userinfo['nickname'],
+                    'nickname' => $userinfo['nickname'],
+                    'avatar' => str_replace("http://", "https://", $userinfo['headimgurl']),
+                    'hp' => 0,
+                    'level' => 0,
+                    'telephone' =>'',
+                    'email' =>'',
+                    'realname'  =>'',
+                    'province'  =>'',
+                    'city'  =>'',
+                    'area'  =>'',
+                    'location'  =>'',
+                    'sex'   =>0,
+                    'height'    =>0,
+                    'weight'    =>0,
+                    'charater'  =>'',
+                    'shoe_code' =>0,
+                    'birthday'  =>'0000-00-00',
+                    'create_time'=>0,
+                    'pid'   =>0,
+                    'hp'    =>0,
+                    'cert_id'   =>0,
+                    'score' =>0,
+                    'flow'  =>0,
+                    'balance'   =>0,
+                    'remarks'   =>0,
+                    'hot_id'=>00000000,
+                ];
+//                cookie('mid', 0);
+                cookie('member', md5($member['id'].$member['member'].config('salekey')) );
+                session('memberInfo', $member, 'think');
+                $this->memberInfo = $member;
+                return json(['code' => 200, 'msg' => -1, 'data' => $member]);
+            }
+        } else {
+            $member = [
+                'id' => 0,
+                'member' => '游客',
+                'nickname' => '游客',
+                'avatar' => '/static/default/avatar.png',
+                'hp' => 0,
+                'level' => 0,
+                'telephone' =>'',
+                'email' =>'',
+                'realname'  =>'',
+                'province'  =>'',
+                'city'  =>'',
+                'area'  =>'',
+                'location'  =>'',
+                'sex'   =>0,
+                'height'    =>0,
+                'weight'    =>0,
+                'charater'  =>'',
+                'shoe_code' =>0,
+                'birthday'  =>'0000-00-00',
+                'create_time'=>0,
+                'pid'   =>0,
+                'hp'    =>0,
+                'cert_id'   =>0,
+                'score' =>0,
+                'flow'  =>0,
+                'balance'   =>0,
+                'remarks'   =>0,
+                'hot_id'=>00000000,
+            ];
+//            cookie('mid', 0);
+            cookie('member', md5($member['id'].$member['member'].config('salekey')) );
+            session('memberInfo', $member, 'think');
+            $this->memberInfo = $member;
+            return json(['code' => 200, 'msg' => 0, 'data' => $member]);
+        }
+    }
 }
