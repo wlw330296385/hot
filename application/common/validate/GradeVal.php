@@ -36,8 +36,8 @@ class GradeVal extends Validate{
     ];
     
     protected $scene = [
-        'add'   =>  ['member_id','grade','lesson_id','students','gradecate_id','week'.'lesson_time','court','area'],
-        'edit'  =>  ['member_id','grade','lesson_id','students','gradecate_id','week'.'lesson_time','court','area'],
+        'add'   =>  ['member_id','grade','lesson_id','students','gradecate_id','week','lesson_time','court','area'],
+        'edit'  =>  ['member_id','grade','lesson_id','students','gradecate_id','week','lesson_time','court','area'],
     ];
 
 }
