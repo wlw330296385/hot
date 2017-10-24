@@ -127,7 +127,8 @@
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
-<script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!--<script src="/static/frontend/js/wooApi.js"></script>-->
 <!-- <script src="/static/frontend/js/smsCode.js"></script> -->
 <script>
     //初始化
@@ -135,21 +136,24 @@
         swipeBack: true //启用右滑关闭功能
     });
 
-    
-    // var isTelephone = false;
-    var total = sessionStorage.lessonTotal;
-    var total_fee = "{$lessonInfo.cost}"*total;
-    var isStudent = false;
-    var student,student_id
-    var studentList = [];
-    var strBillInfo = '{$jsonBillInfo}';
-    console.log(strBillInfo);
-    var objBillInfo = JSON.parse(strBillInfo);
-    console.log(objBillInfo.goods)
 
     $(function(){
-        $('.total').html(total);
-        $('.total_fee').html("￥"+total_fee);
+
+        //alert("ddd");
+        // var isTelephone = false;
+//    var total = sessionStorage.lessonTotal;
+        var total=GetQueryString('total');
+        var total_fee = "{$lessonInfo.cost}"*total;
+        var isStudent = false;
+        var student,student_id
+        var studentList = [];
+        var strBillInfo = '{$jsonBillInfo}';
+        console.log(strBillInfo);
+        var objBillInfo = JSON.parse(strBillInfo);
+        console.log(objBillInfo.goods)
+
+        $('.total').text(total);
+        $('.total_fee').text("￥"+total_fee);
 
 
         //替换学生列表
@@ -178,9 +182,39 @@
         // 获取学生数据
         getStudentList();
 
+
+
+
+        // 提交学生数据
+        $('#submitBtn').on('click','',function(){
+            var arrData = wooApi.getInputData();
+            var objData = wooApi.arrTOobj(arrData);
+            var url = "{:url('api/student/createStudentApi')}";
+            var ajaxResult = wooApi.asyncF(url,objData);
+            console.log(ajaxResult);
+            if(ajaxResult.code == 200){
+                mui.toast(ajaxResult.msg);
+                isStudent = true;
+                location.reload()
+            }else{
+                mui.toast(ajaxResult.msg);
+            }
+        })
+
     })
 
 
+    //获取url参数值
+    function GetQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);  //获取url中"?"符后的字符串并正则匹配
+        var context = "";
+        if (r != null)
+            context = r[2];
+        reg = null;
+        r = null;
+        return context == null || context == "" || context == "undefined" ? "" : context;
+    }
 
     // 获取学生数据
     function getStudentList(){
@@ -256,22 +290,6 @@
           
     //   });
 
-
-      // 提交学生数据
-      $('#submitBtn').on('click',function(){
-        var arrData = wooApi.getInputData();
-        var objData = wooApi.arrTOobj(arrData);
-        var url = "{:url('api/student/createStudentApi')}";
-        var ajaxResult = wooApi.asyncF(url,objData); 
-        console.log(ajaxResult);
-        if(ajaxResult.code == 200){
-            mui.toast(ajaxResult.msg);
-            isStudent = true;
-            location.reload() 
-        }else{
-            mui.toast(ajaxResult.msg);
-        }
-      })
 
 
     function wxpay(){

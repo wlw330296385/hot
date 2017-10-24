@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <title>课程详情</title>
@@ -62,8 +61,8 @@
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-media mui-col-xs-4 opli"><a href="tel:{$lessonInfo.telephone}"><span
                     class="mui-icon mui-icon-phone"></span>电话咨询</a></li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bgblue" onclick="book()">预约体验</li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="buy()">购买课程</a></li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bgblue" id="bookLesson">预约体验</li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" id="buyLesson">购买课程</a></li>
         </ul>
 
     </div>
@@ -71,8 +70,9 @@
 <input type="hidden" name="{$shareurl}">
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
-<script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
 <script>
     //初始化
     mui.init({
@@ -87,60 +87,109 @@
         console.log(data);
     }, 'json');
 
-
-    // 预约课程和购买课程
-    $(function () {
-        sessionStorage.lessonTotal = 0;
-        $('.selectTotal').on('click', function () {
-            $('.selectTotal').removeClass('mui-btn-warning');
-            var data = wooApi.selectLessonTotal2($(this));
-            // 存储课时
-            sessionStorage.lessonTotal = data;
-            console.log(sessionStorage.lessonTotal);
-        })
-    })
-
     var buyUrl = "{:url('lesson/comfirmBill',['lesson_id'=>$lessonInfo['id']])}";
     var bookUrl = "{:url('lesson/bookBill',['lesson_id'=>$lessonInfo['id']])}";
 
-    function book() {
-        if ("{$isPower}" > 1) {
-            mui.alert('不允许购买自身训练营下的课程');
-            return false;
-        }
-        if ("{$memberInfo.id}" <= 0) {
-            var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
-            mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
-        } else {
-            sessionStorage.lessonTotal = 1;
-            // window.location.href = bookUrl;
-            window.location.href = bookUrl + '?total=1';
-        }
+    // 预约课程和购买课程
+    $(function () {
+//        sessionStorage.lessonTotal = 0;
+//        $('.selectTotal').on('click', function () {
+//            $('.selectTotal').removeClass('mui-btn-warning');
+//            var data = wooApi.selectLessonTotal2($(this));
+//            // 存储课时
+//            sessionStorage.lessonTotal = data;
+//            console.log(sessionStorage.lessonTotal);
+//        })
 
-    }
+        //选择课量
+        $('.selectTotal').on('tap','', function () {
+            $('.selectTotal').removeClass('mui-btn-warning');
+            $(this).addClass('mui-btn-warning');
+        })
 
-    function buy() {
-        if ("{$isPower}" > 1) {
-            mui.alert('不允许购买自身训练营下的课程');
-            return false;
-        }
-        if ("{$memberInfo.id}" <= 0) {
-            var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
-            mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
-        } else {
-            var lessonTotal = sessionStorage.lessonTotal;
-            if (lessonTotal == 0) {
-                alert('请先选择课量');
+        //预约体验
+        $('#bookLesson').on('tap','', function () {
+            if ("{$isPower}" > 1) {
+                mui.alert('不允许购买自身训练营下的课程');
                 return false;
-
-            } else {
-                // window.location.href = buyUrl;
-                window.location.href = buyUrl + '?total=' + lessonTotal;
-
             }
-        }
+            if ("{$memberInfo.id}" <= 0) {
+                var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+                mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
+            } else {
+                // sessionStorage.lessonTotal = 1;
+                // window.location.href = bookUrl;
+                window.location.href = bookUrl + '?total=1';
+            }
+        })
 
-    }
+        //购买课程
+        $('#buyLesson').on('tap','', function () {
+            if ("{$isPower}" > 1) {
+                mui.alert('不允许购买自身训练营下的课程');
+                return false;
+            }
+            if ("{$memberInfo.id}" <= 0) {
+                var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+                mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
+            } else {
+               // var lessonTotal = sessionStorage.lessonTotal;
+                var lessonTotal = $('.mui-btn-warning').attr("data");
+                if (lessonTotal == 0||lessonTotal == null||lessonTotal == '') {
+                    alert('请先选择课量');
+                    return false;
+
+                } else {
+                    // window.location.href = buyUrl;
+                    window.location.href = buyUrl + '?total=' + lessonTotal;
+                //alert(lessonTotal);
+
+                }
+            }
+        })
+
+    })
+
+
+//    function book() {
+//        if ("{$isPower}" > 1) {
+//            mui.alert('不允许购买自身训练营下的课程');
+//            return false;
+//        }
+//        if ("{$memberInfo.id}" <= 0) {
+//            var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+//            mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
+//        } else {
+////            sessionStorage.lessonTotal = 1;
+//            // window.location.href = bookUrl;
+//            window.location.href = bookUrl + '?total=1';
+//        }
+//
+//    }
+//
+//    function buy() {
+//        if ("{$isPower}" > 1) {
+//            mui.alert('不允许购买自身训练营下的课程');
+//            return false;
+//        }
+//        if ("{$memberInfo.id}" <= 0) {
+//            var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+//            mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
+//        } else {
+////            var lessonTotal = sessionStorage.lessonTotal;
+//            if (selectLessonCount == 0) {
+//                alert('请先选择课量');
+//                return false;
+//
+//            } else {
+//                // window.location.href = buyUrl;
+//                window.location.href = buyUrl + '?total=' + selectLessonCount;
+////                alert(lessonTotal);
+//
+//            }
+//        }
+//
+//    }
 </script>
 
 <script>
