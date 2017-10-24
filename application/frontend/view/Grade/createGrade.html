@@ -146,6 +146,12 @@
                         <input type="hidden" name="coach_id" value="" class="data coach_id">
                     </a>
                 </div>
+
+                <div class="mui-input-row">
+                    <label>主教底薪<a href="#coach_salary"><i class="mui-icon mui-icon-info"></i></a></label>
+                    <input type="text" name="coach_salary" class="coach_salary data pdr" value="" placeholder="必填">
+                </div>
+
                 <div class="mui-input-row">
                     <a href="#assistantCoach" id="setAsCoach" class="mui-navigate-right">
                         <label>助理教练</label>
@@ -155,18 +161,13 @@
                 </div>
 
                 <div class="mui-input-row">
-                    <label>主教底薪<a href="#coach_salary"><i class="mui-icon mui-icon-info"></i></a></label>
-                    <input type="number" name="coach_salary" class="coach_salary data pdr" value="" placeholder="必填">
-                </div>
-
-                <div class="mui-input-row">
                     <label>助教底薪<a href="#assistantSalary"><i class="mui-icon mui-icon-info"></i></a></label>
-                    <input type="number" name="assistant_salary" class="assistant_salary data pdr" value="" placeholder="选填">
+                    <input type="text" name="assistant_salary" class="assistant_salary data pdr" value="" placeholder="选填">
                 </div>
 
                 <div class="mui-input-row">
                     <label>提成基数<a href="#mainBase"><i class="mui-icon mui-icon-info"></i></a></label>
-                    <input type="number" name="salary_base" class="salary_base data pdr" value="" placeholder="选填">
+                    <input type="text" name="salary_base" class="salary_base data pdr" value="" placeholder="选填">
 
                 </div>
 
@@ -915,6 +916,9 @@
                     return false;
                 } else if ($('input[name="assistants"]').val() != "" && $('input[name="assistant_salary"]').val()=='') {
                     mui.alert("已选择助教，请填写助教底薪");
+                    return false;
+                }else if($('input[name="assistants"]').val() == "" && $('input[name="assistant_salary"]').val()!=''){
+                    mui.alert("已填写助教底薪，还未选择助教");
                     return false;
                 }else {
                     var data = wooApi.getInputData('input', 'data');
