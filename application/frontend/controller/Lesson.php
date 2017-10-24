@@ -33,7 +33,6 @@ class Lesson extends Base{
     	$lesson_id = input('param.lesson_id');
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         $isPower = $this->LessonService->isPower($lessonInfo['camp_id'],$this->memberInfo['id']);
-        // dump($isPower);die;
 
         $this->assign('isPower',$isPower);
         $this->assign('lessonInfo',$lessonInfo);
