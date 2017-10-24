@@ -6,7 +6,7 @@ class Event extends Frontend{
 	private $EventService;
 	public function _initialize(){
 		parent::_initialize();
-        $this->EventService = new $EventService;
+        $this->EventService = new EventService;
 	}
 
     public function index() {
