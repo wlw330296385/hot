@@ -36,7 +36,6 @@ class Lesson extends Base{
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         $lessonInfo['cover'] = request()->root(true) . $lessonInfo['cover'];
         $isPower = $this->LessonService->isPower($lessonInfo['camp_id'],$this->memberInfo['id']);
-        // dump($isPower);die;
 
         $shareurl = request()->url(true);
         $wechatS = new WechatService();
