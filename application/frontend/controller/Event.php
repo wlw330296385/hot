@@ -53,20 +53,38 @@ class Event extends Frontend{
     }
 
     public function eventList() {
-  
+        
         return view('Event/eventList');
     }
 
     public function eventListOfCamp() {
         $camp_id = input('param.camp_id');
+
+
+
         $this->assign('camp_id', $camp_id);
         return view('Event/eventListOfCamp');
     }
-
+    // 活动编辑
     public function updateEvent() {
-        
+        $event_id = input('param.event_id');
+        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
+
+
+
+        $this->assign('eventInfo',$eventInfo);
         return view('Event/updateEvent');
     }
     
+    // 活动录入
+    public function recordEvent() {
+        $event_id = input('param.event_id');
+        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
+
+
+
+        $this->assign('eventInfo',$eventInfo);
+        return view('Event/recordEvent');
+    }
 
 }
