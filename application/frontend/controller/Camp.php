@@ -340,6 +340,27 @@ class Camp extends Base{
             $coachInfo = $coachS->getCoachInfo(['id'=>$coach_id]);
         }
 
+        // 教练的证件
+        $cert = db('cert')->where(['member_id'=>$coachInfo['member_id']])->select();
+        $identCert = [];
+        $coachCert = [];
+        foreach ($cert as $key => $value) {
+            if($value['cert_type'] == 1){
+                $identCert = $value;
+            }
+
+            if($value['cert_type'] == 3){
+                $coachCert = $value;
+            }
+        }
+        // dump($identCert);die;
+        if(empty($identCert)){
+            $identCert['cert_no'] = '未认证';
+        }
+        if(empty($coachCert)){
+            $coachCert = ['photo_positive'=>'/static/frontend/images/uploadDefault.jpg','photo_back'=>'/static/frontend/images/uploadDefault.jpg'];
+        }
+
         // 申请留言
         $campmember = db('camp_member')->where(['member_id' => $coachInfo['member_id'], 'camp_id' => input('camp_id'), 'type' => 2])->find();
 
@@ -367,6 +388,8 @@ class Camp extends Base{
         $this->assign('studentCount',$studentCount);
         $this->assign('gradeCount',$gradeCount);
         $this->assign('coachInfo',$coachInfo);
+        $this->assign('identCert',$identCert);
+        $this->assign('coachCert',$coachCert);
         return view('Camp/coachapply');
     }
 
