@@ -4,12 +4,14 @@ namespace app\service;
 
 use app\model\Event;
 use think\Db;
-
+use app\model\EventMemberModel;
 use app\common\validate\EventVal;
 class EventService {
     private $EventModel;
+    private $EventMemberModel;
     public function __construct(){
         $this->EventModel = new Event;
+        $this->EventMemberModel = new EventMemberModel;
     }
 
 
@@ -50,25 +52,6 @@ class EventService {
         $result = Event::where($map)->find();
         if ($result){
             $res = $result->toArray();
-            if($res['dom']){
-                $res['doms'] = unserialize($res['dom']);
-            }else{
-                $res['doms'] = [];
-            }
-            if($res['assistant']){
-                $pieces = unserialize($res['assistant']);
-                $res['assistants'] = implode(',', $pieces);
-            }else{
-                $res['assistants'] = '';
-            }
-
-            if($res['assistant_id']){
-                $pieces = unserialize($res['assistant_id']);
-                $res['assistant_ids'] = implode(',', $pieces);
-            }else{
-                $res['assistant_ids'] = '';
-            }
-            $res['status_num'] = $result->getData('status');
             return $res;
         }else{
             return $result;
@@ -84,15 +67,15 @@ class EventService {
         if($is_power<2){
             return ['code'=>100,'msg'=> __lang('MSG_403')];
         }
-        
-        
+        if($data['event_times']){
+            $data['event_time'] = strtotime($data['event_times']);
+        }
         $validate = validate('EventVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
         $result = $this->EventModel->save($data,['id'=>$id]);
         if($result){
-            // return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->EventModel->id];
             return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $id];
         }else{
             return ['msg'=>__lang('MSG_400'), 'code' => 100];
@@ -118,6 +101,23 @@ class EventService {
             return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->EventModel->id];
         }else{
             return ['msg'=>__lang('MSG_400'), 'code' => 100];
+        }
+    }
+
+
+    //关联表的更新
+    public function saveAllMmeber($memberData,$event_id,$event){
+        //参加活动的人员
+        foreach ($memberData as $key => $value) {
+            $memberData[$key]['event_id'] = $event_id;
+            $memberData[$key]['event'] = $event;
+        }
+        // dump($students);die;
+        $result = $this->EventMemberModel->saveAll($memberData);
+        if($result){
+            return ['code'=>200,'msg'=>__lang('MSG_200'),'data'=>$result];
+        }else{
+            return ['code'=>100,'msg'=>$this->EventMemberModel->getError()];
         }
     }
 

@@ -191,28 +191,31 @@ class Coach extends Base{
         }else{
             $coachInfo = $this->coachService->getCoachInfo(['member_id'=>$this->memberInfo['id']]);
         }
-        
+
         // 全部班级
-        $gradeList = db('grade')->where(['coach_id'=>$this->memberInfo['id']])->column('id');
+        $gradeList = db('grade')->where(['coach_id'=>$coachInfo['id']])->column('id');
         $gradeCount = count($gradeList);
         // 全部学员
         $studentCount = db('grade_member')->distinct(true)->field('member_id')->where(['grade_id'=>['in',$gradeList],'type'=>1,'status'=>1])->count();
         // 执教过多少课时
         $scheduleCount = $this->scheduleService->countSchedules(['coach_id'=>$coachInfo['id'],'status'=>1]);
+//        dump($scheduleCount);
+//        $scheduleCount = 0;
         //教练评论
         $commentList = db('coach_comment')->where(['coach_id'=>$coach_id])->select();
         //所属训练营
         $campList = Db::view('camp_member','camp_id')
-                    ->view('camp','*','camp.id = camp_member.camp_id')
-                    ->where(['camp_member.member_id'=>$this->memberInfo['id'],'camp_member.type'=>2,'camp_member.status'=>1])
-                    ->order('camp_member.id desc')
-                    ->select();
+            ->view('camp','*','camp.id = camp_member.camp_id')
+            ->where(['camp_member.member_id'=>$this->memberInfo['id'],'camp_member.type'=>2,'camp_member.status'=>1])
+            ->order('camp_member.id desc')
+            ->select();
         $myCampList = db('camp_member')->where(['type'=>['gt',2],'status'=>1,'member_id'=>$this->memberInfo['id']])->select();
 
+//        die;
         $this->assign('myCampList',$myCampList);
         $this->assign('campList',$campList);
         $this->assign('commentList',$commentList);
-        $this->assign('scheduleCount',$scheduleCount);
+        $this->assign('scheduleCount',$scheduleCount['sum']);
         $this->assign('studentCount',$studentCount);
         $this->assign('gradeCount',$gradeCount);
         $this->assign('coachInfo',$coachInfo);

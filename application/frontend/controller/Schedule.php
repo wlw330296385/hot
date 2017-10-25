@@ -30,7 +30,7 @@ class Schedule extends Base
     	$scheduleList = $this->scheduleService->getscheduleList($map);
 
         // 课时统计
-        $scheduleCount = $this->scheduleService->countSchedules($camp_id);
+        $scheduleCount = $this->scheduleService->countSchedules(['camp_id' => $camp_id]);
     	$this->assign('scheduleCount',$scheduleCount);
   		$this->assign('scheduleList',$scheduleList);
   		$this->assign('camp_id', $camp_id);

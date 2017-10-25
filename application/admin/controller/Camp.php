@@ -70,7 +70,7 @@ class Camp extends Backend {
                 $this->success(__lang('MSG_200'), 'camp/index');
             } else {
                 $Auth->record('训练营id:'. $id .' 修改平台备注 失败');
-                $this->error(__lang('MSG_200_ERROR'));
+                $this->error(__lang('MSG_400'));
             }
         }
     }

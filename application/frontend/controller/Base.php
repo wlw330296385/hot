@@ -184,6 +184,7 @@ class Base extends Controller{
             if ($memberInfo) {
                 unset($memberInfo['password']);
                 cookie('mid', $memberInfo['id']);
+                cookie('openid', $memberInfo['openid']);
                 cookie('member', md5($memberInfo['id'].$memberInfo['member'].config('salekey')) );
                 session('memberInfo', $memberInfo, 'think');
                 $this->memberInfo = $memberInfo;
@@ -222,6 +223,7 @@ class Base extends Controller{
                     'hot_id'=>00000000,
                 ];
 //                cookie('mid', 0);
+                cookie('openid', $userinfo['openid']);
                 cookie('member', md5($member['id'].$member['member'].config('salekey')) );
                 session('memberInfo', $member, 'think');
                 $this->memberInfo = $member;

@@ -239,10 +239,10 @@ class ScheduleService
     }
 
     // 统计课时数量
-    public function countSchedules($camp_id) {
+    public function countSchedules($map=[]) {
         $model = new Schedule();
         $count = [];
-        $map['camp_id'] = $camp_id;
+//        $map['camp_id'] = $camp_id;
         $monthcount = $model->where($map)
             ->whereTime('lesson_time', 'month')->count();
         $yearcount = $model->where($map)
