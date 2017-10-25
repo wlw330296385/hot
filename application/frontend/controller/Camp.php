@@ -340,38 +340,32 @@ class Camp extends Base{
             $coachInfo = $coachS->getCoachInfo(['id'=>$coach_id]);
         }
 
-
-        // 教练的证件
-        $cert = db('cert')->where(['member_id'=>$coachInfo['member_id']])->select();
-        $identCert = [];
-        $coachCert = [];
-        foreach ($cert as $key => $value) {
-            if($value['cert_type'] == 1){
-                $identCert = $value;
-            }
-
-            if($value['cert_type'] == 3){
-                $coachCert = $value;
-            }
-        }
-        // dump($identCert);die;
-        if(empty($identCert)){
-            $identCert['cert_no'] = '未认证';
-        }
-        if(empty($coachCert)){
-            $coachCert = ['photo_positive'=>'/static/frontend/images/uploadDefault.jpg','photo_back'=>'/static/frontend/images/uploadDefault.jpg'];
-        }
-
         // 申请留言
-        $campmember = db('camp_member')->where([
-            'member_id' => $coachInfo['member_id'],
-            'camp_id' => input('camp_id'),
-            'type' => ['egt', 2]
-        ])->find();
+        $campmember = db('camp_member')->where(['member_id' => $coachInfo['member_id'], 'camp_id' => input('camp_id'), 'type' => 2])->find();
 
-        $this->assign('identCert',$identCert);
-        $this->assign('coachCert',$coachCert);
+        // 全部班级
+        $gradeList = db('grade')->where(['coach_id'=>$this->memberInfo['id']])->column('id');
+        $gradeCount = count($gradeList);
+        // 全部学员
+        $studentCount = db('grade_member')->distinct(true)->field('member_id')->where(['grade_id'=>['in',$gradeList],'type'=>1,'status'=>1])->count();
+        // 执教过多少课时
+        $scheduleS = new ScheduleService();
+        $scheduleCount =$scheduleS->countSchedules(['coach_id'=>$coachInfo['id'],'status'=>1]);
+        //教练评论
+        $commentList = db('coach_comment')->where(['coach_id'=>$coach_id])->select();
+        //所属训练营
+        $campList = Db::view('camp_member','camp_id')
+            ->view('camp','logo','camp.id=camp_member.camp_id')
+            ->where(['camp_member.member_id'=>$coachInfo['member_id'], 'camp_member.type'=> 2,'camp_member.status'=>1])
+            ->order('camp_member.id desc')
+            ->select();
+
         $this->assign('campmember', $campmember);
+        $this->assign('campList',$campList);
+        $this->assign('commentList',$commentList);
+        $this->assign('scheduleCount',$scheduleCount['sum']);
+        $this->assign('studentCount',$studentCount);
+        $this->assign('gradeCount',$gradeCount);
         $this->assign('coachInfo',$coachInfo);
         return view('Camp/coachapply');
     }
@@ -391,11 +385,12 @@ class Camp extends Base{
         }else{
             $coachInfo =$coachS->getCoachInfo(['id'=>$coach_id]);
         }
+
         //教练的班级
         $GradeService = new \app\service\GradeService;
-        $gradeOfCoachList = $GradeService->getGradeList(['coach_id'=>$member_id,'camp_id'=>$camp_id]);
+        $gradeOfCoachList = $GradeService->getGradeList(['coach_id'=>$coachInfo['member_id'],'camp_id'=>$camp_id]);
         // 教练的证件
-        $cert = db('cert')->where(['member_id'=>$member_id])->select();
+        $cert = db('cert')->where(['member_id'=>$coachInfo['member_id']])->select();
         $identCert = [];
         $coachCert = [];
         foreach ($cert as $key => $value) {
@@ -424,7 +419,7 @@ class Camp extends Base{
 
         $scheduleS = new ScheduleService();
         $monthScheduleOfCoachList = $scheduleS->getScheduleList([
-                'coach_id'=>$member_id,
+                'coach_id'=>$coachInfo['member_id'],
                 // 'type'=>1,
                 'camp_id'=>$camp_id,
                 'create_time'=>['BETWEEN',[$begin_m,$end_m]]
@@ -432,7 +427,7 @@ class Camp extends Base{
 
         $monthScheduleOfCoach = count($monthScheduleOfCoachList);
         $yearScheduleOfCoachList = $scheduleS->getScheduleList([
-                'coach_id'=>$member_id,
+                'coach_id'=>$coachInfo['member_id'],
                 // 'type'=>1,
                 'camp_id'=>$camp_id,
                 'create_time'=>['BETWEEN',[$begin_y,$end_y]]
@@ -440,11 +435,11 @@ class Camp extends Base{
         $yearScheduleOfCoach = count($yearScheduleOfCoachList);
         //教练工资
         $SalaryInService = new \app\service\SalaryInService($member_id);
-        $salaryList = $SalaryInService->getSalaryInList(['member_id'=>$member_id,'type'=>1,'camp_id'=>$camp_id]);
+        $salaryList = $SalaryInService->getSalaryInList(['member_id'=>$coachInfo['member_id'],'type'=>1,'camp_id'=>$camp_id]);
         // 平均月薪
-        $averageSalaryByMonth = $SalaryInService->getAverageSalaryByMonth($member_id,$camp_id);
+        $averageSalaryByMonth = $SalaryInService->getAverageSalaryByMonth($coachInfo['member_id'],$camp_id);
         // 平均年薪
-        $averageSalaryByYear = $SalaryInService->getAverageSalaryByYear($member_id,$camp_id);
+        $averageSalaryByYear = $SalaryInService->getAverageSalaryByYear($coachInfo['member_id'],$camp_id);
         // dump($salaryList);die;
         $this->assign('monthScheduleOfCoachList',$monthScheduleOfCoachList);//教练当月的课量
         $this->assign('monthScheduleOfCoach',$monthScheduleOfCoach);//当月课量数量

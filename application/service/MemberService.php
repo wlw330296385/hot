@@ -102,6 +102,7 @@ class MemberService{
 		$member = $this->getMemberInfo(['id'=>$id]);
         unset($member['password']);
         cookie('mid', $member['id']);
+        cookie('openid', $member['openid']);
         cookie('member',md5($member['id'].$member['member'].config('salekey')));
         session('memberInfo',$member,'think');
         if ( session('memberInfo', '', 'think') ) {

@@ -15,7 +15,7 @@ class Weixin extends Backend {
             $menuData = [
                 'button' => [
                     [
-                        'name' => '大热篮球平台',
+                        'name' => '大热篮球管家',
                         'type' => 'view',
                         'url' => $WechatS->oauthRedirect(url('frontend/index/wxindex', '', '', true))
                     ]

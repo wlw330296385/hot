@@ -42,7 +42,7 @@ class Login extends Controller{
             if ($isMember) {
                 unset($isMember['password']);
                 cookie('mid', $isMember['id']);
-                cookie('openid', $userinfo['openid']);
+                cookie('openid', $isMember['openid']);
                 cookie('member', md5($isMember['id'].$isMember['member'].config('salekey')));
                 session('memberInfo', $isMember, 'think');
                 // if (session('memberInfo', '', 'think')) {
@@ -89,6 +89,7 @@ class Login extends Controller{
                     'hot_id'=>00000000,
                 ];
                 cookie('mid', 0);
+                cookie('openid', $userinfo['openid']);
                 cookie('member', md5($member['id'].$member['member'].config('salekey')) );
                 session('memberInfo', $member, 'think');
                 // if (session('memberInfo', '', 'think')) {

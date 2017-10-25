@@ -33,10 +33,10 @@ class System extends Backend {
             $AuthS = new AuthService();
             if ($result) {
                 $AuthS->record('修改平台信息 成功');
-                $this->success(__lang('MSG_100_SUCCESS'));
+                $this->success(__lang('MSG_200'));
             } else {
                 $AuthS->record('修改平台信息 失败');
-                $this->error(__lang('MSG_200_ERROR'));
+                $this->error(__lang('MSG_400'));
             }
         }
     }
@@ -53,10 +53,10 @@ class System extends Backend {
             $AuthS = new AuthService();
             if ($result) {
                 $AuthS->record('修改平台banner 成功');
-                $this->success(__lang('MSG_100_SUCCESS'));
+                $this->success(__lang('MSG_200'));
             } else {
                 $AuthS->record('修改平台banner 失败');
-                $this->error(__lang('MSG_200_ERROR'));
+                $this->error(__lang('MSG_400'));
             }
         }
     }
@@ -86,10 +86,10 @@ class System extends Backend {
             $AuthS = new AuthService();
             if ($result) {
                 $AuthS->record('修改会员积分设置 成功');
-                $this->success(__lang('MSG_100_SUCCESS'));
+                $this->success(__lang('MSG_200'));
             } else {
                 $AuthS->record('修改会员积分设置 失败');
-                $this->error(__lang('MSG_200_ERROR'));
+                $this->error(__lang('MSG_400'));
             }
         }
     }

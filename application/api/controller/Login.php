@@ -91,6 +91,9 @@ class Login extends Base{
     	$member = $member->getMemberInfo(['id'=>$id]);
     	unset($member['password']);
         cookie('mid', $member['id']);
+        if ($member['openid']) {
+            cookie('openid', $member['openid']);
+        }
     	cookie('member',md5($member['id'].$member['member'].config('salekey')));
         session('memberInfo',$member,'think');
         if ( session('memberInfo', '', 'think') ) {
@@ -109,6 +112,9 @@ class Login extends Base{
         unset($memberInfo['password']);
         $this->memberInfo = $memberInfo;
         cookie('mid', $memberInfo['id']);
+        if ($memberInfo['openid']) {
+            cookie('openid', $memberInfo['openid']);
+        }
         cookie('member',md5($memberInfo['id'].$memberInfo['member'].config('salekey')));
         session('memberInfo',$memberInfo,'think');
 
