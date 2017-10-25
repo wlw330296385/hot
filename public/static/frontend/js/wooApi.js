@@ -1,6 +1,6 @@
 
 if (typeof jQuery == 'undefined') { 
-document.write('<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>');   
+document.write('<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>');
 } else { 
     
 } 
@@ -8,8 +8,8 @@ document.write('<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>'
 
 var wooApi = {
         //同步访问接口
-        'asyncF':function (url,data = '') {
-
+        'asyncF':function (url,data) {
+            data=data||'';
             //访问接口
             var postMsgF = $.ajax({
                 url: url,
@@ -47,8 +47,10 @@ var wooApi = {
 
 
         // 一键获取input下的值
-        'getInputData':function(domName = 'input',className = 'data',data = []){
-       
+        'getInputData':function(domName,className,data){
+            domName=domName||'input';
+            className=className||'data';
+            data=data||[];
             switch(domName){
                 case 'input':
                 $(domName+"."+className).each(function(i){
@@ -97,7 +99,9 @@ var wooApi = {
             }
             return data;
         },
-        'getDomData':function(className = 'domData',data = []){
+        'getDomData':function(className,data){
+            className=className||'domData';
+            data=data||[];
             $('.'+className).each(function(i){
                     var name = $(this).attr('name');
                     var val = $(this).html();

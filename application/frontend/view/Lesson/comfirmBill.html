@@ -128,7 +128,7 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<!--<script src="/static/frontend/js/wooApi.js"></script>-->
+<script src="/static/frontend/js/wooApi.js"></script>
 <!-- <script src="/static/frontend/js/smsCode.js"></script> -->
 <script>
     //初始化
@@ -157,7 +157,7 @@
 
 
         //替换学生列表
-        $('.selectStudent').on('change',function(){
+        $('.selectStudent').on('change','',function(){
             var index = $('option:selected').index();
             $('#student').val(studentList[index].id);
             $('#student').text(studentList[index].student);
@@ -168,25 +168,23 @@
         })
 
         // 添加学生
-        $('#addBtn').on('click','',function(){
+        $('#addBtn').on('tap','',function(){
             $('#oldStudent').hide();
             $('#addStudent').show();
         })
 
         //放弃添加学生
-        $('#giveUp').on('click','',function(){
+        $('#giveUp').on('tap','',function(){
             $('#oldStudent').show();
             $('#addStudent').hide();
         })
 
         // 获取学生数据
         getStudentList();
-
-
-
+        
 
         // 提交学生数据
-        $('#submitBtn').on('click','',function(){
+        $('#submitBtn').on('tap','',function(){
             var arrData = wooApi.getInputData();
             var objData = wooApi.arrTOobj(arrData);
             var url = "{:url('api/student/createStudentApi')}";
