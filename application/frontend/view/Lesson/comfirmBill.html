@@ -136,16 +136,14 @@
         swipeBack: true //启用右滑关闭功能
     });
 
-
+    var isStudent = false;
+    var student,student_id
     $(function(){
 
-        //alert("ddd");
-        // var isTelephone = false;
-//    var total = sessionStorage.lessonTotal;
+
         var total=GetQueryString('total');
         var total_fee = "{$lessonInfo.cost}"*total;
-        var isStudent = false;
-        var student,student_id
+        
         var studentList = [];
         var strBillInfo = '{$jsonBillInfo}';
         console.log(strBillInfo);
@@ -291,12 +289,10 @@
 
 
     function wxpay(){
-      if(!student || !student_id){
+      if(!isStudent){
          mui.alert('请先添加学生信息,并点[确定]按钮');
          return false;
       }  
-      console.log(total_fee);
-      var bill_order = '{$billOrder}';
       if (typeof WeixinJSBridge == "undefined"){
            if( document.addEventListener ){
              document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);

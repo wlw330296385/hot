@@ -1,16 +1,19 @@
 <?php
 namespace app\index\controller;
-use app\service\Weixin;
-
-class Index
+use think\Controller;
+class Index extends Controller
 {
     public function index()
     {
-    	echo 1;
+    	return view('Index/index');
     }
 
     public function wxbind() {
         $WeixinService = new Weixin();
         $WeixinService->mpbind();
+    }
+
+    public function test(){
+    	return view('Index/test');
     }
 }
