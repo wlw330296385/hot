@@ -568,24 +568,6 @@
             mui("#leader").popover("toggle");
         })
 
-        //检测输入是否为数字
-        $(".checkNum").blur(function () {
-            var num = $(this).val();
-            if (isNaN(num)) {
-                mui.toast("请填写数字");
-                return false;
-            }
-        })
-
-        //检测输入是否为汉字
-        // $(".checkChinese").blur(function () {
-        //     var str = $(this).val();
-        //     if (!/^[\u4e00-\u9fa5]+$/.test(str)) {
-        //         mui.toast("请填写汉字");
-        //         return false;
-        //     }
-        // })
-
         //学员列表复选框赋值
         $("#setStudentCBox").on('tap','', function () {
             //每次打开先清空所有选择
@@ -757,19 +739,19 @@
             var teacher = $(".headMasterCont").val();
             var teacher_id = $("input[name='teacher_id']").val();
             var remarks = $(".remarks").val();
-            var coach_salary = $(".coach_salary").val();
-            var assistant_salary = $(".assistant_salary").val();
+            var coach_salary = $(".coach_salary").text();
+            var assistant_salary = $(".assistant_salary").text();
             var grade_category_id = $('input[name=grade_category_id]').val();
             var grade_category = $('input[name=grade_category]').val();
+            console.log(assistants)
+            console.log(assistant_ids)
+            console.log(assistant_salary)
             if(lesson_time =='' || court =='' || coach =='' || province =='' || city == '' || area == ''){
                 mui.toast("请完善信息");
                 return;
             }
-            if(isNaN($(".checkNum").val())){
-                mui.toast("底薪请填写数字");
-                return;
-            }
-            // 判断课时冲突(2个小时内只允许一条数据)
+       
+            //判断课时冲突(2个小时内只允许一条数据)
             mui.ajax("{:url('api/schedule/recordScheduleClashApi')}", {
                 data: {
                     'camp_id': campid,
