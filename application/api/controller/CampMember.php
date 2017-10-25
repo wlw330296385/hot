@@ -439,13 +439,14 @@ class CampMember extends Base{
     // 训练营 学生在营/离营操作
     public function removestudent() {
         try {
-            $campmemberid = input('param.campmemberid');
+            $member_id = input('param.memberid', 0);
+            $camp_id = input('param.camp_id', 0);
             $action = input('param.action');
-            if (!$action) {
+            if (!$action || !$member_id || !$camp_id) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
             $model = new \app\model\CampMember();
-            $campmember = $model->where(['id' => $campmemberid])->find();
+            $campmember = $model->where(['camp_id' => $camp_id, 'member_id' => $member_id])->find();
             $power = getCampPower($campmember['camp_id'], $this->memberInfo['id']);
             if ($power < 3) { // 管理员以上才能操作
                 return json(['code' => 100, 'msg' => __lang('MSG_403')]);
