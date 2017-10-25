@@ -53,7 +53,8 @@ var wooApi = {
             data=data||[];
             switch(domName){
                 case 'input':
-                $(domName+"."+className).each(function(i){
+                var inputs = "input."+className;
+                $(inputs).each(function(i){
                     var name = $(this).attr('name');
                     var val = $(this).val();
                     var son = name+'='+val;
@@ -61,35 +62,39 @@ var wooApi = {
                 })
                 break;
                 case 'select':
-                $(domName+"."+className).each(function(i){
-                    var name = $(this).attr('name');
-                    var val = $(this).val();
-                    var son = name+'='+val;
-                    data.push(son);
-                })
-                break;
-                case 'checkbox':
-                $(domName+"."+className).each(function(i){
-                    if($(this).attr('checked')==true){
-                        var name = $(this).attr('name');
-                        var val = $(this).data();
-                        var son = name+'='+val;
-                        data.push(son);
-                    }
-                })
-                break;
-                case 'radio':
-                $(domName+"."+className).each(function(i){
-                    if($(this).attr('checked')==true){
+                    var selects = "select."+className;
+                    $(selects).each(function(i){
                         var name = $(this).attr('name');
                         var val = $(this).val();
                         var son = name+'='+val;
                         data.push(son);
-                    }
-                })
+                    })
+                break;
+                case 'checkbox':
+                    var checkboxs = "checkbox."+className;
+                    $(checkboxs).each(function(i){
+                        if($(this).attr('checked')==true){
+                            var name = $(this).attr('name');
+                            var val = $(this).data();
+                            var son = name+'='+val;
+                            data.push(son);
+                        }
+                    })
+                break;
+                case 'radio':
+                    var radios = "radio."+className;
+                    $(radios).each(function(i){
+                        if($(this).attr('checked')==true){
+                            var name = $(this).attr('name');
+                            var val = $(this).val();
+                            var son = name+'='+val;
+                            data.push(son);
+                        }
+                    })
                 break;
                 default :
-                $(domName+"."+className).each(function(i){
+                var dName = domName+"."+className;
+                $(dName).each(function(i){
                     var name = $(this).attr('name');
                     var val = $(this).val();
                     var son = name+'='+val;
@@ -102,7 +107,8 @@ var wooApi = {
         'getDomData':function(className,data){
             className=className||'domData';
             data=data||[];
-            $('.'+className).each(function(i){
+            var cName = '.'+className;
+            $(cName).each(function(i){
                     var name = $(this).attr('name');
                     var val = $(this).html();
                     var son = name+'='+val;
@@ -144,8 +150,9 @@ var wooApi = {
 
         // 选择课时
         'selectLessonTotal':function(domName,className){
-            $(domName+"."+className).addClass('mui-btn-warning');
-            return $(domName+"."+className).data();
+            var dName = domName+"."+className;
+            $(dName).addClass('mui-btn-warning');
+            return $(dName).data();
         },
 
 
