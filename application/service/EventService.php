@@ -50,25 +50,6 @@ class EventService {
         $result = Event::where($map)->find();
         if ($result){
             $res = $result->toArray();
-            if($res['dom']){
-                $res['doms'] = unserialize($res['dom']);
-            }else{
-                $res['doms'] = [];
-            }
-            if($res['assistant']){
-                $pieces = unserialize($res['assistant']);
-                $res['assistants'] = implode(',', $pieces);
-            }else{
-                $res['assistants'] = '';
-            }
-
-            if($res['assistant_id']){
-                $pieces = unserialize($res['assistant_id']);
-                $res['assistant_ids'] = implode(',', $pieces);
-            }else{
-                $res['assistant_ids'] = '';
-            }
-            $res['status_num'] = $result->getData('status');
             return $res;
         }else{
             return $result;
@@ -84,14 +65,15 @@ class EventService {
         if($is_power<2){
             return ['code'=>100,'msg'=> __lang('MSG_403')];
         }
-     
+        if($data['event_times']){
+            $data['event_time'] = strtotime($data['event_times']);
+        }
         $validate = validate('EventVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
         $result = $this->EventModel->save($data,['id'=>$id]);
         if($result){
-            // return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->EventModel->id];
             return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $id];
         }else{
             return ['msg'=>__lang('MSG_400'), 'code' => 100];
