@@ -120,7 +120,7 @@ class Event extends Base{
     //编辑|添加活动接口
     public function updateEventApi(){
         try{
-            $Event_id = input('param.Event_id');
+            $event_id = input('param.event_id');
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
@@ -134,8 +134,15 @@ class Event extends Base{
                     $data['area'] = $address[1];
                 }             
             }
-            if($Event_id){
-                $result = $this->EventService->updateEvent($data,$Event_id);
+            if($event_id){
+                $result = $this->EventService->updateEvent($data,$event_id);
+                if($result['code'] == 200){
+                    if($data['memberData']){
+                        $memberData = json_decode($data['memberData'],true);
+                        $res = $this->EventService->saveAllMmeber($memberData,$event_id,$data['event']);
+                        return json($res);
+                    }
+                }
             }else{
                 $result = $this->EventService->createEvent($data);
             }
@@ -160,9 +167,9 @@ class Event extends Base{
             $isPower = $this->EventService->isPower($camp_id,$memberInfo['id']);
 
             if($isPower<3){
-                $Event_id = input('post.Event_id');
+                $event_id = input('post.event_id');
                 $status = input('post.status');
-                $result = db('Event')->save(['status'=>$status],$Event_id);
+                $result = db('Event')->save(['status'=>$status],$event_id);
                 if($result){
                     return json(['code'=>200,'msg'=>__lang('MSG_200')]);
                 }else{
@@ -183,7 +190,7 @@ class Event extends Base{
     // 录入活动
     public function recordEventApi(){
         try{
-            
+
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }

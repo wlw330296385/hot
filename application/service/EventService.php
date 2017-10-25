@@ -4,12 +4,14 @@ namespace app\service;
 
 use app\model\Event;
 use think\Db;
-
+use app\model\EventMemberModel;
 use app\common\validate\EventVal;
 class EventService {
     private $EventModel;
+    private $EventMemberModel;
     public function __construct(){
         $this->EventModel = new Event;
+        $this->EventMemberModel = new EventMemberModel;
     }
 
 
@@ -99,6 +101,23 @@ class EventService {
             return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->EventModel->id];
         }else{
             return ['msg'=>__lang('MSG_400'), 'code' => 100];
+        }
+    }
+
+
+    //关联表的更新
+    public function saveAllMmeber($memberData,$event_id,$event){
+        //参加活动的人员
+        foreach ($memberData as $key => $value) {
+            $memberData[$key]['event_id'] = $event_id;
+            $memberData[$key]['event'] = $event;
+        }
+        // dump($students);die;
+        $result = $this->EventMemberModel->saveAll($memberData);
+        if($result){
+            return ['code'=>200,'msg'=>__lang('MSG_200'),'data'=>$result];
+        }else{
+            return ['code'=>100,'msg'=>$this->EventMemberModel->getError()];
         }
     }
 
