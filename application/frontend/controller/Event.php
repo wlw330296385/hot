@@ -25,8 +25,14 @@ class Event extends Frontend{
         $camp_id = input('param.camp_id');
         $campService = new \app\service\CampService;
         $campInfo = $campService->getCampInfo(['id'=>$camp_id]);
+        $isPower = $CampService->isPower($camp_id,$this->memberInfo['id']);
+        // 我是班主任的班级
+        $GradeModel = new \app\model\Grade;
+        $gradeList = $GradeModel->where(['teacher_id'=>$this->memberInfo['id']])->select();
 
 
+        $this->assign('gradeList',$gradeList);
+        $this->assgin('power',$isPower);
         $this->assign('campInfo',$campInfo);
         $this->assign('camp_id', $camp_id);
         return view('Event/createEvent');
@@ -69,7 +75,12 @@ class Event extends Frontend{
     public function updateEvent() {
         $event_id = input('param.event_id');
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
-
+        if($eventInfo['member_id'] != $this->memberInfo['id']){
+            $isPower = $CampService->isPower($eventInfo['camp_id'],$this->memberInfo['id']);
+            if($isPower<3){
+                $this->error('您没有权限');
+            }
+        }
 
 
         $this->assign('eventInfo',$eventInfo);
@@ -80,7 +91,12 @@ class Event extends Frontend{
     public function recordEvent() {
         $event_id = input('param.event_id');
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
-
+        if($eventInfo['member_id'] != $this->memberInfo['id']){
+            $isPower = $CampService->isPower($eventInfo['camp_id'],$this->memberInfo['id']);
+            if($isPower<3){
+                $this->error('您没有权限');
+            }
+        }
 
 
         $this->assign('eventInfo',$eventInfo);

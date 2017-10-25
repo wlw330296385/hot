@@ -48,8 +48,10 @@
                         <label>活动对象</label>
                         <span class="select-row ">
                             <select id="eventType" class="data" name="targer_type">
+                                {gt name='power' value='2'}
                                 <option value="1">不限</option>
                                 <option value="2">营内</option>
+                                {/gt}
                                 <option value="3">班内</option>
                             </select>
                         </span>
@@ -59,8 +61,13 @@
                 <div class="mui-input-row">
                     <a href="#target" class="mui-navigate-right">
                         <label>具体对象</label>
-                        <span class="targetCont domData" name="target"></span>
+                        <span class="targetCont domData" name="target">
+                            {volist name="gradeList" id="vol"}
+                                {$vol.id} - {$vol.grade}<br/>
+                            {/volist}
+                        </span>
                         <input type="hidden" name="target_id" class="target_id" value="">
+                            
                     </a>
                 </div>
 
@@ -223,7 +230,7 @@
     <script src="/static/frontend/js/common.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script>
-                                                                                                                  var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'court'])}";
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'court'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
