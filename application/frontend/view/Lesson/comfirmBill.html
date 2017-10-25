@@ -182,7 +182,7 @@
 
 
         // 提交学生数据
-        $('#submitBtn').on('tap','',function(){
+        $('#submitBtn').on('tap','','',function(){
             var arrData = wooApi.getInputData();
             var objData = wooApi.arrTOobj(arrData);
             var url = "{:url('api/student/createStudentApi')}";
@@ -190,7 +190,6 @@
             console.log(ajaxResult);
             if(ajaxResult.code == 200){
                 mui.toast(ajaxResult.msg);
-                isStudent = true;
                 location.reload()
             }else{
                 mui.toast(ajaxResult.msg);
@@ -216,33 +215,32 @@
     function getStudentList(){
         // 获取学生列表
         var result = wooApi.asyncF("{:url('api/Student/getStudentListApi')}");
-        console.log(result);
-        if(result.code ==200){
-            if(!result.data){
-                $('#oldStudent').hide();
-                $('#addStudent').show();
-            }else{
-                studentList = result.data;
-                $('#student').val(result.data[0].id);
-                $('#student').text(result.data[0].student);
-                $('#parent').text(result.data[0].parent);
-                // $('#emergency_telephone').text(result.data[0].emergency_telephone);
-                isStudent = true;
-                // if(result.data[0].emergency_telephone>0){
-                //   isTelephone = true;
-                // };
-                student = studentList[0].student;
-                student_id = studentList[0].id;
-                // 循环输出其他的学生
-                for (var i = 1; i < studentList.length; i++) {
-                    studentList[i]
-                    var strhtml = '<option value="'+studentList[i].id+'">'+studentList[i].student+'</option>';
-                    $('.selectStudent').append(strhtml)
-                }
+        
+        if(result.code == 100){
+            $('#oldStudent').hide();
+            $('#addStudent').show();
+        }else{
+            studentList = result.data;
+            $('#student').val(result.data[0].id);
+            $('#student').text(result.data[0].student);
+            $('#parent').text(result.data[0].parent);
+            // $('#emergency_telephone').text(result.data[0].emergency_telephone);
+            isStudent = true;
+            // if(result.data[0].emergency_telephone>0){
+            //   isTelephone = true;
+            // };
+            student = studentList[0].student;
+            student_id = studentList[0].id;
+            // 循环输出其他的学生
+            for (var i = 1; i < studentList.length; i++) {
+                studentList[i]
+                var strhtml = '<option value="'+studentList[i].id+'">'+studentList[i].student+'</option>';
+                $('.selectStudent').append(strhtml)
             }
-
         }
-    }
+
+    }   
+    
 
     // // 发送验证码
     // function sendCode(obj){
