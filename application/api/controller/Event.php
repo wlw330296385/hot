@@ -136,13 +136,7 @@ class Event extends Base{
             }
             if($event_id){
                 $result = $this->EventService->updateEvent($data,$event_id);
-                if($result['code'] == 200){
-                    if($data['memberData']){
-                        $memberData = json_decode($data['memberData'],true);
-                        $res = $this->EventService->saveAllMmeber($memberData,$event_id,$data['event']);
-                        return json($res);
-                    }
-                }
+                
             }else{
                 $result = $this->EventService->createEvent($data);
             }
@@ -190,7 +184,28 @@ class Event extends Base{
     // 录入活动
     public function recordEventApi(){
         try{
-
+            $event_id = input('param.event_id');
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            if($data['address']){
+                $address = explode(' ', $data['address']);
+                $data['province'] = $address[0];
+                $data['city'] = $address[1];
+                if($address[2]){
+                    $data['area'] = $address[2];
+                }else{
+                    $data['area'] = $address[1];
+                }             
+            }
+            $result = $this->EventService->updateEvent($data,$event_id);
+            if($result['code'] == 200){
+                if($data['memberData']){
+                    $memberData = json_decode($data['memberData'],true);
+                    $res = $this->EventService->saveAllMmeber($memberData,$event_id,$data['event']);
+                    return json($res);
+                }
+            }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
