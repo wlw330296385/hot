@@ -139,8 +139,8 @@ var wooApi = {
         'arrTOobj':function(arr){
             var obj = new Object();
             for (var x in arr){
-                var split = arr[x].split('=');
-                obj[split[0] ] = split[1];
+                var splits = arr[x].split('=');
+                obj[splits[0]] = splits[1];
             }
             return obj;
         },
