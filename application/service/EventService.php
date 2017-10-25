@@ -84,8 +84,7 @@ class EventService {
         if($is_power<2){
             return ['code'=>100,'msg'=> __lang('MSG_403')];
         }
-        
-        
+     
         $validate = validate('EventVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
