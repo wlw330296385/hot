@@ -194,7 +194,7 @@ class CampMember extends Base{
 
             $map['camp_id'] = $camp_id;
             $map['camp_member.status'] = $status;
-            $map['camp_member.type'] = ['egt', 2];
+            $map['camp_member.type'] = ['in', '2,4'];
             $list= Db::view('camp_member',['id' => 'campmemberid','camp_id'])
                 ->view('coach','*','coach.member_id=camp_member.member_id')
                 ->where($map)
