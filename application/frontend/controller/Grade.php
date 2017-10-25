@@ -32,7 +32,7 @@ class Grade extends Base{
         }
 
         // 课程列表
-        $lessonList = db('lesson')->where(['camp_id'=>$camp_id,'status'=>1])->select();
+        $lessonList = db('lesson')->where(['camp_id'=>$camp_id,'status'=>1])->where('delete_time','null')->select();
         //获取班级类型
         $gradecateList = $this->GradeService->getGradeCategory();
         //获取员工列表
