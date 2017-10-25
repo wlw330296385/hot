@@ -9,50 +9,47 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
 </head>
 
-<body class=whitebg>
+<body>
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a href="" class="mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回活动列表</span></a>
+        <h1 class="mui-title">{$eventInfo.camp}</h1>
+    </header>
+    <div class="mui-content">
 
+        <div class="camp-list camp-lesson-list">
+            <ul class="mui-table-view list mb">
+                <li class="mui-table-view-cell mui-media listli">
 
-<!--首页-->
-<div class="mui-content">
-
-    <div class="camp-list camp-lesson-list">
-        <ul class="mui-table-view list mb">
-            <li class="mui-table-view-cell mui-media listli">
-               
-                    <div class="mui-media-body wd">
-                        <strong>{$eventInfo.event}</strong><font class="state">[{$eventInfo.status}]</font>
+                   <div class="mui-media-body wd">
+                        <strong>{$eventInfo.event}</strong>
+                        <font class="state">[{$eventInfo.status}]</font>
                         <p class="mui-ellipsis">{$eventInfo.camp} | {$eventInfo.eventcate}</p>
                     </div>
-                    {gt name="$power" value="2"}
-                    <a href="{:url('event/updateEvent',['camp_id'=>$eventInfo['camp_id'],'event_id'=>$eventInfo['id']])}" class="mui-navigate-right">
-                    <div class="price-frame">
-                        <span class="editor-btn">编辑</span>
-                    </div>
+                    <a href="" class="mui-navigate-right">
+                        <div class="price-frame">
+                            <span class="editor-btn">编辑</span>
+                        </div>
                     </a>
-                    {/gt}
-            </li>
-        </ul>
+                </li>
+            </ul>
 
-        <ul class="mui-table-view list">
-            <li class="mui-table-view-cell listli">活动单价<span>￥{$eventInfo.cost}/单次</span></li>
-            <li class="mui-table-view-cell listli">活动所需积分<span class="width">{$eventInfo.score}积分</span></li>
-            <li class="mui-table-view-cell listli">活动时间<span>{$eventInfo.week} {$eventInfo.event_time}</span></li>
-            <li class="mui-table-view-cell listli">活动地点<span>{$eventInfo.location}</span></li>
-            <li class="mui-table-view-cell listli">所属地区<span>{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span></li>
-            <li class="mui-table-view-cell listli">人数范围<span>{$eventInfo.min}-{$eventInfo.max}人</span></li>
-            <li class="mui-table-view-cell listli">已报名人数<span>{$eventInfo.purchased}</span></li>
-            <li class="mui-table-view-cell listli">活动简介<span>{$eventInfo.remarks}</span></li>
-        </ul>
+            <ul class="mui-table-view list">
+                <li class="mui-table-view-cell listli">所属训练营<span>￥{$eventInfo.cost}/单次</span></li>
+                <li class="mui-table-view-cell listli">活动开始时间<span class="width">{$eventInfo.score}积分</span></li>
+                <li class="mui-table-view-cell listli">活动结束时间<span>{$eventInfo.week} {$eventInfo.event_time}</span></li>
+                <li class="mui-table-view-cell listli">所属地区<span>{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span></li>
+                <li class="mui-table-view-cell listli">活动地点<span>{$eventInfo.location}</span></li>
+                <li class="mui-table-view-cell listli">人数范围<span>{$eventInfo.min}-{$eventInfo.max}人</span></li>
+                <li class="mui-table-view-cell listli">联系人<span>{$eventInfo.purchased}</span></li>
+                <li class="mui-table-view-cell listli">联系电话<span>{$eventInfo.remarks}</span></li>
+                <li class="mui-table-view-cell listli">活动简介<span>{$eventInfo.province}</span></li>
+            </ul>
+        </div>
     </div>
-</div>
 
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
@@ -61,5 +58,7 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
 </script>
+
 </html>
