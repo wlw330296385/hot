@@ -28,6 +28,7 @@ class Event extends Frontend{
 
 
         $this->assign('campInfo',$campInfo);
+        $this->assign('camp_id', $camp_id);
         return view('Event/createEvent');
     }
 
@@ -57,12 +58,13 @@ class Event extends Frontend{
     }
 
     public function eventListOfCamp() {
-  
+        $camp_id = input('param.camp_id');
+        $this->assign('camp_id', $camp_id);
         return view('Event/eventListOfCamp');
     }
 
     public function updateEvent() {
-  
+        
         return view('Event/updateEvent');
     }
     
