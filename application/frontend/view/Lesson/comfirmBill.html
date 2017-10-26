@@ -182,18 +182,36 @@
 
 
         // 提交学生数据
+//        $('#submitBtn').on('tap','','',function(){
+//            var arrData = wooApi.getInputData();
+//            var objData = wooApi.arrTOobj(arrData);
+//            var url = "{:url('api/student/createStudentApi')}";
+//            var ajaxResult = wooApi.asyncF(url,objData);
+//            console.log(ajaxResult);
+//            if(ajaxResult.code == 200){
+//                mui.toast(ajaxResult.msg);
+//                location.reload()
+//            }else{
+//                mui.toast(ajaxResult.msg);
+//            }
+//        })
+
+        // 提交学生数据
         $('#submitBtn').on('tap','','',function(){
+
             var arrData = wooApi.getInputData();
             var objData = wooApi.arrTOobj(arrData);
             var url = "{:url('api/student/createStudentApi')}";
             var ajaxResult = wooApi.asyncF(url,objData);
             console.log(ajaxResult);
+
             if(ajaxResult.code == 200){
                 mui.toast(ajaxResult.msg);
                 location.reload()
             }else{
                 mui.toast(ajaxResult.msg);
             }
+//            alert("网路延时，请稍后...");
         })
 
     })
@@ -215,7 +233,7 @@
     function getStudentList(){
         // 获取学生列表
         var result = wooApi.asyncF("{:url('api/Student/getStudentListApi')}");
-        
+
         if(result.code == 100){
             $('#oldStudent').hide();
             $('#addStudent').show();
@@ -286,15 +304,16 @@
 
 
     function wxpay(){
+//        mui.alert('网路延时，请稍后...');
       if(!isStudent){
          mui.alert('请先添加学生信息,并点[确定]按钮');
          return false;
-      }  
+      }
       if (typeof WeixinJSBridge == "undefined"){
            if( document.addEventListener ){
              document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
            }else if (document.attachEvent){
-             document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+             document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
              document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
            }
          }else{
@@ -339,6 +358,7 @@
       objBillInfo.callback_str = callback_str;
       objBillInfo.is_pay = 1;
       console.log(objBillInfo);
+      
       var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
       console.log(result);
       if(result.code == 200){
