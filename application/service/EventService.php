@@ -4,14 +4,14 @@ namespace app\service;
 
 use app\model\Event;
 use think\Db;
-use app\model\EventMemberModel;
+use app\model\EventMember;
 use app\common\validate\EventVal;
 class EventService {
     private $EventModel;
     private $EventMemberModel;
     public function __construct(){
         $this->EventModel = new Event;
-        $this->EventMemberModel = new EventMemberModel;
+        $this->EventMemberModel = new EventMember;
     }
 
 
