@@ -135,13 +135,21 @@ class ScheduleService
             return ['code' => 100, 'msg' => '课时' . __lang('MSG_404')];
         }
         $res = false;
+
+        // 课时相关学员剩余课时-1
+        $students = unserialize($schedule['student_str']);
+        $decStudentRestscheduleResult = $this->decStudentRestschedule($students);
+        if ($decStudentRestscheduleResult['code'] != 200) {
+            return $decStudentRestscheduleResult;
+        }
+
         $update = db('schedule')->where('id', $schedule_id)->update(['status' => 1,'update_time' => time()]);
         if (!$update) {
             return ['code' => 100, 'msg' => '课时记录更新' . __lang('MSG_400')];
         }
         $model = new ScheduleMember();
+
         // 记录学员
-        $students = unserialize($schedule['student_str']);
         $studentDatalist = [];
         foreach ($students as $student) {
             $datatmp = [
@@ -199,14 +207,37 @@ class ScheduleService
                 unset($datatmp);
             }
         }
-        
         $savecoachResult = $model->saveAll($coachDatalist);
         if (!$savecoachResult) {
             return ['code' => 100, 'msg' => '记录学员教练数据异常，请重试'];
         }
 
-        $res = true;
-        return $res;
+        return ['code' => 200, 'msg' => '课时审核'.__lang('MSG_200')];
+    }
+
+    /** 课时相关学员剩余课时-1
+     * @param $students 学员列表数组
+     * [
+     * [] => ['id','student_id','student']
+     * [] => ['id','student_id','student']
+     * ]
+     * id 是grade_member表id
+     * @return array
+     */
+    function decStudentRestschedule($students) {
+        $db = db('grade_member');
+        foreach ($students as $student) {
+            $where['id'] = $student['id'];
+            $restschedule = $db->where($where)->value('rest_schedule');
+            if ($restschedule <= 0) {
+                return ['code' => 100, 'msg' => $student['student'].'已无剩余课时，请修改课时信息'];
+            }
+            $decRestSchedule = $db->where($where)->setDec('rest_schedule');
+            if (!$decRestSchedule) {
+                return ['code' => 100, 'msg' => $student['student'].'更新剩余课时出错'];
+            }
+        }
+        return ['code' => 200, 'msg' => __lang('MSG_200')];
     }
 
     //查看一条课时信息
