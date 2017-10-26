@@ -171,7 +171,7 @@
 
                 <div class="mui-input-row">
                     <label>联系电话</label>
-                    <input type="text" name="telphone" class="data" value="" placeholder="请输入联系电话">
+                    <input type="text" name="telephone" class="data" value="" placeholder="请输入联系电话">
                 </div>
 
                 <div class="mui-input-row h-auto mt55">
@@ -359,20 +359,15 @@
             var url = "{:url('api/event/updateEventApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '创建成功', '确定', function () {
-                    window.location.href = "{:url('frontend/event/eventinfoOfCampp',['camp_id'=>$campInfo['id']])}";
+                mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
+                    var goUrl = "{:url('event/eventinfoOfCamp')}" + '/event_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
+                    window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '创建失败', '确定', function () {
+                mui.alert(ajaxResult.msg, '活动创建失败', '确定', function () {
 
                 })
             }
-            // if (ajaxResult.code) {
-            //     mui.toast(ajaxResult.msg);
-            //     console.log(ajaxResult.data)
-            //     var goUrl = "{:url('event/eventinfoOfCamp')}" + '/event_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
-            //     window.top.location.href = goUrl;
-            // }
         }
     </script>
 </body>
