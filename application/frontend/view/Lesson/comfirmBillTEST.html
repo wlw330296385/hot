@@ -119,7 +119,7 @@
         </div>
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-8 opli" >还需支付:<b class="colororange total_fee">￥</b></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="wxpay()">立即支付</li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="testSubmit()">立即支付</li>
             </ul>
 
 
@@ -140,12 +140,12 @@
     var student,student_id;
     var total=GetQueryString('total');
     var total_fee = "{$lessonInfo.cost}"*total;
-    
     var studentList = [];
     var strBillInfo = '{$jsonBillInfo}';
+    // console.log(strBillInfo);
     var objBillInfo = JSON.parse(strBillInfo);
-    
     $(function(){
+        
         $('.total').text(total);
         $('.total_fee').text("￥"+total_fee);
 
@@ -156,7 +156,6 @@
             $('#student').val(studentList[index].id);
             $('#student').text(studentList[index].student);
             $('#parent').text(studentList[index].parent);
-            // $('#emergency_telephone').text(studentList[index].emergency_telephone);
             student = studentList[index].student;
             student_id = studentList[index].id;
         })
@@ -199,7 +198,7 @@
             var objData = wooApi.arrTOobj(arrData);
             var url = "{:url('api/student/createStudentApi')}";
             var ajaxResult = wooApi.asyncF(url,objData);
-            console.log(ajaxResult);
+            // console.log(ajaxResult);
 
             if(ajaxResult.code == 200){
                 mui.toast(ajaxResult.msg);
@@ -353,10 +352,10 @@
       objBillInfo.balance_pay = total_fee;
       objBillInfo.callback_str = callback_str;
       objBillInfo.is_pay = 1;
-      console.log(objBillInfo);
+      // console.log(objBillInfo);
       
       var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
-      console.log(result);
+      // console.log(result);
       if(result.code == 200){
         mui.alert('欢迎加入本训练营，您的课程购买已完成，请留意课程消息及公告。','购买成功','确定',function(){
             window.location.href="{:url('frontend/lesson/lessonList')}?camp_id={$lessonInfo.camp_id}";
@@ -369,7 +368,8 @@
 
 
     function testSubmit(){
-      createBill('测试');
+
+        createBill('测试');
     }
 </script>
 </html>

@@ -31,7 +31,7 @@ class WechatJsPayService {
     protected function unifiedOrder($data=[]){
         $unifiedOrder = new UnifiedOrder;
         $unifiedOrder->setParameter("openid",$this->openid);       // openid
-        $unifiedOrder->setParameter("body",'商品订单号'+$data['order_no']);    // 商品描术
+        $unifiedOrder->setParameter("body",'商品订单号'.$data['order_no']);    // 商品描术
         // $unifiedOrder->setParameter("out_trade_no",$data['order_no'].'_'.$unifiedOrder->createNoncestr(6));  // 商户订单号
         $unifiedOrder->setParameter("out_trade_no",$data['order_no']);
         $unifiedOrder->setParameter("total_fee",$data['amount']*100);    // 总金额
