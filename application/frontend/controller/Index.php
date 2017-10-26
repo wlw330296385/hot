@@ -28,10 +28,12 @@ class Index extends Base{
         $WechatS = new WechatService;
         $userinfo = $WechatS->oauthUserinfo();
         if ($userinfo) {
+            cache('userinfo_'.$userinfo['openid'], $userinfo);
             $isMember = db('member')->where(['openid' => $userinfo['openid']])->find();
             if ($isMember) {
                 unset($isMember['password']);
                 cookie('mid', $isMember['id']);
+                cookie('openid', $isMember['openid']);
                 cookie('member', md5($isMember['id'].$isMember['member'].config('salekey')));
                 session('memberInfo', $isMember, 'think');
                 $this->redirect('frontend/Index/index');
@@ -68,6 +70,7 @@ class Index extends Base{
                     'hot_id'=>00000000,
                 ];
                 cookie('mid', 0);
+                cookie('openid', $userinfo['openid']);
                 cookie('member', md5($member['id'].$member['member'].config('salekey')) );
                 session('memberInfo', $member, 'think');
                 $this->redirect('frontend/Index/index');
