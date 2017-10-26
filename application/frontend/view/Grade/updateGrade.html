@@ -96,7 +96,7 @@
                         <span class="studentCont students">{volist name="students" id="vol"}{$vol.student},{/volist}</span>
                         <div id="hideStList">
                             {volist name="students" id="vol"}
-                            <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" data-grade="{$vol.grade}" data-grade_id="{$vol.grade_id}">                            
+                            <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" data-grade="{$vol.grade}" data-grade_id="{$vol.grade_id}">                           
                             {/volist}
                         </div>
                         <input type="hidden" name="students" class="students data" value="{$gradeInfo.students}">
@@ -891,19 +891,28 @@
                         //该学员遍历原学生表判断是否存在
                         $("#hideStListIni input").each(function () {
                             if(nid==$(this).attr("data-id")){
+                               console.log($(this).attr("data-id"))
                                idNewID = "No";
                                return false;
                             }
                         });
                         //上面遍历过不存在就添加到最终变动学员列表中
                         if(idNewID == "Yes"){
-                            $("#hideStListChange").append($(this).html());
+                            var id = $(this).attr("data-id");
+                            var student_id = $(this).attr("data-student_id");
+                            var student = $(this).attr("data-student");
+                            var grade_id = "{$gradeInfo.id}";
+                            var grade = "{$gradeInfo.grade}";
+                            var inputHtml = '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id + '" data-grade="'+ grade +'" data-grade_id="'+ grade_id +'" >'
+                            $("#hideStListChange").append(inputHtml);
                         }
                     });
+
                     var idDelID=""
                     //获取变动学员列表（去除学员）
                     $("#hideStListIni input").each(function (i) {
                         var did = $(this).attr("data-id");
+                        // console.log($(this).parent().html())
                         //默认为要去除的学员
                         idDelID = "Yes";
                         //该学员遍历新编辑的学生表判断是否存在
@@ -915,7 +924,14 @@
                         });
                         //上面遍历过不存在就添加到最终变动学员列表中
                         if(idDelID == "Yes"){
-                            $("#hideStListChange").append($(this).html());
+                            var id = $(this).attr("data-id");
+                            var student_id = $(this).attr("data-student_id");
+                            var student = $(this).attr("data-student");
+                            var grade_id = "0";
+                            var grade = "0";
+                            var inputHtml = '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id + '" data-grade="'+ grade +'" data-grade_id="'+ grade_id +'" >'
+                            $("#hideStListChange").append(inputHtml);
+                            
                         }
                     });
 
@@ -924,7 +940,7 @@
                     $("#hideStListChange input").each(function (i) {
                         var id = $(this).attr("data-id");
                         var student_id = $(this).attr("data-student_id");
-                        var student = $(this).val();
+                        var student = $(this).attr("data-student");
                         var grade_id = $(this).attr("data-grade_id");
                         var grade = $(this).attr("data-grade");
                         studentList[i] = {student:student, student_id:student_id, id: id,grade:grade,grade_id:grade_id};
@@ -1030,7 +1046,7 @@
                             tys = '';
                             if (data.data[i].grade_id == 0) { fbm = '<span class="tips">[ 未分配 ]</span>' }
                             if (data.data[i].type == 2) { tys = '<span class="tips">[ 体验生 ]</span>' }
-                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + fbm + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '"></div>'
+                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + fbm + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-grade="' + data.data[i].grade + '" data-grade_id="' + data.data[i].grade_id + '"></div>'
                         }
                         $("#newdiv").append(div);
 
