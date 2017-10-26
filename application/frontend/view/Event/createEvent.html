@@ -33,8 +33,9 @@
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
         <h1 class="mui-title">{$campInfo.camp}</h1>
-        <input type="hidden" name="camp" value="{$campInfo.camp}" class="data">
-        <input type="hidden" name="camp_id" value="{$camp_id}" class="data">
+        <input type="hidden" name="organization" value="{$campInfo.camp}" class="data">
+        <input type="hidden" name="organization_id" value="{$camp_id}" class="data">
+        <input type="hidden" name="organization_type" value="1" class="data">
     </header>
     <div class="mui-content pt">
 
@@ -47,27 +48,22 @@
                     <div class="mui-navigate-right">
                         <label>活动对象</label>
                         <span class="select-row ">
-                            <select id="eventType" class="data" name="targer_type">
+                            <select id="eventObject" class="data" name="targer_type">
                                 {gt name='power' value='2'}
                                 <option value="1">不限</option>
                                 <option value="2">营内</option>
                                 {/gt}
-                                <option value="3">班内</option>
+                                <option value="3" class="cehck">班内</option>
                             </select>
                         </span>
                     </div>
                 </div>
 
-                <div class="mui-input-row">
+                <div class="mui-input-row" id="target-input-row" style="display: none">
                     <a href="#target" class="mui-navigate-right">
                         <label>具体对象</label>
-                        <span class="targetCont domData" name="target">
-                            {volist name="gradeList" id="vol"}
-                                {$vol.id} - {$vol.grade}<br/>
-                            {/volist}
-                        </span>
+                        <span class="targetCont" name="target">{volist name="gradeList" id="vol"}{$vol.id}-{$vol.grade}{/volist}</span>
                         <input type="hidden" name="target_id" class="target_id" value="">
-                            
                     </a>
                 </div>
 
@@ -81,12 +77,13 @@
                         <label>活动类型</label>
                         <span class="select-row">
                         <select id="eventType" class="data" name="event_type">
-                            <optgroup value="活动类型">活动类型</optgroup>
-                            <option value="团队建设">团队建设</option>
-                            <option value="校园活动">校园活动</option>
-                            <option value="亲子教育">亲子教育</option>
-                            <option value="社交娱乐">社交娱乐</option>
-                            <option value="学习交流">学习交流</option>
+                             <optgroup label="活动类型">
+                                <option value="团队建设">团队建设</option>
+                                <option value="校园活动">校园活动</option>
+                                <option value="亲子教育">亲子教育</option>
+                                <option value="社交娱乐">社交娱乐</option>
+                                <option value="学习交流">学习交流</option>
+                            </optgroup>
                         </select>
                         </span>
                     </div>
@@ -96,7 +93,7 @@
                     <div class="mui-navigate-right">
                         <label>是否收费</label>
                         <span class="select-row">
-                            <select id="eventType" class="data" name="is_free">
+                            <select id="eventPrice" class="data" name="is_free">
                                 <option value="1">收费</option>
                                 <option value="2">免费</option>
                             </select>
@@ -104,7 +101,7 @@
                     </div>
                 </div>
 
-                <div class="mui-input-row">
+                <div class="mui-input-row" id="price-input-row">
                     <label>活动单价</label>
                     <input type="text" name="price" class="data" value="" placeholder="请填写活动单价">
                 </div>
@@ -120,7 +117,7 @@
                 <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>开始时间</label>
-                        <span id="resultStart" class="ui-alert domData" name="star"></span>
+                        <span id="resultStart" class="ui-alert domData" name="start"></span>
                     </div>
                 </div>
 
@@ -177,7 +174,7 @@
                 <div class="mui-input-row h-auto mt55">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>活动封面</label>
-                        <img id="preview_1" class="coachicon icon01 upload-preview domData" alt="">
+                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
                         <input type="hidden" name="cover" value='' class="data">
                     </a>
                 </div>
@@ -230,7 +227,7 @@
     <script src="/static/frontend/js/common.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script>
-        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'court'])}";
+                                                                                                                  var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'event'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -331,7 +328,8 @@
                 $(".target_id").val(target_id);
                 $(".targetCont").text(target);
                 mui("#target").popover("toggle");
-            })
+            });
+
             // 费用结算人
             $(".cost").click(function () {
                 var cost = $.trim($(this).text());
@@ -339,7 +337,28 @@
                 $(".cost_id").val(cost_id);
                 $(".costCont").text(cost);
                 mui("#cost").popover("toggle");
+            });
+
+            // 选择活动对象显示隐藏具体对象
+            $("#eventObject").change(function () {
+                if ($(this).children('option:selected').text() == '班内') {
+                    $("#target-input-row").show();
+                    $(".targetCont").addClass("domData");
+                } else {
+                    $("#target-input-row").hide();
+                }
+            });
+
+            // 选择是否收费显示隐藏活动单价
+            $("#eventPrice").change(function () {
+                if ($(this).children('option:selected').text() == '免费') {
+                    $("#price-input-row").hide();
+                    $("input[name='price']").removeClass("data");
+                } else {
+                    $("#target-input-row").show();
+                }
             })
+
 
             // 判断开始时间和结束时间是否相同
             // if($("#resultStart").text()==$("#resultEnd").text()){

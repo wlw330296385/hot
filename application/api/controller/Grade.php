@@ -111,7 +111,7 @@ class Grade extends Base{
                 if($data['studentData']){
                     $studentData = json_decode($data['studentData'],true);
                     $StudentService = new \app\service\StudentService;
-                    $res = $StudentService->saveAllStudent($studentData,$grade_id,$data['grade']);
+                    $res = $StudentService->saveAllStudent($studentData);
                     return json($res);
                 }
                 
@@ -151,7 +151,7 @@ class Grade extends Base{
                if($data['studentData']){
                     $studentData = json_decode($data['studentData'],true);
                     $StudentService = new \app\service\StudentService;
-                    $res = $StudentService->saveAllStudent($studentData,$grade_id,$data['grade']);
+                    $res = $StudentService->saveAllStudent($studentData);
                     return json($res);
                 }
             }else{

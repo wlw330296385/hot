@@ -127,12 +127,12 @@ class StudentService{
 
 
     // 批量更新学生数据
-    public function saveAllStudent($students,$grade_id,$grade){
+    public function saveAllStudent($students){
     	//重组上课学员
-        foreach ($students as $key => $value) {
-            $students[$key]['grade_id'] = $grade_id;
-            $students[$key]['grade'] = $grade;
-        }
+        // foreach ($students as $key => $value) {
+        //     $students[$key]['grade_id'] = $grade_id;
+        //     $students[$key]['grade'] = $grade;
+        // }
         // dump($students);die;
     	$result = $this->gradeMemberModel->saveAll($students);
     	if($result){

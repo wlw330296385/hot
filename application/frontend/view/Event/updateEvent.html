@@ -20,6 +20,7 @@
             left: auto;
             right: 6px;
         }
+        
         .mui-input-row a {
             display: table;
             width: 100%;
@@ -31,8 +32,12 @@
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-        <h1 class="mui-title">{campInfo.camp}</h1>
+        <h1 class="mui-title">{$eventInfo.organization}</h1>
+        <input type="hidden" name="organization" value="{$eventInfo.organization}" class="data">
+        <input type="hidden" name="organization_id" value="{$eventInfo.organization_id}" class="data">
+        <input type="hidden" name="organization_type" value="1" class="data">
     </header>
+    
     <div class="mui-content pt">
 
         <div class="camp-list camp-lesson-list" style="margin-top: 4px">
@@ -43,40 +48,41 @@
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
                         <label>活动对象</label>
-                        <span class="select-row">
-                            <select id="eventType">
-                                <option value="">不限</option>
-                                <option value="">营内</option>
-                                <option value="">班内</option>
+                        <span class="select-row ">
+                            <select id="eventObject" class="data" name="targer_type">
+                                <option value="1">不限</option>
+                                <option value="2">营内</option>
+                                <option value="3" class="cehck">班内</option>
                             </select>
                         </span>
                     </div>
                 </div>
 
-                <div class="mui-input-row">
+                <div class="mui-input-row" id="target-input-row" style="display: none">
                     <a href="#target" class="mui-navigate-right">
                         <label>具体对象</label>
-                        <span class="targetCont">{eventInfo.target}</span>
+                        <span class="targetCont" name="target"></span>
+                        <input type="hidden" name="target_id" class="target_id" value="">
                     </a>
                 </div>
 
                 <div class="mui-input-row">
                     <label>活动主题</label>
-                    <input type="text" name="event" class="data" value="{eventInfo.theme}" placeholder="请输入活动主题">
-                    <input type="hidden" name="" class="data" value="">
+                    <input type="text" name="event" class="data" value="{$eventInfo.event}" placeholder="请输入活动主题">
                 </div>
 
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
                         <label>活动类型</label>
                         <span class="select-row">
-                        <select id="eventType">
-                            <option data-eventcate_id="">活动类型</option>
-                            <option data-eventcate_id="1">团队建设</option>
-                            <option data-eventcate_id="2">校园活动</option>
-                            <option data-eventcate_id="2">亲子教育</option>
-                            <option data-eventcate_id="2">社交娱乐</option>
-                            <option data-eventcate_id="2">学习交流</option>
+                        <select id="eventType" class="data" name="event_type">
+                             <optgroup label="活动类型">
+                                <option value="团队建设">团队建设</option>
+                                <option value="校园活动">校园活动</option>
+                                <option value="亲子教育">亲子教育</option>
+                                <option value="社交娱乐">社交娱乐</option>
+                                <option value="学习交流">学习交流</option>
+                            </optgroup>
                         </select>
                         </span>
                     </div>
@@ -86,57 +92,57 @@
                     <div class="mui-navigate-right">
                         <label>是否收费</label>
                         <span class="select-row">
-                            <select id="eventType">
-                                <option value="">收费</option>
-                                <option value="">免费</option>
+                            <select id="eventPrice" class="data" name="is_free">
+                                <option value="1">收费</option>
+                                <option value="2">免费</option>
                             </select>
                         </span>
                     </div>
                 </div>
 
-                <div class="mui-input-row">
+                <div class="mui-input-row" id="price-input-row">
                     <label>活动单价</label>
-                    <input type="text" name="event" class="data" value="{eventInfo.price}" placeholder="请填写活动单价">
-                    <input type="hidden" name="" class="data" value="">
+                    <input type="text" name="price" class="data" value="{$eventInfo.price}" placeholder="请填写活动单价">
                 </div>
 
                 <div class="mui-input-row">
                     <a href="#cost" class="mui-navigate-right">
                         <label>费用结算人</label>
-                        <span class="costCont">{eventInfo.target}</span>
+                        <span class="costCont domData" name="finance">{$eventInfo.finance}</span>
+                        <input type="hidden" name="finance_id" class="data" value="">
                     </a>
                 </div>
 
                 <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>开始时间</label>
-                        <span id="resultStart" class="ui-alert domData" name="event_time">{eventInfo.star}</span>
+                        <span id="resultStart" class="ui-alert domData" name="start">{$eventInfo.start}</span>
                     </div>
                 </div>
 
                 <div class="mui-input-row picker btnEnd" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>结束时间</label>
-                        <span id="resultEnd" class="ui-alert domData" name="event_time">{eventInfo.end}</span>
+                        <span id="resultEnd" class="ui-alert domData" name="end">{$eventInfo.end}</span>
                     </div>
                 </div>
 
                 <div class="mui-input-row" id='showCityPicker3'>
                     <div class="mui-navigate-right">
                         <label>所属地区</label>
-                        <span id="cityResult3" class="ui-alert domData" name="address">{eventInfo.province}{eventInfo.city}{eventInfo.area}</span>
+                        <span id="cityResult3" class="ui-alert domData" name="address">{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span>
                     </div>
                 </div>
                 <div class="mui-input-row">
                     <label>活动地点</label>
-                    <input type="text" name="location" value="{eventInfo.location}" class="data location" placeholder="请输入活动地点">
+                    <input type="text" name="location" value="{$eventInfo.location}" class="data location" placeholder="请输入活动地点">
                 </div>
 
                 <div class="mui-input-row h-auto">
                     <label>最少参与人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data" type="number" name="min" value="{eventInfo.min}">
+                        <input class="mui-input-numbox data" type="number" name="min" value="{$eventInfo.min}">
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
@@ -144,31 +150,31 @@
                     <label>最多参与人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data" type="number" name="max" value="{eventInfo.max}">
+                        <input class="mui-input-numbox data" type="number" name="max" value="{$eventInfo.max}">
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
 
                 <div class="mui-input-row">
                     <label>活动简介</label>
-                    <input type="text" name="" class="data" value="{eventInfo.event_des}" placeholder="请输入活动简介">
+                    <input type="text" name="event_des" class="data" value="{$eventInfo.event_des}" placeholder="请输入活动简介">
                 </div>
 
                 <div class="mui-input-row">
                     <label>联系人</label>
-                    <input type="text" name="" class="data" value="{eventInfo.contact}" placeholder="请输入联系人">
+                    <input type="text" name="contract" class="data" value="{$eventInfo.contract}" placeholder="请输入联系人">
                 </div>
 
                 <div class="mui-input-row">
                     <label>联系电话</label>
-                    <input type="text" name="" class="data" value="{eventInfo.telphone}" placeholder="请输入联系电话">
+                    <input type="text" name="telephone" class="data" value="{$eventInfo.telephone}" placeholder="请输入联系电话">
                 </div>
 
                 <div class="mui-input-row h-auto mt55">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>活动封面</label>
                         <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
-                        <input type="hidden" name="cover" value="{eventInfo.cover}" class="data">
+                        <input type="hidden" name="cover" value='{$eventInfo.cover}' class="data">
                     </a>
                 </div>
 
@@ -220,7 +226,7 @@
     <script src="/static/frontend/js/common.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script>
-    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'court'])}";
+      var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'event'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -321,7 +327,8 @@
                 $(".target_id").val(target_id);
                 $(".targetCont").text(target);
                 mui("#target").popover("toggle");
-            })
+            });
+
             // 费用结算人
             $(".cost").click(function () {
                 var cost = $.trim($(this).text());
@@ -329,15 +336,57 @@
                 $(".cost_id").val(cost_id);
                 $(".costCont").text(cost);
                 mui("#cost").popover("toggle");
+            });
+
+            // 选择活动对象显示隐藏具体对象
+            $("#eventObject").change(function () {
+                if ($(this).children('option:selected').text() == '班内') {
+                    $("#target-input-row").show();
+                    $(".targetCont").addClass("domData");
+                } else {
+                    $("#target-input-row").hide();
+                }
+            });
+
+            // 选择是否收费显示隐藏活动单价
+            $("#eventPrice").change(function () {
+                if ($(this).children('option:selected').text() == '免费') {
+                    $("#price-input-row").hide();
+                    $("input[name='price']").removeClass("data");
+                } else {
+                    $("#target-input-row").show();
+                }
             })
-            
+
+
             // 判断开始时间和结束时间是否相同
             // if($("#resultStart").text()==$("#resultEnd").text()){
             //     mui.alert("活动开始时间和结束时间不能相同")
             // }
         })
 
+        // 获取数据并进行提交
+        function submitAction() {
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            console.log(arrData)
+            var objData = wooApi.arrTOobj(arrData);
+            console.log(objData)
+            var url = "{:url('api/event/updateEventApi')}"+ '/event_id/{$eventInfo.id}';
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '活动修改成功', '确定', function () {
+                    var goUrl = "{:url('event/eventinfoOfCamp')}" + '/event_id/' + ajaxResult.data ;
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '活动修改失败', '确定', function () {
 
+                })
+            }
+        }
     </script>
 </body>
 
