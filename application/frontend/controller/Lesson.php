@@ -31,7 +31,6 @@ class Lesson extends Base{
 
     // 可编辑
     public function lessonInfo(){
-        $this->checkopenid();
     	$lesson_id = input('param.lesson_id');
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         $lessonInfo['cover'] = request()->root(true) . $lessonInfo['cover'];

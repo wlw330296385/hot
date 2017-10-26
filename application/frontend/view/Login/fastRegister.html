@@ -73,7 +73,13 @@
 
     mui.get("{:url('api/member/checkopenid')}", {}, function(data) {
         console.log(data);
-        if (data.msg)
+        if (data.code===200) {
+            mui.alert('您已注册会员，确认登录平台', '', function(){
+                setTimeout(function(){
+                    window.history.back();
+                },1000);
+            });
+        }
     }, 'json');
 
 $(function(){

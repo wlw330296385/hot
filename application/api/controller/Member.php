@@ -249,44 +249,8 @@ class Member extends Base{
                 cookie('member', md5($member['id'].$member['member'].config('salekey')) );
                 session('memberInfo', $member, 'think');
                 $this->memberInfo = $member;
-                return json(['code' => 200, 'msg' => -1, 'data' => $member]);
+                return json(['code' => 100, 'msg' => -1, 'data' => $member]);
             }
-        } else {
-            $member = [
-                'id' => 0,
-                'member' => '游客',
-                'nickname' => '游客',
-                'avatar' => '/static/default/avatar.png',
-                'hp' => 0,
-                'level' => 0,
-                'telephone' =>'',
-                'email' =>'',
-                'realname'  =>'',
-                'province'  =>'',
-                'city'  =>'',
-                'area'  =>'',
-                'location'  =>'',
-                'sex'   =>0,
-                'height'    =>0,
-                'weight'    =>0,
-                'charater'  =>'',
-                'shoe_code' =>0,
-                'birthday'  =>'0000-00-00',
-                'create_time'=>0,
-                'pid'   =>0,
-                'hp'    =>0,
-                'cert_id'   =>0,
-                'score' =>0,
-                'flow'  =>0,
-                'balance'   =>0,
-                'remarks'   =>0,
-                'hot_id'=>00000000,
-            ];
-//            cookie('mid', 0);
-            cookie('member', md5($member['id'].$member['member'].config('salekey')) );
-            session('memberInfo', $member, 'think');
-            $this->memberInfo = $member;
-            return json(['code' => 200, 'msg' => 0, 'data' => $member]);
         }
     }
 }
