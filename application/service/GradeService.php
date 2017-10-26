@@ -96,7 +96,7 @@ class GradeService{
             $seria = serialize($assistan_list);
             $data['assistant_id'] = $seria;
         }
-        $result = $this->GradeModel->save($data);
+        $result = $this->GradeModel->allowField(true)->save($data);
          if (!$result) {
             return [ 'msg' => __lang('MSG_400'), 'code' => 100 ];
         }else{
