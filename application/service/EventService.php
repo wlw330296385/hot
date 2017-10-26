@@ -88,9 +88,11 @@ class EventService {
     // 新增活动
     public function createEvent($data){
         // 查询是否有权限
-        $is_power = $this->isPower($data['camp_id'],$data['member_id']);
-        if($is_power<2){
-            return ['code'=>100,'msg'=>__lang('MSG_403')];
+        if($data['origanization_type'] == 1){
+            $is_power = $this->isPower($data['origanization_id'],$data['member_id']);
+            if($is_power<2){
+                return ['code'=>100,'msg'=> __lang('MSG_403')];
+            }
         }
         
         $validate = validate('EventVal');
