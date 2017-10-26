@@ -163,7 +163,7 @@ class Lesson extends Base{
             'pay_type'=>'wxpay',
             'type'=>1
         ];
-        $amount = $total*$lessonInfo['cost'];
+        $amount = 0.01;
         $WechatJsPayService = new \app\service\WechatJsPayService;
         $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
         
