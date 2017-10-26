@@ -38,7 +38,7 @@
             width:60% !important;
             line-height: 24px !important;
         }
-        #hideStList {
+        #hideStList,#hideStListIni,#hideStListChange {
             display: none;
         }
         
@@ -100,6 +100,13 @@
                             {/volist}
                         </div>
                         <input type="hidden" name="students" class="students data" value="{$gradeInfo.students}">
+
+                        <div id="hideStListIni">
+                            {volist name="students" id="vol"}
+                            <input type="hidden" class="stdListIni" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" data-grade="{$vol.grade}" data-grade_id="{$vol.grade_id}">
+                            {/volist}
+                        </div>
+                        <div id="hideStListChange"></div>
                     </a>
                 </div>
 
@@ -869,10 +876,60 @@
                 }else if ($('input[name="assistants"]').val() != "" && $('input[name="assistant_salary"]').val()=='') {
                     mui.alert("已选择助教，请填写助教底薪");
                     return false;
-                }else if($('input[name="assistants"]').val() == "" && $('input[name="assistant_salary"]').val()!=''){
+                }else if($('input[name="assistants"]').val() == "" && $('input[name="assistant_salary"]').val()!='' && $('input[name="assistant_salary"]').val()!=0){
                     mui.alert("已填写助教底薪，还未选择助教");
                     return false;
                 } else {
+
+                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    var idNewID=""
+                    //获取变动学员列表（新增学员）
+                    $("#hideStList input").each(function (i) {
+                        var nid = $(this).attr("data-id");
+                        //默认为新添加学员
+                        idNewID = "Yes";
+                        //该学员遍历原学生表判断是否存在
+                        $("#hideStListIni input").each(function () {
+                            if(nid==$(this).attr("data-id")){
+                               idNewID = "No";
+                               return false;
+                            }
+                        });
+                        //上面遍历过不存在就添加到最终变动学员列表中
+                        if(idNewID == "Yes"){
+                            $("#hideStListChange").append($(this).html());
+                        }
+                    });
+                    var idDelID=""
+                    //获取变动学员列表（去除学员）
+                    $("#hideStListIni input").each(function (i) {
+                        var did = $(this).attr("data-id");
+                        //默认为要去除的学员
+                        idDelID = "Yes";
+                        //该学员遍历新编辑的学生表判断是否存在
+                        $("#hideStList input").each(function () {
+                            if(did==$(this).attr("data-id")){
+                                idDelID = "No";
+                                return false;
+                            }
+                        });
+                        //上面遍历过不存在就添加到最终变动学员列表中
+                        if(idDelID == "Yes"){
+                            $("#hideStListChange").append($(this).html());
+                        }
+                    });
+
+                    studentList = [];
+                    //把最终变动学员添加到数组
+                    $("#hideStListChange input").each(function (i) {
+                        var id = $(this).attr("data-id");
+                        var student_id = $(this).attr("data-student_id");
+                        var student = $(this).val();
+                        var grade_id = $(this).attr("data-grade_id");
+                        var grade = $(this).attr("data-grade");
+                        studentList[i] = {student:student, student_id:student_id, id: id,grade:grade,grade_id:grade_id};
+                    });
+                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                     var data = wooApi.getInputData('input', 'data');
                     datas = wooApi.getInputData('select', 'data', data);
@@ -883,17 +940,17 @@
                     objData.studentData = JSON.stringify(studentList);
                     console.log(studentList);
                     // console.log(objData.studentData );return;
-                    var url = "{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}";
-                    var ajaxResult = wooApi.asyncF(url, objData);
-                    if (ajaxResult.code == 200) {
-                        mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
-                            window.location.href = "{:url('frontend/grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
-                        })
-                    } else {
-                        mui.alert(ajaxResult.msg, '修改失败', '确定', function () {
-
-                        })
-                    }
+//                    var url = "{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}";
+//                    var ajaxResult = wooApi.asyncF(url, objData);
+//                    if (ajaxResult.code == 200) {
+//                        mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
+//                            window.location.href = "{:url('frontend/grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
+//                        })
+//                    } else {
+//                        mui.alert(ajaxResult.msg, '修改失败', '确定', function () {
+//
+//                        })
+//                    }
                 }
             })
 
