@@ -225,16 +225,35 @@ class ScheduleService
      * @return array
      */
     function decStudentRestschedule($students) {
-        $db = db('grade_member');
+        $gradeMemberDb = db('grade_member');
+        $studentDb = db('student');
         foreach ($students as $student) {
-            $where['id'] = $student['id'];
-            $restschedule = $db->where($where)->value('rest_schedule');
+            $gradeMemberWhere['id'] = $student['id'];
+            $studentWhere['id'] = $student['student_id'];
+            $restschedule = $gradeMemberDb->where($gradeMemberWhere)->value('rest_schedule');
             if ($restschedule <= 0) {
                 return ['code' => 100, 'msg' => $student['student'].'已无剩余课时，请修改课时信息'];
-            }
-            $decRestSchedule = $db->where($where)->setDec('rest_schedule');
-            if (!$decRestSchedule) {
-                return ['code' => 100, 'msg' => $student['student'].'更新剩余课时出错'];
+            } else {
+                $decRestSchedule = $gradeMemberDb->where($gradeMemberWhere)->setDec('rest_schedule',1);
+                if (!$decRestSchedule) {
+                    return ['code' => 100, 'msg' => $student['student'].'更新剩余课时'.__lang('MSG_400')];
+                }
+                $incStudentFinishedSchedule = $studentDb->where($studentWhere)->setInc('finished_schedule', 1);
+                if (!$incStudentFinishedSchedule) {
+                    return ['code' => 100, 'msg' => $student['student'].'更新完成课时'.__lang('MSG_400')];
+                }
+                
+                // 学员完成课时
+                if ($restschedule == 1) {
+                    $finishSchedule = $gradeMemberDb->where($gradeMemberWhere)->update(['rest_schedule' => 0, 'status' => 4, 'update_time' => time()]);
+                    if (!$finishSchedule) {
+                        return ['code' => 100, 'msg' => $student['student'].'更新剩余课时'.__lang('MSG_400')];
+                    }
+                    $studentFinishedTotal = $studentDb->where($studentWhere)->setInc('finished_total', 1);
+                    if (!$studentFinishedTotal) {
+                        return ['code' => 100, 'msg' => $student['student'].'更新完成课程'.__lang('MSG_400')];
+                    }
+                }
             }
         }
         return ['code' => 200, 'msg' => __lang('MSG_200')];
