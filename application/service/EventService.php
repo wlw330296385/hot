@@ -112,7 +112,6 @@ class EventService {
             $memberData[$key]['event_id'] = $event_id;
             $memberData[$key]['event'] = $event;
         }
-        // dump($students);die;
         $result = $this->EventMemberModel->saveAll($memberData);
         if($result){
             return ['code'=>200,'msg'=>__lang('MSG_200'),'data'=>$result];

@@ -23,8 +23,8 @@ class Event extends Frontend{
     // 创建活动
     public function createEvent() {
         $camp_id = input('param.camp_id');
-        $campService = new \app\service\CampService;
-        $campInfo = $campService->getCampInfo(['id'=>$camp_id]);
+        $CampService = new \app\service\CampService;
+        $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
         $isPower = $CampService->isPower($camp_id,$this->memberInfo['id']);
         // 我是班主任的班级
         $GradeModel = new \app\model\Grade;
