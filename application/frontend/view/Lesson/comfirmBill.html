@@ -195,19 +195,25 @@
         // 提交学生数据
         $('#submitBtn').on('tap','','',function(){
 
-            var arrData = wooApi.getInputData();
-            var objData = wooApi.arrTOobj(arrData);
-            var url = "{:url('api/student/createStudentApi')}";
-            var ajaxResult = wooApi.asyncF(url,objData);
-            console.log(ajaxResult);
+            var addStuName = $('input[name="student"]').val();
+            var btnArray = ['确认', '取消'];
+            mui.confirm('确认添加学生（' + addStuName + '）?', '提示', btnArray, function (e) {
+                if (e.index == 0) {
+                    var arrData = wooApi.getInputData();
+                    var objData = wooApi.arrTOobj(arrData);
+                    var url = "{:url('api/student/createStudentApi')}";
+                    var ajaxResult = wooApi.asyncF(url,objData);
+                    console.log(ajaxResult);
 
-            if(ajaxResult.code == 200){
-                mui.toast(ajaxResult.msg);
-                location.reload()
-            }else{
-                mui.toast(ajaxResult.msg);
-            }
-//            alert("网路延时，请稍后...");
+                    if(ajaxResult.code == 200){
+                        mui.toast(ajaxResult.msg);
+                        location.reload()
+                    }else{
+                        mui.toast(ajaxResult.msg);
+                    }
+                    //alert("网路延时，请稍后...");
+                }
+            });
         })
 
     })
