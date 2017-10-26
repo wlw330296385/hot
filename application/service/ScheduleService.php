@@ -234,15 +234,6 @@ class ScheduleService
             if ($restschedule <= 0) {
                 return ['code' => 100, 'msg' => $student['student'].'已无剩余课时，请修改课时信息'];
             } else {
-                $decRestSchedule = $gradeMemberDb->where($gradeMemberWhere)->setDec('rest_schedule',1);
-                if (!$decRestSchedule) {
-                    return ['code' => 100, 'msg' => $student['student'].'更新剩余课时'.__lang('MSG_400')];
-                }
-                $incStudentFinishedSchedule = $studentDb->where($studentWhere)->setInc('finished_schedule', 1);
-                if (!$incStudentFinishedSchedule) {
-                    return ['code' => 100, 'msg' => $student['student'].'更新完成课时'.__lang('MSG_400')];
-                }
-                
                 // 学员完成课时
                 if ($restschedule == 1) {
                     $finishSchedule = $gradeMemberDb->where($gradeMemberWhere)->update(['rest_schedule' => 0, 'status' => 4, 'update_time' => time()]);
@@ -253,6 +244,15 @@ class ScheduleService
                     if (!$studentFinishedTotal) {
                         return ['code' => 100, 'msg' => $student['student'].'更新完成课程'.__lang('MSG_400')];
                     }
+                } else {
+                    $decRestSchedule = $gradeMemberDb->where($gradeMemberWhere)->setDec('rest_schedule',1);
+                    if (!$decRestSchedule) {
+                        return ['code' => 100, 'msg' => $student['student'].'更新剩余课时'.__lang('MSG_400')];
+                    }
+                }
+                $incStudentFinishedSchedule = $studentDb->where($studentWhere)->setInc('finished_schedule', 1);
+                if (!$incStudentFinishedSchedule) {
+                    return ['code' => 100, 'msg' => $student['student'].'更新完成课时'.__lang('MSG_400')];
                 }
             }
         }
