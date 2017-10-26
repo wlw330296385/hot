@@ -8,7 +8,6 @@ class EventVal extends Validate{
         'event'        =>  'require|max:60',
         'event_type'	=> 'require',
         'price'         => 'require',
-        'coach'         =>'require',
         'end'           =>'require',
         'start'           =>'require',
         'province'              =>'require',

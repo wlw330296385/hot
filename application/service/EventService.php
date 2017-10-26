@@ -97,7 +97,7 @@ class EventService {
        
         $result = $this->EventModel->save($data);
         if($result){
-            db('camp')->where(['id'=>$data['camp_id']])->setInc('total_Events');
+            db('camp')->where(['id'=>$data['camp_id']])->setInc('total_events');
             return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->EventModel->id];
         }else{
             return ['msg'=>__lang('MSG_400'), 'code' => 100];

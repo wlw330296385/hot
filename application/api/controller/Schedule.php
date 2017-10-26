@@ -204,12 +204,13 @@ class Schedule extends Base
         if ($action =='editstatus') {
             // 审核课时
             $res = $scheduleS->saveScheduleMember($scheduleid);
-            if ($res) {
-                $response = ['code' => 200, 'msg' => __lang('MSG_200')];
-            } else {
-                $response = ['code' => 100, 'msg' => __lang('MSG_400')];
-            }
-            return json($response);
+            return json($res);
+//            if ($res) {
+//                $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+//            } else {
+//                $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+//            }
+//            return json($response);
         } else {
             $res = $scheduleS->delSchedule($scheduleid);
             if ($res) {

@@ -96,7 +96,8 @@
                         <span class="studentCont students">{volist name="students" id="vol"}{$vol.student},{/volist}</span>
                         <div id="hideStList">
                             {volist name="students" id="vol"}
-                            <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}">                            {/volist}
+                            <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" data-grade="{$vol.grade}" data-grade_id="{$vol.grade_id}">                            
+                            {/volist}
                         </div>
                         <input type="hidden" name="students" class="students data" value="{$gradeInfo.students}">
                     </a>
@@ -602,7 +603,9 @@
                 var id = $(this).attr("data-id");
                 var student_id = $(this).attr("data-student_id");
                 var student = $(this).attr("data-student");
-                studentList[i] = { student: student, student_id: student_id, id: id };
+                var grade = $(this).attr("data-grade");
+                var grade_id = $(this).attr("data-grade_id");
+                studentList[i] = {student:student, student_id:student_id, id: id,grade:grade,grade_id:grade_id};
                 console.log(studentList)
             });
 
@@ -665,8 +668,10 @@
                     var id = $(this).attr("data-id");
                     var student_id = $(this).attr("data-student_id");
                     var student = $(this).val();
-                    studentList[i] = { student: student, student_id: student_id, id: id }
-                    inputList += '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id + '" >';
+                    var grade_id = $(this).attr("data-grade_id");
+                    var grade = $(this).attr("data-grade");
+                    studentList[i] = {student:student, student_id:student_id, id: id,grade:grade,grade_id:grade_id};
+                    inputList += '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id + '" data-grade="'+ grade +'" data-grade_id="'+ grade_id +'" >';
                     studentNames += student + ','
                 });
                 $("#hideStList").empty();
