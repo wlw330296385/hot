@@ -1,8 +1,8 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Frontend;
+use app\frontend\controller\Base;
 use app\service\EventService;
-class Event extends Frontend{
+class Event extends Base{
 	private $EventService;
 	public function _initialize(){
 		parent::_initialize();
@@ -32,7 +32,7 @@ class Event extends Frontend{
 
 
         $this->assign('gradeList',$gradeList);
-        $this->assgin('power',$isPower);
+        $this->assign('power',$isPower);
         $this->assign('campInfo',$campInfo);
         $this->assign('camp_id', $camp_id);
         return view('Event/createEvent');
