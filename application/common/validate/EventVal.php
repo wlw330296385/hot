@@ -29,8 +29,8 @@ class EventVal extends Validate{
     ];
     
     protected $scene = [
-        'add'   =>  ['event','event_type','event_time','province','city','area','location'],
-        'edit'  =>  [],
+        'add'   =>  ['event','event_type','price','province','city','area','location'],
+        'edit'  =>  ['event_time'],
     ];    
 
 }

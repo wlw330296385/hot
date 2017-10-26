@@ -63,18 +63,17 @@ class EventService {
 
     // 编辑活动
     public function updateEvent($data,$id){
-        if($data['origanization_type'] == 1){
-            $is_power = $this->isPower($data['origanization_id'],$data['member_id']);
+        if($data['organization_type'] == 1){
+            $is_power = $this->isPower($data['organization_id'],$data['member_id']);
             if($is_power<2){
                 return ['code'=>100,'msg'=> __lang('MSG_403')];
             }
         }
-        
-        if($data['event_times']){
+        if( isset($data['event_times']) ){
             $data['event_time'] = strtotime($data['event_times']);
         }
         $validate = validate('EventVal');
-        if(!$validate->check($data)){
+        if(!$validate->scene('edit')->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
         $result = $this->EventModel->save($data,['id'=>$id]);
@@ -88,18 +87,17 @@ class EventService {
     // 新增活动
     public function createEvent($data){
         // 查询是否有权限
-        if($data['origanization_type'] == 1){
-            $is_power = $this->isPower($data['origanization_id'],$data['member_id']);
+        if($data['organization_type'] == 1){
+            $is_power = $this->isPower($data['organization_id'],$data['member_id']);
             if($is_power<2){
                 return ['code'=>100,'msg'=> __lang('MSG_403')];
             }
         }
-        
         $validate = validate('EventVal');
-        if(!$validate->check($data)){
+        if(!$validate->scene('add')->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-       
+        
         $result = $this->EventModel->save($data);
         if($result){
             db('camp')->where(['id'=>$data['camp_id']])->setInc('total_events');
