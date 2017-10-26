@@ -81,24 +81,12 @@
                         <input type="text" name="grade" class="grade gradeCont data pdr" value="{$gradeInfo.grade}">
                         <input type="hidden" name="grade_id" class="grade_id data" value="{$gradeInfo.id}">
                     </div>
-
-<<<<<<< HEAD:application/frontend/view/Grade/__updateGrade.html
                     <div class="mui-input-row">
                         <!--<a href="#lessonType" class="mui-navigate-right">-->
                             <label>所属课程</label>
                             <span class="lesson lessonTypeCont domData pdr" name="lesson">{$gradeInfo.lesson}</span>
                             <input type="hidden" name="lesson_id" class="lesson_id data" value="{$gradeInfo.lesson_id}">
                             <!--</a>-->
-=======
-                <div class="mui-input-row h-auto">
-                    <a href="#student" id="setStudentCBox" class="mui-navigate-right">
-                        <label>学员名单</label>
-                        <span class="studentCont students">{volist name="students" id="vol"}{$vol.student},{/volist}</span>
-                        <div id="hideStList">
-                            {volist name="students" id="vol"}
-                            <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" data-grade="{$vol.grade}" data-grade_id="{$vol.grade_id}">                           
-                            {/volist}
->>>>>>> 61869c1e7bdd2e0d84433edd0a71d1fbf653e24d:application/frontend/view/Grade/updateGrade.html
                         </div>
 
                         <div class="mui-input-row h-auto">
@@ -846,75 +834,6 @@ $(function () {
                     return false;
                 } else {
 
-<<<<<<< HEAD:application/frontend/view/Grade/__updateGrade.html
-=======
-                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    var idNewID=""
-                    //获取变动学员列表（新增学员）
-                    $("#hideStList input").each(function (i) {
-                        var nid = $(this).attr("data-id");
-                        //默认为新添加学员
-                        idNewID = "Yes";
-                        //该学员遍历原学生表判断是否存在
-                        $("#hideStListIni input").each(function () {
-                            if(nid==$(this).attr("data-id")){
-                               console.log($(this).attr("data-id"))
-                               idNewID = "No";
-                               return false;
-                            }
-                        });
-                        //上面遍历过不存在就添加到最终变动学员列表中
-                        if(idNewID == "Yes"){
-                            var id = $(this).attr("data-id");
-                            var student_id = $(this).attr("data-student_id");
-                            var student = $(this).attr("data-student");
-                            var grade_id = "{$gradeInfo.id}";
-                            var grade = "{$gradeInfo.grade}";
-                            var inputHtml = '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id + '" data-grade="'+ grade +'" data-grade_id="'+ grade_id +'" >'
-                            $("#hideStListChange").append(inputHtml);
-                        }
-                    });
-
-                    var idDelID=""
-                    //获取变动学员列表（去除学员）
-                    $("#hideStListIni input").each(function (i) {
-                        var did = $(this).attr("data-id");
-                        // console.log($(this).parent().html())
-                        //默认为要去除的学员
-                        idDelID = "Yes";
-                        //该学员遍历新编辑的学生表判断是否存在
-                        $("#hideStList input").each(function () {
-                            if(did==$(this).attr("data-id")){
-                                idDelID = "No";
-                                return false;
-                            }
-                        });
-                        //上面遍历过不存在就添加到最终变动学员列表中
-                        if(idDelID == "Yes"){
-                            var id = $(this).attr("data-id");
-                            var student_id = $(this).attr("data-student_id");
-                            var student = $(this).attr("data-student");
-                            var grade_id = "0";
-                            var grade = "0";
-                            var inputHtml = '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id + '" data-grade="'+ grade +'" data-grade_id="'+ grade_id +'" >'
-                            $("#hideStListChange").append(inputHtml);
-                            
-                        }
-                    });
-
-                    studentList = [];
-                    //把最终变动学员添加到数组
-                    $("#hideStListChange input").each(function (i) {
-                        var id = $(this).attr("data-id");
-                        var student_id = $(this).attr("data-student_id");
-                        var student = $(this).attr("data-student");
-                        var grade_id = $(this).attr("data-grade_id");
-                        var grade = $(this).attr("data-grade");
-                        studentList[i] = {student:student, student_id:student_id, id: id,grade:grade,grade_id:grade_id};
-                    });
-                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
->>>>>>> 61869c1e7bdd2e0d84433edd0a71d1fbf653e24d:application/frontend/view/Grade/updateGrade.html
                     var data = wooApi.getInputData('input', 'data');
                     datas = wooApi.getInputData('select', 'data', data);
                     // 获取其他标签值
@@ -1015,18 +934,10 @@ $(function () {
                             studentList = data.data;
 
                             if (data.data[i].grade_id == 0) { fbm = '<span class="tips">[ 未分配 ]</span>' }
-<<<<<<< HEAD:application/frontend/view/Grade/__updateGrade.html
                                 if (data.data[i].type == 2) { tys = '<span class="tips">[ 体验生 ]</span>' }
                                     div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + fbm + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '"></div>'
                             }
                             $("#newdiv").append(div);
-=======
-                            if (data.data[i].type == 2) { tys = '<span class="tips">[ 体验生 ]</span>' }
-                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + fbm + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-grade="' + data.data[i].grade + '" data-grade_id="' + data.data[i].grade_id + '"></div>'
-                        }
-                        $("#newdiv").append(div);
->>>>>>> 61869c1e7bdd2e0d84433edd0a71d1fbf653e24d:application/frontend/view/Grade/updateGrade.html
-
                         } else {
                             mui.toast('数据获取失败,请稍候再试');
                         }
