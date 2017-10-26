@@ -63,10 +63,13 @@ class EventService {
 
     // 编辑活动
     public function updateEvent($data,$id){
-        $is_power = $this->isPower($data['camp_id'],$data['member_id']);
-        if($is_power<2){
-            return ['code'=>100,'msg'=> __lang('MSG_403')];
+        if($data['origanization_type'] == 1){
+            $is_power = $this->isPower($data['origanization_id'],$data['member_id']);
+            if($is_power<2){
+                return ['code'=>100,'msg'=> __lang('MSG_403')];
+            }
         }
+        
         if($data['event_times']){
             $data['event_time'] = strtotime($data['event_times']);
         }

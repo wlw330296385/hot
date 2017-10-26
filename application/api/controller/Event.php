@@ -136,7 +136,6 @@ class Event extends Base{
             }
             if($event_id){
                 $result = $this->EventService->updateEvent($data,$event_id);
-                
             }else{
                 $result = $this->EventService->createEvent($data);
             }

@@ -76,7 +76,8 @@ class Event extends Base{
         $event_id = input('param.event_id');
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
         if($eventInfo['member_id'] != $this->memberInfo['id']){
-            $isPower = $CampService->isPower($eventInfo['camp_id'],$this->memberInfo['id']);
+            $CampService = new \app\service\CampService;
+            $isPower = $CampService->isPower($eventInfo['organization_id'],$this->memberInfo['id']);
             if($isPower<3){
                 $this->error('您没有权限');
             }
@@ -92,7 +93,8 @@ class Event extends Base{
         $event_id = input('param.event_id');
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
         if($eventInfo['member_id'] != $this->memberInfo['id']){
-            $isPower = $CampService->isPower($eventInfo['camp_id'],$this->memberInfo['id']);
+            $CampService = new \app\service\CampService;
+            $isPower = $CampService->isPower($eventInfo['organization_id'],$this->memberInfo['id']);
             if($isPower<3){
                 $this->error('您没有权限');
             }
