@@ -176,7 +176,7 @@
                     </a>
                 </div>
 
-                 <div class="mui-input-row">
+                <div class="mui-input-row">
                     <label>助教底薪</label>
                     <span class="assistant_salary pdr">{$scheduleInfo.assistant_salary}</span>
                 </div>
@@ -197,9 +197,9 @@
                     </a>
                 </div>
 
-                
 
-               
+
+
 
                 <div class="mui-input-row">
                     <label>备注</label>
@@ -764,7 +764,12 @@
                     var assistant_salary = $(".assistant_salary").text();
                     var grade_category_id = $('input[name=grade_category_id]').val();
                     var grade_category = $('input[name=grade_category]').val();
-          
+
+                    if ($('#inactiveList input[name=student]').is(':checked')) {
+                        mui.alert('请勿勾选学员名单');
+                        return;
+                    }
+
                     mui.ajax("{:url('api/schedule/updateScheduleApi')}" + '/grade_id/{$scheduleInfo.grade_id}/schedule_id/{$scheduleInfo.id}', {
                         data: {
                             'cover': cover,
