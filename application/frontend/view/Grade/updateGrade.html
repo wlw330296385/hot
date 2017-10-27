@@ -106,7 +106,6 @@
                             <input type="hidden" class="stdListIni" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" data-grade="{$vol.grade}" data-grade_id="{$vol.grade_id}">
                             {/volist}
                         </div>
-                        <div id="hideStListChange"></div>
                     </a>
                 </div>
 
@@ -882,6 +881,8 @@
                 } else {
 
                     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    studentList = [];
+
                     var idNewID=""
                     //获取变动学员列表（新增学员）
                     $("#hideStList input").each(function (i) {
@@ -903,8 +904,7 @@
                             var student = $(this).attr("data-student");
                             var grade_id = "{$gradeInfo.id}";
                             var grade = "{$gradeInfo.grade}";
-                            var inputHtml = '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id + '" data-grade="'+ grade +'" data-grade_id="'+ grade_id +'" >'
-                            $("#hideStListChange").append(inputHtml);
+                            studentList.push({student:student, student_id:student_id, id: id,grade:grade,grade_id:grade_id});
                         }
                     });
 
@@ -929,22 +929,10 @@
                             var student = $(this).attr("data-student");
                             var grade_id = "0";
                             var grade = "0";
-                            var inputHtml = '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id + '" data-grade="'+ grade +'" data-grade_id="'+ grade_id +'" >'
-                            $("#hideStListChange").append(inputHtml);
-                            
+                            studentList.push({student:student, student_id:student_id, id: id,grade:grade,grade_id:grade_id});
                         }
                     });
 
-                    studentList = [];
-                    //把最终变动学员添加到数组
-                    $("#hideStListChange input").each(function (i) {
-                        var id = $(this).attr("data-id");
-                        var student_id = $(this).attr("data-student_id");
-                        var student = $(this).attr("data-student");
-                        var grade_id = $(this).attr("data-grade_id");
-                        var grade = $(this).attr("data-grade");
-                        studentList[i] = {student:student, student_id:student_id, id: id,grade:grade,grade_id:grade_id};
-                    });
                     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                     var data = wooApi.getInputData('input', 'data');
