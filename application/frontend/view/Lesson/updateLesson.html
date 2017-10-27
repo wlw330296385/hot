@@ -691,9 +691,14 @@
         var ajaxResult = wooApi.asyncF(url,objData);
         console.log(ajaxResult);
         if(ajaxResult.code){
-            mui.alert(ajaxResult.msg,'修改成功','确定',function(){
-            window.location.href="{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/{$lessonInfo.id}/camp_id/{$lessonInfo.camp_id}';
-          })
+            if (ajaxResult.code === 200) {
+                mui.alert(ajaxResult.msg,'修改成功','确定',function(){
+                    window.location.href="{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/{$lessonInfo.id}/camp_id/{$lessonInfo.camp_id}';
+                });
+            } else {
+                mui.alert(ajaxResult.msg);
+            }
+
         }
     }
 
