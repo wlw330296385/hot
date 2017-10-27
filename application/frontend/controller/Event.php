@@ -22,10 +22,10 @@ class Event extends Base{
 
     // 创建活动
     public function createEvent() {
-        $camp_id = input('param.camp_id');
+        $organization_id = input('param.organization_id');
         $CampService = new \app\service\CampService;
-        $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
-        $isPower = $CampService->isPower($camp_id,$this->memberInfo['id']);
+        $campInfo = $CampService->getCampInfo(['id'=>$organization_id]);
+        $isPower = $CampService->isPower($organization_id,$this->memberInfo['id']);
         // 我是班主任的班级
         $GradeModel = new \app\model\Grade;
         $gradeList = $GradeModel->where(['teacher_id'=>$this->memberInfo['id']])->select();
@@ -34,7 +34,7 @@ class Event extends Base{
         $this->assign('gradeList',$gradeList);
         $this->assign('power',$isPower);
         $this->assign('campInfo',$campInfo);
-        $this->assign('camp_id', $camp_id);
+        $this->assign('organization_id', $organization_id);
         return view('Event/createEvent');
     }
 
@@ -64,11 +64,11 @@ class Event extends Base{
     }
 
     public function eventListOfCamp() {
-        $camp_id = input('param.camp_id');
+        $organization_id = input('param.organization_id');
 
 
 
-        $this->assign('camp_id', $camp_id);
+        $this->assign('organization_id', $organization_id);
         return view('Event/eventListOfCamp');
     }
     // 活动编辑

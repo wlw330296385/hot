@@ -5,7 +5,7 @@ class LessonVal extends Validate{
 
 
 	protected $rule = [
-        'lesson'        =>  'require|max:60',
+        'lesson'        =>  'require|max:60|token',
         'gradecate'	=> 'require',
         'cost'         => 'require',
         'dom'         => 'require',
@@ -34,7 +34,7 @@ class LessonVal extends Validate{
     
     protected $scene = [
         'add'   =>  ['gradecate','lesson','dom','cost','coach','week','lesson_time','province','city','area','court'],
-        'edit'  =>  [],
+        'edit'  =>  ['lesson'],
     ];    
 
 }

@@ -60,10 +60,10 @@ class BillService {
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
+        $result = $this->Bill->save($data);
         // grade_member操作
         $GradeMember = new GradeMember;
-        $is_student2 = $GradeMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->find();
-        $result = $this->Bill->save($data);
+        $is_student2 = $GradeMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->find();       
         if(!$is_student2){
         // 添加一条学生数据
             if($data['balance_pay']>0){
@@ -165,15 +165,6 @@ class BillService {
                 }
                 $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
                 $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
-                $CampMember = new CampMember;
-                $is_student = $CampMember->where(['member_id'=>$data['member_id'],'camp_id'=>$data['camp_id'],'status'=>1])->where('type','egt',1)->find();
-                if(!$is_student){
-                    // camp_member添加一条数据
-                    $res = $CampMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'type'=>1,'status'=>1]);
-                    if(!$res){
-                        db('log_camp_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
-                    }
-                }
 
             }
             // 训练营的余额增加
@@ -200,8 +191,6 @@ class BillService {
         $GradeMember = new GradeMember;
         $is_student2 = $GradeMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->find();
         
-
-
         // -------------------------------添加一条学生数据
         if(!$is_student2){
         
@@ -313,22 +302,8 @@ class BillService {
                 }
                 $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
                 $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
-                $CampMember = new CampMember;
-                $is_student = $CampMember->where(['member_id'=>$data['member_id'],'camp_id'=>$data['camp_id'],'status'=>1])->where('type','egt',1)->find();
-                if(!$is_student){
-                    // camp_member添加一条数据
-                    $res = $CampMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'type'=>1,'status'=>1]);
-                    if(!$res){
-                        db('log_camp_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
-                    }
-                }
-
             }
             // -------------------------------结束课程操作
-
-
-
-
 
 
 
