@@ -3,7 +3,7 @@ namespace app\common\validate;
 use think\Validate;
 class GradeVal extends Validate{
 	protected $rule = [
-        'grade'  =>  'require|max:60',
+        'grade'  =>  'require|max:60|token',
         'member_id'	=> 'require',
         'lesson_id' => 'require',
         'students' => 'require',
