@@ -20,26 +20,27 @@ class Index extends Controller
 
 
     public function sendMsg(){
+        $MessageService = new \app\service\MessageService;
         $MessageCampData = [
                         "touser" => '',
                         "template_id" => config('wxTemplateID.successBill'),
-                        "url" => url('frontend/bill/billInfoOfCamp',['bill_id'=>$this->Bill->id],'',true),
+                        "url" => url('frontend/bill/billInfoOfCamp',['bill_id'=>77],'',true),
                         "topcolor"=>"#FF0000",
                         "data" => [
                             'first' => ['value' => '蒋清奕购买课程订单支付成功补发通知'],
-                            'keyword1' => ['value' => '蒋清奕'],
-                            'keyword2' => ['value' => '1201710231510000000'],
+                            'keyword1' => ['value' => '李泓'],
+                            'keyword2' => ['value' => '1201710231510000001'],
                             'keyword3' => ['value' => '1500元'],
-                            'keyword4' => ['value' => '蒋清奕购买课程'],
+                            'keyword4' => ['value' => '李泓购买课程'],
                             'remark' => ['value' => '大热篮球']
                         ]
                     ];
         $MessageCampSaveData = [
-                                'title'=>"购买课程-北大附小一年级",
-                                'content'=>"订单号: {$data['bill_order']}<br/>支付金额: {$data['balance_pay']}元<br/>购买学生:{$data['student']}<br/>购买理由: {$data['remarks']}",
-                                'member_id'=>$data['member_id'],
-                                'url'=>url('frontend/bill/billInfoOfCamp',['bill_id'=>$this->Bill->id],'',true)
+                                'title'=>"购买课程-松坪小学",
+                                'content'=>"订单号: 1201710231510000001<br/>支付金额: 1500元<br/>购买学生:李泓<br/>购买理由: 系统补发",
+                                'member_id'=>89,
+                                'url'=>url('frontend/bill/billInfoOfCamp',['bill_id'=>77],'',true)
                             ];
-        $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
+        $MessageService->sendCampMessage(15,$MessageCampData,$MessageCampSaveData);
     }
 }
