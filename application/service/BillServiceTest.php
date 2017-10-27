@@ -64,6 +64,7 @@ class BillService {
         $result = $this->Bill->save($data);
         if($result){
             if($data['balance_pay']>0){
+                $data['pay_time'] = time();
                 $this->finishBill($data);
             }
             return ['code'=>200,'msg'=>'新建成功','data'=>$result];
@@ -74,7 +75,15 @@ class BillService {
     
     // 订单支付
     public function pay($data,$bill_order){
-        
+        $data['pay_time'] = time();
+        $result = $this->Bill->save($data,$bill_order);      
+        if($result){
+            $billInfo = $this->Bill->where(['id'=>$this->Bill->id])->find();
+            $billData = $billInfo->toArray();
+            $this->finishBill($billData);
+        }else{
+            return false;
+        }
     }
 
 
@@ -90,7 +99,6 @@ class BillService {
         $GradeMember = new GradeMember;
         $is_student2 = $GradeMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->find();
         
-
 
         // -------------------------------添加一条学生数据
         if(!$is_student2){
@@ -203,18 +211,9 @@ class BillService {
                 }
                 $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
                 $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
-                $CampMember = new CampMember;
-                $is_student = $CampMember->where(['member_id'=>$data['member_id'],'camp_id'=>$data['camp_id'],'status'=>1])->where('type','egt',1)->find();
-                if(!$is_student){
-                    // camp_member添加一条数据
-                    $res = $CampMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'type'=>1,'status'=>1]);
-                    if(!$res){
-                        db('log_camp_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
-                    }
-                }
-
             }
             // -------------------------------结束课程操作
+            return true;
     }
 
     //判断订单付款金额

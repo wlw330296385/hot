@@ -27,9 +27,9 @@ class Event extends Base{
             $keyword = input('param.keyword');
             $province = input('param.province');
             $page = input('param.page')?input('param.page'):1;
+            $order = input('param.order','id desc');
             $city = input('param.city');
             $area = input('param.area');
-            $camp_id = input('param.camp_id');
             $map['province']=$province;
             $map['city']=$city;
             $map['area']=$area;
@@ -42,10 +42,11 @@ class Event extends Base{
                 unset($map['keyword']);
             }
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
-                $map['Event'] = ['LIKE','%'.$keyword.'%'];
+                $map['event'] = ['LIKE','%'.$keyword.'%'];
             }
-            if($camp_id){
-                $map['camp_id'] = $camp_id;
+
+            if( isset($map['order']) ){
+                unset($map['order']);
             }
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
@@ -53,7 +54,7 @@ class Event extends Base{
             if( isset($map['page']) ){
                 unset($map['page']);
             }
-            $result = $this->EventService->getEventList($map,$page);
+            $result = $this->EventService->getEventList($map,$page,$order);
             if($result){
                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
@@ -78,12 +79,14 @@ class Event extends Base{
                     unset($map[$key]);
                 }
             }
-
+            if( isset($map['order']) ){
+                unset($map['order']);
+            }
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
-                $map['Event'] = ['LIKE','%'.$keyword.'%'];
+                $map['event'] = ['LIKE','%'.$keyword.'%'];
             }
             $result = $this->EventService->getEventListByPage($map,$order);
             if($result){
