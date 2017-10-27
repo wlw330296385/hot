@@ -120,6 +120,7 @@ class Schedule extends Base
 		
 		// 班级学生
 		$studentList = db('grade_member')->where(['grade_id'=>$grade_id,'status'=>1,'type'=>1])->select();
+		$expstudentList = db('grade_member')->where(['grade_id' => $grade_id, 'status' => 1, 'type' => 2])->select();
 //		dump($studentList);
 		$countStudentList = count($studentList);
 
@@ -130,6 +131,7 @@ class Schedule extends Base
 		$this->assign('coachListOfCamp',$coachListOfCamp);
 		$this->assign('campid', $camp_id);
 		$this->assign('studentList', $studentList);
+		$this->assign('expstudentList', $expstudentList);
 		return view('Schedule/recordSchedule');
 	}
 
