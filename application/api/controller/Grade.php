@@ -108,7 +108,7 @@ class Grade extends Base{
             $GradeService = new GradeService;
             $result = $GradeService->updateGrade($data,$data['grade_id']);
             if($result['code']==200){
-                if($data['studentData']){
+                if( !empty($data['studentData']) ){
                     $studentData = json_decode($data['studentData'],true);
                     $StudentService = new \app\service\StudentService;
                     $res = $StudentService->saveAllStudent($studentData);
