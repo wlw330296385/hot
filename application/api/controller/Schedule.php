@@ -105,6 +105,7 @@ class Schedule extends Base
 			$data['member'] = $this->memberInfo['member'];
 			$data['lesson_time'] = strtotime($data['lesson_time']);
 			$data['student_str'] = serialize($data['studentList']);
+			$data['expstudent_str'] = serialize($data['expstudentList']);
 			$result = $this->ScheduleService->createSchedule($data);
 			return json($result);
 		}catch (Exception $e){
@@ -122,6 +123,7 @@ class Schedule extends Base
 			$data['member'] = $this->memberInfo['member'];
 			$data['lesson_time'] = strtotime($data['lesson_time']);
 			$data['student_str'] = serialize($data['studentList']);
+            $data['expstudent_str'] = serialize($data['expstudentList']);
 			$result = $this->ScheduleService->updateSchedule($data,$schedule_id);
 			return json($result);
 		}catch (Exception $e){

@@ -42,9 +42,15 @@ class Schedule extends Base
 		$schedule_id = input('param.schedule_id');
 		$scheduleInfo = $this->scheduleService->getScheduleInfo(['id'=>$schedule_id]);
 //		$studentList = $this->scheduleService->getStudentList($schedule_id);
+        // 正式学员名单
         $studentList = [];
         if ($scheduleInfo['student_str']) {
             $studentList = unserialize($scheduleInfo['student_str']);
+        }
+        // 体验生名单
+        $expstudentList = [];
+        if ($scheduleInfo['expstudent_str']) {
+            $expstudentList = unserialize($scheduleInfo['expstudent_str']);
         }
 		$commentList = $this->scheduleService->getCommentList($schedule_id);
 		foreach ($commentList as $key => $value) {
@@ -64,6 +70,7 @@ class Schedule extends Base
 
 		$this->assign('updateSchedule',$updateSchedule);
 		$this->assign('studentList',$studentList);
+        $this->assign('expstudentList',$expstudentList);
 		$this->assign('scheduleInfo',$scheduleInfo);
 		$this->assign('commentList',$commentList);
 		return view('Schedule/scheduleInfo');
@@ -146,7 +153,13 @@ class Schedule extends Base
         if ($scheduleInfo['student_str']) {
             $studentList = unserialize($scheduleInfo['student_str']);
         }
+        // 体验生名单
+        $expstudentList = [];
+        if ($scheduleInfo['expstudent_str']) {
+            $expstudentList = unserialize($scheduleInfo['expstudent_str']);
+        }
 		$this->assign('studentList',$studentList);
+        $this->assign('expstudentList',$expstudentList);
 		$this->assign('scheduleInfo',$scheduleInfo);
 		return view('Schedule/updateSchedule');
 	}
