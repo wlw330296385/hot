@@ -131,14 +131,63 @@ class CoachService{
         }
     }
 
-    // 教练所在在线班级列表
-    public function onlinegradelist($coach_id, $camp_id) {
+    // 教练在训练营的班级列表
+    public function ingradelist($coach_id, $camp_id) {
         $model = new Grade();
-        $res = $model->where(['camp_id' => $camp_id,'coach_id' => $coach_id, 'status' => 1])->select();
-        if ($res) {
-            return $res->toArray();
-        } else {
-            return $res;
+        $iscoachlist = $model->where(['camp_id' => $camp_id,'coach_id' => $coach_id])->select();
+        if (!$iscoachlist) {
+            return $iscoachlist;
         }
+        $isassistantlist = [];
+        $assistants = $model->where(['camp_id' => $camp_id])->select();
+        if (!$assistants) {
+            return $assistants;
+        }
+        $assistants = $assistants->toArray();
+
+        foreach ($assistants as $assistant) {
+            if ($assistant) {
+                $assistantId = unserialize($assistant['assistant_id']);
+                if ($assistantId) {
+                    foreach ($assistantId as $val) {
+                        if ($val && $val == $coach_id) {
+                            array_push($isassistantlist, $assistant);
+                        }
+                    }
+                }
+            }
+        }
+        $result = array_merge($iscoachlist->toArray(), $isassistantlist);
+        return $result;
+    }
+
+    // 教练在训练营的课程列表
+    public function inlessonlist($coach_id, $camp_id) {
+        $model = new \app\model\Lesson();
+        $iscoachlist = $model->where(['camp_id' => $camp_id, 'coach_id' => $coach_id])->select();
+        if (!$iscoachlist) {
+            return $iscoachlist;
+        }
+        $isassistantlist = [];
+        $assistants = $model->where(['camp_id' => $camp_id])->select();
+        if (!$assistants) {
+            return $assistants;
+        }
+        $assistants = $assistants->toArray();
+
+        foreach ($assistants as $assistant) {
+            if ($assistant) {
+                $assistantId = unserialize($assistant['assistant_id']);
+                if ($assistantId) {
+                    foreach ($assistantId as $val) {
+                        if ($val && $val == $coach_id) {
+                            array_push($isassistantlist, $assistant);
+                        }
+                    }
+                }
+            }
+        }
+        $result = array_merge($iscoachlist->toArray(), $isassistantlist);
+        return $result;
     }
 }

@@ -291,12 +291,17 @@ class CampMember extends Base
                 return json(['code' => 100, 'msg' => __lang('MSG_403')]);
             }
 
-            // 删教练 检查是否在营有在线班级
+            // 删教练 检查是否在营有班级
             if ($campmember->getData('type') == 2) {
                 $coachS = new CoachService();
-                $grade = $coachS->onlinegradelist($campmember['member_id'], $campmember['camp_id']);
+                $coach = $coachS->getCoachInfo(['member_id' => $campmember['member_id']]);
+                $grade = $coachS->ingradelist($coach['id'], $campmember['camp_id']);
                 if ($grade) {
-                    return json(['code' => 100, 'msg' => '该教练有在线班级,需先下架或删除班级记录']);
+                    return json(['code' => 100, 'msg' => '该教练有班级记录,请先修改班级记录主教练/助教练']);
+                }
+                $lesson = $coachS->inlessonlist($coach['id'], $campmember['camp_id']);
+                if ($lesson) {
+                    return json(['code' => 100, 'msg' => '该教练有课程记录,请先修改课程记录主教练/助教练']);
                 }
             }
 
