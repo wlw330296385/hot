@@ -115,7 +115,7 @@ class LessonService {
             $data['assistant_id'] = '';
         }
         $validate = validate('LessonVal');
-        if(!$validate->check($data)){
+        if(!$validate->scene('edit')->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
         $result = $this->lessonModel->save($data,['id'=>$id]);
