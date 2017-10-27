@@ -50,10 +50,10 @@
                         <span class="select-row ">
                             <select id="eventObject" class="data" name="targer_type">
                                 {gt name='power' value='2'}
-                                <option value="1">不限</option>
-                                <option value="2">营内</option>
+                                <option value="1" >不限</option>
+                                <option value="2" >营内</option>
                                 {/gt}
-                                <option value="3" class="cehck">班内</option>
+                                <option value="3" >班内</option>
                             </select>
                         </span>
                     </div>
@@ -62,7 +62,7 @@
                 <div class="mui-input-row" id="target-input-row" style="display: none">
                     <a href="#target" class="mui-navigate-right">
                         <label>具体对象</label>
-                        <span class="targetCont" name="target">{volist name="gradeList" id="vol"}{$vol.grade}{/volist}</span>
+                        <span class="targetCont" name="target"></span>
                         <input type="hidden" name="target_id" class="target_id" value="">
                     </a>
                 </div>
@@ -106,7 +106,7 @@
                     <input type="text" name="price" class="data" value="" placeholder="请填写活动单价">
                 </div>
 
-                <div class="mui-input-row">
+                <div class="mui-input-row" id="finance-input-row">
                     <a href="#cost" class="mui-navigate-right">
                         <label>费用结算人</label>
                         <span class="costCont domData" name="finance"></span>
@@ -198,7 +198,7 @@
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <ul class="mui-table-view list">
-                    <li class="mui-table-view-cell listli detalisli target">某某班</li>
+                    <li class="mui-table-view-cell listli detalisli target">{volist name="gradeList" id="vol"}{$vol.grade}{/volist}</li>
                 </ul>
             </div>
         </div>
@@ -211,8 +211,8 @@
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <ul class="mui-table-view list">
-                    <li class="mui-table-view-cell listli detalisli cost">选择对象</li>
+                <ul class="mui-table-view list campMemberlist">
+
                 </ul>
             </div>
         </div>
@@ -322,7 +322,7 @@
 
         $(function () {
             // 具体对象
-            $(".target").click(function () {
+            $(".target").on('tap','',function () {
                 var target = $.trim($(this).text());
                 var target_id = $(this).attr('data-id');
                 $(".target_id").val(target_id);
@@ -331,7 +331,7 @@
             });
 
             // 费用结算人
-            $(".cost").click(function () {
+            $(".campMemberlist").on('tap','li',function () {
                 var cost = $.trim($(this).text());
                 var cost_id = $(this).attr('data-id');
                 $(".cost_id").val(cost_id);
@@ -343,27 +343,29 @@
             $("#eventObject").change(function () {
                 if ($(this).children('option:selected').text() == '班内') {
                     $("#target-input-row").show();
-                    $(".targetCont").addClass("domData");
+                    $(".targetCont").addClass("domData").text('');
                 } else {
                     $("#target-input-row").hide();
                 }
             });
 
-            // 选择是否收费显示隐藏活动单价
+            // 选择是否收费显示隐藏活动单价和费用结算人
             $("#eventPrice").change(function () {
                 if ($(this).children('option:selected').text() == '免费') {
                     $("#price-input-row").hide();
+                    $("#finance-input-row").hide();
                     $("input[name='price']").removeClass("data");
+                    $(".costCont").removeClass("domData");
                 } else {
-                    $("#target-input-row").show();
+                    $("#price-input-row").show();
+                    $("#finance-input-row").show();
+                    $("input[name='price']").addClass("data").val('');
+                    $(".costCont").addClass("domData").val('');
                 }
             })
 
-
-            // 判断开始时间和结束时间是否相同
-            // if($("#resultStart").text()==$("#resultEnd").text()){
-            //     mui.alert("活动开始时间和结束时间不能相同")
-            // }
+            // 调用训练营身份列表
+            toCampMemberList();
         })
 
         // 获取数据并进行提交
@@ -388,6 +390,44 @@
                 })
             }
         }
+
+        //自定义获取训练营身份列表有分页
+        var toCampMemberList = function () {
+            var url = "{:url('api/camp_member/getCampMemberListApi','','',true)}";
+            var campID = "{$campInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli cost" data-id="' + data.data[i].member_id + '">' + data.data[i].member + '</li>'
+                        }
+                        $("ul.campMemberlist").empty();
+                        if (newli == '') {
+                            var createEvent = "{:url('/frontend/event/createEvent/camp_id/')}" + campID;
+                            newli = '<li class="mui-text-center"><p>没有查找到场地数据哦</p><a href="' + createEvent + '" class="mui-btn mui-btn-primary">添加活动</a></li>'  ///// 添加场地按钮///////////////////////////////////////////////
+                        }
+                        $("ul.campMemberlist").append(newli);
+
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
     </script>
 </body>
 
