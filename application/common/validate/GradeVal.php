@@ -19,6 +19,7 @@ class GradeVal extends Validate{
     ];
     
     protected $message = [
+        'grade.token'   =>'请不要重复提交',
         'grade.require'  =>  '请填写班级名称',
         'member_id.require'	=> '会员信息过期,请重新登录平台',
         'lesson_id.require' => '请选择所属课程',
@@ -37,7 +38,7 @@ class GradeVal extends Validate{
     
     protected $scene = [
         'add'   =>  ['member_id','grade','lesson_id','students','gradecate_id','week','lesson_time','court','area'],
-        'edit'  =>  ['member_id','grade','lesson_id','students','gradecate_id','week','lesson_time','court','area'],
+        'edit'  =>  ['member_id','lesson_id','students','gradecate_id','week','lesson_time','court','area'],
     ];
 
 }

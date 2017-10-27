@@ -43,7 +43,7 @@ class StudentService{
 
 	public function updateStudent($data,$id){
 		$validate = validate('CampVal');
-        if(!$validate->check($StudentVal)){
+        if(!$validate->scene('edit')->check($StudentVal)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
 		$result = $this->studentModel->save($data,['id'=>$id]);
