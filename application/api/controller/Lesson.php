@@ -153,12 +153,20 @@ class Lesson extends Base{
                     $data['area'] = $address[1];
                 }             
             }
+            $lessonS = new LessonService();
             if($lesson_id){
-                $result = $this->LessonService->updateLesson($data,$lesson_id);
+                $lesson = $lessonS->getLessonInfo(['id'=>$lesson_id]);
+                $hasgradeused = $lessonS->hasgradeused($lesson_id);
+                if ($hasgradeused) {
+                    if ($data['cost'] != $lesson['cost']) {
+                        $result = ['code' => 100, 'msg' => '此课程被班级所用，不能修改课程单价'];
+                    } else {
+                        $result = $lessonS->updateLesson($data,$lesson_id);
+                    }
+                }
             }else{
-                $result = $this->LessonService->createLesson($data);
+                $result = $lessonS->createLesson($data);
             }
-
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -273,6 +281,11 @@ class Lesson extends Base{
             $campS = new CampService();
             switch ($lesson['status_num']) {
                 case "1": {
+                    $hasgradeused = $lessonS->hasgradeused($lesson['id']);
+                    if ($hasgradeused) {
+                        return json(['code' => 100,'msg' => '该课程有班级所使用，不能操作']);
+                    }
+//                    die;
                     if ($action == 'editstatus') {
                         // 下架课程
                         $response = $lessonS->updateLessonStatus($lesson['id'], -1);

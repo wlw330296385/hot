@@ -118,7 +118,7 @@ class LessonService {
         if(!$validate->scene('edit')->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-        $result = $this->lessonModel->save($data,['id'=>$id]);
+        $result = $this->lessonModel->allowField(true)->save($data,['id'=>$id]);
         if($result){
             // return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->lessonModel->id];
             return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $id];
@@ -160,7 +160,7 @@ class LessonService {
             return ['msg' => $validate->getError(), 'code' => 100];
         }
        
-        $result = $this->lessonModel->save($data);
+        $result = $this->lessonModel->allowField(true)->save($data);
         if($result){
             db('camp')->where(['id'=>$data['camp_id']])->setInc('total_lessons');
             return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->lessonModel->id];
@@ -191,6 +191,13 @@ class LessonService {
         } else {
             return [ 'code' => 200, 'msg' => __lang('MSG_200'), 'data' => $res ];
         }
+    }
+
+    // 课程是否被班级所用
+    public function hasgradeused($lessonid) {
+        $model = new \app\model\Grade();
+        $res = $model->where(['lesson_id' => $lessonid])->select()->toArray();
+        return $res;
     }
 }
 

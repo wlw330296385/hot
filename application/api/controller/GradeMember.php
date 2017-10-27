@@ -67,8 +67,13 @@ class GradeMember extends Base{
                 unset($map['keyword']);
             }
             $GradeMember = new \app\model\GradeMember;
-            $result = $GradeMember->where($map)->select();    
+            $result = $GradeMember->where($map)->select()->toArray();
             if($result){
+                foreach ($result as $k => $val) {
+                    $temp = $GradeMember->where(['id' => $val['id']])->find()->getData();
+                    $result[$k]['status_num'] = $temp['status'];
+                    $result[$k]['type_num'] = $temp['type'];
+                }
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
                 return json(['code'=>100,'msg'=>'检查你的参数']);
