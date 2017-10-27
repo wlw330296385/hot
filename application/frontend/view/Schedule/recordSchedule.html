@@ -112,6 +112,12 @@
                         {volist name="studentList" id="vol"}
                         <input type="hidden" class="stdList" data-id="{$vol.id}" data-student_id="{$vol.student_id}" data-student="{$vol.student}">                        {/volist}
                     </div>
+                    <div class="mui-input-row">
+                        <label>体验生名单</label>
+                    </div>
+                    <div class="expbox" id="expinactiveList">
+
+                    </div>
                     <div class="operation-btn">
                         <span class="mui-badge">{$gradeInfo.students}</span>
                         <a class="all">全选</a>
@@ -602,6 +608,7 @@
             var totalNum = '';
             var studentList = '';
             var student = '';
+            var student_type = '';
             //角标随checkboxCont的数量变化
             $(document).on('click', '.del', function () {
                 totalNum = $(".checkboxCont").length;
@@ -609,17 +616,25 @@
             });
 
             $("#studentConfirm").on('click', function () {
+
                 //插入学员列表html
                 $(".addStudentList input[type=checkbox]:checked").each(function () {
-                    str += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="student" value="' + $(this).attr("data-id") + '" type="checkbox"><input type="hidden" class="stdList eachList" data-id="' + $(this).attr("data-id") + '" data-student="' + $(this).attr("data-student") + '" data-student_id="' + $(this).attr("data-student_id") + '" ></div>';
+                    str += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="student" value="' + $(this).attr("data-id") + '" type="checkbox"><input type="hidden" class="stdList eachList" data-id="' + $(this).attr("data-id") + '" data-student="' + $(this).attr("data-student") + '" data-student_id="' + $(this).attr("data-student_id") + '" data-type="' + $(this).attr("data-type") + '" ></div>';
+                    student_type = $(this).attr("data-type");
+                    console.log(student_type);
                 })
                 // 学员取值
                 $("input[name='student']").val($("input[name='checkbox-student']:checked").map(function () {
                     return $(this).val()
                 }).get().join(","));
 
-                $(".box").empty();
-                $(".box").append(str);//在增删按钮前加一行
+                if (student_type == 1) {
+                    $(".box").empty();
+                    $(".box").append(str);
+                } else {
+                    $(".expbox").empty();
+                    $(".expbox").append(str);
+                }
                 str = '';
 
                 //学员列表数组
@@ -870,10 +885,19 @@
                     console.log(data)
                     if (data.code == 200) {
                         var inactiveDiv = '';
+                        var thisType = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            inactiveDiv = inactiveDiv + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].student + '</font><input name="student" value="' + data.data[i].student_id + '" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" type="checkbox" class="stdList eachList"></div>'
-                            $("#inactiveList").empty();
-                            $("#inactiveList").append(inactiveDiv);
+                            inactiveDiv = inactiveDiv + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].student + '</font><input name="student" value="' + data.data[i].student_id + '" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-type="' + data.data[i].type + '" type="checkbox" class="stdList eachList"></div>'
+                            thisType = data.data[i].type;
+                            console.log(thisType)
+                            if (thisType == "正式生") {
+                                $("#inactiveList").empty();
+                                $("#inactiveList").append(inactiveDiv);
+                            } else {
+                                $("#expinactiveList").empty();
+                                $("#expinactiveList").append(inactiveDiv);
+                            }
+
                         }
 
                         // 已显示的学员列表
@@ -922,7 +946,7 @@
                             tys = '';
                             if (data.data[i].grade_id == 0) { fbm = '<span class="tips">[ 未分配 ]</span>' }
                             if (data.data[i].type == 2) { tys = '<span class="tips">[ 体验生 ]</span>' }
-                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + fbm + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '"></div>'
+                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + fbm + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-type="' + data.data[i].type + '"></div>'
                         }
                         $("#newdiv").empty();
                         $("#newdiv").append(div);
