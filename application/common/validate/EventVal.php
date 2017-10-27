@@ -7,7 +7,6 @@ class EventVal extends Validate{
 	protected $rule = [
         'event'        =>  'require|max:60',
         'event_type'	=> 'require',
-        'price'         => 'require',
         'end'           =>'require',
         'start'           =>'require',
         'province'              =>'require',
@@ -17,19 +16,18 @@ class EventVal extends Validate{
     ];
     
     protected $message = [
-        'event.require'        =>  '活动名必须',
-        'event_type.require'	=> '活动类型必须',
-        'price.require'      =>'费用必须',
+        'event.require'        =>  '请填写活动主题',
+        'event_type.require'	=> '请填写活动类型',
         'start'           =>'活动时间必须大于当前时间',
         'end'   =>'活动时间必须大于当前时间',
-        'province'              =>'省份必填',
-        'city'                  =>'城市必填',
-        'area'                  =>'区县必填',
-        'location'                 =>'活动地点必填',
+        'province'              =>'请填写所属地区',
+        'city'                  =>'请填写所属地区',
+        'area'                  =>'请填写所属地区',
+        'location'                 =>'请填写活动地点',
     ];
     
     protected $scene = [
-        'add'   =>  ['event','event_type','price','province','city','area','location'],
+        'add'   =>  ['event','event_type','start','end','province','city','area','location'],
         'edit'  =>  ['event_time'],
     ];    
 
