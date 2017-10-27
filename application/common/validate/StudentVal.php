@@ -5,7 +5,7 @@ class StudentVal extends Validate{
 
 
 	protected $rule = [
-        'student'  =>  'require|max:60',
+        'student'  =>  'require|max:60|token',
         'member'  =>  'require|max:60',
         'member_id' =>'require',
         'emergency_telephone' =>'require|number|length:11',

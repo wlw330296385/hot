@@ -4,7 +4,7 @@
 	<title>这里是index下的index</title>
 </head>
 <body>
-	<div>{:time()}</div>
+	<div>{:token()}</div>
 </body>
 
 
@@ -12,19 +12,29 @@
 
 
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
 <script type="text/javascript">
-	function setkey(key, val){
-	  // sessionStorage.removeItem(key);
-	  localStorage.setItem(key, val);
-	  mui.alert(localStorage.getItem('a'))
-	  a ++;
-	  window.h
-	
-	}
+	$(function(){
 
-    localStorage.clear();
-	var a = 1;
-//	setkey('a',5555);
+		var t = window.setInterval("test(0)",3000);
 
+
+
+		
+	})
+	var test = function(times){
+			times++;
+			if(times>5){
+				window.clearInterval(t); 
+			}
+			var data = {
+			'__token__':"{$Request.token}",
+			'student':"测试{:rand(00,99)}",
+			'parent':"测试{:rand(00,99)}"
+			}
+			console.log(data);
+			var result = wooApi.asyncF("{:url('api/student/createStudentApi')}",data);
+			console.log(result);
+		}
 </script>
 </html>
