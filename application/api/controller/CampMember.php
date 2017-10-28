@@ -31,12 +31,28 @@ class CampMember extends Base
             return json(['code' => 100, 'msg' => '不存在此训练营']);
         }
         //是否已存在身份
-        $isType = db('camp_member')->where(['member_id' => $this->memberInfo['id'], 'camp_id' => $camp_id, 'status' => 1])->find();
+        $msg = '你已经成为该训练营的粉丝!';
+        $isType = db('camp_member')->where(['member_id' => $this->memberInfo['id'], 'camp_id' => $camp_id])->find();
         if ($isType) {
-            return json(['code' => 100, 'msg' => '你已经是训练营的一员']);
+            // 被移除过 再次加入 更新原数据记录
+            if ($isType['status'] == -1) {
+                $joinagain = db('camp_member')->where(['id' => $isType['id']])->update([
+                    'status' => 1,
+                    'update_time' => time()
+                ]);
+                if (!$joinagain) {
+                    return json(['code' => 100, 'msg' => '申请失败']);
+                } else {
+                    return json(['code' => 200, 'msg' => $msg]);
+                }
+            }
+
+            if ($isType['status'] == 1) {
+                return json(['code' => 100, 'msg' => '你已经是训练营的一员']);
+            }
+
         }
         $result = db('camp_member')->insert(['camp_id' => $campInfo['id'], 'camp' => $campInfo['camp'], 'member_id' => $this->memberInfo['id'], 'member' => $this->memberInfo['member'], 'type' => -1, 'status' => 1, 'create_time' => time()]);
-        $msg = '你已经成为该训练营的粉丝!';
         if ($result) {
             return json(['code' => 200, 'msg' => $msg]);
         } else {
@@ -61,6 +77,21 @@ class CampMember extends Base
             //是否已存在身份
             $isType = db('camp_member')->where(['member_id' => $this->memberInfo['id'], 'camp_id' => $camp_id])->find();
             if ($isType) {
+                // 被移除过 再次加入 更新原数据记录
+                if ($isType['status'] == -1) {
+                    $joinagain = db('camp_member')->where(['id' => $isType['id']])->update([
+                        'type' => $type,
+                        'status' => ($type == -1) ? 1 : 0,
+                        'remarks' => $remarks,
+                        'update_time' => time()
+                    ]);
+                    if (!$joinagain) {
+                        return json(['code' => 100, 'msg' => '申请失败']);
+                    } else {
+                        return json(['code' => 200, 'msg' => '申请成功', 'insid' => $isType['id']]);
+                    }
+                }
+
                 if ($type > $isType['type']) {  // 升级身份
                     $data['id'] = $isType['id'];
                 } else {
@@ -70,6 +101,7 @@ class CampMember extends Base
                         return json(['code' => 100, 'msg' => '你已申请加入训练营,请等待审核']);
                     }
                 }
+
             }
             // 必须要有教练资格
             if ($type == 2) {
