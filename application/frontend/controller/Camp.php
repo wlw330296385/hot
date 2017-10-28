@@ -14,6 +14,10 @@ class Camp extends Base{
 		parent::_initialize();
         $this->CampService = new CampService;
         $this->CoachService = new CoachService;
+        $camp_id = input('param.camp_id', 0);
+        $camp = $this->CampService->getCampInfo($camp_id);
+        $this->assign('camp_id', $camp_id);
+        $this->assign('campInfo', $camp);
 	}
 
 
@@ -278,7 +282,7 @@ class Camp extends Base{
 
     // 训练营设置
     public function campSetting(){
-         $step = input('param.step', 1);
+        $step = input('param.step', 1);
         $view = 'Camp/campSetting'.$step;
         $camp_id = input('param.camp_id');
         $campInfo = $this->CampService->getCampInfo($camp_id);
