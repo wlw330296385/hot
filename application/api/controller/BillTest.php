@@ -76,17 +76,17 @@ class BillTest extends Frontend{
     }
 
 
-   public function pay(){
+   public function payApi(){
         try{
-            $bill_id = input('param.bill_order');
+            $bill_order = input('param.bill_order');
             $data = input('post.');
             $data['status'] = 1;
             $data['is_pay'] = 1;
-            $result = $this->BillServiceTest->pay($data,['$bill_order'=>$bill_order]);  
+            $result = $this->BillServiceTest->pay($data,['bill_order'=>$bill_order]);  
             if($result){
-                    return json(['code'=>200,'msg'=>'支付成功']);
+                return json(['code'=>200,'msg'=>'支付成功']);
             }else{
-                    return json(['code'=>100,'msg'=>'该订单状态已失效']);
+                return json(['code'=>100,'msg'=>'该订单状态已失效']);
             }  
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

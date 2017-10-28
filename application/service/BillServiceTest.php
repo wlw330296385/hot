@@ -70,11 +70,11 @@ class BillServiceTest {
     }
     
     // 订单支付
-    public function pay($data,$bill_order){
+    public function pay($data,$map){
         $data['pay_time'] = time();
-        $result = $this->Bill->save($data,$bill_order);      
+        $result = $this->Bill->save($data,$map);      
         if($result){
-            $billInfo = $this->Bill->where(['id'=>$this->Bill->id])->find();
+            $billInfo = $this->Bill->where($map)->find();
             $billData = $billInfo->toArray();
             $res = $this->finishBill($billData);
             return $res;

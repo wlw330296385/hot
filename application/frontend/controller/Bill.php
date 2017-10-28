@@ -101,7 +101,8 @@ class Bill extends Base{
             $this->assign('studentInfo',$studentInfo);
         }
         // 生成微信参数
-        $amount = $billInfo['total']*$billInfo['price'];
+        // $amount = $billInfo['total']*$billInfo['price'];
+        $amount = 0.01;
         $WechatJsPayService = new \app\service\WechatJsPayService;
         $result = $WechatJsPayService->pay(['order_no'=>$bill_order.time(),'amount'=>$amount]);
         
@@ -110,7 +111,7 @@ class Bill extends Base{
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billInfo',$billInfo);
-        return view('Bill/billInfo');
+        return view('Bill/billInfoTest');
     }
 
 

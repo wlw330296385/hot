@@ -21,6 +21,7 @@ var wooApi = {
 
                 }
             });
+            console.log(postMsgF);
             return postMsgF.responseJSON;
         },
         //异步访问接口

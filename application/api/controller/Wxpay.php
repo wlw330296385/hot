@@ -41,7 +41,7 @@ class Wxpay extends Base{
 	public function notifyUrl()
 	{      
 
-        $data = input();
+        $data = file_get_contents('php://input');
         if(is_string($data)){
             db('log_wxpay')->insert(['callback'=>$data,'create_time'=>time()]);
         }else{

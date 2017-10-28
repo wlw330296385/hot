@@ -16,6 +16,7 @@ class Student extends Base
 	}
 
 	public function index(){
+		return json(['code'=>1]);
 	}
 
 	public function getStudentListByPageApi(){

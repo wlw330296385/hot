@@ -202,17 +202,36 @@ function onBridgeReady(){
 
 //支付完成
 function pay(callback_str){
-        var result = wooApi.asyncF("{:url('api/BillTest/payApi',['bill_order'=>$billInfo['bill_order']])}",{
-            'balance_pay' : "{$billInfo['total']*$billInfo['price']}",
-            'callback_str':callback_str
-        });
+        // var result = wooApi.asyncF("{:url('api/BillTest/payApi',['bill_order'=>$billInfo['bill_order']])}",{
+        //     'balance_pay' : "{$billInfo['total']*$billInfo['price']}",
+        //     'callback_str':callback_str,
+        //     'is_pay':1,
+        //     'status':1
+        // });
+        $.ajax({
+                url: "{:url('api/BillTest/payApi',['bill_order'=>$billInfo['bill_order']])}",
+                data: {
+                    'balance_pay' : "{$billInfo['total']*$billInfo['price']}",
+                    'callback_str':callback_str,
+                    'is_pay':1,
+                    'status':1
+                },
+                async: false,
+                type: 'post',
+                dataType:'json',
+                complete: function(msg) {
+                    alert(JSON.stringify(msg));
+                }
+            });
+        
+        return false;
         if(result.code == 200){
             mui.alert('支付成功','提示','确定',function(){
                 location.reload()
               });
-          }else{
+        }else{
             mui.toast(result.msg);
-          }
+        }
     }
 
 </script>
