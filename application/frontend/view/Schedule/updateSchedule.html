@@ -57,6 +57,13 @@
             color: #AAAAAA;
             line-height: normal;
         }
+        .nohave {
+            margin: 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-top: none;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -109,8 +116,8 @@
                     <div class="box checkChecked" id="inactiveList">
                         {foreach name="studentList" item="vol"}
                         <div class="mui-input-row mui-checkbox checkboxCont"><label class="number">{$key+1}</label>
-                            <font>{$vol.student}</font><input name="student" class="stdList" data-id="{$vol.id}" data-student_id="{$vol.student_id}" value="{$vol.student}"
-                                data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox"></div>
+                            <font>{$vol.student}</font><input name="student" class="stdList" data-id="{$vol.id}" data-student_id="{$vol.student_id}"
+                                value="{$vol.student}" data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox"></div>
                         {/foreach}
                     </div>
                     <div class="mui-input-row">
@@ -119,8 +126,8 @@
                     <div class="expbox checkChecked" id="expinactiveList">
                         {foreach name="expstudentList" item="vol"}
                         <div class="mui-input-row mui-checkbox checkboxCont"><label class="number">{$key+1}</label>
-                            <font>{$vol.student}</font><input name="student" class="stdList" data-id="{$vol.id}" data-student_id="{$vol.student_id}" value="{$vol.student}"
-                                data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox"></div>
+                            <font>{$vol.student}</font><input name="student" class="stdList" data-id="{$vol.id}" data-student_id="{$vol.student_id}"
+                                value="{$vol.student}" data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox"></div>
                         {/foreach}
                     </div>
 
@@ -628,6 +635,15 @@
                         }
                     });
 
+                    // 检查是否有学员数据
+                    if ($("#inactiveList").html() == '' && $("#expinactiveList").html() == '') {
+                        $(".checkChecked").append('<p class="nohave">没有学员哦</p>');
+                    } else if ($("#inactiveList").html() == '') {
+                        $("#inactiveList").append('<p class="nohave">没有正式学员哦</p>');
+                    } else if ($("#expinactiveList").html() == '') {
+                        $("#expinactiveList").append('<p class="nohave">没有体验生哦</p>');
+                    };
+
                     changeIndex();//调用-更新序号
                     mui("#addStudent").popover("toggle");
                     totalNum = $(".checkboxCont").length;
@@ -820,6 +836,13 @@
                         expstudentList.push({ student: student, student_id: student_id, id: id, type: student_type });
                     }
                 });
+
+                // 检查是否有学员数据
+                if ($("#inactiveList").html() == '') {
+                    $("#inactiveList").append('<p class="nohave">没有正式学员哦</p>');
+                } else if ($("#expinactiveList").html() == '') {
+                    $("#expinactiveList").append('<p class="nohave">没有体验生哦</p>');
+                };
 
                 console.log(studentList);
                 console.log(expstudentList);
