@@ -109,10 +109,19 @@
                     <div class="box" id="inactiveList">
                         {foreach name="studentList" item="vol"}
                         <div class="mui-input-row mui-checkbox checkboxCont"><label class="number">{$key+1}</label>
-                            <font>{$vol.student}</font><input name="student" data-student_id="{$vol.student_id}" value="{$vol.student}"
-                                data-student="{$vol.student}" type="checkbox"></div>
-                        {/foreach} {volist name="studentList" id="vol"}
-                        <input type="hidden" class="stdList" data-student_id="{$vol.student_id}" data-student="{$vol.student}">                        {/volist}
+                            <font>{$vol.student}</font><input name="student" class="stdList" data-id="{$vol.id}" data-student_id="{$vol.student_id}" value="{$vol.student}"
+                                data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox"></div>
+                        {/foreach}
+                    </div>
+                    <div class="mui-input-row">
+                        <label>体验生名单</label>
+                    </div>
+                    <div class="expbox" id="expinactiveList">
+                        {foreach name="expstudentList" item="vol"}
+                        <div class="mui-input-row mui-checkbox checkboxCont"><label class="number">{$key+1}</label>
+                            <font>{$vol.student}</font><input name="student" class="stdList" data-id="{$vol.id}" data-student_id="{$vol.student_id}" value="{$vol.student}"
+                                data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox"></div>
+                        {/foreach}
                     </div>
 
                     <div class="operation-btn">
@@ -147,7 +156,6 @@
                 <div class="mui-input-row fzcity" id='showCityPicker3'>
                     <a href="#" class="mui-navigate-right">
                         <label>所属地区</label>
-                        <!-- <span id="cityResult3" class="ui-alert city">{$scheduleInfo.province}</span> -->
                         <span id="cityResult3" class="ui-alert">{$scheduleInfo.province} {$scheduleInfo.city} {$scheduleInfo.area}</span>
                         <input type="hidden" name="province" value="{$scheduleInfo.province}">
                         <input type="hidden" name="city" value="{$scheduleInfo.city}">
@@ -196,10 +204,6 @@
                         <input type="hidden" name="teacher_id" value="{$scheduleInfo.teacher_id}" class="teacher_id">
                     </a>
                 </div>
-
-
-
-
 
                 <div class="mui-input-row">
                     <label>备注</label>
@@ -565,31 +569,6 @@
                     mui("#leader").popover("toggle");
                 })
 
-                //检测输入是否为数字
-                // $(".checkNum").blur(function () {
-                //     var num = $(this).val();
-                //     if (isNaN(num)) {
-                //         mui.toast("请填写数字");
-                //         return false;
-                //     }
-                // })
-
-                //  $(".checkNum").blur(function () {
-                //     var str = $(this).val();
-                //     if (!/^([1-9][0-9]*)+(.[0-9]{1,2})?$/.test(str)) {
-                //         mui.alert("请填写数字");
-                //     }
-                // })
-
-                //检测输入是否为汉字
-                $(".checkChinese").blur(function () {
-                    var str = $(this).val();
-                    if (!/^[\u4e00-\u9fa5]+$/.test(str)) {
-                        mui.toast("请填写汉字");
-                        return false;
-                    }
-                })
-
                 //学员列表复选框赋值
                 $("#setStudentCBox").on('tap', '', function () {
                     //每次打开先清空所有选择
@@ -620,50 +599,38 @@
                     }
                 });
 
-                var str = '';
-                var totalNum = '';
-                var studentList = '';
                 //角标随checkboxCont的数量变化
                 $(document).on('click', '.del', function () {
                     totalNum = $(".checkboxCont").length;
                     $(".mui-badge").text(totalNum);
                 });
 
+                // 选择添加学员点击事件
                 $("#studentConfirm").on('click', function () {
-                    //插入学员列表html
+
+                    $("#inactiveList").empty();
+                    $("#expinactiveList").empty();
+                    studentList = [];//学员列表数组
+                    expstudentList = [];//体验生列表数组
+
                     $(".addStudentList input[type=checkbox]:checked").each(function () {
-                        str += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="student" value="' + $(this).attr("data-id") + '" type="checkbox"><input type="hidden" class="stdList eachList" data-id="' + $(this).attr("data-id") + '" data-student="' + $(this).attr("data-student") + '" data-student_id="' + $(this).attr("data-student_id") + '" ></div>';
-                    })
-
-                    // 学员取值
-                    $("input[name='student']").val($("input[name='checkbox-student']:checked").map(function () {
-                        return $(this).val()
-                    }).get().join(","));
-
-                    $(".box").empty();
-                    $(".box").append(str);//在增删按钮前加一行
-                    str = '';
-
-                    //学员列表数组
-                    var inputList = "";
-                    var studentNames = "";
-                    studentList = [];
-                    $("input[name='checkbox-student']:checked").each(function (i) {
+                        var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="student" value="' + $(this).attr("data-student_id") + '" type="checkbox"><input type="hidden" class="stdList eachList" data-id="' + $(this).attr("data-id") + '" data-student="' + $(this).attr("data-student") + '" data-student_id="' + $(this).attr("data-student_id") + '" data-type="' + $(this).attr("data-type") + '" ></div>';
+                        var student_type = $(this).attr("data-type");
                         var id = $(this).attr("data-id");
                         var student_id = $(this).attr("data-student_id");
-                        var student = $(this).val();
-                        studentList[i] = { student: student, student_id: student_id, id: id }
-                        inputList += '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id + '" >';
-                        studentNames += student + ','
+                        var student = $(this).attr("data-student");
+                        if (student_type == 1) {
+                            $("#inactiveList").append(str);
+                            studentList.push({ student: student, student_id: student_id, id: id, type: student_type });
+                        } else {
+                            $("#expinactiveList").append(str);
+                            expstudentList.push({ student: student, student_id: student_id, id: id, type: student_type });
+                        }
                     });
-                    console.log(studentList)
-                    $("#hideStList").empty();
-                    $("#hideStList").html(inputList);
 
                     changeIndex();//调用-更新序号
                     mui("#addStudent").popover("toggle");
                     totalNum = $(".checkboxCont").length;
-                    console.log(totalNum)
                     $(".mui-badge").text(totalNum);
                 })
 
@@ -798,8 +765,9 @@
                             'remarks': remarks,
                             'grade_category_id': grade_category_id,
                             'grade_category': grade_category,
-                            'students': students || studentLength,
-                            'studentList': studentList || studentli
+                            'students': students,
+                            'studentList': studentList,
+                            'expstudentList': expstudentList
                         },
                         dataType: 'json',//服务器返回json格式数据
                         type: 'post',//HTTP请求类型
@@ -836,22 +804,27 @@
             }
 
             //获取已经分配班级的学员列表
-            var studentli = '';
-            var studentLength = '';
+            var studentList = '';//正式学员全局变量
+            var expstudentList = '';//体验生全局变量
             var toExpStudentList = function () {
-                // 已显示的学员列表
-                studentListArry = [];
-                $("input[name='student']").each(function (i) {
+                studentList = [];
+                expstudentList = [];
+                $("input[name=student]").each(function () {
+                    var student_type = $(this).attr("data-type");
                     var id = $(this).attr("data-id");
                     var student_id = $(this).attr("data-student_id");
                     var student = $(this).attr("data-student");
-                    studentListArry[i] = { student: student, student_id: student_id, id: id }
-                    studentli = studentListArry;
+                    if (student_type == "正式生") {
+                        studentList.push({ student: student, student_id: student_id, id: id, type: student_type });
+                    } else {
+                        expstudentList.push({ student: student, student_id: student_id, id: id, type: student_type });
+                    }
                 });
-                console.log(studentli)
+
+                console.log(studentList);
+                console.log(expstudentList);
                 changeIndex();//调用-更新序号
-                studentLength = $(".checkboxCont").length;
-                console.log($(".checkboxCont").length);
+                totalNum = $(".checkboxCont").length;
             };
 
 
@@ -878,7 +851,7 @@
                                 tys = '';
                                 if (data.data[i].grade_id == 0) { fbm = '<span class="tips">[ 未分配 ]</span>' }
                                 if (data.data[i].type == 2) { tys = '<span class="tips">[ 体验生 ]</span>' }
-                                div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + fbm + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '"></div>'
+                                div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + fbm + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-type="' + data.data[i].type + '"></div>'
                             }
                             $("#newdiv").empty();
                             $("#newdiv").append(div);

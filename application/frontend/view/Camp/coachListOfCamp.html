@@ -17,10 +17,9 @@
 
 <body>
     <!--头部搜索2-->
-    <header id="header" class="mui-bar mui-bar-nav" style="border-bottom: solid 1px #e3e3e3;">
-        <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"></a>
-        <h1 class="mui-title" style="text-align: left;font-size: 14px;">教练列表</h1>
-        <a href="{:url('camp/coachListOfCamp', ['status' => 0, 'camp_id' => $camp_id])}" class="mui-pull-right " style="font-size: 14px;line-height: 44px;color:#000">待审核教练</a>
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-pull-left" href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"><span class="mui-icon mui-icon-left-nav"></span>{$campInfo.camp}</a>
+        <a class="mui-pull-right" href="{:url('camp/coachListOfCamp', ['status' => 0, 'camp_id' => $camp_id])}">待审核教练<span class="mui-icon mui-icon-forward"></span></a>
     </header>
 
     <div class="mui-content">
@@ -50,6 +49,7 @@
         window.top.location.href=this.href;
     });
 
+    var camp_name ="";
 
     $(function () {
 
@@ -90,7 +90,7 @@
                     var newli = '';
                     for (var i = 0; i <= data.data.length - 1; i++) {
                         var coachSexUrl = getSexIconUrl(data.data[i].sex);
-                        var urls = "{:url('camp/coachInfoOfCamp')}" + '/coach_id/' + data.data[i].id + '/camp_id/'+campID;
+                        var urls = "{:url('camp/coachInfoOfCamp')}" + '/coach_id/' + data.data[i].id + '/camp_id/'+campID+ '?camp_name='+camp_name;
                         newli += '<li class="mui-table-view-cell mui-media listli list-wide"><div class="mui-slider-right mui-disabled"><span class="mui-btn mui-btn-red" data-id="'+data.data[i].campmemberid+'">删除</span></div><div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body wd36">' + data.data[i].coach + '<img src="' + coachSexUrl + '" class="sex" alt=""><p class="mui-ellipsis">教龄:' + data.data[i].coach_year + '&nbsp;&nbsp;等级:' + data.data[i].coach_level + '</p></div><div class="price-frame"><div class="icons mui-inline">' + data.data[i].star + '<i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i><i data-index="4" class="mui-icon mui-icon-star-filled"></i><i data-index="5" class="mui-icon mui-icon-star-filled"></i></div><p class="address tr">' + data.data[i].area + '</p></div></div></a></li>'
                     }
                     $("ul.coach").empty();

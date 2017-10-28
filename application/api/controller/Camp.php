@@ -173,7 +173,17 @@ class Camp extends Base{
             }
         }
 
-        db('camp')->where('id', $campid)->setField('status', 0);
+        $updatecamp = db('camp')->where('id', $campid)->setField('status', 0);
+        if (!$updatecamp) {
+            return ['code' => 100, 'msg' => '更新训练营'.__lang('MSG_400')];
+        }
+
+        // 所有课程设置下架
+        $lessonM = new \app\model\Lesson();
+        $camplessonstatus = $lessonM->where(['camp_id' => $campid, 'status'=>1])->setField('status', -1);
+        if (!$camplessonstatus) {
+            return ['code' => 100, 'msg' => '更新训练营课程'.__lang('MSG_400')];
+        }
 
         return ['code' => 200, 'msg' => __lang('MSG_200')];
     }
@@ -261,6 +271,36 @@ class Camp extends Base{
         }else{
             return json(['code'=>100,'msg'=>'传参错误']);
         }
+    }
 
+    // 开启/关闭训练营
+    public function campclose() {
+        $camp_id = input('param.camp_id');
+        $status = input('param.status'); // 训练营当前status值
+        if (!$camp_id || !$status) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+
+        $setcampstatus = 0;
+        if ($status == 1) {
+            // 执行关闭训练营
+            // 所有课程设置下架
+            $lessonM = new \app\model\Lesson();
+            $camplessonstatus = $lessonM->where(['camp_id' => $camp_id, 'status'=>1])->setField('status', -1);
+//            if (!$camplessonstatus) {
+//                return json(['code' => 100, 'msg' => '更新训练营课程'.__lang('MSG_400')]);
+//            }
+            $setcampstatus = 2;
+        } else {
+            // 执行开启训练营
+            $setcampstatus = 1;
+        }
+
+        $campS = new CampService();
+        $updateCampStatus = $campS->updateCampStatus($camp_id, $setcampstatus);
+        if (!$updateCampStatus) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
 }

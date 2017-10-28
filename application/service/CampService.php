@@ -43,7 +43,9 @@ class CampService {
         if (!$res) {
             return false;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        $result['status_num'] = $res->getData('status');
+        return $result;
     }
 
     public function getOneCamp($map) {
@@ -52,7 +54,7 @@ class CampService {
             return false;
         }
         $result = $res->toArray(); 
-        $result['check_status'] = $res->getData('status');
+        $result['status_num'] = $res->getData('status');
         return $result;
     }
 
@@ -210,5 +212,12 @@ class CampService {
     public function getCampcheck($camp_id) {
         $camp = Camp::get($camp_id);
         return $camp->getData('status');
+    }
+
+    // 2017-10-28 修改训练营状态
+    public function updateCampStatus($camp_id, $status) {
+        $model = new Camp();
+        $res = $model->where('id', $camp_id)->setField('status', $status);
+        return $res;
     }
 }
