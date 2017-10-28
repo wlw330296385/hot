@@ -478,6 +478,7 @@ class Camp extends Base{
         $this->assign('coachCert',$coachCert);
         $this->assign('averageSalaryByMonth',$averageSalaryByMonth);
         $this->assign('averageSalaryByYear',$averageSalaryByYear);
+        $this->assign('camp_id', $camp_id);
         return view('Camp/coachInfoOfCamp');
     }
 
