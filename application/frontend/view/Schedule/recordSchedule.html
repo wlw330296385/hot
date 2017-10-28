@@ -109,6 +109,7 @@
                         <label>学员名单</label>
                     </div>
                     <div class="box" id="inactiveList">
+
                     </div>
                     <div class="mui-input-row">
                         <label>体验生名单</label>
@@ -476,6 +477,7 @@
             });
         }
 
+        var totalNum = '';//序号总和的变量
         $(function () {
             //全选
             $(".all").click(function () {
@@ -571,7 +573,7 @@
                 var id = $(this).attr('data-id');
                 $(".leader_id").val(id);
                 mui("#leader").popover("toggle");
-            })
+            });
 
             //学员列表复选框赋值
             $("#setStudentCBox").on('tap', '', function () {
@@ -602,59 +604,41 @@
                 }
             });
 
-            var str = '';
-            var totalNum = '';
-            var studentList = '';
-            var student = '';
-            var student_type = '';
             //角标随checkboxCont的数量变化
             $(document).on('click', '.del', function () {
                 totalNum = $(".checkboxCont").length;
                 $(".mui-badge").text(totalNum);
             });
 
+            // 选择添加学员点击事件
             $("#studentConfirm").on('click', function () {
 
                 $("#inactiveList").empty();
                 $("#expinactiveList").empty();
-                //插入学员列表html
+                studentList = [];//学员列表数组
+                expstudentList = [];//体验生列表数组
+
                 $(".addStudentList input[type=checkbox]:checked").each(function () {
-                    str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="student" value="' + $(this).attr("data-id") + '" type="checkbox"><input type="hidden" class="stdList eachList" data-id="' + $(this).attr("data-id") + '" data-student="' + $(this).attr("data-student") + '" data-student_id="' + $(this).attr("data-student_id") + '" data-type="' + $(this).attr("data-type") + '" ></div>';
-                    student_type = $(this).attr("data-type");
-                    if (student_type == 1) {
-                        $("#inactiveList").append(str);
-                    } else {
-                        $("#expinactiveList").append(str);
-                    }
-                })
-
-                // 学员取值
-                $("input[name='student']").val($("input[name='checkbox-student']:checked").map(function () {
-                    return $(this).val()
-                }).get().join(","));
-
-                str = '';
-
-                //学员列表数组
-                var inputList = "";
-                var studentNames = "";
-                studentList = [];
-                $("input[name='checkbox-student']:checked").each(function (i) {
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="student" value="' + $(this).attr("data-student_id") + '" type="checkbox"><input type="hidden" class="stdList eachList" data-id="' + $(this).attr("data-id") + '" data-student="' + $(this).attr("data-student") + '" data-student_id="' + $(this).attr("data-student_id") + '" data-type="' + $(this).attr("data-type") + '" ></div>';
+                    var student_type = $(this).attr("data-type");
                     var id = $(this).attr("data-id");
                     var student_id = $(this).attr("data-student_id");
-                    var student = $(this).val();
-                    studentList[i] = { student: student, student_id: student_id, id: id }
-                    inputList += '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id + '" >';
-                    studentNames += student + ','
+                    var student = $(this).attr("data-student");
+                    if (student_type == 1) {
+                        $("#inactiveList").append(str);
+                        studentList.push({ student: student, student_id: student_id, id: id,type:student_type });
+                    } else {
+                        $("#expinactiveList").append(str);
+                        expstudentList.push({ student: student, student_id: student_id, id: id,type:student_type });
+                    }
                 });
+
                 console.log(studentList)
-                $("#hideStList").empty();
-                $("#hideStList").html(inputList);
+                console.log(expstudentList)
 
                 changeIndex();//调用-更新序号
                 mui("#addStudent").popover("toggle");
                 totalNum = $(".checkboxCont").length;
-                console.log(totalNum)
                 $(".mui-badge").text(totalNum);
             })
 
@@ -815,8 +799,9 @@
                                     'remarks': remarks,
                                     'grade_category_id': grade_category_id,
                                     'grade_category': grade_category,
-                                    'students': students || studentLength,
-                                    'studentList': studentList || studentli
+                                    'students': students,
+                                    'studentList': studentList,
+                                    'expstudentList': expstudentList
                                 },
                                 dataType: 'json',//服务器返回json格式数据
                                 type: 'post',//HTTP请求类型
@@ -859,9 +844,9 @@
             }
         }
 
+        var studentList = '';//正式学员全局变量
+        var expstudentList = '';//体验生全局变量
         //获取已经分配班级的学员列表
-        var studentli = '';
-        var studentLength = '';
         var toExpStudentList = function () {
             var url = "{:url('api/grade_member/getGradeMemberListNoPageApi','','',true)}" + '/lesson_id/{$gradeInfo.lesson_id}/grade_id/{$gradeInfo.id}';
             var campID = "{$campid}";
@@ -883,33 +868,37 @@
                     console.log(data)
                     if (data.code == 200) {
                         var inactiveDiv = '';
-                        var thisType = '';
                         $("#inactiveList").empty();
                         $("#expinactiveList").empty();
+
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             inactiveDiv = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].student + '</font><input name="student" value="' + data.data[i].student_id + '" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-type="' + data.data[i].type + '" type="checkbox" class="stdList eachList"></div>'
-                            thisType = data.data[i].type;
+                            var thisType = data.data[i].type;
                             if (thisType == "正式生") {
                                 $("#inactiveList").append(inactiveDiv);
                             } else {
                                 $("#expinactiveList").append(inactiveDiv);
                             }
+                        };
 
-                        }
-
-                        // 已显示的学员列表
-                        studentListArry = [];
-                        $("input[name='student']").each(function (i) {
+                        studentList = [];
+                        expstudentList = [];
+                        $("input[name=student]").each(function () {
+                            var student_type = $(this).attr("data-type");
                             var id = $(this).attr("data-id");
                             var student_id = $(this).attr("data-student_id");
                             var student = $(this).attr("data-student");
-                            studentListArry[i] = { student: student, student_id: student_id, id: id }
-                            studentli = studentListArry;
+                            if (student_type == "正式生") {
+                                studentList.push({ student: student, student_id: student_id, id: id,type:student_type });
+                            } else {
+                                expstudentList.push({ student: student, student_id: student_id, id: id,type:student_type });
+                            }
                         });
-                        console.log(studentli)
+
+                        console.log(studentList);
+                        console.log(expstudentList);
                         changeIndex();//调用-更新序号
-                        studentLength = $(".checkboxCont").length;
-                        console.log($(".checkboxCont").length);
+                        totalNum = $(".checkboxCont").length;
                     }
 
                 },
