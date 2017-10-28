@@ -86,6 +86,7 @@
             </div>
             <div class="tjbtn mb44">
                 <button type="button" class="mui-btn btn" id="submit-form2">提交修改</button>
+                <a id="close-camp" href="javascript:void(0);" class="mui-btn" data-status="{$campInfo.status_num}">{eq name="campInfo.status_num" value="1"}关闭{else/}开启{/eq}训练营</a>
             </div>
 
 
@@ -144,11 +145,11 @@
                         timeout: 10000,
                         headers: {'Content-Type': 'application/json'},
                         success: function (res) {
-                            //console.log(res);
                             if (res.code == 200) {
                                 location.href = "{:url('camp/editsuccess', ['edit' => 1])}";
                             } else {
-                                mui.toast(res.msg);
+                                //mui.toast(res.msg);
+                                mui.alert(res.msg);
                             }
                         },
                         error: function (xhr, type, errorThrown) {
@@ -156,10 +157,39 @@
                         }
                     });
                 } else {
-                    return;
+                    return false;
                 }
             });
         });
+
+        $('#close-camp').on('click', '', function(){
+            var curcampstatus = $(this).attr('data-status');
+            if (curcampstatus == 1) { // 关闭训练营
+                campclosepost(curcampstatus, '关闭训练营会使课程的发布、展示、购买功能停止使用', '确认要关闭训练营吗？');
+            } else { //开启训练营
+                campclosepost(curcampstatus, '开启训练营会使课程的发布、展示、购买功能恢复使用', '确认要开启训练营吗？');
+            }
+
+        });
+
+        function campclosepost(campstatus, cfmessage, cftitle) {
+            var campid = $('input[name=campid]').val();
+            mui.confirm(cfmessage, cftitle, ['取消','确认'], function(e) {
+                if (e.index == 1) {
+                    mui.post("{:url('api/camp/campclose')}", {
+                        camp_id: campid,
+                        status: campstatus
+                    }, function(data) {
+                        if (data.code === 200) {
+                            location.href = "{:url('camp/editsuccess', ['edit' => 2])}";
+                        } else {
+                            //mui.toast(res.msg);
+                            mui.alert(data.msg);
+                        }
+                    },'json');
+                }
+            });
+        }
     });
 
 </script>
