@@ -1,12 +1,12 @@
 <?php 
 namespace app\api\controller;
 use app\api\controller\Base;
-use app\service\BillService;
-class Bill extends Frontend{
-	protected $BillService;
+use app\service\BillServiceTest;
+class BillTest extends Frontend{
+	protected $BillServiceTest;
 	public function _initialize(){
 		parent::_initialize();
-        $this->BillService = new BillService;
+        $this->BillServiceTest = new BillServiceTest;
 	}
 
 
@@ -25,7 +25,7 @@ class Bill extends Frontend{
                 $map['balance_pay'] = 0;
             }
             $result['count'] = count($result);
-            $result = $this->BillService->getBillList($map,$page);
+            $result = $this->BillServiceTest->getBillList($map,$page);
             return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -43,9 +43,8 @@ class Bill extends Frontend{
             if($balancePay == -1){
                 $map['balance_pay'] = 0;
             }
-            // $map['member_id'] = $this->memberInfo['id'];
 
-            $result = $this->BillService->getBillListByPage($map);
+            $result = $this->BillServiceTest->getBillListByPage($map);
             return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -65,9 +64,9 @@ class Bill extends Frontend{
             $data['member_id'] = $this->memberInfo['id'];
             $data['avatar'] = $this->memberInfo['avatar'];
             if($bill_id){
-                $result = $this->BillService->updateBill($data,['id'=>$bill_id]);
+                $result = $this->BillServiceTest->updateBill($data,['id'=>$bill_id]);
             }else{
-                $result = $this->BillService->createBill($data);
+                $result = $this->BillServiceTest->createBill($data);
             }
             return json($result);
         
@@ -77,13 +76,13 @@ class Bill extends Frontend{
     }
 
 
-   public function payApi(){
+   public function pay(){
         try{
             $bill_id = input('param.bill_order');
             $data = input('post.');
             $data['status'] = 1;
             $data['is_pay'] = 1;
-            $result = $this->BillService->pay($data,['$bill_order'=>$bill_order]);  
+            $result = $this->BillServiceTest->pay($data,['$bill_order'=>$bill_order]);  
             if($result){
                     return json(['code'=>200,'msg'=>'支付成功']);
             }else{

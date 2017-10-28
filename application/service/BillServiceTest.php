@@ -5,7 +5,7 @@ use app\common\validate\BillVal;
 use think\Db;
 use app\model\GradeMember;
 use app\model\CampMember;
-class BillService {
+class BillServiceTest {
 
     public $Bill;
     public function __construct()
@@ -63,10 +63,6 @@ class BillService {
         }
         $result = $this->Bill->save($data);
         if($result){
-            if($data['balance_pay']>0){
-                $data['pay_time'] = time();
-                $this->finishBill($data);
-            }
             return ['code'=>200,'msg'=>'新建成功','data'=>$result];
         }else{
             return ['code'=>100,'msg'=>$this->Bill->getError()];
@@ -80,7 +76,8 @@ class BillService {
         if($result){
             $billInfo = $this->Bill->where(['id'=>$this->Bill->id])->find();
             $billData = $billInfo->toArray();
-            $this->finishBill($billData);
+            $res = $this->finishBill($billData);
+            return $res;
         }else{
             return false;
         }

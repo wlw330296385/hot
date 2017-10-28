@@ -88,9 +88,9 @@ class EventService {
         }
         $result = $this->EventModel->save($data,['id'=>$id]);
         if($result){
-            return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $id];
+            return ['msg' => '操作成功', 'code' => 200, 'data' => $id];
         }else{
-            return ['msg'=>__lang('MSG_400'), 'code' => 100];
+            return ['msg'=>'操作失败', 'code' => 100];
         }
     }
 
@@ -116,9 +116,9 @@ class EventService {
         $result = $this->EventModel->save($data);
         if($result){
             db('camp')->where(['id'=>$data['organization_id']])->setInc('total_events');
-            return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->EventModel->id];
+            return ['msg' => '操作成功', 'code' => 200, 'data' => $this->EventModel->id];
         }else{
-            return ['msg'=>__lang('MSG_400'), 'code' => 100];
+            return ['msg'=>'操作失败', 'code' => 100];
         }
     }
 

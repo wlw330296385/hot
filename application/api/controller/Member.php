@@ -253,4 +253,16 @@ class Member extends Base{
             }
         }
     }
+
+
+
+
+
+
+    // 清理模板缓存
+    public function clearTempAhce(){
+        $Cache = new \think\Cache;
+        $Cache::clear();
+        return json(['code' => 200, 'msg' => '清理成功']);
+    }  
 }

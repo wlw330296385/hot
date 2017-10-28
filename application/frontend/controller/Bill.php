@@ -79,10 +79,42 @@ class Bill extends Base{
             $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
             $this->assign('studentInfo',$studentInfo);
         }
+
         $this->assign('lessonInfo',$lessonInfo);
     	$this->assign('billInfo',$billInfo);
     	return view('Bill/billInfo');
     }
+
+
+    // 会员查看自己的订单信息
+    public function billInfoTest(){
+        $bill_order = input('param.bill_order');
+        $billInfo = $this->BillService->getBill(['bill_order'=>$bill_order]);
+        $lessonInfo = [];
+        if($billInfo['goods_type']=='课程'){
+            $LessonService = new \app\service\LessonService;
+            $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
+            
+            // 学生信息
+            $StudentService = new \app\service\StudentService;
+            $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
+            $this->assign('studentInfo',$studentInfo);
+        }
+        // 生成微信参数
+        $amount = $billInfo['total']*$billInfo['price'];
+        $WechatJsPayService = new \app\service\WechatJsPayService;
+        $result = $WechatJsPayService->pay(['order_no'=>$bill_order.time(),'amount'=>$amount]);
+        
+        $jsApiParameters = $result['data']['jsApiParameters'];
+
+        $this->assign('jsApiParameters',$jsApiParameters);
+        $this->assign('lessonInfo',$lessonInfo);
+        $this->assign('billInfo',$billInfo);
+        return view('Bill/billInfo');
+    }
+
+
+
 
     // 获取会员订单列表
     public function billList(){

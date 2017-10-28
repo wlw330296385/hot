@@ -41,12 +41,12 @@ class Wxpay extends Base{
 	public function notifyUrl()
 	{      
 
-	    // return $this-input();
-
-        $bill_order = '12017083011051264101';
-        $BillService = new \app\service\BillService;
-        $result = $BillService->billPay($bill_order,'callback');
-        dump($result);
-
+        $data = input();
+        if(is_string($data)){
+            db('log_wxpay')->insert(['callback'=>$data,'create_time'=>time()]);
+        }else{
+            db('log_wxpay')->insert(['callback'=>json_encode($data),'create_time'=>time()]);
+        }
+       
 	}
 }

@@ -118,7 +118,8 @@
 
         </div>
             <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-8 opli" >还需支付:<b class="colororange total_fee">￥</b></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli" >还需支付:<b class="colororange total_fee">￥</b></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli mui-btn-yellow " onclick="helpPay()">请人代付</li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="wxpay()">立即支付</li>
             </ul>
 
@@ -138,7 +139,7 @@
 
     var isStudent = false;
     var student,student_id;
-    var total=GetQueryString('total');
+    var total=wooApi.GetQueryString('total');
     var total_fee = "{$lessonInfo.cost}"*total;
     var studentList = [];
     var strBillInfo = '{$jsonBillInfo}';
@@ -195,19 +196,6 @@
         })
 
     })
-
-
-    //获取url参数值
-    function GetQueryString(name) {
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-        var r = window.location.search.substr(1).match(reg);  //获取url中"?"符后的字符串并正则匹配
-        var context = "";
-        if (r != null)
-            context = r[2];
-        reg = null;
-        r = null;
-        return context == null || context == "" || context == "undefined" ? "" : context;
-    }
 
     // 获取学生数据
     function getStudentList(){
@@ -282,25 +270,49 @@
     //   });
 
 
-
+    // 立即支付
     function wxpay(){
-     if(!isStudent){
-        mui.alert('请先添加学生信息,并点[确定]按钮');
-        return false;
-     }
-     if (typeof WeixinJSBridge == "undefined"){
-          if( document.addEventListener ){
-            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
-          }else if (document.attachEvent){
-            document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
-            document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
-          }
+        if(!isStudent){
+            mui.alert('请先添加学生信息,并点[确定]按钮');
+            return false;
+        }
+        //创建订单
+        var res =  createBill();
+        if(res === true){
+            if (typeof WeixinJSBridge == "undefined"){
+                if( document.addEventListener ){
+                    document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                }else if (document.attachEvent){
+                    document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                    document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                }
+            }else{
+               onBridgeReady();
+            }
         }else{
-
-           onBridgeReady();
-
-       }
+            mui.alert('订单创建失败,请刷新页面或者重新登录','提示','确定',function(){
+                location.reload();
+            })
+        }
     }
+
+    // 请他人代付
+    function helpPay(){
+        if(!isStudent){
+            mui.alert('请先添加学生信息,并点[确定]按钮');
+            return false;
+        }
+        //创建订单
+        var res =  createBill();
+        if(res.code == 200){
+            window.location.href="{:url('frontend/bill/billInfoTest',['bill_order'=>$billOrder])}";
+        }else{
+            mui.alert('订单创建失败,请刷新页面或者重新登录','提示','确定',function(){
+                location.reload();
+            })
+        }
+    }
+
 
   function onBridgeReady(){
     var strJsApiParameters = '{$jsApiParameters}';
@@ -317,15 +329,15 @@
              },
              function(res){     
                if(res.err_msg == "get_brand_wcpay_request:ok" ) {
-                  createBill(JSON.stringify(res));
+                  pay(JSON.stringify(res));
                }     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
              }
            ); 
   }
 
 
-    //购买成功提交数据
-    function createBill(callback_str){
+    //创建订单
+    function createBill(){
       var remarks = $('.remarks').val();
       objBillInfo.bill_order = "{$billOrder}";
       objBillInfo.goods_des = student+'购买'+objBillInfo.goods;
@@ -333,27 +345,25 @@
       objBillInfo.student_id = student_id;
       objBillInfo.student = student;
       objBillInfo.remarks = remarks;
-      objBillInfo.balance_pay = total_fee;
-      objBillInfo.callback_str = callback_str;
-      objBillInfo.is_pay = 1;
-      // console.log(objBillInfo);
-      var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
-
-
-      if(result.code == 200){
-        mui.alert('欢迎加入本训练营，您的课程购买已完成，请留意课程消息及公告。','购买成功','确定',function(){
-            window.location.href="{:url('frontend/lesson/lessonList')}?camp_id={$lessonInfo.camp_id}";
-          });
-      }else{
-        mui.toast(result.msg);
-      }
+      objBillInfo.balance_pay = 0;
+      var result = wooApi.asyncF("{:url('api/BillTest/updateBillApi')}",objBillInfo);
+      return result;
+      
     }
 
-
-
-    function testSubmit(){
-
-        createBill('测试');
+    function pay(callback_str){
+        var result = wooApi.asyncF("{:url('api/BillTest/payApi',['bill_order'=>$billOrder])}",{
+            'balance_pay' : total_fee,
+            'callback_str':callback_str
+        });
+        if(result.code == 200){
+            mui.alert('欢迎加入本训练营，您的课程购买已完成，请留意课程消息及公告。','购买成功','确定',function(){
+                window.location.href="{:url('frontend/bill/billInfo',['bill_order'=>$billOrder])}";
+              });
+          }else{
+            mui.toast(result.msg);
+          }
     }
+
 </script>
 </html>
