@@ -57,6 +57,14 @@
             color: #AAAAAA;
             line-height: normal;
         }
+        
+        .nohave {
+            margin: 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-top: none;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -106,15 +114,15 @@
 
                 <form class="mui-input-group">
                     <div class="mui-input-row">
-                        <label>学员名单</label>
+                        <label>正式学员</label>
                     </div>
-                    <div class="box" id="inactiveList">
+                    <div class="box checkChecked" id="inactiveList">
 
                     </div>
                     <div class="mui-input-row">
-                        <label>体验生名单</label>
+                        <label>体验生</label>
                     </div>
-                    <div class="expbox" id="expinactiveList">
+                    <div class="expbox checkChecked" id="expinactiveList">
 
                     </div>
                     <div class="operation-btn">
@@ -626,12 +634,22 @@
                     var student = $(this).attr("data-student");
                     if (student_type == 1) {
                         $("#inactiveList").append(str);
-                        studentList.push({ student: student, student_id: student_id, id: id,type:student_type });
+                        studentList.push({ student: student, student_id: student_id, id: id, type: student_type });
                     } else {
                         $("#expinactiveList").append(str);
-                        expstudentList.push({ student: student, student_id: student_id, id: id,type:student_type });
-                    }
+                        expstudentList.push({ student: student, student_id: student_id, id: id, type: student_type });
+                    };
+
                 });
+
+                // 检查是否有学员数据
+                if ($("#inactiveList").html() == '' && $("#expinactiveList").html() == '') {
+                    $(".checkChecked").append('<p class="nohave">没有学员哦</p>');
+                } else if ($("#inactiveList").html() == '') {
+                    $("#inactiveList").append('<p class="nohave">没有正式学员哦</p>');
+                } else if ($("#expinactiveList").html() == '') {
+                    $("#expinactiveList").append('<p class="nohave">没有体验生哦</p>');
+                };
 
                 console.log(studentList)
                 console.log(expstudentList)
@@ -746,7 +764,7 @@
                     mui.toast("请完善信息");
                     return;
                 };
-                if ($('#inactiveList input[name=student]').is(':checked')) {
+                if ($('.checkChecked input[name=student]').is(':checked')) {
                     mui.alert('请勿勾选学员名单');
                     return;
                 }
@@ -868,6 +886,7 @@
                     console.log(data)
                     if (data.code == 200) {
                         var inactiveDiv = '';
+                        console.log(inactiveDiv)
                         $("#inactiveList").empty();
                         $("#expinactiveList").empty();
 
@@ -878,7 +897,13 @@
                                 $("#inactiveList").append(inactiveDiv);
                             } else {
                                 $("#expinactiveList").append(inactiveDiv);
-                            }
+                            };
+                        };
+                        // 检查是否有学员数据
+                        if ($("#inactiveList").html() == '') {
+                            $("#inactiveList").append('<p class="nohave">没有正式学员哦</p>');
+                        } else if ($("#expinactiveList").html() == '') {
+                            $("#expinactiveList").append('<p class="nohave">没有体验生哦</p>');
                         };
 
                         studentList = [];
@@ -889,9 +914,9 @@
                             var student_id = $(this).attr("data-student_id");
                             var student = $(this).attr("data-student");
                             if (student_type == "正式生") {
-                                studentList.push({ student: student, student_id: student_id, id: id,type:student_type });
+                                studentList.push({ student: student, student_id: student_id, id: id, type: student_type });
                             } else {
-                                expstudentList.push({ student: student, student_id: student_id, id: id,type:student_type });
+                                expstudentList.push({ student: student, student_id: student_id, id: id, type: student_type });
                             }
                         });
 
