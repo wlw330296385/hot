@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title> 教练档案</title>
+    <title>教练档案</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -17,44 +17,61 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <!--等级星星样式-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
+    <style type="text/css">
+        .sheader{ padding: 8px 15px !important;}
+        .sheader span{ line-height: 24px;  font-size: 14px; margin-left: 10px; }
+    </style>
 </head>
 
-<body class=whitebg>
+<body>
 
-<div class="mui-content">
+<header id="header" class="mui-bar mui-bar-nav for-tab">
+    <ul class="mui-table-view detalis-list mb">
+        <li class="listli sheader mui-clearfix">
+            <a class="mui-icon mui-icon-left-nav mui-pull-left" href="{:url('camp/coachListOfCamp',['camp_id'=>$camp_id])}"></a>
+            <span class="mui-pull-left">教练列表</span>
+            <span class="mui-pull-right">{$campInfo.camp}</span>
+        </li>
+    </ul>
+    <ul class="mui-table-view list detalis-list mb">
+        <li class="mui-table-view-cell mui-media listli">
+            <a href="javascript:;">
+                <img class="mui-media-object mui-pull-left coachicon"
+                     src="{$coachInfo['portraits']}">
+                <div class="mui-media-body">
+                    {$coachInfo['coach']}
+                    <p class="mui-ellipsis">教龄:{$coachInfo['coach_year']} 等级:{$coachInfo['coach_level']}</p>
+                </div>
+                <div class="price-frame camp-num">
+                    <ul>
+                        <li>{$coachInfo['star']}
+                            <div class="icons mui-inline">
+                                <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
+                                <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
+                                <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </a>
+        </li>
+    </ul>
+    <div class="camp-lesson-list">
+        <div id="segmentedControl" class="mui-segmented-control mb">
+            <a class="mui-control-item  mui-active" href="#item1">档案</a>
+            <a class="mui-control-item" href="#item2">班级</a>
+            <a class="mui-control-item" href="#item3">课量</a>
+            <a class="mui-control-item" href="#item4">工资</a>
+        </div>
+    </div>
+</header>
+
+<div class="mui-content" style="margin-top: 130px;">
+
+
 
     <div class="list camp-list camp-lesson-list detalis-list coach">
-        <ul class="mui-table-view list detalis-list mb" style="margin-top: -4px">
-            <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                <a href="javascript:;">
-                    <img class="mui-media-object mui-pull-left coachicon"
-                         src="{$coachInfo['portraits']}">
-                    <div class="mui-media-body">
-                        {$coachInfo['coach']}
-                        <p class="mui-ellipsis">教龄:{$coachInfo['coach_year']} 等级:{$coachInfo['coach_level']}</p>
-                    </div>
-                    <div class="price-frame camp-num">
-                        <ul>
-                            <li>{$coachInfo['star']}
-                                <div class="icons mui-inline">
-                                    <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
-                                    <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
-                                    <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </a>
-            </li>
-        </ul>
-        <div class="camp-lesson-list">
-            <div id="segmentedControl" class="mui-segmented-control mb">
-                <a class="mui-control-item  mui-active" href="#item1">档案</a>
-                <a class="mui-control-item" href="#item2">班级</a>
-                <a class="mui-control-item" href="#item3">课量</a>
-                <a class="mui-control-item" href="#item4">工资</a>
-            </div>
-        </div>
+
 
         <div class="item-list mt55">
             <div id="item1" class="mui-control-content  mui-active">
@@ -216,8 +233,6 @@
 
 </div>
 
-<!--底部导航-->
-{layout name="Layout/footer"}
 
 </div>
 </body>
@@ -226,6 +241,9 @@
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
+    });
+    mui("body").on("tap","a",function(){
+        window.top.location.href=this.href;
     });
 
     mui('body').on('shown', '.mui-popover', function (e) {
