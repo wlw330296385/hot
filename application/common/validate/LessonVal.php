@@ -19,6 +19,7 @@ class LessonVal extends Validate{
     ];
     
     protected $message = [
+        'lesson.token'   =>'请不要重复提交',
         'lesson.require'        =>  '课程名必须',
         'gradecate.require'	=> '课程类型必须',
         'cost.require'      =>'费用必须',
@@ -34,7 +35,7 @@ class LessonVal extends Validate{
     
     protected $scene = [
         'add'   =>  ['gradecate','lesson','dom','cost','coach','week','lesson_time','province','city','area','court'],
-        'edit'  =>  ['lesson'],
+        'edit'  =>  [],
     ];    
 
 }

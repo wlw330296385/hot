@@ -108,7 +108,7 @@ class GradeService{
     // 编辑班级
     public function updateGrade($data,$id){
         $validate = validate('GradeVal');
-        if(!$validate->check($data)){
+        if(!$validate->scene('edit')->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
         if($data['assistants']){

@@ -52,6 +52,9 @@ class EventService {
         $result = Event::where($map)->find();
         if ($result){
             $res = $result->toArray();
+            $data['event_times'] = date('Y-m-d H:i',$data['event_time']);
+            $data['ends'] = date('Y-m-d H:i',$data['end']);
+            $data['starts'] = date('Y-m-d H:i',$data['start']);
             return $res;
         }else{
             return $result;
@@ -69,12 +72,19 @@ class EventService {
                 return ['code'=>100,'msg'=> __lang('MSG_403')];
             }
         }
-        if( isset($data['event_times']) ){
-            $data['event_time'] = strtotime($data['event_times']);
-        }
+        
         $validate = validate('EventVal');
         if(!$validate->scene('edit')->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
+        }
+        if( isset($data['event_times']) ){
+            $data['event_time'] = strtotime($data['event_times']);
+        }
+        if(isset($data['starts'])){
+            $data['start'] = strtotime($data['starts']);
+        }
+        if(isset($data['ends'])){
+            $data['end'] = strtotime($data['ends']);
         }
         $result = $this->EventModel->save($data,['id'=>$id]);
         if($result){
@@ -97,7 +107,12 @@ class EventService {
         if(!$validate->scene('add')->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-        
+        if(isset($data['starts'])){
+            $data['start'] = strtotime($data['starts']);
+        }
+        if(isset($data['ends'])){
+            $data['end'] = strtotime($data['ends']);
+        }
         $result = $this->EventModel->save($data);
         if($result){
             db('camp')->where(['id'=>$data['organization_id']])->setInc('total_events');
