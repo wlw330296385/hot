@@ -23,7 +23,7 @@ class billVal extends Validate{
         'goods_id'	=> '商品必须',
         'goods'      =>  '商品必须',
         'camp'                  =>'缺少训练营',
-        'total'                 =>'缺少总价',
+        'total'                 =>'缺少购买总数',
         'price'                 =>'缺少单价',
         'camp_id'                  =>'没指定训练营',
         'camp'           =>'训练营',

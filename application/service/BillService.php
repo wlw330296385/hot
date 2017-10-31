@@ -68,13 +68,13 @@ class BillService {
         if(!$is_student2){
         
             if($data['balance_pay']>0){
-                $re = $GradeMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'type'=>$data['type'],'avatar'=>$data['avatar']]);
+                $re = $GradeMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'type'=>1]);
                 if(!$re){
                     db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
                 }
             }else{
                 // 体验课学生课量为0
-               $re = $GradeMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>0,'type'=>$data['type'],'avatar'=>$data['avatar']]);
+               $re = $GradeMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>0,'type'=>2]);
                 if(!$re){
                     db('log_grade_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
                 } 
@@ -174,7 +174,7 @@ class BillService {
             $campBlance = ($data['balance_pay']*(1-$setting['sysrebate']));
             $resss = db('camp')->where(['id'=>$data['camp_id']])->setInc('balance',$campBlance);
             if($resss){
-                db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$setting['sysrebate']),'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time()]);
+                db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'income'=>$data['balance_pay']*(1-$setting['sysrebate']),'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time()]);
             }
             return ['code'=>200,'msg'=>'新建成功','data'=>$result];
         }else{
@@ -204,6 +204,8 @@ class BillService {
             case '1':
                 if($billInfo['status'] != 1){
                     return ['code'=>100,'msg'=>'该订单状态不支持退款申请'];
+                }else if($billInfo['member_id'] != session('mmeberInfo.id')){
+                    return ['code'=>100,'msg'=>'不是您的订单不可以申请退款'];
                 }else{
                     if($billInfo['goods_type'] == 1){
                         // 查询剩余课时
