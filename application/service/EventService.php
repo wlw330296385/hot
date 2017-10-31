@@ -124,7 +124,22 @@ class EventService {
 
     // 参加活动
     public function joinEvent($event_id,$member_id,$member){
-        
+        $eventInfo = $this->getEventInfo(['id'=>$event_id]);
+        if($eventInfo['stats']!= '正常'){
+            return ['msg'=>"该活动已{$eventInfo['status']},不可再参与", 'code' => 100];
+        }
+        $saveData = ['event_id'=>$eventInfo['id'],'event'=>$eventInfo['event'],'member_id'=>$member_id,'member'=>$member,'status'=>1];
+        $res = $this->EventMemberModel->save($saveData);
+        if($res){
+            $result = $this->EventModel->where(['id'=>$event_id])->setInc('participator');
+                // 更改状态
+                if($eventInfo['max'] <= ($eventInfo['participator']+1)){
+                    $this->EventModel->where(['id'=>$event_id])->save(['status'=>4]);
+                }
+            return ['msg'=>'加入成功','code'=>200,'data'=>$eventInfo];
+        }else{ 
+            return ['msg'=>'操作失败', 'code' => 100];
+        }
     }
 
 

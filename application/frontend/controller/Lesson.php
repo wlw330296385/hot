@@ -120,7 +120,8 @@ class Lesson extends Base{
             'score_pay'=>$lessonInfo['score'],
             'goods_type'=>1,
             'pay_type'=>'wxpay',
-            'type'=>1
+            'type'=>1,
+            'status'=>1
         ];
         $amount = $total*$lessonInfo['cost'];
         $WechatJsPayService = new \app\service\WechatJsPayService;
