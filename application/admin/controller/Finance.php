@@ -25,13 +25,26 @@ class Finance extends Backend {
         if ($member) {
             $map['member'] = ['like', '%'. $member .'%'];
         }
-        $lesson = input('lesson');
-        if ($lesson) {
-            $map['lesson'] = ['like', '%'. $lesson .'%'];
+        $goods = input('goods');
+        if ($goods) {
+            $map['goods'] = ['like', '%'. $goods .'%'];
+        }
+        $billorder = input('bill_order');
+        if ($billorder) {
+            $map['bill_order'] = $billorder;
         }
 
-        $list = BillModel::where($map)->paginate(15);
-        //dump($list);
+        $list = BillModel::where($map)->order('id desc')->paginate(15)->each(function($item, $key){
+            if ($item->goods_type == "课程") {
+                $studenttype = db('grade_member')->where([ 'camp_id' => $item->camp_id, 'lesson_id' => $item->goods_id, 'member_id' => $item->member_id ])->value('type');
+                if ($studenttype == 1) {
+                    $item->studenttype = '正式学员';
+                } else {
+                    $item->studenttype = '体验生';
+                }
+            }
+        });
+//        dump($list);
 
         $breadcrumb = ['title' => '支付订单', 'ptitle' => '训练营'];
         $this->assign('breadcrumb', $breadcrumb);
@@ -42,9 +55,10 @@ class Finance extends Backend {
     // 支付订单详情
     public function bill() {
         $id = input('id', 0);
-        $bill = BillModel::get($id);
-        //dump($bill);
-
+        $billObj = BillModel::get($id);
+        $bill = $billObj->toArray();
+        $bill['goods_type_num'] = $billObj->getData('goods_type');
+        
         $breadcrumb = ['title' => '支付订单', 'ptitle' => '训练营'];
         $this->assign('breadcrumb', $breadcrumb);
         $this->assign('bill', $bill);
