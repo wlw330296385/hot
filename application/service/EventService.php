@@ -142,7 +142,7 @@ class EventService {
     public function isPower($organization_id,$member_id){
         $is_power = db('camp_member')
                     ->where([
-                        'organization_id'   =>$organization_id,
+                        'camp_id'   =>$organization_id,
                         'status'    =>1,
                         'member_id'  =>$member_id,
                         ])
