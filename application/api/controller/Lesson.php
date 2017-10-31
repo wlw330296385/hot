@@ -160,10 +160,10 @@ class Lesson extends Base{
                 if ($hasgradeused) {
                     if ($data['cost'] != $lesson['cost']) {
                         $result = ['code' => 100, 'msg' => '此课程被班级所用，不能修改课程单价'];
-                    } else {
-                        $result = $lessonS->updateLesson($data,$lesson_id);
-                    }
+                        return json($result);
+                    } 
                 }
+                $result = $lessonS->updateLesson($data,$lesson_id);
             }else{
                 $result = $lessonS->createLesson($data);
             }
