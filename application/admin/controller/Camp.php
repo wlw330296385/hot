@@ -14,7 +14,9 @@ use app\service\CampService;
 class Camp extends Backend {
     // 训练营列表
     public function index() {
-        $list = CampModel::order('id desc')->paginate(15);
+        $list = CampModel::order('id desc')->paginate(15)->each(function($item, $key){
+            $item->status_num = CampModel::get($item->id)->getData('status');
+        });
         $breadcrumb = ['title' => '训练营管理', 'ptitle' => '训练营模块'];
         $this->assign( 'breadcrumb', $breadcrumb );
         $this->assign('list', $list);

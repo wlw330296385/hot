@@ -29,12 +29,12 @@
                             </div>
                             <div class="form-group">
                                 <label class="control-label">购买商品</label>
-                                <input class="form-control" type="text" name="lesson" >
+                                <input class="form-control" type="text" name="goods" >
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-12 text-center">
                                     <button type="submit" class="btn btn-success btn-flat">搜索</button>
-                                    <button type="reset" class="btn btn-default btn-flat">重置</button>
+                                    <button type="submit" class="btn btn-default btn-flat">重置</button>
                                 </div>
                             </div>
                         </fieldset>
@@ -60,6 +60,7 @@
                                             <th>支付类型</th>
                                             <th>支付状态</th>
                                             <th>订单状态</th>
+                                            <th>备注</th>
                                             <th>操作</th>
                                         </tr>
                                         </thead>
@@ -74,13 +75,26 @@
                                             <td>{$vo.camp}</td>
                                             <td>{$vo.balance_pay}</td>
                                             <td>{$vo.score_pay}</td>
-                                            <td>{$vo.pay_type}</td>
+                                            <td>
+                                                {switch name="vo.pay_type"}
+                                                {case value="wxpay"}微信支付{/case}
+                                                {case value="alipay"}支付宝{/case}
+                                                {/switch}
+                                            </td>
                                             <td>{$vo.is_pay}</td>
                                             <td>
-                                                {$vo.status}
+                                                {switch name="vo.status"}
+                                                {case value="1"}已支付{/case}
+                                                {case value="-1"}申请退款{/case}
+                                                {case value="-2"}已退换{/case}
+                                                {default /}未支付
+                                                {/switch}
                                             </td>
                                             <td>
-                                                <a href="{:url('finance/bill', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i></a>
+{$vo.studenttype}
+                                            </td>
+                                            <td>
+                                                <a href="{:url('finance/bill', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"> 查看详情</i></a>
                                                 <!--<a href="" class="btn btn-xs btn-danger del-btn"><i class="fa fa-trash"></i></a>-->
                                             </td>
                                         </tr>
