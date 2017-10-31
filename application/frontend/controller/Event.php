@@ -7,6 +7,9 @@ class Event extends Base{
 	public function _initialize(){
 		parent::_initialize();
         $this->EventService = new EventService;
+        $event_id = input('param.event_id');
+        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
+        $this->assign('eventInfo',$eventInfo);
 	}
 
     public function index() {
