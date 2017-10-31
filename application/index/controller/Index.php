@@ -1,11 +1,18 @@
 <?php
 namespace app\index\controller;
 use think\Controller;
+use think\Cookie;
 class Index extends Controller
 {
     public function index()
     {
-        $ress = db('student')->where(['id'=>1])->inc('total_lesson',1)->inc('total_schedule',2)->update();
+        $cookie = cookie('mid');
+        dump(session('memberInfo','','think'));
+        if ( !Cookie::has('mid') ) {
+            echo 'no mid';
+        }
+        echo request()->url();
+        dump($cookie);die;
     	return view('Index/index');
     }
 
@@ -20,6 +27,10 @@ class Index extends Controller
 
 
     public function sendMsg(){
+        $action = input('param.action');
+        if($action!= 'woo'){
+            return '???';die;
+        }
         $MessageService = new \app\service\MessageService;
         $MessageCampData = [
                         "touser" => '',

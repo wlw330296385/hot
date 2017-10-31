@@ -123,11 +123,13 @@
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
 
     // 申请退款
     $(".tjBtn").click(function(){
@@ -220,20 +222,68 @@ function pay(callback_str){
                 type: 'post',
                 dataType:'json',
                 complete: function(msg) {
-                    alert(JSON.stringify(msg));
+                    console.log(msg)
+                    // alert(JSON.stringify(msg));
+                },
+                success:function(msg){
+                    if(result.code == 200){
+                        mui.alert('支付成功','提示','确定',function(){
+                            location.reload()
+                          });
+                    }else{
+                        mui.toast(result.msg);
+                    }
                 }
             });
-        
-        return false;
-        if(result.code == 200){
-            mui.alert('支付成功','提示','确定',function(){
-                location.reload()
-              });
-        }else{
-            mui.toast(result.msg);
-        }
     }
 
+</script>
+<script type="text/javascript">
+    wx.config({
+            //开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            debug:true,
+            appId: "{$jsApi.appId}", // 必填，企业号的唯一标识，此处填写企业号corpid
+            timestamp: "{$jsApi.timestamp}", // 必填，生成签名的时间戳
+            nonceStr: "{$jsApi.nonceStr}", // 必填，生成签名的随机串
+            signature: "{$jsApi.signature}",// 必填，签名，见附录1
+            jsApiList:  [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        });
+
+    wx.ready(function () {   
+        // 微信支付分享朋友圈页面
+        wx.onMenuShareTimeline({
+            title: '代付分享', // 分享标题
+            link: "{:url('frontend/bill/billinfotest',['bill_order'=>$billInfo['bill_order']],'',true)}", // 分享链接，该链接域名必须与当前企业的可信域名一致
+            imgUrl: "{$memberInfo['avatar']}", // 分享图标
+            success: function () {
+                // 用户确认分享后执行的回调函数
+            },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+            }
+        });
+        // 分享给朋友
+        wx.onMenuShareAppMessage({
+            title: '代付分享', // 分享标题
+            link: "{:url('frontend/bill/billinfotest',['bill_order'=>$billInfo['bill_order']],'',true)}", // 分享链接，该链接域名必须与当前企业的可信域名一致
+            imgUrl: "{$memberInfo['avatar']}", // 分享图标
+            desc:"宝宝买了{$billInfo['goods']},帮我支付吧!",
+            type: '', // 分享类型,music、video或link，不填默认为link
+            dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+            success: function () {
+                // 用户确认分享后执行的回调函数
+            },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+            }
+        });
+    })
 </script>
 </body>
 </html>

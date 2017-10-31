@@ -7,7 +7,7 @@ use app\service\GradeService;
 use think\Exception;
 
 class Lesson extends Base{
-	protected $LessonService;
+	protected $this->LessonServiceervice;
 	protected $GradeService;
 	public function _initialize(){
 		$this->LessonService = new LessonService;
@@ -123,8 +123,7 @@ class Lesson extends Base{
         try{
             $map = input('post.');
             $page = input('param.page', 1);
-            $lessonS = new LessonService();
-            $result =  $lessonS->getLessonList($map, $page);
+            $result =  $this->LessonService->getLessonList($map, $page);
             if($result){
                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
@@ -153,19 +152,18 @@ class Lesson extends Base{
                     $data['area'] = $address[1];
                 }             
             }
-            $lessonS = new LessonService();
             if($lesson_id){
-                $lesson = $lessonS->getLessonInfo(['id'=>$lesson_id]);
-                $hasgradeused = $lessonS->hasgradeused($lesson_id);
+                $lesson = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+                $hasgradeused = $this->LessonService->hasgradeused($lesson_id);
                 if ($hasgradeused) {
                     if ($data['cost'] != $lesson['cost']) {
                         $result = ['code' => 100, 'msg' => '此课程被班级所用，不能修改课程单价'];
                         return json($result);
                     } 
                 }
-                $result = $lessonS->updateLesson($data,$lesson_id);
+                $result = $this->LessonService->updateLesson($data,$lesson_id);
             }else{
-                $result = $lessonS->createLesson($data);
+                $result = $this->LessonService->createLesson($data);
             }
             return json($result);
         }catch (Exception $e){
@@ -262,8 +260,8 @@ class Lesson extends Base{
             }
 
 
-            $lessonS = new LessonService();
-            $lesson = $lessonS->getLessonInfo(['id' => $lessonid]);
+            $this->LessonService = new LessonService();
+            $lesson = $this->LessonService->getLessonInfo(['id' => $lessonid]);
             if (!$lesson) {
                 return json(['code' => 100, 'msg' => '没有此课程']);
             }
@@ -281,17 +279,17 @@ class Lesson extends Base{
             $campS = new CampService();
             switch ($lesson['status_num']) {
                 case "1": {
-                    $hasgradeused = $lessonS->hasgradeused($lesson['id']);
+                    $hasgradeused = $this->LessonService->hasgradeused($lesson['id']);
                     if ($hasgradeused) {
                         return json(['code' => 100,'msg' => '该课程有班级所使用，不能操作']);
                     }
 //                    die;
                     if ($action == 'editstatus') {
                         // 下架课程
-                        $response = $lessonS->updateLessonStatus($lesson['id'], -1);
+                        $response = $this->LessonService->updateLessonStatus($lesson['id'], -1);
                         return json($response);
                     } else {
-                        $response = $lessonS->SoftDeleteLesson($lesson['id']);
+                        $response = $this->LessonService->SoftDeleteLesson($lesson['id']);
                         return json($response);
                     }
                     break;
@@ -304,10 +302,10 @@ class Lesson extends Base{
                             return json(['code' => 100, 'msg' => '训练营尚未审核，课程不能上架']);
                         }
 
-                        $response = $lessonS->updateLessonStatus($lesson['id'], 1);
+                        $response = $this->LessonService->updateLessonStatus($lesson['id'], 1);
                         return json($response);
                     } else {
-                        $response = $lessonS->SoftDeleteLesson($lesson['id']);
+                        $response = $this->LessonService->SoftDeleteLesson($lesson['id']);
                         return json($response);
                     }
                     break;

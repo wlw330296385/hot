@@ -144,4 +144,4 @@ function imgSlider(){
  * @param {String} curSrc 当前播放的图片地址
  * @param {Array} srcList 图片地址列表
  */
-function imagePreview(curSrc,srcList) ;
+// function imagePreview(curSrc,srcList);

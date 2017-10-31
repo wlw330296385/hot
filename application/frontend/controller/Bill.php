@@ -1,7 +1,8 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Frontend;
+use app\frontend\controller\Base;
 use app\service\BillService;
+use app\service\WechatService;
 class Bill extends Base{
 	protected $BillService;
 	public function _initialize(){
@@ -88,8 +89,15 @@ class Bill extends Base{
 
     // 会员查看自己的订单信息
     public function billInfoTest(){
+        $bill_id = input('param.bill_id');
         $bill_order = input('param.bill_order');
-        $billInfo = $this->BillService->getBill(['bill_order'=>$bill_order]);
+        if($bill_id){
+            $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+        }else{
+            
+            $billInfo = $this->BillService->getBill(['bill_order'=>$bill_order]);
+        }
+        
         $lessonInfo = [];
         if($billInfo['goods_type']=='课程'){
             $LessonService = new \app\service\LessonService;
@@ -101,13 +109,16 @@ class Bill extends Base{
             $this->assign('studentInfo',$studentInfo);
         }
         // 生成微信参数
+        $shareurl = request()->url(true);
+        $WechatService = new WechatService();
+        $jsApi = $WechatService->jsapi($shareurl);
         // $amount = $billInfo['total']*$billInfo['price'];
         $amount = 0.01;
         $WechatJsPayService = new \app\service\WechatJsPayService;
         $result = $WechatJsPayService->pay(['order_no'=>$bill_order.time(),'amount'=>$amount]);
         
         $jsApiParameters = $result['data']['jsApiParameters'];
-
+        $this->assign('jsApi',$jsApi);
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billInfo',$billInfo);
