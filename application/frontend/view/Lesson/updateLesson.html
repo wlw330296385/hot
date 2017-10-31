@@ -169,6 +169,10 @@
                 </a>
             </div>
             <div class="mui-input-row">
+                <label>咨询电话</label>
+                <input type="text" class="data telephone" value="{$lessonInfo.telephone}" name="telephone" placeholder="请填写课程咨询电话">
+            </div>
+            <div class="mui-input-row">
                 <label>是否上架</label>
                 <span>{$lessonInfo.status}</span>
                 <input type="hidden" name="status" value="{$lessonInfo.status_num}" class="data">
@@ -680,6 +684,13 @@
 
     // 获取数据并进行提交
     function submitAction(){
+        //判断电话是否正确格式
+        var telephone = $('.telephone').val();
+        var codeRegTelephone = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/;
+        if (!codeRegTelephone.test(telephone)) {
+            mui.alert('请填写正确的手机号码或区号加固话（例：0755-26650702）');
+            return false;
+        }
         var data = wooApi.getInputData('input','data');
         datas = wooApi.getInputData('select','data',data);
         // 获取其他标签值
