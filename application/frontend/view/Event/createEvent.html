@@ -59,7 +59,7 @@
                     </div>
                 </div>
 
-                <div class="mui-input-row" id="target-input-row" style="display: none">
+                <div class="mui-input-row target-input-row" style="display: none">
                     <a href="#target" class="mui-navigate-right">
                         <label>具体对象</label>
                         <span class="targetCont" name="target"></span>
@@ -102,16 +102,16 @@
                 </div>
 
 
-                <div class="mui-input-row" id="price-input-row">
+                <div class="mui-input-row price-input-row">
                     <label>活动单价</label>
                     <input type="text" name="price" class="data" value="" placeholder="请填写活动单价">
                 </div>
 
-                <div class="mui-input-row" id="finance-input-row">
+                <div class="mui-input-row price-input-row" >
                     <a href="#cost" class="mui-navigate-right">
                         <label>费用结算人</label>
                         <span class="costCont domData" name="finance"></span>
-                        <input type="hidden" name="finance_id" class="data">
+                        <input type="hidden" name="finance_id" class="cost_id data">
                     </a>
                 </div>
 
@@ -199,7 +199,9 @@
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <ul class="mui-table-view list">
-                    <li class="mui-table-view-cell listli detalisli target">{volist name="gradeList" id="vol"}{$vol.grade}{/volist}</li>
+                    {volist name="gradeList" id="vol"}
+                    <li class="mui-table-view-cell listli detalisli target" data-id="{$vol.id}">{$vol.grade}</li>
+                    {/volist}
                 </ul>
             </div>
         </div>
@@ -212,9 +214,7 @@
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <ul class="mui-table-view list campMemberlist">
-
-                </ul>
+                <ul class="mui-table-view list campMemberlist"></ul>
             </div>
         </div>
     </div>
@@ -343,8 +343,9 @@
             // 选择活动对象显示隐藏具体对象
             $("#eventObject").change(function () {
                 if ($(this).children('option:selected').text() == '班内') {
-                    $("#target-input-row").show();
+                    $(".target-input-row").show();
                     $(".targetCont").addClass("domData").text('');
+                    $(".target_id").addClass("data");
                 } else {
                     $("#target-input-row").hide();
                 }
@@ -353,13 +354,11 @@
             // 选择是否收费显示隐藏活动单价和费用结算人
             $("#eventPrice").change(function () {
                 if ($(this).children('option:selected').text() == '免费') {
-                    $("#price-input-row").hide();
-                    $("#finance-input-row").hide();
+                    $(".price-input-row").hide();
                     $("input[name='price']").removeClass("data");
                     $(".costCont").removeClass("domData");
                 } else {
-                    $("#price-input-row").show();
-                    $("#finance-input-row").show();
+                    $(".price-input-row").show();
                     $("input[name='price']").addClass("data").val('');
                     $(".costCont").addClass("domData").val('');
                 }

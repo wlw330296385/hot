@@ -57,6 +57,13 @@
             color: #AAAAAA;
             line-height: normal;
         }
+        .show {
+            display: block;
+        }
+        
+        .hide {
+            display: none;
+        }
     </style>
 </head>
 
@@ -64,7 +71,7 @@
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-        <h1 class="mui-title">{eventInfo.camp}</h1>
+        <h1 class="mui-title">{$eventInfo.organization}</h1>
     </header>
 
     <div class="mui-content">
@@ -75,20 +82,17 @@
                 <li class="mui-table-view-cell mui-media listli">
                     <a href="javascript:;" class="mui-navigate-right">
                         <div class="mui-media-body wd83">
-                            <strong class="grade">{eventInfo.theme}</strong>
-                            <p class="mui-ellipsis camp" style="text-indent: 0" data-id="{eventInfo.camp_id}">{eventInfo.event_type}</p>
-                            <input type="hidden" name="camp" value="{eventInfo.camp}">
-                            <input type="hidden" name="grade_id" value="{eventInfo.id}">
-                            <input type="hidden" name="lesson" value="{eventInfo.lesson}">
-                            <input type="hidden" name="lesson_id" value="{eventInfo.lesson_id}">
+                            <strong class="grade domData" name="event">{$eventInfo.event}</strong>
+                            <p class="mui-ellipsis" style="text-indent: 0" data-id="{eventInfo.organization_id}">{$eventInfo.event_type}</p>
+                            <input type="hidden" name="organization" value="{$eventInfo.organization}" class="data">
+                            <input type="hidden" name="organization_id" value="{$eventInfo.organization_id}" class="data">
+                            <input type="hidden" name="event_id" value="{$eventInfo.id}" class="data">
+                            <input type="hidden" name="organization_type" value="{$eventInfo.organization_type}" class="data">
                         </div>
                     </a>
                 </li>
             </ul>
 
-            <div class="page-header">
-                <span class="course">参加学员</span>
-            </div>
 
             <div class="image-items">
 
@@ -97,14 +101,14 @@
                         <a class="portraits filePicker" onclick="add_id(3)">
                             <label>上传合照</label>
                             <img id="preview_3">
-                            <input type="hidden" class="cover" name="portraits" value="">
+                            <input type="hidden" class="data" name="cover" value="{$eventInfo.cover}">
                         </a>
                     </div>
                 </form>
 
                 <form class="mui-input-group">
                     <div class="mui-input-row">
-                        <label>学员名单</label>
+                        <label>活动人员</label>
                     </div>
                     <div class="box" id="inactiveList">
 
@@ -124,50 +128,64 @@
             <form action="" class="mui-input-group">
 
                 <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>活动对象</label>
+                        <span class="select-row ">
+                            <select id="eventObject" class="data" name="targer_type">
+                                <option value="1" >不限</option>
+                                <option value="2" >营内</option>
+                                <option value="3" >班内</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row {eq name='eventInfo.target_type' value='3'}show{else/}hide{/eq}">
                     <a href="#target" class="mui-navigate-right">
                         <label>具体对象</label>
-                        <span class="targetCont">{eventInfo.target}</span>
+                        <span class="targetCont domData " name="target" >{$eventInfo.target}</span>
+                        <input type="hidden" name="target_id" value="{$eventInfo.target_id}" class="data">
                     </a>
                 </div>
 
                 <div class="mui-input-row picker btn" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>活动时间</label>
-                        <span id="result" class="ui-alert domData" name="event_time">{eventInfo.event_time}</span>
+                        <span id="result" class="ui-alert domData" name="event_times">{$eventInfo.event_time}</span>
                     </div>
                 </div>
 
                 <div class="mui-input-row">
                     <label>活动地点</label>
-                    <input type="text" name="location" value="{eventInfo.location}" class="data location" placeholder="请输入活动地点">
+                    <input type="text" name="location" value="{$eventInfo.location}" class="data location" placeholder="请输入活动地点">
                 </div>
 
                 <div class="mui-input-row" id='showCityPicker3'>
                     <div class="mui-navigate-right">
                         <label>所属地区</label>
-                        <span id="cityResult3" class="ui-alert domData" name="address">{eventInfo.province}{eventInfo.city}{eventInfo.area}</span>
+                        <span id="cityResult3" class="ui-alert domData" name="address">{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span>
                     </div>
                 </div>
 
                 <div class="mui-input-row">
                     <label>联系人</label>
-                    <input type="text" name="" class="data" value="{eventInfo.member}" placeholder="请输入联系人">
+                    <input type="text" name="contract" class="data" value="{$eventInfo.contract}" placeholder="请输入联系人">
                 </div>
 
                 <div class="mui-input-row">
                     <label>联系电话</label>
-                    <input type="text" name="" class="data" value="{eventInfo.telphone}" placeholder="请输入联系电话">
+                    <input type="text" name="telephone" class="data" value="{$eventInfo.telephone}" placeholder="请输入联系电话">
                 </div>
 
                 <div class="mui-input-row mt55">
                     <label>活动简介</label>
-                    <input type="text" name="" class="data" value="{eventInfo.event_des}" placeholder="请输入活动简介">
+                    <input type="text" name="event_des" class="data" value="{$eventInfo.event_des}" placeholder="请输入活动简介">
                 </div>
 
             </form>
 
             <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen operationBtn" style="color: #fff">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen operationBtn" style="color: #fff" onclick="submitAction()">
                     提交录入
                 </li>
             </ul>
@@ -175,34 +193,6 @@
         </div>
 
 
-        <!--具体对象-->
-        <div id="target" class="mui-popover">
-            <div class="mui-popover-arrow"></div>
-            <div class="page-header">
-                <span class="course"><strong>具体对象</strong></span>
-            </div>
-            <div class="mui-scroll-wrapper">
-                <div class="mui-scroll">
-                    <ul class="mui-table-view list">
-                        <li class="mui-table-view-cell listli detalisli target">某某班</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <!--费用结算人-->
-        <div id="cost" class="mui-popover">
-            <div class="mui-popover-arrow"></div>
-            <div class="page-header">
-                <span class="course"><strong>费用结算人</strong></span>
-            </div>
-            <div class="mui-scroll-wrapper">
-                <div class="mui-scroll">
-                    <ul class="mui-table-view list">
-                        <li class="mui-table-view-cell listli detalisli cost">选择对象</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
         <!--学员名单-->
         <div id="addStudent" class="mui-popover">
             <div class="mui-popover-arrow"></div>
@@ -225,8 +215,10 @@
         <script src="/static/frontend/js/mui.picker.min.js"></script>
         <script src="/static/frontend/js/mui.poppicker.js"></script>
         <script src="/static/frontend/js/city.data-3.js"></script>
+        <script src="/static/frontend/js/common.js"></script>
+        <script src="/static/frontend/js/wooApi.js"></script>
         <script>
-            var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+                                                                                                                               var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
         </script>
         <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
         <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -411,27 +403,52 @@
                     totalNum = $(".checkboxCont").length;
                     console.log(totalNum)
                     $(".mui-badge").text(totalNum);
-                })
+                });
 
-                //获取已经分配班级的学员列表
-                var studentli = '';
-                var studentLength = '';
-                var toExpStudentList = function () {
-                    // 已显示的学员列表
-                    studentListArry = [];
-                    $("input[name='student']").each(function (i) {
-                        var id = $(this).attr("data-id");
-                        var student_id = $(this).attr("data-student_id");
-                        var student = $(this).attr("data-student");
-                        studentListArry[i] = { student: student, student_id: student_id, id: id }
-                        studentli = studentListArry;
-                    });
-                    console.log(studentli)
-                    changeIndex();//调用-更新序号
-                    studentLength = $(".checkboxCont").length;
-                    console.log($(".checkboxCont").length);
-                };
+
             });
+
+            // 获取数据并进行提交(编辑活动)
+            function submitAction() {
+                var data = wooApi.getInputData('input', 'data');
+                datas = wooApi.getInputData('select', 'data', data);
+                // 获取其他标签值
+                arrData = wooApi.getDomData('domData', datas);
+                console.log(arrData)
+                var objData = wooApi.arrTOobj(arrData);
+                console.log(objData)
+                var url = "{:url('api/event/recordEventApi')}" + '/event_id/{$eventInfo.id}';
+                var ajaxResult = wooApi.asyncF(url, objData);
+                if (ajaxResult.code == 200) {
+                    mui.alert(ajaxResult.msg, '活动录入成功', '确定', function () {
+                        var goUrl = "{:url('event/eventListOfCamp')}" + '/event_id/' + ajaxResult.data;
+                        window.top.location.href = goUrl;
+                    })
+                } else {
+                    mui.alert(ajaxResult.msg, '活动录入失败', '确定', function () {
+
+                    });
+                };
+            };
+
+            //获取已经分配班级的学员列表
+            var studentli = '';
+            var studentLength = '';
+            var toExpStudentList = function () {
+                // 已显示的学员列表
+                studentListArry = [];
+                $("input[name='student']").each(function (i) {
+                    var id = $(this).attr("data-id");
+                    var student_id = $(this).attr("data-student_id");
+                    var student = $(this).attr("data-student");
+                    studentListArry[i] = { student: student, student_id: student_id, id: id }
+                    studentli = studentListArry;
+                });
+                console.log(studentli)
+                changeIndex();//调用-更新序号
+                studentLength = $(".checkboxCont").length;
+                console.log($(".checkboxCont").length);
+            };
         </script>
 </body>
 
