@@ -499,10 +499,9 @@
 
             //删除
             $(".del").click(function () {
-                $("input[name='student']:checked").each(function () { // 遍历选中的checkbox
-                    var n = $(this).parents("checkboxCont").index();  // 获取checkbox所在行的顺序
-                    $(".checkboxCont:eq(" + n + ")").remove();
-                });
+                $("input[name='student']:checked").parents(".checkboxCont").remove();
+                changeIndex();
+                checkStudent();
             });
 
             // 训练地点
@@ -642,15 +641,7 @@
 
                 });
 
-                // 检查是否有学员数据
-                if ($("#inactiveList").html() == '' && $("#expinactiveList").html() == '') {
-                    $(".checkChecked").append('<p class="nohave">没有学员哦</p>');
-                } else if ($("#inactiveList").html() == '') {
-                    $("#inactiveList").append('<p class="nohave">没有正式学员哦</p>');
-                } else if ($("#expinactiveList").html() == '') {
-                    $("#expinactiveList").append('<p class="nohave">没有体验生哦</p>');
-                };
-
+                checkStudent();// 检查是否有学员数据
                 console.log(studentList)
                 console.log(expstudentList)
 
@@ -851,6 +842,18 @@
         })
 
 
+        // 检查是否有学员数据
+        var checkStudent = function () {
+            if ($("#inactiveList").html() == '' && $("#expinactiveList").html() == '') {
+                $(".checkChecked").append('<p class="nohave">没有学员哦</p>');
+            } else if ($("#inactiveList").html() == '') {
+                $("#inactiveList").append('<p class="nohave">没有正式学员哦</p>');
+            } else if ($("#expinactiveList").html() == '') {
+                $("#expinactiveList").append('<p class="nohave">没有体验生哦</p>');
+            };
+        };
+
+
         //根据默助教遍历出对应所选
         var toAssistantCheckbox = function () {
             var str = $("input[name='assistant_ids']").val();
@@ -859,8 +862,8 @@
                 $("input[name='checkbox-assistant']").filter(function (index) {
                     return $(this).attr("data-id") == s[i]
                 }).prop("checked", true);
-            }
-        }
+            };
+        };
 
         var studentList = '';//正式学员全局变量
         var expstudentList = '';//体验生全局变量
@@ -899,12 +902,8 @@
                                 $("#expinactiveList").append(inactiveDiv);
                             };
                         };
-                        // 检查是否有学员数据
-                        if ($("#inactiveList").html() == '') {
-                            $("#inactiveList").append('<p class="nohave">没有正式学员哦</p>');
-                        } else if ($("#expinactiveList").html() == '') {
-                            $("#expinactiveList").append('<p class="nohave">没有体验生哦</p>');
-                        };
+                        
+                        checkStudent();// 检查是否有学员数据
 
                         studentList = [];
                         expstudentList = [];
