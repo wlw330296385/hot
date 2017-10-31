@@ -66,29 +66,10 @@ class Bill extends Base{
     }
 
 
+
+
     // 会员查看自己的订单信息
     public function billInfo(){
-    	$bill_id = input('param.bill_id');
-    	$billInfo = $this->BillService->getBill(['id'=>$bill_id]);
-        $lessonInfo = [];
-        if($billInfo['goods_type']=='课程'){
-            $LessonService = new \app\service\LessonService;
-            $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
-            
-            // 学生信息
-            $StudentService = new \app\service\StudentService;
-            $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
-            $this->assign('studentInfo',$studentInfo);
-        }
-
-        $this->assign('lessonInfo',$lessonInfo);
-    	$this->assign('billInfo',$billInfo);
-    	return view('Bill/billInfo');
-    }
-
-
-    // 会员查看自己的订单信息
-    public function billInfoTest(){
         $bill_id = input('param.bill_id');
         $bill_order = input('param.bill_order');
         if($bill_id){
@@ -122,7 +103,7 @@ class Bill extends Base{
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billInfo',$billInfo);
-        return view('Bill/billInfoTest');
+        return view('Bill/billInfo');
     }
 
 

@@ -55,16 +55,49 @@ class BillService {
         return $result?$result:0;
     }
 
+    //生成一笔订单
     public function createBill($data){
         $validate = validate('BillVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
         $result = $this->Bill->save($data);
+        if($result){
+            return ['code'=>200,'msg'=>'新建成功','data'=>$result];
+        }else{
+            return ['code'=>100,'msg'=>$this->Bill->getError()];
+        }
+    }
+    
+    // 订单支付
+    public function pay($data,$map){
+        $data['pay_time'] = time();
+        $result = $this->Bill->save($data,$map);      
+        if($result){
+            $billInfo = $this->Bill->where($map)->find();
+            $billData = $billInfo->toArray();
+            $res = $this->finishBill($billData);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+
+
+    /**
+    * 订单支付完成操作
+    * @param $data 一条订单记录
+    **/
+    private function finishBill($data){
+
         // grade_member操作
         $GradeMember = new GradeMember;
-        $is_student2 = $GradeMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->find();  
-        // 添加一条学生数据     
+        $is_student2 = $GradeMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->find();
+        
+
+        // -------------------------------添加一条学生数据
         if(!$is_student2){
         
             if($data['balance_pay']>0){
@@ -92,13 +125,21 @@ class BillService {
             }
             
         }
-        
-        if($result){
-        //购买人数+1;
-            if($data['goods_type'] == 1){
-                
+        // -------------------------------结束增加学生数据
+
+
+
+        //--------------------------------开始课程操作,包括(模板消息发送,camp\camp_mamber和lesson的数据更新)
+        if($data['goods_type'] == 1){
+                //购买人数+1;
                 db('lesson')->where(['id'=>$data['goods_id']])->setInc('students');
-                db('camp')->where(['id'=>$data['camp_id']])->setInc('total_member');
+                // 训练营的余额增加
+                $setting = db('setting')->find();
+                $campBlance = ($data['balance_pay']*(1-$setting['sysrebate']));
+                $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
+                if($resss){
+                    db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$setting['sysrebate']),'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time()]);
+                }
                 // 发送个人消息
                 $MessageService = new \app\service\MessageService;
                 $MessageData = [
@@ -167,22 +208,10 @@ class BillService {
                 }
                 $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
                 $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
-
             }
-            // 训练营的余额增加
-            $setting = db('setting')->find();
-            $campBlance = ($data['balance_pay']*(1-$setting['sysrebate']));
-            $resss = db('camp')->where(['id'=>$data['camp_id']])->setInc('balance',$campBlance);
-            if($resss){
-                db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'income'=>$data['balance_pay']*(1-$setting['sysrebate']),'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time()]);
-            }
-            return ['code'=>200,'msg'=>'新建成功','data'=>$result];
-        }else{
-            return ['code'=>100,'msg'=>$this->Bill->getError()];
-        }
+            // -------------------------------结束课程操作
+            return true;
     }
-    
-
 
     //判断订单付款金额
     public function isPay($map){
@@ -204,8 +233,6 @@ class BillService {
             case '1':
                 if($billInfo['status'] != 1){
                     return ['code'=>100,'msg'=>'该订单状态不支持退款申请'];
-                }else if($billInfo['member_id'] != session('mmeberInfo.id')){
-                    return ['code'=>100,'msg'=>'不是您的订单不可以申请退款'];
                 }else{
                     if($billInfo['goods_type'] == 1){
                         // 查询剩余课时

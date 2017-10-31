@@ -1,12 +1,12 @@
 <?php 
 namespace app\api\controller;
 use app\api\controller\Base;
-use app\service\BillServiceTest;
-class BillTest extends Frontend{
-	protected $BillServiceTest;
+use app\service\BillService;
+class Bill extends Frontend{
+	protected $BillService;
 	public function _initialize(){
 		parent::_initialize();
-        $this->BillServiceTest = new BillServiceTest;
+        $this->BillService = new BillService;
 	}
 
 
@@ -25,7 +25,7 @@ class BillTest extends Frontend{
                 $map['balance_pay'] = 0;
             }
             $result['count'] = count($result);
-            $result = $this->BillServiceTest->getBillList($map,$page);
+            $result = $this->BillService->getBillList($map,$page);
             return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -43,8 +43,9 @@ class BillTest extends Frontend{
             if($balancePay == -1){
                 $map['balance_pay'] = 0;
             }
+            // $map['member_id'] = $this->memberInfo['id'];
 
-            $result = $this->BillServiceTest->getBillListByPage($map);
+            $result = $this->BillService->getBillListByPage($map);
             return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -64,9 +65,9 @@ class BillTest extends Frontend{
             $data['member_id'] = $this->memberInfo['id'];
             $data['avatar'] = $this->memberInfo['avatar'];
             if($bill_id){
-                $result = $this->BillServiceTest->updateBill($data,['id'=>$bill_id]);
+                $result = $this->BillService->updateBill($data,['id'=>$bill_id]);
             }else{
-                $result = $this->BillServiceTest->createBill($data);
+                $result = $this->BillService->createBill($data);
             }
             return json($result);
         
@@ -78,15 +79,15 @@ class BillTest extends Frontend{
 
    public function payApi(){
         try{
-            $bill_order = input('param.bill_order');
+            $bill_id = input('param.bill_order');
             $data = input('post.');
             $data['status'] = 1;
             $data['is_pay'] = 1;
-            $result = $this->BillServiceTest->pay($data,['bill_order'=>$bill_order]);  
+            $result = $this->BillService->pay($data,['$bill_order'=>$bill_order]);  
             if($result){
-                return json(['code'=>200,'msg'=>'支付成功']);
+                    return json(['code'=>200,'msg'=>'支付成功']);
             }else{
-                return json(['code'=>100,'msg'=>'该订单状态已失效']);
+                    return json(['code'=>100,'msg'=>'该订单状态已失效']);
             }  
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
