@@ -7,7 +7,7 @@ use app\service\GradeService;
 use think\Exception;
 
 class Lesson extends Base{
-	protected $this->LessonServiceervice;
+	protected $LessonService;
 	protected $GradeService;
 	public function _initialize(){
 		$this->LessonService = new LessonService;
