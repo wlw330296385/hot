@@ -52,9 +52,9 @@ class EventService {
         $result = Event::where($map)->find();
         if ($result){
             $res = $result->toArray();
-            $data['event_times'] = date('Y-m-d H:i',$data['event_time']);
-            $data['ends'] = date('Y-m-d H:i',$data['end']);
-            $data['starts'] = date('Y-m-d H:i',$data['start']);
+            $res['event_times'] = date('Y-m-d H:i',$res['event_time']);
+            $res['ends'] = date('Y-m-d H:i',$res['end']);
+            $res['starts'] = date('Y-m-d H:i',$res['start']);
             return $res;
         }else{
             return $result;
