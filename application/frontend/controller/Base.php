@@ -41,7 +41,7 @@ class Base extends Controller{
         if ( !Cookie::has('mid') ) {
             $this->nologin();
         }
-
+        
         $this->memberInfo = session('memberInfo', '', 'think');
         $this->assign('memberInfo', $this->memberInfo);
         $wechatS = new WechatService();

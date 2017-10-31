@@ -122,6 +122,11 @@ class EventService {
         }
     }
 
+    // 参加活动
+    public function joinEvent($event_id,$member_id,$member){
+        
+    }
+
 
     //关联表的更新
     public function saveAllMmeber($memberData,$event_id,$event){
@@ -139,7 +144,7 @@ class EventService {
     }
 
     // 活动权限
-    public function isPower($organization_id,$member_id){
+    public function isPower($camp_id,$member_id){
         $is_power = db('camp_member')
                     ->where([
                         'camp_id'   =>$organization_id,

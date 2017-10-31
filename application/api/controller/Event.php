@@ -213,4 +213,18 @@ class Event extends Base{
         }
     }
 
+    // 参加活动
+    public function joinEventApi(){
+        try{
+            $event_id = input('param.event_id');
+            $member_id = $this->memberInfo['id'];
+            $member = $this->memberInfo['member'];
+            $result = $this->EventService->joinEvent($event_id,$member_id,$member);
+            return json($result);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
 }
