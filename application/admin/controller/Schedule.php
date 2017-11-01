@@ -26,7 +26,7 @@ class Schedule extends Backend {
             if ($grade) {
                 $map['grade'] = ['like', '%'. $grade .'%'];
             }
-            $field = ['id', 'grade', 'grade_id', 'teacher', 'assistant', 'lesson_date', 'lesson_time', 'court', 'remarks'];
+            $field = ['id', 'grade', 'grade_id', 'coach', 'assistant', 'lesson_time', 'court', 'remarks'];
             $schedule = ScheduleModel::where($map)->field($field)->select();
             $calendar_events = [];
             if ($schedule) {
@@ -57,8 +57,11 @@ class Schedule extends Backend {
         $schedule = $schedule_res['data'];*/
 
         $schedule = ScheduleModel::where(['id' => $id])->find()->toArray();
-        $students = explode(',', $schedule['student_str']);
-
+        if (!empty($schedule['assistant'])) {
+            $schedule['assistant'] = unserialize($schedule['assistant']);
+        }
+        $students = unserialize($schedule['student_str']);
+//        dump($schedule);
 
         $breadcrumb = ['title' => '课时详情', 'ptitle' => '训练营'];
         $this->assign( 'breadcrumb', $breadcrumb );

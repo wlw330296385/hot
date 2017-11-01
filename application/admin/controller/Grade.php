@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 
 use app\admin\controller\base\Backend;
+use app\model\GradeMember;
 use app\service\GradeService;
 use app\service\ScheduleService;
 use app\model\Grade as GradeModel;
@@ -32,7 +33,7 @@ class Grade extends Backend {
             $map['coach'] = ['like', '%'. $coach .'%'];
         }
 
-        $list = GradeModel::where($map)->paginate(15);
+        $list = GradeModel::where($map)->order('id desc')->paginate(15);
 
         $this->assign('list', $list);
         $breadcrumb = [ 'ptitle' => '训练营' , 'title' => '班级管理' ];
@@ -44,10 +45,13 @@ class Grade extends Backend {
     public function show() {
         $id = input('id');
         $grade = GradeModel::get(['id' => $id])->toArray();
+        $gradememberM = new GradeMember();
         $studentsMap['grade_id'] = $id;
-        $studentsMap['type'] = ['in', [1,5]];
-        $studentsMap['status'] = 1;
-        $grade['student'] = Db::name('gradeMember')->where($studentsMap)->select();
+        $gradeStudentList = $gradememberM->where($studentsMap)->select()->toArray();
+        $grade['student'] = $gradeStudentList;
+        if (!empty($grade['assistant'])) {
+            $grade['assistant'] = unserialize($grade['assistant']);
+        }
         $schedule = ScheduleModel::where(['grade_id' => $id])->order('id desc')->select()->toArray();
 
         $this->assign('grade', $grade);

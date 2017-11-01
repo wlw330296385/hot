@@ -61,7 +61,7 @@ class Camp extends Backend {
 
             $update = [
                 'id' => $id,
-                'sys_remarks' => $sys_remarks,
+                'system_remarks' => $sys_remarks,
                 'update_time' => time()
             ];
             $execute = Db::name('camp')->update($update);
@@ -88,7 +88,7 @@ class Camp extends Backend {
             $execute = Db::name('camp')->update([
                 'id' => $campid,
                 'status' => $status,
-                'sys_remarks' => $sys_remarks,
+                'system_remarks' => $sys_remarks,
                 'update_time' => time()
             ]);
 
