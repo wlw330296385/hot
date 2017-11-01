@@ -10,40 +10,52 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
 </head>
 
 <body>
 
-<header id="header" class="mui-bar mui-bar-nav for-tab">
-    <div class="camp-lesson-list">
-        <div class="mui-segmented-control mb">
-            <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id' => $organization_id])}"></a>
-            <a class="mui-control-item mui-active" href="#onlineEventList">上架活动</a>
-            <a class="mui-control-item" href="#offlineEventList">下架活动</a>
-            <a class="mui-control-item" href="{:url('event/createEvent',['organization_id' => $organization_id])}">添加活动</a>
-        </div>
-    </div>
-
-
-</header>
-
-<div class="mui-content">
-
-    <div class="tab-pullRefresh">
-        <div id="onlineEventList" class="mui-scroll-wrapper mui-control-content mui-active">
-            <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b event1 OA_task_event"></ul>
+    <header id="header" class="mui-bar mui-bar-nav for-tab">
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control mb">
+                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id' => $organization_id])}"></a>
+                <a class="mui-control-item mui-active" href="#onlineEventList">上架</a>
+                <a class="mui-control-item" href="#offlineEventList">下架</a>
+                <a class="mui-control-item" href="#outlineEventList">过期</a>
+                <a class="mui-control-item" href="#fulllineEventList">满人</a>
+                <a class="mui-control-item" href="{:url('event/createEvent',['organization_id' => $organization_id])}">添加</a>
             </div>
         </div>
-        <div id="offlineEventList" class="mui-scroll-wrapper mui-control-content">
-            <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b event2 OA_task_event"></ul>
+
+
+    </header>
+
+    <div class="mui-content">
+
+        <div class="tab-pullRefresh">
+            <div id="onlineEventList" class="mui-scroll-wrapper mui-control-content mui-active">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b event1 OA_task_event"></ul>
+                </div>
+            </div>
+            <div id="offlineEventList" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b event2 OA_task_event"></ul>
+                </div>
+            </div>
+            <div id="outlineEventList" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b event3 OA_task_event"></ul>
+                </div>
+            </div>
+            <div id="fulllineEventList" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b event4 OA_task_event"></ul>
+                </div>
             </div>
         </div>
-    </div>
 
-</div>
+    </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -55,8 +67,8 @@
         swipeBack: true //启用右滑关闭功能
     });
 
-    mui("body").on("tap","a",function(){
-        window.top.location.href=this.href;
+    mui("body").on("tap", "a", function () {
+        window.top.location.href = this.href;
     });
 
     $(function () {
@@ -64,6 +76,8 @@
         //初始化全局变量
         var onCount = 1;
         var offCount = 1;
+        var outCount = 1;
+        var fullCount = 1;
 
         mui('#onlineEventList').pullRefresh({
             down: {
@@ -102,6 +116,46 @@
                 contentrefresh: '正在加载...',
                 contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
                 callback: pullupRefreshOff
+            }
+        });
+
+        mui('#outlineEventList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOut
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOut
+            }
+        });
+
+        mui('#fulllineEventList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshFull
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshFull
             }
         });
 
@@ -145,13 +199,53 @@
             }, 100);
         }
 
+        //下拉刷新具体业务实现（过期）
+        function pulldownRefreshOut() {
+            setTimeout(function () {
+                outCount = 1;//刷新并显示第一页
+                var page = outCount;
+                var gType = 1;//代表下拉刷新
+                toList('outlineEventList', page, gType, 3);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（过期）
+        function pullupRefreshOut() {
+            setTimeout(function () {
+                outCount++;//翻下一页
+                var page = outCount;
+                var gType = 2;//代表上拉加载
+                toList('outlineEventList', page, gType, 3);//具体取数据的方法
+            }, 100);
+        }
+
+        //下拉刷新具体业务实现（满人）
+        function pulldownRefreshFull() {
+            setTimeout(function () {
+                fullCount = 1;//刷新并显示第一页
+                var page = fullCount;
+                var gType = 1;//代表下拉刷新
+                toList('fulllineEventList', page, gType, 4);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（满人）
+        function pullupRefreshFull() {
+            setTimeout(function () {
+                fullCount++;//翻下一页
+                var page = fullCount;
+                var gType = 2;//代表上拉加载
+                toList('fulllineEventList', page, gType, 4);//具体取数据的方法
+            }, 100);
+        }
+
 
     })
 
     //接口获取数据并追加到页面
     var toList = function (wList, page, gType, status) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/event/getEventListByPageApi','','',true)}" + '/?page=' + page;
+        var url = "{:url('api/event/getEventListByPageApi',['organization_id'=>$eventInfo['organization_id']])}" + '/?page=' + page;
         var organizationID = "{$organization_id}";
         mui.ajax({
             url: url,
@@ -162,10 +256,9 @@
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
             timeout: 10000,//超时时间设置为10秒；
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             //processData:false,
             success: function (data) {
-
 
                 var newli = '';
                 if (data.code == 200) {
@@ -174,8 +267,10 @@
                         newli += '<li class="mui-table-view-cell mui-media listli">';
                         if (status == 1) {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
-                        } else {
+                        } else if (status == 2) {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                        } else {
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         }
                         newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '"><div class="mui-media-body wd45">' + data.data.data[i].event + '<p class="mui-ellipsis">' + data.data.data[i].event_type + '</p></div><div class="price-frame"><p class="price"></p><p class="address">' + data.data.data[i].area + '</p></div></a></div>';
                         newli += '</li>';
@@ -228,7 +323,7 @@
                     },
                     dataType: 'json',
                     type: 'post',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     success: function (data) {
                         //console.log(data);
                         if (data.code == 200) {
@@ -250,6 +345,6 @@
         });
     });
 
-
 </script>
+
 </html>

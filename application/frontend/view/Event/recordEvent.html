@@ -57,6 +57,7 @@
             color: #AAAAAA;
             line-height: normal;
         }
+        
         .show {
             display: block;
         }
@@ -86,6 +87,7 @@
                             <p class="mui-ellipsis" style="text-indent: 0" data-id="{eventInfo.organization_id}">{$eventInfo.event_type}</p>
                             <input type="hidden" name="organization" value="{$eventInfo.organization}" class="data">
                             <input type="hidden" name="organization_id" value="{$eventInfo.organization_id}" class="data">
+                            <input type="hidden" name="event" value="{$eventInfo.event}" class="data">
                             <input type="hidden" name="event_id" value="{$eventInfo.id}" class="data">
                             <input type="hidden" name="organization_type" value="{$eventInfo.organization_type}" class="data">
                         </div>
@@ -127,31 +129,18 @@
 
             <form action="" class="mui-input-group">
 
-                <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label>活动对象</label>
-                        <span class="select-row ">
-                            <select id="eventObject" class="data" name="targer_type">
-                                <option value="1" >不限</option>
-                                <option value="2" >营内</option>
-                                <option value="3" >班内</option>
-                            </select>
-                        </span>
-                    </div>
-                </div>
-
                 <div class="mui-input-row {eq name='eventInfo.target_type' value='3'}show{else/}hide{/eq}">
                     <a href="#target" class="mui-navigate-right">
                         <label>具体对象</label>
-                        <span class="targetCont domData " name="target" >{$eventInfo.target}</span>
-                        <input type="hidden" name="target_id" value="{$eventInfo.target_id}" class="data">
+                        <span class="targetCont" name="target">{$eventInfo.target}</span>
+                        <input type="hidden" name="target_id" value="{$eventInfo.target_id}" class="">
                     </a>
                 </div>
 
                 <div class="mui-input-row picker btn" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>活动时间</label>
-                        <span id="result" class="ui-alert domData" name="event_times">{$eventInfo.event_time}</span>
+                        <span id="result" class="ui-alert domData" name="event_times">{$eventInfo.event_times}</span>
                     </div>
                 </div>
 
@@ -185,7 +174,7 @@
             </form>
 
             <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen operationBtn" style="color: #fff" onclick="submitAction()">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen operationBtn" style="color: #fff">
                     提交录入
                 </li>
             </ul>
@@ -197,14 +186,12 @@
         <div id="addStudent" class="mui-popover">
             <div class="mui-popover-arrow"></div>
             <div class="page-header">
-                <span class="course wd36"><strong>学员名单</strong></span>
+                <span class="course wd36"><strong>报名名单</strong></span>
                 <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
             </div>
             <div class="mui-scroll-wrapper">
                 <div class="mui-scroll">
-                    <form id="newdiv" class="mui-input-group addStudentList">
-
-                    </form>
+                    <form id="newdiv" class="mui-input-group addStudentList"></form>
                 </div>
             </div>
         </div>
@@ -218,7 +205,7 @@
         <script src="/static/frontend/js/common.js"></script>
         <script src="/static/frontend/js/wooApi.js"></script>
         <script>
-                                                                                                                               var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+            var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'event'])}";
         </script>
         <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
         <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -244,9 +231,7 @@
             })(mui);
 
             //选择器
-            var getProvince = '';
-            var getCity = '';
-            var getArea = '';
+            var getAddress = '';
             (function ($, doc) {
                 $.ready(function () {
                     var _getParam = function (obj, param) {
@@ -263,7 +248,6 @@
                     cityPicker3.pickers[1].setSelectedIndex(2);
                     cityPicker3.pickers[2].setSelectedIndex(2);
 
-
                     cityPicker3.setData(cityData3);
                     var showCityPickerButton = doc.getElementById('showCityPicker3');
                     var cityResult3 = doc.getElementById('cityResult3');
@@ -273,9 +257,7 @@
                             cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
                             //返回 false 可以阻止选择框的关闭
                             //return false;
-                            getProvince = _getParam(items[0], 'text');
-                            getCity = _getParam(items[1], 'text');
-                            getArea = _getParam(items[2], 'text');
+                            getAddress = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
                         });
                     }, false);
 
@@ -306,6 +288,7 @@
                 });
             }
 
+            var memberData = '';
             $(function () {
 
                 //全选
@@ -358,96 +341,91 @@
                     });
                 });
 
-                var str = '';
-                var totalNum = '';
-                var studentList = '';
                 //角标随checkboxCont的数量变化
                 $(document).on('click', '.del', function () {
                     totalNum = $(".checkboxCont").length;
                     $(".mui-badge").text(totalNum);
                 });
 
+                // 选择添加学员点击事件
                 $("#studentConfirm").on('click', function () {
-                    //插入学员列表html
+
+                    $("#inactiveList").empty();
+                    memberData = [];//学员列表数组
+
                     $(".addStudentList input[type=checkbox]:checked").each(function () {
-                        str += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="student" value="' + $(this).attr("data-id") + '" type="checkbox"><input type="hidden" class="stdList eachList" data-id="' + $(this).attr("data-id") + '" data-student="' + $(this).attr("data-student") + '" data-student_id="' + $(this).attr("data-student_id") + '" ></div>';
-                    })
-
-                    // 学员取值
-                    $("input[name='student']").val($("input[name='checkbox-student']:checked").map(function () {
-                        return $(this).val()
-                    }).get().join(","));
-
-                    $(".box").empty();
-                    $(".box").append(str);//在增删按钮前加一行
-                    str = '';
-
-                    //学员列表数组
-                    var inputList = "";
-                    var studentNames = "";
-                    studentList = [];
-                    $("input[name='checkbox-student']:checked").each(function (i) {
+                        var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="student" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
                         var id = $(this).attr("data-id");
-                        var student_id = $(this).attr("data-student_id");
-                        var student = $(this).val();
-                        studentList[i] = { student: student, student_id: student_id, id: id }
-                        inputList += '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id + '" >';
-                        studentNames += student + ','
+                        var member_id = $(this).attr("data-member_id");
+                        var member = $(this).attr("data-member");
+                        var status = $(this).attr("data-status");
+                        $("#inactiveList").append(str);
+                        console.log(id)
+                        console.log(member_id)
+                        memberData.push({ member: member, member_id: member_id, id: id, status: status });
                     });
-                    console.log(studentList)
-                    $("#hideStList").empty();
-                    $("#hideStList").html(inputList);
+
+                    console.log(memberData)
 
                     changeIndex();//调用-更新序号
                     mui("#addStudent").popover("toggle");
                     totalNum = $(".checkboxCont").length;
-                    console.log(totalNum)
                     $(".mui-badge").text(totalNum);
                 });
 
+                // 已报名的人
+                toSignUpList();
 
+                $(".operationBtn").on("click", '', function () {
+                    var data = wooApi.getInputData('input', 'data');
+                    datas = wooApi.getInputData('select', 'data', data);
+                    // 获取其他标签值
+                    arrData = wooApi.getDomData('domData', datas);
+                    var objData = wooApi.arrTOobj(arrData);
+                    objData.memberData = JSON.stringify(memberData);
+                    console.log(memberData);
+                    var url = "{:url('api/event/recordEventApi',['event_id'=>$eventInfo['id']])}";
+                    var ajaxResult = wooApi.asyncF(url, objData);
+                    if (ajaxResult.code == 200) {
+                        mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
+                            window.location.href = "{:url('frontend/event/eventInfoOfCamp',['event_id'=>$eventInfo['id']])}";
+                        })
+                    } else {
+                        mui.alert(ajaxResult.msg, '修改失败', '确定', function () {
+
+                        })
+                    }
+                });
             });
 
-            // 获取数据并进行提交(编辑活动)
-            function submitAction() {
-                var data = wooApi.getInputData('input', 'data');
-                datas = wooApi.getInputData('select', 'data', data);
-                // 获取其他标签值
-                arrData = wooApi.getDomData('domData', datas);
-                console.log(arrData)
-                var objData = wooApi.arrTOobj(arrData);
-                console.log(objData)
-                var url = "{:url('api/event/recordEventApi')}" + '/event_id/{$eventInfo.id}';
-                var ajaxResult = wooApi.asyncF(url, objData);
-                if (ajaxResult.code == 200) {
-                    mui.alert(ajaxResult.msg, '活动录入成功', '确定', function () {
-                        var goUrl = "{:url('event/eventListOfCamp')}" + '/event_id/' + ajaxResult.data;
-                        window.top.location.href = goUrl;
-                    })
-                } else {
-                    mui.alert(ajaxResult.msg, '活动录入失败', '确定', function () {
-
-                    });
-                };
-            };
-
-            //获取已经分配班级的学员列表
-            var studentli = '';
-            var studentLength = '';
-            var toExpStudentList = function () {
-                // 已显示的学员列表
-                studentListArry = [];
-                $("input[name='student']").each(function (i) {
-                    var id = $(this).attr("data-id");
-                    var student_id = $(this).attr("data-student_id");
-                    var student = $(this).attr("data-student");
-                    studentListArry[i] = { student: student, student_id: student_id, id: id }
-                    studentli = studentListArry;
+            //获取已经报名人员列表
+            var toSignUpList = function () {
+                var event_id = "{$eventInfo.id}";
+                mui.ajax("{:url('api/event_member/getEventMemberListNoPageApi',['event_id'=>$eventInfo.id])}", {
+                    data: {
+                        'event_id': event_id,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data)
+                        var div = '';
+                        if (data.code == 200) {
+                            for (var i = 0; i <= data.data.length - 1; i++) {
+                                div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-student" class="student" value="' + data.data[i].member + '" data-member="' + data.data[i].member + '" data-member_id="' + data.data[i].member_id + '" data-status="' + data.data[i].status + '" type="checkbox" data-id="' + data.data[i].id + '"></div>'
+                            }
+                            $("#newdiv").empty();
+                            $("#newdiv").append(div);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
                 });
-                console.log(studentli)
-                changeIndex();//调用-更新序号
-                studentLength = $(".checkboxCont").length;
-                console.log($(".checkboxCont").length);
             };
         </script>
 </body>

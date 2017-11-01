@@ -192,6 +192,7 @@ class Event extends Base{
             $data['member'] = $this->memberInfo['member'];
             if($data['address']){
                 $address = explode(' ', $data['address']);
+                unset($data['address']);
                 $data['province'] = $address[0];
                 $data['city'] = $address[1];
                 if($address[2]){
@@ -202,12 +203,13 @@ class Event extends Base{
             }
             $result = $this->EventService->updateEvent($data,$event_id);
             if($result['code'] == 200){
-                if($data['memberData']){
+                if($data['memberData'] && $data['memberData']!='[]'){
                     $memberData = json_decode($data['memberData'],true);
                     $res = $this->EventService->saveAllMmeber($memberData,$event_id,$data['event']);
                     return json($res);
                 }
             }
+            return $result;
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }

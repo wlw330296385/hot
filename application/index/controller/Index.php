@@ -12,7 +12,7 @@ class Index extends Controller
             echo 'no mid';
         }
         echo request()->url();
-        dump($cookie);die;
+        // dump($cookie);die;
     	return view('Index/index');
     }
 
