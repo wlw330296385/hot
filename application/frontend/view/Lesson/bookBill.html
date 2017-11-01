@@ -67,7 +67,6 @@
                         <label>学员姓名</label>
                         <span class="select-row">
                         <select class="selectStudent">
-                          <option value="" id="student"></option>
                         </select>
                     </span>
                     </a>
@@ -125,8 +124,8 @@
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
-
-<script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
 <script>
     //初始化
     mui.init({
@@ -144,15 +143,13 @@
 
 
 
-        var total = sessionStorage.lessonTotal;
+        var total = 1;
         var total_fee = "{$lessonInfo.cost}"*total;
         var isStudent = false;
-        var student,student_id
-        var studentList = [];
+//        var student,student_id
+//        var studentList = [];
         var strBillInfo = '{$jsonBillInfo}';
-        console.log(strBillInfo);
         var objBillInfo = JSON.parse(strBillInfo);
-        console.log(objBillInfo.goods)
 
     $(function(){
         $('.total').html(total);
@@ -161,15 +158,15 @@
 
 
         //替换学生列表
-        $('.selectStudent').on('change',function(){
-            var index = $('option:selected').index();
-             $('#student').val(studentList[index].id);
-              $('#student').text(studentList[index].student);
-              $('#parent').text(studentList[index].parent);
-              // $('#emergency_telephone').text(studentList[index].emergency_telephone);
-              student = studentList[index].student;
-              student_id = studentList[index].id;
-        })
+//        $('.selectStudent').on('change',function(){
+//            var index = $('option:selected').index();
+//             $('#student').val(studentList[index].id);
+//              $('#student').text(studentList[index].student);
+//              $('#parent').text(studentList[index].parent);
+//              // $('#emergency_telephone').text(studentList[index].emergency_telephone);
+//              student = studentList[index].student;
+//              student_id = studentList[index].id;
+//        })
 
         // 添加学生
         $('#addBtn').on('click','',function(){
@@ -193,19 +190,19 @@
             $('#oldStudent').hide();
             $('#addStudent').show();
         }else{
-            studentList = result.data;
-            $('#student').val(result.data[0].id);
-            $('#student').text(result.data[0].student);
-            $('#parent').text(result.data[0].parent);
+            var studentList = result.data;
+//            $('#student').val(result.data[0].id);
+//            $('#student').text(result.data[0].student);
+//            $('#parent').text(result.data[0].parent);
             // $('#emergency_telephone').text(result.data[0].emergency_telephone);
-            isStudent = true;
             // if(result.data[0].emergency_telephone>0){
             //   isTelephone = true;
             // };
-            student = studentList[0].student;
-            student_id = studentList[0].id;
+//            student = studentList[0].student;
+//            student_id = studentList[0].id;
             // 循环输出其他的学生
-            for (var i = 1; i < studentList.length; i++) {
+            isStudent = true;
+            for (var i = 0; i < studentList.length; i++) {
                 var strhtml = '<option value="'+studentList[i].id+'">'+studentList[i].student+'</option>';
                 $('.selectStudent').append(strhtml)
             }
@@ -215,49 +212,75 @@
 
 
     // 提交学生数据
-      $('#submitBtn').on('click',function(){
-        var arrData = wooApi.getInputData();
-        var objData = wooApi.arrTOobj(arrData);
-        var url = "{:url('api/student/createStudentApi')}";
-        var ajaxResult = wooApi.asyncF(url,objData); 
-        if(ajaxResult.code == 200){
-            mui.toast(ajaxResult.msg);
-            isStudent = true;
-            location.reload() 
+    $('#submitBtn').on('click',function(){
+        var getStudent = $('input[name="student"]').val();
+        if(getStudent!='') {
+            if(isExistOption(getStudent)){
+                mui.alert(getStudent+"已经存在，请 [ 取消添加 ] 返回选择！");
+                return false;
+            }
+            var arrData = wooApi.getInputData();
+            var objData = wooApi.arrTOobj(arrData);
+            var url = "{:url('api/student/createStudentApi')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.toast(ajaxResult.msg);
+                isStudent = true;
+                location.reload()
+            } else {
+                mui.toast(ajaxResult.msg);
+            }
         }else{
-            mui.toast(ajaxResult.msg);
+            mui.alert('必须填写学生姓名，谢谢！');
         }
-      })
+    })
 
-      // 购买成功提交数据
+    //判断要新添加的学生是否存在
+    function isExistOption(newName){
+        var isExist = false;
+        var optName ='';
+        $(".selectStudent option").each(function () {
+            optName = $(this).text();
+            if(newName==optName){
+                isExist = true;
+                return false;
+            }
+        });
+        return isExist;
+    }
+
+    // 购买成功提交数据
     function createBill(){
-      if(!student || !student_id){
-         mui.alert('请先添加学生信息,并点[确定]按钮');
-         return false;
-      }  
-      var remarks = $('.remarks').val();
-      objBillInfo.bill_order = "{$billOrder}";
-      objBillInfo.goods_des = student+'预约体验'+objBillInfo.goods;
-      objBillInfo.total = total;
-      objBillInfo.student_id = student_id;
-      objBillInfo.student = student;
-      objBillInfo.remarks = remarks;
-      objBillInfo.balance_pay = 0;
-      objBillInfo.callback_str = 0;
-      objBillInfo.is_pay = 1;
-      console.log(objBillInfo);
-      var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
-      // console.log(result);
-      // mui.toast(result.msg);
-      if(result.code == 200){
+        //条件1判断是否没数据，条件2判断添加新学生时忘记点确认
+        if(!isStudent||$("#addStudent").is(':visible')){
+             mui.alert('请先添加学生信息，并点 [ 确定 ] 按钮');
+             return false;
+        }
+        var remarks = $('.remarks').val();
+        var student = $('.selectStudent').find("option:selected").text();
+        var student_id = $('.selectStudent').val();
+        objBillInfo.bill_order = "{$billOrder}";
+        objBillInfo.goods_des = student+'预约体验'+objBillInfo.goods;
+        objBillInfo.total = total;
+        objBillInfo.student_id = student_id;
+        objBillInfo.student = student;
+        objBillInfo.remarks = remarks;
+        objBillInfo.balance_pay = 0;
+        objBillInfo.callback_str = 0;
+        objBillInfo.is_pay = 1;
+        console.log(objBillInfo);
+        var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
+        // console.log(result);
+        // mui.toast(result.msg);
+        if(result.code == 200){
           // window.location.href="{:url('frontend/bill/finishBookBill',['bill_order'=>$billOrder])}";
           mui.alert('您的课程体验已预约成功，请留意课程消息及公告。','体验成功','确定',function(){
             window.location.href="{:url('frontend/bill/billList')}";
           });
-          
-      }else{
+
+        }else{
         mui.toast(result.msg);
-      }
+        }
     }
 
       // 获取学生数据
