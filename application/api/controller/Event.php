@@ -192,6 +192,7 @@ class Event extends Base{
             $data['member'] = $this->memberInfo['member'];
             if($data['address']){
                 $address = explode(' ', $data['address']);
+                unset($data['address']);
                 $data['province'] = $address[0];
                 $data['city'] = $address[1];
                 if($address[2]){

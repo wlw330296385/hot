@@ -94,10 +94,10 @@
                 <div class="mui-input-row h-auto">
                     <a href="#student" id="setStudentCBox" class="mui-navigate-right">
                         <label>学员名单</label>
-                        <span class="studentCont students">{volist name="students" id="vol"}{$vol.student},{/volist}</span>
+                        <span class="studentCont students domData" name="student_str"></span>
                         <div id="hideStList">
                             {volist name="students" id="vol"}
-                            <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}">                            {/volist}
+                            <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}">{/volist}
                         </div>
                         <input type="hidden" name="students" class="students data" value="">
                     </a>
@@ -937,8 +937,8 @@
                     // var studentList = [{student:1,student_id:1,id:1},{student:2,student_id:2,id:2}];
                     objData.studentData = JSON.stringify(studentList);
                     //            console.log(studentList);
-                    //             console.log(objData );
-                    //             return false;
+                                console.log(objData );
+                                // return false;
                     var url = "{:url('api/grade/createGradeApi')}";
                     var ajaxResult = wooApi.asyncF(url, objData);
                     if (ajaxResult.code == 200) {
