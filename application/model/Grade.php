@@ -26,8 +26,8 @@ class Grade extends Model {
     }
 
 
-    
+
     public function gradeMember(){
-        return $this->hasMany('grade_member','grade_id');
+        return $this->hasMany('grade_member','grade_id')->field('student,grade_id');
     }
 }
