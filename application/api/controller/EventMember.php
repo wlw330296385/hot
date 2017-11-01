@@ -68,9 +68,11 @@ class EventMember extends Base{
             }
             $EventMember = new \app\model\EventMember;
             $result = $EventMember->where($map)->select();
-                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            if($result){
+
+                return json(['code'=>200,'msg'=>'ok','data'=>$result->toArray()]);
             }else{
-                return json(['code'=>100,'msg'=>'检查你的参数']);
+                return json(['code'=>100,'msg'=>'未查到数据,请检查参数']);
             }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
