@@ -8,6 +8,7 @@ class Student extends Backend {
     // 学员列表
     public function index() {
         // 搜索筛选
+        $map = [];
         if ($cur_camp = $this->cur_camp) {
             $map['camp_id'] = $cur_camp['camp_id'];
         }
@@ -25,13 +26,14 @@ class Student extends Backend {
         }
 
         // 视图查询 grade_member - student
-        $map['type'] = ['in', [1,5]];
-        $map['status'] = ['>', 0];
-        $list = Db::view('student', 'id, student,member_id')
-            ->view('grade_member', 'grade,camp_id,camp,type,status', 'grade_member.student_id=student.id')
-            ->view('member','member,telephone', 'member.id=student.member_id')
-            ->where($map)->paginate(15);
-        //dump($list);
+        $list = Db::view('student', ['id', 'student','member_id'])
+            ->view('member', ['member', 'hot_id','telephone'], 'member.id=student.member_id','LEFT')
+            ->view('grade_member', ['camp', 'camp_id', 'grade', 'grade_id', 'type', 'status'], 'grade_member.student_id=student.id', 'LEFT')
+            ->where($map)
+            ->where('grade_member.delete_time', null)
+            ->order(['student.id'=>'desc'])
+            ->paginate(15);
+
 
         $breadcrumb = ['title' => '学员列表', 'ptitle' => '训练营'];
         $this->assign('breadcrumb', $breadcrumb);
