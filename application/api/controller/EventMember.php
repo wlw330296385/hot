@@ -67,16 +67,12 @@ class EventMember extends Base{
                 unset($map['keyword']);
             }
             $EventMember = new \app\model\EventMember;
-            $result = $EventMember->where($map)->select()->toArray();
+            $result = $EventMember->where($map)->select();
             if($result){
-                foreach ($result as $k => $val) {
-                    $temp = $EventMember->where(['id' => $val['id']])->find()->getData();
-                    $result[$k]['status_num'] = $temp['status'];
-                    $result[$k]['type_num'] = $temp['type'];
-                }
-                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+
+                return json(['code'=>200,'msg'=>'ok','data'=>$result->toArray()]);
             }else{
-                return json(['code'=>100,'msg'=>'检查你的参数']);
+                return json(['code'=>100,'msg'=>'未查到数据,请检查参数']);
             }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

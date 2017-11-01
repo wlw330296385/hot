@@ -19,7 +19,7 @@ class EventVal extends Validate{
         'event.require'        =>  '请填写活动主题',
         'event_type.require'	=> '请填写活动类型',
         'start'           =>'活动时间必须大于当前时间',
-        'end'   =>'活动时间必须大于当前时间',
+        'end'           =>'活动时间必须大于当前时间',
         'province'              =>'请填写所属地区',
         'city'                  =>'请填写所属地区',
         'area'                  =>'请填写所属地区',
