@@ -49,4 +49,5 @@ class GradeMember extends Model {
     public function student(){
     	return $this->hasOne('student','id','student_id',[],'left join');
     }
+
 }
