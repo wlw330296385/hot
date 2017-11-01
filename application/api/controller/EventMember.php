@@ -67,8 +67,9 @@ class EventMember extends Base{
                 unset($map['keyword']);
             }
             $EventMember = new \app\model\EventMember;
-            $result = $EventMember->where($map)->select()->toArray();
-            if($result){
+            $res = $EventMember->where($map)->select();
+            if($res){
+                $result = $res->toArray();
                 foreach ($result as $k => $val) {
                     $temp = $EventMember->where(['id' => $val['id']])->find()->getData();
                     $result[$k]['status_num'] = $temp['status'];
