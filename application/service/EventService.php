@@ -103,15 +103,15 @@ class EventService {
                 return ['code'=>100,'msg'=> __lang('MSG_403')];
             }
         }
-        $validate = validate('EventVal');
-        if(!$validate->scene('add')->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 100];
-        }
         if(isset($data['starts'])){
             $data['start'] = strtotime($data['starts']);
         }
         if(isset($data['ends'])){
             $data['end'] = strtotime($data['ends']);
+        }
+        $validate = validate('EventVal');
+        if(!$validate->scene('add')->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
         $result = $this->EventModel->save($data);
         if($result){
@@ -134,7 +134,7 @@ class EventService {
             $result = $this->EventModel->where(['id'=>$event_id])->setInc('participator');
                 // 更改状态
                 if($eventInfo['max'] <= ($eventInfo['participator']+1)){
-                    $this->EventModel->where(['id'=>$event_id])->save(['status'=>4]);
+                    $this->EventModel->save(['status'=>4],['id'=>$event_id]);
                 }
             return ['msg'=>'加入成功','code'=>200,'data'=>$eventInfo];
         }else{ 
