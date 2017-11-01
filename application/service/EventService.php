@@ -128,6 +128,11 @@ class EventService {
         if($eventInfo['status']!= '正常'){
             return ['msg'=>"该活动已{$eventInfo['status']},不可再参与", 'code' => 100];
         }
+        // 查询是否已报名
+        $is_join = $this->EventMemberModel->get(['id'=>$event_id,'member_id'=>$member_id]);
+        if($is_join){
+            return ['msg'=>"您已报名,不可重复报名", 'code' => 100];
+        }
         $saveData = ['event_id'=>$eventInfo['id'],'event'=>$eventInfo['event'],'member_id'=>$member_id,'member'=>$member,'status'=>1];
         $res = $this->EventMemberModel->save($saveData);
         if($res){
