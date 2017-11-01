@@ -183,4 +183,30 @@ class Camp extends Backend {
             $this->success(__lang('MSG_200'));
         }
     }
+
+    // 修改训练营状态
+    public function editstatus() {
+        $id = input('id');
+        $campObj = CampModel::get($id);
+        $camp = $campObj->toArray();
+        $camp['status_num'] = $campObj->getData('status');
+//        dump($camp);
+        $setcampstatus = 0;
+        if ($camp['status_num'] == 1) { // 执行下架
+            $lessonM = new \app\model\Lesson();
+            $lessonM->where(['camp_id' => $camp['id'], 'status'=>1])->setField('status', -1);
+            $setcampstatus = 2;
+        } else { // 执行上架或审核通过
+            $setcampstatus = 1;
+        }
+        $result = CampModel::where('id', $camp['id'])->update(['status'=>$setcampstatus]);
+        $Auth = new AuthService();
+        if ( $result ) {
+            $Auth->record('训练营id:'. $id .' 更新状态 成功');
+            $this->success(__lang('MSG_200'), 'camp/index');
+        } else {
+            $Auth->record('训练营id:'. $id .' 更新状态 失败');
+            $this->error(__lang('MSG_400'));
+        }
+    }
 }
