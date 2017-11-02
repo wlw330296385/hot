@@ -22,7 +22,7 @@
     </style>
 </head>
 
-<body>
+<body class="whitebg">
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回活动列表</span></a>
@@ -31,7 +31,7 @@
 
     <div class="mui-content">
 
-        <div class="camp-list camp-lesson-list">
+        <div class="camp-list camp-lesson-list detalis-list">
 
             <ul class="mui-table-view list mb">
                 <li class="mui-table-view-cell mui-media listli">
@@ -49,23 +49,31 @@
             </ul>
 
 
-            <ul class="mui-table-view list">
+            <ul class="mui-table-view list mt55">
                 <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
                 <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='2||3'}show{else/}hide{/eq}">所属训练营<span>{$eventInfo.organization}</span></li>
                 <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='3'}show{else/}hide{/eq}">所属班级<span>{$eventInfo.target}</span></li>
                 <li class="mui-table-view-cell listli">活动开始时间<span>{$eventInfo.starts}</span></li>
                 <li class="mui-table-view-cell listli">活动结束时间<span>{$eventInfo.ends}</span></li>
+                <!--<li class="mui-table-view-cell listli">活动时间<span>{$eventInfo.event_times}</span></li>-->
                 <li class="mui-table-view-cell listli">所属地区<span>{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span></li>
                 <li class="mui-table-view-cell listli">活动地点<span>{$eventInfo.location}</span></li>
                 <li class="mui-table-view-cell listli">人数范围<span>{$eventInfo.min}-{$eventInfo.max}人</span></li>
                 <li class="mui-table-view-cell listli">联系人<span>{$eventInfo.contract}</span></li>
                 <li class="mui-table-view-cell listli">联系电话<span>{$eventInfo.telephone}</span></li>
-                <li class="mui-table-view-cell listli">活动简介<span>{$eventInfo.event_des}</span></li>
+                <!--<li class="mui-table-view-cell listli detalisli " style="line-height:40px;">参加人员
+                    <span class="mui-navigate-right wd73 " id="coachlist" style="height: 40px;overflow: hidden">
+                        <img class="coachicon" src="/static/frontend/images/2.jpg">
+                    </span>
+                </li>-->
+                <li class="mui-table-view-cell listli border-b">活动简介<span>{$eventInfo.event_des}</span></li>
             </ul>
 
-            <div class="tjbtn tjbtn-next">
-                <a href="{:url('event/recordEvent',['event_id'=>$eventInfo['id']])}"><button type="button" class="btn emailBtn">活动录入</button></a>
-            </div>
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen"><a href="{:url('event/recordEvent',['event_id'=>$eventInfo['id']])}">活动录入</a></li>
+                </li>
+            </ul>
+
         </div>
     </div>
 

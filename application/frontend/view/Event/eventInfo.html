@@ -20,7 +20,7 @@
     </header>
     <!--活动详情页-->
     <div class="mui-content" style="padding: 0">
-        <div class="list camp-list">
+        <div class="list camp-list detalis-list">
             <div class="img4x3" style="background-image:url('{$eventInfo.cover}')"></div>
             <ul class="mui-table-view mb" style="margin-top: -4px">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
@@ -31,22 +31,30 @@
                         </div>
                         <div class="price-frame">
                             <p class="price">￥{$eventInfo.price}<span class="nofloat"> / 费用</span></p>
+                            <p class="price"><span class="nofloat">已报名{$eventInfo.participator}人</span></p>
                         </div>
                     </a>
                 </li>
             </ul>
             <ul class="mui-table-view mt55">
-                <li class="mui-table-view-cell listli">所属训练营<span class="wd66" id="aaa">{$eventInfo.organization} {$eventInfo.target}</span></li>
+                <li class="mui-table-view-cell listli">所属训练营<span>{$eventInfo.organization} {$eventInfo.target}</span></li>
                 <li class="mui-table-view-cell listli">活动开始时间<span>{$eventInfo.starts}</span></li>
                 <li class="mui-table-view-cell listli">活动结束时间<span>{$eventInfo.ends}</span></li>
+                <!--<li class="mui-table-view-cell listli">活动时间<span>{$eventInfo.event_times}</span></li>-->
                 <li class="mui-table-view-cell listli">所属地区<span>{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span></li>
                 <li class="mui-table-view-cell listli">活动地点<span>{$eventInfo.location}</span></li>
                 <li class="mui-table-view-cell listli">人数范围<span>{$eventInfo.min}-{$eventInfo.max}人</span></li>
                 <li class="mui-table-view-cell listli">联系人<span>{$eventInfo.contract}</span></li>
                 <li class="mui-table-view-cell listli">联系电话<span>{$eventInfo.telephone}</span></li>
+                <!--<li class="mui-table-view-cell listli detalisli" style="line-height:40px;">参加人员
+                    <span class="mui-navigate-right wd73 " id="coachlist" style="height: 40px;overflow: hidden">
+                        <img class="coachicon" src="/static/frontend/images/2.jpg">
+                    </span>
+                </li>-->
                 <li class="mui-table-view-cell listli border-b">活动简介<span>{$eventInfo.event_des}</span></li>
             </ul>
 
+            <!--报名状态-->
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli"><a href="tel:{$eventInfo.telephone}"><span
                     class="mui-icon mui-icon-phone"></span>电话咨询</a></li>
@@ -55,26 +63,15 @@
                 </li>
             </ul>
 
-        </div>
-    </div>
-
-    <!-- 咨询弹框 -->
-    <div id="pjpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
-            <ul class="mui-table-view operation">
-                <h5><span>留言咨询</span>
-                    <a href="#pjpopover" class="mui-icon mui-icon-closeempty"></a>
-                </h5>
-                <li class="mui-table-view-cell listli">
-                    <textarea rows="4" name="comment" class="data"></textarea>
-                    <input type="hidden" name="camp_id" value="" class="data">
-                    <input type="hidden" name="camp" value="" class="data">
-
+            <!--结束状态-->
+            <!--<ul class="mui-table-view">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen">报名人数已满</a>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="commentSubmit">提交</li>
-            </ul>
+            </ul>-->
+
         </div>
     </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
     <script>
@@ -85,21 +82,6 @@
 
         $(function () {
 
-            //留言咨询功能
-            $("#commentSubmit").on('click', function () {
-                //判断是否登陆会员
-                var data1 = wooApi.getInputData();
-                // var data2 = wooApi.getInputData('textarea','data',data1);
-                var comment = $('textarea.data').val();
-                var objData = wooApi.arrTOobj(data1);
-                objData.comment = comment;
-                var result = wooApi.asyncF("{:url('api/event/createEventCommentApi')}", objData);
-                if (result) {
-                    mui.toast(result.msg);
-                    mui('#pjpopover').popover('toggle');
-                }
-            });
-
             $(".signupbtn").on("click", '', function () {
                 var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
                 mui.ajax(url, {
@@ -108,8 +90,8 @@
                         member_id: "{$memberInfo.id}",
                         event: "{$eventInfo.event}",
                         event_id: "{$eventInfo.id}",
-                        is_pay: 1,
-                        is_sign: 1,
+                        // is_pay: 1,
+                        // is_sign: 1,
                         status: 1,
                     },
                     dataType: 'json',//服务器返回json格式数据
@@ -133,17 +115,6 @@
                     }
                 });
             });
-
-            // var buyUrl = "{:url('event/comfirmBill',['event_id'=>$eventInfo['id']])}";
-
-            // function buy(){
-
-            //     if ( "{$memberInfo.id}"<=0) {
-            //         var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
-            //         mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
-            //     }else{
-            //         window.location.href = buyUrl;
-            //     }
 
         });
     </script>
