@@ -113,7 +113,7 @@
                         <label>活动人员</label>
                     </div>
                     <div class="box" id="inactiveList">
-
+                       
                     </div>
 
                     <div class="operation-btn">
@@ -121,7 +121,7 @@
                         <a class="all">全选</a>
                         <a class="cancel">取消</a>
                         <a class="del">[删除]</a>
-                        <a href="#addStudent" id="setStudentCBox" class="mui-icon mui-icon-personadd add"></a>
+                        <a href="#addMember" id="setMemberBox" class="mui-icon mui-icon-personadd add"></a>
                     </div>
                 </form>
 
@@ -183,15 +183,15 @@
 
 
         <!--学员名单-->
-        <div id="addStudent" class="mui-popover">
+        <div id="addMember" class="mui-popover">
             <div class="mui-popover-arrow"></div>
             <div class="page-header">
                 <span class="course wd36"><strong>报名名单</strong></span>
-                <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
+                <span class="fr"><button class="mui-btn-blue" id="memberConfirm">确认</button></span>
             </div>
             <div class="mui-scroll-wrapper">
                 <div class="mui-scroll">
-                    <form id="newdiv" class="mui-input-group addStudentList"></form>
+                    <form id="newdiv" class="mui-input-group addMemberList"></form>
                 </div>
             </div>
         </div>
@@ -304,7 +304,7 @@
 
                 //删除
                 $(".del").click(function () {
-                    $("input[name='student']:checked").each(function () { // 遍历选中的checkbox
+                    $("input[name='member']:checked").each(function () { // 遍历选中的checkbox
                         var n = $(this).parents("checkboxCont").index();  // 获取checkbox所在行的顺序
                         $(".checkboxCont:eq(" + n + ")").remove();
                     });
@@ -327,17 +327,17 @@
                     mui("#cost").popover("toggle");
                 })
 
-                //学员列表复选框赋值
-                $("#setStudentCBox").on('tap', '', function () {
+                //报名人员列表复选框赋值
+                $("#setMemberBox").on('tap', '', function () {
                     //每次打开先清空所有选择
-                    $("input[name='checkbox-student']").prop("checked", false);
+                    $("input[name='checkbox-member']").prop("checked", false);
                     //然后遍历出对应所选
                     $(".stdList").each(function (i) {
                         var id = $(this).attr("data-id");
-                        var student_id = $(this).attr("data-student_id");
-                        var student = $(this).attr("data-student");
-                        $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
-                            return $(this).attr("data-student_id") == student_id
+                        var member_id = $(this).attr("data-member_id");
+                        var member = $(this).attr("data-member");
+                        $("#newdiv").find("input[name='checkbox-member']").filter(function (index) {
+                            return $(this).attr("data-member_id") == member_id
                         }).prop("checked", true);
                     });
                 });
@@ -348,14 +348,14 @@
                     $(".mui-badge").text(totalNum);
                 });
 
-                // 选择添加学员点击事件
-                $("#studentConfirm").on('click', function () {
+                // 选择添加报名人员点击事件
+                $("#memberConfirm").on('click', function () {
 
                     $("#inactiveList").empty();
-                    memberData = [];//学员列表数组
+                    memberData = [];//报名人员列表数组
 
-                    $(".addStudentList input[type=checkbox]:checked").each(function () {
-                        var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="student" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
+                    $(".addMemberList input[type=checkbox]:checked").each(function () {
+                        var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
                         var id = $(this).attr("data-id");
                         var member_id = $(this).attr("data-member_id");
                         var member = $(this).attr("data-member");
@@ -363,13 +363,13 @@
                         $("#inactiveList").append(str);
                         console.log(id)
                         console.log(member_id)
-                        memberData.push({ member: member, member_id: member_id, id: id, status: 3});
+                        memberData.push({ member: member, member_id: member_id, id: id, status: 3 });
                     });
 
                     console.log(memberData)
 
                     changeIndex();//调用-更新序号
-                    mui("#addStudent").popover("toggle");
+                    mui("#addMember").popover("toggle");
                     totalNum = $(".checkboxCont").length;
                     $(".mui-badge").text(totalNum);
                 });
@@ -388,11 +388,11 @@
                     var url = "{:url('api/event/recordEventApi',['event_id'=>$eventInfo['id']])}";
                     var ajaxResult = wooApi.asyncF(url, objData);
                     if (ajaxResult.code == 200) {
-                        mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
-                            window.location.href = "{:url('frontend/event/eventInfoOfCamp',['event_id'=>$eventInfo['id']])}";
+                        mui.alert(ajaxResult.msg, '活动录入成功', '确定', function () {
+                            window.location.href = "{:url('frontend/event/eventListOfCamp',['event_id'=>$eventInfo['id']])}";
                         })
                     } else {
-                        mui.alert(ajaxResult.msg, '修改失败', '确定', function () {
+                        mui.alert(ajaxResult.msg, '活动录入失败', '确定', function () {
 
                         })
                     }
@@ -416,7 +416,7 @@
                         var div = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-student" class="student" value="' + data.data[i].member + '" data-member="' + data.data[i].member + '" data-member_id="' + data.data[i].member_id + '" data-status="' + data.data[i].status + '" type="checkbox" data-id="' + data.data[i].id + '"></div>'
+                                div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-member" class="member" value="' + data.data[i].member + '" data-member="' + data.data[i].member + '" data-member_id="' + data.data[i].member_id + '" data-status="' + data.data[i].status + '" type="checkbox" data-id="' + data.data[i].id + '"></div>'
                             }
                             $("#newdiv").empty();
                             $("#newdiv").append(div);
