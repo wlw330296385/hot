@@ -60,7 +60,6 @@ class Student extends Base
 			$data = input('post.');
 			$data['member'] = $this->memberInfo['member'];
 			$data['member_id'] = $this->memberInfo['id'];
-			$data['emergency_telephone'] = $this->memberInfo['telephone'];
 			$result = $this->studentService->createStudent($data);
 			return json($result);
 		}catch (Exception $e){

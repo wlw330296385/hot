@@ -62,7 +62,8 @@ class Event extends Base{
     }
 
     public function eventList() {
-        
+        $target_type = input('param.target_type/d', 1);
+        $this->assign('target_type', $target_type);
         return view('Event/eventList');
     }
 
