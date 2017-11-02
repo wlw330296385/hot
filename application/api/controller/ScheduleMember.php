@@ -11,6 +11,7 @@ class ScheduleMember extends Base{
         $this->ScheduleMemberService = new ScheduleMemberService;
 	}
 
+    // 获取训练营下的课程
     public function getScheduleMemberListOfCampByPageApi(){
         try{
             $map = input('post.');
@@ -37,7 +38,7 @@ class ScheduleMember extends Base{
             $map = input('post.');
             $keyword = input('param.keyword');
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
-                $map['student'] = ['LIKE','%'.$keyword.'%'];
+                $map['user'] = ['LIKE','%'.$keyword.'%'];
             } 
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
@@ -54,13 +55,13 @@ class ScheduleMember extends Base{
     }
 
    
-    // 获取与课程|班级|训练营相关的学生|体验生-不带page
+    // 获取课时-不带page
     public function getScheduleMemberListNoPageApi(){
         try{
             $map = input('post.');
             $keyword = input('param.keyword');
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
-                $map['student'] = ['LIKE','%'.$keyword.'%'];
+                $map['user'] = ['LIKE','%'.$keyword.'%'];
             } 
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
@@ -69,13 +70,7 @@ class ScheduleMember extends Base{
             $result = $ScheduleMember->where($map)->select();
 
             if($result){
-                $res = $result->toArray();
-                foreach ($res as $k => $val) {
-                    $temp = $ScheduleMember->where(['id' => $val['id']])->find()->getData();
-                    $res[$k]['status_num'] = $temp['status'];
-                    $res[$k]['type_num'] = $temp['type'];
-                }
-                return json(['code'=>200,'msg'=>'ok','data'=>$res]);
+                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
                 return json(['code'=>100,'msg'=>'检查你的参数']);
             }

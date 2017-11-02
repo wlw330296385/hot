@@ -28,7 +28,7 @@ class ScheduleMemberService{
     }
 
     public function getScheduleMemberListOfCampByPage($map,$paginate = 10){
-        $result = $this->scheduleMemberModel->distinct('true')->field('user_id')->where($map)->paginate($paginate);
+        $result = $this->scheduleMemberModel->distinct('true')->field('schedule_id')->where($map)->paginate($paginate);
         if($result){
             return $result->toArray();
         }
