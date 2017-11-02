@@ -11,6 +11,15 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .show {
+            display: block;
+        }
+        
+        .hide {
+            display: none;
+        }
+    </style>
 </head>
 
 <body class=whitebg>
@@ -37,7 +46,9 @@
                 </li>
             </ul>
             <ul class="mui-table-view mt55">
-                <li class="mui-table-view-cell listli">所属训练营<span>{$eventInfo.organization} {$eventInfo.target}</span></li>
+                <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
+                <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='2||3'}show{else/}hide{/eq}">所属训练营<span>{$eventInfo.organization}</span></li>
+                <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='3'}show{else/}hide{/eq}">所属班级<span>{$eventInfo.target}</span></li>
                 <li class="mui-table-view-cell listli">活动开始时间<span>{$eventInfo.starts}</span></li>
                 <li class="mui-table-view-cell listli">活动结束时间<span>{$eventInfo.ends}</span></li>
                 <!--<li class="mui-table-view-cell listli">活动时间<span>{$eventInfo.event_times}</span></li>-->
