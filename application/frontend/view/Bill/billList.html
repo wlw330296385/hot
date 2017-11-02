@@ -110,13 +110,18 @@
     var campID = wooApi.GetQueryString('camp_id');
     var member_id = wooApi.GetQueryString('member_id');
     var toUrl ;
+    var backUrl;
     if(campID){
         postData.camp_id = campID;
-        toUrl = "{:url('bill/billInfoOfCamp')}"
+        toUrl = "{:url('bill/billInfoOfCamp')}";
+        backUrl = "{:url('camp/powerCamp')}"+"/camp_id/"+campID;
+        $(".mui-icon-left-nav").attr("href",backUrl);
     }
     if(member_id){
         postData.member_id = member_id;
         toUrl = "{:url('bill/billInfo')}";
+        backUrl = "{:url('member/index')}";
+        $(".mui-icon-left-nav").attr("href",backUrl);
     }
 
     $(function () {
