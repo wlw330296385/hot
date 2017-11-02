@@ -32,7 +32,7 @@ class GradeService{
                 ->order($order)
                 ->paginate($paginate);
                 // echo $this->GradeModel->getlastsql();die;
-                
+
         if($result){
             $res = $result->toArray();
             return $res;
@@ -178,8 +178,5 @@ class GradeService{
         return $result;
     }
 
-    public function getGradeListOfCoachByPage(){
-
-    }
 
 }

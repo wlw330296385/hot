@@ -172,6 +172,21 @@ class Schedule extends Base
 		}
 	}
 
+	//获取教练的课时列表有page
+	public function getScheduleListOfCoachByPageApi(){
+		try{
+			$coach_id = input('param.coach_id');
+			$map = function ($query) use ($coach_id){
+                $query->where(['schedule.coach_id'=>$coach_id])->whereOr('schedule.assistant_id','like',"%\"$coach_id\"%");
+            };
+			$result = $this->ScheduleService->getScheduleListByPage($map);
+			return json(['code' => 200, 'msg'=> __lang('MSG_201'),'data'=>$result]);
+		}catch (Exception $e){
+			return json(['code'=>100,'msg'=>$e->getMessage()]);
+		}
+	}
+
+
 
 	//获取开始时间和结束时间的列表带page
 	public function getScheduleListBetweenTimeByPageApi(){
