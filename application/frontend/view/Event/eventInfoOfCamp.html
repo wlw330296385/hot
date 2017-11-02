@@ -11,12 +11,21 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .show {
+            display: block;
+        }
+        
+        .hide {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a href="" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回活动列表</span></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回活动列表</span></a>
         <h1 class="mui-title">{$eventInfo.organization}</h1>
     </header>
 
@@ -41,7 +50,9 @@
 
 
             <ul class="mui-table-view list">
-                <li class="mui-table-view-cell listli">所属训练营<span>{$eventInfo.target}</span></li>
+                <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
+                <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='2||3'}show{else/}hide{/eq}">所属训练营<span>{$eventInfo.organization}</span></li>
+                <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='3'}show{else/}hide{/eq}">所属班级<span>{$eventInfo.target}</span></li>
                 <li class="mui-table-view-cell listli">活动开始时间<span>{$eventInfo.starts}</span></li>
                 <li class="mui-table-view-cell listli">活动结束时间<span>{$eventInfo.ends}</span></li>
                 <li class="mui-table-view-cell listli">所属地区<span>{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span></li>
@@ -51,6 +62,10 @@
                 <li class="mui-table-view-cell listli">联系电话<span>{$eventInfo.telephone}</span></li>
                 <li class="mui-table-view-cell listli">活动简介<span>{$eventInfo.event_des}</span></li>
             </ul>
+
+            <div class="tjbtn tjbtn-next">
+                <a href="{:url('event/recordEvent',['event_id'=>$eventInfo['id']])}"><button type="button" class="btn emailBtn">活动录入</button></a>
+            </div>
         </div>
     </div>
 
