@@ -113,8 +113,8 @@ class StudentService{
     }
 
      // 获取用户学生列表
-    public function getStudentList($map,$page = 1,$paginate = 10){
-        $result = $this->studentModel->where($map)->page($page,$paginate)->select();
+    public function getStudentList($map,$page = 1,$order = 'id desc',$paginate = 10){
+        $result = $this->studentModel->where($map)->order($order)->page($page,$paginate)->select();
 
         if($result){
 			$res = $result->toArray();

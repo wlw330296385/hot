@@ -255,4 +255,21 @@ class Grade extends Base{
         }
 
     }
+
+
+    // 获取教练下的班级
+    public function getGradeListOfCoachByPageApi(){
+        try{
+            $coach_id = input('param.coach_id');
+            $map = function ($query) use ($coach_id){
+                $query->where(['grade.coach_id'=>$coach_id])->whereOr('grade.assistant_id','like',"%\"$coach_id\"%");
+            };
+            $result = $this->GradeService->getGradeListByPage($map);
+            return json($result);
+        }catch (Exception $e){
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+
 }
