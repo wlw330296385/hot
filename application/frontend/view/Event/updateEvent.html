@@ -384,6 +384,20 @@
 
         // 获取数据并进行提交(编辑活动)
         function submitAction() {
+
+            if ($("#eventPrice option:selected").text() == "收费") {
+                var price = $("input[name=price]").val();
+                if (!(/^[0-9]*$/).test(price)) {
+                    mui.alert("活动单价请输入数字");
+                    return;
+                }
+            };
+            
+            if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
+                mui.alert("请输入正确的手机格式");
+                return;
+            };
+            
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值

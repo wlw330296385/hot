@@ -107,7 +107,7 @@
                     <input type="text" name="price" class="data" value="" placeholder="请填写活动单价">
                 </div>
 
-                <div class="mui-input-row price-input-row" >
+                <div class="mui-input-row price-input-row">
                     <a href="#cost" class="mui-navigate-right">
                         <label>费用结算人</label>
                         <span class="costCont domData" name="finance"></span>
@@ -169,7 +169,7 @@
 
                 <div class="mui-input-row">
                     <label>联系电话</label>
-                    <input type="text" name="telephone" class="data" value="" placeholder="请输入联系电话">
+                    <input type="text" name="telephone" class="data telephoneBlur" value="" placeholder="请输入联系电话">
                 </div>
 
                 <div class="mui-input-row h-auto mt55">
@@ -323,7 +323,7 @@
 
         $(function () {
             // 具体对象
-            $(".target").on('tap','',function () {
+            $(".target").on('tap', '', function () {
                 var target = $.trim($(this).text());
                 var target_id = $(this).attr('data-id');
                 $(".target_id").val(target_id);
@@ -332,7 +332,7 @@
             });
 
             // 费用结算人
-            $(".campMemberlist").on('tap','li',function () {
+            $(".campMemberlist").on('tap', 'li', function () {
                 var cost = $.trim($(this).text());
                 var cost_id = $(this).attr('data-id');
                 $(".cost_id").val(cost_id);
@@ -371,11 +371,22 @@
         // 获取数据并进行提交
         function submitAction() {
 
-            // var price = $("input[name=price]").val();
-            // if ((/^[0-9]*$/).test(price)){
-            //     mui.alert("活动单价请输入数字");
-            //     return false;
-            // }
+            if ($("#eventPrice option:selected").text() == "收费") {
+                var price = $("input[name=price]").val();
+                if (!(/^[0-9]*$/).test(price)) {
+                    mui.alert("活动单价请输入数字");
+                    return;
+                }
+            };
+
+            $(".telephoneBlur").blur(function () {
+                if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
+                    mui.alert("请输入正确的手机格式");
+                    return;
+                };
+            })
+
+
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
