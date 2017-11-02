@@ -71,7 +71,7 @@
             var sArea = '';
             var keyword = wooApi.GetQueryString('keyword');
             $('.keyword').val(keyword);
-            var campID = wooApi.GetQueryString('camp_id');
+            // var campID = wooApi.GetQueryString('camp_id');
             var campName = wooApi.GetQueryString('camp_name');
 
             //获取定位省市区
@@ -96,7 +96,7 @@
             //搜索活动
             $("#searchBtn").on("click", function () {
                 keyword = $(".keyword").val();
-                campID = '';
+                // campID = '';
                 searchToList();
             })
             //选择活动类型下拉
@@ -114,7 +114,7 @@
                 count = 1;//显示第一页
                 var page = count;
                 var gType = 1;//代表下拉刷新
-                toList(page, gType, campID);//具体取数据的方法
+                toList(page, gType);//具体取数据的方法
             }
 
             mui.init({
@@ -147,7 +147,7 @@
                     count = 1;//刷新并显示第一页
                     var page = count;
                     var gType = 1;//代表下拉刷新
-                    toList(page, gType, campID);//具体取数据的方法
+                    toList(page, gType);//具体取数据的方法
                 }, 100);
             }
             //上拉加载具体业务实现
@@ -156,11 +156,12 @@
                     count++;//翻下一页
                     var page = count;
                     var gType = 2;//代表上拉加载
-                    toList(page, gType, campID);//具体取数据的方法
+                    toList(page, gType);//具体取数据的方法
                 }, 100);
             }
+            
             //接口获取数据并追加到页面
-            var toList = function (page, gType, campID) {
+            var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
                 var url = "{:url('api/event/searchEventApi','','',true)}";
                 mui.ajax({
@@ -172,8 +173,10 @@
                         city: sCity,
                         area: sArea,
                         event_type: sEventType,
-                        camp_id: campID,
-                        keyword: keyword
+                        // camp_id: campID,
+                        keyword: keyword,
+                        target_type:1
+                        
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
