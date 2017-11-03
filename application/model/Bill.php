@@ -21,7 +21,7 @@ class Bill extends Model{
     }
 
     public function getGoodsTypeAttr($value){
-           $status = [1=>'课程',2=>'普通商品'];
+           $status = [1=>'课程',2=>'活动'];
        return $status[$value];
     }
     public function lesson(){
