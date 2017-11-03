@@ -48,6 +48,7 @@ return [
         'successCheck' => 'xohb4WrWcaDosmQWQL27-l-zNgnMc03hpPORPjVjS88',//审核通过
         'errorCheck' => '   z03wxEVbhiEnXChfnBKEYhpYpCvIMLEPq0912RGgrQg',//未通过认证
         'sendSchedule' => '_ld4qtOLJA1vl-oh0FxCliMK1tbGD0nOTq7Z4OmeFCE', //发送课时通知
+        'checkPend' => 'eq30-P4InOr-gndRqTdK8xAgpsMWdh3BWO1AArdxoeI',
     ],
 
     // +----------------------------------------------------------------------

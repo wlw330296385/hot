@@ -259,12 +259,13 @@ class Message extends Base{
             }
 
             $messageData = [
-                'template_id' => config('wxTemplateID.successJoin'),
+                'template_id' => config('wxTemplateID.checkPend'),
                 'url' => url('frontend/student/studentlistofcamp', ['camp_id' => $applydata['camp_id'], 'type' => 1], '', true),
                 'data' => [
                     'first' => ['value' => $applydata['camp'] . '的学员 ' . $applydata['username'] . '申请退出训练营。'],
-                    'keyword1' => ['value' => $applydata['username']],
-                    'keyword2' => ['value' => date("Y-m-d H:i", $applydata['create_time'])],
+                    'keyword1' => '申请退出训练营',
+                    'keyword2' => ['value' => $applydata['username']],
+                    'keyword3' => ['value' => date("Y-m-d H:i", $applydata['create_time'])],
                     'remark' => ['value' => '点击进入查看更多']
                 ]
             ];
