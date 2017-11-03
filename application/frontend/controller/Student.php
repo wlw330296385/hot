@@ -67,6 +67,9 @@ class Student extends Base
 		// 历史课时
 		$totalSchedule = db('bill')->where(['camp_id'=>$camp_id,'student_id'=>$student_id])->sum('total');
 
+		// 学员自己可操作区显示
+        $studentcando = ($this->memberInfo['id'] == $studentInfo['member_id']) ? 1 : 0;
+
 		$this->assign('totalSchedule',$totalSchedule);
 		$this->assign('restSchedule',$restSchedule);
 		$this->assign('campInfo',$campInfo);
@@ -78,6 +81,8 @@ class Student extends Base
 		$this->assign('studentScheduleList',$studentScheduleList);
 		$this->assign('studentBillList',$studentBillList);
 		$this->assign('totalBill',$totalBill);
+		$this->assign('studentcando', $studentcando);
+		$this->assign('camp_id', $camp_id);
 		return view('Student/studentInfoOfCamp');
 	}
 

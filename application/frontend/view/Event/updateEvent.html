@@ -57,10 +57,10 @@
                     <div class="mui-navigate-right">
                         <label>活动对象</label>
                         <span class="select-row">
-                            <select id="eventObject" class="data" name="target_type">
-                                <option value="1" {eq name="eventInfo.target_type" value="1" }selected{/eq}>不限</option>
-                                <option value="2" {eq name="eventInfo.target_type" value="2" }selected{/eq}>营内</option>
-                                <option value="3" {eq name="eventInfo.target_type" value="3" }selected{/eq}>班内</option>
+                            <select id="eventObject" class="data target_type" name="target_type">
+                                <option value="1">不限</option>
+                                <option value="2">营内</option>
+                                <option value="3">班内</option>
                             </select>
                         </span>
                         <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
@@ -86,11 +86,11 @@
                         <span class="select-row">
                         <select id="eventType" class="data" name="event_type">
                              <optgroup label="活动类型">
-                                <option value="团队建设" {eq name="eventInfo.event_type" value="团队建设"}selected{/eq}>团队建设</option>
-                                <option value="校园活动" {eq name="eventInfo.event_type" value="校园活动"}selected{/eq}>校园活动</option>
-                                <option value="亲子教育" {eq name="eventInfo.event_type" value="亲子教育"}selected{/eq}>亲子教育</option>
-                                <option value="社交娱乐" {eq name="eventInfo.event_type" value="社交娱乐"}selected{/eq}>社交娱乐</option>
-                                <option value="学习交流" {eq name="eventInfo.event_type" value="学习交流"}selected{/eq}>学习交流</option>
+                                <option value="团队建设">团队建设</option>
+                                <option value="校园活动">校园活动</option>
+                                <option value="亲子教育">亲子教育</option>
+                                <option value="社交娱乐">社交娱乐</option>
+                                <option value="学习交流">学习交流</option>
                             </optgroup>
                         </select>
                         </span>
@@ -102,8 +102,8 @@
                         <label>是否收费</label>
                         <span class="select-row">
                             <select id="eventPrice" class="data" name="is_free">
-                                <option value="1" {eq name="eventInfo.is_free" value="1" }selected{/eq}>收费</option>
-                                <option value="2" {eq name="eventInfo.is_free" value="2" }selected{/eq}>免费</option>
+                                <option value="1">收费</option>
+                                <option value="2">免费</option>
                             </select>
                         </span>
                     </div>
@@ -125,14 +125,14 @@
                 <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>开始时间</label>
-                        <span id="resultStart" class="ui-alert domData" name="start">{$eventInfo.starts}</span>
+                        <span id="resultStart" class="ui-alert domData" name="starts">{$eventInfo.starts}</span>
                     </div>
                 </div>
 
                 <div class="mui-input-row picker btnEnd" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>结束时间</label>
-                        <span id="resultEnd" class="ui-alert domData" name="end">{$eventInfo.ends}</span>
+                        <span id="resultEnd" class="ui-alert domData" name="ends">{$eventInfo.ends}</span>
                     </div>
                 </div>
 
@@ -205,7 +205,7 @@
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <ul class="mui-table-view list"></ul>
+                <ul class="mui-table-view list campGradeList"></ul>
             </div>
         </div>
     </div>
@@ -217,7 +217,7 @@
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <ul class="mui-table-view list campMemberlist"></ul>
+                <ul class="mui-table-view list campMemberList"></ul>
             </div>
         </div>
     </div>
@@ -326,7 +326,7 @@
 
         $(function () {
             // 具体对象
-            $(".target").on('tap', '', function () {
+            $(".campGradeList").on('tap', 'li', function () {
                 var target = $.trim($(this).text());
                 var target_id = $(this).attr('data-id');
                 $(".target_id").val(target_id);
@@ -335,21 +335,29 @@
             });
 
             // 费用结算人
-            $(".campMemberlist").on('tap', 'li', function () {
-                var cost = $.trim($(this).text());
+            $(".campMemberList").on('tap', 'li', function () {
+                var cost = $.trim($(this).children(".member").text());
                 var cost_id = $(this).attr('data-id');
                 $(".cost_id").val(cost_id);
                 $(".costCont").text(cost);
                 mui("#cost").popover("toggle");
             });
 
+            // 设置活动对象默认值
+            $('#eventObject option[value="{$eventInfo.target_type}"]').prop("selected", true);
+            // 设置活动类型默认值
+            $('#eventType option[value="{$eventInfo.event_type}"]').prop("selected", true);
+            // 设置收费默认值
+            $('#eventPrice option[value="{$eventInfo.is_free}"]').prop("selected", true);
+
             // 选择活动对象显示隐藏具体对象
-            $("#eventObject").change(function () {
-                var initial = $("input[name='target_type']").val();
-                var selection = $(this).val();
+            $("#eventObject").on("change", '', '', function () {
+                var initial = "{$eventInfo.target_type}";
+                var selection = $(this).find("option:selected").val();
                 if (selection < initial) {
                     mui.alert("不能选择上级对象");
-                    return false;
+                    $('#eventObject').find("option").removeAttr("selected");
+                    $('#eventObject option[value="' + initial + '"]').prop("selected", true);
                 };
 
                 if ($(this).children('option:selected').text() == '班内') {
@@ -376,9 +384,8 @@
                 }
             });
 
-
-            // 调用训练营身份列表
-            toCampMemberList();
+            toCampMemberList();// 调用训练营身份列表
+            toGradeList();//调用训练营班级列表
 
         });
 
@@ -392,12 +399,14 @@
                     return;
                 }
             };
-            
-            if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
-                mui.alert("请输入正确的手机格式");
-                return;
-            };
-            
+
+            $(".telephoneBlur").blur(function () {
+                if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
+                    mui.alert("请输入正确的手机格式");
+                    return;
+                };
+            });
+
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
@@ -438,14 +447,51 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli cost" data-id="' + data.data[i].member_id + '">' + data.data[i].member + '</li>'
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli cost" data-id="' + data.data[i].member_id + '"><font class="member">' + data.data[i].member + '</font><span>' + data.data[i].type + '</span></li>'
                         }
-                        $("ul.campMemberlist").empty();
+                        $("ul.campMemberList").empty();
                         if (newli == '') {
                             var createEvent = "{:url('/frontend/event/createEvent/camp_id/')}" + campID;
                             newli = '<li class="mui-text-center"><p>没有查找到场地数据哦</p><a href="' + createEvent + '" class="mui-btn mui-btn-primary">添加活动</a></li>'  ///// 添加场地按钮///////////////////////////////////////////////
                         }
-                        $("ul.campMemberlist").append(newli);
+                        $("ul.campMemberList").append(newli);
+
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //自定义获取训练营班级列表
+        var toGradeList = function () {
+            var url = "{:url('api/grade/getGradeListApi','','',true)}";
+            var campID = "{$eventInfo.organization_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var gradeli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            gradeli = gradeli + '<li class="mui-table-view-cell listli detalisli target" data-id="' + data.data[i].id + '">' + data.data[i].grade + '</li>'
+                        }
+                        $("ul.campGradeList").empty();
+                        if (gradeli == '') {
+                            gradeli = '<li class="mui-text-center"><p>没有查找到数据哦</p></li>'
+                        }
+                        $("ul.campGradeList").append(gradeli);
 
                     } else {
                         mui.toast('数据获取失败,请稍候再试');
