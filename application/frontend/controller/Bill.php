@@ -112,6 +112,12 @@ class Bill extends Base{
     // 获取会员订单列表
     public function billList(){
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        $camp_id = input('param.camp_id');
+        if($camp_id){
+            $home = db('camp')->where(['id'=>$camp_id])->value('camp');
+        }else{
+            $home = '我的订单';
+        }
     	$map = input('post.');
         $map['member_id'] = $member_id;
         $billList = $this->BillService->getBillList($map);
@@ -128,6 +134,7 @@ class Bill extends Base{
                 $notPayCount++;
             }
         }
+        $this->assign('home',$home);
         $this->assign('notPayCount',$notPayCount);
         $this->assign('payCount',$payCount);
         $this->assign('count',$count);

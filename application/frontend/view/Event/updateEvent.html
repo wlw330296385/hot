@@ -125,14 +125,14 @@
                 <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>开始时间</label>
-                        <span id="resultStart" class="ui-alert domData" name="start">{$eventInfo.start}</span>
+                        <span id="resultStart" class="ui-alert domData" name="start">{$eventInfo.starts}</span>
                     </div>
                 </div>
 
                 <div class="mui-input-row picker btnEnd" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>结束时间</label>
-                        <span id="resultEnd" class="ui-alert domData" name="end">{$eventInfo.end}</span>
+                        <span id="resultEnd" class="ui-alert domData" name="end">{$eventInfo.ends}</span>
                     </div>
                 </div>
 
@@ -384,6 +384,20 @@
 
         // 获取数据并进行提交(编辑活动)
         function submitAction() {
+
+            if ($("#eventPrice option:selected").text() == "收费") {
+                var price = $("input[name=price]").val();
+                if (!(/^[0-9]*$/).test(price)) {
+                    mui.alert("活动单价请输入数字");
+                    return;
+                }
+            };
+            
+            if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
+                mui.alert("请输入正确的手机格式");
+                return;
+            };
+            
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值

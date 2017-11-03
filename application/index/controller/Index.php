@@ -2,17 +2,17 @@
 namespace app\index\controller;
 use think\Controller;
 use think\Cookie;
+use think\Db;
 class Index extends Controller
 {
     public function index()
     {
-        $cookie = cookie('mid');
-        dump(session('memberInfo','','think'));
-        if ( !Cookie::has('mid') ) {
-            echo 'no mid';
-        }
-        echo request()->url();
-        // dump($cookie);die;
+        $list = Db::view('member')
+                ->view('student','member_id,student','student.member_id = member.id')
+                // ->where(1)
+                ->order('member.id asc')
+                ->select();
+        dump($list);die;
     	return view('Index/index');
     }
 

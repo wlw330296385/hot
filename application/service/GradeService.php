@@ -16,23 +16,23 @@ class GradeService{
 
     // 班级列表
     public function getGradeList($map=[],$page = 1, $order='',$p=10) {
-        $result = false;
         $res = Grade::where($map)->order($order)->page($page,$p)->select();
         // echo Grade::getlastsql();
         if($res){   
             $result = $res->toArray();
         }
-        return $result;
+        return $res;
     }
 
     // 班级分页
-    public function getGradeListByPage($map=[], $order='', $paginate=10) {
+    public function getGradeListByPage($map , $order='', $paginate=10) {
         $result =  $this->GradeModel
                 ->with('gradeMember')
                 ->where($map)
                 ->order($order)
                 ->paginate($paginate);
                 // echo $this->GradeModel->getlastsql();die;
+
         if($result){
             $res = $result->toArray();
             return $res;
@@ -177,5 +177,6 @@ class GradeService{
         $result = Grade::destroy($id);
         return $result;
     }
+
 
 }

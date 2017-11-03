@@ -57,7 +57,7 @@ class Coach extends Base{
         }
     	//教练的班级
         $GradeService = new \app\service\GradeService;
-    	$gradeOfCoachList = $GradeService->getGradeList(['coach_id'=>$member_id,'camp_id'=>$camp_id]);
+    	$gradeOfCoachList = $GradeService->getGradeList(['coach_id'=>$coach_id,'camp_id'=>$camp_id]);
         // 教练的证件
         $cert = db('cert')->where(['member_id'=>$member_id,'status'=>1])->select();
         $identCert = [];

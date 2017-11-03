@@ -17,43 +17,35 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <style type="text/css">
         .coach .table { font-size: 13px; }
+        .for-tab{ background-color: #efeff4;}
         .list-cont1 { white-space:normal; padding-right: 15px; }
         .nav-list .nav-list-frame a span { font-size: 13px; }
         .mui-table-view-cell { border-bottom: 1px solid #EEEEEE; }
+        .mui-table-view-cell:after { background: none !important;}
+        .mui-control-item { line-height: 26px !important; padding: 10px 0px 8px;}
+        .mui-control-item span { font-size: 16px; display: block;}
+        .sheader{ padding: 8px 15px !important;}
+        .sheader span{ line-height: 24px; }
     </style>
 </head>
 
-<body class=whitebg>
+<body>
 
 
 <header id="header" class="mui-bar mui-bar-nav for-tab">
-    <div class="camp-lesson-list">
-        <div id="segmentedControl" class="mui-segmented-control mb">
-            <a class="mui-control-item mui-active" href="#bill1">已付款</a>
-            <a class="mui-control-item" href="#bill0">未付款</a>
-            <a class="mui-control-item" href="#bill-2">已退款</a>
-            <a class="mui-control-item" href="#bill-1">未退款</a>
+    <ul class="mui-table-view detalis-list">
+        <li class="listli sheader mui-clearfix">
+            <a class="mui-pull-left mui-icon mui-icon-left-nav"  href="#"></a>
+            <span class="mui-pull-right title-name">{$home}</span>
+        </li>
+    </ul>
+    <div class="camp-lesson-list mb mt">
+        <div id="segmentedControl" class="mui-segmented-control">
+            <a class="mui-control-item mui-active" href="#bill1">已付款<span id="count-bill1">0</span></a>
+            <a class="mui-control-item" href="#bill0">未付款<span id="count-bill0">0</span></a>
+            <a class="mui-control-item" href="#bill-2">已退款<span id="count-bill-2">0</span></a>
+            <a class="mui-control-item" href="#bill-1">未退款<span id="count-bill-1">0</span></a>
         </div>
-    </div>
-    <div class="nav-list">
-        <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"><a href="#">
-                <div class="mui-media-body" id="count-bill1">0</div>
-                <span>已付款</span>
-            </a></li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"><a href="#">
-                <div class="mui-media-body" id="count-bill0">0</div>
-                <span>未付款</span>
-            </a></li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"><a href="#">
-                <div class="mui-media-body" id="count-bill-2">0</div>
-                <span>已退款</span>
-            </a></li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"><a href="#">
-                <div class="mui-media-body" id="count-bill-1">0</div>
-                <span>未退款</span>
-            </a></li>
-        </ul>
     </div>
     <ul class="mui-table-view camp-lesson-list detalis-list coach">
         <li class="mui-table-view-cell">
@@ -118,13 +110,18 @@
     var campID = wooApi.GetQueryString('camp_id');
     var member_id = wooApi.GetQueryString('member_id');
     var toUrl ;
+    var backUrl;
     if(campID){
         postData.camp_id = campID;
-        toUrl = "{:url('bill/billInfoOfCamp')}"
+        toUrl = "{:url('bill/billInfoOfCamp')}";
+        backUrl = "{:url('camp/powerCamp')}"+"/camp_id/"+campID;
+        $(".mui-icon-left-nav").attr("href",backUrl);
     }
     if(member_id){
         postData.member_id = member_id;
         toUrl = "{:url('bill/billInfo')}";
+        backUrl = "{:url('member/index')}";
+        $(".mui-icon-left-nav").attr("href",backUrl);
     }
 
     $(function () {

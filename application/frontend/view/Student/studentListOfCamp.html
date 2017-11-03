@@ -22,7 +22,7 @@
 
 <header id="header" class="mui-bar mui-bar-nav for-tab">
     <div class="camp-lesson-list">
-        <div class="mui-segmented-control mb">
+        <div class="mui-segmented-control">
             <a class="mui-control-item mui-icon mui-icon-left-nav"
                href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"></a>
             <a class="mui-control-item mui-active" search-id="sOn" href="#onlineStudentList">在营</a>
@@ -37,29 +37,26 @@
 <div class="mui-content">
 
     <div class="tab-pullRefresh">
-        <div class="basic-search" id="sOn">
-            <input type="search" class="keywordOn" placeholder="请输入在营学员名称">
-            <span class="mui-icon mui-icon-search searchicon" id="searchBtnOn"></span>
+        <div class="mui-input-row mui-search" id="sOn">
+            <input type="search" class="mui-input-clear keywordOn" placeholder="请输入在营学员名称">
         </div>
-        <div class="basic-search" id="sOff" style="display: none;">
-            <input type="search" class="keywordOff" placeholder="请输入离营学员名称">
-            <span class="mui-icon mui-icon-search searchicon" id="searchBtnOff"></span>
+        <div class="mui-input-row mui-search" id="sOff" style="display: none;">
+            <input type="search" class="mui-input-clear keywordOff" placeholder="请输入离营学员名称">
         </div>
-        <div class="basic-search" id="sPend" style="display: none;">
-            <input type="search" class="keywordPend" placeholder="请输入未处理学员名称">
-            <span class="mui-icon mui-icon-search searchicon" id="searchBtnPend"></span>
+        <div class="mui-input-row mui-search" id="sPend" style="display: none;">
+            <input type="search" class="mui-input-clear keywordPend" placeholder="请输入未处理学员名称">
         </div>
-        <div id="onlineStudentList" class="mui-control-content mui-scroll-wrapper mui-active" style="top:90px">
+        <div id="onlineStudentList" class="mui-control-content mui-scroll-wrapper mui-active" style="top:80px">
             <div class="mui-scroll">
                 <ul class="mui-table-view coach list border-b student1 OA_task_student"></ul>
             </div>
         </div>
-        <div id="offlineStudentList" class="mui-control-content mui-scroll-wrapper" style="top:90px">
+        <div id="offlineStudentList" class="mui-control-content mui-scroll-wrapper" style="top:80px">
             <div class="mui-scroll">
                 <ul class="mui-table-view coach list border-b student-1 OA_task_student"></ul>
             </div>
         </div>
-        <div id="pendingStudentList" class="mui-control-content mui-scroll-wrapper" style="top:90px">
+        <div id="pendingStudentList" class="mui-control-content mui-scroll-wrapper" style="top:80px">
             <div class="mui-scroll">
                 <ul class="mui-table-view coach list border-b student-p"></ul>
             </div>
@@ -101,19 +98,7 @@
         $('.keywordPend').val(keywordPend);
 
         //搜索
-        $("#searchBtnOn").on("tap",'', function () {
-            keywordOn = $(".keywordOn").val();
-            //toList('idName', page, gType, status, keywordOn);
-            toList('onlineStudentList', 1, 1, 1, keywordOn);
-        })
-        $("#searchBtnOff").on("tap",'', function () {
-            keywordOff = $(".keywordOff").val();
-            toList('offlineStudentList', 1, 1, 1, keywordOff);
-        })
-        $("#searchBtnPend").on("tap",'', function () {
-            keywordPend = $(".keywordPend").val();
-            toPendList('pendingStudentList', 1, 1, 1, keywordPend);
-        })
+
         $(".keywordOn").on("blur",'', function () {
             keywordOn = $(this).val();
             toList('onlineStudentList', 1, 1, 1, keywordOn);
@@ -130,7 +115,7 @@
         //切换tab的同时切换搜索框
         $(".mui-control-item").on("tap",'', function () {
             var seachID = $(this).attr("search-id");
-            $(".basic-search").hide();
+            $(".mui-search").hide();
             $("#"+seachID).show();
         })
 

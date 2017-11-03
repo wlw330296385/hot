@@ -11,6 +11,15 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .show {
+            display: block;
+        }
+        
+        .hide {
+            display: none;
+        }
+    </style>
 </head>
 
 <body class=whitebg>
@@ -30,8 +39,9 @@
                             {$eventInfo.event}
                             <p class="mui-ellipsis">{$eventInfo.event_type}</p>
                         </div>
-                        <div class="price-frame singup-num">
-                            人已报名
+                        <div class="price-frame">
+                            <p class="price"><span class="nofloat">已报名{$eventInfo.participator}人</span></p>
+                            <p class="price"><span class="nofloat">剩余名额</span></p>
                         </div>
                     </a>
                 </li>
@@ -41,11 +51,9 @@
             </div>
 
             <ul class="mui-table-view">
-                <li class="mui-table-view-cell listli">
-                    <a class="mui-navigate-right">
-                        所属训练营<span class="wd66" >{$eventInfo.organization}</span>
-                    </a>
-                </li>
+                <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
+                <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='2||3'}show{else/}hide{/eq}">所属训练营<span>{$eventInfo.organization}</span></li>
+                <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='3'}show{else/}hide{/eq}">所属班级<span>{$eventInfo.target}</span></li>
                 <li class="mui-table-view-cell listli">活动单价<span><b class="colororange">￥{$eventInfo.price}</b>（元）</span></li>
                 <li class="mui-table-view-cell listli">活动开始时间<span>{$eventInfo.starts}</span></li>
                 <li class="mui-table-view-cell listli">活动结束时间<span>{$eventInfo.ends}</span></li>
@@ -59,23 +67,23 @@
 
             <div class="mui-input-group mb44">
 
-
                 <div id="oldStudent">
+                    <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
                     <div class="mui-input-row">
                         <label>报名人数</label>
-                        <input type="text" name="" value="" class="totalNum" placeholder="请输入报名人数">
+                        <input type="text" name="participator" value="" class="totalNum data" placeholder="请输入报名人数">
                     </div>
                     <div class="mui-input-row">
                         <label>联系人</label>
-                        <input type="text" name="" value="{$eventInfo.contract}">
+                        <input type="text" name="contract" class="data" value="{$eventInfo.member}">
                     </div>
                     <div class="mui-input-row">
                         <label>联系电话</label>
-                        <input type="text" name="" value="{$eventInfo.telephone}">
+                        <input type="text" name="telephone" class="data" value="{$memberInfo.telephone}">
                     </div>
-                    <div class="mui-input-row h-auto">
+                    <div class="mui-input-row">
                         <label>备注</label>
-                        <textarea rows="3" name="event_des" class="event_des" value="{$eventInfo.event_des}"></textarea>
+                        <textarea rows="2" name="event_des" class="data" value="" placeholder="备注信息填写"></textarea>
                     </div>
 
                 </div>
