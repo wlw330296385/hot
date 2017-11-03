@@ -2,6 +2,8 @@
 namespace app\api\controller;
 use app\service\MessageService;
 use app\api\controller\Base;
+use think\Exception;
+
 class Message extends Base{
 	private $MessageService;
 	public function _initialize(){
@@ -170,69 +172,112 @@ class Message extends Base{
 
     // 申请加入训练营 发送消息
     public function campjoinaudit() {
-        $id =input('param.id');
-        $campmemberObj = \app\model\CampMember::get($id);
-        if (!$campmemberObj) {
-            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
-        }
-        $campmember = $campmemberObj->toArray();
-        $campmember['type_num'] = $campmemberObj->getData('type');
-        if ($campmember['type_num'] > 1) {
-            if ($campmember['type_num'] == 3) {
-                $baseurl = 'frontend/camp/teachlistofcamp';
-            } else  {
-                $baseurl = 'frontend/camp/coachlistofcamp';
+        try {
+            $id = input('param.id');
+            $campmemberObj = \app\model\CampMember::get($id);
+            if (!$campmemberObj) {
+                return json(['code' => 100, 'msg' => __lang('MSG_401')]);
             }
-            $data = [
-                'title' => '加入训练营申请',
-                'content' => '会员 '.$campmember['member'].'申请加入'. $campmember['camp'] .' 成为 '. $campmember['type'] .'，请及时处理',
-                'baseurl' => $baseurl,
-                'member' => $campmember['member'],
-                'jointime' => $campmember['create_time']
-            ];
+            $campmember = $campmemberObj->toArray();
+            $campmember['type_num'] = $campmemberObj->getData('type');
+            if ($campmember['type_num'] > 1) {
+                if ($campmember['type_num'] == 3) {
+                    $baseurl = 'frontend/camp/teachlistofcamp';
+                } else {
+                    $baseurl = 'frontend/camp/coachlistofcamp';
+                }
+                $data = [
+                    'title' => '加入训练营申请',
+                    'content' => '会员 ' . $campmember['member'] . '申请加入' . $campmember['camp'] . ' 成为 ' . $campmember['type'] . '，请及时处理',
+                    'baseurl' => $baseurl,
+                    'member' => $campmember['member'],
+                    'jointime' => $campmember['create_time']
+                ];
 
-            $messageS = new MessageService();
-            $messageS->campJoinAudit($data, $campmember['camp_id']);
+                $messageS = new MessageService();
+                $messageS->campJoinAudit($data, $campmember['camp_id']);
+            }
+        }catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMassege()]);
         }
     }
 
     // 加入训练营
     public function campjoinauditresult() {
-        $id = input('param.id');
-        $campmemberObj = \app\model\CampMember::get($id);
-        if (!$campmemberObj) {
-            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+        try {
+            $id = input('param.id');
+            $campmemberObj = \app\model\CampMember::get($id);
+            if (!$campmemberObj) {
+                return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+            }
+            $campmember = $campmemberObj->toArray();
+            $campmember['type_num'] = $campmemberObj->getData('type');
+            $campmember['status_num'] = $campmemberObj->getData('status');
+            if ($campmember['type_num'] > 1) {
+                $url = '';
+                $checkstr = '';
+                switch ($campmember['status_num']) {
+                    case "1" : {
+                        $url = url('frontend/camp/powercamp', ['camp_id' => $campmember['camp_id']], '', true);
+                        $checkstr = '审核通过';
+                        break;
+                    }
+                    case "-2": {
+                        $url = url('frontend/message/index', '', '', true);
+                        $checkstr = '被拒绝';
+                        break;
+                    }
+                }
+
+                $data = [
+                    'title' => '加入训练营申请结果',
+                    'content' => '您好，您申请加入'. $campmember['camp'] .' 成为 '. $campmember['type'] . $checkstr,
+                    'url' => $url,
+                    'member' => $campmember['member'],
+                    'audittime' => $campmember['update_time'],
+                    'checkstr' => $checkstr
+                ];
+
+                $messageS = new MessageService();
+                $messageS->campJoinAuditResult($data, $campmember['member_id']);
+            }
+        }catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMassege()]);
         }
-        $campmember = $campmemberObj->toArray();
-        $campmember['type_num'] = $campmemberObj->getData('type');
-        $campmember['status_num'] = $campmemberObj->getData('status');
-        if ($campmember['type_num'] > 1) {
-            $url = '';
-            $checkstr = '';
-            switch ($campmember['status_num']) {
-                case "1" : {
-                    $url = url('frontend/camp/powercamp', ['camp_id' => $campmember['camp_id']], '', true);
-                    $checkstr = '审核通过';
-                    break;
-                }
-                case "-2": {
-                    $url = url('frontend/message/index', '', '', true);
-                    $checkstr = '被拒绝';
-                    break;
-                }
+    }
+
+    public function applyleavecamp() {
+        try {
+            $applyid = input('param.id', 0);
+            if (!$applyid) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
 
-            $data = [
-                'title' => '加入训练营申请结果',
-                'content' => '您好，您申请加入'. $campmember['camp'] .' 成为 '. $campmember['type'] . $checkstr,
-                'url' => $url,
-                'member' => $campmember['member'],
-                'audittime' => $campmember['update_time'],
-                'checkstr' => $checkstr
-            ];
+            $applydata = db('camp_leaveapply')->where('id', $applyid)->find();
+            if (!$applydata) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+            }
 
+            $messageData = [
+                'template_id' => config('wxTemplateID.successJoin'),
+                'url' => url('frontend/student/studentlistofcamp', ['camp_id' => $applydata['camp_id'], 'type' => 1], '', true),
+                'data' => [
+                    'first' => ['value' => $applydata['camp'] . '的学员 ' . $applydata['username'] . '申请退出训练营。'],
+                    'keyword1' => ['value' => $applydata['username']],
+                    'keyword2' => ['value' => date("Y-m-d H:i", $applydata['create_time'])],
+                    'remark' => ['value' => '点击进入查看更多']
+                ]
+            ];
+            $saveData = [
+                'title' => '学员申请退出训练营',
+                'content' => $applydata['camp'] . '的学员 ' . $applydata['username'] . '申请退出训练营。提交申请时间：' . date("Y-m-d H:i", $applydata['create_time']),
+                'status' => 1,
+                'url' => url('frontend/student/studentlistofcamp', ['camp_id' => $applydata['camp_id'], 'type' => 1], '', true)
+            ];
             $messageS = new MessageService();
-            $messageS->campJoinAuditResult($data, $campmember['member_id']);
+            $messageS->sendCampMessage($applydata['camp_id'], $messageData, $saveData);
+        }catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMassege()]);
         }
     }
 }
