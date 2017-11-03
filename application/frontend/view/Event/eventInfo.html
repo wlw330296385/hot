@@ -69,7 +69,7 @@
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli"><a href="tel:{$eventInfo.telephone}"><span
                     class="mui-icon mui-icon-phone"></span>电话咨询</a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bgblue"><a href="#">剩余8个名额</a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bgblue"><a href="#">剩余<font class="surplus"></font>个名额</a></li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen signupbtn">报名</a>
                 </li>
             </ul>
@@ -92,7 +92,7 @@
         });
 
         $(function () {
-
+            
             $(".signupbtn").on("click", '', function () {
                 var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
                 mui.ajax(url, {
@@ -127,7 +127,15 @@
                 });
             });
 
+            surplus();//剩余名额
         });
+
+
+        // 剩余名额
+        var surplus = function(){
+            var surplus = "{$eventInfo.max}"-"{$eventInfo.participator}";
+            $(".surplus").text(surplus)
+        };
     </script>
 </body>
 

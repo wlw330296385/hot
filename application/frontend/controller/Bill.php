@@ -18,21 +18,29 @@ class Bill extends Base{
     //训练营查看会员订单
     public function billInfoOfCamp(){
         $bill_id = input('param.bill_id');
-        $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+        $bill_order = input('param.bill_order');
+        if($bill_id){
+            $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+        }else{
+            
+            $billInfo = $this->BillService->getBill(['bill_order'=>$bill_order]);
+        }
+        if(!$billInfo){
+            $this->error('订单信息已改变');
+        }
         $lessonInfo = [];
         $studentInfo = [];
         // 课程信息
         if($billInfo['goods_type'] == '课程'){
             $LessonService = new \app\service\LessonService;
             $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
-            $this->assign('lessonInfo',$lessonInfo);
             // 学生信息
             $StudentService = new \app\service\StudentService;
             $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
         }        
         // 判断权限
         $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
-        // dump($isPower);die;
+        $this->assign('lessonInfo',$lessonInfo);
         $this->assign('studentInfo',$studentInfo);
         $this->assign('power',$isPower);
         $this->assign('billInfo',$billInfo);
@@ -42,7 +50,13 @@ class Bill extends Base{
     // 训练营修改会员订单
     public function updateBillInfoOfCamp(){
         $bill_id = input('param.bill_id');
-        $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+        $bill_order = input('param.bill_order');
+        if($bill_id){
+            $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+        }else{
+            
+            $billInfo = $this->BillService->getBill(['bill_order'=>$bill_order]);
+        }
         $lessonInfo = [];
         // 判断权限
         $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
@@ -124,7 +138,6 @@ class Bill extends Base{
         $count = count($billList);
         // 已付款
         $payCount = 0;
-        
         $notPayCount = 0;
         foreach ($billList as $key => $value) {
             if($value['is_pay'] == '已付款'){
