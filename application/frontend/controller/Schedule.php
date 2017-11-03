@@ -1,6 +1,7 @@
 <?php 
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
+use app\service\CampService;
 use app\service\ScheduleService;
 use think\Db;
 /**
@@ -15,6 +16,11 @@ class Schedule extends Base
 	{
 		parent::_initialize();
 		$this->scheduleService = new ScheduleService;
+		$campS = new CampService();
+		$camp_id = input('camp_id', 0);
+		$camp = $campS->getCampInfo($camp_id);
+		$this->assign('campInfo', $camp);
+		$this->assign('camp_id', $camp_id);
 	}
 
 	public function index(){
@@ -166,4 +172,18 @@ class Schedule extends Base
 		return view('Schedule/updateSchedule');
 	}
 
+	// 赠课管理
+	public function giftlistofcamp() {
+	    return view('Schedule/giftlistOfCamp');
+    }
+
+    // 购买赠送课时
+    public function giftbuy() {
+	    return view("Schedule/giftbuy");
+    }
+
+    // 赠送课时 分配给学员
+    public function giftrecord() {
+	    return view('Schedule/giftrecord');
+    }
 }

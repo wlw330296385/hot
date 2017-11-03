@@ -71,7 +71,7 @@
                     <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
                     <div class="mui-input-row">
                         <label>报名人数</label>
-                        <input type="text" name="participator" value="" class="totalNum data" placeholder="请输入报名人数">
+                        <input type="text" name="participator" value="" class="eventNum data" placeholder="请输入报名人数">
                     </div>
                     <div class="mui-input-row">
                         <label>联系人</label>
@@ -90,7 +90,7 @@
 
             </div>
             <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-8 opli">需要支付:<b class="colororange total_fee">￥</b></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-8 opli">需要支付:<b class="colororange eventTotal">￥</b></li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="wxpay()">立即支付</li>
             </ul>
         </div>
@@ -104,10 +104,17 @@
             swipeBack: true //启用右滑关闭功能
         });
 
-        // $(function () {
-        //     var totalNum = $(".totalNum").val();
-        //     var totalPrice = "{$eventInfo.price}" * totalNum;
-        // })
+        $(function () {
+            // 需要支付的费用
+            $(".eventNum").on("blur", '', function () {
+                var eventPrice = "{$eventInfo.price}";
+                var eventNum = $(".eventNum").val();
+                var eventTotal = eventPrice * eventNum;
+                console.log(eventTotal)
+                $(".eventTotal").text('￥' + eventTotal);
+            });
+        });
+
     </script>
 </body>
 
