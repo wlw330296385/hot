@@ -94,13 +94,14 @@ class MessageService
         foreach ($memberList as $key => $value) {
             if ($value['openid']) {
                 $messageData['touser'] = $value['openid'];
+                $messageData['url'] = $messageData['url'].'/openid/'.$value['openid'];
                 $WechatService = new \app\service\WechatService();
                 $result = $WechatService->sendTemplate($messageData);
                 if ($result) {
-                    $logData = ['wxopenid' => $value['openid'], 'member_id' => $value['id'], 'status' => 1, 'content' => serialize($messageData)];
+                    $logData = ['wxopenid' => $value['openid'], 'member_id' => $value['id'], 'status' => 1, 'content' => serialize($messageData), 'url' => $messageData['url']];
                     $this->insertLog($logData);
                 } else {
-                    $logData = ['wxopenid' => $value['openid'], 'member_id' => $value['id'], 'status' => 0, 'content' => serialize($messageData)];
+                    $logData = ['wxopenid' => $value['openid'], 'member_id' => $value['id'], 'status' => 0, 'content' => serialize($messageData), 'url' => $messageData['url']];
                     $this->insertLog($logData);
                 }
             }
@@ -110,14 +111,15 @@ class MessageService
         $res = $this->MessageMemberModel->saveAll($saveallData);
         if ($res) {
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     // 获取系统消息列表
     public function getMessageList($map = [], $paginate = 10)
     {
-		$result = Message::where(['status' => 1])->paginate($paginate);
+		$result = Message::where(['status' => 1])->order('id desc')->paginate($paginate);
 		if ($result) {
 		    $list= $result->toArray();
 		    foreach ($list['data'] as $key => $val) {
@@ -139,6 +141,7 @@ class MessageService
     {
         $result = $this->MessageMemberModel
             ->where($map)
+            ->order('id desc')
             ->paginate($paginate);
         if ($result) {
             $res = $result->toArray();

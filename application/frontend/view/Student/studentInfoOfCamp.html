@@ -71,6 +71,9 @@
                     <li class="mui-table-view-cell listli">紧急电话<span>{$studentInfo['emergency_telephone']}</span></li>
                     <li class="mui-table-view-cell listli">个人备注<span>{$studentInfo['remarks']}</span></li>
                 </ul>
+                {eq name="studentcando" value="1"}
+                <button class="mui-btn mui-btn-warning mui-btn-block" type="button" id="leaveapply">申请离营</button>
+                {/eq}
             </div>
             <div id="item2" class="mui-control-content">
                 <ul class="mui-table-view mui-text-center mb">
@@ -170,10 +173,44 @@
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
+    });
+
+    jQuery(function($){
+        $('#leaveapply').on('click','',function(){
+            mui.confirm('如有未完成课程请与训练营沟通','确定要提交离营申请吗？',['取消','确定'], function(e) {
+                if (e.index==1) {
+                    mui.ajax("{:url('api/student/applyleavecamp')}", {
+                        data:{
+                            student_id:"{$studentInfo.id}",
+                            camp_id:"{$camp_id}"
+                        },
+                        dataType:'json',//服务器返回json格式数据
+                        type:'post',//HTTP请求类型
+                        timeout:10000,//超时时间设置为10秒；
+                        headers:{'Content-Type':'application/json'},
+                        success:function(data){
+                            if (data.code === 200) {
+                                mui.alert('申请发送成功');
+                                mui.get("{:url('api/message/applyleavecamp')}", {'id': data.data}, function(res){
+
+                                });
+                            } else {
+                                mui.alert(data.msg);
+                            }
+                        },
+                        error:function(xhr,type,errorThrown){
+                            //异常处理；
+                            console.log(type);
+                        }
+                    });
+                }
+            });
+        });
     });
 </script>
 </html>
