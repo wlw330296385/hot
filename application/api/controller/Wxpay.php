@@ -41,12 +41,11 @@ class Wxpay extends Base{
 	public function notifyUrl()
 	{      
 
-        $data = file_get_contents('php://input');
-        if(is_string($data)){
-            db('log_wxpay')->insert(['callback'=>$data,'create_time'=>time()]);
-        }else{
-            db('log_wxpay')->insert(['callback'=>json_encode($data),'create_time'=>time()]);
-        }
-       
+        $xml = file_get_contents('php://input');
+        $obj=simplexml_load_string($xml,'SimpleXMLElement',LIBXML_NOCDATA);
+        $jsonObj = json_encode($obj);
+        $data = json_decode($jsonObj,true);
+        db('log_wxpay')->insert(['callback'=>$jsonObj,'create_time'=>time(),'time_end'=>$data['time_end'],'total_fee'=>$data['total_fee'],'openid'=>$data['openid'],'bill_order'=>$data['out_trade_no']]);
+        
 	}
 }

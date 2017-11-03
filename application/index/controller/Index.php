@@ -8,8 +8,27 @@ class Index extends Controller{
 
 
     public function index(){
-        $list = Db::table();
-        dump($list);die;
+        $xml = '<xml><appid><![CDATA[wx19f60be0f2f24c31]]></appid>
+                <bank_type><![CDATA[CFT]]></bank_type>
+                <cash_fee><![CDATA[150000]]></cash_fee>
+                <fee_type><![CDATA[CNY]]></fee_type>
+                <is_subscribe><![CDATA[N]]></is_subscribe>
+                <mch_id><![CDATA[1488926612]]></mch_id>
+                <nonce_str><![CDATA[alw7b10lcwiorixu0deh3ul4ooycn6rb]]></nonce_str>
+                <openid><![CDATA[o83291NM7kHtVyTmKG-ao5-Pxwzo]]></openid>
+                <out_trade_no><![CDATA[1201711031610202726]]></out_trade_no>
+                <result_code><![CDATA[SUCCESS]]></result_code>
+                <return_code><![CDATA[SUCCESS]]></return_code>
+                <sign><![CDATA[430A51B37742ABF6D5F6CBECF84E09C5]]></sign>
+                <time_end><![CDATA[20171103160702]]></time_end>
+                <total_fee>150000</total_fee>
+                <trade_type><![CDATA[JSAPI]]></trade_type>
+                <transaction_id><![CDATA[4200000027201711032186864528]]></transaction_id>
+                </xml>';
+                $obj=simplexml_load_string($xml,'SimpleXMLElement',LIBXML_NOCDATA);
+                $jsonObj = json_encode($obj);
+                $data = json_decode($jsonObj,true);
+        dump($data);die;
         return view('Index/index');
     }
     
@@ -29,7 +48,7 @@ class Index extends Controller{
     }
     
 
-
+    
     public function sendMsg(){
         $action = input('param.action');
         if($action!= 'woo'){
