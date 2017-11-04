@@ -182,8 +182,16 @@ class Schedule extends Base
 	    return view("Schedule/giftbuy");
     }
 
+    public function giftbuyDetail() {
+        return view("Schedule/giftbuyDetail");
+    }
+
     // 赠送课时 分配给学员
     public function giftrecord() {
 	    return view('Schedule/giftrecord');
+    }
+
+    public function giftrecordDetail() {
+        return view('Schedule/giftrecordDetail');
     }
 }
