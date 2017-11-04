@@ -441,16 +441,37 @@ class ScheduleService
         }
     }
 
+    // 购买赠送课时列表
+    public function buygiftpage($map=[], $page=1, $order='id desc', $limit=10) {
+        $model = new ScheduleGiftbuy;
+        $list = $model->where($map)->order($order)->page($page, $limit)->select();
+        if ($list) {
+            return ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $list->toArray()];
+        } else {
+            return ['code' => 100, 'msg' => __lang('MSG_000')];
+        }
+    }
+
     // 赠送课时给学员
     public function recordgift($request) {
         //dump($request);
         $model = new ScheduleGiftrecord();
-        
         $result = $model->allowField(true)->save($request);
         if (!$result) {
             return ['code' => 100, 'msg' => '赠送课时'.__lang('MSG_400')];
         } else {
             return ['code' => 200, 'msg' => '赠送课时'.__lang('MSG_200'), 'insid' => $model->id];
+        }
+    }
+
+    // 赠送课时列表
+    public function giftpage($map=[], $page=1, $order='id desc', $limit=10) {
+        $model = new ScheduleGiftrecord();
+        $list = $model->where($map)->order($order)->page($page, $limit)->select();
+        if ($list) {
+            return ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $list->toArray()];
+        } else {
+            return ['code' => 100, 'msg' => __lang('MSG_000')];
         }
     }
 }
