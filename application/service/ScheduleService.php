@@ -440,10 +440,16 @@ class ScheduleService
             return ['code' => 200, 'msg' => '购买赠送课时'.__lang('MSG_200'), 'insid' => $model->id];
         }
     }
-    
+
+    // 赠送课时给学员
     public function recordgift($request) {
         //dump($request);
         $model = new ScheduleGiftrecord();
-
+        $result = $model->save($request);
+        if (!$result) {
+            return ['code' => 100, 'msg' => '赠送课时'.__lang('MSG_400')];
+        } else {
+            return ['code' => 200, 'msg' => '赠送课时'.__lang('MSG_200'), 'insid' => $model->id];
+        }
     }
 }
