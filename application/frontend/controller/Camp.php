@@ -230,8 +230,8 @@ class Camp extends Base{
     public function clientOfcamp(){
         $camp_id = input('param.camp_id');
         $campInfo = $this->CampService->getCampInfo($camp_id);
-        $GradeMember = new \app\model\GradeMember;
-        $objStudentList = $GradeMember->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>$camp_id])->select();
+        $LessonMember = new \app\model\LessonMember;
+        $objStudentList = $LessonMember->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>$camp_id])->select();
         if($objStudentList){
             $studentList = $objStudentList->toArray();
         }else{

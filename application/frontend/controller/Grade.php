@@ -43,8 +43,6 @@ class Grade extends Base{
         $courtService = new \app\service\CourtService;
         //$courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         $courtList = $courtService->getCourtListOfCamp(['camp_id'=>$camp_id]);
-        // 获取课程学生
-        $students = db('grade_member')->where(['camp_id'=>$camp_id,'status'=>1,'lesson_id'=>$lesson_id])->select();
         // 教案列表
         $PlanService = new \app\service\PlanService;
         $planList = $PlanService->getPlanList(['camp_id'=>$camp_id,'type'=>1]);
@@ -56,7 +54,6 @@ class Grade extends Base{
         $this->assign('staffList',$staffList);
         $this->assign('coachlist', $coachlist);
         $this->assign('gradecateList',$gradecateList);
-        $this->assign('students',$students);
         $this->assign('campInfo',$campInfo);
     	return view('Grade/createGrade');
     }

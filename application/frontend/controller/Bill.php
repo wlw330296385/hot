@@ -162,18 +162,7 @@ class Bill extends Base{
         $billList['count'] = count($billList);
         return json(['code'=>100,'data'=>$billList,'msg'=>'OK']);    	
     }
-    //编辑|添加订单
-    public function createBill(){
-    	// 训练营主教练
-    	$map = input('post.');
-    	$coachList = db('grade_member')->where(['type'=>0,'camp_id'=>$camp_id,'status'=>1])->select();
-    	$assitantList = db('grade_member')->where(['type'=>8,'camp_id'=>$camp_id,'status'=>1])->select();
-    	$this->assign('coachList',$coachList);
-    	$this->assign('assitantList',$assitantList);
-    	return view('Bill/createBill');
-    }
-
-
+   
     public function comfirmBill(){
         // 生成订单号
         $billOrder = '1'.date('YmdHis',time()).rand(0000,9999).$this->memberInfo['id'];

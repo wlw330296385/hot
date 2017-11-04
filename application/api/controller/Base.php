@@ -14,7 +14,7 @@ class Base extends Controller{
 
     public function _initialize() {
         $this->memberInfo = session('memberInfo','','think');
-        $this->gettoken();
+        // $this->gettoken();
     }
 
     public function gettoken(){

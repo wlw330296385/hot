@@ -5,12 +5,12 @@ use traits\model\SoftDelete;
 class Bill extends Model{
 	use SoftDelete;
     protected $deleteTime = 'delete_time';
-	protected $type = [
+	  protected $type = [
         
     ];
     protected $autoWriteTimestamp = true;
 
-    protected $readonly = ['create_time','callback_str','pay_time'];
+    protected $readonly = ['create_time'];
     // public function getStatusAttr($value){
 	   //     $status = [0=>'未付款',1=>'已付款','-1'=>'申请退款','-2'=>'已退款'];
 	   // return $status[$value];
