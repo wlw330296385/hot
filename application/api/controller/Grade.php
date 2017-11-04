@@ -265,7 +265,12 @@ class Grade extends Base{
                 $query->where(['grade.coach_id'=>$coach_id])->whereOr('grade.assistant_id','like',"%\"$coach_id\"%");
             };
             $result = $this->GradeService->getGradeListByPage($map);
-            return json($result);
+            if($result){
+                return json(['code' => 200, 'msg' => '获取成功','data'=>$result]);
+            }else{
+                return json(['code' => 100, 'msg' =>'获取失败']);
+            }
+            
         }catch (Exception $e){
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }

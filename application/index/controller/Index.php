@@ -32,8 +32,50 @@ class Index extends Controller{
         return view('Index/index');
     }
     
+    public function grade(){
+        // $GradeService = new \app\service\GradeService;
+        // $result = $GradeService->getGradeListByPage([]);
+        $result = db('grade')->select();
+        dump($result);die;
+        foreach($result as $key =>&$value){
+            if($value['student_str'] == 0){
+                $value['student_str'] = '';
+            }
+            if($value['status'] == 0){
+                $value['status'] = 1;
+            }
+        }
+        $GradeModel = new \app\model\Grade;
+        $GradeModel->saveAll($result); 
+    }
         
-    
+    public function getGradeStudentStr(){
+        $GradeService = new \app\service\GradeService;
+        $result = $GradeService->getGradeListByPage([]);
+        // $list = $result->toArray();
+        $list = [];
+        dump($result);die;
+        foreach ($result['data'] as $key => &$value) {
+            // dump($value['grade_member']);
+            $value['grade_member'] = $value['grade_member']->toArray();
+        }
+        $list = $result['data'];
+        foreach ($list as $key => &$value) {
+            if($value['student_str'] == 0){
+                $value['student_str'] ='';
+            }
+            foreach ($value['grade_member'] as $ky => $val) {
+                // dump($val);
+                $value['student_str'] .= $val['student'].',';
+            }
+            $value['student_str'] = substr($value['student_str'],0,strlen($value['student_str'])-1);
+            unset($value['grade_member']);
+            unset($value['status']);
+        }
+        dump($list);
+        $GradeModel = new \app\model\Grade;
+        $GradeModel->saveAll($list);
+    }
 
     public function wxbind() {
         $WeixinService = new Weixin();
