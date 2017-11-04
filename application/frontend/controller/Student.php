@@ -42,8 +42,8 @@ class Student extends Base
 		// 剩余课量
 		$restSchedule = 0;
 		foreach ($studentGradeList as $key => $value) {
-								$restSchedule+=$value['rest_schedule'];
-							}					
+			$restSchedule+=$value['rest_schedule'];
+		}					
 		// 学生课量
 		$studentScheduleList = Db::view('schedule_member','*')
 								->view('schedule','students,leave','schedule.id=schedule_member.schedule_id')
