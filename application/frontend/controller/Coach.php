@@ -2,17 +2,14 @@
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\CoachService;
-use app\service\GradeMemberService;
 use app\service\ScheduleService;
 use think\Db;
 class Coach extends Base{
 	protected $coachService;
-    protected $gradeMemberService;
     protected $scheduleService;
 	public function _initialize(){
 		parent::_initialize();
 		$this->coachService = new CoachService;
-		$this->gradeMemberService = new GradeMemberService;
         $this->scheduleService = new ScheduleService;
 
 	}

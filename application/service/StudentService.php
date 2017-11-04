@@ -53,26 +53,6 @@ class StudentService{
 			return ['code'=>100,'msg'=>$this->studentModel->getError()];
 		}
 	}
-	/**
-	 * 	购买课程
-	 */
-	public function buyLesson($request,$id = false){
-		//是否完善资料
-		$is_student = $this->studentModel->where(['member_id'=>$this->memberInfo['id']])->find();
-		if(!$is_student){
-			return false;
-		}
-		if($id){
-			$result = $this->gradeMemberModel->save($request,['id'=>$id]);
-		}else{
-			$result = $this->gradeMemberModel->save($request);
-		}
-		if($result){
-			return true;
-		}else{
-			return false;
-		}
-	}
 
 
 	// 获取一个教练下的所有学生

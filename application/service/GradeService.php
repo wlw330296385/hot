@@ -27,7 +27,7 @@ class GradeService{
     // 班级分页
     public function getGradeListByPage($map , $order='', $paginate=10) {
         $result =  $this->GradeModel
-                ->with('gradeMember')
+                // ->with('gradeMember')
                 ->where($map)
                 ->order($order)
                 ->paginate($paginate);

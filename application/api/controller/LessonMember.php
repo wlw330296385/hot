@@ -11,6 +11,27 @@ class LessonMember extends Base{
         $this->LessonMemberService = new LessonMemberService;
 	}
 
+    public function getLessonMemberListOfCampByPageApi(){
+        try{
+            $map = input('post.');
+            $keyword = input('param.keyword');
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['student'] = ['LIKE','%'.$keyword.'%'];
+            } 
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            $result = $this->LessonMemberService->getLessonMemberListOfCampByPage($map);    
+            if($result){
+                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'检查你的参数']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
     public function getLessonMemberListByPageApi(){
         try{
             $map = input('post.');
