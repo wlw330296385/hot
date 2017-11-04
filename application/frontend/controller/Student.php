@@ -40,10 +40,21 @@ class Student extends Base
 							->order('grade_member.id desc')
 							->select();
 		// 剩余课量
-		$restSchedule = 0;
-		foreach ($studentGradeList as $key => $value) {
-								$restSchedule+=$value['rest_schedule'];
-							}					
+//		$restSchedule = 0;
+//		foreach ($studentGradeList as $key => $value) {
+//								$restSchedule+=$value['rest_schedule'];
+//							}
+
+        $restSchedule = Db::name('grade_member')->where([
+            'camp_id' => $camp_id,
+            'student_id' => $student_id,
+            'type' => $type,
+            'status' => 1
+        ])->sum('rest_schedule');
+        if (!$restSchedule) {
+            $restSchedule = 0;
+        }
+
 		// 学生课量
 		$studentScheduleList = Db::view('schedule_member','*')
 								->view('schedule','students,leave','schedule.id=schedule_member.schedule_id')
