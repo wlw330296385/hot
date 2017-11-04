@@ -468,17 +468,17 @@ class CampMember extends Base
             }
             $keyword = input('param.keyword');
             if (!empty($keyword) && $keyword != "" && $keyword != " ") {
-                $where['grade_member.student'] = ['like', "%$keyword%"];
+                $where['lesson_member.student'] = ['like', "%$keyword%"];
                 unset($map['keyword']);
             }
             if (isset($map['status'])) {
-                $where['grade_member.status'] = $map['status'];
+                $where['lesson_member.status'] = $map['status'];
             }
 
-            $where['grade_member.camp_id'] = $map['camp_id'];
+            $where['lesson_member.camp_id'] = $map['camp_id'];
             $where['grade_id'] = 0;
-            $list = Db::view('grade_member')
-                ->view('student', ['id' => 'studentid', 'member_id', 'student', 'student_sex', 'student_avatar'], 'student.member_id=grade_member.member_id')
+            $list = Db::view('lesson_member')
+                ->view('student', ['id' => 'studentid', 'member_id', 'student', 'student_sex', 'student_avatar'], 'student.member_id=lesson_member.member_id')
                 ->where($where)->page($page, 10)->select();
             if (empty($list)) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
@@ -532,7 +532,7 @@ class CampMember extends Base
                                 return json(['code' => 100, 'msg' => __lang('MSG_400') . '，该学员在训练营课时尚未完成']);
                             }
                         }
-                        // grade_member status=-1 学员离营
+                        // lesson_member status=-1 学员离营
                         $studentleave = $gradememberM->where($gradememberMap)->setField('status', -1);
                         if (!$studentleave) {
                             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
