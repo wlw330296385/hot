@@ -305,6 +305,20 @@ class Schedule extends Base
         }
     }
 
+    // 购买赠送课时列表
+    public function buygiftlist()  {
+	    try {
+            $camp_id = input('param.camp_id', 0);
+            $page = input('param.page', 1);
+            $scheduleS = new ScheduleService();
+            $map['camp_id'] = $camp_id;
+            $res = $scheduleS->buygiftpage($map, $page);
+            return json($res);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
     // 赠送课时给学员
     public function recordgift() {
 	    try {
@@ -323,6 +337,20 @@ class Schedule extends Base
 
             $scheduleS = new ScheduleService();
             $res = $scheduleS->recordgift($request);
+            return json($res);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 赠送课时列表
+    public function giftlist() {
+	    try {
+            $camp_id = input('param.camp_id', 0);
+            $page = input('param.page', 1);
+            $scheduleS = new ScheduleService();
+            $map['camp_id'] = $camp_id;
+            $res = $scheduleS->giftpage($map, $page);
             return json($res);
         } catch (Exception $e) {
             return json(['code'=>100,'msg'=>$e->getMessage()]);
