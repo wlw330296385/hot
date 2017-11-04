@@ -514,17 +514,22 @@ class CampMember extends Base
             switch ($campmemberObj->getData('status')) {
                 case "1" : {
                     if ($action == 'editstatus') {
-                        // 学员有剩余课时 不允许操作
-                        $restschedule = $gradememberM->where($gradememberMap)->sum('rest_schedule');
-                        if ($restschedule > 0) {
-                            return json(['code' => 100, 'msg' => __lang('MSG_400') . '，该学员在训练营课时尚未完成']);
-                        }
                         // 学员在有效数据的班级中
                         $gradeIds = $gradememberM->where($gradememberMap)->column('grade_id');
                         if ($gradeIds) {
                             $grades = $gradeM->where(['id' => ['in', $gradeIds]])->select();
                             if ($grades) {
-                                return json(['code' => 100, 'msg' => __lang('MSG_400') . '，该学员在训练营班级中']);
+                                return json(['code' => 100, 'msg' => __lang('MSG_400') . '，该学员在训练营班级中，请先将学员移出班级']);
+                            }
+                        }
+
+                        // 如果学员有离营申请记录，可直接进行离营操作；否则先检查剩余课时
+                        $studentleaveappply = db('camp_leaveapply')->where(['camp_id' => $camp_id, 'member_id' => $member_id])->find();
+                        if (!$studentleaveappply) {
+                            // 学员有剩余课时 不允许操作
+                            $restschedule = $gradememberM->where($gradememberMap)->sum('rest_schedule');
+                            if ($restschedule > 0) {
+                                return json(['code' => 100, 'msg' => __lang('MSG_400') . '，该学员在训练营课时尚未完成']);
                             }
                         }
                         // grade_member status=-1 学员离营
