@@ -3,6 +3,8 @@ namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\MessageService;
 use app\service\ScheduleService;
+use think\Exception;
+
 /**
 * 课时表类
 */
@@ -206,66 +208,123 @@ class Schedule extends Base
 
 	// 操作课时 设为已申/删除
 	public function removeschedule() {
-	    $scheduleid = input('scheduleid');
-	    $action = input('action');
-	    if (!$scheduleid || !$action) {
-	        return json(['code' => 100, 'msg' => __lang('MSG_402')]);
-        }
+	    try {
+            $scheduleid = input('scheduleid');
+            $action = input('action');
+            if (!$scheduleid || !$action) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
 
-        $scheduleS = new ScheduleService();
-        $schedule = $scheduleS->getScheduleInfo(['id' => $scheduleid]);
-        if (!$schedule) {
-            return json(['code' => 100, 'msg' => '课时'.__lang('MSG_404')]);
-        }
-        //dump($schedule);
-        if ($schedule['status'] != 0) {
-            return ['code' => 100, 'msg' => '该课时记录已审核，不能操作了'];
-        }
+            $scheduleS = new ScheduleService();
+            $schedule = $scheduleS->getScheduleInfo(['id' => $scheduleid]);
+            if (!$schedule) {
+                return json(['code' => 100, 'msg' => '课时' . __lang('MSG_404')]);
+            }
+            //dump($schedule);
+            if ($schedule['status'] != 0) {
+                return ['code' => 100, 'msg' => '该课时记录已审核，不能操作了'];
+            }
 
-        if ($action =='editstatus') {
-            // 审核课时
-            $res = $scheduleS->saveScheduleMember($scheduleid);
-            return json($res);
+            if ($action == 'editstatus') {
+                // 审核课时
+                $res = $scheduleS->saveScheduleMember($scheduleid);
+                return json($res);
 //            if ($res) {
 //                $response = ['code' => 200, 'msg' => __lang('MSG_200')];
 //            } else {
 //                $response = ['code' => 100, 'msg' => __lang('MSG_400')];
 //            }
 //            return json($response);
-        } else {
-            $res = $scheduleS->delSchedule($scheduleid);
+            } else {
+                $res = $scheduleS->delSchedule($scheduleid);
+                if ($res) {
+                    $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+                } else {
+                    $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+                }
+                return json($response);
+            }
+        }catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 发送课时结果消息给学员
+    public function sendschedule() {
+	    try {
+            $scheduleid = input('scheduleid');
+            $scheduleS = new ScheduleService();
+            $members = $scheduleS->getScheduleStudentMemberList($scheduleid);
+//            dump($members);
+            $schedule = $scheduleS->getScheduleInfo(['id' => $scheduleid]);
+//        dump($schedule);
+
+            $templateData = [
+                'title' => $schedule['grade'].'最新课时',
+                'content' => '您参加的'.$schedule['camp'].'-'.$schedule['lesson'].'-'.$schedule['grade'].'班级 发布最新课时',
+                'lesson_time' => date('Y-m-d H:i', $schedule['lesson_time']),
+                'url' => url('frontend/schedule/scheduleinfo', ['schedule_id' => $schedule['id'], 'camp_id' => $schedule['camp_id']], '', true)
+            ];
+            //dump($templateData);
+            $messageS = new MessageService();
+            $res = $messageS->sendschedule($templateData, $members);
             if ($res) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_400')];
             }
             return json($response);
+        }catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
-    // 发送课时结果消息给学员
-    public function sendschedule() {
-        $scheduleid = input('scheduleid');
-        $scheduleS = new ScheduleService();
-        $members = $scheduleS->getScheduleStudentMemberList($scheduleid);
-        dump($members);
-        $schedule = $scheduleS->getScheduleInfo(['id' => $scheduleid]);
-//        dump($schedule);
-
-        $templateData = [
-            'title' => $schedule['grade'].'最新课时',
-            'content' => '您参加的'.$schedule['camp'].'-'.$schedule['lesson'].'-'.$schedule['grade'].'班级 发布最新课时',
-            'lesson_time' => date('Y-m-d H:i', $schedule['lesson_time']),
-            'url' => url('frontend/schedule/scheduleinfo', ['schedule_id' => $schedule['id'], 'camp_id' => $schedule['camp_id']], '', true)
-        ];
-        //dump($templateData);
-        $messageS = new MessageService();
-        $res = $messageS->sendschedule($templateData, $members);
-        if ($res) {
-            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
-        } else {
-            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+    // 购买赠送课时
+    public function buygift() {
+	    try {
+            $request = input('param.');
+            $camp_id = $request['camp_id'];
+            $camppower = getCampPower($camp_id, $this->memberInfo['id']);
+            if ($camppower < 2) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403').'不能操作']);
+            }
+            $request['member_id'] = $this->memberInfo['id'];
+            $request['member'] = $this->memberInfo['member'];
+            $scheduleS = new ScheduleService();
+            $res = $scheduleS->buygift($request);
+            if ($res['code'] == 200) {
+                // 更新课程赠送课时字段
+                $updateLesson = db('lesson')->where('id', $request['lesson_id'])->setInc('resi_giftschedule', $request['quantity']);
+                if (!$updateLesson) {
+                    return json(['code' => 100, 'msg' => '更新课程赠送课时'.__lang('MSG_400')]);
+                }
+            }
+            return json($res);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
-        return json($response);
+    }
+
+    // 赠送课时给学员
+    public function recordgift() {
+	    try {
+            $request = input('param.');
+            $camp_id = $request['camp_id'];
+            $camppower = getCampPower($camp_id, $this->memberInfo['id']);
+            if ($camppower < 2) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403').'不能操作']);
+            }
+            $request['member_id'] = $this->memberInfo['id'];
+            $request['member'] = $this->memberInfo['member'];
+            $request['status'] = 1;
+            if (!empty($request['studentList'])) {
+                $request['student_str'] = serialize($request['studentList']);
+            }
+
+            $scheduleS = new ScheduleService();
+            $scheduleS->recordgift($request);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
     }
 }
