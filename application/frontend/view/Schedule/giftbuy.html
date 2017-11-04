@@ -49,134 +49,109 @@
             height: initial;
         }
         
-        .pdr {
-            padding-right: 30px !important;
-        }
-        
         #newdiv .tips {
             color: #AAAAAA;
             line-height: normal;
         }
         
-        .nohave {
-            margin: 0;
+        .page-header {
+            background: #efeff4;
+        }
+        
+        .explain-cont {
             padding: 15px;
-            border: 1px solid #ddd;
-            border-top: none;
-            text-align: center;
+        }
+        
+        .explain-cont p {
+            margin-bottom: 2px;
         }
     </style>
 </head>
 
-<body>
+<body class="whitebg">
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-        <h1 class="mui-title"></h1>
+        <h1 class="mui-title">{$campInfo.camp}</h1>
+        <input type="hidden" name="camp" value="{$campInfo.camp}" class="data">
+        <input type="hidden" name="camp_id" value="{$campInfo.id}" class="data">
     </header>
 
     <div class="mui-content">
 
-        <div class="camp-list camp-lesson-list detalis-list grade-list editor mt">
+        <form class="mui-input-group mt55">
 
+            <div class="page-header">
+                <span class="course">选择对应课程进行购买</span>
+            </div>
 
+            <div class="mui-input-row">
+                <a href="#Lesson" class="mui-navigate-right">
+                    <label>选择课程</label>
+                    <span class="lessonCont domData" name="lesson"></span>
+                    <input type="hidden" name="lesson_id" value="" data-cost="" class="lesson_id data">
+                </a>
+            </div>
 
-            <form class="mui-input-group mt55">
+            <div class="mui-input-row">
+                <label>课时单价</label>
+                <span><b class="colororange cost"></b>元</span>
+            </div>
 
-                <div class="page-header">
-                    <span class="course">选择对应课程进行购买</span>
-                </div>
+            <div class="page-header">
+                <span class="course wd52">填写购买数量</span>
+                <span class="more" style="padding-right:0">剩余赠送：20</span>
+            </div>
 
-                <div class="mui-input-row">
-                    <a href="#trainLocation" class="mui-navigate-right">
-                        <label>选择课程</label>
-                        <span class="trainLocationCont"></span>
-                        <input type="hidden" name="court_id" value="" class="court_id">
-                    </a>
-                </div>
+            <div class="mui-input-row">
+                <label>购买课量</label>
+                <input type="text" name="quantity" value="" class="quantity data" placeholder="请填写购买课时数量">
+            </div>
 
-                <div class="mui-input-row">
-                    <a href="#" class="mui-navigate-right">
-                        <label>课时单价</label>
-                        <span id="result" class="ui-alert"></span>
-                    </a>
-                </div>
-                <div class="page-header">
-                    <span class="course">选择对应课程进行购买</span>
-                </div>
+            <div class="page-header">
+                <span class="course">注意事项</span>
+            </div>
 
-                <div class="mui-input-row">
-                    <label>购买课量</label>
-                    <span class="assistant_salary pdr"></span>
-                </div>
-                <div class="page-header">
-                    <span class="course">注意事项</span>
-                </div>
+            <div class="explain-cont">
+                <p>1、赠送课时的优惠政策以及产生的费用由训练营自行负责;</p>
+                <p>2、训练营必须先从平台购买课时用于赠送操作;</p>
+                <p>3、赠送出去的课时会在每月结算时进行抵扣;</p>
+            </div>
 
-            </form>
+        </form>
 
-            <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen operationBtn" style="color: #fff">
-                    提交购买
-                </li>
-            </ul>
-
-        </div>
-
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen operationBtn" style="color: #fff" onclick="submitAction()">
+                提交购买
+            </li>
+        </ul>
 
     </div>
 
-
-    <!--训练地点-->
-    <div id="trainLocation" class="mui-popover">
+    <!--选择课程-->
+    <div id="Lesson" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course"><strong>训练地点</strong></span>
+            <span class="course"><strong>课程列表</strong></span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <ul class="mui-table-view list courtlist">
+                <ul class="mui-table-view list lessonlist">
+                    <li class="mui-table-view-cell listli detalisli">校园班</li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <!--学员名单-->
-    <div id="addStudent" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course wd36"><strong>学员名单</strong></span>
-            <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <form id="newdiv" class="mui-input-group addStudentList">
-
-                </form>
-            </div>
-        </div>
-    </div>
-
-
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <!-- 选择器 -->
-    <script src="/static/frontend/js/mui.picker.min.js"></script>
-    <script src="/static/frontend/js/mui.poppicker.js"></script>
-    <script src="/static/frontend/js/city.data-3.js"></script>
-    <script>
-        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
-    </script>
-    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-
-        //弹出菜单
-        mui('.mui-scroll-wrapper').scroll();
 
         //弹出框滚动必须写在mui专用的初始化
         (function ($) {
@@ -189,6 +164,85 @@
                 mui(".mui-popover.mui-active").popover("toggle");
             })
         })(mui);
+
+        $(function () {
+            // 选择课程
+            $(".lessonlist").on('tap', 'li', function () {
+                var lesson = $(this).text();
+                var lesson_id = $(this).attr('data-id');
+                var cost = $(this).attr('data-cost');
+                $(".lessonCont").text(lesson);
+                $(".lesson_id").val(lesson_id);
+                $(".cost").text(cost);
+                mui("#Lesson").popover("toggle");
+            });
+
+            toLessonList()
+        });
+
+        // 获取数据并进行提交
+        function submitAction() {
+
+            var quantity = $("input[name=quantity]").val();
+            if (!(/^[0-9]*$/).test(quantity)) {
+                mui.alert("请输入正确的课量数量");
+                return;
+            };
+
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var url = "{:url('api/schedule/buygift')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '购买课时成功', '确定', function () {
+                    var goUrl = "{:url('schedule/giftlistOfCamp')}" + '/gift_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '购买课时失败', '确定', function () {
+
+                })
+            }
+        };
+
+        //课程列表接口获取数据并追加到页面
+        var toLessonList = function () {
+            var url = "{:url('api/lesson/getLessonListApi','','',true)}";
+            var campID = "{$camp_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '" data-cost="' + data.data[i].cost + '">' + data.data[i].lesson + '</li>'
+                        }
+                        $("ul.lessonlist").empty();
+                        if (newli == '') {
+                            newli = '<li class="mui-text-center"><p>没有查找到场地数据哦</p></li>'
+                        }
+                        $("ul.lessonlist").append(newli);
+
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
     </script>
 </body>
 

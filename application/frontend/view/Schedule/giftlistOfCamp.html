@@ -19,188 +19,215 @@
         <div class="camp-lesson-list">
             <div class="mui-segmented-control mb">
                 <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id' => $camp_id])}"></a>
-                <a class="mui-control-item mui-active" href="#onlineEventList">赠送概览</a>
-                <a class="mui-control-item" href="#offlineEventList">赠送记录</a>
-                <a class="mui-control-item" href="#outlineEventList">购买记录</a>
+                <a class="mui-control-item mui-active" href="#onlineGiftList">赠送概览</a>
+                <a class="mui-control-item" href="#offlineGiftList">赠送记录</a>
+                <a class="mui-control-item" href="#outlineGiftList">购买记录</a>
                 <a class="mui-control-item" href="{:url('schedule/giftbuy',['camp_id' => $camp_id])}">购买课时</a>
             </div>
         </div>
-
-
     </header>
 
     <div class="mui-content">
 
         <div class="tab-pullRefresh">
-            <div id="onlineEventList" class="mui-scroll-wrapper mui-control-content mui-active">
+            <div id="onlineGiftList" class="mui-scroll-wrapper mui-control-content mui-active">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list border-b event1 OA_task_event"></ul>
+                    <ul class="mui-table-view detalis-list list border-b gift1 OA_task_gift">
+                        <li class="mui-table-view-cell mui-media listli">
+                            <div class="mui-media-body wd83 ">大热篮球超级控球课程
+                                <p class="mui-ellipsis">历史赠送：20节 &nbsp;|&nbsp; 剩余赠送：30节</p>
+                            </div>
+                            <div class="price-frame">
+                                <p class="price mui-text-center">80</p>
+                                <p class="address">未结算</p>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
-            <div id="offlineEventList" class="mui-scroll-wrapper mui-control-content">
+            <div id="offlineGiftList" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list border-b event2 OA_task_event"></ul>
+                    <ul class="mui-table-view detalis-list list border-b gift2 OA_task_gift">
+                        <li class="mui-table-view-cell mui-media listli">
+                            <a href="{:url('schedule/giftrecordInfo',['camp_id' => $camp_id])}">
+                                <div class="mui-media-body wd83 ">篮球超级控球课程
+                                    <p class="mui-ellipsis">赠送人数：20人 &nbsp;|&nbsp; 人均赠送：30节</p>
+                                </div>
+                                <div class="price-frame">
+                                    <p class="price mui-text-center">20</p>
+                                    <p class="address">赠送</p>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
-            <div id="outlineEventList" class="mui-scroll-wrapper mui-control-content">
+            <div id="outlineGiftList" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list border-b event3 OA_task_event"></ul>
+                    <ul class="mui-table-view detalis-list list border-b gift3 OA_task_gift">
+                        <li class="mui-table-view-cell mui-media listli">
+                            <a href="{:url('schedule/giftbuyInfo',['camp_id' => $camp_id])}">
+                                <div class="mui-media-body wd83 ">荣光特训课程
+                                    <p class="mui-ellipsis">2017-11-04 10:20</p>
+                                </div>
+                                <div class="price-frame">
+                                    <p class="price">100元</p>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
-         
+
         </div>
 
     </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        mui("body").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
+
+        // $(function () {
+
+        //     //初始化全局变量
+        //     var onCount = 1;
+        //     var offCount = 1;
+        //     var outCount = 1;
+        //     var fullCount = 1;
+
+        //     mui('#onlineGiftList').pullRefresh({
+        //         down: {
+        //             //下拉刷新
+        //             height: 50,//可选.默认50.触发下拉刷新拖动距离
+        //             auto: true,//可选,默认false.自动下拉刷新一次
+        //             contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+        //             contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+        //             contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+        //             callback: pulldownRefreshOn
+        //         },
+        //         up: {
+        //             //上拉加载
+        //             height: 150,//可选.默认50.触发上拉加载拖动距离
+        //             //auto:true,//可选,默认false.自动上拉加载一次
+        //             contentrefresh: '正在加载...',
+        //             contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+        //             callback: pullupRefreshOn
+        //         }
+        //     });
+
+        //     mui('#offlineGiftList').pullRefresh({
+        //         down: {
+        //             //下拉刷新
+        //             height: 50,//可选.默认50.触发下拉刷新拖动距离
+        //             auto: true,//可选,默认false.自动下拉刷新一次
+        //             contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+        //             contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+        //             contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+        //             callback: pulldownRefreshOff
+        //         },
+        //         up: {
+        //             //上拉加载
+        //             height: 150,//可选.默认50.触发上拉加载拖动距离
+        //             //auto:true,//可选,默认false.自动上拉加载一次
+        //             contentrefresh: '正在加载...',
+        //             contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+        //             callback: pullupRefreshOff
+        //         }
+        //     });
+
+        //     mui('#outlineGiftList').pullRefresh({
+        //         down: {
+        //             //下拉刷新
+        //             height: 50,//可选.默认50.触发下拉刷新拖动距离
+        //             auto: true,//可选,默认false.自动下拉刷新一次
+        //             contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+        //             contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+        //             contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+        //             callback: pulldownRefreshOut
+        //         },
+        //         up: {
+        //             //上拉加载
+        //             height: 150,//可选.默认50.触发上拉加载拖动距离
+        //             //auto:true,//可选,默认false.自动上拉加载一次
+        //             contentrefresh: '正在加载...',
+        //             contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+        //             callback: pullupRefreshOut
+        //         }
+        //     });
+
+        //     //下拉刷新具体业务实现（上架）
+        //     function pulldownRefreshOn() {
+        //         setTimeout(function () {
+        //             onCount = 1;//刷新并显示第一页
+        //             var page = onCount;
+        //             var gType = 1;//代表下拉刷新
+        //             toList('onlineGiftList', page, gType, 1);//具体取数据的方法
+        //         }, 100);
+        //     }
+
+        //     //上拉加载具体业务实现（上架）
+        //     function pullupRefreshOn() {
+        //         setTimeout(function () {
+        //             onCount++;//翻下一页
+        //             var page = onCount;
+        //             var gType = 2;//代表上拉加载
+        //             toList('onlineGiftList', page, gType, 1);//具体取数据的方法
+        //         }, 100);
+        //     }
+
+        //     //下拉刷新具体业务实现（下架）
+        //     function pulldownRefreshOff() {
+        //         setTimeout(function () {
+        //             offCount = 1;//刷新并显示第一页
+        //             var page = offCount;
+        //             var gType = 1;//代表下拉刷新
+        //             toList('offlineGiftList', page, gType, 2);//具体取数据的方法
+        //         }, 100);
+        //     }
+
+        //     //上拉加载具体业务实现（下架）
+        //     function pullupRefreshOff() {
+        //         setTimeout(function () {
+        //             offCount++;//翻下一页
+        //             var page = offCount;
+        //             var gType = 2;//代表上拉加载
+        //             toList('offlineGiftList', page, gType, 2);//具体取数据的方法
+        //         }, 100);
+        //     }
+
+        //     //下拉刷新具体业务实现（过期）
+        //     function pulldownRefreshOut() {
+        //         setTimeout(function () {
+        //             outCount = 1;//刷新并显示第一页
+        //             var page = outCount;
+        //             var gType = 1;//代表下拉刷新
+        //             toList('outlineGiftList', page, gType, 3);//具体取数据的方法
+        //         }, 100);
+        //     }
+
+        //     //上拉加载具体业务实现（过期）
+        //     function pullupRefreshOut() {
+        //         setTimeout(function () {
+        //             outCount++;//翻下一页
+        //             var page = outCount;
+        //             var gType = 2;//代表上拉加载
+        //             toList('outlineGiftList', page, gType, 3);//具体取数据的方法
+        //         }, 100);
+        //     }
+
+
+        // })
+    </script>
 </body>
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<script src="/static/frontend/js/wooApi.js"></script>
-<script src="/static/frontend/js/common.js"></script>
-<script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
-
-    mui("body").on("tap", "a", function () {
-        window.top.location.href = this.href;
-    });
-
-    // $(function () {
-
-    //     //初始化全局变量
-    //     var onCount = 1;
-    //     var offCount = 1;
-    //     var outCount = 1;
-    //     var fullCount = 1;
-
-    //     mui('#onlineEventList').pullRefresh({
-    //         down: {
-    //             //下拉刷新
-    //             height: 50,//可选.默认50.触发下拉刷新拖动距离
-    //             auto: true,//可选,默认false.自动下拉刷新一次
-    //             contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-    //             contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-    //             contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-    //             callback: pulldownRefreshOn
-    //         },
-    //         up: {
-    //             //上拉加载
-    //             height: 150,//可选.默认50.触发上拉加载拖动距离
-    //             //auto:true,//可选,默认false.自动上拉加载一次
-    //             contentrefresh: '正在加载...',
-    //             contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-    //             callback: pullupRefreshOn
-    //         }
-    //     });
-
-    //     mui('#offlineEventList').pullRefresh({
-    //         down: {
-    //             //下拉刷新
-    //             height: 50,//可选.默认50.触发下拉刷新拖动距离
-    //             auto: true,//可选,默认false.自动下拉刷新一次
-    //             contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-    //             contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-    //             contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-    //             callback: pulldownRefreshOff
-    //         },
-    //         up: {
-    //             //上拉加载
-    //             height: 150,//可选.默认50.触发上拉加载拖动距离
-    //             //auto:true,//可选,默认false.自动上拉加载一次
-    //             contentrefresh: '正在加载...',
-    //             contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-    //             callback: pullupRefreshOff
-    //         }
-    //     });
-
-    //     mui('#outlineEventList').pullRefresh({
-    //         down: {
-    //             //下拉刷新
-    //             height: 50,//可选.默认50.触发下拉刷新拖动距离
-    //             auto: true,//可选,默认false.自动下拉刷新一次
-    //             contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-    //             contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-    //             contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-    //             callback: pulldownRefreshOut
-    //         },
-    //         up: {
-    //             //上拉加载
-    //             height: 150,//可选.默认50.触发上拉加载拖动距离
-    //             //auto:true,//可选,默认false.自动上拉加载一次
-    //             contentrefresh: '正在加载...',
-    //             contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-    //             callback: pullupRefreshOut
-    //         }
-    //     });
-
-    //     //下拉刷新具体业务实现（上架）
-    //     function pulldownRefreshOn() {
-    //         setTimeout(function () {
-    //             onCount = 1;//刷新并显示第一页
-    //             var page = onCount;
-    //             var gType = 1;//代表下拉刷新
-    //             toList('onlineEventList', page, gType, 1);//具体取数据的方法
-    //         }, 100);
-    //     }
-
-    //     //上拉加载具体业务实现（上架）
-    //     function pullupRefreshOn() {
-    //         setTimeout(function () {
-    //             onCount++;//翻下一页
-    //             var page = onCount;
-    //             var gType = 2;//代表上拉加载
-    //             toList('onlineEventList', page, gType, 1);//具体取数据的方法
-    //         }, 100);
-    //     }
-
-    //     //下拉刷新具体业务实现（下架）
-    //     function pulldownRefreshOff() {
-    //         setTimeout(function () {
-    //             offCount = 1;//刷新并显示第一页
-    //             var page = offCount;
-    //             var gType = 1;//代表下拉刷新
-    //             toList('offlineEventList', page, gType, 2);//具体取数据的方法
-    //         }, 100);
-    //     }
-
-    //     //上拉加载具体业务实现（下架）
-    //     function pullupRefreshOff() {
-    //         setTimeout(function () {
-    //             offCount++;//翻下一页
-    //             var page = offCount;
-    //             var gType = 2;//代表上拉加载
-    //             toList('offlineEventList', page, gType, 2);//具体取数据的方法
-    //         }, 100);
-    //     }
-
-    //     //下拉刷新具体业务实现（过期）
-    //     function pulldownRefreshOut() {
-    //         setTimeout(function () {
-    //             outCount = 1;//刷新并显示第一页
-    //             var page = outCount;
-    //             var gType = 1;//代表下拉刷新
-    //             toList('outlineEventList', page, gType, 3);//具体取数据的方法
-    //         }, 100);
-    //     }
-
-    //     //上拉加载具体业务实现（过期）
-    //     function pullupRefreshOut() {
-    //         setTimeout(function () {
-    //             outCount++;//翻下一页
-    //             var page = outCount;
-    //             var gType = 2;//代表上拉加载
-    //             toList('outlineEventList', page, gType, 3);//具体取数据的方法
-    //         }, 100);
-    //     }
-
-
-    // })
-
-    
-
-
-
-</script>
 
 </html>
