@@ -445,6 +445,7 @@ class ScheduleService
     public function recordgift($request) {
         //dump($request);
         $model = new ScheduleGiftrecord();
+        
         $result = $model->allowField(true)->save($request);
         if (!$result) {
             return ['code' => 100, 'msg' => '赠送课时'.__lang('MSG_400')];
