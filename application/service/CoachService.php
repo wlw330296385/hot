@@ -3,13 +3,11 @@ namespace app\service;
 use app\model\Coach;
 use app\common\validate\CoachVal;
 use app\model\Grade;
-use app\model\GradeMember;
 use think\Db;
 class CoachService{
 	private $CoachModel;
 	public function __construct(){
 		$this->CoachModel = new Coach();
-        $this->gradeMemberModel = new GradeMember;
 	}
 
 	/**
