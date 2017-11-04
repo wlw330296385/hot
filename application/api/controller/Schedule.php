@@ -322,7 +322,8 @@ class Schedule extends Base
             }
 
             $scheduleS = new ScheduleService();
-            $scheduleS->recordgift($request);
+            $res = $scheduleS->recordgift($request);
+            return json($res);
         } catch (Exception $e) {
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
