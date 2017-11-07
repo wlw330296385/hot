@@ -100,7 +100,7 @@
 
             <div class="page-header">
                 <span class="course wd52">填写购买数量</span>
-                <span class="more" style="padding-right:0">剩余赠送：20</span>
+                <span class="more" style="padding-right:0">剩余赠送：<b class="resi_giftschedule"></b></span>
             </div>
 
             <div class="mui-input-row">
@@ -165,15 +165,19 @@
             })
         })(mui);
 
+
+        var resi_giftschedule = '';
         $(function () {
             // 选择课程
             $(".lessonlist").on('tap', 'li', function () {
                 var lesson = $(this).text();
                 var lesson_id = $(this).attr('data-id');
                 var cost = $(this).attr('data-cost');
+                resi_giftschedule = $(this).attr('data-resi_giftschedule');
                 $(".lessonCont").text(lesson);
                 $(".lesson_id").val(lesson_id);
                 $(".cost").text(cost);
+                $(".resi_giftschedule").text(resi_giftschedule);
                 mui("#Lesson").popover("toggle");
             });
 
@@ -226,7 +230,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '" data-cost="' + data.data[i].cost + '">' + data.data[i].lesson + '</li>'
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '" data-cost="' + data.data[i].cost + '" data-resi_giftschedule="' + data.data[i].resi_giftschedule + '">' + data.data[i].lesson + '</li>'
                         }
                         $("ul.lessonlist").empty();
                         if (newli == '') {
