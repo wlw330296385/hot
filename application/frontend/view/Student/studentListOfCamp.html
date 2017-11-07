@@ -53,7 +53,7 @@
         </div>
         <div id="offlineStudentList" class="mui-control-content mui-scroll-wrapper" style="top:80px">
             <div class="mui-scroll">
-                <ul class="mui-table-view coach list border-b student-1 OA_task_student"></ul>
+                <ul class="mui-table-view coach list border-b student2 OA_task_student"></ul>
             </div>
         </div>
         <div id="pendingStudentList" class="mui-control-content mui-scroll-wrapper" style="top:80px">
@@ -185,7 +185,7 @@
                 offCount = 1;//刷新并显示第一页
                 var page = offCount;
                 var gType = 1;//代表下拉刷新
-                toList('offlineStudentList', page, gType, -1, keywordOff);//具体取数据的方法
+                toList('offlineStudentList', page, gType, 2, keywordOff);//具体取数据的方法
             }, 100);
         }
 
@@ -195,7 +195,7 @@
                 offCount++;//翻下一页
                 var page = offCount;
                 var gType = 2;//代表上拉加载
-                toList('offlineStudentList', page, gType, -1, keywordOff);//具体取数据的方法
+                toList('offlineStudentList', page, gType, 2, keywordOff);//具体取数据的方法
             }, 100);
         }
 
@@ -245,7 +245,7 @@
     //接口获取数据并追加到页面
     var toList = function (wList, page, gType, status, keyword) {
         //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/grade_member/getGradeMemberListOfCampByPageApi','','',true)}?page="+page+"&keyword="+keyword;
+        var url  = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}?page="+page+"&keyword="+keyword;
         var campID = "{$camp_id}";
         var typeID = 1;
         mui.ajax({

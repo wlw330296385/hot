@@ -143,9 +143,8 @@
                 <ul class="mui-table-view">
                     <li class="mui-table-view-cell">
                         <ul class="mui-row table">
-                            <li class="mui-col-xs-2">审核</li>
-                            <li class="mui-col-xs-4">日期</li>
-                            <li class="mui-col-xs-4">班级</li>
+                            <li class="mui-col-xs-5">日期</li>
+                            <li class="mui-col-xs-5">班级</li>
                             <li class="mui-col-xs-2">人数</li>
                         </ul>
                     </li>
@@ -153,10 +152,9 @@
                 <ul class="mui-table-view detalis-list list schedule">
                     <li class="mui-table-view-cell">
                         <ul class="mui-row table">
-                            <li class="mui-col-sm-2 mui-col-xs-2">status</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">create_time</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">grade</li>
-                            <li class="mui-col-sm-2 mui-col-xs-2 ">students</li>
+                            <li class="mui-col-sm-4 mui-col-xs-5">create_time</li>
+                            <li class="mui-col-sm-4 mui-col-xs-5">grade</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2">students</li>
                         </ul>
                     </li>
                 </ul>
@@ -331,9 +329,9 @@
 
                 var newli='';
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('grade/gradeInfoOfCamp')}" + '/grade_id/' + data.data[i].id+'/camp_id/'+data.data[i].camp_id;
-                        newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><div class="mui-media-body wd"><strong>'+ data.data[i].grade+'</strong><p class="mui-ellipsis">'+ data.data[i].gradecate+' | '+ data.data[i].court+'</p></div></a></li>';
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        var urls = "{:url('grade/gradeInfoOfCamp')}" + '/grade_id/' + data.data.data[i].id+'/camp_id/'+data.data.data[i].camp_id;
+                        newli += '<li class="mui-table-view-cell mui-media listli fulllist"><a href="' + urls + '"><p class="fTop"><strong>'+ data.data.data[i].grade+'</strong><span>'+ data.data.data[i].court+'</span></p><p class="fMiddle">'+ data.data.data[i].student_str+'</p><p class="fBottom">学员：'+ data.data.data[i].students+' 人</p></a></li>';
                     }
                     if(gType==1){
                         //上拉刷新
@@ -385,9 +383,9 @@
 
                 var newli='';
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + campID;
-                        newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></li></a>';
+                        newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].lesson_time + '</li><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></li></a>';
                     }
                     if(gType==1){
                         //上拉刷新

@@ -96,8 +96,6 @@
                         <label>学员名单</label>
                         <span class="studentCont students domData" name="student_str"></span>
                         <div id="hideStList">
-                            {volist name="students" id="vol"}
-                            <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}">{/volist}
                         </div>
                         <input type="hidden" name="students" class="students data" value="">
                     </a>
@@ -871,7 +869,7 @@
             $(".lessonType").click(function () {
                 var lessonType = $(this).text();
                 var lesson_id = $(this).attr("data-id");
-                mui.ajax("{:url('api/lesson/getStudentListOfLessonApi')}", {
+                mui.ajax("{:url('api/lesson_member/getLessonMemberListNoPageApi')}", {
                     data: { "lesson_id": lesson_id },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
