@@ -25,6 +25,14 @@ class LessonMemberService{
         return $result;
     }
 
+    public function getLessonMemberListOfCampByPage($map,$paginate = 10){
+        $result = $this->LessonMemberModel->where($map)->distinct(true)->paginate($paginate);
+        if($result){
+            return $result->toArray();
+        }
+        return $result;
+    }
+
 
     //获取教练拥有的班级
     public function getGradeOfCoach($map){
