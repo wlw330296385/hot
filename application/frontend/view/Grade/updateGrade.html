@@ -103,7 +103,7 @@
 
                         <div id="hideStListIni">
                             {volist name="students" id="vol"}
-                            <input type="hidden" class="stdListIni" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-lesson_id="{$vol.lesson_id}" data-lesson="{$vol.lesson}">
+                            <input type="hidden" class="stdListIni" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-grade_id="{$vol.grade_id}" data-grade="{$vol.grade}" data-lesson_id="{$vol.lesson_id}" data-lesson="{$vol.lesson}">
                             {/volist}
                         </div>
                     </a>
@@ -952,6 +952,7 @@
                     // return;
                    var url = "{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}";
                    var ajaxResult = wooApi.asyncF(url, objData);
+                   console.log(ajaxResult);
                    if (ajaxResult.code == 200) {
                        mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
                            window.location.href = "{:url('frontend/grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";

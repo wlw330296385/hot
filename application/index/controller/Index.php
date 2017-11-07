@@ -5,7 +5,10 @@ use think\Cookie;
 use think\Db;
 class Index extends Controller{
 
-
+    public function counttest(){
+        db('log_wxpay')->count('*');
+        echo db('log_wxpay')->getlastsql();
+    }
 
     public function index(){
         $xml = '<xml><appid><![CDATA[wx19f60be0f2f24c31]]></appid>
