@@ -452,6 +452,13 @@ class ScheduleService
         }
     }
 
+    // 购买赠送课时详情
+    public function getbuygift($map) {
+        $model = new ScheduleGiftbuy;
+        $result = $model->with('lesson')->where($map)->find()->toArray();
+        return $result;
+    }
+
     // 赠送课时给学员
     public function recordgift($request) {
         //dump($request);
