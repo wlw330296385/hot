@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>购买课时</title>
+    <title>购买课时详情</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -49,146 +49,65 @@
             height: initial;
         }
         
-        .pdr {
-            padding-right: 30px !important;
-        }
-        
         #newdiv .tips {
             color: #AAAAAA;
             line-height: normal;
         }
         
-        .nohave {
-            margin: 0;
+        .page-header {
+            background: #efeff4;
+        }
+        
+        .explain-cont {
             padding: 15px;
-            border: 1px solid #ddd;
-            border-top: none;
-            text-align: center;
+        }
+        
+        .explain-cont p {
+            margin-bottom: 2px;
+        }
+         .checkboxCont font {
+            font-size: 14px;
         }
     </style>
 </head>
 
-<body>
+<body class="whitebg">
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-        <h1 class="mui-title"></h1>
+        <h1 class="mui-title">训练营名称</h1>
     </header>
 
     <div class="mui-content">
 
-        <div class="camp-list camp-lesson-list detalis-list grade-list editor mt">
+        <form class="mui-input-group">
 
-
-
-            <form class="mui-input-group mt55">
-
-                <div class="page-header">
-                    <span class="course">选择对应课程进行购买</span>
-                </div>
-
-                <div class="mui-input-row">
-                    <a href="#trainLocation" class="mui-navigate-right">
-                        <label>选择课程</label>
-                        <span class="trainLocationCont"></span>
-                        <input type="hidden" name="court_id" value="" class="court_id">
-                    </a>
-                </div>
-
-                <div class="mui-input-row">
-                    <a href="#" class="mui-navigate-right">
-                        <label>课时单价</label>
-                        <span id="result" class="ui-alert"></span>
-                    </a>
-                </div>
-                <div class="page-header">
-                    <span class="course">选择对应课程进行购买</span>
-                </div>
-
-                <div class="mui-input-row">
-                    <label>购买课量</label>
-                    <span class="assistant_salary pdr"></span>
-                </div>
-                <div class="page-header">
-                    <span class="course">注意事项</span>
-                </div>
-
-            </form>
-
-            <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen operationBtn" style="color: #fff">
-                    提交购买
-                </li>
-            </ul>
-
-        </div>
-
-
-    </div>
-
-
-    <!--训练地点-->
-    <div id="trainLocation" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course"><strong>训练地点</strong></span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list courtlist">
-                </ul>
+            <div class="mui-input-row">
+                <label>课程名称</label>
+                <span>超级射手班</span>
             </div>
-        </div>
-    </div>
 
-    <!--学员名单-->
-    <div id="addStudent" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course wd36"><strong>学员名单</strong></span>
-            <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <form id="newdiv" class="mui-input-group addStudentList">
-
-                </form>
+            <div class="mui-input-row">
+                <label>课时单价</label>
+                <span>100元</span>
             </div>
-        </div>
-    </div>
 
+            <div class="mui-input-row">
+                <label>课量数量</label>
+                <span>5</span>
+            </div>
+
+        </form>
+
+    </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <!-- 选择器 -->
-    <script src="/static/frontend/js/mui.picker.min.js"></script>
-    <script src="/static/frontend/js/mui.poppicker.js"></script>
-    <script src="/static/frontend/js/city.data-3.js"></script>
-    <script>
-        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
-    </script>
-    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-
-        //弹出菜单
-        mui('.mui-scroll-wrapper').scroll();
-
-        //弹出框滚动必须写在mui专用的初始化
-        (function ($) {
-            $(".mui-scroll-wrapper").scroll({
-                //bounce: false,//滚动条是否有弹力默认是true
-                indicators: true //是否显示滚动条,默认是true
-            });
-            // 关闭弹出菜单
-            $("body").on('tap', '.mui-backdrop', function () {
-                mui(".mui-popover.mui-active").popover("toggle");
-            })
-        })(mui);
     </script>
 </body>
 
