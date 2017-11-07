@@ -125,6 +125,9 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+    mui("body").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
 
     var isStudent = false;
     var total=wooApi.GetQueryString('total');
@@ -141,9 +144,14 @@
         // 添加学生
         $('#addBtn').on('click','',function(){
 //            $('#oldStudent').hide();
-            $('#addStudent').show();
-            $('.mui-popup-backdrop').addClass("mui-active");
-            $('.mui-popup-backdrop').show();
+            if ("{$memberInfo.id}" <= 0) {
+                var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+                mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', btnArray);
+            }else{
+                $('#addStudent').show();
+                $('.mui-popup-backdrop').addClass("mui-active");
+                $('.mui-popup-backdrop').show();
+            }
         })
         // 取消添加
         $('#cancelAdd').on('click','',function(){
@@ -165,33 +173,33 @@
 
         // 提交学生数据
         $('#submitBtn').on('tap','','',function(){
-            var telephone = $('.telephone').val();
-            var codeRegTelephone = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/;
-            if (!codeRegTelephone.test(telephone)) {
-                mui.toast('请填写正确的手机号码');
-                return false;
-            }
-            var getStudent = $('input[name="student"]').val();
-            if(getStudent!='') {
-                if(isExistOption(getStudent)){
-                    mui.toast(getStudent+"已经存在，请 [ 取消添加 ] 返回选择！");
+                var telephone = $('.telephone').val();
+                var codeRegTelephone = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/;
+                if (!codeRegTelephone.test(telephone)) {
+                    mui.toast('请填写正确的手机号码');
                     return false;
                 }
-                var arrData = wooApi.getInputData();
-                var objData = wooApi.arrTOobj(arrData);
-                var url = "{:url('api/student/createStudentApi')}";
-                var ajaxResult = wooApi.asyncF(url,objData);
-                // console.log(ajaxResult);
+                var getStudent = $('input[name="student"]').val();
+                if(getStudent!='') {
+                    if(isExistOption(getStudent)){
+                        mui.toast(getStudent+"已经存在，请 [ 取消添加 ] 返回选择！");
+                        return false;
+                    }
+                    var arrData = wooApi.getInputData();
+                    var objData = wooApi.arrTOobj(arrData);
+                    var url = "{:url('api/student/createStudentApi')}";
+                    var ajaxResult = wooApi.asyncF(url,objData);
+                    // console.log(ajaxResult);
 
-                if(ajaxResult.code == 200){
-                    mui.toast(ajaxResult.msg);
-                    location.reload()
+                    if(ajaxResult.code == 200){
+                        mui.toast(ajaxResult.msg);
+                        location.reload()
+                    }else{
+                        mui.toast(ajaxResult.msg);
+                    }
                 }else{
-                    mui.toast(ajaxResult.msg);
+                    mui.toast('必须填写学生姓名，谢谢！');
                 }
-            }else{
-                mui.toast('必须填写学生姓名，谢谢！');
-            }
         })
 
     })
