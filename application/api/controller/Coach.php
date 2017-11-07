@@ -224,22 +224,6 @@ class Coach extends Base{
         }
     }
 
-
-    // 获取教练下的训练营
-    public function campListOfCoachApi(){
-        try{
-            $member_id = input('param.member_id')? input('param.member_id'):$this->memberInfo['id'];
-            $campList = Db::view('grade_member','camp_id')
-                    ->view('camp','camp,act_member,finished_lessons,star,province,city,area,logo,id,total_member,total_lessons','camp.id=grade_member.camp_id')
-                    ->where(['grade_member.member_id'=>$member_id,'grade_member.type'=>4,'grade_member.status'=>1])
-                    ->select();
-            return json(['code'=>200,'msg'=>'OK','data'=>$campList]);        
-        }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }
-    }
-
-
     // 用户是否拥有教练身份
     public function isCoach(){
         try{
@@ -256,33 +240,4 @@ class Coach extends Base{
         }
     }
 
-//
-//    public function getCoachListOfCampByPageApi(){
-//         try{
-//            $map = input('post.');
-//
-//            $result = $this->CoachService->getCoachListOfCampByPage($map);
-//             if($result){
-//               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
-//            }else{
-//                return json(['code'=>100,'msg'=>'ok']);
-//            }
-//        }catch (Exception $e){
-//            return json(['code'=>100,'msg'=>$e->getMessage()]);
-//        }
-//    }
-//
-//    public function getCoachListOfCampApi(){
-//         try{
-//            $map = input('post.');
-//            $result = $this->CoachService->getCoachListOfCamp($map);
-//             if($result){
-//               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
-//            }else{
-//                return json(['code'=>100,'msg'=>'ok']);
-//            }
-//        }catch (Exception $e){
-//            return json(['code'=>100,'msg'=>$e->getMessage()]);
-//        }
-//    }
 }

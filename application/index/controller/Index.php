@@ -33,6 +33,11 @@ class Index extends Controller{
     }
     
     public function grade(){
+        $action = input('param.action');
+        if($action!= 'woo'){
+
+            return '???';die;
+        }
         // $GradeService = new \app\service\GradeService;
         // $result = $GradeService->getGradeListByPage([]);
         $result = db('grade')->select();
@@ -50,6 +55,11 @@ class Index extends Controller{
     }
         
     public function getGradeStudentStr(){
+        $action = input('param.action');
+        if($action!= 'woo'){
+
+            return '???';die;
+        }
         $GradeService = new \app\service\GradeService;
         $result = $GradeService->getGradeListByPage([]);
         // $list = $result->toArray();
@@ -145,4 +155,22 @@ class Index extends Controller{
         $MessageService->sendCampMessage(15,$MessageCampData,$MessageCampSaveData);
     }
 
+
+
+    public function insertLessonMember(){
+        $action = input('param.action');
+        if($action!= 'woo'){
+
+            return '???';die;
+        }
+        $grade_member = db('grade_member')->select();
+        foreach ($grade_member as $key => &$value) {
+            unset($value['id']);
+        }
+
+        // dump($grade_member);die;
+        $LessonMmeber = new \app\model\LessonMember;
+        $LessonMmeber->saveAll($grade_member);
+
+    }
 }
