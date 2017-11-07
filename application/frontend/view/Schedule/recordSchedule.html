@@ -500,6 +500,7 @@
             //删除
             $(".del").click(function () {
                 $("input[name='student']:checked").parents(".checkboxCont").remove();
+                delStudent();
                 changeIndex();
                 checkStudent();
             });
@@ -841,7 +842,24 @@
             });
         })
 
-
+        //初始值
+            var delStudent = function () {
+                studentList = [];
+                expstudentList = [];
+                $(".checkChecked input[type=checkbox]").each(function () {
+                    var student_type = $(this).attr("data-type");
+                    var id = $(this).attr("data-id");
+                    var student_id = $(this).attr("data-student_id");
+                    var student = $(this).attr("data-student");
+                    if (student_type == "正式生") {
+                        studentList.push({ student: student, student_id: student_id, id: id, type: student_type });
+                    } else {
+                        expstudentList.push({ student: student, student_id: student_id, id: id, type: student_type });
+                    }
+                    console.log(studentList)
+                    console.log(expstudentList)
+                });
+            }
         // 检查是否有学员数据
         var checkStudent = function () {
             if ($("#inactiveList").html() == '' && $("#expinactiveList").html() == '') {

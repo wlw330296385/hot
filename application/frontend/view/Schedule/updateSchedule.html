@@ -493,6 +493,7 @@
                 //删除
                 $(".del").click(function () {
                     $("input[name='student']:checked").parents(".checkboxCont").remove();
+                    delStudent();
                     changeIndex();
                     checkStudent();
                 });
@@ -612,6 +613,7 @@
                     $(".mui-badge").text(totalNum);
                 });
 
+
                 // 选择添加学员点击事件
                 $("#studentConfirm").on('click', function () {
 
@@ -641,7 +643,8 @@
                     mui("#addStudent").popover("toggle");
                     totalNum = $(".checkboxCont").length;
                     $(".mui-badge").text(totalNum);
-                })
+                });
+
 
                 //获取已经分配班级的学员列表
                 toExpStudentList();
@@ -801,6 +804,26 @@
                 });
             });
 
+            //初始值
+            var delStudent = function () {
+                studentList = [];
+                expstudentList = [];
+                $(".checkChecked input[type=checkbox]").each(function () {
+                    var student_type = $(this).attr("data-type");
+                    var id = $(this).attr("data-id");
+                    var student_id = $(this).attr("data-student_id");
+                    var student = $(this).attr("data-student");
+                    if (student_type == 1) {
+                        studentList.push({ student: student, student_id: student_id, id: id, type: student_type });
+                    } else {
+                        expstudentList.push({ student: student, student_id: student_id, id: id, type: student_type });
+                    }
+                    console.log(studentList)
+                    console.log(expstudentList)
+                });
+            }
+
+
             // 检查是否有学员数据
             var checkStudent = function () {
                 if ($("#inactiveList").html() == '' && $("#expinactiveList").html() == '') {
@@ -827,8 +850,10 @@
             var studentList = '';//正式学员全局变量
             var expstudentList = '';//体验生全局变量
             var toExpStudentList = function () {
+                
                 studentList = [];
                 expstudentList = [];
+         
                 $("input[name=student]").each(function () {
                     var student_type = $(this).attr("data-type");
                     var id = $(this).attr("data-id");
@@ -842,9 +867,9 @@
                 });
 
                 checkStudent();// 检查是否有学员数据
-            
-                console.log(studentList);
-                console.log(expstudentList);
+
+                // console.log(studentList);
+                // console.log(expstudentList);
                 changeIndex();//调用-更新序号
                 totalNum = $(".checkboxCont").length;
             };
