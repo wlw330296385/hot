@@ -77,5 +77,12 @@ class LessonMember extends Base{
         }
     }
 
-
+    // 查询没有分班的学生
+    public function getOutJoinGradeMmeberListByPage(){
+        try{
+            
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }

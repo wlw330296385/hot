@@ -50,4 +50,7 @@ class LessonMember extends Model {
     	return $this->hasOne('student','id','student_id',[],'left join');
     }
 
+    public function outerjoinGrademember(){
+        return $this->hasOne('student','id','student_id',[],'left join');
+    }
 }

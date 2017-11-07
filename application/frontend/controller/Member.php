@@ -184,12 +184,10 @@ class Member extends Base{
 
     // 我名下的训练营
     public function myCamp(){
-        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        $member_id = $this->memberInfo['id'];
         $type = input('param.type')?input('param.type'):4;
         if($type){
             $campList = db('camp_member')->where(['member_id'=>$member_id,'type'=>$type,'status'=>1])->select();
-            //dump($campList);
-
             switch($type) {
                 case '2' : {
                     $isCoach = $this->MemberService->hasCoach($this->memberInfo['id']);
