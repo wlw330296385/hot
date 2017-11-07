@@ -262,8 +262,7 @@ class CampMember extends Base
             if (isset($map['page'])) {
                 unset($map['page']);
             }
-            $CampMember = new  \app\model\CampMember;
-            $result = $CampMember->with('coach')->where($map)->paginate(10);
+            $result = $this->CampService->getCampMemberListByPage($map);
             if ($result) {
                 return json(['code' => 200, 'msg' => 'OK', 'data' => $result]);
             } else {
