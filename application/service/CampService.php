@@ -39,7 +39,7 @@ class CampService {
 
 
     public function getCampMemberListByPage($map=[],$paginate=10, $order=''){
-         $res = $this->CampMember->with('student')->where($map)->order($order)->paginate($paginate);
+         $res = $this->CampMember->where($map)->order($order)->paginate($paginate);
         if($res){
             $result = $res->toArray();
             return $result;
