@@ -9,4 +9,8 @@ class ScheduleGiftbuy extends Model
     protected $autoWriteTimestamp = true;
     use SoftDelete;
     protected $deleteTime = 'delete_time';
+
+    public function lesson(){
+        return $this->belongsTo('lesson' );
+    }
 }
