@@ -78,7 +78,7 @@ class LessonMember extends Base{
     }
 
     // 查询没有分班的学生
-    public function getOutJoinGradeMmeberListByPage(){
+    public function getNoGradeMmeberListByPage(){
         try{
             
         }catch (Exception $e){
