@@ -463,12 +463,22 @@ class ScheduleService
     public function recordgift($request) {
         //dump($request);
         $model = new ScheduleGiftrecord();
+        $validate = validate('ScheduleGiftrecordVal');
+        if (!$validate->check($request)) {
+            return ['code' => 100, 'msg' => $validate->getError()];
+        }
         $result = $model->allowField(true)->save($request);
         if (!$result) {
-            return ['code' => 100, 'msg' => '赠送课时'.__lang('MSG_400')];
+            return $result;
         } else {
-            return ['code' => 200, 'msg' => '赠送课时'.__lang('MSG_200'), 'insid' => $model->id];
+            return $model->id;
         }
+    }
+
+    // 批量更新学员剩余课时
+    public function saveStudentRestschedule($map, $gift_schedule){
+        $res = Db::name('lesson_member')->where($map)->setInc('rest_schedule', $gift_schedule);
+        return $res;
     }
 
     // 赠送课时列表
@@ -480,5 +490,12 @@ class ScheduleService
         } else {
             return ['code' => 100, 'msg' => __lang('MSG_000')];
         }
+    }
+
+    // 赠送课时详情
+    public function getGiftRecordInfo($map) {
+        $model = new ScheduleGiftrecord();
+        $result = $model->where($map)->find()->toArray();
+        return $result;
     }
 }
