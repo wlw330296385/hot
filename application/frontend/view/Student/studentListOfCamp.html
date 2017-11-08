@@ -274,7 +274,7 @@
                         } else {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为在营</span></div>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '"><div class="mui-media-body wd45">' + data.data.data[i].student + ' <img src="'+studentSexUrl+'" /><p class="mui-ellipsis">学员ID：' + data.data.data[i].student_id + '</p></div></a></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '"><div class="mui-media-body wd45">' + data.data.data[i].student.student + ' <img src="'+studentSexUrl+'" /><p class="mui-ellipsis">学员ID：' + data.data.data[i].student_id + '</p></div></a></div>';
                         newli += '</li>';
                     }
                 }
@@ -311,7 +311,7 @@
         var li = elem.parentNode.parentNode;
         var btnArray = ['确认', '取消'];
         var txt = elem.innerHTML;
-        var memberid = elem.parentNode.getAttribute('data-id');
+        var student_id = elem.parentNode.getAttribute('data-id');
         var action = elem.getAttribute('data-action');
         var campID = "{$camp_id}";
         mui.confirm('确认该课程' + txt + '?', '提示', btnArray, function (e) {
@@ -320,7 +320,7 @@
                 var apiurl = "{:url('api/camp_member/removestudent')}";
                 mui.ajax(apiurl, {
                     data: {
-                        memberid: memberid,
+                        student_id: student_id,
                         action: action,
                         camp_id: campID,
                     },
@@ -330,8 +330,11 @@
                     success: function (data) {
                         //console.log(data);
                         if (data.code == 200) {
-                            li.parentNode.removeChild(li);
-                            location.reload();
+                            mui.alert(data.msg);
+                            setTimeout(function(){
+                                    li.parentNode.removeChild(li);
+                                    location.reload();
+                            },1000);
                         } else {
                             mui.toast(data.msg);
                         }

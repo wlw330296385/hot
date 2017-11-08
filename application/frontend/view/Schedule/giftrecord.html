@@ -132,13 +132,13 @@
                 </div>
 
                 <div class="mui-input-row">
-                    <label>每人赠送课量</label>
-                    <input type="text" name="gift_schedule" value="" class="data" placeholder="请填写人均赠送课时数量">
+                    <label style="width: 40%">每人赠送课量</label>
+                    <input type="text" name="gift_schedule" value="" class="data" placeholder="请填写人均赠送课时数量" style="width: 60%;">
                 </div>
 
                 <div class="mui-input-row">
                     <label>赠送留言</label>
-                    <textarea rows="3" name="remarks" value="" class="data" placeholder="请填写赠送留言"></textarea>
+                    <input type="text" name="remarks" value="" class="data" placeholder="请填写赠送留言">
                 </div>
 
                 <div class="page-header">
@@ -186,9 +186,7 @@
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <ul class="mui-table-view list gradelist">
-                    <li class="mui-text-center">
-                        <p>请先选择课程！</p>
-                    </li>
+                    <p class="mui-text-center">请先选择课程！</p>
                 </ul>
             </div>
         </div>
@@ -203,10 +201,11 @@
             swipeBack: true //启用右滑关闭功能
         });
 
+
         //弹出框滚动必须写在mui专用的初始化
         (function ($) {
 
-            mui(".content").on("tap", "a", function () {
+            mui(".mui-content").on("tap", "a", function () {
                 window.top.location.href = this.href;
             });
 
@@ -239,7 +238,7 @@
             // 选择班级
             $(".gradelist").on('tap', 'li', function () {
                 var grade = $(this).text();
-                var grade_id = $(this).attr('data-id');
+                grade_id = $(this).attr('data-id');
                 $(".gradeCont").text(grade);
                 $(".grade_id").val(grade_id);
                 toGradeStudentList();
@@ -248,14 +247,15 @@
 
             changeIndex();
             toLessonList();
-            studentList();
         });
 
         // 获取数据并进行提交
         function submitAction() {
+            studentList();
+
             var lesson = $(".lessonCont").text();
             var gift_schedule = $("input[name=gift_schedule]").val();
-            if (lesson == '' || gift_schedule == '') {
+            if (lesson == '' || gift_schedule == '' || student_str <= 0) {
                 mui.alert("请先填写信息后再提交");
                 return;
             } else if (!(/^[0-9]*$/).test(gift_schedule)) {
@@ -263,18 +263,18 @@
                 return;
             };
 
-            if ($(".gradeCont").text() != '') {
+            if ($("input[name=grade_id]").val() != '') {
                 $(".gradeCont").addClass("domData");
-                // $("input[name=grade_id]").addClass("data");
+                $("input[name=grade_id]").addClass("data");
             };
 
-            studentList();
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
             objData.student_str = JSON.stringify(student_str);
+            objData.student_num = JSON.stringify(student_num);
             var url = "{:url('api/schedule/recordgift')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
@@ -292,7 +292,7 @@
         //获取选择的学员名单
         function studentList() {
             student_str = [];//学员列表数组
-            $(".box input[type=checkbox]:checked").each(function () {
+            $("input[type=checkbox]:checked").each(function () {
                 var id = $(this).attr("data-id");
                 var student_id = $(this).attr("data-student_id");
                 var student = $(this).attr("data-student");
@@ -333,7 +333,7 @@
                         }
                         $("ul.lessonlist").empty();
                         if (newli == '') {
-                            newli = '<li class="mui-text-center"><p>没有查找到相关数据哦</p></li>'
+                            newli = '<p class="mui-text-center>没有查找到相关数据哦</p>'
                         }
                         $("ul.lessonlist").append(newli);
 
@@ -349,7 +349,7 @@
 
         //选择课程对应的学生列表
         function toLessonStudentList() {
-            var url = "{:url('api/lesson/getStudentListOfLessonApi','','',true)}";
+            var url = "{:url('api/lesson_member/getLessonMemberListNoPageApi','','',true)}";
             var campID = "{$camp_id}";
             mui.ajax({
                 url: url,
@@ -370,7 +370,7 @@
                         }
                         $(".box").empty();
                         if (newstudentli == '') {
-                            newstudentli = '<li class="mui-text-center"><p>该课程还没有学员哦</p></li>'
+                            newstudentli = '<p class="nohave">该课程还没有学员哦</p>'
                         }
                         $(".box").append(newstudentli);
 
@@ -408,7 +408,7 @@
                         }
                         $("ul.gradelist").empty();
                         if (newli == '') {
-                            newli = '<li class="mui-text-center"><p>没有查找到数据哦</p></li>'
+                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
                         }
                         $("ul.gradelist").append(newli);
                     } else {
@@ -420,6 +420,7 @@
                 }
             });
         };
+
 
         //选择班级对应的学生列表
         function toGradeStudentList() {
@@ -441,11 +442,11 @@
                     if (data.code == 200) {
                         var newstudentli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newstudentli = newstudentli + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].student + '</font><input name="student" value="" type="checkbox"></div>'
+                            newstudentli = newstudentli + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].student + '</font><input name="student" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" value="' + data.data[i].student_id + '" type="checkbox"></div>'
                         }
                         $(".box").empty();
                         if (newstudentli == '') {
-                            newstudentli = '<li class="mui-text-center"><p>该课程还没有学员哦</p></li>'
+                            newstudentli = '<p class="mui-text-center">该班级还没有学员哦</p>'
                         }
                         $(".box").append(newstudentli);
 

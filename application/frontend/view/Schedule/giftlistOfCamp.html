@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .mui-bar-nav~.mui-content .mui-pull-top-pocket {
+            top: 0;
+        }
+    </style>
 </head>
 
 <body>
@@ -33,52 +38,21 @@
             <div id="onlineGiftList" class="mui-scroll-wrapper mui-control-content mui-active">
                 <div class="mui-scroll">
                     <ul class="mui-table-view detalis-list list border-b gift1">
-                        <li class="mui-table-view-cell mui-media listli">
-                            <div class="mui-media-body wd83 ">大热篮球超级控球课程
-                                <p class="mui-ellipsis">历史赠送：20节 &nbsp;|&nbsp; 剩余赠送：30节</p>
-                            </div>
-                            <div class="price-frame">
-                                <p class="price mui-text-center">80</p>
-                                <p class="address">未结算</p>
-                            </div>
-                        </li>
                     </ul>
                 </div>
             </div>
             <div id="offlineGiftList" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
                     <ul class="mui-table-view detalis-list list border-b gift2">
-                        <li class="mui-table-view-cell mui-media listli">
-                            <a href="{:url('schedule/giftrecordInfo',['camp_id' => $camp_id])}">
-                                <div class="mui-media-body wd83 ">篮球超级控球课程
-                                    <p class="mui-ellipsis">赠送人数：20人 &nbsp;|&nbsp; 人均赠送：30节</p>
-                                </div>
-                                <div class="price-frame">
-                                    <p class="price mui-text-center">20</p>
-                                    <p class="address">赠送</p>
-                                </div>
-                            </a>
-                        </li>
                     </ul>
                 </div>
             </div>
             <div id="outlineGiftList" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
                     <ul class="mui-table-view detalis-list list border-b gift3">
-                        <!--<li class="mui-table-view-cell mui-media listli">
-                            <a href="{:url('schedule/giftbuyInfo',['camp_id' => $camp_id])}">
-                                <div class="mui-media-body wd83 ">荣光特训课程
-                                    <p class="mui-ellipsis">2017-11-04 10:20</p>
-                                </div>
-                                <div class="price-frame">
-                                    <p class="price">100元</p>
-                                </div>
-                            </a>
-                        </li>-->
                     </ul>
                 </div>
             </div>
-
         </div>
 
     </div>
@@ -103,7 +77,6 @@
             var onCount = 1;
             var offCount = 1;
             var outCount = 1;
-            var fullCount = 1;
 
             mui('#onlineGiftList').pullRefresh({
                 down: {
@@ -165,47 +138,47 @@
                 }
             });
 
-            //下拉刷新具体业务实现（上架）
+            //下拉刷新具体业务实现（赠送概览）
             function pulldownRefreshOn() {
                 setTimeout(function () {
                     onCount = 1;//刷新并显示第一页
                     var page = onCount;
                     var gType = 1;//代表下拉刷新
-                    toList('onlineGiftList', page, gType);//具体取数据的方法
+                    toLessonList('onlineGiftList', page, gType);//具体取数据的方法
                 }, 100);
             }
 
-            //上拉加载具体业务实现（上架）
+            //上拉加载具体业务实现（赠送概览）
             function pullupRefreshOn() {
                 setTimeout(function () {
                     onCount++;//翻下一页
                     var page = onCount;
                     var gType = 2;//代表上拉加载
-                    toList('onlineGiftList', page, gType);//具体取数据的方法
+                    toLessonList('onlineGiftList', page, gType);//具体取数据的方法
                 }, 100);
             }
 
-            //下拉刷新具体业务实现（下架）
+            //下拉刷新具体业务实现（赠送记录）
             function pulldownRefreshOff() {
                 setTimeout(function () {
                     offCount = 1;//刷新并显示第一页
                     var page = offCount;
                     var gType = 1;//代表下拉刷新
-                    toList('offlineGiftList', page, gType);//具体取数据的方法
+                    toGiftList('offlineGiftList', page, gType);//具体取数据的方法
                 }, 100);
             }
 
-            //上拉加载具体业务实现（下架）
+            //上拉加载具体业务实现（赠送记录）
             function pullupRefreshOff() {
                 setTimeout(function () {
                     offCount++;//翻下一页
                     var page = offCount;
                     var gType = 2;//代表上拉加载
-                    toList('offlineGiftList', page, gType);//具体取数据的方法
+                    toGiftList('offlineGiftList', page, gType);//具体取数据的方法
                 }, 100);
             }
 
-            //下拉刷新具体业务实现（过期）
+            //下拉刷新具体业务实现（购买记录）
             function pulldownRefreshOut() {
                 setTimeout(function () {
                     outCount = 1;//刷新并显示第一页
@@ -215,7 +188,7 @@
                 }, 100);
             }
 
-            //上拉加载具体业务实现（过期）
+            //上拉加载具体业务实现（购买记录）
             function pullupRefreshOut() {
                 setTimeout(function () {
                     outCount++;//翻下一页
@@ -226,7 +199,114 @@
             }
         });
 
-        //接口获取数据并追加到页面
+
+        // 赠送概览（课程）列表
+        var toLessonList = function (wList, page, gType) {
+            var url = "{:url('api/lesson/getLessonListApi','','',true)}" + '/?page=' + page;
+            var campID = "{$camp_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+
+                    var newlessonli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('lesson/lessonInfo')}" + '/camp_id/' + campID + '/id/' + data.data[i].id;
+                            newlessonli = newlessonli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><div class="mui-media-body wd83 ">' + data.data[i].lesson + '<p class="mui-ellipsis">历史赠送：' + data.data[i].total_giftschedule + '节 &nbsp;|&nbsp; 剩余赠送：' + data.data[i].resi_giftschedule + '节</p></div><div class="price-frame mui-text-center"><p class="price">' + data.data[i].unbalanced_giftschedule + '</p><p class="address">未结算</p></div></a></li>';
+                        }
+                    };
+
+                    // 根据状态获取课时列表
+                    if (gType == 1) {
+                        //上拉刷新
+                        $(".gift1").empty().append(newlessonli);
+                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                        mui('#' + wList).pullRefresh().refresh(true);
+                        if (newlessonli == '') {
+                            $("gift1").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        }
+
+                    } else {
+                        //下拉加载 gType==2
+                        $("gift1").append(newlessonli);
+                    }
+
+                    if (newlessonli != '') {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                    } else {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
+
+        // 赠送记录列表
+        var toGiftList = function (wList, page, gType) {
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/schedule/giftlist','','',true)}" + '/?page=' + page;
+            var campID = "{$camp_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    var newgiftli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var total_schedule = data.data[i].student_num * data.data[i].gift_schedule;
+                            var urls = "{:url('schedule/giftrecordInfo')}" + '/camp_id/' + campID + '/id/' + data.data[i].id;
+                            newgiftli = newgiftli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><div class="mui-media-body wd83 ">' + data.data[i].lesson + '<p class="mui-ellipsis">赠送人数：' + data.data[i].student_num + '人 &nbsp;|&nbsp; 人均赠送：' + data.data[i].gift_schedule + '节</p></div><div class="price-frame mui-text-center"><p class="price">' + total_schedule + '</p><p class="more">赠送</p></div></a></li>';
+                        }
+                    };
+
+                    // 根据状态获取课时列表
+                    if (gType == 1) {
+                        //上拉刷新
+                        $(".gift2").empty().append(newgiftli);
+                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                        mui('#' + wList).pullRefresh().refresh(true);
+                        if (newgiftli == '') {
+                            $("gift2").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        }
+
+                    } else {
+                        //下拉加载 gType==2
+                        $("gift2").append(newgiftli);
+                    }
+
+                    if (newgiftli != '') {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                    } else {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
+
+        // 购买记录列表
         var toList = function (wList, page, gType) {
             //搜索关键字不能完全为空，否则查询为空
             var url = "{:url('api/schedule/buygiftlist','','',true)}" + '/?page=' + page;
@@ -242,14 +322,13 @@
                 headers: { 'Content-Type': 'application/json' },
                 //processData:false,
                 success: function (data) {
-
+                    console.log(data)
                     var newli = '';
                     if (data.code == 200) {
-                        var newDate = new Date();
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             var urls = "{:url('schedule/giftbuyInfo')}" + '/camp_id/' + campID + '/id/' + data.data[i].id;
                             newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><div class="mui-media-body wd83 ">' + data.data[i].lesson.lesson + '<p class="mui-ellipsis">' + data.data[i].create_time
-                                + '</p></div><div class="price-frame"><p class="price">' + data.data[i].lesson.cost + '元</p></div></a></li>';
+                                + '</p></div><div class="price-frame mui-text-center"><p class="price">' + data.data[i].quantity + '</p><p class="more">购买</p></div></a></li>';
                         }
                     };
 
