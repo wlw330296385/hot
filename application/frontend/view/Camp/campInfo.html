@@ -18,17 +18,33 @@
     <!--等级星星样式-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
     <style>
-     .mui-popover {
-        height: 300px;
-    }
-</style>
+        .mui-popover {
+            height: 300px;
+        }
+
+
+        .comment-list li {
+            color:#737373;
+            font-size: 12px;
+        }
+        .comment-list .mui-pull-right {
+            color:#aaa;
+        }
+        .comment-list .coachicon{
+            margin-right: 10px;
+            width:32px !important;
+            height:32px !important;
+        }
+        .comment-list p {
+            font-size: 13px;
+        }
+    </style>
 </head>
 
 <body>
 
     <div class="mui-content">
 
-        <div class="mui-content">
             <div class="list camp-list detalis-list coach">
                 <div class="img4x3" style="background-image:url('{$campInfo.banner}')"></div>
                 <ul class="mui-table-view mb" style="margin-top: -4px">
@@ -103,25 +119,11 @@
 
             <div class="page-header">
                 <span class="course" style="font-size: 14px">评论</span>
-                <span class="more">全部0个评论</span>
+                <span class="more">全部 <span class="colororange">0</span> 个评论</span>
             </div>
-            <ul class="mui-table-view list mui-text-center min-height">
-                {volist name='commentList' id="vol" empty="暂无评论"}
-                <li class="mui-table-view-cell mui-media listli">
-                    <a href="javascript:;">
-                        <img class="mui-media-object mui-pull-left coachicon" src="{$vol.avatar}">
-                        <div class="mui-media-body">
-                            {$vol.member}
-                            <p class="mui-ellipsis">{$vol.comment}</p>
-                        </div>
-                        <div class="price-frame">
-                            <p>{$vol.create_time}</p>
-                        </div>
-                    </a>
-                </li>
-                {/volist}
+            <ul class="mui-table-view comment-list">
             </ul>
-            <p class="dropdown mt55"><a href="#">查看16条评论...</a></p>
+            <p class="dropdown mt55"><a href="#" class="moreComment">查看更多评论...</a></p>
 
             <ul class="mui-table-view operation mt">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli">
@@ -235,6 +237,7 @@
             if(result){
                 mui.toast(result.msg);
                 mui('#pjpopover').popover('toggle');
+                pulldownRefresh();
             }
         })
 
@@ -285,9 +288,77 @@
 
         //获取训练营教练列表
         toCoachList('','');
+        //页面打开时获取一次最新评论信息
+        pulldownRefresh();
     });
 
+    var count = 1;
+    //下拉刷新具体业务实现
+    function pulldownRefresh() {
+        setTimeout(function() {
+            count = 1;//刷新并显示第一页
+            var page = count;
+            var gType = 1;//代表下拉刷新
+            toCommentList(page,gType);//具体取数据的方法
+        }, 100);
+    }
+    //上拉加载具体业务实现
+    function pullupRefresh() {
+        setTimeout(function() {
+            count++;//翻下一页
+            var page = count;
+            var gType =2;//代表上拉加载
+            toCommentList(page,gType);//具体取数据的方法
+        }, 100);
+    }
+    //接口获取数据并追加到页面
+    var toCommentList = function(page,gType) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url  = "{:url('api/camp/getCampCommentListByPage','','',true)}/?page="+page;
+        var camp_id = "{$campInfo.id}";
+        mui.ajax({
+            url:url,
+            data: {
+                camp_id: camp_id
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+                var newli='';
+                if (data.code == 200) {
+                    $(".colororange").text(data.data.total);
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        newli = newli + '<li class="mui-table-view-cell listli"><div class="mui-pull-right">'+data.data.data[i].create_time+'</div><img class="mui-pull-left coachicon" src="'+data.data.data[i].avatar+'">'+data.data.data[i].member+'<p class="mui-ellipsis">'+data.data.data[i].comment+'</p></li>'
+                    }
+                }
+                if(gType==1){
+                    //上拉刷新
+                    $("ul.comment-list").empty().append(newli);
+                    mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                    mui('#refreshContainer').pullRefresh().refresh(true);
+                    if(newli==''){
+                        $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>还没有评论哦，你来说几句吧！</p></li>');
+                    }
+                }else{
+                    //下拉加载 gType==2
+                    $("ul.comment-list").append(newli);
+                }
+                if(newli!=''){
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                }else{
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                }
 
+            },
+            error: function(xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
 
     //训练营教练列表接口获取数据并追加到页面
     var toCoachList = function(page,gType) {
