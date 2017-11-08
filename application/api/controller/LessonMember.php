@@ -77,10 +77,15 @@ class LessonMember extends Base{
         }
     }
 
-    // 查询没有分班的学生
-    public function getNoGradeMmeberListByPage(){
+    // 获取未分配班级的学生列表-带page
+    public function getNoGradeMmeberListByPageApi(){
         try{
-            
+            $map = input('post.');
+            // 已分配的学生IDs
+            $IDs = db('grade_member')->where($map)->column('student_id');
+            $map['student_id']=['not in',$IDs];
+            $result = $this->LessonMemberService->getLessonMemberListByPage($map);
+            return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }

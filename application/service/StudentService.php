@@ -115,6 +115,7 @@ class StudentService{
         // }
         // dump($students);die;
     	$result = $this->gradeMemberModel->saveAll($data);
+    	echo $this->gradeMemberModel->getlastsql();
     	if($result){
 			return ['code'=>200,'msg'=>__lang('MSG_200'),'data'=>$result];
 		}else{
