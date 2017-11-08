@@ -3,6 +3,7 @@ namespace app\index\controller;
 use think\Controller;
 use think\Cookie;
 use think\Db;
+use app\service\WechatService;
 class Index extends Controller{
 
     public function counttest(){
@@ -10,8 +11,28 @@ class Index extends Controller{
         echo db('log_wxpay')->getlastsql();
     }
 
-    public function index(){
-        $xml = '<xml><appid><![CDATA[wx19f60be0f2f24c31]]></appid>
+
+
+    public function gdMap(){
+
+
+
+        return view('Index/gdMap');
+
+    }
+
+    public function wxMap(){
+        // 生成微信参数
+        $shareurl = request()->url(true);
+        $WechatService = new WechatService;
+        $jsApi = $WechatService->jsapi($shareurl); 
+        $this->assign('jsApi',$jsApi);   
+        return view('Index/wxMap');
+    }
+    
+
+    public function xmltest(){
+       $xml = '<xml><appid><![CDATA[wx19f60be0f2f24c31]]></appid>
                 <bank_type><![CDATA[CFT]]></bank_type>
                 <cash_fee><![CDATA[150000]]></cash_fee>
                 <fee_type><![CDATA[CNY]]></fee_type>
@@ -31,10 +52,8 @@ class Index extends Controller{
                 $obj=simplexml_load_string($xml,'SimpleXMLElement',LIBXML_NOCDATA);
                 $jsonObj = json_encode($obj);
                 $data = json_decode($jsonObj,true);
-        dump($data);die;
-        return view('Index/index');
+        dump($data);die; 
     }
-    
     public function grade(){
         $action = input('param.action');
         if($action!= 'woo'){
