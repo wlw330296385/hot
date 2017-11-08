@@ -547,7 +547,7 @@ class CampMember extends Base
                     if ($studentLessonAllLeave) {
                         $model->update(['id' => $campmember['id'], 'status' => 1, 'update_time' => time()]);
                     }
-                    return json(['code' => 100, 'msg' => '学员设为在营'.__lang('MSG_200')]);
+                    return json(['code' => 200, 'msg' => '学员设为在营'.__lang('MSG_200')]);
                 }
             } else { // 执行离营
                 if (!$studentleaveappply) {
