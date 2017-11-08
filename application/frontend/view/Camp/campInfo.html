@@ -19,25 +19,12 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
     <style>
         .mui-popover {
-            height: 300px;
+            height: 260px;
+        }
+        .page-header .more{
+            padding-right: 0px;
         }
 
-
-        .comment-list li {
-            color:#737373;
-            font-size: 12px;
-        }
-        .comment-list .mui-pull-right {
-            color:#aaa;
-        }
-        .comment-list .coachicon{
-            margin-right: 10px;
-            width:32px !important;
-            height:32px !important;
-        }
-        .comment-list p {
-            font-size: 13px;
-        }
     </style>
 </head>
 
@@ -94,32 +81,18 @@
                     </a>
                 </li>
             </ul>
+
             <div class="page-header">
                 <span class="course">热门课程</span>
-                <span class="more">全部{$lessonCount}个课程</span>
+                <span class="more">全部 <span class="colororange">{$lessonCount}</span> 个课程</span>
             </div>
-            <ul class="mui-table-view course-list">
-                {volist name="lessonList" id="vol" limit='5'}
-                <li class="mui-table-view-cell mui-media listli">
-                    <a href="{:url('lesson/lessonInfo',['lesson_id'=>$vol['id']])}">
-                        <img class="mui-media-object mui-pull-left" src="{$vol.cover}">
-                        <div class="mui-media-body">
-                            {$vol.lesson}
-                            <p class="mui-ellipsis">{$vol.gradecate}</p>
-                        </div>
-                        <div class="price-frame">
-                            <p class="price">￥{$vol.cost}</p>
-                            <p class="address">{$vol.province} {$vol.city} {$vol.area}</p>
-                        </div>
-                    </a>
-                </li>
-                {/volist}
+            <ul class="mui-table-view course-list lesson">
             </ul>
-            <p class="dropdown"><a href="{:url('lesson/lessonList')}?camp_id={$campInfo['id']}">更多课程...</a></p>
+            <p class="dropdown moreLesson"><a href="{:url('lesson/lessonList')}?camp_id={$campInfo['id']}">更多课程...</a></p>
 
             <div class="page-header">
                 <span class="course" style="font-size: 14px">评论</span>
-                <span class="more">全部 <span class="colororange">0</span> 个评论</span>
+                <span class="more">全部 <span class="commentCount colororange">0</span> 个评论</span>
             </div>
             <ul class="mui-table-view comment-list">
             </ul>
@@ -145,12 +118,12 @@
     <!-- 申请加入选择身份弹出框 -->
     <div id="join" class="mui-popover">
         <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course"><strong>请选择身份</strong></span>
+        </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <div class="camp-list camp-lesson-list detalis-list list">
-                    <div class="page-header">
-                        <span class="course"><strong>请选择身份</strong></span>
-                    </div>
                     <ul class="mui-table-view ">
                         <li class="mui-table-view-cell listli detalisli choiseType">学生<input type="text" name="" value="1" style="display: none"></li>
                         <li class="mui-table-view-cell listli detalisli choiseType">教练<input type="text" name="" value="2" style="display: none"></li>
@@ -201,6 +174,8 @@
     //弹出菜单
     mui('.mui-scroll-wrapper').scroll();
 
+    var count = 1;
+
     $(function () {
 
         //展示训练营介绍全文
@@ -225,20 +200,52 @@
             }
         })
 
+        //点击查看更多评论
+        $(".moreComment").click(function() {
+            pullupRefresh();
+        })
+
         //评价功能
         $("#commentSubmit").on('click',function() {
             //判断是否登陆会员
-            var data1 = wooApi.getInputData();
-            // var data2 = wooApi.getInputData('textarea','data',data1);
-            var comment = $('textarea.data').val();
-            var objData = wooApi.arrTOobj(data1);
-            objData.comment = comment;
-            var result = wooApi.asyncF("{:url('api/camp/createCampCommentApi')}",objData);
-            if(result){
-                mui.toast(result.msg);
-                mui('#pjpopover').popover('toggle');
-                pulldownRefresh();
-            }
+            mui.ajax("{:url('api/CampMember/getCampMemberApi')}", {
+                data: {
+                    'camp_id': "{$campInfo['id']}",
+                    'member_id': "{$memberInfo.id}"
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: {'Content-Type': 'application/json'},
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    if (data.code == 200 && data.data.status=="正常") {
+                        var data1 = wooApi.getInputData();
+                        // var data2 = wooApi.getInputData('textarea','data',data1);
+                        var comment = $('textarea.data').val();
+                        if(comment==""||comment==null){
+                            mui.toast("您没填写评论内容哦");
+                            return false;
+                        }
+                        var objData = wooApi.arrTOobj(data1);
+                        objData.comment = comment;
+                        var result = wooApi.asyncF("{:url('api/camp/createCampCommentApi')}",objData);
+                        if(result){
+                            mui.toast(result.msg);
+                            mui('#pjpopover').popover('toggle');
+                            pulldownRefresh();
+                            $(".moreComment").show();
+                        }
+                    } else {
+                        mui.toast("本训练营会员才能评论，欢迎加入！");
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
         })
 
         //训练营的身份api
@@ -286,13 +293,14 @@
             
         })
 
+        //获取训练营课程
+        toLessonList();
         //获取训练营教练列表
         toCoachList('','');
         //页面打开时获取一次最新评论信息
         pulldownRefresh();
     });
 
-    var count = 1;
     //下拉刷新具体业务实现
     function pulldownRefresh() {
         setTimeout(function() {
@@ -329,16 +337,17 @@
             success: function (data) {
                 var newli='';
                 if (data.code == 200) {
-                    $(".colororange").text(data.data.total);
+                    $(".commentCount").text(data.data.total);
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        newli = newli + '<li class="mui-table-view-cell listli"><div class="mui-pull-right">'+data.data.data[i].create_time+'</div><img class="mui-pull-left coachicon" src="'+data.data.data[i].avatar+'">'+data.data.data[i].member+'<p class="mui-ellipsis">'+data.data.data[i].comment+'</p></li>'
+                        newli = newli + '<li class="mui-table-view-cell listli"><div class="mui-pull-right">' + data.data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data.data[i].avatar + '">' + data.data.data[i].member + '<p class="mui-ellipsis">' + data.data.data[i].comment + '</p></li>'
+                    }
+                    if(data.data.total==0||data.data.last_page==page){
+                        $(".moreComment").hide();
                     }
                 }
                 if(gType==1){
                     //上拉刷新
                     $("ul.comment-list").empty().append(newli);
-                    mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                    mui('#refreshContainer').pullRefresh().refresh(true);
                     if(newli==''){
                         $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>还没有评论哦，你来说几句吧！</p></li>');
                     }
@@ -346,16 +355,50 @@
                     //下拉加载 gType==2
                     $("ul.comment-list").append(newli);
                 }
-                if(newli!=''){
-                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-                }else{
-                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+
+            },
+            error: function(xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+            }
+        });
+    };
+
+    //接口获取训练营课程数据并追加到页面
+    var toLessonList = function() {
+        //搜索关键字不能完全为空，否则查询为空
+        var url  = "{:url('api/lesson/searchLessonApi','','',true)}";
+        var camp_id = "{$campInfo.id}";
+        mui.ajax({
+            url:url,
+            data: {
+                page: 1,
+                status:1,
+                camp_id: camp_id
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+                var newli='';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('lesson/lessonInfo')}" + '/lesson_id/' + data.data[i].id;
+                        newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd45">' + data.data[i].lesson + '<p class="mui-ellipsis">' + data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥' + data.data[i].cost + '</p><p class="address">' + data.data[i].area + '</p></div></a></li>'
+                    }
+                    if(data.data.length<=10){
+                        $(".moreLesson").hide();
+                    }
+                }
+                $("ul.lesson").empty().append(newli);
+                if(newli==''){
+                    $("ul.lesson").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>{$campInfo.camp}还没有相关课程哦</p></li>');
                 }
 
             },
             error: function(xhr, type, errerThrown) {
                 mui.toast('网络异常,请稍候再试');
-                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
             }
         });
     };
