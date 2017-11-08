@@ -77,11 +77,15 @@
             border-top: none;
             text-align: center;
         }
+        
+        .subheader {
+            border: none;
+        }
     </style>
 </head>
 
 <body class="whitebg">
-    
+
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
         <h1 class="mui-title">{$campInfo.camp}</h1>
@@ -95,32 +99,22 @@
                 <span class="course">赠送信息</span>
             </div>
             <ul class="mui-table-view list detalis-list">
-                <li class="mui-table-view-cell listli">课程名称<span>{giftrecordInfo.lesson}</span></li>
-                <li class="mui-table-view-cell listli">班级名称<span>{giftrecordInfo.grade}</span></li>
-                <li class="mui-table-view-cell listli">剩余赠送数量<span>{giftrecordInfo.}</span></li>
-                <li class="mui-table-view-cell listli">每人赠送课量<span>{giftrecordInfo.gift_schedule}</span></li>
-                <li class="mui-table-view-cell listli border-b">赠送留言<span>{giftrecordInfo.remarks}</span></li>
+                <li class="mui-table-view-cell listli">课程名称<span>{$giftrecordInfo.lesson}</span></li>
+                <li class="mui-table-view-cell listli grade">班级名称<span>{$giftrecordInfo.grade}</span></li>
+                <li class="mui-table-view-cell listli">每人赠送课量<span>{$giftrecordInfo.gift_schedule}</span></li>
+                <li class="mui-table-view-cell listli border-b">赠送留言<span>{$giftrecordInfo.remarks}</span></li>
             </ul>
             <div class="page-header">
                 <span class="course">赠送对象</span>
             </div>
             <form class="mui-input-group">
-                <div class="box">
+                <div class="box" style="border: none">
+                     {foreach name="studentList" item="vol"}
                     <div class="mui-input-row mui-checkbox checkboxCont">
-                        <label class="number">1</label>
-                        <font>梁浩峰</font>
-                        <input name="student" data-id="79" data-student_id="91" data-student="梁浩峰" value="91" type="checkbox">
+                        <label class="number">{$key+1}</label>
+                        <font>{$vol.student}</font>
                     </div>
-                    <div class="mui-input-row mui-checkbox checkboxCont">
-                        <label class="number">2</label>
-                        <font>梁浩然</font>
-                        <input name="student" data-id="78" data-student_id="90" data-student="梁浩然" value="90" type="checkbox">
-                    </div>
-                    <div class="mui-input-row mui-checkbox checkboxCont">
-                        <label class="number">3</label>
-                        <font>薛子豪</font>
-                        <input name="student" data-id="65" data-student_id="75" data-student="薛子豪" value="75" type="checkbox">
-                    </div>
+                    {/foreach}
                 </div>
             </form>
         </div>
@@ -135,6 +129,13 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
+
+        $(function(){
+            var grade = "{$giftrecordInfo.grade}";
+            if(grade==''){
+                $(".grade").hide();
+            }
+        })
     </script>
 </body>
 

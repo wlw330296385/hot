@@ -83,7 +83,7 @@
 <body class="whitebg">
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <a href="{:url('camp/powercamp',['camp_id' => $camp_id])}" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
         <h1 class="mui-title">{$campInfo.camp}</h1>
         <input type="hidden" name="camp" value="{$campInfo.camp}" class="data">
         <input type="hidden" name="camp_id" value="{$campInfo.id}" class="data">
@@ -119,16 +119,15 @@
                     <span class="course wd66">选择赠送对象</span>
                 </div>
 
-                <div class="box">
+                <div class="box" style="border: none">
                     <p class="nohave">请添加赠送对象</p>
                 </div>
 
                 <div class="page-header">
-                    <span class="course wd52">剩余赠送数量：<b></b></span>
+                    <span class="course wd52 ">剩余赠送数量：<b class="resi_giftschedule"></b></span>
                     <a href="{:url('schedule/giftbuy',['camp_id' => $camp_id])}" class="mui-navigate-right">
                         <span class="more" style="padding-right:0">购买课量</span>
                     </a>
-
                 </div>
 
                 <div class="mui-input-row">
@@ -205,7 +204,7 @@
         //弹出框滚动必须写在mui专用的初始化
         (function ($) {
 
-            mui(".mui-content").on("tap", "a", function () {
+            mui("body").on("tap", "a", function () {
                 window.top.location.href = this.href;
             });
 
@@ -228,9 +227,11 @@
             //选择课程
             $(".lessonlist").on('tap', 'li', function () {
                 var lesson = $(this).text();
+                var resi_giftschedule = $(this).attr('data-resi_giftschedule');
                 lesson_id = $(this).attr('data-id');
                 $(".lessonCont").text(lesson);
                 $(".lesson_id").val(lesson_id);
+                $(".resi_giftschedule").text(resi_giftschedule);
                 toLessonStudentList();
                 $(".gradeCont").text('');
                 mui("#Lesson").popover("toggle");
@@ -279,7 +280,7 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '赠送课时成功', '确定', function () {
-                    var goUrl = "{:url('schedule/giftlistOfCamp')}" + '/gift_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
+                    var goUrl = "{:url('schedule/giftlistOfCamp')}" + '/camp_id/{$campInfo.id}';
                     window.top.location.href = goUrl;
                 })
             } else {
@@ -329,7 +330,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '" data-cost="' + data.data[i].cost + '" >' + data.data[i].lesson + '</li>'
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '" data-resi_giftschedule="' + data.data[i].resi_giftschedule + '" >' + data.data[i].lesson + '</li>'
                         }
                         $("ul.lessonlist").empty();
                         if (newli == '') {
@@ -446,7 +447,7 @@
                         }
                         $(".box").empty();
                         if (newstudentli == '') {
-                            newstudentli = '<p class="mui-text-center">该班级还没有学员哦</p>'
+                            newstudentli = '<p class="nohave">该班级还没有学员哦</p>'
                         }
                         $(".box").append(newstudentli);
 
