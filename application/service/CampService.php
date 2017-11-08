@@ -8,13 +8,15 @@ use app\model\CampMember;
 class CampService {
 
     public $Camp;
+    public $CampMember;
     public function __construct()
     {
-        $this->Camp = new Camp();
+        $this->CampMember = new CampMember;
+        $this->Camp = new Camp;
     }
 
     public function getCampList($map=[],$page = 1,$paginate = 10,$order='') {
-        $res = $this->Camp->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
+        $res = $this->Camp->where($map)->order($order)->page($page,$paginate)->select();
         if($res){
             $result = $res->toArray();
             return $result;
@@ -24,7 +26,7 @@ class CampService {
     }
 
     public function getCampListByPage( $map=[],$paginate=10, $order=''){
-        $res = $this->Camp->where($map)->where(['status'=>1])->order($order)->paginate($paginate);
+        $res = $this->Camp->where($map)->order($order)->paginate($paginate);
         
         if($res){
             $result = $res->toArray();
@@ -34,6 +36,18 @@ class CampService {
         }
         
     }
+
+
+    public function getCampMemberListByPage($map=[],$paginate=10, $order=''){
+         $res = $this->CampMember->where($map)->order($order)->paginate($paginate);
+        if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
+        }
+    }
+
 
     /**
      * 读取资源

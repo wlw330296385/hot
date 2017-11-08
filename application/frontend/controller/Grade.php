@@ -46,7 +46,7 @@ class Grade extends Base{
         // 教案列表
         $PlanService = new \app\service\PlanService;
         $planList = $PlanService->getPlanList(['camp_id'=>$camp_id,'type'=>1]);
-
+        $this->assign('delete_time',time());
         $this->assign('lessonList',$lessonList);
         $this->assign('planList',$planList);
         $this->assign('courtList',$courtList);
@@ -82,6 +82,7 @@ class Grade extends Base{
         $PlanService = new \app\service\PlanService;
         $planList = $PlanService->getPlanList(['camp_id'=>$gradeInfo['camp_id'],'type'=>1]);
         // dump($gradeInfo);die;
+        $this->assign('delete_time',time());
         $this->assign('planList',$planList);
         $this->assign('courtList',$courtList);
         $this->assign('courtListJson',json_encode($courtList));

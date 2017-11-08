@@ -30,4 +30,12 @@ class CampMember extends Model {
     public function coach(){
         return $this->hasOne('coach','member_id','member_id',[],'LEFT');
     }
+
+    public function member(){
+        return $this->hasOne('member','id','member_id',[],'LEFT');
+    }
+
+    public function student(){
+        return $this->hasMany('student','member_id','member_id',[],'LEFT');
+    }
 }

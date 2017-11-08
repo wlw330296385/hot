@@ -34,7 +34,7 @@
             top: 250px
         }
 
-        .students{
+        .mui-input-group .mui-input-row .students{
             width:60% !important;
             line-height: 24px !important;
         }
@@ -96,14 +96,14 @@
                         <span class="studentCont students domData" name="student_str">{$gradeInfo.student_str}</span>
                         <div id="hideStList">
                             {volist name="students" id="vol"}
-                            <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" data-grade="{$vol.grade}" data-grade_id="{$vol.grade_id}">                           
+                            <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-lesson_id="{$vol.lesson_id}" data-lesson="{$vol.lesson}" data-member_id="{$vol.member_id}" data-member="{$vol.member}">
                             {/volist}
                         </div>
                         <input type="hidden" name="students" class="students data" value="{$gradeInfo.students}">
 
                         <div id="hideStListIni">
                             {volist name="students" id="vol"}
-                            <input type="hidden" class="stdListIni" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" data-grade="{$vol.grade}" data-grade_id="{$vol.grade_id}">
+                            <input type="hidden" class="stdListIni" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-lesson_id="{$vol.lesson_id}" data-lesson="{$vol.lesson}" data-member_id="{$vol.member_id}" data-member="{$vol.member}">
                             {/volist}
                         </div>
                     </a>
@@ -165,7 +165,6 @@
                         <input type="hidden" name="assistant_ids" value="{$gradeInfo.assistant_ids}" class="data">
                     </a>
                 </div>
-
                 <div class="mui-input-row">
                     <label>主教底薪<a href="#coach_salary"><i class="mui-icon mui-icon-info"></i></a></label>
                     <input type="number" name="coach_salary" class="coach_salary data pdr" value="{$gradeInfo.coach_salary}">
@@ -606,9 +605,13 @@
                 var id = $(this).attr("data-id");
                 var student_id = $(this).attr("data-student_id");
                 var student = $(this).attr("data-student");
-                var grade = $(this).attr("data-grade");
-                var grade_id = $(this).attr("data-grade_id");
-                studentList[i] = {student:student, student_id:student_id, id: id,grade:grade,grade_id:grade_id};
+                var camp = $(this).attr("data-camp");
+                var camp_id = $(this).attr("data-camp_id");
+                var lesson = $(this).attr("data-lesson");
+                var lesson_id = $(this).attr("data-lesson_id");
+                var member = $(this).attr("data-member");
+                var member_id = $(this).attr("data-member_id");
+                studentList[i] = {student:student, student_id:student_id, id: id, amp:camp, camp_id:camp_id, lesson:lesson, lesson_id:lesson_id, member:member, member_id:member_id};
                 console.log(studentList)
             });
 
@@ -671,10 +674,15 @@
                     var id = $(this).attr("data-id");
                     var student_id = $(this).attr("data-student_id");
                     var student = $(this).val();
-                    var grade_id = $(this).attr("data-grade_id");
-                    var grade = $(this).attr("data-grade");
-                    studentList[i] = {student:student, student_id:student_id, id: id,grade:grade,grade_id:grade_id};
-                    inputList += '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id + '" data-grade="'+ grade +'" data-grade_id="'+ grade_id +'" >';
+                    var camp = $(this).attr("data-camp");
+                    var camp_id = $(this).attr("data-camp_id");
+                    var lesson = $(this).attr("data-lesson");
+                    var lesson_id = $(this).attr("data-lesson_id");
+                    var member = $(this).attr("data-member");
+                    var member_id = $(this).attr("data-member_id");
+
+                    studentList[i] = {student:student, student_id:student_id, id: id, camp:camp, camp_id:camp_id, lesson:lesson, lesson_id:lesson_id, member:member, member_id:member_id};
+                    inputList += '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id +'" data-camp="'+ camp +'" data-camp_id="'+ camp_id +'" data-lesson="'+ lesson +'" data-lesson_id="'+ lesson_id +'" data-member="'+ member +'" data-member_id="'+ member_id +'" >';
                     studentNames += student + ','
                 });
                 $("#hideStList").empty();
@@ -883,13 +891,13 @@
                     var idNewID=""
                     //新增学员
                     $("#hideStList input").each(function (i) {
-                        var nid = $(this).attr("data-id");
+                        var sid = $(this).attr("data-student_id");
                         //默认为新添加学员
                         idNewID = "Yes";
                         //该学员遍历原学生表判断是否存在
                         $("#hideStListIni input").each(function () {
-                            if(nid==$(this).attr("data-id")){
-                               console.log($(this).attr("data-id"))
+                            if(sid==$(this).attr("data-student_id")){
+                               console.log($(this).attr("data-student_id"))
                                idNewID = "No";
                                return false;
                             }
@@ -898,21 +906,25 @@
                         if(idNewID == "Yes"){
                             var student_id = $(this).attr("data-student_id");
                             var student = $(this).attr("data-student");
-                            var grade_id = "{$gradeInfo.id}";
-                            var grade = "{$gradeInfo.grade}";
-                            studentList.push({student:student,student_id:student_id,grade:grade,grade_id:grade_id});
+                            var camp = $(this).attr("data-camp");
+                            var camp_id = $(this).attr("data-camp_id");
+                            var lesson = $(this).attr("data-lesson");
+                            var lesson_id = $(this).attr("data-lesson_id");
+                            var member = $(this).attr("data-member");
+                            var member_id = $(this).attr("data-member_id");
+                            studentList.push({student:student,student_id:student_id,camp:camp,camp_id:camp_id,lesson:lesson,lesson_id:lesson_id, member:member, member_id:member_id, grade:"{$gradeInfo.grade}",grade_id:"{$gradeInfo.id}"});
                         }
                     });
 
                     var idDelID=""
                     //去除学员
                     $("#hideStListIni input").each(function (i) {
-                        var did = $(this).attr("data-id");
+                        var dsid = $(this).attr("data-student_id");
                         //默认为要去除的学员
                         idDelID = "Yes";
                         //该学员遍历新编辑的学生表判断是否存在
                         $("#hideStList input").each(function () {
-                            if(did==$(this).attr("data-id")){
+                            if(dsid==$(this).attr("data-student_id")){
                                 idDelID = "No";
                                 return false;
                             }
@@ -920,11 +932,15 @@
                         //上面遍历过不存在就添加到最终变动学员列表中
                         if(idDelID == "Yes"){
                             var id = $(this).attr("data-id");
-                            var student_id = $(this).attr("data-student_id");
-                            var student = $(this).attr("data-student");
-                            var grade_id = "0";
-                            var grade = "0";
-                            studentList.push({student:student, student_id:student_id, id: id,grade:grade,grade_id:grade_id});
+//                            var student_id = $(this).attr("data-student_id");
+//                            var student = $(this).attr("data-student");
+//                            var camp = $(this).attr("data-camp");
+//                            var camp_id = $(this).attr("data-camp_id");
+//                            var lesson = $(this).attr("data-lesson");
+//                            var lesson_id = $(this).attr("data-lesson_id");
+//                            studentList.push({student:student, student_id:student_id, id: id, camp:camp, camp_id:camp_id, lesson:lesson, lesson_id:lesson_id, delete_time:"{$delete_time}"});
+                            studentList.push({id: id,delete_time:"{$delete_time}"});
+
                         }
                     });
 
@@ -942,6 +958,7 @@
                     // return;
                    var url = "{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}";
                    var ajaxResult = wooApi.asyncF(url, objData);
+                   console.log(ajaxResult);
                    if (ajaxResult.code == 200) {
                        mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
                            window.location.href = "{:url('frontend/grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
@@ -1005,15 +1022,13 @@
         };
         //课程学员接口获取数据并追加到页面
         var toLessonList = function () {
-            var url = "{:url('api/lesson/getStudentListOfLessonApi','','',true)}";
+            var url = "{:url('api/lesson_member/getLessonMemberListNoPageApi','','',true)}";
             var campID = "{$gradeInfo.camp_id}";
             var lesson_id = $("input[name=lesson_id]").val();
             mui.ajax({
                 url: url,
                 data: {
-                    camp_id: campID,
-                    lesson_id: lesson_id,
-                    type: 2
+                    lesson_id: lesson_id
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -1023,14 +1038,11 @@
                 success: function (data) {
                     if (data.code == 200) {
                         var div = '';
-                        var fbm = '';
                         var tys = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            fbm = '';
                             tys = '';
-                            if (data.data[i].grade_id == 0) { fbm = '<span class="tips">[ 未分配 ]</span>' }
                             if (data.data[i].type == 2) { tys = '<span class="tips">[ 体验生 ]</span>' }
-                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + fbm + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-grade="' + data.data[i].grade + '" data-grade_id="' + data.data[i].grade_id + '"></div>'
+                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student +'" data-camp="'+ data.data[i].camp +'" data-camp_id="'+ data.data[i].camp_id +'" data-lesson="'+ data.data[i].lesson +'" data-lesson_id="'+ data.data[i].lesson_id +'" data-member="'+ data.data[i].member +'" data-member_id="'+ data.data[i].member_id + '"></div>'
                         }
                         $("#newdiv").append(div);
 

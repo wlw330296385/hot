@@ -493,6 +493,7 @@
                 //删除
                 $(".del").click(function () {
                     $("input[name='student']:checked").parents(".checkboxCont").remove();
+                    delStudent();
                     changeIndex();
                     checkStudent();
                 });
@@ -612,6 +613,7 @@
                     $(".mui-badge").text(totalNum);
                 });
 
+
                 // 选择添加学员点击事件
                 $("#studentConfirm").on('click', function () {
 
@@ -626,7 +628,7 @@
                         var id = $(this).attr("data-id");
                         var student_id = $(this).attr("data-student_id");
                         var student = $(this).attr("data-student");
-                        if (student_type == 1) {
+                        if (student_type == "正式生") {
                             $("#inactiveList").append(str);
                             studentList.push({ student: student, student_id: student_id, id: id, type: student_type });
                         } else {
@@ -641,7 +643,8 @@
                     mui("#addStudent").popover("toggle");
                     totalNum = $(".checkboxCont").length;
                     $(".mui-badge").text(totalNum);
-                })
+                });
+
 
                 //获取已经分配班级的学员列表
                 toExpStudentList();
@@ -801,6 +804,26 @@
                 });
             });
 
+            //初始值
+            var delStudent = function () {
+                studentList = [];
+                expstudentList = [];
+                $(".checkChecked input[type=checkbox]").each(function () {
+                    var student_type = $(this).attr("data-type");
+                    var id = $(this).attr("data-id");
+                    var student_id = $(this).attr("data-student_id");
+                    var student = $(this).attr("data-student");
+                    if (student_type == 1) {
+                        studentList.push({ student: student, student_id: student_id, id: id, type: student_type });
+                    } else {
+                        expstudentList.push({ student: student, student_id: student_id, id: id, type: student_type });
+                    }
+                    console.log(studentList)
+                    console.log(expstudentList)
+                });
+            }
+
+
             // 检查是否有学员数据
             var checkStudent = function () {
                 if ($("#inactiveList").html() == '' && $("#expinactiveList").html() == '') {
@@ -827,8 +850,10 @@
             var studentList = '';//正式学员全局变量
             var expstudentList = '';//体验生全局变量
             var toExpStudentList = function () {
+                
                 studentList = [];
                 expstudentList = [];
+         
                 $("input[name=student]").each(function () {
                     var student_type = $(this).attr("data-type");
                     var id = $(this).attr("data-id");
@@ -842,9 +867,9 @@
                 });
 
                 checkStudent();// 检查是否有学员数据
-            
-                console.log(studentList);
-                console.log(expstudentList);
+
+                // console.log(studentList);
+                // console.log(expstudentList);
                 changeIndex();//调用-更新序号
                 totalNum = $(".checkboxCont").length;
             };
@@ -853,7 +878,7 @@
             //获取学员列表
             var toScheduleList = function () {
                 var lesson_id = "{$scheduleInfo.lesson_id}";
-                mui.ajax("{:url('api/lesson/getStudentListOfLessonApi')}", {
+                mui.ajax("{:url('api/lesson_member/getLessonMemberListNoPageApi')}", {
                     data: {
                         'lesson_id': lesson_id,
                     },
@@ -865,15 +890,12 @@
                         //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data)
                         var div = '';
-                        var fbm = '';
                         var tys = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                fbm = '';
                                 tys = '';
-                                if (data.data[i].grade_id == 0) { fbm = '<span class="tips">[ 未分配 ]</span>' }
                                 if (data.data[i].type == 2) { tys = '<span class="tips">[ 体验生 ]</span>' }
-                                div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + fbm + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-type="' + data.data[i].type + '"></div>'
+                                div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-type="' + data.data[i].type + '"></div>'
                             }
                             $("#newdiv").empty();
                             $("#newdiv").append(div);

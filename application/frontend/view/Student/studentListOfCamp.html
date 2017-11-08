@@ -245,7 +245,7 @@
     //接口获取数据并追加到页面
     var toList = function (wList, page, gType, status, keyword) {
         //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/grade_member/getGradeMemberListOfCampByPageApi','','',true)}?page="+page+"&keyword="+keyword;
+        var url  = "{:url('api/lesson_member/getLessonMemberListOfCampByPageApi','','',true)}?page="+page+"&keyword="+keyword;
         var campID = "{$camp_id}";
         var typeID = 1;
         mui.ajax({
@@ -265,15 +265,16 @@
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
+
                         var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
                         var studentSexUrl = getSexIconUrl(data.data.data[i].student.student_sex);
                         newli += '<li class="mui-table-view-cell mui-media listli">';
                         if (status == 1) {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student.member_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为离营</span></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为离营</span></div>';
                         } else {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student.member_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为在营</span></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为在营</span></div>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].student.student_avatar + '"><div class="mui-media-body wd45">' + data.data.data[i].student.student + ' <img src="'+studentSexUrl+'" /><p class="mui-ellipsis">学员ID：' + data.data.data[i].student_id + '</p></div></a></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '"><div class="mui-media-body wd45">' + data.data.data[i].student + ' <img src="'+studentSexUrl+'" /><p class="mui-ellipsis">学员ID：' + data.data.data[i].student_id + '</p></div></a></div>';
                         newli += '</li>';
                     }
                 }

@@ -444,12 +444,19 @@ class ScheduleService
     // 购买赠送课时列表
     public function buygiftpage($map=[], $page=1, $order='id desc', $limit=10) {
         $model = new ScheduleGiftbuy;
-        $list = $model->where($map)->order($order)->page($page, $limit)->select();
+        $list = $model->with('lesson')->where($map)->order($order)->page($page, $limit)->select();
         if ($list) {
             return ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $list->toArray()];
         } else {
             return ['code' => 100, 'msg' => __lang('MSG_000')];
         }
+    }
+
+    // 购买赠送课时详情
+    public function getbuygift($map) {
+        $model = new ScheduleGiftbuy;
+        $result = $model->with('lesson')->where($map)->find()->toArray();
+        return $result;
     }
 
     // 赠送课时给学员

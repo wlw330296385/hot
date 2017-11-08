@@ -227,6 +227,9 @@
             </form>
 
             <ul class="mui-table-view operation">
+                <!--<li class="mui-table-view-cell mui-col-xs-12 opli bggreen" style="color: #fff">-->
+                    <!--此功能维护中，请稍后再使用-->
+                <!--</li>-->
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen operationBtn" style="color: #fff">
                     提交录入
                 </li>
@@ -500,6 +503,7 @@
             //删除
             $(".del").click(function () {
                 $("input[name='student']:checked").parents(".checkboxCont").remove();
+                delStudent();
                 changeIndex();
                 checkStudent();
             });
@@ -631,7 +635,7 @@
                     var id = $(this).attr("data-id");
                     var student_id = $(this).attr("data-student_id");
                     var student = $(this).attr("data-student");
-                    if (student_type == 1) {
+                    if (student_type == "正式生") {
                         $("#inactiveList").append(str);
                         studentList.push({ student: student, student_id: student_id, id: id, type: student_type });
                     } else {
@@ -841,7 +845,24 @@
             });
         })
 
-
+        //初始值
+            var delStudent = function () {
+                studentList = [];
+                expstudentList = [];
+                $(".checkChecked input[type=checkbox]").each(function () {
+                    var student_type = $(this).attr("data-type");
+                    var id = $(this).attr("data-id");
+                    var student_id = $(this).attr("data-student_id");
+                    var student = $(this).attr("data-student");
+                    if (student_type == "正式生") {
+                        studentList.push({ student: student, student_id: student_id, id: id, type: student_type });
+                    } else {
+                        expstudentList.push({ student: student, student_id: student_id, id: id, type: student_type });
+                    }
+                    console.log(studentList)
+                    console.log(expstudentList)
+                });
+            }
         // 检查是否有学员数据
         var checkStudent = function () {
             if ($("#inactiveList").html() == '' && $("#expinactiveList").html() == '') {
@@ -936,7 +957,7 @@
         //获取学员列表
         var toScheduleList = function () {
             var lesson_id = "{$gradeInfo.lesson_id}";
-            mui.ajax("{:url('api/lesson/getStudentListOfLessonApi',['lesson_id'=>$gradeInfo.lesson_id])}", {
+            mui.ajax("{:url('api/lesson_member/getLessonMemberListNoPageApi',['lesson_id'=>$gradeInfo.lesson_id])}", {
                 data: {
                     'lesson_id': lesson_id,
                 },
@@ -948,15 +969,12 @@
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data)
                     var div = '';
-                    var fbm = '';
                     var tys = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            fbm = '';
                             tys = '';
-                            if (data.data[i].grade_id == 0) { fbm = '<span class="tips">[ 未分配 ]</span>' }
                             if (data.data[i].type == 2) { tys = '<span class="tips">[ 体验生 ]</span>' }
-                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + fbm + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-type="' + data.data[i].type + '"></div>'
+                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-type="' + data.data[i].type + '"></div>'
                         }
                         $("#newdiv").empty();
                         $("#newdiv").append(div);

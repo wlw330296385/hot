@@ -45,7 +45,12 @@ class Wxpay extends Base{
         $obj=simplexml_load_string($xml,'SimpleXMLElement',LIBXML_NOCDATA);
         $jsonObj = json_encode($obj);
         $data = json_decode($jsonObj,true);
-        db('log_wxpay')->insert(['callback'=>$jsonObj,'create_time'=>time(),'time_end'=>$data['time_end'],'total_fee'=>$data['total_fee'],'openid'=>$data['openid'],'bill_order'=>$data['out_trade_no']]);
-        
+        db('log_wxpay')->insert(['callback'=>$jsonObj,'create_time'=>time(),'time_end'=>$data['time_end'],'total_fee'=>$data['total_fee'],'openid'=>$data['openid'],'bill_order'=>$data['out_trade_no'],'transaction_id'=>$data['transaction_id']]);
+         $msg = [
+            'return_code'=>'SUCCESS',
+            'return_msg'=>'OK'
+            ];
+            
+        return xml($msg);
 	}
 }

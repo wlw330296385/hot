@@ -183,6 +183,14 @@ class Schedule extends Base
     }
 
     public function giftbuyinfo() {
+	    $id = input('id', 0);
+	    if (!$id) {
+	        $this->error(__lang('MSG_402'));
+        }
+        $scheduleS = new ScheduleService();
+        $giftbuyinfo = $scheduleS->getbuygift(['id' => $id]);
+//	    dump($giftbuyinfo);
+        $this->assign('giftbuyinfo', $giftbuyinfo);
         return view("Schedule/giftbuyInfo");
     }
 
