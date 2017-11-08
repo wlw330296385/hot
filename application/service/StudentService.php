@@ -152,4 +152,38 @@ class StudentService{
 	    }
         
     }
+
+    // 学员参加的课程
+    public function getLessons($map=[]){
+        $where['lesson_member.camp_id'] = $map['camp_id'];
+        if (isset($map['student_id'])) {
+            $where['lesson_member.student_id'] = $map['student_id'];
+        }
+        $where['lesson_member.member_id'] = $map['member_id'];
+        if (isset($map['status'])) {
+            $where['lesson_member.status'] = $map['status'];
+        }
+        $result = Db::view('lesson')
+            ->view('lesson_member', ['student_id','student','member_id','member','status' => 'lesson_member_status','rest_schedule'], 'lesson_member.lesson_id=lesson.id')
+            ->where($where)
+            ->where('lesson.delete_time', null)
+            ->select();
+        return $result;
+    }
+
+    // 学员所在班级
+    public function getGrades($map=[]) {
+        $where['grade_member.camp_id'] = $map['camp_id'];
+        $where['grade_member.student_id'] = $map['student_id'];
+        $where['grade_member.member_id'] = $map['member_id'];
+        if (isset($map['status'])) {
+            $where['grade_member.status'] = $map['status'];
+        }
+        $result = Db::view('grade')
+            ->view('grade_member', ['student_id', 'student', 'member', 'member_id', 'status' => 'grade_member_status'], 'grade_member.grade_id=grade.id')
+            ->where($where)
+            ->where('grade.delete_time', null)
+            ->select();
+        return $result;
+    }
 }
