@@ -190,7 +190,7 @@ class Schedule extends Base
         $scheduleS = new ScheduleService();
         $giftbuyinfo = $scheduleS->getbuygift(['id' => $id]);
 //	    dump($giftbuyinfo);
-        $this->assign('giftbuyinfo', $giftbuyinfo);
+        $this->assign('giftbuyInfo', $giftbuyinfo);
         return view("Schedule/giftbuyInfo");
     }
 
@@ -200,6 +200,16 @@ class Schedule extends Base
     }
 
     public function giftrecordinfo() {
+        $id = input('id', 0);
+        if (!$id) {
+            $this->error(__lang('MSG_402'));
+        }
+        $scheduleS = new ScheduleService();
+        $giftrecordInfo = $scheduleS->getGiftRecordInfo(['id' => $id]);
+        $studentList = json_decode($giftrecordInfo['student_str'], true);
+        
+        $this->assign('giftrecordInfo', $giftrecordInfo);
+        $this->assigN('studentList', $studentList);
         return view('Schedule/giftrecordInfo');
     }
 }

@@ -292,13 +292,12 @@ class Lesson extends Base{
             // $city = input('param.city');
             // $map['province']=$province;
             // $map['city'] = $city;
-            // $map['hot'] = ['egt',1];
             foreach ($map as $key => $value) {
                 if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
                 }
             }
-            $result = $this->LessonService->getLessonList($map);
+            $result = $this->LessonService->getLessonList($map,1,'hot desc',4);
             if($result){
                 shuffle($result);
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);

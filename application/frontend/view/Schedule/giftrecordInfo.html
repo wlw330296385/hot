@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>赠送课时详情</title>
+    <title>赠送课时</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -65,8 +65,21 @@
         .explain-cont p {
             margin-bottom: 2px;
         }
+        
         .checkboxCont font {
             font-size: 14px;
+        }
+        
+        .nohave {
+            margin: 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-top: none;
+            text-align: center;
+        }
+        
+        .subheader {
+            border: none;
         }
     </style>
 </head>
@@ -75,50 +88,39 @@
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-        <h1 class="mui-title">训练营名称</h1>
+        <h1 class="mui-title">{$campInfo.camp}</h1>
     </header>
 
     <div class="mui-content">
 
-        <form class="mui-input-group">
+        <div class="camp-list camp-lesson-list detalis-list grade-list editor mt">
 
-            <div class="mui-input-row">
-                <label>课程名称</label>
-                <span>超级射手班</span>
+            <div class="page-header">
+                <span class="course">赠送信息</span>
             </div>
-
-            <div class="mui-input-row">
-                <label>班级名称</label>
-                <span>天才班</span>
+            <ul class="mui-table-view list detalis-list">
+                <li class="mui-table-view-cell listli">课程名称<span>{$giftrecordInfo.lesson}</span></li>
+                <li class="mui-table-view-cell listli grade">班级名称<span>{$giftrecordInfo.grade}</span></li>
+                <li class="mui-table-view-cell listli">每人赠送课量<span>{$giftrecordInfo.gift_schedule}</span></li>
+                <li class="mui-table-view-cell listli border-b">赠送留言<span>{$giftrecordInfo.remarks}</span></li>
+            </ul>
+            <div class="page-header">
+                <span class="course">赠送对象</span>
             </div>
-
-            <div class="mui-input-row">
-                <label>赠送对象</label>
-            </div>
-            <div class="box">
+            <form class="mui-input-group">
+                <div class="box" style="border: none">
+                     {foreach name="studentList" item="vol"}
                     <div class="mui-input-row mui-checkbox checkboxCont">
-                        <label class="number">1</label>
-                        <font>陈佳一</font>
+                        <label class="number">{$key+1}</label>
+                        <font>{$vol.student}</font>
                     </div>
-                    <div class="mui-input-row mui-checkbox checkboxCont">
-                        <label class="number">1</label>
-                        <font>陈佳一</font>
-                    </div>
+                    {/foreach}
                 </div>
-
-            <div class="mui-input-row">
-                <label>课量数量</label>
-                <span>5</span>
-            </div>
-
-            <div class="mui-input-row">
-                <label>赠送留言</label>
-                <span>没有留言</span>
-            </div>
-
-        </form>
+            </form>
+        </div>
 
     </div>
+
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -127,6 +129,13 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
+
+        $(function(){
+            var grade = "{$giftrecordInfo.grade}";
+            if(grade==''){
+                $(".grade").hide();
+            }
+        })
     </script>
 </body>
 

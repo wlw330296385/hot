@@ -238,7 +238,7 @@ class Camp extends Base{
 
 
     // 获取评论列表
-    public function getCampCommentListByPage(){
+    public function getCampCommentListByPageApi(){
         try{ 
             $map = input('post.');
             $result = $this->CampService->getCampCommentListByPage($map);

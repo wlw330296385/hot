@@ -55,15 +55,12 @@ class Camp extends Base{
         $LessonService = new \app\service\LessonService;
         $lessonList = $LessonService->getLessonList(['camp_id'=>$camp_id,'status'=>1]);
         $lessonCount = count($lessonList);
-        $commentList = $this->CampService->getCampCommentListByPage(['camp_id'=>$camp_id]);
         $campInfo = $this->CampService->getCampInfo($camp_id);
         // 查询是否跟训练营有关系
         $isPower = $this->CampService->isPower($camp_id,$this->memberInfo['id']);
 
         $this->assign('isPower',$isPower);
-        $this->assign('commentList',$commentList['data']);
         $this->assign('lessonCount',$lessonCount);
-        $this->assign('lessonList',$lessonList);
         $this->assign('campInfo',$campInfo);
         return view('Camp/campInfo');
     }

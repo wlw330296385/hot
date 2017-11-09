@@ -20,17 +20,17 @@ class LessonVal extends Validate{
     
     protected $message = [
         'lesson.token'   =>'请不要重复提交',
-        'lesson.require'        =>  '课程名必须',
-        'gradecate.require'	=> '课程类型必须',
-        'cost.require'      =>'费用必须',
+        'lesson.require'        =>  '请输入课程名称',
+        'gradecate.require'	=> '请选择课程类型',
+        'cost.require'      =>'请输入课程单价',
         'dom'                 =>'缺少必填项目',
-        'coach'                 =>'主教练必填',
-        'week'                  =>'周期（星期几）必填',
-        'lesson_time'           =>'发布时间大于当前时间',
-        'province'              =>'省份必填',
-        'city'                  =>'城市必填',
-        'area'                  =>'区县必填',
-        'court'                 =>'训练点必填',
+        'coach'                 =>'请选择主教练',
+        'week'                  =>'请选择周期（星期几）',
+        'lesson_time'           =>'发布时间需要大于当前时间',
+        'province'              =>'请选择地区',
+        'city'                  =>'请选择地区',
+        'area'                  =>'请选择地区',
+        'court'                 =>'请选择训练场地',
     ];
     
     protected $scene = [
