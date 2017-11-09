@@ -669,10 +669,10 @@
             mui.alert('请填写正确的手机号码或区号加固话（例：0755-26650702）');
             return false;
         }
-        var dataVal = $(".dataVal").val();
-        var dataSpan = $(".dataSpan").text();
-        var dataImg = $(".dataImg").attr('src');
-        if(dataVal!=''&&dataSpan!=''&&dataImg!=''){
+//        var dataVal = $(".dataVal").val();
+//        var dataSpan = $(".dataSpan").text();
+//        var dataImg = $(".dataImg").attr('src');
+//        if(dataVal!=''&&dataSpan!=''&&dataImg!=''){
             var data = wooApi.getInputData('input','data');
             datas = wooApi.getInputData('select','data',data);
             // 获取其他标签值
@@ -683,14 +683,23 @@
             var url = "{:url('api/lesson/updateLessonApi')}";
             var ajaxResult = wooApi.asyncF(url,objData);
             if(ajaxResult.code){
-                console.log(ajaxResult.data)
-                 mui.alert('',ajaxResult.msg,'确定',function(){
-                    window.location.href="{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/'+ajaxResult.data+'/camp_id/{$campInfo.id}';
-                  });
+                if (ajaxResult.code == 200) {
+                    //console.log(ajaxResult.data)
+                    mui.alert('',ajaxResult.msg,'确定',function(){
+                        window.location.href="{:url('lesson/lessoninfoOfCamp')}"+'/lesson_id/'+ajaxResult.data+'/camp_id/{$campInfo.id}';
+                    });
+                } else {
+                    mui.alert(ajaxResult.msg, '创建失败');
+                    mui.get("{:url('api/frontend/reloadtoken')}", function(data){
+                        if(data.code===200) {
+                            $('input[name=__token__]').val(data.data);
+                        }
+                    }, 'json');
+                }
             }
-        }else{
-            mui.toast("请填写课程信息");
-        }
+//        }else{
+//            mui.toast("请填写课程信息");
+//        }
         
     }
 
