@@ -159,8 +159,8 @@
 
                 <div class="mui-input-row">
                     <label>活动简介</label>
-                    <input type="text" name="event_des" class="data" value="" placeholder="请输入活动简介">
-                    <!--<textarea name="event_des" class="data" value="" placeholder="请输入活动简介"> </textarea>-->
+                    <!--<input type="text" name="event_des" class="data" value="" placeholder="请输入活动简介">-->
+                    <textarea name="event_des" class="data" value="" placeholder="请输入活动简介"> </textarea>
                 </div>
 
                 <div class="mui-input-row">
@@ -385,15 +385,21 @@
             //     };
             // });
 
+            var data1 = wooApi.getInputData();
+            var event_des = $('textarea.data').val();
+            var objData = wooApi.arrTOobj(data1);
+            objData.event_des = event_des;
+            console.log(objData)
+
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
-            arrData = wooApi.getDomData('domData', datas);
+            arrData = wooApi.getDomData('domData', datas, data1);
             console.log(arrData)
             var objData = wooApi.arrTOobj(arrData);
             console.log(objData)
             var url = "{:url('api/event/updateEventApi')}";
-            var ajaxResult = wooApi.asyncF(url, objData);
+            var ajaxResult = wooApi.asyncF(url, objData );
             // if (ajaxResult.code == 200) {
             //     mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
             //         var goUrl = "{:url('event/eventinfoOfCamp')}" + '/event_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
