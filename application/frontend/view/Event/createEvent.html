@@ -318,7 +318,7 @@
         })(mui, document);
 
         $(function () {
-            // 具体对象
+            // // 具体对象
             $(".campGradeList").on('tap', 'li', function () {
                 var target = $.trim($(this).text());
                 console.log(target)
@@ -363,7 +363,7 @@
             });
 
             toCampMemberList();// 调用训练营身份列表
-            toGradeList();//调用训练营班级列表
+            toCampGradeList();//调用训练营班级列表
         })
 
         // 获取数据并进行提交
@@ -383,7 +383,6 @@
                     return;
                 };
             });
-
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
@@ -424,12 +423,12 @@
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli cost" data-id="' + data.data[i].member_id + '"><font class="member">' + data.data[i].member + '</font><span>' + data.data[i].type + '</span></li>'
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli cost" data-id="' + data.data.data[i].member_id + '"><font class="member">' + data.data.data[i].member + '</font><span>' + data.data.data[i].type + '</span></li>'
                         }
                         $("ul.campMemberList").empty();
                         if (newli == '') {
-                            newli = '<li class="mui-text-center"><p>没有查找到数据哦</p></li>'  
+                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
                         }
                         $("ul.campMemberList").append(newli);
 
@@ -444,7 +443,7 @@
         };
 
         //自定义获取训练营班级列表
-        var toGradeList = function () {
+        var toCampGradeList = function () {
             var url = "{:url('api/grade/getGradeListApi','','',true)}";
             var campID = "{$campInfo.id}";
             mui.ajax({
@@ -466,7 +465,7 @@
                         }
                         $("ul.campGradeList").empty();
                         if (gradeli == '') {
-                            gradeli = '<li class="mui-text-center"><p>没有查找到数据哦</p></li>' 
+                            gradeli = '<li class="mui-text-center"><p>没有查找到数据哦</p></li>'
                         }
                         $("ul.campGradeList").append(gradeli);
 
