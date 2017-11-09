@@ -44,9 +44,19 @@ class Event extends Base{
     public function eventInfo() {
         $event_id = input('param.event_id');
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
+        $variable = 1;
+        if($eventInfo['status']=='下架'){
+            $variable = 2 ;
+        }
+        if($eventInfo['is_max'] == '已满人'){
+            $variable = 3 ;
+        }
 
+        if($eventInfo['is_overdue'] == '已过期'){
+            $variable = 4 ;
+        }
 
-
+        $this->assign('variable',$variable);
         $this->assign('eventInfo',$eventInfo);
         return view('Event/eventInfo');
     }
@@ -55,8 +65,9 @@ class Event extends Base{
         $event_id = input('param.event_id');
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
 
+        $power = $this->EventService->isPower($eventInfo['organization_type'],$eventInfo['organization_id'],$this->memberInfo['id']);
 
-
+        $this->assign('power',$power);
         $this->assign('eventInfo',$eventInfo);
         return view('Event/eventInfoOfCamp');
     }
