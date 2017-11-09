@@ -28,7 +28,7 @@ class Event extends Base{
         $organization_id = input('param.organization_id');
         $CampService = new \app\service\CampService;
         $campInfo = $CampService->getCampInfo(['id'=>$organization_id]);
-        $isPower = $CampService->isPower($organization_id,$this->memberInfo['id']);
+        $isPower = $this->EventService->isPower($organization_id,$this->memberInfo['id']);
         // 我是班主任的班级
         $GradeModel = new \app\model\Grade;
         $gradeList = $GradeModel->where(['teacher_id'=>$this->memberInfo['id']])->select();
@@ -91,8 +91,7 @@ class Event extends Base{
         $event_id = input('param.event_id');
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
         if($eventInfo['member_id'] != $this->memberInfo['id']){
-            $CampService = new \app\service\CampService;
-            $isPower = $CampService->isPower($eventInfo['organization_id'],$this->memberInfo['id']);
+            $isPower = $this->EventService->isPower($eventInfo['organization_type'],$eventInfo['organization_id'],$eventInfo['organization_id'],$this->memberInfo['id']);
             if($isPower<3){
                 $this->error('您没有权限');
             }
@@ -108,8 +107,7 @@ class Event extends Base{
         $event_id = input('param.event_id');
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
         if($eventInfo['member_id'] != $this->memberInfo['id']){
-            $CampService = new \app\service\CampService;
-            $isPower = $CampService->isPower($eventInfo['organization_id'],$this->memberInfo['id']);
+            $isPower = $this->EventService->isPower($eventInfo['organization_type'],$eventInfo['organization_id'],$this->memberInfo['id']);
             if($isPower<3){
                 $this->error('您没有权限');
             }
