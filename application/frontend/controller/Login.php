@@ -152,6 +152,7 @@ class Login extends Controller{
         }
 //        dump( cookie('url') );
 //        dump( session('memberInfo') );
+        $this->assign('userinfo', $userinfo);
         return view('Login/fastRegister');
     }
 }
