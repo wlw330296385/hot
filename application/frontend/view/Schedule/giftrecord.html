@@ -112,6 +112,7 @@
                         <label>选择班级</label>
                         <span class="gradeCont" name="grade"></span>
                         <input type="hidden" name="grade_id" value="" class="grade_id">
+                        <input type="hidden" name="lesson" value=""  data-lesson="">
                     </a>
                 </div>
 
@@ -240,14 +241,17 @@
             $(".gradelist").on('tap', 'li', function () {
                 var grade = $(this).text();
                 grade_id = $(this).attr('data-id');
+                var lessonOfGrade = $(this).attr('data-lesson');
                 $(".gradeCont").text(grade);
                 $(".grade_id").val(grade_id);
+                $(".lessonCont").text(lessonOfGrade);
                 toGradeStudentList();
                 mui("#Grade").popover("toggle");
             });
 
             changeIndex();
             toLessonList();
+            toGradeList();
         });
 
         // 获取数据并进行提交
@@ -378,7 +382,7 @@
                     } else {
                         mui.toast('数据获取失败,请稍候再试');
                     };
-                    toGradeList();
+                    // toGradeList();
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
@@ -405,7 +409,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '" data-id="' + data.data[i].lesson_id + '">' + data.data[i].grade + '</li>'
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '" data-lesson="' + data.data[i].lesson + '">' + data.data[i].grade + '</li>'
                         }
                         $("ul.gradelist").empty();
                         if (newli == '') {
@@ -431,7 +435,6 @@
                 url: url,
                 data: {
                     camp_id: campID,
-                    lesson_id: lesson_id,
                     grade_id: grade_id
                 },
                 dataType: 'json',//服务器返回json格式数据
@@ -443,7 +446,7 @@
                     if (data.code == 200) {
                         var newstudentli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newstudentli = newstudentli + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].student + '</font><input name="student" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" value="' + data.data[i].student_id + '" type="checkbox"></div>'
+                            newstudentli = newstudentli + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].student + '</font><input name="student" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-lesson="' + data.data[i].lesson + '" value="' + data.data[i].student_id + '" type="checkbox"></div>'
                         }
                         $(".box").empty();
                         if (newstudentli == '') {
@@ -454,7 +457,7 @@
                     } else {
                         mui.toast('数据获取失败,请稍候再试');
                     };
-                    toGradeList();
+                    // toGradeList();
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
