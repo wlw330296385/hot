@@ -185,27 +185,26 @@ class Member extends Base{
     // 我名下的训练营
     public function myCamp(){
         $member_id = $this->memberInfo['id'];
-        $type = input('param.type')?input('param.type'):4;
-        if($type){
-            $campList = db('camp_member')->where(['member_id'=>$member_id,'type'=>$type,'status'=>1])->select();
-            switch($type) {
-                case '2' : {
-                    $isCoach = $this->MemberService->hasCoach($this->memberInfo['id']);
-                    $this->assign('iscoach', $isCoach);
-                    break;
-                }
-                case '4' : {
-                    $hasCamp = $this->MemberService->hasCamp($this->memberInfo['id']);
-                    //dump($hasCamp);
-                    $this->assign('iscamp', $hasCamp);
-                    break;
-                }
-
+        $type = input('param.type', 4);
+        $campList = db('camp_member')->where(['member_id' => $member_id, 'type' => $type, 'status' => 1])->select();
+        switch ($type) {
+            case "1": {
+                $hasStudent = db('student')->where(['member_id' => $member_id])->select();
+                $this->assign('hasStudent', $hasStudent);
+                break;
             }
-
-        }else{
-            $campList = db('camp')->where(['member_id'=>$member_id,'status'=>1])->select();
+            case "2": {
+                $hasCoach = $this->MemberService->hasCoach($this->memberInfo['id']);
+                $this->assign('hasCoach', $hasCoach);
+                break;
+            }
+            case "4": {
+                $hasCamp = $this->MemberService->hasCamp($this->memberInfo['id']);
+                $this->assign('hasCamp', $hasCamp);
+                break;
+            }
         }
+
         $this->assign('type',$type);
         $this->assign('campList',$campList);
         return view('Member/myCamp');
