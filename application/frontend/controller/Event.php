@@ -28,7 +28,7 @@ class Event extends Base{
         $organization_id = input('param.organization_id');
         $CampService = new \app\service\CampService;
         $campInfo = $CampService->getCampInfo(['id'=>$organization_id]);
-        $isPower = $this->EventService->isPower($organization_id,$this->memberInfo['id']);
+        $isPower = $CampService->isPower($organization_id,$this->memberInfo['id']);
         // 我是班主任的班级
         $GradeModel = new \app\model\Grade;
         $gradeList = $GradeModel->where(['teacher_id'=>$this->memberInfo['id']])->select();
