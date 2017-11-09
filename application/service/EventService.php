@@ -94,11 +94,9 @@ class EventService {
     // 新增活动
     public function createEvent($data){
         // 查询是否有权限
-        if($data['organization_type'] == 1){
-            $is_power = $this->isPower($data['organization_id'],$data['member_id']);
-            if($is_power<2){
-                return ['code'=>100,'msg'=> __lang('MSG_403')];
-            }
+        $is_power = $this->isPower($data['organization_type'],$data['organization_id'],$data['member_id']);
+        if($is_power<2){
+            return ['code'=>100,'msg'=> __lang('MSG_403')];
         }
         if(isset($data['starts'])){
             $data['start'] = strtotime($data['starts']);
