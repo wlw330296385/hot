@@ -5,6 +5,7 @@ namespace app\api\controller;
 use app\service\Wechat;
 use app\api\controller\Base;
 use app\service\TokenService;
+use think\Exception;
 
 class Frontend extends Base{
 
@@ -22,5 +23,14 @@ class Frontend extends Base{
             $this->checklogin();
         }
 
+    }
+
+    // 刷新表单__token__
+    public function reloadtoken() {
+        try {
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => request()->token()]);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
     }
 }
