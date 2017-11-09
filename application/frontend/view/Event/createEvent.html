@@ -160,6 +160,7 @@
                 <div class="mui-input-row">
                     <label>活动简介</label>
                     <input type="text" name="event_des" class="data" value="" placeholder="请输入活动简介">
+                    <!--<textarea name="event_des" class="data" value="" placeholder="请输入活动简介"> </textarea>-->
                 </div>
 
                 <div class="mui-input-row">
@@ -369,20 +370,20 @@
         // 获取数据并进行提交
         function submitAction() {
 
-            if ($("#eventPrice option:selected").text() == "收费") {
-                var price = $("input[name=price]").val();
-                if (!(/^[0-9]*$/).test(price)) {
-                    mui.alert("活动单价请输入数字");
-                    return;
-                }
-            };
+            // if ($("#eventPrice option:selected").text() == "收费") {
+            //     var price = $("input[name=price]").val();
+            //     if (!(/^[0-9]*$/).test(price)) {
+            //         mui.alert("活动单价请输入数字");
+            //         return;
+            //     }
+            // };
 
-            $(".telephoneBlur").blur(function () {
-                if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
-                    mui.alert("请输入正确的手机格式");
-                    return;
-                };
-            });
+            // $(".telephoneBlur").blur(function () {
+            //     if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
+            //         mui.alert("请输入正确的手机格式");
+            //         return;
+            //     };
+            // });
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
@@ -393,16 +394,16 @@
             console.log(objData)
             var url = "{:url('api/event/updateEventApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
-            if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
-                    var goUrl = "{:url('event/eventinfoOfCamp')}" + '/event_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
-                    window.top.location.href = goUrl;
-                })
-            } else {
-                mui.alert(ajaxResult.msg, '活动创建失败', '确定', function () {
+            // if (ajaxResult.code == 200) {
+            //     mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
+            //         var goUrl = "{:url('event/eventinfoOfCamp')}" + '/event_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
+            //         window.top.location.href = goUrl;
+            //     })
+            // } else {
+            //     mui.alert(ajaxResult.msg, '活动创建失败', '确定', function () {
 
-                })
-            }
+            //     })
+            // }
         };
 
         //自定义获取训练营身份列表有分页
@@ -465,7 +466,7 @@
                         }
                         $("ul.campGradeList").empty();
                         if (gradeli == '') {
-                            gradeli = '<li class="mui-text-center"><p>没有查找到数据哦</p></li>'
+                            gradeli = '<p class="mui-text-center">没有查找到数据哦</p>'
                         }
                         $("ul.campGradeList").append(gradeli);
 
