@@ -288,10 +288,6 @@ class Lesson extends Base{
     public function getHotLessonListApi(){
         try{
             $map = input('post.');
-            // $province = input('param.province');
-            // $city = input('param.city');
-            // $map['province']=$province;
-            // $map['city'] = $city;
             foreach ($map as $key => $value) {
                 if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
@@ -300,6 +296,11 @@ class Lesson extends Base{
             $result = $this->LessonService->getLessonList($map,1,'hot desc',4);
             if($result){
                 shuffle($result);
+                if( count($result)<4 ){
+                    $res = $this->LessonService->getLessonList(['status'=>1],1,'id desc',(4-count($result)));
+                    $result = array_merge($result,$res);
+                }
+                
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
             }else{
                 return json(['code'=>100,'msg'=>'传参错误']);
