@@ -164,10 +164,9 @@
                     </div>
                 </div>
 
-                <div class="mui-input-row">
+                <div class="mui-input-row h-auto">
                     <label>活动简介</label>
-                    <input type="text" name="event_des" class="data" value="{$eventInfo.event_des}" placeholder="请输入活动简介">
-                    <!--<textarea name="event_des" class="data" value=""  placeholder="请输入活动简介">{$eventInfo.event_des}</textarea>-->
+                    <textarea name="event_des" class="data" value=""  placeholder="请输入活动简介">{$eventInfo.event_des}</textarea>
                 </div>
 
                 <div class="mui-input-row">
@@ -412,9 +411,9 @@
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
-            console.log(arrData)
             var objData = wooApi.arrTOobj(arrData);
-            console.log(objData)
+            var event_des = $('textarea.data').val();
+            objData.event_des = event_des;
             var url = "{:url('api/event/updateEventApi')}" + '/event_id/{$eventInfo.id}';
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
