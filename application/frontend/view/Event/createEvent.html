@@ -400,16 +400,16 @@
             console.log(objData)
             var url = "{:url('api/event/updateEventApi')}";
             var ajaxResult = wooApi.asyncF(url, objData );
-            // if (ajaxResult.code == 200) {
-            //     mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
-            //         var goUrl = "{:url('event/eventinfoOfCamp')}" + '/event_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
-            //         window.top.location.href = goUrl;
-            //     })
-            // } else {
-            //     mui.alert(ajaxResult.msg, '活动创建失败', '确定', function () {
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
+                    var goUrl = "{:url('event/eventinfoOfCamp')}" + '/event_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '活动创建失败', '确定', function () {
 
-            //     })
-            // }
+                })
+            }
         };
 
         //自定义获取训练营身份列表有分页
