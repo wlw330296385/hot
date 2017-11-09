@@ -212,9 +212,9 @@ class Camp extends Base{
         $member_id = $this->memberInfo['id'];
         $power = $this->CampService->isPower($camp_id,$member_id);
         $campInfo = $this->CampService->getCampInfo($camp_id);
-        $gradeCount = db('grade')->where(['camp_id'=>$camp_id])->count();
-        $scheduleCount = db('schedule')->where(['camp_id'=>$camp_id])->count();
-        $lessonCount = db('lesson')->where(['camp_id'=>$camp_id])->count();
+        $gradeCount = db('grade')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
+        $scheduleCount = db('schedule')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
+        $lessonCount = db('lesson')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
         $this->assign('power',$power);
         $this->assign('gradeCount',$gradeCount);
         $this->assign('scheduleCount',$scheduleCount);

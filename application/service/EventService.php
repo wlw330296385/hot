@@ -66,13 +66,10 @@ class EventService {
 
     // 编辑活动
     public function updateEvent($data,$id){
-        if($data['organization_type'] == 1){
-            $is_power = $this->isPower($data['organization_id'],$data['member_id']);
-            if($is_power<2){
-                return ['code'=>100,'msg'=> __lang('MSG_403')];
-            }
+        $is_power = $this->isPower($data['organization_type'],$data['organization_id'],$data['member_id']);
+        if($is_power<2){
+            return ['code'=>100,'msg'=> __lang('MSG_403')];
         }
-        
         $validate = validate('EventVal');
         if(!$validate->scene('edit')->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
@@ -164,14 +161,25 @@ class EventService {
     }
 
     // 活动权限
-    public function isPower($organization_id,$member_id){
-        $is_power = db('camp_member')
+    public function isPower($organization_type,$organization_id,$member_id){
+        switch ($organization_type) {
+            case '1':
+                 $is_power = db('camp_member')
                     ->where([
                         'camp_id'   =>$organization_id,
                         'status'    =>1,
                         'member_id'  =>$member_id,
                         ])
                     ->value('type');
+                break;
+            case '2':
+                 //学校权限
+                break;
+            default:
+                # code...
+                break;
+        }
+       
 
         return $is_power?$is_power:0;
     }
