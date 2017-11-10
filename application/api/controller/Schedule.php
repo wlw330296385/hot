@@ -151,21 +151,24 @@ class Schedule extends Base
     public function starScheduleApi()
     {
         try {
-            $camp_id = input('param.camp_id');
-            $is_power = $this->recordSchedulePowerApi();
-            if ($is_power > 1) {
-                return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+            $request = input('param.');
+            $request['score_item1'] = ($request['score_item1'] == 0) ? 5 : $request['score_item1'];
+            $request['score_item2'] = ($request['score_item2'] == 0) ? 5 : $request['score_item2'];
+            $request['score_item3'] = ($request['score_item3'] == 0) ? 5 : $request['score_item3'];
+            $request['score_item4'] = ($request['score_item4'] == 0) ? 5 : $request['score_item4'];
+            $request['star'] = $request['score_item1']+$request['score_item2']+$request['score_item3']+$request['score_item4'];
+            $request['member_id'] = $this->memberInfo['id'];
+            $request['member'] = $this->memberInfo['member'];
+            $request['anonymous'] = 1;
+            $request['member_avatar'] = $this->memberInfo['avatar'];
+//            dump($request);
+            $scheduleS = new ScheduleService();
+            $canStar = $scheduleS->canStarSchedule($request['schedule_id'], $this->memberInfo['id']);
+            if (!$canStar) {
+                return json(['code' => 100, 'msg' => '您不是此课时的上课学员，不能评论']);
             }
-            $data = input('post.');
-            $data['member_id'] = $this->memberInfo['id'];
-            $data['member'] = $this->memberInfo['member'];
-            $data['star'] = $data['attitude'] + $data['profession'] + $data['teaching_attitude'] + $data['teaching_quality'];
-            $result = $this->ScheduleService->starSchedule($data);
-            if ($result) {
-                return json(['code' => 200, 'msg' => '审核成功']);
-            } else {
-                return json(['code' => 100, 'msg' => '审核失败']);
-            }
+            $res = $scheduleS->starSchedule($request);
+            return json($res);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }

@@ -53,13 +53,14 @@ class Student extends Base
 		$studentScheduleList = Db::view('schedule_member','*')
 								->view('schedule','students,leave','schedule.id=schedule_member.schedule_id')
 								->where([
+								    'schedule.status' => 1,
 									'schedule_member.user_id'=>$student_id,
 									// 'schedule_member.type'=>$type,
 									'schedule_member.status'=>1
 								])	
 								->order('schedule_member.id desc')
 								->select();	
-				
+
 		// 学生订单
 		$billService = new \app\service\BillService;
 		$studentBillList = $billService->getBillList(['student_id'=>$student_id,'camp_id'=>$camp_id]);

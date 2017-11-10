@@ -383,7 +383,7 @@ class ScheduleService
     }
 
 
-    // 可是评分
+    // 课时评分
     public function starSchedule($data)
     {
         $ScheduleComment = new \app\model\ScheduleComment;
@@ -393,18 +393,27 @@ class ScheduleService
         }
         $isSchedule = $ScheduleComment->where(['member_id' => $data['member_id'], 'schedule_id' => $data['schedule_id']])->find();
         if ($isSchedule) {
-            return ['code' => 100, 'msg' => '一个人只能评论一次'];
+            return ['code' => 100, 'msg' => '您已经评论过此课时'];
         } else {
-            $result = $ScheduleComment->save($data);
+            $result = $ScheduleComment->allowField(true)->save($data);
             if ($result) {
                 // 计算总评分
-
                 return ['code' => 200, 'msg' => '评论成功'];
             } else {
                 return ['code' => 100, 'msg' => '评论失败'];
             }
         }
+    }
 
+    // 能否课时评分
+    public function canStarSchedule($schedule_id, $member_id) {
+        $students = db('student')->where('member_id', $member_id)->column('id');
+        $scheduleMember = db('schedule_member')->where(['schedule_id' => $schedule_id, 'type' => 1])->column('user_id');
+        if (array_intersect($students, $scheduleMember)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // 删除课时
