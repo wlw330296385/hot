@@ -122,13 +122,12 @@
 
 
     <script type="text/javascript">
-           // 立即支付
+    var total=wooApi.GetQueryString('total');
+    var total_fee = "{$eventInfo.price}"*total;
+    var strBillInfo = '{$jsonBillInfo}';
+    var objBillInfo = JSON.parse(strBillInfo);
+   // 立即支付
     function wxpay(){
-        //条件1判断是否没数据
-        if(!isStudent){
-            mui.alert('请先 [ 添加学生 ] 信息，谢谢！');
-            return false;
-        }
         //创建订单
         var res =  createBill();
         if(res.code == 200){
@@ -198,8 +197,8 @@
         objBillInfo.bill_order = "{$billOrder}";
         objBillInfo.goods_des = student+'购买'+objBillInfo.goods;
         objBillInfo.total = total;
-        objBillInfo.student_id = student_id;
-        objBillInfo.student = student;
+        objBillInfo.student_id = "{$memberInfo.id}";
+        objBillInfo.student = "{$memberInfo.member}";
         objBillInfo.remarks = remarks;
         objBillInfo.balance_pay = 0;
         var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
