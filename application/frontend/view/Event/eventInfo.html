@@ -64,39 +64,33 @@
                 </li>-->
                 <li class="mui-table-view-cell listli border-b">活动简介<span>{$eventInfo.event_des}</span></li>
             </ul>
-            {switch name="variable"}
-                {case value='1'}
+            {switch name="variable"} {case value='1'}
             <!--报名状态-->
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli"><a href="tel:{$eventInfo.telephone}"><span
                     class="mui-icon mui-icon-phone"></span>电话咨询</a></li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bgblue"><a href="#">剩余<font class="surplus"></font>个名额</a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen signupbtn">报名</a>
-                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen signupbtn"><a href="{:url('event/comfirmBill',['event_id'=>$eventInfo['id']])}">报名</a></li>
             </ul>
-                {/case}
-                {case value='3'}
+            {/case} {case value='3'}
             <!--报名人数已满-->
             <ul class="mui-table-view">
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen">报名人数已满</a>
                 </li>
             </ul>
-                {/case}
-                {case value='2'}
+            {/case} {case value='2'}
             <!--已下架-->
             <ul class="mui-table-view">
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen">已下架</a>
                 </li>
             </ul>
-                {/case}
-                {case value='4'}
+            {/case} {case value='4'}
             <!--已过期-->
             <ul class="mui-table-view">
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen">已过期</a>
                 </li>
             </ul>
-            {/case}
-            {/switch}
+            {/case} {/switch}
         </div>
     </div>
 
@@ -109,50 +103,9 @@
         });
 
         $(function () {
-            
-            $(".signupbtn").on("click", '', function () {
-                var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
-                mui.ajax(url, {
-                    data: {
-                        member: "{$memberInfo.member}",
-                        member_id: "{$memberInfo.id}",
-                        event: "{$eventInfo.event}",
-                        event_id: "{$eventInfo.id}",
-                        // is_pay: 1,
-                        // is_sign: 1,
-                        status: 1,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.alert('报名成功。', '提示', '确定', function () {
-                                window.location.href = "{:url('event/eventlist',['event_id'=>$eventInfo.organization_id])}";
-                            });
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            });
-
-            surplus();//剩余名额
-        });
-
-
-        // 剩余名额
-        var surplus = function(){
-            var surplus = "{$eventInfo.max}"-"{$eventInfo.participator}";
+            var surplus = "{$eventInfo.max}" - "{$eventInfo.participator}";
             $(".surplus").text(surplus)
-        };
+        });
     </script>
 </body>
 

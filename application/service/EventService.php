@@ -94,11 +94,9 @@ class EventService {
     // 新增活动
     public function createEvent($data){
         // 查询是否有权限
-        if($data['organization_type'] == 1){
-            $is_power = $this->isPower($data['organization_id'],$data['member_id']);
-            if($is_power<2){
-                return ['code'=>100,'msg'=> __lang('MSG_403')];
-            }
+        $is_power = $this->isPower($data['organization_type'],$data['organization_id'],$data['member_id']);
+        if($is_power<2){
+            return ['code'=>100,'msg'=> __lang('MSG_403')];
         }
         if(isset($data['starts'])){
             $data['start'] = strtotime($data['starts']);
@@ -126,9 +124,17 @@ class EventService {
             return ['msg'=>"该活动已{$eventInfo['status']},不可再参与", 'code' => 100];
         }
         // 查询是否已报名
-        $is_join = $this->EventMemberModel->get(['id'=>$event_id,'member_id'=>$member_id]);
-        if($is_join){
-            return ['msg'=>"您已报名,不可重复报名", 'code' => 100];
+        // $is_join = $this->EventMemberModel->get(['id'=>$event_id,'member_id'=>$member_id]);
+        // if($is_join){
+        //     return ['msg'=>"您已报名,不可重复报名", 'code' => 100];
+        // }
+        // 检测是否已满人
+        if($eventInfo['is_max'] == -1){
+             return ['msg'=>"该活动已满人,不可再参与", 'code' => 100];   
+        }
+        // 检测是否已结束
+        if(time() > $eventInfo['end']){
+             return ['msg'=>"该活动已结束,不可再参与", 'code' => 100];   
         }
         $saveData = ['event_id'=>$eventInfo['id'],'event'=>$eventInfo['event'],'member_id'=>$member_id,'member'=>$member,'status'=>1];
         $res = $this->EventMemberModel->save($saveData);
@@ -136,7 +142,7 @@ class EventService {
             $result = $this->EventModel->where(['id'=>$event_id])->setInc('participator');
                 // 更改状态
                 if($eventInfo['max'] <= ($eventInfo['participator']+1)){
-                    $this->EventModel->save(['status'=>4],['id'=>$event_id]);
+                    $this->EventModel->save(['is_max'=>-1],['id'=>$event_id]);
                 }
             return ['msg'=>'加入成功','code'=>200,'data'=>$eventInfo];
         }else{ 

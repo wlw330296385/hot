@@ -121,7 +121,6 @@ class Lesson extends Base{
             'score_pay'=>$lessonInfo['score'],
             'goods_type'=>1,
             'pay_type'=>'wxpay',
-            'type'=>1
         ];
         $amount = $total*$lessonInfo['cost'];
         // $amount = 0.01;
@@ -155,7 +154,6 @@ class Lesson extends Base{
             'score_pay'=>0,
             'goods_type'=>1,
             'pay_type'=>'',
-            'type'=>2
         ];
         $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
         $this->assign('lessonInfo',$lessonInfo);

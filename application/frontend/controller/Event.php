@@ -19,7 +19,32 @@ class Event extends Base{
 
 
     public function comfirmBill() {
-  
+        $event_id = input('param.event_id');
+        $total = input('param.total');
+        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);     
+        $billOrder = '2'.getOrderID(rand(0,9));
+        $jsonBillInfo = [
+            'goods'=>$eventInfo['event'],
+            'goods_id'=>$eventInfo['id'],
+            'camp_id'=>$eventInfo['organization_id'],
+            'camp'=>$eventInfo['organization'],
+            'organization_type'=>2,
+            'price'=>$eventInfo['price'],
+            'score_pay'=>$eventInfo['score'],
+            'goods_type'=>2,
+            'pay_type'=>'wxpay',
+        ];
+        $amount = $total*$eventInfo['price'];
+        // $amount = 0.01;
+        $WechatJsPayService = new \app\service\WechatJsPayService;
+        $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
+        
+        $jsApiParameters = $result['data']['jsApiParameters'];
+
+        $this->assign('jsApiParameters',$jsApiParameters);
+        $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
+        $this->assign('eventInfo',$eventInfo);
+        $this->assign('billOrder',$billOrder);
         return view('Event/comfirmBill');
     }
 
@@ -52,7 +77,7 @@ class Event extends Base{
             $variable = 3 ;
         }
 
-        if($eventInfo['is_overdue'] == '已过期'){
+        if($eventInfo['end'] <= time()){
             $variable = 4 ;
         }
 
@@ -91,8 +116,7 @@ class Event extends Base{
         $event_id = input('param.event_id');
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
         if($eventInfo['member_id'] != $this->memberInfo['id']){
-            $CampService = new \app\service\CampService;
-            $isPower = $CampService->isPower($eventInfo['organization_id'],$this->memberInfo['id']);
+            $isPower = $this->EventService->isPower($eventInfo['organization_type'],$eventInfo['organization_id'],$eventInfo['organization_id'],$this->memberInfo['id']);
             if($isPower<3){
                 $this->error('您没有权限');
             }
@@ -108,8 +132,7 @@ class Event extends Base{
         $event_id = input('param.event_id');
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
         if($eventInfo['member_id'] != $this->memberInfo['id']){
-            $CampService = new \app\service\CampService;
-            $isPower = $CampService->isPower($eventInfo['organization_id'],$this->memberInfo['id']);
+            $isPower = $this->EventService->isPower($eventInfo['organization_type'],$eventInfo['organization_id'],$this->memberInfo['id']);
             if($isPower<3){
                 $this->error('您没有权限');
             }

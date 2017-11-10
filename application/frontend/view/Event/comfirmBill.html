@@ -35,13 +35,12 @@
                 <li class="mui-table-view-cell mui-media listli mb">
                     <a href="javascript:;">
                         <img class="mui-media-object mui-pull-left" src="{$eventInfo.cover}">
-                        <div class="mui-media-body wd45">
-                            {$eventInfo.event}
-                            <p class="mui-ellipsis">{$eventInfo.event_type}</p>
+                        <div class="mui-media-body wd45 domData" name="event">{$eventInfo.event}<p class="mui-ellipsis domData" name="event_type">{$eventInfo.event_type}</p>
                         </div>
                         <div class="price-frame">
                             <p class="price"><span class="nofloat">已报名{$eventInfo.participator}人</span></p>
-                            <p class="price"><span class="nofloat">剩余名额</span></p>
+                            <input type="hidden" name="participator" value="{$eventInfo.participator}" class="data">
+                            <p class="price"><span class="nofloat">剩余<font class="surplus"></font>名额</span></p>
                         </div>
                     </a>
                 </li>
@@ -51,16 +50,20 @@
             </div>
 
             <ul class="mui-table-view">
-                <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
-                <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='2||3'}show{else/}hide{/eq}">所属训练营<span>{$eventInfo.organization}</span></li>
-                <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='3'}show{else/}hide{/eq}">所属班级<span>{$eventInfo.target}</span></li>
+                <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+                <input type="hidden" name="target_type" value="{$eventInfo.target_type}" class="target_type data">
+                <input type="hidden" name="organization_id" value="{$eventInfo.organization_id}" class="data">
+                <input type="hidden" name="target_id" value="{$eventInfo.target_id}" class="data">
+                <input type="hidden" name="price" value="{$eventInfo.price}" class="data">
+                <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='2||3'}show{else/}hide{/eq}">所属训练营<span class="domData" name="organization">{$eventInfo.organization}</span></li>
+                <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='3'}show{else/}hide{/eq}">所属班级<span class="domData" name="target">{$eventInfo.target}</span></li>
                 <li class="mui-table-view-cell listli">活动单价<span><b class="colororange">￥{$eventInfo.price}</b>（元）</span></li>
-                <li class="mui-table-view-cell listli">活动开始时间<span>{$eventInfo.starts}</span></li>
-                <li class="mui-table-view-cell listli">活动结束时间<span>{$eventInfo.ends}</span></li>
-                <li class="mui-table-view-cell listli">活动地点<span>{$eventInfo.location}</span></li>
-                <li class="mui-table-view-cell listli">所属地区<span>{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span></li>
-
+                <li class="mui-table-view-cell listli">活动开始时间<span class="domData" name="starts">{$eventInfo.starts}</span></li>
+                <li class="mui-table-view-cell listli">活动结束时间<span class="domData" name="ends">{$eventInfo.ends}</span></li>
+                <li class="mui-table-view-cell listli">活动地点<span class="domData" name="location">{$eventInfo.location}</span></li>
+                <li class="mui-table-view-cell listli">所属地区<span class="domData" name="address">{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span></li>
             </ul>
+
             <div class="page-header">
                 <span class="course">报名信息</span>
             </div>
@@ -71,7 +74,7 @@
                     <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
                     <div class="mui-input-row">
                         <label>报名人数</label>
-                        <input type="text" name="participator" value="" class="eventNum data" placeholder="请输入报名人数">
+                        <input type="text" name="participator" value="" class="participator data" placeholder="请输入报名人数">
                     </div>
                     <div class="mui-input-row">
                         <label>联系人</label>
@@ -83,9 +86,8 @@
                     </div>
                     <div class="mui-input-row">
                         <label>备注</label>
-                        <textarea rows="2" name="event_des" class="data" value="" placeholder="备注信息填写"></textarea>
+                        <textarea name="remarks" class="data" value="" placeholder="备注信息填写"></textarea>
                     </div>
-
                 </div>
 
             </div>
@@ -106,16 +108,185 @@
 
         $(function () {
             // 需要支付的费用
-            $(".eventNum").on("blur", '', function () {
+            $(".participator").on("blur", '', function () {
                 var eventPrice = "{$eventInfo.price}";
-                var eventNum = $(".eventNum").val();
-                var eventTotal = eventPrice * eventNum;
+                var participator = $(".participator").val();
+                var eventTotal = eventPrice * participator;
                 console.log(eventTotal)
                 $(".eventTotal").text('￥' + eventTotal);
             });
+            surplus();
         });
 
+        function surplus() {
+            var surplus = "{$eventInfo.max}" - "{$eventInfo.participator}";
+            $(".surplus").text(surplus)
+        };
+
+        function wxpay() {
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var remarks = $('textarea.data').val();
+            objData.remarks = remarks;
+            var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            // if (ajaxResult.code == 200) {
+            //     mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
+            //         var goUrl = "{:url('event/eventlist')}";
+            //         window.top.location.href = goUrl;
+            //     })
+            // } else {
+            //     mui.alert(ajaxResult.msg, '活动创建失败', '确定', function () {
+            //         mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+            //             if (data.code === 200) {
+            //                 $('input[name=__token__]').val(data.data);
+            //             }
+            //         }, 'json');
+            //     })
+            // }
+
+            // var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
+            // mui.ajax(url, {
+            //     data: {
+            //         member: "{$memberInfo.member}",
+            //         member_id: "{$memberInfo.id}",
+            //         event: "{$eventInfo.event}",
+            //         event_id: "{$eventInfo.id}",
+            //         participator:participator,
+            //         // is_pay: 1,
+            //         // is_sign: 1,
+            //         status: 1,
+            //     },
+            //     dataType: 'json',//服务器返回json格式数据
+            //     type: 'post',//HTTP请求类型
+            //     timeout: 10000,//超时时间设置为10秒；
+            //     headers: { 'Content-Type': 'application/json' },
+            //     success: function (data) {
+            //         //服务器返回响应，根据响应结果，分析是否登录成功；
+            //         console.log(data);
+            //         if (data.code == 200) {
+            //             mui.alert('报名成功。', '提示', '确定', function () {
+            //                 window.location.href = "{:url('event/eventlist')}";
+            //             });
+            //         } else {
+            //             mui.toast(data.msg);
+            //         }
+            //     },
+            //     error: function (xhr, type, errorThrown) {
+            //         //异常处理；
+            //         console.log(type);
+            //     }
+            // });
+        }
+
     </script>
+
+
+
+    <script type="text/javascript">
+           // 立即支付
+    function wxpay(){
+        //条件1判断是否没数据
+        if(!isStudent){
+            mui.alert('请先 [ 添加学生 ] 信息，谢谢！');
+            return false;
+        }
+        //创建订单
+        var res =  createBill();
+        if(res.code == 200){
+            if (typeof WeixinJSBridge == "undefined"){
+                if( document.addEventListener ){
+                    document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                }else if (document.attachEvent){
+                    document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                    document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                }
+            }else{
+               onBridgeReady();
+            }
+        }else{
+            mui.alert('订单创建失败,请刷新页面或者重新登录','提示','确定',function(){
+                location.reload();
+            })
+        }
+    }
+
+    // 请他人代付
+    function helpPay(){
+        //条件1判断是否没数据
+        if(!isStudent){
+            mui.alert('请先 [ 添加学生 ] 信息，谢谢！');
+            return false;
+        }
+        //创建订单
+        var res =  createBill();
+        if(res.code == 200){  
+            window.location.href="{:url('frontend/bill/billInfo',['bill_order'=>$billOrder])}";
+        }else{
+            mui.alert('订单创建失败,请刷新页面或者重新登录','提示','确定',function(){
+                location.reload();
+            })
+        }
+    }
+
+
+  function onBridgeReady(){
+    var strJsApiParameters = '{$jsApiParameters}';
+    var objJsApiParameters = JSON.parse(strJsApiParameters);
+    WeixinJSBridge.invoke(
+     'getBrandWCPayRequest', {
+               "appId":objJsApiParameters.appId,     //公众号名称，由商户传入     
+               "timeStamp":"{:time()}",         //时间戳，自1970年以来的秒数     
+               "nonceStr":objJsApiParameters.nonceStr, //随机串     
+               "package":objJsApiParameters.package,     
+               "signType":"MD5",         //微信签名方式：     
+               "paySign":objJsApiParameters.paySign, //微信签名
+               'payType':objJsApiParameters.payType
+             },
+             function(res){     
+               if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+                  pay(JSON.stringify(res));
+               }     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
+             }
+           ); 
+  }
+
+
+    //创建订单
+    function createBill(){
+        var remarks = $('.remarks').val();
+        var student = $('.selectStudent').find("option:selected").text();
+        var student_id = $('.selectStudent').val();
+        objBillInfo.bill_order = "{$billOrder}";
+        objBillInfo.goods_des = student+'购买'+objBillInfo.goods;
+        objBillInfo.total = total;
+        objBillInfo.student_id = student_id;
+        objBillInfo.student = student;
+        objBillInfo.remarks = remarks;
+        objBillInfo.balance_pay = 0;
+        var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
+        return result;
+    }
+
+    function pay(callback_str){
+        var result = wooApi.asyncF("{:url('api/Bill/payApi',['bill_order'=>$billOrder])}",{
+            'balance_pay' : total_fee,
+            'callback_str':callback_str
+        });
+
+        if(result.code == 200){
+            mui.alert('欢迎加入本训练营，您的课程购买已完成，请留意课程消息及公告。','购买成功','确定',function(){
+                window.location.href="{:url('frontend/bill/billInfo',['bill_order'=>$billOrder])}";
+              });
+          }else{
+            mui.toast(result.msg);
+          }
+    }
+    </script>
+
 </body>
 
 </html>

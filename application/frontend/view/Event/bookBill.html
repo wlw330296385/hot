@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>活动订单支付</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .show {
+            display: block;
+        }
+        
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class=whitebg>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">确认订单</h1>
+    </header>
+    <div class="mui-content">
+
+        <div class="list">
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell mui-media listli mb">
+                    <a href="javascript:;">
+                        <img class="mui-media-object mui-pull-left" src="{$eventInfo.cover}">
+                        <div class="mui-media-body wd45">
+                            {$eventInfo.event}
+                            <p class="mui-ellipsis">{$eventInfo.event_type}</p>
+                        </div>
+                        <div class="price-frame">
+                            <p class="price"><span class="nofloat">已报名{$eventInfo.participator}人</span></p>
+                            <p class="price"><span class="nofloat">剩余名额</span></p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+            <div class="page-header">
+                <span class="course">活动信息</span>
+            </div>
+
+            <ul class="mui-table-view">
+                <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
+                <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='2||3'}show{else/}hide{/eq}">所属训练营<span>{$eventInfo.organization}</span></li>
+                <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='3'}show{else/}hide{/eq}">所属班级<span>{$eventInfo.target}</span></li>
+                <li class="mui-table-view-cell listli">活动单价<span><b class="colororange">￥{$eventInfo.price}</b>（元）</span></li>
+                <li class="mui-table-view-cell listli">活动开始时间<span>{$eventInfo.starts}</span></li>
+                <li class="mui-table-view-cell listli">活动结束时间<span>{$eventInfo.ends}</span></li>
+                <li class="mui-table-view-cell listli">活动地点<span>{$eventInfo.location}</span></li>
+                <li class="mui-table-view-cell listli">所属地区<span>{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span></li>
+
+            </ul>
+            <div class="page-header">
+                <span class="course">报名信息</span>
+            </div>
+
+            <div class="mui-input-group mb44">
+
+                <div id="oldStudent">
+                    <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+                    <div class="mui-input-row">
+                        <label>报名人数</label>
+                        <input type="text" name="participator" value="" class="eventNum data" placeholder="请输入报名人数">
+                    </div>
+                    <div class="mui-input-row">
+                        <label>联系人</label>
+                        <input type="text" name="contract" class="data" value="{$eventInfo.member}">
+                    </div>
+                    <div class="mui-input-row">
+                        <label>联系电话</label>
+                        <input type="text" name="telephone" class="data" value="{$memberInfo.telephone}">
+                    </div>
+                    <div class="mui-input-row">
+                        <label>备注</label>
+                        <textarea rows="2" name="event_des" class="data" value="" placeholder="备注信息填写"></textarea>
+                    </div>
+
+                </div>
+
+            </div>
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-8 opli">需要支付:<b class="colororange eventTotal">￥</b></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="createBill()">立即支付</li>
+            </ul>
+        </div>
+    </div>
+
+    
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
+<script>
+//初始化
+mui.init({
+    swipeBack: true //启用右滑关闭功能
+});
+
+$(function () {
+    // 需要支付的费用
+    $(".eventNum").on("blur", '', function () {
+        var eventPrice = "{$eventInfo.price}";
+        var eventNum = $(".eventNum").val();
+        var eventTotal = eventPrice * eventNum;
+        console.log(eventTotal)
+        $(".eventTotal").text('￥' + eventTotal);
+    });
+});
+//创建订单
+function createBill(){
+    var remarks = $('.remarks').val();
+    var student = $('.selectStudent').find("option:selected").text();
+    var student_id = $('.selectStudent').val();
+    objBillInfo.bill_order = "{$billOrder}";
+    objBillInfo.goods_des = student+'购买'+objBillInfo.goods;
+    objBillInfo.total = total;
+    objBillInfo.student_id = student_id;
+    objBillInfo.student = student;
+    objBillInfo.remarks = remarks;
+    objBillInfo.balance_pay = 0;
+    var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
+    return result;
+}
+</script>    
+</html>

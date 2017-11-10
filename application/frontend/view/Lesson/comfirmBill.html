@@ -42,7 +42,7 @@
                 </li>
             </ul>
 
-            <ul class="mui-table-view">
+            <ul class="mui-table-view border-b">
                 <li class="mui-table-view-cell listli">
                     <a class="mui-navigate-right">
                         所属训练营<span class="wd66" >{$lessonInfo.camp}</span>
@@ -53,15 +53,16 @@
                 <li class="mui-table-view-cell listli">训练时间<span>{$lessonInfo.week} {$lessonInfo.lesson_time}</span></li>
                 <li class="mui-table-view-cell listli">训练地点<span>{$lessonInfo.location}</span></li>
                 <li class="mui-table-view-cell listli">所属地区<span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span></li>
-                <li class="mui-table-view-cell listli"><span>课程总价<b class="colororange total_fee"></b></span></li>
+                <li class="mui-table-view-cell listli mb mt"><span>课程总价<b class="colororange total_fee"></b></span></li>
             </ul>
 
+            <div class="page-header">
+                <span class="title">学员信息</span>
+                <span class="fr"><span id="addBtn" class="mui-btn mui-btn-blue">添加学生</span></span>
+                <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+            </div>
             <div class="mui-input-group mb44">
 
-                <div class="page-header mb mt">
-                    <span class="title">学员信息</span>
-                    <span class="fr"><span id="addBtn" class="mui-btn mui-btn-blue">添加学生</span></span>
-                </div>
                 <div id="oldStudent">
                     <div class="mui-input-row">
                         <a href="#" class="mui-navigate-right">
@@ -99,22 +100,6 @@
 
 </div>
 
-
-<div id="addStudent" class="mui-popup mui-popup-in" style="display:none;">
-    <div class="mui-popup-inner">
-        <div class="mui-popup-text">请输入学员信息</div>
-        <div class="mui-popup-input">
-            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-            <input type="text" name="student" class="data" placeholder="学员姓名" autofocus="">
-            <input type="text" name="parent" class="data" placeholder="家长姓名">
-            <input type="text" name="emergency_telephone" class="data telephone" placeholder="联系电话" value="{$memberInfo.telephone}">
-        </div>
-    </div>
-    <div class="mui-popup-buttons">
-        <span class="mui-popup-button" id="submitBtn">确定</span><span class="mui-popup-button mui-popup-button-bold" id="cancelAdd">取消</span>
-    </div>
-</div>
-<div class="mui-popup-backdrop" style="display: none;"></div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -143,22 +128,53 @@
 
         // 添加学生
         $('#addBtn').on('click','',function(){
-//            $('#oldStudent').hide();
             var mID = "{$memberInfo.id}";
             if (mID <= 0) {
                 var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
                 mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', btnArray);
             }else{
-                $('#addStudent').show();
-                $('.mui-popup-backdrop').addClass("mui-active");
-                $('.mui-popup-backdrop').show();
+                var btnArray = ['确定', '取消'];
+                var addForm = '<div class="mui-popup-input"><span class="colororange">请勿同时填写多名学员姓名</span><input type="text" name="student" class="data" placeholder="学员姓名" autofocus=""><input type="text" name="parent" class="data" placeholder="家长姓名"><input type="text" name="emergency_telephone" class="data telephone" placeholder="联系电话" value="{$memberInfo.telephone}"></div>'
+                mui.confirm(addForm, '添加学员信息', btnArray, function(e) {
+                    if (e.index == 0) {
+                        //确定添加，进行提交
+                        var telephone = $('.telephone').val();
+                        var codeRegTelephone = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/;
+                        if (!codeRegTelephone.test(telephone)) {
+                            mui.toast('请填写正确的手机号码');
+                            return false;
+                        }
+                        var getStudent = $('input[name="student"]').val();
+                        var codeRegStudent = /^(?!.*?_$)[a-zA-Z0-9_\u4e00-\u9fa5]{2,20}$/;
+                        if (!codeRegStudent.test(getStudent)) {
+                            mui.toast('学员姓名只能包含汉字、字母、数字！');
+                            return false;
+                        }else{
+                            if(isExistOption(getStudent)){
+                                mui.toast(getStudent+"已经存在，请 [ 取消 ] 返回选择！");
+                                return false;
+                            }
+                            var arrData = wooApi.getInputData();
+                            var objData = wooApi.arrTOobj(arrData);
+                            var url = "{:url('api/student/createStudentApi')}";
+                            var ajaxResult = wooApi.asyncF(url,objData);
+                            // console.log(ajaxResult);
+
+                            if(ajaxResult.code == 200){
+                                mui.toast(ajaxResult.msg);
+                                location.reload()
+                            }else{
+                                mui.toast(ajaxResult.msg);
+                                mui.get("{:url('api/frontend/reloadtoken')}", function(data){
+                                    if(data.code===200) {
+                                        $('input[name=__token__]').val(data.data);
+                                    }
+                                }, 'json');
+                            }
+                        }
+                    }
+                })
             }
-        })
-        // 取消添加
-        $('#cancelAdd').on('click','',function(){
-            $('#addStudent').hide();
-            $('.mui-popup-backdrop').removeClass("mui-active");
-            $('.mui-popup-backdrop').hide();
         })
 
         //替换学生列表
@@ -171,37 +187,6 @@
         // 获取学生数据
        getStudentList();
 
-
-        // 提交学生数据
-        $('#submitBtn').on('tap','','',function(){
-                var telephone = $('.telephone').val();
-                var codeRegTelephone = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/;
-                if (!codeRegTelephone.test(telephone)) {
-                    mui.toast('请填写正确的手机号码');
-                    return false;
-                }
-                var getStudent = $('input[name="student"]').val();
-                if(getStudent!='') {
-                    if(isExistOption(getStudent)){
-                        mui.toast(getStudent+"已经存在，请 [ 取消添加 ] 返回选择！");
-                        return false;
-                    }
-                    var arrData = wooApi.getInputData();
-                    var objData = wooApi.arrTOobj(arrData);
-                    var url = "{:url('api/student/createStudentApi')}";
-                    var ajaxResult = wooApi.asyncF(url,objData);
-                    // console.log(ajaxResult);
-
-                    if(ajaxResult.code == 200){
-                        mui.toast(ajaxResult.msg);
-                        location.reload()
-                    }else{
-                        mui.toast(ajaxResult.msg);
-                    }
-                }else{
-                    mui.toast('必须填写学生姓名，谢谢！');
-                }
-        })
 
     })
 
