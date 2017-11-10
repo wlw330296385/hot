@@ -108,20 +108,22 @@
                 <ul class="mui-table-view mui-text-center">
                     <li class="mui-table-view-cell">
                         <ul class="mui-row table">
-                            <li class="mui-col-xs-2">状态</li>
+                            <!--<li class="mui-col-xs-2">状态</li>-->
                             <li class="mui-col-xs-4">日期</li>
                             <li class="mui-col-xs-4">班级</li>
-                            <li class="mui-col-xs-2">上课人数</li>
+                            <li class="mui-col-xs-4">上课人数</li>
                         </ul>
                     </li>
                     {volist name="studentScheduleList" id="vol"}
                     <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-sm-2 mui-col-xs-2"><i class="mui-icon mui-icon-checkmarkempty">{$vol.status}</i></li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.schedule_time}</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.schedule}</li>
-                            <li class="mui-col-sm-2 mui-col-xs-2 ">{$vol.students-$vol.leave}</li>
-                        </ul>
+                        <a href="{:url('frontend/schedule/scheduleInfo', ['schedule_id' => $vol['schedule_id']])}">
+                            <ul class="mui-row table">
+                                <!--<li class="mui-col-sm-2 mui-col-xs-2"><i class="mui-icon mui-icon-checkmarkempty">{$vol.status}</i></li>-->
+                                <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.schedule_time|date="Y-m-d H:i",###}</li>
+                                <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.schedule}</li>
+                                <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.students-$vol.leave}</li>
+                            </ul>
+                        </a>
                     </li>
                     {/volist}
                 </ul>

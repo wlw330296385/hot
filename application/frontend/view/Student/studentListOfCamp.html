@@ -355,15 +355,12 @@
     //训练营训练营未分配班级学生
     var toPendList = function (wList, page, gType, status, keyword) {
         //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/grade_member/getGradeMemberListOfCampByPageApi','','',true)}?page="+page+"&keyword="+keyword;
+        var url  = "{:url('api/lesson_member/getNoGradeMemberListByPageApi','','',true)}?page="+page;
         var campID = "{$camp_id}";
         mui.ajax({
             url: url,
             data: {
-                camp_id: campID,
-                type: 1,
-                grade_id: 0,
-                status: status
+                camp_id: campID
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -378,11 +375,6 @@
                         var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
                         var studentSexUrl = getSexIconUrl(data.data.data[i].student.student_sex);
                         newli += '<li class="mui-table-view-cell mui-media listli">';
-                        if (status == 1) {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student.member_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为离营</span></div>';
-                        } else {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student.member_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为在营</span></div>';
-                        }
                         newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].student.student_avatar + '"><div class="mui-media-body wd45">' + data.data.data[i].student.student + ' <img src="'+studentSexUrl+'" /><p class="mui-ellipsis">学员ID：' + data.data.data[i].student_id + '</p></div></a></div>';
                         newli += '</li>';
                     }

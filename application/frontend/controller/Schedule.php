@@ -73,7 +73,7 @@ class Schedule extends Base
 				$updateSchedule = 1;
 			}
 		}
-
+        //dump($scheduleInfo);
 		$this->assign('updateSchedule',$updateSchedule);
 		$this->assign('studentList',$studentList);
         $this->assign('expstudentList',$expstudentList);

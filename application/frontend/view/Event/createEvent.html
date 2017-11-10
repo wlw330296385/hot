@@ -371,8 +371,8 @@
 
             if ($("#eventPrice option:selected").text() == "收费") {
                 var price = $("input[name=price]").val();
-                if (!(/^[0-9]*$/).test(price)) {
-                    mui.alert("活动单价请输入数字");
+                if (!(/^[1-9]*$/).test(price)) {
+                    mui.alert("请输入不为0的活动单价");
                     return;
                 }
             };
@@ -395,7 +395,7 @@
             var ajaxResult = wooApi.asyncF(url, objData );
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
-                    var goUrl = "{:url('event/eventlistOfCamp')}" + '/event_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
+                    var goUrl = "{:url('event/eventlistOfCamp')}" + '/event_id/' + ajaxResult.data + '/organization_id/{$campInfo.id}';
                     window.top.location.href = goUrl;
                 })
             } else {
