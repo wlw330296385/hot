@@ -77,7 +77,7 @@ class Event extends Base{
             $variable = 3 ;
         }
 
-        if($eventInfo['is_overdue'] == '已过期'){
+        if($eventInfo['end'] <= time()){
             $variable = 4 ;
         }
 
