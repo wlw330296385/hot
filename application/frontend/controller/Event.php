@@ -21,6 +21,7 @@ class Event extends Base{
     public function comfirmBill() {
         $event_id = input('param.event_id');
         $total = input('param.total');
+
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);     
         $billOrder = '2'.getOrderID(rand(0,9));
         $jsonBillInfo = [
