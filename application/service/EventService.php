@@ -118,7 +118,7 @@ class EventService {
     }
 
     // 参加活动
-    public function joinEvent($event_id,$member_id,$member){
+    public function joinEvent($event_id,$member_id,$member,$total){
         $eventInfo = $this->getEventInfo(['id'=>$event_id]);
         if($eventInfo['status']!= '正常'){
             return ['msg'=>"该活动已{$eventInfo['status']},不可再参与", 'code' => 100];
@@ -132,27 +132,28 @@ class EventService {
         if($eventInfo['is_max'] == -1){
              return ['msg'=>"该活动已满人,不可再参与", 'code' => 100];   
         }
+
+        if(($eventInfo['max']-$eventInfo['participator'])<$total){
+            return ['msg'=>"可参与人数小于$total,请重新选择人数", 'code' => 100];   
+        }
         // 检测是否已结束
         if(time() > $eventInfo['end']){
              return ['msg'=>"该活动已结束,不可再参与", 'code' => 100];   
         }
-        $saveData = ['event_id'=>$eventInfo['id'],'event'=>$eventInfo['event'],'member_id'=>$member_id,'member'=>$member,'status'=>1];
-        $res = $this->EventMemberModel->save($saveData);
-        if($res){
-            $result = $this->EventModel->where(['id'=>$event_id])->setInc('participator');
-                // 更改状态
-                if($eventInfo['max'] <= ($eventInfo['participator']+1)){
-                    $this->EventModel->save(['is_max'=>-1],['id'=>$event_id]);
-                }
-            return ['msg'=>'加入成功','code'=>200,'data'=>$eventInfo];
+        $result = $this->EventModel->where(['id'=>$event_id])->setInc('participator',$total);
+        // 更改状态
+        if($eventInfo['max'] <= ($eventInfo['participator']+$total)){
+            $this->EventModel->save(['is_max'=>-1],['id'=>$event_id]);
+            return true;
         }else{ 
-            return ['msg'=>'操作失败', 'code' => 100];
+            return false;
         }
     }
 
 
     //关联表的更新
-    public function saveAllMmeber($memberData,$event_id,$event){
+    public function saveAllMmeber($memberData,$event_id){
+        $eventInfo = $this->EventModel->where(['id'=>$event_id])->find();
         //参加活动的人员
         foreach ($memberData as $key => $value) {
             $memberData[$key]['event_id'] = $event_id;
