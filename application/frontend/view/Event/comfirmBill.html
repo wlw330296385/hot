@@ -151,6 +151,11 @@
 
     // 请他人代付
     function helpPay(){
+        //条件1判断是否没数据
+        if(!isStudent){
+            mui.alert('请先 [ 添加学生 ] 信息，谢谢！');
+            return false;
+        }
         //创建订单
         var res =  createBill();
         if(res.code == 200){  
@@ -181,8 +186,8 @@
                   pay(JSON.stringify(res));
                }     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
              }
-        ); 
-    }
+           ); 
+  }
 
 
     //创建订单

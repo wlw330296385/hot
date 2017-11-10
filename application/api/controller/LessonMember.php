@@ -78,7 +78,7 @@ class LessonMember extends Base{
     }
 
     // 获取未分配班级的学生列表-带page
-    public function getNoGradeMmeberListByPageApi(){
+    public function getNoGradeMemberListByPageApi(){
         try{
             $map = input('post.');
             // 已分配的学生IDs
