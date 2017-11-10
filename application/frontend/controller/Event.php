@@ -19,7 +19,32 @@ class Event extends Base{
 
 
     public function comfirmBill() {
-  
+        $event_id = input('param.event_id');
+        $total = input('param.total');
+        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);     
+        $billOrder = '2'.getOrderID(rand(0,9));
+        $jsonBillInfo = [
+            'goods'=>$eventInfo['event'],
+            'goods_id'=>$eventInfo['id'],
+            'camp_id'=>$eventInfo['organization_id'],
+            'camp'=>$eventInfo['organization'],
+            'organization_type'=>2,
+            'price'=>$eventInfo['price'],
+            'score_pay'=>$eventInfo['score'],
+            'goods_type'=>2,
+            'pay_type'=>'wxpay',
+        ];
+        $amount = $total*$eventInfo['price'];
+        // $amount = 0.01;
+        $WechatJsPayService = new \app\service\WechatJsPayService;
+        $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
+        
+        $jsApiParameters = $result['data']['jsApiParameters'];
+
+        $this->assign('jsApiParameters',$jsApiParameters);
+        $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
+        $this->assign('eventInfo',$eventInfo);
+        $this->assign('billOrder',$billOrder);
         return view('Event/comfirmBill');
     }
 

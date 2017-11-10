@@ -117,7 +117,7 @@ function getTID($salt){
 }
 
 // 生成订单号
-function getOrderID(){
+function getOrderID($salt){
     $result = date('YmdHis').rand(0000,9999).$salt;
     return $result;
 }
