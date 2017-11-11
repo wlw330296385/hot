@@ -151,19 +151,23 @@ class EventService {
         if(time() > $eventInfo['end']){
              return ['msg'=>"该活动已结束,不可再参与", 'code' => 100];   
         }
+
         $result = $this->EventModel->where(['id'=>$event_id])->setInc('participator',$total);
         // 更改状态
         if($eventInfo['max'] <= ($eventInfo['participator']+$total)){
-            $this->EventModel->save(['is_max'=>-1],['id'=>$event_id]);
-            return true;
-        }else{ 
-            return false;
+            $this->EventModel->save(['is_max'=>-1],['id'=>$event_id]); 
         }
+        if($result){
+            return ['msg'=>"报名成功", 'code' => 200];
+        }else{
+            return ['msg'=>"报名失败", 'code' => 100];
+        }
+        
     }
 
 
     //关联表的更新
-    public function saveAllMmeber($memberData,$event_id){
+    public function saveAllMmeber($memberData,$event_id,$event){
         $eventInfo = $this->EventModel->where(['id'=>$event_id])->find();
         //参加活动的人员
         foreach ($memberData as $key => $value) {

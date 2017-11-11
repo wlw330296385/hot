@@ -96,8 +96,7 @@
 
             </div>
             <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-8 opli">需要支付:<b class="colororange eventTotal">￥</b></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="createBill()">立即支付</li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="joinEvent()">立即报名</li>
             </ul>
         </div>
     </div>
@@ -112,8 +111,10 @@
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <form id="newdiv" class="mui-input-group">
-
+                <form  class="mui-input-group">
+                    <div class="mui-input-row mui-checkbox mui-left" id="newdiv">
+                        <label for="member">{$memberInfo.member}</label><input name="memebr" class="student" value="{$memberInfo.member}" type="checkbox" checked="checked" data-student_id="{$memberInfo.id}">
+                    </div>
                 </form>
             </div>
         </div>
@@ -129,14 +130,13 @@ mui.init({
 });
 var total=wooApi.GetQueryString('total');
 var total_fee = "{$eventInfo.price}"*total;
-var studentList = [];
+var studentList = [{ student: "{$memberInfo.member}", student_id: 0, member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"}];
 $(function () {
     $('.eventNum').val(total);
-    $('.eventTotal').text("￥"+total_fee);
 
     //学员列表复选框赋值
     $("#setStudentCBox").on('tap', '', function () {
-        //每次打开先清空所有选择
+        //每次打开先清空所有选择en
         $("input[name='checkbox-student']").prop("checked", false);
         //然后遍历出对应所选
         $(".stdList").each(function (i) {
@@ -153,24 +153,16 @@ $(function () {
     $("#studentConfirm").on('tap', '', function () {
         var inputList = "";
         var studentNames = "";
+        studentList = [{ student: "{$memberInfo.member}", student_id: 0, member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"}];
         $("input[name='checkbox-student']:checked").each(function (i) {
 //                    var id = $(this).attr("data-id");
             var student_id = $(this).attr("data-student_id");
             var student = $(this).val();
-            var camp = $(this).attr("data-camp");
-            var camp_id = $(this).attr("data-camp_id");
-            var lesson = $(this).attr("data-lesson");
-            var lesson_id = $(this).attr("data-lesson_id");
-            var member = $(this).attr("data-member");
-            var member_id = $(this).attr("data-member_id");
-            var key = { student: student, student_id: student_id, camp:camp, camp_id:camp_id, lesson:lesson, lesson_id:lesson_id, member:member, member_id:member_id}
+            var key = { student: student, student_id: student_id, member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"};
             studentNames += student + ','
             studentList.push(key);
         });
         $(".students").text(studentNames.substring(0, studentNames.length - 1))
-        console.log(studentList)
-        console.log(studentNames)
-
         //班级成员
         $("input[name=students]").val(studentList.length)
         mui('#student').popover('toggle');
@@ -189,12 +181,23 @@ function getStudentList(){
     var div = '';
     if (result.code == 200) {
         for (var i = 0; i <= result.data.length - 1; i++) {
-            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + result.data[i].student  + '</label><input name="checkbox-student" class="student" value="' + result.data[i].student + '" type="checkbox" data-student_id="' + result.data[i].student_id + '" data-student="' + result.data[i].student +'" data-camp="'+ result.data[i].camp +'" data-camp_id="'+ result.data[i].camp_id +'" data-lesson="'+ result.data[i].lesson +'" data-lesson_id="'+ result.data[i].lesson_id+'" data-member="'+ result.data[i].member +'" data-member_id="'+ result.data[i].member_id + '"></div>'
+            div = div + '<label for="a'+i+'">' + result.data[i].student  + '</label><input name="a'+i+'" class="student" value="' + result.data[i].student + '" type="checkbox" data-student_id="' + result.data[i].id + '" data-student="' + result.data[i].student+'">';
         }
-        $("#newdiv").empty();
+        // $("#newdiv").empty();
+        // $('#newdiv').append('<label for="member">{$memberInfo.member}</label><input name="memebr" class="student" value="{$memberInfo.member}" type="checkbox" checked="checked" data-student_id="{$memberInfo.id}">');
         $("#newdiv").append(div);
     }
 
+}
+
+function joinEvent(){
+    var data = {};
+    data.memberData = JSON.stringify(studentList);
+    data.event = "{$eventInfo.event}";
+    console.log(data);
+    var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
+    var result = wooApi.asyncF(url+'/total/'+total,data);
+    console.log(result);
 }
 
 
