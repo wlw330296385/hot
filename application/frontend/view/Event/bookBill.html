@@ -74,6 +74,12 @@
                         <input type="text" name="participator" value="" class="eventNum data" placeholder="请输入报名人数">
                     </div>
                     <div class="mui-input-row">
+                    <a href="#student" id="setStudentCBox" class="mui-navigate-right" style="display: flex">
+                        <label>选择参与人员</label>
+                        <span class="studentCont students domData" name="student_str"></span>
+                    </a>
+                    </div>
+                    <div class="mui-input-row">
                         <label>联系人</label>
                         <input type="text" name="contract" class="data" value="{$eventInfo.member}">
                     </div>
@@ -96,6 +102,22 @@
         </div>
     </div>
 
+
+    <!--学员名单-->
+    <div id="student" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd36"><strong>学员名单</strong></span>
+            <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form id="newdiv" class="mui-input-group">
+
+                </form>
+            </div>
+        </div>
+    </div>
     
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
@@ -105,31 +127,76 @@
 mui.init({
     swipeBack: true //启用右滑关闭功能
 });
-
+var total=wooApi.GetQueryString('total');
+var total_fee = "{$eventInfo.price}"*total;
+var studentList = [];
 $(function () {
-    // 需要支付的费用
-    $(".eventNum").on("blur", '', function () {
-        var eventPrice = "{$eventInfo.price}";
-        var eventNum = $(".eventNum").val();
-        var eventTotal = eventPrice * eventNum;
-        console.log(eventTotal)
-        $(".eventTotal").text('￥' + eventTotal);
+    $('.eventNum').val(total);
+    $('.eventTotal').text("￥"+total_fee);
+
+    //学员列表复选框赋值
+    $("#setStudentCBox").on('tap', '', function () {
+        //每次打开先清空所有选择
+        $("input[name='checkbox-student']").prop("checked", false);
+        //然后遍历出对应所选
+        $(".stdList").each(function (i) {
+            //var id = $(this).attr("data-id");
+            var student_id = $(this).attr("data-student_id");
+            //var student = $(this).attr("data-student");
+            $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
+                return $(this).attr("data-student_id") == student_id
+            }).prop("checked", true);
+        });
     });
+
+    // 学员名单
+    $("#studentConfirm").on('tap', '', function () {
+        var inputList = "";
+        var studentNames = "";
+        $("input[name='checkbox-student']:checked").each(function (i) {
+//                    var id = $(this).attr("data-id");
+            var student_id = $(this).attr("data-student_id");
+            var student = $(this).val();
+            var camp = $(this).attr("data-camp");
+            var camp_id = $(this).attr("data-camp_id");
+            var lesson = $(this).attr("data-lesson");
+            var lesson_id = $(this).attr("data-lesson_id");
+            var member = $(this).attr("data-member");
+            var member_id = $(this).attr("data-member_id");
+            var key = { student: student, student_id: student_id, camp:camp, camp_id:camp_id, lesson:lesson, lesson_id:lesson_id, member:member, member_id:member_id}
+            studentNames += student + ','
+            studentList.push(key);
+        });
+        $(".students").text(studentNames.substring(0, studentNames.length - 1))
+        console.log(studentList)
+        console.log(studentNames)
+
+        //班级成员
+        $("input[name=students]").val(studentList.length)
+        mui('#student').popover('toggle');
+    })
+
+    // 获取学生数据
+    getStudentList();
+
 });
-//创建订单
-function createBill(){
-    var remarks = $('.remarks').val();
-    var student = $('.selectStudent').find("option:selected").text();
-    var student_id = $('.selectStudent').val();
-    objBillInfo.bill_order = "{$billOrder}";
-    objBillInfo.goods_des = student+'购买'+objBillInfo.goods;
-    objBillInfo.total = total;
-    objBillInfo.student_id = student_id;
-    objBillInfo.student = student;
-    objBillInfo.remarks = remarks;
-    objBillInfo.balance_pay = 0;
-    var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
-    return result;
+
+// 获取学生数据
+function getStudentList(){
+    // 获取学生列表
+    var result = wooApi.asyncF("{:url('api/Student/getStudentListApi')}");
+
+    var div = '';
+    if (result.code == 200) {
+        for (var i = 0; i <= result.data.length - 1; i++) {
+            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + result.data[i].student  + '</label><input name="checkbox-student" class="student" value="' + result.data[i].student + '" type="checkbox" data-student_id="' + result.data[i].student_id + '" data-student="' + result.data[i].student +'" data-camp="'+ result.data[i].camp +'" data-camp_id="'+ result.data[i].camp_id +'" data-lesson="'+ result.data[i].lesson +'" data-lesson_id="'+ result.data[i].lesson_id+'" data-member="'+ result.data[i].member +'" data-member_id="'+ result.data[i].member_id + '"></div>'
+        }
+        $("#newdiv").empty();
+        $("#newdiv").append(div);
+    }
+
 }
+
+
 </script>    
 </html>

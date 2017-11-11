@@ -221,8 +221,18 @@ class Event extends Base{
             $event_id = input('param.event_id');
             $member_id = $this->memberInfo['id'];
             $member = $this->memberInfo['member'];
-            $result = $this->EventService->joinEvent($event_id,$member_id,$member);
-            return json($result);
+            $total = input('param.total');
+            $data = input('post.data');
+            $res = $this->EventService->joinEvent($event_id,$member_id,$member,$total);
+            if($res){
+                if( !empty($data['memberData']) && $data['memberData'] != '[]' ){
+                    $memberData = json_decode($data['memberData'],true);
+                    $res = $this->EventService->saveAllMmeber($memberData,$event_id);
+                    return json($res);
+                }
+            }else{
+                return json(['code'=>100,'msg'=>'报名失败']);
+            }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
