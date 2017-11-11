@@ -85,7 +85,11 @@ class LessonMember extends Base{
             $IDs = db('grade_member')->where($map)->where('delete_time','is null')->column('student_id');
             $map['student_id']=['not in',$IDs];
             $result = $this->LessonMemberService->getLessonMemberListByPage($map);
-            return json($result);
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'查不到学生信息,请检查参数']);
+            }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
