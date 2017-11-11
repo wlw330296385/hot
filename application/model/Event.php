@@ -17,8 +17,5 @@ class Event extends Model{
         return $status[$value];
     }
 
-    public function getIsOverdueAttr($value){
-        $status = [1=>'正常',-1=>'已过期'];
-        return $status[$value];
-    }
+    
 }

@@ -21,6 +21,11 @@ class EventService {
 
         if($result){
             $res = $result->toArray();
+            foreach ($res as $key => &$value) {
+                $value['event_times'] = date('Y-m-d H:i',$value['event_time']);
+                $value['ends'] = date('Y-m-d H:i',$value['end']);
+                $value['starts'] = date('Y-m-d H:i',$value['start']);
+            }
             return $res;
         }else{
             return $result;
@@ -29,11 +34,17 @@ class EventService {
 
     // 分页获取活动
     public function getEventListByPage($map=[], $order='',$paginate=10){
-        $res = Event::where($map)->order($order)->paginate($paginate);
+        $result = Event::where($map)->order($order)->paginate($paginate);
         if($res){
             return $res->toArray();
-        }else{
+            foreach ($res as $key => &$value) {
+                $value['event_times'] = date('Y-m-d H:i',$value['event_time']);
+                $value['ends'] = date('Y-m-d H:i',$value['end']);
+                $value['starts'] = date('Y-m-d H:i',$value['start']);
+            }
             return $res;
+        }else{
+            return $result;
         }
     }
 
