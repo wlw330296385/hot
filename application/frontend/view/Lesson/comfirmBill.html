@@ -265,7 +265,7 @@
         if(res.code == 200){  
             window.location.href="{:url('frontend/bill/billInfo',['bill_order'=>$billOrder])}";
         }else{
-            mui.alert('订单创建失败,请刷新页面或者重新登录','提示','确定',function(){
+            mui.alert('订单创建失败,请刷新页面或者重新登录',res.msg,'确定',function(){
                 location.reload();
             })
         }
@@ -313,7 +313,7 @@
     function pay(callback_str){
         var result = wooApi.asyncF("{:url('api/Bill/payApi',['bill_order'=>$billOrder])}",{
             'balance_pay' : total_fee,
-            'callback_str':callback_str
+            'callback_str': callback_str
         });
 
         if(result.code == 200){

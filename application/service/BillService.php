@@ -77,7 +77,7 @@ class BillService {
             $billInfo = $this->Bill->where($map)->find();
             $billData = $billInfo->toArray();
             $res = $this->finishBill($billData);
-            return true;
+            return false;
         }else{
             return false;
         }
