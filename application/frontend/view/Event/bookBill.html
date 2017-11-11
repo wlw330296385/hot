@@ -106,7 +106,7 @@
     <div id="student" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course wd36"><strong>学员名单</strong></span>
+            <span class="course wd36"><strong>报名名单</strong></span>
             <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
         </div>
         <div class="mui-scroll-wrapper">
@@ -181,7 +181,7 @@ function getStudentList(){
     var div = '';
     if (result.code == 200) {
         for (var i = 0; i <= result.data.length - 1; i++) {
-            div = div + '<label for="a'+i+'">' + result.data[i].student  + '</label><input name="a'+i+'" class="student" value="' + result.data[i].student + '" type="checkbox" data-student_id="' + result.data[i].id + '" data-student="' + result.data[i].student+'">';
+            div = div + '<label for="a'+i+'">' + result.data[i].student  + '</label><input id="a'+i+'" class="student" value="' + result.data[i].student + '" type="checkbox" data-student_id="' + result.data[i].id + '" data-student="' + result.data[i].student+'">';
         }
         // $("#newdiv").empty();
         // $('#newdiv').append('<label for="member">{$memberInfo.member}</label><input name="memebr" class="student" value="{$memberInfo.member}" type="checkbox" checked="checked" data-student_id="{$memberInfo.id}">');
@@ -192,6 +192,10 @@ function getStudentList(){
 
 function joinEvent(){
     var data = {};
+    if(studentList.length>total){
+        alert('参与人员不可大于报名人数['+total+']');
+        return false;
+    }
     data.memberData = JSON.stringify(studentList);
     data.event = "{$eventInfo.event}";
     console.log(data);
