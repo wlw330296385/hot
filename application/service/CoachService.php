@@ -130,18 +130,31 @@ class CoachService{
     }
 
     // 教练在训练营的班级列表
-    public function ingradelist($coach_id, $camp_id) {
+    public function ingradelist($coach_id, $camp_id=0) {
         $model = new Grade();
-        $iscoachlist = $model->where(['camp_id' => $camp_id,'coach_id' => $coach_id])->select();
-        if (!$iscoachlist) {
-            return $iscoachlist;
+        if ($camp_id) {
+            $iscoachlist = $model->where(['camp_id' => $camp_id,'coach_id' => $coach_id])->select();
+            if (!$iscoachlist) {
+                return $iscoachlist;
+            }
+            $isassistantlist = [];
+            $assistants = $model->where(['camp_id' => $camp_id])->select();
+            if (!$assistants) {
+                return $assistants;
+            }
+            $assistants = $assistants->toArray();
+        } else {
+            $iscoachlist = $model->where(['coach_id' => $coach_id, 'status' => 1])->select();
+            if (!$iscoachlist) {
+                return $iscoachlist;
+            }
+            $isassistantlist = [];
+            $assistants = $model->where(['status' => 1])->select();
+            if (!$assistants) {
+                return $assistants;
+            }
+            $assistants = $assistants->toArray();
         }
-        $isassistantlist = [];
-        $assistants = $model->where(['camp_id' => $camp_id])->select();
-        if (!$assistants) {
-            return $assistants;
-        }
-        $assistants = $assistants->toArray();
 
         foreach ($assistants as $assistant) {
             if ($assistant) {
@@ -187,5 +200,22 @@ class CoachService{
         }
         $result = array_merge($iscoachlist->toArray(), $isassistantlist);
         return $result;
+    }
+
+    // 教练执教学员统计
+    public function teachstudents($coach_id) {
+        $grades = $this->ingradelist($coach_id);
+        if ($grades) {
+            //return $grades;
+            $gradeIds = [];
+            foreach ($grades as $grade) {
+                array_push($gradeIds, $grade['id']);
+            }
+            //dump($gradeIds);
+            $students = db('grade_member')->distinct(true)->field('member_id')->where(['grade_id'=>['in',$gradeIds],'type'=>1,'status'=>1])->where('delete_time', null)->count();
+            return $students;
+        } else {
+            return 0;
+        }
     }
 }

@@ -24,8 +24,9 @@
 
 <body class=whitebg>
 
-    <header id="header" class="mui-bar mui-bar-nav subheader subheader-other">
+    <header id="header" class="mui-bar mui-bar-transparent">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">活动详情</h1>
     </header>
     <!--活动详情页-->
     <div class="mui-content" style="padding: 0">
@@ -39,7 +40,7 @@
                             <p class="mui-ellipsis">{$eventInfo.event_type}</p>
                         </div>
                         <div class="price-frame">
-                            <p class="price">￥{$eventInfo.price}<span class="nofloat"> / 费用</span></p>
+                            <p class="price">￥{$eventInfo.price}<span class="nofloat"> / 人</span></p>
                             <p class="price"><span class="nofloat">已报名{$eventInfo.participator}人</span></p>
                         </div>
                     </a>
@@ -69,8 +70,8 @@
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli"><a href="tel:{$eventInfo.telephone}"><span
                     class="mui-icon mui-icon-phone"></span>电话咨询</a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bgblue"><a href="#">剩余<font class="surplus"></font>个名额</a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen signupbtn"><a href="{:url('event/comfirmBill',['event_id'=>$eventInfo['id']])}">报名</a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli ">剩余<font class="surplus colororange"></font>个名额</li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen signupbtn">报名</li>
             </ul>
             {/case} {case value='3'}
             <!--报名人数已满-->
@@ -94,6 +95,8 @@
         </div>
     </div>
 
+
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
     <script>
@@ -105,6 +108,37 @@
         $(function () {
             var surplus = "{$eventInfo.max}" - "{$eventInfo.participator}";
             $(".surplus").text(surplus)
+
+            //报名活动
+            $('.signupbtn').on('tap', '', function () {
+
+                var mID = "{$memberInfo.id}";
+                if (mID <= 0) {
+                    var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+                    mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', btnArray);
+                }else{
+                    var btnArray = ['确定', '取消'];
+                    var addForm = '<div class="mui-popup-input"><input type="number" name="participator" class="data" placeholder="请输入报名人数" autofocus=""></div>'
+                    mui.confirm(addForm, '报名人数', btnArray, function (e) {
+                        if (e.index == 0) {
+                            var eventTotal = $("input[name=participator]").val();
+                            if(!(/^[0-9]*$/).test(eventTotal) || eventTotal=='') {
+                                mui.toast("请输入正确数字");
+                                return false;
+                            }
+                            var isfree = "{$eventInfo.is_free}";
+                            if(isfree==1){
+                                buyUrl = "{:url('event/bookBill',['event_id'=>$eventInfo['id']])}";
+                            }else{
+                                buyUrl = "{:url('event/comfirmBill',['event_id'=>$eventInfo['id']])}";
+                            }
+                            window.location.href = buyUrl + '?total=' + eventTotal;
+                        }
+                    });
+                }
+
+
+            })
         });
     </script>
 </body>

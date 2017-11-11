@@ -3,6 +3,7 @@
 namespace app\service;
 
 use app\model\Schedule;
+use app\model\ScheduleComment;
 use app\model\ScheduleGiftrecord;
 use app\model\ScheduleMember;
 use app\model\Student;
@@ -305,9 +306,10 @@ class ScheduleService
     }
 
     // 获得课时评论
-    public function getCommentList($schedule_id, $page = 1, $paginate = 10)
+    public function getCommentList($schedule_id, $paginate = 10)
     {
-        $result = db('schedule_comment')->where(['schedule_id' => $schedule_id])->page($page, $paginate)->select();
+        $model = new ScheduleComment();
+        $result = $model->where(['schedule_id' => $schedule_id])->paginate($paginate);
         return $result;
     }
 
@@ -383,7 +385,7 @@ class ScheduleService
     }
 
 
-    // 可是评分
+    // 课时评分
     public function starSchedule($data)
     {
         $ScheduleComment = new \app\model\ScheduleComment;
@@ -393,18 +395,35 @@ class ScheduleService
         }
         $isSchedule = $ScheduleComment->where(['member_id' => $data['member_id'], 'schedule_id' => $data['schedule_id']])->find();
         if ($isSchedule) {
-            return ['code' => 100, 'msg' => '一个人只能评论一次'];
+            return ['code' => 100, 'msg' => '您已经评论过此课时'];
         } else {
-            $result = $ScheduleComment->save($data);
+            $result = $ScheduleComment->allowField(true)->save($data);
             if ($result) {
                 // 计算总评分
-
+                $this->updateCampStar($data['schedule_id'], $data['camp_id']);
                 return ['code' => 200, 'msg' => '评论成功'];
             } else {
                 return ['code' => 100, 'msg' => '评论失败'];
             }
         }
+    }
 
+    // 能否课时评分
+    public function canStarSchedule($schedule_id, $member_id) {
+        $students = db('student')->where('member_id', $member_id)->column('id');
+        $scheduleMember = db('schedule_member')->where(['schedule_id' => $schedule_id, 'type' => 1])->column('user_id');
+        if (array_intersect($students, $scheduleMember)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // 课时评分更新训练营评分
+    public function updateCampStar($schedule_id, $camp_id) {
+        $schedleCommentM = new \app\model\ScheduleComment;
+        $commentAvgstar = $schedleCommentM->where(['schedule_id' => $schedule_id])->avg('avg_star');
+        Db::name('camp')->where('id', $camp_id)->setField('star', $commentAvgstar);
     }
 
     // 删除课时
