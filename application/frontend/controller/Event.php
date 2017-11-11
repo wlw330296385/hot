@@ -18,6 +18,12 @@ class Event extends Base{
     }
 
 
+    public function bookBill(){
+        $event_id = input('param.event_id');
+        $total = input('param.total');
+        return view('Event/bookBill');
+    }
+
     public function comfirmBill() {
         $event_id = input('param.event_id');
         $total = input('param.total');

@@ -82,7 +82,7 @@ class LessonMember extends Base{
         try{
             $map = input('post.');
             // 已分配的学生IDs
-            $IDs = db('grade_member')->where($map)->column('student_id');
+            $IDs = db('grade_member')->where($map)->where('delete_time','is null')->column('student_id');
             $map['student_id']=['not in',$IDs];
             $result = $this->LessonMemberService->getLessonMemberListByPage($map);
             return json($result);
