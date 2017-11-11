@@ -183,21 +183,21 @@ class Coach extends Base{
 
     public function coachInfo(){
         $coach_id = input('param.coach_id');
-        if($coach_id){
-            $coachInfo = $this->coachService->getCoachInfo(['id'=>$coach_id]);
-        }else{
-            $coachInfo = $this->coachService->getCoachInfo(['member_id'=>$this->memberInfo['id']]);
+        $coachInfo = $this->coachService->getCoachInfo(['id'=>$coach_id]);
+        if (!$coachInfo) {
+            $this->error('没有这个教练信息');
         }
 
         // 全部班级
-        $gradeList = db('grade')->where(['coach_id'=>$coachInfo['id']])->column('id');
+//      $gradeList = db('grade')->where(['coach_id'=>$coachInfo['id'],'status'=>1])->where('delete_time', null)->column('id');
+        $gradeList = $this->coachService->ingradelist($coachInfo['id']);
         $gradeCount = count($gradeList);
         // 全部学员
-        $studentCount = db('grade_member')->distinct(true)->field('member_id')->where(['grade_id'=>['in',$gradeList],'type'=>1,'status'=>1])->count();
+//      $studentCount = db('grade_member')->distinct(true)->field('member_id')->where(['grade_id'=>['in',$gradeList],'type'=>1,'status'=>1])->where('delete_time', null)->count();
+        $studentCount = $this->coachService->teachstudents($coachInfo['id']);
+
         // 执教过多少课时
         $scheduleCount = $this->scheduleService->countSchedules(['coach_id'=>$coachInfo['id'],'status'=>1]);
-//        dump($scheduleCount);
-//        $scheduleCount = 0;
         //教练评论
         $commentList = db('coach_comment')->where(['coach_id'=>$coach_id])->select();
         //所属训练营
@@ -208,7 +208,6 @@ class Coach extends Base{
             ->select();
         $myCampList = db('camp_member')->where(['type'=>['gt',2],'status'=>1,'member_id'=>$this->memberInfo['id']])->select();
 
-//        die;
         $this->assign('myCampList',$myCampList);
         $this->assign('campList',$campList);
         $this->assign('commentList',$commentList);

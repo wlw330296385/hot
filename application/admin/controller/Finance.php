@@ -35,17 +35,17 @@ class Finance extends Backend {
         }
 
         $list = BillModel::where($map)->order('id desc')->paginate(15)->each(function($item, $key){
-            if ($item->goods_type == "课程") {
-                $studenttype = db('grade_member')->where([ 'camp_id' => $item->camp_id, 'lesson_id' => $item->goods_id, 'member_id' => $item->member_id ])->value('type');
-                if ($studenttype == 1) {
-                    $item->studenttype = '正式学员';
-                } else {
-                    $item->studenttype = '体验生';
-                }
-            }
+//            if ($item->goods_type == "课程") {
+//                $studenttype = db('grade_member')->where([ 'camp_id' => $item->camp_id, 'lesson_id' => $item->goods_id, 'member_id' => $item->member_id ])->value('type');
+//                if ($studenttype == 1) {
+//                    $item->studenttype = '正式学员';
+//                } else {
+//                    $item->studenttype = '体验生';
+//                }
+//            }
         });
-//        dump($list);
-
+        //dump($list);
+//die;
         $breadcrumb = ['title' => '支付订单', 'ptitle' => '训练营'];
         $this->assign('breadcrumb', $breadcrumb);
         $this->assign('list', $list);
