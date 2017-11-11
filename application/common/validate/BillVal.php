@@ -5,7 +5,7 @@ class billVal extends Validate{
 
 
 	protected $rule = [
-        'bill_order'        =>  'require|unique',
+        'bill_order'        =>  'require|unique:bill',
         'goods_id'	=> 'require',
         'goods'         => 'require',
         'total'         =>'require',
