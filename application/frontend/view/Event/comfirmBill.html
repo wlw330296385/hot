@@ -41,7 +41,7 @@
                         </div>
                         <div class="price-frame">
                             <p class="price"><span class="nofloat">已报名{$eventInfo.participator}人</span></p>
-                            <p class="price"><span class="nofloat">剩余名额</span></p>
+                            <p class="price"><span class="nofloat">剩余<font class="participator"></font>个名额</span></p>
                         </div>
                     </a>
                 </li>
@@ -96,8 +96,8 @@
 
             </div>
             <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli">需要支付:<b class="colororange eventTotal">￥</b></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 opli" onclick="helpPay()">请人代付</li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-5 opli">需要支付:<b class="colororange eventTotal">￥</b></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli" onclick="helpPay()">请人代付</li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 opli bggreen" onclick="wxpay()">立即支付</li>
             </ul>
         </div>
@@ -135,6 +135,9 @@
         var objBillInfo = JSON.parse(strBillInfo);
 
         $(function () {
+            
+            var participator = "{$eventInfo.max}" - "{$eventInfo.min}";
+            $(".participator").text(participator);
 
             $('.eventNum').val(total);
             $('.eventTotal').text("￥"+total_fee);
