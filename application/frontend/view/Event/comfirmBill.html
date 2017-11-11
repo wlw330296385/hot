@@ -11,7 +11,17 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <style>
+
+        .mui-popover {
+            height: 300px;
+        }
+        .mui-input-group .mui-input-row .students{
+            width:60% !important;
+        }
         .show {
             display: block;
         }
@@ -71,7 +81,7 @@
                     <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
                     <div class="mui-input-row">
                     <a href="#student" id="setStudentCBox" class="mui-navigate-right" style="display: flex">
-                        <label>选择参与人员</label>
+                        <label>选择参与会员</label>
                         <span class="studentCont students domData" name="student_str"></span>
                     </a>
                     </div>
@@ -122,17 +132,24 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
 
+        //弹出菜单
+        mui('.mui-scroll-wrapper').scroll();
 
         var total=wooApi.GetQueryString('total');
         var total_fee = "{$eventInfo.price}"*total;
         var strBillInfo = '{$jsonBillInfo}';
         var objBillInfo = JSON.parse(strBillInfo);
+        var studentList = new Array();
 
         $(function () {
             
@@ -147,40 +164,29 @@
                 //每次打开先清空所有选择
                 $("input[name='checkbox-student']").prop("checked", false);
                 //然后遍历出对应所选
-                $(".stdList").each(function (i) {
-                    //var id = $(this).attr("data-id");
-                    var student_id = $(this).attr("data-student_id");
-                    //var student = $(this).attr("data-student");
+                for (var i = 0; i <= studentList.length - 1; i++) {
                     $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
-                        return $(this).attr("data-student_id") == student_id
+                        return $(this).attr("data-student_id") == studentList[i].student_id
                     }).prop("checked", true);
-                });
+                }
             });
 
             // 学员名单
             $("#studentConfirm").on('tap', '', function () {
-                var inputList = "";
                 var studentNames = "";
                 studentList = [];
                 $("input[name='checkbox-student']:checked").each(function (i) {
-//                    var id = $(this).attr("data-id");
                     var student_id = $(this).attr("data-student_id");
                     var student = $(this).val();
-                    var camp = $(this).attr("data-camp");
-                    var camp_id = $(this).attr("data-camp_id");
-                    var lesson = $(this).attr("data-lesson");
-                    var lesson_id = $(this).attr("data-lesson_id");
                     var member = $(this).attr("data-member");
                     var member_id = $(this).attr("data-member_id");
-                    studentList[i] = { student: student, student_id: student_id, camp:camp, camp_id:camp_id, lesson:lesson, lesson_id:lesson_id, member:member, member_id:member_id}
+                    studentList[i] = { student: student, student_id: student_id, member:member, member_id:member_id, event:"{$eventInfo.event}", event_id:"{$eventInfo.id}"}
                     studentNames += student + ','
                 });
                 $(".students").text(studentNames.substring(0, studentNames.length - 1))
                 console.log(studentList)
                 console.log(studentNames)
 
-                //班级成员
-                $("input[name=students]").val(studentList.length)
                 mui('#student').popover('toggle');
             })
 
@@ -197,7 +203,7 @@
             var div = '';
             if (result.code == 200) {
                 for (var i = 0; i <= result.data.length - 1; i++) {
-                    div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + result.data[i].student  + '</label><input name="checkbox-student" class="student" value="' + result.data[i].student + '" type="checkbox" data-student_id="' + result.data[i].student_id + '" data-student="' + result.data[i].student +'" data-camp="'+ result.data[i].camp +'" data-camp_id="'+ result.data[i].camp_id +'" data-lesson="'+ result.data[i].lesson +'" data-lesson_id="'+ result.data[i].lesson_id+'" data-member="'+ result.data[i].member +'" data-member_id="'+ result.data[i].member_id + '"></div>'
+                    div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + result.data[i].student  + '</label><input name="checkbox-student" class="student" value="' + result.data[i].student + '" type="checkbox" data-student_id="' + result.data[i].id + '" data-student="' + result.data[i].student +'" data-member="'+ result.data[i].member +'" data-member_id="'+ result.data[i].member_id + '"></div>'
                 }
                 $("#newdiv").empty();
                 $("#newdiv").append(div);
@@ -273,8 +279,9 @@
         //创建订单
         function createBill(){
             var remarks = $('.remarks').val();
-            var student = $('.selectStudent').find("option:selected").text();
-            var student_id = $('.selectStudent').val();
+//            var student = $('.selectStudent').find("option:selected").text();
+//            var student_id = $('.selectStudent').val();
+//            如何传学员数组给后端？
             objBillInfo.bill_order = "{$billOrder}";
             objBillInfo.goods_des = student+'购买'+objBillInfo.goods;
             objBillInfo.total = total;
