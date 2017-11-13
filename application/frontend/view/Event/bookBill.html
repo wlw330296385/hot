@@ -136,7 +136,7 @@
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <form id="newdiv" class="mui-input-group">
-
+                    <div class="mui-input-row mui-checkbox mui-left"><label>{$memberInfo.member}</label><input name="checkbox-student" class="student" value="{$memberInfo.member}" type="checkbox" data-student_id="0" data-student="0" data-member="{$memberInfo.member}" data-member_id="{$memberInfo.id}"></div>
                 </form>
             </div>
         </div>
@@ -150,7 +150,6 @@
 <script src="/static/frontend/js/mui.poppicker.js"></script>
 <script src="/static/frontend/js/city.data-3.js"></script>
 <script>
-<script>
 //初始化
 mui.init({
     swipeBack: true //启用右滑关闭功能
@@ -161,7 +160,7 @@ mui('.mui-scroll-wrapper').scroll();
 
 var total=wooApi.GetQueryString('total');
 var total_fee = "{$eventInfo.price}"*total;
-//var studentList = [{ student: "{$memberInfo.member}", student_id: 0, member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"}];
+// var studentList = [{ student: "{$memberInfo.member}", student_id: 0, member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"}];
 var studentList = new Array();
 $(function () {
     $('.eventNum').val(total);
@@ -187,8 +186,9 @@ $(function () {
             var student = $(this).val();
             var member = $(this).attr("data-member");
             var member_id = $(this).attr("data-member_id");
-            studentList[i] = { student: student, student_id: student_id, member:member, member_id:member_id, event:"{$eventInfo.event}", event_id:"{$eventInfo.id}"}
-            studentNames += student + ','
+            studentStr = { student: student, student_id: student_id, member:member, member_id:member_id, event:"{$eventInfo.event}", event_id:"{$eventInfo.id}"}
+            studentNames += student + ',';
+            studentList.push(studentStr);
         });
         $(".students").text(studentNames.substring(0, studentNames.length - 1))
         console.log(studentList)
@@ -207,13 +207,12 @@ $(function () {
 function getStudentList(){
     // 获取学生列表
     var result = wooApi.asyncF("{:url('api/Student/getStudentListApi')}");
-
+    
     var div = '';
     if (result.code == 200) {
         for (var i = 0; i <= result.data.length - 1; i++) {
             div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + result.data[i].student  + '</label><input name="checkbox-student" class="student" value="' + result.data[i].student + '" type="checkbox" data-student_id="' + result.data[i].id + '" data-student="' + result.data[i].student +'" data-member="'+ result.data[i].member +'" data-member_id="'+ result.data[i].member_id + '"></div>'
         }
-        $("#newdiv").empty();
         $("#newdiv").append(div);
     }
 
