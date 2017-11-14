@@ -208,4 +208,22 @@ class Court extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+    // 获取courtcamp一条记录
+    public function getCourtCampListOfPageApi(){
+        try{
+            $map = input('post.');
+            $result = $this->CourtService->getCourtCampListByPage($map);
+            if($result){
+                return json(['code'=>200,'msg'=>'请求成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'请求成功','data'=>$result]);
+            }
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
 }

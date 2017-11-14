@@ -35,7 +35,7 @@ class Event extends Base{
             'goods_id'=>$eventInfo['id'],
             'camp_id'=>$eventInfo['organization_id'],
             'camp'=>$eventInfo['organization'],
-            'organization_type'=>2,
+            'organization_type'=>1,
             'price'=>$eventInfo['price'],
             'score_pay'=>$eventInfo['score'],
             'goods_type'=>2,
@@ -47,8 +47,13 @@ class Event extends Base{
         $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
         
         $jsApiParameters = $result['data']['jsApiParameters'];
-
+        $shareurl = request()->url(true);
+        $wechatS = new \app\service\WechatService;
+        $jsapi = $wechatS->jsapi($shareurl);
+        // dump($jsApiParameters);
+        // dump($jsapi);die;
         $this->assign('jsApiParameters',$jsApiParameters);
+        $this->assign('jsapi', $jsapi);
         $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
         $this->assign('eventInfo',$eventInfo);
         $this->assign('billOrder',$billOrder);

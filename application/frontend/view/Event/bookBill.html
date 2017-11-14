@@ -82,12 +82,12 @@
                     <div class="mui-input-row">
                     <a href="#student" id="setStudentCBox" class="mui-navigate-right" style="display: flex">
                         <label>选择参与人员</label>
-                        <span class="studentCont" name="student_str" >{$memberInfo.member}</span>
+                        <span class="studentCont students" name="student_str" >{$memberInfo.member}</span>
                     </a>
                     </div>
                     <div class="mui-input-row">
                         <label>联系人</label>
-                        <input type="text" name="linkman" class="data" value="{$eventInfo.member}">
+                        <input type="text" name="linkman" class="data" value="{$memberInfo.member}">
                     </div>
                     <div class="mui-input-row">
                         <label>联系电话</label>
@@ -148,10 +148,6 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
-<!-- 选择器 -->
-<script src="/static/frontend/js/mui.picker.min.js"></script>
-<script src="/static/frontend/js/mui.poppicker.js"></script>
-<script src="/static/frontend/js/city.data-3.js"></script>
 <script>
 //初始化
 mui.init({
@@ -173,9 +169,9 @@ $(function () {
         //每次打开先清空所有选择
         $("input[name='checkbox-student']").prop("checked", false);
         //然后遍历出对应所选
-        for (var i = 0; i <= studentList.length - 1; i++) {
+        for (var ii = 0; ii <= studentList.length - 1; ii++) {
             $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
-                return $(this).attr("data-student_id") == studentList[i].student_id
+                return $(this).attr("data-student_id") == studentList[ii].student_id
             }).prop("checked", true);
         }
     });
@@ -219,7 +215,7 @@ function getStudentList(){
 }
 
 function joinEvent(){
-    var data = {};
+    var objData = {};
     console.log(studentList);
     if(studentList.length>total){
         alert('参与人员不可大于报名人数['+total+']');
@@ -229,17 +225,16 @@ function joinEvent(){
         alert('请选择参与名单');
         return false;
     }
-    var arrData = wooApi.getInputData();var textareaDat = wooApi.getInputData('textarea','data',arrData);
-    console.log(textareaDat);
-    data = wooApi.arrTOobj(arrData);
-
-    data.memberData = JSON.stringify(studentList);
-    data.event = "{$eventInfo.event}";
+    var arrData1 = wooApi.getInputData();
+    arrData2 = wooApi.getInputData('textarea','data',arrData1);
+    objData = wooApi.arrTOobj(arrData2);
+    objData.memberData = JSON.stringify(studentList);
+    objData.event = "{$eventInfo.event}";
     var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
-    var result = wooApi.asyncF(url+'/total/'+total,data);
-    console.log(result);
+    var result = wooApi.asyncF(url+'/total/'+total,objData);
+    
     if(result.code == 200){
-        mui.alert("您的活动已购买成功，请留意活动消息及公告。",result.msg,function(){
+        mui.alert("您的活动已报名成功，请留意活动消息及公告。",result.msg,function(){
             window.location.href="{:url('frontend/event/eventInfo',['event_id'=>$eventInfo['id']])}";
         });
     }else{
