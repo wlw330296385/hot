@@ -27,7 +27,7 @@
         }
         
         .muicol {
-            padding: 5px 15px;
+            margin: 5px 13px;
         }
         
         .frame {
@@ -56,11 +56,10 @@
         
         .operationDiv .delbtn {
             position: absolute;
-            right: 0;
-            top: 5px;
+            right: 15px;
+            top: 10px;
             line-height: initial !important;
-            font-size: 12px !important;
-            color: #f00 !important;
+            font-size: 18px !important;
         }
         
         .operationDiv h5 {
@@ -237,13 +236,13 @@
                         <div class="introBox"></div>
                     </div>
                     <div class="mui-row mui-text-center">
-                        <div class="mui-col-xs-4 mui-col-sm-4 muicol">
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
                             <a class="frame titleClass">添加标题</a>
                         </div>
-                        <div class="mui-col-xs-4 mui-col-sm-4 muicol">
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
                             <a class="frame textClass">添加正文</a>
                         </div>
-                        <div class="mui-col-xs-4 mui-col-sm-4 muicol">
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
                             <a class="frame imageClass">
                                 <div id="uploader-demo">
                                     <div id="fileList" class="uploader-list"></div>
@@ -395,7 +394,7 @@
 
         var all = '';
         $(function () {
-            // // 具体对象
+            // 具体对象
             $(".campGradeList").on('tap', 'li', function () {
                 var target = $.trim($(this).text());
                 console.log(target)
@@ -441,14 +440,14 @@
 
             //添加标题
             $(".titleClass").on('tap', '', function () {
-                var title = '<div class="operationDiv"><span class="delbtn">删除</span><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
+                var title = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
                 $(".introBox").append(title);
 
             });
 
             //添加正文
             $(".textClass").on('tap', '', function () {
-                var text = '<div class="operationDiv"><span class="delbtn">删除</span><textarea name="" rows="3" class="mui-text-left text delClass" placeholder="请输入正文"></textarea></div>';
+                var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><textarea name="" rows="3" class="mui-text-left text delClass" placeholder="请输入正文"></textarea></div>';
                 $(".introBox").append(text);
             });
 
@@ -469,7 +468,7 @@
             // 当有文件添加进来的时候
             uploader.on('fileQueued', function (file) {
                 var $li = $(
-                    '<div class="operationDiv"><span class="delbtn">删除</span>' +
+                    '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i>' +
                     '<img>' +
                     '</div>'
                 ),
@@ -480,34 +479,50 @@
                     $img.attr('src', src);
                 });
             });
+            // uploader.on('uploadSuccess', function (file,response) {
+            //     var imgwupload = response.url;
+            //     console.log(imgwupload)
+            //     $('#' + file.id).addClass('upload-state-done');
+            // });
 
             //删除操作
             $(document).on('tap', '.delbtn', function () {
                 $(this).parent().remove();
             });
 
-            // 焦点离开后把内容放在h4标签里
+            // 焦点离开后把内容放在h5标签里
             $(document).on('blur', '.operationDiv input', function () {
                 $('.delbtn').remove();
-                var inputValue = '<h5>' + $(this).val() + '</h5>';
-                $(this).parent().html(inputValue)
+                if ($(".operationDiv input").val() != '') {
+                    var inputValue = '<h5>' + $(this).val() + '</h5>';
+                    $(this).parent().html(inputValue)
+                } else {
+                    var inputValueNull = '<h5>标题</h5>';
+                    $(this).parent().html(inputValueNull)
+                }
             });
             // 点击时显示input框
             $(document).on('tap', '.operationDiv h5', function () {
-                var YinputValue = '<span class="delbtn">删除</span><input type="text" name="" value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="标题">';
-                $(this).parent().html(YinputValue)
+                var YinputValue = '<i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="标题">';
+                $(this).parent(".operationDiv").html(YinputValue)
+                console.log(YinputValue)
             });
-
 
             // 焦点离开后把内容放在p标签里
             $(document).on('blur', '.operationDiv textarea', function () {
                 $('.delbtn').remove();
-                var textAreaValue = '<p>' + $(this).val() + '</p>';
-                $(this).parent().html(textAreaValue)
+                if ($(".operationDiv textarea").val() != '') {
+                    var textAreaValue = '<p>' + $(this).val() + '</p>';
+                    $(this).parent().html(textAreaValue)
+                } else {
+                    var textAreaValueNull = '<p>请输入正文</p>';
+                    $(this).parent().html(textAreaValueNull)
+                }
+
             });
             // 点击时显示textarea框
             $(document).on('tap', '.operationDiv p', function () {
-                var YtextAreaValue = '<span class="delbtn">删除</span><input type="text" name="" value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="请输入正文">';
+                var YtextAreaValue = '<i class="delbtn mui-icon mui-icon-close"></i><textarea rows="3" class="mui-text-left text delClass" placeholder="请输入正文">' + $(this).val() + '</textarea>';
                 $(this).parent().html(YtextAreaValue)
             });
 
