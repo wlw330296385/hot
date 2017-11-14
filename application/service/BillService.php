@@ -91,6 +91,7 @@ class BillService {
     * @param $data 一条订单记录
     **/
     private function finishBill($data){
+        $MessageService = new \app\service\MessageService;
         //开始课程操作,包括(模板消息发送,camp\camp_mamber和lesson的数据更新)
         if($data['goods_type'] == '课程'){
             //购买人数+1;
@@ -102,8 +103,7 @@ class BillService {
             if($ress){
                 db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$setting['sysrebate']),'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time()]);
             }
-            // 发送个人消息
-            $MessageService = new \app\service\MessageService;
+            // 发送个人消息           
             $MessageData = [
                 "touser" => session('memberInfo.openid'),
                 "template_id" => config('wxTemplateID.successBill'),
@@ -168,8 +168,7 @@ class BillService {
                             'url'=>url('frontend/bill/billInfoOfCamp',['bill_order'=>$data['bill_order']],'',true)
                         ];
             }
-            $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
-            $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
+            
             // camp_member操作
             $CampMember = new CampMember;
             $is_campMember = $CampMember->where(['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id']])->find();
@@ -220,8 +219,10 @@ class BillService {
                 $CampMember->save(['type'=>-1,'camp_id'=>$data['camp_id'],'member_id'=>$data['member_id'],'camp'=>$data['camp'],'member'=>$data['member'],'status'=>1]);
             }
             
+            
         }   
-                
+        $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
+        $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);        
         return true;
     }
 

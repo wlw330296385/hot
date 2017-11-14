@@ -105,7 +105,7 @@
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-5 opli">需要支付:<b class="colororange eventTotal">￥</b></li>
                 <!-- <li class="mui-table-view-cell mui-media mui-col-xs-4 opli" onclick="helpPay()">请人代付</li> -->
-                <li class="mui-table-view-cell mui-media mui-col-xs-8 opli bggreen" onclick="wxpay()">立即支付</li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-7 opli bggreen" onclick="wxpay()">立即支付</li>
             </ul>
         </div>
     </div>
@@ -142,7 +142,7 @@
 
         //弹出菜单
         mui('.mui-scroll-wrapper').scroll();
-
+        var debug = 1;
         var total=wooApi.GetQueryString('total');
         var total_fee = "{$eventInfo.price}"*total;
         $('.eventTotal').text('￥'+total_fee+'元');
@@ -177,6 +177,15 @@
                     studentList.push(studentStr);
                 });
                 $(".studentCont").text(studentNames.substring(0, studentNames.length - 1))
+                
+                if(studentList.length>total){
+                    alert('参与人员不可大于报名人数['+total+']');
+                    debug = '参与人员不可大于报名人数['+total+']';
+                    return false;
+                }
+                
+                debug = 1;
+                
                 mui('#student').popover('toggle');
             })
 
@@ -203,7 +212,6 @@
 
         function joinEvent(){
             var data = {};
-            console.log(studentList);
             if(studentList.length>total){
                 alert('参与人员不可大于报名人数['+total+']');
                 return false;
@@ -220,8 +228,8 @@
             var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
             var result = wooApi.asyncF(url+'/total/'+total,objData);
             if(result.code == 200){
-                mui.alert("您的活动已报名成功，请留意活动消息及公告。",result.msg,function(){
-                    window.location.href="{:url('frontend/event/eventInfo',['event_id'=>$eventInfo['id']])}";
+                mui.alert("您已报名成功，请留意活动消息及公告。",result.msg,function(){
+                    window.location.href="{:url('frontend/event/eventList')}";
                 });
             }else{
                 mui.alert(result.msg);
@@ -254,7 +262,7 @@
         function createBill(){
             var remarks = $('.remarks').val();
             objBillInfo.bill_order = "{$billOrder}";
-            objBillInfo.goods_des = {$memberInfo.member}+'购买'+objBillInfo.goods;
+            objBillInfo.goods_des = "{$memberInfo.member}"+'购买'+objBillInfo.goods;
             objBillInfo.total = total;
             objBillInfo.student_id = "{$memberInfo.id}";
             objBillInfo.student = "{$memberInfo.member}";
@@ -297,6 +305,10 @@
 
         // 立即支付
         function wxpay(){
+            if(debug != 1){
+                mui.alert(debug);
+                return false;
+            }
             var strJsApiParameters = '{$jsApiParameters}';
             var objJsApiParameters = JSON.parse(strJsApiParameters);
             //创建订单

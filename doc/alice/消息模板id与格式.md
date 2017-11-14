@@ -81,6 +81,48 @@
 当前人数：10
 点击查看成员详情
 
+6. 付费活动报名成功
+ID:
+rgF4hfyPKVxeP9HSOSbmzf7iqITPB_Bo5UgGyc9j36s
+详细内容:
+{{first.DATA}}
+用户昵称：{{keyword1.DATA}}
+活动名称：{{keyword2.DATA}}
+活动时间：{{keyword3.DATA}}
+报名人数：{{keyword4.DATA}}
+支付金额：{{keyword5.DATA}}
+{{remark.DATA}}
+
+内容示例:
+亲，新用户报名参加了您发起的活动！
+用户昵称：xxx
+活动名称：神农架原始森林穿越
+活动时间：2016-08-02
+报名人数：2
+支付金额：200
+请及时查看报名详情！
+
+7. 免费活动报名成功
+模版ID
+RvMcKdoOyu5RRlT7ucXtAgF5-dOA-n3Gd61eho4k4lw
+
+详细内容
+{{first.DATA}}
+活动名称：{{keyword1.DATA}}
+活动时间：{{keyword2.DATA}}
+活动地点：{{keyword3.DATA}}
+报名详情：{{keyword4.DATA}}
+{{remark.DATA}}
+在发送时，需要将内容中的参数（{{.DATA}}内为参数）赋值替换为需要的信息
+
+内容示例
+尊敬的用户，您已成功报名该活动。
+活动名称：小桔灯户外自驾游活动
+活动时间：2017-06-14至2017-06-30
+活动地点：云台山景区
+报名详情：请查看官方公众号活动页面
+更多活动信息请关注官方微信公众号。
+
 ***
 wechatService调用
 $data = [
