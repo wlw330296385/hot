@@ -1,62 +1,43 @@
 // user
-var user_Boolean = false;
-var password_Boolean = false;
-var varconfirm_Boolean = false;
-var emaile_Boolean = false;
-var Mobile_Boolean = false;
+
 $('.reg_user').blur(function () {
-    if ((/^[a-z0-9_-]{6,15}$/).test($(".reg_user").val())) {
-        $('.user_hint').html("").css("color","green");
-        user_Boolean = true;
-    } else {
-        $('.user_hint').html("请输入6-15位的英文或数字").css("color", "red");
-        user_Boolean = false;
+    $('.validate-result span').remove('.user_yz');
+    if ((/^[a-zA-Z0-9_\u4e00-\u9fa5]{6,15}$/).test($(".reg_user").val())==false) {
+        $('.validate-result').append('<span class="user_yz">会员名只能包含英文、数字或中文，长度为6-15位</span>');
     }
 });
 // password
 $('.reg_password').blur(function () {
-    if ((/^[a-z0-9_-]{6,16}$/).test($(".reg_password").val())) {
-        $('.password_hint').html("").css("color","green");
-        password_Boolean = true;
-    } else {
-        $('.password_hint').html("请输入6-16位的密码").css("color", "red");
-        password_Boolean = false;
+    $('.validate-result span').remove('.password_yz');
+    if ((/^[a-z0-9_-]{6,16}$/).test($(".reg_password").val())==false) {
+        $('.validate-result').append('<span class="password_yz">密码长度为6-16位</span>');
     }
 });
 
 
 // password_confirm
 $('.reg_confirm').blur(function () {
-    if (($(".reg_password").val()) == ($(".reg_confirm").val())) {
-        $('.confirm_hint').html("").css("color","green");
-        varconfirm_Boolean = true;
-    } else {
-        $('.confirm_hint').html("确认密码").css("color", "red");
-        varconfirm_Boolean = false;
+    $('.validate-result span').remove('.confirm_yz');
+    if (($(".reg_password").val()) != ($(".reg_confirm").val())) {
+        $('.validate-result').append('<span class="confirm_yz">两次密码输入不一致</span>');
     }
 });
 
 
 // Email
 $('.reg_email').blur(function () {
-    if ((/^[a-z\d]+(\.[a-z\d]+)*@([\da-z](-[\da-z])?)+(\.{1,2}[a-z]+)+$/).test($(".reg_email").val())) {
-        $('.email_hint').html("✔").css("color", "green");
-        emaile_Boolean = true;
-    } else {
-        $('.email_hint').html("×").css("color", "red");
-        emaile_Boolean = false;
+    $('.validate-result span').remove('.email_yz');
+    if ((/^[a-z\d]+(\.[a-z\d]+)*@([\da-z](-[\da-z])?)+(\.{1,2}[a-z]+)+$/).test($(".reg_email").val())==false) {
+        $('.validate-result').append('<span class="email_yz">两次密码输入不一致</span>');
     }
 });
 
 
 // Mobile
 $('.reg_mobile').blur(function () {
-    if ((/^1[34578]\d{9}$/).test($(".reg_mobile").val())) {
-        $('.mobile_hint').html("").css("color","green");
-        Mobile_Boolean = true;
-    } else {
-        $('.mobile_hint').html("请输入正确的手机格式").css("color", "red");
-        Mobile_Boolean = false;
+    $('.validate-result span').remove('.mobile_yz');
+    if ((/^1[34578]\d{9}$/).test($(".reg_mobile").val())==false) {
+        $('.validate-result').append('<span class="mobile_yz">请输入正确的手机格式</span>');
     }
 });
 
