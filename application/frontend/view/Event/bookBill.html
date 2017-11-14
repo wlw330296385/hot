@@ -77,25 +77,25 @@
                     <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
                     <div class="mui-input-row">
                         <label>报名人数</label>
-                        <input type="text" name="participator" value="" class="eventNum data" readonly>
+                        <input type="text" name="participator" value="" class="eventNum" readonly>
                     </div>
                     <div class="mui-input-row">
                     <a href="#student" id="setStudentCBox" class="mui-navigate-right" style="display: flex">
                         <label>选择参与人员</label>
-                        <span class="studentCont students domData" name="student_str"></span>
+                        <span class="studentCont" name="student_str" >{$memberInfo.member}</span>
                     </a>
                     </div>
                     <div class="mui-input-row">
                         <label>联系人</label>
-                        <input type="text" name="contract" class="data" value="{$eventInfo.member}">
+                        <input type="text" name="linkman" class="data" value="{$eventInfo.member}">
                     </div>
                     <div class="mui-input-row">
                         <label>联系电话</label>
-                        <input type="text" name="telephone" class="data" value="{$memberInfo.telephone}">
+                        <input type="text" name="contact" class="data" value="{$memberInfo.telephone}">
                     </div>
                     <div class="mui-input-row">
                         <label>备注</label>
-                        <textarea rows="2" name="event_des" class="data" value="" placeholder="备注信息填写"></textarea>
+                        <textarea rows="2" name="remarks" class="data" value="" placeholder="备注信息填写"></textarea>
                     </div>
 
                 </div>
@@ -136,7 +136,10 @@
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <form id="newdiv" class="mui-input-group">
-                    <div class="mui-input-row mui-checkbox mui-left"><label>{$memberInfo.member}</label><input name="checkbox-student" class="student" value="{$memberInfo.member}" type="checkbox" data-student_id="0" data-student="0" data-member="{$memberInfo.member}" data-member_id="{$memberInfo.id}"></div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>{$memberInfo.member}</label>
+                        <input name="" class="student" value="{$memberInfo.member}" type="checkbox" data-student_id="0" data-student="0" data-member="{$memberInfo.member}" data-member_id="{$memberInfo.id}" checked="checked" >
+                    </div>
                 </form>
             </div>
         </div>
@@ -160,8 +163,8 @@ mui('.mui-scroll-wrapper').scroll();
 
 var total=wooApi.GetQueryString('total');
 var total_fee = "{$eventInfo.price}"*total;
-// var studentList = [{ student: "{$memberInfo.member}", student_id: 0, member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"}];
-var studentList = new Array();
+var studentList = [{ student: "{$memberInfo.member}", student_id: 0, member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"}];
+// var studentList = new Array();
 $(function () {
     $('.eventNum').val(total);
 
@@ -181,7 +184,7 @@ $(function () {
     $("#studentConfirm").on('tap', '', function () {
         var studentNames = "";
         studentList = [];
-        $("input[name='checkbox-student']:checked").each(function (i) {
+        $("input[type=checkbox]:checked").each(function (i) {
             var student_id = $(this).attr("data-student_id");
             var student = $(this).val();
             var member = $(this).attr("data-member");
@@ -190,10 +193,7 @@ $(function () {
             studentNames += student + ',';
             studentList.push(studentStr);
         });
-        $(".students").text(studentNames.substring(0, studentNames.length - 1))
-        console.log(studentList)
-        console.log(studentNames)
-
+        $(".studentCont").text(studentNames.substring(0, studentNames.length - 1))
         mui('#student').popover('toggle');
     })
 
@@ -220,16 +220,31 @@ function getStudentList(){
 
 function joinEvent(){
     var data = {};
+    console.log(studentList);
     if(studentList.length>total){
         alert('参与人员不可大于报名人数['+total+']');
         return false;
     }
+    if(studentList.length<1){
+        alert('请选择参与名单');
+        return false;
+    }
+    var arrData = wooApi.getInputData();var textareaDat = wooApi.getInputData('textarea','data',arrData);
+    console.log(textareaDat);
+    data = wooApi.arrTOobj(arrData);
+
     data.memberData = JSON.stringify(studentList);
     data.event = "{$eventInfo.event}";
-    console.log(data);
     var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
     var result = wooApi.asyncF(url+'/total/'+total,data);
     console.log(result);
+    if(result.code == 200){
+        mui.alert("您的活动已购买成功，请留意活动消息及公告。",result.msg,function(){
+            window.location.href="{:url('frontend/event/eventInfo',['event_id'=>$eventInfo['id']])}";
+        });
+    }else{
+        mui.alert(result.msg);
+    }
 }
 
 

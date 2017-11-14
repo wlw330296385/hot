@@ -227,7 +227,12 @@ class Event extends Base{
             if($res['code'] == 200){
                 if( !empty($data['memberData']) && $data['memberData'] != '[]' ){
                     $memberData = json_decode($data['memberData'],true);
-                    $result = $this->EventService->saveAllMmeber($memberData,$event_id,$data['event']);
+                    foreach ($memberData as $key => &$value) {
+                        $value['contact'] = $data['contact'];
+                        $value['linkman'] = $data['linkman'];
+                        $value['remarks'] = $data['remarks'];
+                    }
+                    $result = $this->EventService->saveAllMmeber($memberData);
                     return json($result);
                 }
             }else{
