@@ -33,6 +33,58 @@
         .hide {
             display: none;
         }
+        
+        .muicol {
+            padding: 5px 15px;
+        }
+        
+        .frame {
+            width: 100%;
+            padding: 15px 5px;
+            font-size: 14px;
+            border: 1px dashed #ddd;
+            color: #b1b0b0;
+        }
+        
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .introBox img {
+            width: 100%;
+            height: auto;
+            float: none;
+            margin: 0
+        }
+        
+        .operationDiv {
+            position: relative;
+        }
+        
+        .operationDiv .delbtn {
+            position: absolute;
+            right: 0;
+            top: 5px;
+            line-height: initial !important;
+            font-size: 12px !important;
+            color: #f00 !important;
+        }
+                
+        .operationDiv h5 {
+            padding: 10px 15px;
+            height: 40px;
+            line-height: 21px;
+            color: #000;
+            margin: 0;
+            font-weight: bold
+        }
+        
+        .operationDiv p {
+            padding: 10px 15px;
+            margin: 0;
+            color: #000;
+        }
     </style>
 </head>
 
@@ -51,7 +103,7 @@
         <div class="camp-list camp-lesson-list" style="margin-top: 4px">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
 
-            <form action="" class="mui-input-group">
+            <form action="" class="mui-input-group mt55">
 
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
@@ -164,11 +216,6 @@
                     </div>
                 </div>
 
-                <div class="mui-input-row h-auto">
-                    <label>活动简介</label>
-                    <textarea name="event_des" class="data" value=""  placeholder="请输入活动简介">{$eventInfo.event_des}</textarea>
-                </div>
-
                 <div class="mui-input-row">
                     <label>联系人</label>
                     <input type="text" name="contract" class="data" value="{$eventInfo.contract}" placeholder="请输入联系人">
@@ -179,12 +226,39 @@
                     <input type="text" name="telephone" class="data" value="{$eventInfo.telephone}" placeholder="请输入联系电话">
                 </div>
 
-                <div class="mui-input-row h-auto mt55">
+                <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>活动封面</label>
                         <img id="preview_1" class="coachicon icon01 upload-preview" alt="" src="{$eventInfo.cover}">
                         <input type="hidden" name="cover" value='{$eventInfo.cover}' class="data">
                     </a>
+                </div>
+
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="course">活动简介</span>
+                </div>
+
+                <div class="mui-input-row h-auto">
+                    <div class="mui-input-row h-auto" style="margin-bottom: 10px">
+                        <textarea name="event_des" class="data event_des" style="display: none"></textarea>
+                        <div class="introBox"></div>
+                    </div>
+                    <div class="mui-row mui-text-center">
+                        <div class="mui-col-xs-4 mui-col-sm-4 muicol">
+                            <a class="frame titleClass">添加标题</a>
+                        </div>
+                        <div class="mui-col-xs-4 mui-col-sm-4 muicol">
+                            <a class="frame textClass">添加正文</a>
+                        </div>
+                        <div class="mui-col-xs-4 mui-col-sm-4 muicol">
+                            <a class="frame imageClass">
+                                <div id="uploader-demo">
+                                    <div id="fileList" class="uploader-list"></div>
+                                    <div id="filePicker">选择图片</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
             </form>
@@ -195,7 +269,7 @@
                 </li>
             </ul>
         </div>
-        
+
     </div>
 
     <!--具体对象-->
@@ -231,6 +305,7 @@
     <script src="/static/frontend/js/city.data-3.js"></script>
     <script src="/static/frontend/js/common.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/libs/webuploader.min.js"></script>
     <script>
                                                                                                                   var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'event'])}";
     </script>
@@ -385,6 +460,78 @@
                 }
             });
 
+            //添加标题
+            $(".titleClass").on('tap', '', function () {
+                var title = '<div class="operationDiv"><span class="delbtn">删除</span><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
+                $(".introBox").append(title);
+
+            });
+
+            //添加正文
+            $(".textClass").on('tap', '', function () {
+                var text = '<div class="operationDiv"><span class="delbtn">删除</span><textarea name="" rows="3" class="mui-text-left text delClass" placeholder="请输入正文"></textarea></div>';
+                $(".introBox").append(text);
+            });
+
+
+            //添加图片
+            // 初始化Web Uploader
+            var uploader = WebUploader.create({
+                // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+                pick: '#filePicker',
+
+                // 只允许选择图片文件。
+                accept: {
+                    title: 'Images',
+                    extensions: 'gif,jpg,jpeg,bmp,png',
+                    mimeTypes: 'image/*'
+                }
+            });
+            // 当有文件添加进来的时候
+            uploader.on('fileQueued', function (file) {
+                var $li = $(
+                    '<div class="operationDiv"><span class="delbtn">删除</span>' +
+                    '<img>' +
+                    '</div>'
+                ),
+                    $img = $li.find('img');
+
+                $(".introBox").append($li);
+                uploader.makeThumb(file, function (error, src) {
+                    $img.attr('src', src);
+                });
+            });
+
+            //删除操作
+            $(document).on('tap', '.delbtn', function () {
+                $(this).parent().remove();
+            });
+
+            // 焦点离开后把内容放在h4标签里
+            $(document).on('blur', '.operationDiv input', function () {
+                $('.delbtn').remove();
+                var inputValue = '<h5>' + $(this).val() + '</h5>';
+                $(this).parent().html(inputValue)
+            });
+            // 点击时显示input框
+            $(document).on('tap', '.operationDiv h5', function () {
+                var YinputValue = '<span class="delbtn">删除</span><input type="text" name="" value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="标题">';
+                $(this).parent().html(YinputValue)
+            });
+
+
+            // 焦点离开后把内容放在p标签里
+            $(document).on('blur', '.operationDiv textarea', function () {
+                $('.delbtn').remove();
+                var textAreaValue = '<p>' + $(this).val() + '</p>';
+                $(this).parent().html(textAreaValue)
+            });
+            // 点击时显示textarea框
+            $(document).on('tap', '.operationDiv p', function () {
+                var YtextAreaValue = '<span class="delbtn">删除</span><input type="text" name="" value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="请输入正文">';
+                $(this).parent().html(YtextAreaValue)
+            });
+
             toCampMemberList();// 调用训练营身份列表
             toGradeList();//调用训练营班级列表
 
@@ -407,6 +554,11 @@
                     return;
                 };
             });
+
+            $('.delbtn').remove();
+            var totalHtml = $(".introBox").html();
+            $(".event_des").val(totalHtml);
+            console.log(totalHtml);
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
