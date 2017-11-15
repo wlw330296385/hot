@@ -30,6 +30,9 @@
 
         <div class="camp-list camp-lesson-list" style="margin-top: 4px">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+            <input type="hidden" name="organization" value="{$campInfo.camp}" class="data">
+            <input type="hidden" name="organization_id" value="{$campInfo.id}" class="data">
+            <input type="hidden" name="organization_type" value="1" class="data">
 
             <form action="" class="mui-input-group mt55">
 
@@ -51,36 +54,11 @@
                     <input type="text" name="recruitment" class="data" value="" placeholder="请输入招募名称">
                 </div>
 
-                <div class="mui-input-row">
+                <div class="mui-input-row h-auto" style="padding: 10px 0px;">
                     <label>招募人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
                         <input class="mui-input-numbox data recruit_number" type="number" name="max" value="">
-                        <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
-                    </div>
-                </div>
-
-                <div class="mui-input-row">
-                    <label>是否面议</label>
-                    <div class="mui-switch" data-switch="1" style="transition-duration: 0.2s;">
-                        <div class="mui-switch-handle" style="transition-duration: 0.2s; transform: translate(0px, 0px);"></div>
-                    </div>
-                </div>
-
-                <div class="mui-input-row">
-                    <label>薪酬范围（最少）</label>
-                    <div class="mui-numbox">
-                        <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data min" type="number" name="max" value="">
-                        <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
-                    </div>
-                </div>
-
-                <div class="mui-input-row">
-                    <label>薪酬范围（最多）</label>
-                    <div class="mui-numbox">
-                        <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data max" type="number" name="max" value="">
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
@@ -96,8 +74,33 @@
                 </div>
 
                 <div class="mui-input-row">
+                    <label>是否面议</label>
+                    <div class="mui-switch isMianyi">
+                        <div class="mui-switch-handle"></div>
+                    </div>
+                </div>
+
+                <div class="mui-input-row h-auto" style="padding: 10px 0px;">
+                    <label>薪酬（最少）</label>
+                    <div class="mui-numbox moneyNumber">
+                        <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+                        <input class="mui-input-numbox data min" type="number" name="max" value="">
+                        <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+                    </div>
+                </div>
+
+                <div class="mui-input-row h-auto" style="padding: 10px 0px;">
+                    <label>薪酬（最多）</label>
+                    <div class="mui-numbox moneyNumber">
+                        <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+                        <input class="mui-input-numbox data max" type="number" name="max" value="">
+                        <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+                    </div>
+                </div>
+
+                <div class="mui-input-row">
                     <label>截止日期</label>
-                    <input type="text" name="deadline" class="data" value="" placeholder="请输入截止日期">
+                    <input type="text" name="deadlines" class="data" value="" placeholder="请输入截止日期">
                 </div>
 
                 <div class="mui-input-row" id='showCityPicker3'>
@@ -108,8 +111,11 @@
                 </div>
 
                 <div class="mui-input-row">
-                    <label>联系人</label>
-                    <input type="text" name="contract" class="data" value="" placeholder="请输入联系人">
+                    <a href="#recruitContract" class="mui-navigate-right">
+                        <label>联系人</label>
+                        <span class="contractCont domData" name="contract"></span>
+                        <input type="hidden" name="contract_id" class="contract_id data">
+                    </a>
                 </div>
 
                 <div class="mui-input-row">
@@ -144,7 +150,11 @@
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <ul class="mui-table-view list campMemberList"></ul>
+                <ul class="mui-table-view list campMemberList">
+                    {volist name="staffList" id="vol"}
+                    <li class="mui-table-view-cell listli detalisli" data-id="{$vol.member_id}"><font class="member">{$vol.member.member}</font><span>{$vol.member.telephone} {$vol.type}</span></li>
+                    {/volist}
+                </ul>
             </div>
         </div>
     </div>
@@ -170,6 +180,19 @@
             swipeBack: true //启用右滑关闭功能
         });
 
+        mui('.mui-content .isMianyi').each(function() { //循环所有toggle
+            this.addEventListener('toggle', function(event) {
+                //event.detail.isActive 可直接获取当前状态
+//                this.parentNode.querySelector('span').innerText = '状态：' + (event.detail.isActive ? 'true' : 'false');
+                if(event.detail.isActive){
+                    $(".moneyNumber input").val("0").attr("readonly",true);
+                    $(".moneyNumber button").attr("disabled",true);
+                }else{
+                    $(".moneyNumber input").val("0").attr("readonly",false);
+                    $(".moneyNumber button").attr("disabled",false);
+                }
+            });
+        });
 
         //弹出框滚动必须写在mui专用的初始化
         (function ($) {
@@ -182,11 +205,8 @@
                 mui(".mui-popover.mui-active").popover("toggle");
             });
 
-            mui('.mui-content .mui-switch').addEventListener('toggle', function(event) {
-                //event.detail.isActive 可直接获取当前状态
-                this.parentNode.querySelector('span').innerText = '状态：' + (event.detail.isActive ? 'true' : 'false');
-            });
         })(mui);
+
 
         //选择器
         var getProvince = '';
@@ -259,58 +279,34 @@
             });
         })(mui, document);
 
+        var isMianYi = false;
         $(function () {
+
+            // 面议开关
+//            $("mui-content").on('toggle', '.isMianyi', function () {
+//                if(isMianYi){
+//                    alert("dddd");
+//                    $(".moneyNumber input").val("0").attr("readonly",false);
+//                    $(".moneyNumber button").attr("disabled",false);
+//                    isMianYi = true;
+//                }else{
+//                    $(".moneyNumber input").val("0").attr("readonly",true);
+//                    $(".moneyNumber button").attr("disabled",true);
+//                    isMianYi = false;
+//                }
+//            });
 
             // 招募联系人
             $(".campMemberList").on('tap', 'li', function () {
                 var contract = $.trim($(this).children(".member").text());
                 var contract_id = $(this).attr('data-id');
                 $(".contract_id").val(contract_id);
-                $("input[name=contract]").val(contract);
+                $(".contractCont").text(contract);
                 mui("#recruitContract").popover("toggle");
             });
 
-            // 调用训练营身份列表
-            toCampMemberList();
         })
 
-
-        //自定义获取训练营身份列表有分页
-        var toCampMemberList = function () {
-            var url = "{:url('api/camp_member/getCampMemberListApi','','',true)}";
-            var campID = "{$campInfo.id}";
-            mui.ajax({
-                url: url,
-                data: {
-                    camp_id: campID
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                //processData:false,
-                success: function (data) {
-                    console.log(data)
-                    if (data.code == 200) {
-                        var newli = '';
-                        for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli cost" data-id="' + data.data.data[i].member_id + '"><font class="member">' + data.data.data[i].member + '</font><span>' + data.data.data[i].type + '</span></li>'
-                        }
-                        $("ul.campMemberList").empty();
-                        if (newli == '') {
-                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
-                        }
-                        $("ul.campMemberList").append(newli);
-
-                    } else {
-                        mui.toast('数据获取失败,请稍候再试');
-                    }
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                }
-            });
-        };
 
         // 获取数据并进行提交
         function submitAction(all) {
@@ -323,22 +319,25 @@
             });
 
             var data = wooApi.getInputData('input', 'data');
-            datas = wooApi.getInputData('select', 'data', data);
-            // 获取其他标签值
-            arrData = wooApi.getDomData('domData', datas);
-            var objData = wooApi.arrTOobj(arrData);
-            var event_des = $('textarea.data').val();
-            objData.event_des = event_des;
-            var url = "{:url('api/event/updateRecruitmentApi')}";
+            var datas = wooApi.getInputData('select', 'data', data);
+            var datass = wooApi.getInputData('textarea','data',datas);
+            var datasss = wooApi.getDomData('domData', datass);
+            var objData = wooApi.arrTOobj(datasss);
+            console.log(objData);
+            var url = "{:url('api/recruitment/updateRecruitmentApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '招募创建成功', '确定', function () {
-                    var goUrl = "{:url('recruit/recruitmentlistOfCamp')}" + '/recruitment_id/' + ajaxResult.data;
+                    var goUrl = "{:url('recruitment/recruitmentInfoOfCamp')}" + '/recruitment_id/' + ajaxResult.data;
                     window.top.location.href = goUrl;
                 })
             } else {
                 mui.alert(ajaxResult.msg, '招募创建失败', '确定', function () {
-
+                    mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                        if (data.code === 200) {
+                            $('input[name=__token__]').val(data.data);
+                        }
+                    }, 'json');
                 })
             }
         };
