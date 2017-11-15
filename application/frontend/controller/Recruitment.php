@@ -48,7 +48,7 @@ class Recruitment extends Base{
         }
         //获取员工列表
         $CampMember = new \app\model\CampMember;
-        $staffList = $CampMember::with('member')->where(['camp_id'=>$organization_id,'status'=>1])->select();
+        $staffList = $CampMember::with('member')->where(['camp_id'=>$organization_id,'status'=>1,'delete_time'=>'null','type'=>['gt',2]])->select();
         
         $this->assign('staffList',$staffList->toArray());
         $this->assign('recruitmentInfo',$recruitmentInfo);
