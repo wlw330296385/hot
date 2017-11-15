@@ -68,7 +68,7 @@ class Recruitment extends Base{
         $recruitment_id = input('recruitment_id');
         $recruitmentInfo = $this->RecruitmentService->getRecruitmentInfo(['id'=>$recruitment_id]);
         // 判断权限
-        $power = $this->RecruitmentService->isPower($recruitmentInfo['organization_id'],$member_id);
+        $power = $this->RecruitmentService->isPower($recruitmentInfo['organization_id'],$this->memberInfo['id']);
 
         $this->assign('power',$power);
         $this->assign('recruitmentInfo',$recruitmentInfo);
