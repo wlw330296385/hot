@@ -137,6 +137,9 @@ class Recruitment extends Base{
                     $data['area'] = $address[1];
                 }             
             }
+            if($data['deadlines']){
+                $data['deadline'] = strtotime($data['deadlines']);
+            }
             if($recruitment_id){
                 $result = $this->RecruitmentService->updateRecruitment($data,$recruitment_id);
             }else{
