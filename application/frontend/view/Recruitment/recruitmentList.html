@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>活动列表</title>
+    <title>招募列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -32,25 +32,23 @@
                 </select>
             </span>
             <span class="location-choise max">
-                <select id="eventType" class="data" name="event_type">
-                    <option value="">活动类型</option>
-                    <option value="团队建设">团队建设</option>
-                    <option value="校园活动">校园活动</option>
-                    <option value="亲子教育">亲子教育</option>
-                    <option value="社交娱乐">社交娱乐</option>
-                    <option value="学习交流">学习交流</option>
+                <select id="recruitmentType" class="data" name="recruitmentType">
+                    <option value="">招募类型</option>
+                    <option value="教练员">教练员</option>
+                    <option value="兼职">兼职</option>
+                    <option value="球队">球队</option>
+                    <option value="球员">球员</option>
                 </select>
             </span>
         </div>
 
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b event">
+                <ul class="mui-table-view detalis-list list border-b recruitment">
                 </ul>
             </div>
         </div>
 
-        <input type="hidden" name="eventID" class="eventID" />
 
     </div>
 
@@ -68,7 +66,7 @@
 
             //初始化全局变量
             var count = 1;
-            var sEventType = '';
+            var sRecruitType = '';
             var sArea = '';
             var keyword = wooApi.GetQueryString('keyword');
             $('.keyword').val(keyword);
@@ -83,7 +81,7 @@
             $('.location').text(sCity);
             if (campName != '' && campName != null) {
                 $('.location').text(campName);
-                $('.keyword').attr('placeholder', '请输入' + campName + '活动名称');
+                $('.keyword').attr('placeholder', '请输入' + campName + '招募名称');
                 $("#areaSelect").parent().hide();
             }
 
@@ -101,8 +99,8 @@
                 searchToList();
             })
             //选择活动类型下拉
-            $("#eventType").on("change", function () {
-                sEventType = $(this).find("option:checked").val();
+            $("#recruitmentType").on("change", function () {
+                sRecruitType = $(this).find("option:checked").val();
                 searchToList();
             });
             //选择地区下拉
@@ -164,8 +162,7 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType, campID) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/event/searchEventApi','','',true)}";
-                var target_type = "{$target_type}";
+                var url = "{:url('api/recruitment/searchRecruitmentTypeApi','','',true)}";
                 mui.ajax({
                     url: url,
                     data: {
@@ -173,10 +170,9 @@
                         province: sProvince,
                         city: sCity,
                         area: sArea,
-                        event_type: sEventType,
+                        event_type: sRecruitType,
                         camp_id: campID,
-                        keyword: keyword,
-                        target_type: target_type
+                        keyword: keyword
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -196,7 +192,7 @@
                                 var month = d.getMonth() + 1
                                 var year = d.getFullYear()
                                 var time = year + "-" + month + "-" + day + "-" + hours + minutes + ":" + seconds;
-                                var urls = "{:url('event/eventInfo')}" + '/event_id/' + data.data[i].id;
+                                var urls = "{:url('recruitment/recruitmentInfo')}" + '/recruitment_id/' + data.data[i].id;
                                 if (data.data[i].status != "下架") {
                                     newli += '<li class="mui-table-view-cell mui-media listli">'
                                     newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd60">' + data.data[i].event + '';
@@ -220,15 +216,15 @@
                         }
                         if (gType == 1) {
                             //上拉刷新
-                            $("ul.event").empty().append(newli);
+                            $("ul.recruitment").empty().append(newli);
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.event").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
+                                $("ul.recruitment").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
                             }
                         } else {
                             //下拉加载 gType==2
-                            $("ul.event").append(newli);
+                            $("ul.recruitment").append(newli);
                         }
                         if (newli != '') {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
