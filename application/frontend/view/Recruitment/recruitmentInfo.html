@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>招募详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .show {
+            display: block;
+        }
+        
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class=whitebg>
+
+    <header id="header" class="mui-bar mui-bar-transparent">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+    <!--招募详情页-->
+    <div class="mui-content" style="padding: 0">
+        <div class="list camp-list detalis-list">
+            <div class="img4x3" style="background-image:url('{$eventInfo.cover}')"></div>
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                    <a href="javascript:;">
+                        <div class="mui-media-body wd52">
+                            <strong>{$recruitInfo.recruitment}</strong>
+                            <p class="mui-ellipsis">{$recruitInfo.recruitment_type}</p>
+                        </div>
+                        <div class="price-frame">
+                            <p class="price">￥{$recruitInfo.min}-{$recruitInfo.max}<span class="nofloat"> / 人</span></p>
+                            <p class="price"><span class="nofloat">已报名{$recruitInfo.participator}人</span></p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+            <ul class="mui-table-view mt55">
+                <input type="hidden" name="target_type" value="{$recruitInfo.target_type}">
+                <li class="mui-table-view-cell listli">所属训练营<span>{$recruitInfo.camp}</span></li>
+                <li class="mui-table-view-cell listli">招募人数<span>{$recruitInfo.number}</span></li>
+                <li class="mui-table-view-cell listli">薪资范围<span>{$recruitInfo.min}-{$recruitInfo.max}元</span></li>
+                <li class="mui-table-view-cell listli">招募简介<span>{$recruitInfo.recruitment_des}</span></li>
+                <li class="mui-table-view-cell listli">招募要求<span>{$recruitInfo.yaoqiu}</span></li>
+                <li class="mui-table-view-cell listli">截至日期<span>{$recruitInfo.deadline}</span></li>
+                <li class="mui-table-view-cell listli">所属地区<span>{$recruitInfo.province} {$recruitInfo.city} {$recruitInfo.area}</span></li>
+                <li class="mui-table-view-cell listli">联系人<span>{$recruitInfo.contract}</span></li>
+                <li class="mui-table-view-cell listli">联系电话<span>{$recruitInfo.telephone}</span></li>
+            </ul>
+            {switch name="variable"} {case value='1'}
+            <!--报名状态-->
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><a href="tel:{$recruitInfo.telephone}"><span
+                    class="mui-icon mui-icon-phone"></span>电话咨询</a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen signupbtn">我要报名</li>
+            </ul>
+            {/case} {case value='2'}
+            <!--已过期-->
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">已过期</li>
+            </ul>
+            {/case} {/switch}
+        </div>
+    </div>
+
+
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        $(function () {
+            var surplus = "{$eventInfo.max}" - "{$eventInfo.participator}";
+            $(".surplus").text(surplus)
+
+            //报名活动
+            $('.signupbtn').on('tap', '', function () {
+
+                var mID = "{$memberInfo.id}";
+                if (mID <= 0) {
+                    var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+                    mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', btnArray);
+                }else{
+                    var btnArray = ['确定', '取消'];
+                    var addForm = '<div class="mui-popup-input"><input type="number" name="participator" class="data" placeholder="请输入报名人数" autofocus=""></div>'
+                    mui.confirm(addForm, '报名人数', btnArray, function (e) {
+                        if (e.index == 0) {
+                            var eventTotal = $("input[name=participator]").val();
+                            if(!(/^[0-9]*$/).test(eventTotal) || eventTotal=='') {
+                                mui.toast("请输入正确数字");
+                                return false;
+                            }
+                            var isfree = "{$eventInfo.is_free}";
+                            if(isfree==1){
+                                buyUrl = "{:url('event/bookBill',['event_id'=>$eventInfo['id']])}";
+                            }else{
+                                buyUrl = "{:url('event/comfirmBill',['event_id'=>$eventInfo['id']])}";
+                            }
+                            window.location.href = buyUrl + '?total=' + eventTotal;
+                        }
+                    });
+                }
+
+
+            })
+        });
+    </script>
+</body>
+
+</html>
