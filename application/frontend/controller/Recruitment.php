@@ -25,7 +25,6 @@ class Recruitment extends Base{
         $campInfo = db('camp')->where(['id'=>$organization_id])->find();
          // 判读权限
         $power = $this->RecruitmentService->isPower($campInfo['id'],$this->memberInfo['id']);
-        $power = $this->RecruitmentService->isPower($organization_id,$this->memberInfo['id']);
         if($power < 2){
             $this->error('您没有权限');
         }
@@ -34,6 +33,7 @@ class Recruitment extends Base{
         $staffList = $CampMember::with('member')->where(['camp_id'=>$organization_id,'status'=>1,'type'=>['gt',2]])->where('delete_time','null')->select();
         // dump($staffList->toArray());die;
         $this->assign('staffList',$staffList->toArray());
+
         $this->assign('campInfo',$campInfo);
     	return view('Recruitment/createRecruitment');
     }
@@ -68,7 +68,7 @@ class Recruitment extends Base{
         $recruitment_id = input('recruitment_id');
         $recruitmentInfo = $this->RecruitmentService->getRecruitmentInfo(['id'=>$recruitment_id]);
         // 判断权限
-        $power = $this->RecruitmentService->isPower($organization_id,$member_id);
+        $power = $this->RecruitmentService->isPower($recruitmentInfo['organization_id'],$member_id);
 
         $this->assign('power',$power);
         $this->assign('recruitmentInfo',$recruitmentInfo);
