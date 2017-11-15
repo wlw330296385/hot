@@ -25,7 +25,7 @@ class Recruitment extends Base{
         $campInfo = db('camp')->where(['id'=>$organization_id])->find();
          // 判读权限
         $power = $this->RecruitmentService->isPower($campInfo['id'],$this->memberInfo['id']);
-        $power = $CampService->isPower($organization_id,$this->memberInfo['id']);
+        $power = $this->RecruitmentService->isPower($organization_id,$this->memberInfo['id']);
         if($power < 2){
             $this->error('您没有权限');
         }
@@ -78,7 +78,7 @@ class Recruitment extends Base{
     // 普通招募列表
     public function recruitmentList(){
         $member_id = $this->memberInfo['id'];
-                
+
         return view('Recruitment/recruitmentList');
     }
 
