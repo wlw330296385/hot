@@ -101,8 +101,8 @@ class RecruitmentService{
 
 
      // 获取参与者列表
-     public function getRecruitmentMemberList($recruitment_id,$page = 1,$paginate = 10){
-        $result = RecruitmentMember::where(['recruitment_id'=>$recruitment_id,'status'=>1])
+     public function getRecruitmentMemberList($map,$page = 1,$paginate = 10){
+        $result = RecruitmentMember::where($map)
                 // ->page($page,$paginate)
                 ->select();
         if($result){
@@ -201,9 +201,9 @@ class RecruitmentService{
         if($result){
             $res = $this->RecruitmentModel->where(['id'=>$recruitment_id])->setInc('participator',$total);
             // 更改状态
-            if($recruitmentInfo['max'] <= ($recruitmentInfo['participator']+$total)){
-                $this->RecruitmentModel->save(['is_max'=>-1],['id'=>$recruitment_id]); 
-            }
+            // if($recruitmentInfo['max'] <= ($recruitmentInfo['participator']+$total)){
+            //     $this->RecruitmentModel->save(['is_max'=>-1],['id'=>$recruitment_id]); 
+            // }
             return ['msg'=>"报名成功", 'code' => 200];
         }else{
             return ['msg'=>"报名失败", 'code' => 100];

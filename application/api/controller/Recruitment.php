@@ -200,5 +200,19 @@ class Recruitment extends Base{
         }
     }
 
+    // 获取响应人名单
+    public function getRecruitmentMemberListNoPageApi(){
+        try{
+            $map = input('post.');
+            $result = $this->RecruitmentService->getRecruitmentMemberList($map);
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'无数据']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
 }

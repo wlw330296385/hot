@@ -69,7 +69,7 @@ class Recruitment extends Base{
         $recruitmentInfo = $this->RecruitmentService->getRecruitmentInfo(['id'=>$recruitment_id]);
         // 判断权限
         $power = $this->RecruitmentService->isPower($recruitmentInfo['organization_id'],$this->memberInfo['id']);
-
+        // dump($recruitmentInfo);die;
         $this->assign('power',$power);
         $this->assign('recruitmentInfo',$recruitmentInfo);
         return view('Recruitment/recruitmentInfoOfCamp');
