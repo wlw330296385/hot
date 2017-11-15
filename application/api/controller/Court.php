@@ -230,7 +230,7 @@ class Court extends Base{
         try{
             $court_id = input('param.court_id');
             $status = input('param.status',1);
-            $result = Db::view('court_camp','court_id,camp_id')
+            $result = Db::view('court_camp','court_id,camp_id,status')
                     ->view('camp','*','camp.id = court_camp.camp_id')
                     ->where(['court_camp.court_id'=>$court_id])
                     ->where(['court_camp.status'=>$status])
