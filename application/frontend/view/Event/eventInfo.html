@@ -19,6 +19,67 @@
         .hide {
             display: none;
         }
+
+        .intro {
+            padding: 0 !important;
+        }
+        
+        .intro img {
+            padding: 10px 15px;
+            width: 100%;
+            height: auto;
+        }
+        
+        .muicol {
+            margin: 5px 13px;
+        }
+        
+        .frame {
+            width: 100%;
+            padding: 15px 5px;
+            font-size: 14px;
+            border: 1px dashed #ddd;
+            color: #b1b0b0;
+        }
+        
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .introBox img {
+            width: 100%;
+            height: auto;
+            float: none;
+            margin: 0
+        }
+        
+        .operationDiv {
+            position: relative;
+        }
+        
+        .operationDiv .delbtn {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            line-height: initial !important;
+            font-size: 18px !important;
+        }
+        
+        .operationDiv h5 {
+            padding: 10px 15px;
+            height: 40px;
+            line-height: 21px;
+            color: #000;
+            margin: 0;
+            font-weight: bold
+        }
+        
+        .operationDiv p {
+            padding: 10px 15px;
+            margin: 0;
+            color: #000;
+        }
     </style>
 </head>
 
@@ -57,19 +118,18 @@
                 <li class="mui-table-view-cell listli">人数范围<span>{$eventInfo.min}-{$eventInfo.max}人</span></li>
                 <li class="mui-table-view-cell listli">联系人<span>{$eventInfo.contract}</span></li>
                 <li class="mui-table-view-cell listli">联系电话<span>{$eventInfo.telephone}</span></li>
-                <!--<li class="mui-table-view-cell listli detalisli" style="line-height:40px;">参加人员
-                    <span class="mui-navigate-right wd73 " id="coachlist" style="height: 40px;overflow: hidden">
-                        <img class="coachicon" src="/static/frontend/images/2.jpg">
-                    </span>
-                </li>-->
-                <li class="mui-table-view-cell listli border-b">活动简介<span>{$eventInfo.event_des}</span></li>
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="course">活动简介</span>
+                </div>
+                <li class="mui-table-view-cell listli intro">{$eventInfo.event_des}</li>
             </ul>
             {switch name="variable"} {case value='1'}
             <!--报名状态-->
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli"><a href="tel:{$eventInfo.telephone}"><span
                     class="mui-icon mui-icon-phone"></span>电话咨询</a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-5 opli ">剩余<font class="surplus colororange"></font>个名额</li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-5 opli ">剩余
+                    <font class="surplus colororange"></font>个名额</li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 opli bggreen signupbtn">报名</li>
             </ul>
             {/case} {case value='3'}
@@ -114,20 +174,20 @@
                 if (mID <= 0) {
                     var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
                     mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', btnArray);
-                }else{
+                } else {
                     var btnArray = ['确定', '取消'];
                     var addForm = '<div class="mui-popup-input"><input type="number" name="participator" class="data" placeholder="请输入报名人数" autofocus=""></div>'
                     mui.confirm(addForm, '报名人数', btnArray, function (e) {
                         if (e.index == 0) {
                             var eventTotal = $("input[name=participator]").val();
-                            if(!(/^[0-9]*$/).test(eventTotal) || eventTotal=='') {
+                            if (!(/^[0-9]*$/).test(eventTotal) || eventTotal == '') {
                                 mui.toast("请输入正确数字");
                                 return false;
                             }
                             var isfree = "{$eventInfo.is_free}";
-                            if(isfree==1){
+                            if (isfree == 1) {
                                 buyUrl = "{:url('event/bookBill',['event_id'=>$eventInfo['id']])}";
-                            }else{
+                            } else {
                                 buyUrl = "{:url('event/comfirmBill',['event_id'=>$eventInfo['id']])}";
                             }
                             window.location.href = buyUrl + '?total=' + eventTotal;
