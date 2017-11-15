@@ -1,7 +1,7 @@
 <?php 
 namespace app\common\validate;
 use think\Validate;
-class GradeVal extends Validate{
+class RecruitmentVal extends Validate{
 	protected $rule = [
         'recruitment'  =>  'require|max:60|token',
         'member_id'	=> 'require',
