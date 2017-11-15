@@ -210,7 +210,7 @@ class Court extends Base{
     }
 
 
-    // 获取courtcamp一条记录
+    // 获取courtcamp列表
     public function getCourtCampListOfPageApi(){
         try{
             $map = input('post.');
@@ -225,5 +225,22 @@ class Court extends Base{
         }
     }
 
+    // 获取courtcamp记录(无page无分页)
+    public function getCourtCampListNoPageApi(){
+        try{
+            $court_id = input('param.court_id');
+            $result = Db::view('court_camp','court_id,camp_id')
+                    ->view('camp','*','camp.id = court_camp.camp_id')
+                    ->where(['court_camp.court_id'=>$court_id])
+                    ->select();
+            if($result){
+                return json(['code'=>200,'msg'=>'请求成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'请求成功','data'=>$result]);
+            }
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
 }
