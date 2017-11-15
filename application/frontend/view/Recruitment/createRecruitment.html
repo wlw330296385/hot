@@ -58,7 +58,7 @@
                     <label>招募人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data recruit_number" type="number" name="max" value="">
+                        <input class="mui-input-numbox data" type="number" name="recruit_number" value="">
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
@@ -75,32 +75,26 @@
 
                 <div class="mui-input-row">
                     <label>是否面议</label>
-                    <div class="mui-switch isMianyi">
+                    <div class="mui-switch isNegotiated">
                         <div class="mui-switch-handle"></div>
                     </div>
                 </div>
 
-                <div class="mui-input-row h-auto" style="padding: 10px 0px;">
+                <div class="mui-input-row">
                     <label>薪酬（最少）</label>
-                    <div class="mui-numbox moneyNumber">
-                        <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data min" type="number" name="max" value="">
-                        <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
-                    </div>
-                </div>
-
-                <div class="mui-input-row h-auto" style="padding: 10px 0px;">
-                    <label>薪酬（最多）</label>
-                    <div class="mui-numbox moneyNumber">
-                        <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data max" type="number" name="max" value="">
-                        <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
-                    </div>
+                    <input class="data min" type="number" name="min" value="" placeholder="填写最低薪资">
                 </div>
 
                 <div class="mui-input-row">
-                    <label>截止日期</label>
-                    <input type="text" name="deadlines" class="data" value="" placeholder="请输入截止日期">
+                    <label>薪酬（最多）</label>
+                    <input class="data max" type="number" name="max" value="" placeholder="填写最高薪资">
+                </div>
+
+                <div class="mui-input-row picker btnStart" id="demo3" data-options='{"type":"date","beginYear":2017,"endYear":2050}'>
+                    <div class="mui-navigate-right">
+                        <label>截止日期</label>
+                        <span id="resultStart" class="ui-alert domData" name="deadlines"></span>
+                    </div>
                 </div>
 
                 <div class="mui-input-row" id='showCityPicker3'>
@@ -113,8 +107,8 @@
                 <div class="mui-input-row">
                     <a href="#recruitContract" class="mui-navigate-right">
                         <label>联系人</label>
-                        <span class="contractCont domData" name="contract"></span>
-                        <input type="hidden" name="contract_id" class="contract_id data">
+                        <span class="contactCont domData" name="contact"></span>
+                        <input type="hidden" name="contract_id" class="contact_id data">
                     </a>
                 </div>
 
@@ -130,7 +124,6 @@
                         <input type="hidden" name="cover" value='' class="data">
                     </a>
                 </div>
-
 
             </form>
 
@@ -152,7 +145,7 @@
             <div class="mui-scroll">
                 <ul class="mui-table-view list campMemberList">
                     {volist name="staffList" id="vol"}
-                    <li class="mui-table-view-cell listli detalisli" data-id="{$vol.member_id}"><font class="member">{$vol.member.member}</font><span>{$vol.member.telephone} {$vol.type}</span></li>
+                    <li class="mui-table-view-cell listli detalisli" data-id="{$vol.member_id}"><font class="member">{$vol.member.member}</font><span>{$vol.member.telephone}</span></li>
                     {/volist}
                 </ul>
             </div>
@@ -180,16 +173,18 @@
             swipeBack: true //启用右滑关闭功能
         });
 
-        mui('.mui-content .isMianyi').each(function() { //循环所有toggle
+        mui('.mui-content .isNegotiated').each(function() { //循环所有toggle
             this.addEventListener('toggle', function(event) {
-                //event.detail.isActive 可直接获取当前状态
-//                this.parentNode.querySelector('span').innerText = '状态：' + (event.detail.isActive ? 'true' : 'false');
                 if(event.detail.isActive){
-                    $(".moneyNumber input").val("0").attr("readonly",true);
-                    $(".moneyNumber button").attr("disabled",true);
+                    $("input.min").val("0");
+                    $("input.max").val("0");
+                    $("input.min").prop("readonly",true);
+                    $("input.max").prop("readonly",true);
                 }else{
-                    $(".moneyNumber input").val("0").attr("readonly",false);
-                    $(".moneyNumber button").attr("disabled",false);
+                    $("input.min").val("");
+                    $("input.max").val("");
+                    $("input.min").prop("readonly",false);
+                    $("input.max").prop("readonly",false);
                 }
             });
         });
@@ -259,49 +254,19 @@
                     }, false);
                 });
 
-                //结束时间
-                var resultEnd = $('#resultEnd')[0];
-                var btnEnd = $('.btnEnd');
-                btnEnd.each(function (i, btn) {
-                    btn.addEventListener('tap', function () {
-                        var optionsJson = this.getAttribute('data-options') || '{}';
-                        var options = JSON.parse(optionsJson);
-                        var id = this.getAttribute('id');
-                        var picker = new $.DtPicker(options);
-
-                        picker.show(function (rs) {
-                            resultEnd.innerText = rs.text;
-                            picker.dispose();
-                        });
-                    }, false);
-                });
-
             });
         })(mui, document);
 
-        var isMianYi = false;
         $(function () {
-
-            // 面议开关
-//            $("mui-content").on('toggle', '.isMianyi', function () {
-//                if(isMianYi){
-//                    alert("dddd");
-//                    $(".moneyNumber input").val("0").attr("readonly",false);
-//                    $(".moneyNumber button").attr("disabled",false);
-//                    isMianYi = true;
-//                }else{
-//                    $(".moneyNumber input").val("0").attr("readonly",true);
-//                    $(".moneyNumber button").attr("disabled",true);
-//                    isMianYi = false;
-//                }
-//            });
 
             // 招募联系人
             $(".campMemberList").on('tap', 'li', function () {
-                var contract = $.trim($(this).children(".member").text());
-                var contract_id = $(this).attr('data-id');
-                $(".contract_id").val(contract_id);
-                $(".contractCont").text(contract);
+                var contact = $.trim($(this).children(".member").text());
+                var contact_id = $(this).attr('data-id');
+                var tel = $(this).find('span').text();
+                $(".contactCont").text(contact);
+                $(".contact_id").val(contact_id);
+                $(".telephoneBlur").val(tel);
                 mui("#recruitContract").popover("toggle");
             });
 
@@ -311,12 +276,19 @@
         // 获取数据并进行提交
         function submitAction(all) {
 
-            $(".telephoneBlur").blur(function () {
-                if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
-                    mui.alert("请输入正确的手机格式");
-                    return;
-                };
-            });
+            if ($(".isNegotiated").hasClass("mui-active")==false) {
+                var vMin = $("input[name=min]").val();
+                var vMax = $("input[name=max]").val();
+                if ((/^\+?[1-9]\d*$/).test(vMin)==false||(/^\+?[1-9]\d*$/).test(vMax)==false) {
+                    mui.alert("请输入正确的薪资范围");
+                    return false;
+                }
+            };
+
+            if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
+                mui.alert("请输入正确的手机格式");
+                return false;
+            };
 
             var data = wooApi.getInputData('input', 'data');
             var datas = wooApi.getInputData('select', 'data', data);
