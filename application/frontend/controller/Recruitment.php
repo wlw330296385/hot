@@ -22,38 +22,19 @@ class Recruitment extends Base{
 
     public function createRecruitment(){
     	$organization_id = input('param.organization_id');
-        $lesson_id = input('param.lesson_id');
         $campInfo = db('camp')->where(['id'=>$organization_id])->find();
          // 判读权限
-        $CampService = new \app\service\CampService;
+        $power = $this->RecruitmentService->isPower($campInfo['id'],$this->memberInfo['id']);
         $power = $CampService->isPower($organization_id,$this->memberInfo['id']);
         if($power < 2){
             $this->error('您没有权限');
         }
-
-        // 课程列表
-        $lessonList = db('lesson')->where(['organization_id'=>$organization_id,'status'=>1])->where('delete_time','null')->select();
         //获取招募类型
         $recruitmentcateList = $this->RecruitmentService->getRecruitmentCategory();
         //获取员工列表
         $staffList = db('camp_member')->where(['organization_id'=>$organization_id,'status'=>1])->select();
-        // 教练列表
-        $coachlist = db('camp_member')->where(['organization_id'=>$organization_id,'status'=>1, 'type' => 2])->select();
-        //场地列表
-        $courtService = new \app\service\CourtService;
-        //$courtList = $courtService->getCourtList(['organization_id'=>$organization_id,'status'=>1]);
-        $courtList = $courtService->getCourtListOfCamp(['organization_id'=>$organization_id]);
-        // 教案列表
-        $PlanService = new \app\service\PlanService;
-        $planList = $PlanService->getPlanList(['organization_id'=>$organization_id,'type'=>1]);
-        $this->assign('delete_time',time());
-        $this->assign('lessonList',$lessonList);
-        $this->assign('planList',$planList);
-        $this->assign('courtList',$courtList);
-        $this->assign('courtListJson',json_encode($courtList));
+        
         $this->assign('staffList',$staffList);
-        $this->assign('coachlist', $coachlist);
-        $this->assign('recruitmentcateList',$recruitmentcateList);
         $this->assign('campInfo',$campInfo);
     	return view('Recruitment/createRecruitment');
     }
@@ -97,7 +78,7 @@ class Recruitment extends Base{
     // 普通招募列表
     public function recruitmentList(){
         $member_id = $this->memberInfo['id'];
-        $organization_id = input('param.organization_id');
+                
         return view('Recruitment/recruitmentList');
     }
 
