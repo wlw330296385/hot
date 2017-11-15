@@ -29,8 +29,6 @@ class Recruitment extends Base{
         if($power < 2){
             $this->error('您没有权限');
         }
-        //获取招募类型
-        $recruitmentcateList = $this->RecruitmentService->getRecruitmentCategory();
         //获取员工列表
         $staffList = db('camp_member')->where(['organization_id'=>$organization_id,'status'=>1])->select();
         
