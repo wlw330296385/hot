@@ -30,9 +30,10 @@ class Recruitment extends Base{
             $this->error('您没有权限');
         }
         //获取员工列表
-        $staffList = db('camp_member')->where(['camp_id'=>$organization_id,'status'=>1])->select();
-        
-        $this->assign('staffList',$staffList);
+        $CampMember = new \app\model\CampMember;
+        $staffList = $CampMember::with('member')->where(['camp_id'=>$organization_id,'status'=>1])->select();
+
+        $this->assign('staffList',$staffList->toArray());
         $this->assign('campInfo',$campInfo);
     	return view('Recruitment/createRecruitment');
     }
@@ -46,9 +47,10 @@ class Recruitment extends Base{
             $this->error('您没有权限');
         }
         //获取员工列表
-        $staffList = db('camp_member')->where(['camp_id'=>$recruitmentInfo['organization_id'],'status'=>1])->select();
-        $this->assign('delete_time',time());
-        $this->assign('staffList',$staffList);
+        $CampMember = new \app\model\CampMember;
+        $staffList = $CampMember::with('member')->where(['camp_id'=>$organization_id,'status'=>1])->select();
+        
+        $this->assign('staffList',$staffList->toArray());
         $this->assign('recruitmentInfo',$recruitmentInfo);
     	return view('Recruitment/updateRecruitment');
     }
