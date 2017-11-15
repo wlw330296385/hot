@@ -11,9 +11,12 @@ class SalaryIn extends Model{
 
 
     public function getMemberTypeAttr($value){
-    	$arr = [4=>'教练',3=>'副教练',5=>'机构'];
+    	$arr = [4=>'主教练',3=>'助教练',5=>'训练营营主'];
     	return $arr[$value];
     }
 
+    public function schedule() {
+        return $this->hasOne('schedule', 'id', 'schedule_id', [] ,'left join');
+    }
 }
 

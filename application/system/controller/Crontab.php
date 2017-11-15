@@ -25,62 +25,94 @@ class Crontab extends Controller {
         // 上级会员收入提成(90%*5%,90%*3%)
         list($start, $end) = Time::today();
         $map['status'] = 1;
-        $map['create_time'] = ['between', [$start, $end]];
+        //$map['create_time'] = ['between', [$start, $end]];
         $map['is_settle'] = 0;
         Db::name('schedule')->where($map)->chunk(50, function($schedules) {
             foreach ($schedules as $schedule) {
-//                dump($schedule);
+                // 课时正式学员人数
+                $numScheduleStudent = count(unserialize($schedule['student_str']));
+
                 $lesson = $lesson = Db::name('lesson')->where('id', $schedule['lesson_id'])->find();
-//                dump($lesson);
-                // 课时收入
-                $incomeSchedule = ($lesson['cost'] * $schedule['students']) * (1-$this->setting['sysrebate']);
-                //dump($scheduleIncome);
-                $coachMember = $this->getCoachMember($schedule['coach_id']);
-                //dump($coachMember);
-                // 主教练薪资
-                $incomeCoach = [
-                    'salary' => $schedule['coach_salary'],
-                    'member_id' => $coachMember['member']['id'],
-                    'member' => $coachMember['member']['member'],
-                    'realname' => $coachMember['coach'],
-                    'member_type' => 4,
-                    'pid' => $coachMember['member']['pid'],
-                    'level' => $coachMember['member']['level'],
-                    'lesson_id' => $schedule['lesson_id'],
-                    'lesson' => $schedule['lesson'],
-                    'grade_id' => $schedule['grade_id'],
-                    'grade' => $schedule['grade'],
-                    'camp_id' => $schedule['camp_id'],
-                    'camp' => $schedule['camp'],
-                    'status' => 1,
-                    'type' => 1
-                ];
-//                dump($coachIncome);
-//                if ($schedule['assistant_id'] && $schedule['assistant_salary']) {
-                    //dump($schedule);
-//                }
-                $campMember = $this->getCampMember($schedule['camp_id']);
-                //dump($campMember);
-                $incomeCamp = [
-                    'salary' => $incomeSchedule-$schedule['coach_salary'],
-                    'member_id' => $campMember['id'],
-                    'member' => $campMember['member'],
-                    'realname' => $campMember['realname'],
-                    'member_type' => 5,
-                    'pid' => $campMember['pid'],
-                    'level' => $campMember['level'],
-                    'lesson_id' => $schedule['lesson_id'],
-                    'lesson' => $schedule['lesson'],
-                    'grade_id' => $schedule['grade_id'],
-                    'grade' => $schedule['grade'],
-                    'camp_id' => $schedule['camp_id'],
-                    'camp' => $schedule['camp'],
-                    'status' => 1,
-                    'type' => 1
-                ];
-//                dump($campIncome);
-                $this->insertSalaryIn($incomeCamp);
-                $this->insertSalaryIn($incomeCoach);
+                // 课程有未结算赠课数,  抵扣赠课课时
+                if ($lesson['unbalanced_giftschedule']) {
+                    $numGiftSchedule = ceil($numScheduleStudent/2);
+                    Db::name('lesson')->where('id', $schedule['lesson_id'])->setDec('unbalanced_giftschedule', $numGiftSchedule);
+                } else {
+                    // 课时收入
+                    $incomeSchedule = ($lesson['cost'] * $numScheduleStudent) * (1-$this->setting['sysrebate']);
+                    $coachMember = $this->getCoachMember($schedule['coach_id']);
+                    // 主教练薪资
+                    if ($schedule['coach_salary'] > 0) {
+                        $incomeCoach = [
+                            'salary' => $schedule['coach_salary'],
+                            'member_id' => $coachMember['member']['id'],
+                            'member' => $coachMember['member']['member'],
+                            'realname' => $coachMember['coach'],
+                            'member_type' => 4,
+                            'pid' => $coachMember['member']['pid'],
+                            'level' => $coachMember['member']['level'],
+                            'schedule_id' => $schedule['id'],
+                            'lesson_id' => $schedule['lesson_id'],
+                            'lesson' => $schedule['lesson'],
+                            'grade_id' => $schedule['grade_id'],
+                            'grade' => $schedule['grade'],
+                            'camp_id' => $schedule['camp_id'],
+                            'camp' => $schedule['camp'],
+                            'status' => 1,
+                            'type' => 1
+                        ];
+                        $this->insertSalaryIn($incomeCoach);
+                    }
+                    // 助教薪资
+                    $incomeAssistant = [];
+                    if (!empty($schedule['assistant_id']) && $schedule['assistant_salary'] ) {
+                        $assistantMember = $this->getAssistantMember($schedule['assistant_id']);
+                        foreach ($assistantMember as $k => $val) {
+                            $incomeAssistant[$k] = [
+                                'salary' => $schedule['assistant_salary'],
+                                'member_id' => $val['member']['id'],
+                                'member' => $val['member']['member'],
+                                'realname' => $val['coach'],
+                                'member_type' => 3,
+                                'pid' => $val['member']['pid'],
+                                'level' => $val['member']['level'],
+                                'schedule_id' => $schedule['id'],
+                                'lesson_id' => $schedule['lesson_id'],
+                                'lesson' => $schedule['lesson'],
+                                'grade_id' => $schedule['grade_id'],
+                                'grade' => $schedule['grade'],
+                                'camp_id' => $schedule['camp_id'],
+                                'camp' => $schedule['camp'],
+                                'status' => 1,
+                                'type' => 1
+                            ];
+                        }
+                        $this->insertSalaryIn($incomeAssistant, 1);
+                    }
+
+                    // 营主所得
+                    $campMember = $this->getCampMember($schedule['camp_id']);
+                    $incomeCamp = [
+                        'salary' => $incomeSchedule-$schedule['coach_salary']-$schedule['assistant_salary'],
+                        'member_id' => $campMember['member_id'],
+                        'member' => $campMember['member'],
+                        'realname' => $campMember['realname'],
+                        'member_type' => 5,
+                        'pid' => $campMember['pid'],
+                        'level' => $campMember['level'],
+                        'schedule_id' => $schedule['id'],
+                        'lesson_id' => $schedule['lesson_id'],
+                        'lesson' => $schedule['lesson'],
+                        'grade_id' => $schedule['grade_id'],
+                        'grade' => $schedule['grade'],
+                        'camp_id' => $schedule['camp_id'],
+                        'camp' => $schedule['camp'],
+                        'status' => 1,
+                        'type' => 1
+                    ];
+                    $this->insertSalaryIn($incomeCamp);
+                }
+                //Db::name('schedule')->where(['id' => $schedule['id']])->update(['update_time' => time(), 'is_settle' => 1]);
             }
         });
     }
@@ -101,10 +133,24 @@ class Crontab extends Controller {
         return $member;
     }
 
+    private function getAssistantMember($assistant_id) {
+        $assistants = unserialize($assistant_id);
+        $member = [];
+        $coachM = new Coach();
+        foreach( $assistants as $k => $assistant ) {
+            $member[$k] = $coachM->with('member')->where(['id' => $assistant])->find()->toArray();
+        }
+        return $member;
+    }
+
     // 保存收入记录
-    private function insertSalaryIn($data) {
+    private function insertSalaryIn($data, $saveAll=0) {
         $model = new \app\model\SalaryIn();
-        $execute = $model->allowField(true)->save($data);
+        if ($saveAll == 1) {
+            $execute = $model->allowField(true)->saveAll($data);
+        } else {
+            $execute = $model->allowField(true)->save($data);
+        }
         if ($execute) {
             //db('member')->where('id', $data['member_id'])->setInc('balance', $data['salary']);
             file_put_contents(ROOT_PATH.'data/salaryin/'.date('Y-m-d',time()).'.txt', json_encode(['time'=>date('Y-m-d H:i:s',time()), 'success'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND );

@@ -34,18 +34,8 @@ class Finance extends Backend {
             $map['bill_order'] = $billorder;
         }
 
-        $list = BillModel::where($map)->order('id desc')->paginate(15)->each(function($item, $key){
-//            if ($item->goods_type == "课程") {
-//                $studenttype = db('grade_member')->where([ 'camp_id' => $item->camp_id, 'lesson_id' => $item->goods_id, 'member_id' => $item->member_id ])->value('type');
-//                if ($studenttype == 1) {
-//                    $item->studenttype = '正式学员';
-//                } else {
-//                    $item->studenttype = '体验生';
-//                }
-//            }
-        });
+        $list = BillModel::where($map)->order('id desc')->paginate(15);
         //dump($list);
-//die;
         $breadcrumb = ['title' => '支付订单', 'ptitle' => '训练营'];
         $this->assign('breadcrumb', $breadcrumb);
         $this->assign('list', $list);
@@ -80,8 +70,12 @@ class Finance extends Backend {
         if ($member) {
             $map['member'] = ['like', '%'. $member .'%'];
         }
-        $list = SalaryInModel::where($map)->paginate(15);
-        //dump($list);
+        $list = SalaryInModel::with('schedule')->where($map)->order('id desc')->paginate(15)->each(function($item, $key) {
+            $item['lesson'] = db('lesson')->where(['id' => $item['lesson_id']])->find();
+            $item['schedule']['num_student'] = count( unserialize( $item['schedule']['student_str'] ) ) ;
+            return $item;
+        });
+//        dump($list->toArray());
 
         $breadcrumb = ['title' => '收入记录', 'ptitle' => '训练营'];
         $this->assign('breadcrumb', $breadcrumb);
@@ -94,10 +88,11 @@ class Finance extends Backend {
         $id = input('id', 0);
         $salaryin = SalaryInModel::where('id', $id)->find()->toArray();
         $pid = $salaryin['pid'];
-        if ($pid) {
+        //if ($pid) {
             //$salaryin['parent'] = MemberModel::where(['id' => $pid])->field(['id','member','realname'])->find()->toArray();
-            $salaryin['rebate'] = RebateModel::where(['salary_id' => $salaryin['id'], 'tier' => ['elt', 4]])->select()->toArray();
-        }
+            //$salaryin['rebate'] = RebateModel::where(['salary_id' => $salaryin['id'], 'tier' => ['elt', 4]])->select()->toArray();
+            $salaryin['rebate'] = [];
+        //}
         //dump($salaryin);
 
         $breadcrumb = ['title' => '收入详情', 'ptitle' => '训练营'];
