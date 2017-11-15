@@ -32,7 +32,7 @@ class Recruitment extends Base{
         //获取员工列表
         $CampMember = new \app\model\CampMember;
         $staffList = $CampMember::with('member')->where(['camp_id'=>$organization_id,'status'=>1,'type'=>['gt',2]])->where('delete_time','null')->select();
-        dump($staffList->toArray());die;
+        // dump($staffList->toArray());die;
         $this->assign('staffList',$staffList->toArray());
         $this->assign('campInfo',$campInfo);
     	return view('Recruitment/createRecruitment');
