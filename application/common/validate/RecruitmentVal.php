@@ -12,7 +12,6 @@ class RecruitmentVal extends Validate{
         'recruitment.token'   =>'请不要重复提交',
         'recruitment.require'  =>  '请填写班级名称',
         'member_id.require'	=> '会员信息过期,请重新登录平台',
-        
         'province.require' => '请选择所属地区',
         
     ];

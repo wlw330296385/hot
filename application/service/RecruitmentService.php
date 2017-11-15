@@ -80,7 +80,6 @@ class RecruitmentService{
          if (!$result) {
             return [ 'msg' => __lang('MSG_400'), 'code' => 100 ];
         }else{
-            db('camp')->where(['id'=>$data['camp_id']])->setInc('total_grade');
             return [ 'msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->RecruitmentModel->id];
         }
     }
