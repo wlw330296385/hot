@@ -395,7 +395,10 @@
 
             });
         })(mui, document);
-
+        function add_id(id) {
+            window.id = id;
+            console.log(window.id);
+        }
         var all = '';
         $(function () {
             // 具体对象
@@ -455,32 +458,29 @@
                 $(".introBox").append(text);
             });
 
-
-            //添加图片
+            //添加图片start·····································································
             // 初始化Web Uploader
             var uploader = WebUploader.create({
-                // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+                auto: true,
+                server: uploadApiUrl,
                 pick: '#filePicker',
-
-                // 只允许选择图片文件。
                 accept: {
                     title: 'Images',
                     extensions: 'gif,jpg,jpeg,bmp,png',
                     mimeTypes: 'image/*'
                 }
             });
-            // 当有文件添加进来的时候
-            uploader.on('fileQueued', function (file) {
-                var $li = $(
-                    '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img></div>'
-                ),
-                    $img = $li.find('img');
-
-                $(".introBox").append($li);
-                uploader.makeThumb(file, function (error, src) {
-                    $img.attr('src', src);
-                });
+            // 上传成功
+            uploader.on('uploadSuccess', function (file, responce) {
+                if (eval('responce').status == 0) {
+                    mui.toast('上传失败,请重试', { 'duration': 'long' });
+                } else {
+                    mui.toast('上传成功', { 'duration': 'long' });
+                    var $li = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img src="' + responce.path + '"></div>';
+                    $(".introBox").append($li);
+                }
             });
+            //添加图片end·····································································
 
             //删除操作
             $(document).on('tap', '.delbtn', function () {
@@ -529,7 +529,7 @@
         })
 
         // 获取数据并进行提交
-        function submitAction(all) {
+        function submitAction() {
 
             if ($("#eventPrice option:selected").text() == "收费") {
                 var price = $("input[name=price]").val();
@@ -567,9 +567,12 @@
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '活动创建失败', '确定', function () {
-
-                })
+                mui.alert(ajaxResult.msg, '创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
             }
         };
 

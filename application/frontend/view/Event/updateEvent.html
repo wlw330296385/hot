@@ -473,31 +473,29 @@
             });
 
 
-            //添加图片
+            //添加图片start·····································································
             // 初始化Web Uploader
             var uploader = WebUploader.create({
-                // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+                auto: true,
+                server: uploadApiUrl,
                 pick: '#filePicker',
-
-                // 只允许选择图片文件。
                 accept: {
                     title: 'Images',
                     extensions: 'gif,jpg,jpeg,bmp,png',
                     mimeTypes: 'image/*'
                 }
             });
-            // 当有文件添加进来的时候
-            uploader.on('fileQueued', function (file) {
-                var $li = $(
-                    '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img></div>'
-                ),
-                    $img = $li.find('img');
-
-                $(".introBox").append($li);
-                uploader.makeThumb(file, function (error, src) {
-                    $img.attr('src', src);
-                });
+            // 上传成功
+            uploader.on('uploadSuccess', function (file, responce) {
+                if (eval('responce').status == 0) {
+                    mui.toast('上传失败,请重试', { 'duration': 'long' });
+                } else {
+                    mui.toast('上传成功', { 'duration': 'long' });
+                    var $li = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img src="' + responce.path + '"></div>';
+                    $(".introBox").append($li);
+                }
             });
+            //添加图片end·····································································
 
             //删除操作
             $(document).on('tap', '.delbtn', function () {
