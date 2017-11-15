@@ -30,7 +30,7 @@ class Recruitment extends Base{
             $this->error('您没有权限');
         }
         //获取员工列表
-        $staffList = db('camp_member')->where(['organization_id'=>$organization_id,'status'=>1])->select();
+        $staffList = db('camp_member')->where(['camp_id'=>$organization_id,'status'=>1])->select();
         
         $this->assign('staffList',$staffList);
         $this->assign('campInfo',$campInfo);
