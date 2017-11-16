@@ -42,6 +42,7 @@ class Recruitment extends Base{
     public function updateRecruitment(){
     	$recruitment_id = input('param.recruitment_id');
         $recruitmentInfo = $this->RecruitmentService->getRecruitmentInfo(['id'=>$recruitment_id]);
+
         $power = $this->RecruitmentService->isPower($recruitmentInfo['organization_id'],$this->memberInfo['id']);
         if($power < 2){
             $this->error('您没有权限');

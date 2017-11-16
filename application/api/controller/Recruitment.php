@@ -127,7 +127,7 @@ class Recruitment extends Base{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-            if($data['address']){
+            if(isset($data['address'])){
                 $address = explode(' ', $data['address']);
                 $data['province'] = $address[0];
                 $data['city'] = $address[1];
@@ -137,7 +137,7 @@ class Recruitment extends Base{
                     $data['area'] = $address[1];
                 }             
             }
-            if($data['deadlines']){
+            if(isset($data['deadlines'])){
                 $data['deadline'] = strtotime($data['deadlines']);
             }
             if($recruitment_id){
