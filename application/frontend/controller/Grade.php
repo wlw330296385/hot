@@ -19,14 +19,18 @@ class Grade extends Base{
         return view('Grade/index');
     }
 
+    // 平台球队列表
+    public function teamlist() {
+        $camp_id = input('?param.camp_id');
+        $this->assign('camp_id', $camp_id);
+        return view('Grade/teamlist');
+    }
 
     // 班级主页
     public function team() {
         $grade_id = input('grade_id');
         $gradeInfo = $this->GradeService->getGradeInfo(['id'=>$grade_id]);
 
-
-        
         $this->assign('gradeInfo',$gradeInfo);
         return view('Grade/team');
     }
