@@ -43,22 +43,11 @@
             font-weight: bold;
         }
         
-        .introBox {
-            padding: 0 14px;
-        }
-        
-        .introBox img {
-            width: 100%;
-            height: auto;
-            float: none;
-            margin: 0
-        }
-        
-        .operationDiv {
+        .introBox .operationDiv {
             position: relative;
         }
         
-        .operationDiv .delbtn {
+        .introBox .operationDiv .delbtn {
             position: absolute;
             right: 15px;
             top: 10px;
@@ -66,7 +55,15 @@
             font-size: 18px !important;
         }
         
-        .operationDiv h5 {
+        .introBox .operationDiv img {
+            width: 100%;
+            height: auto;
+            float: none;
+            margin: 0;
+            padding: 0 15px;
+        }
+        
+        .introBox .operationDiv h5 {
             padding: 10px 15px;
             height: 40px;
             line-height: 21px;
@@ -75,7 +72,7 @@
             font-weight: bold
         }
         
-        .operationDiv p {
+        .introBox .operationDiv p {
             padding: 10px 15px;
             margin: 0;
             color: #000;
@@ -214,7 +211,7 @@
 
                 <div class="mui-input-row">
                     <label>联系人</label>
-                    <input type="text" name="contract" class="data" value="" placeholder="请输入联系人">
+                    <input type="text" name="contact" class="data" value="" placeholder="请输入联系人">
                 </div>
 
                 <div class="mui-input-row">
@@ -501,7 +498,7 @@
             });
             // 点击时显示input框
             $(document).on('tap', '.operationDiv h5', function () {
-                var YinputValue = '<i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="标题">';
+                var YinputValue = '<i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="title" autofocus value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="标题">';
                 $(this).parent(".operationDiv").html(YinputValue)
                 console.log(YinputValue)
             });
@@ -519,7 +516,7 @@
             });
             // 点击时显示textarea框
             $(document).on('tap', '.operationDiv p', function () {
-                var YtextAreaValue = '<i class="delbtn mui-icon mui-icon-close"></i><textarea rows="3" value="' + $(this).text() + '" class="mui-text-left text delClass" placeholder="请输入正文">' + $(this).text() + '</textarea>';
+                var YtextAreaValue = '<i class="delbtn mui-icon mui-icon-close"></i><textarea rows="3"  autofocus value="' + $(this).text() + '"  class="mui-text-left text delClass" placeholder="请输入正文">' + $(this).text() + '</textarea>';
                 $(this).parent().html(YtextAreaValue)
             });
 
@@ -535,18 +532,15 @@
                 var price = $("input[name=price]").val();
                 if (!(/^\+?[1-9]\d*$/).test(price)) {
                     mui.alert("请输入不为0的活动单价");
-                    return;
+                    return false;
                 }
             };
 
-            $(".telephoneBlur").blur(function () {
-                if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
-                    mui.alert("请输入正确的手机格式");
-                    return;
-                };
-            });
+            if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
+                mui.alert("请输入正确的手机格式");
+                return false;
+            };
 
-            // guolv()
             $('.delbtn').remove();
             var totalHtml = $(".introBox").html();
             $(".event_des").val(totalHtml);
