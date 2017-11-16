@@ -12,6 +12,13 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
+
+        .mui-popover {
+            height: 300px;
+        }
+        .mui-input-group .mui-input-row .students{
+            width:60% !important;
+        }
         .show {
             display: block;
         }
@@ -41,7 +48,7 @@
                         </div>
                         <div class="price-frame">
                             <p class="price"><span class="nofloat">已报名{$eventInfo.participator}人</span></p>
-                            <p class="price"><span class="nofloat">剩余名额</span></p>
+                            <p class="price"><span class="nofloat">剩余<font class="participator"></font>个名额</span></p>
                         </div>
                     </a>
                 </li>
@@ -70,37 +77,35 @@
                 <div id="oldStudent">
                     <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
                     <div class="mui-input-row">
+                        <label>报名人数</label>
+                        <input type="text" name="participator" value="" class="eventNum" readonly>
+                    </div>
+                    <div class="mui-input-row">
                     <a href="#student" id="setStudentCBox" class="mui-navigate-right" style="display: flex">
                         <label>选择参与人员</label>
-                        <span class="studentCont students domData" name="student_str"></span>
-                        <div id="hideStList">
-                        </div>
+                        <span class="studentCont students" name="student_str" >{$memberInfo.member}</span>
                     </a>
                     </div>
                     <div class="mui-input-row">
-                        <label>报名人数</label>
-                        <input type="text" name="participator" value="" class="eventNum data" readonly>
-                    </div>
-                    <div class="mui-input-row">
                         <label>联系人</label>
-                        <input type="text" name="contract" class="data" value="{$eventInfo.member}">
+                        <input type="text" name="linkman" class="data" value="{$memberInfo.member}">
                     </div>
                     <div class="mui-input-row">
                         <label>联系电话</label>
-                        <input type="text" name="telephone" class="data" value="{$memberInfo.telephone}">
+                        <input type="text" name="contact" class="data" value="{$memberInfo.telephone}">
                     </div>
                     <div class="mui-input-row">
                         <label>备注</label>
-                        <textarea rows="2" name="event_des" class="data" value="" placeholder="备注信息填写"></textarea>
+                        <textarea rows="2" name="remarks" class="data" value="" placeholder="备注信息填写"></textarea>
                     </div>
 
                 </div>
 
             </div>
             <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli">需要支付:<b class="colororange eventTotal">￥</b></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 opli" onclick="helpPay()">请人代付</li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 opli bggreen" onclick="wxpay()">立即支付</li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-5 opli">需要支付:<b class="colororange eventTotal">￥</b></li>
+                <!-- <li class="mui-table-view-cell mui-media mui-col-xs-4 opli" onclick="helpPay()">请人代付</li> -->
+                <li class="mui-table-view-cell mui-media mui-col-xs-7 opli bggreen" onclick="wxpay()">立即支付</li>
             </ul>
         </div>
     </div>
@@ -116,7 +121,10 @@
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <form id="newdiv" class="mui-input-group">
-
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>{$memberInfo.member}</label>
+                        <input name="" value="{$memberInfo.member}" type="checkbox" data-student_id="0" data-student="0" data-member="{$memberInfo.member}" data-member_id="{$memberInfo.id}" checked="checked" >
+                    </div>
                 </form>
             </div>
         </div>
@@ -124,64 +132,63 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
+    <!-- 选择器 -->
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
 
-
+        //弹出菜单
+        mui('.mui-scroll-wrapper').scroll();
+        var debug = 1;
         var total=wooApi.GetQueryString('total');
         var total_fee = "{$eventInfo.price}"*total;
-        var strBillInfo = '{$jsonBillInfo}';
-        var objBillInfo = JSON.parse(strBillInfo);
-
+        $('.eventTotal').text('￥'+total_fee+'元');
+        var studentList = [{ student: "{$memberInfo.member}", student_id: 0, member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"}];
+        // var studentList = new Array();
         $(function () {
-
             $('.eventNum').val(total);
-            $('.eventTotal').text("￥"+total_fee);
 
             //学员列表复选框赋值
             $("#setStudentCBox").on('tap', '', function () {
                 //每次打开先清空所有选择
                 $("input[name='checkbox-student']").prop("checked", false);
                 //然后遍历出对应所选
-                $(".stdList").each(function (i) {
-                    //var id = $(this).attr("data-id");
-                    var student_id = $(this).attr("data-student_id");
-                    //var student = $(this).attr("data-student");
+                for (var ii = 0; ii <= studentList.length - 1; ii++) {
                     $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
-                        return $(this).attr("data-student_id") == student_id
+                        return $(this).attr("data-student_id") == studentList[ii].student_id
                     }).prop("checked", true);
-                });
+                }
             });
 
             // 学员名单
             $("#studentConfirm").on('tap', '', function () {
-                var inputList = "";
                 var studentNames = "";
                 studentList = [];
-                $("input[name='checkbox-student']:checked").each(function (i) {
-//                    var id = $(this).attr("data-id");
+                $("input[type=checkbox]:checked").each(function (i) {
                     var student_id = $(this).attr("data-student_id");
                     var student = $(this).val();
-                    var camp = $(this).attr("data-camp");
-                    var camp_id = $(this).attr("data-camp_id");
-                    var lesson = $(this).attr("data-lesson");
-                    var lesson_id = $(this).attr("data-lesson_id");
                     var member = $(this).attr("data-member");
                     var member_id = $(this).attr("data-member_id");
-                    studentList[i] = { student: student, student_id: student_id, camp:camp, camp_id:camp_id, lesson:lesson, lesson_id:lesson_id, member:member, member_id:member_id}
-                    studentNames += student + ','
+                    studentStr = { student: student, student_id: student_id, member:member, member_id:member_id, event:"{$eventInfo.event}", event_id:"{$eventInfo.id}"}
+                    studentNames += student + ',';
+                    studentList.push(studentStr);
                 });
-                $(".students").text(studentNames.substring(0, studentNames.length - 1))
-                console.log(studentList)
-                console.log(studentNames)
-
-                //班级成员
-                $("input[name=students]").val(studentList.length)
+                $(".studentCont").text(studentNames.substring(0, studentNames.length - 1))
+                
+                if(studentList.length>total){
+                    alert('参与人员不可大于报名人数['+total+']');
+                    debug = '参与人员不可大于报名人数['+total+']';
+                    return false;
+                }
+                
+                debug = 1;
+                
                 mui('#student').popover('toggle');
             })
+
 
             // 获取学生数据
             getStudentList();
@@ -192,40 +199,90 @@
         function getStudentList(){
             // 获取学生列表
             var result = wooApi.asyncF("{:url('api/Student/getStudentListApi')}");
-
+            
             var div = '';
             if (result.code == 200) {
                 for (var i = 0; i <= result.data.length - 1; i++) {
-                    div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + result.data[i].student  + '</label><input name="checkbox-student" class="student" value="' + result.data[i].student + '" type="checkbox" data-student_id="' + result.data[i].student_id + '" data-student="' + result.data[i].student +'" data-camp="'+ result.data[i].camp +'" data-camp_id="'+ result.data[i].camp_id +'" data-lesson="'+ result.data[i].lesson +'" data-lesson_id="'+ result.data[i].lesson_id+'" data-member="'+ result.data[i].member +'" data-member_id="'+ result.data[i].member_id + '"></div>'
+                    div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + result.data[i].student  + '</label><input name="checkbox-student" class="student" value="' + result.data[i].student + '" type="checkbox" data-student_id="' + result.data[i].id + '" data-student="' + result.data[i].student +'" data-member="'+ result.data[i].member +'" data-member_id="'+ result.data[i].member_id + '"></div>'
                 }
-                $("#newdiv").empty();
                 $("#newdiv").append(div);
             }
 
         }
 
-
-
-       // 立即支付
-        function wxpay(){
-            //创建订单
-            var res =  createBill();
-            if(res.code == 200){
-                if (typeof WeixinJSBridge == "undefined"){
-                    if( document.addEventListener ){
-                        document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
-                    }else if (document.attachEvent){
-                        document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
-                        document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
-                    }
-                }else{
-                   onBridgeReady();
-                }
-            }else{
-                mui.alert('订单创建失败,请刷新页面或者重新登录','提示','确定',function(){
-                    location.reload();
-                })
+        function joinEvent(){
+            var data = {};
+            if(studentList.length>total){
+                alert('参与人员不可大于报名人数['+total+']');
+                return false;
             }
+            if(studentList.length<1){
+                alert('请选择参与名单');
+                return false;
+            }
+            var arrData1 = wooApi.getInputData();
+            arrData2 = wooApi.getInputData('textarea','data',arrData1);
+            objData = wooApi.arrTOobj(arrData2);
+            objData.memberData = JSON.stringify(studentList);
+            objData.event = "{$eventInfo.event}";
+            var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
+            var result = wooApi.asyncF(url+'/total/'+total,objData);
+            if(result.code == 200){
+                mui.alert("您已报名成功，请留意活动消息及公告。",result.msg,function(){
+                    window.location.href="{:url('frontend/event/eventList')}";
+                });
+            }else{
+                mui.alert(result.msg);
+            }
+        }
+
+    </script>
+
+
+
+    <script type="text/javascript">
+        wx.config({
+            // debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: {$jsapi['timestamp']},
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ',
+                'chooseWXPay'
+            ]
+        });
+        var strBillInfo = '{$jsonBillInfo}';
+        var objBillInfo = JSON.parse(strBillInfo);
+        //创建订单
+        function createBill(){
+            var remarks = $('.remarks').val();
+            objBillInfo.bill_order = "{$billOrder}";
+            objBillInfo.goods_des = "{$memberInfo.member}"+'购买'+objBillInfo.goods;
+            objBillInfo.total = total;
+            objBillInfo.student_id = "{$memberInfo.id}";
+            objBillInfo.student = "{$memberInfo.member}";
+            objBillInfo.remarks = remarks;
+            objBillInfo.balance_pay = 0;
+            var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
+            return result;
+        }
+
+        function pay(callback_str){
+            var result = wooApi.asyncF("{:url('api/Bill/payApi',['bill_order'=>$billOrder])}",{
+                'balance_pay' : total_fee,
+                'callback_str':callback_str
+            });
+
+            if(result.code == 200){
+                joinEvent();
+              }else{
+                mui.toast(result.msg);
+              }
         }
 
         // 请他人代付
@@ -246,59 +303,42 @@
             }
         }
 
-
-      function onBridgeReady(){
-        var strJsApiParameters = '{$jsApiParameters}';
-        var objJsApiParameters = JSON.parse(strJsApiParameters);
-        WeixinJSBridge.invoke(
-         'getBrandWCPayRequest', {
-                   "appId":objJsApiParameters.appId,     //公众号名称，由商户传入
-                   "timeStamp":"{:time()}",         //时间戳，自1970年以来的秒数
-                   "nonceStr":objJsApiParameters.nonceStr, //随机串
-                   "package":objJsApiParameters.package,
-                   "signType":"MD5",         //微信签名方式：
-                   "paySign":objJsApiParameters.paySign, //微信签名
-                   'payType':objJsApiParameters.payType
-                 },
-                 function(res){
-                   if(res.err_msg == "get_brand_wcpay_request:ok" ) {
-                      pay(JSON.stringify(res));
-                   }     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
-                 }
-               );
-      }
-
-
-        //创建订单
-        function createBill(){
-            var remarks = $('.remarks').val();
-            var student = $('.selectStudent').find("option:selected").text();
-            var student_id = $('.selectStudent').val();
-            objBillInfo.bill_order = "{$billOrder}";
-            objBillInfo.goods_des = student+'购买'+objBillInfo.goods;
-            objBillInfo.total = total;
-            objBillInfo.student_id = "{$memberInfo.id}";
-            objBillInfo.student = "{$memberInfo.member}";
-            objBillInfo.remarks = remarks;
-            objBillInfo.balance_pay = 0;
-            var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
-            return result;
+        // 立即支付
+        function wxpay(){
+            if(debug != 1){
+                mui.alert(debug);
+                return false;
+            }
+            var strJsApiParameters = '{$jsApiParameters}';
+            var objJsApiParameters = JSON.parse(strJsApiParameters);
+            //创建订单
+            var res =  createBill();
+            if(res.code == 200){
+                wx.chooseWXPay({
+                    timestamp: objJsApiParameters.timeStamp,
+                    nonceStr: objJsApiParameters.nonceStr,
+                    package: objJsApiParameters.package,
+                    signType: 'MD5',
+                    paySign: objJsApiParameters.paySign,
+                    success: function (res) {
+                        // 支付成功后的回调函数
+                        pay(JSON.stringify(res));
+                    },
+                    cancel: function() {
+                        mui.toast('用户已取消');                    
+                    },
+                    fail: function(res) {
+                        var errmsg = res.errMsg;
+                        mui.alert(errmsg.slice(12));
+                    }
+                });
+            }else{
+                mui.alert('订单创建失败,请刷新页面或者重新登录','提示','确定',function(){
+                    location.reload();
+                })
+            }
         }
 
-        function pay(callback_str){
-            var result = wooApi.asyncF("{:url('api/Bill/payApi',['bill_order'=>$billOrder])}",{
-                'balance_pay' : total_fee,
-                'callback_str':callback_str
-            });
-
-            if(result.code == 200){
-                mui.alert('欢迎加入本训练营，您的课程购买已完成，请留意课程消息及公告。','购买成功','确定',function(){
-                    window.location.href="{:url('frontend/bill/billInfo',['bill_order'=>$billOrder])}";
-                  });
-              }else{
-                mui.toast(result.msg);
-              }
-        }
     </script>
 
 </body>

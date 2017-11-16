@@ -8,7 +8,7 @@ class CourtService {
     private $courtModel;
     public function __construct(){
         $this->courtModel = new Court;
-        $this->CourtCamp = new CourtCamp;
+        $this->CourtCampModel = new CourtCamp;
     }
     // 场地列表
     public function getCourtList($map=[],$page = 1,$paginate = 10, $order='', $field='*'){
@@ -148,7 +148,7 @@ class CourtService {
 
     // 把场地添加到自己的库
     public function ownCourt($court_id,$camp_id){
-        $is_own = $this->CourtCamp->where(['court_id'=>$court_id,'camp_id'=>$camp_id])->find();
+        $is_own = $this->CourtCampModel->where(['court_id'=>$court_id,'camp_id'=>$camp_id])->find();
         if($is_own){
             return ['code'=>100,'msg'=>"重复添加"];
         }
@@ -159,7 +159,7 @@ class CourtService {
         }else{
             $courtInfo = $courtInfoOBJ->toArray();
             $data = ['camp_id'=>$camp_id,'court_id'=>$court_id,'court'=>$courtInfo['court'],'camp'=>$campInfo['camp']];
-            $res = $this->CourtCamp->save($data);
+            $res = $this->CourtCampModel->save($data);
             if($res){
                 return ['code'=>200,'msg'=>__lang('MSG_200')];
             }else{
@@ -181,6 +181,18 @@ class CourtService {
             return ['code' => 100, 'msg' => '删除训练营场地'.__lang('MSG_400'), 'data' => $execute];
         } else {
             return ['code' => 200, 'msg' => '删除训练营场地'.__lang('MSG_200'), 'data' => $execute];
+        }
+    }
+
+
+
+
+    public function getCourtCampListByPage($map,$order = '',$paginate = 10){
+        $result = $this->CourtCampModel->where($map)->paginate($paginate);
+        if($result){
+            return $result->toArray();
+        }else{
+            return $result;
         }
     }
 }

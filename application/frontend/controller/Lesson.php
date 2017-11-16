@@ -128,15 +128,17 @@ class Lesson extends Base{
         $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
         
         $jsApiParameters = $result['data']['jsApiParameters'];
+        $shareurl = request()->url(true);
+        $wechatS = new WechatService();
+        $jsapi = $wechatS->jsapi($shareurl);
 
         $this->assign('jsApiParameters',$jsApiParameters);
+        $this->assign('jsapi', $jsapi);
         $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billOrder',$billOrder);
         return view('Lesson/comfirmBill');
     }
-
-    
 
     // 购买体验课
     public function bookBill(){

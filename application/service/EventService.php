@@ -21,6 +21,11 @@ class EventService {
 
         if($result){
             $res = $result->toArray();
+            foreach ($res as $key => &$value) {
+                $value['event_times'] = date('Y-m-d H:i',$value['event_time']);
+                $value['ends'] = date('Y-m-d H:i',$value['end']);
+                $value['starts'] = date('Y-m-d H:i',$value['start']);
+            }
             return $res;
         }else{
             return $result;
@@ -29,11 +34,17 @@ class EventService {
 
     // 分页获取活动
     public function getEventListByPage($map=[], $order='',$paginate=10){
-        $res = Event::where($map)->order($order)->paginate($paginate);
-        if($res){
-            return $res->toArray();
-        }else{
+        $result = Event::where($map)->order($order)->paginate($paginate);
+        if($result){
+            $res =  $result->toArray();
+            foreach ($res['data'] as $key => &$value) {
+                $value['event_times'] = date('Y-m-d H:i',$value['event_time']);
+                $value['ends'] = date('Y-m-d H:i',$value['end']);
+                $value['starts'] = date('Y-m-d H:i',$value['start']);
+            }
             return $res;
+        }else{
+            return $result;
         }
     }
 
@@ -118,7 +129,7 @@ class EventService {
     }
 
     // 参加活动
-    public function joinEvent($event_id,$member_id,$member){
+    public function joinEvent($event_id,$member_id,$member,$total){
         $eventInfo = $this->getEventInfo(['id'=>$event_id]);
         if($eventInfo['status']!= '正常'){
             return ['msg'=>"该活动已{$eventInfo['status']},不可再参与", 'code' => 100];
@@ -132,32 +143,96 @@ class EventService {
         if($eventInfo['is_max'] == -1){
              return ['msg'=>"该活动已满人,不可再参与", 'code' => 100];   
         }
+
+        if(($eventInfo['max']-$eventInfo['participator'])<$total){
+            return ['msg'=>"可参与人数小于$total,请重新选择人数", 'code' => 100];   
+        }
         // 检测是否已结束
         if(time() > $eventInfo['end']){
              return ['msg'=>"该活动已结束,不可再参与", 'code' => 100];   
         }
-        $saveData = ['event_id'=>$eventInfo['id'],'event'=>$eventInfo['event'],'member_id'=>$member_id,'member'=>$member,'status'=>1];
-        $res = $this->EventMemberModel->save($saveData);
-        if($res){
-            $result = $this->EventModel->where(['id'=>$event_id])->setInc('participator');
-                // 更改状态
-                if($eventInfo['max'] <= ($eventInfo['participator']+1)){
-                    $this->EventModel->save(['is_max'=>-1],['id'=>$event_id]);
-                }
-            return ['msg'=>'加入成功','code'=>200,'data'=>$eventInfo];
-        }else{ 
-            return ['msg'=>'操作失败', 'code' => 100];
+
+        $result = $this->EventModel->where(['id'=>$event_id])->setInc('participator',$total);
+        // 更改状态
+        if($eventInfo['max'] <= ($eventInfo['participator']+$total)){
+            $this->EventModel->save(['is_max'=>-1],['id'=>$event_id]); 
         }
+        // 发送个人模板消息
+        $MessageService = new \app\service\MessageService;
+        if($eventInfo['is_free'] == 1){
+            $MessageData = [
+                "touser" => session('memberInfo.openid'),
+                "template_id" => config('wxTemplateID.eventBook'),
+                "url" => url('frontend/event/eventInfo',['event_id'=>$event_id],'',true),
+                "topcolor"=>"#FF0000",
+                "data" => [
+                    'first' => ['value' => "{$member}已成功报名{$eventInfo['event']}。"],
+                    'keyword1' => ['value' => $eventInfo['event']],
+                    'keyword2' => ['value' => $eventInfo['starts'].'至'.$eventInfo['ends']],
+                    'keyword3' => ['value' => $eventInfo['location']],
+                    'keyword4' => ['value' => "点击此消息查看"],
+                    'remark' => ['value' => '大热篮球']
+                ]
+            ];
+        }else{
+            $MessageData = [
+                "touser" => session('memberInfo.openid'),
+                "template_id" => config('wxTemplateID.eventJoin'),
+                "url" => url('frontend/event/eventInfo',['event_id'=>$event_id],'',true),
+                "topcolor"=>"#FF0000",
+                "data" => [
+                    'first' => ['value' => "尊敬的{$member}，您已成功报名{$eventInfo['event']}。"],
+                    'keyword1' => ['value' => $member],
+                    'keyword2' => ['value' => $eventInfo['event']],
+                    'keyword3' => ['value' => $eventInfo['starts'].'至'.$eventInfo['ends']],
+                    'keyword4' => ['value' => $total],
+                    'keyword5' => ['value' =>$total*$eventInfo['price']],
+                    'remark' => ['value' => '点击此消息查看[活动详情],具体订单信息请查看[我的订单]']
+                ]
+            ];
+        }
+        $saveData1 = [
+                        'title'=>"[{$eventInfo['event']}]报名成功",
+                        'content'=>$member."报名活动成功",
+                        'url'=>url('frontend/event/eventInfo',['event_id'=>$event_id],'',true),
+                        'member_id'=>$member_id
+                    ];
+        $saveData2 = [
+                        'title'=>"[{$eventInfo['event']}]报名成功",
+                        'content'=>$member."报名活动成功",
+                        'url'=>url('frontend/event/eventInfo',['event_id'=>$event_id],'',true),
+                        'member_id'=>$eventInfo['member_id']
+                    ];
+        // 发布者的member
+        $memberInfo = db('member')->where(['id'=>$eventInfo['member_id']])->find();
+        $MessageData2 = [
+                "touser" => $memberInfo['openid'],
+                "template_id" => config('wxTemplateID.eventBook'),
+                "url" => url('frontend/event/eventInfo',['event_id'=>$event_id],'',true),
+                "topcolor"=>"#FF0000",
+                "data" => [
+                    'first' => ['value' => "{$member}已成功报名{$eventInfo['event']}。"],
+                    'keyword1' => ['value' => $eventInfo['event']],
+                    'keyword2' => ['value' => $eventInfo['starts'].'至'.$eventInfo['ends']],
+                    'keyword3' => ['value' => $eventInfo['location']],
+                    'keyword4' => ['value' => "点击此消息查看"],
+                    'remark' => ['value' => '大热篮球']
+                ]
+            ];
+        $MessageService->sendMessageMember($member_id,$MessageData,$saveData1);   //发给报名的人
+        $MessageService->sendMessageMember($eventInfo['member_id'],$MessageData2,$saveData2);  //发给发布者        
+        if($result){
+            return ['msg'=>"报名成功", 'code' => 200];
+        }else{
+            return ['msg'=>"报名失败", 'code' => 100];
+        }
+        
     }
 
 
     //关联表的更新
-    public function saveAllMmeber($memberData,$event_id,$event){
+    public function saveAllMmeber($memberData){
         //参加活动的人员
-        foreach ($memberData as $key => $value) {
-            $memberData[$key]['event_id'] = $event_id;
-            $memberData[$key]['event'] = $event;
-        }
         $result = $this->EventMemberModel->saveAll($memberData);
         if($result){
             return ['code'=>200,'msg'=>__lang('MSG_200'),'data'=>$result];

@@ -34,7 +34,7 @@ class Index extends Controller{
     public function xmltest(){
        $xml = '<xml><appid><![CDATA[wx19f60be0f2f24c31]]></appid>
                 <bank_type><![CDATA[CFT]]></bank_type>
-                <cash_fee><![CDATA[150000]]></cash_fee>
+                <cash_fee><![CDATA[120000]]></cash_fee>
                 <fee_type><![CDATA[CNY]]></fee_type>
                 <is_subscribe><![CDATA[N]]></is_subscribe>
                 <mch_id><![CDATA[1488926612]]></mch_id>
@@ -45,7 +45,7 @@ class Index extends Controller{
                 <return_code><![CDATA[SUCCESS]]></return_code>
                 <sign><![CDATA[430A51B37742ABF6D5F6CBECF84E09C5]]></sign>
                 <time_end><![CDATA[20171103160702]]></time_end>
-                <total_fee>150000</total_fee>
+                <total_fee>120000</total_fee>
                 <trade_type><![CDATA[JSAPI]]></trade_type>
                 <transaction_id><![CDATA[4200000027201711032186864528]]></transaction_id>
                 </xml>';
@@ -134,47 +134,47 @@ class Index extends Controller{
         $MessageCampData = [
                         "touser" => '',
                         "template_id" => config('wxTemplateID.successBill'),
-                        "url" => url('frontend/bill/billInfoOfCamp',['bill_id'=>1201711011851072758],'',true),
+                        "url" => url('frontend/bill/billInfoOfCamp',['bill_order'=>'1201711081030416766'],'',true),
                         "topcolor"=>"#FF0000",
                         "data" => [
-                            'first' => ['value' => '梁浩峰购买课程订单支付成功补发通知'],
-                            'keyword1' => ['value' => '梁浩峰'],
-                            'keyword2' => ['value' => '1201711011851072758'],
-                            'keyword3' => ['value' => '1500元'],
-                            'keyword4' => ['value' => '梁浩峰购买课程'],
+                            'first' => ['value' => '李鸣轩购买课程订单支付成功补发通知'],
+                            'keyword1' => ['value' => '李鸣轩'],
+                            'keyword2' => ['value' => '1201711081030416766'],
+                            'keyword3' => ['value' => '1200元'],
+                            'keyword4' => ['value' => '李鸣轩购买课程'],
                             'remark' => ['value' => '大热篮球']
                         ]
                     ];
         $MessageCampSaveData = [
-                                'title'=>"购买课程-石厦学校兰球队",
-                                'content'=>"订单号: 1201711011851072758<br/>支付金额: 1500元<br/>购买学生:梁浩峰<br/>购买理由: 系统补发",
-                                'member_id'=>101,
-                                'url'=>url('frontend/bill/billInfoOfCamp',['bill_id'=>'1201711011851072758'],'',true)
+                                'title'=>"购买课程-龙岗民警子女篮球课程",
+                                'content'=>"订单号: 1201711081030416766<br/>支付金额: 1200元<br/>购买学生:李鸣轩<br/>购买理由: 系统补发",
+                                'member_id'=>125,
+                                'url'=>url('frontend/bill/billInfoOfCamp',['bill_order'=>'1201711081030416766'],'',true)
                             ];
 
         // 发送个人消息
         $MessageData = [
-            "touser" => 'o83291ONqTeJlke5wNqfpsh8Oo0Q',
+            "touser" => 'o83291A4UscsGS6_i1solCR2Ly4U',
             "template_id" => config('wxTemplateID.successBill'),
-            "url" => url('frontend/bill/billInfo',['bill_id'=>'1201711011851072758'],'',true),
+            "url" => url('frontend/bill/billInfo',['bill_order'=>'1201711081030416766'],'',true),
             "topcolor"=>"#FF0000",
             "data" => [
                 'first' => ['value' => '订单支付成功通知'],
-                'keyword1' => ['value' => '梁浩峰'],
-                'keyword2' => ['value' => '1201711011851072758'],
-                'keyword3' => ['value' => '1500元'],
-                'keyword4' => ['value' => '梁浩峰购买课程'],
+                'keyword1' => ['value' => '李鸣轩'],
+                'keyword2' => ['value' => '1201711081030416766'],
+                'keyword3' => ['value' => '1200元'],
+                'keyword4' => ['value' => '李鸣轩购买课程'],
                 'remark' => ['value' => '大热篮球']
             ]
         ];
         $saveData = [
-                        'title'=>"订单支付成功-石厦学校兰球队",
-                        'content'=>"订单号: 1201711011851072758<br/>支付金额: 1500元<br/>支付学生信息:梁浩峰",
-                        'url'=>url('frontend/bill/billInfo',['bill_order'=>'1201711011851072758']),
-                        'member_id'=>101
+                        'title'=>"订单支付成功-龙岗民警子女篮球课程",
+                        'content'=>"订单号: 1201711081030416766<br/>支付金额: 1200元<br/>支付学生信息:李鸣轩",
+                        'url'=>url('frontend/bill/billInfo',['bill_order'=>'1201711081030416766']),
+                        'member_id'=>125
                     ];
-        $MessageService->sendMessageMember(101,$MessageData,$saveData);            
-        $MessageService->sendCampMessage(15,$MessageCampData,$MessageCampSaveData);
+        $MessageService->sendMessageMember(125,$MessageData,$saveData);            
+        $MessageService->sendCampMessage(9,$MessageCampData,$MessageCampSaveData);
     }
 
 

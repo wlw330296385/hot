@@ -49,6 +49,8 @@ return [
         'errorCheck' => '   z03wxEVbhiEnXChfnBKEYhpYpCvIMLEPq0912RGgrQg',//未通过认证
         'sendSchedule' => '_ld4qtOLJA1vl-oh0FxCliMK1tbGD0nOTq7Z4OmeFCE', //发送课时通知
         'checkPend' => 'eq30-P4InOr-gndRqTdK8xAgpsMWdh3BWO1AArdxoeI',
+        'eventJoin' =>'rgF4hfyPKVxeP9HSOSbmzf7iqITPB_Bo5UgGyc9j36s',//付费活动报名成功
+        'eventBook' =>'RvMcKdoOyu5RRlT7ucXtAgF5-dOA-n3Gd61eho4k4lw',//免费活动报名成功通知
     ],
 
     // +----------------------------------------------------------------------
@@ -279,4 +281,5 @@ return [
         'var_page'  => 'page',
         'list_rows' => 15,
     ],
+    'app_debug'=>true,
 ];

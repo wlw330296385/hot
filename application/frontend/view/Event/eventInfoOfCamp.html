@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>训练营-活动详情-</title>
+    <title>训练营-活动详情</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -18,6 +18,43 @@
         
         .hide {
             display: none;
+        }
+        
+        .intro {
+            padding: 0 !important;
+        }
+        
+        .intro img {
+            padding: 0px 15px;
+            width: 100%;
+            height: auto;
+        }
+        
+        .operationDiv {
+            position: relative;
+        }
+        
+        .operationDiv .delbtn {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            line-height: initial !important;
+            font-size: 18px !important;
+        }
+        
+        .operationDiv h5 {
+            padding: 10px 15px;
+            height: 40px;
+            line-height: 21px;
+            color: #000;
+            margin: 0;
+            font-weight: bold
+        }
+        
+        .operationDiv p {
+            padding: 10px 15px;
+            margin: 0;
+            color: #000;
         }
     </style>
 </head>
@@ -35,8 +72,8 @@
 
             <ul class="mui-table-view list mb">
                 <li class="mui-table-view-cell mui-media listli">
-                    <img class="mui-media-object mui-pull-left" src="{$eventInfo.cover}">
-                    <div class="mui-media-body">
+                    <img class="mui-media-object mui-pull-left" src="{$eventInfo.cover}" style="width:70px!important;height: 56px!important;">
+                    <div class="mui-media-body wd52">
                         <strong>{$eventInfo.event}</strong>
                         <p class="mui-ellipsis">{$eventInfo.event_type}</p>
                     </div>
@@ -48,26 +85,25 @@
                 </li>
             </ul>
 
-
             <ul class="mui-table-view list mt55">
                 <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
                 <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='2||3'}show{else/}hide{/eq}">所属训练营<span>{$eventInfo.organization}</span></li>
                 <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='3'}show{else/}hide{/eq}">所属班级<span>{$eventInfo.target}</span></li>
+                <li class="mui-table-view-cell listli {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">活动单价<span>{$eventInfo.price}元</span></li>
+                <li class="mui-table-view-cell listli {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">费用结算人<span>{$eventInfo.finance}</span></li>
                 <li class="mui-table-view-cell listli">活动开始时间<span>{$eventInfo.starts}</span></li>
                 <li class="mui-table-view-cell listli">活动结束时间<span>{$eventInfo.ends}</span></li>
-                <!--<li class="mui-table-view-cell listli">活动时间<span>{$eventInfo.event_times}</span></li>-->
                 <li class="mui-table-view-cell listli">所属地区<span>{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span></li>
                 <li class="mui-table-view-cell listli">活动地点<span>{$eventInfo.location}</span></li>
                 <li class="mui-table-view-cell listli">人数范围<span>{$eventInfo.min}-{$eventInfo.max}人</span></li>
-                <li class="mui-table-view-cell listli">联系人<span>{$eventInfo.contract}</span></li>
+                <li class="mui-table-view-cell listli">联系人<span>{$eventInfo.contact}</span></li>
                 <li class="mui-table-view-cell listli">联系电话<span>{$eventInfo.telephone}</span></li>
-                <!--<li class="mui-table-view-cell listli detalisli " style="line-height:40px;">参加人员
-                    <span class="mui-navigate-right wd73 " id="coachlist" style="height: 40px;overflow: hidden">
-                        <img class="coachicon" src="/static/frontend/images/2.jpg">
-                    </span>
-                </li>-->
-                <li class="mui-table-view-cell listli border-b">活动简介<span>{$eventInfo.event_des}</span></li>
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="course">活动简介</span>
+                </div>
+                <li class="mui-table-view-cell listli intro">{$eventInfo.event_des}</li>
             </ul>
+
             {egt name="power" value='2'}
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen"><a href="{:url('event/recordEvent',['event_id'=>$eventInfo['id']])}">活动录入</a></li>

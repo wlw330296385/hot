@@ -77,7 +77,7 @@ class BillService {
             $billInfo = $this->Bill->where($map)->find();
             $billData = $billInfo->toArray();
             $res = $this->finishBill($billData);
-            return true;
+            return false;
         }else{
             return false;
         }
@@ -91,7 +91,8 @@ class BillService {
     * @param $data 一条订单记录
     **/
     private function finishBill($data){
-        //--------------------------------开始课程操作,包括(模板消息发送,camp\camp_mamber和lesson的数据更新)
+        $MessageService = new \app\service\MessageService;
+        //开始课程操作,包括(模板消息发送,camp\camp_mamber和lesson的数据更新)
         if($data['goods_type'] == '课程'){
             //购买人数+1;
             db('lesson')->where(['id'=>$data['goods_id']])->setInc('students');
@@ -102,8 +103,7 @@ class BillService {
             if($ress){
                 db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$setting['sysrebate']),'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time()]);
             }
-            // 发送个人消息
-            $MessageService = new \app\service\MessageService;
+            // 发送个人消息           
             $MessageData = [
                 "touser" => session('memberInfo.openid'),
                 "template_id" => config('wxTemplateID.successBill'),
@@ -168,8 +168,7 @@ class BillService {
                             'url'=>url('frontend/bill/billInfoOfCamp',['bill_order'=>$data['bill_order']],'',true)
                         ];
             }
-            $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
-            $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
+            
             // camp_member操作
             $CampMember = new CampMember;
             $is_campMember = $CampMember->where(['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id']])->find();
@@ -179,6 +178,38 @@ class BillService {
             }else{
                 $CampMember->save(['type'=>1,'camp_id'=>$data['camp_id'],'member_id'=>$data['member_id'],'camp'=>$data['camp'],'member'=>$data['member'],'status'=>1]);
             }
+            // lesson_member操作
+            $LessonMember = new LessonMember;
+            $is_student2 = $LessonMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->find();
+            
+            //添加一条学生数据
+            if(!$is_student2){
+                if($data['balance_pay']>0){
+                    $re = $LessonMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'type'=>1]);
+                    if(!$re){
+                        db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
+                    }
+                }else{
+                    // 体验课学生课量为0
+                   $re = $LessonMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>0,'type'=>2]);
+                    if(!$re){
+                        db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
+                    } 
+                }
+            }else{
+                // 课量增加
+                // 只有正式学生课量增加,并且状态强制改为正式学生
+                if($data['balance_pay']>0){
+                    $re = $LessonMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->setInc('rest_schedule',$data['total']);
+                    $ress = db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
+                    if(!$re){
+                        db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
+                    }
+                }
+                
+            }
+        //结束增加学生数据
+        //结束课程操作
         }elseif ($data['goods_type'] == '活动') {
             // camp_member操作
             $CampMember = new CampMember;
@@ -187,40 +218,11 @@ class BillService {
                 //成为粉丝
                 $CampMember->save(['type'=>-1,'camp_id'=>$data['camp_id'],'member_id'=>$data['member_id'],'camp'=>$data['camp'],'member'=>$data['member'],'status'=>1]);
             }
-        }   
-        // -------------------------------结束课程操作
-
-        // lesson_member操作
-        $LessonMember = new LessonMember;
-        $is_student2 = $LessonMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->find();
-        
-        // -------------------------------添加一条学生数据
-        if(!$is_student2){
-            if($data['balance_pay']>0){
-                $re = $LessonMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'type'=>1]);
-                if(!$re){
-                    db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
-                }
-            }else{
-                // 体验课学生课量为0
-               $re = $LessonMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>0,'type'=>2]);
-                if(!$re){
-                    db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
-                } 
-            }
-        }else{
-            // 课量增加
-            // 只有正式学生课量增加,并且状态强制改为正式学生
-            if($data['balance_pay']>0){
-                $re = $LessonMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->setInc('rest_schedule',$data['total']);
-                $ress = db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
-                if(!$re){
-                    db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
-                }
-            }
             
-        }
-        // -------------------------------结束增加学生数据
+            
+        }   
+        $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
+        $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);        
         return true;
     }
 
