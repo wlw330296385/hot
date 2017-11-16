@@ -12,7 +12,7 @@ class Recruitment extends Model {
 
 
     public function getStatusAttr($value){
-    	$status = [1=>'上架',2=>'下架', 2 => '下架班级'];
+    	$status = [1=>'上架',2=>'下架'];
     	return $status[$value];
     }
 

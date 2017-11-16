@@ -47,7 +47,7 @@ class RecruitmentService{
         $res = $this->RecruitmentModel->where($map)->find();
         if($res){           
             $result = $res->toArray();
-            $result['deadlines'] = date('Y-m-d H:i',$result['deadline']);
+            $result['deadlines'] = date('Y-m-d',$result['deadline']);
             return $result;
         }
         return $res;
