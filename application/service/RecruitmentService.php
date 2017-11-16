@@ -114,6 +114,18 @@ class RecruitmentService{
         }
     }
 
+    // 获取参与者列表
+     public function getRecruitmentMemberListByPage($map,$order = '',$paginate = 10){
+        $result = RecruitmentMember::where($map)
+                ->order($order)
+                ->paginate($paginate);
+        if($result){
+            $res = $result->toArray();
+            return $res;
+        }else{
+            return $result;
+        }
+    }
 
     // 招募权限
     public function isPower($camp_id,$member_id){
@@ -200,7 +212,9 @@ class RecruitmentService{
         // $MessageService->sendMessageMember($member_id,$MessageData,$saveData1);   //发给报名的人
         // $MessageService->sendMessageMember($recruitmentInfo['member_id'],$MessageData2,$saveData2);  //发给发布者        
         if($result){
-            $res = $this->RecruitmentModel->where(['id'=>$recruitment_id])->setInc('participator',$total);
+            if(!isset($data['id'])){
+                $res = $this->RecruitmentModel->where(['id'=>$recruitment_id])->setInc('participator',$total);
+            }
             // 更改状态
             // if($recruitmentInfo['max'] <= ($recruitmentInfo['participator']+$total)){
             //     $this->RecruitmentModel->save(['is_max'=>-1],['id'=>$recruitment_id]); 

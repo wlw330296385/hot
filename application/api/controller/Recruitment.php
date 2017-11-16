@@ -215,4 +215,17 @@ class Recruitment extends Base{
         }
     }
 
+    public function getRecruitmentMemberListByPageApi(){
+        try{
+            $map = input('post.');
+            $result = $this->RecruitmentService->getRecruitmentMemberListByPage($map);
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'无数据']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }
