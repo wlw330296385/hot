@@ -18,7 +18,7 @@
 
     <header id="header" class="mui-bar mui-bar-nav search2">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title"><input type="search" class="mui-input-clear keyword" placeholder="请输入活动名称"></h1>
+        <h1 class="mui-title"><input type="search" class="mui-input-clear keyword" placeholder="请输入招募名称"></h1>
         <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
     </header>
 
@@ -34,10 +34,9 @@
             <span class="location-choise max">
                 <select id="recruitmentType" class="data" name="recruitmentType">
                     <option value="">招募类型</option>
-                    <option value="教练员">教练员</option>
-                    <option value="兼职">兼职</option>
-                    <option value="球队">球队</option>
-                    <option value="球员">球员</option>
+                    <option value="1">教练员</option>
+                    <option value="2">兼职</option>
+                    <option value="3">篮球队</option>
                 </select>
             </span>
         </div>
@@ -162,17 +161,17 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType, campID) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/recruitment/searchRecruitmentTypeApi','','',true)}";
+                var url = "{:url('api/recruitment/getRecruitmentListByPageApi','','',true)}"+ '/?page=' + page;
                 mui.ajax({
                     url: url,
                     data: {
-                        page: page,
                         province: sProvince,
                         city: sCity,
                         area: sArea,
                         event_type: sRecruitType,
                         camp_id: campID,
-                        keyword: keyword
+                        keyword: keyword,
+                        status: 1
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -182,36 +181,33 @@
                     success: function (data) {
                         var newli = '';
                         if (data.code == 200) {
-                            for (var i = 0; i <= data.data.length - 1; i++) {
+                            for (var i = 0; i <= data.data.data.length - 1; i++) {
+
                                 // 获取当前时间
                                 var d = new Date()
-                                var seconds = d.getSeconds()
                                 var minutes = d.getMinutes()
                                 var hours = d.getHours()
                                 var day = d.getDate()
                                 var month = d.getMonth() + 1
                                 var year = d.getFullYear()
-                                var time = year + "-" + month + "-" + day + "-" + hours + minutes + ":" + seconds;
-                                var urls = "{:url('recruitment/recruitmentInfo')}" + '/recruitment_id/' + data.data[i].id;
-                                if (data.data[i].status != "下架") {
-                                    newli += '<li class="mui-table-view-cell mui-media listli">'
-                                    newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd60">' + data.data[i].event + '';
-                                    if (data.data[i].is_max == "已满人") {
-                                        newli += '<font style="color:red">&nbsp;&nbsp;[满人]</font>';
-                                    }
-                                    if (data.data[i].ends < time) {
-                                        newli += '<font style="color:#b1b0b0">&nbsp;&nbsp;[过期]</font>';
-                                    }
-                                    newli += '<p class="mui-ellipsis">' + data.data[i].event_type + '&nbsp;&nbsp;' + data.data[i].starts + '</p></div><div class="price-frame mui-text-center">'
-                                    if (data.data[i].is_free == 2) {
-                                        newli += '<p class="price">￥' + data.data[i].price + '</p>';
-                                    } else {
-                                        newli += '<p class="price" style="color:#59b200;font-size:14px;">免费</p>';
-                                    }
+                                var time = year + "-" + month + "-" + day + "-" + hours + ":" + minutes;
 
-                                    newli += '<p class="address">' + data.data[i].area + '</p></div></a></div><input type="hidden" class="is_overdue" value="' + data.data[i].is_overdue + '">';
-                                    newli += '</li>';
+                                var rExpire ="";
+                                if (data.data.data[i].deadlines < time) {
+                                    rExpire = '<font style="color:#b1b0b0">&nbsp;&nbsp;[过期]</font>';
                                 }
+                                var rPrice="";
+                                if (data.data.data[i].max != 0) {
+                                    rPrice = '<p class="price">' + data.data.data[i].min + ' - ' + data.data.data[i].max + '</p>';
+                                } else {
+                                    rPrice = '<p class="price" style="color:#59b200;font-size:14px;">面议</p>';
+                                }
+                                var urls = "{:url('recruitment/recruitmentInfo')}" + '/recruitment_id/' + data.data.data[i].id ;
+
+                                newli += '<li class="mui-table-view-cell mui-media listli">'
+                                newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '"><div class="mui-media-body wd60">' + data.data.data[i].recruitment + rExpire +'<p class="mui-ellipsis">' + data.data.data[i].recruitment_type + '</p></div><div class="price-frame mui-text-center">'+rPrice+'</div></a></div>';
+                                newli += '</li>';
+
                             }
                         }
                         if (gType == 1) {

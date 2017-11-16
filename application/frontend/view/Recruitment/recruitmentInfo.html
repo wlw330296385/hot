@@ -19,6 +19,9 @@
         .hide {
             display: none;
         }
+        .mui-popover .mui-table-view{
+            max-height: none;
+        }
     </style>
 </head>
 
@@ -30,7 +33,7 @@
     <!--招募详情页-->
     <div class="mui-content" style="padding: 0">
         <div class="list camp-list detalis-list">
-            <div class="img4x3" style="background-image:url('{$eventInfo.cover}')"></div>
+            <div class="img4x3" style="background-image:url('{$recruitmentInfo.cover}')"></div>
             <ul class="mui-table-view mb" style="margin-top: -4px">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
                     <a href="javascript:;">
@@ -39,43 +42,50 @@
                             <p class="mui-ellipsis">{$recruitmentInfo.recruitment_type}</p>
                         </div>
                         <div class="price-frame">
-                            <p class="price">￥{$recruitmentInfo.min}-{$recruitmentInfo.max}<span class="nofloat"> / 人</span></p>
+                            <p class="price">￥{$recruitmentInfo.min} - {$recruitmentInfo.max}<span class="nofloat"> / 人</span></p>
                             <p class="price"><span class="nofloat">已报名{$recruitmentInfo.participator}人</span></p>
                         </div>
                     </a>
                 </li>
             </ul>
             <ul class="mui-table-view mt55">
-                <li class="mui-table-view-cell listli">所属训练营<span>{$recruitmentInfo.camp}</span></li>
-                <li class="mui-table-view-cell listli">招募人数<span>{$recruitmentInfo.recruitment_number}</span></li>
+                <li class="mui-table-view-cell listli">所属训练营<span>{$recruitmentInfo.organization}</span></li>
+                <li class="mui-table-view-cell listli">招募人数<span>{$recruitmentInfo.recruit_number}</span></li>
                 <li class="mui-table-view-cell listli">薪资范围<span>￥{$recruitmentInfo.min}- ￥{$recruitmentInfo.max}</span></li>
                 <li class="mui-table-view-cell listli">招募简介<span>{$recruitmentInfo.recruitment_des}</span></li>
                 <li class="mui-table-view-cell listli">招募要求<span>{$recruitmentInfo.requirement}</span></li>
-                <li class="mui-table-view-cell listli">截至日期<span>{$recruitmentInfo.deadline}</span></li>
+                <li class="mui-table-view-cell listli">截至日期<span>{$recruitmentInfo.deadlines}</span></li>
                 <li class="mui-table-view-cell listli">所属地区<span>{$recruitmentInfo.province} {$recruitmentInfo.city} {$recruitmentInfo.area}</span></li>
                 <li class="mui-table-view-cell listli">联系人<span>{$recruitmentInfo.contact}</span></li>
                 <li class="mui-table-view-cell listli">联系电话<span>{$recruitmentInfo.telephone}</span></li>
             </ul>
-            {switch name="variable"} {case value='1'}
-            <!--报名状态-->
+
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><a href="tel:{$recruitmentInfo.telephone}"><span
-                    class="mui-icon mui-icon-phone"></span>电话咨询</a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen signupbtn">我要报名</li>
+                        class="mui-icon mui-icon-phone"></span>电话咨询</a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen"><a href="#signupPop">我要报名</a></li>
             </ul>
-            {/case} {case value='2'}
-            <!--已过期-->
+        </div>
+    </div>
+
+    <!-- 报名弹框 -->
+    <div id="signupPop" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
             <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">已过期</li>
+                <h5><span>我要报名</span><a href="#pjpopover" class="mui-icon mui-icon-closeempty"></a></h5>
+                <li class="mui-table-view-cell listli">
+                    <input type="text" name="linkman" class="data" value="{$memberInfo.member}" placeholder="请输入报名人姓名" />
+                    <input type="text" name="contact" class="data" value="{$memberInfo.telephone}" placeholder="请输入联系电话" />
+                    <textarea rows="4" name="comment" class="data"></textarea>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="signupSubmit">提交</li>
             </ul>
-            {/case} {/switch}
         </div>
     </div>
 
 
-
     <script src="/static/frontend/js/mui.min.js"></script>
-    <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script>
         //初始化
         mui.init({
@@ -83,35 +93,38 @@
         });
 
         $(function () {
-            var surplus = "{$eventInfo.max}" - "{$eventInfo.participator}";
-            $(".surplus").text(surplus)
 
             //报名活动
-            $('.signupbtn').on('tap', '', function () {
+            $('#signupSubmit').on('tap', '', function () {
 
                 var mID = "{$memberInfo.id}";
                 if (mID <= 0) {
                     var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
                     mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', btnArray);
                 }else{
-                    var btnArray = ['确定', '取消'];
-                    var addForm = '<div class="mui-popup-input"><input type="number" name="participator" class="data" placeholder="请输入报名人数" autofocus=""></div>'
-                    mui.confirm(addForm, '报名人数', btnArray, function (e) {
-                        if (e.index == 0) {
-                            var eventTotal = $("input[name=participator]").val();
-                            if(!(/^[0-9]*$/).test(eventTotal) || eventTotal=='') {
-                                mui.toast("请输入正确数字");
-                                return false;
-                            }
-                            var isfree = "{$eventInfo.is_free}";
-                            if(isfree==1){
-                                buyUrl = "{:url('event/bookBill',['event_id'=>$eventInfo['id']])}";
-                            }else{
-                                buyUrl = "{:url('event/comfirmBill',['event_id'=>$eventInfo['id']])}";
-                            }
-                            window.location.href = buyUrl + '?total=' + eventTotal;
-                        }
-                    });
+
+                    var signLinkman = $('input.linkman').val();
+                    var signContact = $('input.contact').val();
+                    var signMsg = $('textarea.data').val();
+                    if(signMsg==""||signContact==""||signLinkman==""){
+                        mui.toast("请填写完整报名信息");
+                        return false;
+                    }
+
+                    var data1 = wooApi.getInputData();
+                    var data2 = wooApi.getInputData('textarea','data',data1);
+                    var objData = wooApi.arrTOobj(data2);
+                    console.log(objData)
+
+                    var result = wooApi.asyncF("{:url('api/recruitment/joinRecruitmentApi',['recruitment_id'=>$recruitmentInfo.id])}",objData);
+                    if(result){
+                        mui.toast(result.msg);
+                        mui('#signupPop').popover('toggle');
+                    }else{
+                        mui.alert("提交失败，"+result.msg);
+                        return false;
+                    }
+
                 }
 
 
