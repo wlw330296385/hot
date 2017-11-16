@@ -204,7 +204,7 @@ class Recruitment extends Base{
     public function getRecruitmentMemberListNoPageApi(){
         try{
             $map = input('post.');
-            $result = $this->RecruitmentService->getRecruitmentMemberList($map);
+            $result = $this->RecruitmentService->getRecruitmentMemberListNoPage($map);
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
             }else{

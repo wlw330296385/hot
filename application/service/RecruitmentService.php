@@ -47,6 +47,7 @@ class RecruitmentService{
         $res = $this->RecruitmentModel->where($map)->find();
         if($res){           
             $result = $res->toArray();
+            $result['deadlines'] = date('Y-m-d H:i',$result['deadline']);
             return $result;
         }
         return $res;
@@ -101,7 +102,7 @@ class RecruitmentService{
 
 
      // 获取参与者列表
-     public function getRecruitmentMemberList($map,$page = 1,$paginate = 10){
+     public function getRecruitmentMemberListNoPage($map,$page = 1,$paginate = 10){
         $result = RecruitmentMember::where($map)
                 // ->page($page,$paginate)
                 ->select();
