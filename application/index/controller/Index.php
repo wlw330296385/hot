@@ -11,6 +11,13 @@ class Index extends Controller{
         echo db('log_wxpay')->getlastsql();
     }
 
+    public function index(){
+        $timestr = strtotime('2017-11-16');
+        
+        // echo $timestr-time();
+        $this->assign('timestr',time());
+        return view('Index/index');
+    }
 
 
     public function gdMap(){

@@ -138,7 +138,7 @@ class Recruitment extends Base{
                 }             
             }
             if(isset($data['deadlines'])){
-                $data['deadline'] = strtotime($data['deadlines']);
+                $data['deadline'] = strtotime($data['deadlines'])+86399;
             }
             if($recruitment_id){
                 $result = $this->RecruitmentService->updateRecruitment($data,$recruitment_id);
