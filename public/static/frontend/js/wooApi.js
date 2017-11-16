@@ -166,19 +166,21 @@ var wooApi = {
 
 
 
-
+    // 获取路径上?的参数
     GetQueryString:function (name){
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");   
         var r = window.location.search.substr(1).match(reg);   
         if (r != null) return decodeURI(r[2]); return null;   
     },
 
+    // 时间戳转换为日期
     timeTOstr:function(nS) {  
         //           将时间戳换成毫秒        转换时间格式     去掉秒
         return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');  
         // 返回格式:2017/11/16 下午2:43 
     },
-
+    
+    // 自定义格式时间戳转换为日期
     dateIt:function(format, timestamp){ 
         var a, jsdate=((timestamp) ? new Date(timestamp*1000) : new Date()); 
         var pad = function(n, c){ 

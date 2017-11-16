@@ -133,7 +133,7 @@ class RecruitmentService{
     // 参加招募
     public function joinRecruitment($recruitment_id,$data,$total = 1){
         $recruitmentInfo = $this->getRecruitmentInfo(['id'=>$recruitment_id]);
-        if($recruitmentInfo['status']!= '正常'){
+        if($recruitmentInfo['status']!= '上架'){
             return ['msg'=>"该招募已{$recruitmentInfo['status']},不可再参与", 'code' => 100];
         }
         // 检测是否已满人
