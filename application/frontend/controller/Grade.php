@@ -20,6 +20,17 @@ class Grade extends Base{
     }
 
 
+    // 班级主页
+    public function team() {
+        $grade_id = input('grade_id');
+        $gradeInfo = $this->GradeService->getGradeInfo(['id'=>$grade_id]);
+
+
+        
+        $this->assign('gradeInfo',$gradeInfo);
+        return view('Grade/team');
+    }
+
     public function createGrade(){
     	$camp_id = input('param.camp_id');
         $lesson_id = input('param.lesson_id');
