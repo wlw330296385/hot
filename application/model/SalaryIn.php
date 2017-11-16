@@ -11,7 +11,7 @@ class SalaryIn extends Model{
 
 
     public function getMemberTypeAttr($value){
-    	$arr = [4=>'主教练',3=>'助教练',5=>'训练营营主'];
+    	$arr = [4=>'主教练',3=>'助教练',5=>'直接收入'];
     	return $arr[$value];
     }
 

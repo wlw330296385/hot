@@ -5,9 +5,10 @@
     <div class="panel-heading">
         <div class="panel-lead">
             <em>工资/收入列表</em>
-            <p>主教练工资=班级主教练底薪+正式学员人数*班级设定提成基数（提成基数可为0）</p>
-            <p>助教练工资=班级助教练底薪+正式学员人数*班级设定提成基数（提成基数可为0）</p>
-            <p>训练营营主收入=班级课程单价*正式学员人数*90%-主教练工资-助教练工资</p>
+            <p>上课学员人数=上课正式学员人数-抵扣赠课数</p>
+            <p>主教练工资=班级主教练底薪+上课学员人数*班级设定提成基数（提成基数可为0）</p>
+            <p>助教练工资=班级助教练底薪+上课学员人数*班级设定提成基数（提成基数可为0）</p>
+            <p>直接收入=班级课程单价*上课学员人数*90%-主教练工资-助教练工资</p>
         </div>
     </div>
     <div class="panel-body">
@@ -59,7 +60,7 @@
                                     {volist name="list" id="vo"}
                                     <tr>
                                         <td>{$vo.id}</td>
-                                        <td>{$vo.salary}</td>
+                                        <td>{$vo.salary}{notempty name="vo.push_salary"}+{$vo.push_salary}{/notempty}</td>
                                         <td>
                                             {switch name="vo.type"}
                                             {case value="1"}教学{/case}
@@ -73,7 +74,7 @@
                                         <td>{$vo.create_time}</td>
                                         <td>
                                             {eq name="vo.type" value="1"}
-                                            {$vo['member_type']}——课程：{$vo['lesson']['lesson']}（单价：{$vo['lesson']['cost']}）——班级：{$vo['schedule']['grade']}<br>课时{$vo['schedule']['lesson_time']|date="Y-m-d H:i",###}——正式学员人数{$vo['schedule']['num_student']}
+                                            {$vo['member_type']}——课程：{$vo['lesson']['lesson']}（单价：{$vo['lesson']['cost']}）——班级：{$vo['schedule']['grade']}<br>课时{$vo['schedule']['lesson_time']|date="Y-m-d H:i",###}——正式学员人数{$vo['schedule']['num_student']}{notempty name="vo.system_remarks"}——{$vo.system_remarks}{/notempty}
                                              {/eq}
                                         </td>
                                         <td>

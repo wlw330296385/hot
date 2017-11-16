@@ -192,4 +192,30 @@ class MemberService{
 	        return 0;
         }
     }
+
+    // 获取会员下线层级
+    public function getMemberPier($member_id) {
+        $tree = [];
+        $model = new Member();
+        $field = ['id' => 'member_id','member','pid'];
+        $member = $model->field($field)->where(['id' => $member_id])->find()->toArray();
+        $parent_member = $model->field($field)->where(['id' => $member['pid']])->find();
+        //dump($parent_member);
+        if ($parent_member) {
+            $parent_member = $parent_member->toArray();
+            $parent_member['tier'] = 2;
+            $parent_member['sid'] = $member['member_id'];
+            $parent_member['s_member'] = $member['member'];
+            array_push($tree, $parent_member);
+            $parent_member2 = $model->field($field)->where('id', $parent_member['pid'])->find();
+            if ($parent_member2) {
+                $parent_member2 = $parent_member2->toArray();
+                $parent_member2['tier'] =3;
+                $parent_member2['sid'] = $parent_member['member_id'];
+                $parent_member2['s_member'] = $parent_member['member'];
+                array_push($tree, $parent_member2);
+            }
+        }
+        return $tree;
+    }
 }

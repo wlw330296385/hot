@@ -193,21 +193,23 @@ class ScheduleService
         }
         $assistantIdArray = unserialize($schedule['assistant_id']) ;
         $assistantArray = unserialize($schedule['assistant']);
-        foreach ($assistantIdArray as $key => $val) {
-            if ($val) {
-                $datatmp = [
-                    'schedule_id' => $schedule_id,
-                    'schedule' => $schedule['grade'],
-                    'camp_id' => $schedule['camp_id'],
-                    'camp' => $schedule['camp'],
-                    'user_id' => $val,
-                    'user' => $assistantArray[$key],
-                    'type' => 2,
-                    'status' => 1,
-                    'schedule_time' => $schedule['lesson_time']
-                ];
-                array_push($coachDatalist, $datatmp);
-                unset($datatmp);
+        if (!empty($assistantIdArray)) {
+            foreach ($assistantIdArray as $key => $val) {
+                if ($val) {
+                    $datatmp = [
+                        'schedule_id' => $schedule_id,
+                        'schedule' => $schedule['grade'],
+                        'camp_id' => $schedule['camp_id'],
+                        'camp' => $schedule['camp'],
+                        'user_id' => $val,
+                        'user' => $assistantArray[$key],
+                        'type' => 2,
+                        'status' => 1,
+                        'schedule_time' => $schedule['lesson_time']
+                    ];
+                    array_push($coachDatalist, $datatmp);
+                    unset($datatmp);
+                }
             }
         }
         $savecoachResult = $model->saveAll($coachDatalist);
