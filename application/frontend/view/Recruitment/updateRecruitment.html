@@ -23,7 +23,7 @@
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-        <h1 class="mui-title">{$campInfo.camp}</h1>
+        <h1 class="mui-title">{$recruitmentInfo.organization}</h1>
         <input type="hidden" name="recruitment_id" value="{$recruitmentInfo.id}" class="data">
     </header>
 
@@ -33,8 +33,8 @@
 
         <div class="camp-list camp-lesson-list" style="margin-top: 4px">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-            <input type="hidden" name="organization" value="{$campInfo.camp}" class="data">
-            <input type="hidden" name="organization_id" value="{$campInfo.id}" class="data">
+            <input type="hidden" name="organization" value="{$recruitmentInfo.organization}" class="data">
+            <input type="hidden" name="organization_id" value="{$recruitmentInfo.organization_id}" class="data">
             <input type="hidden" name="organization_type" value="1" class="data">
             <input type="hidden" name="recruitment_id" value="{$recruitmentInfo.id}" class="data">
 
@@ -45,9 +45,9 @@
                         <label>招募类型</label>
                         <span class="select-row ">
                             <select id="recruitment_type" class="data" name="recruitment_type">
-                                <option value="1" >教练员</option>
-                                <option value="2" >兼职</option>
-                                <option value="3" >篮球队</option>
+                                <option value="教练员" >教练员</option>
+                                <option value="兼职" >兼职</option>
+                                <option value="篮球队" >篮球队</option>
                             </select>
                         </span>
                     </div>
@@ -62,7 +62,7 @@
                     <label>招募人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data" type="number" name="recruit_number" value="{$recruitmentInfo.recruitment_number}">
+                        <input class="mui-input-numbox data" type="number" name="recruit_number" value="{$recruitmentInfo.recruit_number}">
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
@@ -97,7 +97,7 @@
                 <div class="mui-input-row picker btnStart" id="demo3" data-options='{"type":"date","beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>截止日期</label>
-                        <span id="resultStart" class="ui-alert domData" name="deadlines">{$recruitmentInfo.deadline}</span>
+                        <span id="resultStart" class="ui-alert domData" name="deadlines">{$recruitmentInfo.deadlines}</span>
                     </div>
                 </div>
 
@@ -112,7 +112,7 @@
                     <a href="#recruitContract" class="mui-navigate-right">
                         <label>联系人</label>
                         <span class="contactCont domData" name="contact">{$recruitmentInfo.contact}</span>
-                        <input type="hidden" name="contract_id" class="contact_id data" value="{$recruitmentInfo.contact_id}">
+                        <input type="hidden" name="contact_id" class="contact_id data" value="{$recruitmentInfo.contact_id}">
                     </a>
                 </div>
 
@@ -312,7 +312,7 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '招募创建成功', '确定', function () {
-                    var goUrl = "{:url('recruitment/recruitmentInfoOfCamp')}" + '/recruitment_id/' + ajaxResult.data;
+                    var goUrl = "{:url('recruitment/recruitmentInfoOfCamp')}" + '/recruitment_id/{$recruitmentInfo.id}/organization_id/{$recruitmentInfo.organization_id}';
                     window.top.location.href = goUrl;
                 })
             } else {

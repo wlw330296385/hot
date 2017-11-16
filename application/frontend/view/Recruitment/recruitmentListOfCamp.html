@@ -180,6 +180,16 @@
                         var year = d.getFullYear()
                         var time = year + "-" + month + "-" + day + "-" + hours + ":" + minutes;
 
+                        var rExpire ="";
+                        if (data.data.data[i].deadlines < time) {
+                            rExpire = '<font style="color:#b1b0b0">&nbsp;&nbsp;[过期]</font>';
+                        }
+                        var rPrice="";
+                        if (data.data.data[i].max != 0) {
+                            rPrice = '<p class="price">' + data.data.data[i].min + ' - ' + data.data.data[i].max + '</p>';
+                        } else {
+                            rPrice = '<p class="price" style="color:#59b200;font-size:14px;">面议</p>';
+                        }
                         var urls = "{:url('recruitment/recruitmentInfoOfCamp')}" + '/recruitment_id/' + data.data.data[i].id + '/organization_id/' + organizationID;
 
                         newli += '<li class="mui-table-view-cell mui-media listli">'
@@ -188,17 +198,7 @@
                         } else if (status == 2) {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '"><div class="mui-media-body wd60">' + data.data.data[i].recruitment + '';
-
-                        if (data.data.data[i].deadline < time) {
-                            newli += '<font style="color:#b1b0b0">&nbsp;&nbsp;[过期]</font>';
-                        }
-                        newli += '<p class="mui-ellipsis">' + data.data.data[i].recruitment_type + '</p></div><div class="price-frame mui-text-center">'
-                        if (data.data.data[i].max != 0) {
-                            newli += '<p class="price">￥' + data.data.data[i].min + ' - ￥' + data.data.data[i].max + '</p>';
-                        } else {
-                            newli += '<p class="price" style="color:#59b200;font-size:14px;">面议</p>';
-                        }
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '"><div class="mui-media-body wd60">' + data.data.data[i].recruitment + rExpire +'<p class="mui-ellipsis">' + data.data.data[i].recruitment_type + '</p></div><div class="price-frame mui-text-center">'+rPrice+'</div></a></div>';
                         newli += '</li>';
 
                     }
