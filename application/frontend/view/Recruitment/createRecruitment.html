@@ -16,7 +16,17 @@
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
     <style>
-
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+        .mui-navigate-right input[type='text'] {
+            padding-right: 30px !important;
+        }
     </style>
 </head>
 
@@ -120,8 +130,8 @@
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>招募封面</label>
-                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
-                        <input type="hidden" name="cover" value='' class="data">
+                        <img id="preview_1" class="coachicon icon01 upload-preview" src="{$campInfo.banner}" alt="">
+                        <input type="hidden" name="cover" value='{$campInfo.banner}' class="data">
                     </a>
                 </div>
 
@@ -171,6 +181,9 @@
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
+        });
+        mui("body").on("tap", "a", function () {
+            window.top.location.href = this.href;
         });
 
         mui('.mui-content .isNegotiated').each(function() { //循环所有toggle
