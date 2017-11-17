@@ -10,14 +10,13 @@ class Salaryin extends Base{
 	}
 
 	public function index(){
-		
-            $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];
-            $monthRebate = $this->SalaryInService->getReabteByMonth('08',1,2);
-            dump(strtotime('-1 month'));die;
-            $avreageMonthSalary = $this->SalaryInService->getAverageSalaryByMonth(2);
-            $averageYearSalary = $this->SalaryInService->getAverageSalaryByYear(2);
-            $this->assign('monthRebate',$monthRebate);
-            return view('Salaryin/index');
+        $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];
+        $monthRebate = $this->SalaryInService->getReabteByMonth('08',1,2);
+        //dump(strtotime('-1 month'));die;
+        $avreageMonthSalary = $this->SalaryInService->getAverageSalaryByMonth(2);
+        $averageYearSalary = $this->SalaryInService->getAverageSalaryByYear(2);
+        $this->assign('monthRebate',$monthRebate);
+        return view('Salaryin/index');
 	}
 
 
@@ -26,12 +25,12 @@ class Salaryin extends Base{
     // 训练营的当月工资单
     public function salaryOfCamp(){
         $camp_id = input('param.camp_id');
+        $y = date('Y',time());
+        $m = date('m',time());
         $start = input('param.start')?input('param.start'):date(strtotime('-1 month'));
         $end = input('param.end')?input('param.end'):date('Y-m-d H:i:s',time());
         $startInt = strtotime($start);
         $endInt = strtotime($end);
-        $y = date('Y',time());
-        $m = date('m',time());
         $salaryList = $this->SalaryInService->getSalaryInList($startInt,$endInt,['camp_id'=>$camp_id,'type'=>1]);
         // 工资总额
         // $countSalaryin = $this->SalaryInService->countSalaryin(['camp_id'=>$camp_id,'type'=>1,'create_time'=>['BETWEEN',[$startInt,$endInt]]]);
@@ -39,8 +38,12 @@ class Salaryin extends Base{
         // 教练总数
         $coachList = db('camp_member')->where(['camp_id'=>$camp_id,'type'=>2,'status'=>1])->select();
         $coachCount = count($coachList);
+
+        //$map = [];
+        //$salaryList = $this->SalaryInService->getSalaryList($map);
+        //dump($salaryList);
         $this->assign('countSalaryin',$countSalaryin);
-        $this->assign('salaryList',$salaryList);   
+        $this->assign('salaryList',$salaryList);
         $this->assign('y',$y); 
         $this->assign('m',$m);        
         $this->assign('coachCount',$coachCount);
