@@ -45,9 +45,10 @@
         .liFrame .listLeft {
             text-align: center
         }
-         .liFrame h5 {
-           font-weight: bold;
-           color: #000
+        
+        .liFrame h5 {
+            font-weight: bold;
+            color: #000
         }
         
         .liFrame .listLeft h2 {
@@ -76,6 +77,25 @@
             height: 45px;
             border-radius: 50%;
         }
+        
+        #scrollbox ul {
+            overflow: hidden;
+            padding: 0
+        }
+        
+        #scrollbox ul LI {
+            FLOAT: left;
+            width: 70px;
+            text-align: center;
+            padding: 0px;
+            overflow: hidden;
+        }
+        
+        #scrollbox ul LI img {
+            width: 100%;
+            height: 50px;
+            padding: 0 5px;
+        }
     </style>
 </head>
 
@@ -97,7 +117,7 @@
                         <img class="mui-media-object mui-pull-left" src="/static/frontend/images/ads1.jpg">
                         <div class="mui-media-body">
                             {$gradeInfo.grade}
-                            <p class="mui-ellipsis">{$gradeInfo.court}</p>
+                            <p class="mui-ellipsis">{$gradeInfo.camp_id}</p>
                         </div>
                         <div class="price-frame rightClass">
                             <ul>
@@ -277,12 +297,40 @@
                 <span class="course">班级相册</span>
                 <span class="more">查看更多</span>
             </div>
-            <ul class="mui-table-view">
-                <li class="mui-table-view-cell detalisli listli">
-                   sasaf 
-                </li>
-               
-            </ul>
+            <table class="whitebg" style="width: 100%">
+                <tr>
+                    <th><img src="/static/frontend/images/leftjt.gif" id="arrLeft" /></th>
+                    <td>
+                        <div id="scrollbox">
+                            <ul>
+                                <li>
+                                    <A href="###">
+                                        <IMG src="/static/frontend/images/ads1.jpg">
+                                    </A>
+                                </li>
+                                <li>
+                                    <A href="###">
+                                        <IMG src="/static/frontend/images/ads1.jpg">
+                                    </A>
+                                </li>
+                                <li>
+                                    <A href="###">
+                                        <IMG src="/static/frontend/images/ads1.jpg">
+                                    </A>
+                                </li>
+                                <li>
+                                    <A href="###">
+                                        <IMG src="/static/frontend/images/ads1.jpg">
+                                    </A>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                    <th><img src="/static/frontend/images/rightjt.gif" id="arrRight" />
+                    </th>
+                </tr>
+            </table>
+
 
             <div class="page-header">
                 <span class="course">评论</span>
@@ -371,16 +419,29 @@
     </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/Designer.js"></script>
     <script>
         mui.init({
             swipeBack: false
         });
         (function ($) {
             $('.mui-scroll-wrapper').scroll({
-                indicators: true //是否显示滚动条
+                indicators: true //是否显示滚    动条
             });
 
         })(mui);
+
+        var scrollPic_02 = new ScrollPic();
+        scrollPic_02.scrollContId = "scrollbox"; //内容容器ID
+        scrollPic_02.arrLeftId = "arrLeft";//左箭头ID
+        scrollPic_02.arrRightId = "arrRight"; //右箭头ID
+        scrollPic_02.frameWidth = 280;//显示框宽度
+        scrollPic_02.pageWidth = 280; //翻页宽度
+        scrollPic_02.speed = 8; //移动速度(单位毫秒，越小越快)
+        scrollPic_02.space = 8; //每次移动像素(单位px，越大越快)
+        scrollPic_02.autoPlay = false; //自动播放
+        scrollPic_02.autoPlayTime = 3; //自动播放间隔时间(秒)
+        scrollPic_02.initialize(); //初始化
     </script>
 
 </body>

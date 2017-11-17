@@ -20,7 +20,6 @@
             left: auto;
             right: 6px;
         }
-        
         p {
             text-indent: 22px;
         }
@@ -32,6 +31,12 @@
         
         .mui-navigate-right input[type='text'] {
             padding-right: 30px !important;
+        }
+        .show{
+            display: block;
+        }
+        .hide{
+            display: none;
         }
     </style>
 </head>
@@ -189,6 +194,32 @@
                     <!--</select>-->
                     <!--</span>-->
                 </div>
+
+                <div class="mui-input-row">
+                    <label class="wd49">是否设为私密课程</label>
+                    <span class="select-row">
+                        <select id="lessonPrivate" class="data" name="isprivate">
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </span>
+                </div>
+
+                <div class="image-items memberInput-row border-b {eq name='lessonInfo.isprivate' value='1'}show{else/}hide{/eq}" style="padding-top: 0;">
+                    <div class="mui-input-group">
+                        <div class="box checkChecked" id="inactiveList">
+                            <p class="nohave">请选择你想要发送私密课程的会员。</p>
+                        </div>
+                        <div class="operation-btn">
+                            <span class="mui-badge">0</span>
+                            <a class="all">全选</a>
+                            <a class="cancel">取消</a>
+                            <a class="del">[删除]</a>
+                            <a href="#addMember" id="setMemberCBox" class="mui-icon mui-icon-personadd add"></a>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="mui-input-row mt55">
                     <label>备注</label>
                     <input type="text" name="remarks" class="input data" value="{$lessonInfo.remarks}">
@@ -205,6 +236,21 @@
         </div>
     </div>
 
+    <!--会员名单-->
+    <div id="addMember" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd36"><strong>会员名单</strong></span>
+            <span class="fr"><button class="mui-btn-blue" id="memberConfirm">确认</button></span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form id="newdiv" class="mui-input-group campMemberList">
+
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!--课程类型-->
     <div id="lessonType" class="mui-popover">
@@ -626,6 +672,82 @@
             })
         });
 
+        // 设置收费默认值
+        $('#lessonPrivate option[value="{$lessonInfo.isprivate}"]').prop("selected", true);
+
+        // 选择是否为私密课程显示隐藏选择会员框
+        $("#lessonPrivate").change(function () {
+            if ($(this).children('option:selected').text() == '是') {
+                $(".memberInput-row").show();
+            } else {
+                $(".memberInput-row").hide();
+            }
+        });
+
+        //全选
+        $(".all").click(function () {
+            $(".checkboxCont").find('input').prop('checked', true)
+        })
+
+        //取消全选
+        $(".cancel").click(function () {
+            $(".checkboxCont").find('input').prop('checked', false)
+        })
+
+        //删除
+        $(".del").click(function () {
+            $("input[name='member']:checked").parents(".checkboxCont").remove();
+            changeIndex();
+            if ($("#inactiveList").html() == '') {
+                $("#inactiveList").append('<p class="nohave">请选择你想要发送私密课程的会员。</p>')
+            }
+        });
+
+        //学员列表复选框赋值
+        $("#setMemberCBox").on('tap', '', function () {
+            //每次打开先清空所有选择
+            $("input[name='checkbox-member']").prop("checked", false);
+            //然后遍历出对应所选
+            $(".stdList").each(function (i) {
+                var id = $(this).attr("data-id");
+                var member = $(this).attr("data-member");
+                $("#newdiv").find("input[name='checkbox-member']").filter(function (index) {
+                    return $(this).attr("data-id") == id
+                }).prop("checked", true);
+            });
+        });
+
+        //角标随checkboxCont的数量变化
+        $(document).on('click', '.del', function () {
+            totalNum = $(".checkboxCont").length;
+            $(".mui-badge").text(totalNum);
+        });
+
+        // 选择添加学员点击事件
+        $("#memberConfirm").on('click', function () {
+            $("#inactiveList").empty();
+            memberList = [];//学员列表数组
+            $(".campMemberList input[type=checkbox]:checked").each(function () {
+                var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).attr("data-id") + '" type="checkbox"><input type="hidden" class="stdList eachList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '"data-type="' + $(this).attr("data-type") + '" ></div>';
+                var member_type = $(this).attr("data-type");
+                var id = $(this).attr("data-id");
+                var member = $(this).attr("data-member");
+                $("#inactiveList").append(str);
+                memberList.push({ member: member, id: id, type: member_type });
+            });
+
+            // checkmember();// 检查是否有学员数据
+            console.log(memberList)
+
+            changeIndex();//调用-更新序号
+            mui("#addMember").popover("toggle");
+            totalNum = $(".checkboxCont").length;
+            $(".mui-badge").text(totalNum);
+        })
+        //获取训练营身份列表
+        toCampMemberList();
+
+
         //获取训练营场地表
         toCourtList()
         //获取训练营教练列表
@@ -690,7 +812,16 @@
             }
         })
 
-    })
+    });
+
+    //更新序号函数
+    function changeIndex() {
+        var i = 1;
+        $(".checkboxCont").each(function () { //循环checkboxCont
+            $(this).find("label").text(i++);//更新序号
+        });
+    }
+
 
     // 获取数据并进行提交
     function submitAction() {
@@ -708,6 +839,7 @@
         console.log(arrData)
         var objData = wooApi.arrTOobj(arrData);
         console.log(objData)
+        objData.memberData = JSON.stringify(memberData);
         var url = "{:url('api/lesson/updateLessonApi',['lesson_id'=>$lessonInfo['id']])}";
         var ajaxResult = wooApi.asyncF(url, objData);
         console.log(ajaxResult);
@@ -723,7 +855,44 @@
         }
     }
 
+    //获取会员列表
+    var toCampMemberList = function (type) {
+        var url = "{:url('api/camp_member/getCampMemberListApi','','',true)}";
+        var campID = "{$lessonInfo.camp_id}";
+        mui.ajax({
+            url: url,
+            data: {
+                camp_id: campID
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            //processData:false,
+            success: function (data) {
+                console.log(data)
+                if (data.code == 200) {
+                    var newli = '';
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        if (data.data.data[i].type == "学生" || data.data.data[i].type == "粉丝") {
+                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label class="wd73">' + data.data.data[i].member + '</label><span>' + data.data.data[i].type + '</span><input name="checkbox-member" class="member" value="' + data.data.data[i].member + '" type="checkbox" data-id="' + data.data.data[i].id + '" data-member="' + data.data.data[i].member + '" data-type="' + data.data.data[i].type + '"></div>'
+                        }
+                    }
+                    $(".campMemberList").empty();
+                    if (newli == '') {
+                        newli = '<p class="mui-text-center">没有查找到数据哦</p>'
+                    }
+                    $(".campMemberList").append(newli);
 
+                } else {
+                    mui.toast('数据获取失败,请稍候再试');
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+            }
+        });
+    };
 
     //根据默助教遍历出对应所选
     var toAssistantCheckbox = function () {
@@ -737,6 +906,8 @@
             }).prop("checked", true);
         }
     }
+
+
 
     //训练营场地列表接口获取数据并追加到页面
     var toCourtList = function () {
