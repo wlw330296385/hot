@@ -36,7 +36,7 @@ class SalaryInService {
         }else{
             return $res;
         }
-        
+
     }
 
     /**
@@ -214,7 +214,7 @@ class SalaryInService {
     }
 
     //获取教学分成列表
-    public function getSalaryList($startTime,$endTime,$map,$page = 1,$paginate = 10){
+    /*public function getSalaryList($startTime,$endTime,$map,$page = 1,$paginate = 10){
         $res = $this->SalaryIn
                     ->where($map)
                     ->where(['create_time'=>['between',[$startTime,$endTime]]])
@@ -226,9 +226,17 @@ class SalaryInService {
         }else{
             return $res;
         }
-                    
-        
+    }*/
+    public function getSalaryList($map, $order='id desc', $paginate=10) {
+        $model = new SalaryIn();
+        $list = $model->where($map)->select();
+        if ($list) {
+            return $list->toArray();
+        } else {
+            return $list;
+        }
     }
+
 
     // 获取销售提成列表
     public function getGoodsSellList($startTime,$endTime,$member_id = 0,$page = 1,$paginate = 10){
