@@ -234,4 +234,16 @@ class CampService {
         $res = $model->where('id', $camp_id)->setField('status', $status);
         return $res;
     }
+
+    // 获取训练营下在营教练列表
+    public function getCoachList($camp_id) {
+        $map['camp_id'] = $camp_id;
+        $map['camp_member.status'] = 1;
+        $map['camp_member.type'] = ['in', '2,4'];
+        $list = Db::view('camp_member')
+            ->view('coach', '*', 'coach.member_id=camp_member.member_id')
+            ->where($map)
+            ->select();
+        return $list;
+    }
 }

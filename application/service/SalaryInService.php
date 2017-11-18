@@ -27,16 +27,15 @@ class SalaryInService {
     }
 
 
-    // 获取订单列表
-    public function getSalaryInList($map,$page = 1 ,$paginate = 10 ,$order = 'id DESC'){
-        $res = $this->SalaryIn->where($map)->order('id DESC')->page($page,$paginate)->select();
+    // 获取工资列表
+    public function getSalaryInList($map,$order = 'id DESC'){
+        $res = $this->SalaryIn->where($map)->order($order)->select();
         if($res){
             $result = $res->toArray();
             return $result;
         }else{
             return $res;
         }
-
     }
 
     /**
@@ -227,16 +226,6 @@ class SalaryInService {
             return $res;
         }
     }*/
-    public function getSalaryList($map, $order='id desc', $paginate=10) {
-        $model = new SalaryIn();
-        $list = $model->where($map)->select();
-        if ($list) {
-            return $list->toArray();
-        } else {
-            return $list;
-        }
-    }
-
 
     // 获取销售提成列表
     public function getGoodsSellList($startTime,$endTime,$member_id = 0,$page = 1,$paginate = 10){
