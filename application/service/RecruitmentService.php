@@ -102,7 +102,7 @@ class RecruitmentService{
 
 
      // 获取参与者列表
-     public function getRecruitmentMemberListNoPage($map,$page = 1,$paginate = 10){
+     public function getRecruitmentMemberListNoPage($map){
         $result = RecruitmentMember::where($map)
                 // ->page($page,$paginate)
                 ->select();
@@ -154,7 +154,7 @@ class RecruitmentService{
         }
 
         // 检测是否已结束
-        if(time() > $recruitmentInfo['deadline']){
+        if(time() > $recruitmentInfo['deadline'] && $recruitmentInfo['deadline']>1){
              return ['msg'=>"该招募已结束,不可再参与", 'code' => 100];   
         }
 

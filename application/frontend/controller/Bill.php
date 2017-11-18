@@ -84,15 +84,13 @@ class Bill extends Base{
 
     // 会员查看自己的订单信息
     public function billInfo(){
-        $bill_id = input('param.bill_id');
         $bill_order = input('param.bill_order');
-        if($bill_id){
-            $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
-        }else{
-            
-            $billInfo = $this->BillService->getBill(['bill_order'=>$bill_order]);
+        if(!$bill_order){
+           $this->error('找不到订单号');
         }
-        
+            
+        $billInfo = $this->BillService->getBill(['bill_order'=>$bill_order]);
+
         if($billInfo['goods_type']=='课程'){
             $LessonService = new \app\service\LessonService;
             $goodsInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
@@ -102,7 +100,8 @@ class Bill extends Base{
             $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
             $this->assign('studentInfo',$studentInfo);
         }elseif ($billInfo['goods_type']=='活动') {
-            
+            $studentInfo = [];
+            $this->assign('studentInfo',$studentInfo);
         }
         // 生成微信参数
         $shareurl = request()->url(true);
@@ -111,9 +110,15 @@ class Bill extends Base{
         $amount = ($billInfo['total']*$billInfo['price'])?($billInfo['total']*$billInfo['price']):1;
         // $amount = 0.01;
         $WechatJsPayService = new \app\service\WechatJsPayService;
+       
         $result = $WechatJsPayService->pay(['order_no'=>$billInfo['bill_order'],'amount'=>$amount]);
+        if($result['code']==100){
+            $jsApiParameters = 0;
+        }else{
+            $jsApiParameters = $result['data']['jsApiParameters'];
+        }
         
-        $jsApiParameters = $result['data']['jsApiParameters'];
+
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('jsApi', $jsApi);
         $this->assign('billInfo',$billInfo);

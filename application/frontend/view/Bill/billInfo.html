@@ -168,28 +168,33 @@
 
 // 立即支付
 function wxpay(){
-    var strJsApiParameters = '{$jsApiParameters}';
-    var objJsApiParameters = JSON.parse(strJsApiParameters);
-    wx.chooseWXPay({
-        timestamp: {$jsApi['timestamp']},
-        nonceStr: objJsApiParameters.nonceStr,
-        package: objJsApiParameters.package,
-        signType: 'MD5',
-        paySign: objJsApiParameters.paySign,
-        success: function (res) {
-            // 支付成功后的回调函数
-            pay(JSON.stringify(res));
-        },
-        cancel: function() {
-            //mui.toast('取消了支付付款');
-            mui.alert('取消了支付付款');
-        },
-        fail: function(res) {
-            var errmsg = res.errMsg;
-            // mui.toast(errmsg.slice(12));
-            mui.alert(errmsg.slice(12));
-        }
-    });
+    {if condition="$jsApiParameters == 0"}
+        alert('订单已支付,不可再支付');
+    {else /}
+        var strJsApiParameters = '{$jsApiParameters}';
+        var objJsApiParameters = JSON.parse(strJsApiParameters);
+        wx.chooseWXPay({
+            timestamp: {$jsApi['timestamp']},
+            // timestamp:objJsApiParameters.timeStamp,
+            nonceStr: objJsApiParameters.nonceStr,
+            package: objJsApiParameters.package,
+            signType: 'MD5',
+            paySign: objJsApiParameters.paySign,
+            success: function (res) {
+                // 支付成功后的回调函数
+                pay(JSON.stringify(res));
+            },
+            cancel: function() {
+                //mui.toast('取消了支付付款');
+                mui.alert('取消了支付付款');
+            },
+            fail: function(res) {
+                var errmsg = res.errMsg;
+                // mui.toast(errmsg.slice(12));
+                mui.alert(errmsg.slice(12));
+            }
+        });
+    {/if}
 }
 
 

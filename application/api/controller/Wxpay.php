@@ -31,7 +31,7 @@ class Wxpay extends Base{
             'return_code'=>'SUCCESS',
             'return_msg'=>'OK'
             ];
-             db('log_wxpay')->insert(['callback'=>$jsonObj,'create_time'=>time(),'time_end'=>$data['time_end'],'total_fee'=>$data['total_fee'],'openid'=>$data['openid'],'bill_order'=>$data['out_trade_no'],'transaction_id'=>$data['transaction_id'],'sys_remarks'=>'初始化记录','delete_time'=>time()]);
+             // db('log_wxpay')->insert(['callback'=>$jsonObj,'create_time'=>time(),'time_end'=>$data['time_end'],'total_fee'=>$data['total_fee'],'openid'=>$data['openid'],'bill_order'=>$data['out_trade_no'],'transaction_id'=>$data['transaction_id'],'sys_remarks'=>'初始化记录','delete_time'=>time()]);
         $billInfo = db('bill')->where(['bill_order'=>$data['out_trade_no']])->find();
         if($billInfo){
             if($billInfo['is_pay']!=1 || $billInfo['status']!=1){

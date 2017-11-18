@@ -23,6 +23,10 @@ class WechatJsPayService {
     // 统一下单
     public function pay($data){
             $unified_order = $this->unifiedOrder($data);  //统一下单
+            // dump($unified_order);die;
+            if(isset($unified_order['result_code'])){
+                return ['code'=>100,'msg'=>$unified_order['err_code_des'],'data'=>$unified_order];
+            }
             $jsApiParameters=$this->getParameters($unified_order);
             return ['code'=>200,'msg'=>'','data'=>['order_no'=>$data['order_no'],'jsApiParameters'=>$jsApiParameters,'amount'=>$data['amount']]];
     }

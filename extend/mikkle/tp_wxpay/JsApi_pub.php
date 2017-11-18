@@ -109,7 +109,7 @@ class JsApi_pub extends Common_util_pub
         $timeStamp = time();
         $jsApiObj["timeStamp"] = "$timeStamp";
         $jsApiObj["nonceStr"] = $this->createNoncestr();
-        $jsApiObj["package"] = "prepay_id=$this->prepay_id";
+        $jsApiObj["package"] = "prepay_id=".$this->prepay_id;
         $jsApiObj["signType"] = "MD5";
         $jsApiObj["paySign"] = $this->getSign($jsApiObj);
         $this->parameters = json_encode($jsApiObj);
