@@ -3,6 +3,7 @@
 namespace app\service;
 
 use app\model\Lesson;
+use app\model\LessonAssignMember;
 use think\Db;
 
 use app\common\validate\LessonVal;
@@ -167,6 +168,31 @@ class LessonService {
         }else{
             return ['msg'=>__lang('MSG_400'), 'code' => 100];
         }
+    }
+
+    public function saveLessonAssign($data) {
+        if (!$data['lesson_id']) {
+            return ['code' => 100, 'msg' => '课程'.__lang('MSG_402')];
+        }
+        $model = new LessonAssignMember();
+        // 查询课程有无指定数据
+        $haslist = $model->where(['lesson_id' => $data['lesson_id']])->select();
+        if (!$haslist->isEmpty()) {
+            // 过滤选择指定会员被删除的数据
+            $model->where(['lesson_id' => $data['lesson_id']])->setField('status', -1);
+        }
+        // 保存数据
+        $members = json_decode($data['memberData'], true);
+        $dataSave = [];
+        foreach ($members as $k => $member) {
+            $dataSave[$k]['lesson_id'] = $data['lesson_id'];
+            $dataSave[$k]['lesson'] = $data['lesson'];
+            $dataSave[$k]['member_id'] = $member['id'];
+            $dataSave[$k]['member'] = $member['member'];
+            $dataSave[$k]['status'] = 1;
+        }
+        $res = $model->saveAll($dataSave);
+        return $res;
     }
 
     // 课程权限

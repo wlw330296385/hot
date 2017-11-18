@@ -152,6 +152,9 @@ class Lesson extends Base{
                     $data['area'] = $address[1];
                 }             
             }
+            if ($data['isprivate']==1 && $data['memberData'] == "[]") {
+                return json(['code' => 100, 'msg' => '私密课程必须选择想要发送私密课程的会员']);
+            }
             if($lesson_id){
                 $lesson = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
                 $hasgradeused = $this->LessonService->hasgradeused($lesson_id);
@@ -159,11 +162,20 @@ class Lesson extends Base{
                     if ($data['cost'] != $lesson['cost']) {
                         $result = ['code' => 100, 'msg' => '此课程被班级所用，不能修改课程单价'];
                         return json($result);
-                    } 
+                    }
                 }
                 $result = $this->LessonService->updateLesson($data,$lesson_id);
             }else{
                 $result = $this->LessonService->createLesson($data);
+                if ($result['code'] == 200 && $data['isprivate'] == 1) {
+                    $dataLessonAssign['lesson_id'] = $result['data'];
+                    $dataLessonAssign['lesson'] = $data['lesson'];
+                    $dataLessonAssign['memberData'] = $data['memberData'];
+                    $resultSaveLessonAssign = $this->LessonService->saveLessonAssign($dataLessonAssign);
+                    if (!$resultSaveLessonAssign) {
+                        return json(['code' => 100, 'msg' => '选择指定会员'.__lang('MSG_400')]);
+                    }
+                }
             }
             return json($result);
         }catch (Exception $e){
@@ -171,8 +183,6 @@ class Lesson extends Base{
         }
     	
     }
-
-
 
     // 获取购买了课程的没毕业的学生
     public function getStudentListOfLessonApi(){
