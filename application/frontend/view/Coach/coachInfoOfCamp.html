@@ -56,22 +56,21 @@
             </div>
         </div>
 
-        <div class="item-list">
+        <div class="item-list mt55">
             <div id="item1" class="mui-control-content  mui-active">
                 <ul class="mui-table-view list detalis-list mt55">
                     <li class="mui-table-view-cell listli">教练ID<span>{$coachInfo['id']}</span></li>
                     <li class="mui-table-view-cell listli">手机号码<span>{$memberInfo['telephone']}</span></li>
                     <li class="mui-table-view-cell listli">电子邮箱<span>{$memberInfo['email']}</span></li>
                     <li class="mui-table-view-cell listli">真实姓名<span>{$memberInfo['realname']}</span></li>
-                    <li class="mui-table-view-cell listli">所属地区<span>{$memberInfo['province']} {$memberInfo['city']} {$memberInfo['area']}</span></li>
+                    <li class="mui-table-view-cell listli">所属地区<span>{$memberInfo['province']} {$memberInfo['city']} {$memberInfo['area']}</span>
+                    </li>
                     <li class="mui-table-view-cell listli">身份证号<span>{$identCert['cert_no']}</span></li>
                     <li class="mui-table-view-cell listli detalisli border-b">
                         <a href="#" class="mui-navigate-right">
                             认证资料
-                            <!--上传照片后的界面-->
                             <img class="coachicon icon01" src="{$coachCert.photo_positive}" alt="" style="width: 60px">
                             <img class="coachicon icon01" src="{$coachCert.photo_back}" alt="" style="width: 60px">
-                            <!--<span class="wd52">上传</span>-->
                         </a>
                     </li>
                 </ul>
@@ -89,10 +88,12 @@
                     {volist name="gradeOfCoachList" id="vol"}
                     <li class="mui-table-view-cell">
                         <ul class="mui-row table">
-                            <li class="mui-col-sm-2 mui-col-xs-2"><i class="mui-icon mui-icon-checkmarkempty  {eq name='vol.grade.status' value='1'}colorgreen{/eq} "></i></li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.grade.grade}</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.grade.gradecate}</li>
-                            <li class="mui-col-sm-2 mui-col-xs-2 ">{$vol.grade.students}</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2"><i
+                                    class="mui-icon mui-icon-checkmarkempty  {eq name='vol.status' value='正常'}colorgreen{/eq} "></i>
+                            </li>
+                            <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.grade}</li>
+                            <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.gradecate}</li>
+                            <li class="mui-col-sm-2 mui-col-xs-2 ">{$vol.students}</li>
                         </ul>
                     </li>
                     {/volist}
@@ -110,20 +111,33 @@
                             <div class="mui-media-body">{$yearScheduleOfCoach}</div>
                         </a></li>
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
-                            <span>总课量</span>
+                            <span>个人总课量</span>
                             <div class="mui-media-body">{$coachInfo['lesson_flow']}</div>
                         </a></li>
                     </ul>
                 </div>
-                <ul class="mui-table-view mui-text-center mb mt">
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-xs-4"><b>已上课表</b></li>
-                            <li class="mui-col-xs-4">{$y}年<i class="mui-icon mui-icon-arrowdown"></i></li>
-                            <li class="mui-col-xs-4">{$m}月<i class="mui-icon mui-icon-arrowdown"></i></li>
-                        </ul>
-                    </li>
-                </ul>
+                <div class="page-header location-frame mt">
+                    <ul class="mui-row table mui-text-center">
+                        <li class="mui-col-xs-4"><b>已上课表</b></li>
+                        <li class="mui-col-xs-4 location-choise location-chosie-initial">
+                            <select class="wd52">
+                                {for start="$m" end="0" comparison="gt" step="-1" name="i"}
+                                <option>{$i}月</option>
+                                {/for}
+                            </select>
+                            <i class="mui-icon mui-icon-arrowdown" style="float: none"></i>
+                        </li>
+                        <li class="mui-col-xs-4 location-choise location-chosie-initial">
+                            <select class="wd52">
+                                {for start="$y" end="$y-8" comparison="gt" step="-1" name="i"}
+                                <option>{$i}年</option>
+                                {/for}
+                            </select>
+                            <i class="mui-icon mui-icon-arrowdown" style="float: none"></i>
+                        </li>
+                    </ul>
+                </div>
+
                 <ul class="mui-table-view mui-text-center">
                     <li class="mui-table-view-cell">
                         <ul class="mui-row table">
@@ -133,10 +147,12 @@
                             <li class="mui-col-xs-2">人数</li>
                         </ul>
                     </li>
-                    {volist name="scheduleOfCoachList" id="vol"}
+                    {volist name="monthScheduleOfCoachList" id="vol"}
                     <li class="mui-table-view-cell">
                         <ul class="mui-row table">
-                            <li class="mui-col-sm-2 mui-col-xs-2"><i class="mui-icon mui-icon-checkmarkempty {eq name='vol.status' value='1'}colorgreen{/eq} "></i></li>
+                            <li class="mui-col-sm-2 mui-col-xs-2 font26"><i
+                                    class="mui-icon mui-icon-checkmarkempty {eq name='vol.status' value='1'}colorgreen{/eq} "></i>
+                            </li>
                             <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.create_time}</li>
                             <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.grade}</li>
                             <li class="mui-col-sm-2 mui-col-xs-2 ">{$vol.students}</li>
@@ -148,34 +164,46 @@
             <div id="item4" class="mui-control-content">
                 <div class="nav-list">
                     <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                        <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6"><a href="#">
-                            <span>平均月薪</span>
-                            <div class="mui-media-body">{$averageSalaryByMonth}</div>
-                        </a></li>
-                        <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6"><a href="#">
-                            <span>平均年薪</span>
-                            <div class="mui-media-body">{$averageSalaryByYear}</div>
-                        </a></li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
+                            <a href="#">
+                                <span>平均月薪</span>
+                                <div class="mui-media-body">{$averageSalaryByMonth}</div>
+                            </a>
+                        </li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
+                            <a href="#">
+                                <span>平均年薪</span>
+                                <div class="mui-media-body">{$averageSalaryByYear}</div>
+                            </a>
+                        </li>
                     </ul>
                 </div>
-                <div class="page-header mb">
+                <div class="page-header location-frame mb">
                     <span class="course">工资表</span>
-                    <span class="more">{$y}年<i class="mui-icon mui-icon-arrowdown iconsize"></i></span>
+                    <span class="location-choise">
+                         <select class="wd73">
+                        {for start="$y" end="$y-8" comparison="gt" step="-1" name="i"}
+                        <option>{$i}年</option>
+                        {/for}
+                        </select>
+                        <i class="mui-icon mui-icon-arrowdown iconsize"></i>
+                    </span>
                 </div>
 
-                <ul class="mui-table-view mui-text-center">
+
+                <ul class="mui-table-view mui-text-center mb">
                     <li class="mui-table-view-cell">
                         <ul class="mui-row table">
-                            <li class="mui-col-xs-3">时间</li>
-                            <li class="mui-col-xs-3">工资</li>
+                            <li class="mui-col-sm-6 mui-col-xs-7">月份</li>
+                            <li class="mui-col-sm-6 mui-col-xs-5">工资</li>
                         </ul>
                     </li>
                     {volist name="salaryList" id="vol"}
                     <li class="mui-table-view-cell">
                         <a class="mui-navigate-right">
                             <ul class="mui-row table">
-                                <li class="mui-col-xs-3">{$vol.create_time}</li>
-                                <li class="mui-col-xs-3">{$vol.salary}</li>
+                                <li class="mui-col-sm-7 mui-col-xs-7">{$vol.create_time}</li>
+                                <li class="mui-col-sm-5 mui-col-xs-5">{$vol.salary}</li>
                             </ul>
                         </a>
                     </li>
@@ -189,34 +217,11 @@
 </div>
 
 <!--底部导航-->
-<nav class="mui-bar mui-bar-tab">
-    <a class="mui-tab-item mui-active" href="#tabbar">
-        <span class="mui-icon mui-icon-home"></span>
-        <span class="mui-tab-label">首页</span>
-    </a>
-    <a class="mui-tab-item" href="#tabbar-with-chat">
-        <span class="mui-icon mui-icon-chatbubble"></span>
-        <span class="mui-tab-label">消息</span>
-    </a>
-    <a class="mui-tab-item" href="#tabbar-with-contact">
-        <span class="mui-icon mui-icon-checkmarkempty"></span>
-        <span class="mui-tab-label">录课</span>
-    </a>
-    <a class="mui-tab-item" href="#tabbar-with-contact">
-        <span class="mui-icon mui-icon-extra mui-icon-extra-class"></span>
-        <span class="mui-tab-label">商城</span>
-    </a>
-    <a class="mui-tab-item" href="#tabbar-with-map">
-        <span class="mui-icon mui-icon-contact mui-icon-icon-contact-filled"></span>
-        <span class="mui-tab-label">我的</span>
-    </a>
-</nav>
+{layout name="Layout/footer"}
 
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
-<!--等级星星样式-->
-<script src="/static/frontend/js/feedback.js"></script>
 <script>
     //初始化
     mui.init({

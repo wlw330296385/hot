@@ -19,56 +19,92 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
 </head>
 
-<body class=whitebg>
+<body>
 
 
-<!--首页-->
-<div class="mui-content">
-
-    <!--头部搜索2-->
     <header id="header" class="mui-bar mui-bar-nav search2">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title"><input type="search" class="mui-input-clear" placeholder="搜索教练关键词"></h1>
-        <span class="mui-icon mui-icon-search searchicon"></span>
+        <h1 class="mui-title"><input type="search" class="mui-input-clear keyword" placeholder="搜索教练名称"></h1>
+        <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
     </header>
+
     <div class="mui-content">
-
-
-        <ul class="mui-table-view list detalis-list list coach">
-        {volist name="coachList" id="vol"}
-            <li class="mui-table-view-cell mui-media listli padding list-wide">
-                <a href="{:url('coach/coachInfo',['coach_id'=>$vol['coach_id']])}">
-                    <img class="mui-media-object mui-pull-left coachicon"
-                         src="{$vol.portraits}">
-                    <div class="mui-media-body">
-                        {$vol.coach}<img src="{:getSex($vol['sex'])}" class="sex" alt="">
-                        <p class="mui-ellipsis">教龄:{$vol.coach_year}&nbsp;&nbsp;等级:{$vol.coach_level}</p>
-                    </div>
-                    <div class="price-frame">
-                        <div class="icons mui-inline">{$vol.star}
-                            <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
-                            <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
-                            <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
-                            <i data-index="4" class="mui-icon mui-icon-star-filled"></i>
-                            <i data-index="5" class="mui-icon mui-icon-star-filled"></i>
-                        </div>
-                        <p class="address tr">南山区</p>
-                    </div>
-                </a>
+        <ul class="mui-table-view mb">
+            <li class="mui-table-view-cell listli detalisli">所属训练营
+                <span class="campName"></span>
             </li>
-        {/volist}
+        </ul>
+        <ul class="mui-table-view list detalis-list list coach">
         </ul>
     </div>
 
-</div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
-<!--等级星星样式-->
-<script src="/static/frontend/js/feedback.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/common.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+    $(function () {
+
+        var keyword='';
+        $('.keyword').val(keyword);
+        var campname = wooApi.GetQueryString('campname');
+        $('.campname').text(campname);
+
+        //搜索教练
+        $("#searchBtn").on("click", function () {
+            keyword = $(".keyword").val();
+            toCoachList(keyword);
+        })
+
+        //获取训练营教练列表
+        toCoachList(keyword);
+    });
+
+
+
+    //训练营教练列表接口获取数据并追加到页面
+    var toCoachList = function(keyword) {
+        var url  = "{:url('api/camp_member/getCoachListApi','','',true)}";
+        var campID = "{$campInfo.id}";
+        mui.ajax({
+            url:url,
+            data: {
+                camp_id:campID,
+                keyword:keyword
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+                if (data.code == 100) {
+                    var newli = '';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var coachSexUrl = getSexIconUrl(data.data[i].sex);
+                        var urls = "{:url('coach/coachInfo')}" + '/coach_id/' + data.data[i].id;
+                        newli = newli + '<li class="mui-table-view-cell mui-media listli list-wide"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body wd36">' + data.data[i].coach + '<img src="' + coachSexUrl + '" class="sex" alt=""><p class="mui-ellipsis">教龄:' + data.data[i].coach_year + '&nbsp;&nbsp;等级:' + data.data[i].coach_level + '</p></div><div class="price-frame"><div class="icons mui-inline">' + data.data[i].star + '<i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i><i data-index="4" class="mui-icon mui-icon-star-filled"></i><i data-index="5" class="mui-icon mui-icon-star-filled"></i></div><p class="address tr">' + data.data[i].area + '</p></div></a></li>'
+                    }
+                    $("ul.coach").empty();
+                    if(newli==''){
+                        newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
+                    }
+                    $("ul.coach").append(newli);
+
+                }else{
+                    mui.toast('数据获取失败,请稍候再试');
+                }
+            },
+            error: function(xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+            }
+        });
+    };
 </script>
 </html>

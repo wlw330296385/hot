@@ -2,7 +2,7 @@
 namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\BillService;
-class Bill extends Base{
+class Bill extends Frontend{
 	protected $BillService;
 	public function _initialize(){
 		parent::_initialize();
@@ -15,7 +15,8 @@ class Bill extends Base{
     public function getBillListApi(){
         try{
             $map = input('post.');
-            $result = $this->BillService->getBillList($map);
+            $page = input('param.page')?input('param.page'):1;
+            $result = $this->BillService->getBillList($map,$page);
             $billList = $result['data'];
             $billList['count'] = count($billList);
             return json(['code'=>100,'data'=>$billList,'msg'=>'OK']);       
@@ -29,10 +30,13 @@ class Bill extends Base{
         try{
             $id = input('get.id');
             $data = input('post.');
+            $data['member'] = $this->memberInfo['member'];
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['avatar'] = $this->memberInfo['avatar'];
             if($id){
                 $result = $this->BillService->updateBill($data,$id);
             }else{
-                $result = $this->BillService->pubBill($data);
+                $result = $this->BillService->createBill($data);
             }
             return json($result);
         
@@ -42,5 +46,18 @@ class Bill extends Base{
     }
 
 
+    public function updateBillInfoOfCampApi(){
+        try{
+            $camp_id = input('param.camp_id');
+            // 判断权限
+            $isPower = $this->BillService->isPower($camp_id,$this->memberInfo['id']);
+            if($isPower<3){
+                return json(['code'=>100,'msg'=>'权限不足']);
+            }
+            return json(['code'=>100,'data'=>$billList,'msg'=>'OK']);       
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }   
+    }
     
 }

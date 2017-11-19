@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>训练营注册</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <!-- webuploader -->
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+</head>
+
+<body>
+<div class="mui-content pt">
+    <div id="form1" class="register mb44">
+        <header class="mui-bar mui-bar-nav subheader header1">
+            <a class="mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+            <h1 class="mui-title">注册训练营信息</h1>
+        </header>
+        <form action="" class="mui-input-group mt25">
+            <div class="mui-input-row campname">
+                <label>训练营名称</label>
+                <input type="text" class="input camp" placeholder="请输入训练营名称">
+            </div>
+            <div class="mui-input-row">
+                <label>训练营类型</label>
+                <span class="select-arrow">
+                    <select class="pbselect type">
+                        <option>机构/教练/其他</option>
+                        <option value="1">机构</option>
+                        <option value="0">教练</option>
+                        <option value="2">其他</option>
+                    </select>
+                </span>
+            </div>
+            <div class="mui-input-row">
+                <label>创建者姓名</label>
+                <input type="text" class="input realname" placeholder="请输入负责人真实姓名">
+            </div>
+            {eq name="fast" value="0"}
+            <div class="mui-input-row ">
+                <label>手机号码</label>
+                <input id="telephone" type="text" class="input camp_telephone" placeholder="请输入手机号码">
+            </div>
+            <div class="mui-input-row">
+                <label>短信验证码</label>
+                <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)">
+                <input id="code" type="text" class="input verification" placeholder="输入验证码" style="width: 40%;">
+            </div>
+            {/eq}
+        </form>
+        <span class="tip-box tip"></span>
+        <div class="tip-box">
+            <input name="checkbox" checked value="已阅读并同意大热篮球（连锁）训练营合作协议" type="checkbox">
+            <label>已阅读并同意大热篮球训练营合作协议</label>
+        </div>
+        <div class="tjbtn mb44">
+            <button type="button" class="mui-btn btn camp-step1">注册</button>
+        </div>
+    </div>
+    <!-- #form1 end -->
+</div>
+
+
+
+
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/smsCode.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    // 发送短信验证码
+    function sendCode(obj){
+        telephone = document.getElementById('telephone').value;
+        var telephoneReg = /^\d{11,11}$/;
+        if(!telephoneReg.test(telephone)){
+            mui.toast('请填写正确的手机号码');
+            flag = false;
+        }else{
+            var result = smsCode.getMobileCodeApi(obj,telephone,"{:url('api/sms/getmobilecodeapi', ['use' => '训练营注册'])}");
+            //console.log(result);
+            if(result.code == 100){
+                flag = true;
+                mui.toast(result.msg);
+            }else{
+                flag = false;
+                mui.toast(result.msg);
+            }
+        }
+    }
+
+    $(function() {
+        //验证短信验证码
+        $('#code').on("blur",function(){
+            //var code = document.getElementById('code').value;
+            var code = $(this).val();
+            var codeReg = /^\d{6,6}$/;
+
+            console.log(code);
+            if(!codeReg.test(code)){
+                mui.toast('请填写正确的验证码');
+                flag = false;
+            }else{
+                telephone = document.getElementById('telephone').value;
+                var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/sms/validatesmscodeapi')}");
+                if(result == 100){
+                    flag = true;
+                    mui.toast(result.msg);
+                }else{
+                    flag = false;
+                    mui.toast(result.msg);
+                }
+            }
+
+        });
+
+
+        // 注册 step1
+        $('.camp-step1').click(function() {
+            var campname = $('.camp').val();
+            var camptype = $('.type').val();
+            var creator = $('.realname').val();
+            var camp_telephone = $('.camp_telephone').val();
+            var smsverify = $('.verifcation').val();
+            var formData = {
+                campname: campname,
+                camptype: camptype,
+                creator: creator,
+                camp_telephone: camp_telephone
+            };
+
+            if ( campname == ""  ) {
+                mui.toast('请填写训练营名称');
+                return false;
+            }
+
+            if ( isNaN(camptype)===true) {
+                mui.toast('请选择训练营类型');
+                return false;
+            }
+
+            if ( creator == ""  ) {
+                mui.toast('请填写创建者姓名');
+                return false;
+            }
+
+            mui.ajax("{:url('api/camp/createCamp')}", {
+                data: {
+                    campname: campname,
+                    camptype: camptype,
+                    creator: creator,
+                    camp_telephone: camp_telephone
+                },
+                dataType: 'json',
+                type: 'post',
+                timeout: 10000,
+                headers:{'Content-Type':'application/json'},
+                success:function(res){
+                    //console.log(res);
+                    if (res.code == 200) {
+                        mui.toast(res.msg+',请继续完善训练营');
+                        location.href = "{:url('camp/createcamp', '', '', true)}/step/2/camp_id/"+res.data;
+                    } else {
+                        mui.toast(res.msg);
+                    }
+                },
+                error:function(xhr,type,errorThrown){
+                    console.log(type);
+                }
+            });
+
+        });
+    });
+
+
+</script>
+</html>

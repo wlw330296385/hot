@@ -15,21 +15,27 @@ class CoachService{
 	 * 查询教练信息&&关联member表
 	 */
 	public function coachInfo($map){
-        $result = Coach::with('member')->where($map)->find();
-        return $result->toArray();
+        $res = Coach::with('member')->where($map)->find();
+        if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
+        }
 	}
 
 	/**
 	 * 申请成为教练
 	 */
 	public function createCoach($request){
-		$result = $this->CoachModel->validate('CoachVal')->save($request);
-        if($result){
-            return ['code'=>100,'msg'=>'OK','data'=>$result];
+        $model = new Coach();
+        $result = $model->validate('CoachVal')->save($request);
+        if ($result === false) {
+            return ['code' => 100, 'msg' => $model->getError()];
         }else{
-            return ['code'=>100,'msg'=>$this->CoachModel->getError()];
+            return ['code'=>200,'msg'=>'OK','data'=> $model->getLastInsID() ];
         }
-	}
+    }
 
 
 	/**
@@ -37,39 +43,34 @@ class CoachService{
 	 */
 	public function updateCoach($request,$id)
     {
-        $result = $this->CoachModel->allowField(true)->validate('CoachVal')->save($request,$id);
-
+        $model = new Coach();
+        $result = $model->validate('CoachVal')->save($request, ['id' => $id]);
         if ($result === false) {
-            return ['msg' => $this->Coach->getError(), 'code' => 200];
+            return ['code' => 100, 'msg' => $model->getError()];
         } else {
-            return ['msg' => __lang('MSG_100_SUCCESS'), 'code' => 100, 'data' => $result];
+            return ['code' => 200, 'msg' => __lang('MSG_100_SUCCESS')];
         }
     }
 	
 	// 教练列表
-	public function coachList($map=[], $order='') {
-	    $result = Coach::with('member')->where($map)->order($order)->select();
-	    //return $result;
-        if (!$result) {
-            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
+	public function coachList($map=[],$page = 1,$paginate = 10, $order='') {
+	    $res = Coach::with('member')->where($map)->order($order)->page($page,$paginate)->select();
+        if($res){
+            $result = $res->toArray();
+        }else{
+            $res;
         }
-        if ($result->isEmpty()) {
-            return [ 'msg' => __lang('MSG_000_NULL'), 'code' => 000, 'data' => ''];
-        }
-        return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $result->toArray()];
     }
 
     // 教练列表 分页
-    public function coachListPage( $map=[], $paginate=0,$order='') {
-        $result = Coach::with('member')->where($map)->order($order)->paginate($paginate);
+    public function coachListPage( $map=[],$page = 1, $paginate = 10,$order='') {
+        $res = Coach::with('member')->where($map)->order($order)->page($page,$paginate)->select();
         //return $result;
-        if (!$result) {
-            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
+        if($res){
+            $result = $res->toArray();
+        }else{
+            $res;
         }
-        if ($result->isEmpty()) {
-            return [ 'msg' => __lang('MSG_000_NULL'), 'code' => 000, 'data' => ''];
-        }
-        return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $result];
     }
     
     public function updateCoachStatus($request) {
@@ -93,12 +94,12 @@ class CoachService{
 
     // // 获取训练营下的教练
     // public function getCoahListOfCamp($map){
-    //     $result = $this->gradeMemberModel->where($map)->paginate($paginate);
+    //     $result = $this->gradeMemberModel->where($map)->page($page,$paginate)->select();
     //     return $result->toArray();
     // }
 
-    public function getCoachListPage(){
-        $result = Coach::with('member')->where($map)->order($order)->paginate($paginate);
+    public function getCoachListPage($map=[],$page=1, $paginate = 10, $order=''){
+        $result = Coach::with('member')->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
         if (!$result) {
             return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
         }
@@ -111,11 +112,11 @@ class CoachService{
 
 
     // 教练列表 分页
-    public function getCoachList($map=[], $paginate = 10, $order='') {
-        $result = $this->CoachModel->where($map)->order($order)->paginate($paginate);
+    public function getCoachList($map=[],$page=1, $paginate = 10, $order='') {
+        $result = $this->CoachModel->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
         if($result){
             $result = $result->toArray();
-            return $result['data'];
+            return $result;
         }else{
             return $result;
         }
@@ -124,24 +125,23 @@ class CoachService{
 
 
     // 教练列表 分页
-    public function getCoachListOfCamp($map=[], $paginate = 10, $order='') {
-        $result = Db::view('grade_member','*')
-                ->view('coach','portraits,star,sex,coach_year,coach_level','grade_member.coach_id=coach.id')
+    public function getCoachListOfCamp($map=[],$page = 1, $paginate = 10, $order='') {
+        $result = Db::view('camp_member','member_id,type')
+                ->view('coach','*','camp_member.member_id=coach.member_id')
                 ->where($map)
                 ->order($order)
-                ->paginate($paginate);
-                // echo db('grade_member')->getlastsql();die;
-        if($result){
-            $result = $result->toArray();
-            return $result['data'];
-        }else{
-            return $result;
-        }
-        
+                ->page($page,$paginate)
+                ->select();
+        return $result;
     }
 
     public function getCoachInfo($map){
-        $result = $this->CoachModel->where($map)->find();
-        return $result;
+        $res = $this->CoachModel->with('member')->where($map)->find();
+        if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
+        }
     }
 }

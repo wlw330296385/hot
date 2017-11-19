@@ -20,7 +20,7 @@ function getdomain() {
 
 // 用户密码加密
 function passwd($str) {
-    return sha1(config('queue.salekey') . $str);
+    return sha1(config('salekey') . $str);
 }
 
 // 获取语言包
@@ -103,9 +103,9 @@ function format_sex($sex_int) {
 function getSex($value){
     if($value == 1){
         //1=男
-        return "/static/frontend/images/icon03.jpg";
+        return "/static/frontend/images/male.png";
     }else{
-         return "/static/frontend/images/icon04.jpg";
+        return "/static/frontend/images/female.png";
     }
 }
 
@@ -131,3 +131,45 @@ function getOrderID(){
     $result = date('YmdHis').rand(0000,9999).$salt;
     return $result;
 }
+
+
+
+function sendMessage($data){
+    $MessageService = new \app\service\MessageService;
+    $result = $MessageService->saveMessageInfo($data);
+    return $result;
+}
+
+
+function sendMessageMember($data){
+    $MessageMemberService = new \app\service\MessageMemberService;
+    $result = $MessageMemberService->saveMessageInfo($data);
+    return $result;
+}
+
+function buildqrcode($url, $size=4, $level='L')
+{
+//    dump($url);
+
+    $savePath = ROOT_PATH . 'public/uploads/images/qrcode/' . date('Y') .'/'. date('m') .'/';
+    $webPath = '/uploads/images/qrcode/' . date('Y') .'/'. date('m') . '/';
+
+    if (!file_exists($savePath)) {
+        mkdir($savePath, 0777, true);
+    }
+    //$qr=new \phpqrcode\QRcode();
+    //\QRcode::png($url, $filename, $level,$size);
+    $filename = $savePath . DS . date('His').md5($url) . '.png';
+    \think\Loader::import('phpqrcode.phpqrcode');
+    $qrcodeObj = new \phpqrcode\QRcode();
+    if (isset($url)) {
+        $qrcodeObj::png($url, $filename, $level,$size);
+    }
+    //dump( $savePath . basename($filename) );
+    if ( file_exists($savePath . basename($filename) ) ) {
+        return $webPath.basename($filename);
+    } else {
+        return false;
+    }
+}
+

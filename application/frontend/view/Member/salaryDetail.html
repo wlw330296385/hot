@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>训练营课程列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body class="whitebg">
+
+<div class="mui-content">
+
+    <div class="list camp-list camp-lesson-list detalis-list coach">
+        <div class="camp-lesson-list">
+            <div id="segmentedControl" class="mui-segmented-control mb">
+                <a class="mui-control-item mui-active" href="#item2">收入明细</a>
+                <a class="mui-control-item" href="#item3">支出明细</a>
+            </div>
+
+            <div class="item-list">
+                <div id="item2" class="mui-control-content mui-active">
+                    <ul class="mui-table-view list">
+                    {volist name="salaryinList" id="vol"}
+                     <ul class="mui-table-view"> 
+                        <li class="mui-table-view-cell mui-collapse">
+                            <a class="mui-navigate-right" href="#">
+                                <div class="list-cont">
+                                    <h4>{$vol.grade}</h4>
+                                    <p>{$vol.create_time}</p>
+                                </div>
+                                 <span class="date money">+{$vol.salary}</span>
+                            </a>
+                            <div class="mui-collapse-content">
+                                <div class="list camp-list camp-lesson-list detalis-list coach">
+                                <ul class="mui-table-view mb">
+                                    <li class="mui-table-view-cell listli listinitial">
+                                        进账金额<span>{$vol.salary}</span>
+                                    </li>
+                                    <li class="mui-table-view-cell listli listinitial">
+                                        训练营<span>{$vol.camp}</span>
+                                    </li>
+                                    <li class="mui-table-view-cell listli listinitial">
+                                        课程<span>{$vol.lesson}</span>
+                                    </li>
+                                    <li class="mui-table-view-cell listli listinitial">
+                                        角色<span>{$vol.member_type}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            </div>
+                        </li>
+                    </ul>
+                    {/volist}
+                    </ul>
+                </div>
+                <div id="item3" class="mui-control-content">
+                    <ul class="mui-table-view list">
+                    {volist name="salaryoutList" id="vol"}
+                        <ul class="mui-table-view"> 
+                        <li class="mui-table-view-cell mui-collapse">
+                            <a class="mui-navigate-right" href="#">
+                                <div class="list-cont">
+                                    <h4>{$vol.create_time}                                        
+                                    </h4>
+                                </div>
+                                <span class="date money">-{$vol.salary}</span>
+                            </a>
+                            <div class="mui-collapse-content">
+                                <div class="list camp-list camp-lesson-list detalis-list coach">
+                                <ul class="mui-table-view mb">   
+
+                                <li class="mui-table-view-cell listli listinitial">
+                                    出账平台<span>{$vol.bank}
+                                    </span>
+                                </li>
+                                <li class="mui-table-view-cell listli listinitial">
+                                    出账账号<span>{$vol.bank_card}
+                                    </span>
+                                </li>
+                                <li class="mui-table-view-cell listli listinitial">
+                                    手续费<span>{$vol.fee}</span>
+                                </li>
+                                <li class="mui-table-view-cell listli listinitial">
+                                    交易单号<span>{$vol.tid}</span>
+                                </li>
+                                <li class="mui-table-view-cell listli listinitial">
+                                    状态<span>{$vol.status}</span>
+                                </li>
+                                </ul>
+                            </div>
+                            </div>
+                        </li>
+                    </ul>
+                    {/volist}
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+    mui("body").on("tap","a",function(){
+        window.top.location.href=this.href;
+    });
+</script>
+</html>

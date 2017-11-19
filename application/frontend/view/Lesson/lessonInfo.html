@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>训练营-课程详情页-</title>
+    <title>课程详情</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -19,53 +19,123 @@
 
 <body class=whitebg>
 
-
-<!--首页-->
-<div class="mui-content">
-
-    <div class="camp-list camp-lesson-list">
-        <ul class="mui-table-view list mb">
-            <li class="mui-table-view-cell mui-media listli">
-                <a href="{:url('lesson/updateLesson',['lesson_id'=>$lessonInfo['id']])}" class="mui-navigate-right">
-                    <div class="mui-media-body">
-                        <strong>{$lessonInfo.lesson}</strong><font class="state">[{$lessonInfo.status}]</font>
-                        <p class="mui-ellipsis">{$lessonInfo.camp} | {$lessonInfo.gradecate}</p>
+<header id="header" class="mui-bar mui-bar-nav subheader subheader-other">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+</header>
+<!--课程详情页-->
+<div class="mui-content" style="padding: 0">
+    <div class="list camp-list">
+        <div class="img4x3" style="background-image:url('{$lessonInfo.cover}')"></div>
+        <ul class="mui-table-view mb" style="margin-top: -4px">
+            <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                <a href="javascript:;">
+                    <div class="mui-media-body wd52">
+                        <strong>{$lessonInfo.lesson}</strong>
+                        <p class="mui-ellipsis">{$lessonInfo.gradecate}</p>
                     </div>
-
                     <div class="price-frame">
-                        <span class="editor-btn">编辑</span>
+                        <p class="price">￥{$lessonInfo.cost}<span class="nofloat"> / 课时</span></p>
                     </div>
                 </a>
             </li>
         </ul>
 
-        <ul class="mui-table-view list">
-            <li class="mui-table-view-cell listli">课程单价<span>￥{$lessonInfo.cost}/课时</span></li>
-            <li class="mui-table-view-cell listli">课程数量<span>{$lessonInfo.total}节</span></li>
-            <li class="mui-table-view-cell listli">课程所需积分<span class="width">{$lessonInfo.score}积分</span></li>
-            <li class="mui-table-view-cell listli">训练时间<span>{$lessonInfo.week} {$lessonInfo.lesson_time}</span></li>
-            <li class="mui-table-view-cell listli">所属地区<span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span></li>
+        <ul class="mui-table-view mt55">
+            <li class="mui-table-view-cell listli">选择课量
+                <span>
+                    {volist name="lessonInfo['doms']" id="vol" }
+                        <button type="button" class="mui-btn selectTotal" data="{$vol}"  >{$vol}节</button>
+                    {/volist}
+                    </span>
+            </li>
+            <li class="mui-table-view-cell listli">
+                <a class="mui-navigate-right">
+                    所属训练营<span class="wd66" id="aaa">{$lessonInfo.camp}</span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli">训练时间<span>{$lessonInfo.week} {$lessonInfo.lesson_time} </span></li>
             <li class="mui-table-view-cell listli">训练地点<span>{$lessonInfo.court}</span></li>
+            <li class="mui-table-view-cell listli">所属地区<span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span>
+            </li>
             <li class="mui-table-view-cell listli">具体地址<span>{$lessonInfo.location}</span></li>
             <li class="mui-table-view-cell listli">人数范围<span>{$lessonInfo.min}-{$lessonInfo.max}人</span></li>
             <li class="mui-table-view-cell listli">主教练<span>{$lessonInfo.coach}</span></li>
-            <li class="mui-table-view-cell listli">助理教练<span>{$lessonInfo.assistant}</span></li>
-            <li class="mui-table-view-cell listli">领队<span>{$lessonInfo.leader}</span></li>
-            <li class="mui-table-view-cell listli">班主任<span>{$lessonInfo.teacher}</span></li>
             <li class="mui-table-view-cell listli">备注<span>{$lessonInfo.remarks}</span></li>
         </ul>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 opli"><a href="tel:{$lessonInfo.telephone}"><span
+                    class="mui-icon mui-icon-phone"></span>电话咨询</a></li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bgblue" onclick="book()">预约体验</li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="buy()">购买课程</a></li>
+        </ul>
+
     </div>
 </div>
-
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
 
-    //    var tottal = 20;
-    localStorage.setItem("total", total);
+
+    // 预约课程和购买课程
+    $(function(){
+        sessionStorage.lessonTotal = 0;
+        $('.selectTotal').on('click',function(){
+            $('.selectTotal').removeClass('mui-btn-warning');
+            var data = wooApi.selectLessonTotal2($(this));
+            // 存储课时
+           sessionStorage.lessonTotal = data;
+           console.log(sessionStorage.lessonTotal);
+        })
+    })
+    
+    var buyUrl = "{:url('lesson/comfirmBill',['lesson_id'=>$lessonInfo['id']])}";
+    var bookUrl = "{:url('lesson/bookBill',['lesson_id'=>$lessonInfo['id']])}";
+
+    function book(){
+
+        if ( "{$memberInfo.id}"<=0) {
+            var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+            mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
+        }else{
+            var lessonTotal = sessionStorage.lessonTotal;
+            if(lessonTotal == 0){
+                alert('请先选择课量');
+                return false;
+
+            }else{
+                // window.location.href = bookUrl;
+                window.location.href = bookUrl+'?total='+lessonTotal;
+
+            }
+        }
+        
+    }
+
+    function buy(){
+
+        if ( "{$memberInfo.id}"<=0) {
+            var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+            mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
+        }else{
+            var lessonTotal = sessionStorage.lessonTotal;
+            if(lessonTotal == 0){
+                alert('请先选择课量');
+                return false;
+
+            }else{
+                // window.location.href = buyUrl;
+                window.location.href = buyUrl+'?total='+lessonTotal;
+
+            }
+        }
+
+    }
+
 </script>
 </html>

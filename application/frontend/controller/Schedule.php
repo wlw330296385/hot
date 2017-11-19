@@ -18,7 +18,7 @@ class Schedule extends Base
 	}
 
 	public function index(){
-		return view();
+		return view('Schedule/index');
 
 	}
 
@@ -39,7 +39,7 @@ class Schedule extends Base
     	$this->assign('myCount',$myCount);
   		$this->assign('scheduleList',$scheduleList);
   		$this->assign('scheduleListCount',$scheduleListCount);
-		return view();
+		return view('Schedule/scheduleList');
     }
 
 	// 课时详情
@@ -56,34 +56,46 @@ class Schedule extends Base
 		$this->assign('studentList',$studentList);
 		$this->assign('scheduleInfo',$scheduleInfo);
 		$this->assign('commentList',$commentList);
-		return view();
+		return view('Schedule/scheduleInfo');
 	}
 
 
 	// 录课界面
 	public function recordSchedule(){
-		$camp_id = input('camp_id');
-		$lesson_id = input('lesson_id');
-		$grade_id = input('grade_id');
-		$is_power = $this->recordSchedulePower();
-		if($is_power == 0){
+		$camp_id = input('param.camp_id');
+		$lesson_id = input('param.lesson_id');
+		$grade_id = input('param.grade_id');
+		$is_power = $this->scheduleService->isPower($camp_id,$this->memberInfo['id']);
+		if($is_power <2){
 			$this->error('您没有权限录课');die;
 		}
+
 		// 教练列表
-		$memberOfAllList = db('grade_member')
+		$memberListOfCamp = db('camp_member')
 						->where([
 						'camp_id'	=>$camp_id,
-						'grade_id'	=>$grade_id,
-						// 'type'		=>4,
-						'status'	=>1
+						'status'	=>1,
 						])
-						->whereOr(['type'=>['in',[2,3,4,6,8]]])
-						->field('member,member_id,coach,coach_id')
+						->field('member,member_id')
 						->select();
-		$this->assign('memberOfAllList',$memberOfAllList);
-		// $this->assign('coachList',$coachtList);
-		// $this->assign('assistantList',$assistantList);
-		return view();
+		// 班级信息
+		$GradeService = new \app\service\GradeService;		
+		$gradeInfo = $GradeService->getGradeInfo(['id'=>$grade_id]);
+
+		// 训练项目
+		$ExerciseService = new \app\service\ExerciseService;
+		$exerciseList = $ExerciseService->getExerciseListOfCamp($camp_id);
+
+		// 班级学生
+		$studentList = db('grade_member')->where(['grade_id'=>$grade_id,'status'=>1,'type'=>1])->select();
+		$countStudentList = count($studentList);
+		$this->assign('countStudentList',$countStudentList);
+		$this->assign('studentList',$studentList);
+		$this->assign('exerciseList',$exerciseList);
+		$this->assign('gradeInfo',$gradeInfo);
+		$this->assign('memberListOfCamp',$memberListOfCamp);
+		$this->assign('campid', $camp_id);
+		return view('Schedule/recordSchedule');
 	}
 
 	//判断录课冲突,规则:同一个训练营课程班级,在某个时间点左右2个小时之内只允许一条数据;
@@ -113,51 +125,6 @@ class Schedule extends Base
 		}
 
 		return $result;die;
-	}
-	
-	// 判断是否有录课权限|审核
-	public function recordSchedulePower(){
-		// 只要是训练营的教练都可以跨训练营录课
-		$camp_id = input('camp_id');
-		$member_id = $this->memberInfo['id'];
-		$result = 1;
-		$is_power = db('grade_member')->where([
-											'member_id'	=>$member_id,
-											'camp_id'	=>$camp_id,
-											'status'	=>1
-									])
-									->whereOr(['type'=>['in',[2,3,4,6,8]]])	
-									->find();
-		if(!$is_power){
-			$result = 0;
-		}
-
-		return $result;
-	}
-
-
-	//课时审核
-	public function recordScheduleCheckApi(){
-		$camp_id = input('camp_id');
-		$is_power = $this->recordSchedulePowerApi();
-		if($is_power == 0){
-			return json(['code'=>200,'msg'=>'权限不足']);die;
-		}
-		$schedule_id = input('schedule_id');
-		$result = db('schedule')->save(['status'=>1],$schedule_id);
-		if($result){
-			return json(['code'=>100,'msg'=>'审核成功']);die;
-		}else{
-			return json(['code'=>200,'msg'=>'审核失败']);die;
-		}
-	}
-
-
-	// 录课Api
-	public function recordScheduleApi(){
-		$data = input('post.');
-		$result = $this->scheduleService->pubSchedule($data);
-		return json($result);
 	}
 
 

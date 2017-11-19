@@ -5,12 +5,13 @@ class LessonVal extends Validate{
 
 
 	protected $rule = [
-        'Lesson'        =>  'require|max:60',
-        'lessoncate'	=> 'require',
-        'total'         => 'require',
+        'lesson'        =>  'require|max:60',
+        'gradecate'	=> 'require',
+        'cost'         => 'require',
+        'dom'         => 'require',
         'coach'         =>'require',
         'week'           =>'require',
-        'lesson_time'           =>'after:'.date('Y-m-d',time()),
+        'lesson_time'           =>'require',
         'province'              =>'require',
         'city'                  =>'require',
         'area'                  =>'require',
@@ -18,23 +19,22 @@ class LessonVal extends Validate{
     ];
     
     protected $message = [
-        'Lesson.require'        =>  '课程名必须',
-        'lessoncate.require'	=> '课程类型必须',
-        'realname.require'      =>  '创建者必须实名认证',
-        'camp'                  =>'所属训练营必须',
-        'total'                 =>'字段必须',
-        'coach'                 =>'字段必须',
-        'week'                  =>'字段必须',
+        'lesson.require'        =>  '课程名必须',
+        'gradecate.require'	=> '课程类型必须',
+        'cost.require'      =>'费用必须',
+        'dom'                 =>'dom字段必须',
+        'coach'                 =>'coach字段必须',
+        'week'                  =>'week字段必须',
         'lesson_time'           =>'发布时间大于当前时间',
-        'province'              =>'字段必须',
-        'city'                  =>'字段必须',
-        'area'                  =>'字段必须',
-        'court'                 =>'字段必须',
+        'province'              =>'province字段必须',
+        'city'                  =>'city字段必须',
+        'area'                  =>'area字段必须',
+        'court'                 =>'court字段必须',
     ];
     
     protected $scene = [
-        'add'   =>  ['lessoncate','lesson','camp','total','coach','week','lesson_time','province','city','area','court'],
-        'edit'  =>  ['lessoncate','lesson','camp','total','coach','week','lesson_time','province','city','area','court'],
+        'add'   =>  ['gradecate','lesson','dom','cost','coach','week','lesson_time','province','city','area','court'],
+        'edit'  =>  [],
     ];    
 
 }

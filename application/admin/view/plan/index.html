@@ -8,7 +8,7 @@
         </div>
         <ul class="nav nav-tabs">
             <li class="active"><a href="{:url('plan/index')}">平台发布</a></li>
-            <li><a href="">训练营/教练发布</a></li>
+            <li><a href="{:url('plan/manage')}">训练营/教练发布</a></li>
         </ul>
     </div>
     <div class="panel-body">
@@ -20,6 +20,36 @@
                         <a href="{:url('plan/create')}" class="btn btn-success btn-add"><i class="fa fa-plus"></i> 添加</a>
                         <!--<a href="javascript:;" class="btn btn-danger btn-del disabled"><i class="fa fa-trash"></i> 删除</a>-->
                     </div>
+                </div>
+
+                <div class="search-form">
+                    <form action="" class="form-inline" method="post">
+                        <fieldset>
+                            <div class="form-group">
+                                <label class="control-label">教案名称</label>
+                                <input class="form-control" type="text" name="outline" >
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">适合阶段</label>
+                                <select class="form-control" name="grade_category_id">
+                                    <option value="">请选择</option>
+                                    {volist name="category" id="vo"}
+                                    <optgroup label="{$vo.name}">
+                                        {volist name="$vo['_data']" id="vo2"}
+                                        <option value="{$vo2.id}">{$vo2.name}</option>
+                                        {/volist}
+                                    </optgroup>
+                                    {/volist}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12 text-center">
+                                    <button type="submit" class="btn btn-success btn-flat">搜索</button>
+                                    <button type="reset" class="btn btn-default btn-flat">重置</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
                 </div>
 
                 <div class="box-body">
@@ -45,7 +75,7 @@
                                 {$vo.status}
                             </td>
                             <td>
-                                <a href="" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i></a>
+                                <a href="{:url('plan/show', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i></a>
                                 <a href="" class="btn btn-xs btn-danger del-btn"><i class="fa fa-trash"></i></a>
                             </td>
                         </tr>

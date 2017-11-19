@@ -1,0 +1,107 @@
+{extend name="layout/common"/}
+
+{block name="page-content"}
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+            <em>教案管理</em>
+        </div>
+        <ul class="nav nav-tabs">
+            <li><a href="{:url('plan/index')}">平台发布</a></li>
+            <li class="active"><a href="{:url('plan/manage')}">训练营/教练发布</a></li>
+        </ul>
+    </div>
+    <div class="panel-body">
+        <div class="no-padding">
+            <div class="bootstrap-table">
+                <div class="search-form">
+                    <form action="" class="form-inline" method="post">
+                        <fieldset>
+                            {if condition="!isset($curcamp)"}
+                            <div class="form-group">
+                                <label class="control-label">训练营</label>
+                                <input class="form-control" type="text" name="camp" >
+                            </div>
+                            {/if}
+                            <div class="form-group">
+                                <label class="control-label">教案名称</label>
+                                <input class="form-control" type="text" name="outline" >
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">适合阶段</label>
+                                <select class="form-control" name="grade_category_id">
+                                    <option value="">请选择</option>
+                                    {volist name="category" id="vo"}
+                                    <optgroup label="{$vo.name}">
+                                        {volist name="$vo['_data']" id="vo2"}
+                                        <option value="{$vo2.id}">{$vo2.name}</option>
+                                        {/volist}
+                                    </optgroup>
+                                    {/volist}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">发布人</label>
+                                <input class="form-control" type="text" name="member" >
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12 text-center">
+                                    <button type="submit" class="btn btn-success btn-flat">搜索</button>
+                                    <button type="reset" class="btn btn-default btn-flat">重置</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+
+                <div class="fixed-table-container no-border">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="box no-border">
+                                <div class="box-body">
+                                    <table class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>教案名称</th>
+                                            <th>适合阶段</th>
+                                            <th>所属训练营</th>
+                                            <th>发布人</th>
+                                            <th>创建时间</th>
+                                            <th>状态</th>
+                                            <th>操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {volist name="list" id="vo"}
+                                        <tr>
+                                            <td>{$vo.id}</td>
+                                            <td>{$vo.outline}</td>
+                                            <td>{$vo.grade_category}</td>
+                                            <td>{$vo.camp}</td>
+                                            <td>{$vo.member}</td>
+                                            <td>{$vo.create_time}</td>
+                                            <td>
+                                                {$vo.status}
+                                            </td>
+                                            <td>
+                                                <a href="{:url('plan/show', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i></a>
+                                                <a href="{:url('plan/sdel', ['id' => $vo['id']])}" class="btn btn-xs btn-danger del-btn"><i class="fa fa-trash"></i></a>
+                                            </td>
+                                        </tr>
+                                        {/volist}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="box-footer clearfix">
+                                    {$list->render()}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

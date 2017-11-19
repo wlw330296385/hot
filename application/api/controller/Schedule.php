@@ -10,13 +10,14 @@ class Schedule extends Base
 	
 	protected $scheduleService;
 
-	function __construct()
+	function _initialize()
 	{
+		parent::_initialize();
 		$this->scheduleService = new ScheduleService;
 	}
 
 	public function index(){
-
+		echo  "11";
 
 	}
 
@@ -25,13 +26,13 @@ class Schedule extends Base
 	//判断录课冲突,规则:同一个训练营课程班级,在某个时间点左右2个小时之内只允许一条数据;
 	public function recordScheduleClashApi(){
 		try{
-			$lesson_id = input('lesson_id');
-			$lesson_time = input('lesson_time');
-			$grade_id = input('grade_id');
-			$camp_id = input('camp_id');
+			$lesson_id = input('param.lesson_id');
+			$lesson_time = input('param.lesson_time');
+			$grade_id = input('param.grade_id');
+			$camp_id = input('param.camp_id');
 			//前后2个小时
-			$start_time = time()-7200;
-			$end_time = time()+7200;
+			$start_time = $lesson_time-7200;
+			$end_time = $lesson_time+7200;
 			$scheduleList = db('schedule')->where([
 									'camp_id'=>$camp_id,
 									'grade_id'=>$grade_id,
@@ -60,18 +61,9 @@ class Schedule extends Base
 	public function recordSchedulePowerApi(){
 		try{
 			// 只要是训练营的教练都可以跨训练营录课
-			$camp_id = input('camp_id');
+			$camp_id = input('param.camp_id');
 			$member_id = $this->memberInfo['id'];
-			$result = 1;
-			$is_power = db('grade_member')->where([
-												'member_id'	=>$member_id,
-												'camp_id'	=>$camp_id,
-												'type'		=>['or',['2,3,4,8']],
-												'status'	=>1
-										])->find();
-			if(!$is_power){
-				$result = 0;
-			}
+			$result = $this->scheduleService->is_power($camp_id,$member_id);
 			return $result;
 		}catch (Exception $e){
 			return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -83,9 +75,9 @@ class Schedule extends Base
 	//课时审核
 	public function recordScheduleCheckApi(){
 		try{
-			$camp_id = input('camp_id');
+			$camp_id = input('param.camp_id');
 			$is_power = $this->recordSchedulePowerApi();
-			if($is_power != 1){
+			if($is_power <3){
 				return json(['code'=>200,'msg'=>'权限不足']);die;
 			}
 			$schedule_id = input('schedule_id');
@@ -106,7 +98,9 @@ class Schedule extends Base
 	public function recordScheduleApi(){
 		try{
 			$data = input('post.');
-			$result = $this->scheduleService->pubSchedule($data);
+			$data['member_id'] = $this->memberInfo['id'];
+			$data['member'] = $this->memberInfo['member'];
+			$result = $this->scheduleService->createSchedule($data);
 			return json($result);
 		}catch (Exception $e){
 			return json(['code'=>100,'msg'=>$e->getMessage()]);

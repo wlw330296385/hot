@@ -1,13 +1,13 @@
 <?php
-namespace extend;
+//namespace extend;
 class SmsApi {
     public $api_appid;
     public $api_secret;
     public $paramArr;
 
     public function __construct() {
-        $this->api_appid = C('SMS_APPID');
-        $this->api_secret = C('SMS_SECRET');
+        $this->api_appid = config('SMS_APPID');
+        $this->api_secret = config('SMS_SECRET');
     }
 
     // 创建参数并签名处理
@@ -90,7 +90,7 @@ class SmsApi {
         if ( $code == 0 ) {
             return $result->showapi_res_code;
         } else {
-            return false;
+            return $result->showapi_res_body->msg;
         }
     }
 }

@@ -21,46 +21,96 @@
 
 <!--会员登陆-->
 <div class="mui-content">
+
     <div class=login-frame>
+        <!--logo-->
         <div class="logo">
             <img src="/static/frontend/images/logo.png" alt="大热篮球">
         </div>
-        <p class="tjlogin">（推荐使用微信登陆）</p>
-        <div class="tjdlbtn">
-            <button type="button" class="mui-btn">
-                <span class="mui-icon mui-icon-weixin"></span>使用微信登陆
-            </button>
-        </div>
-        <p class="other-login">
-            <a href="#">其他登录选项</a>
-        </p>
-        <p class="line"></p>
 
-        <div class="login">
-            <h3>会员登录</h3>
-            <div class="mui-input-row">
-                <input type="text" class="mui-input-clear" placeholder="输入手机号/会员ID" data-input-clear="5">
-                <span class="mui-icon mui-icon-clear mui-hidden"></span>
-            </div>
-            <div class="mui-input-row">
-                <input type="text" class="mui-input-clear password" placeholder="输入密码" data-input-clear="5"><span class="forgot-password"><a href="#">忘记密码</a></span>
-                <span class="mui-icon mui-icon-clear mui-hidden"></span>
-            </div>
-            <div class="tjdlbtn">
-                <button type="button" class="mui-btn">
-                    登陆
+        <!--其他登录-->
+        <div class="otherbox">
+            <p class="tjlogin">（推荐使用微信登陆）</p>
+            <div class="tjbtn">
+                <button type="button" class="mui-btn btn">
+                    <span class="mui-icon mui-icon-weixin"></span>使用微信登陆
                 </button>
             </div>
+            <p class="other-login">
+                <a href="#" class="otherbtn">其他登录选项</a>
+            </p>
+        </div>
+
+        <!--账号密码登录-->
+        <div class="loginbox" style="display: none">
+            <form action="" class="login">
+                <h3>会员账号登录</h3>
+                <div class="mui-input-row">
+                    <input type="text" name="username" class="mui-input-clear inputname reg_user"
+                           placeholder="输入手机号\会员ID"
+                           data-input-clear="5" style="margin-bottom: 0">
+                    <span class="regspan tip user_hint"></span>
+                </div>
+                <div class="mui-input-row">
+                    <input type="password" class="mui-input-clear password reg_password" required placeholder="输入密码"
+                           data-input-clear="5"><span class="forgot-password"><a href="#">忘记密码</a></span>
+                    <span class="regspan tip password_hint"></span>
+                </div>
+                <div class="tjbtn">
+                    <button type="button" class="mui-btn btn loginbtn">
+                        登陆
+                    </button>
+                </div>
+                <p class="other-login">
+                    <a href="{:url('login/register')}">没账号？我要注册</a>
+                </p>
+            </form>
         </div>
 
     </div>
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/libs/yzvalidate.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+    $(function () {
+        $(".loginbtn").on("click", function () {
+            var member = $(".reg_user").val();
+            var password = $(".reg_password").val();
+            mui.ajax("{:url('api/login/loginApi')}", {
+                data: {
+                    'username': member,
+                    'password': password
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: {'Content-Type': 'application/json'},
+                success: function (data) {
+                    if (data.code == 100) {
+                        mui.toast(data.msg);
+                        window.location.href = "{:url('index/index')}";
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(xhr + type + errorThrown);
+                }
+            });
+        });
+
+
+        //登录切换
+        $(".otherbtn").click(function () {
+            $(".loginbox").show();
+            $(".otherbox").hide();
+            $(".logo").addClass("logo1")
+        })
+    })
 </script>
 </html>

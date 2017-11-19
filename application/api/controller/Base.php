@@ -8,54 +8,35 @@ use app\service\TokenService;
 
 class Base extends Controller{
 
- 
-
- 	public $memberInfo;
-
-
-  public function _initialize() {  	
-
-      $this->gettoken();
-      $is_login = cookie('member');
-      $this->memberInfo = session('memberInfo','','think');
-  	 if(($is_login!=md5($this->memberInfo['id'].$this->memberInfo['create_time'].'hot'))||!$is_login||!$this->memberInfo){
-
-    		$this->checklogin();
-    	}
-  }
-  public function gettoken(){
-
- 
-
-     $TokenService = new TokenService;
-
-     $visits = $TokenService->visitTimes();
-
-     if(!$visits){
-         $this->checklogin();
-
-     }       
-
- }
-
-  public function checklogin(){ 
-
-    // return json(['code'=>200,'msg'=>'请先登录']);die;
-    $this->redirect('index/noLogin');die;
-  }
+    public $defend = 0;
+    public $memberInfo;
 
 
+    public function _initialize() {
+        $this->memberInfo = session('memberInfo','','think');
+        $this->gettoken();
+    }
 
+    public function gettoken(){
 
+        $TokenService = new TokenService;
 
+        $visits = $TokenService->visitTimes();
+        if(!$visits){
+            $this->defend++;
+        }
 
+        // if($this->defend>1 && $this->defend<10){
+        //     $this->checklogin();
+        // }elseif ($this->defend > 10) {
+        //     $this->redirect('index/defendActivated');
+        // }
 
+    }
 
-
-
-
-
-
-
+    public function checklogin(){
+        return json(['code'=>400,'msg'=>'请重新登录']);
+        redirect('frontend/login/login');
+    }
 
 }

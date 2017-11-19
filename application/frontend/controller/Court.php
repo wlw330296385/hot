@@ -14,7 +14,7 @@ class Court extends Base{
 
     public function index() {
 
-        return view();
+        return view('Court/index');
     }
 
 
@@ -24,30 +24,39 @@ class Court extends Base{
         $mediaList = db('court_media')->where(['court_id'=>$court_id])->limit(3)->select();
         $this->assign('courtInfo',$courtInfo);
         $this->assign('mediaList',$mediaList);
-    	return view();
+    	return view('Court/courtInfo');
     }
 
     public function courtList(){
-        $courtList = $this->CourtService->getCourtList();
+        $camp_id = input('param.camp_id')?input('param.camp_id'):0;
+        $courtList = $this->CourtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         $this->assign('courtList',$courtList);
-        return view();
+        return view('Court/courtList');
     }
 
     public function updateCourt(){   	
     	$court_id = input('param.court_id');
+        $camp_id = input('param.camp_id');
+        $CampService = new \app\service\CampService;
+        $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
+        if($power<2){
+            $this->error('请先加入一个训练营并成为管理员或者创建训练营');
+        }
 		$CourtInfo = $this->CourtService->getCourtInfo(['id'=>$court_id]);
-        // dump($CourtInfo);die;
         $mediaList = $this->CourtMediaService->getCourtMediaList(['court_id'=>$court_id]);
 		$this->assign('CourtInfo',$CourtInfo);
         $this->assign('mediaList',$mediaList);
-    	return view();
+    	return view('Court/updateCourt');
     }
 
     public function createCourt(){
-        // $pidList = $this->CourtService->getCourtList(['pid'=>0]);
-
-        // $this->assign('pidList',$pidList['data']);
-        return view();
+        $camp_id = input('param.camp_id');
+        $CampService = new \app\service\CampService;
+        $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
+        if($power<2){
+            $this->error('请先加入一个训练营并成为管理员或者创建训练营');
+        }
+        return view('Court/createCourt');
     }
     // 分页获取数据
     public function courtListApi(){

@@ -9,19 +9,31 @@ class MessageService{
 	}
 	// 获取Message
 	public function getMessageInfo($map){
-		$result = $this->MessageModel->where($map)->find()->toArray();
-		return $result;
+		$result = $this->MessageModel->where($map)->find();
+		if($result){
+			$res = $result->toArray();
+			return $result;
+		}else{
+			return $res;
+		}
+		
+		
 	}
 
 	//获取资源列表
-	public function getMessageList($map,$paginate=10){
-		$result = $this->MessageModel->where($map)->paginate();
-		return $result->toArray();
+	public function getMessageList($map,$page = 1 ,$paginate=10){
+		$result = $this->MessageModel->where($map)->page($page,$paginate)->select();
+		if($result){
+			$res = $result->toArray();
+			return $result;
+		}else{
+			return $res;
+		}
 	}
 
 	//修改Message资料
-	public function updateMessageInfo($request,$id){
-		$result = $this->MessageModel->save($request,['id'=>$id]);
+	public function updateMessageInfo($data,$id){
+		$result = $this->MessageModel->save($data,['id'=>$id]);
 		
 		if($result ===false){
 			return ['msg'=>$this->MessageModel->getError(),'code'=>200];
@@ -31,8 +43,12 @@ class MessageService{
 	}
 
 	//新建Message
-	public function saveMessageInfo($request){
-		$result = $this->MessageModel->validate('MessageVal')->data($request)->save();
+	public function saveMessageInfo($data){
+		$validate = validate('MessageVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+		$result = $this->MessageModel->data($data)->save();
 		
 		if($result ===false){
 			return ['msg'=>$this->MessageModel->getError(),'code'=>200];

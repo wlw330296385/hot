@@ -20,8 +20,8 @@ class SalaryOutService {
 
 
     // 获取提现记录列表
-    public function getSalaryOutList($map,$p = 10,$order = 'id DESC'){
-        $result = $this->SalaryOut->where($map)->order('id DESC')->paginate($p);
+    public function getSalaryOutList($map,$p = 1,$order = 'id DESC'){
+        $result = $this->SalaryOut->where($map)->order('id DESC')->page($p,10)->select();
         return $result;
     }
 
@@ -31,8 +31,15 @@ class SalaryOutService {
         $data['paytime'] = '';
         $data['is_pay'] = 0;
         $data['status'] = 0;
+        $validate = validate('SalaryOutVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
         $result = $this->SalaryOut->save($data);
         if($result){
+            db('member')->where(['id'=>$data['member_id']])->setDec('balance',$data['salary']);
+            $memberInfo = db('member')->where(['id'=>$data['member_id']])->find();
+            session('memberInfo',$memberInfo,'think');
             return ['code'=>100,'msg'=>'申请成功','data'=>$data];
         }else{
             return ['code'=>200,'msg'=>'申请失败','data'=>$data];

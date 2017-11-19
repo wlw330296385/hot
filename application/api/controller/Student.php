@@ -9,8 +9,9 @@ use app\api\controller\Base;
 class Student extends Base
 {
 	protected $studentService;
-	function __construct()
+	function _initialize()
 	{
+		parent::_initialize();
 		$this->studentService = new StudentService;
 	}
 
@@ -36,7 +37,7 @@ class Student extends Base
 	public function updateStudentApi(){
 		try{
 			$data = input('post.');
-			$student_id = input('student_id');
+			$student_id = input('param.student_id');
 			$result = $this->studentService->updateStudent($data,$student_id);
 			return json($result);
 		}catch (Exception $e){
@@ -47,8 +48,8 @@ class Student extends Base
 
 	public function getStudentListApi(){
 		try{
-			$map = input('post.');
-			$result = $this->studentService->getStudentList($map);
+			$member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+			$result = $this->studentService->getStudentList(['member_id'=>$member_id]);
 			if($result){
 				return json(['data'=>$result,'code'=>100,'msg'=>'ok']);
 			}else{
@@ -57,6 +58,5 @@ class Student extends Base
 		}catch(Exception $e){
 			return json(['code'=>100,'msg'=>$e->getMessage()]);
 		}
-		
 	}	
 }

@@ -11,16 +11,22 @@ class CampService {
         $this->Camp = new Camp();
     }
 
-    public function getCampList($map=[],$paginate = 10,$order='') {
-        $res = $this->Camp->where($map)->order($order)->paginate($paginate);
-        return $res->toArray();
+    public function getCampList($map=[],$page = 1,$paginate = 10,$order='') {
+        $res = $this->Camp->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
+        if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
+        }
     }
 
-    public function campListPage( $map=[],$paginate=10, $order=''){
-        $res = $this->Camp->where($map)->order($order)->paginate($paginate);
-        $result = $res->toArray();
-        if($result['data']){
-            return $result['data'];
+    public function campListPage( $map=[],$page = 1,$paginate=10, $order=''){
+        $res = $this->Camp->where($map)->where(['status'=>1])->order($order)->page($page,$paginate)->select();
+        
+        if($res){
+            $result = $res->toArray();
+            return $result;
         }else{
             return $res;
         }
@@ -32,22 +38,34 @@ class CampService {
      */
     public function getCampInfo($id) {
         $res = $this->Camp->get($id);
-
-        if (!$res) return false;
-        
+        if (!$res) {
+            return false;
+        }
         return $res->toArray();
+    }
+
+    public function getOneCamp($map) {
+        $res = Camp::get($map);
+        if (!$res) {
+            return false;
+        }
+        $result = $res->toArray(); 
+        $result['check_status'] = $res->getData('status');
+        return $result;
     }
 
     /**
      * 更新资源
      */
-    public function UpdateCamp($data) {
-        $res = $this->Camp->validate('CampVal')->update($data);
-        if($res === false){
-            return ['msg'=>$this->Camp->getError(),'code'=>'200'];
-        }else{
-            return ['data'=>$res,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>'100'];
+    public function updateCamp($request) {
+        $model = new Camp();
+        $result = $model->validate('CampVal.edit')->isUpdate(true)->save($request);
+        if (false === $result) {
+            return ['code' => 100, 'msg' => $model->getError()];
+        } else {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $request['id']];
         }
+
     }
 
     public function SoftDeleteCamp($id) {
@@ -60,47 +78,100 @@ class CampService {
      */
     public function createCamp($request){
         // 一个人只能创建一个训练营
-        $is_create = $this->isCreateCamp($request['member_id']);
-        if($is_create){
-            return ['msg'=>'一个用户只能创建一个训练营','code'=>'200'];die;
+        if ( $this->hasCreateCamp($request['member_id']) ){
+            return [ 'msg' => '一个会员只能创建一个训练营', 'code' => 100 ];
         }
-        $res = $this->Camp->validate('CampVal')->save($request);
-        if($res === false){
-            return ['msg'=>$this->Camp->getError(),'code'=>'200'];
-        }else{
-            $data = ['camp' =>$request['camp'],'camp_id'=>$res,'type'=>3,'realname'=>$request['realname'],'member_id'=>$request['member_id']];
-            $result = Db::name('grade_member')->insert($data);
-            if(!$result){
-                Camp::destroy($res);
-                return ['msg'=>Db::name('grade_member')->getError(),'code'=>'200'];
-            }
-            return ['data'=>$res,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>'100'];
+        $model = new Camp();
+        $result = $model->validate('CampVal.add')->save($request);
+        if ( false === $result ) {
+            return ['code' => 100, 'msg' => $model->getError()];
         }
+        // 保存camp_member 关联记录
+        //dump($model->getLastInsID());
+        $lastInsId = $model->getLastInsID();
+        $campMemberDb = Db::name('camp_member');
+        $campMemberData = [
+            'camp' => $request['camp'],
+            'camp_id' => $lastInsId,
+            'member' => $request['realname'],
+            'member_id' => $request['member_id'],
+            'remarks' => '创建训练营',
+            'type' => 4,
+            'status' => 1,
+            'create_time' => time(),
+            'update_time' => time()
+        ];
+        $addCampMember = $campMemberDb->insert($campMemberData);
+        if (!$addCampMember) {
+            Camp::destroy($lastInsId);
+            return ['msg' => __lang('MSG_403'), 'code' => 100];
+        }
+        return [ 'code' => 200, 'msg' => __lang('MSG_200'), 'data' => $lastInsId ];
     }
 
     /**
-     * 判断是否已拥有训练营
+     * 判断是否已创建训练营
      */
 
-    public function isCreateCamp($member_id){
-        $is_create = $this->Camp->where(['member_id'=>$member_id,'status'=>['NEQ',1]])->find();
-        if($is_create){
-            return $is_create['id'];
-        }else{
+    public function hasCreateCamp($member_id){
+        $res = Camp::get(['member_id' => $member_id, 'status' => ['neq', 1]]);
+        if ($res) {
+            return $res->toArray();
+        } else {
             return false;
         }
     }
 
-
     /**
-     * 是否有2,3,4权限管理训练营
+     * 返回权限
      */
-    public function isPower234($camp_id,$member_id){
-        $is_power = db('grade_member')
+    public function isPower($camp_id,$member_id){
+        $is_power = db('camp_member')
                     ->where(['member_id'=>$member_id,'camp_id'=>$camp_id,'status'=>1])
-                    ->where(function ($query) {
-                            $query->where('type', 2)->whereor('type', 3)->whereor('type',4);})
-                    ->select();
+                    // ->where(function ($query) {
+                            // $query->where('type', 2)->whereor('type', 3)->whereor('type',4);})
+                    ->value('type');
+                    // echo db('camp_member')->getlastsql();die;
         return $is_power?$is_power:0;
+    }
+
+    // 获取训练营资质证明
+    public function getCampCert($campid) {
+        $certlist = db('cert')->where(['camp_id' => $campid])->select();
+        $campCert = [
+            'cert' => '',
+            'fr' => ['cert_no' => '', 'photo_positive' => ''],
+            'cjz' => ['cert_no' => '', 'photo_positive' => ''],
+            'other' => ''
+        ];
+        if ($certlist) {
+            foreach ($certlist as $val) {
+                switch ( $val['cert_type'] ) {
+                    case 1: {
+                        if ($val['member_id']) {
+                            $campCert['cjz']['cert_no'] = $val['cert_no'];
+                            $campCert['cjz']['photo_positive'] = $val['photo_positive'];
+                        } else {
+                            $campCert['fr']['cert_no'] = $val['cert_no'];
+                            $campCert['fr']['photo_positive'] = $val['photo_positive'];
+                        }
+                        break;
+                    }
+                    case 4: {
+                        $campCert['cert'] = $val['photo_positive'];
+                        break;
+                    }
+                    default: {
+                        $campCert['other'] = $val['photo_positive'];
+                    }
+                }
+            }
+        }
+        return $campCert;
+    }
+
+    // 训练营的教练
+    public function coachlistOfcamp($campid) {
+
     }
 }

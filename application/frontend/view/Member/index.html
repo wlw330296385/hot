@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>学员平台首页</title>
+    <title>会员中心</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -22,6 +22,8 @@
 <div class="mui-content">
 
     <div id="tabbar" class="mui-control-content mui-active coach">
+        <!--设置页面-->
+        <div class="member-setup goConfirm" data-href="{:url('member/memberSetup')}"><span class="icon iconfont icon-hotbasketball-Traini"></span></div>
         <!--操作模块-->
         <div class="coach-info">
             <ul class="mui-table-view mui-grid-view mui-grid-9">
@@ -44,75 +46,100 @@
                     </a>
                 </li>
             </ul>
-            <p class="coachid">ID:75394503</p>
+            <p class="coachid">ID:{$memberInfo['id']}</p>
         </div>
         <!--图文导航-->
-        <div class="nav-list">
+        <div class="nav-list mb">
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli wd25"><a href="{:url('score/index',['member_id'=>$memberInfo['id']])}">
-                    <span></span>
-                    <div class="mui-media-body">我的积分</div>
-                </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli wd25"><a href="{:url('member/myBalance',['member_id'=>$memberInfo['id']])}">
-                    <span></span>
-                    <div class="mui-media-body">我的余额</div>
-                </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli wd25"><a href="{:url('bill/billList',['member_id'=>$memberInfo['id']])}">
-                    <span></span>
-                    <div class="mui-media-body">我的订单</div>
-                </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli wd25"><a href="{:url('member/myGroup',['member_id'=>$memberInfo['id']])}">
-                    <span></span>
-                    <div class="mui-media-body">我的组织</div>
-                </a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli wd25">
+                    <div class="goConfirm" data-href="{:url('score/myScore',['member_id'=>$memberInfo['id']])}">
+                        <span class="icon iconfont icon-hotpc-member"></span>
+                        <div class="mui-media-body">我的积分</div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli wd25">
+                    <div class="goConfirm" data-href="{:url('member/myWallet',['member_id'=>$memberInfo['id']])}">
+                        <span class="icon iconfont icon-hotbasketball-wage"></span>
+                        <div class="mui-media-body">我的余额</div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli wd25">
+                    <div class="goConfirm" data-href="{:url('bill/billList',['member_id'=>$memberInfo['id']])}">
+                        <span class="icon iconfont icon-hotpc-Mall"></span>
+                        <div class="mui-media-body">我的订单</div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli wd25">
+                    <div class="goConfirm" data-href="{:url('member/myGroup',['member_id'=>$memberInfo['id']])}">
+                        <span class="icon iconfont icon-hotpc-Teamsteward"></span>
+                        <div class="mui-media-body">我的组织</div>
+                    </div>
+                </li>
             </ul>
         </div>
         <!--个人信息-->
-        <ul class="mui-table-view list detalis-list mb">
+        <ul class="mui-table-view list detalis-list border-b">
             <li class="mui-table-view-cell listli listinitial">
-                <a class="mui-navigate-right">
+                <div class="mui-navigate-right goConfirm" data-href="{:url('member/memberInfo')}">
                     个人资料
-                </a>
+                </div>
             </li>
             <li class="mui-table-view-cell listli listinitial">
-                <a class="mui-navigate-right" href="{:url('member/photoAlbum',['member_id'=>$memberInfo['id']])}">
+                <div class="mui-navigate-right goConfirm" data-href="{:url('member/photoAlbum',['member_id'=>$memberInfo['id']])}">
                     相册
-                </a>
+                </div>
             </li>
             <li class="mui-table-view-cell listli listinitial">
-                <a class="mui-navigate-right">
+                <div class="mui-navigate-right goConfirm" data-href="{:url('member/share')}">
                     邀请好友
-                </a>
+                </div>
             </li>
+            {gt name="memberInfo.id" value="0"}
+            <!--教练-->
+            {if condition="$coach"}
+            <li class="mui-table-view-cell listli listinitial ">
+                <div class="mui-navigate-right goConfirm" data-href="{:url('coach/updatecoach')}">教练员认证 <span>[{$coach.status}]</span></div>
+            </li>
+            {/if}
+
+            <!--创建训练营-->
+            {if condition="$camp"}
+            <li class="mui-table-view-cell listli listinitial ">
+                <div class="mui-navigate-right goConfirm" data-href="{:url('camp/campsetting', ['camp_id' => $camp['id']])}">训练营认证 <span>[{$camp.status}]</span></div>
+            </li>
+            {/if}
+            {/gt}
         </ul>
-        <ul class="mui-table-view list detalis-list">
-            <li class="mui-table-view-cell listli listinitial">
-                训练营身份
+
+
+        <div class="page-header">
+            <span class="course"><b>训练营身份</b></span>
+        </div>
+        <ul class="mui-table-view list detalis-list mt55">
+            <li class="mui-table-view-cell listli listinitial ">
+                <div class="mui-navigate-right goConfirm" data-href="{:url('member/myCamp',['type'=>5])}">
+                    粉丝
+                </div>
             </li>
             <li class="mui-table-view-cell listli listinitial ">
-                <a class="mui-navigate-right" href="{:url('member/myStudent')}">
+                <div class="mui-navigate-right goConfirm" data-href="{:url('member/myCamp',['type'=>1])}">
                     学员
-                </a>
+                </div>
             </li>
             <li class="mui-table-view-cell listli listinitial">
-                <a class="mui-navigate-right" href="{:url('member/myCoach')}">
+                <div class="mui-navigate-right goConfirm" data-href="{:url('member/myCamp',['type'=>2])}">
                     教练
-                </a>
+                </div>
             </li>
             <li class="mui-table-view-cell listli listinitial">
-                <a class="mui-navigate-right" href="{:url('member/myLeader')}">
-                    领队
-                </a>
+                <div class="mui-navigate-right goConfirm" data-href="{:url('member/myCamp',['type'=>3])}">
+                    管理员
+                </div>
             </li>
             <li class="mui-table-view-cell listli listinitial">
-                <a class="mui-navigate-right" href="{:url('member/myTeacher')}">
-                    班主任
-                </a>
-            </li>
-            <li class="mui-table-view-cell listli listinitial">
-                <a class="mui-navigate-right" href="{:url('member/myCamp')}">
-                    我创建的训练营
-                </a>
+                <div class="mui-navigate-right goConfirm" data-href="{:url('member/myCamp',['type'=>4])}">
+                    营主
+                </div>
             </li>
         </ul>
 
@@ -120,42 +147,38 @@
 
 
     <!--底部导航-->
-    <nav class="mui-bar mui-bar-tab">
-        <a class="mui-tab-item mui-active" href="#tabbar">
-            <span class="mui-icon mui-icon-home"></span>
-            <span class="mui-tab-label">首页</span>
-        </a>
-        <a class="mui-tab-item" href="#tabbar-with-chat">
-            <span class="mui-icon mui-icon-chatbubble"></span>
-            <span class="mui-tab-label">消息</span>
-        </a>
-        <a class="mui-tab-item" href="#tabbar-with-contact">
-            <span class="mui-icon mui-icon-checkmarkempty"></span>
-            <span class="mui-tab-label">发现</span>
-        </a>
-        <a class="mui-tab-item" href="#tabbar-with-contact">
-            <span class="mui-icon mui-icon-extra mui-icon-extra-class"></span>
-            <span class="mui-tab-label">商城</span>
-        </a>
-        <a class="mui-tab-item" href="#tabbar-with-map">
-            <span class="mui-icon mui-icon-contact mui-icon-icon-contact-filled"></span>
-            <span class="mui-tab-label">我的</span>
-        </a>
-    </nav>
-
+{layout name="Layout/footer"}
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-
     //轮播
     var slider = mui("#slider");
     slider.slider({
         interval: 5000
     });
+
+    $(function () {
+
+        //搜索子页：搜索提交
+        $(".goConfirm").click(function () {
+            var goUrl = $(this).attr("data-href");
+            if ( "{$memberInfo.id}"<=0) {
+                var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+                mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
+            }else{
+                window.top.location.href = goUrl;
+            }
+        })
+
+    })
+
+
+
 </script>
 </html>

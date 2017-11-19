@@ -11,130 +11,119 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--icon扩展样式icons-extra.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
     <!--App自定义的css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <!--选择器样式-->
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <style>
+        .regspan {
+            font-size: 12px;
+            text-align: center;
+            height: 40px;
+            padding: 10px 0;
+        }
+    </style>
 </head>
 
-<body class=whitebg>
+<body>
 
-<div class="mui-content">
+<header class="mui-bar mui-bar-nav subheader header2">
+    <a class="mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <h1 class="mui-title">注册教练身份</h1>
+</header>
+<div class="mui-content pt">
 
-    <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">填写会员登陆信息</h1>
-    </header>
-    <div class="mui-content pt">
-        <div class="detalis-list register">
-            <!--form1-->
-            <form action="" class="whitebg form1">
-                <ul class="mui-table-view list">
-                    <li class="mui-table-view-cell listli detalisli">微信昵称<input type="text" class="input wd66"
-                                                                                placeholder="微信授权自动获取" value="{$memberInfo['nickname']}"></li>
-                    <li class="mui-table-view-cell listli detalisli">真实姓名<input type="text" class="input"
-                                                                                placeholder="请输入真实姓名"></li>
-                    <li class="mui-table-view-cell listli detalisli">密码<input type="text" class="input"
-                                                                              placeholder="请输入密码"></li>
-                    <li class="mui-table-view-cell listli detalisli">确认密码<input type="text" class="input"
-                                                                                placeholder="请再次输入密码"></li>
-                    <li class="mui-table-view-cell listli detalisli">手机号码<input type="text" class="input"
-                                                                                placeholder="请输入手机号码"></li>
-                    <li class="mui-table-view-cell listli detalisli">短信验证码
-                        <input type="button" class="code-btn" value="获取验证码" onclick="clickButton(this)">
-                        <input type="text" class="input" placeholder="输入验证码" style="width: 44%;margin-top: 4px">
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli border-b">推荐人<input type="text" class="input"
-                                                                                        placeholder="微信转发代参填写" value="{$referer}"></li>
-                                                                                        <input type="hidden" name="pid" value="{$pid}">
-                </ul>
-                <div class="registf">
-                    <input name="checkbox" value="同意大热篮球事业合伙协议" type="checkbox" checked>
-                    <label>同意大热篮球事业合伙协议</label>
-                </div>
-                <div class="tjbtn">
-                    <button type="button" class="mui-btn btn registerbtn1">
-                        注册
-                    </button>
-                </div>
-            </form>
+    <div class="register mt25">
+        <form action="" class="mui-input-group">
+            <input type="hidden" name="memberid" value="{$mid}">
+            {notempty name="memberInfo.nickname"}
+            <div class="mui-input-row">
+                <label>微信昵称</label>
+                <span>
+                {$memberInfo['nickname']}</span>
+            </div>
+            {/notempty}
+            <div class="mui-input-row">
+                <label>真实姓名</label>
+                <input type="text" class="input coach_name" placeholder="请输入真实姓名" value="">
+            </div>
+            <div class="mui-input-row">
+                <label>身份证号码</label>
+                <input type="text" class="input wd54 idno" placeholder="请输入身份证号码">
+            </div>
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right filePicker" onclick="add_id(1)">
+                    <label>身份证正面</label>
+                    <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
+                    <input type="hidden" name="photo_positive" value="">
+                </a>
+            </div>
+            <div class="mui-input-row h-auto">
+                <a  class="mui-navigate-right filePicker" onclick="add_id(2)">
+                    <label>身份证反面</label>
+                    <img id="preview_2" class="coachicon icon01 upload-preview" alt="">
+                    <input type="hidden" name="photo_back" value="">
+                </a>
+            </div>
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right portraits filePicker" onclick="add_id(3)">
+                    <label>个人形象照</label>
+                    <img id="preview_3" class="coachicon icon01 upload-preview" >
+                    <input type="hidden" name="portraits" value=''>
+                </a>
+            </div>
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right filePicker" onclick="add_id(4)">
+                    <label>资质证明</label>
+                    <img id="preview_4" class="coachicon icon01 upload-preview"  alt="">
+                    <input type="hidden" name="cert" value="">
+                </a>
+            </div>
+            <div class="mui-input-row" id='showCityPicker3'>
+                <a href="#" class="mui-navigate-right">
+                    <label>所属地区</label>
+                    <span id="cityResult3" class="ui-alert location" style="color:#737373">选择
+                        </span>
+                </a>
+                <input id="location-input" type="hidden" name="locationStr" value="">
+            </div>
+            <div class="mui-input-row">
+                <label>教龄</label>
+                <input type="text" class="input coach_year"
+                       placeholder="请输入教学工作年数" value="">
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>教学经验描述</label>
+                <textarea rows="5" class="experience" placeholder="填写教学经验"></textarea>
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>自我介绍</label>
+                <textarea rows="5" class="introduction" placeholder="自我介绍"></textarea>
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>个人宣言</label>
+                <textarea rows="5" class="description" placeholder="个人宣言"></textarea>
+            </div>
+        </form>
 
-            <!--form2-->
-            <form action="" class="whitebg form2" style="display: none">
-                <ul class="mui-table-view list">
-                    <li class="mui-table-view-cell listli detalisli listinitial">姓名<span>通过上一页获取</span></li>
-                    <li class="mui-table-view-cell listli detalisli listinitial" id="showUserPicker"><a href="#"
-                                                                                                        class="mui-navigate-right">性别
-                        <span id='userResult' class="ui-alert"></span></a>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli listinitial bbtn" id='demo2'
-                        data-options='{"type":"date"}'><a href="#" class="mui-navigate-right">出生日期
-                        <span id='result' class="ui-alert"></span></a>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli listinitial" id='showCityPicker3'><a href="#"
-                                                                                                         class="mui-navigate-right">所属地区
-                        <span id='cityResult3' class="ui-alert" style="color:#737373"></span></a>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli listinitial">居住地址<input type="text" class="input"
-                                                                                            placeholder="请输入居住地址"></li>
-                    <li class="mui-table-view-cell listli detalisli listinitial">教学工龄
-                        <input type="text" class="input"
-                               placeholder="请输入教学工龄">
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli border-b">教学经验
-                        <div class="tips">
-                            <textarea rows="5" placeholder="填写教学经验"></textarea>
-                        </div>
-                    </li>
-                </ul>
-                <p class=height20></p>
-                <div class="tjbtn">
-                    <button type="button" class="mui-btn btn registerbtn2">
-                        完善个人信息
-                    </button>
-                </div>
-                <p class="pass"><a href="#">[跳过，稍后完善]</a></p>
-            </form>
-
-            <!--form3-->
-            <form action="" class="whitebg form3" style="display: none">
-                <ul class="mui-table-view  list line-height40">
-                    <li class="mui-table-view-cell listli detalisli ">姓名<span>通过上一页获取</span></li>
-                    <li class="mui-table-view-cell listli detalisli">身份证号码<input type="text" class="input"
-                                                                                 placeholder="请输入身份证号码"></li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <a href="#" class="mui-navigate-right">身份证
-                            <!--上传照片后的界面-->
-                            <img class="coachicon icon01" src="/static/frontend/images/yuantiao.jpg" alt="">
-                            <!--<span>上传</span>-->
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli"><a href="#" class="mui-navigate-right">个人形象照
-                        <!--上传照片后的界面-->
-                        <img class="coachicon icon01" src="/static/frontend/images/yuantiao.jpg" alt="">
-                        <!--<span>上传</span>-->
-                    </a>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli border-b"><a href="#" class="mui-navigate-right">资质证明
-                        <!--上传照片后的界面-->
-                        <img class="coachicon icon01" src="/static/frontend/images/yuantiao.jpg" alt="">
-                        <!--<span>上传</span>-->
-                    </a>
-                    </li>
-                </ul>
-                <p class=height20></p>
-                <div class="tjbtn">
-                    <button type="button" class="mui-btn btn registerbtn3">
-                        完善认证信息
-                    </button>
-                </div>
-                <p class="pass"><a href="#">[跳过，稍后完善]</a></p>
-            </form>
+        <span class="tip-box tip repassword_hint password_hint mobile_hint"></span>
+        <div class="tip-box">
+            <input type="checkbox" checked>
+            <label>已阅读并同意大热篮球教练员管理条例</label>
         </div>
+        <div class="tjbtn mb44">
+            <button type="button" class="mui-btn btn registerbtn2">注册</button>
+        </div>
+        <!--<p class="pass"><a href="{:url('index/index')}">[跳过，稍后完善]</a></p>-->
     </div>
+
 
 </div>
 </body>
@@ -143,14 +132,19 @@
 <!--选择器-->
 <script src="/static/frontend/js/mui.picker.min.js"></script>
 <script src="/static/frontend/js/mui.poppicker.js"></script>
-<script src="/static/frontend/js/city.data.js"></script>
 <script src="/static/frontend/js/city.data-3.js"></script>
+<script>
+    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+</script>
+<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
 
+    //地区选择器
     (function ($, doc) {
         $.init();
         $.ready(function () {
@@ -164,64 +158,78 @@
             cityPicker3.setData(cityData3);
             var showCityPickerButton = doc.getElementById('showCityPicker3');
             var cityResult3 = doc.getElementById('cityResult3');
+            var locationvalue = doc.getElementById('location-input');
             showCityPickerButton.addEventListener('tap', function (event) {
                 cityPicker3.show(function (items) {
                     cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    locationvalue.value = _getParam(items[0], 'text') + "|" + _getParam(items[1], 'text') + "|" + _getParam(items[2], 'text')
                     //返回 false 可以阻止选择框的关闭
                     //return false;
                 });
             }, false);
         });
-
-        //选择时间
-        var result = $('#result')[0];
-        var btns = $('.bbtn');
-        btns.each(function (i, btn) {
-            btn.addEventListener('tap', function () {
-                var optionsJson = this.getAttribute('data-options') || '{}';
-                var options = JSON.parse(optionsJson);
-                var id = this.getAttribute('id');
-                var picker = new $.DtPicker(options);
-                picker.show(function (rs) {
-                    result.innerText = rs.text;
-                    picker.dispose();
-                });
-            }, false);
-        });
-
     })(mui, document);
 
-    //验证码
-    function clickButton(obj) {
-        var obj = $(obj);
-        obj.attr("disabled", "disabled");
-        /*按钮倒计时*/
-        var time = 60;
-        var set = setInterval(function () {
-            obj.val(--time + "(s)");
-        }, 1000);
-        /*等待时间*/
-        setTimeout(function () {
-            obj.attr("disabled", false).val("重新获取验证码");
-            /*倒计时*/
-            clearInterval(set);
-        }, 60000);
-    }
-
-    //流程跳转
+    //完善教练信息
     $(function () {
-        $(".registerbtn1").click(function () {
-            $(".form1").hide();
-            $(".form2").show();
-        });
-        $(".registerbtn2").click(function () {
-            $(".form2").hide();
-            $(".form3").show();
-        });
-        $(".registerbtn3").click(function () {
-            $(".form3").hide();
-            $(".form1").show();
-        });
+
+        $(".registerbtn2").on("click", function () {
+            var coachid = $('input[name=coachid]').val();
+            var memberid = $('input[name=memberid]').val();
+            var coach_name = $('.coach_name').val();
+            var coach_year = $(".coach_year").val();
+            var experience = $(".experience").val();
+            var introduction = $(".introduction").val();
+            var description = $(".description").val();
+            var locationStr = $('input[name=locationStr]').val();
+
+            var idno = $(".idno").val();
+            var portraits = $("input[name=portraits]").val();
+            var photo_positive = $('input[name=photo_positive]').val();
+            var photo_back = $('input[name=photo_back]').val();
+            var cert = $('input[name=cert]').val();
+
+            if (coach_name == "" || portraits == "" || coach_year == "" || experience == "" || introduction == "" || description == '' || locationStr=="" || portraits=="" || photo_positive=="" || photo_back=="" || cert=="") {
+                alert("请完善信息");
+                return;
+            }
+            mui.ajax("{:url('api/coach/createCoachApi')}", {
+                data: {
+                    coachid: coachid,
+                    member_id: memberid,
+                    coach: coach_name,
+                    coach_year: coach_year,
+                    experience: experience,
+                    introduction: introduction,
+                    description: description,
+                    portraits: portraits,
+                    locationStr: locationStr,
+                    photo_positive: photo_positive,
+                    photo_back: photo_back,
+                    cert: cert,
+                    idno: idno
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: {'Content-Type': 'application/json'},
+                success: function (data) {
+
+                    console.log(data);
+                    if (data.code == 200) {
+                        window.location.href = "{:url('coach/registersuccess')}";
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(type);
+                }
+            });
+
+        })
+
     })
+
 </script>
 </html>

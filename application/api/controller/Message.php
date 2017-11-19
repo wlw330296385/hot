@@ -3,7 +3,8 @@ namespace app\api\controller;
 use app\service\MessageService;
 class Message{
 	private $MessageService;
-	public function __construct(){
+	public function _initialize(){
+        parent::_initialize();
 		$this->MessageService = new MessageService;
 	}
 
@@ -17,7 +18,8 @@ class Message{
     public function messageListApi(){
     	try{
     		$map = input()?input():[];
-	    	$messageList = $this->MessageService->getMessageList($map);
+            $page = input('param.page')?input('param.page'):1;
+	    	$messageList = $this->MessageService->getMessageList($map,$page);
 	    	if($messageList){
 	    		return json(['code'=>100,'msg'=>'OK','data'=>$messageList]);
 	    	}else{

@@ -1,11 +1,11 @@
 <?php 
 namespace app\api\controller;
-use app\api\controller\Base;
+use app\api\controller\Frontend;
 use app\service\SalaryInService;
-class Salaryin extends Base{
+class Salaryin extends Frontend{
 	private $SalaryInService;
-	public function __construct(){
-		parent::__construct();
+	public function _initialize(){
+		parent::_initialize();
 		$this->SalaryInService = new SalaryInService($this->memberInfo['id']);
 	}
 
@@ -51,12 +51,14 @@ class Salaryin extends Base{
 
     public function salaryListApi(){
         try{
+
             $start = input('start')?input('start'):date(strtotime('-1 month'));
             $end = intpu('end')?input('end'):date('Y-m-d',time());
+            $page = input('param.page')?input('param.page'):1;
             $startInt = strtotime($start);
             $endInt = strtotime($end);
             $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];
-            $salaryList = $this->Salaryin->getSalaryList($startInt,$endInt,$member_id);
+            $salaryList = $this->Salaryin->getSalaryList($startInt,$endInt,['member_id'=>$member_id],$page);
             return json(['code'=>100,'msg'=>'ok','data'=>$salaryList]);
         }catch (Exception $e){
             return json(['code'=>200,'msg'=>$e->getMessage()]);

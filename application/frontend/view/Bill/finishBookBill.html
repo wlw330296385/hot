@@ -29,12 +29,13 @@
     </header>
 
     <div class="mui-content">
-        <div class="course-list de">
+        <div class="course-list camp-list camp-lesson-list detalis-list list">
             <ul class="mui-table-view">
-                <li class="mui-table-view-cell mui-media course-listli course-padding mb">
+                <li class="mui-table-view-cell mui-media course-listli course-padding padding mb">
                     <a href="javascript:;">
-                        <img class="mui-media-object mui-pull-left" src="/static/frontend/images/icon02.jpg" style="width: 55px;">
-                        <div class="mui-media-body" style="width: 65%">
+                        <img class="mui-media-object mui-pull-left" src="/static/frontend/images/icon02.jpg"
+                             style="width: 55px;">
+                        <div class="mui-media-body">
                             <span class="colorblue">预约体检提交完成</span>
                             <p class="mui-ellipsis">感谢您的预约，我们将在24小时内与您联系</p>
                         </div>
@@ -46,15 +47,15 @@
                 <span class="course">课程信息</span>
             </div>
             <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell course-detailsli detalisli">
-                    <a class="mui-navigate-right">
+                <li class="mui-table-view-cell listli detalisli">
+                    <a class="mui-navigate-right" href="#">
                         训练营
-                        <span>训练营名称</span>
+                        <span>{$billInfo.camp}</span>
                     </a>
                 </li>
-                <li class="mui-table-view-cell course-detailsli detalisli">训练时间<span>周六 16:30</span></li>
-                <li class="mui-table-view-cell course-detailsli detalisli">训练地点<span>深圳湾篮球场</span></li>
-                <li class="mui-table-view-cell course-detailsli detalisli">所属地区<span>广东 深圳 南山</span></li>
+                <li class="mui-table-view-cell listli detalisli">训练时间<span>{$lessonInfo.week} {$lessonInfo.lesson_time}</span></li>
+                <li class="mui-table-view-cell listli detalisli">训练地点<span>{$lessonInfo.court}</span></li>
+                <li class="mui-table-view-cell listli detalisli">所属地区<span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span></li>
             </ul>
 
 
@@ -62,15 +63,14 @@
                 <span class="course">个人信息</span>
             </div>
             <ul class="mui-table-view">
-                <li class="mui-table-view-cell course-detailsli detalisli">学员姓名<span>习小小</span></li>
-                <li class="mui-table-view-cell course-detailsli detalisli">家长姓名<span>习小小</span></li>
-                <li class="mui-table-view-cell course-detailsli detalisli">手机号码<span>13556789652</span></li>
-                <li class="mui-table-view-cell course-detailsli detalisli border-b">提交时间<span>2017-08-06 13:20</span></li>
+                <li class="mui-table-view-cell listli detalisli">学员姓名<span>{$studentInfo.student}</span></li>
+                <li class="mui-table-view-cell listli detalisli">家长姓名<span>{$studentInfo.member}</span></li>
+                <li class="mui-table-view-cell listli detalisli">手机号码<span>{$memberInfo.telephone}</span></li>
+                <li class="mui-table-view-cell listli detalisli border-b">提交日期<span>{$billInfo.create_time}</span></li>
             </ul>
 
         </div>
     </div>
-
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
@@ -78,6 +78,9 @@
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
+    });
+    mui("body").on("tap","a",function(){
+        window.top.location.href=this.href;
     });
 </script>
 </html>

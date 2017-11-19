@@ -9,84 +9,394 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <style>
+        .mui-views,
+        .mui-view,
+        .mui-pages,
+        .mui-page,
+        .mui-page-content {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #efeff4;
+        }
+        .mui-pages {
+            top: 46px;
+            height: auto;
+        }
+        .mui-scroll-wrapper,
+        .mui-scroll {
+            background-color: #efeff4;
+        }
+        .mui-page.mui-transitioning {
+            -webkit-transition: -webkit-transform 300ms ease;
+            transition: transform 300ms ease;
+        }
+        .mui-page-left {
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+        }
+        .mui-ios .mui-page-left {
+            -webkit-transform: translate3d(-20%, 0, 0);
+            transform: translate3d(-20%, 0, 0);
+        }
+        .mui-navbar {
+            position: fixed;
+            right: 0;
+            left: 0;
+            z-index: 10;
+            height: 44px;
+            background-color: #f7f7f8;
+        }
+        .mui-navbar .mui-bar {
+            position: absolute;
+            background: transparent;
+            text-align: center;
+        }
+        .mui-android .mui-navbar-inner.mui-navbar-left {
+            opacity: 0;
+        }
+        .mui-ios .mui-navbar-left .mui-left,
+        .mui-ios .mui-navbar-left .mui-center,
+        .mui-ios .mui-navbar-left .mui-right {
+            opacity: 0;
+        }
+        .mui-navbar .mui-btn-nav {
+            -webkit-transition: none;
+            transition: none;
+            -webkit-transition-duration: .0s;
+            transition-duration: .0s;
+        }
+        .mui-navbar .mui-bar .mui-title {
+           margin-left: 0 !important;
+       }
+       .mui-page-shadow {
+        position: absolute;
+        right: 100%;
+        top: 0;
+        width: 16px;
+        height: 100%;
+        z-index: -1;
+        content: '';
+    }
+    .mui-page-shadow {
+        background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
+        background: linear-gradient(to right, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
+    }
+    .mui-navbar-inner.mui-transitioning,
+    .mui-navbar-inner .mui-transitioning {
+        -webkit-transition: opacity 300ms ease, -webkit-transform 300ms ease;
+        transition: opacity 300ms ease, transform 300ms ease;
+    }
+    .mui-page {
+        display: none;
+    }
+    .mui-pages .mui-page {
+        display: block;
+    }
+    .mui-table-view span.mui-pull-right {
+        color: #999;
+    }
+    .mui-table-view-divider {
+        background-color: #efeff4;
+        font-size: 14px;
+    }
+    .mui-table-view-divider:before,
+    .mui-table-view-divider:after {
+        height: 0;
+    }
+    .mui-fullscreen {
+        position: fixed;
+        z-index: 20;
+        background-color: #000;
+    }
+    .tipspan{
+        font-size: 14px;
+        text-align: center;
+        display: block;
+        padding: 10px;
+        height: 41px;
+    }
+    .success{
+        padding: 20px 0;
+        width: 60%;
+        margin: 0 auto;
+    }
+    .success img{
+        width: 40px;
+        height: 40px;
+    }
+    .success span{
+        float: right;
+        line-height: 40px;
+    }
+    .mui-f
+</style>
 </head>
 
-<body class=whitebg>
-<header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-    <h1 class="mui-title">个人资料</h1>
-</header>
-<div class="mui-content">
+<body class="mui-fullscreen">
+    <!--页面主结构开始-->
+    <div id="app" class="mui-views">
+        <div class="mui-view">
+            <div class="mui-navbar">
+            </div>
+            <div class="mui-pages">
+            </div>
+        </div>
+    </div>
+    <!--页面主结构结束-->
 
-    <div class="list camp-list camp-lesson-list detalis-list coach">
-        <div class="page-header">
-            <span class="course"><b>个人信息</b></span>
+    <!--单页面开始-->
+    <div id="setting" class="mui-page">
+        <!--页面标题栏开始-->
+        <div class="mui-navbar-inner mui-bar mui-bar-nav">
+            <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+                <span class="mui-icon mui-icon-left-nav"></span>
+            </button>
+            <h1 class="mui-center mui-title">个人资料</h1>
         </div>
-        <ul class="mui-table-view archives mb">
-            <li class="mui-table-view-cell listli detalisli ">
-                头像<img class="coachicon" src="/static/frontend/images/yuantiao.jpg" alt="">
-            </li>
-            <li class="mui-table-view-cell listli listinitial">学员ID<span>{$memberInfo['id']}</span></li>
-            <li class="mui-table-view-cell listli listinitial">
-                姓名<span>{$memberInfo['member']}</span>
-            </li>
-            <li class="mui-table-view-cell listli listinitial">
-                性别<span>{$memberInfo['sex']}</span>
-            </li>
-            <li class="mui-table-view-cell listli listinitial">
-                身高<span>{$memberInfo['height']}cm</span>
-            </li>
-            <li class="mui-table-view-cell listli listinitial">
-                体重<span>{$memberInfo['weight']}kg</span>
-            </li>
-            <li class="mui-table-view-cell listli listinitial">
-                性格特征<span>{$memberInfo['charater']}</span>
-            </li>
-            <li class="mui-table-view-cell listli listinitial">
-                出生日期<span>{$memberInfo['birthday']}</span>
-            </li>
-            <li class="mui-table-view-cell listli listinitial">
-                所属地区<span>{$memberInfo['province']}{$memberInfo['city']}{$memberInfo['area']}</span>
-            </li>
-            <li class="mui-table-view-cell listli listinitial">
-                注册日期<span class="">{$memberInfo['create_time']}</span></li>
-        </ul>
-        <div class="page-header">
-            <span class="course"><b>安全设置</b></span>
+        <!--页面标题栏结束-->
+
+        <!--页面主内容区开始-->
+        <div class="mui-page-content">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="list camp-list camp-lesson-list detalis-list coach">
+                        <div class="page-header">
+                            <span class="course"><b>个人信息</b></span>
+                            <span class="more" style="font-size:14px;padding-right: 15px;"><a href="#editor" class="editroBtn mui-navigate-right">编辑</a></span>
+                        </div>
+                        <form action="" class="mui-input-group archives1 mb">
+                            <div class="mui-input-row h-auto">
+                                <label>头像</label><img src="{$memberInfo['avatar']}" alt="头像" style="margin-right: 18px">
+                            </div>
+                            <div class="mui-input-row">
+                                <label>学员ID</label><span>{$memberInfo['id']}</span>
+                            </div>
+                            <div class="mui-input-row">
+                                <label>姓名</label><span class="name">{$memberInfo['member']}</span>
+                            </div>
+                            <div class="mui-input-row">
+                                <label>性别</label><span class="sex">{$memberInfo['sex']}</span>
+                            </div>
+                            <div class="mui-input-row">
+                                <label>身高</label><span class="height">{$memberInfo['height']}cm</span>
+                            </div>
+                            <div class="mui-input-row">
+                                <label>体重</label><span class="weight">{$memberInfo['weight']}kg</span>
+                            </div>
+                            <div class="mui-input-row">
+                                <label>出生日期</label><span class="birthday">{$memberInfo['birthday']}</span>
+                            </div>
+                            <div class="mui-input-row">
+                                <label>所属地区</label><span class="location">{$memberInfo['province']}{$memberInfo['city']}{$memberInfo['area']}</span>
+                            </div>
+                            <div class="mui-input-row">
+                                <label>注册日期</label><span class="">{$memberInfo['create_time']}</span>
+                            </div>
+                        </form>
+                        <div class="page-header">
+                            <span class="course"><b>其他</b></span>
+                        </div>
+                        <ul class="mui-table-view  public-list border-b">
+                            <li class="mui-table-view-cell listli listinitial">
+                                <a href="{:url('member/memberSetup')}" class="mui-navigate-right">个人设置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <ul class="mui-table-view  public-list">
-            <li class="mui-table-view-cell listli listinitial">
-                <a href="#" class="mui-navigate-right">手机绑定<span>213551351</span>
-                </a>
-            </li>
-            <li class="mui-table-view-cell listli listinitial">
-                <a href="#" class="mui-navigate-right">微信绑定<span>微信昵称</span>
-                </a>
-            </li>
-            <li class="mui-table-view-cell listli listinitial">
-                <a href="#" class="mui-navigate-right">电子邮箱<span>31351315@qq.com</span>
-                </a>
-            </li>
-            <li class="mui-table-view-cell listli listinitial">
-                <a href="#" class="mui-navigate-right">登录密码<span>设置</span>
-                </a>
-            </li>
-        </ul>
+        <!--页面主内容区结束-->
+    </div>
+    <!--单页面结束-->
+
+    <div id="editor" class="mui-page">
+        <div class="mui-navbar-inner mui-bar mui-bar-nav">
+            <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+                <span class="mui-icon mui-icon-left-nav"></span>
+            </button>
+            <h1 class="mui-center mui-title">编辑页面</h1>
+        </div>
+        <div class="mui-page-content">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <form action="" class="mui-input-group archives2 mb">
+                        <div class="mui-input-row h-auto">
+                            <a href="#picture" class="mui-navigate-right">
+                                <label>头像</label><img class="coachicon" src="/static/frontend/images/yuantiao.jpg" alt="头像">
+                            </a>
+                        </div>
+                        <div class="mui-input-row">
+                            <label>学员ID</label>
+                            <input type="text" name="" value="{$memberInfo['id']}">
+                        </div>
+                        <div class="mui-input-row">
+                            <label>姓名</label>
+                            <input type="text" name="" class="member editor" value="{$memberInfo['member']}">
+                        </div>
+                        <div class="mui-input-row">
+                            <label>性别</label>
+                            <span class="editor">
+                               <select class="sex">
+                                <option>{$memberInfo['sex']}</option>
+                                <option>男</option>
+                                <option>女</option>
+                            </select>
+                        </span>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>身高</label>
+                        <input type="text" name="" class="height editor" value="{$memberInfo['height']}">
+                    </div>
+                    <div class="mui-input-row">
+                        <label>体重</label>
+                        <input type="text" name="" class="weight editor" value="{$memberInfo['weight']}">
+                    </div>
+                    <div class="mui-input-row btn1" id="demo2" data-options='{"type":"date","beginYear":1990,"endYear":2013}'>
+                        <label>出生日期</label>
+                        <span id="result" class="ui-alert birthday">{$memberInfo['birthday']}</span>
+                    </div>
+                    <div class="mui-input-row" id='showCityPicker3'>
+                        <label>所属地区</label><span id="cityResult3"
+                        class="ui-alert location">{$memberInfo['province']}{$memberInfo['city']}{$memberInfo['area']}</span>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>注册日期</label>
+                        <span class="">{$memberInfo['create_time']}</span>
+                    </div>
+                </form>
+                <div class="tjbtn tjbtn-next">
+                    <button type="button" class="btn successBtn">
+                        完成
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-</body>
-<script src="/static/frontend/js/mui.min.js"></script>
+
+<script src="/static/frontend/js/mui.min.js "></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!-- 窗体切换 -->
+<script src="/static/frontend/js/mui.view.js "></script>
+<!--选择器-->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
 <script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
-</script>
+    mui.init();
+        //初始化单页view
+        var viewApi = mui('#app').view({
+            defaultPage: '#setting'
+        });
+
+        //初始化单页的区域滚动
+        mui('.mui-scroll-wrapper').scroll();
+        var view = viewApi.view;
+        (function($) {
+            //处理view的后退与webview后退
+            var oldBack = $.back;
+            $.back = function() {
+                if (viewApi.canBack()) { //如果view可以后退，则执行view的后退
+                    viewApi.back();
+                } else { //执行webview后退
+                    oldBack();
+                }
+            };
+        })(mui);
+
+        // 选择器
+        (function ($, doc) {
+            $.init();
+            $.ready(function () {
+                var _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+            ///级联示例
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
+            });
+            cityPicker3.setData(cityData3);
+            var showCityPickerButton = doc.getElementById('showCityPicker3');
+            var cityResult3 = doc.getElementById('cityResult3');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+
+            //时间
+            var result = $('#result')[0];
+            var btns = $('.btn1');
+            btns.each(function (i, btn) {
+                btn.addEventListener('tap', function () {
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var id = this.getAttribute('id');
+                    var picker = new $.DtPicker(options);
+
+                    picker.show(function (rs) {
+                        result.innerText = rs.text;
+                        picker.dispose();
+                    });
+                }, false);
+            });
+
+        });
+        })(mui, document);
+
+        //个人信息编辑
+        $(".successBtn").click(function(){
+            var member =$(".member").val();
+            var sex =$(".sex").val();
+            var height =$(".height").val();
+            var weight =$(".weight").val();
+            var birthday =$(".birthday").text();
+            var location =$(".location").text();
+            console.log(height)
+            if(member!='' && sex!='' && height!='' && weight!='' && birthday!='' && location!=''){
+                mui.ajax("{:url('api/member/updateMemberApi')}", {
+                    data: {
+                        'member': member,
+                        'sex': sex,
+                        'height': height,
+                        'weight': weight,
+                        'birthday': birthday,
+                        'location': location
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        console.log(data)
+                        if (data.code == 100) {
+                            mui.toast(data.msg);
+                            viewApi.back();
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        console.log(data);
+                    }
+                }); 
+            }
+        })
+
+    </script>
+
+</body>
+
 </html>

@@ -12,7 +12,7 @@ class Exercise extends Base{
 
     public function index() {
 
-        return view();
+        return view('Exercise/index');
     }
 
 
@@ -23,7 +23,7 @@ class Exercise extends Base{
         $exercisePInfo =  $this->ExerciseService->getExerciseInfo(['id'=>$exerciseInfo['pid']]);
         $this->assign('exercisePInfo',$exercisePInfo);
         $this->assign('exerciseInfo',$exerciseInfo);
-    	return view();
+    	return view('Exercise/exerciseInfo');
     }
 
 
@@ -40,7 +40,7 @@ class Exercise extends Base{
 
         $this->assign('ExerciseType',$ExerciseType);
 		$this->assign('ExerciseInfo',$ExerciseInfo);
-    	return view();
+    	return view('Exercise/updateExercise');
     }
 
     // 项目列表
@@ -48,6 +48,7 @@ class Exercise extends Base{
 
     	$result = $this->ExerciseService->getExerciseList();
         $this->assign('ecerciseList',$result);
+        return view('Exercise/exerciseList');
     }
 
 

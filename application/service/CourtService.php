@@ -9,8 +9,8 @@ class CourtService {
         $this->courtModel = new Court;
     }
     // 场地列表
-    public function getCourtList($map=[], $order='', $field='*'){
-        $result = Court::where($map)->whereOr(['status'=>1])->field($field)->limit(10)->order($order)->select();
+    public function getCourtList($map=[],$page = 1,$paginate = 10, $order='', $field='*'){
+        $result = Court::where($map)->field($field)->order($order)->page($page,$paginate)->select();
         if($result){           
             $result = $result->toArray();
         }
@@ -18,10 +18,10 @@ class CourtService {
     }
 
     // 场地分页
-    public function getCourtPage($map=[], $order='', $field='*', $paginate=10){
-        $result = Court::where($map)->field($field)->order($order)->paginate($paginate)->toArray();
+    public function getCourtListbyPage($map=[], $order='', $field='*', $paginate=10){
+        $result = Court::where($map)->field($field)->order($order)->paginate($paginate);
         if($result){           
-            $result = $result['data'];
+            $result = $result->toArray();
         }
         return $result;
     }
@@ -38,7 +38,11 @@ class CourtService {
 
     // 编辑场地
     public function updateCourt($data,$id){
-        $result = $this->courtModel->validate('CourtVal')->save($data,$id);
+        $validate = validate('CourtVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        $result = $this->courtModel->save($data,['id'=>$id]);
         if($result){
             return ['code'=>100,'data'=>$result,'msg'=>__lang('MSG_101_SUCCESS')];
         }else{
@@ -48,7 +52,11 @@ class CourtService {
 
     // 新增场地
     public function createCourt($data){
-        $result = $this->courtModel->validate('CourtVal')->save($data);
+        $validate = validate('CourtVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        $result = $this->courtModel->save($data);
         if($result){
             return ['code'=>100,'data'=>$result,'msg'=>__lang('MSG_101_SUCCESS')];
         }else{

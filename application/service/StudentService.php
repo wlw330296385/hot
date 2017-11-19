@@ -29,7 +29,11 @@ class StudentService{
 	}	
 
 	public function createStudent($data){
-		$reuslt = $this->studentModel->validate('StudentVal')->data($data)->save();
+		$validate = validate('StudentVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+		$result = $this->studentModel->data($data)->save();
 		if($result){
 			return ['code'=>100,'msg'=>'ok','data'=>$result];
 		}else{
@@ -38,7 +42,11 @@ class StudentService{
 	}
 
 	public function updateStudent($data,$id){
-		$result = $this->studentModel->validate('StudentVal')->save($data,$id);
+		$validate = validate('CampVal');
+        if(!$validate->check($StudentVal)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+		$result = $this->studentModel->save($data,['id'=>$id]);
 		if($result){
 			return ['code'=>100,'msg'=>'ok','data'=>$result];
 		}else{
@@ -46,16 +54,16 @@ class StudentService{
 		}
 	}
 	/**
-	 * 	
+	 * 	购买课程
 	 */
 	public function buyLesson($request,$id = false){
 		//是否完善资料
-		$is_student = $this->studentModel->where(['member_id'=>$this->memberInfo['id']])->find()->toArray();
+		$is_student = $this->studentModel->where(['member_id'=>$this->memberInfo['id']])->find();
 		if(!$is_student){
 			return false;
 		}
 		if($id){
-			$result = $this->gradeMemberModel->save($request,$id);
+			$result = $this->gradeMemberModel->save($request,['id'=>$id]);
 		}else{
 			$result = $this->gradeMemberModel->save($request);
 		}
@@ -68,35 +76,80 @@ class StudentService{
 
 
 	// 获取一个教练下的所有学生
-	public function getStudentListOfCoach($map){
-		$result = $this->gradeMemberModel->where($map)->paginate(10);
+	public function getStudentListOfCoach($map,$page = 1,$paginate = 10){
+		$result = $this->gradeMemberModel->where($map)->page($page,$paginate)->select();
 		if($result){
-			$res = $result->toArray();return $res['data'];
+			$res = $result->toArray();return $res;
 		}
 		return $result;
     }
 
-    public function getStudentGradeList($map){
-    	$result = $this->gradeMemberModel->where($map)->paginate(10);
+    // 获取学生班级?
+    public function getStudentGradeList($map,$page = 1,$paginate = 10){
+    	$result = $this->gradeMemberModel->where($map)->page($page,$paginate)->select();
     	if($result){
-			$res = $result->toArray();return $res['data'];
+			$res = $result->toArray();return $res;
 		}
 		return $result;
     }
 
-    public function getStudentScheduleList($map){
-    	$result = $this->scheduleMemberModel->where($map)->paginate(10);
+    // 获取课时学生列表
+    public function getStudentScheduleList($map,$page = 1,$paginate = 10){
+    	$result = db('schedule_member')->where($map)->page($page,$paginate)->select();
     	if($result){
-			$res = $result->toArray();return $res['data'];
+			$res = $result->toArray();return $res;
 		}
     	return $result;
     }
 
-    public function getStudentList($map){
-    	$result = $this->gradeMemberModel->where($map)->paginate(10);
+    // 获取学生?
+    public function getStudentListOfCamp($map,$page = 1,$paginate = 10){
+    	$result = $this->gradeMemberModel->where($map)->page($page,$paginate)->select();
     	if($result){
-			$res = $result->toArray();return $res['data'];
+			$res = $result->toArray();
+			return $res;
 		}
     	return $result;
+    }
+
+     // 获取用户学生列表
+    public function getStudentList($map,$page = 1,$paginate = 10){
+        $result = $this->studentModel->where($map)->page($page,$paginate)->select();
+
+        if($result){
+			$res = $result->toArray();
+			return $res;
+		}
+    	return $result;
+    }
+
+
+
+
+    // 批量更新学生数据
+    public function saveAllStudent($data){
+    	$result = $this->gradeMemberModel->saveAll($data);
+    	if($result){
+			return ['code'=>100,'msg'=>'ok','data'=>$result];
+		}else{
+			return ['code'=>200,'msg'=>$this->gradeMemberModel->getError()];
+		}
+    }
+
+
+    // 班级学生变动
+    public function updateGradeMember($data,$id){
+        $result = $this->gradeMemberModel->save($data,['id'=>$id]);
+        if($result){
+			return ['code'=>100,'msg'=>'ok','data'=>$result];
+		}else{
+			return ['code'=>200,'msg'=>$this->gradeMemberModel->getError()];
+		}
+    }
+
+
+    // 已上课程+1
+    public function setIncFinishedTotal($num = 1,$student_id){
+    	$this->studentModel->where(['id'=>$student_id])->setInc('finished_total',$num);
     }
 }

@@ -13,8 +13,9 @@ class Cert extends Base{
     // 分页获取数据
     public function CertListApi(){
         try{
-            $map = input('post.');
-            $result = $this->CertService->getCertList($map);    
+            $map = input();
+            $page = input('param.page')?input('param.page'):1;
+            $result = $this->CertService->getCertList($map,$page);    
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -24,8 +25,10 @@ class Cert extends Base{
     public function updateCertApi(){
         try{
             $data = input('post.');
-            $id = input('get.id');
-            $result = $this->CertService->updateCert($data,$id);
+            $cert_id = input('param.cert_id');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $result = $this->CertService->updateCert($data,$cert_id);
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -41,4 +44,7 @@ class Cert extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+    
 }

@@ -5,19 +5,23 @@ class CampVal extends Validate{
 
 
 	protected $rule = [
-        'camp'  =>  'require|max:60',
+	    'id' => 'require',
+        'camp'  =>  'require|max:60|unique:camp,camp',
         'member_id'	=> 'require',
         'realname' =>  'require',
     ];
     
     protected $message = [
-        'camp.require'  =>  '训练营名必须',
-        'member_id.require'	=> '创建者必须',
-        'realname.require' =>  '创建者必须实名认证',
+        'id.require' => '无此训练营记录',
+        'camp.require'  =>  '请输入训练营名称',
+        'camp.unique'   =>'训练营名称被占用',
+        'member_id.require'	=> '请先注册会员',
+        'realname.require' =>  '请输入创建者真实姓名',
     ];
     
     protected $scene = [
         'add'   =>  ['realname','member_id','camp'],
+        'edit' => ['id']
     ];    
 
 }

@@ -1,8 +1,8 @@
 {extend name="layout/common" /}
 
 {block name="css"}
-<link rel="stylesheet" href="/backend/plugins/fullcalendar/fullcalendar.min.css">
-<link rel="stylesheet" href="/backend/plugins/fullcalendar/fullcalendar.print.css" media="print">
+<link rel="stylesheet" href="/static/backend/plugins/fullcalendar/fullcalendar.min.css">
+<link rel="stylesheet" href="/static/backend/plugins/fullcalendar/fullcalendar.print.css" media="print">
 {/block}
 
 {block name="page-content"}
@@ -13,9 +13,38 @@
         </div>
     </div>
     <div class="panel-body">
-        <div class="row">
-            <div class="col-md-12 col-sm-12">
-                <div id="calendar"></div>
+        <div class="no-padding">
+            <div class="bootstrap-table">
+                <div class="search-form">
+                    <form class="form-inline schedule-list" method="post">
+                        <fieldset>
+                            {if condition="!isset($curcamp)"}
+                            <div class="form-group">
+                                <label class="control-label">训练营</label>
+                                <input class="form-control" type="text" name="camp" >
+                            </div>
+                            {/if}
+                            <div class="form-group">
+                                <label class="control-label">班级名称</label>
+                                <input class="form-control" type="text" name="grade" >
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12 text-center">
+                                    <button type="button" class="btn btn-success btn-flat btn-sub">搜索</button>
+                                    <button type="reset" class="btn btn-default btn-flat">重置</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+
+                <div class="fixed-table-container no-border">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <div id="calendar"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -23,11 +52,12 @@
 {/block}
 
 {block name="js"}
-<script src="/backend/plugins/moment.min.js"></script>
-<script src="/backend/plugins/fullcalendar/fullcalendar.min.js"></script>
+<script src="/static/backend/plugins/moment.min.js"></script>
+<script src="/static/backend/plugins/fullcalendar/fullcalendar.min.js"></script>
 <script>
 $(function(){
     var serverUrl = "{:url('schedule/calendar')}";
+
     $.get(serverUrl, function(res){
 //        console.log(res);
         if (res.status) {
@@ -49,6 +79,33 @@ $(function(){
         }
     }, 'json');
 
+
+    $('.btn-sub').click(function() {
+        schedule_filter = $('.schedule-list').serialize();
+        $.post(serverUrl, schedule_filter, function(res){
+//        console.log(res);
+            if (res.status) {
+                //location.reload();
+                //$('#calendar').empty();
+                $('#calendar').fullCalendar('destroy');
+                $('#calendar').fullCalendar({
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,agendaWeek,agendaDay'
+                    },
+                    buttonText: {
+                        today: 'today',
+                        month: 'month',
+                        week: 'week',
+                        day: 'day'
+                    },
+                    //Random default events
+                    events: res.data
+                });
+            }
+        }, 'json');
+    });
 });
 </script>
 {/block}

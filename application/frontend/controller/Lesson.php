@@ -3,6 +3,7 @@ namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\LessonService;
 use app\service\GradeService;
+
 class Lesson extends Base{
 	protected $LessonService;
 	protected $GradeService;
@@ -13,7 +14,6 @@ class Lesson extends Base{
 	}
     public function test(){
         $is_power = $this->LessonService->isPower(9,1);
-        dump($lessonInfo);
     }
     // 可购买
     public function index() {
@@ -24,7 +24,7 @@ class Lesson extends Base{
         unset($lessonInfo['dom']);
         $this->assign('lessonInfoJson',json_encode($lessonInfo));
         $this->assign('lessonInfo',$lessonInfo);
-        return view();
+        return view('Lesson/index');
 
     }
 
@@ -34,40 +34,25 @@ class Lesson extends Base{
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         $this->assign('lessonInfoJson',json_encode($lessonInfo));
         $this->assign('lessonInfo',$lessonInfo);
-        return view();
+        return view('Lesson/lessonInfo');
     }
 
-    // 课程列表
+    //
     public function lessonList(){
-    	$map = input();
-    	$map = $map?$map:[];
-    	$result = $this->LessonService->getLessonPage($map,10);
-    	if($result['code'] == 100){
-			$list = $result['data'];
-	    	//在线课程
-	    	$dateNow = date('Y-m-d',time());
-	    	$onlineList = [];
+        $camp_id = input('param.camp_id');
+        $map = [];
+        if($camp_id){
+            $map['camp_id'] = $camp_id;
+        }
+        $lessonList = $this->LessonService->getLessonPage($map);
+        // // 课程类型
+        $GradeService = new \app\service\GradeService;
+        $gradecateList = $GradeService->getGradeCategory();
 
-	    	//离线课程
-	    	$offlineList = [];
-			foreach ($list as $key => $value) {
-				if($value['end']<$dateNow || $value['start']>$dateNow){
-					$offlineList[] = $value;
-				}else{
-					$onlineList[] = $value;
-				}
-				
-			}
-	    		 	
-    	}else{
-    		$list = []; 
-    	}
-    	
-  		$this->assign('onlineList',$onlineList);
-  		$this->assign('offlineList',$offlineList);
-		return view();
+        $this->assign('gradecateList',$gradecateList);  
+        $this->assign('lessonList',$lessonList);
+        return view('Lesson/lessonList');
     }
-
 
     //编辑课程
     public function updateLesson(){
@@ -75,92 +60,172 @@ class Lesson extends Base{
     	$camp_id = input('param.camp_id');
         $lesson_id = input('param.lesson_id');
         $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
-        if(!$is_power){
+        if($is_power<2){
             $this->error('您没有权限');
         }
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
-        $lessonInfo['doms'] = unserialize($lessonInfo['dom']);
+        
+        // 教练列表
+    	$staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
 
-    	$coachList = db('grade_member')->where(['type'=>4,'camp_id'=>$camp_id,'status'=>1])->select();
-    	$assitantList = db('grade_member')->where(['type'=>8,'camp_id'=>$camp_id,'status'=>1])->select();
     	$gradeCategoryList = $this->GradeService->getGradeCategory(1);
         $courtService = new \app\service\CourtService;
-        $courtList = $courtService->getCourtList(['status'=>$camp_id]);
+        $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         $this->assign('lessonInfo',$lessonInfo);
+        $this->assign('camp_id',$camp_id);
     	$this->assign('gradeCategoryList',$gradeCategoryList);
         $this->assign('courtList',$courtList);
-    	$this->assign('coachList',$coachList);
-    	$this->assign('assitantList',$assitantList);
-    	return view();
+    	$this->assign('staffList',$staffList);
+    	return view('Lesson/updateLesson');
     }
 
-    // 添加课程
+    // 添加课程|发布课程
     public function createLesson(){
         //训练营主教练
         $camp_id = input('param.camp_id');
-        $lesson_id = input('param.lesson_id');
-        $coachList = db('grade_member')->where(['type'=>4,'camp_id'=>$camp_id,'status'=>1])->select();
-        $assitantList = db('grade_member')->where(['type'=>8,'camp_id'=>$camp_id,'status'=>1])->select();
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+        // 教练列表
+        $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         $gradeCategoryList = $this->GradeService->getGradeCategory(1);
         $courtService = new \app\service\CourtService;
-        $courtList = $courtService->getCourtList(['status'=>$camp_id]);
-        // dump($assitantList);die;
+        $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
+        $this->assign('campInfo',$campInfo);
         $this->assign('gradeCategoryList',$gradeCategoryList);
         $this->assign('courtList',$courtList);
-        $this->assign('coachList',$coachList);
-        $this->assign('assitantList',$assitantList);
-        return view();
+        $this->assign('staffList',$staffList);
+        return view('Lesson/createLesson');
     }
 
 
 
     // 购买课程
-    public function buyLesson(){
-        $studentInfo = db('student')->where(['member_id'=>$this->memberInfo['id']])->select();        
-        $this->assign('studentInfo',$studentInfo); 
-    	return view();
-    }
+    // public function buyLesson(){
+    //     $studentInfo = db('student')->where(['member_id'=>$this->memberInfo['id']])->select();        
+    //     $this->assign('studentInfo',$studentInfo); 
+    // 	return view('Lesson/buyLesson');
+    // }
 
-    //课程订单支付
+    // 课程订单购买页面
+    // public function comfirmBill(){
+    //     $lesson_id = input('param.lesson_id');
+    //     $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+
+    //     // 生成订单号
+    //     $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
+    //     $jsonBillInfo = [
+    //         'goods'=>$lessonInfo['lesson'],
+    //         'goods_id'=>$lessonInfo['id'],
+    //         'camp_id'=>$lessonInfo['camp_id'],
+    //         'camp'=>$lessonInfo['camp'],
+    //         'price'=>$lessonInfo['cost'],
+    //         'score_pay'=>$lessonInfo['score'],
+    //         'goods_type'=>1,
+    //         'pay_type'=>'wxpay'
+    //     ];
+    //     $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
+    //     $this->assign('lessonInfo',$lessonInfo);
+    //     $this->assign('billOrder',$billOrder);
+    //     return view('Lesson/comfirmBill');
+    // }
+
+    // 课程订单购买页面
     public function comfirmBill(){
-    // 生成订单号
-    $billOrder = '1'.date('YmrHis',time()).rand(0000,9999);
-    // 生成微信参数
+        $lesson_id = input('param.lesson_id');
+        $total = input('param.total');
+        if(!$lesson_id){
+            $this->error('参数错误');
+        }
+        
+        if(!$total){
+            $this->error('参数错误');
+        }
+        $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+        // 生成订单号
+        $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
+        $jsonBillInfo = [
+            'goods'=>$lessonInfo['lesson'],
+            'goods_id'=>$lessonInfo['id'],
+            'camp_id'=>$lessonInfo['camp_id'],
+            'camp'=>$lessonInfo['camp'],
+            'price'=>$lessonInfo['cost'],
+            'score_pay'=>$lessonInfo['score'],
+            'goods_type'=>1,
+            'pay_type'=>'wxpay',
+            'type'=>1
+        ];
+        $amount = $total*$lessonInfo['cost'];
+        $WechatJsPayService = new \app\service\WechatJsPayService;
+        $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
+        
+        $jsApiParameters = $result['data']['jsApiParameters'];
 
-    $this->assign('billOrder',$billOrder);
-    return view();
+        $this->assign('jsApiParameters',$jsApiParameters);
+        $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
+        $this->assign('lessonInfo',$lessonInfo);
+        $this->assign('billOrder',$billOrder);
+        return view('Lesson/comfirmBill');
     }
 
+    // 购买体验课
     public function bookBill(){
+        $lesson_id = input('param.lesson_id');
+        $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         // 生成订单号
-        $billOrder = '1'.date('YmrHis',time()).rand(0000,9999);
+        $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
         // 生成微信参数
-
+        $jsonBillInfo = [
+            'goods'=>$lessonInfo['lesson'],
+            'goods_id'=>$lessonInfo['id'],
+            'camp_id'=>$lessonInfo['camp_id'],
+            'camp'=>$lessonInfo['camp'],
+            'price'=>$lessonInfo['cost'],
+            'score_pay'=>0,
+            'goods_type'=>1,
+            'pay_type'=>'',
+            'type'=>2
+        ];
+        $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
+        $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billOrder',$billOrder);
-        return view();
+        return view('Lesson/bookBill');
     }
     // 邀请体验课程
     public function inviteStudent(){
         
-        return view();
+        return view('Lesson/inviteStudent');
     }
 
+     // 可编辑课程
     public function LessonInfoOfCamp(){
-        
+        $lesson_id = input('param.lesson_id');
+        $member_id = $this->memberInfo['id'];
+        $camp_id = input('param.camp_id');
+        $power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
+        if($power<2){
+            $this->error('您没有权限');
+        }
+        $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+        $this->assign('lessonInfo',$lessonInfo);
+        $this->assign('power',$power);
+        return view('Lesson/LessonInfoOfCamp');
     }
 
 
     public function lessonListOfCamp(){
         $camp_id = input('param.camp_id');
+        
         // 上架课程
         $onlineLessonList = $this->LessonService->getLessonList(['camp_id'=>$camp_id,'status'=>1]);
-
-
         // 下架课程
         $offlineLessonList = $this->LessonService->getLessonList(['camp_id'=>$camp_id,'status'=>-1]);
-
+        // 训练营信息
+        // $campInfo = db('camp')->where(['id'=>$camp_id])->find();
         $this->assign('onlineLessonList',$onlineLessonList);
         $this->assign('offlineLessonList',$offlineLessonList);
-        return view();
+        $this->assign('camp_id',$camp_id);
+        return view('Lesson/lessonListOfCamp');
     }
+
+
+
 }

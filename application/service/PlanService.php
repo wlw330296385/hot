@@ -11,15 +11,20 @@ class PlanService {
         $this->Plan = new Plan();
     }
 
-    public function PlanList($map=[], $order='') {
-        $res = $this->Plan->where($map)->order($order)->select()->toArray();
-        return $res;
+    public function getPlanList($map=[],$page = 1,$paginate = 10, $order='') {
+        $res = $this->Plan->where($map)->whereOr(['type'=>0])->order($order)->page($page,$paginate)->select();
+         if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
+        }
     }
 
-    public function PlanListPage( $map=[],$paginate=10, $order=''){
-        $res = $this->Plan->where($map)->order($order)->paginate($paginate)->toArray();
+    public function PlanListPage( $map=[],$page = 1,$paginate=10, $order=''){
+        $res = $this->Plan->where($map)->whereOr(['type'=>0])->order($order)->page($page,$paginate)->select();
         if($res){
-            $result = $res['data'];
+            $result = $res->toArray();
             return $result;
         }else{
             return $res;
@@ -39,8 +44,22 @@ class PlanService {
     /**
      * 更新资源
      */
-    public function UpdatePlan($data) {
-        $res = $this->Plan->validate('PlanVal')->update($data);
+    public function updatePlan($data,$id) {
+        $validate = validate('PlanVal');
+        if($data['exercise_ids']){
+            $arrSeri = explode(',', $data['exercise_ids']);
+            $data['exercise_id'] = serialize($arrSeri);
+        }
+
+        if($data['exercises']){
+            $arrSeri = explode(',', $data['exercises']);
+            $data['exercise'] = serialize($arrSeri);
+        }
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        
+        $res = $this->Plan->save($data,$id);
         if($res === false){
             return ['msg'=>$this->Plan->getError(),'code'=>'200'];
         }else{
@@ -56,23 +75,43 @@ class PlanService {
     /**
      * 创建资源
      */
-    public function createPlan($request){
-        // 一个人只能创建一个训练营
-        $is_create = $this->Plan->where(['member_id'=>$request['member_id'],'status'=>['NEQ',1]])->find();
-        if($is_create){
-            return ['msg'=>'一个用户只能创建一个训练营','code'=>'200'];
+    public function createPlan($data){
+        $validate = validate('PlanVal');
+        if($data['exercise_ids']){
+            $arrSeri = explode(',', $data['exercise_ids']);
+            $data['exercise_id'] = serialize($arrSeri);
         }
-        $res = $this->Plan->validate('PlanVal')->save($request);
+
+        if($data['exercises']){
+            $arrSeri = explode(',', $data['exercises']);
+            $data['exercise'] = serialize($arrSeri);
+        }
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        
+        $res = $this->Plan->save($data);
         if($res === false){
             return ['msg'=>$this->Plan->getError(),'code'=>'200'];
         }else{
-            $data = ['Plan' =>$request['Plan'],'Plan_id'=>$res,'type'=>3,'realname'=>$request['realname'],'member_id'=>$request['member_id']];
-            $result = Db::name('grade_member')->insert($data);
-            if(!$result){
-                Plan::destroy($res);
-                return ['msg'=>Db::name('grade_member')->getError(),'code'=>'200'];
-            }
             return ['data'=>$res,'msg'=>__lang('MSG_100_SUCCESS'),'code'=>'100'];
+        }
+    }
+
+    public function getPlanInfo($map){
+        $result = $this->Plan->where($map)->find();
+        if($result){
+            $res = $result->toArray();
+            if($res['exercise_id']){
+                $res['exercise_ids'] = implode(',', unserialize($res['exercise_id']));
+                
+            }
+            if($res['exercise']){
+                $res['exercises'] = implode(',', unserialize($res['exercise']));
+            }
+            return $res;
+        }else{
+            return $result;
         }
     }
 }

@@ -13,14 +13,16 @@ return [
     // 安全key
     'salekey' => 'hotpaas',
 
-    // 公众号 测试账号
-    'appid' => 'wx96e47b68ca398cf8',
-    'appsecret' => '2bd8014b1fca2a04e6ea6f371bda39aa',
-    'token' => 'hot-basket',
-    'encodingaeskey' => '',
+    // 公众号
+    'appid' => 'wx19f60be0f2f24c31',
+    'appsecret' => 'cd9e6671b9d382ebd079929e70b86f99',
+    'token' => 'hotbasketball',
+    'encodingaeskey' => 'hWJMgOj45Q5wNRFmY0BRHzNz6jLsDBNKFqd11YK492s',
     'state' => 'hb',
-
-
+    'mchid' =>'1488926612',
+    'key'   =>'93a793a3b611f19008432d0032251f34',//注：key为商户平台设置的密钥key
+    'sslcert_path'=>'',
+    'sslkey_path'=>'',
     // 七牛云
     //accessKey
     'qn_accesskey' => 'OOzGcbsIECVSx8uNY7d6iy8z8j60LruYL88dCGj8',
@@ -32,11 +34,8 @@ return [
     'qn_domain'=>'http://ou1z1q8b2.bkt.clouddn.com/',
 	
 	// 短信通道showapi
-    'sms_appid' => '37836',
-    'sms_secret' => 'ccf5ac14e3994cd0850765326275eb41',
-	
-	
-	
+	'sms_appid' => '45842',
+    'sms_secret' => '9b3c9e8899a7484890ab1c100a8fca82',
 
     // +----------------------------------------------------------------------
     // | 应用设置

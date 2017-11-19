@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>教练员详情页-</title>
+    <title>教练员详情</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -32,10 +32,10 @@
             <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
                 <a href="javascript:;">
                     <img class="mui-media-object mui-pull-left coachicon"
-                         src="/static/frontend/images/shuijiao.jpg">
+                         src="{$coachInfo.portraits}">
                     <div class="mui-media-body">
-                        陈麦克
-                        <p class="mui-ellipsis">年龄:24 等级:3</p>
+                        {$coachInfo.coach}
+                        <p class="mui-ellipsis">年龄:{$coachInfo.sex} 等级:{$coachInfo.coach_rank}</p>
                     </div>
                     <div class="price-frame camp-num">
                         <ul>
@@ -56,7 +56,7 @@
         </ul>
 
         <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell listli detalisli">自我介绍
+            <li class="mui-table-view-cell listli detalisli listinitial">自我介绍
                 <span class="about">{$coachInfo.introduction}
                         <a href="#">全文展示</a>
                     </span>
@@ -64,8 +64,8 @@
         </ul>
 
         <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell listli detalisli" style="line-height: 40px;">
-                <a class="mui-navigate-right" href="{:url('camp/campListOfCaoch',['coach_id'=>$coachInfo['id']])}">
+            <li class="mui-table-view-cell listli detalisli " style="line-height: 40px;">
+                <a class="mui-navigate-right" href="{:url('camp/campListOfCoach',['coach_id'=>$coachInfo['id']])}">
                     所属训练营
                     {volist name="campList" id="vol"}
                     <img class="coachicon" src="{$vol.logo}" alt="">
@@ -74,20 +74,20 @@
             </li>
             <li class="mui-table-view-cell listli detalisli">个人认证
                 <span>
-                    <img class="rzicon" src="/static/frontend/images/icon05.jpg/">证书认证&nbsp;&nbsp;&nbsp;
-                    <img class="rzicon" src="/static/frontend/images/icon05.jpg/">身份认证
+                    <img class="rzicon" src="/static/frontend/images/icon05.jpg">证书认证&nbsp;&nbsp;&nbsp;
+                    <img class="rzicon" src="/static/frontend/images/icon05.jpg">身份认证
                 </span>
             </li>
-            <li class="mui-table-view-cell listli detalisli">课量<span>执教过{$scheduleCount}课时</span></li>
-            <li class="mui-table-view-cell listli detalisli">学员<span>执教过{$studentCount}个学生</span></li>
-            <li class="mui-table-view-cell listli detalisli">班级<span>执教{$gradeCount}个班级</span></li>
+            <li class="mui-table-view-cell listli detalisli listinitial">课量<span>执教过{$scheduleCount}课时</span></li>
+            <li class="mui-table-view-cell listli detalisli listinitial">学员<span>执教过{$studentCount}个学生</span></li>
+            <li class="mui-table-view-cell listli detalisli listinitial">班级<span>执教{$gradeCount}个班级</span></li>
         </ul>
         <div class="page-header">
             <span class="course">学员评价</span>
         </div>
-        <ul class="mui-table-view list">
+        <ul class="mui-table-view list min-height mui-text-center">
             {volist name='commentList' id="vol" empty="暂无评论"}
-                <li class="mui-table-view-cell mui-media listli padding">
+                <li class="mui-table-view-cell mui-media listli">
                     <a href="javascript:;">
                         <img class="mui-media-object mui-pull-left coachicon" src="{$vol.avatar}">
                         <div class="mui-media-body">
@@ -101,16 +101,15 @@
                 </li>
             {/volist}
         </ul>
-        <p class="dropdown"><a href="#">查看16条评论...</a></p>
+        <p class="dropdown mt55"><a href="#">查看16条评论...</a></p>
 
-        <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli"><a href="#delete">我要评价</a>
+        <ul class="mui-table-view operation mt">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli"><a href="#comment" class="type1Btn">我要评价</a>
             </li>
         </ul>
 
 
-        <div id="delete" class="mui-popover mui-popover-action mui-popover-bottom" data-backdrop="static">
-
+        <div id="comment" class="mui-popover mui-popover-action mui-popover-bottom" data-backdrop="static">
             <ul class="mui-table-view">
                 <li class="mui-table-view-cell">
                     <textarea id="question" class="mui-input-clear question" placeholder="说说你对教练的印象吧..."></textarea>
@@ -118,10 +117,10 @@
             </ul>
             <ul class="mui-table-view">
                 <li class="mui-table-view-cell">
-                    <a href="#delete"><b>提交评价</b></a>
+                    <a href="#comment" id="commentSubmit"><b>提交评价</b></a>
                 </li>
                 <li class="mui-table-view-cell">
-                    <a href="#delete"><b>取消</b></a>
+                    <a href="#comment"><b>取消</b></a>
                 </li>
             </ul>
         </div>
@@ -132,37 +131,58 @@
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
-<!--等级星星样式-->
-<script src="/static/frontend/js/feedback.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
 
-    mui('body').on('shown', '.mui-popover', function (e) {
-        //console.log('shown', e.detail.id);//detail为当前popover元素
-    });
-    mui('body').on('hidden', '.mui-popover', function (e) {
-        //console.log('hidden', e.detail.id);//detail为当前popover元素
-    });
-    var info = document.getElementById("info");
-    mui('body').on('tap', '.mui-popover-action li>a', function () {
-        var a = this,
-            parent;
-        //根据点击按钮，反推当前是哪个actionsheet
-        for (parent = a.parentNode; parent != document.body; parent = parent.parentNode) {
-            if (parent.classList.contains('mui-popover-action')) {
-                break;
-            }
-        }
-        //关闭actionsheet
-        mui('#' + parent.id).popover('toggle');
-        info.innerHTML = "你刚点击了\"" + a.innerHTML + "\"按钮";
-    })
-
     mui("body").on("tap", "a", function () {
         window.top.location.href = this.href;
     });
+
+    $(function () {
+
+
+        //评价功能
+        $("#commentSubmit").click(function() {
+            //判断是否登陆会员
+            if ( "{$memberInfo.id}"<=0) {
+                var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+                mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
+            }else{
+                //判断是否该训练营学生
+
+            }
+        })
+
+    });
+
+    // mui('body').on('shown', '.mui-popover', function (e) {
+    //     //console.log('shown', e.detail.id);//detail为当前popover元素
+    // });
+    // mui('body').on('hidden', '.mui-popover', function (e) {
+    //     //console.log('hidden', e.detail.id);//detail为当前popover元素
+    // });
+    // var info = document.getElementById("info");
+    // mui('body').on('tap', '.mui-popover-action li>a', function () {
+    //     var a = this,
+    //         parent;
+    //     //根据点击按钮，反推当前是哪个actionsheet
+    //     for (parent = a.parentNode; parent != document.body; parent = parent.parentNode) {
+    //         if (parent.classList.contains('mui-popover-action')) {
+    //             break;
+    //         }
+    //     }
+    //     //关闭actionsheet
+    //     mui('#' + parent.id).popover('toggle');
+    //     info.innerHTML = "你刚点击了\"" + a.innerHTML + "\"按钮";
+    // })
+
+    // mui("body").on("tap", "a", function () {
+    //     window.top.location.href = this.href;
+    // });
 </script>
 </html>

@@ -8,10 +8,10 @@ class WechatService
 
     public function __construct() {
         $this->options = array(
-            'token' => config('queue.token'),
+            'token' => config('token'),
             //'encodingaeskey'=> config('queue.encodingaeskey'),
-            'appid' => config('queue.appid'),
-            'appsecret' => config('queue.appsecret')
+            'appid' => config('appid'),
+            'appsecret' => config('appsecret')
         );
     }
 
@@ -58,7 +58,7 @@ class WechatService
     // 生成用户授权链接
     public function oauthredirect($callback) {
         $weObj = new TPwechat($this->options);
-        return $weObj->getOauthRedirect($callback,config('queue.state'));
+        return $weObj->getOauthRedirect($callback,config('state'));
     }
 
     // 获取授权用户信息

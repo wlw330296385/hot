@@ -9,7 +9,7 @@ class Message extends Base{
 	}
 
     public function index() {
-
-        return view();
+  
+        echo "暂未开放";
     }
 }

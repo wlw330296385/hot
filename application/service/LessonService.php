@@ -4,14 +4,12 @@ namespace app\service;
 
 use app\model\Lesson;
 use think\Db;
-use app\model\GradeMember;
+
 use app\common\validate\LessonVal;
 class LessonService {
-    private $gradeMemberModel;
     private $lessonModel;
     public function __construct(){
         $this->lessonModel = new Lesson;
-        $this->gradeMemberModel = new GradeMember;
     }
 
     // 课程分类数据
@@ -24,26 +22,25 @@ class LessonService {
     }
     
     // 获取所有课程
-    public function getLessonList($map=[], $order='',$paginate = 10) {
-        $result = Lesson::where($map)->order($order)->paginate($paginate);
+    public function getLessonList($map=[],$page = 1,$order='',$paginate = 10) {
+        $result = Lesson::where($map)->order($order)->page($page,$paginate)->select();
         if($result){
             $result = $result->toarray();
-            return $result['data'];
+            return $result;
         }else{
             return $result;
         }
     }
 
     // 分页获取课程
-    public function getLessonPage($map=[],$paginate=10, $order=''){
-        $res = Lesson::where($map)->order($order)->paginate($paginate);
-        if (!$res) {
-            return ['msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200];
+    public function getLessonPage($map=[],$page = 1 ,$paginate=10, $order=''){
+        $res = Lesson::where($map)->order($order)->page($page,$paginate)->select();
+        if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
         }
-        if ($res->isEmpty()) {
-            return ['msg' => __lang('MSG_000_NULL'), 'code' => 000, 'data' => ''];
-        }
-        return ['msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $res];
     }
 
     // 软删除
@@ -60,59 +57,120 @@ class LessonService {
     public function getLessonInfo($map) {
         $result = Lesson::where($map)->find();
         if ($result){
-            $result = $result->toArray();
+            $res = $result->toArray();
+            if($res['dom']){
+                $res['doms'] = unserialize($res['dom']);
+            }else{
+                $res['doms'] = [];
+            }
+            if($res['assistant']){
+                $res['assistants'] = unserialize($res['assistant']);
+                $res['assistant_ids'] = unserialize($res['assistant_id']);
+            }else{
+                $res['assistants'] = [];
+                $res['assistants_ids'] = [];
+            }
+            return $res;
         }
             return $result;
     }
 
 
-    // 发布课程
-    public function pubLession($data){
+
+
+    // 编辑课程
+    public function updateLesson($data,$id){
+        $is_power = $this->isPower($data['camp_id'],$data['member_id']);
+        if(!$is_power){
+            return ['code'=>200,'msg'=>'权限不足'];
+        }
+        
+        if($data['doms']){
+                $doms = explode(',', $data['doms']);
+                $seria = serialize($doms);
+                $data['dom'] = $seria;
+            }else{
+                $data['dom'] = '';
+            }
+        if($data['assistants']){
+            $doms = explode(',', $data['assistants']);
+            $seria = serialize($doms);
+            $data['assistant'] = $seria;
+        }else{
+            $data['assistant'] = '';
+        }
+        if($data['assistant_ids']){
+            $doms = explode(',', $data['assistant_ids']);
+            $seria = serialize($doms);
+            $data['assistant_id'] = $seria;
+        }else{
+            $data['assistant_id'] = '';
+        }
+        $validate = validate('LessonVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+        $result = $this->lessonModel->save($data,['id'=>$id]);
+        if($result){
+            return ['msg' => "编辑成功", 'code' => 100, 'data' => $result];
+        }else{
+            return ['msg'=>__lang('MSG_200_ERROR'), 'code' => 200];
+        }
+    }
+
+    // 新增课程
+    public function createLesson($data){
         // 查询是否有权限
         $is_power = $this->isPower($data['camp_id'],$data['member_id']);
         if(!$is_power){
             return ['code'=>200,'msg'=>'权限不足'];
         }
-        $result = $this->lessonModel->validate('LessonVal')->data($data)->save();
+        if($data['doms']){
+                $doms = explode(',', $data['doms']);
+                $seria = serialize($doms);
+                $data['dom'] = $seria;
+            }else{
+                $data['dom'] = '';
+            }
+        if($data['assistants']){
+            $doms = explode(',', $data['assistants']);
+            $seria = serialize($doms);
+            $data['assistant'] = $seria;
+        }else{
+            $data['assistant'] = '';
+        }
+        if($data['assistant_ids']){
+            $doms = explode(',', $data['assistant_ids']);
+            $seria = serialize($doms);
+            $data['assistant_id'] = $seria;
+        }else{
+            $data['assistant_id'] = '';
+        }
+        $validate = validate('LessonVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
+       
+        $result = $this->lessonModel->save($data);
         if($result){
-            return ['msg' => $this->lessonModel->getError(), 'code' => 100, 'data' => $result];
+            return ['msg' => '发布成功', 'code' => 100, 'data' => $this->lessonModel->id];
         }else{
             return ['msg'=>__lang('MSG_200_ERROR'), 'code' => 200];
         }
     }
-
-    // 编辑课程
-    public function updateLesson($data,$id){
-        $is_power = $this->isPower($data['camp_id'],$data['member_id']);
-
-        if(!$is_power){
-            return ['code'=>200,'msg'=>'权限不足'];
-        }
-
-        $result = $this->lessonModel->validate('LessonVal')->save($data,['id'=>$id]);
-        if($result){
-            return ['msg' => $this->lessonModel->getError(), 'code' => 100, 'data' => $result];
-        }else{
-            return ['msg'=>__lang('MSG_200_ERROR'), 'code' => 200];
-        }
-    }
-
 
     // 课程权限
     public function isPower($camp_id,$member_id){
-        $is_power = $this->gradeMemberModel
+        $is_power = db('camp_member')
                     ->where([
                         'camp_id'   =>$camp_id,
                         'status'    =>1,
                         'member_id'  =>$member_id,
-                        'type'      =>['in','2,3,4']
                         ])
-                    ->find();
-        if($is_power){
-            return true;
-        }else{
-            return false;
-        }
+                    ->value('type');
+
+        return $is_power?$is_power:0;
+    
     }
 }
 

@@ -1,0 +1,142 @@
+{extend name="layout/common"/}
+
+{block name="page-content"}
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">收入详情</h3>
+            </div>
+            <div class="box-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="" class="col-md-2 col-sm-2 control-label">会员</label>
+                        <div class="col-md-10 col-sm-10">
+                            <h5>{$salaryin.member}</h5>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-md-2 col-sm-2 control-label">会员姓名</label>
+                        <div class="col-md-10 col-sm-10">
+                            <h5>{$salaryin.realname}</h5>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-md-2 col-sm-2 control-label">会员等级</label>
+                        <div class="col-md-10 col-sm-10">
+                            <h5>{$salaryin.level}</h5>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-md-2 col-sm-2 control-label">会员身份</label>
+                        <div class="col-md-10 col-sm-10">
+                            <h5>{$salaryin.member_type}</h5>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-md-2 col-sm-2 control-label">收入类型</label>
+                        <div class="col-md-10 col-sm-10">
+                            <h5>
+                                {switch name="salaryin.type"}
+                                {case value="1"}教学{/case}
+                                {default/}其他
+                                {/switch}
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-md-2 col-sm-2 control-label">收入金额</label>
+                        <div class="col-md-10 col-sm-10">
+                            <h5>{$salaryin.salary}</h5>
+                        </div>
+                    </div>
+                    {notempty name="salaryin.camp"}
+                    <div class="form-group">
+                        <label for="" class="col-md-2 col-sm-2 control-label">所属训练营</label>
+                        <div class="col-md-10 col-sm-10">
+                            <h5>{$salaryin.camp}</h5>
+                        </div>
+                    </div>
+                    {/notempty}
+                    {notempty name="salaryin.lesson"}
+                    <div class="form-group">
+                        <label for="" class="col-md-2 col-sm-2 control-label">课程</label>
+                        <div class="col-md-10 col-sm-10">
+                            <h5>{$salaryin.lesson}</h5>
+                        </div>
+                    </div>
+                    {/notempty}
+                    {notempty name="salaryin.grade"}
+                    <div class="form-group">
+                        <label for="" class="col-md-2 col-sm-2 control-label">班级</label>
+                        <div class="col-md-10 col-sm-10">
+                            <h5>{$salaryin.grade}</h5>
+                        </div>
+                    </div>
+                    {/notempty}
+                    {notempty name="salaryin.star"}
+                    <div class="form-group">
+                        <label for="" class="col-md-2 col-sm-2 control-label">评分</label>
+                        <div class="col-md-10 col-sm-10">
+                            <h5>{$salaryin.star}</h5>
+                        </div>
+                    </div>
+                    {/notempty}
+                    <div class="form-group">
+                        <label for="" class="col-md-2 col-sm-2 control-label">结算日期</label>
+                        <div class="col-md-10 col-sm-10">
+                            <h5>{$salaryin.create_time}</h5>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-md-2 col-sm-2 control-label">状态</label>
+                        <div class="col-md-10 col-sm-10">
+                            <h5>
+                                {switch name="salaryin.status"}
+                                {case value="1"}正常{/case}
+                                {default/}失败
+                                {/switch}
+                            </h5>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">推荐人返利</h3>
+            </div>
+            <div class="box-body">
+                <div class="box-body">
+                    <table class="table table-striped table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>推荐人</th>
+                            <th>返利金额</th>
+                            <th>返利积分</th>
+                            <th>层级</th>
+                            <th>创建时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {volist name="salaryin.rebate" id="vo"}
+                        <tr>
+                            <td>{$vo.id}</td>
+                            <td>{$vo.member}</td>
+                            <td>{$vo.salary}</td>
+                            <td>{$vo.score}</td>
+                            <td>{$vo.tier}</td>
+                            <td>{$vo.create_time}</td>
+                        </tr>
+                        {/volist}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

@@ -1,11 +1,11 @@
 <?php 
 namespace app\api\controller;
-use app\api\controller\Base;
+use app\api\controller\Frontend;
 use app\service\SalaryOutService;
-class SalaryOut extends Base{
+class SalaryOut extends Frontend{
 	private $SalaryOutService;
-	public function __construct(){
-		parent::__construct();
+	public function _initialize(){
+		parent::_initialize();
 		$this->SalaryOutService = new SalaryOutService($this->memberInfo['id']);
 	}
 
@@ -26,5 +26,21 @@ class SalaryOut extends Base{
         }        
     }
 
-    
+    //提现申请
+    public function applySalaryOut(){
+        try{
+            $data = input('post.');
+            if($this->memberInfo['balance']<$data['salary'] || $data['salary']<0){
+                return json(['code'=>200,'msg'=>'余额不足']);die;
+            }
+            $data['member'] = $this->memberInfo['member'];
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['telephone'] = $this->memberInfo['telephone'];
+            $data['openid'] = $this->memberInfo['openid'];
+            $result = $this->SalaryOutService->saveSalaryOut($data);
+            return $result;
+        }catch (Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }   
+    }
 }
