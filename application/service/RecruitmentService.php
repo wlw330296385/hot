@@ -47,6 +47,7 @@ class RecruitmentService{
         $res = $this->RecruitmentModel->where($map)->find();
         if($res){           
             $result = $res->toArray();
+            $result['status_num'] = $res->getData('status');
             $result['deadlines'] = date('Y-m-d',$result['deadline']);
             return $result;
         }
@@ -91,7 +92,7 @@ class RecruitmentService{
         if(!$validate->scene('edit')->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-        $result = $this->RecruitmentModel->save($data,['id'=>$id]);
+        $result = $this->RecruitmentModel->allowField(true)->save($data,['id'=>$id]);
          if (!$result) {
             return [ 'msg' => __lang('MSG_400'), 'code' =>100 ];
         }else{
@@ -202,7 +203,17 @@ class RecruitmentService{
         }else{
             return ['msg'=>"报名失败", 'code' => 100];
         }
-        
     }
 
+    // 软删除招募数据
+    public function softDeleteRecruitment($recruitment_id) {
+        return Recruitment::destroy($recruitment_id);
+    }
+
+    // 修改招募更新某个字段的值
+    public function updateRecruitmentField($recruitment_id, $field, $value) {
+        $model = new Recruitment();
+        $res = $model->where(['id' => $recruitment_id])->setField($field, $value);
+        return $res;
+    }
 }
