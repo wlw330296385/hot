@@ -215,6 +215,7 @@ class Recruitment extends Base{
         }
     }
 
+    // 获取响应人名单page
     public function getRecruitmentMemberListByPageApi(){
         try{
             $map = input('post.');
@@ -227,5 +228,23 @@ class Recruitment extends Base{
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
+    }
+
+    // 审核招募人员
+    public function checkRecruitmentMemberApi(){
+        try{
+            
+            $organization_id = input('param.organization_id');
+            $member_id = input('param.member_id');
+            $result = $this->RecruitmentService->checkRecruitmentMember($map);
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'无数据']);
+            } 
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+
     }
 }

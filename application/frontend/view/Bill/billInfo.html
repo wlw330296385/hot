@@ -168,39 +168,35 @@
 
 // 立即支付
 function wxpay(){
-    if (typeof WeixinJSBridge == "undefined"){
-        if( document.addEventListener ){
-            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
-        }else if (document.attachEvent){
-            document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
-            document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
-        }
-    }else{
-       onBridgeReady();
-    }
+    {if condition="$jsApiParameters == 0"}
+        alert('订单已支付,不可再支付');
+    {else /}
+        var strJsApiParameters = '{$jsApiParameters}';
+        var objJsApiParameters = JSON.parse(strJsApiParameters);
+        wx.chooseWXPay({
+            timestamp: {$jsApi['timestamp']},
+            // timestamp:objJsApiParameters.timeStamp,
+            nonceStr: objJsApiParameters.nonceStr,
+            package: objJsApiParameters.package,
+            signType: 'MD5',
+            paySign: objJsApiParameters.paySign,
+            success: function (res) {
+                // 支付成功后的回调函数
+                pay(JSON.stringify(res));
+            },
+            cancel: function() {
+                //mui.toast('取消了支付付款');
+                mui.alert('取消了支付付款');
+            },
+            fail: function(res) {
+                var errmsg = res.errMsg;
+                // mui.toast(errmsg.slice(12));
+                mui.alert(errmsg.slice(12));
+            }
+        });
+    {/if}
 }
 
-//微信支付
-function onBridgeReady(){
-    var strJsApiParameters = '{$jsApiParameters}';
-    var objJsApiParameters = JSON.parse(strJsApiParameters);
-    WeixinJSBridge.invoke(
-        'getBrandWCPayRequest', {
-               "appId":objJsApiParameters.appId,     //公众号名称，由商户传入     
-               "timeStamp":"{:time()}",         //时间戳，自1970年以来的秒数     
-               "nonceStr":objJsApiParameters.nonceStr, //随机串     
-               "package":objJsApiParameters.package,     
-               "signType":"MD5",         //微信签名方式：     
-               "paySign":objJsApiParameters.paySign, //微信签名
-               'payType':objJsApiParameters.payType
-             },
-            function(res){     
-               if(res.err_msg == "get_brand_wcpay_request:ok" ) {
-                  pay(JSON.stringify(res));
-               }     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
-            }
-        ); 
-}
 
 //支付完成
 function pay(callback_str){
@@ -226,9 +222,9 @@ function pay(callback_str){
                     // alert(JSON.stringify(msg));
                 },
                 success:function(msg){
-                    if(result.code == 200){
+                    if(msg.code == 200){
                         mui.alert('支付成功','提示','确定',function(){
-                            location.reload()
+                            location.reload();
                           });
                     }else{
                         mui.toast(result.msg);
@@ -251,10 +247,10 @@ function pay(callback_str){
                 'checkJsApi',
                 'onMenuShareTimeline',
                 'onMenuShareAppMessage',
-                'onMenuShareQQ'
+                'onMenuShareQQ',
+                'hideMenuItems'
             ]// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
         });
-
     wx.ready(function () {   
         // 微信支付分享朋友圈页面
         wx.onMenuShareTimeline({
@@ -283,6 +279,25 @@ function pay(callback_str){
                 // 用户取消分享后执行的回调函数
             }
         });
+        {if condition="$billInfo['status']!=0"}
+            wx.hideMenuItems({
+            menuList: [ 
+            "menuItem:share:appMessage",
+            "menuItem:share:timeline",
+            "menuItem:share:qq",
+            "menuItem:share:weiboApp",
+            "menuItem:share:facebook",
+            "menuItem:favorite",
+            "menuItem:copyUrl",
+            "menuItem:originPage",
+            "menuItem:readMode",
+            "menuItem:openWithQQBrowser",
+            "menuItem:openWithSafari",
+            ] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
+
+        });
+        {/if}
+
     })
 </script>
 </body>

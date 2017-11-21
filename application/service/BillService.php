@@ -77,7 +77,7 @@ class BillService {
             $billInfo = $this->Bill->where($map)->find();
             $billData = $billInfo->toArray();
             $res = $this->finishBill($billData);
-            return false;
+            return $res;
         }else{
             return false;
         }
@@ -223,7 +223,7 @@ class BillService {
         }   
         $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
         $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);        
-        return true;
+        return 1;
     }
 
     //判断订单付款金额

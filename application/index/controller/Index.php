@@ -13,9 +13,13 @@ class Index extends Controller{
 
     public function index(){
         $timestr = strtotime('2017-11-16');
-        
+        // 生成微信参数
+        $shareurl = request()->url(true);
+        $WechatService = new WechatService();
+        $jsApi = $WechatService->jsapi($shareurl);
         // echo $timestr-time();
         $this->assign('timestr',time());
+        $this->assign('jsApi',$jsApi);
         return view('Index/index');
     }
 

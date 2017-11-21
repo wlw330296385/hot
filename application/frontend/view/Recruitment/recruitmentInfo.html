@@ -63,7 +63,28 @@
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><a href="tel:{$recruitmentInfo.telephone}"><span
                         class="mui-icon mui-icon-phone"></span>电话咨询</a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen"><a href="#signupPop">我要报名</a></li>
+                    {if condition="$recruitmentInfo.deadline<time() &&  $recruitmentInfo.deadline>1"}
+                        <li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen">已结束</li>
+                    {else /}
+                        {if condition="$recruitmentInfo.is_max == -1"}
+                            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen">已满人</li>
+                            {else /}
+                            {switch name="recruitmentInfo.status"}
+                                {case value="上架"}
+                                    <a href="#signupPop"><li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen">
+                                    {if $isJoin == 0}    
+                                    立即报名
+                                    {else /}
+                                    立即报名(已报名{$isJoin})
+                                    {/if}
+                                    </li></a>
+                                {/case}
+                                {case value="下架"}
+                                    <li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen">已下架</li>
+                                {/case}
+                            {/switch}
+                        {/if}
+                    {/if}
             </ul>
         </div>
     </div>
@@ -119,7 +140,7 @@
                     console.log(objData)
 
                     var result = wooApi.asyncF("{:url('api/recruitment/joinRecruitmentApi',['recruitment_id'=>$recruitmentInfo.id])}",objData);
-                    if(result){
+                    if(result.code == 200){
                         mui.toast(result.msg);
                         mui('#signupPop').popover('toggle');
                     }else{

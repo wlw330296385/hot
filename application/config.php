@@ -213,7 +213,8 @@ return [
         // 日志保存目录
         'path'  => LOG_PATH,
         // 日志记录级别
-        'level' => ['error','sql'],
+        'level' => ['error','sql','log','info'],
+        'apart_level' => ['error', 'sql','log','info'],
     ],
 
     // +----------------------------------------------------------------------
@@ -281,5 +282,4 @@ return [
         'var_page'  => 'page',
         'list_rows' => 15,
     ],
-    'app_debug'=>true,
 ];
