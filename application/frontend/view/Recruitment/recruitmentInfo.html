@@ -72,10 +72,10 @@
                             {switch name="recruitmentInfo.status"}
                                 {case value="上架"}
                                     <a href="#signupPop"><li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen">
-                                    {if $isJoin == 0}    
+                                    {if empty($recruitmentMember)}    
                                     立即报名
                                     {else /}
-                                    立即报名(已报名{$isJoin})
+                                    已报名
                                     {/if}
                                     </li></a>
                                 {/case}
@@ -94,13 +94,23 @@
         <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
             <ul class="mui-table-view operation">
                 <h5><span>我要报名</span><a href="#pjpopover" class="mui-icon mui-icon-closeempty"></a></h5>
+                {if !empty($recruitmentMember)}
                 <li class="mui-table-view-cell listli">
                     <input type="hidden" name="recruitment" class="data" value="{$recruitmentInfo.recruitment}" />
                     <input type="hidden" name="recruitment_id" class="data" value="{$recruitmentInfo.id}" />
-                    <input type="text" name="linkman" class="data" value="{$memberInfo.member}" placeholder="请输入报名人姓名" />
-                    <input type="text" name="contact" class="data" value="{$memberInfo.telephone}" placeholder="请输入联系电话" />
+                    <input type="text" name="linkman" class="data" value="{$recruitmentMember.member}" placeholder="请输入报名人姓名" />
+                    <input type="text" name="contact" class="data" value="{$recruitmentMember.contact}" placeholder="请输入联系电话" />
+                    <textarea rows="4" name="remarks" class="data">{$recruitmentMember.remarks}</textarea>
+                </li>
+                {else /}
+                    <li class="mui-table-view-cell listli">
+                    <input type="hidden" name="recruitment" class="data" value="{$recruitmentInfo.recruitment}" />
+                    <input type="hidden" name="recruitment_id" class="data" value="{$recruitmentInfo.id}" />
+                    <input type="text" name="linkman" class="data" value="" placeholder="请输入报名人姓名" />
+                    <input type="text" name="contact" class="data" value="" placeholder="请输入联系电话" />
                     <textarea rows="4" name="remarks" class="data"></textarea>
                 </li>
+                {/if}
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="signupSubmit">提交</li>
             </ul>
         </div>
@@ -125,20 +135,16 @@
                     var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
                     mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', btnArray);
                 }else{
-
-                    var signLinkman = $('input.linkman').val();
-                    var signContact = $('input.contact').val();
-                    var signMsg = $('textarea.data').val();
-                    if(signMsg==""||signContact==""||signLinkman==""){
-                        mui.toast("请填写完整报名信息");
-                        return false;
-                    }
-
                     var data1 = wooApi.getInputData();
                     var data2 = wooApi.getInputData('textarea','data',data1);
                     var objData = wooApi.arrTOobj(data2);
                     console.log(objData)
-
+                    for(var i in objData){
+                        if(objData[i] =='' || objData[i] =='undefinded' || !objData[i]){
+                            mui.toast("请填写完整报名信息");
+                            return false;
+                        }
+                    } 
                     var result = wooApi.asyncF("{:url('api/recruitment/joinRecruitmentApi',['recruitment_id'=>$recruitmentInfo.id])}",objData);
                     if(result.code == 200){
                         mui.toast(result.msg);

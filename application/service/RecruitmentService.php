@@ -99,7 +99,13 @@ class RecruitmentService{
         }
     }
    
-
+    // 获取参与者
+    public function getRecruitmentMember($map){
+        $result = RecruitmentMember::where($map)->find();
+        if($result)
+        return $result->toarray();
+        return $result;
+    }
 
      // 获取参与者列表
      public function getRecruitmentMemberListNoPage($map){
