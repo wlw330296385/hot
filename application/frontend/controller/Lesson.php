@@ -178,8 +178,15 @@ class Lesson extends Base{
             $this->error('您没有权限');
         }
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+        // 私密课程 获取指定会员列表
+        $assignMemberList = [];
+        if ($lessonInfo['isprivate']) {
+            $assignMemberList = $this->LessonService->getAssignMember($lessonInfo['id']);
+        }
+
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('power',$power);
+        $this->assign('assignMemberList', $assignMemberList);
         return view('Lesson/lessonInfoOfCamp');
     }
 

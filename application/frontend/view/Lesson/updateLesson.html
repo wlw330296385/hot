@@ -20,6 +20,7 @@
             left: auto;
             right: 6px;
         }
+        
         p {
             text-indent: 22px;
         }
@@ -32,17 +33,19 @@
         .mui-navigate-right input[type='text'] {
             padding-right: 30px !important;
         }
-        .show{
+        
+        .show {
             display: block;
         }
-        .hide{
+        
+        .hide {
             display: none;
         }
-
+        
         .number {
             width: 20% !important;
         }
-
+        
         .nohave {
             margin: 0;
             padding: 15px;
@@ -220,15 +223,14 @@
                 <div class="image-items memberInput-row border-b {eq name='lessonInfo.isprivate' value='1'}show{else/}hide{/eq}" style="padding-top: 0;">
                     <div class="mui-input-group">
                         <div class="box checkChecked" id="inactiveList">
-                            {notempty name="assignMemberList"}
-                            {foreach name="assignMemberList" item="assignMember"}
+                            {notempty name="assignMemberList"} {foreach name="assignMemberList" item="assignMember"}
                             <div class="mui-input-row mui-checkbox checkboxCont">
-                                <label class="number">{$key+1}</label><font>{$assignMember.member}</font>
+                                <label class="number">{$key+1}</label>
+                                <font>{$assignMember.member}</font>
                                 <input name="member" value="{$assignMember.member_id}" type="checkbox">
-                                <input type="hidden" class="stdList eachList" data-id="{$assignMember.member_id}" data-member="{$assignMember.member}" data-type="" >
+                                <input type="hidden" class="stdList eachList" data-id="{$assignMember.member_id}" data-member="{$assignMember.member}" data-type="">
                             </div>
-                            {/foreach}
-                            {else/}
+                            {/foreach} {else/}
                             <p class="nohave">请选择你想要发送私密课程的会员。</p>
                             {/notempty}
                         </div>
@@ -764,11 +766,12 @@
             mui("#addMember").popover("toggle");
             totalNum = $(".checkboxCont").length;
             $(".mui-badge").text(totalNum);
-        })
+        });
+
+        //获取不做修改时的会员名单提交
+        initialMember();
         //获取训练营身份列表
         toCampMemberList();
-
-
         //获取训练营场地表
         toCourtList()
         //获取训练营教练列表
@@ -843,6 +846,17 @@
         });
     }
 
+
+    //获取不做修改的会员名单提交
+    function initialMember() {
+        memberList = [];
+        $(".checkChecked input[type=hidden]").each(function (i) {
+            var member_type = $(this).attr("data-type");
+            var id = $(this).attr("data-id");
+            var member = $(this).attr("data-member");
+            memberList[i] = { member: member, id: id, type: member_type };
+        });
+    }
 
     // 获取数据并进行提交
     function submitAction() {
