@@ -168,8 +168,9 @@
 
 // 立即支付
 function wxpay(){
-    {if condition="$jsApiParameters == 0"}
-        alert('订单已支付,不可再支付');
+    {if $jsApiParameters === 0}
+        alert('订单已支付,不可再支付'); 
+
     {else /}
         var strJsApiParameters = '{$jsApiParameters}';
         var objJsApiParameters = JSON.parse(strJsApiParameters);
@@ -212,7 +213,9 @@ function pay(callback_str){
                     'balance_pay' : "{$billInfo['total']*$billInfo['price']}",
                     'callback_str':callback_str,
                     'is_pay':1,
-                    'status':1
+                    'status':1,
+                    'agent_id':{$memberInfo.id},
+                    "agent":{$memberInfo.member}
                 },
                 async: false,
                 type: 'post',

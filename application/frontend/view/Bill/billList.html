@@ -321,7 +321,12 @@
                 if (data.code == 200) {
                     for(var i=0;i<=data.data.data.length-1;i++){
                         var urls = toUrl+ '/bill_order/' + data.data.data[i].bill_order;
-                        newli +=  '<li class="mui-table-view-cell listli"><a href="'+urls+'"><ul class="mui-row table  item-list"><li class="mui-col-sm-10 mui-col-xs-10"><div class="list-cont1">' + data.data.data[i].goods_des + '<p>' + data.data.data[i].create_time + '</p></div></li><li class="mui-col-sm-2 mui-col-xs-2">' + data.data.data[i].balance_pay + '</li></ul></a></li>';
+                        if(data.data.data[i].expire>0){
+                            newli +=  '<li class="mui-table-view-cell listli"><a href="'+urls+'"><ul class="mui-row table  item-list"><li class="mui-col-sm-10 mui-col-xs-10"><div class="list-cont1">' + data.data.data[i].goods_des + '<p>' + data.data.data[i].create_time + '</p><p style="color:red">['+wooApi.dateIt('Y-m-d H:i')+']&nbsp;过期</p></div></li><li class="mui-col-sm-2 mui-col-xs-2">' + data.data.data[i].balance_pay + '</li></ul></a></li>';
+                        }else{
+                            newli +=  '<li class="mui-table-view-cell listli"><a href="'+urls+'"><ul class="mui-row table  item-list"><li class="mui-col-sm-10 mui-col-xs-10"><div class="list-cont1">' + data.data.data[i].goods_des + '<p>' + data.data.data[i].create_time + '</p></div></li><li class="mui-col-sm-2 mui-col-xs-2">' + data.data.data[i].balance_pay + '</li></ul></a></li>';
+                        }
+                        
                     }
                     $('#count-'+wList).text(data.data.total);
                 }

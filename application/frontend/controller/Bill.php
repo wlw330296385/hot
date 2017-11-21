@@ -112,6 +112,7 @@ class Bill extends Base{
         $WechatJsPayService = new \app\service\WechatJsPayService;
        
         $result = $WechatJsPayService->pay(['order_no'=>$billInfo['bill_order'],'amount'=>$amount]);
+
         if($result['code']==100){
             $jsApiParameters = 0;
         }else{
