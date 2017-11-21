@@ -703,16 +703,17 @@
         });
 
         // 选择添加学员点击事件
+        memberList = [];//学员列表数组
         $("#memberConfirm").on('click', function () {
             $("#inactiveList").empty();
-            memberList = [];//学员列表数组
-            $(".campMemberList input[type=checkbox]:checked").each(function () {
+            $(".campMemberList input[type=checkbox]:checked").each(function (i) {
                 var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).attr("data-id") + '" type="checkbox"><input type="hidden" class="stdList eachList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '"data-type="' + $(this).attr("data-type") + '" ></div>';
                 var member_type = $(this).attr("data-type");
                 var id = $(this).attr("data-id");
                 var member = $(this).attr("data-member");
                 $("#inactiveList").append(str);
-                memberList.push({ member: member, id: id, type: member_type });
+                //memberList.push({ member: member, id: id, type: member_type });
+                memberList[i] = { member: member, id: id, type: member_type };
             });
 
             // checkmember();// 检查是否有学员数据
@@ -815,15 +816,15 @@
         datas = wooApi.getInputData('select', 'data', data);
         // 获取其他标签值
         arrData = wooApi.getDomData('domData', datas);
-        console.log(arrData)
+        //console.log(arrData)
         var objData = wooApi.arrTOobj(arrData);
-        console.log(objData)
-        objData.memberData = JSON.stringify(memberData);
+        //console.log(objData)
+        objData.memberData = JSON.stringify(memberList);
         var url = "{:url('api/lesson/updateLessonApi')}";
         var ajaxResult = wooApi.asyncF(url, objData);
         if (ajaxResult.code) {
-            if (ajaxResult.code == 200) {
-                //console.log(ajaxResult.data)
+            if (ajaxResult.code === 200) {
+                //console.log(ajaxResult);
                 mui.alert('', ajaxResult.msg, '确定', function () {
                     window.location.href = "{:url('lesson/lessoninfoOfCamp')}" + '/lesson_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
                 });
@@ -860,7 +861,7 @@
                     var newli = '';
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         if (data.data.data[i].type == "学生" || data.data.data[i].type == "粉丝") {
-                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label class="wd73">' + data.data.data[i].member + '</label><span>' + data.data.data[i].type + '</span><input name="checkbox-member" class="member" value="' + data.data.data[i].member + '" type="checkbox" data-id="' + data.data.data[i].id + '" data-member="' + data.data.data[i].member + '" data-type="' + data.data.data[i].type + '"></div>'
+                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label class="wd73">' + data.data.data[i].member + '</label><span>' + data.data.data[i].type + '</span><input name="checkbox-member" class="member" value="' + data.data.data[i].member + '" type="checkbox" data-id="' + data.data.data[i].member_id + '" data-member="' + data.data.data[i].member + '" data-type="' + data.data.data[i].type + '"></div>'
                         }
                     }
                     $(".campMemberList").empty();

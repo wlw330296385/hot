@@ -20,6 +20,7 @@
             left: auto;
             right: 6px;
         }
+        
         p {
             text-indent: 22px;
         }
@@ -32,11 +33,25 @@
         .mui-navigate-right input[type='text'] {
             padding-right: 30px !important;
         }
-        .show{
+        
+        .show {
             display: block;
         }
-        .hide{
+        
+        .hide {
             display: none;
+        }
+        
+        .number {
+            width: 20% !important;
+        }
+        
+        .nohave {
+            margin: 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-top: none;
+            text-align: center;
         }
     </style>
 </head>
@@ -48,7 +63,7 @@
         <h1 class="mui-title">{$lessonInfo.camp}</h1>
     </header>
     <div class="mui-content pt">
-        <div class="camp-list camp-lesson-list" style="margin-top: 4px">
+        <div class="camp-list camp-lesson-list editor" style="margin-top: 4px">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
             <form action="" class="mui-input-group">
                 <div class="mui-input-row">
@@ -208,10 +223,19 @@
                 <div class="image-items memberInput-row border-b {eq name='lessonInfo.isprivate' value='1'}show{else/}hide{/eq}" style="padding-top: 0;">
                     <div class="mui-input-group">
                         <div class="box checkChecked" id="inactiveList">
+                            {notempty name="assignMemberList"} {foreach name="assignMemberList" item="assignMember"}
+                            <div class="mui-input-row mui-checkbox checkboxCont">
+                                <label class="number">{$key+1}</label>
+                                <font>{$assignMember.member}</font>
+                                <input name="member" value="{$assignMember.member_id}" type="checkbox">
+                                <input type="hidden" class="stdList eachList" data-id="{$assignMember.member_id}" data-member="{$assignMember.member}" data-type="">
+                            </div>
+                            {/foreach} {else/}
                             <p class="nohave">请选择你想要发送私密课程的会员。</p>
+                            {/notempty}
                         </div>
                         <div class="operation-btn">
-                            <span class="mui-badge">0</span>
+                            <span class="mui-badge">{$assignMemberCount}</span>
                             <a class="all">全选</a>
                             <a class="cancel">取消</a>
                             <a class="del">[删除]</a>
@@ -224,8 +248,6 @@
                     <label>备注</label>
                     <input type="text" name="remarks" class="input data" value="{$lessonInfo.remarks}">
                 </div>
-
-
 
             </form>
             <ul class="mui-table-view operation">
@@ -724,16 +746,17 @@
         });
 
         // 选择添加学员点击事件
+        memberList = [];//学员列表数组
         $("#memberConfirm").on('click', function () {
             $("#inactiveList").empty();
-            memberList = [];//学员列表数组
-            $(".campMemberList input[type=checkbox]:checked").each(function () {
+            $(".campMemberList input[type=checkbox]:checked").each(function (i) {
                 var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).attr("data-id") + '" type="checkbox"><input type="hidden" class="stdList eachList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '"data-type="' + $(this).attr("data-type") + '" ></div>';
                 var member_type = $(this).attr("data-type");
                 var id = $(this).attr("data-id");
                 var member = $(this).attr("data-member");
                 $("#inactiveList").append(str);
-                memberList.push({ member: member, id: id, type: member_type });
+                //memberList.push({ member: member, id: id, type: member_type });
+                memberList[i] = { member: member, id: id, type: member_type };
             });
 
             // checkmember();// 检查是否有学员数据
@@ -743,11 +766,12 @@
             mui("#addMember").popover("toggle");
             totalNum = $(".checkboxCont").length;
             $(".mui-badge").text(totalNum);
-        })
+        });
+
+        //获取不做修改时的会员名单提交
+        initialMember();
         //获取训练营身份列表
         toCampMemberList();
-
-
         //获取训练营场地表
         toCourtList()
         //获取训练营教练列表
@@ -823,6 +847,17 @@
     }
 
 
+    //获取不做修改的会员名单提交
+    function initialMember() {
+        memberList = [];
+        $(".checkChecked input[type=hidden]").each(function (i) {
+            var member_type = $(this).attr("data-type");
+            var id = $(this).attr("data-id");
+            var member = $(this).attr("data-member");
+            memberList[i] = { member: member, id: id, type: member_type };
+        });
+    }
+
     // 获取数据并进行提交
     function submitAction() {
         //判断电话是否正确格式
@@ -839,7 +874,7 @@
         console.log(arrData)
         var objData = wooApi.arrTOobj(arrData);
         console.log(objData)
-        objData.memberData = JSON.stringify(memberData);
+        objData.memberData = JSON.stringify(memberList);
         var url = "{:url('api/lesson/updateLessonApi',['lesson_id'=>$lessonInfo['id']])}";
         var ajaxResult = wooApi.asyncF(url, objData);
         console.log(ajaxResult);
@@ -875,7 +910,7 @@
                     var newli = '';
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         if (data.data.data[i].type == "学生" || data.data.data[i].type == "粉丝") {
-                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label class="wd73">' + data.data.data[i].member + '</label><span>' + data.data.data[i].type + '</span><input name="checkbox-member" class="member" value="' + data.data.data[i].member + '" type="checkbox" data-id="' + data.data.data[i].id + '" data-member="' + data.data.data[i].member + '" data-type="' + data.data.data[i].type + '"></div>'
+                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label class="wd73">' + data.data.data[i].member + '</label><span>' + data.data.data[i].type + '</span><input name="checkbox-member" class="member" value="' + data.data.data[i].member + '" type="checkbox" data-id="' + data.data.data[i].member_id + '" data-member="' + data.data.data[i].member + '" data-type="' + data.data.data[i].type + '"></div>'
                         }
                     }
                     $(".campMemberList").empty();

@@ -174,11 +174,25 @@
                         var urls = "{:url('lesson/LessonInfoOfCamp')}" + '/lesson_id/' + data.data.data[i].id + '/camp_id/' + campID;
                         newli += '<li class="mui-table-view-cell mui-media listli">';
                         if (status == 1) {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+//                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="setprivate">设为私密课程</span></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="setprivate">';
+                            if (data.data.data[i].isprivate ===1 ) {
+                                newli += '撤销私密课程';
+                            } else {
+                                newli += '设为私密课程';
+                            }
+                            newli += '</span></div>';
                         } else {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '"><div class="mui-media-body wd60">' + data.data.data[i].lesson + '<p class="mui-ellipsis">' + data.data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥' + data.data.data[i].cost + '</p><p class="address">' + data.data.data[i].area + '</p></div></a></div>';
+
+//                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '"><div class="mui-media-body wd60">' + data.data.data[i].lesson + '<p class="mui-ellipsis">' + data.data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥' + data.data.data[i].cost + '</p><p class="address">' + data.data.data[i].area + '</p></div></a></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '"><div class="mui-media-body wd60">' + data.data.data[i].lesson;
+                        if (data.data.data[i].isprivate ===1) {
+                            newli += '<font style="color:red">&nbsp;&nbsp;[私密]</font>';
+                        }
+                        newli += '<p class="mui-ellipsis">' + data.data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥' + data.data.data[i].cost + '</p><p class="address">' + data.data.data[i].area + '</p></div></a></div>';
+
                         newli += '</li>';
                     }
                 }

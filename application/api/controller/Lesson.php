@@ -58,6 +58,7 @@ class Lesson extends Base{
             if( isset($map['page']) ){
                 unset($map['page']);
             }
+            $map['isprivate'] = input('param.isprivate', 0);
             $result = $this->LessonService->getLessonList($map,$page);
             if($result){
                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
@@ -152,6 +153,9 @@ class Lesson extends Base{
                     $data['area'] = $address[1];
                 }             
             }
+            if ($data['isprivate']==1 && $data['memberData'] == "[]") {
+                return json(['code' => 100, 'msg' => '私密课程必须选择想要发送私密课程的会员']);
+            }
             if($lesson_id){
                 $lesson = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
                 $hasgradeused = $this->LessonService->hasgradeused($lesson_id);
@@ -159,11 +163,29 @@ class Lesson extends Base{
                     if ($data['cost'] != $lesson['cost']) {
                         $result = ['code' => 100, 'msg' => '此课程被班级所用，不能修改课程单价'];
                         return json($result);
-                    } 
+                    }
                 }
                 $result = $this->LessonService->updateLesson($data,$lesson_id);
+                if ($result['code'] == 200 && $data['isprivate'] == 1) {
+                    $dataLessonAssign['lesson_id'] = $lesson_id;
+                    $dataLessonAssign['lesson'] = $data['lesson'];
+                    $dataLessonAssign['memberData'] = $data['memberData'];
+                    $resultSaveLessonAssign = $this->LessonService->saveLessonAssign($dataLessonAssign);
+                    if (!$resultSaveLessonAssign) {
+                        return json(['code' => 100, 'msg' => '选择指定会员'.__lang('MSG_400')]);
+                    }
+                }
             }else{
                 $result = $this->LessonService->createLesson($data);
+                if ($result['code'] == 200 && $data['isprivate'] == 1) {
+                    $dataLessonAssign['lesson_id'] = $result['data'];
+                    $dataLessonAssign['lesson'] = $data['lesson'];
+                    $dataLessonAssign['memberData'] = $data['memberData'];
+                    $resultSaveLessonAssign = $this->LessonService->saveLessonAssign($dataLessonAssign);
+                    if (!$resultSaveLessonAssign) {
+                        return json(['code' => 100, 'msg' => '选择指定会员'.__lang('MSG_400')]);
+                    }
+                }
             }
             return json($result);
         }catch (Exception $e){
@@ -171,8 +193,6 @@ class Lesson extends Base{
         }
     	
     }
-
-
 
     // 获取购买了课程的没毕业的学生
     public function getStudentListOfLessonApi(){
@@ -247,22 +267,29 @@ class Lesson extends Base{
             $campS = new CampService();
             switch ($lesson['status_num']) {
                 case "1": {
-                    $hasgradeused = $this->LessonService->hasgradeused($lesson['id']);
-                    if ($hasgradeused) {
-                        return json(['code' => 100,'msg' => '该课程有班级所使用，不能操作']);
-                    }
-//                    die;
+                    // 上架课程可操作:下架/设为私密
                     if ($action == 'editstatus') {
                         // 下架课程
-                        $response = $this->LessonService->updateLessonStatus($lesson['id'], -1);
+                        $hasgradeused = $this->LessonService->hasgradeused($lesson['id']);
+                        if ($hasgradeused) {
+                            return json(['code' => 100,'msg' => '该课程有班级所使用，不能操作']);
+                        }
+                        $response = $this->LessonService->updateLessonField($lesson['id'], "status", -1);
                         return json($response);
                     } else {
-                        $response = $this->LessonService->SoftDeleteLesson($lesson['id']);
+                        //$response = $this->LessonService->updateLessonField($lesson['id'], "isprivate", )
+                        // 根据课程当前私密课程字段内容更新字段内容
+                        if ($lesson['isprivate'] == 1) {
+                            $response = $this->LessonService->updateLessonField($lesson['id'], "isprivate", 0);
+                        } else {
+                            $response = $this->LessonService->updateLessonField($lesson['id'], "isprivate", 1);
+                        }
                         return json($response);
                     }
                     break;
                 }
                 case "-1": {
+                    // 下架课程可操作:上架/删除
                     if ($action == 'editstatus') {
                         // 上架课程
                         $campstatus = $campS->getCampcheck($lesson['camp_id']);
@@ -270,7 +297,7 @@ class Lesson extends Base{
                             return json(['code' => 100, 'msg' => '训练营尚未审核，课程不能上架']);
                         }
 
-                        $response = $this->LessonService->updateLessonStatus($lesson['id'], 1);
+                        $response = $this->LessonService->updateLessonField($lesson['id'], "status", 1);
                         return json($response);
                     } else {
                         $response = $this->LessonService->SoftDeleteLesson($lesson['id']);
