@@ -77,11 +77,13 @@
             height: 45px;
             border-radius: 50%;
         }
+        
         #scrollboxframe {
             overflow: hidden;
             background-color: #fff;
             padding: 20px 10px;
         }
+        
         #scrollbox {
             float: left;
         }
@@ -136,7 +138,7 @@
                         </div>
                         <div class="price-frame rightClass">
                             <ul>
-                                <li><button type="button" class="mui-btn mui-btn-danger">关注</button></li>
+                                <li><button type="button" class="mui-btn mui-btn-danger follow">关注</button></li>
                                 <li class="fr">粉丝：152</li>
                             </ul>
                         </div>
@@ -441,6 +443,41 @@
         (function ($) {
             $('.mui-scroll-wrapper').scroll({
                 indicators: true //是否显示滚    动条
+            });
+
+            // 关注训练营
+            $(".follow").on("tap", '', function () {
+                mui.ajax("{:url('api/follow/focus')}", {
+                    data: {
+                        'type': 4,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                            mui.ajax("{:url('api/follow/')}", {
+                                function() {
+                                    if (data.code == -1) {
+                                        $(".follow").text("取消关注");
+                                    } else {
+                                        $(".follow").text("关注");
+                                    }
+                                }
+                            })
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
             });
 
         })(mui);

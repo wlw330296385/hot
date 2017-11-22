@@ -10,69 +10,75 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
     <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css" />
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--等级星星样式-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css" />
     <style>
         .mui-popover {
             height: 260px;
         }
-        .page-header .more{
+        
+        .page-header .more {
             padding-right: 0px;
         }
-
     </style>
 </head>
 
 <body>
 
+    <header id="header" class="mui-bar mui-bar-transparent">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
     <div class="mui-content">
 
-            <div class="list camp-list detalis-list coach">
-                <div class="img4x3" style="background-image:url('{$campInfo.banner}')"></div>
-                <ul class="mui-table-view mb" style="margin-top: -4px">
-                    <li class="mui-table-view-cell mui-media listli de " style="padding:11px 15px;">
-                        <a href="javascript:;">
-                            <img class="mui-media-object mui-pull-left" src="{$campInfo.logo}">
-                            <div class="mui-media-body">
-                                {$campInfo.camp}
-                                <p class="mui-ellipsis">{$campInfo.province} {$campInfo.city} {$campInfo.area}</p>
-                            </div>
-                            <div class="price-frame camp-num">
-                                <ul>
-                                    <li>
-                                        <div class="icons mui-inline">{$campInfo.star}
-                                            <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
-                                            <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
-                                            <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
-                                        </div>
-                                    </li>
-                                    <li class="fr">{$campInfo.total_member}人报名</li>
-                                </ul>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
+        <div class="list camp-list detalis-list coach">
+            <div class="img4x3" style="background-image:url('{$campInfo.banner}')"></div>
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media listli de " style="padding:11px 15px;">
+                    <a href="javascript:;">
+                        <img class="mui-media-object mui-pull-left" src="{$campInfo.logo}">
+                        <div class="mui-media-body">
+                            {$campInfo.camp}
+                            <p class="mui-ellipsis">{$campInfo.province} {$campInfo.city} {$campInfo.area}</p>
+                        </div>
+                        <div class="price-frame camp-num">
+                            <ul>
+                                <li>
+                                    <div class="icons mui-inline">{$campInfo.star}
+                                        <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
+                                        <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
+                                        <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
+                                    </div>
+                                </li>
+                                <li class="fr">{$campInfo.total_member}人报名</li>
+                            </ul>
+                        </div>
+                    </a>
+                </li>
+            </ul>
 
-                <ul class="mui-table-view mb">
-                    <li class="mui-table-view-cell listli detalisli">训练营介绍
-                        <span class="about">{$campInfo.camp_introduction}
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli detalisli">
+                    <button type="button" class="btn follow">关注</button>
+                    <!--<button type="button" class="btn follow">取消关注</button>-->
+                </li>
+                <li class="mui-table-view-cell listli detalisli">训练营介绍
+                    <span class="about">{$campInfo.camp_introduction}
                             <a href="javascript:void(0)">......全文展示</a>
                         </span>
-                    </li>
-                </ul>
+                </li>
+            </ul>
 
-                <ul class="mui-table-view">
-                    <li class="mui-table-view-cell listli detalisli" style="line-height: 40px;">
-                        <a class="mui-navigate-right" id="coachlist"
-                        href="{:url('coach/coachListOfCamp',['camp_id'=>$campInfo['id']])}/?campname={$campInfo.camp}">
-                        
-                        </a>
-                    </li>
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell listli detalisli" style="line-height: 40px;">
+                    <a class="mui-navigate-right" id="coachlist" href="{:url('coach/coachListOfCamp',['camp_id'=>$campInfo['id']])}/?campname={$campInfo.camp}">
+
+                    </a>
+                </li>
                 <li class="mui-table-view-cell listli detalisli">课量<span>已上{$campInfo.total_schedule}课时</span></li>
                 <li class="mui-table-view-cell listli detalisli">班级<span>全部{$campInfo.total_grade}个班级</span></li>
                 <li class="mui-table-view-cell listli detalisli">
@@ -138,7 +144,9 @@
     <div id="yqpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
             <ul class="mui-table-view operation">
-                <h5><span class="type"></span><a href="#yqpopover" class="mui-icon mui-icon-closeempty"></a></h5>
+                <h5><span class="type"></span>
+                    <a href="#yqpopover" class="mui-icon mui-icon-closeempty"></a>
+                </h5>
                 <li class="mui-table-view-cell listli">
                     <textarea rows="4" class="remarks"></textarea>
                 </li>
@@ -150,11 +158,13 @@
     <div id="pjpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
             <ul class="mui-table-view operation">
-                <h5><span>评价我的训练营</span><a href="#pjpopover" class="mui-icon mui-icon-closeempty"></a></h5>
+                <h5><span>评价我的训练营</span>
+                    <a href="#pjpopover" class="mui-icon mui-icon-closeempty"></a>
+                </h5>
                 <li class="mui-table-view-cell listli">
                     <textarea rows="4" name="comment" class="data"></textarea>
-                    <input type="hidden" name="camp_id" value="{$campInfo['id']}" class="data" >
-                    <input type="hidden" name="camp" value="{$campInfo['camp']}" class="data" >
+                    <input type="hidden" name="camp_id" value="{$campInfo['id']}" class="data">
+                    <input type="hidden" name="camp" value="{$campInfo['camp']}" class="data">
 
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="commentSubmit">提交</li>
@@ -166,118 +176,158 @@
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
-
-    //弹出菜单
-    mui('.mui-scroll-wrapper').scroll();
-
-    var count = 1;
-
-    $(function () {
-
-        //展示训练营介绍全文
-        $(".about a").click( function() {
-            $(".about").css("display","block");
-            $(this).hide();
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
         });
-        
-        //选择身份申请加入
-        var type = '';
-        $(".choiseType").click(function() {
-            if ( "{$memberInfo.id}"<=0) {
-                var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
-                mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
-            }else{
-                //弹出申请加入菜单
-                type = $(this).find("input").val();
-                var choiseType = $(this).text();
-                $("#yqpopover").addClass("mui-active").css("display","block");
-                $(".type").text("申请加入"+choiseType);
-                mui('#yqpopover').popover('toggle');
-            }
-        })
 
-        //点击查看更多评论
-        $(".moreComment").click(function() {
-            pullupRefresh();
-        })
+        //弹出菜单
+        mui('.mui-scroll-wrapper').scroll();
 
-        //评价功能
-        $("#commentSubmit").on('click',function() {
-            //判断是否登陆会员
-            mui.ajax("{:url('api/CampMember/getCampMemberApi')}", {
-                data: {
-                    'camp_id': "{$campInfo['id']}",
-                    'member_id': "{$memberInfo.id}"
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: {'Content-Type': 'application/json'},
-                success: function (data) {
-                    //服务器返回响应，根据响应结果，分析是否登录成功；
-                    console.log(data);
-                    if (data.code == 200 && data.data.status=="正常") {
-                        var data1 = wooApi.getInputData();
-                        // var data2 = wooApi.getInputData('textarea','data',data1);
-                        var comment = $('textarea.data').val();
-                        if(comment==""||comment==null){
-                            mui.toast("您没填写评论内容哦");
-                            return false;
-                        }
-                        var objData = wooApi.arrTOobj(data1);
-                        objData.comment = comment;
-                        var result = wooApi.asyncF("{:url('api/camp/createCampCommentApi')}",objData);
-                        if(result){
-                            mui.toast(result.msg);
-                            mui('#pjpopover').popover('toggle');
-                            pulldownRefresh();
-                            $(".moreComment").show();
-                        }
-                    } else {
-                        mui.toast("本训练营会员才能评论，欢迎加入！");
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
+        var count = 1;
+
+        $(function () {
+
+            //展示训练营介绍全文
+            $(".about a").click(function () {
+                $(".about").css("display", "block");
+                $(this).hide();
             });
-        })
 
-        //训练营的身份api
-        $(".joinBtn").click(function () {
-            var remarks = $(".remarks").val();
-            if(remarks !=0){
-                mui.ajax("{:url('api/CampMember/applyApi')}", {
+            //选择身份申请加入
+            var type = '';
+            $(".choiseType").click(function () {
+                if ("{$memberInfo.id}" <= 0) {
+                    var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+                    mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
+                } else {
+                    //弹出申请加入菜单
+                    type = $(this).find("input").val();
+                    var choiseType = $(this).text();
+                    $("#yqpopover").addClass("mui-active").css("display", "block");
+                    $(".type").text("申请加入" + choiseType);
+                    mui('#yqpopover').popover('toggle');
+                }
+            })
+
+            //点击查看更多评论
+            $(".moreComment").click(function () {
+                pullupRefresh();
+            })
+
+            //评价功能
+            $("#commentSubmit").on('click', function () {
+                //判断是否登陆会员
+                mui.ajax("{:url('api/CampMember/getCampMemberApi')}", {
                     data: {
-                        'type': type,
-                        'camp_id': "{$campInfo.id}",
-                        'remarks': remarks,
+                        'camp_id': "{$campInfo['id']}",
+                        'member_id': "{$memberInfo.id}"
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200 && data.data.status == "正常") {
+                            var data1 = wooApi.getInputData();
+                            // var data2 = wooApi.getInputData('textarea','data',data1);
+                            var comment = $('textarea.data').val();
+                            if (comment == "" || comment == null) {
+                                mui.toast("您没填写评论内容哦");
+                                return false;
+                            }
+                            var objData = wooApi.arrTOobj(data1);
+                            objData.comment = comment;
+                            var result = wooApi.asyncF("{:url('api/camp/createCampCommentApi')}", objData);
+                            if (result) {
+                                mui.toast(result.msg);
+                                mui('#pjpopover').popover('toggle');
+                                pulldownRefresh();
+                                $(".moreComment").show();
+                            }
+                        } else {
+                            mui.toast("本训练营会员才能评论，欢迎加入！");
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            })
+
+            //训练营的身份api
+            $(".joinBtn").click(function () {
+                var remarks = $(".remarks").val();
+                if (remarks != 0) {
+                    mui.ajax("{:url('api/CampMember/applyApi')}", {
+                        data: {
+                            'type': type,
+                            'camp_id': "{$campInfo.id}",
+                            'remarks': remarks,
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            //服务器返回响应，根据响应结果，分析是否登录成功；
+                            console.log(data);
+                            if (data.code == 200) {
+                                mui.toast("提交成功,待审核");
+                                mui('#yqpopover').popover('toggle');
+                                mui.post("{:url('api/message/campjoinaudit')}", { id: data.insid }, function (res) {
+                                    console.log(res);
+                                }, 'json');
+                            } else if (data.code != 200 && data.code != 100) {
+                                mui('#yqpopover').popover('toggle');
+                                mui.confirm('', data.msg, ['取消', '立即前往'], function (e) {
+                                    if (e.index == 1) {
+                                        window.location.href = data.goto;
+                                    }
+                                });
+                            } else {
+                                mui.toast(data.msg);
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            //异常处理；
+                            console.log(type);
+                        }
+                    });
+                } else {
+                    mui.toast("请填写申请理由");
+                }
+
+            })
+
+            // 关注训练营
+            $(".follow").on("tap", '', function () {
+                mui.ajax("{:url('api/follow/focus')}", {
+                    data: {
+                        'type': 2,
+                        'camp_id': "{$campInfo.id}"
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
                     success: function (data) {
                         //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data);
                         if (data.code == 200) {
-                            mui.toast("提交成功,待审核");
-                            mui('#yqpopover').popover('toggle');
-                            mui.post("{:url('api/message/campjoinaudit')}", {id: data.insid}, function(res){
-                                console.log(res);
-                            }, 'json');
-                        } else if (data.code != 200 && data.code != 100) {
-                            mui('#yqpopover').popover('toggle');
-                            mui.confirm('', data.msg, ['取消', '立即前往'], function(e) {
-                                if (e.index == 1) {
-                                    window.location.href = data.goto;
+                            mui.toast(data.msg);
+                            mui.ajax("{:url('api/follow')}", {
+                                function() {
+                                    if (data.code == -1) {
+                                        $(".follow").text("取消关注");
+                                    } else {
+                                        $(".follow").text("关注");
+                                    }
                                 }
-                            });
+                            })
                         } else {
                             mui.toast(data.msg);
                         }
@@ -287,154 +337,151 @@
                         console.log(type);
                     }
                 });
-            }else{
-                mui.toast("请填写申请理由");
-            }
-            
-        })
+            });
 
-        //获取训练营课程
-        toLessonList();
-        //获取训练营教练列表
-        toCoachList('','');
-        //页面打开时获取一次最新评论信息
-        pulldownRefresh();
-    });
-
-    //下拉刷新具体业务实现
-    function pulldownRefresh() {
-        setTimeout(function() {
-            count = 1;//刷新并显示第一页
-            var page = count;
-            var gType = 1;//代表下拉刷新
-            toCommentList(page,gType);//具体取数据的方法
-        }, 100);
-    }
-    //上拉加载具体业务实现
-    function pullupRefresh() {
-        setTimeout(function() {
-            count++;//翻下一页
-            var page = count;
-            var gType =2;//代表上拉加载
-            toCommentList(page,gType);//具体取数据的方法
-        }, 100);
-    }
-    //接口获取数据并追加到页面
-    var toCommentList = function(page,gType) {
-        //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/camp/getCampCommentListByPageApi','','',true)}/?page="+page;
-        var camp_id = "{$campInfo.id}";
-        mui.ajax({
-            url:url,
-            data: {
-                camp_id: camp_id
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: {'Content-Type': 'application/json'},
-            //processData:false,
-            success: function (data) {
-                var newli='';
-                if (data.code == 200) {
-                    $(".commentCount").text(data.data.total);
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        newli = newli + '<li class="mui-table-view-cell listli"><div class="mui-pull-right">' + data.data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data.data[i].avatar + '">' + data.data.data[i].member + '<p class="mui-ellipsis">' + data.data.data[i].comment + '</p></li>'
-                    }
-                    if(data.data.total==0||data.data.last_page==page){
-                        $(".moreComment").hide();
-                    }
-                }
-                if(gType==1){
-                    //上拉刷新
-                    $("ul.comment-list").empty().append(newli);
-                    if(newli==''){
-                        $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>还没有评论哦，你来说几句吧！</p></li>');
-                    }
-                }else{
-                    //下拉加载 gType==2
-                    $("ul.comment-list").append(newli);
-                }
-
-            },
-            error: function(xhr, type, errerThrown) {
-                mui.toast('网络异常,请稍候再试');
-            }
+            //获取训练营课程
+            toLessonList();
+            //获取训练营教练列表
+            toCoachList('', '');
+            //页面打开时获取一次最新评论信息
+            pulldownRefresh();
         });
-    };
 
-    //接口获取训练营课程数据并追加到页面
-    var toLessonList = function() {
-        //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/lesson/searchLessonApi','','',true)}";
-        var camp_id = "{$campInfo.id}";
-        mui.ajax({
-            url:url,
-            data: {
-                page: 1,
-                status:1,
-                camp_id: camp_id
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: {'Content-Type': 'application/json'},
-            //processData:false,
-            success: function (data) {
-                var newli='';
-                if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('lesson/lessonInfo')}" + '/lesson_id/' + data.data[i].id;
-                        newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd45">' + data.data[i].lesson + '<p class="mui-ellipsis">' + data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥' + data.data[i].cost + '</p><p class="address">' + data.data[i].area + '</p></div></a></li>'
+        //下拉刷新具体业务实现
+        function pulldownRefresh() {
+            setTimeout(function () {
+                count = 1;//刷新并显示第一页
+                var page = count;
+                var gType = 1;//代表下拉刷新
+                toCommentList(page, gType);//具体取数据的方法
+            }, 100);
+        }
+        //上拉加载具体业务实现
+        function pullupRefresh() {
+            setTimeout(function () {
+                count++;//翻下一页
+                var page = count;
+                var gType = 2;//代表上拉加载
+                toCommentList(page, gType);//具体取数据的方法
+            }, 100);
+        }
+        //接口获取数据并追加到页面
+        var toCommentList = function (page, gType) {
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/camp/getCampCommentListByPageApi','','',true)}/?page=" + page;
+            var camp_id = "{$campInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: camp_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    var newli = '';
+                    if (data.code == 200) {
+                        $(".commentCount").text(data.data.total);
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli"><div class="mui-pull-right">' + data.data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data.data[i].avatar + '">' + data.data.data[i].member + '<p class="mui-ellipsis">' + data.data.data[i].comment + '</p></li>'
+                        }
+                        if (data.data.total == 0 || data.data.last_page == page) {
+                            $(".moreComment").hide();
+                        }
                     }
-                    if(data.data.length<=10){
-                        $(".moreLesson").hide();
+                    if (gType == 1) {
+                        //上拉刷新
+                        $("ul.comment-list").empty().append(newli);
+                        if (newli == '') {
+                            $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>还没有评论哦，你来说几句吧！</p></li>');
+                        }
+                    } else {
+                        //下拉加载 gType==2
+                        $("ul.comment-list").append(newli);
                     }
-                }
-                $("ul.lesson").empty().append(newli);
-                if(newli==''){
-                    $("ul.lesson").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>{$campInfo.camp}还没有相关课程哦</p></li>');
-                }
 
-            },
-            error: function(xhr, type, errerThrown) {
-                mui.toast('网络异常,请稍候再试');
-            }
-        });
-    };
-
-    //训练营教练列表接口获取数据并追加到页面
-    var toCoachList = function(page,gType) {
-        var url  = "{:url('api/camp_member/getCoachListApi','','',true)}";
-        var campID = "{$campInfo.id}";
-        mui.ajax({
-            url:url,
-            data: {
-                camp_id:campID
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: {'Content-Type': 'application/json'},
-            //processData:false,
-            success: function (data) {
-                if (data.code == 200) {
-                    var newli='';
-                    for(var i=0;i<=data.data.length-1;i++){
-                        newli = newli + '<img class="coachicon" src="'+data.data[i].portraits+'" alt="'+data.data[i].coach+'">'
-                        console.log(data.data[i].portraits)
-                        if(i>=4){ return false }
-                    }
-                    $("#coachlist").append(newli);
-                }else{
-                    mui.toast('训练营教练列表获取失败,请稍候再试');
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
                 }
-            },
-            error: function(xhr, type, errerThrown) {
-                mui.toast('网络异常,请稍候再试');
-            }
-        });
-    };
+            });
+        };
+
+        //接口获取训练营课程数据并追加到页面
+        var toLessonList = function () {
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/lesson/searchLessonApi','','',true)}";
+            var camp_id = "{$campInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    page: 1,
+                    status: 1,
+                    camp_id: camp_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('lesson/lessonInfo')}" + '/lesson_id/' + data.data[i].id;
+                            newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd45">' + data.data[i].lesson + '<p class="mui-ellipsis">' + data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥' + data.data[i].cost + '</p><p class="address">' + data.data[i].area + '</p></div></a></li>'
+                        }
+                        if (data.data.length <= 10) {
+                            $(".moreLesson").hide();
+                        }
+                    }
+                    $("ul.lesson").empty().append(newli);
+                    if (newli == '') {
+                        $("ul.lesson").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>{$campInfo.camp}还没有相关课程哦</p></li>');
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //训练营教练列表接口获取数据并追加到页面
+        var toCoachList = function (page, gType) {
+            var url = "{:url('api/camp_member/getCoachListApi','','',true)}";
+            var campID = "{$campInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli = newli + '<img class="coachicon" src="' + data.data[i].portraits + '" alt="' + data.data[i].coach + '">'
+                            console.log(data.data[i].portraits)
+                            if (i >= 4) { return false }
+                        }
+                        $("#coachlist").append(newli);
+                    } else {
+                        mui.toast('训练营教练列表获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
     </script>
 </body>
+
 </html>
