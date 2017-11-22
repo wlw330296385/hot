@@ -18,14 +18,14 @@ class StudentService{
 
 
 	public function getStudentInfo($map){
-			$res = $this->studentModel->where($map)->find();
-			if($res){
-				$result = $res->toArray();
-				return $result;
-			}else{
-				return $res;
-			}
-			
+	    $model = new Student();
+        $res = $model->with('member')->where($map)->find();
+        if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
+        }
 	}	
 
 	public function createStudent($data){

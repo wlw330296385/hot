@@ -40,7 +40,7 @@ class Student extends Base
 							->order('grade_member.id desc')
 							->select();
 		// 剩余课量
-        $restSchedule = Db::name('grade_member')->where([
+        $restSchedule = Db::name('lesson_member')->where([
             'camp_id' => $camp_id,
             'student_id' => $student_id,
             'type' => $type,
