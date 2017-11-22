@@ -24,8 +24,8 @@
     <script src="/static/frontend/iconfont/iconfont.js"></script>
     <style type="text/css">
         .coloricon {
-            width: 2.4em;
-            height: 2.4em;
+            width: 2.7em;
+            height: 2.7em;
             vertical-align: -0.7em;
             fill: currentColor;
             overflow: hidden;
@@ -326,8 +326,11 @@
 
         //提示框
         if ($('input[name=mid]').val() == 0) {
-            var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
-            mui.confirm('欢迎使用大热篮球服务平台，请先完善您的登陆信息，以便进行后续操作，谢谢！', '提示', btnArray);
+            mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function(e) {
+                if (e.index===1) {
+                    window.location.href="{$fasturl}";
+                }
+            });
         }
 
         //搜索子页：类型选择

@@ -243,5 +243,51 @@ class Event extends Base{
         }
     }
 
-
+    // 2017-11-21 活动操作状态/软删除
+    public function removeevent() {
+        try {
+            // 接收参数，检查参数是否符合
+            $event_id = input('param.eventid');
+            $action = input('action');
+            if (!$event_id || !$action) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            // 查询活动数据，不存在活动数据抛出提示
+            $eventS = new EventService();
+            $event= $eventS->getEventInfo(['id' => $event_id]);
+            if (!$event) {
+                return json(['code' => 100, 'msg' => '活动'.__lang('MSG_401')]);
+            }
+            // 判断可操作会员身份 教练及以上才能操作
+            $power = getCampPower($event['organization_id'], $this->memberInfo['id']);
+            if ($power < 2) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+            }
+            // 根据活动当前状态(1上架,2下架)+不允许操作条件
+            // 根据action参数 editstatus执行上下架/del删除操作
+            // 更新数据 返回结果
+            switch ( $event['status_num'] ) {
+                case 1 : {
+                    if ($action == 'editstatus') {
+                        $response = $eventS->updateEventStatus($event['id'], 2);
+                    } else {
+                        $response = $eventS->SoftDeleteEvent($event['id']);
+                    }
+                    return json($response);
+                    break;
+                }
+                case 2 : {
+                    if ($action == 'editstatus') {
+                        $response = $eventS->updateEventStatus($event['id'], 1);
+                    } else {
+                        $response = $eventS->SoftDeleteEvent($event['id']);
+                    }
+                    return json($response);
+                    break;
+                }
+            }
+        } catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }

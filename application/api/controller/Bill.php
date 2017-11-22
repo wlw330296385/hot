@@ -14,18 +14,15 @@ class Bill extends Frontend{
     //获取会员订单接口
     public function getBillListApi(){
         try{
-            $map = input('post.');
             $page = input('param.page')?input('param.page'):1;
+            $map = input('post.');
+            $where = function($query) use($map){
+                $query -> where($map)->where(function($query){
+                    $query->whereOr('expire',0)->whereOr('expire','gt',time());
+                });
+            };
             
-            // $balancePay = input('param.balancePay');
-            // if($balancePay == 1){
-            //     $map['balance_pay'] = ['gt',0];
-            // }
-            // if($balancePay == -1){
-            //     $map['balance_pay'] = 0;
-            // }
-            $result['count'] = count($result);
-            $result = $this->BillService->getBillList($map,$page);
+            $result = $this->BillService->getBillList($where,$page);
             return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -36,15 +33,12 @@ class Bill extends Frontend{
     public function getBillListByPageApi(){
         try{
             $map = input('post.');
-            // $balancePay = input('param.balancePay');
-            // if($balancePay == 1){
-            //     $map['balance_pay'] = ['gt',0];
-            // }
-            // if($balancePay == -1){
-            //     $map['balance_pay'] = 0;
-            // }
-
-            $result = $this->BillService->getBillListByPage($map);
+            $where = function($query) use($map){
+                $query -> where($map)->where(function($query){
+                    $query->whereOr('expire',0)->whereOr('expire','gt',time());
+                });
+            };
+            $result = $this->BillService->getBillListByPage($where);
             return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

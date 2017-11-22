@@ -9,171 +9,187 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--选择器样式-->
-    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
-    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <!-- webuploader -->
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
 </head>
 
 <body>
-<div class="mui-content pt">
-    <div class="register">
-        <header class="mui-bar mui-bar-nav subheader header2">
-            <a class="mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-            <h1 class="mui-title">完善训练营信息</h1>
-        </header>
-        <form id="form2" action="" class="mui-input-group mt25">
-            <div class="mui-input-row">
-                <label>训练营名称</label><span>{if condition="$camp"}{$camp.camp}{/if}</span>
-                <input type="hidden" name="campid" value="{$camp.id}">
+    <div class="mui-content" style="padding-top: 18px">
+
+        <div class="register">
+
+            <header class="mui-bar mui-bar-nav subheader header2">
+                <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+                <h1 class="mui-title">完善训练营信息</h1>
+            </header>
+
+            <form id="form2" action="" class="mui-input-group mt25">
+
+                <div class="mui-input-row">
+                    <label>训练营名称</label><span>{if condition="$camp"}{$camp.camp}{/if}</span>
+                    <input type="hidden" name="campid" value="{$camp.id}">
+                </div>
+                <div class="mui-input-row h-auto">
+                    <a class="mui-navigate-right camplogo filePicker" onclick="add_id(1)">
+                        <label>训练营LOGO</label>
+                        <img id="preview_1" class="coachicon icon01 upload-preview">
+                        <input type="hidden" name="logo" value="">
+                    </a>
+                </div>
+                <div class="mui-input-row h-auto">
+                    <a class="mui-navigate-right campbanner filePicker" onclick="add_id(2)">
+                        <label>训练营封面</label>
+                        <img id="preview_2" class="coachicon icon01 banner upload-preview">
+                        <input type="hidden" name="banner" value="">
+                    </a>
+                </div>
+                <div class="mui-input-row">
+                    <label>所属公司</label>
+                    <input type="text" name="company" class="input company" placeholder="非机构可不填">
+                </div>
+                <div class="mui-input-row">
+                    <label>总部地址</label>
+                    <input type="text" class="input" name="location" placeholder="非机构可不填">
+                </div>
+                <div class="mui-input-row" id='showCityPicker3'>
+                    <a href="#" class="mui-navigate-right">
+                        <label>所属地区</label>
+                        <span id="cityResult3" class="ui-alert location" style="color:#737373"></span>
+                    </a>
+                    <input id="location-input" type="hidden" name="locationStr" value="">
+                </div>
+                <div class="mui-input-row">
+                    <label>联系电话</label>
+                    <input type="tel" class="input camp_telephone" placeholder="请填写你的联系电话">
+                </div>
+                <div class="mui-input-row h-auto">
+                    <label>训练营简介</label>
+                    <textarea rows="5" class="intro" placeholder="填写训练营简介"></textarea>
+                </div>
+
+            </form>
+            <span class="tip-box tip"></span>
+            <div class="tjbtn">
+                <button type="button" class="mui-btn btn camp-step2">完善训练营信息</button>
             </div>
-            <div class="mui-input-row h-auto">
-                <a class="mui-navigate-right camplogo filePicker" onclick="add_id(1)">
-                    <label>训练营LOGO</label>
-                    <img id="preview_1" class="coachicon icon01 logo upload-preview">
-                    <input type="hidden" name="logo" value="">
-                </a>
-            </div>
-            <div class="mui-input-row h-auto">
-                <a  class="mui-navigate-right campbanner filePicker" onclick="add_id(2)">
-                    <label>训练营封面</label>
-                    <img id="preview_2" class="coachicon icon01 banner upload-preview" >
-                    <input type="hidden" name="banner" value="">
-                </a>
-            </div>
-            <div class="mui-input-row">
-                <label>所属公司</label>
-                <input type="text" name="company" class="input company" placeholder="非机构可不填">
-            </div>
-            <div class="mui-input-row">
-                <label>总部地址</label>
-                <input type="text" class="input" name="location" placeholder="非机构可不填">
-            </div>
-            <div class="mui-input-row" id='showCityPicker3'>
-                <a href="#" class="mui-navigate-right">
-                    <label>所属地区</label>
-                    <span id="cityResult3" class="ui-alert location" style="color:#737373">选择</span>
-                </a>
-                <input id="location-input" type="hidden" name="locationStr" value="">
-            </div>
-            <div class="mui-input-row">
-                <label>联系电话</label>
-                <input type="tel" class="input camp_telephone">
-            </div>
-            <div class="mui-input-row h-auto">
-                <label>训练营简介</label>
-                <textarea rows="5" class="intro" placeholder="填写训练营简介"></textarea>
-            </div>
-        </form>
-        <span class="tip-box tip"></span>
-        <div class="tjbtn">
-            <button type="button" class="mui-btn btn camp-step2">完善训练营信息</button>
+            <p class="pass mb44"><a href="{:url('index/index')}">[ 跳过，稍后完善 ]</a></p>
         </div>
-        <p class="pass mb44"><a href="{:url('index/index')}">[ 跳过，稍后完善 ]</a></p>
+        <!-- #form2 end -->
+
     </div>
-    <!-- #form2 end -->
 
-</div>
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!--选择器-->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script>
+                                                                                 var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'banner'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
 
-
-
-
-</body>
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<!--选择器-->
-<script src="/static/frontend/js/mui.picker.min.js"></script>
-<script src="/static/frontend/js/mui.poppicker.js"></script>
-<script src="/static/frontend/js/city.data-3.js"></script>
-<script>
-    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'banner'])}";
-</script>
-<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
-<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-<script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
-
-    //地区选择器
-    (function ($, doc) {
-        $.init();
-        $.ready(function () {
-            var _getParam = function (obj, param) {
-                return obj[param] || '';
-            };
-            ///级联示例
-            var cityPicker3 = new $.PopPicker({
-                layer: 3
-            });
-            cityPicker3.setData(cityData3);
-            var showCityPickerButton = doc.getElementById('showCityPicker3');
-            var cityResult3 = doc.getElementById('cityResult3');
-            var locationvalue = doc.getElementById('location-input');
-            showCityPickerButton.addEventListener('tap', function (event) {
-                cityPicker3.show(function (items) {
-                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
-                    locationvalue.value = _getParam(items[0], 'text') + "|" + _getParam(items[1], 'text') + "|" + _getParam(items[2], 'text')
-                    //返回 false 可以阻止选择框的关闭
-                    //return false;
+        //地区选择器
+        (function ($, doc) {
+            $.init();
+            $.ready(function () {
+                var _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+                ///级联示例
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
                 });
-            }, false);
-        });
-    })(mui, document);
+                cityPicker3.setData(cityData3);
+                // 设置默认值
+                cityPicker3.pickers[0].setSelectedIndex(18);
+                cityPicker3.pickers[1].setSelectedIndex(2);
+                cityPicker3.pickers[2].setSelectedIndex(2);
 
-
-    $(function() {
-
-        // 注册 step2
-        $('.camp-step2').click(function() {
-            var campid = $('input[name=campid]').val();
-            var logo = $('input[name=logo]').val();
-            var banner = $('input[name=banner]').val();
-            var camp_telephone = $('.camp_telephone').val();
-            var company = $('input[name=company]').val();
-            var location_input = $('input[name=location]').val();
-            var locationStr = $('input[name=locationStr]').val();
-            var intro = $('.intro').val();
-            mui.ajax("{:url('api/camp/updatecamp')}", {
-                data: {
-                    camp_id: campid,
-                    logo: logo,
-                    banner: banner,
-                    company: company,
-                    location: location_input,
-                    locationStr: locationStr,
-                    intro: intro,
-                    camp_telephone: camp_telephone
-                },
-                dataType:'json',
-                type:'post',
-                timeout:10000,
-                headers:{'Content-Type':'application/json'},
-                success:function(res){
-                   //console.log(res);
-                    if (res.code == 200) {
-                        mui.toast(res.msg+',请完善训练营资质证明');
-                        location.href = "{:url('camp/createcamp', '', '', true)}/step/3/camp_id/"+res.data;
-                    } else {
-                        mui.toast(res.msg);
-                    }
-                },
-                error:function(xhr,type,errorThrown){
-                    console.log(type);
-                }
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                var locationvalue = doc.getElementById('location-input');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        locationvalue.value = _getParam(items[0], 'text') + "|" + _getParam(items[1], 'text') + "|" + _getParam(items[2], 'text')
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                    });
+                }, false);
             });
+        })(mui, document);
+
+
+        $(function () {
+
+            // 注册 step2
+            $('.camp-step2').click(function () {
+                var campid = $('input[name=campid]').val();
+                var logo = $('input[name=logo]').val();
+                var banner = $('input[name=banner]').val();
+                var camp_telephone = $('.camp_telephone').val();
+                var company = $('input[name=company]').val();
+                var location_input = $('input[name=location]').val();
+                var locationStr = $('input[name=locationStr]').val();
+                var intro = $('.intro').val();
+
+                if (logo == "" || banner == "") {
+                    mui.toast('请上传图片');
+                    return false;
+                } else if (locationStr == "") {
+                    mui.toast('请选择所属地区');
+                    return false;
+                } else if (!(/^1[34578]\d{9}$/).test(camp_telephone)) {
+                    mui.toast("请输入正确的手机格式");
+                    return false;
+                } else if (intro == "") {
+                    mui.toast("请填写训练营简介");
+                    return false;
+                };
+
+                mui.ajax("{:url('api/camp/updatecamp')}", {
+                    data: {
+                        camp_id: campid,
+                        logo: logo,
+                        banner: banner,
+                        company: company,
+                        location: location_input,
+                        locationStr: locationStr,
+                        intro: intro,
+                        camp_telephone: camp_telephone
+                    },
+                    dataType: 'json',
+                    type: 'post',
+                    timeout: 10000,
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            mui.toast(res.msg + ',请完善训练营资质证明');
+                            setTimeout(window.location.href = "{:url('camp/createcamp', '', '', true)}/step/3/camp_id/" + res.data, 3000);
+                        } else {
+                            mui.toast(res.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        console.log(type);
+                    }
+                });
+            });
+
         });
+    </script>
+</body>
 
-    });
-
-
-</script>
 </html>

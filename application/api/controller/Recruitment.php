@@ -215,6 +215,7 @@ class Recruitment extends Base{
         }
     }
 
+    // 获取响应人名单page
     public function getRecruitmentMemberListByPageApi(){
         try{
             $map = input('post.');
@@ -225,6 +226,92 @@ class Recruitment extends Base{
                 return json(['code'=>100,'msg'=>'无数据']);
             }
         }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 审核招募人员
+    public function checkRecruitmentMemberApi(){
+        try{
+            
+            $organization_id = input('param.organization_id');
+            $member_id = input('param.member_id');
+            $result = $this->RecruitmentService->checkRecruitmentMember($map);
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'无数据']);
+            } 
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+
+    }
+
+    // 2017-11-21 招募操作状态/软删除
+    public function removerecruitment() {
+        try {
+            // 接收参数，检查参数是否符合
+            $recruitment_id = input('recruitmentid');
+            $action = input('action');
+            if (!$recruitment_id || !$action) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            // 查询招募数据，不存在活动数据抛出提示
+            $recruitmentS = new RecruitmentService();
+            $recruitment = $recruitmentS->getRecruitmentInfo(['id' => $recruitment_id]);
+            if (!$recruitment) {
+                return json(['code' => 100, 'msg' => '招募'.__lang('MSG_401')]);
+            }
+            // 判断可操作会员身份 教练及以上才能操作
+            $power = getCampPower($recruitment['organization_id'], $this->memberInfo['id']);
+            if ($power < 2) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+            }
+            // 根据活动当前状态(1上架,2下架)+不允许操作条件
+            // 根据action参数 editstatus执行上下架/del删除操作
+            // 更新数据 返回结果
+            switch ( $recruitment['status_num'] ) {
+                case 1 : {
+                    if ($action == 'editstatus') {
+                        $result = $recruitmentS->updateRecruitmentField($recruitment['id'], 'status', 2);
+                        if (!$result) {
+                            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+                        } else {
+                            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+                        }
+                    } else {
+                        $result = $recruitmentS->softDeleteRecruitment($recruitment['id']);
+                        if (!$result) {
+                            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+                        } else {
+                            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+                        }
+                    }
+                    return json($response);
+                    break;
+                }
+                case 2 : {
+                    if ($action == 'editstatus') {
+                        $result = $recruitmentS->updateRecruitmentField($recruitment['id'], 'status', 1);
+                        if (!$result) {
+                            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+                        } else {
+                            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+                        }
+                    } else {
+                        $result = $recruitmentS->softDeleteRecruitment($recruitment['id']);
+                        if (!$result) {
+                            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+                        } else {
+                            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+                        }
+                    }
+                    return json($response);
+                    break;
+                }
+            }
+        }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }

@@ -63,6 +63,7 @@ class EventService {
         $result = Event::where($map)->find();
         if ($result){
             $res = $result->toArray();
+            $res['status_num'] = $result->getData('status');
             $res['event_times'] = date('Y-m-d H:i',$res['event_time']);
             $res['ends'] = date('Y-m-d H:i',$res['end']);
             $res['starts'] = date('Y-m-d H:i',$res['start']);
@@ -94,7 +95,7 @@ class EventService {
         if(isset($data['ends'])){
             $data['end'] = strtotime($data['ends']);
         }
-        $result = $this->EventModel->save($data,['id'=>$id]);
+        $result = $this->EventModel->allowField(true)->save($data,['id'=>$id]);
         if($result){
             return ['msg' => '操作成功', 'code' => 200, 'data' => $id];
         }else{
@@ -119,7 +120,7 @@ class EventService {
         if(!$validate->scene('add')->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-        $result = $this->EventModel->save($data);
+        $result = $this->EventModel->allowField(true)->save($data);
         if($result){
             db('camp')->where(['id'=>$data['organization_id']])->setInc('total_events');
             return ['msg' => '操作成功', 'code' => 200, 'data' => $this->EventModel->id];

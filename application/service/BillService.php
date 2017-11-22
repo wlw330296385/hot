@@ -15,7 +15,6 @@ class BillService {
 
     // 关联lesson获取订单详情
     public function getBill($map){
-        // $result = $this->Bill->with('lesson')->where($map)->find();
         $result = $this->Bill->where($map)->find();
         if($result){
             $res = $result->toArray();
@@ -41,7 +40,7 @@ class BillService {
     // 获取订单列表
     public function getBillListByPage($map,$paginate = 10){
         $result = $this->Bill->where($map)->paginate($paginate);
-
+        // dump($result);die;
         if($result){
             $res = $result->toArray();
             return $res;
@@ -61,6 +60,7 @@ class BillService {
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
+        $data['expire'] = time()+86400;
         $result = $this->Bill->save($data);
         if($result){
             return ['code'=>200,'msg'=>'新建成功','data'=>$result];
@@ -72,12 +72,13 @@ class BillService {
     // 订单支付
     public function pay($data,$map){
         $data['pay_time'] = time();
+        $data['expire'] = 0;
         $result = $this->Bill->save($data,$map);      
         if($result){
             $billInfo = $this->Bill->where($map)->find();
             $billData = $billInfo->toArray();
             $res = $this->finishBill($billData);
-            return false;
+            return $res;
         }else{
             return false;
         }
@@ -223,7 +224,7 @@ class BillService {
         }   
         $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
         $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);        
-        return true;
+        return 1;
     }
 
     //判断订单付款金额

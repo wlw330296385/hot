@@ -13,9 +13,13 @@ class Index extends Controller{
 
     public function index(){
         $timestr = strtotime('2017-11-16');
-        
+        // 生成微信参数
+        $shareurl = request()->url(true);
+        $WechatService = new WechatService();
+        $jsApi = $WechatService->jsapi($shareurl);
         // echo $timestr-time();
         $this->assign('timestr',time());
+        $this->assign('jsApi',$jsApi);
         return view('Index/index');
     }
 
@@ -201,5 +205,25 @@ class Index extends Controller{
         $LessonMmeber = new \app\model\LessonMember;
         $LessonMmeber->saveAll($grade_member);
 
+    }
+
+    public function repairCourt(){
+        $result = db('court_camp')
+                ->field("camp_id,count('court_id') camp_base,camp")
+                ->where('delete_time','null')
+                ->group('camp_id')
+                ->select();
+                echo db('court_camp')->getlastsql();
+        dump($result);
+        foreach ($result as $key => $value) {
+           db('camp')->where(['id'=>$value['camp_id']])->update(['camp_base'=>$value['camp_base']]);
+        }
+    }
+
+    public function repairBill(){
+        $result = db('bill')
+                ->where(['balance_pay'=>0])
+                ->update(['expire'=>time()+86400]);
+        
     }
 }

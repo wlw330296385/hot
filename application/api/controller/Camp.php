@@ -172,19 +172,23 @@ class Camp extends Base{
                 return ['code' => 100, 'msg' => '其他证明保存失败'];
             }
         }
+        
+        // 训练营上架状态更新认证信息 修改status=0     
+        $campinfo = db('camp')->where('id', $campid)->find();
+        if ($campinfo['status']) {
+            $updatecamp = db('camp')->where('id', $campid)->setField('status', 0);
+            if (!$updatecamp) {
+                return ['code' => 100, 'msg' => '更新训练营'.__lang('MSG_400')];
+            }
 
-        $updatecamp = db('camp')->where('id', $campid)->setField('status', 0);
-        if (!$updatecamp) {
-            return ['code' => 100, 'msg' => '更新训练营'.__lang('MSG_400')];
+            // 所有课程设置下架
+            $lessonM = new \app\model\Lesson();
+            $camplessonstatus = $lessonM->where(['camp_id' => $campid, 'status'=>1])->setField('status', -1);
+            // if (!$camplessonstatus) {
+            //     return ['code' => 100, 'msg' => '更新训练营课程'.__lang('MSG_400')];
+            // }
         }
-
-        // 所有课程设置下架
-        $lessonM = new \app\model\Lesson();
-        $camplessonstatus = $lessonM->where(['camp_id' => $campid, 'status'=>1])->setField('status', -1);
-        if (!$camplessonstatus) {
-            return ['code' => 100, 'msg' => '更新训练营课程'.__lang('MSG_400')];
-        }
-
+    
         return ['code' => 200, 'msg' => __lang('MSG_200')];
     }
 

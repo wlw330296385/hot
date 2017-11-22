@@ -47,6 +47,7 @@ class RecruitmentService{
         $res = $this->RecruitmentModel->where($map)->find();
         if($res){           
             $result = $res->toArray();
+            $result['status_num'] = $res->getData('status');
             $result['deadlines'] = date('Y-m-d',$result['deadline']);
             return $result;
         }
@@ -91,7 +92,7 @@ class RecruitmentService{
         if(!$validate->scene('edit')->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-        $result = $this->RecruitmentModel->save($data,['id'=>$id]);
+        $result = $this->RecruitmentModel->allowField(true)->save($data,['id'=>$id]);
          if (!$result) {
             return [ 'msg' => __lang('MSG_400'), 'code' =>100 ];
         }else{
@@ -99,10 +100,16 @@ class RecruitmentService{
         }
     }
    
-
+    // 获取参与者
+    public function getRecruitmentMember($map){
+        $result = RecruitmentMember::where($map)->find();
+        if($result)
+        return $result->toarray();
+        return $result;
+    }
 
      // 获取参与者列表
-     public function getRecruitmentMemberListNoPage($map,$page = 1,$paginate = 10){
+     public function getRecruitmentMemberListNoPage($map){
         $result = RecruitmentMember::where($map)
                 // ->page($page,$paginate)
                 ->select();
@@ -154,7 +161,7 @@ class RecruitmentService{
         }
 
         // 检测是否已结束
-        if(time() > $recruitmentInfo['deadline']){
+        if(time() > $recruitmentInfo['deadline'] && $recruitmentInfo['deadline']>1){
              return ['msg'=>"该招募已结束,不可再参与", 'code' => 100];   
         }
 
@@ -162,68 +169,51 @@ class RecruitmentService{
         //插入数据
         $RecruitmentMember = new RecruitmentMember;
         $result = $RecruitmentMember->save($data);
-
-        // // 发送个人模板消息
-        // $MessageService = new \app\service\MessageService;
-        
-        //     $MessageData = [
-        //         "touser" => session('memberInfo.openid'),
-        //         "template_id" => config('wxTemplateID.recruitmentJoin'),
-        //         "url" => url('frontend/recruitment/recruitmentInfo',['recruitment_id'=>$recruitment_id],'',true),
-        //         "topcolor"=>"#FF0000",
-        //         "data" => [
-        //             'first' => ['value' => "尊敬的{$member}，您已成功报名{$recruitmentInfo['recruitment']}。"],
-        //             'keyword1' => ['value' => $member],
-        //             'keyword2' => ['value' => $recruitmentInfo['recruitment']],
-        //             'keyword3' => ['value' => $recruitmentInfo['starts'].'至'.$recruitmentInfo['ends']],
-        //             'keyword4' => ['value' => $total],
-        //             'keyword5' => ['value' =>$total*$recruitmentInfo['price']],
-        //             'remark' => ['value' => '点击此消息查看[招募详情],具体订单信息请查看[我的订单]']
-        //         ]
-        //     ];
-        // $saveData1 = [
-        //                 'title'=>"[{$recruitmentInfo['recruitment']}]报名成功",
-        //                 'content'=>$member."报名招募成功",
-        //                 'url'=>url('frontend/recruitment/recruitmentInfo',['recruitment_id'=>$recruitment_id],'',true),
-        //                 'member_id'=>$member_id
-        //             ];
-        // $saveData2 = [
-        //                 'title'=>"[{$recruitmentInfo['recruitment']}]报名成功",
-        //                 'content'=>$member."报名招募成功",
-        //                 'url'=>url('frontend/recruitment/recruitmentInfo',['recruitment_id'=>$recruitment_id],'',true),
-        //                 'member_id'=>$recruitmentInfo['member_id']
-        //             ];
-        // // 发布者的member
-        // $memberInfo = db('member')->where(['id'=>$recruitmentInfo['member_id']])->find();
-        // $MessageData2 = [
-        //         "touser" => $memberInfo['openid'],
-        //         "template_id" => config('wxTemplateID.recruitmentBook'),
-        //         "url" => url('frontend/recruitment/recruitmentInfo',['recruitment_id'=>$recruitment_id],'',true),
-        //         "topcolor"=>"#FF0000",
-        //         "data" => [
-        //             'first' => ['value' => "{$member}已成功报名{$recruitmentInfo['recruitment']}。"],
-        //             'keyword1' => ['value' => $recruitmentInfo['recruitment']],
-        //             'keyword2' => ['value' => $recruitmentInfo['starts'].'至'.$recruitmentInfo['ends']],
-        //             'keyword3' => ['value' => $recruitmentInfo['location']],
-        //             'keyword4' => ['value' => "点击此消息查看"],
-        //             'remark' => ['value' => '大热篮球']
-        //         ]
-        //     ];
-        // $MessageService->sendMessageMember($member_id,$MessageData,$saveData1);   //发给报名的人
-        // $MessageService->sendMessageMember($recruitmentInfo['member_id'],$MessageData2,$saveData2);  //发给发布者        
+               
         if($result){
             if(!isset($data['id'])){
                 $res = $this->RecruitmentModel->where(['id'=>$recruitment_id])->setInc('participator',$total);
+            
+                // 发送模板消息
+                $MessageService = new \app\service\MessageService;                
+                $MessageCampData = [
+                    "touser" => '',
+                    "template_id" => config('wxTemplateID.successJoin'),
+                    "url" => url('frontend/recruitment/recruitmentInfoOfCamp',['recruitment_id'=>$recruitmentInfo['id']],'',true),
+                    "topcolor"=>"#FF0000",
+                    "data" => [
+                        'first' => ['value' => "{$data['member']}申请[{$recruitmentInfo['recruitment']}]招募"],
+                        'keyword1' => ['value' => $data['member']],
+                        'keyword2' => ['value' => date('Y-m-d H:i',time())],
+                        'remark' => ['value' => '大热篮球']
+                    ]
+                ];
+                $MessageCampSaveData = [
+                            'title'=>"招募申请",
+                            'content'=>"{$data['member']}申请[{$recruitmentInfo['recruitment']}]招募",
+                            'url'=>url('frontend/recruitment/recruitmentInfoOfCamp',['recruitment_id'=>$recruitmentInfo['id']],'',true),
+                        ];
+                $MessageService->sendCampMessage($recruitmentInfo['organization_id'],$MessageCampData,$MessageCampSaveData);  //发给训练营管理员 
+                // 更改状态
+                // if($recruitmentInfo['max'] <= ($recruitmentInfo['participator']+$total)){
+                //     $this->RecruitmentModel->save(['is_max'=>-1],['id'=>$recruitment_id]); 
+                // }
             }
-            // 更改状态
-            // if($recruitmentInfo['max'] <= ($recruitmentInfo['participator']+$total)){
-            //     $this->RecruitmentModel->save(['is_max'=>-1],['id'=>$recruitment_id]); 
-            // }
             return ['msg'=>"报名成功", 'code' => 200];
         }else{
             return ['msg'=>"报名失败", 'code' => 100];
         }
-        
     }
 
+    // 软删除招募数据
+    public function softDeleteRecruitment($recruitment_id) {
+        return Recruitment::destroy($recruitment_id);
+    }
+
+    // 修改招募更新某个字段的值
+    public function updateRecruitmentField($recruitment_id, $field, $value) {
+        $model = new Recruitment();
+        $res = $model->where(['id' => $recruitment_id])->setField($field, $value);
+        return $res;
+    }
 }
