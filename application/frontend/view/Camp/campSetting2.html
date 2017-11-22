@@ -19,15 +19,12 @@
 
     <div class="mui-content">
         <div class="list camp-list camp-lesson-list detalis-list coach">
-            <!--<header class="mui-bar mui-bar-nav">-->
-                <div class="camp-lesson-list">
-                    <div id="segmentedControl" class="mui-segmented-control mb">
-                        <a class="mui-control-item" href="{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>1])}">基本信息</a>
-                        <a class="mui-control-item mui-active" href="{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>2])}">认证信息</a>
-                    </div>
+            <div class="camp-lesson-list">
+                <div id="segmentedControl" class="mui-segmented-control mb">
+                    <a class="mui-control-item" href="{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>1])}">基本信息</a>
+                    <a class="mui-control-item mui-active" href="{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>2])}">认证信息</a>
                 </div>
-            <!--</header>-->
-
+            </div>
 
             <div class="item-list">
                 <form id="form2" action="" class="mui-input-group">
@@ -82,7 +79,8 @@
                 </div>
                 <div class="tjbtn mb44">
                     <button type="button" class="mui-btn btn" id="submit-form2">提交修改</button>
-                    <a id="close-camp" href="javascript:void(0);" class="mui-btn" data-status="{$campInfo.status_num}">{eq name="campInfo.status_num" value="1"}关闭{else/}开启{/eq}训练营</a>
+                    <button type="button" class="mui-btn btn" id="close-camp" data-status="{$campInfo.status_num}" style="margin: 10px 0">{eq name="campInfo.status_num" value="1"}关闭{else/}开启{/eq}训练营</button>
+                    <!--<a  href="javascript:void(0);" class="mui-btn" data-status="{$campInfo.status_num}">{eq name="campInfo.status_num" value="1"}关闭{else/}开启{/eq}训练营</a>-->
                 </div>
 
 
@@ -93,10 +91,6 @@
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <!--选择器-->
-<script src="/static/frontend/js/mui.picker.min.js"></script>
-<script src="/static/frontend/js/mui.poppicker.js"></script>
-<script src="/static/frontend/js/city.data.js"></script>
-<script src="/static/frontend/js/city.data-3.js"></script>
 <script>
                                                                           var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
 
@@ -116,17 +110,27 @@
     $(function () {
 
         $('#submit-form2').click(function () {
+            var campid = $('input[name=campid]').val();
+            var cert = $('input[name=cert]').val();
+            var fr_idcard = $('input[name=fr_idcard]').val();
+            var fr_idno = $('.fridno').val();
+            var cjz_idcard = $('input[name=cjz_idcard]').val();
+            var cjz_idno = $('.cjzidno').val();
+            var other_cert = $('input[name=other_cert]').val();
+            var idno = /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
+
+            if (!(idno).test(fr_idno) || !(idno).test(cjz_idno)) {
+                mui.toast("请输入正确身份证号码");
+                return false;
+            };
+            if (cert == "" || fr_idcard == "" || cjz_idcard == "") {
+                mui.toast("请上传证件照");
+                return false;
+            };
+
             var btnArray = ['取消', '确认'];
             mui.confirm('修改认证资料需要重新审核', '确认要提交修改吗?', btnArray, function (e) {
                 if (e.index == 1) {
-                    var campid = $('input[name=campid]').val();
-                    var cert = $('input[name=cert]').val();
-                    var fr_idcard = $('input[name=fr_idcard]').val();
-                    var fr_idno = $('.fridno').val();
-                    var cjz_idcard = $('input[name=cjz_idcard]').val();
-                    var cjz_idno = $('.cjzidno').val();
-                    var other_cert = $('input[name=other_cert]').val();
-
                     mui.ajax("{:url('api/camp/updatecampcert')}", {
                         data: {
                             camp_id: campid,
@@ -143,10 +147,9 @@
                         headers: { 'Content-Type': 'application/json' },
                         success: function (res) {
                             if (res.code == 200) {
-                                location.href = "{:url('camp/editsuccess', ['edit' => 1])}";
+                                setTimeout(window.location.href = "{:url('camp/editsuccess', ['edit' => 1])}", 3000);
                             } else {
-                                //mui.toast(res.msg);
-                                mui.alert(res.msg);
+                                mui.toast(res.msg);
                             }
                         },
                         error: function (xhr, type, errorThrown) {
@@ -176,7 +179,7 @@
                         status: campstatus
                     }, function (data) {
                         if (data.code === 200) {
-                            location.href = "{:url('camp/editsuccess', ['edit' => 2])}";
+                            setTimeout(window.location.href = "{:url('camp/editsuccess', ['edit' => 2])}", 3000);
                         } else {
                             //mui.toast(res.msg);
                             mui.alert(data.msg);
