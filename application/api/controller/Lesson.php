@@ -337,4 +337,40 @@ class Lesson extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+    // 2017-11-22 会员是否能购买课程
+    public function canbuylesson() {
+        // try catch 抛出异常
+        try {
+            // 获取lesson id 查询课程数据是否为私密课程
+            $lesson_id = input('param.lesson_id');
+            if (!$lesson_id) {
+                return json(['code' => 100, 'msg' => '购买课程'.__lang('MSG_402')]);
+            }
+            $lessonS = new LessonService();
+            $lesson = $lessonS->getLessonInfo(['id' => $lesson_id]);
+            if (!$lesson) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+            }
+            if ($lesson['status_num'] == -1) {
+                return json(['code' => 100, 'msg' => '此课程已下架，不能购买']);
+            }
+            // 非私密课程 可直接购买
+            if ($lesson['isprivate'] != 1) {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'.',可购买此课程')]);
+            }
+            //dump($lesson);
+            // 私密课程 判断当前会员是否在可购买名单
+            $inAssign = $lessonS->isInAssignMember($lesson['id'], $this->memberInfo['id']);
+            // 不在名单中 提示不可购买
+            if (!$inAssign) {
+                $response = ['code' => 100, 'msg' => __lang('您不能购买此课程，请联系咨询教练或训练营')];
+            } else {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201').',可购买此私密课程'];
+            }
+            return json($response);
+        } catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }

@@ -149,18 +149,37 @@
                 });
             } else {
                // var lessonTotal = sessionStorage.lessonTotal;
-                var lessonTotal = $('.mui-btn-warning').attr("data");
-                if (lessonTotal == 0||lessonTotal == null||lessonTotal == '') {
+                mui.ajax("{:url('api/lesson/canbuylesson')}", {
+                    data:{
+                        lesson_id: "{$lessonInfo.id}"
+                    },
+                    dataType: 'json',
+                    type: 'post',
+                    header: {'Content-Type':'application/json'},
+                    success: function(data) {
+                        if (data.code === 200) {
+                            var lessonTotal = $('.mui-btn-warning').attr("data");
+                            if (lessonTotal == 0||lessonTotal == null||lessonTotal == '') {
 //                    alert('请先选择课量');
-                    mui.alert('', '请先选择课量', function() {});
-                    return false;
+                                mui.alert('', '请先选择课量', function() {});
+                                return false;
 
-                } else {
-                    // window.location.href = buyUrl;
-                    window.location.href = buyUrl + '?total=' + lessonTotal;
-                //alert(lessonTotal);
+                            } else {
+                                // window.location.href = buyUrl;
+                                window.location.href = buyUrl + '?total=' + lessonTotal;
+                                //alert(lessonTotal);
 
-                }
+                            }
+                        } else {
+                            mui.alert(data.msg);
+                            return false;
+                        }
+                    },
+                    error: function(xhr, type, errorThrown) {
+                        mui.alert('网络异常，请稍后再试');
+                    }
+                });
+
             }
         })
 

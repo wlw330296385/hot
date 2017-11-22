@@ -239,5 +239,16 @@ class LessonService {
         $res = $model->where(['lesson_id' => $lesson_id, 'status' => 1])->select()->toArray();
         return $res;
     }
+
+    // 2017-11-22 会员是否在课程指定可购买名单
+    public function isInAssignMember($lesson_id, $member_id) {
+        $model = new \app\model\LessonAssignMember();
+        $res = $model->where(['lesson_id' => $lesson_id, 'status' => 1, 'member_id' => $member_id])->find();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
 }
 
