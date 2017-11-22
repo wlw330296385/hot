@@ -89,4 +89,21 @@ class Lesson extends Backend {
         }
     }
 
+
+
+    // 购买课程
+    public function buyLesson(){
+        $LessonService = new LessonService;
+        $lessonList = $LessonService->getLessonList();
+        $breadcrumb = ['ptitle' => '课程管理', 'title' => '帮购买课程'];
+        $this->assign('breadcrumb',$breadcrumb);
+        $member_id = input('param.member_id');
+        // 学生列表
+        $studentList = db('student')->where(['member_id'=>$member_id])->select();
+
+
+
+        return view('lesson/buyLesson');
+    }
+
 }

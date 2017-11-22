@@ -21,12 +21,22 @@ class MemberService{
 	}
 
 	//获取资源列表
-	public function getMemberList($map){
+	public function getMemberList($map = []){
 		$result = $this->memberModel->where($map)->select();
 		if($result){
 			$res = $result->toArray();
 			return $res;
 		}
+		return $result;
+	}
+
+	//获取资源列表
+	public function getMemberListByPage($map = [],$order = '',$paginate = 10){
+		$result = $this->memberModel->where($map)->order($order)->paginate($paginate);
+		// if($result){
+		// 	$res = $result->toArray();
+		// 	return $res;
+		// }
 		return $result;
 	}
 

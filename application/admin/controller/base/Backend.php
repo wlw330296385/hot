@@ -10,11 +10,11 @@ use think\Cookie;
 class Backend extends Controller {
     public $cur_camp;
     public $site;
-
+    public $AuthService;
     public function _initialize() {
         // 检查控制台登录
-        $AuthS = new AuthService();
-        if ( !$AuthS->islogin() ) {
+        $this->AuthService = new AuthService();
+        if ( !$this->AuthService->islogin() ) {
             $this->error('请登录后操作', url('Login/index'));
         }
 
@@ -43,5 +43,9 @@ class Backend extends Controller {
         } else {
             return ;
         }
+    }
+
+    protected function record($do){
+        $this->AuthService->record($do);
     }
 }

@@ -60,11 +60,8 @@ class Exercise extends Backend {
         }
 
         $ExerciseS = new ExerciseService();
-        $exercise_res = $ExerciseS->getExerciseOne(['id' => $id]);
-        if ($exercise_res['code'] == 200) {
-            $this->error($exercise_res['msg']);
-        }
-        $exercise = $exercise_res['data'];
+        $exercise = $ExerciseS->getExerciseInfo(['id' => $id]);
+
         $view = ($exercise['camp_id'] > 0 && $exercise['member_id'] > 0) ? 'audit' : 'show';
         
         $this->assign('exercise', $exercise);

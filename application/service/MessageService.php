@@ -97,13 +97,13 @@ class MessageService
                 $messageData['url'] = $messageData['url'].'/openid/'.$value['openid'];
                 $WechatService = new \app\service\WechatService();
                 $result = $WechatService->sendTemplate($messageData);
-                // if ($result) {
-                //     $logData = ['wxopenid' => $value['openid'], 'member_id' => $value['id'], 'status' => 1, 'content' => serialize($messageData), 'url' => $messageData['url']];
-                //     $this->insertLog($logData);
-                // } else {
-                //     $logData = ['wxopenid' => $value['openid'], 'member_id' => $value['id'], 'status' => 0, 'content' => serialize($messageData), 'url' => $messageData['url']];
-                //     $this->insertLog($logData);
-                // }
+                if ($result) {
+                    $logData = ['wxopenid' => $value['openid'], 'member_id' => $value['id'], 'status' => 1, 'content' => serialize($messageData), 'url' => $messageData['url']];
+                    $this->insertLog($logData);
+                } else {
+                    $logData = ['wxopenid' => $value['openid'], 'member_id' => $value['id'], 'status' => 0, 'content' => serialize($messageData), 'url' => $messageData['url']];
+                    $this->insertLog($logData);
+                }
             }
             $saveallData[$key] = $saveData;
             $saveallData[$key]['member_id'] = $value['id'];

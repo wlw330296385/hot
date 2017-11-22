@@ -245,6 +245,10 @@ class BillService {
         switch ($data['action']) {
         // 退款操作
             case '1':
+                if($billInfo['member_id']!= session('memberInfo.id','','think')){
+                    return ['code'=>100,'msg'=>'不是您的订单不能申请退款,谢谢'];
+                }
+
                 if($billInfo['status'] != 1){
                     return ['code'=>100,'msg'=>'该订单状态不支持退款申请'];
                 }else{
@@ -330,7 +334,7 @@ class BillService {
                             }
                         }else{
                             // 其他订单
-
+                            
                         }
                        
                         
@@ -361,7 +365,11 @@ class BillService {
 
                         }
                     break;
-            //其他   
+            //拒绝退款
+                case '4': 
+                    
+                    break;
+            //其他  
                 default:
                     return ['code'=>100,'msg'=>'非法操作'];
                     break;
