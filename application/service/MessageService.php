@@ -72,10 +72,10 @@ class MessageService
             $WechatService = new \app\service\WechatService();
             $result = $WechatService->sendTemplate($messageData);
             if ($result) {
-                $logData = ['wxopenid' => $messageData['touser'], 'member_id' => $saveData['member_id'], 'status' => 1, 'content' => serialize($messageData)];
+                $logData = ['wxopenid' => $messageData['touser'], 'member_id' => $saveData['member_id'], 'status' => 1, 'content' => serialize($messageData),'system_remarks'=>'给用户的通知'];
                 $this->insertLog($logData);
             } else {
-                $logData = ['wxopenid' => $messageData['touser'], 'member_id' => $saveData['member_id'], 'status' => 0, 'content' => serialize($messageData)];
+                $logData = ['wxopenid' => $messageData['touser'], 'member_id' => $saveData['member_id'], 'status' => 0, 'content' => serialize($messageData),'system_remarks'=>'给用户的通知'];
                 $this->insertLog($logData);
             }
             return true;
@@ -98,10 +98,10 @@ class MessageService
                 $WechatService = new \app\service\WechatService();
                 $result = $WechatService->sendTemplate($messageData);
                 if ($result) {
-                    $logData = ['wxopenid' => $value['openid'], 'member_id' => $value['id'], 'status' => 1, 'content' => serialize($messageData), 'url' => $messageData['url']];
+                    $logData = ['wxopenid' => $value['openid'], 'member_id' => $value['id'], 'status' => 1, 'content' => serialize($messageData), 'url' => $messageData['url'],'system_remarks'=>'给训练营营主和管理员的通知'];
                     $this->insertLog($logData);
                 } else {
-                    $logData = ['wxopenid' => $value['openid'], 'member_id' => $value['id'], 'status' => 0, 'content' => serialize($messageData), 'url' => $messageData['url']];
+                    $logData = ['wxopenid' => $value['openid'], 'member_id' => $value['id'], 'status' => 0, 'content' => serialize($messageData), 'url' => $messageData['url'],'system_remarks'=>'给训练营营主和管理员的通知'];
                     $this->insertLog($logData);
                 }
             }

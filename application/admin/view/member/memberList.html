@@ -41,7 +41,7 @@
 	                            </div>
 	                        </div>
 	                        <!-- 添加会员 -->
-	                        <a class="btn btn-warning  btn-flat btn-sub pull-right">添加会员&nbsp;<i class="fa fa-user-plus"></i></a>
+	                        <a class="btn btn-warning  btn-flat btn-sub pull-right pop-iframe" data-href="{:url('member/createMember')}" >添加会员&nbsp;<i class="fa fa-user-plus"></i></a>
 	                    </fieldset>
 	                </form>
 
@@ -59,6 +59,7 @@
                         <th class="text-center">微信昵称</th>
                         <th class="text-center">电话号码</th>
                         <th class="text-center">所在地区</th>
+                        <th>系统备注</th>
                         <th class="text-center">操作</th>
                     </tr>
                     </thead>
@@ -66,9 +67,10 @@
                     {volist name="memberList" id="vo"}
                     <tr>
                         <td class="text-center">{$vo.hot_id}</td>
-                        <td class="text-center">
-                        	<img src="{$vo.avatar}"  class="img-rounded img-lg" >
-                        
+                        <td>
+                        	<div class="text-center">
+                        		<img src="{$vo.avatar}" class="img-rounded img-md img-responsive center-block" >
+                        	</div>
                     	</td>
                         <td class="text-center">{$vo.member}</td>
                         <td class="text-center">
@@ -78,6 +80,9 @@
                             {$vo.telephone}
                         </td>
                         <td class="text-center">{$vo.province}-{$vo.city}-{$vo.area}</td>
+                        <td>
+                        	{$vo.system_remarks}
+                        </td>
                         <td class="text-center">
                         	<button type="button" class="btn btn-info">详细</button>
                             <div class="btn-group open">
@@ -95,6 +100,7 @@
 			                  </ul>
 			                </div>
                         </td>
+                        
                     </tr>
                     {/volist}
                     </tbody>
@@ -105,4 +111,33 @@
     </div>
 </div>
 	
+{/block}
+
+
+
+
+{block name='js'}
+<script type="text/javascript">
+	$(function(){
+		$('.pop-iframe').click(function() {
+	        var iframeurl = $(this).attr('data-href');
+	        // alert(iframeurl);return;
+	        var title = $(this).text();
+	        layui.use('layer', function() {
+	            var layer = layui.layer;
+	            //layer.msg('heelo');
+	                layer.open({
+	                type: 2,
+	                title: title,
+	                shadeClose: true,
+	                shade: false,
+	                maxmin: true, //开启最大化最小化按钮
+	                area: ['900px', '650px'],
+	                content: iframeurl
+	            });
+	        });
+	    });
+	})
+	
+</script>
 {/block}

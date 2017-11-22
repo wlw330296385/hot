@@ -5,7 +5,7 @@ class MemberVal extends Validate{
 
 
 	protected $rule = [
-        'member'  =>  'require|max:60|unique:member,member',
+        'member'  =>  'require|max:60|unique:member,member|token',
         'nickname'	=> 'max:60',
         'email' =>  'email',
         'telephone' => 'require|length:11|unique:member,telephone',
