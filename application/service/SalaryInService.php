@@ -258,20 +258,10 @@ class SalaryInService {
     }
 
 
-
-    public function saveSalaryin(){
-        
-    }
-
-
     // 统计工资总额
     public function countSalaryin($map){
-            $result = $this->SalaryIn
-                    ->where($map)
-                    ->sum('salary');
+        $result = $this->SalaryIn->where($map)->sum('salary+push_salary');
         return $result?$result:0;
     }
-
-
 
 }
