@@ -27,6 +27,10 @@ class Member extends Base{
         return view('Member/index');
     }
 
+    public function follow() {
+	    return view('Member/followlist');
+    }
+
     // 会员设置页面
     public function memberSetup(){
 
