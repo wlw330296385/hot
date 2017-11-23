@@ -136,24 +136,26 @@ class Lesson extends Backend {
                     'bill_type'=>1
                 ];
                 $BillService = new \app\service\BillService;
-                $result = $BillService->updateBill($billInfo);
+                $result = $BillService->createBill($billInfo);
                 if($result['code']==200){
-                    $res = $BillService->pay(['pay_time'=>time(),'expire'=>0,'balance_pay'=>$lessonInfo['price']*$postData['total']],['bill_order'=>$billOrder]);
+                    $res = $BillService->pay(['pay_time'=>time(),'expire'=>0,'balance_pay'=>$lessonInfo['cost']*$postData['total'],'status'=>1,'is_pay'=>1],['bill_order'=>$billOrder]);
                     if($res){
-                        $this->success('操作成功');
+                        return json(['code'=>100,'msg'=>'操作成功']);
                     }else{
-                        $this->error('订单订单后续操作失败,请联系woo');
+                        return json(['code'=>100,'msg'=>'后续操作有bug,请联系woo']);
                     }
+                    
                 }else{
-                    $this->error('订单生成失败');
+                    return json(['code'=>100,'msg'=>'订单生成失败']);
                 }
             }catch (Exception $e){
-                $this->error($e->getMessage());
+                return json(['code'=>100,'msg'=>$e->getMessage()]);
             }
             
         }
         
-
+        $camp_id = cookie('camp_id')?cookie('camp_id'):1;
+        $this->assign('camp_id',$camp_id);
         $this->assign('campList',$campList);
         $this->assign('studentList',$studentList);
         return $this->fetch('lesson/buyLesson');

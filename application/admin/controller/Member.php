@@ -10,7 +10,7 @@ class Member extends Backend{
 	}
 
 
-	public function memberList(){
+	public function memberlist(){
 		$breadcrumb = ['ptitle' => '会员管理', 'title' => '会员列表'];
 
 		$memberList = $this->MemberService->getMemberListByPage();
@@ -18,7 +18,7 @@ class Member extends Backend{
 		// 模板变量赋值
 		$this->assign('memberList', $memberList);
 		$this->assign('breadcrumb',$breadcrumb);
-		return view('member/memberList');
+		return view('member/memberlist');
 	}
 
 
