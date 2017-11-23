@@ -1,6 +1,6 @@
 // 星级显示
 function starShow(star) {
-
+    
     var star1 = '<i data-index="1" class="mui-icon mui-icon-star-filled"></i>';
     var star2 = '<i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i>';
     var star3 = '<i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i>';
