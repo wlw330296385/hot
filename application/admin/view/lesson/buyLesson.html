@@ -23,11 +23,10 @@
 					</div>
 					<!-- /.box-header -->
 					<!-- form start -->
-					<form role="form">
 						<div class="box-body">
 							<div class="form-group">
 								<label for="">选择训练营</label>
-								<select class="form-control" name="camp_id">
+								<select class="form-control " name="camp_id">
 									{volist name="campList" id="vol"}
 									<option value="{$vol.id}">{$vol.camp}</option>
 									{/volist}
@@ -35,13 +34,13 @@
 							</div>
 							<div class="form-group">
 								<label for="">选择课程</label>
-								<select class="form-control" name="lesson_id">
+								<select class="form-control data" name="lesson_id">
 									<option></option>
 								</select>
 							</div>
 							<div class="form-group">
 								<label for="">选择学生</label>
-								<select class="form-control" name="studentIndex">
+								<select class="form-control data" name="studentIndex">
 									{volist name="studentList" id="vol"}
 									<option value="{$key}">{$vol.student}</option>
 									{/volist}
@@ -49,7 +48,7 @@
 							</div>
 							<div class="form-group">
 								<label for="">填写购买数量</label>
-								<input type="number" class="form-control" name="total" placeholder="1">
+								<input type="number" class="form-control data" name="total" placeholder="1" >
 							</div>
 							<div class="checkbox">
 								<label>
@@ -60,9 +59,8 @@
 						<!-- /.box-body -->
 
 						<div class="box-footer">
-							<button type="submit" class="btn btn-primary">提交</button>
+							<button id="submit">提交</button>
 						</div>
-					</form>
 				</div>
 				<!-- /.box -->
 
@@ -84,16 +82,25 @@
 <script src="/static/backend/plugins/jQuery/jquery-2.2.3.min.js"></script>
 <script src="/static/backend/adminlte/js/bootstrap.min.js"></script>
 <script src="/static/backend/layui/layui.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
 
 <script type="text/javascript">
-
+	var camp_id = "{$camp_id}";
 	$(function(){
 		$('select[name=camp_id]').on('change',function(){
-			var camp_id = $(this).val();
+			camp_id = $(this).val();
 			getLessonList(camp_id);
 		});
 
-
+		$('#submit').on('click',function(){
+			var submiUrl = '';
+			var data = wooApi.getInputData('input', 'data');
+			var datas = wooApi.getInputData('number', 'data',data);
+        	var arrData = wooApi.getInputData('select', 'data', datas);
+        	var objData = wooApi.arrTOobj(arrData);
+        	var ajaxResult = wooApi.asyncF(submiUrl, objData);
+        	alert(ajaxResult.msg);
+		})
 
 
 
@@ -102,7 +109,7 @@
 
 
 	//训练营场地列表接口获取数据并追加到页面
-    var getLessonList = function (camp_id) {
+    var getLessonList = function () {
         var url = "{:url('api/lesson/getLessonListNoPageApi')}";
         $.post({
             url: url,
@@ -124,7 +131,7 @@
                     $("select[name=lesson_id]").html(newli);
 
                 } else {
-                    alert(data.msg);
+                    console.log('没有课程数据');
                 }
             },
             error: function (xhr, type, errerThrown) {
