@@ -29,40 +29,20 @@ class Salaryin extends Base{
         // 获取当前年/月，用于输出时间筛选
         $y = date('Y',time());
         $m = date('m',time());
-       /* $start = input('param.start')?input('param.start'):date(strtotime('-1 month'));
-        $end = input('param.end')?input('param.end'):date('Y-m-d H:i:s',time());
-        $startInt = strtotime($start);
-        $endInt = strtotime($end);
-        $salaryList = $this->SalaryInService->getSalaryInList($startInt,$endInt,['camp_id'=>$camp_id,'type'=>1]);*/
         // 教练总数
         $campS = new CampService();
         $coachList = $campS->getCoachList($camp_id);
         $coachCount = count($coachList);
         // 工资总额
         // $countSalaryin = $this->SalaryInService->countSalaryin(['camp_id'=>$camp_id,'type'=>1,'create_time'=>['BETWEEN',[$startInt,$endInt]]]);
-        $countSalaryin = $this->SalaryInService->countSalaryin(['camp_id'=>$camp_id,'type'=>1]);
-        // 根据用户在训练营身份输出工资列表：营主+管理员列出所有，教练只列自己
-        $map = [];
-        $campPower = getCampPower($camp_id, $this->memberInfo['id']);
-        if ($campPower > 2) {
-            $memberIds = [];
-            foreach ($coachList as $k => $coach) {
-                $memberIds[$k] = $coach['member_id'];
-            }
-            $map['member_id'] = ['in', $memberIds];
-        } else {
-            $map['member_id'] = $this->memberInfo['id'];
-        }
-        // 筛选某月工资 默认本月
-        list($start, $end) = Time::month();
-        $map['create_time'] = ['between', [$start, $end]];
-        $salaryList = $this->SalaryInService->getSalaryInList($map);
+        $countSalaryin = $this->SalaryInService->countSalaryin(['camp_id'=>$camp_id,'type'=>1, 'member_type' => 4]);
+        // 工资列表 api读取数据
         
         $this->assign('countSalaryin',$countSalaryin);
-        $this->assign('salaryList',$salaryList);
         $this->assign('y',$y); 
         $this->assign('m',$m);
         $this->assign('coachCount',$coachCount);
+        $this->assign('camp_id', $camp_id);
         return view('Salaryin/salaryOfCamp');
     }
 
