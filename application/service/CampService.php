@@ -243,6 +243,7 @@ class CampService {
         $list = Db::view('camp_member')
             ->view('coach', '*', 'coach.member_id=camp_member.member_id')
             ->where($map)
+            ->order('camp_member.id desc')
             ->select();
         return $list;
     }

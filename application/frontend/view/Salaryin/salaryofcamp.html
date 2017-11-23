@@ -17,6 +17,9 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <!--等级星星样式-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -42,43 +45,21 @@
                     </a></li>
                 </ul>
             </div>
-            <div class="page-header location-frame">
-                <span class="course location-choise wd27" style=float:left;>
-                      <select class="wd73 month-select">
-                        {for start="$m" end="0" comparison="gt" step="-1" name="i"}
-                        <option>{$i}月</option>
-                        {/for}<!--工资-->
-
-                    </select>
-                     <i class="mui-icon mui-icon-arrowdown iconsize"></i>
-                </span>
-                <span class="location-choise">
-                     <select class="wd73 year-select">
-                        {for start="$y" end="$y-8" comparison="gt" step="-1" name="i"}
-                        <option>{$i}年</option>
-                        {/for}
-                    </select>
-                    <i class="mui-icon mui-icon-arrowdown iconsize"></i>
-                </span>
-                <input type="hidden" name="year" value="{$y}">
-                <input type="hidden" name="month" value="{$m}">
-            </div>
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    <p class="mui-navigate-right">
+                        选择时间<span class="btnTime" id="mStatisticsTime" data-options='{"type":"month"}'>{$y}年 {$m}月</span>
+                    </p>
+                </li>
+                <input id="year" type="hidden" name="year" value="{$y}">
+                <input id="month" type="hidden" name="month" value="{$m}">
+            </ul>
 
             <ul class="mui-table-view" id="salary-ul">
-                <li class="mui-table-view-cell listli first-li" style="color:#000">
+                <!--<li class="mui-table-view-cell listli first-li" style="color:#000">
                     教练名称
                     <span>工资</span>
-                </li>
-                <!--
-                {volist name="salaryList" id="vol"}
-                <li class="mui-table-view-cell listli">
-                    <a class="mui-navigate-right" style="color:#000" href="{:url('coach/coachInfoOfCamp',['member_id'=>$vol.member_id])}">
-                        {$vol.realname}
-                        <span class="wd45">{$vol.salary+$vol.push_salary}</span>
-                    </a>
-                </li>
-                {/volist}
-                -->
+                </li>-->
             </ul>
         </div>
     </div>
@@ -88,6 +69,8 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src='/static/frontend/js/jquery-3.2.1.min.js'></script>
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
 <!--等级星星样式-->
 <!--<script src="/static/frontend/js/feedback.js"></script>-->
 <script>
@@ -98,6 +81,35 @@
     mui("body").on("tap","a",function(){
         window.top.location.href=this.href;
     });
+
+    (function ($, doc) {
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+            //开始时间
+            var btnTimes = $('.btnTime');
+            btnTimes.each(function (i, btn) {
+                btn.addEventListener('tap', function () {
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var wTime = this;
+                    var id = this.getAttribute('id');
+                    var picker = new $.DtPicker(options);
+
+                    picker.show(function (rs) {
+                        //wTime.innerText = rs.text;
+                        wTime.innerText = rs.y.text+'年 '+rs.m.text+'月';
+                        document.getElementById('month').value=rs.m.text;
+                        document.getElementById('year').value=rs.y.text;
+                        getSalaryInList();
+                        picker.dispose();
+                    });
+                }, false);
+            });
+
+        });
+    })(mui, document);
 
     $(function(){
         // 初始化读取
@@ -119,40 +131,44 @@
             getSalaryInList();
         });
 
-        // 请求训练营工资列表
-        function getSalaryInList() {
-            var year = $('input[name=year]').val();
-            var month = $('input[name=month]').val();
-            mui.ajax("{:url('api/salaryin/campsalarylist')}", {
-                data: {
-                    camp_id: "{$camp_id}",
-                    year: year,
-                    month: month
-                },
-                dataType:'json',
-                type:'post',
-                timeout:10000,
-                headers:{'Content-Type':'application/json'},
-                success:function(data){
-                    //console.log(data);
-                    var newli = '';
-                    if (data.code === 200) {
-                        for (var i=0; i<data.data.length;i++) {
-                            var urls = "{:url('coach/coachInfoOfCamp')}/member_id/"+data.data[i].member_id;
-                            newli += '<li class="mui-table-view-cell listli">';
-                            newli += '<a class="mui-navigate-right" style="color:#000" href="'+ urls +'">';
-                            newli += data.data[i].member + '<span class="wd45">'+ (data.data[i].salary+data.data[i].push_salary) +'</span>';
-                            newli += '</a></li>';
-                        }
-                        //console.log(newli);
-                        $('#salary-ul').children('.first-li').empty().append(newli);
-                    }
-                },
-                error:function(xhr,type,errorThrown){
-                    mui.toast('网络异常,请稍候再试');
-                }
-            })
-        }
     });
+
+    // 请求训练营工资列表
+    function getSalaryInList() {
+        var year = $('input[name=year]').val();
+        var month = $('input[name=month]').val();
+        mui.ajax("{:url('api/salaryin/campsalarylist')}", {
+            data: {
+                camp_id: "{$camp_id}",
+                year: year,
+                month: month
+            },
+            dataType:'json',
+            type:'post',
+            timeout:10000,
+            headers:{'Content-Type':'application/json'},
+            success:function(data){
+                //console.log(data);
+                var newli = '';
+                if (data.code === 200) {
+                    newli += ' <li class="mui-table-view-cell listli first-li" style="color:#000">教练名称<span>工资</span></li>';
+                    for (var i=0; i<data.data.length;i++) {
+                        var urls = "{:url('camp/coachInfoOfCamp')}/member_id/"+data.data[i].member_id+"/camp_id/"+"{$camp_id}";
+                        newli += '<li class="mui-table-view-cell listli">';
+                        newli += '<a class="mui-navigate-right" style="color:#000" href="'+ urls +'">';
+                        newli += data.data[i].member + '<span class="wd45">'+ (data.data[i].salary+data.data[i].push_salary) +'</span>';
+                        newli += '</a></li>';
+                    }
+                    //console.log(newli);
+                    $('#salary-ul').html(newli);
+                } else {
+                    $('#salary-ul').html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');;
+                }
+            },
+            error:function(xhr,type,errorThrown){
+                mui.toast('网络异常,请稍候再试');
+            }
+        })
+    }
 </script>
 </html>

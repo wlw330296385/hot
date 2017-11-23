@@ -17,6 +17,9 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <!--等级星星样式-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <style type="text/css">
         .sheader{ padding: 8px 15px !important;}
         .sheader span{ line-height: 24px; }
@@ -123,21 +126,10 @@
                     </ul>
                 </div>
                 <ul class="mui-table-view list detalis-list page-header location-frame mb">
-                    <li class="mui-table-view-cell listli">已上课表
-                        <span class="location-choise location-chosie-initial">
-                        <select>
-                                {for start="$m" end="0" comparison="gt" step="-1" name="i"}
-                                <option>{$i}月</option>
-                                {/for}
-                        </select>
-                    </span>
-                        <span class="location-choise location-chosie-initial">
-                        <select>
-                                {for start="$y" end="$y-8" comparison="gt" step="-1" name="i"}
-                                <option>{$i}年</option>
-                                {/for}
-                        </select>
-                    </span>
+                    <li class="mui-table-view-cell listli">
+                        <p class="mui-navigate-right">
+                            已上课表<span class="btnTime" id="scheduleTime" data-options='{"type":"month"}'>{$y}年 {$m}月</span>
+                        </p>
                     </li>
                 </ul>
                 <ul class="mui-table-view">
@@ -179,14 +171,11 @@
                 </ul>
             </div>
             <ul class="mui-table-view list detalis-list page-header location-frame mb">
-                <li class="mui-table-view-cell listli">工资表
-                    <span class="location-choise location-chosie-initial">
-                        <select>
-                            {for start="$y" end="$y-8" comparison="gt" step="-1" name="i"}
-                            <option>{$i}年</option>
-                            {/for}
-                        </select>
-                    </span>
+                <li class="mui-table-view-cell listli">
+                    <p class="mui-navigate-right">
+                        工资表<span id="yearPicker">{$y}年</span>
+                    </p>
+                    <input id="salaryYear" type="hidden" value="{$y}">
                 </li>
             </ul>
             <ul class="mui-table-view list detalis-list mb">
@@ -211,6 +200,8 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
 <script>
     //初始化
     mui.init({
@@ -219,6 +210,68 @@
     mui("body").on("tap","a",function(){
         window.top.location.href=this.href;
     });
+
+    (function ($, doc) {
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+            //时间选择器
+            var btnTimes = $('.btnTime');
+            btnTimes.each(function (i, btn) {
+                btn.addEventListener('tap', function () {
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var wTime = this;
+                    var id = this.getAttribute('id');
+                    var picker = new $.DtPicker(options);
+
+                    picker.show(function (rs) {
+                        //wTime.innerText = rs.text;
+                        wTime.innerText = rs.y.text+'年 '+rs.m.text+'月';
+                        picker.dispose();
+                    });
+                }, false);
+            });
+
+            // 自定义年份选择器
+            var yearPicker = new $.PopPicker();
+            yearPicker.setData([
+                {
+                    value: '2017',
+                    text: '2017年'
+                },
+                {
+                    value: '2016',
+                    text: '2016年'
+                },
+                {
+                    value: '2015',
+                    text: '2015年'
+                },
+                {
+                    value: '2014',
+                    text: '2014年'
+                },
+                {
+                    value: '2013',
+                    text: '2013年'
+                },
+                {
+                    value: '2012',
+                    text: '2012年'
+                }
+            ]);
+            var showYearPickerBtn = document.getElementById('yearPicker');
+            var yearResult = document.getElementById('salaryYear');
+            showYearPickerBtn.addEventListener('tap', function(e){
+                yearPicker.show(function(items) {
+                    yearResult.value = items[0].value;
+                    showYearPickerBtn.innerText = items[0].text;
+                });
+            }, false);
+        });
+    })(mui, document);
 
 
     $(function () {
