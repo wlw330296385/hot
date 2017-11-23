@@ -98,12 +98,65 @@ class Lesson extends Backend {
         $breadcrumb = ['ptitle' => '课程管理', 'title' => '帮购买课程'];
         $this->assign('breadcrumb',$breadcrumb);
         $member_id = input('param.member_id');
+        $memebrInfo = db('member')->where(['id'=>$member_id])->find();
+        if(!$memebrInfo){
+            echo '找不到用户信息';die;
+        }
         // 学生列表
-        $studentList = db('student')->where(['member_id'=>$member_id])->select();
+        $StudentModel = new \app\model\Student;
+        $studentList = $StudentModel->where(['member_id'=>$member_id])->select();
 
+        //训练营列表
+        $CampModel = new \app\model\Camp;
+        $campList = $CampModel->select();
+        if(request()->isPost()){
+            try{
+                $postData = input('post.');
+                $lessonInfo = db('lesson')->where(['id'=>$postData['lesson_id']])->find();
 
+                // 生成订单号
+                $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
+                $billInfo = [
+                    'bill_order'=>$billOrder,
+                    'goods'=>$lessonInfo['lesson'],
+                    'goods_id'=>$lessonInfo['id'],
+                    'goods_des'=>"{$studentList[$postData['studentIndex']]['student']}购买{$lessonInfo['lesson']}",
+                    'camp_id'=>$lessonInfo['camp_id'],
+                    'camp'=>$lessonInfo['camp'],
+                    'price'=>$lessonInfo['cost'],
+                    'score_pay'=>$lessonInfo['score'],
+                    'goods_type'=>1,
+                    'pay_type'=>"system",
+                    'member'=>$memebrInfo['member'],
+                    'member_id'=>$memebrInfo['id'],
+                    'student'=>$studentList[$postData['studentIndex']]['student'],
+                    'student_id'=>$studentList[$postData['studentIndex']]['id'],
+                    'total'=>$postData['total'],
+                    'sys_remarks'=>"system:{$this->admin['username']},id:{$this->admin['id']}",
+                    'bill_type'=>1
+                ];
+                $BillService = new \app\service\BillService;
+                $result = $BillService->updateBill($billInfo);
+                if($result['code']==200){
+                    $res = $BillService->pay(['pay_time'=>time(),'expire'=>0],['bill_order'=>$billOrder]);
+                    if($res){
+                        $this->success('操作成功');
+                    }else{
+                        $this->error('订单订单后续操作失败,请联系woo');
+                    }
+                }else{
+                    $this->error('订单生成失败');
+                }
+            }catch (Exception $e){
+                $this->error($e->getMessage());
+            }
+            
+        }
+        
 
-        return view('lesson/buyLesson');
+        $this->assign('campList',$campList);
+        $this->assign('studentList',$studentList);
+        return $this->fetch('lesson/buyLesson');
     }
 
 }

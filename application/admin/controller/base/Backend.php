@@ -11,11 +11,14 @@ class Backend extends Controller {
     public $cur_camp;
     public $site;
     public $AuthService;
+    public $admin;
     public function _initialize() {
         // 检查控制台登录
         $this->AuthService = new AuthService();
         if ( !$this->AuthService->islogin() ) {
             $this->error('请登录后操作', url('Login/index'));
+        }else{
+            $this->admin = session('admin');
         }
 
         // 获取平台数据

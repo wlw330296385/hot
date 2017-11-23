@@ -65,23 +65,24 @@ class MessageService
 
     // 发送个人消息
     public function sendMessageMember($member_id, $messageData, $saveData)
-    {
-        $memberInfo = db('member')->where(['id'=>$member_id])->find();
-        if($memberInfo){
-            $messageData['touser'] = $memberInfo['openid'];
-        }
+    {   
         $res = $this->MessageMemberModel->save($saveData);
         if ($res) {
-            $WechatService = new \app\service\WechatService();
-            $result = $WechatService->sendTemplate($messageData);
-            if ($result) {
-                $logData = ['wxopenid' => $messageData['touser'], 'member_id' => $saveData['member_id'], 'status' => 1, 'content' => serialize($messageData),'system_remarks'=>'给用户的通知'];
-                $this->insertLog($logData);
-            } else {
-                $logData = ['wxopenid' => $messageData['touser'], 'member_id' => $saveData['member_id'], 'status' => 0, 'content' => serialize($messageData),'system_remarks'=>'给用户的通知'];
-                $this->insertLog($logData);
+            $memberInfo = db('member')->where(['id'=>$member_id])->find();
+            if($memberInfo['openid']){
+                $messageData['touser'] = $memberInfo['openid'];
+                $WechatService = new \app\service\WechatService();
+                $result = $WechatService->sendTemplate($messageData);
+                if ($result) {
+                    $logData = ['wxopenid' => $messageData['touser'], 'member_id' => $saveData['member_id'], 'status' => 1, 'content' => serialize($messageData),'system_remarks'=>'给用户的通知'];
+                    $this->insertLog($logData);
+                } else {
+                    $logData = ['wxopenid' => $messageData['touser'], 'member_id' => $saveData['member_id'], 'status' => 0, 'content' => serialize($messageData),'system_remarks'=>'给用户的通知'];
+                    $this->insertLog($logData);
+                }
+                return true;
             }
-            return true;
+            
         }
         return false;
     }

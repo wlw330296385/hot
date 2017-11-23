@@ -37,15 +37,21 @@ class Login extends Base{
 
         	$response = $memberS->saveMemberInfo($data);
         	if ($response['code'] ==200) {
-        	    $lasturl = cookie('url');
-        	    if ($lasturl && $lasturl != '/frontend') { // 记录最后访问地址, 注册成功返回该页面
-                    $response['goto'] = $lasturl;
-                    cookie('url', null);
-                } else {
-                    $response['goto'] = url('frontend/member/registerSuccess');
+                $result = $memberS->saveLogin($response['id']);
+                if($result){
+                    $lasturl = cookie('url');
+                    if ($lasturl && $lasturl != '/frontend') { // 记录最后访问地址, 注册成功返回该页面
+                        $response['goto'] = $lasturl;
+                        cookie('url', null);
+                    } else {
+                        $response['goto'] = url('frontend/member/registerSuccess');
+                    }
+                }else{
+                    return json(['code'=>100,'msg'=>'请重新登陆']);
                 }
+        	    
             }
-            return $response;
+            return json($response);
         }catch (Exception $e){
         	return json(['code'=>100,'msg'=>$e->getMessage()]);
         }

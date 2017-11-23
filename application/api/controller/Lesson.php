@@ -117,6 +117,50 @@ class Lesson extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }       
     }
+
+    // 搜索课程
+    public function getLessonListNoPageApi(){
+        try{
+            $map = input('post.');
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $city = input('param.city');
+            $area = input('param.area');
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
+            $hot = input('param.hot');
+
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value==' '){
+                    unset($map[$key]);
+                }
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['lesson'] = ['LIKE','%'.$keyword.'%'];
+            }
+            if ($hot) {
+                $map['hot'] = ['eq',$hot];
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+            $result = $this->LessonService->getLessonListNoPage($map);
+            if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'没有课程数据']);
+            }
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }       
+    }
     
     //翻页获取课程接口
     public function getLessonListApi(){

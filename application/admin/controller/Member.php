@@ -31,6 +31,12 @@ class Member extends Backend{
 			if($result['code'] == 100){
 				echo '<script type="text/javascript">alert("'.$result["msg"].'")</script>';
 			}else{
+				// 判断是否有添加学生
+				if($data['student']){
+					$data['member_id'] = $result['data'];
+					$Student = new \app\model\Student;
+					$Student->save($data);
+				}
 				echo '<script type="text/javascript">alert("'.$result["msg"].'")</script>';
 			}
 		}

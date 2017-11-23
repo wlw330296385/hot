@@ -128,8 +128,16 @@ class Index extends Controller{
     
 
     public function test(){
-
-    	return view('Index/test');
+        $id = input('id',6);
+        $memberInfo = db('member')->find($id);
+        dump($memberInfo);
+        if($memberInfo['realname']){
+            dump($memberInfo['realname']) ;
+        }else{
+            // dump($memberInfo['realname']);
+            echo 22;
+        }
+    	// return view('Index/test');
     }
     
 

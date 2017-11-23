@@ -44,6 +44,15 @@ class LessonService {
         }
     }
 
+    public function getLessonListNoPage($map=[], $order='id desc',$paginate=10){
+        $res = Lesson::where($map)->order($order)->select();
+        if($res){
+            return $res->toArray();
+        }else{
+            return $res;
+        }
+    }
+
     // 软删除
     public function SoftDeleteLesson($id) {
         $result = Lesson::destroy($id);

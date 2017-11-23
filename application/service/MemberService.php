@@ -71,15 +71,9 @@ class MemberService{
         //验证规则
 		$res = $MemberModel->validate('MemberVal.add')->allowField(true)->save($request);
 		if ($res === false) {
-		    //dump($MemberModel->getError());
             return [ 'code' => 100, 'msg' => $MemberModel->getError() ];
         } else {
-		    $login = $this->saveLogin($MemberModel->id);
-		    if ($login) {
-		        return ['code' => 200, 'msg' => __lang('MSG_200'), ''];
-            } else {
-		        return ['code' => 100, 'msg' => '请重新登陆'];
-            }
+	        return ['code' => 200, 'msg' => __lang('MSG_200'), 'data'=>$MemberModel->id,'id'=>$MemberModel->id];
         }
 	}
 
