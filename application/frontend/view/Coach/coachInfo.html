@@ -10,183 +10,286 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
     <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css" />
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--等级星星样式-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css" />
 </head>
 
 <body class=whitebg>
 
-<header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-    <h1 class="mui-title">教练介绍</h1>
-</header>
-<div class="mui-content">
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">教练介绍</h1>
+    </header>
+    <div class="mui-content">
 
-    <div class="list camp-list detalis-list coach">
-        <ul class="mui-table-view mb" style="margin-top: -4px">
-            <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                <a href="javascript:;">
-                    <img class="mui-media-object mui-pull-left coachicon"
-                         src="{$coachInfo.portraits}">
-                    <div class="mui-media-body">
-                        {$coachInfo.coach} <i class="icon iconfont icon-sex{$coachInfo.sex}"></i>
-                        <p class="mui-ellipsis">教龄:{$coachInfo.coach_year} 等级:{$coachInfo.coach_rank}</p>
-                    </div>
-                    <div class="price-frame camp-num">
-                        <ul>
-                            <li>
-                                <div class="icons mui-inline">
-                                    <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
-                                    <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
-                                    <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
-                                    <i data-index="4" class="mui-icon mui-icon-star-filled"></i>
-                                    <i data-index="5" class="mui-icon mui-icon-star-filled"></i>
-                                </div>
-                            </li>
-                            <li class="fr">{$coachInfo.province} {$coachInfo.city} {$coachInfo.area}</li>
-                        </ul>
-                    </div>
-                </a>
-            </li>
-        </ul>
+        <div class="list camp-list detalis-list coach">
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                    <a href="javascript:;">
+                        <img class="mui-media-object mui-pull-left coachicon" src="{$coachInfo.portraits}">
+                        <div class="mui-media-body">
+                            {$coachInfo.coach} <i class="icon iconfont icon-sex{$coachInfo.sex}"></i>
+                            <p class="mui-ellipsis">教龄:{$coachInfo.coach_year} 等级:{$coachInfo.coach_rank} {$coachInfo.area}</p>
+                        </div>
+                        <div class="camp-num mui-text-right">
+                            <ul>
+                                <li><button type="button" class="mui-btn mui-btn-danger follow">关注</button></li>
+                                <li>
+                                    <div class="icons mui-inline">
+                                        <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
+                                        <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
+                                        <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
+                                        <i data-index="4" class="mui-icon mui-icon-star-filled"></i>
+                                        <i data-index="5" class="mui-icon mui-icon-star-filled"></i>
+                                    </div>
+                                </li>
+                                <!--<li class="fr">{$coachInfo.area}</li>-->
+                            </ul>
+                        </div>
+                    </a>
+                </li>
+            </ul>
 
-        <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell listli detalisli listinitial">自我介绍
-                <span class="about">{$coachInfo.introduction}
+            <ul class="mui-table-view mb">
+                <!--<li class="mui-table-view-cell listli detalisli">
+                    <button type="button" class="btn follow">关注</button>
+                </li>-->
+                <li class="mui-table-view-cell listli detalisli listinitial">自我介绍
+                    <span class="about">{$coachInfo.introduction}
                         <a href="#">全文展示</a>
                     </span>
-            </li>
-        </ul>
+                </li>
+            </ul>
 
-        <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell listli detalisli " style="line-height: 40px;">
-                <!--<a class="mui-navigate-right" href="{:url('camp/campListOfCoach',['coach_id'=>$coachInfo['id']])}">-->
-                    所属训练营
-                    {volist name="campList" id="vol"}
-                    <img class="coachicon" src="{$vol.logo}" alt="">
-                    {/volist}
-                <!--</a>-->
-            </li>
-            <li class="mui-table-view-cell listli detalisli">个人认证
-                <span>
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli detalisli " style="line-height: 40px;">
+                    <!--<a class="mui-navigate-right" href="{:url('camp/campListOfCoach',['coach_id'=>$coachInfo['id']])}">-->
+                    所属训练营 {volist name="campList" id="vol"}
+                    <img class="coachicon" src="{$vol.logo}" alt=""> {/volist}
+                    <!--</a>-->
+                </li>
+                <li class="mui-table-view-cell listli detalisli">个人认证
+                    <span>
                         <img class="rzicon" src="/static/frontend/images/icon05.jpg">证书认证&nbsp;&nbsp;&nbsp;
                         <img class="rzicon" src="/static/frontend/images/icon05.jpg">身份认证
                     </span>
-            </li>
-            <li class="mui-table-view-cell listli detalisli listinitial">课量<span>执教过{$scheduleCount}课时</span></li>
-            <li class="mui-table-view-cell listli detalisli listinitial">学员<span>执教过{$studentCount}个学生</span></li>
-            <li class="mui-table-view-cell listli detalisli listinitial">班级<span>执教{$gradeCount}个班级</span></li>
-        </ul>
-        <div class="page-header">
-            <span class="course">学员评价</span>
-        </div>
-        <ul class="mui-table-view list min-height mui-text-center">
-            {volist name='commentList' id="vol" empty="暂无评论"}
-            <li class="mui-table-view-cell mui-media listli">
-                <a href="javascript:;">
-                    <img class="mui-media-object mui-pull-left coachicon" src="{$vol.avatar}">
-                    <div class="mui-media-body">
-                        {$vol.member}
-                        <p class="mui-ellipsis">{$vol.comment}</p>
-                    </div>
-                    <div class="price-frame">
-                        <p>{$vol.create_time|date='Y-m-d',###}</p>
-                    </div>
-                </a>
-            </li>
-            {/volist}
-        </ul>
-        <p class="dropdown mt55"><a href="#">查看更多评论...</a></p>
-
-        <ul class="mui-table-view operation mt">
-            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><a href="#comment" class="typeBtn1">我要评价</a>
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><a href="#comment" class="typeBtn2">邀请加入</a>
-            </li>
-        </ul>
-
-        <!-- 评价弹框 -->
-        <div id="comment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-            <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
-                <ul class="mui-table-view operation">
-                    <h5><span class="title">评价我的教练</span><a href="#comment" class="mui-icon mui-icon-closeempty"></a></h5>
-                    <li class="mui-table-view-cell listli">
-                        <textarea rows="4"></textarea>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="commentSubmit">提交</li>
-
-                </ul>
+                </li>
+                <li class="mui-table-view-cell listli detalisli listinitial">课量<span>执教过{$scheduleCount}课时</span></li>
+                <li class="mui-table-view-cell listli detalisli listinitial">学员<span>执教过{$studentCount}个学生</span></li>
+                <li class="mui-table-view-cell listli detalisli listinitial">班级<span>执教{$gradeCount}个班级</span></li>
+            </ul>
+            <div class="page-header">
+                <span class="course">学员评价</span>
             </div>
-        </div>
+            <ul class="mui-table-view list min-height mui-text-center">
+                {volist name='commentList' id="vol" empty="暂无评论"}
+                <li class="mui-table-view-cell mui-media listli">
+                    <a href="javascript:;">
+                        <img class="mui-media-object mui-pull-left coachicon" src="{$vol.avatar}">
+                        <div class="mui-media-body">
+                            {$vol.member}
+                            <p class="mui-ellipsis">{$vol.comment}</p>
+                        </div>
+                        <div class="price-frame">
+                            <p>{$vol.create_time|date='Y-m-d',###}</p>
+                        </div>
+                    </a>
+                </li>
+                {/volist}
+            </ul>
+            <p class="dropdown mt55"><a href="#">查看更多评论...</a></p>
 
+            <ul class="mui-table-view operation mt">
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><a href="#comment" class="typeBtn1">我要评价</a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><a href="#invitation" class="typeBtn2">邀请加入</a>
+                </li>
+            </ul>
+
+            <!-- 评价弹框 -->
+            <div id="comment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+                <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+                    <ul class="mui-table-view operation">
+                        <h5><span class="sstitle">评价我的教练</span>
+                            <a href="#comment" class="mui-icon mui-icon-closeempty"></a>
+                        </h5>
+                        <li class="listli">
+                            <textarea rows="4"></textarea>
+                        </li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="commentSubmit">提交</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 邀请弹框 -->
+            <div id="invitation" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+                <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+                    <ul class="mui-table-view operation">
+                        <h5><span class="sstitle">邀请加入</span>
+                            <a href="#invitation" class="mui-icon mui-icon-closeempty"></a>
+                        </h5>
+                        <li class="listli">
+                            <textarea rows="4"></textarea>
+                        </li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="invitationSubmit">提交</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
     </div>
 
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 
-</div>
-
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-
-<script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
-
-    mui("body").on("tap", "a", function () {
-        window.top.location.href = this.href;
-    });
-
-    $(function () {
-
-        //评价功能
-        $("#commentSubmit").click(function() {
-            //判断是否登陆会员
-            if ( "{$memberInfo.id}"<=0) {
-                var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
-                mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
-            }else{
-                //判断是否该训练营学生
-
-            }
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
         });
 
-        $("#comment").click(function(){
-            var  title = "邀请加入";
-            $(".title").text(title);
-        })
+        mui("body").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
 
-    });
+        $(function () {
 
-    // mui('body').on('shown', '.mui-popover', function (e) {
-    //     //console.log('shown', e.detail.id);//detail为当前popover元素
-    // });
-    // mui('body').on('hidden', '.mui-popover', function (e) {
-    //     //console.log('hidden', e.detail.id);//detail为当前popover元素
-    // });
-    // var info = document.getElementById("info");
-    // mui('body').on('tap', '.mui-popover-action li>a', function () {
-    //     var a = this,
-    //         parent;
-    //     //根据点击按钮，反推当前是哪个actionsheet
-    //     for (parent = a.parentNode; parent != document.body; parent = parent.parentNode) {
-    //         if (parent.classList.contains('mui-popover-action')) {
-    //             break;
-    //         }
-    //     }
-    //     //关闭actionsheet
-    //     mui('#' + parent.id).popover('toggle');
-    //     info.innerHTML = "你刚点击了\"" + a.innerHTML + "\"按钮";
-    // })
+            // //评价功能
+            // $("#commentSubmit").click(function () {
+            //     //判断是否登陆会员
+            //     if ("{$memberInfo.id}" <= 0) {
+            //         var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+            //         mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
+            //     } else {
+            //         //判断是否该训练营学生
 
-    // mui("body").on("tap", "a", function () {
-    //     window.top.location.href = this.href;
-    // });
-</script>
+            //     }
+            // });
+
+            //评价
+            $("#commentSubmit").on('click', function () {
+                //判断是否登陆会员
+                mui.ajax("{:url('api/CampMember/getCampMemberApi')}", {
+                    data: {
+                        'member_id': "{$memberInfo.id}"
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200 && data.data.status == "正常") {
+                            var data1 = wooApi.getInputData();
+                            var comment = $('textarea.data').val();
+                            if (comment == "" || comment == null) {
+                                mui.toast("您没填写评论内容哦");
+                                return false;
+                            }
+                            var objData = wooApi.arrTOobj(data1);
+                            objData.comment = comment;
+                            var result = wooApi.asyncF("{:url('api/camp/createCoachCommentApi')}", objData);
+                            if (result) {
+                                mui.toast(result.msg);
+                                mui('#pjpopover').popover('toggle');
+                                pulldownRefresh();
+                                $(".moreComment").show();
+                            }
+                        } else {
+                            mui.toast("学生身份才能评论哦，马上去注册吧！");
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            })
+
+            //邀请
+            $("#invitationSubmit").on('click', function () {
+                //判断是否登陆会员
+                mui.ajax("{:url('api/CampMember/getCampMemberApi')}", {
+                    data: {
+                        'member_id': "{$memberInfo.id}"
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200 && data.data.status == "正常") {
+                            var data1 = wooApi.getInputData();
+                            var comment = $('textarea.data').val();
+                            if (invitation == "" || invitation == null) {
+                                mui.toast("您没填写评论内容哦");
+                                return false;
+                            }
+                            var objData = wooApi.arrTOobj(data1);
+                            objData.invitation = invitation;
+                            var result = wooApi.asyncF("{:url('api/camp/createCoachCommentApi')}", objData);
+                            if (result) {
+                                mui.toast(result.msg);
+                                mui('#pjpopover').popover('toggle');
+                                pulldownRefresh();
+                            }
+                        } else {
+                            mui.toast("错误提示！");
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            })
+
+            // 关注教练
+            $(".follow").on("tap", '', function () {
+                mui.ajax("{:url('api/follow/focus')}", {
+                    data: {
+                        'type': 1,
+                        'member_id': "{$coachInfo.member_id}"
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                            mui.ajax("{:url('api/follow')}", {
+                                function() {
+                                    if (data.code == -1) {
+                                        $(".follow").text("取消关注");
+                                    } else {
+                                        $(".follow").text("关注");
+                                    }
+                                }
+                            })
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+        });
+    </script>
 </body>
+
 </html>

@@ -27,7 +27,7 @@ class Member extends Base{
         return view('Member/index');
     }
 
-    public function follow() {
+    public function followlist() {
 	    return view('Member/followlist');
     }
 
