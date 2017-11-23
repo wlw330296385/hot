@@ -9,10 +9,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css" />
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--等级星星样式-->
@@ -56,9 +52,6 @@
             </ul>
 
             <ul class="mui-table-view mb">
-                <!--<li class="mui-table-view-cell listli detalisli">
-                    <button type="button" class="btn follow">关注</button>
-                </li>-->
                 <li class="mui-table-view-cell listli detalisli listinitial">自我介绍
                     <span class="about">{$coachInfo.introduction}
                         <a href="#">全文展示</a>
@@ -153,7 +146,7 @@
             swipeBack: true //启用右滑关闭功能
         });
 
-        mui("body").on("tap", "a", function () {
+        mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
 
@@ -254,10 +247,11 @@
 
             // 关注教练
             $(".follow").on("tap", '', function () {
+                var member_id = "{$coachInfo.member_id}";
                 mui.ajax("{:url('api/follow/focus')}", {
                     data: {
-                        'type': 1,
-                        'member_id': "{$coachInfo.member_id}"
+                        type: 1,
+                        member_id: member_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -268,15 +262,7 @@
                         console.log(data);
                         if (data.code == 200) {
                             mui.toast(data.msg);
-                            mui.ajax("{:url('api/follow')}", {
-                                function() {
-                                    if (data.code == -1) {
-                                        $(".follow").text("取消关注");
-                                    } else {
-                                        $(".follow").text("关注");
-                                    }
-                                }
-                            })
+                            followStatus();
                         } else {
                             mui.toast(data.msg);
                         }
@@ -288,7 +274,37 @@
                 });
             });
 
+            //判断当前的关注状态
+            followStatus();
+
         });
+
+        // 判断当前的关注状态
+        function followStatus() {
+            var member_id = "{$coachInfo.member_id}";
+            mui.ajax("{:url('api/follow/getfollow')}", {
+                data: {
+                    type: 1,
+                    member_id: member_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data === 1) {
+                            $(".follow").text("取消关注");
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
     </script>
 </body>
 
