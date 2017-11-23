@@ -50,6 +50,7 @@
                                 <li><button type="button" class="mui-btn mui-btn-danger follow">关注</button></li>
                                 <li>
                                     <div class="icons mui-inline">
+                                        {$campInfo.star}
                                         <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
                                         <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
                                         <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
@@ -185,7 +186,32 @@
 
         var count = 1;
 
+        function starShow() {
+            // $("i.mui-icon-star-filled").hide();
+            var star = "{$campInfo.star}";
+            var lll = star.length;
+            console.log(lll)
+            // for (var i = 0; i < star.length; i++) {
+            //     $("input[name='checkbox-assistant']").filter(function (index) {
+            //         return $(this).attr("data-id") == s[i]
+            //     }).prop("checked", true);
+            // }
+
+        }
+
         $(function () {
+
+            // <div class="icons mui-inline">
+            //                             {$campInfo.star}
+            //                             <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
+            //                             <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
+            //                             <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
+            //                             <i data-index="4" class="mui-icon mui-icon-star-filled"></i>
+            //                             <i data-index="5" class="mui-icon mui-icon-star-filled"></i>
+            //                         </div>
+
+            // 星级显示
+            starShow();
 
             //展示训练营介绍全文
             $(".about a").click(function () {
@@ -304,10 +330,11 @@
 
             // 关注训练营
             $(".follow").on("tap", '', function () {
+                var camp_id = "{$campInfo.id}";
                 mui.ajax("{:url('api/follow/focus')}", {
                     data: {
-                        'type': 2,
-                        'camp_id': "{$campInfo.id}"
+                        type: 2,
+                        camp_id: camp_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -318,15 +345,7 @@
                         console.log(data);
                         if (data.code == 200) {
                             mui.toast(data.msg);
-                            mui.ajax("{:url('api/follow')}", {
-                                function() {
-                                    if (data.code == -1) {
-                                        $(".follow").text("取消关注");
-                                    } else {
-                                        $(".follow").text("关注");
-                                    }
-                                }
-                            })
+                            followStatus();
                         } else {
                             mui.toast(data.msg);
                         }
@@ -338,6 +357,8 @@
                 });
             });
 
+            //判断当前的关注状态
+            followStatus();
             //获取训练营课程
             toLessonList();
             //获取训练营教练列表
@@ -345,6 +366,34 @@
             //页面打开时获取一次最新评论信息
             pulldownRefresh();
         });
+
+        // 判断当前的关注状态
+        function followStatus() {
+            var camp_id = "{$campInfo.id}"
+            mui.ajax("{:url('api/follow/getfollow')}", {
+                data: {
+                    type: 2,
+                    camp_id: camp_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data === 1) {
+                            $(".follow").text("取消关注");
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+
 
         //下拉刷新具体业务实现
         function pulldownRefresh() {

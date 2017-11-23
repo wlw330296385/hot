@@ -445,11 +445,11 @@
                 indicators: true //是否显示滚    动条
             });
 
-            // 关注训练营
+            // 关注教练(缺少参数，待完善)
             $(".follow").on("tap", '', function () {
                 mui.ajax("{:url('api/follow/focus')}", {
                     data: {
-                        'type': 4,
+                        type: 4,
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -460,15 +460,7 @@
                         console.log(data);
                         if (data.code == 200) {
                             mui.toast(data.msg);
-                            mui.ajax("{:url('api/follow/')}", {
-                                function() {
-                                    if (data.code == -1) {
-                                        $(".follow").text("取消关注");
-                                    } else {
-                                        $(".follow").text("关注");
-                                    }
-                                }
-                            })
+                            followStatus();
                         } else {
                             mui.toast(data.msg);
                         }
@@ -480,7 +472,35 @@
                 });
             });
 
+            //判断当前的关注状态
+            followStatus();
+
         })(mui);
+
+        // 判断当前的关注状态(缺少参数，待完善)
+        function followStatus() {
+            mui.ajax("{:url('api/follow/getfollow')}", {
+                data: {
+                    type: 4,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data === 1) {
+                            $(".follow").text("取消关注");
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
 
         var scrollPic_02 = new ScrollPic();
         var width = 280;

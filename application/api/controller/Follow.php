@@ -250,7 +250,7 @@ class Follow extends Base {
             if ($res) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res['status']];
             } else {
-                $response = ['code' => 200, 'msg' => __lang('MSG_401')];
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
             }
             return json($response);
         } catch (Exception $e) {
