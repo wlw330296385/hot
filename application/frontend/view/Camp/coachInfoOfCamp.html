@@ -10,25 +10,47 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
     <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css" />
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--等级星星样式-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css" />
     <!--选择器样式-->
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <style type="text/css">
-        .sheader{ padding: 8px 15px !important;}
-        .sheader span{ line-height: 24px; }
-        .for-tab .mui-icon-left-nav { padding-right:10px !important; }
-        .for-tab .price-frame .mui-icon{ padding: 0px 10px !important; }
-        .location-frame { padding: 0px; border-bottom:none; }
-        .location-frame span { width: 25% !important;}
-        .nav-list .nav-list-frame a .mui-media-body{ font-size: 20px !important;}
-        .mui-control-content{
+        .sheader {
+            padding: 8px 15px !important;
+        }
+        
+        .sheader span {
+            line-height: 24px;
+        }
+        
+        .for-tab .mui-icon-left-nav {
+            padding-right: 10px !important;
+        }
+        
+        .for-tab .price-frame .mui-icon {
+            padding: 0px 10px !important;
+        }
+        
+        .location-frame {
+            padding: 0px;
+            border-bottom: none;
+        }
+        
+        .location-frame span {
+            width: 25% !important;
+        }
+        
+        .nav-list .nav-list-frame a .mui-media-body {
+            font-size: 20px !important;
+        }
+        
+        .mui-control-content {
             top: 170px !important;
             width: 100% !important;
         }
@@ -37,24 +59,23 @@
 
 <body>
 
-<header id="header" class="mui-bar mui-bar-nav for-tab">
-    <ul class="mui-table-view detalis-list mb">
-        <li class="listli sheader mui-clearfix">
-            <a class="mui-pull-left"  href="{:url('camp/coachListOfCamp',['camp_id'=>$camp_id])}"><span class="mui-icon mui-icon-left-nav"></span>教练列表</a>
-            <span class="mui-pull-right">{$campInfo.camp}</span>
-        </li>
-    </ul>
-    <ul class="mui-table-view list detalis-list mb">
-        <li class="mui-table-view-cell mui-media listli">
-                <img class="mui-media-object mui-pull-left coachicon"
-                     src="{$coachInfo['portraits']}">
+    <header id="header" class="mui-bar mui-bar-nav for-tab">
+        <ul class="mui-table-view detalis-list mb">
+            <li class="listli sheader mui-clearfix">
+                <a class="mui-pull-left" href="{:url('camp/coachListOfCamp',['camp_id'=>$camp_id])}"><span class="mui-icon mui-icon-left-nav"></span>教练列表</a>
+                <span class="mui-pull-right">{$campInfo.camp}</span>
+            </li>
+        </ul>
+        <ul class="mui-table-view list detalis-list mb">
+            <li class="mui-table-view-cell mui-media listli">
+                <img class="mui-media-object mui-pull-left coachicon" src="{$coachInfo['portraits']}">
                 <div class="mui-media-body">
                     {$coachInfo['coach']} <i class="icon iconfont icon-sex{$coachInfo['sex']}"></i>
                     <p class="mui-ellipsis">教龄:{$coachInfo['coach_year']} 等级:{$coachInfo['coach_level']}</p>
                 </div>
                 <div class="price-frame">
-                    <ul>
-                        <li>{$coachInfo['star']}
+                    <ul style="padding: 0">
+                        <li>
                             <div class="icons mui-inline">
                                 <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
                                 <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
@@ -63,152 +84,159 @@
                         </li>
                     </ul>
                 </div>
-        </li>
-    </ul>
-    <div class="camp-lesson-list">
-        <div id="segmentedControl" class="mui-segmented-control mb">
-            <a class="mui-control-item  mui-active" href="#tabFile">档案</a>
-            <a class="mui-control-item" href="#tabGrade">班级</a>
-            <a class="mui-control-item" href="#tabSchedule">课量</a>
-            <a class="mui-control-item" href="#tabSalary">工资</a>
+            </li>
+        </ul>
+        <div class="camp-lesson-list">
+            <div id="segmentedControl" class="mui-segmented-control mb">
+                <a class="mui-control-item  mui-active" href="#tabFile">档案</a>
+                <a class="mui-control-item" href="#tabGrade">班级</a>
+                <a class="mui-control-item" href="#tabSchedule">课量</a>
+                <a class="mui-control-item" href="#tabSalary">工资</a>
+            </div>
         </div>
-    </div>
-</header>
+    </header>
 
-<div class="mui-content" style="margin-top: 125px;">
+    <div class="mui-content" style="margin-top: 125px;">
 
 
-    <div class="tab-pullRefresh list coach">
-        <!--教练档案 -->
-        <div id="tabFile" class="mui-control-content mui-active">
-            <ul class="mui-table-view list detalis-list">
-                <li class="mui-table-view-cell listli">教练ID<span>{$coachInfo['id']}</span></li>
-                <li class="mui-table-view-cell listli">手机号码<span>{$coachInfo['member']['telephone']}</span></li>
-                <li class="mui-table-view-cell listli">电子邮箱<span>{$coachInfo['member']['email']}</span></li>
-                <li class="mui-table-view-cell listli">真实姓名<span>{$coachInfo['member']['realname']}</span></li>
-                <li class="mui-table-view-cell listli">所属地区<span>{$coachInfo['member']['province']} {$coachInfo['member']['city']} {$coachInfo['member']['area']}</span>
-                </li>
-                <li class="mui-table-view-cell listli">身份证号<span>{$identCert['cert_no']}</span></li>
-                <li class="mui-table-view-cell listli detalisli border-b">
-                    <a href="#" class="mui-navigate-right">
+        <div class="tab-pullRefresh list coach">
+            <!--教练档案 -->
+            <div id="tabFile" class="mui-control-content mui-active">
+                <ul class="mui-table-view list detalis-list">
+                    <li class="mui-table-view-cell listli">教练ID<span>{$coachInfo['id']}</span></li>
+                    <li class="mui-table-view-cell listli">手机号码<span>{$coachInfo['member']['telephone']}</span></li>
+                    <li class="mui-table-view-cell listli">电子邮箱<span>{$coachInfo['member']['email']}</span></li>
+                    <li class="mui-table-view-cell listli">真实姓名<span>{$coachInfo['member']['realname']}</span></li>
+                    <li class="mui-table-view-cell listli">所属地区<span>{$coachInfo['member']['province']} {$coachInfo['member']['city']} {$coachInfo['member']['area']}</span>
+                    </li>
+                    <li class="mui-table-view-cell listli">身份证号<span>{$identCert['cert_no']}</span></li>
+                    <li class="mui-table-view-cell listli detalisli border-b">
+                        <a href="#" class="mui-navigate-right">
                         认证资料
                         <img class="coachicon icon01" src="{$coachCert.photo_positive}" alt="" style="width: 60px">
                         <img class="coachicon icon01" src="{$coachCert.photo_back}" alt="" style="width: 60px">
                     </a>
-                </li>
-            </ul>
-        </div>
-        <!--教练班级 -->
-        <div id="tabGrade" class="mui-scroll-wrapper mui-control-content">
-            <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list grade">
+                    </li>
                 </ul>
             </div>
-        </div>
-        <!-- 教练课时 -->
-        <div id="tabSchedule" class="mui-scroll-wrapper mui-control-content">
-            <div class="mui-scroll">
+            <!--教练班级 -->
+            <div id="tabGrade" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list grade">
+                    </ul>
+                </div>
+            </div>
+            <!-- 教练课时 -->
+            <div id="tabSchedule" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
 
+                    <div class="nav-list">
+                        <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                                <a href="#">
+                                    <span>本月课量</span>
+                                    <div class="mui-media-body">{$monthScheduleOfCoach}</div>
+                                </a>
+                            </li>
+                            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                                <a href="#">
+                                    <span>本年课量</span>
+                                    <div class="mui-media-body">{$yearScheduleOfCoach}</div>
+                                </a>
+                            </li>
+                            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                                <a href="#">
+                                    <span>个人总课量</span>
+                                    <div class="mui-media-body">{$coachInfo['schedule_flow']}</div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <ul class="mui-table-view list detalis-list page-header location-frame mb">
+                        <li class="mui-table-view-cell listli">
+                            <p class="mui-navigate-right">
+                                已上课表<span class="btnTime" id="scheduleTime" data-options='{"type":"month"}'>{$y}年 {$m}月</span>
+                            </p>
+                        </li>
+                    </ul>
+                    <ul class="mui-table-view">
+                        <li class="mui-table-view-cell">
+                            <ul class="mui-row table">
+                                <li class="mui-col-xs-5">日期</li>
+                                <li class="mui-col-xs-5">班级</li>
+                                <li class="mui-col-xs-2">人数</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="mui-table-view detalis-list list schedule">
+                        <li class="mui-table-view-cell">
+                            <ul class="mui-row table">
+                                <li class="mui-col-sm-4 mui-col-xs-5">create_time</li>
+                                <li class="mui-col-sm-4 mui-col-xs-5">grade</li>
+                                <li class="mui-col-sm-2 mui-col-xs-2">students</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- 教练工资 -->
+            <div id="tabSalary" class="mui-control-content">
                 <div class="nav-list">
                     <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
-                            <span>本月课量</span>
-                            <div class="mui-media-body">{$monthScheduleOfCoach}</div>
-                        </a></li>
-                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
-                            <span>本年课量</span>
-                            <div class="mui-media-body">{$yearScheduleOfCoach}</div>
-                        </a></li>
-                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
-                            <span>个人总课量</span>
-                            <div class="mui-media-body">{$coachInfo['schedule_flow']}</div>
-                        </a></li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
+                            <a href="#">
+                                <span>平均月薪</span>
+                                <div class="mui-media-body">{$averageSalaryByMonth}</div>
+                            </a>
+                        </li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
+                            <a href="#">
+                                <span>平均年薪</span>
+                                <div class="mui-media-body">{$averageSalaryByYear}</div>
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <ul class="mui-table-view list detalis-list page-header location-frame mb">
                     <li class="mui-table-view-cell listli">
                         <p class="mui-navigate-right">
-                            已上课表<span class="btnTime" id="scheduleTime" data-options='{"type":"month"}'>{$y}年 {$m}月</span>
+                            工资表<span id="yearPicker">{$y}年</span>
                         </p>
+                        <input id="salaryYear" type="hidden" value="{$y}">
                     </li>
                 </ul>
-                <ul class="mui-table-view">
+                <ul class="mui-table-view list detalis-list mb">
+                    <li class="mui-table-view-cell listli">月份<span>工资</span></li>
+                    {volist name="salaryList" id="vol"}
                     <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-xs-5">日期</li>
-                            <li class="mui-col-xs-5">班级</li>
-                            <li class="mui-col-xs-2">人数</li>
-                        </ul>
-                    </li>
-                </ul>
-                <ul class="mui-table-view detalis-list list schedule">
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-sm-4 mui-col-xs-5">create_time</li>
-                            <li class="mui-col-sm-4 mui-col-xs-5">grade</li>
-                            <li class="mui-col-sm-2 mui-col-xs-2">students</li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <!-- 教练工资 -->
-        <div id="tabSalary" class="mui-control-content">
-            <div class="nav-list">
-                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
-                        <a href="#">
-                            <span>平均月薪</span>
-                            <div class="mui-media-body">{$averageSalaryByMonth}</div>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
-                        <a href="#">
-                            <span>平均年薪</span>
-                            <div class="mui-media-body">{$averageSalaryByYear}</div>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <ul class="mui-table-view list detalis-list page-header location-frame mb">
-                <li class="mui-table-view-cell listli">
-                    <p class="mui-navigate-right">
-                        工资表<span id="yearPicker">{$y}年</span>
-                    </p>
-                    <input id="salaryYear" type="hidden" value="{$y}">
-                </li>
-            </ul>
-            <ul class="mui-table-view list detalis-list mb">
-                <li class="mui-table-view-cell listli">月份<span>工资</span></li>
-                {volist name="salaryList" id="vol"}
-                <li class="mui-table-view-cell">
-                    <a class="mui-navigate-right">
+                        <a class="mui-navigate-right">
                         {$vol.create_time}<span>{$vol.salary}</span>
                     </a>
-                </li>
-                {/volist}
-            </ul>
+                    </li>
+                    {/volist}
+                </ul>
 
+            </div>
         </div>
+
+
     </div>
 
 
-</div>
-
-
-</div>
+    </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="/static/frontend/js/mui.picker.min.js"></script>
 <script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/starshow.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-    mui("body").on("tap","a",function(){
-        window.top.location.href=this.href;
+    mui("body").on("tap", "a", function () {
+        window.top.location.href = this.href;
     });
 
     (function ($, doc) {
@@ -228,7 +256,7 @@
 
                     picker.show(function (rs) {
                         //wTime.innerText = rs.text;
-                        wTime.innerText = rs.y.text+'年 '+rs.m.text+'月';
+                        wTime.innerText = rs.y.text + '年 ' + rs.m.text + '月';
                         picker.dispose();
                     });
                 }, false);
@@ -264,8 +292,8 @@
             ]);
             var showYearPickerBtn = document.getElementById('yearPicker');
             var yearResult = document.getElementById('salaryYear');
-            showYearPickerBtn.addEventListener('tap', function(e){
-                yearPicker.show(function(items) {
+            showYearPickerBtn.addEventListener('tap', function (e) {
+                yearPicker.show(function (items) {
                     yearResult.value = items[0].value;
                     showYearPickerBtn.innerText = items[0].text;
                 });
@@ -276,6 +304,9 @@
 
     $(function () {
 
+        // 星星显示
+        starShow("{$coachInfo.star}");
+
         //初始化全局变量
         var gCount = 1;
         var sCount = 1;
@@ -284,10 +315,10 @@
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
-                auto:true,//可选,默认false.自动下拉刷新一次
-                contentdown : "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                contentover : "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                contentrefresh : "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
                 callback: pulldownRefreshG
             },
             up: {
@@ -295,7 +326,7 @@
                 height: 150,//可选.默认50.触发上拉加载拖动距离
                 //auto:true,//可选,默认false.自动上拉加载一次
                 contentrefresh: '正在加载...',
-                contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
                 callback: pullupRefreshG
             }
         });
@@ -304,10 +335,10 @@
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
-                auto:true,//可选,默认false.自动下拉刷新一次
-                contentdown : "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                contentover : "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                contentrefresh : "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
                 callback: pulldownRefreshS
             },
             up: {
@@ -315,46 +346,46 @@
                 height: 150,//可选.默认50.触发上拉加载拖动距离
                 //auto:true,//可选,默认false.自动上拉加载一次
                 contentrefresh: '正在加载...',
-                contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
                 callback: pullupRefreshS
             }
         });
 
         //下拉刷新具体业务实现（上架）
         function pulldownRefreshG() {
-            setTimeout(function() {
+            setTimeout(function () {
                 gCount = 1;//刷新并显示第一页
                 var page = gCount;
                 var gType = 1;//代表下拉刷新
-                toGradeList('tabGrade',page,gType);//具体取数据的方法
+                toGradeList('tabGrade', page, gType);//具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现（上架）
         function pullupRefreshG() {
-            setTimeout(function() {
+            setTimeout(function () {
                 gCount++;//翻下一页
                 var page = gCount;
-                var gType =2;//代表上拉加载
-                toGradeList('tabGrade',page,gType);//具体取数据的方法
+                var gType = 2;//代表上拉加载
+                toGradeList('tabGrade', page, gType);//具体取数据的方法
             }, 100);
         }
 
         //下拉刷新具体业务实现（下架）
         function pulldownRefreshS() {
-            setTimeout(function() {
+            setTimeout(function () {
                 sCount = 1;//刷新并显示第一页
                 var page = sCount;
                 var gType = 1;//代表下拉刷新
-                toScheduleList('tabSchedule',page,gType);//具体取数据的方法
+                toScheduleList('tabSchedule', page, gType);//具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现（下架）
         function pullupRefreshS() {
-            setTimeout(function() {
+            setTimeout(function () {
                 sCount++;//翻下一页
                 var page = sCount;
-                var gType =2;//代表上拉加载
-                toScheduleList('tabSchedule',page,gType);//具体取数据的方法
+                var gType = 2;//代表上拉加载
+                toScheduleList('tabSchedule', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -362,13 +393,13 @@
     })
 
     //接口获取数据并追加到页面
-    var toGradeList = function(wList,page,gType) {
+    var toGradeList = function (wList, page, gType) {
         //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/grade/getGradeListOfCoachByPageApi','','',true)}/?page="+page;
+        var url = "{:url('api/grade/getGradeListOfCoachByPageApi','','',true)}/?page=" + page;
         var campID = "{$camp_id}";
         var coachID = "{$coachInfo['id']}";
         mui.ajax({
-            url:url,
+            url: url,
             data: {
                 camp_id: campID,
                 coach_id: coachID
@@ -376,53 +407,53 @@
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
             timeout: 10000,//超时时间设置为10秒；
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             //processData:false,
             success: function (data) {
 
-                var newli='';
+                var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('grade/gradeInfoOfCamp')}" + '/grade_id/' + data.data.data[i].id+'/camp_id/'+data.data.data[i].camp_id;
-                        newli += '<li class="mui-table-view-cell mui-media listli fulllist"><a href="' + urls + '"><p class="fTop"><strong>'+ data.data.data[i].grade+'</strong><span>'+ data.data.data[i].court+'</span></p><p class="fMiddle">'+ data.data.data[i].student_str+'</p><p class="fBottom">学员：'+ data.data.data[i].students+' 人</p></a></li>';
+                        var urls = "{:url('grade/gradeInfoOfCamp')}" + '/grade_id/' + data.data.data[i].id + '/camp_id/' + data.data.data[i].camp_id;
+                        newli += '<li class="mui-table-view-cell mui-media listli fulllist"><a href="' + urls + '"><p class="fTop"><strong>' + data.data.data[i].grade + '</strong><span>' + data.data.data[i].court + '</span></p><p class="fMiddle">' + data.data.data[i].student_str + '</p><p class="fBottom">学员：' + data.data.data[i].students + ' 人</p></a></li>';
                     }
-                    if(gType==1){
+                    if (gType == 1) {
                         //上拉刷新
                         $("ul.grade").empty().append(newli);
-                        mui('#'+wList).pullRefresh().endPulldownToRefresh();
-                        mui('#'+wList).pullRefresh().refresh(true);
-                        if(newli=='') {
+                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                        mui('#' + wList).pullRefresh().refresh(true);
+                        if (newli == '') {
                             $("ul.grade").append('<li class="nodata"><p>没有相关数据哦</p></li>');
                         }
-                    }else{
+                    } else {
                         //下拉加载 gType==2
                         $("ul.grade").append(newli);
                     }
-                }else{
+                } else {
                     mui.toast('数据获取失败,请稍候再试');
                 }
 
-                if(newli!=''){
-                    mui('#'+wList).pullRefresh().endPullupToRefresh(false);
-                }else{
-                    mui('#'+wList).pullRefresh().endPullupToRefresh(true);
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
                 }
 
             },
-            error: function(xhr, type, errerThrown) {
+            error: function (xhr, type, errerThrown) {
                 mui.toast('网络异常,请稍候再试');
-                mui('#'+wList).pullRefresh().endPullupToRefresh(true);
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
             }
         });
     };
 
-    var toScheduleList = function(wList,page,gType) {
+    var toScheduleList = function (wList, page, gType) {
         //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/schedule/getScheduleListOfCoachByPageApi','','',true)}/?page="+page;
+        var url = "{:url('api/schedule/getScheduleListOfCoachByPageApi','','',true)}/?page=" + page;
         var campID = "{$camp_id}";
         var coachID = "{$coachInfo['id']}";
         mui.ajax({
-            url:url,
+            url: url,
             data: {
                 camp_id: campID,
                 coach_id: coachID
@@ -430,44 +461,46 @@
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
             timeout: 10000,//超时时间设置为10秒；
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             //processData:false,
             success: function (data) {
 
-                var newli='';
+                var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + campID;
                         newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].lesson_time + '</li><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></li></a>';
                     }
-                    if(gType==1){
+                    if (gType == 1) {
                         //上拉刷新
                         $("ul.schedule").empty().append(newli);
-                        mui('#'+wList).pullRefresh().endPulldownToRefresh();
-                        mui('#'+wList).pullRefresh().refresh(true);
-                        if(newli=='') {
+                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                        mui('#' + wList).pullRefresh().refresh(true);
+                        if (newli == '') {
                             $("ul.schedule").append('<li class="nodata"><p>没有相关数据哦</p></li>');
                         }
-                    }else{
+                    } else {
                         //下拉加载 gType==2
                         $("ul.schedule").append(newli);
                     }
-                }else{
+                } else {
                     mui.toast('数据获取失败,请稍候再试');
                 }
 
-                if(newli!=''){
-                    mui('#'+wList).pullRefresh().endPullupToRefresh(false);
-                }else{
-                    mui('#'+wList).pullRefresh().endPullupToRefresh(true);
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
                 }
 
             },
-            error: function(xhr, type, errerThrown) {
+            error: function (xhr, type, errerThrown) {
                 mui.toast('网络异常,请稍候再试');
-                mui('#'+wList).pullRefresh().endPullupToRefresh(true);
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
             }
         });
     };
+
 </script>
+
 </html>
