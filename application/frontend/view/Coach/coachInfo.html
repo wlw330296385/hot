@@ -34,10 +34,11 @@
                         <img class="mui-media-object mui-pull-left coachicon" src="{$coachInfo.portraits}">
                         <div class="mui-media-body">
                             {$coachInfo.coach} <i class="icon iconfont icon-sex{$coachInfo.sex}"></i>
-                            <p class="mui-ellipsis">教龄:{$coachInfo.coach_year} 等级:{$coachInfo.coach_rank}</p>
+                            <p class="mui-ellipsis">教龄:{$coachInfo.coach_year} 等级:{$coachInfo.coach_rank} {$coachInfo.area}</p>
                         </div>
-                        <div class="price-frame camp-num">
+                        <div class="camp-num mui-text-right">
                             <ul>
+                                <li><button type="button" class="mui-btn mui-btn-danger follow">关注</button></li>
                                 <li>
                                     <div class="icons mui-inline">
                                         <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
@@ -47,7 +48,7 @@
                                         <i data-index="5" class="mui-icon mui-icon-star-filled"></i>
                                     </div>
                                 </li>
-                                <li class="fr">{$coachInfo.area}</li>
+                                <!--<li class="fr">{$coachInfo.area}</li>-->
                             </ul>
                         </div>
                     </a>
@@ -55,9 +56,9 @@
             </ul>
 
             <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell listli detalisli">
+                <!--<li class="mui-table-view-cell listli detalisli">
                     <button type="button" class="btn follow">关注</button>
-                </li>
+                </li>-->
                 <li class="mui-table-view-cell listli detalisli listinitial">自我介绍
                     <span class="about">{$coachInfo.introduction}
                         <a href="#">全文展示</a>
@@ -106,7 +107,7 @@
             <ul class="mui-table-view operation mt">
                 <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><a href="#comment" class="typeBtn1">我要评价</a>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><a href="#comment" class="typeBtn2">邀请加入</a>
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><a href="#invitation" class="typeBtn2">邀请加入</a>
                 </li>
             </ul>
 
@@ -114,21 +115,33 @@
             <div id="comment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
                 <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
                     <ul class="mui-table-view operation">
-                        <h5><span class="title">评价我的教练</span>
+                        <h5><span class="sstitle">评价我的教练</span>
                             <a href="#comment" class="mui-icon mui-icon-closeempty"></a>
                         </h5>
-                        <li class="mui-table-view-cell listli">
+                        <li class="listli">
                             <textarea rows="4"></textarea>
                         </li>
                         <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="commentSubmit">提交</li>
+                    </ul>
+                </div>
+            </div>
 
+            <!-- 邀请弹框 -->
+            <div id="invitation" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+                <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+                    <ul class="mui-table-view operation">
+                        <h5><span class="sstitle">邀请加入</span>
+                            <a href="#invitation" class="mui-icon mui-icon-closeempty"></a>
+                        </h5>
+                        <li class="listli">
+                            <textarea rows="4"></textarea>
+                        </li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="invitationSubmit">提交</li>
                     </ul>
                 </div>
             </div>
 
         </div>
-
-
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -146,21 +159,97 @@
 
         $(function () {
 
-            //评价功能
-            $("#commentSubmit").click(function () {
+            // //评价功能
+            // $("#commentSubmit").click(function () {
+            //     //判断是否登陆会员
+            //     if ("{$memberInfo.id}" <= 0) {
+            //         var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+            //         mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
+            //     } else {
+            //         //判断是否该训练营学生
+
+            //     }
+            // });
+
+            //评价
+            $("#commentSubmit").on('click', function () {
                 //判断是否登陆会员
-                if ("{$memberInfo.id}" <= 0) {
-                    var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
-                    mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
-                } else {
-                    //判断是否该训练营学生
+                mui.ajax("{:url('api/CampMember/getCampMemberApi')}", {
+                    data: {
+                        'member_id': "{$memberInfo.id}"
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200 && data.data.status == "正常") {
+                            var data1 = wooApi.getInputData();
+                            var comment = $('textarea.data').val();
+                            if (comment == "" || comment == null) {
+                                mui.toast("您没填写评论内容哦");
+                                return false;
+                            }
+                            var objData = wooApi.arrTOobj(data1);
+                            objData.comment = comment;
+                            var result = wooApi.asyncF("{:url('api/camp/createCoachCommentApi')}", objData);
+                            if (result) {
+                                mui.toast(result.msg);
+                                mui('#pjpopover').popover('toggle');
+                                pulldownRefresh();
+                                $(".moreComment").show();
+                            }
+                        } else {
+                            mui.toast("学生身份才能评论哦，马上去注册吧！");
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            })
 
-                }
-            });
-
-            $("#comment").click(function () {
-                var title = "邀请加入";
-                $(".title").text(title);
+            //邀请
+            $("#invitationSubmit").on('click', function () {
+                //判断是否登陆会员
+                mui.ajax("{:url('api/CampMember/getCampMemberApi')}", {
+                    data: {
+                        'member_id': "{$memberInfo.id}"
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200 && data.data.status == "正常") {
+                            var data1 = wooApi.getInputData();
+                            var comment = $('textarea.data').val();
+                            if (invitation == "" || invitation == null) {
+                                mui.toast("您没填写评论内容哦");
+                                return false;
+                            }
+                            var objData = wooApi.arrTOobj(data1);
+                            objData.invitation = invitation;
+                            var result = wooApi.asyncF("{:url('api/camp/createCoachCommentApi')}", objData);
+                            if (result) {
+                                mui.toast(result.msg);
+                                mui('#pjpopover').popover('toggle');
+                                pulldownRefresh();
+                            }
+                        } else {
+                            mui.toast("错误提示！");
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
             })
 
             // 关注教练
@@ -200,31 +289,6 @@
             });
 
         });
-
-    // mui('body').on('shown', '.mui-popover', function (e) {
-    //     //console.log('shown', e.detail.id);//detail为当前popover元素
-    // });
-    // mui('body').on('hidden', '.mui-popover', function (e) {
-    //     //console.log('hidden', e.detail.id);//detail为当前popover元素
-    // });
-    // var info = document.getElementById("info");
-    // mui('body').on('tap', '.mui-popover-action li>a', function () {
-    //     var a = this,
-    //         parent;
-    //     //根据点击按钮，反推当前是哪个actionsheet
-    //     for (parent = a.parentNode; parent != document.body; parent = parent.parentNode) {
-    //         if (parent.classList.contains('mui-popover-action')) {
-    //             break;
-    //         }
-    //     }
-    //     //关闭actionsheet
-    //     mui('#' + parent.id).popover('toggle');
-    //     info.innerHTML = "你刚点击了\"" + a.innerHTML + "\"按钮";
-    // })
-
-    // mui("body").on("tap", "a", function () {
-    //     window.top.location.href = this.href;
-    // });
     </script>
 </body>
 
