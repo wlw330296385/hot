@@ -15,7 +15,7 @@
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <style type="text/css">
-        #tStatisticsTime{ height: 200px !important; }
+        #popSelectTime{ height: 200px !important; }
     </style>
 </head>
 
@@ -42,7 +42,7 @@
                     <ul class="mui-table-view mb">
                         <li class="mui-table-view-cell listli">
                             <p class="mui-navigate-right">
-                                当前月份<span class="btnTime" id="mStatisticsTime" data-options='{"type":"month"}'>2017年 10月</span>
+                                当前月份<span class="btnTime" id="mStatisticsTime" data-options='{"type":"month"}'>2017-11</span>
                             </p>
                         </li>
                     </ul>
@@ -198,8 +198,8 @@
                 <div id="tuitionStatistics" class="mui-control-content">
                     <ul class="mui-table-view mb">
                         <li class="mui-table-view-cell listli">
-                            <a href="#tStatisticsTime" class="mui-navigate-right">
-                                统计时间段<span class="tStatisticsTime">2017-10-1 至 2017-10-31</span>
+                            <a href="#popSelectTime" class="mui-navigate-right">
+                                统计时间段<span id="tStatisticsTime">2017-10-1 至 2017-10-31</span>
                             </a>
                         </li>
                     </ul>
@@ -307,7 +307,7 @@
 
 
     <!--学费统计时间段弹框-->
-    <div id="tStatisticsTime" class="mui-popover">
+    <div id="popSelectTime" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
             <span class="course"><strong>请选择统计时间段</strong></span>
@@ -379,10 +379,18 @@
     $(function () {
 
         //获取当前日期初始值，赋予对应位置并输出数据
-        var date = new Date;
-        var year = date.getFullYear();
-        var month = date.getMonth()+1;
-        var mDate = year+'-'+month;
+        var currYearMonth = "2017-11";
+        var currYMfirstDay = "2017-11-1";
+        var currYMlastDay = "2017-11-30";
+        var currLastMonth = "2017-10";
+        $("#mStatisticsTime").text(currYearMonth);
+        $("#tStatisticsTime").text(currYMfirstDay+' 至 '+currYMlastDay);
+        $("#eStatisticsTime").text(currLastMonth);
+
+//        getMonthlyTuition(currYearMonth);
+//        getTuitionStatistics(currYMfirstDay,currYMlastDay);
+//        getEarnings(currLastMonth);
+
 
         //切换tab的同时切换搜索框
         $(".mui-control-item").on("tap",'', function () {
@@ -398,13 +406,12 @@
         $("#timeConfirm").on("tap",'', function () {
             var sTime = $("#startTime").text();
             var eTime = $("#endTime").text();
-            var seTime = sTime+' 至 '+eTime;
-            $(".tStatisticsTime").text(seTime);
+            $("#tStatisticsTime").text(sTime+' 至 '+eTime);
 
             //api查询输出数据////////////
-            getTuitionStatistics(seTime);
+            getTuitionStatistics(sTime,eTime);
             //关闭弹框
-            mui('#tStatisticsTime').popover('toggle');
+            mui('#popSelectTime').popover('toggle');
         })
 
     })
@@ -417,9 +424,9 @@
     }
 
     //获取学费统计数据
-    var getTuitionStatistics = function (d) {
+    var getTuitionStatistics = function (s,e) {
 
-        mui.alert(d);
+        mui.alert(s+' 至 '+e);
 
     }
 
