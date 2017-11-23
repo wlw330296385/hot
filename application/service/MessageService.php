@@ -66,7 +66,10 @@ class MessageService
     // 发送个人消息
     public function sendMessageMember($member_id, $messageData, $saveData)
     {
-
+        $memberInfo = db('member')->where(['id'=>$member_id])->find();
+        if($memberInfo){
+            $messageData['touser'] = $memberInfo['openid'];
+        }
         $res = $this->MessageMemberModel->save($saveData);
         if ($res) {
             $WechatService = new \app\service\WechatService();

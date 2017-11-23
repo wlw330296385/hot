@@ -97,16 +97,19 @@ class BillService {
         if($data['goods_type'] == '课程'){
             //购买人数+1;
             db('lesson')->where(['id'=>$data['goods_id']])->setInc('students');
-            // 训练营的余额增加
+            // 训练营的余额和历史会员增加
             $setting = db('setting')->find();
             $campBlance = ($data['balance_pay']*(1-$setting['sysrebate']));
             $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
+
             if($ress){
                 db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$setting['sysrebate']),'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time()]);
             }
+            //学生表的总课程和总课量+n;   
+            db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
             // 发送个人消息           
             $MessageData = [
-                "touser" => session('memberInfo.openid'),
+                "touser" => '',
                 "template_id" => config('wxTemplateID.successBill'),
                 "url" => url('frontend/bill/billInfo',['bill_order'=>$data['bill_order']],'',true),
                 "topcolor"=>"#FF0000",

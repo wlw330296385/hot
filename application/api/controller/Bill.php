@@ -33,6 +33,7 @@ class Bill extends Frontend{
     public function getBillListByPageApi(){
         try{
             $map = input('post.');
+            // $map['member_id'] = $this->memberInfo['id'];
             $where = function($query) use($map){
                 $query -> where($map)->where(function($query){
                     $query->whereOr('expire',0)->whereOr('expire','gt',time());
