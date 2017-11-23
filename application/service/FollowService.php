@@ -42,4 +42,15 @@ class FollowService {
         $list = $model->where($map)->order($order)->paginate($paginate);
         return $list;
     }
+
+    // 获取关注数据
+    public function getfollow($map) {
+        $model = new Follow();
+        $result = $model->where($map)->find();
+        if ($result) {
+            return $result->toArray();
+        } else {
+            return $result;
+        }
+    }
 }

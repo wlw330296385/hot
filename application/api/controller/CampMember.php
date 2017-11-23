@@ -55,6 +55,12 @@ class CampMember extends Base
         }
         $result = db('camp_member')->insert(['camp_id' => $campInfo['id'], 'camp' => $campInfo['camp'], 'member_id' => $this->memberInfo['id'], 'member' => $this->memberInfo['member'], 'type' => -1, 'status' => 1, 'create_time' => time()]);
         if ($result) {
+            // 插入follow数据
+            db('follow')->insert([
+                'type' => 2, 'status' => 1,
+                'follow_id' => $campInfo['id'], 'follow_name' => $campInfo['camp'], 'follow_avatar' => $campInfo['logo'],
+                'member_id' => $this->memberInfo['id'], 'member' => $this->memberInfo['member'], 'member_avatar' => $this->memberInfo['avatar']
+            ]);
             return json(['code' => 200, 'msg' => $msg]);
         } else {
             return json(['code' => 100, 'msg' => '申请失败']);
@@ -130,6 +136,12 @@ class CampMember extends Base
             $model = new \app\model\CampMember();
             $result = $model->save($data);
             if ($result) {
+                // 插入follow数据
+                db('follow')->insert([
+                    'type' => 2, 'status' => 1,
+                    'follow_id' => $campInfo['id'], 'follow_name' => $campInfo['camp'], 'follow_avatar' => $campInfo['logo'],
+                    'member_id' => $this->memberInfo['id'], 'member' => $this->memberInfo['member'], 'member_avatar' => $this->memberInfo['avatar']
+                ]);
                 return json(['code' => 200, 'msg' => '申请成功', 'insid' => $model->id]);
             } else {
                 return json(['code' => 100, 'msg' => '申请失败']);
