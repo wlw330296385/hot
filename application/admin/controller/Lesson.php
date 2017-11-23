@@ -138,7 +138,7 @@ class Lesson extends Backend {
                 $BillService = new \app\service\BillService;
                 $result = $BillService->updateBill($billInfo);
                 if($result['code']==200){
-                    $res = $BillService->pay(['pay_time'=>time(),'expire'=>0],['bill_order'=>$billOrder]);
+                    $res = $BillService->pay(['pay_time'=>time(),'expire'=>0,'balance_pay'=>$lessonInfo['price']*$postData['total']],['bill_order'=>$billOrder]);
                     if($res){
                         $this->success('操作成功');
                     }else{
