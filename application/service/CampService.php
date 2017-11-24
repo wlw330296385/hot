@@ -19,6 +19,11 @@ class CampService {
         $res = $this->Camp->where($map)->order($order)->page($page,$paginate)->select();
         if($res){
             $result = $res->toArray();
+            foreach ($result as $k => $val) {
+                if ($val['star'] > 0) {
+                    $result[$k]['star'] = ceil($val['star']/$val['star_num']);   
+                }
+            }
             return $result;
         }else{
             return $res;
@@ -26,7 +31,12 @@ class CampService {
     }
 
     public function getCampListByPage( $map=[],$paginate=10, $order=''){
-        $res = $this->Camp->where($map)->order($order)->paginate($paginate);
+        $res = $this->Camp->where($map)->order($order)->paginate($paginate)->each(function($item,$key){
+            if ($item['star'] > 0) {
+                $item['star'] = ceil($item['star']/$item['star_num']);
+            }
+            return $item;
+        });
         
         if($res){
             $result = $res->toArray();
