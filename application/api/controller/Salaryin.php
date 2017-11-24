@@ -103,11 +103,13 @@ class Salaryin extends Base {
             $map['member_type'] = ['lt', 5];
             $map['type'] = 1;
             // 获取工资数据
-            $salaryList = $this->SalaryInService->getSalaryInList($map);
+            //$salaryList = $this->SalaryInService->getCampSalaryInList($map);
+            $salaryinM = new \app\model\SalaryIn();
+            $salaryList = $salaryinM->where($map)->field(['member','sum(salary+push_salary)' => 'month_salary', 'member_id'])->group('member_id')->select();
             if (!$salaryList) {
                 $response = ['code' => 100, 'msg' => __lang('MSG_401')];
             } else {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $salaryList];
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $salaryList->toArray()];
             }
             return json($response);
         }catch (Exception $e){
