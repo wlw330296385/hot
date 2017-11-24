@@ -223,7 +223,49 @@ class BillService {
                 $CampMember->save(['type'=>-1,'camp_id'=>$data['camp_id'],'member_id'=>$data['member_id'],'camp'=>$data['camp'],'member'=>$data['member'],'status'=>1]);
             }
             
-            
+            // 发送训练营模板消息
+            $MessageCampData = [
+                "touser" => '',
+                "template_id" => config('wxTemplateID.successBill'),
+                "url" => url('frontend/bill/billInfoOfCamp',['bill_order'=>$data['bill_order']],'',true),
+                "topcolor"=>"#FF0000",
+                "data" => [
+                    'first' => ['value' => '订单支付成功通知'],
+                    'keyword1' => ['value' => $data['student']],
+                    'keyword2' => ['value' => $data['bill_order']],
+                    'keyword3' => ['value' => $data['balance_pay'].'元'],
+                    'keyword4' => ['value' => $data['goods_des']],
+                    'remark' => ['value' => '大热篮球']
+                ]
+            ];
+            $MessageCampSaveData = [
+                'title'=>"购买-{$data['goods']}",
+                'content'=>"订单号: {$data['bill_order']}<br/>支付金额: {$data['balance_pay']}元<br/>购买人:{$data['member']}<br/>购买理由: {$data['remarks']}",
+                'member_id'=>$data['member_id'],
+                'url'=>url('frontend/bill/billInfoOfCamp',['bill_order'=>$data['bill_order']],'',true)
+            ];
+            // 发送个人模板消息
+            $MessageData = [
+                "touser" => '',
+                "template_id" => config('wxTemplateID.successBill'),
+                "url" => url('frontend/bill/billInfo',['bill_order'=>$data['bill_order']],'',true),
+                "topcolor"=>"#FF0000",
+                "data" => [
+                    'first' => ['value' => '订单支付成功通知'],
+                    'keyword1' => ['value' => $data['member']],
+                    'keyword2' => ['value' => $data['bill_order']],
+                    'keyword3' => ['value' => $data['balance_pay'].'元'],
+                    'keyword4' => ['value' => $data['goods_des']],
+                    'remark' => ['value' => '大热篮球']
+                ]
+            ];
+            $saveData = [
+                'title'=>"订单支付成功-{$data['goods']}",
+                'content'=>"订单号: {$data['bill_order']}<br/>支付金额: {$data['balance_pay']}元<br/>支付人信息:{$data['member']}",
+                'url'=>url('frontend/bill/billInfo',['bill_order'=>$data['bill_order']],'',true),
+                'member_id'=>$data['member_id']
+            ];
+
         }   
         $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
         $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);        
