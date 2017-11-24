@@ -188,9 +188,11 @@ class Coach extends Base{
             $this->error('没有这个教练信息');
         }
 
-        // 全部班级
-//      $gradeList = db('grade')->where(['coach_id'=>$coachInfo['id'],'status'=>1])->where('delete_time', null)->column('id');
-        $gradeList = $this->coachService->ingradelist($coachInfo['id']);
+        // 全部班级数量
+        $map = function ($query) use ($coach_id){
+            $query->where(['grade.coach_id'=>$coach_id])->whereOr('grade.assistant_id','like',"%\"$coach_id\"%");
+        };
+        $gradeList = db('grade')->where($map)->column('id');
         $gradeCount = count($gradeList);
         // 全部学员
 //      $studentCount = db('grade_member')->distinct(true)->field('member_id')->where(['grade_id'=>['in',$gradeList],'type'=>1,'status'=>1])->where('delete_time', null)->count();
@@ -207,7 +209,14 @@ class Coach extends Base{
             ->order('camp_member.id desc')
             ->select();
         $myCampList = db('camp_member')->where(['type'=>['gt',2],'status'=>1,'member_id'=>$this->memberInfo['id']])->select();
-
+        // 评价教练员权限
+        $commentPower = 0;
+        $gradememberList = db('grade_member')->where(['grade_id'=>['in',$gradeList],'member_id'=>$this->memberInfo['id'],'delete_time'=>'null'])->find();
+        if($gradememberList){
+            $commentPower = 1;
+        }
+        
+        $this->assign('commentPower',$commentPower);
         $this->assign('myCampList',$myCampList);
         $this->assign('campList',$campList);
         $this->assign('commentList',$commentList);

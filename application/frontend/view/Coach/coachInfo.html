@@ -96,7 +96,7 @@
             <p class="dropdown mt55"><a href="#">查看更多评论...</a></p>
 
             <ul class="mui-table-view operation mt">
-                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><a href="#comment" class="typeBtn1">我要评价</a>
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><a href="#comment" id="typeBtn1">我要评价</a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><a href="#invitation" class="typeBtn2">邀请加入</a>
                 </li>
@@ -110,7 +110,7 @@
                             <a href="#comment" class="mui-icon mui-icon-closeempty"></a>
                         </h5>
                         <li class="listli">
-                            <textarea rows="4"></textarea>
+                            <textarea rows="4" class="data"></textarea>
                         </li>
                         <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="commentSubmit">提交</li>
                     </ul>
@@ -124,6 +124,11 @@
                         <h5><span class="sstitle">邀请加入</span>
                             <a href="#invitation" class="mui-icon mui-icon-closeempty"></a>
                         </h5>
+                        <select>
+                            {volist name="myCampList" id="vol"}
+                                <option value="{$vol.camp_id}" >{$vol.camp}</option>
+                            {/volist}
+                        </select>
                         <li class="listli">
                             <textarea rows="4"></textarea>
                         </li>
@@ -138,7 +143,7 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/starshow.js"></script>
-
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script>
         //初始化
         mui.init({
@@ -167,44 +172,27 @@
 
             //评价
             $("#commentSubmit").on('click', function () {
-                //判断是否登陆会员
-                mui.ajax("{:url('api/CampMember/getCampMemberApi')}", {
-                    data: {
-                        'member_id': "{$memberInfo.id}"
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data);
-                        if (data.code == 200 && data.data.status == "正常") {
-                            var data1 = wooApi.getInputData();
-                            var comment = $('textarea.data').val();
-                            if (comment == "" || comment == null) {
-                                mui.toast("您没填写评论内容哦");
-                                return false;
-                            }
-                            var objData = wooApi.arrTOobj(data1);
-                            objData.comment = comment;
-                            var result = wooApi.asyncF("{:url('api/camp/createCoachCommentApi')}", objData);
-                            if (result) {
-                                mui.toast(result.msg);
-                                mui('#pjpopover').popover('toggle');
-                                pulldownRefresh();
-                                $(".moreComment").show();
-                            }
-                        } else {
-                            mui.toast("学生身份才能评论哦，马上去注册吧！");
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
+                //判断是否登陆会员     
+                if("{$commentPower}"!=1){
+                    alert('您还不是该教练的学生,无法评论');
+                    return;
+                }    
+                    var comment = $('textarea.data').val();
+                    if (comment == "" || comment == null) {
+                        mui.toast("您没填写评论内容哦");
+                        return false;
+                    }
+                    var objData = {};
+                    objData.comment = comment;
+                    objData.coach = "{$coachInfo.coach}";
+                    objData.coach_id = "{$coachInfo.id}";
+                    var result = wooApi.asyncF("{:url('api/coach/createCoachCommentApi')}", objData);
+                    if (result) {
+                        mui.toast(result.msg);
+                        mui('#pjpopover').popover('toggle');
+                        $(".moreComment").show();
                     }
                 });
-            })
 
             //邀请
             $("#invitationSubmit").on('click', function () {

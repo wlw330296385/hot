@@ -234,4 +234,27 @@ class Index extends Controller{
                 ->update(['expire'=>time()+86400]);
         
     }
+
+    public function repairStudentStotalschedule(){
+        // $studentList = db('lesson_member')->field('sum(`rest_schedule`) total_schedule,student_id id')->group('student_id')->select();
+
+        $studentList = db('bill')->field('sum(`total`) total_schedule,student_id id')->where(['is_pay'=>1,'status'=>1,'expire'=>0,'goods_type'=>1])->group('student_id')->select();
+        dump(db('bill')->getlastsql()) ;
+        // dump($studentList);die;
+        $StudentModel = new \app\model\Student;
+        $StudentModel->saveAll($studentList);
+        echo $StudentModel->getlastsql();
+    }
+
+
+    public function repairStudentStotalslesson(){
+        // $studentList = db('lesson_member')->field('sum(`rest_schedule`) total_schedule,student_id id')->group('student_id')->select();
+
+        $studentList = db('bill')->field('count(`goods_id`) total_lesson,student_id id')->where(['is_pay'=>1,'status'=>1,'expire'=>0,'goods_type'=>1])->group('student_id')->select();
+        dump(db('bill')->getlastsql()) ;
+        // dump($studentList);die;
+        $StudentModel = new \app\model\Student;
+        $StudentModel->saveAll($studentList);
+        echo $StudentModel->getlastsql();
+    }
 }

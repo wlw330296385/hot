@@ -218,4 +218,16 @@ class CoachService{
             return 0;
         }
     }
+
+
+    // 创建教练评论
+    public function createCoachComment($data){
+        $CoachComemnt = new \app\model\CoachComment;
+        $result = $CoachComemnt->save($data);
+        if($result){
+            return ['code' => 200, 'msg' => '评论成功'];
+        }else{
+            return ['code' => 100, 'msg' => $CoachComemnt->getError()];
+        }
+    }
 }

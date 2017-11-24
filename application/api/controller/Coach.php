@@ -240,4 +240,18 @@ class Coach extends Base{
         }
     }
 
+    // 评论教练
+    public function createCoachCommentApi(){
+        try{
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $data['avatar'] = $this->memberInfo['avatar'];
+            $result = $this->CoachService->createCoachComment($data);
+            return json($result);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
 }
