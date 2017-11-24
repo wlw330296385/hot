@@ -10,12 +10,59 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--等级星星样式-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css" />
     <style type="text/css">
-        #campList a { width:auto; display: inline; }
-        .detalis-list .detalisli .coachicon:first-child{ margin-right: 0px; margin-left: 10px; }
+        #campList a {
+            width: auto;
+            display: inline;
+        }
+        
+        .detalis-list .detalisli .coachicon:first-child {
+            margin-right: 0px;
+            margin-left: 10px;
+        }
+        
+        #container {
+            width: 375px;
+            height: 250px;
+        }
+        
+        #mapFrame {
+            height: 250px;
+        }
+        
+        #map button {
+            top: 11px;
+            position: absolute;
+            right: 3px;
+            padding: 5px 8px;
+        }
+        
+        #tip {
+            background-color: #ddf;
+            color: #333;
+            border: 1px solid silver;
+            box-shadow: 3px 4px 3px 0px silver;
+            position: absolute;
+            top: 10px;
+            left: 5px;
+            right: 55px;
+            border-radius: 5px;
+            overflow: hidden;
+            line-height: 20px;
+        }
+        
+        #tip input[type="text"] {
+            height: 25px;
+            border: 0;
+            padding-left: 5px;
+            width: 280px;
+            border-radius: 3px;
+            outline: none;
+            margin-bottom: 0;
+        }
     </style>
 </head>
 
@@ -56,30 +103,28 @@
                     <a href="javascript:;">
                         <div class="mui-media-body">
                             {$courtInfo.court}
-                            
-                            <p class="mui-ellipsis">{switch name="courtInfo.outdoors"}{case value="1"}室内{/case}
-                                {case value="2"}室外{/case}
-                                {default /}室内|室外{/switch}
+
+                            <p class="mui-ellipsis">{switch name="courtInfo.outdoors"}{case value="1"}室内{/case} {case value="2"}室外{/case} {default
+                                /}室内|室外{/switch}
                             </p>
 
                         </div>
                         {eq name="button" value="2" }
                         <a href="{:url('court/updateCourt',['court_id'=>$courtInfo['id']])}" class="mui-btn mui-btn-primary">
-                        <div class="price-frame camp-num">
-                            <ul>
-                                <li class="fr">
-                                    
-                                    <span class="more">编辑</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </a>
-                        {/eq}
-                        {eq name="button" value="1"}
+                            <div class="price-frame camp-num">
+                                <ul>
+                                    <li class="fr">
+
+                                        <span class="more">编辑</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </a>
+                        {/eq} {eq name="button" value="1"}
                         <div class="price-frame camp-num" onclick="addCourt({$courtInfo['id']})">
                             <ul>
                                 <li class="fr">
-                                    <span  class="mui-btn mui-btn-primary">添加到我的训练营</span>
+                                    <span class="mui-btn mui-btn-primary">添加到我的训练营</span>
                                 </li>
                             </ul>
                         </div>
@@ -91,7 +136,7 @@
             <ul class="mui-table-view">
                 <li class="mui-table-view-cell listli detalisli">所属地区<span>{$courtInfo.province} {$courtInfo.city} {$courtInfo.area}</span></li>
                 <li class="mui-table-view-cell listli detalisli">
-                    具体地址<span><i class="mui-icon mui-icon-location"></i>{$courtInfo.location}</span>
+                    具体地址<a href="#mapFrame"><span><i class="mui-icon mui-icon-location"></i>{$courtInfo.location}</span></a>
                 </li>
                 <li class="mui-table-view-cell listli detalisli">联系人<span>{$courtInfo.principal}</span></li>
                 <li class="mui-table-view-cell listli detalisli">营业时间<span class="fixed">{$courtInfo.open_time}</span></li>
@@ -109,73 +154,90 @@
         </div>
     </div>
 
-</div>
+    <!-- map -->
+    <div id="mapFrame" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div id="map">
+            <div>{:token()}</div>
+            <div id="container"></div>
+            <div id="tip">
+                <input type="text" id="keyword" name="keyword" value="{$courtInfo.location}" onfocus='this.value=""' placeholder="请输入关键字：(选定后搜索)"
+                />
+            </div>
+            <button class="mui-btn-blue" id="mapConfirm">确认</button>
+        </div>
+    </div>
 
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/wooApi.js"></script>
+    </div>
 
-<script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <!--获取地址-->
+    <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
+    <script src="/static/frontend/js/map.js"></script>
 
-    //轮播
-    var slider = mui("#slider");
-    slider.slider({
-        interval: 5000
-    });
+    <script>
+                                                                                                      //初始化
+                                                                                                      mui.init({
+                                                                                                          swipeBack: true //启用右滑关闭功能
+                                                                                                      });
 
-    $(function () {
+                                                                                                      //轮播
+                                                                                                      var slider = mui("#slider");
+                                                                                                      slider.slider({
+                                                                                                          interval: 5000
+                                                                                                      });
 
-        //获取场地下训练营
-        toCampList('','');
+                                                                                                      $(function () {
 
-    })
+                                                                                                          //获取场地下训练营
+                                                                                                          toCampList('', '');
 
-    //训练营教练列表接口获取数据并追加到页面
-    var toCampList = function(page,gType) {
-        var url  = "{:url('api/court/getCourtCampListNoPageApi','','',true)}";
-        var courtID = "{$courtInfo.id}";
-        mui.ajax({
-            url:url,
-            data: {
-                court_id:courtID,
-                status:1
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: {'Content-Type': 'application/json'},
-            //processData:false,
-            success: function (data) {
-                if (data.code == 200) {
-                    var newli='';
-                    for(var i=0;i<=data.data.length-1;i++){
-                        var urls = "{:url('camp/campInfo')}" + '/camp_id/' + data.data[i].id;
-                        newli = newli + '<a href="' + urls + '"><img class="coachicon" src="'+data.data[i].logo+'" alt="'+data.data[i].camp+'"></a>'
-                        console.log(data.data[i].banner)
-                    }
-                    $("#campList").append(newli);
-                }else{
-                    mui.toast('训练营教练列表获取失败,请稍候再试');
-                }
-            },
-            error: function(xhr, type, errerThrown) {
-                mui.toast('网络异常,请稍候再试');
-            }
-        });
-    };
+                                                                                                      })
 
-     function addCourt(court_id){
-        var result = wooApi.asyncF("{:url('api/court/ownCourtApi')}",{'court_id':court_id,'camp_id':"{$camp_id}"});
-        if(result.code == 200){
-            mui.toast(result.msg);
-            location.reload();
-        }else{
-           mui.toast('网络错误'); 
-        }
-    }
-</script>
+                                                                                                      //训练营教练列表接口获取数据并追加到页面
+                                                                                                      var toCampList = function (page, gType) {
+                                                                                                          var url = "{:url('api/court/getCourtCampListNoPageApi','','',true)}";
+                                                                                                          var courtID = "{$courtInfo.id}";
+                                                                                                          mui.ajax({
+                                                                                                              url: url,
+                                                                                                              data: {
+                                                                                                                  court_id: courtID,
+                                                                                                                  status: 1
+                                                                                                              },
+                                                                                                              dataType: 'json',//服务器返回json格式数据
+                                                                                                              type: 'post',//HTTP请求类型
+                                                                                                              timeout: 10000,//超时时间设置为10秒；
+                                                                                                              headers: { 'Content-Type': 'application/json' },
+                                                                                                              //processData:false,
+                                                                                                              success: function (data) {
+                                                                                                                  if (data.code == 200) {
+                                                                                                                      var newli = '';
+                                                                                                                      for (var i = 0; i <= data.data.length - 1; i++) {
+                                                                                                                          var urls = "{:url('camp/campInfo')}" + '/camp_id/' + data.data[i].id;
+                                                                                                                          newli = newli + '<a href="' + urls + '"><img class="coachicon" src="' + data.data[i].logo + '" alt="' + data.data[i].camp + '"></a>'
+                                                                                                                          console.log(data.data[i].banner)
+                                                                                                                      }
+                                                                                                                      $("#campList").append(newli);
+                                                                                                                  } else {
+                                                                                                                      mui.toast('训练营教练列表获取失败,请稍候再试');
+                                                                                                                  }
+                                                                                                              },
+                                                                                                              error: function (xhr, type, errerThrown) {
+                                                                                                                  mui.toast('网络异常,请稍候再试');
+                                                                                                              }
+                                                                                                          });
+                                                                                                      };
+
+                                                                                                      function addCourt(court_id) {
+                                                                                                          var result = wooApi.asyncF("{:url('api/court/ownCourtApi')}", { 'court_id': court_id, 'camp_id': "{$camp_id}" });
+                                                                                                          if (result.code == 200) {
+                                                                                                              mui.toast(result.msg);
+                                                                                                              location.reload();
+                                                                                                          } else {
+                                                                                                              mui.toast('网络错误');
+                                                                                                          }
+                                                                                                      }
+    </script>
 </body>
+
 </html>

@@ -10,36 +10,79 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--选择器样式-->
-    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
-    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
     <style>
-        .previewList{
+        .previewList {
             overflow: hidden;
             padding: 0 10px;
         }
-        .previewList li{
+        
+        .previewList li {
             float: left;
             width: 17%;
             position: relative;
             display: flex;
             margin-right: 8px;
         }
+        
         .previewList i {
             position: absolute;
             top: 0;
             right: 0;
             color: #f00;
         }
+        
         .previewList img {
-         width: 55px;
-         height: 55px;
-         margin-right: 0
-     }
- </style>
+            width: 55px;
+            height: 55px;
+            margin-right: 0
+        }
+        
+        #container {
+            width: 375px;
+            height: 250px;
+        }
+        
+        #mapFrame {
+            height: 250px;
+        }
+        
+        #map button {
+            top: 11px;
+            position: absolute;
+            right: 3px;
+            padding: 5px 8px;
+        }
+        
+        #tip {
+            background-color: #ddf;
+            color: #333;
+            border: 1px solid silver;
+            box-shadow: 3px 4px 3px 0px silver;
+            position: absolute;
+            top: 10px;
+            left: 5px;
+            right: 55px;
+            border-radius: 5px;
+            overflow: hidden;
+            line-height: 20px;
+        }
+        
+        #tip input[type="text"] {
+            height: 25px;
+            border: 0;
+            padding-left: 5px;
+            width: 280px;
+            border-radius: 3px;
+            outline: none;
+            margin-bottom: 0;
+        }
+    </style>
 </head>
 
 <body>
@@ -66,12 +109,15 @@
                         </a>
                     </div>
 
-                    <div class="mui-input-row h-auto"><label>具体地址</label>
-                        <textarea rows="2" class="location" placeholder="请输入具体地址"></textarea> 
+                    <div class="mui-input-row">
+                        <a href="#mapFrame">
+                            <label>具体地址</label>
+                            <input type="text" name="location" value="" class="location data pdr" placeholder="请输入具体地址">
+                        </a>
                     </div>
 
                     <div class="mui-input-row h-auto"><label>营业时间</label>
-                        <textarea rows="2" class="open_time" placeholder="请输入营业时间"></textarea> 
+                        <textarea rows="2" class="open_time" placeholder="请输入营业时间"></textarea>
                     </div>
 
                     <div class="mui-input-row"><label>联系电话</label>
@@ -114,16 +160,14 @@
                     <div class="mui-input-row h-auto ">
                         <a class="mui-navigate-right portraits filePicker" onclick="add_id(1)">
                             <label>场地环境</label>
-                            <img id="preview_1" class="coachicon icon01 upload-preview" >
+                            <img id="preview_1" class="coachicon icon01 upload-preview">
                             <input type="hidden" name="portraits" value='' class="covers">
                         </a>
                     </div>
 
                     <div class="mui-input-row h-auto mt55">
                         <ul class="previewList">
-                        <!--     <li><i id='del'>X</i><img id='img' src="/static/frontend/images/1.jpg"></li>
-                            <li><i id='del'>X</i><img id='img' src="/static/frontend/images/2.jpg"></li>
-                             <li><i id='del'>X</i><img id='img' src="/static/frontend/images/3.jpg"></li> -->
+
                         </ul>
                     </div>
 
@@ -136,6 +180,17 @@
         </div>
 
     </div>
+    <!-- map -->
+    <div id="mapFrame" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div id="map">
+            <div>{:token()}</div>
+            <div id="container"></div>
+            <div id="tip">
+                <input type="text" id="keyword" name="keyword" value="" onfocus='this.value=""' placeholder="请输入关键字：(选定后搜索)" />
+            </div>
+            <button class="mui-btn-blue" id="mapConfirm">确认</button>
+        </div>
+    </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -144,122 +199,133 @@
     <script src="/static/frontend/js/mui.poppicker.js"></script>
     <script src="/static/frontend/js/city.data-3.js"></script>
     <script>
-        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'court'])}";
+                                                                                 var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'court'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+    <!--获取地址-->
+    <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
+    <script src="/static/frontend/js/map.js"></script>
     <script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
-
-    //选择器
-    var getProvince ='';
-    var getCity ='';
-    var getArea = '';
-    (function ($, doc) {
-     $.init();
-     $.ready(function () {
-        _getParam = function (obj, param) {
-            return obj[param] || '';
-        };
-
-        var cityPicker3 = new $.PopPicker({
-            layer: 3
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
         });
-        cityPicker3.setData(cityData3);
-        var showCityPickerButton = doc.getElementById('showCityPicker3');
-        var cityResult3 = doc.getElementById('cityResult3');
-        showCityPickerButton.addEventListener('tap', function (event) {
-            cityPicker3.show(function (items) {
-                cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
-                    //返回 false 可以阻止选择框的关闭
-                    //return false;
-                    getProvince = _getParam(items[0], 'text');
-                    getCity = _getParam(items[1], 'text');
-                    getArea = _getParam(items[2], 'text');
+
+        //选择器
+        var getProvince = '';
+        var getCity = '';
+        var getArea = '';
+        (function ($, doc) {
+            $.init();
+            $.ready(function () {
+                _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
                 });
-        }, false);
-    });
- })(mui, document);
+                cityPicker3.setData(cityData3);
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                        getProvince = _getParam(items[0], 'text');
+                        getCity = _getParam(items[1], 'text');
+                        getArea = _getParam(items[2], 'text');
+                    });
+                }, false);
+            });
+        })(mui, document);
 
-    //检测输入是否为数字
-    $(".checkNum").blur(function(){
-        var num =$(this).val();
-        if(isNaN(num)){
-            mui.toast("请填写数字");
-            return false;
-        }
-    })
+        //检测输入是否为数字
+        $(".checkNum").blur(function () {
+            var num = $(this).val();
+            if (isNaN(num)) {
+                mui.toast("请填写数字");
+                return false;
+            }
+        });
+        // map(选择具体地址)
+        $("#mapConfirm").on('tap', '', function () {
+            var mapkeyword = $("input[name='keyword']").val();
+            $("input[name='location']").val(mapkeyword)
+            mui("#mapFrame").popover("toggle");
+        });
 
 
-    //创建场地
-    $(".createBtn").click(function(){
-        var covers =[];
-        $(".previewList img").each(function(){
-            covers.push($(this).attr('src'));
-        }).get().join(",");
-        // 上面获取图片地址
-        var  court = $(".court").val();
-        var  province = getProvince;
-        var  city = getCity;
-        var  area = getArea;
-        var  location = $(".location").val();
-        var  open_time = $(".open_time").val();
-        var  contract = $(".contract").val();
-        var  principal = $(".principal").val();
-        var  outdoors = $(".outdoors").val();
-        var  chip_rent = $(".chip_rent").val();
-        var  half_rent = $(".half_rent").val();
-        var  full_rent = $(".full_rent").val();
-        var  remarks = $(".remarks").val();
-        var  camp_id ="{$campInfo['id']}";
-        var  camp ="{$campInfo['camp']}";
-        if(court!=''&&location!=''&&open_time!=''&&contract!=''&&principal!=''&&chip_rent!=''&&half_rent!=''&&full_rent!=''&&outdoors!=''){
-            mui.ajax("{:url('api/court/createCourtApi')}",{
-                data:{
-                    "court":court,
-                    "province":getProvince,
-                    "city":getCity,
-                    "area":getArea,
-                    "location":location,
-                    "open_time":open_time,
-                    "contract":contract,
-                    "principal":principal,
-                    "chip_rent":chip_rent,
-                    "half_rent":half_rent,
-                    "full_rent":full_rent,
-                    "outdoors":outdoors,
-                    "remarks":remarks,
-                    "covers":covers,
-                    "camp_id":camp_id,
-                    "camp":camp
-                },
-                    dataType:'json',//服务器返回json格式数据
-                    type:'post',//HTTP请求类型
-                    timeout:10000,//超时时间设置为10秒；
-                    headers:{'Content-Type':'application/json'},                  
-                    success:function(data){
+        //创建场地
+        $(".createBtn").click(function () {
+            var covers = [];
+            $(".previewList img").each(function () {
+                covers.push($(this).attr('src'));
+            }).get().join(",");
+            // 上面获取图片地址
+            var court = $(".court").val();
+            var province = getProvince;
+            var city = getCity;
+            var area = getArea;
+            var location = $(".location").val();
+            var open_time = $(".open_time").val();
+            var contract = $(".contract").val();
+            var principal = $(".principal").val();
+            var outdoors = $(".outdoors").val();
+            var chip_rent = $(".chip_rent").val();
+            var half_rent = $(".half_rent").val();
+            var full_rent = $(".full_rent").val();
+            var remarks = $(".remarks").val();
+            var camp_id = "{$campInfo['id']}";
+            var camp = "{$campInfo['camp']}";
+            if (court != '' && location != '' && open_time != '' && contract != '' && principal != '' && chip_rent != '' && half_rent != '' && full_rent != '' && outdoors != '') {
+                mui.ajax("{:url('api/court/createCourtApi')}", {
+                    data: {
+                        "court": court,
+                        "province": getProvince,
+                        "city": getCity,
+                        "area": getArea,
+                        "location": location,
+                        "open_time": open_time,
+                        "contract": contract,
+                        "principal": principal,
+                        "chip_rent": chip_rent,
+                        "half_rent": half_rent,
+                        "full_rent": full_rent,
+                        "outdoors": outdoors,
+                        "remarks": remarks,
+                        "covers": covers,
+                        "camp_id": camp_id,
+                        "camp": camp,
+                        "lng": lng,
+                        "lat": lat,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
                         //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data)
-                        if(data.code==200){
+                        if (data.code == 200) {
                             mui.toast(data.msg);
-//                            setTimeout(window.location.href="{:url('court/courtinfo',['camp_id'=>$campInfo['id']])}"+'/court_id/'+data.data,1000);
-                            setTimeout(window.location.href="{:url('camp/courtlistofcamp#onCourtList',['camp_id'=>$campInfo['id']])}",1000);
-                        }else{
+                            setTimeout(window.location.href = "{:url('camp/courtlistofcamp#onCourtList',['camp_id'=>$campInfo['id']])}", 3000);
+                        } else {
                             mui.toast(data.msg)
                         }
                     },
-                    error:function(xhr,type,errorThrown){
+                    error: function (xhr, type, errorThrown) {
                         //异常处理；
                         console.log(type);
                     }
                 });
-        }else{
-            mui.toast("选项不能为空");
-        }
-    })
-</script>
+            } else {
+                mui.toast("选项不能为空");
+            }
+        })
+    </script>
 </body>
+
 </html>
