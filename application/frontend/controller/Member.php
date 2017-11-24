@@ -31,6 +31,12 @@ class Member extends Base{
 	    return view('Member/followlist');
     }
 
+    // 我的班级列表
+    public function myGrade() {
+        $member_id = $this->memberInfo['id'];
+        return view('Member/myGrade');
+    }
+
     // 会员设置页面
     public function memberSetup(){
 

@@ -60,6 +60,46 @@
         .pdr {
             padding-right: 30px !important;
         }
+        
+        #container {
+            width: 375px;
+            height: 250px;
+        }
+        
+        #mapFrame {
+            height: 250px;
+        }
+        
+        #map button {
+            top: 11px;
+            position: absolute;
+            right: 3px;
+            padding: 5px 8px;
+        }
+        
+        #tip {
+            background-color: #ddf;
+            color: #333;
+            border: 1px solid silver;
+            box-shadow: 3px 4px 3px 0px silver;
+            position: absolute;
+            top: 10px;
+            left: 5px;
+            right: 55px;
+            border-radius: 5px;
+            overflow: hidden;
+            line-height: 20px;
+        }
+        
+        #tip input[type="text"] {
+            height: 25px;
+            border: 0;
+            padding-left: 5px;
+            width: 280px;
+            border-radius: 3px;
+            outline: none;
+            margin-bottom: 0;
+        }
     </style>
 </head>
 
@@ -132,8 +172,11 @@
                 </div>
 
                 <div class="mui-input-row">
-                    <label>具体地址</label>
-                    <input type="text" name="location" value="" class="location data pdr" placeholder="选填">
+                    <a href="#mapFrame">
+                        <label>具体地址</label>
+                        <input type="text" name="location" value="" class="location data pdr" placeholder="选填">
+                    </a>
+
                 </div>
 
                 <div class="mui-input-row" id='showCityPicker3'>
@@ -499,25 +542,19 @@
             </div>
         </div>
     </div>
-    <!--教案-->
-    <!--     <div id="teachingPlan" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course"><strong>教案列表</strong></span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
 
-                <ul class="mui-table-view list">
-                    {volist name="planList" id="vol"}
-                    <li class="mui-table-view-cell listli detalisli teachingPlan" data-id="{$v.id}">
-                        {$vol.outline}
-                    </li>
-                    {/volist}
-                </ul>
+    <!-- map -->
+    <div id="mapFrame" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div id="map">
+            <div>{:token()}</div>
+            <div id="container"></div>
+            <div id="tip">
+                <input type="text" id="keyword" name="keyword" value="" onfocus='this.value=""' placeholder="请输入关键字：(选定后搜索)" />
             </div>
+            <button class="mui-btn-blue" id="mapConfirm">确认</button>
         </div>
-    </div> -->
+    </div>
+
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -527,6 +564,9 @@
     <script src="/static/frontend/js/city.data-3.js"></script>
     <script src="/static/frontend/js/common.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
+    <!--获取地址-->
+    <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
+    <script src="/static/frontend/js/map.js"></script>
     <script>
         //初始化
         mui.init({
@@ -682,7 +722,7 @@
                 var studentNames = "";
                 studentList = [];
                 $("input[name='checkbox-student']:checked").each(function (i) {
-//                    var id = $(this).attr("data-id");
+                    //                    var id = $(this).attr("data-id");
                     var student_id = $(this).attr("data-student_id");
                     var student = $(this).val();
                     var camp = $(this).attr("data-camp");
@@ -691,8 +731,8 @@
                     var lesson_id = $(this).attr("data-lesson_id");
                     var member = $(this).attr("data-member");
                     var member_id = $(this).attr("data-member_id");
-                    studentList[i] = { student: student, student_id: student_id, camp:camp, camp_id:camp_id, lesson:lesson, lesson_id:lesson_id, member:member, member_id:member_id}
-                    inputList += '<input type="hidden" class="stdList" data-student="' + student + '" data-student_id="' + student_id +'" data-camp="'+ camp +'" data-camp_id="'+ camp_id +'" data-lesson="'+ lesson +'" data-lesson_id="'+ lesson_id +'" data-member="'+ member +'" data-member_id="'+ member_id + '" >';
+                    studentList[i] = { student: student, student_id: student_id, camp: camp, camp_id: camp_id, lesson: lesson, lesson_id: lesson_id, member: member, member_id: member_id }
+                    inputList += '<input type="hidden" class="stdList" data-student="' + student + '" data-student_id="' + student_id + '" data-camp="' + camp + '" data-camp_id="' + camp_id + '" data-lesson="' + lesson + '" data-lesson_id="' + lesson_id + '" data-member="' + member + '" data-member_id="' + member_id + '" >';
                     studentNames += student + ','
                 });
                 $("#hideStList").empty();
@@ -742,6 +782,13 @@
                     $(this).find("input[name='checkbox-assistant']").prop("checked", false);
                     return;
                 }
+            })
+
+            // map(选择具体地址)
+            $("#mapConfirm").on('tap', '', function () {
+                var mapkeyword = $("input[name='keyword']").val();
+                $("input[name='location']").val(mapkeyword)
+                mui("#mapFrame").popover("toggle");
             })
 
             // 主教练
@@ -890,7 +937,7 @@
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 tys = '';
                                 if (data.data[i].type == 2) { tys = '<span class="tips">[ 体验生 ]</span>' }
-                                div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student  + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student +'" data-camp="'+ data.data[i].camp +'" data-camp_id="'+ data.data[i].camp_id +'" data-lesson="'+ data.data[i].lesson +'" data-lesson_id="'+ data.data[i].lesson_id+'" data-member="'+ data.data[i].member +'" data-member_id="'+ data.data[i].member_id + '"></div>'
+                                div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-camp="' + data.data[i].camp + '" data-camp_id="' + data.data[i].camp_id + '" data-lesson="' + data.data[i].lesson + '" data-lesson_id="' + data.data[i].lesson_id + '" data-member="' + data.data[i].member + '" data-member_id="' + data.data[i].member_id + '"></div>'
                             }
                             $("#newdiv").empty();
                             $("#newdiv").append(div);
@@ -938,11 +985,11 @@
                     // var studentList = [{student:1,student_id:1,id:1},{student:2,student_id:2,id:2}];
                     objData.studentData = JSON.stringify(studentList);
                     //            console.log(studentList);
-                                console.log(objData );
-                                
+                    console.log(objData);
+
                     var url = "{:url('api/grade/createGradeApi')}";
                     var ajaxResult = wooApi.asyncF(url, objData);
-//                    return false;
+                    //                    return false;
                     if (ajaxResult.code == 200) {
                         mui.alert(ajaxResult.msg, '创建成功', '确定', function () {
                             window.location.href = "{:url('frontend/grade/gradelistofcamp',['camp_id'=>$campInfo['id']])}";
@@ -958,6 +1005,9 @@
                     }
                 }
             })
+
+
+
 
         })
 
