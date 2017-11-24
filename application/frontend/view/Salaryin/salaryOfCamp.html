@@ -151,18 +151,21 @@
                 //console.log(data);
                 var newli = '';
                 if (data.code === 200) {
-                    newli += ' <li class="mui-table-view-cell listli first-li" style="color:#000">教练名称<span>工资</span></li>';
-                    for (var i=0; i<data.data.length;i++) {
-                        var urls = "{:url('camp/coachInfoOfCamp')}/member_id/"+data.data[i].member_id+"/camp_id/"+"{$camp_id}";
-                        newli += '<li class="mui-table-view-cell listli">';
-                        newli += '<a class="mui-navigate-right" style="color:#000" href="'+ urls +'">';
-                        newli += data.data[i].member + '<span class="wd45">'+ (data.data[i].salary+data.data[i].push_salary) +'</span>';
-                        newli += '</a></li>';
+                    // 返回为空 显示无数据
+                    if (data.data.length != 0) {
+                        newli += ' <li class="mui-table-view-cell listli first-li" style="color:#000">教练名称<span>工资</span></li>';
+                        for (var i=0; i<data.data.length;i++) {
+                            var urls = "{:url('salaryin/salaryinfo')}/camp_id/"+"{$camp_id}"+"/member_id/"+data.data[i].member_id+"/month/"+month+"/year/"+year;
+                            newli += '<li class="mui-table-view-cell listli">';
+                            newli += '<a class="mui-navigate-right" style="color:#000" href="'+ urls +'">';
+                            newli += data.data[i].member + '<span class="wd45">'+ (data.data[i].month_salary) +'</span>';
+                            newli += '</a></li>';
+                        }
+                    } else {
+                        newli = '<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>';
                     }
                     //console.log(newli);
                     $('#salary-ul').html(newli);
-                } else {
-                    $('#salary-ul').html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');;
                 }
             },
             error:function(xhr,type,errorThrown){
