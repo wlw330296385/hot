@@ -88,6 +88,11 @@ class CoachService{
         $result = $this->CoachModel->where($map)->order($order)->page($page,$paginate)->select();
         if($result){
             $res = $result->toArray();
+            foreach ($res as $k => $val) {
+                if ($val['star'] >0) {
+                    $res[$k]['star'] = ceil($val['star']/$val['star_num']);
+                }
+            }
             return $res;
         }else{
             return $result;

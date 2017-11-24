@@ -230,18 +230,19 @@ class ScheduleService
      * @return array
      */
     function decStudentRestschedule($students) {
-        $gradeMemberDb = db('grade_member');
+        //$gradeMemberDb = db('grade_member');
+        $lessonDb = db('lesson_member');
         $studentDb = db('student');
         foreach ($students as $student) {
             $gradeMemberWhere['id'] = $student['id'];
             $studentWhere['id'] = $student['student_id'];
-            $restschedule = $gradeMemberDb->where($gradeMemberWhere)->value('rest_schedule');
+            $restschedule = $lessonDb->where($gradeMemberWhere)->value('rest_schedule');
             if ($restschedule <= 0) {
                 return ['code' => 100, 'msg' => $student['student'].'已无剩余课时，请修改课时信息'];
             } else {
                 // 学员完成课时
                 if ($restschedule == 1) {
-                    $finishSchedule = $gradeMemberDb->where($gradeMemberWhere)->update(['rest_schedule' => 0, 'status' => 4, 'update_time' => time()]);
+                    $finishSchedule = $lessonDb->where($gradeMemberWhere)->update(['rest_schedule' => 0, 'status' => 4, 'update_time' => time()]);
                     if (!$finishSchedule) {
                         return ['code' => 100, 'msg' => $student['student'].'更新剩余课时'.__lang('MSG_400')];
                     }
@@ -250,7 +251,7 @@ class ScheduleService
                         return ['code' => 100, 'msg' => $student['student'].'更新完成课程'.__lang('MSG_400')];
                     }
                 } else {
-                    $decRestSchedule = $gradeMemberDb->where($gradeMemberWhere)->setDec('rest_schedule',1);
+                    $decRestSchedule = $lessonDb->where($gradeMemberWhere)->setDec('rest_schedule',1);
                     if (!$decRestSchedule) {
                         return ['code' => 100, 'msg' => $student['student'].'更新剩余课时'.__lang('MSG_400')];
                     }
@@ -401,8 +402,9 @@ class ScheduleService
         } else {
             $result = $ScheduleComment->allowField(true)->save($data);
             if ($result) {
-                // 计算总评分
-                $this->updateCampStar($data['schedule_id'], $data['camp_id']);
+                // 更新训练营评分、教练评分
+                db('camp')->where(['id' => $data['camp_id']])->inc('star', $data['avg_star'])->inc('star_num',1)->update();
+                $this->updateCoachStar($data['schedule_id'],$data['avg_star']);
                 return ['code' => 200, 'msg' => '评论成功'];
             } else {
                 return ['code' => 100, 'msg' => '评论失败'];
@@ -421,11 +423,39 @@ class ScheduleService
         }
     }
 
-    // 课时评分更新训练营评分
-    public function updateCampStar($schedule_id, $camp_id) {
-        $schedleCommentM = new \app\model\ScheduleComment;
-        $commentAvgstar = $schedleCommentM->where(['schedule_id' => $schedule_id])->avg('avg_star');
-        Db::name('camp')->where('id', $camp_id)->setField('star', $commentAvgstar);
+    // 课时评分更新课时相关教练评分
+    public function updateCoachStar($schedule_id, $star) {
+        // 获取课时教练名单
+        $coachs = $this->getScheduleCoachList($schedule_id);
+        // 遍历更新教练评分
+        $coachDb = db('coach');
+        if (!empty($coachs)) {
+            foreach ($coachs as $coach) {
+                $coachDb->where(['id' => $coach['coach_id']])->inc('star', $star)->inc('star_num', 1)->update();
+            }
+        }
+    }
+
+    // 获取课时的教练名单（主教练+助教练）
+    public function getScheduleCoachList($schedule_id) {
+        // 查询课时数据
+        $schedule = db('schedule')->where('id', $schedule_id)->find();
+        $coachs = [];
+        // 获取主教练
+        if ($schedule['coach_id']) {
+            array_push($coachs, ['coach_id' => $schedule['coach_id'], 'coach' => $schedule['coach'], 'coach_type' => 1]);
+        }
+        // 获取助教练，反序列化处理
+        $assistantIdArray = unserialize($schedule['assistant_id']) ;
+        $assistantArray = unserialize($schedule['assistant']);
+        if (!empty($assistantIdArray)) {
+            foreach ($assistantIdArray as $key => $val) {
+                if ($val) {
+                    array_push($coachs, ['coach_id' => $val, 'coach' => $assistantArray[$key], 'coach_type' => 2]);
+                }
+            }
+        }
+        return $coachs;
     }
 
     // 删除课时
