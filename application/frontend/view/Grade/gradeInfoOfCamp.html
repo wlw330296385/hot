@@ -10,15 +10,57 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        #container {
+            width: 375px;
+            height: 250px;
+        }
+        
+        #mapFrame {
+            height: 250px;
+        }
+        
+        #map button {
+            top: 11px;
+            position: absolute;
+            right: 3px;
+            padding: 5px 8px;
+        }
+        
+        #tip {
+            background-color: #ddf;
+            color: #333;
+            border: 1px solid silver;
+            box-shadow: 3px 4px 3px 0px silver;
+            position: absolute;
+            top: 10px;
+            left: 5px;
+            right: 55px;
+            border-radius: 5px;
+            overflow: hidden;
+            line-height: 20px;
+        }
+        
+        #tip input[type="text"] {
+            height: 25px;
+            border: 0;
+            padding-left: 5px;
+            width: 280px;
+            border-radius: 3px;
+            outline: none;
+            margin-bottom: 0;
+        }
+    </style>
 </head>
 
 <body>
 
-<header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-    <h1 class="mui-title"><font>({$gradeInfo.lesson})</font>{$gradeInfo.camp}</h1>
-</header>
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <h1 class="mui-title">
+            <font>({$gradeInfo.lesson})</font>{$gradeInfo.camp}</h1>
+    </header>
 
     <div class="mui-content">
 
@@ -28,7 +70,8 @@
                 <li class="mui-table-view-cell mui-media listli">
                     <a href="{:url('grade/updateGrade',['grade_id'=>$gradeInfo['id']])}" class="mui-navigate-right">
                         <div class="mui-media-body wd">
-                            <strong>{$gradeInfo.grade}</strong><font class="state">[{$gradeInfo.status}]</font>
+                            <strong>{$gradeInfo.grade}</strong>
+                            <font class="state">[{$gradeInfo.status}]</font>
                             <p>{$gradeInfo.students} 名正式学员</p>
                         </div>
                         {eq name="updateGrade" value='1'}
@@ -48,7 +91,7 @@
                 <li class="mui-table-view-cell listli">训练时间<span id="weektime">{$gradeInfo.week} {$gradeInfo.lesson_time}</span></li>
                 <li class="mui-table-view-cell listli">训练地点<span>{$gradeInfo.court}</span></li>
                 <li class="mui-table-view-cell listli">所属地区<span>{$gradeInfo.province}&nbsp;{$gradeInfo.city}&nbsp;{$gradeInfo.area}</span></li>
-                <li class="mui-table-view-cell listli">具体地址<span>{$gradeInfo.location}</span></li>
+                <li class="mui-table-view-cell listli">具体地址<a href="#mapFrame"><span>{$gradeInfo.location}</span></a></li>
                 <li class="mui-table-view-cell listli">主教练<span>{$gradeInfo.coach}</span></li>
                 <li class="mui-table-view-cell listli">主教底薪
                     <a href="#coachSalary" style="display:inline-flex; padding: 0;margin-left: 0">
@@ -71,88 +114,104 @@
                 </li>
                 <li class="mui-table-view-cell listli">领队<span>{$gradeInfo.leader}</span></li>
                 <li class="mui-table-view-cell listli">班主任<span>{$gradeInfo.teacher}</span></li>
-            
-     <!--        <li class="mui-table-view-cell listli">
+
+                <!--        <li class="mui-table-view-cell listli">
                 <a href="{:url('plan/planList')}" class="mui-navigate-right">
                     教案<span>{$gradeInfo.plan}</span>
                 </a>
             </li>
             <li class="mui-table-view-cell listli">场地租金<span>{$gradeInfo.rent}</span></li> -->
-            <li class="mui-table-view-cell listli">备注<span>{$gradeInfo.remarks}</span></li>
-        </ul>
+                <li class="mui-table-view-cell listli">备注<span>{$gradeInfo.remarks}</span></li>
+            </ul>
 
-    </div>
+        </div>
 
-    <!--主教底薪-->
-    <div id="coachSalary" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <div class="mine">
-                    <ul class="mui-table-view list">
-                        <li class="mui-table-view-cell listli detalisli">主教底薪</li>
-                    </ul>
+        <!--主教底薪-->
+        <div id="coachSalary" class="mui-popover">
+            <div class="mui-popover-arrow"></div>
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="mine">
+                        <ul class="mui-table-view list">
+                            <li class="mui-table-view-cell listli detalisli">主教底薪</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!--助教底薪-->
-    <div id="assistantSalary" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <div class="mine">
-                    <ul class="mui-table-view list">
-                        <li class="mui-table-view-cell listli detalisli">助教底薪</li>
-                    </ul>
+        <!--助教底薪-->
+        <div id="assistantSalary" class="mui-popover">
+            <div class="mui-popover-arrow"></div>
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="mine">
+                        <ul class="mui-table-view list">
+                            <li class="mui-table-view-cell listli detalisli">助教底薪</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!--主教基数-->
-    <div id="mainBase" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <div class="mine">
-                    <div class="explain">
-                        <div class="page-header explain-title">
-                            <span class="course">基数说明</span>
-                        </div>
-                        <div class="explain-cont">
-                            <p>1、基数说明;</p>
+        <!--主教基数-->
+        <div id="mainBase" class="mui-popover">
+            <div class="mui-popover-arrow"></div>
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="mine">
+                        <div class="explain">
+                            <div class="page-header explain-title">
+                                <span class="course">基数说明</span>
+                            </div>
+                            <div class="explain-cont">
+                                <p>1、基数说明;</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- map -->
+        <div id="mapFrame" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+            <div id="map">
+                <div>{:token()}</div>
+                <div id="container"></div>
+                <div id="tip">
+                    <input type="text" id="keyword" name="keyword" value="{$gradeInfo.location}" disabled onfocus='this.value=""' placeholder="请输入关键字：(选定后搜索)"
+                    />
+                </div>
+            </div>
+        </div>
+
     </div>
 
-</div>
 
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!--获取地址-->
+    <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
+    <script src="/static/frontend/js/map.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+        $(function () {
+            //组合周期和时间
+            var weeks = "{$gradeInfo.week}"
+            var times = "{$gradeInfo.lesson_time}"
+            var wk = weeks.split(',');
+            var ts = times.split(',');
+            var weekTime = "";
+            for (var i = 0; i < wk.length; i++) {
+                weekTime += wk[i] + "（" + ts[i] + "）"
+            }
+            $("#weektime").text(weekTime);
+        })
 
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
-    $(function(){
-        //组合周期和时间
-        var weeks = "{$gradeInfo.week}"
-        var times = "{$gradeInfo.lesson_time}"
-        var wk=weeks.split(',');
-        var ts=times.split(',');
-        var weekTime="";
-        for(var i = 0;i<wk.length;i++){
-            weekTime += wk[i]+"（"+ts[i]+"）"
-        }
-        $("#weektime").text(weekTime);
-    })
-</script>
+    </script>
 </body>
 
 </html>
