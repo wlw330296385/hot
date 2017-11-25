@@ -18,7 +18,7 @@ class Apply extends Base{
             $map = input('post.');
             $keyword = input('param.keyword');
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
-                $map['student'] = ['LIKE','%'.$keyword.'%'];
+                $map['member'] = ['LIKE','%'.$keyword.'%'];
             } 
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
@@ -41,7 +41,7 @@ class Apply extends Base{
             $map = input('post.');
             $keyword = input('param.keyword');
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
-                $map['student'] = ['LIKE','%'.$keyword.'%'];
+                $map['member'] = ['LIKE','%'.$keyword.'%'];
             } 
             if( isset($map['keyword']) ){
                 unset($map['keyword']);

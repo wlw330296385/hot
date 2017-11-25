@@ -2,6 +2,7 @@
 namespace app\service;
 use app\model\Apply;
 use think\Db;
+use app\common\validate\ApplyVal;
 class ApplyService{
 	protected $ApplyModel;
 	public function __construct(){
@@ -18,7 +19,7 @@ class ApplyService{
     }
 
     public function getApplyListByPage($map,$paginate = 10){
-        $result = Apply::with('member')->where($map)->paginate($paginate);
+        $result = Apply::where($map)->paginate($paginate);
         if($result){
             return $result->toArray();
         }
@@ -34,8 +35,26 @@ class ApplyService{
     
     // 插入一条数据
     public function createApply($data){
+        $validate = validate('ApplyVal');
+        if(!$validate->scene('add')->check($data)){
+             return ['msg' => $validate->getError(), 'code' => 100];
+        }
         $result = $this->ApplyModel->save($data);
-        // 暂时不启用验证器
+        if($result){
+            return ['code'=>200,'msg'=>'操作成功','data'=>$this->ApplyModel->id];
+        }else{
+            return ['code'=>100,'msg'=>'操作失败'];
+        }
+    }
+
+
+    //更新一条数据
+    public function updateApply($data,$apply_id){
+        $validate = validate('ApplyVal');
+        if(!$validate->scene('edit')->check($data)){
+             return ['msg' => $validate->getError(), 'code' => 100];
+        }
+        $result = $this->ApplyModel->save($data,['id'=>$apply_id]);
         if($result){
             return ['code'=>200,'msg'=>'操作成功','data'=>$this->ApplyModel->id];
         }else{
