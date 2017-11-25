@@ -66,11 +66,11 @@
 
                 <div class="mui-input-row h-auto" style="padding: 10px 0px;">
                     <label>招募人数</label>
-                    <div class="mui-numbox">
+                    <div class="mui-numbox mui-pull-right" data-numbox-min="0">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data" type="number" name="recruit_number" value="">
+                        <input class="mui-input-numbox data" type="number" name="recruit_number" value="0">
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
-                    </div>
+                    </div><span>0 为不限</span>
                 </div>
 
                 <div class="mui-input-row h-auto">
@@ -312,12 +312,12 @@
             var url = "{:url('api/recruitment/updateRecruitmentApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '招募创建成功', '确定', function () {
+                mui.alert(ajaxResult.msg, '招募修改成功', '确定', function () {
                     goUrl = "{:url('recruitment/recruitmentlistofcamp')}"+'/organization_id/'+'{$campInfo.id}';
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '招募创建失败', '确定', function () {
+                mui.alert(ajaxResult.msg, '招募修改失败', '确定', function () {
                     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                         if (data.code === 200) {
                             $('input[name=__token__]').val(data.data);
