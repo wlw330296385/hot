@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>教练员详情</title>
+    <title>教练员介绍</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -19,7 +19,7 @@
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">教练介绍</h1>
+        <h1 class="mui-title"><button type="button" class="mui-btn mui-btn-danger follow" style="padding: 4px 12px;">关注</button></h1>
     </header>
     <div class="mui-content">
 
@@ -30,11 +30,10 @@
                         <img class="mui-media-object mui-pull-left coachicon" src="{$coachInfo.portraits}">
                         <div class="mui-media-body">
                             {$coachInfo.coach} <i class="icon iconfont icon-sex{$coachInfo.sex}"></i>
-                            <p class="mui-ellipsis">教龄:{$coachInfo.coach_year} 等级:{$coachInfo.coach_rank} {$coachInfo.area}</p>
+                            <p class="mui-ellipsis">教龄:{$coachInfo.coach_year} 等级:{$coachInfo.coach_rank}</p>
                         </div>
                         <div class="camp-num mui-text-right">
                             <ul>
-                                <li><button type="button" class="mui-btn mui-btn-danger follow">关注</button></li>
                                 <li>
                                     <div class="icons mui-inline">
                                         <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
@@ -42,7 +41,7 @@
                                         <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
                                     </div>
                                 </li>
-                                <!--<li class="fr">{$coachInfo.area}</li>-->
+                                <li class="fr">{$coachInfo.area}</li>
                             </ul>
                         </div>
                     </a>
@@ -121,14 +120,24 @@
             <div id="invitation" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
                 <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
                     <ul class="mui-table-view operation">
-                        <h5><span class="sstitle">邀请加入</span>
+                        <h5 class="border-b"><span class="sstitle">邀请加入</span>
                             <a href="#invitation" class="mui-icon mui-icon-closeempty"></a>
                         </h5>
-                        <select class="select">
-                            {volist name="myCampList" id="vol"}
-                                <option value="{$vol.camp_id}" >{$vol.camp}</option>
-                            {/volist}
-                        </select>
+                        <form action="" class="mui-input-group">
+                            <div class="mui-input-row">
+                                <div class="mui-navigate-right">
+                                    <label class="wd49" style="padding: 14px 15px">邀请加入的训练营</label>
+                                    <span>
+                                        <select class="select-row">
+                                            {volist name="myCampList" id="vol"}
+                                                <option value="{$vol.camp_id}" >{$vol.camp}</option>
+                                            {/volist}
+                                        </select>
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+
                         <li class="listli">
                             <textarea rows="4" name="remarks" class="remarks"></textarea>
                         </li>
@@ -175,8 +184,9 @@
             $("#commentSubmit").on('click', function () {
                 //判断是否登陆会员     
                 if ("{$commentPower}" != 1) {
-                    alert('您还不是该教练的学生,无法评论');
-                    return;
+                    mui.toast('您还不是该教练的学生,无法评论');
+                    mui('#comment').popover('toggle');
+                    return false;
                 }
                 var comment = $('textarea.data').val();
                 if (comment == "" || comment == null) {
@@ -201,9 +211,15 @@
                 var remarks = $(".remarks").val();
                 var organization = $("option:selected").text();
                 var organization_id = $("option:selected").val();
+
+                if (remarks == '') {
+                    mui.toast("你还没有写邀请理由哦！");
+                    return false;
+                }
+
                 mui.ajax("{:url('api/apply/createApplyApi')}", {
                     data: {
-                        '__token__':"{$Request.token}",
+                        '__token__': "{$Request.token}",
                         "member": "{$coachInfo.coach}",
                         "member_id": "{$coachInfo.member_id}",
                         "organization_type": 1,
@@ -223,9 +239,15 @@
                         //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data);
                         if (data.code == 200) {
-                            console.log(123)
+                            mui.toast("邀请成功，待审核");
+                            mui('#invitation').popover('toggle');
                         } else {
                             mui.toast(data.msg);
+                            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                                if (data.code === 200) {
+                                    $('input[name=__token__]').val(data.data);
+                                }
+                            }, 'json');
                         }
                     },
                     error: function (xhr, type, errorThrown) {
@@ -286,6 +308,8 @@
                     if (data.code == 200) {
                         if (data.data === 1) {
                             $(".follow").text("取消关注");
+                        } else {
+                            $(".follow").text("关注");
                         }
                     }
                 },

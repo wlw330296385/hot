@@ -150,7 +150,9 @@
         var url = "{:url('api/Apply/getApplyListByPageApi')}" + '/?page=' + page;
         mui.ajax({
             url: url,
-            data: {},
+            data: {
+                inviter_id: inviter_id
+            },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
             timeout: 10000,//超时时间设置为10秒；
@@ -159,20 +161,11 @@
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        // var urls = "{:url('event/eventInfoOfCamp')}" + '/event_id/' + data.data.data[i].id + '/organization_id/' + organizationID;
+                        var url = "{:url('coach/coachInfo')}" + '/coach_id/' + data.data.data[i].id;
                         newli += '<li class="mui-table-view-cell mui-media listli">'
-                        newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del">取消关注</span></div>';
-                        newli += '<div class="mui-slider-handle"><a ><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].follow_avatar + '"><div class="mui-media-body wd60">' + data.data.data[i].follow_name + '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div><div class="price-frame mui-text-center">';
-                        if (data.data.data[i].type == 1) {
-                            newli += "会员";
-                        } else if (data.data.data[i].type == 2) {
-                            newli += "训练营";
-                        } else if (data.data.data[i].type == 3) {
-                            newli += "班级";
-                        } else if (data.data.data[i].type == 4) {
-                            newli += "球队";
-                        }
-                        newli += '</div></li>';
+                        newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del">同意</span></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + url + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].follow_avatar + '"><div class="mui-media-body">' + data.data.data[i].member + '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div><div class="price-frame"><p class="address">' + data.data.data[i].organization + '</p></div></a>';
+                        newli += '</li>';
                     }
                 }
                 if (gType == 1) {
@@ -205,11 +198,10 @@
     //接口获取数据并追加到
     var toInvitationMy = function (wList, page, gType) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/follow/invitationmy')}" + '/?page=' + page;
+        var url = "{:url('api/Apply/getApplyListByPageApi')}" + '/?page=' + page;
         mui.ajax({
             url: url,
             data: {
-                type: 1,
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -219,9 +211,10 @@
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        var url = "{:url('coach/coachInfo')}" + '/coach_id/' + data.data.data[i].id;
                         newli += '<li class="mui-table-view-cell mui-media listli">'
-                        newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del">取消关注</span></div>';
-                        newli += '<div class="mui-slider-handle"><a ><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].member_avatar + '"><div class="mui-media-body wd60">' + data.data.data[i].member + '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div>';
+                        newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del">同意</span></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + url + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].follow_avatar + '"><div class="mui-media-body">' + data.data.data[i].inviter + '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div><div class="price-frame"><p class="address">' + data.data.data[i].organization + '</p></div></a>';
                         newli += '</li>';
                     }
                 }
@@ -251,45 +244,6 @@
             }
         });
     };
-
-
-    //拖拽后显示操作图标，点击操作图标删除元素；
-    $('.OA_task_invitation').on('tap', '.mui-btn', function (event) {
-        var elem = this;
-        var li = elem.parentNode.parentNode;
-        var btnArray = ['确认', '取消'];
-        var eventid = elem.parentNode.getAttribute('data-id');
-        var action = elem.getAttribute('data-action');
-        mui.confirm('确认取消关注吗？', '提示', btnArray, function (e) {
-            if (e.index == 0) {
-                var apiurl = "{:url('api/member/')}";
-                mui.ajax(apiurl, {
-                    data: {
-                        eventid: eventid,
-                        action: action
-                    },
-                    dataType: 'json',
-                    type: 'post',
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        if (data.code == 200) {
-                            li.parentNode.removeChild(li);
-                            location.reload();
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errotThrown) {
-                        mui.toast('网络异常,请稍候再试');
-                    }
-                });
-            } else {
-                setTimeout(function () {
-                    mui.swipeoutClose(li);
-                }, 0);
-            }
-        });
-    });
 
 </script>
 
