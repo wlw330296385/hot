@@ -19,7 +19,7 @@ class ApplyService{
     }
 
     public function getApplyListByPage($map,$paginate = 10){
-        $result = Apply::with('member')->where($map)->paginate($paginate);
+        $result = Apply::where($map)->paginate($paginate);
         if($result){
             return $result->toArray();
         }
