@@ -254,6 +254,9 @@ class CampMember extends Base
                 ->view('coach', '*', 'coach.member_id=camp_member.member_id')
                 ->where($map)
                 ->select();
+            foreach ($list as $k => $val) {
+                $list[$k]['star'] = ceil($val['star']/$val['star_num']);
+            } 
             return ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $list];
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);

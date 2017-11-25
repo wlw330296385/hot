@@ -1,3 +1,6 @@
+var lng = '';
+var lat = '';
+
 // map(选择具体地址)
 var map = new AMap.Map('container', {
     resizeEnable: true,
@@ -27,6 +30,7 @@ AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geo
         if (status === 'complete' && result.info === 'OK') {
             //TODO:获得了有效经纬度，可以做一些展示工作
             console.log(result);
+
         } else {
             //获取经纬度失败
             console.log('获取经纬度失败');
@@ -49,6 +53,10 @@ AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geo
     });
     geolocation.getCurrentPosition(function (status, result) {
         console.log(result);
+        lng = result.position.lng;
+        lat = result.position.lat;
+        // console.log(lng)
+        // console.log(lat)
     });
 
 

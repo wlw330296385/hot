@@ -11,47 +11,6 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <style>
-        #container {
-            width: 375px;
-            height: 250px;
-        }
-        
-        #mapFrame {
-            height: 250px;
-        }
-        
-        #map button {
-            top: 11px;
-            position: absolute;
-            right: 3px;
-            padding: 5px 8px;
-        }
-        
-        #tip {
-            background-color: #ddf;
-            color: #333;
-            border: 1px solid silver;
-            box-shadow: 3px 4px 3px 0px silver;
-            position: absolute;
-            top: 10px;
-            left: 5px;
-            right: 55px;
-            border-radius: 5px;
-            overflow: hidden;
-            line-height: 20px;
-        }
-        
-        #tip input[type="text"] {
-            height: 25px;
-            border: 0;
-            padding-left: 5px;
-            width: 280px;
-            border-radius: 3px;
-            outline: none;
-            margin-bottom: 0;
-        }
-    </style>
 </head>
 
 <body>
@@ -91,7 +50,7 @@
                 <li class="mui-table-view-cell listli">训练时间<span id="weektime">{$gradeInfo.week} {$gradeInfo.lesson_time}</span></li>
                 <li class="mui-table-view-cell listli">训练地点<span>{$gradeInfo.court}</span></li>
                 <li class="mui-table-view-cell listli">所属地区<span>{$gradeInfo.province}&nbsp;{$gradeInfo.city}&nbsp;{$gradeInfo.area}</span></li>
-                <li class="mui-table-view-cell listli">具体地址<a href="#mapFrame"><span>{$gradeInfo.location}</span></a></li>
+                <li class="mui-table-view-cell listli">具体地址<span>{$gradeInfo.location}</span></li>
                 <li class="mui-table-view-cell listli">主教练<span>{$gradeInfo.coach}</span></li>
                 <li class="mui-table-view-cell listli">主教底薪
                     <a href="#coachSalary" style="display:inline-flex; padding: 0;margin-left: 0">
@@ -173,26 +132,12 @@
             </div>
         </div>
 
-        <!-- map -->
-        <div id="mapFrame" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-            <div id="map">
-                <div>{:token()}</div>
-                <div id="container"></div>
-                <div id="tip">
-                    <input type="text" id="keyword" name="keyword" value="{$gradeInfo.location}" disabled onfocus='this.value=""' placeholder="请输入关键字：(选定后搜索)"
-                    />
-                </div>
-            </div>
-        </div>
 
     </div>
 
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <!--获取地址-->
-    <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
-    <script src="/static/frontend/js/map.js"></script>
     <script>
         //初始化
         mui.init({
