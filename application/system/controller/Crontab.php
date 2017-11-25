@@ -70,6 +70,7 @@ class Crontab extends Controller {
                         'grade' => $schedule['grade'],
                         'camp_id' => $schedule['camp_id'],
                         'camp' => $schedule['camp'],
+                        'schedule_time' => $schedule['lesson_time'],
                         'status' => 1,
                         'type' => 1,
                     ];
@@ -97,6 +98,7 @@ class Crontab extends Controller {
                             'grade' => $schedule['grade'],
                             'camp_id' => $schedule['camp_id'],
                             'camp' => $schedule['camp'],
+                            'schedule_time' => $schedule['lesson_time'],
                             'status' => 1,
                             'type' => 1,
                         ];
@@ -104,7 +106,7 @@ class Crontab extends Controller {
                     $this->insertSalaryIn($incomeAssistant, 1);
                 }
 
-                // 营主所得
+                // 营主所得 课时收入-主教底薪-助教底薪-学员人数提成*教练人数。教练人数 = 助教人数+1（1代表主教人数）
                 $incomeCampSalary = $incomeSchedule-$schedule['coach_salary']-$schedule['assistant_salary']-($pushSalary*(count($incomeAssistant)+1));
                 $campMember = $this->getCampMember($schedule['camp_id']);
                 $incomeCamp = [
@@ -123,12 +125,13 @@ class Crontab extends Controller {
                     'grade' => $schedule['grade'],
                     'camp_id' => $schedule['camp_id'],
                     'camp' => $schedule['camp'],
+                    'schedule_time' => $schedule['lesson_time'],
                     'status' => 1,
                     'type' => 1,
                     'system_remarks' => $systemRemarks
                 ];
                 $this->insertSalaryIn($incomeCamp);
-//                Db::name('schedule')->where(['id' => $schedule['id']])->update(['update_time' => time(), 'is_settle' => 1]);
+                Db::name('schedule')->where(['id' => $schedule['id']])->update(['update_time' => time(), 'is_settle' => 1]);
             }
         });
     }
@@ -144,7 +147,7 @@ class Crontab extends Controller {
             $res = $this->insertRebate($salaryin['member_id'], $salaryin['month_salary']);
             if (!$res) { continue; }
         }
-//        DB::name('salary_in')->where($map)->update(['has_rebate' => 1]);
+        DB::name('salary_in')->where($map)->update(['has_rebate' => 1]);
     }
 
     // 获取教练会员
@@ -159,6 +162,7 @@ class Crontab extends Controller {
         $member = Db::view('member')
             ->view('camp', '*','camp.member_id=member.id')
             ->where(['camp.id' => $camp_id])
+            ->order('camp.id desc')
             ->find();
         return $member;
     }
