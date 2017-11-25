@@ -58,5 +58,14 @@ class Apply extends Base{
         }
     }
 
-  
+    // 邀请加入|申请加入,写入一条
+    public function createApplyApi(){
+        try{
+            $data = input('post.');
+            $result = $this->ApplyService->createApply($data);
+            return json($result);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }
