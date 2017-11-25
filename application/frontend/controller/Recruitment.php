@@ -93,7 +93,10 @@ class Recruitment extends Base{
         $organization_id = input('param.organization_id');
         // 判断权限
         $power = $this->RecruitmentService->isPower($organization_id,$member_id);
+        // 机构详情
+        $organizationInfo = db('camp')->where(['id'=>$organization_id])->find();
 
+        $this->assign('organizationInfo',$organizationInfo);
         $this->assign('power',$power);
         $this->assign('organization_id',$organization_id);
         return view('Recruitment/recruitmentListOfCamp');
