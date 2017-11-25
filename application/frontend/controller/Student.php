@@ -29,7 +29,7 @@ class Student extends Base
 		// 学生信息
 		$studentInfo = $this->studentService->getStudentInfo(['id'=>$student_id]);
 		//学生的班级	
-		$studentGradeList = Db::view('grade_member','grade_id,rest_schedule')
+		$studentGradeList = Db::view('grade_member')
 							->view('grade','*','grade.id=grade_member.grade_id')
 							->where([
 								'grade_member.student_id'=>$student_id,
