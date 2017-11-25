@@ -39,7 +39,7 @@ class Wxpay extends Base{
                     'balance_pay'   =>($data['total_fee']/100),
                     'callback_str'     =>$data['transaction_id'],
                     'status'    =>1,
-                    'is_pay'    =>1
+                    'is_pay'    =>1,
                 ];
 
                 $BillService = new \app\service\BillService;
