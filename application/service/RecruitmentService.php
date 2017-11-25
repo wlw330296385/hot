@@ -168,8 +168,14 @@ class RecruitmentService{
 
         //插入数据
         $RecruitmentMember = new RecruitmentMember;
-        $result = $RecruitmentMember->save($data);
-               
+        if($data['id']){
+            $rid = $data['id'];
+            unset($data['id']);
+            $result = $RecruitmentMember->save($data,['id'=>$rid]);
+        }else{
+            $result = $RecruitmentMember->save($data);
+        }
+              
         if($result){
             if(!isset($data['id'])){
                 $res = $this->RecruitmentModel->where(['id'=>$recruitment_id])->setInc('participator',$total);
