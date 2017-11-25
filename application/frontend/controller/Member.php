@@ -37,6 +37,12 @@ class Member extends Base{
         return view('Member/myGrade');
     }
 
+    // 教练邀请列表
+    public function invitation() {
+        $member_id = $this->memberInfo['id'];
+        return view('Member/invitation');
+    }
+
     // 会员设置页面
     public function memberSetup(){
 
