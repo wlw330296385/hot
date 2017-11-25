@@ -31,7 +31,15 @@ class SalaryInService {
     public function getSalaryInList($map,$order = 'id DESC'){
         $res = $this->SalaryIn->where($map)->order($order)->select();
         if($res){
+            // 数据集转换为数组
             $result = $res->toArray();
+            // 数据字段内容格式转换
+            foreach ($result as $k => $val) {
+                // 课时上课时间(schedule_time)格式化
+                if ($val['schedule_time']) {
+                    $result[$k]['schedule_time'] = date('Y-m-d H:i', $val['schedule_time']);
+                }
+            }
             return $result;
         }else{
             return $res;
