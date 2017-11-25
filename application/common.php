@@ -194,3 +194,33 @@ function get_code($length=6) {
     $max = pow(10, $length) - 1;
     return rand($min, $max);
 }
+
+// 初始化日期
+function initDateTime() {
+    $dateTime = [];
+    // 当前年、月
+    $dateTime['year'] = input('year', date('Y'));
+    $dateTime['month'] = input('month', date('m'));
+    // 本月第一天、最后一天
+    //$monthfirstday = input('firstday', date('Y-m-01'));
+    $monthday = getthemonth();
+    $dateTime['fistday'] = input('firstday', $monthday[0]);
+    $dateTime['lastday'] = input('lastday', $monthday[1]);
+    // 上月（年）
+    $lastmonthTimestr = strtotime("last month");
+    $dateTime['lastmonth'] = input('lastmonth', date('m', $lastmonthTimestr));
+    $dateTime['lastmonth_year'] = input('lastmonth', date('Y', $lastmonthTimestr));
+    // 上月第一天、最后一天
+    $lastmonthday = getthemonth($lastmonthTimestr);
+    $dateTime['lastmonth_firstday'] = $lastmonthday[0];
+    $dateTime['lastmonth_lastday'] = $lastmonthday[1];
+    return $dateTime;
+}
+// 当前unix时间戳获取当月第一天及最后一天
+function getthemonth($timestamp=0)
+{
+    if (!$timestamp) {$timestamp = time();}
+    $firstday = date('Y-m-01', $timestamp);
+    $lastday = date('Y-m-d', strtotime("$firstday +1 month -1 day"));
+    return array($firstday,$lastday);
+}

@@ -36,7 +36,8 @@ class ApplyService{
     // 插入一条数据
     public function createApply($data){
         $validate = validate('ApplyVal');
-        if(!$validate->scene('add')->check($data)){
+        if(!$validate->check($data)){
+
              return ['msg' => $validate->getError(), 'code' => 100];
         }
         $result = $this->ApplyModel->save($data);
