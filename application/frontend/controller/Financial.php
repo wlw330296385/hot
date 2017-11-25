@@ -17,7 +17,13 @@ class Financial extends Base {
         return view('Financial/billlist');
     }
 
+    // 训练营财务统计
     public function statistics() {
+        // 初始化时间选择器日期（年、月、上月、本月第一天、本月最后一天）
+        $dateTime = initDateTime();
+
+
+        $this->assign('dateTime', $dateTime);
         return view('Financial/statistics');
     }
 }

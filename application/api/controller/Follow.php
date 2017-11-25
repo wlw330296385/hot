@@ -14,7 +14,10 @@ class Follow extends Base {
             if (!$type) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
-
+            $member_id = $this->memberInfo['id'];
+            if ($member_id === 0) {
+                return json(['code' => 100, 'msg' => '请先登录平台或注册会员']);
+            }
             $followData = [];
             switch ($type) {
                 case 1: {
