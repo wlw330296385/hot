@@ -24,6 +24,7 @@ class Bill extends Model{
            $status = [1=>'课程',2=>'活动'];
        return $status[$value];
     }
+    
     public function lesson(){
     	return $this->hasOne('lesson','id','goods_id',[],'left join');
     } 
