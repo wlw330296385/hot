@@ -71,8 +71,9 @@
 
             <ul class="mui-table-view">
                 <li class="mui-table-view-cell listli detalisli" style="line-height: 40px;">
-                    <a class="mui-navigate-right" id="coachlist" href="{:url('coach/coachListOfCamp',['camp_id'=>$campInfo['id']])}/?campname={$campInfo.camp}">
-
+                    <a class="mui-navigate-right" href="{:url('coach/coachListOfCamp',['camp_id'=>$campInfo['id']])}/?campname={$campInfo.camp}">
+                        教练员
+                        <span id="coachlist"></span>
                     </a>
                 </li>
                 <li class="mui-table-view-cell listli detalisli">课量<span>已上{$campInfo.total_schedule}课时</span></li>
@@ -493,7 +494,9 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli = newli + '<img class="coachicon" src="' + data.data[i].portraits + '" alt="' + data.data[i].coach + '">'
                             console.log(data.data[i].portraits)
-                            if (i >= 4) { return false }
+                            if (i >= 3) {
+                                break;
+                            }
                         }
                         $("#coachlist").append(newli);
                     } else {
