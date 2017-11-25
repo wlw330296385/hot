@@ -2,6 +2,7 @@
 namespace app\service;
 use app\model\Apply;
 use think\Db;
+use a\\common\validate\ApplyVal;
 class ApplyService{
 	protected $ApplyModel;
 	public function __construct(){
