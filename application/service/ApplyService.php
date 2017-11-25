@@ -2,7 +2,11 @@
 namespace app\service;
 use app\model\Apply;
 use think\Db;
+<<<<<<< HEAD
 use a\\common\validate\ApplyVal;
+=======
+use app\common\validate\ApplyVal;
+>>>>>>> 89753cab9a2bea1d084f2c7b49311a770e02bb76
 class ApplyService{
 	protected $ApplyModel;
 	public function __construct(){
@@ -35,8 +39,11 @@ class ApplyService{
     
     // 插入一条数据
     public function createApply($data){
+        $validate = validate('ApplyVal');
+        if(!$validate->scene('add')->check($data)){
+             return ['msg' => $validate->getError(), 'code' => 100];
+        }
         $result = $this->ApplyModel->save($data);
-        // 暂时不启用验证器
         if($result){
             return ['code'=>200,'msg'=>'操作成功','data'=>$this->ApplyModel->id];
         }else{
