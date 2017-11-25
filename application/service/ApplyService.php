@@ -46,5 +46,20 @@ class ApplyService{
             return ['code'=>100,'msg'=>'操作失败'];
         }
     }
+
+
+    //更新一条数据
+    public function updateApply($data,$apply_id){
+        $validate = validate('ApplyVal');
+        if(!$validate->scene('edit')->check($data)){
+             return ['msg' => $validate->getError(), 'code' => 100];
+        }
+        $result = $this->ApplyModel->save($data,['id'=>$apply_id]);
+        if($result){
+            return ['code'=>200,'msg'=>'操作成功','data'=>$this->ApplyModel->id];
+        }else{
+            return ['code'=>100,'msg'=>'操作失败'];
+        }
+    }
     
 }
