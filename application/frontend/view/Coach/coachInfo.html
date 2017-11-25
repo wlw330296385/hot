@@ -124,13 +124,13 @@
                         <h5><span class="sstitle">邀请加入</span>
                             <a href="#invitation" class="mui-icon mui-icon-closeempty"></a>
                         </h5>
-                        <select>
+                        <select class="select">
                             {volist name="myCampList" id="vol"}
                                 <option value="{$vol.camp_id}" >{$vol.camp}</option>
                             {/volist}
                         </select>
                         <li class="listli">
-                            <textarea rows="4"></textarea>
+                            <textarea rows="4" name="remarks" class="remarks"></textarea>
                         </li>
                         <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="invitationSubmit">提交</li>
                     </ul>
@@ -174,33 +174,45 @@
             //评价
             $("#commentSubmit").on('click', function () {
                 //判断是否登陆会员     
-                if("{$commentPower}"!=1){
+                if ("{$commentPower}" != 1) {
                     alert('您还不是该教练的学生,无法评论');
                     return;
-                }    
-                    var comment = $('textarea.data').val();
-                    if (comment == "" || comment == null) {
-                        mui.toast("您没填写评论内容哦");
-                        return false;
-                    }
-                    var objData = {};
-                    objData.comment = comment;
-                    objData.coach = "{$coachInfo.coach}";
-                    objData.coach_id = "{$coachInfo.id}";
-                    var result = wooApi.asyncF("{:url('api/coach/createCoachCommentApi')}", objData);
-                    if (result) {
-                        mui.toast(result.msg);
-                        mui('#pjpopover').popover('toggle');
-                        $(".moreComment").show();
-                    }
-                });
+                }
+                var comment = $('textarea.data').val();
+                if (comment == "" || comment == null) {
+                    mui.toast("您没填写评论内容哦");
+                    return false;
+                }
+                var objData = {};
+                objData.comment = comment;
+                objData.coach = "{$coachInfo.coach}";
+                objData.coach_id = "{$coachInfo.id}";
+                var result = wooApi.asyncF("{:url('api/coach/createCoachCommentApi')}", objData);
+                if (result) {
+                    mui.toast(result.msg);
+                    mui('#pjpopover').popover('toggle');
+                    $(".moreComment").show();
+                }
+            });
 
             //邀请
             $("#invitationSubmit").on('click', function () {
                 //判断是否登陆会员
-                mui.ajax("{:url('api/CampMember/getCampMemberApi')}", {
+                var remarks = $(".remarks").val();
+                var organization = $("option:selected").text();
+                var organization_id = $("option:selected").val();
+                mui.ajax("{:url('api/apply/createApplyApi')}", {
                     data: {
-                        'member_id': "{$memberInfo.id}"
+                        "member": "{$coachInfo.coach}",
+                        "member_id": "{$coachInfo.member_id}",
+                        "organization_type": 1,
+                        "organization": organization,
+                        "organization_id": organization_id,
+                        "type": 2,
+                        "inviter": "{$memberInfo.member}",
+                        "inviter_id": "{$memberInfo.id}",
+                        "remarks": remarks,
+                        "apply_type": 2,
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -209,23 +221,10 @@
                     success: function (data) {
                         //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data);
-                        if (data.code == 200 && data.data.status == "正常") {
-                            var data1 = wooApi.getInputData();
-                            var comment = $('textarea.data').val();
-                            if (invitation == "" || invitation == null) {
-                                mui.toast("您没填写评论内容哦");
-                                return false;
-                            }
-                            var objData = wooApi.arrTOobj(data1);
-                            objData.invitation = invitation;
-                            var result = wooApi.asyncF("{:url('api/camp/createCoachCommentApi')}", objData);
-                            if (result) {
-                                mui.toast(result.msg);
-                                mui('#pjpopover').popover('toggle');
-                                pulldownRefresh();
-                            }
+                        if (data.code == 200) {
+                            console.log(123)
                         } else {
-                            mui.toast("错误提示！");
+                            mui.toast(data.msg);
                         }
                     },
                     error: function (xhr, type, errorThrown) {
