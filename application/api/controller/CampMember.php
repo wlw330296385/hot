@@ -255,7 +255,9 @@ class CampMember extends Base
                 ->where($map)
                 ->select();
             foreach ($list as $k => $val) {
-                $list[$k]['star'] = ceil($val['star']/$val['star_num']);
+                if ($val['star'] > 0) {
+                    $list[$k]['star'] = ceil($val['star']/$val['star_num']);
+                }
             } 
             return ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $list];
         } catch (Exception $e) {
