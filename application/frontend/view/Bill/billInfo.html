@@ -130,7 +130,8 @@
         swipeBack: true //启用右滑关闭功能
     });
 
-
+$(function(){
+    
     // 申请退款
     $(".tjBtn").click(function(){
         var remarks = $(".question").val();
@@ -166,38 +167,38 @@
     })
 
 
-// 立即支付
-function wxpay(){
-    {if $jsApiParameters === 0}
-        alert('订单已支付,不可再支付'); 
+    // 立即支付
+    function wxpay(){
+        {if $jsApiParameters === 0}
+            alert('订单已支付,不可再支付'); 
 
-    {else /}
-        var strJsApiParameters = '{$jsApiParameters}';
-        var objJsApiParameters = JSON.parse(strJsApiParameters);
-        wx.chooseWXPay({
-            timestamp: {$jsApi['timestamp']},
-            // timestamp:objJsApiParameters.timeStamp,
-            nonceStr: objJsApiParameters.nonceStr,
-            package: objJsApiParameters.package,
-            signType: 'MD5',
-            paySign: objJsApiParameters.paySign,
-            success: function (res) {
-                // 支付成功后的回调函数
-                pay(JSON.stringify(res));
-            },
-            cancel: function() {
-                //mui.toast('取消了支付付款');
-                mui.alert('取消了支付付款');
-            },
-            fail: function(res) {
-                var errmsg = res.errMsg;
-                // mui.toast(errmsg.slice(12));
-                mui.alert(errmsg.slice(12));
-            }
-        });
-    {/if}
-}
-
+        {else /}
+            var strJsApiParameters = '{$jsApiParameters}';
+            var objJsApiParameters = JSON.parse(strJsApiParameters);
+            wx.chooseWXPay({
+                timestamp: {$jsApi['timestamp']},
+                // timestamp:objJsApiParameters.timeStamp,
+                nonceStr: objJsApiParameters.nonceStr,
+                package: objJsApiParameters.package,
+                signType: 'MD5',
+                paySign: objJsApiParameters.paySign,
+                success: function (res) {
+                    // 支付成功后的回调函数
+                    pay(JSON.stringify(res));
+                },
+                cancel: function() {
+                    //mui.toast('取消了支付付款');
+                    mui.alert('取消了支付付款');
+                },
+                fail: function(res) {
+                    var errmsg = res.errMsg;
+                    // mui.toast(errmsg.slice(12));
+                    mui.alert('刷新页面即可支付');
+                }
+            });
+        {/if}
+    }
+})
 
     //支付完成
     function pay(callback_str){
@@ -226,7 +227,7 @@ function wxpay(){
                     mui.toast(result.msg);
                 }
             },
-            error:function(){
+            error:function(msg){
                 alert(JSON.stringify(msg));
             }
         });
