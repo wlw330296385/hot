@@ -211,7 +211,10 @@ class Coach extends Base{
         $myCampList = db('camp_member')->where(['type'=>['gt',2],'status'=>1,'member_id'=>$this->memberInfo['id']])->select();
         // 评价教练员权限
         $commentPower = 0;
-        $gradememberList = db('grade_member')->where(['grade_id'=>['in',$gradeList],'member_id'=>$this->memberInfo['id']])->where('delete_time',null)->find();
+        $gradememberList = db('grade_member')->where(['grade_id'=>['in',$gradeList],'member_id'=>$this->memberInfo['id']])
+                // ->where(['delete_time'=>['=','null']])
+                ->where('delete_time',null)
+                ->find();
         if($gradememberList){
             $commentPower = 1;
         }
