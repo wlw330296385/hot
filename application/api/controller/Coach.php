@@ -3,6 +3,8 @@ namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CoachService;
 use app\service\CertService;
+use think\Exception;
+
 class Coach extends Base{
 	protected $CoachService;
 	public function _initialize(){
@@ -254,4 +256,26 @@ class Coach extends Base{
         }
     }
 
+    // 获取教练所在班级列表（包括主教、助教）
+    public function getCoachGradeList() {
+        try {
+            // 接收参数coach_id
+            $coach_id = input('coach_id');
+            if (!$coach_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'需要教练信息']);
+            }
+            // 查询教练所在班级
+            $coachS = new CoachService();
+            $res = $coachS->ingradelist($coach_id);
+            // 返回结果
+            if ($res) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }
