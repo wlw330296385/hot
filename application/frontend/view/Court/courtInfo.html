@@ -114,7 +114,6 @@
                             <div class="price-frame camp-num">
                                 <ul>
                                     <li class="fr">
-
                                         <span class="more">编辑</span>
                                     </li>
                                 </ul>
@@ -135,21 +134,15 @@
 
             <ul class="mui-table-view">
                 <li class="mui-table-view-cell listli detalisli">所属地区<span>{$courtInfo.province} {$courtInfo.city} {$courtInfo.area}</span></li>
-                <li class="mui-table-view-cell listli detalisli">
-                    具体地址<a href="#mapFrame"><span><i class="mui-icon mui-icon-location"></i>{$courtInfo.location}</span></a>
-                </li>
+                <li class="mui-table-view-cell listli detalisli">具体地址<span><a href="#mapFrame" style="display: block"><i class="mui-icon mui-icon-location"></i>{$courtInfo.location}</a></span></li>
                 <li class="mui-table-view-cell listli detalisli">联系人<span>{$courtInfo.principal}</span></li>
                 <li class="mui-table-view-cell listli detalisli">营业时间<span class="fixed">{$courtInfo.open_time}</span></li>
                 <li class="mui-table-view-cell listli detalisli">散场<span>{$courtInfo.chip_rent}元/人</span></li>
                 <li class="mui-table-view-cell listli detalisli">半场包场<span>{$courtInfo.half_rent}元/小时</span></li>
                 <li class="mui-table-view-cell listli detalisli">全场包场<span>{$courtInfo.full_rent}元/小时</span></li>
                 <li class="mui-table-view-cell listli detalisli">咨询电话<span>{$courtInfo.contract}</span></li>
-                <li class="mui-table-view-cell listli detalisli" id="campList" style="line-height: 40px;">已进驻训练营<span>{$courtInfo.contract}</span></li>
-                <li class="mui-table-view-cell listli detalisli">咨询电话
-                    <div class="tips">
-                        {$courtInfo.remarks}
-                    </div>
-                </li>
+                <li class="mui-table-view-cell listli detalisli" id="campList" style="line-height: 40px;">已进驻训练营<span></span></li>
+                <li class="mui-table-view-cell listli detalisli">温馨提示<span>{$courtInfo.remarks}</span></li>
             </ul>
         </div>
     </div>
@@ -167,8 +160,6 @@
         </div>
     </div>
 
-    </div>
-
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <!--获取地址-->
@@ -176,67 +167,86 @@
     <script src="/static/frontend/js/map.js"></script>
 
     <script>
-                                                                                                      //初始化
-                                                                                                      mui.init({
-                                                                                                          swipeBack: true //启用右滑关闭功能
-                                                                                                      });
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
 
-                                                                                                      //轮播
-                                                                                                      var slider = mui("#slider");
-                                                                                                      slider.slider({
-                                                                                                          interval: 5000
-                                                                                                      });
+        //轮播
+        var slider = mui("#slider");
+        slider.slider({
+            interval: 5000
+        });
 
-                                                                                                      $(function () {
+        $(function () {
 
-                                                                                                          //获取场地下训练营
-                                                                                                          toCampList('', '');
+       //获取地址
+        AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geolocation'], function () {
+            var geocoder = new AMap.Geocoder({
 
-                                                                                                      })
+            });
+            var marker = new AMap.Marker({
+                map: map,
+                bubble: true
+            })
+            //设置深圳站定位
+            var aa = {
+                N: "{$courtInfo.lng}",
+                Q:  "{$courtInfo.lat}",
+                lat:  "{$courtInfo.lat}",
+                lng:  "{$courtInfo.lng}",
+            }
+           
+            marker.setPosition(aa);
+        })
+            //获取场地下训练营
+            toCampList('', '');
 
-                                                                                                      //训练营教练列表接口获取数据并追加到页面
-                                                                                                      var toCampList = function (page, gType) {
-                                                                                                          var url = "{:url('api/court/getCourtCampListNoPageApi','','',true)}";
-                                                                                                          var courtID = "{$courtInfo.id}";
-                                                                                                          mui.ajax({
-                                                                                                              url: url,
-                                                                                                              data: {
-                                                                                                                  court_id: courtID,
-                                                                                                                  status: 1
-                                                                                                              },
-                                                                                                              dataType: 'json',//服务器返回json格式数据
-                                                                                                              type: 'post',//HTTP请求类型
-                                                                                                              timeout: 10000,//超时时间设置为10秒；
-                                                                                                              headers: { 'Content-Type': 'application/json' },
-                                                                                                              //processData:false,
-                                                                                                              success: function (data) {
-                                                                                                                  if (data.code == 200) {
-                                                                                                                      var newli = '';
-                                                                                                                      for (var i = 0; i <= data.data.length - 1; i++) {
-                                                                                                                          var urls = "{:url('camp/campInfo')}" + '/camp_id/' + data.data[i].id;
-                                                                                                                          newli = newli + '<a href="' + urls + '"><img class="coachicon" src="' + data.data[i].logo + '" alt="' + data.data[i].camp + '"></a>'
-                                                                                                                          console.log(data.data[i].banner)
-                                                                                                                      }
-                                                                                                                      $("#campList").append(newli);
-                                                                                                                  } else {
-                                                                                                                      mui.toast('训练营教练列表获取失败,请稍候再试');
-                                                                                                                  }
-                                                                                                              },
-                                                                                                              error: function (xhr, type, errerThrown) {
-                                                                                                                  mui.toast('网络异常,请稍候再试');
-                                                                                                              }
-                                                                                                          });
-                                                                                                      };
+        })
 
-                                                                                                      function addCourt(court_id) {
-                                                                                                          var result = wooApi.asyncF("{:url('api/court/ownCourtApi')}", { 'court_id': court_id, 'camp_id': "{$camp_id}" });
-                                                                                                          if (result.code == 200) {
-                                                                                                              mui.toast(result.msg);
-                                                                                                              location.reload();
-                                                                                                          } else {
-                                                                                                              mui.toast('网络错误');
-                                                                                                          }
-                                                                                                      }
+        //训练营教练列表接口获取数据并追加到页面
+        var toCampList = function (page, gType) {
+            var url = "{:url('api/court/getCourtCampListNoPageApi','','',true)}";
+            var courtID = "{$courtInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    court_id: courtID,
+                    status: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('camp/campInfo')}" + '/camp_id/' + data.data[i].id;
+                            newli = newli + '<a href="' + urls + '"><img class="coachicon" src="' + data.data[i].logo + '" alt="' + data.data[i].camp + '"></a>'
+                            console.log(data.data[i].banner)
+                        }
+                        $("#campList span").append(newli);
+                    } else {
+                        mui.toast('训练营教练列表获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        function addCourt(court_id) {
+            var result = wooApi.asyncF("{:url('api/court/ownCourtApi')}", { 'court_id': court_id, 'camp_id': "{$camp_id}" });
+            if (result.code == 200) {
+                mui.toast(result.msg);
+                location.reload();
+            } else {
+                mui.toast('网络错误');
+            }
+        }
     </script>
 </body>
 

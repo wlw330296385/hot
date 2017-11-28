@@ -105,7 +105,7 @@
                     <div class="mui-input-row" id='showCityPicker3'>
                         <a href="#" class="mui-navigate-right">
                             <label>所属地区</label>
-                            <span id="cityResult3" class="ui-alert province city area"></span>
+                            <span id="cityResult3" class="ui-alert address province city area"></span>
                         </a>
                     </div>
 
@@ -121,7 +121,7 @@
                     </div>
 
                     <div class="mui-input-row"><label>联系电话</label>
-                        <input type="text" class="contract" placeholder="请输入联系电话">
+                        <input type="text" class="contract" placeholder="请填写手机号或区号加固话">
                     </div>
 
                     <div class="mui-input-row"><label>联系人</label>
@@ -132,12 +132,12 @@
                         <input type="text" class="chip_rent checkNum" placeholder="请输入散场价格">
                     </div>
 
-                    <div class="mui-input-row"><label>包半场（小时)</label>
-                        <input type="text" class="half_rent checkNum" placeholder="请输入半场价格">
+                    <div class="mui-input-row"><label class="wd45">包半场（小时)</label>
+                        <input type="text" class="half_rent checkNum wd52" placeholder="请输入半场价格">
                     </div>
 
-                    <div class="mui-input-row"><label>包全场（小时）</label>
-                        <input type="text" class="full_rent checkNum" placeholder="请输入全场价格">
+                    <div class="mui-input-row"><label class="wd45">包全场（小时）</label>
+                        <input type="text" class="full_rent checkNum wd52" placeholder="请输入全场价格">
                     </div>
 
                     <div class="mui-input-row">
@@ -154,7 +154,7 @@
                     </div>
 
                     <div class="mui-input-row h-auto"><label>温馨提示</label>
-                        <textarea rows="5" class="remarks" placeholder="温馨提示内容"></textarea>
+                        <textarea rows="4" class="remarks" placeholder="温馨提示内容"></textarea>
                     </div>
 
                     <div class="mui-input-row h-auto ">
@@ -227,6 +227,13 @@
                     layer: 3
                 });
                 cityPicker3.setData(cityData3);
+
+                // 设置默认值
+                cityPicker3.pickers[0].setSelectedIndex(18);
+                cityPicker3.pickers[1].setSelectedIndex(2);
+                cityPicker3.pickers[2].setSelectedIndex(2);
+
+
                 var showCityPickerButton = doc.getElementById('showCityPicker3');
                 var cityResult3 = doc.getElementById('cityResult3');
                 showCityPickerButton.addEventListener('tap', function (event) {
@@ -266,6 +273,7 @@
             }).get().join(",");
             // 上面获取图片地址
             var court = $(".court").val();
+            var address = $(".address").text();
             var province = getProvince;
             var city = getCity;
             var area = getArea;
@@ -280,52 +288,68 @@
             var remarks = $(".remarks").val();
             var camp_id = "{$campInfo['id']}";
             var camp = "{$campInfo['camp']}";
-            if (court != '' && location != '' && open_time != '' && contract != '' && principal != '' && chip_rent != '' && half_rent != '' && full_rent != '' && outdoors != '') {
-                mui.ajax("{:url('api/court/createCourtApi')}", {
-                    data: {
-                        "court": court,
-                        "province": getProvince,
-                        "city": getCity,
-                        "area": getArea,
-                        "location": location,
-                        "open_time": open_time,
-                        "contract": contract,
-                        "principal": principal,
-                        "chip_rent": chip_rent,
-                        "half_rent": half_rent,
-                        "full_rent": full_rent,
-                        "outdoors": outdoors,
-                        "remarks": remarks,
-                        "covers": covers,
-                        "camp_id": camp_id,
-                        "camp": camp,
-                        "lng": lng,
-                        "lat": lat,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data)
-                        if (data.code == 200) {
-                            mui.toast(data.msg);
-                            setTimeout(window.location.href = "{:url('camp/courtlistofcamp#onCourtList',['camp_id'=>$campInfo['id']])}", 3000);
-                        } else {
-                            mui.toast(data.msg)
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
+
+
+            if (contract != '' && !(/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/).test(contract)) {
+                mui.alert('请填写正确的手机号码或区号加固话（例：0755-26650702）');
+                return false;
+            };
+            if (isNaN(chip_rent)) {
+                mui.toast("请填写正确的价格");
+                return false;
+            };
+            if (isNaN(half_rent)) {
+                mui.toast("请填写正确的价格");
+                return false;
+            };
+            if (isNaN(full_rent)) {
+                mui.toast("请填写正确的价格");
+                return false;
+            };
+
+            mui.ajax("{:url('api/court/createCourtApi')}", {
+                data: {
+                    court: court,
+                    province: getProvince,
+                    city: getCity,
+                    area: getArea,
+                    location: location,
+                    open_time: open_time,
+                    contract: contract,
+                    principal: principal,
+                    chip_rent: chip_rent,
+                    half_rent: half_rent,
+                    full_rent: full_rent,
+                    outdoors: outdoors,
+                    remarks: remarks,
+                    covers: covers,
+                    camp_id: camp_id,
+                    camp: camp,
+                    lng: lng,
+                    lat: lat,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data)
+                    if (data.code == 200) {
+                        mui.toast(data.msg);
+                        setTimeout(window.location.href = "{:url('camp/courtlistofcamp',['camp_id'=>$campInfo['id']])}", 3000);
+                    } else {
+                        mui.toast(data.msg)
                     }
-                });
-            } else {
-                mui.toast("选项不能为空");
-            }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
         })
     </script>
+
 </body>
 
 </html>

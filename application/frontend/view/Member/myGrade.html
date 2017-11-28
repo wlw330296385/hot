@@ -23,7 +23,7 @@
                 <a class="mui-control-item mui-active" href="#onStudentList">学员</a>
                 <a class="mui-control-item" href="#onLeaderList">领队</a>
                 <a class="mui-control-item" href="#onTeacherList">班主任</a>
-                <a class="mui-control-item" href="#onCoachList">教练</a>
+                <a class="mui-control-item tabCoach" href="#onCoachList">教练</a>
             </div>
         </div>
     </header>
@@ -77,7 +77,7 @@
             window.top.location.href = this.href;
         });
 
-        
+
         $(function () {
             //初始化全局变量
             var onStudent = 1;
@@ -175,7 +175,7 @@
                     toStudentList('onStudentList', page, gType);//具体取数据的方法
                 }, 100);
             }
-            //上拉加载具体业务实现（学员）
+            //1上拉加载具体业务实现（学员）
             function pullupRefreshStudent() {
                 setTimeout(function () {
                     onStudent++;//翻下一页
@@ -213,7 +213,7 @@
                     toTeacherList('onTeacherList', page, gType);//具体取数据的方法
                 }, 100);
             }
-            //上拉加载具体业务实现（班主任）
+            //3上拉加载具体业务实现（班主任）
             function pullupRefreshTeacher() {
                 setTimeout(function () {
                     onTeacher++;//翻下一页
@@ -232,7 +232,7 @@
                     toCoachList('onCoachList', page, gType);//具体取数据的方法
                 }, 100);
             }
-            //上拉加载具体业务实现（教练）
+            //4上拉加载具体业务实现（教练）
             function pullupRefreshCoach() {
                 setTimeout(function () {
                     onCoach++;//翻下一页
@@ -241,34 +241,6 @@
                     toCoachList('onCoachList', page, gType);//具体取数据的方法
                 }, 100);
             }
-
-            //判断用户是否为教练
-            var urla = "{:url('api/coach/iscoach','','',true)}";
-            mui.ajax({
-                url: urla,
-                data: {
-                    member_id: "{$memberInfo.id}",
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    if (data.code == 200) {
-                        console.log(data)
-                        coach_id = data.data.id;
-                        console.log(coach_id)
-                        if (data.data != '') {
-                            console.log(123)
-                            toCoachList();
-                        }
-                    }
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-                }
-            });
         });
 
         //学员
@@ -422,54 +394,76 @@
         };
 
         //教练
-        var coach_id = '';
         var toCoachList = function (wList, page, gType) {
-            //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/grade/getGradeListApi','','',true)}/?page=" + page;
+            //判断用户是否为教练
+            var urla = "{:url('api/coach/iscoach','','',true)}";
             mui.ajax({
-                url: url,
+                url: urla,
                 data: {
-                    coach_id: coach_id,
+                    member_id: "{$memberInfo.id}",
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
                 headers: { 'Content-Type': 'application/json' },
                 success: function (data) {
-                    var newli = '';
-                    if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            var urls = "{:url('grade/gradeInfo')}" + '/grade_id/' + data.data[i].id;
-                            newli = newli + '<li class="mui-table-view-cell mui-media listli fulllist"><div class="mui-slider-handle"><a href="' + urls + '"><p class="fTop"><strong>' + data.data[i].grade + '</strong><span>' + data.data[i].court + '</span></p><p class="fMiddle">' + data.data[i].student_str + '</p><p class="fBottom">学员：' + data.data[i].students + ' 人</p></a></div></li>';
-                        }
-                        if (gType == 1) {
-                            //上拉刷新
-                            $("ul.grade4").empty().append(newli);
-                            mui('#' + wList).pullRefresh().endPulldownToRefresh();
-                            mui('#' + wList).pullRefresh().refresh(true);
-                            if (newli == '') {
-                                $("ul.grade4").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    if (data.data != '') {
+                        console.log(data)
+                        coach_id = data.data.id;
+                        //搜索关键字不能完全为空，否则查询为空
+                        var url = "{:url('api/coach/getcoachgradelist','','',true)}/?page=" + page;
+                        mui.ajax({
+                            url: url,
+                            data: {
+                                coach_id: coach_id,
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (data) {
+                                var newli = '';
+                                if (data.code == 200) {
+                                    for (var i = 0; i <= data.data.length - 1; i++) {
+                                        var urls = "{:url('grade/gradeInfo')}" + '/grade_id/' + data.data[i].id;
+                                        newli = newli + '<li class="mui-table-view-cell mui-media listli fulllist"><div class="mui-slider-handle"><a href="' + urls + '"><p class="fTop"><strong>' + data.data[i].grade + '</strong><span>' + data.data[i].camp + '</span></p><p class="fMiddle">' + data.data[i].student_str + '</p><p class="fBottom">场地：' + data.data[i].court + '&nbsp;&nbsp;学员：' + data.data[i].students + ' 人</p></a></div></li>';
+                                    }
+                                    if (gType == 1) {
+                                        //上拉刷新
+                                        $("ul.grade4").empty().append(newli);
+                                        mui('#' + wList).pullRefresh().endPulldownToRefresh(false);
+                                        mui('#' + wList).pullRefresh().refresh(true);
+                                    } else {
+                                        //下拉加载 gType==2
+                                        $("ul.grade4").append(newli);
+                                    }
+                                } else {
+                                    // mui.toast('数据获取失败,请稍候再试');
+                                }
+
+                                if (newli != '') {
+                                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                                } else {
+                                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                                }
+
+                            },
+                            error: function (xhr, type, errerThrown) {
+                                mui.toast('网络异常,请稍候再试');
+                                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
                             }
-                        } else {
-                            //下拉加载 gType==2
-                            $("ul.grade4").append(newli);
-                        }
-                    } else {
-                        mui.toast('数据获取失败,请稍候再试');
-                    }
+                        });
 
-                    if (newli != '') {
-                        mui('#' + wList).pullRefresh().endPullupToRefresh(false);
                     } else {
-                        mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                        $(".tabCoach").hide();
                     }
-
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
                     mui('#' + wList).pullRefresh().endPullupToRefresh(true);
                 }
             });
+
         };
     </script>
 </body>
