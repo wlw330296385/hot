@@ -75,7 +75,7 @@
                 class="mui-icon mui-icon-phone"></span>电话咨询
             </li>
             <li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen"
-                style="color:#fff;border-left: 1px solid #ccc;" onclick="wxpay()" >立即支付
+                style="color:#fff;border-left: 1px solid #ccc;" id = "wxpay" >立即支付
             </li>
     </ul>
     {/case}
@@ -168,7 +168,7 @@ $(function(){
 
 
     // 立即支付
-    function wxpay(){
+    $('#wxpay').on('click',function(){
         {if $jsApiParameters === 0}
             alert('订单已支付,不可再支付'); 
 
@@ -193,12 +193,14 @@ $(function(){
                 fail: function(res) {
                     var errmsg = res.errMsg;
                     // mui.toast(errmsg.slice(12));
-                    mui.alert('刷新页面即可支付');
+                    mui.alert('网络延迟,请刷新页面');
                 }
             });
         {/if}
-    }
-})
+    })
+
+
+
 
     //支付完成
     function pay(callback_str){
@@ -232,7 +234,7 @@ $(function(){
             }
         });
     }
-
+})
 </script>
 <script type="text/javascript">
     wx.config({
