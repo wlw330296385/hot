@@ -164,7 +164,7 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <!--获取地址-->
     <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
-    <script src="/static/frontend/js/map.js"></script>
+    <!--<script src="/static/frontend/js/map.js"></script>-->
 
     <script>
         //初始化
@@ -179,26 +179,32 @@
         });
 
         $(function () {
-
-       //获取地址
-        AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geolocation'], function () {
-            var geocoder = new AMap.Geocoder({
-
+            // map(选择具体地址)
+            var map = new AMap.Map('container', {
+                resizeEnable: true,
+                zoom: 12,
             });
-            var marker = new AMap.Marker({
-                map: map,
-                bubble: true
-            })
-            //设置深圳站定位
-            var aa = {
-                N: "{$courtInfo.lng}",
-                Q:  "{$courtInfo.lat}",
-                lat:  "{$courtInfo.lat}",
-                lng:  "{$courtInfo.lng}",
-            }
-            
-            marker.setPosition(aa);
-        })
+            var geocoder;
+
+            //点击获取地址
+            AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geolocation'], function () {
+                var geocoder = new AMap.Geocoder({
+
+                });
+                var marker = new AMap.Marker({
+                    map: map,
+                    bubble: true
+                })
+                //设置深圳站定位
+                var aa = {
+                    N: "{$courtInfo.lng}",
+                    Q: "{$courtInfo.lat}",
+                    lat: "{$courtInfo.lat}",
+                    lng: "{$courtInfo.lng}",
+                }
+                marker.setPosition(aa);
+            });
+
             //获取场地下训练营
             toCampList('', '');
 
