@@ -18,6 +18,16 @@ AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geo
         map: map,
         bubble: true
     })
+    //设置深圳站定位
+    var aa = {
+        N: 114.118048,
+        Q: 22.529559,
+        lat: 22.529559,
+        lng: 114.118048,
+    }
+
+    marker.setPosition(aa);
+    
     map.on('click', function (e) {
         marker.setPosition(e.lnglat);
         geocoder.getAddress(e.lnglat, function (status, result) {
@@ -53,6 +63,8 @@ AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geo
     });
     geolocation.getCurrentPosition(function (status, result) {
         console.log(result);
+        N = result.position.N;
+        Q = result.position.Q;
         lng = result.position.lng;
         lat = result.position.lat;
         // console.log(lng)

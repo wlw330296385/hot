@@ -187,7 +187,6 @@ class Coach extends Base{
         if (!$coachInfo) {
             $this->error('没有这个教练信息');
         }
-
         // 全部班级数量
         $map = function ($query) use ($coach_id){
             $query->where(['grade.coach_id'=>$coach_id])->whereOr('grade.assistant_id','like',"%\"$coach_id\"%");
@@ -205,7 +204,7 @@ class Coach extends Base{
         //所属训练营
         $campList = Db::view('camp_member','camp_id')
             ->view('camp','*','camp.id = camp_member.camp_id')
-            ->where(['camp_member.member_id'=>$this->memberInfo['id'],'camp_member.type'=>2,'camp_member.status'=>1])
+            ->where(['camp_member.member_id'=>$coachInfo['member_id'],'camp_member.type'=>2,'camp_member.status'=>1])
             ->order('camp_member.id desc')
             ->select();
         $myCampList = db('camp_member')->where(['type'=>['gt',2],'status'=>1,'member_id'=>$this->memberInfo['id']])->select();
