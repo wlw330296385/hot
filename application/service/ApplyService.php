@@ -57,7 +57,7 @@ class ApplyService{
         }
         $result = $this->ApplyModel->save($data,['id'=>$apply_id]);
         if($result){
-            return ['code'=>200,'msg'=>'操作成功','data'=>$this->ApplyModel->id];
+            return ['code'=>200,'msg'=>'操作成功'];
         }else{
             return ['code'=>100,'msg'=>'操作失败'];
         }
