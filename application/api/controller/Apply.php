@@ -62,7 +62,13 @@ class Apply extends Base{
     public function createApplyApi(){
         try{
             $data = input('post.');
-            $result = $this->ApplyService->createApply($data);
+            $apply_id = input('param.apply_id');
+            if($apply_id){
+                $result = $this->ApplyService->updateApply($data,$apply_id);
+            }else{
+                $result = $this->ApplyService->createApply($data);
+            }
+            
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
