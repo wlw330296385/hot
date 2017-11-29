@@ -84,7 +84,7 @@
                     </ul>
                     <ul class="mui-table-view mui-text-center">
                         <li class="mui-table-view-cell">
-                            <ul class="mui-row table">
+                            <ul class="mui-row table ">
                                 <li class="mui-col-xs-3 mui-col-sm-3">统计类型</li>
                                 <li class="mui-col-xs-3 mui-col-sm-3"></li>
                                 <li class="mui-col-xs-3 mui-col-sm-3">人数</li>
@@ -92,27 +92,27 @@
                             </ul>
                         </li>
                         <li class="mui-table-view-cell">
-                            <ul class="mui-row table">
+                            <ul class="mui-row table first-ul">
                                 <li class="mui-col-xs-3 mui-col-sm-3">新报交费</li>
                                 <li class="mui-col-xs-3 mui-col-sm-3"></li>
-                                <li class="mui-col-xs-3 mui-col-sm-3">10</li>
-                                <li class="mui-col-xs-3 mui-col-sm-3">￥15000</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">0</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">￥0</li>
                             </ul>
                         </li>
                         <li class="mui-table-view-cell">
-                            <ul class="mui-row table">
+                            <ul class="mui-row table renew-ul">
                                 <li class="mui-col-xs-3 mui-col-sm-3">续报交费</li>
                                 <li class="mui-col-xs-3 mui-col-sm-3"></li>
-                                <li class="mui-col-xs-3 mui-col-sm-3">30</li>
-                                <li class="mui-col-xs-3 mui-col-sm-3">￥45000</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">0</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">￥0</li>
                             </ul>
                         </li>
                         <li class="mui-table-view-cell mb">
-                            <ul class="mui-row table">
+                            <ul class="mui-row table sum-ul">
                                 <li class="mui-col-xs-3 mui-col-sm-3">合计交费</li>
                                 <li class="mui-col-xs-3 mui-col-sm-3"></li>
-                                <li class="mui-col-xs-3 mui-col-sm-3">40</li>
-                                <li class="mui-col-xs-3 mui-col-sm-3">￥60000</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">0</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">￥0</li>
                             </ul>
                         </li>
                     </ul>
@@ -126,11 +126,11 @@
                             </ul>
                         </li>
                         <li class="mui-table-view-cell">
-                            <ul class="mui-row table">
+                            <ul class="mui-row table refund-ul">
                                 <li class="mui-col-xs-3 mui-col-sm-3">退费</li>
                                 <li class="mui-col-xs-3 mui-col-sm-3"></li>
-                                <li class="mui-col-xs-3 mui-col-sm-3">1</li>
-                                <li class="mui-col-xs-3 mui-col-sm-3">￥1500</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">0</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">￥0</li>
                             </ul>
                         </li>
                     </ul>
@@ -266,8 +266,10 @@
 //        $("#tStatisticsTime").text(currYMfirstDay+' 至 '+currYMlastDay);
 //        $("#eStatisticsTime").text(currLastMonth);
         var currYearMonth = $('#mStatisticsTime').text();
+        var currYMfirstDay = $('#startTime').text();
+        var currYMlastDay = $('#endTime').text();
         getMonthlyTuition(currYearMonth);
-//        getTuitionStatistics(currYMfirstDay,currYMlastDay);
+        getTuitionStatistics(currYMfirstDay,currYMlastDay);
 //        getEarnings(currLastMonth);
 
 
@@ -355,9 +357,34 @@
 
     //获取学费统计数据
     var getTuitionStatistics = function (s,e) {
+        mui.ajax("{:url('api/financial/statistics')}", {
+            data: {
+                start: s,
+                end: e,
+                camp_id: "{$camp_id}"
+            },
+            dateType: 'json',
+            type:'post',
+            timeout:10000,
+            headers:{'Content-Type':'application/json'},
+            success:function(data){
+                if (data.code==200) {
+                    console.log(data);
+                    $('.first-ul li').eq(2).html(data.data.first.count);
+                    $('.first-ul li').eq(3).html('￥'+data.data.first.total);
+                    $('.renew-ul li').eq(2).html(data.data.renew.count);
+                    $('.renew-ul li').eq(3).html('￥'+data.data.renew.total);
+                    $('.sum-ul li').eq(2).html(data.data.sum.count);
+                    $('.sum-ul li').eq(3).html('￥'+data.data.sum.total);
+                    $('.refund-ul li').eq(2).html(data.data.refund.count);
+                    $('.refund-ul li').eq(3).html('￥'+data.data.refund.total);
+                }
+            },
+            error:function(xhr,type,errorThrown){
 
-        mui.alert(s+' 至 '+e);
-
+                console.log(type);
+            }
+        });
     }
 
     //获取收支月表数据
