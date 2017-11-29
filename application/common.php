@@ -216,6 +216,7 @@ function initDateTime() {
     $dateTime['lastmonth_lastday'] = $lastmonthday[1];
     return $dateTime;
 }
+
 // 当前unix时间戳获取当月第一天及最后一天
 function getthemonth($timestamp=0)
 {
@@ -223,4 +224,72 @@ function getthemonth($timestamp=0)
     $firstday = date('Y-m-01', $timestamp);
     $lastday = date('Y-m-d', strtotime("$firstday +1 month -1 day"));
     return array($firstday,$lastday);
+}
+
+/**
+ * 获取指定年月日的开始时间戳和结束时间戳(本地时间戳非GMT时间戳)
+ * [1] 指定年：获取指定年份第一天第一秒的时间戳和下一年第一天第一秒的时间戳
+ * [2] 指定年月：获取指定年月第一天第一秒的时间戳和下一月第一天第一秒时间戳
+ * [3] 指定年月日：获取指定年月日第一天第一秒的时间戳
+ * @param  integer $year     [年份]
+ * @param  integer $month    [月份]
+ * @param  integer $day      [日期]
+ * @return array('start' => '', 'end' => '')
+ */
+function getStartAndEndUnixTimestamp($year = 0, $month = 0, $day = 0)
+{
+    if(empty($year))
+    {
+        $year = date("Y");
+    }
+
+    $start_year = $year;
+    $start_year_formated = str_pad(intval($start_year), 4, "0", STR_PAD_RIGHT);
+    $end_year = $start_year + 1;
+    $end_year_formated = str_pad(intval($end_year), 4, "0", STR_PAD_RIGHT);
+
+    if(empty($month))
+    {
+        //只设置了年份
+        $start_month_formated = '01';
+        $end_month_formated = '01';
+        $start_day_formated = '01';
+        $end_day_formated = '01';
+    }
+    else
+    {
+
+        $month > 12 || $month < 1 ? $month = 1 : $month = $month;
+        $start_month = $month;
+        $start_month_formated = sprintf("%02d", intval($start_month));
+
+        if(empty($day))
+        {
+            //只设置了年份和月份
+            $end_month = $start_month + 1;
+
+            if($end_month > 12)
+            {
+                $end_month = 1;
+            }
+            else
+            {
+                $end_year_formated = $start_year_formated;
+            }
+            $end_month_formated = sprintf("%02d", intval($end_month));
+            $start_day_formated = '01';
+            $end_day_formated = '01';
+        }
+        else
+        {
+            //设置了年份月份和日期
+            $startTimestamp = strtotime($start_year_formated.'-'.$start_month_formated.'-'.sprintf("%02d", intval($day))." 00:00:00");
+            $endTimestamp = $startTimestamp + 24 * 3600 - 1;
+            return array('start' => $startTimestamp, 'end' => $endTimestamp);
+        }
+    }
+
+    $startTimestamp = strtotime($start_year_formated.'-'.$start_month_formated.'-'.$start_day_formated." 00:00:00");
+    $endTimestamp = strtotime($end_year_formated.'-'.$end_month_formated.'-'.$end_day_formated." 00:00:00") - 1;
+    return array('start' => $startTimestamp, 'end' => $endTimestamp);
 }
