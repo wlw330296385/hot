@@ -2,7 +2,7 @@
 
 $('.reg_user').blur(function () {
     $('.validate-result span').remove('.user_yz');
-    if ((/^[a-zA-Z0-9_\u4e00-\u9fa5]{6,15}$/).test($(".reg_user").val())==false) {
+    if ((/^[a-zA-Z0-9]{6,15}$/).test($(".reg_user").val())==false && ((/^[\u4E00-\u9FA5]{2,5}$/).test($(".reg_user").val())===false) ) {
         $('.validate-result').append('<span class="user_yz">会员名只能包含英文、数字或中文，长度为6-15位</span>');
     }
 });
