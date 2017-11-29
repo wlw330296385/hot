@@ -110,7 +110,7 @@
                         <label>活动对象</label>
                         <span class="select-row">
                             <select id="eventObject" class="data target_type" name="target_type">
-                                <option value="1">不限</option>
+                                <option value="1">公开</option>
                                 <option value="2">营内</option>
                                 <option value="3">班内</option>
                             </select>
@@ -154,8 +154,8 @@
                         <label>是否收费</label>
                         <span class="select-row">
                             <select id="eventPrice" class="data" name="is_free">
-                                <option value="2">收费</option>
                                 <option value="1">免费</option>
+                                <option value="2" style="display: none">收费</option>
                             </select>
                         </span>
                     </div>
@@ -163,14 +163,14 @@
 
                 <div class="mui-input-row price-input-row {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">
                     <label>活动单价</label>
-                    <input type="text" name="price" class="data" value="{$eventInfo.price}" placeholder="请填写活动单价">
+                    <input type="text" name="price" class="" value="{$eventInfo.price}" placeholder="请填写活动单价">
                 </div>
 
                 <div class="mui-input-row price-input-row {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">
                     <a href="#cost" class="mui-navigate-right">
                         <label>费用结算人</label>
-                        <span class="costCont domData" name="finance">{$eventInfo.finance}</span>
-                        <input type="hidden" name="finance_id" class="data" value="">
+                        <span class="costCont " name="finance">{$eventInfo.finance}</span>
+                        <input type="hidden" name="finance_id" class="" value="">
                     </a>
                 </div>
 
@@ -453,12 +453,19 @@
                     $(".price-input-row").hide();
                     $("input[name='price']").removeClass("data");
                     $(".costCont").removeClass("domData");
+                    $("input[name='finance_id']").removeClass("data");
                 } else {
                     $(".price-input-row").show();
                     $("input[name='price']").addClass("data");
                     $(".costCont").addClass("domData");
+                    $("input[name='finance_id']").addClass("data");
                 }
             });
+
+            //判断只有大热俱乐部可以收费
+            freeStatus();
+            //判断是否收费显示data
+            isFree();
 
             //添加标题
             $(".titleClass").on('tap', '', function () {
@@ -545,12 +552,35 @@
         });
 
 
+
         // 插入删除按钮
         function delbtnFunction() {
             var delbtn = '<i class="delbtn mui-icon mui-icon-close"></i>';
             $(".operationDiv img").before(delbtn);
         }
 
+        //判断是否收费显示data
+        function isFree() {
+            var is_free = "{$eventInfo.is_free}";
+            if (is_free == 1) {
+                $("input[name='price']").removeClass("data");
+                $(".costCont").removeClass("domData");
+                $("input[name='finance_id']").removeClass("data");
+            } else {
+                $(".price-input-row").show();
+                $("input[name='price']").addClass("data");
+                $(".costCont").addClass("domData");
+                $("input[name='finance_id']").addClass("data");
+            }
+        }
+
+        //判断只有大热俱乐部可以收费
+        function freeStatus() {
+            var organization_id = $("input[name=organization_id]").val();
+            if (organization_id == 9) {
+                $("#eventPrice").children().show();
+            }
+        }
 
         // 获取数据并进行提交(编辑活动)
         function submitAction() {
