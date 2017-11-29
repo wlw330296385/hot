@@ -266,7 +266,7 @@ class Coach extends Base{
             }
             // 查询教练所在班级
             $coachS = new CoachService();
-            $res = $coachS->ingradelist($coach_id);
+            $res = $coachS->ingradelistPage($coach_id);
             // 返回结果
             if ($res) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];

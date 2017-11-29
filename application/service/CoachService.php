@@ -137,44 +137,38 @@ class CoachService{
     // 教练在训练营的班级列表
     public function ingradelist($coach_id, $camp_id=0) {
         $model = new Grade();
+        $map = [];
         if ($camp_id) {
-            $iscoachlist = $model->where(['camp_id' => $camp_id,'coach_id' => $coach_id])->select();
-            if (!$iscoachlist) {
-                return $iscoachlist;
-            }
-            $isassistantlist = [];
-            $assistants = $model->where(['camp_id' => $camp_id])->select();
-            if (!$assistants) {
-                return $assistants;
-            }
-            $assistants = $assistants->toArray();
+            $map['camp_id'] = $camp_id;
+        }
+        $coach = $this->coachInfo(['id' => $coach_id]);
+        $res = $model->where($map)
+            ->where('coach_id = :coach_id or assistant like :coach', ['coach_id' => $coach_id, 'coach' => "%".$coach['coach']."%"])
+            ->select();
+        if ($res) {
+            return $res->toArray();
         } else {
-            $iscoachlist = $model->where(['coach_id' => $coach_id, 'status' => 1])->select();
-            if (!$iscoachlist) {
-                return $iscoachlist;
-            }
-            $isassistantlist = [];
-            $assistants = $model->where(['status' => 1])->select();
-            if (!$assistants) {
-                return $assistants;
-            }
-            $assistants = $assistants->toArray();
+            return $res;
         }
+    }
 
-        foreach ($assistants as $assistant) {
-            if ($assistant) {
-                $assistantId = unserialize($assistant['assistant_id']);
-                if ($assistantId) {
-                    foreach ($assistantId as $val) {
-                        if ($val && $val == $coach_id) {
-                            array_push($isassistantlist, $assistant);
-                        }
-                    }
-                }
-            }
+    // 教练在训练营的班级列表(有分页)
+    public function ingradelistPage($coach_id, $camp_id=0, $order='id desc', $paginate=10) {
+        $model = new Grade();
+        $map = [];
+        if ($camp_id) {
+            $map['camp_id'] = $camp_id;
         }
-        $result = array_merge($iscoachlist->toArray(), $isassistantlist);
-        return $result;
+        $coach = $this->coachInfo(['id' => $coach_id]);
+        $res = $model->where($map)
+            ->where('coach_id = :coach_id or assistant like :coach', ['coach_id' => $coach_id, 'coach' => "%".$coach['coach']."%"])
+            ->order($order)
+            ->paginate($paginate);
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
     }
 
     // 教练在训练营的课程列表
