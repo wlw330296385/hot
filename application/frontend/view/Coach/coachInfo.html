@@ -164,18 +164,6 @@
         });
         $(function () {
 
-            // //评价功能
-            // $("#commentSubmit").click(function () {
-            //     //判断是否登陆会员
-            //     if ("{$memberInfo.id}" <= 0) {
-            //         var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
-            //         mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
-            //     } else {
-            //         //判断是否该训练营学生
-
-            //     }
-            // });
-
             // 星星显示
             var star = Math.round("{$coachInfo.star}" / "{$coachInfo.star_num}");
             starShow(star);
@@ -200,23 +188,22 @@
                 var result = wooApi.asyncF("{:url('api/coach/createCoachCommentApi')}", objData);
                 if (result) {
                     mui.toast(result.msg);
-                    mui('#pjpopover').popover('toggle');
+                    mui('#comment').popover('toggle');
                     $(".moreComment").show();
                 }
             });
 
-            //邀请
+            //邀请教练加入
             $("#invitationSubmit").on('click', function () {
-                //判断是否登陆会员
+
                 var remarks = $(".remarks").val();
                 var organization = $("option:selected").text();
                 var organization_id = $("option:selected").val();
-
                 if (remarks == '') {
                     mui.toast("你还没有写邀请理由哦！");
                     return false;
-                }
-
+                };
+                //没有邀请记录，可以邀请
                 mui.ajax("{:url('api/apply/createApplyApi')}", {
                     data: {
                         '__token__': "{$Request.token}",
@@ -230,6 +217,7 @@
                         "inviter_id": "{$memberInfo.id}",
                         "remarks": remarks,
                         "apply_type": 2,
+                        "apply_id" : yid
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -288,7 +276,8 @@
 
             //判断当前的关注状态
             followStatus();
-
+            //判断是否已经邀请，是就修改邀请内容
+            exist();
         });
 
         // 判断当前的关注状态
@@ -311,6 +300,51 @@
                         } else {
                             $(".follow").text("关注");
                         }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+
+        //判断是否已经邀请，是就修改邀请内容
+        var yid = '';
+        console.log(yid)
+        function exist() {
+            var remarks = $(".remarks").val();
+            var organization = $("option:selected").text();
+            var organization_id = $("option:selected").val();
+
+            mui.ajax("{:url('api/apply/getApplyListByPageApi')}", {
+                data: {
+                    "member": "{$coachInfo.coach}",
+                    "member_id": "{$coachInfo.member_id}",
+                    "organization": organization,
+                    "organization_id": organization_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data, i) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data.data != '') {
+                            for (var i = 0; i <= data.data.data.length - 1; i++) {
+                                yid = data.data.data[i].id;
+                                var yremarks = data.data.data[i].remarks;
+                                var yorganization = data.data.data[i].organization;
+                                var yorganization_id = data.data.data[i].organization_id;
+                            }
+                            $(".select-row option:selected").text(yorganization)
+                            $(".select-row option:selected").val(yorganization_id)
+                            $(".remarks").val(yremarks)
+                        }
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
                     }
                 },
                 error: function (xhr, type, errorThrown) {
