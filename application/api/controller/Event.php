@@ -129,6 +129,9 @@ class Event extends Base{
             if( isset($map['order']) ){
                 unset($map['order']);
             }
+            if(isset($map['page'])){
+                unset($mao['page']);
+            }
             $map['target_type'] = 3;
             $member_id = $this->memberInfo['id'];
             $gradeIDS = db('grade_member')->where(['member_id'=>8,'status'=>1])->column('grade_id');
