@@ -130,7 +130,7 @@ class Event extends Base{
                 unset($map['order']);
             }
             if(isset($map['page'])){
-                unset($mao['page']);
+                unset($map['page']);
             }
             $map['target_type'] = 3;
             $member_id = $this->memberInfo['id'];
