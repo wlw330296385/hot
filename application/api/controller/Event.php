@@ -164,7 +164,7 @@ class Event extends Base{
             }
             $map['target_type'] = 3;
             $member_id = $this->memberInfo['id'];
-            $gradeIDS = db('grade_member')->where(['member_id'=>8,'status'=>1])->column('grade_id');
+            $gradeIDS = db('grade_member')->where(['member_id'=>$member_id,'status'=>1])->column('grade_id');
             $map['target_id'] = ['in',$gradeIDS];
             $result =  $this->EventService->getEventList($map, $page,$order);
             if($result){
