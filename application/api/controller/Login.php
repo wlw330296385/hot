@@ -1,6 +1,8 @@
 <?php 
 namespace app\api\controller;
 use SmsApi;
+use think\Cookie;
+
 class Login extends Base{
 	
     public function _initialize(){
@@ -16,9 +18,13 @@ class Login extends Base{
     public function registerApi(){
         try{
         	$data = input('post.');
-            $pid = input('param.pid');
+            /*$pid = input('param.pid');
             if($pid){
                 $data['pid'] = $pid;
+            }*/
+            // 推荐人id
+            if (Cookie::has('pid')) {
+                $data['pid'] = Cookie::get('pid');
             }
 
             $memberInfo = session('memberInfo', '', 'think');

@@ -11,9 +11,9 @@ class Base extends Controller{
 	public $systemSetting;
 	public $memberInfo;
 	public function _initialize(){
+        $memberS = new MemberService();
 	    // 从模板消息url进入 带有openid字段 保存会员登录信息
 	    if ( input('?param.openid') ) {
-            $memberS = new MemberService();
             $member = $memberS->getMemberInfo(['openid' => input('param.openid')]);
             if ($member) {
                 cookie('mid', $member['id']);
@@ -28,27 +28,46 @@ class Base extends Controller{
 //			cookie('url', $url);
             cookie('url', \request()->url(), 1800);
 		}
-		$pid = input('param.pid');
+		/*$pid = input('param.pid');
 		if($pid){
 			cookie('pid',$pid);
 		}else{
 			cookie('pid',0);
-		}
+		}*/
+		// 获取推荐人信息
+        $pmember = [];
+		if ( input('?param.pid') ) {
+		    $pid = input('param.pid');
+            $pmember = $memberS->getMemberInfo(['id' => $pid]);
+            if ($pmember) {
+                cookie('pid', $pmember['id']);
+            }
+        } else {
+		    cookie('pid', 0);
+        }
 		$this->systemSetting = SystemService::getSite();
-		$this->assign('systemSetting',$this->systemSetting);
-		$this->footMenu();
-		
+
         if ( !Cookie::has('mid') ) {
             $this->nologin();
         }
-        
         $this->memberInfo = session('memberInfo', '', 'think');
         $this->assign('memberInfo', $this->memberInfo);
+        //提示完善信息对话框链接
         $wechatS = new WechatService();
         $fastRegisterInwx = $wechatS->oauthredirect(  url('login/fastRegister', '', '', true) );
-        $fasturl = $this->is_weixin() ? $fastRegisterInwx : url('login/login'); //提示完善信息对话框链接
+        $fasturl = $this->is_weixin() ? $fastRegisterInwx : url('login/login');
+
+        // 微信分享信息链接
+        $shareurl = request()->url(true);
+        $jsapi = $wechatS->jsapi($shareurl);
+
+        $this->assign('shareurl', $shareurl);
+        $this->assign('jsapi', $jsapi);
         $this->assign('fasturl', $fasturl);
         $this->assign('mid', cookie('mid'));
+        $this->assign('systemSetting',$this->systemSetting);
+        $this->assign('pmember', $pmember);
+        $this->footMenu();
 	}
 
 
