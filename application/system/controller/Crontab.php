@@ -18,14 +18,14 @@ class Crontab extends Controller {
         $this->setting = $SystemS::getSite();
     }
 
-    // 结算当天已申课时工资收入
+    // 结算前一天已申课时工资收入
     public function schedulesalaryin() {
         // 获取课时列表
         // 赠课记录，有赠课记录先抵扣
         // 91分 9进入运算 1平台收取
         // 结算主教+助教收入，剩余给营主
         // 上级会员收入提成(90%*5%,90%*3%)
-        list($start, $end) = Time::today();
+        list($start, $end) = Time::yesterday();
         $map['status'] = 1;
         //$map['create_time'] = ['between', [$start, $end]];
         $map['is_settle'] = 0;
@@ -48,7 +48,8 @@ class Crontab extends Controller {
                     }
                 }
                 // 课时总收入
-                $incomeSchedule = ($lesson['cost'] * ($numScheduleStudent-$numGiftSchedule)) * (1-$this->setting['sysrebate']);
+                $incomeSchedule = ($lesson['cost'] * ($numScheduleStudent-$numGiftSchedule));
+                //$incomeScheulde1 = $incomeSchedule * (1-$this->setting['sysrebate']);
                 // 学生人数提成
                 $pushSalary = $schedule['salary_base']*$numScheduleStudent;
                 $coachMember = $this->getCoachMember($schedule['coach_id']);
@@ -106,8 +107,8 @@ class Crontab extends Controller {
                     $this->insertSalaryIn($incomeAssistant, 1);
                 }
 
-                // 营主所得 课时收入-主教底薪-助教底薪-学员人数提成*教练人数。教练人数 = 助教人数+1（1代表主教人数）
-                $incomeCampSalary = $incomeSchedule-$schedule['coach_salary']-$schedule['assistant_salary']-($pushSalary*(count($incomeAssistant)+1));
+                // 营主所得 课时收入*(1-平台抽取比例)-主教底薪-助教底薪-学员人数提成*教练人数。教练人数 = 助教人数+1（1代表主教人数）
+                $incomeCampSalary = $incomeSchedule*(1-$this->setting['sysrebate'])-$schedule['coach_salary']-$schedule['assistant_salary']-($pushSalary*(count($incomeAssistant)+1));
                 $campMember = $this->getCampMember($schedule['camp_id']);
                 $incomeCamp = [
                     'salary' => $incomeCampSalary,
@@ -131,14 +132,14 @@ class Crontab extends Controller {
                     'system_remarks' => $systemRemarks
                 ];
                 $this->insertSalaryIn($incomeCamp);
-                Db::name('schedule')->where(['id' => $schedule['id']])->update(['update_time' => time(), 'is_settle' => 1]);
+                Db::name('schedule')->where(['id' => $schedule['id']])->update(['update_time' => time(), 'is_settle' => 1, 'schedule_income' => $incomeSchedule]);
             }
         });
     }
 
-    // 结算当月收入 会员分成
+    // 结算上一个月收入 会员分成
     public function salaryinrebate(){
-        list($start, $end) = Time::month();
+        list($start, $end) = Time::lastMonth();
         $map['status'] = 1;
         $map['has_rebate'] = 0;
         $map['create_time'] = ['between', [$start, $end]];

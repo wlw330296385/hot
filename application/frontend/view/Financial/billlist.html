@@ -36,7 +36,7 @@
     <ul class="mui-table-view detalis-list border-b">
         <li class="listli sheader mui-clearfix">
             <a class="mui-pull-left mui-icon mui-icon-left-nav"  href="#"></a>
-            <span class="mui-pull-right title-name">某某时间段 订单列表</span>
+            <span class="mui-pull-right title-name">{$days} 订单列表</span>
         </li>
     </ul>
     <ul class="mui-table-view camp-lesson-list detalis-list coach">
@@ -60,10 +60,8 @@
             <div id="bill1" class="mui-scroll-wrapper mui-control-content mui-active" style="top:85px">
                 <div class="mui-scroll">
                     <ul class="mui-table-view mui-text-center detalis-list bill1">
-                        <li class="mui-table-view-cell listli"><a href="/frontend/bill/billinfo/bill_order/22017111418153391115"><ul class="mui-row table  item-list"><li class="mui-col-sm-10 mui-col-xs-10"><div class="list-cont1">legend购买超级射手［海岸城站］<p>2017-11-14 18:15</p></div></li><li class="mui-col-sm-2 mui-col-xs-2">1</li></ul></a></li>
-                        <li class="mui-table-view-cell listli"><a href="/frontend/bill/billinfo/bill_order/22017111418153391115"><ul class="mui-row table  item-list"><li class="mui-col-sm-10 mui-col-xs-10"><div class="list-cont1">legend购买超级射手［海岸城站］<p>2017-11-14 18:15</p></div></li><li class="mui-col-sm-2 mui-col-xs-2">1</li></ul></a></li>
-                        <li class="mui-table-view-cell listli"><a href="/frontend/bill/billinfo/bill_order/22017111418153391115"><ul class="mui-row table  item-list"><li class="mui-col-sm-10 mui-col-xs-10"><div class="list-cont1">legend购买超级射手［海岸城站］<p>2017-11-14 18:15</p></div></li><li class="mui-col-sm-2 mui-col-xs-2">1</li></ul></a></li>
-                        <li class="mui-table-view-cell listli"><a href="/frontend/bill/billinfo/bill_order/22017111418153391115"><ul class="mui-row table  item-list"><li class="mui-col-sm-10 mui-col-xs-10"><div class="list-cont1">legend购买超级射手［海岸城站］<p>2017-11-14 18:15</p></div></li><li class="mui-col-sm-2 mui-col-xs-2">1</li></ul></a></li>
+                        <!--<li class="mui-table-view-cell listli"><a href="/frontend/bill/billinfo/bill_order/22017111418153391115"><ul class="mui-row table  item-list"><li class="mui-col-sm-10 mui-col-xs-10"><div class="list-cont1">legend购买超级射手［海岸城站］<p>2017-11-14 18:15</p></div></li><li class="mui-col-sm-2 mui-col-xs-2">1</li></ul></a></li>-->
+
                     </ul>
                 </div>
             </div>
@@ -92,9 +90,33 @@
 
 
     $(function () {
-
         // 参考订单列表页面 api
+//        toBillList('dd', 1, 1);
+        //获取订单列表数据并追加到页面
+//        var toBillList = function (wList, page, gType) {
+        page = 1;
+            var url = "{:url('api/bill/getBillListByPageApi','','',true)}/?page=" + page;
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: "{$camp_id}",
+                    start: "{$start}",
+                    end: "{$end}"
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
 
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    //mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+            });
+//        }
     })
 
 </script>
