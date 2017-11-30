@@ -16,6 +16,13 @@ class Bill extends Frontend{
         try{
             $page = input('param.page')?input('param.page'):1;
             $map = input('post.');
+            if (input('?start') || input('?end')) {
+                $start = input('start');
+                $end = input('end');
+                $map['create_time'] = ['between', [$start, $end]];
+                unset($map['start']);
+                unset($map['end']);
+            }
             $where = function($query) use($map){
                 $query -> where($map)->where(function($query){
                     $query->whereOr('expire',0)->whereOr('expire','gt',time());
@@ -33,6 +40,13 @@ class Bill extends Frontend{
     public function getBillListByPageApi(){
         try{
             $map = input('post.');
+            if (input('?start') || input('?end')) {
+                $start = input('start');
+                $end = input('end');
+                $map['create_time'] = ['between', [$start, $end]];
+                unset($map['start']);
+                unset($map['end']);
+            }
             // $map['member_id'] = $this->memberInfo['id'];
             $where = function($query) use($map){
                 $query -> where($map)->where(function($query){
