@@ -162,8 +162,8 @@
                 <div class="mui-input-row price-input-row" style="display: none">
                     <a href="#cost" class="mui-navigate-right">
                         <label>费用结算人</label>
-                        <span class="costCont " name="finance"></span>
-                        <input type="hidden" name="finance_id" class="cost_id ">
+                        <span class="finance" name="finance"></span>
+                        <input type="hidden" name="finance_id" value="" class="finance_id">
                     </a>
                 </div>
 
@@ -219,6 +219,18 @@
                     <input type="text" name="telephone" class="data telephoneBlur" value="" placeholder="请输入联系电话">
                 </div>
 
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>生效状态</label>
+                        <span class="select-row freeStatus">
+                            <select  class="data" name="status">
+                                <option value="2">默认下架</option>
+                                <option value="1">上架</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>活动封面</label>
@@ -226,8 +238,6 @@
                         <input type="hidden" name="cover" value='' class="data">
                     </a>
                 </div>
-
-                <input type="hidden" name="status" value='2' class="data">
 
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">活动简介</span>
@@ -278,30 +288,18 @@
             </div>
         </div>
     </div>
-    <!--费用结算人-->
-    <!--<div id="cost" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course"><strong>费用结算人</strong></span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list campMemberList"></ul>
-            </div>
-        </div>
-    </div>-->
 
     <!--费用结算人-->
     <div id="cost" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course wd36"><strong>费用结算人</strong></span>
-            <span class="fr"><button class="mui-btn" id="leaderDel">清除</button></span>
+            <span class="course wd45"><strong>选择费用结算人</strong></span>
+            <span class="fr"><button class="mui-btn" id="StudentDel">清除</button></span>
         </div>
         <div class="camp-lesson-list">
             <div class="mui-segmented-control">
-                <a class="mui-control-item wd36 mui-active" href="#item11">学生</a>
-                <a class="mui-control-item wd58" href="#item22">管理员，教练，营主</a>
+                <a class="mui-control-item mui-active" href="#item11">学生列表</a>
+                <a class="mui-control-item" href="#item22">管理员列表</a>
             </div>
         </div>
         <div id="item11" class="mui-control-content mui-active">
@@ -311,7 +309,7 @@
             </div>
             <div class="mui-scroll-wrapper" style="top:40px !important;">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view list leader campStudentList">
+                    <ul class="mui-table-view list campMemberType campMemberStudent">
                     </ul>
                     <ul class="mui-pager">
                         <li><a href="#" class="prev_page">上一页</a></li>
@@ -324,7 +322,7 @@
         <div id="item22" class="mui-control-content">
             <div class="mui-scroll-wrapper">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view list campMemberList">
+                    <ul class="mui-table-view list campMemberType campMemberAdmin">
                     </ul>
                 </div>
             </div>
@@ -440,6 +438,14 @@
         }
         var all = '';
         $(function () {
+
+            //获取训练营粉丝列表
+            var fansKeyword = '';
+            var wStudents = '';
+            var pageLD = 1;
+            toStudentList(fansKeyword, wStudents, 1);
+
+
             // 具体对象
             $(".campGradeList").on('tap', 'li', function () {
                 var target = $.trim($(this).text());
@@ -449,15 +455,6 @@
                 $(".target_id").val(target_id);
                 $(".targetCont").text(target);
                 mui("#target").popover("toggle");
-            });
-
-            // 费用结算人
-            $(".campMemberList").on('tap', 'li', function () {
-                var cost = $.trim($(this).children(".member").text());
-                var cost_id = $(this).attr('data-id');
-                $(".cost_id").val(cost_id);
-                $(".costCont").text(cost);
-                mui("#cost").popover("toggle");
             });
 
             // 选择活动对象显示隐藏具体对象
@@ -476,17 +473,56 @@
                 if ($(this).children('option:selected').text() == '免费') {
                     $(".price-input-row").hide();
                     $("input[name='price']").removeClass("data");
-                    $(".costCont").removeClass("domData");
+                    $(".finance").removeClass("domData");
                     $("input[name='finance_id']").removeClass("data");
                 } else {
                     $(".price-input-row").show();
                     $("input[name='price']").addClass("data").val('');
-                    $(".costCont").addClass("domData").val('');
+                    $(".finance").addClass("domData").val('');
                     $("input[name='finance_id']").addClass("data").val('');
                 }
             });
 
-
+            // 费用结算人
+            $(".campMemberType").on('click', 'li', function () {
+                var finance = $(this).find("font").text();
+                $(".finance").text(finance);
+                var id = $(this).attr('data-id');
+                $(".finance_id").val(id);
+                mui("#cost").popover("toggle");
+            })
+            //清除费用结算人
+            $("#StudentDel").on('tap', '', function () {
+                $(".finance").text('');
+                $(".finance_id").val("");
+                mui("#cost").popover("toggle");
+            })
+            //搜索费用结算人学生
+            $("#searchLD").on("click", function () {
+                var keyword = $(".keywordLD").val();
+                var pageLD = 1;
+                toStudentList(keyword, "cost", pageLD);
+            })
+            //费用结算人学生弹出框页码控制
+            $("#cost").on('click', '.next_page', function () {
+                var getTotalPage = $("#cost .totalPage").text();
+                pageLD++;
+                if (pageLD > getTotalPage) {
+                    mui.toast("已经最后一页了");
+                } else {
+                    var keyword = $(".keywordLD").val();
+                    toStudentList(keyword, "cost", pageLD);
+                }
+            })
+            $("#cost").on('click', '.prev_page', function () {
+                pageLD--;
+                if (pageLD < 1) {
+                    mui.toast("已经是第一页了");
+                } else {
+                    var keyword = $(".keywordLD").val();
+                    toStudentList(keyword, "cost", pageLD);
+                }
+            })
 
             //添加标题
             $(".titleClass").on('tap', '', function () {
@@ -569,14 +605,8 @@
             toCampMemberList(); // 调用训练营身份列表
             toCampGradeList(); //调用训练营班级列表
             freeStatus(); //判断只有大热俱乐部可以收费
-            istype();
 
         })
-
-        function istype() {
-            var type = $(".campMemberList").find(".type").text();
-            console.log(type)
-        }
 
         //判断只有大热俱乐部可以收费
         function freeStatus() {
@@ -669,14 +699,15 @@
             });
         };
 
-        //自定义获取训练营身份列表有分页
+        //自定义获取训练营身份列表没分页
         var toCampMemberList = function () {
-            var url = "{:url('api/camp_member/getCampMemberListApi','','',true)}";
+            var url = "{:url('api/camp_member/getCampMemberListNoPageApi','','',true)}";
             var campID = "{$campInfo.id}";
             mui.ajax({
                 url: url,
                 data: {
-                    camp_id: campID
+                    camp_id: campID,
+                    type: 2
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -686,21 +717,16 @@
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
-                        for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            type = data.data.data[i].type;
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli cost" data-id="' + data.data.data[i].member_id + '"><font class="member">' + data.data.data[i].member + '</font><span class="type">' + data.data.data[i].type + '</span></li>'
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            type = data.data[i].type;
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli cost" data-id="' + data.data[i].member_id + '"><font class="member">' + data.data[i].member + '</font><span class="wd36">' + data.data[i].type + '</span></li>'
                         }
 
-                        $("ul.campMemberList").empty();
+                        $("ul.campMemberAdmin").empty();
+                        $("ul.campMemberAdmin").append(newli);
                         if (newli == '') {
                             newli = '<p class="mui-text-center">没有查找到数据哦</p>'
                         }
-                        $("ul.campMemberList").append(newli);
-                        // if (type == "学生") {
-                        //     $(".campMemberList li").hide();
-                        // }
-                        // console.log(type)
-
                     } else {
                         mui.toast('数据获取失败,请稍候再试');
                     }
@@ -712,54 +738,55 @@
         };
 
 
-        // //学生列表接口获取数据并追加到页面
-        // var toFansList = function (keyword, wFans, page) {
-        //     var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}";
-        //     var campID = "{$campInfo.id}";
-        //     var typeID = "-1";
-        //     var wFansList = "ul.fans";
-        //     var currPage = ".currPage";
-        //     var totalPage = ".totalPage";
-        //     if (keyword != '' && wFans != '') {
-        //         wFansList = "#" + wFans + " ul.fans";
-        //         currPage = "#" + wFans + " .currPage";
-        //         totalPage = "#" + wFans + " .totalPage";
-        //     }
-        //     mui.ajax({
-        //         url: url,
-        //         data: {
-        //             camp_id: campID,
-        //             type: typeID,
-        //             page: page,
-        //             keyword: keyword
-        //         },
-        //         dataType: 'json',//服务器返回json格式数据
-        //         type: 'post',//HTTP请求类型
-        //         timeout: 10000,//超时时间设置为10秒；
-        //         headers: { 'Content-Type': 'application/json' },
-        //         //processData:false,
-        //         success: function (data) {
-        //             if (data.code == 200) {
-        //                 var newli = '';
-        //                 for (var i = 0; i <= data.data.data.length - 1; i++) {
-        //                     newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].member_id + '">' + data.data.data[i].member + '</li>'
-        //                 }
-        //                 $(wFansList).empty();
-        //                 if (newli == '') {
-        //                     newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
-        //                 }
-        //                 $(wFansList).append(newli);
-        //                 $(currPage).text(data.data.current_page);
-        //                 $(totalPage).text(data.data.last_page);
-        //             } else {
-        //                 mui.toast('数据获取失败,请稍候再试');
-        //             }
-        //         },
-        //         error: function (xhr, type, errerThrown) {
-        //             mui.toast('网络异常,请稍候再试');
-        //         }
-        //     });
-        // };
+        //训练营下学生身份列表接口获取数据并追加到页面
+        var toStudentList = function (keyword, wStudents, page) {
+            var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}";
+            var campID = "{$campInfo.id}";
+            var typeID = "1";
+            var wStudentsList = "ul.campMemberStudent";
+            var currPage = ".currPage";
+            var totalPage = ".totalPage";
+            if (keyword != '' && wStudents != '') {
+                wStudentsList = "#" + wStudents + " ul.campMemberStudent";
+                currPage = "#" + wStudents + " .currPage";
+                totalPage = "#" + wStudents + " .totalPage";
+            }
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID,
+                    type: typeID,
+                    page: page,
+                    keyword: keyword
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].member_id + '"><font class="member">' + data.data.data[i].member + '</font></li>'
+                        }
+                        $(wStudentsList).empty();
+                        if (newli == '') {
+                            newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
+                        }
+                        $(wStudentsList).append(newli);
+                        $(currPage).text(data.data.current_page);
+                        $(totalPage).text(data.data.last_page);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
     </script>
 </body>
 
