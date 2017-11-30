@@ -299,6 +299,7 @@ class CampMember extends Base
         try {
             $map = input('post.');
             $keyword = input('param.keyword');
+            $type = input('param.type');
             if (!empty($keyword) && $keyword != ' ' && $keyword != '') {
                 $map['member'] = ['LIKE', '%' . $keyword . '%'];
             }
@@ -307,6 +308,9 @@ class CampMember extends Base
             }
             if (isset($map['page'])) {
                 unset($map['page']);
+            }
+            if(!empty($type) && $type != ' ' && $type != ''){
+                $map['type'] = ['egt',$type];
             }
             $CampMember = new  \app\model\CampMember;
             $result = $CampMember->where($map)->select();
