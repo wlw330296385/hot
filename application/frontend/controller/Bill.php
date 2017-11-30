@@ -17,7 +17,7 @@ class Bill extends Base{
 
     //训练营查看会员订单
     public function billInfoOfCamp(){
-        $bill_id = input('param.bill_id');
+        $bill_id = input('param.id');
         $bill_order = input('param.bill_order');
         if($bill_id){
             $billInfo = $this->BillService->getBill(['id'=>$bill_id]);

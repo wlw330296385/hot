@@ -24,7 +24,7 @@ $('.reg_confirm').blur(function () {
 });
 
 
-// Email
+// email_yz
 $('.reg_email').blur(function () {
     $('.validate-result span').remove('.email_yz');
     if ((/^[a-z\d]+(\.[a-z\d]+)*@([\da-z](-[\da-z])?)+(\.{1,2}[a-z]+)+$/).test($(".reg_email").val())==false) {

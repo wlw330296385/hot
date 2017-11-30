@@ -292,6 +292,34 @@ class CampMember extends Base
         }
     }
 
+
+    //自定义获取训练营身份列表分页（无分页）
+    public function getCampMemberListNoPageApi()
+    {
+        try {
+            $map = input('post.');
+            $keyword = input('param.keyword');
+            if (!empty($keyword) && $keyword != ' ' && $keyword != '') {
+                $map['member'] = ['LIKE', '%' . $keyword . '%'];
+            }
+            if (isset($map['keyword'])) {
+                unset($map['keyword']);
+            }
+            if (isset($map['page'])) {
+                unset($map['page']);
+            }
+            $CampMember = new  \app\model\CampMember;
+            $result = $CampMember->where($map)->select();
+            if ($result) {
+                return json(['code' => 200, 'msg' => 'OK', 'data' => $result]);
+            } else {
+                return json(['code' => 100, 'msg' => __lang('MSG_402') . __lang('MSG_403')]);
+            }
+        } catch (Exception $e) {
+            return json(['code' => 200, 'msg' => $e->getMessage()]);
+        }
+    }
+
     //自定义获取训练营身份列表有分页
     public function getCampMemberListApi()
     {
