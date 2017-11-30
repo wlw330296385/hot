@@ -293,3 +293,18 @@ function getStartAndEndUnixTimestamp($year = 0, $month = 0, $day = 0)
     $endTimestamp = strtotime($end_year_formated.'-'.$end_month_formated.'-'.$end_day_formated." 00:00:00") - 1;
     return array('start' => $startTimestamp, 'end' => $endTimestamp);
 }
+
+// 检查日期格式是否正确
+function checkDatetimeIsValid($date) {
+    //strtotime转换不对，代表日期格式不对。
+    $unixTime = strtotime($date);
+    if (!$unixTime) {
+        return false;
+    }
+    // 检查日期格式是否有效
+    if (date('Y-m-d', $unixTime) == $date) {
+        return true;
+    } else {
+        return false;
+    }
+}

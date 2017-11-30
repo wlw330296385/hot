@@ -56,6 +56,14 @@
             margin: 0;
             color: #000;
         }
+        
+        .nohave {
+            margin: 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-top: none;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -84,6 +92,7 @@
             </ul>
             <ul class="mui-table-view mt55">
                 <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
+                <li class="mui-table-view-cell listli">活动对象<span class="target_type"></span></li>
                 <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='2||3'}show{else/}hide{/eq}">所属训练营<span>{$eventInfo.organization}</span></li>
                 <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='3'}show{else/}hide{/eq}">所属班级<span>{$eventInfo.target}</span></li>
                 <li class="mui-table-view-cell listli">活动开始时间<span>{$eventInfo.starts}</span></li>
@@ -139,6 +148,11 @@
         });
 
         $(function () {
+            // 活动对象转换成文字显示
+            targetType();
+            // 默认的样式
+            initialEds();
+
             var surplus = "{$eventInfo.max}" - "{$eventInfo.participator}";
             $(".surplus").text(surplus)
 
@@ -148,7 +162,11 @@
                 var mID = "{$memberInfo.id}";
                 if (mID <= 0) {
                     var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
-                    mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', btnArray);
+                    mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                        if (e.index === 1) {
+                            window.location.href = "{$fasturl}";
+                        }
+                    });
                 } else {
                     var btnArray = ['确定', '取消'];
                     var addForm = '<div class="mui-popup-input"><input type="number" name="participator" class="data" placeholder="请输入报名人数" autofocus=""></div>'
@@ -169,10 +187,28 @@
                         }
                     });
                 }
+            });
 
-
-            })
         });
+
+        // 活动对象转换成文字显示
+        function targetType() {
+            target_type = "{$eventInfo.target_type}";
+            if (target_type == 1) {
+                target_type_name = "公开活动";
+            } else if (target_type == 2) {
+                target_type_name = "营内活动";
+            } else if (target_type == 3) {
+                target_type_name = "班内活动";
+            }
+            $(".target_type").text(target_type_name)
+        }
+        // 默认的样式
+        function initialEds() {
+            if ($(".intro").text() == '') {
+                $(".intro").append("<p class='nohave'>还没有活动简介哦</p>")
+            }
+        }
     </script>
 </body>
 
