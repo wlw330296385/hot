@@ -2,6 +2,9 @@
 // 财务
 namespace app\api\controller;
 use app\service\CampService;
+use app\service\SalaryInService;
+use app\service\ScheduleService;
+use app\service\SystemService;
 use think\Db;
 use think\Exception;
 use think\helper\Time;
@@ -28,6 +31,7 @@ class Financial extends Base {
             }
             $map['camp_id'] = $camp['id'];
             $map['is_pay'] = 1;
+            $map['goods_type'] = 1;
             // 要查询的时间段（年、月），默认当前年月；
             if (input('?year') || input('?month')) {
                 // 判断年、月参数是否为数字格式
@@ -120,6 +124,7 @@ class Financial extends Base {
             ];
             $model = new \app\model\Bill();
             // 按会员分组查询所有交费订单记录
+            $map['goods_type'] = 1;
             $bills = $model->where($map)
                 ->field('count(*) count,sum(balance_pay) total, member_id')
                 ->group('member_id')
@@ -153,6 +158,79 @@ class Financial extends Base {
                 $resultArr['refund']['total'] = (!empty($refundBills[0]['total'])) ? $refundBills[0]['total'] : 0;
             }
             //dump($resultArr);
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $resultArr]);
+        } catch(Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 收益统计
+    public function earnings() {
+        try {
+            // 接受参数 camp_id year month
+            $camp_id = input('camp_id');
+            if (!$camp_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').',需要训练营信息']);
+            }
+            // 查询训练营信息，无训练营抛出提示
+            $campS = new CampService();
+            $camp = $campS->getCampInfo($camp_id);
+            if (!$camp) {
+                return json(['code' => 100, 'msg' => '训练营'.__lang('MSG_404')]);
+            }
+            // 有无权限查看数据
+            $campPower = getCampPower($camp['id'], $this->memberInfo['id']);
+            if (!$campPower || $campPower < 3) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403').',你无权查看此训练营相关信息']);
+            }
+            $map['camp_id'] = $camp['id'];
+            // 要查询的时间段（年、月），默认上个年月；
+            if (input('?year') || input('?month')) {
+                // 判断年、月参数是否为数字格式
+                $year = input('year', date('Y'));
+                $month = input('month', date('m'));
+                if (!is_numeric($year) || !is_numeric($month) ) {
+                    return json(['code' => 100, 'msg' => '时间格式错误']);
+                }
+                // 根据传入年、月 获取月份第一天开始时间和最后一天结束时间
+                $when = getStartAndEndUnixTimestamp($year,$month);
+                $start = $when['start'];
+                $end = $when['end'];
+            } else {
+                list($start, $end) = Time::lastMonth();
+            }
+            // 组合时间查询条件
+            $map['create_time'] = ['between', [$start, $end]];
+           // 初始化统计输出结果
+            $resultArr = ['schedule_salaryin' => 0, 'system_extract' => 0, 'coach_salary' => 0, 'camp_income' => 0];
+            // 获取平台服务抽取比例
+            $setting = SystemService::getSite();
+            $sysrebate = $setting['sysrebate'];
+            // 获取数据
+            // 获取课时结算总收入、平台服务支出输出结果
+            $scheduleS = new ScheduleService();
+            $scheduleSalaryin = $scheduleS->scheduleIncome($map);
+            if ($scheduleSalaryin) {
+                $resultArr['schedule_salaryin'] = $scheduleSalaryin;
+                $resultArr['system_extract'] = $scheduleSalaryin*$sysrebate;
+            }
+            // 获取教练工资支出
+            $salaryInS = new SalaryInService($this->memberInfo['id']);
+            $coachMap = $map;
+            $coachMap['member_type'] = ['lt', 5];
+            $coachMap['type'] = 1;
+            $coachSalaryIn = $salaryInS->countSalaryin($coachMap);
+            if ($coachSalaryIn) {
+                $resultArr['coach_salary'] = $coachSalaryIn;
+            }
+            // 训练营直接收入
+            $campMap = $map;
+            $campMap['type'] =1;
+            $campMap['member_type'] = 5;
+            $campSalaryin = $salaryInS->countSalaryin($campMap);
+            if ($campSalaryin) {
+                $resultArr['camp_income'] = $campSalaryin;
+            }
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $resultArr]);
         } catch(Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
