@@ -108,7 +108,7 @@ class Event extends Base{
             if( isset($map['order']) ){
                 unset($map['order']);
             }
-            $result =  $this->getEventList($map, $page,$order);
+            $result =  $this->EventService->getEventList($map, $page,$order);
             if($result){
                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
@@ -118,6 +118,31 @@ class Event extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
 		    	
+    }
+
+    //翻页获取班级活动接口
+    public function getEventListOfGradeApi(){
+        try{
+            $map = input('post.');
+            $page = input('param.page', 1);
+            $order = input('param.order','id desc');
+            if( isset($map['order']) ){
+                unset($map['order']);
+            }
+            $map['target_type'] = 3;
+            $member_id = $this->memberInfo['id'];
+            $gradeIDS = db('grade_member')->where(['member_id'=>8,'status'=>1])->column('grade_id');
+            $map['target_id'] = ['in',$gradeIDS];
+            $result =  $this->EventService->getEventList($map, $page,$order);
+            if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+                
     }
 
     //编辑|添加活动接口
