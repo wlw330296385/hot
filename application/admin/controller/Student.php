@@ -18,7 +18,7 @@ class Student extends Backend {
         }
         $name = input('name');
         if ($name) {
-            $map['grade_member.student'] = ['like', '%'. $name .'%'];
+            $map['student.student'] = ['like', '%'. $name .'%'];
         }
         $tel = input('tel');
         if ($tel) {
@@ -26,15 +26,15 @@ class Student extends Backend {
         }
 
         // 视图查询 grade_member - student
-        $list = Db::view('student', ['id', 'student','member_id'])
-            ->view('member', ['member', 'hot_id','telephone'], 'member.id=student.member_id','LEFT')
+        $list = Db::view('student')
+            ->view('member', ['member', 'hot_id','telephone'], 'member.id=student.member_id', 'left')
             ->view('grade_member', ['camp', 'camp_id', 'grade', 'grade_id', 'type', 'status'], 'grade_member.student_id=student.id', 'LEFT')
             ->where($map)
             ->where('grade_member.delete_time', null)
             ->order(['student.id'=>'desc'])
             ->paginate(15);
 
-
+//        dump($list->toArray());die;
         $breadcrumb = ['title' => '学员列表', 'ptitle' => '训练营'];
         $this->assign('breadcrumb', $breadcrumb);
         $this->assign('list', $list);
