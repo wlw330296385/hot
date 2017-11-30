@@ -1,5 +1,6 @@
 <?php
 namespace app\frontend\controller;
+use app\service\BillService;
 use app\service\CampService;
 
 class Financial extends Base {
@@ -14,6 +15,18 @@ class Financial extends Base {
     }
 
     public function billlist() {
+        $days = input('param.days');
+        if (!checkDatetimeIsValid($days)) {
+            $this->error('查看日期格式不合法');
+        }
+
+        $day = explode("-", $days);
+        $when = getStartAndEndUnixTimestamp($day[0], $day[1], $day[2]);
+        $start = $when['start'];
+        $end = $when['end'];
+        $this->assign('days', $days);
+        $this->assign('start', $start);
+        $this->assign('end', $end);
         return view('Financial/billlist');
     }
 
@@ -21,7 +34,6 @@ class Financial extends Base {
     public function statistics() {
         // 初始化时间选择器日期（年、月、上月、本月第一天、本月最后一天）
         $dateTime = initDateTime();
-
 
         $this->assign('dateTime', $dateTime);
         return view('Financial/statistics');
