@@ -1,0 +1,94 @@
+{extend name="layout/common"/}
+
+{block name="page-content"}
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+            <em>订单对账</em>
+
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="no-padding">
+            <div class="bootstrap-table">
+                <div class="search-form">
+                    <form action="{:url('finance/reconciliation')}" class="form-inline" method="post">
+                        <fieldset>
+                            {if condition="!isset($curcamp)"}
+                            <div class="form-group">
+                                <label class="control-label">训练营</label>
+                                <input class="form-control" type="text" name="camp" >
+                            </div>
+                            {/if}
+                            <div class="form-group">
+                                <label class="control-label">选择月份</label>
+                                <input class="form-control layui-input" type="text" name="month" id="month-selecter" value="{$curmonth}">
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-12 text-center">
+                                    <button type="submit" class="btn btn-success btn-flat">搜索</button>
+                                    <button type="submit" class="btn btn-default btn-flat">重置</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+
+                <div class="fixed-table-container no-border">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="box no-border">
+                                <div class="box-body">
+                                    <table class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>日期</th>
+                                            <th>交费金额</th>
+                                            <th>手续费</th>
+                                            <th>收款金额</th>
+                                            <th>学员人数</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {volist name="list" id="vo"}
+                                        <tr>
+                                            <td>{$vo.days}</td>
+                                            <td>{$vo.total}</td>
+                                            <td>{$vo.bank_charges}</td>
+                                            <td>{$vo.collection}</td>
+                                            <td>{$vo.count}</td>
+                                            <td>
+                                                <a href="{:url('finance/billlist', ['days' => $vo['days']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"> 查看详情</i></a>
+                                            </td>
+                                        </tr>
+                                        {/volist}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{/block}
+{block name="js"}
+<script>
+$(function() {
+//    $('#month-selecter').on('click', '',function() {
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+            laydate.render({
+                //指定元素,
+                elem: '#month-selecter',
+                type: 'month'
+            });
+        });
+//    });
+});
+</script>
+{/block}
