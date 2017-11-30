@@ -105,8 +105,23 @@ class Event extends Base{
             $map = input('post.');
             $page = input('param.page', 1);
             $order = input('param.order','id desc');
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $city = input('param.city');
+            $area = input('param.area');
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
             if( isset($map['order']) ){
                 unset($map['order']);
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['event'] = ['LIKE','%'.$keyword.'%'];
+            }
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value==' '){
+                    unset($map[$key]);
+                }
             }
             $result =  $this->EventService->getEventList($map, $page,$order);
             if($result){
@@ -126,11 +141,26 @@ class Event extends Base{
             $map = input('post.');
             $page = input('param.page', 1);
             $order = input('param.order','id desc');
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $city = input('param.city');
+            $area = input('param.area');
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
             if( isset($map['order']) ){
                 unset($map['order']);
             }
             if(isset($map['page'])){
                 unset($map['page']);
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['event'] = ['LIKE','%'.$keyword.'%'];
+            }
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value==' '){
+                    unset($map[$key]);
+                }
             }
             $map['target_type'] = 3;
             $member_id = $this->memberInfo['id'];
