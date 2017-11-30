@@ -283,7 +283,7 @@ class CampMember extends Base
             $CampMember = new  \app\model\CampMember;
             $result = $CampMember->with('coach')->where($map)->paginate(10);
             if ($result) {
-                return json(['code' => 200, 'msg' => 'OK', 'data' => $result]);
+                return json(['code' => 200, 'msg' => 'OK', 'data' => $result->toArray()]);
             } else {
                 return json(['code' => 100, 'msg' => __lang('MSG_402') . __lang('MSG_403')]);
             }
