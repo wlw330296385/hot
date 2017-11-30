@@ -145,7 +145,7 @@
                             </p>
                         </li>
                     </ul>
-                    <ul class="mui-table-view border-b">
+                    <ul class="mui-table-view border-b earing-ul">
                         <li class="mui-table-view-cell">
                             <ul class="mui-row table">
                                 <li class="mui-col-xs-6 mui-col-sm-6">统计类型</li>
@@ -155,25 +155,25 @@
                         <li class="mui-table-view-cell">
                             <ul class="mui-row table">
                                 <li class="mui-col-xs-6 mui-col-sm-6">课时结算总收入</li>
-                                <li class="mui-col-xs-6 mui-col-sm-6 mui-text-right">￥35000</li>
+                                <li class="mui-col-xs-6 mui-col-sm-6 mui-text-right">￥0</li>
                             </ul>
                         </li>
                         <li class="mui-table-view-cell">
                             <ul class="mui-row table">
                                 <li class="mui-col-xs-6 mui-col-sm-6">平台服务支出</li>
-                                <li class="mui-col-xs-6 mui-col-sm-6 mui-text-right">￥2000</li>
+                                <li class="mui-col-xs-6 mui-col-sm-6 mui-text-right">￥0</li>
                             </ul>
                         </li>
                         <li class="mui-table-view-cell">
                             <ul class="mui-row table">
                                 <li class="mui-col-xs-6 mui-col-sm-6">教练员工资支出</li>
-                                <li class="mui-col-xs-6 mui-col-sm-6 mui-text-right">￥20000</li>
+                                <li class="mui-col-xs-6 mui-col-sm-6 mui-text-right">￥0</li>
                             </ul>
                         </li>
                         <li class="mui-table-view-cell">
                             <ul class="mui-row table">
                                 <li class="mui-col-xs-6 mui-col-sm-6">本月训练营收入</li>
-                                <li class="mui-col-xs-6 mui-col-sm-6 mui-text-right">￥13000</li>
+                                <li class="mui-col-xs-6 mui-col-sm-6 mui-text-right">￥0</li>
                             </ul>
                         </li>
                     </ul>
@@ -268,9 +268,10 @@
         var currYearMonth = $('#mStatisticsTime').text();
         var currYMfirstDay = $('#startTime').text();
         var currYMlastDay = $('#endTime').text();
+        var currLastMonth = $('#eStatisticsTime').text();
         getMonthlyTuition(currYearMonth);
         getTuitionStatistics(currYMfirstDay,currYMlastDay);
-//        getEarnings(currLastMonth);
+        getEarnings(currLastMonth);
 
 
         //切换tab的同时切换搜索框
@@ -320,16 +321,6 @@
                 if (data.code === 200) {
                     // 返回为空 显示无数据
                     if (data.data.length != 0) {
-                    /*<li class="mui-table-view-cell">
-                            <a href="billlist.html" class="mui-navigate-right">
-                            <ul class="mui-row table">
-                            <li class="mui-col-xs-3 mui-col-sm-3">2017-10-1</li>
-                            <li class="mui-col-xs-3 mui-col-sm-3"></li>
-                            <li class="mui-col-xs-3 mui-col-sm-3">6</li>
-                            <li class="mui-col-xs-3 mui-col-sm-3">￥3000</li>
-                            </ul>
-                            </a>
-                            </li>*/
                         for (var i=0; i<data.data.length;i++) {
                             urls = "{:url('frontend/financial/billlist')}/camp_id/{$camp_id}" + "/year/" + year + "/month/" + month;
                             newli += '<li class="mui-table-view-cell">';
@@ -369,7 +360,7 @@
             headers:{'Content-Type':'application/json'},
             success:function(data){
                 if (data.code==200) {
-                    console.log(data);
+                    //console.log(data);
                     $('.first-ul li').eq(2).html(data.data.first.count);
                     $('.first-ul li').eq(3).html('￥'+data.data.first.total);
                     $('.renew-ul li').eq(2).html(data.data.renew.count);
@@ -389,9 +380,33 @@
 
     //获取收支月表数据
     var getEarnings = function (d) {
+        var yearandmonth = d.split("-");
+        year = yearandmonth[0];
+        month = yearandmonth[1];
+        mui.ajax("{:url('api/financial/earnings')}", {
+            data: {
+                year: year,
+                month: month,
+                camp_id: "{$camp_id}"
+            },
+            dateType: 'json',
+            type:'post',
+            timeout:10000,
+            headers:{'Content-Type':'application/json'},
+            success:function(data){
+                if (data.code==200) {
+                    console.log(data);
+                    $('.earing-ul').children('li').eq(1).find('.mui-text-right').html('￥'+data.data.schedule_salaryin);
+                    $('.earing-ul').children('li').eq(2).find('.mui-text-right').html('￥'+data.data.system_extract);
+                    $('.earing-ul').children('li').eq(3).find('.mui-text-right').html('￥'+data.data.coach_salary);
+                    $('.earing-ul').children('li').eq(4).find('.mui-text-right').html('￥'+data.data.camp_income);
+                }
+            },
+            error:function(xhr,type,errorThrown){
 
-        mui.alert(d);
-
+                console.log(type);
+            }
+        });
     }
 
 </script>

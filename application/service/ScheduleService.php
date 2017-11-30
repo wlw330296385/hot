@@ -554,4 +554,27 @@ class ScheduleService
         $result = $model->where($map)->find()->toArray();
         return $result;
     }
+
+    // 课时结算的收入统计
+    public function scheduleIncome($map) {
+        $model = new Schedule();
+        if (isset($map['create_time'])) {
+            $map['lesson_time'] = $map['create_time'];
+            unset($map['create_time']);
+        }
+        $map['status'] = 1;
+        $map['is_settle'] = 1;
+        $schedules = $model->where($map)->select();
+        $sum = 0;
+        if ($schedules) {
+            $schedules = $schedules->toArray();
+            //dump($schedules);
+            foreach ($schedules as $schedule) {
+                $sum += $schedule['schedule_income'];
+            }
+            return $sum;
+        } else {
+            return $sum;
+        }
+    }
 }
