@@ -112,13 +112,21 @@
             </form>
 
             <div class="tip-box">
-                <input type="checkbox" checked>
-                <label>已阅读并同意大热篮球教练员管理条例</label>
+                <input name="iagree" type="checkbox" />&nbsp;<a href="#userAgreement" >已阅读并同意篮球管家用户协议（点击查看）</a>
             </div>
             <div class="tjbtn mb44">
                 <button type="button" class="mui-btn btn registerbtn2">注册</button>
             </div>
             <!--<p class="pass"><a href="{:url('index/index')}">[跳过，稍后完善]</a></p>-->
+        </div>
+    </div>
+
+    <div id="userAgreement" class="mui-popover mui-popover-action mui-popover-bottom whitebg">
+        <div class="page-header">
+            <span class="course"><strong>篮球管家服务平台与用户共同确认：</strong></span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll"></div>
         </div>
     </div>
 
@@ -138,10 +146,18 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-
         //地区选择器
         (function ($, doc) {
-            $.init();
+
+            $(".mui-scroll-wrapper").scroll({
+                //bounce: false,//滚动条是否有弹力默认是true
+                indicators: true //是否显示滚动条,默认是true
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+
             $.ready(function () {
                 var _getParam = function (obj, param) {
                     return obj[param] || '';
@@ -173,6 +189,23 @@
 
         //完善教练信息
         $(function () {
+
+            //获取用户协议内容，放置弹出框中
+            mui.ajax("{:url('frontend/member/userAgreement')}", {
+                data: {},
+                dataType: 'html',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    $("#userAgreement .mui-scroll").append(data);
+
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(type);
+                }
+            });
 
             $(".registerbtn2").on("click", function () {
                 var coachid = $('input[name=coachid]').val();
@@ -206,6 +239,9 @@
                     return false;
                 } else if (experience == "" || introduction == "" || description == '') {
                     mui.toast("请完善信息");
+                    return false;
+                } else if (!$('input[name=iagree]').is(':checked')) {
+                    mui.toast("请阅读并同意篮球管家用户协议，谢谢");
                     return false;
                 };
 

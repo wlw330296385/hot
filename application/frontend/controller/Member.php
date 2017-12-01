@@ -241,6 +241,11 @@ class Member extends Base{
         return view('Member/myShare');
     }
 
+    // 用户协议说明页面
+    public function userAgreement(){
+        return view('Member/userAgreement');
+    }
+
 
 
 }
