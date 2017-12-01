@@ -1,14 +1,17 @@
 // user
 
 $('.reg_user').blur(function () {
+    var aa = $.trim($(".reg_user").val());
+    $(".reg_user").val(aa);
     $('.validate-result span').remove('.user_yz');
-    if ((/^[a-zA-Z0-9]{6,15}$/).test($(".reg_user").val())==false && ((/^[\u4E00-\u9FA5]{2,5}$/).test($(".reg_user").val())===false) ) {
-        $('.validate-result').append('<span class="user_yz">会员名只能包含英文、数字或中文，长度为6-15位,不能有空格和特殊符号</span>');
-    }
-
-    if((/\s/).test($(".reg_user").val())==true){
-        alert('提示:您输入的用户名里有空格,注册的时候空格会被去掉');
-    }   
+    if(((/\s/).test(aa))===true)
+    {
+        $('.validate-result').append('<span class="user_yz">提示:用户名不许有空格</span>');
+    }else if ((/^[a-zA-Z0-9]{6,15}$/).test($(".reg_user").val())==false && ((/^[\u4E00-\u9FA5]{2,5}$/).test($(".reg_user").val())===false) ) 
+    {
+        $('.validate-result').append('<span class="user_yz">会员名只能包含英文、数字或中文，长度为6-15位</span>');
+    } 
+    
 });
 // password
 $('.reg_password').blur(function () {

@@ -72,22 +72,21 @@
         swipeBack: true //启用右滑关闭功能
     });
 
-    // mui.get("{:url('api/member/checkopenid')}", {}, function(data) {
-    //     console.log(data);
-    //     if (data.code===200) {
-    //         mui.alert('您已注册会员，确认登录平台', '', function(){
-    //             setTimeout(function(){
-    //                 window.history.back();
-    //             },1000);
-    //         });
-    //     }
-    // }, 'json');
+    mui.get("{:url('api/member/checkopenid')}", {}, function(data) {
+        console.log(data);
+        if (data.code===200) {
+            mui.alert('您已注册会员，确认登录平台', '', function(){
+                setTimeout(function(){
+                    window.history.back();
+                },1000);
+            });
+        }
+    }, 'json');
 
 $(function(){
     $(".registerBtn").on("click", function () {
-        var members = $(".reg_user").val();
-        var member = Trim(members);
-        $(".reg_user").val(member);
+        var member = $(".reg_user").val();
+        
         var telephone = $(".reg_mobile").val();
         var password = $(".reg_password").val();
         var repassword = $(".reg_confirm").val();
