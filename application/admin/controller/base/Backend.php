@@ -2,6 +2,7 @@
 // admin模块 控制器基类
 namespace app\admin\controller\base;
 
+use app\model\Camp;
 use app\service\SystemService;
 use think\Controller;
 use app\service\AuthService;
@@ -31,8 +32,12 @@ class Backend extends Controller {
         $this->cur_camp = $curcamp;
         $this->assign('curcamp', $curcamp);
 
+        // 列出可选训练营
+        $campM = new Camp();
+        $camplist = $campM->where(['status' => 1])->order('id desc')->select()->toArray();
         $this->assign('site', $site);
         $this->assign('admin', session('admin') );
+        $this->assign('camplist', $camplist);
     }
 
     // 获取当前查看训练营

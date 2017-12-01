@@ -199,6 +199,7 @@ function get_code($length=6) {
 function initDateTime() {
     $dateTime = [];
     // 当前年、月
+    $dateTime['date'] = input('date', date('Y-m'));
     $dateTime['year'] = input('year', date('Y'));
     $dateTime['month'] = input('month', date('m'));
     // 本月第一天、最后一天

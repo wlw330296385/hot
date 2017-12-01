@@ -1,0 +1,53 @@
+{extend name="layout/common"/}
+
+{block name="page-content"}
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+            <em>收益统计</em>
+
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="no-padding">
+            <div class="bootstrap-table">
+                <div class="search-form">
+                    <form action="{:url('finance/earings')}" class="form-inline" method="get">
+                        <fieldset>
+                            <div class="form-group">
+                                <label class="control-label">选择月份</label>
+                                <input class="form-control layui-input" type="text" name="date" id="month-selecter" value="">
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-12 text-center">
+                                    <button type="submit" class="btn btn-success btn-flat">搜索</button>
+                                    <button type="reset" class="btn btn-default btn-flat">重置</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{/block}
+{block name="js"}
+<script>
+    $(function() {
+//    $('#month-selecter').on('click', '',function() {
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+            laydate.render({
+                //指定元素,
+                elem: '#month-selecter',
+                type: 'month'
+            });
+        });
+//    });
+    });
+</script>
+{/block}
