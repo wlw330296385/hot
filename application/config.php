@@ -282,4 +282,8 @@ return [
         'var_page'  => 'page',
         'list_rows' => 15,
     ],
+
+
+    //开发者模式,0:非|1:真
+    'develop_mode'=> 0,
 ];

@@ -40,9 +40,9 @@ class AdminGroup extends Model {
         }
 
         // 获取菜单
-        $adminGroups = Tree::config(['title' => 'name'])->toList(self::where($where)->column('id,pid,name'));
-        foreach ($adminGroups as $adminGroup) {
-            $result[$adminGroup['id']] = $adminGroup['title_display'];
+        $group_ids = Tree::config(['title' => 'name'])->toList(self::where($where)->column('id,pid,name'));
+        foreach ($group_ids as $group_id) {
+            $result[$group_id['id']] = $group_id['title_display'];
         }
 
         // 设置默认菜单项标题
@@ -80,15 +80,15 @@ class AdminGroup extends Model {
     public static function checkAuth($id = 0, $url = false)
     {
         // 当前用户的角色
-        $adminGroup = session('admin_auth.adminGroup');
+        $group_id = session('admin.group_id');
 
         // id为1的是超级管理员，或者角色为1的，拥有最高权限
-        if (session('admin_auth.uid') == '1' || $adminGroup == '1') {
+        if (session('admin.id') == '1' || $group_id == '1') {
             return true;
         }
 
         // 获取当前用户的权限
-        $menu_auth = session('adminGroup_menu_auth');
+        $menu_auth = session('admin_group');
 
         // 检查权限
         if ($menu_auth) {
@@ -107,21 +107,23 @@ class AdminGroup extends Model {
     }
 
     /**
-     * 读取当前角色权限
+     * 读取当前角色权限,没有则设置当前权限
      * @return mixed
      */
-    public function adminGroupAuth()
+    static public function group_idAuth()
     {
-        $menu_auth = cache('adminGroup_menu_auth_'.session('admin_auth.adminGroup'));
+        $menu_auth = cache('group_id_menu_auth_'.session('admin.group_id'));
         if (!$menu_auth) {
-            $menu_auth = self::where('id', session('admin_auth.adminGroup'))->value('menu_auth');
+
+            $menu_auth = self::where('id', session('admin.group_id'))->value('menu_auth');
             $menu_auth = json_decode($menu_auth, true);
             $menu_auth = MenuModel::where('id', 'in', $menu_auth)->column('id,url_value');
         }
         // 非开发模式，缓存数据
         if (config('develop_mode') == 0) {
-            cache('adminGroup_menu_auth_'.session('admin_auth.adminGroup'), $menu_auth);
+            cache('group_id_menu_auth_'.session('admin.group_id'), $menu_auth);
         }
+
         return $menu_auth;
     }
 
@@ -142,12 +144,12 @@ class AdminGroup extends Model {
 
     /**
      * 根据角色id获取权限
-     * @param array $adminGroup 角色id
+     * @param array $group_id 角色id
      * @return array
      */
-    public static function getAuthWithAdminGroup($adminGroup = [])
+    public static function getAuthWithAdminGroup($group_id = [])
     {
-        return self::where('id', 'in', $adminGroup)->column('id,menu_auth');
+        return self::where('id', 'in', $group_id)->column('id,menu_auth');
     }
 
 
