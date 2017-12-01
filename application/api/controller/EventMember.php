@@ -55,7 +55,7 @@ class EventMember extends Base{
     }
 
    
-    // 获取与课程|班级|训练营相关的学生|体验生-不带page
+    // 获取与活动相关的会员-不带page
     public function getEventMemberListNoPageApi(){
         try{
             $map = input('post.');
