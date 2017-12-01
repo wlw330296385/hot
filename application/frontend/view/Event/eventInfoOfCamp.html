@@ -115,21 +115,21 @@
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">活动简介</span>
                 </div>
-                <li class="mui-table-view-cell listli intro intro1">{$eventInfo.event_des}</li>
             </ul>
 
             <!--活动录入的信息-->
             <ul class="mui-table-view list mt55">
+                <li class="mui-table-view-cell listli intro intro1">{$eventInfo.event_des}</li>
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">已参与人员</span>
                 </div>
-                <li class="mui-table-view-cell listli intro intro2">
-                    <div class="box" id="inactiveList"></div>
+                <li class="mui-table-view-cell listli intro ">
+                    <div class="box  intro2" id="inactiveList"></div>
                 </li>
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">备注信息</span>
                 </div>
-                <li class="mui-table-view-cell listli intro intro2">{$eventInfo.remarks}</li>
+                <li class="mui-table-view-cell listli intro intro3">{$eventInfo.remarks}</li>
             </ul>
 
             {egt name="power" value='2'}
@@ -175,8 +175,8 @@
             if ($(".intro1").text() == '') {
                 $(".intro1").append("<p class='nohave'>没有活动简介哦</p>")
             }
-            if ($(".intro2").text() == '') {
-                $(".intro2").append("<p class='nohave'>没有备注信息哦</p>")
+            if ($(".intro3").text() == '') {
+                $(".intro3").append("<p class='nohave'>没有备注信息哦</p>")
             }
         }
 
@@ -214,7 +214,9 @@
                             inactiveDiv = '<div class="mui-input-row mui-checkbox checkboxCont border-b"><label class="number wd45">' + (i + 1) + '</label><font>' + data.data[i].member + '</font></div>'
                             $("#inactiveList").append(inactiveDiv);
                         };
-
+                        if (inactiveDiv == '') {
+                            $("#inactiveList").append("<p class='nohave'>没有参与人员哦</p>")
+                        }
                         changeIndex();//调用-更新序号
                         totalNum = $(".checkboxCont").length;
                     }
