@@ -155,7 +155,7 @@
 
             <div class="image-items">
 
-                <form class="mui-input-group">
+                <!--<form class="mui-input-group">
                     <div class="mui-input-row h-auto">
                         <a class="portraits filePicker" onclick="add_id(3)">
                             <label>上传合照</label>
@@ -163,7 +163,7 @@
                             <input type="hidden" class="data" name="cover" value="{$eventInfo.cover}">
                         </a>
                     </div>
-                </form>
+                </form>-->
 
                 <form class="mui-input-group">
                     <div class="mui-input-row">
@@ -224,13 +224,13 @@
                 </div>
 
                 <div class="page-header" style="background: #efeff4;">
-                    <span class="course">活动简介</span>
+                    <span class="course">备注</span>
                 </div>
 
                 <div class="mui-input-row h-auto">
                     <div class="mui-input-row h-auto" style="margin-bottom: 10px;padding:0">
-                        <textarea name="event_des" class="data event_des" style="display: none"></textarea>
-                        <div class="introBox">{$eventInfo.event_des}</div>
+                        <textarea name="remarks" class="data event_des" style="display: none"></textarea>
+                        <div class="introBox">{$eventInfo.remarks}</div>
                     </div>
                     <div class="mui-row mui-text-center">
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
@@ -446,6 +446,7 @@
                         memberData.push({ member: member, member_id: member_id, id: id, status: 3 });
                     });
 
+
                     console.log(memberData)
 
                     changeIndex();//调用-更新序号
@@ -535,6 +536,7 @@
 
                 toSignUpList();// 已报名的人
                 delbtnFunction()//调用删除按钮
+                chushi();
 
                 // 插入删除按钮
                 function delbtnFunction() {
@@ -543,6 +545,12 @@
                 }
 
                 $(".operationBtn").on("click", '', function () {
+
+                    if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
+                        mui.alert("请输入正确的手机格式");
+                        return;
+                    };
+
                     var data = wooApi.getInputData('input', 'data');
                     datas = wooApi.getInputData('select', 'data', data);
                     // 获取其他标签值
@@ -555,7 +563,7 @@
                     var ajaxResult = wooApi.asyncF(url, objData);
                     if (ajaxResult.code == 200) {
                         mui.alert(ajaxResult.msg, '活动录入成功', '确定', function () {
-                            window.location.href = "{:url('frontend/event/eventListOfCamp',['event_id'=>$eventInfo['id']])}";
+                            window.location.href = "{:url('frontend/event/eventListOfCamp',['organization_id'=>$eventInfo['organization_id']])}";
                         })
                     } else {
                         mui.alert(ajaxResult.msg, '创建失败');
@@ -567,6 +575,20 @@
                     }
                 });
             });
+
+            // 
+            function chushi() {
+                memberData = [];//报名人员列表数组
+                $(".addMemberList input[type=checkbox]:checked").each(function () {
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
+                    var id = $(this).attr("data-id");
+                    var member_id = $(this).attr("data-member_id");
+                    var member = $(this).attr("data-member");
+                    var status = $(this).attr("data-status");
+                    $("#inactiveList").append(str);
+                    memberData.push({ member: member, member_id: member_id, id: id, status: 3 });
+                });
+            }
 
             //获取已经报名人员列表
             var toSignUpList = function () {

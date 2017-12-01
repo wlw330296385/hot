@@ -3,11 +3,12 @@
 
 namespace app\admin\controller;
 use app\admin\controller\base\Backend;
-use app\model\Bill as BillModel;
-use app\model\Member as MemberModel;
-use app\model\Rebate as RebateModel;
-use app\model\SalaryIn as SalaryInModel;
+use app\model\Bill;
+use app\model\Member;
+use app\model\Rebate;
+use app\model\SalaryIn;
 use think\Db;
+use think\helper\Time;
 
 class Finance extends Backend {
     // 支付订单列表
@@ -33,10 +34,23 @@ class Finance extends Backend {
         if ($billorder) {
             $map['bill_order'] = $billorder;
         }
+        $days = input('days');
+        if ($days) {
+            if (!checkDatetimeIsValid($days)) {
+                $this->error('查看日期格式不合法');
+            }
 
-        $list = BillModel::where($map)->order('id desc')->paginate(15);
+            $day = explode("-", $days);
+            $when = getStartAndEndUnixTimestamp($day[0], $day[1], $day[2]);
+            $start = $when['start'];
+            $end = $when['end'];
+            $map['create_time'] = ['between', [$start, $end]];
+        }
+        //$map['is_pay'] = 1;
+        //$map['status'] = 1;
+        $list = Bill::where($map)->order('id desc')->paginate(15);
         //dump($list);
-        $breadcrumb = ['title' => '支付订单', 'ptitle' => '训练营'];
+        $breadcrumb = ['title' => '支付订单', 'ptitle' => '财务'];
         $this->assign('breadcrumb', $breadcrumb);
         $this->assign('list', $list);
         return $this->fetch();
@@ -45,11 +59,11 @@ class Finance extends Backend {
     // 支付订单详情
     public function bill() {
         $id = input('id', 0);
-        $billObj = BillModel::get($id);
+        $billObj = Bill::get($id);
         $bill = $billObj->toArray();
         $bill['goods_type_num'] = $billObj->getData('goods_type');
         
-        $breadcrumb = ['title' => '支付订单', 'ptitle' => '训练营'];
+        $breadcrumb = ['title' => '支付订单', 'ptitle' => '财务'];
         $this->assign('breadcrumb', $breadcrumb);
         $this->assign('bill', $bill);
         return view();
@@ -70,14 +84,14 @@ class Finance extends Backend {
         if ($member) {
             $map['member'] = ['like', '%'. $member .'%'];
         }
-        $list = SalaryInModel::with('schedule')->where($map)->order('id desc')->paginate(15)->each(function($item, $key) {
+        $list = SalaryIn::with('schedule')->where($map)->order('id desc')->paginate(15)->each(function($item, $key) {
             $item['lesson'] = db('lesson')->where(['id' => $item['lesson_id']])->find();
             $item['schedule']['num_student'] = count( unserialize( $item['schedule']['student_str'] ) ) ;
             return $item;
         });
 //        dump($list->toArray());
 
-        $breadcrumb = ['title' => '收入记录', 'ptitle' => '训练营'];
+        $breadcrumb = ['title' => '收入记录', 'ptitle' => '财务'];
         $this->assign('breadcrumb', $breadcrumb);
         $this->assign('list', $list);
         return $this->fetch();
@@ -86,7 +100,7 @@ class Finance extends Backend {
     // 收入记录详情
     public function salaryin() {
         $id = input('id', 0);
-        $salaryin = SalaryInModel::where('id', $id)->find()->toArray();
+        $salaryin = SalaryIn::where('id', $id)->find()->toArray();
         $pid = $salaryin['pid'];
         //if ($pid) {
             //$salaryin['parent'] = MemberModel::where(['id' => $pid])->field(['id','member','realname'])->find()->toArray();
@@ -95,7 +109,7 @@ class Finance extends Backend {
         //}
         //dump($salaryin);
 
-        $breadcrumb = ['title' => '收入详情', 'ptitle' => '训练营'];
+        $breadcrumb = ['title' => '收入详情', 'ptitle' => '财务'];
         $this->assign('breadcrumb', $breadcrumb);
         $this->assign('salaryin', $salaryin);
         return view();
@@ -110,7 +124,7 @@ class Finance extends Backend {
         }
         $list = Db::name('salary_out')->where($map)->paginate(15);
 
-        $breadcrumb = ['title' => '提现记录', 'ptitle' => '训练营'];
+        $breadcrumb = ['title' => '提现记录', 'ptitle' => '财务'];
         $this->assign('breadcrumb', $breadcrumb);
         $this->assign('list', $list);
         return view();
@@ -121,10 +135,75 @@ class Finance extends Backend {
         $salaryout = Db::name('salary_out')->where('id', $id)->find();
         //dump($salaryout);
 
-        $breadcrumb = ['title' => '提现详情', 'ptitle' => '训练营'];
+        $breadcrumb = ['title' => '提现详情', 'ptitle' => '财务'];
         $this->assign('breadcrumb', $breadcrumb);
         $this->assign('salaryout', $salaryout);
         return view();
     }
 
+    // 订单对账
+    public function reconciliation() {
+        $map = [];
+        if ($cur_camp = $this->cur_camp) {
+            $map['camp_id'] = $cur_camp['camp_id'];
+        }
+        $camp = input('camp');
+        if ($camp) {
+            $map['camp'] = ['like', '%'. $camp .'%'];
+        }
+        $month = input('month');
+        if ($month) {
+            $date = explode('-', $month);
+            $when = getStartAndEndUnixTimestamp($date[0], $date[1]);
+            $start = $when['start'];
+            $end = $when['end'];
+        } else {
+            $month = date('Y-m', time());
+            list($start, $end) = Time::month();
+        }
+        $map['create_time'] = ['between', [$start, $end]];
+        //$list = Bill::where($map)->field()->order('id desc')->paginate(15);
+        $model = new \app\model\Bill();
+        $datas = $model->field("FROM_UNIXTIME(`create_time`,'%Y-%m-%d') days,count(*) count,sum(balance_pay) total")->where($map)->group('days')->select()->toArray();
+        $listArr = [];
+        if ($datas) {
+            // 生成筛选时间段内日期每日递增的数组
+            for ($i=$start; $i<$end; $i+= 86400) {
+                $date = date('Y-m-d', $i);
+                $listArr[$date] = ['days' => $date, 'count' => 0, 'total' => 0, 'bank_charges' => 0, 'collection' => 0];
+            }
+            // 遍历查询结果 将相应日期的数据覆盖进数组对应键值
+            foreach ($datas as $val) {
+                if ( array_key_exists($val['days'], $listArr) ) {
+                    $arrayKey = $val['days'];
+                    $listArr[$arrayKey] = $val;
+                    $bankCharges = $val['total']*0.06;
+                    $listArr[$arrayKey]['bank_charges'] = $bankCharges;
+                    $listArr[$arrayKey]['collection'] = $val['total']-$bankCharges;
+                }
+            }
+            // 数组索引重新从0开始递增排序
+            $listArr = array_values($listArr);
+            //dump($listArr);
+        }
+
+
+
+        $breadcrumb = ['title' => '订单对账', 'ptitle' => '财务'];
+        $this->assign('curmonth', $month);
+        $this->assign('breadcrumb', $breadcrumb);
+        $this->assign('list', $listArr);
+        return $this->fetch();
+    }
+
+
+    // 交费统计
+    public function tuitionstatis() {
+        return $this->fetch();
+    }
+
+    // 收益统计
+    public function earings() {
+
+    }
 }
