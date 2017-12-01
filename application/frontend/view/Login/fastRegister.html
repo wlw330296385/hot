@@ -23,7 +23,7 @@
     </header>
 
     <div class="mui-content pt">
-        <strong class="tip-box colorred mt mb">welcome to Hot Basketball</strong>
+        <strong class="tip-box colorblue mt mb">welcome to Hot Basketball</strong>
         <div class="register">
             <form class="mui-input-group">
                 <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
@@ -51,6 +51,9 @@
             </form>
 
             <span class="tip-box validate-result"></span>
+            <div class="tip-box">
+                <input name="iagree" type="checkbox" />&nbsp;<a href="#userAgreement" >已阅读并同意篮球管家用户协议（点击查看）</a>
+            </div>
             <div class="tjbtn">
                 <button type="button" class="mui-btn btn registerBtn">
                     完成
@@ -60,6 +63,15 @@
             <div class="btmfixed"><h6>POWER BY HotTECH</h6></div>
         </div>
 
+    </div>
+
+    <div id="userAgreement" class="mui-popover mui-popover-action mui-popover-bottom whitebg">
+        <div class="page-header">
+            <span class="course"><strong>篮球管家服务平台与用户共同确认：</strong></span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll"></div>
+        </div>
     </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
@@ -83,7 +95,41 @@
         }
     }, 'json');
 
+
+
+    (function ($, doc) {
+
+        $(".mui-scroll-wrapper").scroll({
+            //bounce: false,//滚动条是否有弹力默认是true
+            indicators: true //是否显示滚动条,默认是true
+        });
+        // 关闭弹出菜单
+        $("body").on('tap', '.mui-backdrop', function () {
+            mui(".mui-popover.mui-active").popover("toggle");
+        })
+
+    })(mui, document);
+
 $(function(){
+
+    //获取用户协议内容，放置弹出框中
+    mui.ajax("{:url('frontend/member/userAgreement')}", {
+        data: {},
+        dataType: 'html',//服务器返回json格式数据
+        type: 'post',//HTTP请求类型
+        timeout: 10000,//超时时间设置为10秒；
+        headers: { 'Content-Type': 'application/json' },
+        success: function (data) {
+//            console.log(data);
+            $("#userAgreement .mui-scroll").append(data);
+
+        },
+        error: function (xhr, type, errorThrown) {
+            console.log(type);
+        }
+    });
+
+
     $(".registerBtn").on("click", function () {
         var member = $(".reg_user").val();
         
@@ -91,6 +137,26 @@ $(function(){
         var password = $(".reg_password").val();
         var repassword = $(".reg_confirm").val();
         var smscode = $('.reg_code').val();
+
+        if (!$('input[name=iagree]').is(':checked')) {
+            mui.toast("请阅读并同意篮球管家用户协议，谢谢");
+            return false;
+        };
+
+        //防止用户直接提交带有特殊符号的微信昵称
+        //因用户没做修改就不会触发blur函数进行验证,所以提交前再验证一次
+        var gName = $.trim($(".reg_user").val());
+        $(".reg_user").val(gName);
+        $('.validate-result span').remove('.user_yz');
+        if(((/\s/).test(gName))===true)
+        {
+            $('.validate-result').append('<span class="user_yz">填写提示:会员名不许有空格</span>');
+        }else if((/^[\u4E00-\u9FA5A-Za-z0-9_]{2,15}$/).test(gName)===false)
+        {
+            $('.validate-result').append('<span class="user_yz">提示:会员名只能包含英文、数字或中文，长度为2-15位</span>');
+        }
+        //////////////////////////////////////////////////////////////////////////////////
+
         var validateResult = $(".validate-result span").text();
         if(validateResult!=""||member==""||telephone==""||password==""||repassword==""||smscode==""){
             mui.toast("提交失败，请填写完整并保证信息格式正确！");
@@ -199,11 +265,6 @@ $(function(){
         }
     }
 
-    function Trim(str){
-        var result;
-        result = str.replace(/\s/g,"");
-        return result;
-    }
 
 </script>
 </html>

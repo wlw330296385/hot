@@ -2,6 +2,7 @@
 // admin模块 控制器基类
 namespace app\admin\controller\base;
 
+use app\model\Camp;
 use app\service\SystemService;
 use app\admin\controller\base\Base;
 use app\service\AuthService;
@@ -28,7 +29,6 @@ class Backend extends Base {
         //检查权限
         if (!$this->AuthService->checkAuth()) $this->error('权限不足！');
 
-        
     }
 
 }

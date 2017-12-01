@@ -155,4 +155,30 @@ class Event extends Base{
         return view('Event/recordEvent');
     }
 
+    // 营内公开活动列表
+    public function eventOfOpen(){
+        $organization_id = input('param.organization_id');
+        $this->assign('organization_id', $organization_id);
+        return view('Event/eventOfOpen');
+    }
+
+    // 营内活动列表
+    public function eventOfCamp(){
+        $organization_id = input('param.organization_id');
+        $this->assign('organization_id', $organization_id);
+        return view('Event/eventOfCamp');
+    }
+
+    // 班内活动列表
+    public function eventOfGrade(){
+        $organization_id = input('param.organization_id');
+        $this->assign('organization_id', $organization_id);
+        return view('Event/eventOfGrade');
+    }
+
+    // 已报名人员列表
+    public function eventOfSignUpList(){
+        return view('Event/eventOfSignUpList');
+    }
+
 }

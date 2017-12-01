@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>缴费明细</title>
+    <title>报名人员列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -11,73 +11,23 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <style type="text/css">
-        .for-tab {
-            background-color: #efeff4;
-        }
-        
-        .list-cont1 {
-            white-space: normal;
-            padding-right: 15px;
-            text-align: left;
-        }
-        
-        .nav-list .nav-list-frame a span {
-            font-size: 13px;
-        }
-        
-        .mui-table-view-cell {
-            border-bottom: 1px solid #EEEEEE;
-        }
-        
-        .mui-table-view-cell:after {
-            background: none !important;
-        }
-        
-        .mui-control-item {
-            line-height: 26px !important;
-            padding: 10px 0px 8px;
-        }
-        
-        .mui-control-item span {
-            font-size: 16px;
-            display: block;
-        }
-        
-        .sheader {
-            padding: 8px 15px !important;
-        }
-        
-        .sheader span {
-            line-height: 24px;
-        }
-    </style>
+
 </head>
 
 <body class=whitebg>
 
-    <header id="header" class="mui-bar mui-bar-nav for-tab">
-        <ul class="mui-table-view detalis-list border-b">
-            <li class="listli sheader mui-clearfix">
-                <a class="mui-pull-left mui-icon mui-icon-left-nav" href="#"></a>
-                <span class="mui-pull-right title-name">{$days} 订单列表</span>
-            </li>
-        </ul>
-        <ul class="mui-table-view camp-lesson-list detalis-list coach">
-            <li class="mui-table-view-cell">
-                <ul class="mui-row table">
-                    <li class="mui-col-sm-6 mui-col-xs-10 mui-text-left">订单名称（课程）</li>
-                    <li class="mui-col-sm-2 mui-col-xs-2 mui-text-center">金额</li>
-                </ul>
-            </li>
-        </ul>
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <h1 class="mui-title">{$eventInfo.organization}</h1>
     </header>
 
     <div class="mui-content">
 
-        <div id="refreshContainer" class="mui-scroll-wrapper coach" style="margin-top: 94px">
+
+        <div id="refreshContainer" class="mui-scroll-wrapper coach" style="margin-top: 44px">
             <div class="mui-scroll">
-                <ul class="mui-table-view mui-text-center detalis-list list border-b bill">
+                <ul class="mui-table-view detalis-list list border-b event">
+
                 </ul>
             </div>
         </div>
@@ -142,29 +92,16 @@
                 }, 100);
             }
 
-            // 将时间戳转成日期格式
-            function gettime(t) {
-                var _time = new Date(t);
-                var year = _time.getFullYear();
-                var month = _time.getMonth() + 1;
-                var day = _time.getDate();
-                var hours = _time.getHours();
-                var minutes = _time.getMinutes();
-                return year + "-" + month + "-" + day + " " + hours + ":" + minutes;
-            }
-
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/bill/getBillListByPageApi','','',true)}/?page=" + page;
+                var url = "{:url('api/event_member/getEventMemberListByPageApi',['event_id'=>$eventInfo.id])}"+ '/?page=' + page;
+                var event_id = "{$eventInfo.id}";
                 mui.ajax({
                     url: url,
                     data: {
-                        camp_id: "{$camp_id}",
-                        start: "{$start}",
-                        end: "{$end}",
-                        is_pay: 1,
-                        goods_type: 1
+                        event_id: event_id,
+                        status: 3
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -173,25 +110,47 @@
                     //processData:false,
                     success: function (data) {
                         var newli = '';
+                        console.log(data)
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                // 将时间戳转成日期格式(建议后端转换)
-                                var time = data.data.data[i].pay_time * 1000;//js时间戳精确到毫秒,所以要乘以1000后转换
-                                var pay_time = gettime(time)
-                                newli = newli + '<li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-sm-10 mui-col-xs-10"><div class="list-cont1">' + data.data.data[i].student + '购买' + data.data.data[i].goods + '<p>' + pay_time + '</p></div></li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].balance_pay + '</li></ul></li>'
+                                // 获取当前时间
+                                var d = new Date()
+                                var minutes = d.getMinutes()
+                                var hours = d.getHours()
+                                var day = d.getDate()
+                                var month = d.getMonth() + 1
+                                var year = d.getFullYear()
+                                var time = '';
+                                time += year + "-";
+                                if (month >= 10) {
+                                    time += month + "-";
+                                }
+                                else {
+                                    time += "0" + month + "-";
+                                }
+                                if (day >= 10) {
+                                    time += day;
+                                }
+                                else {
+                                    time += "0" + day;
+                                }
+                                time += " " + hours + ":" + minutes;
+                                console.log(time)
+                               
+                                newli = newli + '<li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-6 mui-col-sm-6"><p>' + data.data.data[i].student + '</p><p>' + data.data.data[i].contact + '</p></li><li class="mui-col-xs-6 mui-col-sm-6 mui-text-right">' + time + '</li></ul></li>'
                             }
                         }
                         if (gType == 1) {
                             //上拉刷新
-                            $("ul.bill").empty().append(newli);
+                            $("ul.event").empty().append(newli);
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.bill").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
+                                $("ul.event").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
                             }
                         } else {
                             //下拉加载 gType==2
-                            $("ul.bill").append(newli);
+                            $("ul.event").append(newli);
                         }
                         if (newli != '') {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);

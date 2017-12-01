@@ -11,7 +11,7 @@ class Sms {
             //$randstr = str_shuffle('1234567890');
             //$smscode = substr($randstr, 0, 6);
             $smscode = mt_rand(100000, 999999);
-            $content = json_encode([ 'code' => $smscode, 'minute' => 5, 'comName' => 'HOT大热篮球' ]);
+            $content = json_encode([ 'code' => $smscode, 'minute' => 5, 'comName' => '篮球管家' ]);
             $smsApi = new SmsApi();
             $smsApi->paramArr = [
                 'mobile' => $telephone,

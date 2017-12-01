@@ -6,7 +6,7 @@ use app\service\SystemService;
 use think\Controller;
 use app\service\AuthService;
 use think\Cookie;
-
+use app\model\Camp;
 class Base extends Controller {
     public $cur_camp;
     public $site;
@@ -23,7 +23,13 @@ class Base extends Controller {
         $curcamp = $this->getCurCamp();
         $this->cur_camp = $curcamp;
         $this->assign('curcamp', $curcamp);
-
+        // 列出所选训练营
+        $campM = new Camp();
+        $camplist = $campM->where(['status' => 1])->order('id desc')->select()->toArray();
+        $this->assign('site', $site);
+        $this->assign('admin', session('admin') );
+        $this->assign('camplist', $camplist);
+        
         $this->assign('site', $site);
         $this->assign('admin', session('admin') );
     }

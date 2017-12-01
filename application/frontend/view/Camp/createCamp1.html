@@ -57,8 +57,7 @@
             </form>
             <span class="tip-box tip"></span>
             <div class="tip-box">
-                <input name="checkbox" checked value="已阅读并同意大热篮球（连锁）训练营合作协议" type="checkbox">
-                <label>已阅读并同意大热篮球训练营合作协议</label>
+                <input name="iagree" type="checkbox" />&nbsp;<a href="#userAgreement" >已阅读并同意篮球管家用户协议（点击查看）</a>
             </div>
             <div class="tjbtn mb44">
                 <button type="button" class="mui-btn btn camp-step1">注册</button>
@@ -67,6 +66,14 @@
         <!-- #form1 end -->
     </div>
 
+    <div id="userAgreement" class="mui-popover mui-popover-action mui-popover-bottom whitebg">
+        <div class="page-header">
+            <span class="course"><strong>篮球管家服务平台与用户共同确认：</strong></span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll"></div>
+        </div>
+    </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -76,6 +83,19 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
+
+        (function ($, doc) {
+
+            $(".mui-scroll-wrapper").scroll({
+                //bounce: false,//滚动条是否有弹力默认是true
+                indicators: true //是否显示滚动条,默认是true
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+
+        })(mui, document);
 
         // 发送短信验证码
         function sendCode(obj) {
@@ -100,6 +120,23 @@
 
         $(function () {
 
+            //获取用户协议内容，放置弹出框中
+            mui.ajax("{:url('frontend/member/userAgreement')}", {
+                data: {},
+                dataType: 'html',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    $("#userAgreement .mui-scroll").append(data);
+
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(type);
+                }
+            });
+
             // 注册 step1
             $('.camp-step1').click(function () {
                 var campname = $('.camp').val();
@@ -119,6 +156,9 @@
                     return false;
                 } else if (!(/^1[34578]\d{9}$/).test(camp_telephone)) {
                     mui.toast("请输入正确的手机格式");
+                    return false;
+                } else if (!$('input[name=iagree]').is(':checked')) {
+                    mui.toast("请阅读并同意篮球管家用户协议，谢谢");
                     return false;
                 };
                 if (!(/^\d{6,6}$/).test(smsverify)) {

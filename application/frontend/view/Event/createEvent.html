@@ -23,12 +23,12 @@
         
         .mui-input-row a {
             display: table;
-            width: 100%;
+            width: 67%;
         }
         
-        .muicol {
+        /*.muicol {
             margin: 5px 13px;
-        }
+        }*/
         
         .frame {
             width: 100%;
@@ -250,6 +250,10 @@
                     </div>
                     <div class="mui-row mui-text-center">
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame up">上移</a>
+                            <a class="frame down">下移</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
                             <a class="frame titleClass">添加标题</a>
                         </div>
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
@@ -440,10 +444,10 @@
         $(function () {
 
             //获取训练营粉丝列表
-            var fansKeyword = '';
+            var StudentKeyword = '';
             var wStudents = '';
             var pageLD = 1;
-            toStudentList(fansKeyword, wStudents, 1);
+            toStudentList(StudentKeyword, wStudents, 1);
 
 
             // 具体对象
@@ -569,10 +573,9 @@
             // 焦点离开后把内容放在h5标签里
             $(document).on('blur', '.operationDiv input', function () {
                 $(this).siblings(".delbtn").remove();
-                // val.replace("/<>/g", "《》");
                 if ($(this).val() != '') {
                     var inputValue = '<h5>' + $(this).val() + '</h5>';
-                    $(this).parent().html(inputValue)
+                    $(this).parent().html(inputValue).removeClass("bgorange")
                 } else {
                     var inputValueNull = '<h5>标题</h5>';
                     $(this).parent().html(inputValueNull)
@@ -581,16 +584,20 @@
             // 点击时显示input框
             $(document).on('tap', '.operationDiv h5', function () {
                 var YinputValue = '<i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="title" autofocus value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="标题">';
-                $(this).parent(".operationDiv").html(YinputValue)
+                $(this).parent(".operationDiv").html(YinputValue).addClass("bgorange");
                 console.log(YinputValue)
             });
+
+            // $(document).on('tap', '.down', function () {
+            //     $(".bgorange").after(".operationDiv")
+            // });
 
             // 焦点离开后把内容放在p标签里
             $(document).on('blur', '.operationDiv textarea', function () {
                 $(this).siblings(".delbtn").remove();
                 if ($(this).val() != '') {
                     var textAreaValue = '<p>' + $(this).val() + '</p>';
-                    $(this).parent().html(textAreaValue)
+                    $(this).parent().html(textAreaValue).removeClass("bgorange")
                 } else {
                     var textAreaValueNull = '<p>请输入正文</p>';
                     $(this).parent().html(textAreaValueNull)
@@ -599,7 +606,7 @@
             // 点击时显示textarea框
             $(document).on('tap', '.operationDiv p', function () {
                 var YtextAreaValue = '<i class="delbtn mui-icon mui-icon-close"></i><textarea rows="3"  autofocus value="' + $(this).text() + '"  class="mui-text-left text delClass" placeholder="请输入正文">' + $(this).text() + '</textarea>';
-                $(this).parent().html(YtextAreaValue)
+                $(this).parent().html(YtextAreaValue).addClass("bgorange");
             });
 
             toCampMemberList(); // 调用训练营身份列表
