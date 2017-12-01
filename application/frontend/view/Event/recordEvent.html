@@ -155,16 +155,6 @@
 
             <div class="image-items">
 
-                <!--<form class="mui-input-group">
-                    <div class="mui-input-row h-auto">
-                        <a class="portraits filePicker" onclick="add_id(3)">
-                            <label>上传合照</label>
-                            <img id="preview_3">
-                            <input type="hidden" class="data" name="cover" value="{$eventInfo.cover}">
-                        </a>
-                    </div>
-                </form>-->
-
                 <form class="mui-input-group">
                     <div class="mui-input-row">
                         <label>活动人员</label>
@@ -174,7 +164,7 @@
                     </div>
 
                     <div class="operation-btn">
-                        <span class="mui-badge">0</span>
+                        <span class="mui-badge"></span>
                         <a class="all">全选</a>
                         <a class="cancel">取消</a>
                         <a class="del">[删除]</a>
@@ -229,7 +219,7 @@
 
                 <div class="mui-input-row h-auto">
                     <div class="mui-input-row h-auto" style="margin-bottom: 10px;padding:0">
-                        <textarea name="remarks" class="data event_des" style="display: none"></textarea>
+                        <textarea name="remarks" class="data remarks" style="display: none"></textarea>
                         <div class="introBox">{$eventInfo.remarks}</div>
                     </div>
                     <div class="mui-row mui-text-center">
@@ -369,6 +359,7 @@
             }
 
             // var memberData = '';
+            var totalNum = '';//序号总和的变量
             memberData = [];
             $(function () {
 
@@ -452,6 +443,7 @@
                     changeIndex();//调用-更新序号
                     mui("#addMember").popover("toggle");
                     totalNum = $(".checkboxCont").length;
+                    console.log(totalNum)
                     $(".mui-badge").text(totalNum);
                 });
 
@@ -533,10 +525,9 @@
                     $(this).parent().html(YtextAreaValue)
                 });
 
-
+                toExpMemberList();//已经参与的人
                 toSignUpList();// 已报名的人
                 delbtnFunction()//调用删除按钮
-                chushi();
 
                 // 插入删除按钮
                 function delbtnFunction() {
@@ -545,11 +536,16 @@
                 }
 
                 $(".operationBtn").on("click", '', function () {
-
+                    console.log(remarks)
                     if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
                         mui.alert("请输入正确的手机格式");
                         return;
                     };
+
+                    $('.delbtn').remove();
+                    var totalHtml = $(".introBox").html();
+                    $(".remarks").val(totalHtml);
+                    console.log(totalHtml);
 
                     var data = wooApi.getInputData('input', 'data');
                     datas = wooApi.getInputData('select', 'data', data);
@@ -557,8 +553,8 @@
                     arrData = wooApi.getDomData('domData', datas);
                     var objData = wooApi.arrTOobj(arrData);
                     objData.memberData = JSON.stringify(memberData);
-                    var event_des = $('textarea.data').val();
-                    objData.event_des = event_des;
+                    var remarks = $('textarea.data').val();
+                    objData.remarks = remarks;
                     var url = "{:url('api/event/recordEventApi',['event_id'=>$eventInfo['id']])}";
                     var ajaxResult = wooApi.asyncF(url, objData);
                     if (ajaxResult.code == 200) {
@@ -576,26 +572,52 @@
                 });
             });
 
-            // 
-            function chushi() {
-                memberData = [];//报名人员列表数组
-                $(".addMemberList input[type=checkbox]:checked").each(function () {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
-                    var id = $(this).attr("data-id");
-                    var member_id = $(this).attr("data-member_id");
-                    var member = $(this).attr("data-member");
-                    var status = $(this).attr("data-status");
-                    $("#inactiveList").append(str);
-                    memberData.push({ member: member, member_id: member_id, id: id, status: 3 });
+            //获取已经分配班级的学员列表
+            var toExpMemberList = function () {
+                var url = "{:url('api/event_member/getEventMemberListNoPageApi',['event_id'=>$eventInfo.id])}";
+                var event_id = "{$eventInfo.id}";
+                mui.ajax({
+                    url: url,
+                    data: {
+                        event_id: event_id,
+                        status: 3
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data)
+                        if (data.code == 200) {
+                            var inactiveDiv = '';
+                            totalLength = data.data.length;
+                            $(".mui-badge").text(totalLength);
+                            $("#inactiveList").empty();
+
+                            for (var i = 0; i <= data.data.length - 1; i++) {
+                                inactiveDiv = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].member + '</font><input name="member" value="' + data.data[i].member_id + '" data-id="' + data.data[i].id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" type="checkbox" class="stdList eachList"></div>'
+                                $("#inactiveList").append(inactiveDiv);
+                            };
+                            if ($("#inactiveList").html() == '') {
+                                $(".checkChecked").append('<p class="nohave">没有学员哦</p>');
+                            }
+                            changeIndex();//调用-更新序号
+                            totalNum = $(".checkboxCont").length;
+                        }
+
+                    },
+                    error: function (xhr, type, errerThrown) {
+                        console.log(type);
+                    }
                 });
-            }
+            };
 
             //获取已经报名人员列表
             var toSignUpList = function () {
                 var event_id = "{$eventInfo.id}";
                 mui.ajax("{:url('api/event_member/getEventMemberListNoPageApi',['event_id'=>$eventInfo.id])}", {
                     data: {
-                        'event_id': event_id,
+                        event_id: event_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -607,10 +629,13 @@
                         var div = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-member" class="member" value="' + data.data[i].member + '" data-member="' + data.data[i].member + '" data-member_id="' + data.data[i].member_id + '" data-status="' + data.data[i].status + '" type="checkbox" data-id="' + data.data[i].id + '"></div>'
+                                div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-member" class="member" value="' + data.data[i].member + '" data-member="' + data.data[i].member + '" data-member_id="' + data.data[i].member_id + '" data-id="' + data.data[i].id + '" data-status="' + data.data[i].status + '" type="checkbox" ></div>'
                             }
                             $("#newdiv").empty();
                             $("#newdiv").append(div);
+                            if (div == '') {
+                                $("#newdiv").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                            }
                         }
                     },
                     error: function (xhr, type, errorThrown) {
