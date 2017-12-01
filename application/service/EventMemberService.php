@@ -18,7 +18,7 @@ class EventMemberService{
     }
 
     public function getEventMemberListByPage($map,$paginate = 10){
-        $result = EventMember::with('member')->where($map)->paginate($paginate);
+        $result = EventMember::where($map)->paginate($paginate);
         if($result){
             return $result->toArray();
         }
@@ -26,7 +26,7 @@ class EventMemberService{
     }
 
     public function getEventMemberListOfCampByPage($map,$paginate = 10){
-        $result = EventMember::with('member')->distinct('true')->field('member_id')->where($map)->paginate($paginate);
+        $result = EventMember::distinct('true')->field('member_id')->where($map)->paginate($paginate);
         if($result){
             return $result->toArray();
         }
