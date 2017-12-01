@@ -18,7 +18,7 @@ $('.reg_user').blur(function () {
 // password
 $('.reg_password').blur(function () {
     $('.validate-result span').remove('.password_yz');
-    if ((/^[a-z0-9_-]{6,16}$/).test($(".reg_password").val())==false) {
+    if ((/^[a-z0-9_-]|[!@#$%^&*()~]{6,16}$/).test($(".reg_password").val())==false) {
         $('.validate-result').append('<span class="password_yz">密码长度为6-16位</span>');
     }
 });
