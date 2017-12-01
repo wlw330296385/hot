@@ -189,13 +189,28 @@
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 // 获取当前时间
                                 var d = new Date()
-                                var seconds = d.getSeconds()
                                 var minutes = d.getMinutes()
                                 var hours = d.getHours()
                                 var day = d.getDate()
                                 var month = d.getMonth() + 1
                                 var year = d.getFullYear()
-                                var time = year + "-" + month + "-" + day + " " + hours + minutes + ":" + seconds;
+                                // var time = year + "-"+ month + "-" + day + " " + hours + ":" + minutes 
+                                var time = '';
+                                time += year + "-";
+                                if (month >= 10) {
+                                    time += month + "-";
+                                }
+                                else {
+                                    time += "0" + month + "-";
+                                }
+                                if (day >= 10) {
+                                    time += day;
+                                }
+                                else {
+                                    time += "0" + day;
+                                }
+                                time += " " + hours + ":" + minutes;
+                                console.log(time)
                                 var urls = "{:url('event/eventInfo')}" + '/event_id/' + data.data[i].id;
                                 if (data.data[i].status != "下架") {
                                     newli += '<li class="mui-table-view-cell mui-media listli">'
