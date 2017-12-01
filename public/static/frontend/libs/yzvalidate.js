@@ -7,9 +7,11 @@ $('.reg_user').blur(function () {
     if(((/\s/).test(aa))===true)
     {
         $('.validate-result').append('<span class="user_yz">提示:用户名不许有空格</span>');
-    }else if ((/^[a-zA-Z0-9]{6,15}$/).test($(".reg_user").val())==false && ((/^[\u4E00-\u9FA5]{2,5}$/).test($(".reg_user").val())===false) ) 
+    }else 
+    // if ((/^[a-zA-Z0-9]{6,15}$/).test($(".reg_user").val())==false && ((/^[\u4E00-\u9FA5]{2,5}$/).test($(".reg_user").val())===false) ) 
+    if((/^[\u4E00-\u9FA5A-Za-z0-9_]{2,15}$/).test($(".reg_user").val())===false)
     {
-        $('.validate-result').append('<span class="user_yz">会员名只能包含英文、数字或中文，长度为6-15位</span>');
+        $('.validate-result').append('<span class="user_yz">会员名只能包含英文、数字或中文，长度为2-15位</span>');
     } 
     
 });
