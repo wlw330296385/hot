@@ -155,7 +155,7 @@ class Finance extends Backend {
         if ($camp_id) {
             $map['camp_id'] = $camp_id;
         }
-        $date = input('date', date('Y-m', time()));
+        $date = input('date');
         if ($date) {
             $dateArr = explode('-', $date);
             $when = getStartAndEndUnixTimestamp($dateArr[0], $dateArr[1]);
@@ -174,8 +174,8 @@ class Finance extends Backend {
         if ($datas) {
             // 生成筛选时间段内日期每日递增的数组
             for ($i=$start; $i<$end; $i+= 86400) {
-                $date = date('Y-m-d', $i);
-                $listArr[$date] = ['days' => $date, 'count' => 0, 'total' => 0, 'bank_charges' => 0, 'collection' => 0];
+                $day = date('Y-m-d', $i);
+                $listArr[$day] = ['days' => $day, 'count' => 0, 'total' => 0, 'bank_charges' => 0, 'collection' => 0];
             }
             // 遍历查询结果 将相应日期的数据覆盖进数组对应键值
             foreach ($datas as $val) {

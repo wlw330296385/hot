@@ -34,12 +34,13 @@ class Schedule extends Base
             //前后2个小时
             $start_time = $lesson_time - 7200;
             $end_time = $lesson_time + 7200;
-            $scheduleList = db('schedule')->where([
+            $model = new \app\model\Schedule();
+            $scheduleList = $model->where([
                 'camp_id' => $camp_id,
                 'grade_id' => $grade_id,
                 'lesson_id' => $lesson_id,
                 'lesson_time' => ['BETWEEN', [$start_time, $end_time]]
-            ])->select();
+            ])->select()->toArray();
 
             $result = 1;
             if (!$scheduleList) {
