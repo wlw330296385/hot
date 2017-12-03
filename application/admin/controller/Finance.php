@@ -254,6 +254,7 @@ class Finance extends Backend {
         $model = new \app\model\Bill();
         $map['goods_type'] = 1;
         $map['is_pay'] = 1;
+        //$map['balance_pay'] = ['>', 0];
 
         $campM = new \app\model\Camp();
         $camps = $campM->where(['status' => ['>', 0]])->field(['id', 'camp'])->order('id desc')->select()->toArray();
@@ -342,49 +343,73 @@ class Finance extends Backend {
         //dump($map);
         // 初始化输出结果数组：合计
         $sum = [
-
+            'total_amount' => 0,
+            'system_rebate' => 0,
+            'camp_income' => 0,
+            'schedule_salaryin' => 0,
+            'schedule_salaryin_notsettle' => 0
         ];
         // 遍历所有训练营
         $campM = new \app\model\Camp();
         $camps = $campM->where(['status' => ['>', 0]])->field(['id', 'camp'])->order('id desc')->select()->toArray();
+        $billModel = new \app\model\Bill();
+        $scheduleModel = new \app\model\Schedule();
         foreach ($camps as $k => $camp) {
-            $map['camp_id'] = $camp['id'];
-            $camps[$k]['schedule_salaryin'] = 0;
-            $camps[$k]['system_extract'] = 0;
-            $camps[$k]['coach_salary'] = 0;
+            $camps[$k]['total_amount'] = 0;
+            $camps[$k]['system_rebate'] = 0;
             $camps[$k]['camp_income'] = 0;
-            // 获取平台服务抽取比例
-            $setting = SystemService::getSite();
-            $sysrebate = $setting['sysrebate'];
-            // 获取数据
-            // 获取课时结算总收入、平台服务支出输出结果
-            $scheduleS = new ScheduleService();
-            $scheduleSalaryin = $scheduleS->scheduleIncome($map);
-            if ($scheduleSalaryin) {
-                $camps[$k]['schedule_salaryin'] = $scheduleSalaryin;
-                $camps[$k]['system_extract'] = $scheduleSalaryin*$sysrebate;
+            $camps[$k]['schedule_salaryin'] = 0;
+            $camps[$k]['schedule_salaryin_notsettle']=0;
+            $map['camp_id'] = $camp['id'];
+            // 组合训练营相关订单查询条件
+            $campbillMap=$map;
+            $campbillMap['goods_type'] = 1;
+            $campbillMap['balance_pay'] = ['>', 0];
+            // 收费金额=课程交费总和-退费总和
+            $campbillsum = $billModel->where($campbillMap)->sum('balance_pay');
+            $refundBillsum= $billModel->where($campbillMap)->where(['status' => -2, 'refundamount' => ['>', 0]])->sum('balance_pay');
+            if ($campbillsum) {
+                if ($refundBillsum) {
+                    $camps[$k]['total_amount'] = $campbillsum-$refundBillsum;
+                } else {
+                    $camps[$k]['total_amount'] = $campbillsum;
+                }
+                $sum['total_amount'] += $camps[$k]['total_amount'];
             }
-            // 获取教练工资支出
-            $salaryInS = new SalaryInService(1);
-            $coachMap = $map;
-            $coachMap['member_type'] = ['lt', 5];
-            $coachMap['type'] = 1;
-            $coachSalaryIn = $salaryInS->countSalaryin($coachMap);
-            if ($coachSalaryIn) {
-                $camps[$k]['coach_salary'] = $coachSalaryIn;
+            // 平台收费=收费金额*5%
+            $camps[$k]['system_rebate'] = $camps[$k]['total_amount']*0.05;
+            $sum['system_rebate'] += $camps[$k]['system_rebate'];
+            // 训练营收入=收费金额-平台收费
+            $camps[$k]['camp_income'] = $camps[$k]['total_amount']-$camps[$k]['system_rebate'];
+            $sum['camp_income'] += $camps[$k]['camp_income'];
+            // 已结算课时工资(上课应得课时费)
+            $campScheduleSalayin = $scheduleModel->where($map)->where(['status' => 1,'is_settle' => 1])->sum('schedule_income');
+            if ($campScheduleSalayin) {
+                $camps[$k]['schedule_salaryin'] = $campScheduleSalayin;
+                $sum['schedule_salaryin'] += $camps[$k]['schedule_salaryin'];
             }
-            // 训练营直接收入
-            $campMap = $map;
-            $campMap['type'] =1;
-            $campMap['member_type'] = 5;
-            $campSalaryin = $salaryInS->countSalaryin($campMap);
-            if ($campSalaryin) {
-                $camps[$k]['camp_income'] = $campSalaryin;
+            // 未结课时费=(上月未结金额+本月训练营收入-本月已结课时费)
+            $nosettleSchedule = $scheduleModel->where($map)->where(['status' => 1,'is_settle' => 0])->group('camp_id')->select()->toArray();
+            if ($nosettleSchedule) {
+                foreach ($nosettleSchedule as $k2=> $schedule) {
+//                    $notsettleSchedule[$k2]['schedule_income'] = 0;
+                    // 课时正式学员人数
+                    $numScheduleStudent = count(unserialize($schedule['student_str']));
+                    $lesson = $lesson = Db::name('lesson')->where('id', $schedule['lesson_id'])->find();
+                    // 课时收入
+                    $incomeSchedule = $lesson['cost'] * $numScheduleStudent;
+//                    $notsettleSchedule[$k2]['schedule_income']=$incomeSchedule;
+                    $camps[$k]['schedule_salaryin_notsettle']+=$incomeSchedule;
+                }
+                $camps[$k]['schedule_salaryin_notsettle'] = $camps[$k]['schedule_salaryin_notsettle']+$camps[$k]['camp_income']-$camps[$k]['schedule_salaryin'];
+                $sum['schedule_salaryin_notsettle'] += $camps[$k]['schedule_salaryin_notsettle'];
             }
         }
-        //dump($camps);
-        $breadcrumb = ['title' => '学费统计', 'ptitle' => '财务'];
+
+        $breadcrumb = ['title' => '收益统计', 'ptitle' => '财务'];
         $this->assign('breadcrumb', $breadcrumb);
+        $this->assign('camps', $camps);
+        $this->assign('sum', $sum);
         return $this->fetch();
     }
 }

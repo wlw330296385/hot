@@ -1,9 +1,10 @@
 <?php
 namespace app\admin\controller;
 
+use app\admin\controller\base\Backend;
 use app\admin\controller\base\Base;
 
-class Index extends Base {
+class Index extends Backend {
     public function index() {
 
     	/*dump(cache('group_id_menu_auth_2'));

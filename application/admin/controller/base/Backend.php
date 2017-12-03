@@ -33,6 +33,14 @@ class Backend extends Controller {
     }*/
 
     public function _initialize() {
+        // 检查控制台登录
+        $this->AuthService = new AuthService();
+        if ( !$this->AuthService->islogin() ) {
+            $this->error('请登录后操作', url('Login/index'));
+        }else{
+            $this->admin = session('admin');
+        }
+
 
         // 获取平台数据
         $SystemS = new SystemService();
@@ -49,9 +57,6 @@ class Backend extends Controller {
         $this->assign('site', $site);
         $this->assign('admin', session('admin') );
         $this->assign('camplist', $camplist);
-
-        $this->assign('site', $site);
-        $this->assign('admin', session('admin') );
     }
 
     // 获取当前查看训练营
