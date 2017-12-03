@@ -15,7 +15,7 @@
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
-    <style>
+   <style>
         .mui-popover-arrow {
             left: auto;
             right: 6px;
@@ -26,16 +26,8 @@
             width: 100%;
         }
         
-        .show {
-            display: block;
-        }
-        
-        .hide {
-            display: none;
-        }
-        
         .muicol {
-            margin: 5px 13px;
+            padding: 0 15px;
         }
         
         .frame {
@@ -49,6 +41,10 @@
         .title {
             font-size: 16px;
             font-weight: bold;
+        }
+        
+        .pd {
+            padding: 7px 0;
         }
         
         .introBox .operationDiv {
@@ -168,9 +164,9 @@
 
                 <div class="mui-input-row price-input-row {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">
                     <a href="#cost" class="mui-navigate-right">
-                        <label>费用结算人</label>
-                        <span class="costCont " name="finance">{$eventInfo.finance}</span>
-                        <input type="hidden" name="finance_id" class="" value="">
+                        <label class="wd36">费用结算人</label>
+                        <span class="finance " name="finance">{$eventInfo.finance}</span>
+                        <input type="hidden" name="finance_id" class="finance_id" value="">
                     </a>
                 </div>
 
@@ -200,7 +196,7 @@
                 </div>
 
                 <div class="mui-input-row h-auto">
-                    <label>最少参与人数</label>
+                    <label class="wd36">最少参与人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
                         <input class="mui-input-numbox data" type="number" name="min" value="{$eventInfo.min}">
@@ -208,7 +204,7 @@
                     </div>
                 </div>
                 <div class="mui-input-row h-auto">
-                    <label>最多参与人数</label>
+                    <label class="wd36">最多参与人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
                         <input class="mui-input-numbox data" type="number" name="max" value="{$eventInfo.max}">
@@ -238,12 +234,16 @@
                     <span class="course">活动简介</span>
                 </div>
 
-                <div class="mui-input-row h-auto">
-                    <div class="mui-input-row h-auto" style="margin-bottom: 10px;padding:0">
+                       <div class="mui-input-row h-auto">
+                    <div class="mui-input-row h-auto" style="margin-bottom: 10px">
                         <textarea name="event_des" class="data event_des" style="display: none"></textarea>
                         <div class="introBox">{$eventInfo.event_des}</div>
                     </div>
-                    <div class="mui-row mui-text-center">
+                    <div class="mui-row mui-text-center mui-row-operation">
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame up pd">上移</a>
+                            <a class="frame down pd">下移</a>
+                        </div>
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
                             <a class="frame titleClass">添加标题</a>
                         </div>
@@ -284,7 +284,7 @@
             </div>
         </div>
     </div>
-    <!--费用结算人-->
+     <!--费用结算人-->
     <div id="cost" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
@@ -582,7 +582,7 @@
                 $(this).siblings(".delbtn").remove();
                 if ($(this).val() != '') {
                     var inputValue = '<h5>' + $(this).val() + '</h5>';
-                    $(this).parent().html(inputValue)
+                    $(this).parent().html(inputValue).removeClass("bgorange")
                 } else {
                     var inputValueNull = '<h5>标题</h5>';
                     $(this).parent().html(inputValueNull)
@@ -591,7 +591,7 @@
             // 点击时显示input框
             $(document).on('tap', '.operationDiv h5', function () {
                 var YinputValue = '<i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="标题">';
-                $(this).parent(".operationDiv").html(YinputValue)
+                $(this).parent(".operationDiv").html(YinputValue).addClass("bgorange");
                 console.log(YinputValue)
             });
 
@@ -600,7 +600,7 @@
                 $(this).siblings(".delbtn").remove();
                 if ($(this).val() != '') {
                     var textAreaValue = '<p>' + $(this).val() + '</p>';
-                    $(this).parent().html(textAreaValue)
+                    $(this).parent().html(textAreaValue).removeClass("bgorange")
                 } else {
                     var textAreaValueNull = '<p>请输入正文</p>';
                     $(this).parent().html(textAreaValueNull)
@@ -609,7 +609,16 @@
             // 点击时显示textarea框
             $(document).on('tap', '.operationDiv p', function () {
                 var YtextAreaValue = '<i class="delbtn mui-icon mui-icon-close"></i><textarea rows="3" value="' + $(this).text() + '" class="mui-text-left text delClass" placeholder="请输入正文">' + $(this).text() + '</textarea>';
-                $(this).parent().html(YtextAreaValue)
+                $(this).parent().html(YtextAreaValue).addClass("bgorange");
+            });
+
+             // 上移动
+            $(document).on('tap', '.up', function () {
+                $(".bgorange").prev().insertAfter(".bgorange");
+            });
+            // 上移动
+            $(document).on('tap', '.down', function () {
+                $(".bgorange").next().insertBefore(".bgorange");
             });
 
             toCampMemberList(); // 调用训练营身份列表
@@ -731,7 +740,7 @@
         //自定义获取训练营身份列表没分页
         var toCampMemberList = function () {
             var url = "{:url('api/camp_member/getCampMemberListNoPageApi','','',true)}";
-            var campID = "{$eventInfo.organization_id}";
+           var campID = "{$eventInfo.organization_id}";
             mui.ajax({
                 url: url,
                 data: {
