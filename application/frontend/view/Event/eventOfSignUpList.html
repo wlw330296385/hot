@@ -91,83 +91,56 @@
                     toList(page, gType);//具体取数据的方法
                 }, 100);
             }
-
-            //接口获取数据并追加到页面
-            var toList = function (page, gType) {
-                //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/event_member/getEventMemberListByPageApi',['event_id'=>$eventInfo.id])}"+ '/?page=' + page;
-                var event_id = "{$eventInfo.id}";
-                mui.ajax({
-                    url: url,
-                    data: {
-                        event_id: event_id,
-                        status: 3
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    //processData:false,
-                    success: function (data) {
-                        var newli = '';
-                        console.log(data)
-                        if (data.code == 200) {
-                            for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                // 获取当前时间
-                                var d = new Date()
-                                var minutes = d.getMinutes()
-                                var hours = d.getHours()
-                                var day = d.getDate()
-                                var month = d.getMonth() + 1
-                                var year = d.getFullYear()
-                                var time = '';
-                                time += year + "-";
-                                if (month >= 10) {
-                                    time += month + "-";
-                                }
-                                else {
-                                    time += "0" + month + "-";
-                                }
-                                if (day >= 10) {
-                                    time += day;
-                                }
-                                else {
-                                    time += "0" + day;
-                                }
-                                time += " " + hours + ":" + minutes;
-                                console.log(time)
-                               
-                                newli = newli + '<li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-6 mui-col-sm-6"><p>' + data.data.data[i].student + '</p><p>' + data.data.data[i].contact + '</p></li><li class="mui-col-xs-6 mui-col-sm-6 mui-text-right">' + time + '</li></ul></li>'
-                            }
+        });
+        
+        //接口获取数据并追加到页面
+        var toList = function (page, gType) {
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/event_member/getEventMemberListByPageApi',['event_id'=>$eventInfo.id])}" + '/?page=' + page;
+            var event_id = "{$eventInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    event_id: event_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    var newli = '';
+                    console.log(data)
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-6 mui-col-sm-6"><p>' + data.data.data[i].student + '</p><p>' + data.data.data[i].contact + '</p></li><li class="mui-col-xs-6 mui-col-sm-6 mui-text-right">' + data.data.data[i].create_time + '</li></ul></li>'
                         }
-                        if (gType == 1) {
-                            //上拉刷新
-                            $("ul.event").empty().append(newli);
-                            mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                            mui('#refreshContainer').pullRefresh().refresh(true);
-                            if (newli == '') {
-                                $("ul.event").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
-                            }
-                        } else {
-                            //下拉加载 gType==2
-                            $("ul.event").append(newli);
+                    }
+                    if (gType == 1) {
+                        //上拉刷新
+                        $("ul.event").empty().append(newli);
+                        mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                        mui('#refreshContainer').pullRefresh().refresh(true);
+                        if (newli == '') {
+                            $("ul.event").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
                         }
-                        if (newli != '') {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-                        } else {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                        }
-
-                    },
-                    error: function (xhr, type, errerThrown) {
-                        mui.toast('网络异常,请稍候再试');
+                    } else {
+                        //下拉加载 gType==2
+                        $("ul.event").append(newli);
+                    }
+                    if (newli != '') {
+                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                    } else {
                         mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                     }
-                });
-            };
 
-
-        })
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
     </script>
 </body>
 
