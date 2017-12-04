@@ -171,9 +171,12 @@
                     <div class="mui-input-row">
                         <label>活动人员</label>
                     </div>
-                    <div class="box" id="inactiveList">
+                    <div class="box" id="inactiveList"></div>
 
-                    </div>
+                    <!--memebr-->
+                    <div class="box" id="hideStList" style="display: none"></div>
+                    <div class="box" id="hideStListIni" style="display: none"></div>
+                    <!--memebr end-->
 
                     <div class="operation-btn">
                         <span class="mui-badge"></span>
@@ -374,9 +377,8 @@
                 });
             }
 
-            // var memberData = '';
             var totalNum = '';//序号总和的变量
-            memberData = [];
+            memberList = [];
             $(function () {
 
                 //全选
@@ -391,10 +393,20 @@
 
                 //删除
                 $(".del").click(function () {
-                    $("input[name='member']:checked").each(function () { // 遍历选中的checkbox
-                        var n = $(this).parents("checkboxCont").index();  // 获取checkbox所在行的顺序
-                        $(".checkboxCont:eq(" + n + ")").remove();
-                    });
+                    $("input[name='member']:checked").parents(".checkboxCont").remove();
+                    changeIndex();
+                    $("#hideStList").empty();
+                    $("#inactiveList input[type=checkbox]").each(function () {
+                        var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
+                        var id = $(this).attr("data-id");
+                        var member_id = $(this).attr("data-member_id");
+                        var member = $(this).attr("data-member");
+                        var student_id = $(this).attr("data-student_id");
+                        var student = $(this).attr("data-student");
+                        memberList.push({ member: member, member_id: member_id, id: id, student: student, student_id: student_id, status: 3 });
+                        $("#hideStList").append(str);
+                    })
+
                 });
 
                 // 具体对象
@@ -431,7 +443,7 @@
 
                 //角标随checkboxCont的数量变化
                 $(document).on('click', '.del', function () {
-                    totalNum = $(".checkboxCont").length;
+                    totalNum = $("#inactiveList .checkboxCont").length;
                     $(".mui-badge").text(totalNum);
                 });
 
@@ -439,26 +451,23 @@
                 $("#memberConfirm").on('click', function () {
 
                     $("#inactiveList").empty();
-                    memberData = [];//报名人员列表数组
-
+                    $("#hideStList").empty();
+                    // memberList = [];//报名人员列表数组
                     $(".addMemberList input[type=checkbox]:checked").each(function () {
                         var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
-                        var id = $(this).attr("data-id");
-                        var member_id = $(this).attr("data-member_id");
-                        var member = $(this).attr("data-member");
-                        var status = $(this).attr("data-status");
+                        // var id = $(this).attr("data-id");
+                        // var member_id = $(this).attr("data-member_id");
+                        // var member = $(this).attr("data-member");
+                        // var status = $(this).attr("data-status");
                         $("#inactiveList").append(str);
-                        console.log(id)
-                        console.log(member_id)
-                        memberData.push({ member: member, member_id: member_id, id: id, status: 3 });
+                        $("#hideStList").append(str);
+                        // memberList.push({ member: member, member_id: member_id, id: id, status: 3 });
                     });
-
-
-                    console.log(memberData)
+                    // console.log(memberList)
 
                     changeIndex();//调用-更新序号
                     mui("#addMember").popover("toggle");
-                    totalNum = $(".checkboxCont").length;
+                    totalNum = $("#inactiveList .checkboxCont").length;
                     console.log(totalNum)
                     $(".mui-badge").text(totalNum);
                 });
@@ -573,12 +582,64 @@
                     $(".remarks").val(totalHtml);
                     console.log(totalHtml);
 
+                    //////////////////////////////////////////
+                    memberList = [];
+
+                    var idNewID = ""
+                    //新增学员
+                    $("#hideStList input[name=member]").each(function (i) {
+                        var sid = $(this).attr("data-member_id");
+                        //默认为新添加学员
+                        idNewID = "Yes";
+                        //该学员遍历原学生表判断是否存在
+                        $("#hideStListIni input[name=member]").each(function () {
+                            if (sid == $(this).attr("data-member_id")) {
+                                idNewID = "No";
+                                return false;
+                            }
+                        });
+                        //上面遍历过不存在就添加到最终变动学员列表中
+                        if (idNewID == "Yes") {
+                            var id = $(this).attr("data-id");
+                            var member = $(this).attr("data-member");
+                            var member_id = $(this).attr("data-member_id");
+                            var student_id = $(this).attr("data-student_id");
+                            var student = $(this).attr("data-student");
+                            memberList.push({ member: member, member_id: member_id, id: id, student: student, student_id: student_id, status: 3 });
+                            console.log(memberList)
+                        }
+                    });
+
+                    var idDelID = ""
+                    //去除学员
+                    $("#hideStListIni input[name=member]").each(function (i) {
+                        var dsid = $(this).attr("data-member_id");
+                        //默认为要去除的学员
+                        idDelID = "Yes";
+                        //该学员遍历新编辑的学生表判断是否存在
+                        $("#hideStList input[name=member]").each(function () {
+                            if (dsid == $(this).attr("data-member_id")) {
+                                idDelID = "No";
+                                return false;
+                            }
+                        });
+                        //上面遍历过不存在就添加到最终变动学员列表中
+                        if (idDelID == "Yes") {
+                            var id = $(this).attr("data-id");
+
+                            memberList.push({ id: id, status: 4 });
+                            console.log(memberList)
+                        }
+                    });
+
+                    //////////////////////////////////////////
+
                     var data = wooApi.getInputData('input', 'data');
                     datas = wooApi.getInputData('select', 'data', data);
                     // 获取其他标签值
                     arrData = wooApi.getDomData('domData', datas);
                     var objData = wooApi.arrTOobj(arrData);
-                    objData.memberData = JSON.stringify(memberData);
+                    objData.memberData = JSON.stringify(memberList);
                     var remarks = $('textarea.data').val();
                     objData.remarks = remarks;
                     var url = "{:url('api/event/recordEventApi',['event_id'=>$eventInfo['id']])}";
@@ -598,7 +659,7 @@
                 });
             });
 
-            //获取已经分配班级的学员列表
+            //获取已经分配的活动人员列表
             var toExpMemberList = function () {
                 var url = "{:url('api/event_member/getEventMemberListNoPageApi',['event_id'=>$eventInfo.id])}";
                 var event_id = "{$eventInfo.id}";
@@ -618,12 +679,15 @@
                             var inactiveDiv = '';
                             totalLength = data.data.length;
                             $(".mui-badge").text(totalLength);
-                            $("#inactiveList").empty();
 
+                            $("#inactiveList").empty();
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                inactiveDiv = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].member + '</font><input name="member" value="' + data.data[i].member_id + '" data-id="' + data.data[i].id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" type="checkbox" class="stdList eachList"></div>'
+                                inactiveDiv = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].member + '</font><input name="member" value="' + data.data[i].member_id + '" data-id="' + data.data[i].id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-student="' + data.data[i].student + '"  data-studen_id="' + data.data[i].student_id + '"  type="checkbox" class="stdList eachList"></div>'
                                 $("#inactiveList").append(inactiveDiv);
+                                $("#hideStList").append(inactiveDiv);
+                                $("#hideStListIni").append(inactiveDiv);
                             };
+
                             if ($("#inactiveList").html() == '') {
                                 $(".checkChecked").append('<p class="nohave">没有学员哦</p>');
                             }
@@ -655,10 +719,11 @@
                         var div = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-member" class="member" value="' + data.data[i].member + '" data-member="' + data.data[i].member + '" data-member_id="' + data.data[i].member_id + '" data-id="' + data.data[i].id + '" data-status="' + data.data[i].status + '" type="checkbox" ></div>'
+                                div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-member" class="member" value="' + data.data[i].member + '" data-member="' + data.data[i].member + '" data-member_id="' + data.data[i].member_id + '" data-id="' + data.data[i].id + '" data-student="' + data.data[i].student + '"  data-studen_id="' + data.data[i].student_id + '" data-status="' + data.data[i].status + '" type="checkbox" ></div>'
                             }
                             $("#newdiv").empty();
                             $("#newdiv").append(div);
+
                             if (div == '') {
                                 $("#newdiv").append('<li class="nodata"><p>没有相关数据哦</p></li>');
                             }
