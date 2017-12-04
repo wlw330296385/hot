@@ -11,7 +11,7 @@ class EventMember extends Base{
 		parent::_initialize();
         $this->EventMemberService = new EventMemberService;
 	}
-
+    //获取一个组织机构下参与的活动人员(唯一)
     public function getEventMemberListOfCampByPageApi(){
         try{
             $map = input('post.');
@@ -33,6 +33,7 @@ class EventMember extends Base{
         }
     }
 
+    //获取活动相关人员(带分页)
     public function getEventMemberListByPageApi(){
         try{
             $map = input('post.');
