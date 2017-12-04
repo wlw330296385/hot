@@ -125,48 +125,53 @@
                     <label>电话</label><span>{$pmember.telephone}</span>
                 </div>
             </form>
-            {/notempty} 
-            
-            
-           
+            {/notempty}
+
+
+
         </div>
-         {switch name="variable"} {case value='1'}
-            <!--报名状态-->
-            <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli"><a href="tel:{$eventInfo.telephone}"><span
+        {switch name="variable"} {case value='1'}
+        <!--报名状态-->
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 opli"><a href="tel:{$eventInfo.telephone}"><span
                     class="mui-icon mui-icon-phone"></span>电话咨询</a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-5 opli ">剩余
-                    <font class="surplus colororange"></font>个名额</li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 opli bggreen signupbtn">报名</li>
-            </ul>
-            {/case} {case value='3'}
-            <!--报名人数已满-->
-            <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">报名人数已满</a>
-                </li>
-            </ul>
-            {/case} {case value='2'}
-            <!--已下架-->
-            <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">已下架</a>
-                </li>
-            </ul>
-            {/case} {case value='4'}
-            <!--已过期-->
-            <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">已过期</li>
-            </ul>
-            {/case} {/switch}
+            <li class="mui-table-view-cell mui-media mui-col-xs-5 opli ">剩余
+                <font class="surplus colororange"></font>个名额</li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 opli bggreen signupbtn">报名</li>
+        </ul>
+        {/case} {case value='3'}
+        <!--报名人数已满-->
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">报名人数已满</a>
+            </li>
+        </ul>
+        {/case} {case value='2'}
+        <!--已下架-->
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">已下架</a>
+            </li>
+        </ul>
+        {/case} {case value='4'}
+        <!--已过期-->
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">已过期</li>
+        </ul>
+        {/case} {/switch}
     </div>
 
 
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
+        });
+
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
         });
 
         $(function () {
@@ -266,7 +271,7 @@
             wx.onMenuShareTimeline({
                 title: "{$eventInfo.event}", // 分享标题
                 link: "{$shareurl}/pid/{$mid}", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-                imgUrl: "{$eventInfo.cover}", // 分享图标
+                imgUrl: "{:request()->root(true)}{$eventInfo.cover}", // 分享图标
                 success: function () {
                     // 用户确认分享后执行的回调函数
                     //alert('已分享');
@@ -279,9 +284,9 @@
             // 分享给朋友
             wx.onMenuShareAppMessage({
                 title: '{$eventInfo.event}', // 分享标题
-                desc: '{$eventInfo.event_des}', // 分享描述
+                desc: '{$eventInfo.organization}', // 分享描述
                 link: "{$shareurl}/pid/{$mid}", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-                imgUrl: "{$eventInfo.cover}", // 分享图标
+                imgUrl: "{:request()->root(true)}{$eventInfo.cover}", // 分享图标
                 type: "", // 分享类型,music、video或link，不填默认为link
                 dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
                 success: function () {
@@ -293,7 +298,6 @@
             });
 
         });
-
     </script>
 </body>
 
