@@ -58,6 +58,14 @@
             padding-right: 30px !important;
         }
         
+        .nohave {
+            margin: 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-top: none;
+            text-align: center;
+        }
+        
         #newdiv .tips {
             color: #AAAAAA;
             line-height: normal;
@@ -72,7 +80,7 @@
         }
         
         .muicol {
-            margin: 5px 13px;
+            padding: 0 15px;
         }
         
         .frame {
@@ -86,6 +94,10 @@
         .title {
             font-size: 16px;
             font-weight: bold;
+        }
+        
+        .pd {
+            padding: 7px 0;
         }
         
         .introBox .operationDiv {
@@ -218,11 +230,15 @@
                 </div>
 
                 <div class="mui-input-row h-auto">
-                    <div class="mui-input-row h-auto" style="margin-bottom: 10px;padding:0">
+                    <div class="mui-input-row h-auto" style="margin-bottom: 10px">
                         <textarea name="remarks" class="data remarks" style="display: none"></textarea>
-                        <div class="introBox">{$eventInfo.remarks}</div>
+                        <div class="introBox"></div>
                     </div>
-                    <div class="mui-row mui-text-center">
+                    <div class="mui-row mui-text-center mui-row-operation">
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame up pd">上移</a>
+                            <a class="frame down pd">下移</a>
+                        </div>
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
                             <a class="frame titleClass">添加标题</a>
                         </div>
@@ -495,7 +511,7 @@
                     $(this).siblings(".delbtn").remove();
                     if ($(this).val() != '') {
                         var inputValue = '<h5>' + $(this).val() + '</h5>';
-                        $(this).parent().html(inputValue)
+                        $(this).parent().html(inputValue).removeClass("bgorange")
                     } else {
                         var inputValueNull = '<h5>标题</h5>';
                         $(this).parent().html(inputValueNull)
@@ -504,7 +520,7 @@
                 // 点击时显示input框
                 $(document).on('tap', '.operationDiv h5', function () {
                     var YinputValue = '<i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="标题">';
-                    $(this).parent(".operationDiv").html(YinputValue)
+                    $(this).parent(".operationDiv").html(YinputValue).addClass("bgorange");
                     console.log(YinputValue)
                 });
 
@@ -513,7 +529,7 @@
                     $(this).siblings(".delbtn").remove();
                     if ($(this).val() != '') {
                         var textAreaValue = '<p>' + $(this).val() + '</p>';
-                        $(this).parent().html(textAreaValue)
+                        $(this).parent().html(textAreaValue).removeClass("bgorange")
                     } else {
                         var textAreaValueNull = '<p>请输入正文</p>';
                         $(this).parent().html(textAreaValueNull)
@@ -522,7 +538,17 @@
                 // 点击时显示textarea框
                 $(document).on('tap', '.operationDiv p', function () {
                     var YtextAreaValue = '<i class="delbtn mui-icon mui-icon-close"></i><textarea rows="3" value="' + $(this).text() + '" class="mui-text-left text delClass" placeholder="请输入正文">' + $(this).text() + '</textarea>';
-                    $(this).parent().html(YtextAreaValue)
+                    $(this).parent().html(YtextAreaValue).addClass("bgorange");
+                });
+
+
+                // 上移动
+                $(document).on('tap', '.up', function () {
+                    $(".bgorange").prev().insertAfter(".bgorange");
+                });
+                // 上移动
+                $(document).on('tap', '.down', function () {
+                    $(".bgorange").next().insertBefore(".bgorange");
                 });
 
                 toExpMemberList();//已经参与的人
@@ -635,6 +661,9 @@
                             $("#newdiv").append(div);
                             if (div == '') {
                                 $("#newdiv").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                            }
+                            if ($("#inactiveList").html() == '') {
+                                $("#inactiveList").append('<p class="nohave">还没有活动人员哦</p>');
                             }
                         }
                     },

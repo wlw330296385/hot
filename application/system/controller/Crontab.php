@@ -27,9 +27,9 @@ class Crontab extends Controller {
         // 上级会员收入提成(90%*5%,90%*3%)
         list($start, $end) = Time::yesterday();
         $map['status'] = 1;
-        //$map['create_time'] = ['between', [$start, $end]];
+        $map['create_time'] = ['between', [$start, $end]];
         $map['is_settle'] = 0;
-        Db::name('schedule')->where($map)->chunk(50, function($schedules) {
+        Db::name('schedule')->where($map)->where('delete_time',null)->chunk(50, function($schedules) {
             foreach ($schedules as $schedule) {
                 // 课时正式学员人数
                 $numScheduleStudent = count(unserialize($schedule['student_str']));
@@ -143,7 +143,7 @@ class Crontab extends Controller {
         $map['status'] = 1;
         $map['has_rebate'] = 0;
         $map['create_time'] = ['between', [$start, $end]];
-        $salaryins = DB::name('salary_in')->field(['member_id', 'sum(salary)+sum(push_salary)'=>'month_salary'])->where($map)->select();
+        $salaryins = DB::name('salary_in')->field(['member_id', 'sum(salary)+sum(push_salary)'=>'month_salary'])->where($map)->where('delete_time', null)->select();
         foreach ($salaryins as $salaryin) {
             $res = $this->insertRebate($salaryin['member_id'], $salaryin['month_salary']);
             if (!$res) { continue; }

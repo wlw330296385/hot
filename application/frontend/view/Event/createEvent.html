@@ -23,12 +23,12 @@
         
         .mui-input-row a {
             display: table;
-            width: 67%;
+            width: 100%;
         }
         
-        /*.muicol {
-            margin: 5px 13px;
-        }*/
+        .muicol {
+            padding: 0 15px;
+        }
         
         .frame {
             width: 100%;
@@ -41,6 +41,10 @@
         .title {
             font-size: 16px;
             font-weight: bold;
+        }
+        
+        .pd {
+            padding: 7px 0;
         }
         
         .introBox .operationDiv {
@@ -161,7 +165,7 @@
 
                 <div class="mui-input-row price-input-row" style="display: none">
                     <a href="#cost" class="mui-navigate-right">
-                        <label>费用结算人</label>
+                        <label class="wd36">费用结算人</label>
                         <span class="finance" name="finance"></span>
                         <input type="hidden" name="finance_id" value="" class="finance_id">
                     </a>
@@ -193,7 +197,7 @@
                 </div>
 
                 <div class="mui-input-row h-auto">
-                    <label>最少参与人数</label>
+                    <label class="wd36">最少参与人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
                         <input class="mui-input-numbox data" type="number" name="min" value="">
@@ -201,7 +205,7 @@
                     </div>
                 </div>
                 <div class="mui-input-row h-auto">
-                    <label>最多参与人数</label>
+                    <label class="wd36">最多参与人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
                         <input class="mui-input-numbox data" type="number" name="max" value="">
@@ -248,10 +252,10 @@
                         <textarea name="event_des" class="data event_des" style="display: none"></textarea>
                         <div class="introBox"></div>
                     </div>
-                    <div class="mui-row mui-text-center">
+                    <div class="mui-row mui-text-center mui-row-operation">
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
-                            <a class="frame up">上移</a>
-                            <a class="frame down">下移</a>
+                            <a class="frame up pd">上移</a>
+                            <a class="frame down pd">下移</a>
                         </div>
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
                             <a class="frame titleClass">添加标题</a>
@@ -588,10 +592,6 @@
                 console.log(YinputValue)
             });
 
-            // $(document).on('tap', '.down', function () {
-            //     $(".bgorange").after(".operationDiv")
-            // });
-
             // 焦点离开后把内容放在p标签里
             $(document).on('blur', '.operationDiv textarea', function () {
                 $(this).siblings(".delbtn").remove();
@@ -607,6 +607,15 @@
             $(document).on('tap', '.operationDiv p', function () {
                 var YtextAreaValue = '<i class="delbtn mui-icon mui-icon-close"></i><textarea rows="3"  autofocus value="' + $(this).text() + '"  class="mui-text-left text delClass" placeholder="请输入正文">' + $(this).text() + '</textarea>';
                 $(this).parent().html(YtextAreaValue).addClass("bgorange");
+            });
+
+            // 上移动
+            $(document).on('tap', '.up', function () {
+                $(".bgorange").prev().insertAfter(".bgorange");
+            });
+            // 上移动
+            $(document).on('tap', '.down', function () {
+                $(".bgorange").next().insertBefore(".bgorange");
             });
 
             toCampMemberList(); // 调用训练营身份列表
