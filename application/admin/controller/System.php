@@ -10,12 +10,10 @@ class System extends Backend {
         parent::_initialize();
     }
     public function index(){
-        //dump($this->site);
-        $banner = unserialize($this->site['banner']);
-        //dump($banner);
+        $o_id = input('param.o_id',0);
+        $o_type = input('param.o_type',0);
+        $banner = db('banner')->where(['organization_id'=>$o_id,'organization_type'=>$o_type])->order('ord asc')->limit(3)->select();
 
-        $breadcrumb = ['title' => '系统设置'];
-        $this->assign( 'breadcrumb', $breadcrumb );
         $this->assign('banner', $banner);
         return view('System/index');
     }
@@ -47,12 +45,16 @@ class System extends Backend {
     // 平台banner
     public function editbanner() {
         if ( request()->isPost() ) {
-            $id = input('id');
-            $banner = input('banner/a');
-            //dump($banner);
-            $data = ['banner' => serialize($banner)];
-            $result = db('setting')->where('id', $id)->update($data);
-
+            $data = input('post.');
+            $bannerModel = new \app\model\Banner;
+            if($data['id']){
+                $id = $data['id'];
+                unset($data['id']);
+                $result = $bannerModel->save($data,['id'=>$id]);
+            }else{
+                $result = $bannerModel->save($data);
+            }
+            
             $AuthS = new AuthService();
             if ($result) {
                 $AuthS->record('修改平台banner 成功');

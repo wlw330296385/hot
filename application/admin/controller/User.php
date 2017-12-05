@@ -3,24 +3,23 @@
 namespace app\admin\controller;
 use app\admin\controller\base\Backend;
 use app\admin\model\Admin;
-
+use util\Tree;
 class User extends Backend {
     public function _initialize(){
         parent::_initialize();
     }
     public function index() {
-        $users = Admin::order('id desc')->paginate(15);
-
-        $breadcrumb = ['title' => '管理员列表', 'ptitle' => '管理员'];
-        $this->assign('breadcrumb', $breadcrumb);
+        $users = Admin::with('admin_group')->order('id desc')->paginate(15);
+        // dump($users);die;
         $this->assign('list', $users);
         return $this->fetch();
     }
 
     public function create() {
-
-        $breadcrumb = ['title' => '添加管理员', 'ptitle' => '管理员'];
-        $this->assign('breadcrumb', $breadcrumb);
+        $menu = db('admin_group')->select();
+        $groupTree = Tree::toLayer($menu);
+        // dump($groupTree);die;
+        $this->assign('groupTree',$groupTree);
         return $this->fetch();
     }
 
@@ -47,9 +46,10 @@ class User extends Backend {
     public function edit() {
         $id = input('id');
         $user = Admin::get($id);
-
-        $breadcrumb = ['title' => '修改管理员', 'ptitle' => '管理员'];
-        $this->assign('breadcrumb', $breadcrumb);
+        $menu = db('admin_group')->select();
+        $groupTree = Tree::toLayer($menu);
+        // dump($groupTree);die;
+        $this->assign('groupTree',$groupTree);
         $this->assign('user', $user);
         return $this->fetch();
     }

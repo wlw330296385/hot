@@ -11,8 +11,16 @@ class Index extends Base{
 	}
 
     public function index() {
-        $page = input('param.page')?input('param.page'):1;
-    	$bannerList = unserialize($this->systemSetting['banner']); 
+    	$o_id = input('param.o_id',0);
+        $o_type = input('param.o_type',0);
+        $bannerList = db('banner')->where(['organization_id'=>$o_id,'organization_type'=>$o_type,'status'=>1])->order('ord asc')->limit(3)->select();
+        // 如果banner不够三张
+        if( count($bannerList)<2 ){
+            $res = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1])->order('ord asc')->limit((2-count($bannerList)))->select();
+            $bannerList = array_merge($bannerList,$res);
+        }
+                
+        // dump($bannerList);die;
     	// 热门课程
     	// $hotLessonList = $this->LessonService->getLessonList([],$page,'hot ASC',4);
     	//推荐课程

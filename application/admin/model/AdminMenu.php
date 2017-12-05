@@ -94,7 +94,7 @@ class AdminMenu extends Model {
             ];
             // 非开发模式，只显示可以显示的菜单
             if (config('develop_mode') == 0) {
-                // $map['online_hide'] = 0;
+                $map['online_hide'] = 1;
             }
             $menus = self::where($map)->order('sort,id')->column('id,pid,module,title,url_value,url_type,url_target,icon');
             // 解析模块链接
