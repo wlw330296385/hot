@@ -14,115 +14,35 @@
 
         <!-- Sidebar Menu -->
         <ul class="sidebar-menu">
-            <li>
-                <a href="{:url('system/index')}">
-                    <i class="fa fa-cog"></i> <span>系统设置</span>
-                </a>
-            </li>
-            <li>
-                <a href="{:url('user/index')}">
-                    <i class="fa fa-cog"></i> <span>管理员</span>
-                </a>
-            </li>
-            <li class="treeview">
-                <a href="javascript:;">
-                    <i class="fa fa-cog"></i> <span>微信管理</span>
+            {volist name = '_sidebar_menus' id ='vol'}
+            {if !empty($vol['daughter'])}
+            <li class="treeview  {if $_location[0]['title'] == $vol.title} active {/if}} ">
+                <a href="{$vol.url_value}">
+                    <i class="{$vol.icon}"></i> <span>{$vol.title}</span>
+                    
                     <span class="pull-right-container">
                         <i class="fa fa-angle-left pull-right"></i>
                     </span>
                 </a>
                 <ul class="treeview-menu">
+                    {volist name = "$vol['daughter']" id ='v'}
                     <li>
-                        <a href="{:url('weixin/menu')}">
-                            <i class="fa fa-flag"></i> <span>菜单管理</span>
+                        <a href="/{$v.url_value}">
+                            <i class="{$v.icon}"></i> <span>{$v.title}</span>
                         </a>
                     </li>
+                    {/volist}
                 </ul>
+                
             </li>
+            {else /}
             <li class="treeview">
-                <a href="#">
-                    <i class="fa fa-group"></i><span>训练营</span>
-                    <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </span>
+                <a href="/{$vol.url_value}">
+                    <i class="{$vol.icon}"></i> <span>{$vol.title}</span>
                 </a>
-                <ul class="treeview-menu">
-                    <li>
-                        <a href="{:url('camp/index')}">
-                            <i class="fa fa-flag"></i> <span>训练营管理</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{:url('court/index')}">
-                            <i class="fa fa-flag"></i> <span>场地管理</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{:url('coach/index')}">
-                            <i class="fa fa-flag"></i> <span>教练管理</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{:url('student/index')}">
-                            <i class="fa fa-flag"></i> <span>学员管理</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{:url('grade/index')}">
-                            <i class="fa fa-flag"></i> <span>班级管理</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{:url('lesson/index')}">
-                            <i class="fa fa-flag"></i><span>课程管理</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{:url('schedule/index')}">
-                            <i class="fa fa-flag"></i><span>课时管理</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{:url('plan/index')}">
-                            <i class="fa fa-flag"></i><span>教案管理</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{:url('exercise/index')}">
-                            <i class="fa fa-flag"></i><span>训练项目管理</span>
-                        </a>
-                    </li>
-                </ul>
             </li>
-            <li class="treeview">
-                <a href="javascript:;">
-                    <i class="fa fa-flag"></i><span>财务管理</span>
-                    <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li><a href="{:url('finance/billlist')}"><i class="fa fa-circle-o"></i>支付订单</a></li>
-                    <li><a href="{:url('finance/salaryinlist')}"><i class="fa fa-circle-o"></i>工资收入</a></li>
-                    <li><a href="{:url('finance/salaryoutlist')}"><i class="fa fa-circle-o"></i>提现管理</a></li>
-                    <li><a href="{:url('finance/reconciliation')}"><i class="fa fa-circle-o"></i>订单对账</a></li>
-                    <li><a href="{:url('finance/tuitionstatis')}"><i class="fa fa-circle-o"></i>交费统计</a></li>
-                    <li><a href="{:url('finance/earings')}"><i class="fa fa-circle-o"></i>收益统计</a></li>
-                </ul>
-            </li>
-            <li class="treeview">
-                <a href="javascript:;">
-                    <i class="fa fa-user"></i><span>会员管理</span>
-                    <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li><a href="{:url('member/memberList')}"><i class="fa fa-users"></i>会员列表</a></li>
-                    <li><a href="{:url('member/createMember')}"><i class="fa fa-user-plus"></i>添加会员</a></li>
-                    <li><a href="{:url('member/createMember')}"><i class="fa fa-circle-o"></i>其他</a></li>
-                </ul>
-            </li>
+            {/if}
+            {/volist}
         </ul>
         <!-- /.sidebar-menu -->
     </section>

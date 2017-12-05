@@ -40,9 +40,8 @@ class AdminMenu extends Model {
         }
 
         $location = cache($cache_name);
-
         if (!$location) {
-            $map['pid'] = ['<>', 0];
+            // $map['pid'] = ['<>', 0];
             $map['url_value'] = strtolower($model.'/'.trim(preg_replace("/[A-Z]/", "_\\0", $controller), "_").'/'.$action);
 
             // 当前操作对应的节点ID
@@ -66,5 +65,68 @@ class AdminMenu extends Model {
             }
         }
         return $location;
+    }
+
+
+        /**
+     * 获取侧栏节点
+     * @param string $id 模块id
+     * @param string $module 模块名
+     * @param string $controller 控制器名
+     * @return array|mixed
+     */
+    public static function getSidebarMenu($id = '', $module = '', $controller = '')
+    {
+        $module     = $module == '' ? request()->module() : $module;
+        $controller = $controller == '' ? request()->controller() : $controller;
+        $cache_tag  = strtolower('_sidebar_menus_' . $module . '_' . $controller).'_role_'.session('user_auth.role');
+        $menus      = cache($cache_tag);
+
+        if (!$menus) {
+            // 获取当前节点地址
+            $location = self::getLocation($id);
+            // 当前顶级节点id
+            $top_id = $location[0]['id'];
+            // 获取顶级节点下的所有节点
+            $map = [
+                'status' => 1,
+                'module' => $module
+            ];
+            // 非开发模式，只显示可以显示的菜单
+            if (config('develop_mode') == 0) {
+                // $map['online_hide'] = 0;
+            }
+            $menus = self::where($map)->order('sort,id')->column('id,pid,module,title,url_value,url_type,url_target,icon');
+            // 解析模块链接
+            foreach ($menus as $key => &$menu) {
+                // 没有访问权限的节点不显示
+                if (!AdminGroup::checkAuth($menu['id'])) {
+                    unset($menus[$key]);
+                    continue;
+                }
+                
+            }
+
+            $menus = self::toLayer($menus);
+
+            // 非开发模式，缓存菜单
+            if (config('develop_mode') == 0) {
+                cache($cache_tag, $menus);
+            }
+        }
+        return $menus;
+    }
+
+
+
+    public static function toLayer($arr = [],$pid = 0){
+        $list = [];
+         foreach ($arr as $key => $value) {
+            if($value['pid'] == $pid){
+                $value['daughter'] = self::toLayer($arr,$value['id']);
+               $list[] = $value;
+            }
+        }
+        return $list;
     }
 }

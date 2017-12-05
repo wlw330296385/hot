@@ -2,11 +2,13 @@
 namespace app\admin\controller;
 
 use app\admin\controller\base\Backend;
-
-class Test extends Backend {
+use app\admin\controller\base\Base;
+use util\Tree;
+class Test extends Base {
     public function index() {
-       
-    	dump(cache());
-    	dump($_SESSION);die;
+	   	$menu = db('admin_menu')->select();
+	   	// dump($menu);
+	   	$menuList = Tree::toLayer($menu);
+	   	dump($menuList);
     }
 }

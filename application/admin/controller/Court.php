@@ -8,6 +8,9 @@ use app\service\WechatService;
 use app\model\Court as CourtModel;
 
 class Court extends Backend {
+    public function _initialize(){
+        parent::_initialize();
+    }
     // 场地管理
     public function index() {
         $court = CourtModel::paginate(15);

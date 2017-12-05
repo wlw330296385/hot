@@ -10,6 +10,9 @@ use think\Db;
 use app\model\Coach as CoachModel;
 
 class Coach extends Backend {
+    public function _initialize(){
+        parent::_initialize();
+    }
     // 教练列表
     public function index() {
         $list = CoachModel::order('id desc')->paginate(15);

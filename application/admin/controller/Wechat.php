@@ -6,7 +6,9 @@ use app\admin\controller\base\Backend;
 use app\service\WechatService;
 
 class Wechat extends Backend {
-
+    public function _initialize(){
+        parent::_initialize();
+    }
     public function menu() {
         $WechatS = new WechatService();
         if (request()->isPut()) {

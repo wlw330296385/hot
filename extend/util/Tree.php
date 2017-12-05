@@ -34,6 +34,7 @@ class Tree
         'html'  => '┝ ',   // 层级标记
         'step'  => 4,       // 层级步进数量
     ];
+    static public $treeList = array();
 
     /**
      * 架构函数
@@ -60,33 +61,15 @@ class Tree
         return self::$instance;
     }
 
-    /**
-     * 将数据集格式化成层次结构
-     * @param array/object $lists 要格式化的数据集，可以是数组，也可以是对象
-     * @param int $pid 父级id
-     * @param int $max_level 最多返回多少层，0为不限制
-     * @param int $curr_level 当前层数
-     * @author 蔡伟明 <314013107@qq.com>
-     * @return array
-     */
-    public static function toLayer($lists = [], $pid = 0, $max_level = 0, $curr_level = 0)
-    {
-        $trees = [];
-        $lists = array_values($lists);
-        foreach ($lists as $key => $value) {
-            if ($value[self::$config['pid']] == $pid) {
-                if ($max_level > 0 && $curr_level == $max_level) {
-                    return $trees;
-                }
-                unset($lists[$key]);
-                $child = self::toLayer($lists, $value[self::$config['id']], $max_level, $curr_level + 1);
-                if (!empty($child)) {
-                    $value[self::$config['child']] = $child;
-                }
-                $trees[] = $value;
+    public static function toLayer($arr = [],$pid = 0){
+        $list = [];
+         foreach ($arr as $key => $value) {
+            if($value['pid'] == $pid){
+                $value['daughter'] = self::toLayer($arr,$value['id']);
+               $list[] = $value;
             }
         }
-        return $trees;
+        return $list;
     }
 
     /**

@@ -6,6 +6,9 @@ use app\service\SystemService;
 use app\service\AuthService;
 
 class System extends Backend {
+    public function _initialize(){
+        parent::_initialize();
+    }
     public function index(){
         //dump($this->site);
         $banner = unserialize($this->site['banner']);

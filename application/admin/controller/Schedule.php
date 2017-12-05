@@ -6,6 +6,9 @@ use app\service\ScheduleService;
 use app\model\Schedule as ScheduleModel;
 
 class Schedule extends Backend {
+    public function _initialize(){
+        parent::_initialize();
+    }
     public function index() {
         $breadcrumb = ['title' => '课时管理', 'ptitle' => '训练营'];
         $this->assign( 'breadcrumb', $breadcrumb );

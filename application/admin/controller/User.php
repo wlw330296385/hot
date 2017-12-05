@@ -5,6 +5,9 @@ use app\admin\controller\base\Backend;
 use app\admin\model\Admin;
 
 class User extends Backend {
+    public function _initialize(){
+        parent::_initialize();
+    }
     public function index() {
         $users = Admin::order('id desc')->paginate(15);
 

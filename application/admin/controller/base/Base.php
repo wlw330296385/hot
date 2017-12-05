@@ -29,9 +29,8 @@ class Base extends Controller {
         $this->assign('site', $site);
         $this->assign('admin', session('admin') );
         $this->assign('camplist', $camplist);
-        
-        $this->assign('site', $site);
-        $this->assign('admin', session('admin') );
+
+
     }
 
     // 获取当前查看训练营

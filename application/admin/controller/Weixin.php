@@ -7,7 +7,9 @@ use app\service\WechatService;
 //use wechatsdk\TPwechat;
 
 class Weixin extends Backend {
-
+    public function _initialize(){
+        parent::_initialize();
+    }
     public function menu() {
         if (request()->isPost()) {
             // 参考dev/wexin/setmenu

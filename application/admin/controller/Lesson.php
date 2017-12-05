@@ -7,6 +7,9 @@ use think\Db;
 use app\model\Lesson as LessonModel;
 
 class Lesson extends Backend {
+    public function _initialize(){
+        parent::_initialize();
+    }
     // 列表
     public function index() {
         $map = [];

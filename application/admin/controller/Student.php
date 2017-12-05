@@ -5,6 +5,9 @@ use app\model\Student as StudentModel;
 use think\Db;
 
 class Student extends Backend {
+    public function _initialize(){
+        parent::_initialize();
+    }
     // 学员列表
     public function index() {
         // 搜索筛选

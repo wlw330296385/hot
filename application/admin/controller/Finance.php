@@ -14,6 +14,9 @@ use app\service\ScheduleService;
 use app\service\SystemService;
 
 class Finance extends Backend {
+    public function _initialize(){
+        parent::_initialize();
+    }
     // 支付订单列表
     public function billlist() {
         // 搜索筛选

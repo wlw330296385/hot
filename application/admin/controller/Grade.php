@@ -10,6 +10,9 @@ use app\model\Schedule as ScheduleModel;
 use think\Db;
 
 class Grade extends Backend {
+    public function _initialize(){
+        parent::_initialize();
+    }
     // 班级管理
     public function index() {
         $map = [];
