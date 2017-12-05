@@ -20,10 +20,12 @@
             left: auto;
             right: 6px;
         }
+        
         .mui-input-row a {
             display: table;
             width: 100%;
         }
+        
         .mui-navigate-right input[type='text'] {
             padding-right: 30px !important;
         }
@@ -75,12 +77,12 @@
 
                 <div class="mui-input-row h-auto">
                     <label>招募简介</label>
-                    <textarea rows="5" class="data" name="recruitment_des" placeholder="填写简介"></textarea>
+                    <textarea rows="5" class="data mui-text-left" name="recruitment_des" placeholder="请填写招募简介"></textarea>
                 </div>
 
                 <div class="mui-input-row h-auto">
                     <label>招募要求</label>
-                    <textarea rows="5" class="data" name="requirement" placeholder="填写要求"></textarea>
+                    <textarea rows="5" class="data mui-text-left" name="requirement" placeholder="请填写招募要求"></textarea>
                 </div>
 
                 <div class="mui-input-row">
@@ -91,13 +93,13 @@
                 </div>
 
                 <div class="mui-input-row">
-                    <label>薪酬（最少）</label>
-                    <input class="data min" type="number" name="min" value="" placeholder="填写最低薪资">
+                    <label class="wd36">薪酬（最少）</label>
+                    <input class="data min wd60" type="number" name="min" value="" placeholder="填写最低薪资">
                 </div>
 
                 <div class="mui-input-row">
-                    <label>薪酬（最多）</label>
-                    <input class="data max" type="number" name="max" value="" placeholder="填写最高薪资">
+                    <label class="wd36">薪酬（最多）</label>
+                    <input class="data max wd60" type="number" name="max" value="" placeholder="填写最高薪资">
                 </div>
 
                 <div class="mui-input-row picker btnStart" id="demo3" data-options='{"type":"date","beginYear":2017,"endYear":2050}'>
@@ -155,7 +157,8 @@
             <div class="mui-scroll">
                 <ul class="mui-table-view list campMemberList">
                     {volist name="staffList" id="vol"}
-                    <li class="mui-table-view-cell listli detalisli" data-id="{$vol.member_id}"><font class="member">{$vol.member.member}</font><span>{$vol.member.telephone}</span></li>
+                    <li class="mui-table-view-cell listli detalisli" data-id="{$vol.member_id}">
+                        <font class="member">{$vol.member.member}</font><span wd36>{$vol.member.telephone}</span></li>
                     {/volist}
                 </ul>
             </div>
@@ -182,22 +185,22 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-        mui("body").on("tap", "a", function () {
+        mui(".mui.content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
 
-        mui('.mui-content .isNegotiated').each(function() { //循环所有toggle
-            this.addEventListener('toggle', function(event) {
-                if(event.detail.isActive){
+        mui('.mui-content .isNegotiated').each(function () { //循环所有toggle
+            this.addEventListener('toggle', function (event) {
+                if (event.detail.isActive) {
                     $("input.min").val("0");
                     $("input.max").val("0");
-                    $("input.min").prop("readonly",true);
-                    $("input.max").prop("readonly",true);
-                }else{
+                    $("input.min").prop("readonly", true);
+                    $("input.max").prop("readonly", true);
+                } else {
                     $("input.min").val("");
                     $("input.max").val("");
-                    $("input.min").prop("readonly",false);
-                    $("input.max").prop("readonly",false);
+                    $("input.min").prop("readonly", false);
+                    $("input.max").prop("readonly", false);
                 }
             });
         });
@@ -289,10 +292,10 @@
         // 获取数据并进行提交
         function submitAction(all) {
 
-            if ($(".isNegotiated").hasClass("mui-active")==false) {
+            if ($(".isNegotiated").hasClass("mui-active") == false) {
                 var vMin = $("input[name=min]").val();
                 var vMax = $("input[name=max]").val();
-                if ((/^\+?[1-9]\d*$/).test(vMin)==false||(/^\+?[1-9]\d*$/).test(vMax)==false) {
+                if ((/^\+?[1-9]\d*$/).test(vMin) == false || (/^\+?[1-9]\d*$/).test(vMax) == false) {
                     mui.alert("请输入正确的薪资范围");
                     return false;
                 }
@@ -305,7 +308,7 @@
 
             var data = wooApi.getInputData('input', 'data');
             var datas = wooApi.getInputData('select', 'data', data);
-            var datass = wooApi.getInputData('textarea','data',datas);
+            var datass = wooApi.getInputData('textarea', 'data', datas);
             var datasss = wooApi.getDomData('domData', datass);
             var objData = wooApi.arrTOobj(datasss);
             console.log(objData);
@@ -313,7 +316,7 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '招募修改成功', '确定', function () {
-                    goUrl = "{:url('recruitment/recruitmentlistofcamp')}"+'/organization_id/'+'{$campInfo.id}';
+                    goUrl = "{:url('recruitment/recruitmentlistofcamp')}" + '/organization_id/' + '{$campInfo.id}';
                     window.top.location.href = goUrl;
                 })
             } else {
@@ -326,8 +329,6 @@
                 })
             }
         };
-
-
     </script>
 </body>
 
