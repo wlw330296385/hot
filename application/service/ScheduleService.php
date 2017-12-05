@@ -141,7 +141,7 @@ class ScheduleService
 
         // 课时相关学员剩余课时-1
         $students = unserialize($schedule['student_str']);
-        $decStudentRestscheduleResult = $this->decStudentRestschedule($students);
+        $decStudentRestscheduleResult = $this->decStudentRestschedule($students, $schedule);
         if ($decStudentRestscheduleResult['code'] != 200) {
             return $decStudentRestscheduleResult;
         }
@@ -229,12 +229,14 @@ class ScheduleService
      * id 是grade_member表id
      * @return array
      */
-    function decStudentRestschedule($students) {
+    function decStudentRestschedule($students, $schedule) {
         //$gradeMemberDb = db('grade_member');
         $lessonDb = db('lesson_member');
         $studentDb = db('student');
         foreach ($students as $student) {
-            $gradeMemberWhere['id'] = $student['id'];
+            $gradeMemberWhere['student_id'] = $student['student_id'];
+            $gradeMemberWhere['lesson_id'] = $schedule['lesson_id'];
+            $gradeMemberWhere['camp_id'] = $schedule['camp_id'];
             $studentWhere['id'] = $student['student_id'];
             $restschedule = $lessonDb->where($gradeMemberWhere)->value('rest_schedule');
             if ($restschedule <= 0) {
@@ -246,7 +248,7 @@ class ScheduleService
                     if (!$finishSchedule) {
                         return ['code' => 100, 'msg' => $student['student'].'更新剩余课时'.__lang('MSG_400')];
                     }
-                    $studentFinishedTotal = $studentDb->where($studentWhere)->setInc('finished_total', 1);
+                    $studentFinishedTotal = $studentDb->where($studentWhere)->setInc('finished_schedule', 1);
                     if (!$studentFinishedTotal) {
                         return ['code' => 100, 'msg' => $student['student'].'更新完成课程'.__lang('MSG_400')];
                     }

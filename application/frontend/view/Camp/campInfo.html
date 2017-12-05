@@ -34,7 +34,7 @@
     </header>
     <div class="mui-content">
 
-        <div class="list camp-list detalis-list coach">
+        <div class="list camp-list detalis-list coach  mt55">
             <div class="img4x3" style="background-image:url('{$campInfo.banner}')"></div>
             <ul class="mui-table-view mb" style="margin-top: -4px">
                 <li class="mui-table-view-cell mui-media listli de " style="padding:11px 15px;">
@@ -99,9 +99,30 @@
             </div>
             <ul class="mui-table-view comment-list">
             </ul>
-            <p class="dropdown mt55"><a href="#" class="moreComment">查看更多评论...</a></p>
+            <p class="dropdown"><a href="#" class="moreComment">查看更多评论...</a></p>
 
-            <ul class="mui-table-view operation mt">
+
+            <!--推荐人信息-->
+            {notempty name="pmember"}
+            <div class="page-header">
+                <span class="course">推荐人信息</span>
+            </div>
+            <form action="" class="mui-input-group">
+                <div class="mui-input-row h-auto">
+                    <label>头像</label><img src="{$pmember['avatar']}" style="margin-right: 18px">
+                </div>
+                <div class="mui-input-row">
+                    <label>推荐人</label><span>{$pmember.nickname}</span>
+                </div>
+                <div class="mui-input-row">
+                    <label>电话</label><span>{$pmember.telephone}</span>
+                </div>
+            </form>
+            {/notempty}
+
+        </div>
+
+         <ul class="mui-table-view operation mt">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 opli">
                     <a href="tel:{$campInfo.camp_telephone}">
                         <span class="mui-icon mui-icon-phone"></span>电话咨询
@@ -114,7 +135,6 @@
                     <a href="#join">申请加入</a>
                 </li>
             </ul>
-        </div>
 
     </div>
 
@@ -173,6 +193,7 @@
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/starshow.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
         //初始化
         mui.init({
@@ -510,6 +531,69 @@
                 }
             });
         };
+    </script>
+    <script>
+        wx.config({
+            //debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: "{$jsapi['timestamp']}",
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]
+        });
+        wx.ready(function () {
+            // 在这里调用 API
+            /*document.querySelector('#checkJsApi').onclick = function () {
+             wx.checkJsApi({
+             jsApiList: [
+             'onMenuShareTimeline',
+             'onMenuShareAppMessage',
+             'onMenuShareQQ'
+             ],
+             success: function (res) {
+             alert(JSON.stringify(res));
+             }
+             });
+             };*/
+
+            // 分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: "{$campInfo.camp}", // 分享标题
+                link: "{$shareurl}/pid/{$mid}", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                imgUrl: "{:request()->root(true)}/{$campInfo.logo}", // 分享图标
+                success: function () {
+                    // 用户确认分享后执行的回调函数
+                    //alert('已分享');
+                },
+                cancel: function () {
+                    // 用户取消分享后执行的回调函数
+                }
+            });
+
+            // 分享给朋友
+            wx.onMenuShareAppMessage({
+                title: '{$campInfo.camp}', // 分享标题
+                desc: '{$campInfo.camp_introduction}', // 分享描述
+                link: "{$shareurl}/pid/{$mid}", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                imgUrl: "{:request()->root(true)}/{$campInfo.logo}", // 分享图标
+                type: "", // 分享类型,music、video或link，不填默认为link
+                dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                success: function () {
+                    // 用户确认分享后执行的回调函数
+                },
+                cancel: function () {
+                    // 用户取消分享后执行的回调函数
+                }
+            });
+
+        });
+
     </script>
 </body>
 

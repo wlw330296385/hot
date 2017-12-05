@@ -185,7 +185,7 @@ class Finance extends Backend {
                 if ( array_key_exists($val['days'], $listArr) ) {
                     $arrayKey = $val['days'];
                     $listArr[$arrayKey] = $val;
-                    $bankCharges = $val['total']*0.06;
+                    $bankCharges = $val['total']*0.006;
                     $listArr[$arrayKey]['bank_charges'] = $bankCharges;
                     $collection = $val['total']-$bankCharges;
                     $listArr[$arrayKey]['collection'] = $collection;
