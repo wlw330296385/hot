@@ -16,6 +16,10 @@
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
     <style>
+        .mui-popover .mui-scroll-wrapper {
+            top: 43px;
+        }
+        
         .mui-popover-arrow {
             left: auto;
             right: 6px;
@@ -26,60 +30,33 @@
             width: 100%;
         }
         
-        .muicol {
-            padding: 0 15px;
+        .mui-input-group img {
+            width: 42px;
+            border-radius: 50%;
+            background: #ddd;
+            border:none
         }
         
-        .frame {
-            width: 100%;
-            padding: 15px 5px;
-            font-size: 14px;
-            border: 1px dashed #ddd;
-            color: #b1b0b0;
+        i.tip {
+            height: 0;
+            color: red;
+            float: right;
+            font-size: 22px;
         }
         
-        .title {
-            font-size: 16px;
-            font-weight: bold;
+        i.color {
+            width: 12px;
+            height: 12px;
+            display: block;
+            float: left;
+            margin-right: 10px;
+            margin-top: 15px;
+            border: 1px solid #ddd;
         }
         
-        .pd {
-            padding: 7px 0;
-        }
-        
-        .introBox .operationDiv {
-            position: relative;
-        }
-        
-        .introBox .operationDiv .delbtn {
-            position: absolute;
-            right: 15px;
-            top: 10px;
-            line-height: initial !important;
-            font-size: 18px !important;
-        }
-        
-        .introBox .operationDiv img {
-            width: 100%;
-            height: auto;
-            float: none;
-            margin: 0;
-            padding: 0 15px;
-        }
-        
-        .introBox .operationDiv h5 {
-            padding: 10px 15px;
-            height: 40px;
-            line-height: 21px;
-            color: #000;
-            margin: 0;
-            font-weight: bold
-        }
-        
-        .introBox .operationDiv p {
-            padding: 10px 15px;
-            margin: 0;
-            color: #000;
+        .colorLineHeight li {
+            line-height: 43px;
+            padding: 0 15px !important;
         }
     </style>
 </head>
@@ -100,155 +77,120 @@
 
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
-                        <label>球队LOGO</label>
+                        <label><b>球队LOGO</b></label>
                         <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
-                        <input type="hidden" name="cover" value='' class="data">
+                        <input type="hidden" name="logo" value='' class="data">
                     </a>
                 </div>
 
                 <div class="mui-input-row">
-                    <label>球队名称</label>
-                    <input type="text" name="" value="" class="" placeholder="F-18">
+                    <label>球队名称<i class="tip">*</i></label>
+                    <input type="text" name="name" value="" class="data" placeholder="请输入球队名称">
                 </div>
 
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
-                        <label>球队类型</label>
+                        <label>球队类型<i class="tip">*</i></label>
                         <span class="location-choise max">
-                            <select id="eventType" class="data" name="event_type">
-                                <option value="">球队类型</option>
-                                <option value="青少年训练营">青少年训练营</option>
-                                <option value="企事业单位">企事业单位</option>
-                                <option value="同事朋友">同事朋友</option>
-                                <option value="校友会">校友会</option>
-                                <option value="大学生">大学生</option>
-                                <option value="高中生">高中生</option>
-                                <option value="初中生">初中生</option>
-                                <option value="小学生">小学生</option>
+                            <select id="teamType" class="data" name="type">
+                                    <option value="1">青少年训练营</option>
+                                    <option value="2">企事业单位</option>
+                                    <option value="3">同事朋友</option>
+                                    <option value="4">同乡会</option>
+                                    <option value="5">校友会</option>
+                                    <option value="6">大学生</option>
+                                    <option value="7">高中生</option>
+                                    <option value="8">初中生</option>
+                                    <option value="9">小学生</option>
                             </select>
                         </span>
                     </div>
                 </div>
 
-                <div class="mui-input-row price-input-row">
-                    <a href="" class="mui-navigate-right">
-                        <label>所属训练营</label>
-                        <span class="camp" name="camp"></span>
-                        <input type="hidden" name="camp_id" value="" class="camp_id">
+                <div class="mui-input-row camp-input-row">
+                    <a href="#camp" class="mui-navigate-right">
+                        <label class="wd36">所属训练营<i class="tip">*</i></label>
+                        <span class="campCont domData" name="camp"></span>
+                        <input type="hidden" name="camp_id" value="" class="camp_id data">
                     </a>
                 </div>
 
                 <div class="mui-input-row" id='showCityPicker3'>
-                    <a href="" class="mui-navigate-right">
+                    <a href="#" class="mui-navigate-right">
                         <div class="mui-navigate-right">
-                            <label>所属地区</label>
+                            <label>所属地区<i class="tip">*</i></label>
                             <span id="cityResult3" class="ui-alert domData" name="address"></span>
                         </div>
                     </a>
                 </div>
 
-                <div class="mui-input-row price-input-row">
-                    <a href="" class="mui-navigate-right">
+                <div class="mui-input-row">
+                    <a href="#court" class="mui-navigate-right">
                         <label>常驻场地</label>
-                        <span class="camp" name="camp"></span>
-                        <input type="hidden" name="camp_id" value="" class="camp_id">
+                        <span class="courtCont domData" name="court"></span>
+                        <input type="hidden" name="court_id" value="" class="court_id data">
                     </a>
                 </div>
 
-                <div class="mui-input-row price-input-row">
-                    <a href="" class="mui-navigate-right">
+                <div class="mui-input-row">
+                    <a href="#homeColor" class="mui-navigate-right">
                         <label>主场颜色</label>
-                        <span class="camp" name="camp"></span>
-                        <input type="hidden" name="camp_id" value="" class="camp_id">
+                        <span class="home_color domData" name="home_color"></span>
                     </a>
                 </div>
 
-                <div class="mui-input-row price-input-row">
-                    <a href="" class="mui-navigate-right">
+                <div class="mui-input-row">
+                    <a href="#awayColor" class="mui-navigate-right">
                         <label>客场颜色</label>
-                        <span class="camp" name="camp"></span>
-                        <input type="hidden" name="camp_id" value="" class="camp_id">
+                        <span class="away_color domData" name="away_color"></span>
                     </a>
                 </div>
 
-                <div class="mui-input-row price-input-row">
-                    <a href="" class="mui-navigate-right">
-                        <label>领队</label>
-                        <span class="camp" name="camp"></span>
-                        <input type="hidden" name="camp_id" value="" class="camp_id">
-                    </a>
+                <div class="mui-input-row">
+                    <label>领队<i class="tip">*</i></label>
+                    <span class="leader data" name="leader">{$memberInfo.member}</span>
                 </div>
 
                 <div class="mui-input-row price-input-row">
-                    <a href="" class="mui-navigate-right">
-                        <label>领队</label>
-                        <span class="camp" name="camp"></span>
-                        <input type="hidden" name="camp_id" value="" class="camp_id">
-                    </a>
+                    <label>平均年龄</label>
+                    <span class="avg_age" name="avg_age">统计数据直接获取</span>
                 </div>
 
                 <div class="mui-input-row price-input-row">
-                    <a href="" class="mui-navigate-right">
-                        <label>球员</label>
-                        <span class="camp" name="camp"></span>
-                        <input type="hidden" name="camp_id" value="" class="camp_id">
-                    </a>
+                    <label>平均身高</label>
+                    <span class="avg_height" name="avg_height">统计数据直接获取</span>
                 </div>
 
                 <div class="mui-input-row price-input-row">
-                    <a href="" class="mui-navigate-right">
-                        <label>教练</label>
-                        <span class="camp" name="camp"></span>
-                        <input type="hidden" name="camp_id" value="" class="camp_id">
-                    </a>
+                    <label>平均体重</label>
+                    <span class="avg_weight" name="avg_weight">统计数据直接获取</span>
                 </div>
 
-                <div class="mui-input-row price-input-row">
-                    <a href="" class="mui-navigate-right">
-                        <label>队委</label>
-                        <span class="camp" name="camp"></span>
-                        <input type="hidden" name="camp_id" value="" class="camp_id">
-                    </a>
-                </div>
-
-                <div class="mui-input-row price-input-row">
-                    <a href="" class="mui-navigate-right">
-                        <label>平均年龄</label>
-                        <span class="camp" name="camp"></span>
-                        <input type="hidden" name="camp_id" value="" class="camp_id">
-                    </a>
-                </div>
-
-                <div class="mui-input-row price-input-row">
-                    <a href="" class="mui-navigate-right">
-                        <label>平均身高</label>
-                        <span class="camp" name="camp"></span>
-                        <input type="hidden" name="camp_id" value="" class="camp_id">
-                    </a>
-                </div>
-
-                <div class="mui-input-row price-input-row">
-                    <a href="" class="mui-navigate-right">
-                        <label>平均体重</label>
-                        <span class="camp" name="camp"></span>
-                        <input type="hidden" name="camp_id" value="" class="camp_id">
-                    </a>
-                </div>
-
-                <div class="mui-input-row price-input-row">
-                    <a href="" class="mui-navigate-right">
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
                         <label>球队特点</label>
-                        <span class="camp" name="camp"></span>
-                        <input type="hidden" name="camp_id" value="" class="camp_id">
+                        <span class="location-choise max">
+                            <select id="charater" class="data" name="charater">
+                                <option value="球风良好">球风良好</option>
+                                <option value="青少年训练营">青少年训练营</option>
+                                <option value="企事业单位">企事业单位</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row h-auto">
+                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                        <label>球队封面</label>
+                        <img id="preview_2" class="coachicon icon01 upload-preview" alt="">
+                        <input type="hidden" name="cover" value='' class="data">
                     </a>
                 </div>
 
-                <div class="mui-input-row price-input-row">
+                <div class="mui-input-row h-auto">
                     <label>球队介绍</label>
-                    <textarea rows="3" name="event_des" class="data event_des"></textarea>
-                    <input type="hidden" name="camp_id" value="" class="camp_id">
+                    <textarea rows="3" name="introduce" class="data introduce" placeholder="请填写球队介绍"></textarea>
                 </div>
-
 
             </form>
 
@@ -261,131 +203,110 @@
     </div>
 
     <!--所属训练营-->
-    <div id="camp" class="mui-popover">
+    <div id="camp" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course"><strong>所属训练营</strong></span>
+            <span class="course wd45"><strong>所属训练营</strong></span>
+            <span class="fr"><button class="mui-btn" id="CampDel">清除</button></span>
         </div>
-        <div class="mui-scroll-wrapper">
+        <div class="pop-search">
+            <input type="search" class="keywordLD" placeholder="请输入训练营名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchLD"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:88px !important;">
             <div class="mui-scroll">
-                <ul class="mui-table-view list campGradeList"></ul>
+                <ul class="mui-table-view list campList"></ul>
+                <ul class="mui-pager">
+                    <li><a href="#" class="prev_page">上一页</a></li>
+                    <li><span class="currPage">0</span>/<span class="totalPage">0</span></li>
+                    <li><a href="#" class="next_page">下一页</a></li>
+                </ul>
             </div>
         </div>
     </div>
 
     <!--常驻场地-->
-    <div id="court" class="mui-popover">
+    <div id="court" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course"><strong>常驻场地</strong></span>
+            <span class="course wd45"><strong>常驻球场</strong></span>
+            <span class="fr"><button class="mui-btn" id="CourtDel">清除</button></span>
         </div>
-        <div class="mui-scroll-wrapper">
+        <div class="pop-search">
+            <input type="search" class="keywordLD" placeholder="请输入场地名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchCR"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:88px !important;">
             <div class="mui-scroll">
-                <ul class="mui-table-view list campGradeList"></ul>
+                <ul class="mui-table-view list courtList"></ul>
+                <ul class="mui-pager">
+                    <li><a href="#" class="prev_page">上一页</a></li>
+                    <li><span class="currPage">0</span>/<span class="totalPage">0</span></li>
+                    <li><a href="#" class="next_page">下一页</a></li>
+                </ul>
             </div>
         </div>
     </div>
 
     <!--主场颜色-->
-    <div id="mainCourt" class="mui-popover">
+    <div id="homeColor" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
+        <div class="page-header border-b">
             <span class="course"><strong>主场颜色</strong></span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <ul class="mui-table-view list campGradeList"></ul>
+                <ul class="mui-table-view list homeColorList colorLineHeight">
+                    <li class="mui-table-view-cell listli detalisli"><i class="color black"></i>黑色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color white"></i>白色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color red"></i>红色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color blue"></i>蓝色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color yellow"></i>黄色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color green"></i>绿色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color orange"></i>橙色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color purple"></i>紫色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color gray"></i>灰色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color pink"></i>粉色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color ching"></i>青色</li>
+                </ul>
             </div>
         </div>
     </div>
 
     <!--客场颜色-->
-    <div id="guestCourt" class="mui-popover">
+    <div id="awayColor" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
             <span class="course"><strong>客场颜色</strong></span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <ul class="mui-table-view list campGradeList"></ul>
+                <ul class="mui-table-view list awayColorList colorLineHeight">
+                    <li class="mui-table-view-cell listli detalisli"><i class="color black"></i>黑色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color white"></i>白色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color red"></i>红色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color blue"></i>蓝色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color yellow"></i>黄色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color green"></i>绿色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color orange"></i>橙色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color purple"></i>紫色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color gray"></i>灰色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color pink"></i>粉色</li>
+                    <li class="mui-table-view-cell listli detalisli"><i class="color ching"></i>青色</li>
+                </ul>
             </div>
         </div>
     </div>
 
     <!--领队-->
-    <div id="guestCourt" class="mui-popover">
+    <div id="leader" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course"><strong>客场颜色</strong></span>
+            <span class="course"><strong>领队</strong></span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <ul class="mui-table-view list campGradeList"></ul>
-            </div>
-        </div>
-    </div>
-
-    <!--队长-->
-    <div id="guestCourt" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course"><strong>队长</strong></span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list campGradeList"></ul>
-            </div>
-        </div>
-    </div>
-
-    <!--球员-->
-    <div id="guestCourt" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course"><strong>球员</strong></span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list campGradeList"></ul>
-            </div>
-        </div>
-    </div>
-
-    <!--教练-->
-    <div id="guestCourt" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course"><strong>教练</strong></span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list campGradeList"></ul>
-            </div>
-        </div>
-    </div>
-
-    <!--队委-->
-    <div id="guestCourt" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course"><strong>队委</strong></span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list campGradeList"></ul>
-            </div>
-        </div>
-    </div>
-
-    <!--球队特点-->
-    <div id="guestCourt" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course"><strong>球队特点</strong></span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list campGradeList"></ul>
+                <ul class="mui-table-view list leaderList"></ul>
             </div>
         </div>
     </div>
@@ -494,330 +415,169 @@
 
             });
         })(mui, document);
-        function add_id(id) {
-            window.id = id;
-            console.log(window.id);
-        }
-        var all = '';
+
+        // 主场客场颜色显示
+        function colorShow() {
+            $(".black").css("background", "black");
+            $(".white").css("background", "white");
+            $(".red").css("background", "red");
+            $(".blue").css("background", "blue");
+            $(".yellow").css("background", "yellow");
+            $(".green").css("background", "green");
+            $(".orange").css("background", "orange");
+            $(".purple").css("background", "purple");
+            $(".gray").css("background", "gray");
+            $(".pink").css("background", "pink");
+            $(".ching").css("background", "#00eaff");
+        };
+
+
         $(function () {
 
             //获取训练营粉丝列表
-            var StudentKeyword = '';
-            var wStudents = '';
+            var campKeyword = '';
+            var courtKeyword = '';
+            var wCamp = '';
+            var wCourt = '';
             var pageLD = 1;
-            toStudentList(StudentKeyword, wStudents, 1);
+            var pageCR = 1;
+            toCampList(wCamp, campKeyword, 1);
+            toCourtList(wCourt, courtKeyword, 1);
 
+            colorShow(); // 调用主场客场颜色显示
 
-            // 具体对象
-            $(".campGradeList").on('tap', 'li', function () {
-                var target = $.trim($(this).text());
-                console.log(target)
-                var target_id = $(this).attr('data-id');
-                console.log(target_id)
-                $(".target_id").val(target_id);
-                $(".targetCont").text(target);
-                mui("#target").popover("toggle");
+            // 主场颜色
+            $(".homeColorList").on('tap', 'li', function () {
+                var home_color = $.trim($(this).html());
+                $(".home_color").html(home_color);
+                mui("#homeColor").popover("toggle");
             });
 
-            // 选择活动对象显示隐藏具体对象
-            $("#eventObject").change(function () {
-                if ($(this).children('option:selected').text() == '班内') {
-                    $(".target-input-row").show();
-                    $(".targetCont").addClass("domData").text('');
-                    $(".target_id").addClass("data");
+            // 客场颜色
+            $(".awayColorList").on('tap', 'li', function () {
+                var away_color = $.trim($(this).html());
+                $(".away_color").html(away_color);
+                mui("#awayColor").popover("toggle");
+            });
+
+            // 选择球队类型判断是否显示所属训练营
+            $("#teamType").change(function () {
+                if ($(this).children('option:selected').text() != "青少年训练营") {
+                    $(".camp-input-row").hide();
+                    $(".campCont").removeClass("domData").text('');
+                    $(".camp_id").removeClass("data");
                 } else {
-                    $(".target-input-row").hide();
+                    $(".camp-input-row").show();
+                    $(".campCont").addClass("domData").text('');
+                    $(".camp_id").addClass("data");
                 }
             });
 
-            // 选择是否收费显示隐藏活动单价和费用结算人
-            $("#eventPrice").change(function () {
-                if ($(this).children('option:selected').text() == '免费') {
-                    $(".price-input-row").hide();
-                    $("input[name='price']").removeClass("data");
-                    $(".finance").removeClass("domData");
-                    $("input[name='finance_id']").removeClass("data");
-                } else {
-                    $(".price-input-row").show();
-                    $("input[name='price']").addClass("data").val('');
-                    $(".finance").addClass("domData").val('');
-                    $("input[name='finance_id']").addClass("data").val('');
-                }
-            });
-
-            // 费用结算人
-            $(".campMemberType").on('click', 'li', function () {
-                var finance = $(this).find("font").text();
-                $(".finance").text(finance);
+            //////////////////////训练营////////////////////////////////////
+            // 所属训练营
+            $(".campList").on('click', 'li', function () {
+                var camp = $(this).find("font").text();
+                $(".campCont").text(camp);
                 var id = $(this).attr('data-id');
-                $(".finance_id").val(id);
-                mui("#cost").popover("toggle");
+                $(".camp_id").val(id);
+                mui("#camp").popover("toggle");
             })
-            //清除费用结算人
-            $("#StudentDel").on('tap', '', function () {
-                $(".finance").text('');
-                $(".finance_id").val("");
-                mui("#cost").popover("toggle");
+            //清除所属训练营
+            $("#CampDel").on('tap', '', function () {
+                $(".camp").text('');
+                $(".camp_id").val("");
+                mui("#camp").popover("toggle");
             })
-            //搜索费用结算人学生
+            //搜索所属训练营
             $("#searchLD").on("click", function () {
                 var keyword = $(".keywordLD").val();
                 var pageLD = 1;
-                toStudentList(keyword, "cost", pageLD);
+                toCampList(keyword, "camp", pageLD);
             })
-            //费用结算人学生弹出框页码控制
-            $("#cost").on('click', '.next_page', function () {
-                var getTotalPage = $("#cost .totalPage").text();
+            //所属训练营弹出框页码控制
+            $("#camp").on('click', '.next_page', function () {
+                var getTotalPage = $("#camp .totalPage").text();
                 pageLD++;
+                console.log(pageLD)
                 if (pageLD > getTotalPage) {
                     mui.toast("已经最后一页了");
                 } else {
                     var keyword = $(".keywordLD").val();
-                    toStudentList(keyword, "cost", pageLD);
+                    toCampList(keyword, "camp", pageLD);
                 }
             })
-            $("#cost").on('click', '.prev_page', function () {
+            $("#camp").on('click', '.prev_page', function () {
                 pageLD--;
                 if (pageLD < 1) {
                     mui.toast("已经是第一页了");
                 } else {
                     var keyword = $(".keywordLD").val();
-                    toStudentList(keyword, "cost", pageLD);
+                    toCampList(keyword, "camp", pageLD);
                 }
             })
+            //////////////////////////训练营///////////////////////////////////
 
-            //添加标题
-            $(".titleClass").on('tap', '', function () {
-                var title = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
-                $(".introBox").append(title);
-
-            });
-
-            //添加正文
-            $(".textClass").on('tap', '', function () {
-                var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><textarea name="" rows="3" class="mui-text-left text delClass" placeholder="请输入正文"></textarea></div>';
-                $(".introBox").append(text);
-            });
-
-            //添加图片start·····································································
-            // 初始化Web Uploader
-            var uploader = WebUploader.create({
-                auto: true,
-                server: uploadApiUrl,
-                pick: '#filePicker',
-                accept: {
-                    title: 'Images',
-                    extensions: 'gif,jpg,jpeg,bmp,png',
-                    mimeTypes: 'image/*'
-                }
-            });
-            // 上传成功
-            uploader.on('uploadSuccess', function (file, responce) {
-                if (eval('responce').status == 0) {
-                    mui.toast('上传失败,请重试', { 'duration': 'long' });
+            //////////////////////常驻球场////////////////////////////////////
+            // 常驻球场
+            $(".courtList").on('click', 'li', function () {
+                var court = $(this).find("font").text();
+                $(".courtCont").text(court);
+                var id = $(this).attr('data-id');
+                $(".court_id").val(id);
+                mui("#court").popover("toggle");
+            })
+            //清除常驻球场
+            $("#courtDel").on('tap', '', function () {
+                $(".court").text('');
+                $(".court_id").val("");
+                mui("#court").popover("toggle");
+            })
+            //搜索常驻球场
+            $("#searchCR").on("click", function () {
+                var keyword = $(".keywordLD").val();
+                var pageCR = 1;
+                toCampList(keyword, "court", pageCR);
+            })
+            //常驻球场弹出框页码控制
+            $("#court").on('click', '.next_page', function () {
+                var getTotalPage = $("#court .totalPage").text();
+                pageCR++;
+                console.log(pageCR)
+                if (pageCR > getTotalPage) {
+                    mui.toast("已经最后一页了");
                 } else {
-                    mui.toast('上传成功', { 'duration': 'long' });
-                    var $li = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img src="' + responce.path + '"></div>';
-                    $(".introBox").append($li);
+                    var keyword = $(".keywordLD").val();
+                    toCourtList(keyword, "court", pageCR);
                 }
-            });
-            //添加图片end·····································································
-
-            //删除操作
-            $(document).on('tap', '.delbtn', function () {
-                $(this).parent().remove();
-            });
-
-            // 焦点离开后把内容放在h5标签里
-            $(document).on('blur', '.operationDiv input', function () {
-                $(this).siblings(".delbtn").remove();
-                if ($(this).val() != '') {
-                    var inputValue = '<h5>' + $(this).val() + '</h5>';
-                    $(this).parent().html(inputValue).removeClass("bgorange")
+            })
+            $("#court").on('click', '.prev_page', function () {
+                pageCR--;
+                if (pageCR < 1) {
+                    mui.toast("已经是第一页了");
                 } else {
-                    var inputValueNull = '<h5>标题</h5>';
-                    $(this).parent().html(inputValueNull)
+                    var keyword = $(".keywordLD").val();
+                    toCourtList(keyword, "court", pageCR);
                 }
-            });
-            // 点击时显示input框
-            $(document).on('tap', '.operationDiv h5', function () {
-                var YinputValue = '<i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="title" autofocus value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="标题">';
-                $(this).parent(".operationDiv").html(YinputValue).addClass("bgorange");
-                console.log(YinputValue)
-            });
-
-            // 焦点离开后把内容放在p标签里
-            $(document).on('blur', '.operationDiv textarea', function () {
-                $(this).siblings(".delbtn").remove();
-                if ($(this).val() != '') {
-                    var textAreaValue = '<p>' + $(this).val() + '</p>';
-                    $(this).parent().html(textAreaValue).removeClass("bgorange")
-                } else {
-                    var textAreaValueNull = '<p>请输入正文</p>';
-                    $(this).parent().html(textAreaValueNull)
-                }
-            });
-            // 点击时显示textarea框
-            $(document).on('tap', '.operationDiv p', function () {
-                var YtextAreaValue = '<i class="delbtn mui-icon mui-icon-close"></i><textarea rows="3"  autofocus value="' + $(this).text() + '"  class="mui-text-left text delClass" placeholder="请输入正文">' + $(this).text() + '</textarea>';
-                $(this).parent().html(YtextAreaValue).addClass("bgorange");
-            });
-
-            // 上移动
-            $(document).on('tap', '.up', function () {
-                $(".bgorange").prev().insertAfter(".bgorange");
-            });
-            // 上移动
-            $(document).on('tap', '.down', function () {
-                $(".bgorange").next().insertBefore(".bgorange");
-            });
-
-            toCampMemberList(); // 调用训练营身份列表
-            toCampGradeList(); //调用训练营班级列表
-            freeStatus(); //判断只有大热俱乐部可以收费
+            })
+            //////////////////////////训练营///////////////////////////////////
 
         })
 
-        //判断只有大热俱乐部可以收费
-        function freeStatus() {
-            var organization_id = $("input[name=organization_id]").val();
-            if (organization_id == 9) {
-                $("#eventPrice").children().show();
-            }
-        }
 
-        // 获取数据并进行提交
-        function submitAction() {
-
-            if ($("#eventPrice option:selected").text() == "收费") {
-                var price = $("input[name=price]").val();
-                if (!(/^\+?[1-9]\d*$/).test(price)) {
-                    mui.alert("请输入不为0的活动单价");
-                    return false;
-                }
-            };
-
-            if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
-                mui.alert("请输入正确的手机格式");
-                return false;
-            };
-
-            $('.delbtn').remove();
-            var totalHtml = $(".introBox").html();
-            $(".event_des").val(totalHtml);
-            console.log(totalHtml);
-
-            var data = wooApi.getInputData('input', 'data');
-            datas = wooApi.getInputData('select', 'data', data);
-            // 获取其他标签值
-            arrData = wooApi.getDomData('domData', datas);
-            var objData = wooApi.arrTOobj(arrData);
-            var event_des = $('textarea.data').val();
-            objData.event_des = event_des;
-            var url = "{:url('api/event/updateEventApi')}";
-            var ajaxResult = wooApi.asyncF(url, objData);
-            if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
-                })
-            } else {
-                mui.alert(ajaxResult.msg, '创建失败');
-                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                    if (data.code === 200) {
-                        $('input[name=__token__]').val(data.data);
-                    }
-                }, 'json');
-            }
-        };
-
-
-        //自定义获取训练营班级列表
-        var toCampGradeList = function () {
-            var url = "{:url('api/grade/getGradeListApi','','',true)}";
-            mui.ajax({
-                url: url,
-                data: {
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                //processData:false,
-                success: function (data) {
-                    console.log(data)
-                    if (data.code == 200) {
-                        var gradeli = '';
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            gradeli = gradeli + '<li class="mui-table-view-cell listli detalisli target" data-id="' + data.data[i].id + '">' + data.data[i].grade + '</li>'
-                        }
-                        $("ul.campGradeList").empty();
-                        if (gradeli == '') {
-                            gradeli = '<p class="mui-text-center">没有查找到数据哦</p>'
-                        }
-                        $("ul.campGradeList").append(gradeli);
-
-                    } else {
-                        mui.toast('数据获取失败,请稍候再试');
-                    }
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                }
-            });
-        };
-
-        //自定义获取训练营身份列表没分页
-        var toCampMemberList = function () {
-            var url = "{:url('api/camp_member/getCampMemberListNoPageApi','','',true)}";
-            mui.ajax({
-                url: url,
-                data: {
-                    type: 2
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    if (data.code == 200) {
-                        var newli = '';
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            type = data.data[i].type;
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli cost" data-id="' + data.data[i].member_id + '"><font class="member">' + data.data[i].member + '</font><span class="wd36">' + data.data[i].type + '</span></li>'
-                        }
-
-                        $("ul.campMemberAdmin").empty();
-                        $("ul.campMemberAdmin").append(newli);
-                        if (newli == '') {
-                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
-                        }
-                    } else {
-                        mui.toast('数据获取失败,请稍候再试');
-                    }
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                }
-            });
-        };
-
-
-        //训练营下学生身份列表接口获取数据并追加到页面
-        var toStudentList = function (keyword, wStudents, page) {
-            var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}";
-            var typeID = "1";
-            var wStudentsList = "ul.campMemberStudent";
+        //训练营列表接口获取数据并追加到页面
+        var toCampList = function (keyword, wCourt, page) {
+            var url = "{:url('api/camp/getCampListByPageApi','','',true)}/?page=" + page;
+            var wCampList = "ul.campList";
             var currPage = ".currPage";
             var totalPage = ".totalPage";
-            if (keyword != '' && wStudents != '') {
-                wStudentsList = "#" + wStudents + " ul.campMemberStudent";
-                currPage = "#" + wStudents + " .currPage";
-                totalPage = "#" + wStudents + " .totalPage";
+            if (keyword != '' && wCamp != '') {
+                wCampList = "#" + wCamp + " ul.campList";
+                currPage = "#" + wCamp + " .currPage";
+                totalPage = "#" + wCamp + " .totalPage";
             }
             mui.ajax({
                 url: url,
                 data: {
-                    type: typeID,
                     page: page,
                     keyword: keyword
                 },
@@ -825,19 +585,63 @@
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
                 headers: { 'Content-Type': 'application/json' },
-                //processData:false,
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].member_id + '"><font class="member">' + data.data.data[i].member + '</font></li>'
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '"><font class="camp">' + data.data.data[i].camp + '</font></li>'
                         }
-                        $(wStudentsList).empty();
+                        $(wCampList).empty();
                         if (newli == '') {
                             newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
                         }
-                        $(wStudentsList).append(newli);
+                        $(wCampList).append(newli);
+                        $(currPage).text(data.data.current_page);
+                        $(totalPage).text(data.data.last_page);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //场地列表接口获取数据并追加到页面 
+        var toCourtList = function (keyword, wCourt, page) {
+            var url = "{:url('api/court/getCourtListByPageApi','','',true)}/?page=" + page;
+            var wCourtList = "ul.courtList";
+            var currPage = ".currPage";
+            var totalPage = ".totalPage";
+            if (keyword != '' && wCourt != '') {
+                wCourtList = "#" + wCourt + " ul.courtList";
+                currPage = "#" + wCourt + " .currPage";
+                totalPage = "#" + wCourt + " .totalPage";
+            }
+            mui.ajax({
+                url: url,
+                data: {
+                    page: page,
+                    keyword: keyword
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '"><font class="court">' + data.data.data[i].court + '</font></li>'
+                        }
+                        $(wCourtList).empty();
+                        if (newli == '') {
+                            newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
+                        }
+                        $(wCourtList).append(newli);
                         $(currPage).text(data.data.current_page);
                         $(totalPage).text(data.data.last_page);
                     } else {
