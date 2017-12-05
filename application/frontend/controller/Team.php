@@ -3,6 +3,8 @@
 namespace app\frontend\controller;
 
 
+use app\service\TeamService;
+
 class Team extends Base {
     // 球队列表(平台展示)
     public function teamlist() {
@@ -26,6 +28,24 @@ class Team extends Base {
 
     // 球队首页
     public function teaminfo() {
+        // 获取球队详细信息
+        $team_id = input('team_id');
+        $teamS = new TeamService();
+        $teamInfo = $teamS->getTeam(['id' => $team_id]);
+        // 球队胜率输出
+        $teamInfo['win_rate'] = 0;
+        if ($teamInfo['match_num']) {
+            if ($teamInfo['match_win']) {
+                $winrate = ($teamInfo['match_win']/$teamInfo['match_num']);
+                $winrate = sprintf("%.2f", $winrate);
+                $teamInfo['win_rate'] = $winrate*100;
+            }  else {
+                $teamInfo['win_rate'] = 0;
+            }
+        }
+
+        //dump($teamInfo);
+        $this->assign('teamInfo', $teamInfo);
         return view('Team/teamInfo');
     }
 
