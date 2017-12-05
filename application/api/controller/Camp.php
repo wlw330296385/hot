@@ -48,7 +48,7 @@ class Camp extends Base{
         }       
     }
 
-    // 搜索训练营
+    // 获取训练营的列表有page
     public function getCampListByPageApi(){
         try{
             $map = input('post.');

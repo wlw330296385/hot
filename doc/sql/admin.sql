@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50553
 File Encoding         : 65001
 
-Date: 2017-12-05 10:58:32
+Date: 2017-12-05 17:55:56
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -36,10 +36,11 @@ CREATE TABLE `admin` (
   `lastlogin_ip` varchar(20) NOT NULL COMMENT '最后登录ip',
   `lastlogin_ua` varchar(200) NOT NULL DEFAULT '' COMMENT '最后登录ua',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin
 -- ----------------------------
-INSERT INTO `admin` VALUES ('1', 'admin', '56c1dea092bcdb3c77b072d6ee9914008f8a383d', '', '', '/static/default/avatar.png', '0', '1', '1', '0', '1512374802', '94', '1512374802', '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36');
-INSERT INTO `admin` VALUES ('2', 'test', '56c1dea092bcdb3c77b072d6ee9914008f8a383d', '', '', '/static/default/avatar.png', '0', '3', '1', '0', '1512375578', '15', '1512375578', '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36');
+INSERT INTO `admin` VALUES ('1', 'admin', '56c1dea092bcdb3c77b072d6ee9914008f8a383d', '', '', '/static/default/avatar.png', '0', '1', '1', '0', '1512457231', '96', '1512457231', '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36');
+INSERT INTO `admin` VALUES ('2', 'test', '56c1dea092bcdb3c77b072d6ee9914008f8a383d', '', '', '/static/default/avatar.png', '0', '3', '1', '0', '1512454911', '16', '1512454911', '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36');
+INSERT INTO `admin` VALUES ('3', 'test2', '56c1dea092bcdb3c77b072d6ee9914008f8a383d', '111', '', '/static/default/avatar.png', '0', '3', '1', '1512456554', '1512456554', '0', '0', '', '');
