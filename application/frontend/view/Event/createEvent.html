@@ -515,6 +515,7 @@
             $("#cost").on('click', '.next_page', function () {
                 var getTotalPage = $("#cost .totalPage").text();
                 pageLD++;
+                console.log(pageLD)
                 if (pageLD > getTotalPage) {
                     mui.toast("已经最后一页了");
                 } else {
@@ -755,8 +756,8 @@
 
 
         //训练营下学生身份列表接口获取数据并追加到页面
-        var toStudentList = function (keyword, wStudents, page) {
-            var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}";
+        var toStudentList = function (keyword, wStudents, page, pageLD) {
+            var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}/?page=" + page;
             var campID = "{$campInfo.id}";
             var typeID = "1";
             var wStudentsList = "ul.campMemberStudent";
@@ -772,7 +773,6 @@
                 data: {
                     camp_id: campID,
                     type: typeID,
-                    page: page,
                     keyword: keyword
                 },
                 dataType: 'json',//服务器返回json格式数据

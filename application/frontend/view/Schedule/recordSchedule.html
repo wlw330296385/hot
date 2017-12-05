@@ -229,7 +229,7 @@
 
             <ul class="mui-table-view operation">
                 <!--<li class="mui-table-view-cell mui-col-xs-12 opli bggreen" style="color: #fff">-->
-                    <!--此功能维护中，请稍后再使用-->
+                <!--此功能维护中，请稍后再使用-->
                 <!--</li>-->
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen operationBtn" style="color: #fff">
                     提交录入
@@ -849,23 +849,23 @@
         })
 
         //初始值
-            var delStudent = function () {
-                studentList = [];
-                expstudentList = [];
-                $(".checkChecked input[type=checkbox]").each(function () {
-                    var student_type = $(this).attr("data-type");
-                    var id = $(this).attr("data-id");
-                    var student_id = $(this).attr("data-student_id");
-                    var student = $(this).attr("data-student");
-                    if (student_type == "正式生") {
-                        studentList.push({ student: student, student_id: student_id, id: id, type: student_type });
-                    } else {
-                        expstudentList.push({ student: student, student_id: student_id, id: id, type: student_type });
-                    }
-                    console.log(studentList)
-                    console.log(expstudentList)
-                });
-            }
+        var delStudent = function () {
+            studentList = [];
+            expstudentList = [];
+            $(".checkChecked input[type=checkbox]").each(function () {
+                var student_type = $(this).attr("data-type");
+                var id = $(this).attr("data-id");
+                var student_id = $(this).attr("data-student_id");
+                var student = $(this).attr("data-student");
+                if (student_type == "正式生") {
+                    studentList.push({ student: student, student_id: student_id, id: id, type: student_type });
+                } else {
+                    expstudentList.push({ student: student, student_id: student_id, id: id, type: student_type });
+                }
+                console.log(studentList)
+                console.log(expstudentList)
+            });
+        }
         // 检查是否有学员数据
         var checkStudent = function () {
             if ($("#inactiveList").html() == '' && $("#expinactiveList").html() == '') {
@@ -926,7 +926,7 @@
                                 $("#expinactiveList").append(inactiveDiv);
                             };
                         };
-                        
+
                         checkStudent();// 检查是否有学员数据
 
                         studentList = [];
@@ -1073,7 +1073,7 @@
 
         //粉丝列表接口获取数据并追加到页面
         var toFansList = function (keyword, wFans, page) {
-            var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}";
+            var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}/?page=" + page;
             var campID = "{$campid}";
             var typeID = "-1";
             var wFansList = "ul.fans";
@@ -1089,7 +1089,6 @@
                 data: {
                     camp_id: campID,
                     type: typeID,
-                    page: page,
                     keyword: keyword
                 },
                 dataType: 'json',//服务器返回json格式数据
