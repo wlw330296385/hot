@@ -150,9 +150,11 @@ class Login extends Controller{
             cookie('member', md5($member['id'].$member['member'].config('salekey')) );
             session('memberInfo', $member, 'think');
         }
-//        dump( cookie('url') );
-//        dump( session('memberInfo') );
         $this->assign('userinfo', $userinfo);
         return view('Login/fastRegister');
     }
+
+
+    
+
 }

@@ -4,8 +4,20 @@ namespace app\service;
 use app\model\Team;
 use app\model\TeamMember;
 use app\model\TeamMemberRole;
+use think\Db;
 
 class TeamService {
+    // 我的球队列表（与会员有关联的球队）
+    public function myTeamList($map=[], $page=1, $order='id desc', $limit=10) {
+        $model = new TeamMember();
+        $res = $model->with('team')->where($map)->order($order)->page($page)->limit($limit)->select();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
     // 创建球队
     public function createTeam($data) {
         $model = new Team();
@@ -100,6 +112,34 @@ class TeamService {
         }
     }
 
+    // 获取球队成员列表
+    public function getTeamMemberList($map=[], $page=1, $order='id asc', $limit=10) {
+        $model = new TeamMember();
+        $res = $model->with('team')->where($map)->order($order)->page($page)->limit($limit)->select();
+        if ($res) {
+            // 遍历获取成员在球队的角色身份
+            $teammembers = $res->toArray();
+            $roleModel = new TeamMemberRole();
+            foreach ($teammembers as $k => $teammember) {
+                $teammembers[$k]['role_text'] = '';
+                $memberRole = $roleModel->where(['member_id' => $teammember['member_id'], 'team_id' => $teammember['team_id'], 'status' => 1])->select()->toArray();
+                foreach ($memberRole as $val) {
+                    $teammembers[$k]['role_text'] .= $val['type'].',';
+                }
+            }
+            return $teammembers;
+        } else {
+            return $res;
+        }
+    }
+
+    // 获取球队-队员详细
+    public function getTeamMemberInfo($map) {
+        $model = new TeamMember();
+        $res = $model->where($map)->find()->toArray();
+        return $res;
+    }
+
     // 保存team_member_role 会员-球队角色关联信息
     public function saveTeamMemberRole($data, $teamMemberRole_id=0) {
         $model = new TeamMemberRole();
@@ -122,15 +162,24 @@ class TeamService {
             }
         }
     }
-    
-    // 我的球队列表（与会员有关联的球队）
-    public function myTeamList($map=[], $page=1, $order='id desc', $limit=10) {
-        $model = new TeamMember();
-        $res = $model->with('team')->order($order)->page($page)->limit($limit)->select();
-        if ($res) {
-            return $res->toArray();
-        } else {
-            return $res;
-        }
+
+    // 获取球队有角色身份的会员列表
+    public function getTeamRoleMembers($team_id)
+    {
+        $list = Db::view('team_member_role', '*, status as role_status')
+            ->view('team_member', '*', 'team_member.member_id=team_member_role.member_id', 'left')
+            ->where(['team_member_role.team_id' => $team_id, 'team_member_role.status' => 1, 'team_member.status' => 1])
+            ->where('team_member.delete_time', null)
+            ->where('team_member_role.delete_time', null)
+            ->order('type desc')
+            ->select();
+        return $list;
+    }
+
+    public function checkMemberTeamRole($map) {
+        $model = new TeamMemberRole();
+        $res = $model->where($map)
+            ->where(['status' => 1])->value('type');
+        return $res ? $res : 0;
     }
 }

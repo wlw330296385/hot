@@ -27,5 +27,9 @@ class Team extends Model {
         return $type[$value];
     }
 
-
+    // status 获取器
+    public function getStatusAttr($value) {
+        $status = [1=> '上架', -1 => '下架'];
+        return $status[$value];
+    }
 }
