@@ -115,7 +115,18 @@ class Login extends Base{
         }
 	}
 
-
+    // 绑定微信
+    public function bandWxApi(){
+        try{
+            $openid = input('post.openid');
+            $telephone = input('param.telephone');
+            $MemberService = new \app\service\MemberService;
+            $result = $MemberService->updateMemberInfo(['openid'=>$openid], ['telephone'=>$telephone]);
+            return json($result);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
     public function autoLogin(){
         $id = input('param.id',1);

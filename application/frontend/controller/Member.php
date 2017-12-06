@@ -246,6 +246,21 @@ class Member extends Base{
         return view('Member/userAgreement');
     }
 
-
+    public function bandWx(){
+        $hot_id = input('hot_id');
+        // 获取用户信息
+        $member = db('member')->field('id,hot_id,member,telephone,openid')->where(['openid'=>session('memberInfo.openid')])->find();
+        if(!$member){
+            $memebr  = [
+                'hot_id'=>'',
+                'id'=>0,
+                'member'=>'',
+                'telephone'=>'',
+                'openid' => 0
+            ];
+        }
+        $this->assign('member',$member);
+        return view('Member/bandWx');
+    }
 
 }

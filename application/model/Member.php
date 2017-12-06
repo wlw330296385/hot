@@ -8,7 +8,7 @@ class Member extends Model{
     protected $autoWriteTimestamp = true;
 	protected $readonly = [
 //							'create_time',
-							'openid',
+							// 'openid',
 							'member',
 							'balance',
 							'score',

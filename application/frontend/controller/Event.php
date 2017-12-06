@@ -128,7 +128,7 @@ class Event extends Base{
         $event_id = input('param.event_id');
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
         if($eventInfo['member_id'] != $this->memberInfo['id']){
-            $isPower = $this->EventService->isPower($eventInfo['organization_type'],$eventInfo['organization_id'],$eventInfo['organization_id'],$this->memberInfo['id']);
+            $isPower = $this->EventService->isPower($eventInfo['organization_type'],$eventInfo['organization_id'],$this->memberInfo['id']);
             if($isPower<3){
                 $this->error('您没有权限');
             }

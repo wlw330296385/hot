@@ -53,7 +53,7 @@ class Member extends Base{
             $data = input('post.');
             $data['member_id'] = $member_id;
             $data['member'] = $this->memberInfo['member'];
-            $result = $this->MemberService->updateMemberInfo($data, $member_id);
+            $result = $this->MemberService->updateMemberInfo($data, ['id'=>$member_id]);
             return json($result);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
