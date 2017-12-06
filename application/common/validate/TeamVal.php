@@ -7,7 +7,7 @@ class TeamVal extends Validate {
     // 验证规则
     protected $rule = [
         // 球队名称：必填|字段值长度2-16字符|值只能是汉字、字母、数字和下划线_及破折号-|名称team表唯一|表单token
-        'name' => 'require|length:2,16|chsDash|unique:team',
+        'name' => 'require|length:2,16|chsDash|unique:team|token',
         // 会员id大于0表示已注册或登录会员
         'member_id' => 'require|gt:0',
         'type' => 'require',
