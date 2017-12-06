@@ -48,6 +48,9 @@ class MemberService{
 		if($result ===false){
 			return ['msg'=>$this->memberModel->getError(),'code'=>100];
 		}else{
+			$memberInfo = $this->getMemberInfo($map);
+			session('memberInfo',$memberInfo,'think');
+			cookie('mid',$memberInfo['id']);
 			return ['msg'=>__lang('MSG_200'),'code'=>200,'data'=>$result];
 		}	
 	}
