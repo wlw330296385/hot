@@ -81,6 +81,24 @@
             margin: 0;
             color: #000;
         }
+        
+        .textarea {
+            min-height: 20px;
+            padding: 10px 15px;
+            _height: 120px;
+            margin-left: auto;
+            margin-right: auto;
+            outline: 0;
+            font-size: 14px;
+            word-wrap: break-word;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        
+        .textarea:empty::before {
+            color: #b1b0b0;
+            content: attr(placeholder);
+        }
     </style>
 </head>
 
@@ -537,12 +555,11 @@
             $(".titleClass").on('tap', '', function () {
                 var title = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
                 $(".introBox").append(title);
-
             });
 
             //添加正文
             $(".textClass").on('tap', '', function () {
-                var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><textarea name="" rows="3" class="mui-text-left text delClass" placeholder="请输入正文"></textarea></div>';
+                var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" name="" class="mui-text-left text delClass textarea" placeholder="请输入正文"></div>';
                 $(".introBox").append(text);
             });
 
@@ -594,20 +611,20 @@
             });
 
             // 焦点离开后把内容放在p标签里
-            $(document).on('blur', '.operationDiv textarea', function () {
+            $(document).on('blur', '.operationDiv .textarea', function () {
                 $(this).siblings(".delbtn").remove();
-                if ($(this).val() != '') {
-                    var textAreaValue = '<p>' + $(this).val() + '</p>';
-                    $(this).parent().html(textAreaValue).removeClass("bgorange")
+                if ($(this).text() != '') {
+                    var divValue = '<p>' + $(this).text() + '</p>';
+                    $(this).parent().html(divValue).removeClass("bgorange")
                 } else {
-                    var textAreaValueNull = '<p>请输入正文</p>';
-                    $(this).parent().html(textAreaValueNull)
+                    var divValueNull = '<p>请输入正文</p>';
+                    $(this).parent().html(divValueNull)
                 }
             });
-            // 点击时显示textarea框
+            // 点击时显示div框
             $(document).on('tap', '.operationDiv p', function () {
-                var YtextAreaValue = '<i class="delbtn mui-icon mui-icon-close"></i><textarea rows="3"  autofocus value="' + $(this).text() + '"  class="mui-text-left text delClass" placeholder="请输入正文">' + $(this).text() + '</textarea>';
-                $(this).parent().html(YtextAreaValue).addClass("bgorange");
+                var YdivValue = '<i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" value="' + $(this).text() + '"  class="mui-text-left text delClass textarea" placeholder="请输入正文">' + $(this).text() + '</div>';
+                $(this).parent().html(YdivValue).addClass("bgorange");
             });
 
             // 上移动
