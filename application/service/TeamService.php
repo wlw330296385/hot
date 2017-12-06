@@ -4,6 +4,7 @@ namespace app\service;
 use app\model\Team;
 use app\model\TeamMember;
 use app\model\TeamMemberRole;
+use think\Db;
 
 class TeamService {
     // 创建球队
@@ -121,6 +122,16 @@ class TeamService {
                 return ['code' => 100, 'msg' => __lang('MSG_400').$model->getError()];
             }
         }
+    }
+
+    // 获取球队有角色身份的会员列表
+    public function getTeamRoleMembers($team_id) {
+        $list = Db::view('team_member_role', '*, status as role_status')
+            ->view('team_member', '*', 'team_member.member_id=team_member_role.member_id', 'left')
+            ->where(['team_member_role.team_id' => $team_id, 'team_member_role.status' => 1, 'team_member.status' => 1])
+            ->order('type desc')
+            ->select();
+        return $list;
     }
     
     // 我的球队列表（与会员有关联的球队）
