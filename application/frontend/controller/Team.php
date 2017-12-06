@@ -33,6 +33,12 @@ class Team extends Base {
 
     // 球队管理
     public function teammanage() {
+        // 获取会员在球队角色身份
+        $checkMemberTeamRoleMap = ['team_id' => $this->team_id, 'member_id' => $this->memberInfo['id']];
+        $teamS = new TeamService();
+        $teamrole = $teamS->checkMemberTeamRole($checkMemberTeamRoleMap);
+        //dump($teamrole);
+        $this->assign('teamrole', $teamrole);
         return view('Team/teamManage');
     }
 
@@ -41,7 +47,7 @@ class Team extends Base {
         // 获取球队有角色身份的会员列表
         $teamS = new TeamService();
         $rolemembers = $teamS->getTeamRoleMembers($this->team_id);
-
+        //dump($rolemembers);
         $this->assign('rolemembers', $rolemembers);
         return view('Team/teamEdit');
     }
@@ -74,6 +80,20 @@ class Team extends Base {
 
     // 队员档案
     public function teammemberinfo() {
+        // 接收参数
+        $team_id = input('team_id', 0);
+        $member_id = input('member_id', 0);
+        $teamS = new TeamService();
+        // 获取队员在当前球队的数据信息
+        $map = ['team_id' => $team_id, 'member_id' => $member_id];
+        $teamMemberInfo = $teamS->getTeamMemberInfo($map);
+
+        // 该队员的其他球队列表
+        $memberOtherTeamMap = [ 'member_id' => $member_id, 'team_id' => ['neq', $team_id]];
+        $memberOtherTeam = $teamS->getTeamMemberList($memberOtherTeamMap);
+
+        $this->assign('teamMemberInfo', $teamMemberInfo);
+        $this->assign('memberOtherTeam', $memberOtherTeam);
         return view('Team/teamMemberInfo');
     }
 

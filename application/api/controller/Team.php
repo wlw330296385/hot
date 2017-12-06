@@ -140,4 +140,27 @@ class Team extends Base {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+
+    // 球队成员列表
+    public function teammemberlist() {
+        try {
+            $team_id = input('param.team_id');
+            if (!$team_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').',请选择球队']);
+            }
+            $page = input('page', 1);
+            $teamS = new TeamService();
+            $map['team_id'] = $team_id;
+            $result = $teamS->getTeamMemberList($map, $page);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
 }
