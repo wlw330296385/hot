@@ -26,12 +26,12 @@ class Team extends Base {
             //dump($data);
             // 执行创建球队
             $teamS = new TeamService();
-            $res = $teamS->createTeam($data);
+             $res = $teamS->createTeam($data);
             // 创建球队成功 保存创建者会员的球队-会员关系team_member
             if ($res['code'] !== 100) {
                 $teamMemberData = [
                     'team_id' => $res['insid'],
-                    'team_name' => $data['name'],
+                    'team' => $data['name'],
                     'member_id' => $this->memberInfo['id'],
                     'member' => $this->memberInfo['member'],
                     'member_sex' => $this->memberInfo['sex'],
@@ -70,6 +70,18 @@ class Team extends Base {
             }
             return json($res);
         } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 修改球队
+    public function updateteam() {
+        try {
+            $data = input('param.');
+            $teamS = new TeamService();
+            $result = $teamS->updateTeam($data);
+            return json($result);
+        }catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
