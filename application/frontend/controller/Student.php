@@ -25,6 +25,25 @@ class Student extends Base
 		$student_id = input('param.student_id');
 		$camp_id = input('param.camp_id');
 		$type = input('param.type')?input('param.type'):1;
+
+        // 获取当前用户身份
+        $power = db('camp_member')->where(['camp_id'=>$camp_id,'member_id'=>$this->memberInfo['id'],'status'=>1])->value('type');
+        // 如果是教练身份
+        if($power < 3){ 
+            
+            $coach_id = db('coach')->where(['member_id'=>$this->memberInfo['id']])->value('id');
+            if(!$coach_id){
+            	$this->error('只有教练可以查看学生信息');
+            }
+            $map = function ($query) use ($coach_id){
+                $query->where(['grade.coach_id'=>$coach_id])->whereOr('grade.assistant_id','like',"%\"$coach_id\"%");
+            };
+            $gradeList = db('grade')->where($map)->column('id');
+            $is_power = db('grade_member')->where(['student_id'=>$student_id,['id'=>['in',]]])->value('grade_id');
+            if(!$is_power){
+            	$this->error('它不是您的学生,不可查看该学生信息');
+            }
+        }
 		$campInfo = db('camp')->where(['id'=>$camp_id])->find();
 		// 学生信息
 		$studentInfo = $this->studentService->getStudentInfo(['id'=>$student_id]);
@@ -34,7 +53,6 @@ class Student extends Base
 							->where([
 								'grade_member.student_id'=>$student_id,
 								'grade_member.camp_id'=>$camp_id,
-								'grade_member.type'=>$type,
 								'grade_member.status'=>1
 							])
 							->order('grade_member.id desc')
@@ -55,7 +73,6 @@ class Student extends Base
 								->where([
 								    'schedule.status' => 1,
 									'schedule_member.user_id'=>$student_id,
-									// 'schedule_member.type'=>$type,
 									'schedule_member.status'=>1
 								])	
 								->order('schedule_member.id desc')
