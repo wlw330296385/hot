@@ -28,11 +28,10 @@ class Plan extends Base{
         if($planInfo['exercise_id']){
             $ExerciseService = new \app\service\ExerciseService;
             $exerciseList = $ExerciseService->getExerciseList();
-            $pids = db('exercise')->where(['id'=>['in',$planInfo['exercise_ids']]])->column('pid');
+            $pids = db('exercise')->where(['id'=>['in',$planInfo['exercise_id']]])->column('pid');
             $arrIds = unserialize($planInfo['exercise_id']);
             $ids = array_merge($arrIds,$pids);
         }
-        
         $this->assign('ids',$ids);
         $this->assign('exerciseList',$exerciseList);
         $this->assign('power',$is_power);
