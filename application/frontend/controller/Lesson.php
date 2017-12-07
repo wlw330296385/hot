@@ -139,18 +139,14 @@ class Lesson extends Base{
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         // 生成订单号
         $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
-        // 生成微信参数
-        $jsonBillInfo = [
-            'goods'=>$lessonInfo['lesson'],
-            'goods_id'=>$lessonInfo['id'],
+        $jsonLessonInfo = [
+            'camp'  => $lessonInfo['camp'],
             'camp_id'=>$lessonInfo['camp_id'],
-            'camp'=>$lessonInfo['camp'],
-            'price'=>$lessonInfo['cost'],
-            'score_pay'=>0,
-            'goods_type'=>1,
-            'pay_type'=>'',
-        ];
-        $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
+            'leson'=>$lessonInfo['lesson'],
+            'lesson_id' =>$lessonInfo['id'],
+            'location' =>$lessonInfo['location'],
+        ]
+        $this->assign('jsonLessonInfo',json_encode($lessonInfo));
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billOrder',$billOrder);
         return view('Lesson/bookBill');

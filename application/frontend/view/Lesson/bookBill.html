@@ -92,7 +92,7 @@
 
     <ul class="mui-table-view operation">
         <li class="mui-table-view-cell mui-media mui-col-xs-8 opli" >还需支付:<b class="colororange total_fee">￥0</b></li>
-        <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="createBill()">立即体验</li>
+        <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="bookLeeson()">立即体验</li>
     </ul>
 
 </div>
@@ -115,13 +115,9 @@
         //console.log('hidden', e.detail.id);//detail为当前popover元素
     });
 
-
-    var total = 1;
-    var total_fee = "{$lessonInfo.cost}"*total;
     var isStudent = false;
-    var strBillInfo = '{$jsonBillInfo}';
-    var objBillInfo = JSON.parse(strBillInfo);
-
+    var strLessonInfo = '{$jsonLessonInfo}';
+    var objLessonInfo = JSON.parse(strLessonInfo);
     $(function(){
         $('.total').html(total);
         $('.total_fee').html("￥"+0);
@@ -226,32 +222,24 @@
 
 
     // 购买成功提交数据
-    function createBill(){
+    function bookLeeson(){
         //条件1判断是否没数据
         if(!isStudent){
              mui.alert('请先 [ 添加学生 ] 信息，谢谢！');
              return false;
         }
+        
         var remarks = $('.remarks').val();
         var student = $('.selectStudent').find("option:selected").text();
         var student_id = $('.selectStudent').val();
-        objBillInfo.bill_order = "{$billOrder}";
-        objBillInfo.goods_des = student+'预约体验'+objBillInfo.goods;
-        objBillInfo.total = total;
-        objBillInfo.student_id = student_id;
-        objBillInfo.student = student;
-        objBillInfo.remarks = remarks;
-        objBillInfo.balance_pay = 0;
-        objBillInfo.callback_str = 0;
-        objBillInfo.is_pay = 1;
-        console.log(objBillInfo);
-        var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
-        // console.log(result);
-        // mui.toast(result.msg);
+        jsonLessonInfo.student_id = student_id;
+        jsonLessonInfo.student = student;
+        jsonLessonInfo.remarks = remarks;
+        var result = wooApi.asyncF("{:url('api/lesson/bookLessonApi')}",objLessonInfo);
         if(result.code == 200){
           // window.location.href="{:url('frontend/bill/finishBookBill',['bill_order'=>$billOrder])}";
           mui.alert('您的课程体验已预约成功，请留意课程消息及公告。','预约成功','确定',function(){
-            window.location.href="{:url('frontend/student/studentInfoOfCamp',['camp_id'=>$lessonInfo['camp_id']])}".'student_id'+student_id;
+            window.location.href="{:url('frontend/student/studentInfoOfCamp',['camp_id'=>$lessonInfo['camp_id']])}"+'student_id'+student_id;
           });
 
         }else{
