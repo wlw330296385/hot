@@ -32,7 +32,7 @@
                 </select>
             </span>
             <span class="location-choise max">
-                <select id="eventType" class="data" name="event_type">
+                <select id="teamType" class="data" name="type">
                     <option value="">球队类型</option>
                     <option value="青少年训练营">青少年训练营</option>
                     <option value="企事业单位">企事业单位</option>
@@ -48,7 +48,7 @@
 
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b event">
+                <ul class="mui-table-view detalis-list list border-b team">
                 </ul>
             </div>
         </div>
@@ -71,12 +71,12 @@
 
             //初始化全局变量
             var count = 1;
-            var sEventType = '';
+            var sTeamType = '';
             var sArea = '';
             var keyword = wooApi.GetQueryString('keyword');
             $('.keyword').val(keyword);
-            var campID = wooApi.GetQueryString('camp_id');
-            var campName = wooApi.GetQueryString('camp_name');
+            var teamID = wooApi.GetQueryString('team_id');
+            var teamName = wooApi.GetQueryString('team_name');
 
             //获取定位省市区
             var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
@@ -84,9 +84,9 @@
             var sProvince = getLocationTB['province'];
             var allArea = getLocationTB['area'];
             $('.location').text(sCity);
-            if (campName != '' && campName != null) {
-                $('.location').text(campName);
-                $('.keyword').attr('placeholder', '请输入' + campName + '球队名称');
+            if (teamName != '' && teamName != null) {
+                $('.location').text(teamName);
+                $('.keyword').attr('placeholder', '请输入' + teamName + '球队名称');
                 $("#areaSelect").parent().hide();
             }
 
@@ -100,12 +100,12 @@
             //搜索活动
             $("#searchBtn").on("click", function () {
                 keyword = $(".keyword").val();
-                campID = '';
+                teamID = '';
                 searchToList();
             })
             //选择活动类型下拉
-            $("#eventType").on("change", function () {
-                sEventType = $(this).find("option:checked").val();
+            $("#teamType").on("change", function () {
+                sTeamType = $(this).find("option:checked").val();
                 searchToList();
             });
             //选择地区下拉
@@ -118,7 +118,7 @@
                 count = 1;//显示第一页
                 var page = count;
                 var gType = 1;//代表下拉刷新
-                toList(page, gType, campID);//具体取数据的方法
+                toList(page, gType, teamID);//具体取数据的方法
             }
 
             mui.init({
@@ -151,7 +151,7 @@
                     count = 1;//刷新并显示第一页
                     var page = count;
                     var gType = 1;//代表下拉刷新
-                    toList(page, gType, campID);//具体取数据的方法
+                    toList(page, gType, teamID);//具体取数据的方法
                 }, 100);
             }
             //上拉加载具体业务实现
@@ -160,14 +160,14 @@
                     count++;//翻下一页
                     var page = count;
                     var gType = 2;//代表上拉加载
-                    toList(page, gType, campID);//具体取数据的方法
+                    toList(page, gType, teamID);//具体取数据的方法
                 }, 100);
             }
 
             //接口获取数据并追加到页面
-            var toList = function (page, gType, campID) {
+            var toList = function (page, gType, teamID) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/event/searchEventApi','','',true)}";
+                var url = "{:url('api/team/teamlist','','',true)}";
                 mui.ajax({
                     url: url,
                     data: {
@@ -175,8 +175,7 @@
                         province: sProvince,
                         city: sCity,
                         area: sArea,
-                        event_type: sEventType,
-                        camp_id: campID,
+                        team_id: teamID,
                         keyword: keyword,
                     },
                     dataType: 'json',//服务器返回json格式数据
@@ -185,10 +184,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     //processData:false,
                     success: function (data) {
+                        console.log(data)
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('event/eventInfo')}" + '/event_id/' + data.data[i].id;
+                                var urls = "{:url('team/teaminfo')}" + '/team_id/' + data.data[i].id;
                                 newli += '<li class="mui-table-view-cell mui-media listli">'
                                 newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd60">球队名称';
                                 newli += '<p class="mui-ellipsis">平均年龄：32&nbsp;&nbsp;身高：172</p></div><div class="price-frame mui-text-center">'
@@ -198,15 +198,15 @@
                         }
                         if (gType == 1) {
                             //上拉刷新
-                            $("ul.event").empty().append(newli);
+                            $("ul.team").empty().append(newli);
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.event").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
+                                $("ul.team").html('<li class="nodata"><i class="icon iconfont icon-m-Trainingteam1"></i><p>没有相关数据哦</p></li>');
                             }
                         } else {
                             //下拉加载 gType==2
-                            $("ul.event").append(newli);
+                            $("ul.team").append(newli);
                         }
                         if (newli != '') {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);

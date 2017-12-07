@@ -30,6 +30,13 @@
             width: 100%;
         }
         
+        .mui-input-group img {
+            width: 42px;
+            border-radius: 50%;
+            background: #ddd;
+            border: none
+        }
+        
         i.tip {
             height: 0;
             color: red;
@@ -71,14 +78,14 @@
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label><b>球队LOGO</b></label>
-                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
+                        <img id="preview_1" class="coachicon icon01 upload-preview" src="{$teamInfo.logo}" alt="">
                         <input type="hidden" name="logo" value='' class="data">
                     </a>
                 </div>
 
                 <div class="mui-input-row">
                     <label>球队名称<i class="tip">*</i></label>
-                    <input type="text" name="name" value="" class="data" placeholder="请输入球队名称">
+                    <input type="text" name="name" value="{$teamInfo.name}" class="data" placeholder="请输入球队名称">
                 </div>
 
                 <div class="mui-input-row">
@@ -103,7 +110,7 @@
                 <div class="mui-input-row camp-input-row">
                     <a href="#camp" class="mui-navigate-right">
                         <label class="wd36">所属训练营<i class="tip">*</i></label>
-                        <span class="campCont domData" name="camp"></span>
+                        <span class="campCont domData" name="camp">{$teamInfo.camp}</span>
                         <input type="hidden" name="camp_id" value="" class="camp_id data">
                     </a>
                 </div>
@@ -112,7 +119,7 @@
                     <a href="#" class="mui-navigate-right">
                         <div class="mui-navigate-right">
                             <label>所属地区<i class="tip">*</i></label>
-                            <span id="cityResult3" class="ui-alert domData" name="address"></span>
+                            <span id="cityResult3" class="ui-alert domData" name="address">{$teamInfo.province} {$teamInfo.city} {$teamInfo.area}</span>
                         </div>
                     </a>
                 </div>
@@ -120,7 +127,7 @@
                 <div class="mui-input-row">
                     <a href="#court" class="mui-navigate-right">
                         <label>常驻场地</label>
-                        <span class="courtCont domData" name="court"></span>
+                        <span class="courtCont domData" name="court">{$teamInfo.court}</span>
                         <input type="hidden" name="court_id" value="" class="court_id data">
                     </a>
                 </div>
@@ -128,67 +135,61 @@
                 <div class="mui-input-row">
                     <a href="#homeColor" class="mui-navigate-right">
                         <label>主场颜色</label>
-                        <span class="home_color domData" name="home_color"></span>
+                        <span class="home_color domData" name="home_color">{$teamInfo.home_color}</span>
                     </a>
                 </div>
 
                 <div class="mui-input-row">
                     <a href="#awayColor" class="mui-navigate-right">
                         <label>客场颜色</label>
-                        <span class="away_color domData" name="away_color"></span>
+                        <span class="away_color domData" name="away_color">{$teamInfo.away_color}</span>
                     </a>
                 </div>
 
                 <div class="mui-input-row">
-                    <label>领队<i class="tip">*</i></label>
-                    <span class="leader data" name="leader">{$memberInfo.member}</span>
+                    <a href="#leader" class="mui-navigate-right">
+                        <label>领队<i class="tip">*</i></label>
+                        <span class="leader data" name="leader">{$teamInfo.leader}</span>
+                    </a>
                 </div>
 
                 <div class="mui-input-row price-input-row">
                     <a href="#captain" class="mui-navigate-right">
                         <label>队长</label>
-                        <span class="captain" name="captain"></span>
+                        <span class="captain" name="captain">{$teamInfo.captain}</span>
                         <input type="hidden" name="captain_id" value="" class="captain_id">
                     </a>
                 </div>
 
                 <div class="mui-input-row price-input-row">
-                    <a href="#player" class="mui-navigate-right">
-                        <label>球员</label>
-                        <span class="player" name="player"></span>
-                        <input type="hidden" name="player_id" value="" class="player_id">
-                    </a>
-                </div>
-
-                <div class="mui-input-row price-input-row">
-                    <a href="" class="mui-navigate-right">
+                    <a href="#coach" class="mui-navigate-right">
                         <label>教练</label>
-                        <span class="camp" name="camp"></span>
-                        <input type="hidden" name="camp_id" value="" class="camp_id">
+                        <span class="coach" name="coach"></span>
+                        <input type="hidden" name="coach_id" value="" class="coach_id">
                     </a>
                 </div>
 
                 <div class="mui-input-row price-input-row">
                     <a href="#committee" class="mui-navigate-right">
                         <label>队委</label>
-                        <span class="camp" name="camp"></span>
-                        <input type="hidden" name="camp_id" value="" class="camp_id">
+                        <span class="" name=""></span>
+                        <input type="hidden" name="" value="" class="">
                     </a>
                 </div>
 
                 <div class="mui-input-row price-input-row">
                     <label>平均年龄</label>
-                    <span class="avg_age" name="avg_age">统计数据直接获取</span>
+                    <span class="avg_age" name="avg_age"></span>
                 </div>
 
                 <div class="mui-input-row price-input-row">
                     <label>平均身高</label>
-                    <span class="avg_height" name="avg_height">统计数据直接获取</span>
+                    <span class="avg_height" name="avg_height">{$memberInfo.height}</span>
                 </div>
 
                 <div class="mui-input-row price-input-row">
                     <label>平均体重</label>
-                    <span class="avg_weight" name="avg_weight">统计数据直接获取</span>
+                    <span class="avg_weight" name="avg_weight">{$memberInfo.weight}</span>
                 </div>
 
                 <div class="mui-input-row">
@@ -204,17 +205,29 @@
                     </div>
                 </div>
 
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>生效状态</label>
+                        <span class="select-row freeStatus">
+                            <select  class="data" name="status">
+                                <option value="2">默认下架</option>
+                                <option value="1">上架</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>球队封面</label>
-                        <img id="preview_2" class="coachicon icon01 upload-preview" alt="">
+                        <img id="preview_2" class="coachicon icon01 upload-preview" src="{$teamInfo.cover}" alt="">
                         <input type="hidden" name="cover" value='' class="data">
                     </a>
                 </div>
 
                 <div class="mui-input-row h-auto">
                     <label>球队介绍</label>
-                    <textarea rows="3" name="introduce" class="data introduce" placeholder="请填写球队介绍"></textarea>
+                    <textarea rows="3" name="introduce" class="data introduce" placeholder="请填写球队介绍">{$teamInfo.introduce}</textarea>
                 </div>
 
             </form>
@@ -638,12 +651,38 @@
             })
             //////////////////////////训练营///////////////////////////////////
 
-        })
+        });
+
+        // 获取数据并进行提交
+        function submitAction() {
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var introduce = $('textarea.data').val();
+            objData.introduce = introduce;
+            var url = "{:url('api/team/updateteam')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
+                    var goUrl = "{:url('team/teammanage')}" + '/team_id/' + ajaxResult.insid;
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '修改失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
+        };
 
 
         //训练营列表接口获取数据并追加到页面
         var toCampList = function (keyword, wCourt, page) {
-            var url = "{:url('api/camp/searchCampApi','','',true)}/?page=" + page;
+            var url = "{:url('api/camp/getCampListByPageApi','','',true)}/?page=" + page;
             var wCampList = "ul.campList";
             var currPage = ".currPage";
             var totalPage = ".totalPage";
@@ -666,8 +705,8 @@
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '"><font class="camp">' + data.data[i].camp + '</font></li>'
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '"><font class="camp">' + data.data.data[i].camp + '</font></li>'
                         }
                         $(wCampList).empty();
                         if (newli == '') {
@@ -688,7 +727,7 @@
 
         //场地列表接口获取数据并追加到页面 
         var toCourtList = function (keyword, wCourt, page) {
-            var url = "{:url('api/court/searchCourtApi','','',true)}/?page=" + page;
+            var url = "{:url('api/court/getCourtListByPageApi','','',true)}/?page=" + page;
             var wCourtList = "ul.courtList";
             var currPage = ".currPage";
             var totalPage = ".totalPage";
@@ -711,8 +750,8 @@
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '"><font class="court">' + data.data[i].court + '</font></li>'
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '"><font class="court">' + data.data.data[i].court + '</font></li>'
                         }
                         $(wCourtList).empty();
                         if (newli == '') {

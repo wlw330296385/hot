@@ -34,7 +34,7 @@
             width: 42px;
             border-radius: 50%;
             background: #ddd;
-            border:none
+            border: none
         }
         
         i.tip {
@@ -119,7 +119,10 @@
                     <a href="#" class="mui-navigate-right">
                         <div class="mui-navigate-right">
                             <label>所属地区<i class="tip">*</i></label>
-                            <span id="cityResult3" class="ui-alert domData" name="address"></span>
+                            <span id="cityResult3" class="ui-alert"></span>
+                            <input type="hidden" name="province" value="" class="data" id="province">
+                            <input type="hidden" name="city" value="" class="data" id="city">
+                            <input type="hidden" name="area" value="" class="data" id="area">
                         </div>
                     </a>
                 </div>
@@ -135,7 +138,8 @@
                 <div class="mui-input-row">
                     <a href="#homeColor" class="mui-navigate-right">
                         <label>主场颜色</label>
-                        <span class="home_color domData" name="home_color"></span>
+                        <span class="home_color" name="home_color"></span>
+                        <input type="hidden" name="home_color_style" class="data" value="">
                     </a>
                 </div>
 
@@ -151,19 +155,24 @@
                     <span class="leader data" name="leader">{$memberInfo.member}</span>
                 </div>
 
+                <div class="mui-input-row">
+                    <label>队长</label>
+                    <span class="captain data" name="captain">{$memberInfo.member}</span>
+                </div>
+
                 <div class="mui-input-row price-input-row">
                     <label>平均年龄</label>
-                    <span class="avg_age" name="avg_age">统计数据直接获取</span>
+                    <span class="avg_age" name="avg_age"></span>
                 </div>
 
                 <div class="mui-input-row price-input-row">
                     <label>平均身高</label>
-                    <span class="avg_height" name="avg_height">统计数据直接获取</span>
+                    <span class="avg_height" name="avg_height">{$memberInfo.height}</span>
                 </div>
 
                 <div class="mui-input-row price-input-row">
                     <label>平均体重</label>
-                    <span class="avg_weight" name="avg_weight">统计数据直接获取</span>
+                    <span class="avg_weight" name="avg_weight">{$memberInfo.weight}</span>
                 </div>
 
                 <div class="mui-input-row">
@@ -179,8 +188,20 @@
                     </div>
                 </div>
 
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>生效状态</label>
+                        <span class="select-row freeStatus">
+                            <select  class="data" name="status">
+                                <option value="-1">默认下架</option>
+                                <option value="1">上架</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
                 <div class="mui-input-row h-auto">
-                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(2)">
                         <label>球队封面</label>
                         <img id="preview_2" class="coachicon icon01 upload-preview" alt="">
                         <input type="hidden" name="cover" value='' class="data">
@@ -189,7 +210,7 @@
 
                 <div class="mui-input-row h-auto">
                     <label>球队介绍</label>
-                    <textarea rows="3" name="introduce" class="data introduce" placeholder="请填写球队介绍"></textarea>
+                    <textarea name="introduce" class="data introduce" placeholder="请填写球队介绍"></textarea>
                 </div>
 
             </form>
@@ -322,7 +343,7 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/libs/webuploader.min.js"></script>
     <script>
-                                                                                                                  var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'event'])}";
+                                                                                                                  var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'team'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -376,6 +397,9 @@
                         getProvince = _getParam(items[0], 'text');
                         getCity = _getParam(items[1], 'text');
                         getArea = _getParam(items[2], 'text');
+                        document.getElementById('province').value = getProvince;
+                        document.getElementById('city').value = getCity;
+                        document.getElementById('area').value = getArea;
                     });
                 }, false);
 
@@ -561,8 +585,33 @@
             })
             //////////////////////////训练营///////////////////////////////////
 
-        })
+        });
 
+        // 获取数据并进行提交
+        function submitAction() {
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var introduce = $('textarea.data').val();
+            objData.introduce = introduce;
+            var url = "{:url('api/team/createteam')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '球队创建成功', '确定', function () {
+                    var goUrl = "{:url('team/teammanage')}" + '/team_id/' + ajaxResult.insid;
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
+        };
 
         //训练营列表接口获取数据并追加到页面
         var toCampList = function (keyword, wCourt, page) {
