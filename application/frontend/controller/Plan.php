@@ -22,11 +22,17 @@ class Plan extends Base{
         // 判读权限
         $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
-        $ExerciseService = new \app\service\ExerciseService;
-        $exerciseList = $ExerciseService->getExerciseList();
-        $pids = db('exercise')->where(['id'=>['in',$planInfo['exercise_ids']]])->column('pid');
-        $arrIds = unserialize($planInfo['exercise_id']);
-        $ids = array_merge($arrIds,$pids);
+        // 获取项目列表
+        $exerciseList = [];
+        $ids = '';
+        if($planInfo['exercise_id']){
+            $ExerciseService = new \app\service\ExerciseService;
+            $exerciseList = $ExerciseService->getExerciseList();
+            $pids = db('exercise')->where(['id'=>['in',$planInfo['exercise_ids']]])->column('pid');
+            $arrIds = unserialize($planInfo['exercise_id']);
+            $ids = array_merge($arrIds,$pids);
+        }
+        
         $this->assign('ids',$ids);
         $this->assign('exerciseList',$exerciseList);
         $this->assign('power',$is_power);
@@ -64,6 +70,7 @@ class Plan extends Base{
         // 判读权限
         $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($camp_id,$this->memberInfo['id']);
+        // dump($is_power);die;
         if($is_power < 2){
             $this->error('您没有权限');
         }       

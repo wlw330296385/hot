@@ -26,6 +26,9 @@ class Exercise extends Base{
         
     }
 
-    
+    // 编辑项目
+    public function updateExerciseApi(){
+        
+    }
 
 }
