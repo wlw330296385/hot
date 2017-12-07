@@ -52,7 +52,7 @@ class ExerciseService {
     public function createExercise($data){
         $result = $this->exerciseModel->save($data);
         if($result){
-            return ['code'=>200,'msg'=>__lang('MSG_200'),'data'=>$result];
+            return ['code'=>200,'msg'=>__lang('MSG_200'),'data'=>$this->exerciseModel->id];
         }else{
             return ['code'=>100,'msg'=>__lang('MSG_400')];
         }
