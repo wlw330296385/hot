@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
+    <meta c t="utf-8">
     <title>球队列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -112,15 +112,15 @@
                     headers: { 'Content-Type': 'application/json' },
                     //processData:false,
                     success: function (data) {
-                        console.log(data)
+                        console.log(data);
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 var urls = "{:url('team/teaminfo')}" + '/team_id/' + data.data[i].id;
                                 newli += '<li class="mui-table-view-cell mui-media listli">'
-                                newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd60">' + data.data[i].name + '';
-                                newli += '<p class="mui-ellipsis">平均年龄：32&nbsp;&nbsp;身高：172</p></div><div class="price-frame mui-text-center">'
-                                newli += '<p class="address">' + data.data[i].area + '</p></div></a></div>';
+                                newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].team.cover + '"><div class="mui-media-body wd60">' + data.data[i].team.name + '';
+                                newli += '<p class="mui-ellipsis">平均年龄：'+ data.data[i].team.avg_age +'&nbsp;&nbsp;身高：'+ data.data[i].team.avg_height +'</p></div><div class="price-frame mui-text-center">';
+                                newli += '<p class="address">' + data.data[i].team.area + '</p></div></a></div>';
                                 newli += '</li>';
                             }
                         }
