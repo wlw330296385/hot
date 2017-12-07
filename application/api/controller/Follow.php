@@ -4,6 +4,7 @@ use app\service\CampService;
 use app\service\FollowService;
 use app\service\GradeService;
 use app\service\MemberService;
+use app\service\TeamService;
 use think\Exception;
 
 class Follow extends Base {
@@ -99,6 +100,21 @@ class Follow extends Base {
                     if (!$team_id) {
                         return json(['code' => 100, 'msg' => '关注球队'.__lang('MSG_402')]);
                     }
+                    $teamS = new TeamService();
+                    $followTeamInfo = $teamS->getTeam(['id' => $team_id]);
+                    if (!$followTeamInfo) {
+                        return json(['code' => 100, 'msg' => '没有球队信息']);
+                    }
+                    $followData = [
+                        'type' => $type,
+                        'follow_id' => $followTeamInfo['id'],
+                        'follow_name' => $followTeamInfo['name'],
+                        'follow_avatar' => $followTeamInfo['logo'],
+                        'member_id' => $this->memberInfo['id'],
+                        'member' => $this->memberInfo['member'],
+                        'member_avatar' => $this->memberInfo['avatar'],
+                    ];
+                    break;
                 }
             }
             $followS = new FollowService();
@@ -162,6 +178,7 @@ class Follow extends Base {
                     if (!$team_id) {
                         return json(['code' => 100, 'msg' => '球队'.__lang('MSG_402')]);
                     }
+                    $map['follow_id'] = $team_id;
                     break;
                 }
             }
@@ -246,6 +263,13 @@ class Follow extends Base {
                     if (!$team_id) {
                         return json(['code' => 100, 'msg' => '球队'.__lang('MSG_402')]);
                     }
+                    $teamS = new TeamService();
+                    $teamInfo = $teamS->getTeam(['id' => $team_id]);
+                    if (!$teamInfo) {
+                        return json(['code' => 100, 'msg' => '没有球队信息']);
+                    }
+                    $map['follow_id'] = $teamInfo['id'];
+                    break;
                 }
             }
             $followS = new FollowService();
