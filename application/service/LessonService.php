@@ -268,7 +268,7 @@ class LessonService {
             return ['code'=>100,'msg'=>$validate->getError()];
         }
         $CampMember = new \app\model\CampMember;
-        $camp_member = $CampMember->where(['camp_id'=>$data['id'],'member_id'=>$data['member_id'],'status'=>1])->find();
+        $camp_member = $CampMember->where(['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id'],'status'=>1])->find();
         if(!$camp_member){
             $res = $CampMember->save($data);
             if(!$res){
@@ -277,7 +277,7 @@ class LessonService {
         }
 
         $LessonMember = new \app\model\LessonMember;
-        $lesson_member = $LessonMember->where(['lesson_id'=>$data['lesson_id'],'student_id'=>$data['student_id'],'status'=>1])->find();
+        $lesson_member = $LessonMember->where(['lesson_id'=>$data['lesson_id'],'student_id'=>$data['student_id'],'status'=>1,'type'=>2])->find();
         if(!$lesson_member){
             $res = $LessonMember->save($data);
             if(!$res){
@@ -310,7 +310,7 @@ class LessonService {
         $MessageData = [
             "touser" => '',
             "template_id" => config('wxTemplateID.lessonBook'),
-            "url" => url('frontend/student/studentInfoOfCamp',['student_id'=>$data['student_id'],'camp_id'=>$data['camp_id']],'',true),
+            "url" => url('frontend/message/index','','',true),
             "topcolor"=>"#FF0000",
             "data" => [
                 'first' => ['value' => '体验课预约申请成功'],
@@ -323,11 +323,16 @@ class LessonService {
             ]
         ];
         $saveData = [
-            'title'=>"订单支付成功-{$data['goods']}",
+            'title'=>"预约体验申请-{$data['lesson']}",
             'content'=>"申请学生:{$data['student']}<br/>申请理由: {$data['remarks']}",
             'url'=>url('frontend/student/studentInfoOfCamp',['student_id'=>$data['student_id'],'camp_id'=>$data['camp_id']],'',true),
             'member_id'=>$data['member_id']
         ];
+
+        // 发送模板消息
+        $MessageService = new \app\service\MessageService;
+        $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
+        $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
 
         return ['code'=>200,'msg'=>'预约成功'];
 

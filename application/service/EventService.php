@@ -172,7 +172,7 @@ class EventService {
                     'keyword2' => ['value' => $eventInfo['starts'].'至'.$eventInfo['ends']],
                     'keyword3' => ['value' => $eventInfo['location']],
                     'keyword4' => ['value' => "点击此消息查看"],
-                    'remark' => ['value' => '大热篮球']
+                    'remark' => ['value' => '篮球管家']
                 ]
             ];
         }else{
@@ -217,7 +217,7 @@ class EventService {
                     'keyword2' => ['value' => $eventInfo['starts'].'至'.$eventInfo['ends']],
                     'keyword3' => ['value' => $eventInfo['location']],
                     'keyword4' => ['value' => "点击此消息查看"],
-                    'remark' => ['value' => '大热篮球']
+                    'remark' => ['value' => '篮球管家']
                 ]
             ];
         $MessageService->sendMessageMember($member_id,$MessageData,$saveData1);   //发给报名的人

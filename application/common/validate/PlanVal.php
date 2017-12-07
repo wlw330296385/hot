@@ -17,9 +17,9 @@ class PlanVal extends Validate{
         'camp_id'  =>  'camp_id 必须大于0',
         'member_id'    => 'require',
         'member'  => 'require',
-        'camp' =>  'camp require',
-        'outline' => 'outline require',
-        'exercise'=>' exercise require',
+        'camp' =>  '训练营必须',
+        'outline' => 'outline必须',
+        'exercise'=>' exercise必须',
     ];
     
     protected $scene = [

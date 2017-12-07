@@ -142,11 +142,11 @@ class Lesson extends Base{
         $jsonLessonInfo = [
             'camp'  => $lessonInfo['camp'],
             'camp_id'=>$lessonInfo['camp_id'],
-            'leson'=>$lessonInfo['lesson'],
+            'lesson'=>$lessonInfo['lesson'],
             'lesson_id' =>$lessonInfo['id'],
             'location' =>$lessonInfo['location'],
-        ]
-        $this->assign('jsonLessonInfo',json_encode($lessonInfo));
+        ];
+        $this->assign('jsonLessonInfo',json_encode($jsonLessonInfo));
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billOrder',$billOrder);
         return view('Lesson/bookBill');

@@ -119,7 +119,7 @@ class BillService {
                     'keyword2' => ['value' => $data['bill_order']],
                     'keyword3' => ['value' => $data['balance_pay'].'元'],
                     'keyword4' => ['value' => $data['goods_des']],
-                    'remark' => ['value' => '大热篮球']
+                    'remark' => ['value' => '篮球管家']
                 ]
             ];
             $saveData = [
@@ -141,7 +141,7 @@ class BillService {
                         'keyword2' => ['value' => $data['bill_order']],
                         'keyword3' => ['value' => $data['balance_pay'].'元'],
                         'keyword4' => ['value' => $data['goods_des']],
-                        'remark' => ['value' => '大热篮球']
+                        'remark' => ['value' => '篮球管家']
                     ]
                 ];
                 $MessageCampSaveData = [
