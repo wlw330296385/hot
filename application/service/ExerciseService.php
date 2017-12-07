@@ -10,7 +10,7 @@ class ExerciseService {
     }
     // 获取训练项目顶级分类
     public function getExerciseType() {
-        $result = Exercise::where([ 'camp_id' => 0, 'pid' => 0, 'status' => 1 ])->field(['id', 'exercise'])->select();
+        $result = Exercise::where([ 'camp_id' => 0, 'pid' => 0, 'status' => 1 ])->field(['id', 'exercise'])->order('id asc')->select();
         if($result){
             return $result->toArray();
         }else{

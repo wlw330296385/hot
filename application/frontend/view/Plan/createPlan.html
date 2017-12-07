@@ -3,87 +3,104 @@
 
 <head>
     <meta charset="utf-8">
-    <title>教学大纲-编辑</title>
+    <title>创建教学大纲</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+        
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+        
+        .exercises p {
+            margin: 0;
+            line-height: 24px;
+            text-align: left
+        }
+    </style>
 </head>
 
 <body>
-<header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-    <h1 class="mui-title">添加教案</h1>
-</header>
-<div class="mui-content program mt">
-    <form class="mui-input-group">
-        <div class="mui-input-row">
-            <label>作者</label>
-            <input type="text" placeholder="用户名/用户ID" name="{$memberInfo.member}" value="{$memberInfo.member}" disabled="1">
-        </div>
-        <div class="mui-input-row">
-            <label>所属</label>
-            <input type="text" placeholder="训练营/平台" name="camp" value="{$campInfo.camp}" class="data" disabled="1">
-            <input type = "hidden" name="camp_id" value="{$campInfo.id}" class="data">
-        </div>
-        <div class="mui-input-row">
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+    </header>
+    <div class="mui-content program mt">
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+        <form class="mui-input-group">
+            <div class="mui-input-row">
+                <label>作者</label>
+                <input type="text" name="{$memberInfo.member}" value="{$memberInfo.member}" disabled="1">
+            </div>
+            <div class="mui-input-row">
+                <label>所属</label>
+                <input type="text" name="camp" value="{$campInfo.camp}" class="data" disabled="1">
+                <input type="hidden" name="camp_id" value="{$campInfo.id}" class="data">
+            </div>
 
-            <a href="#" class="mui-navigate-right">
-                <label>适合阶段</label>
-                <span class="select-row">
-                        <select placeholder="小学基础/小学增强/等阶段" class="data" name="grade_category_id" value="" id="gradecate_id">
+            <div class="mui-input-row">
+                <a href="#" class="mui-navigate-right">
+                    <label>适合阶段</label>
+                    <span class="select-row">
+                        <select id="gradecate">
+                            <option>--请选择--</option>
                             {volist name="gradecateList" id="vol"}
-                                <optgroup label="{$vol.name}">
-                            {volist name="vol._data" id="v"}
-                                <option value ="{$v.id}" >{$v.name}</option>
+                            <optgroup label="{$vol.name}"></optgroup>
+                                {volist name="vol._data" id="v"}
+                                <option value="{$v.id}">{$v.name}</option>
+                                {/volist}
                             {/volist}
-                            </optgroup>
-                          {/volist}
                         </select>
-                        <input type="hidden" name="grade_category" value="" id="grade_category" class="data" >
-                </span>
-            </a>
+                        <input type="hidden" name="grade_category" value=""  class="data" >
+                        <input type="hidden" name="grade_category_id" value=""  class="data" >
+                     </span>
+                </a>
 
+            </div>
+            <div class="mui-input-row">
+                <label>大纲名称</label>
+                <input type="text" placeholder="小学基础/小学增强/等阶段" name="outline" class="data" value="">
+            </div>
+            <div class="mui-input-row height127">
+                <label>大纲介绍</label>
+                <textarea rows="5" class="data outline_detail" name="outline_detail" placeholder="填写教案大纲简介"></textarea>
+            </div>
+
+            <div class="mui-input-row h-auto">
+                <a href="#exercises" class="mui-navigate-right">
+                    <label class="wd36">选择训练项目</label>
+                    <span class="exercises"></span>
+                    <input type="hidden" name="exercises" class="data" value="">
+                    <input type="hidden" name="exercise_ids" class="data" value="">
+                </a>
+            </div>
+
+            <div class="mui-input-row">
+                <label>上传视频</label>
+            </div>
+
+        </form>
+        <div class="tip-box">
+            <input type="checkbox" value="1" name="is_open" class="data" checked style="width:16px;height:16px;">
+            <label>是否对外开放</label>
         </div>
-        <div class="mui-input-row">
-            <label>大纲名称</label>
-            <input type="text" placeholder="小学基础/小学增强/等阶段" name="outline" class="data">
-        </div>
-        <div class="mui-input-row height127">
-            <label>大纲介绍</label>
-            <textarea rows="5" class="data" name="outline_detail" placeholder="填写教案大纲简介"></textarea>
-        </div>
-        <div class="mui-input-row">
-            <a href="#exercises" class="mui-navigate-right">
-                <label>选择训练项目</label>
-                <span class="exercises domData" name="exercises"></span>
-                <input type="hidden" name="exercise_ids" class="data" value="" >
-            </a>
-        </div>
-        <div class="mui-input-row">
-            <label>上传视频</label>
+        <div class="tjbtn mb44">
+            <button type=button class='btn' id="submitBtn" onclick="submitAction()">提交</button>
         </div>
 
-    </form>
-    <div class="tip-box">
-        <input type="checkbox" value="1" name="is_open" class="data" checked style="width:16px;height:16px;">
-        <label>是否对外开放</label>
     </div>
-    <div class="tjbtn mb44">
-        <button type=button class='btn' id="submitBtn" >提交</button>
-    </div>
-
-</div>
 
 
-<!--选择训练项目-->
+    <!--选择训练项目-->
     <div id="exercises" class="mui-popover">
         <div class="mui-popover-arrow"></div>
 
@@ -100,56 +117,50 @@
 
         <div id="item1" class="mui-control-content mui-active">
             <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                {volist name="exerciseList" id="vol"}
-                {neq name="vol.camp_id" value="0"}
-                <ul class="mui-table-view">
-                <li class="mui-table-view-cell mui-collapse">
-                    <a class="mui-navigate-right" href="#">{$vol.exercise}</a>
-                    {volist name="vol._data" id="v"}
-                    <div class="mui-collapse-content">
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <label>{$v.exercise}</label>
-                            <input name="checkbox-dom" value="{$v.id}" type="checkbox" data-exercise="{$v.exercise}">
-                        </div>
-                    </div>
-                    {/volist}
-                </li>
-                </ul>
-                {/neq}
-                {/volist}
-            </div>
+                <div class="mui-scroll">
+                    {volist name="exerciseList" id="vol"} {neq name="vol.camp_id" value="0"}
+                    <ul class="mui-table-view">
+                        <li class="mui-table-view-cell mui-collapse">
+                            <a class="mui-navigate-right" href="#">{$vol.exercise}</a> {volist name="vol._data" id="v"}
+                            <div class="mui-collapse-content">
+                                <div class="mui-input-row mui-checkbox mui-left">
+                                    <label>{$v.exercise}</label>
+                                    <input name="checkbox-dom" value="{$v.id}" type="checkbox" data-exercise="{$v.exercise}">
+                                </div>
+                            </div>
+                            {/volist}
+                        </li>
+                    </ul>
+                    {/neq} {/volist}
+                </div>
             </div>
         </div>
 
         <div id="item2" class="mui-control-content">
             <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                {volist name="exerciseList" id="vol"}
-                {eq name="vol.camp_id" value="0"}
-                <ul class="mui-table-view">
-                <li class="mui-table-view-cell mui-collapse">
-                    <a class="mui-navigate-right" href="#">{$vol.exercise}</a>
-                    {volist name="vol._data" id="v"}
-                    <div class="mui-collapse-content">
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <label>{$v.exercise}</label>
-                            <input name="checkbox-dom" value="{$v.id}" type="checkbox"  data-exercise="{$v.exercise}">
-                        </div>
-                    </div>
-                    {/volist}
-                </li>
-                </ul>
-                {/eq}
-                {/volist}
+                <div class="mui-scroll">
+                    {volist name="exerciseList" id="vol"} {eq name="vol.camp_id" value="0"}
+                    <ul class="mui-table-view">
+                        <li class="mui-table-view-cell mui-collapse">
+                            <a class="mui-navigate-right" href="#">{$vol.exercise}</a> {volist name="vol._data" id="v"}
+                            <div class="mui-collapse-content">
+                                <div class="mui-input-row mui-checkbox mui-left">
+                                    <label>{$v.exercise}</label>
+                                    <input name="checkbox-dom" value="{$v.id}" type="checkbox" data-exercise="{$v.exercise}">
+                                </div>
+                            </div>
+                            {/volist}
+                        </li>
+                    </ul>
+                    {/eq} {/volist}
+                </div>
             </div>
-            </div>
-         </div>
+        </div>
 
     </div>
 
 
-               
+
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -161,68 +172,85 @@
     });
 
     //弹出框滚动必须写在mui专用的初始化
-    (function($) {
+    (function ($) {
         $(".mui-scroll-wrapper").scroll({
             //bounce: false,//滚动条是否有弹力默认是true
             indicators: true //是否显示滚动条,默认是true
         });
     })(mui);
 
-    $(function(){
+    $(function () {
 
         // 关闭弹出菜单
-        $("body").on('click','.mui-backdrop',function(){
+        $("body").on('click', '.mui-backdrop', function () {
             mui(".mui-popover.mui-active").popover("toggle");
         })
 
 
         //训练项目选择列表确认
-        $("#domConfirm").click(function(){
-            //把所选课量串在一起，以逗号分隔
-            $("input[name='exercise_ids']").val($("input[name='checkbox-dom']:checked").map(function(){
+        $("#domConfirm").click(function () {
+            $(".exercises").empty();
+            $("input[name='checkbox-dom']:checked").each(function () {
+                var str = '<p class="domData">' + $(this).attr('data-exercise') + '</p>';
+                $(".exercises").append(str);
+            });
+            $("input[name='exercise_ids']").val($("input[name='checkbox-dom']:checked").map(function () {
                 return $(this).val();
-            }).get().join(",") );
-            $("span.exercises").text($("input[name='checkbox-dom']:checked").map(function(){
+            }).get().join(","));
+            $("input[name=exercises]").val($("input[name='checkbox-dom']:checked").map(function () {
                 return $(this).attr('data-exercise');
-            }).get().join(",") );
+            }).get().join(","));
             mui('#exercises').popover('toggle');
         })
 
         // 课程类型更改选择
-        $('#gradecate_id').on('change',function(){
+        $('#gradecate').on('change', function () {
             var index = $(this).selectedIndex;
-            
-            var option = $('#gradecate_id option:selected');
-            $('#grade_category').val(option.text());
+            var grade_category = $('#gradecate option:selected').text();
+            var grade_category_id = $('#gradecate option:selected').val();
+            $('input[name=grade_category]').val(grade_category);
+            $('input[name=grade_category_id]').val(grade_category_id)
         })
 
 
         // 是否开放
-        $('input[name=is_open]').on('change',function(){
+        $('input[name=is_open]').on('change', function () {
             console.log($(this).val());
-            if(($(this).val())==1){
+            if (($(this).val()) == 1) {
                 $(this).val(0)
-            }else{
+            } else {
                 $(this).val(1)
             }
         })
     })
 
-    $('#submitBtn').on('click',function(){
-        var data1 = wooApi.getInputData();
-        var data2 = wooApi.getInputData('select','data',data1);
-        var data3 = wooApi.getDomData('domData',data2);
-        var data4 = wooApi.getInputData('textarea','data',data3);
-        var objData = wooApi.arrTOobj(data4)
-        var result = wooApi.asyncF("{:url('api/plan/createPlanApi')}",objData);
-        console.log(result);
-        if(result.code == 100){
-            mui.toast(result.msg)
-        }else{
-            mui.toast(result.msg)
-        }
-    })
+    // 获取数据并进行提交
+    function submitAction() {
+        var data = wooApi.getInputData('input', 'data');
+        datas = wooApi.getInputData('select', 'data', data);
+        // 获取其他标签值
+        arrData = wooApi.getDomData('domData', datas);
+        var objData = wooApi.arrTOobj(arrData);
+        var outline_detail = $('textarea.data').val();
+        objData.outline_detail = outline_detail;
+        var url = "{:url('api/plan/createPlanApi')}";
+        var ajaxResult = wooApi.asyncF(url, objData);
 
+        if (ajaxResult.code == 200) {
+            mui.alert(ajaxResult.msg, '教案创建成功', '确定', function () {
+                var goUrl = "{:url('plan/planinfo')}" + '/plan_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
+                window.top.location.href = goUrl;
+            })
+        } else {
+            mui.alert(ajaxResult.msg, '创建失败');
+            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                if (data.code === 200) {
+                    $('input[name=__token__]').val(data.data);
+                }
+            }, 'json');
+        }
+    };
 
 </script>
+
 </html>

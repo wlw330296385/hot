@@ -33,15 +33,16 @@
             </span>
             <span class="location-choise max">
                 <select id="teamType" class="data" name="type">
-                    <option value="">球队类型</option>
-                    <option value="青少年训练营">青少年训练营</option>
-                    <option value="企事业单位">企事业单位</option>
-                    <option value="同事朋友">同事朋友</option>
-                    <option value="校友会">校友会</option>
-                    <option value="大学生">大学生</option>
-                    <option value="高中生">高中生</option>
-                    <option value="初中生">初中生</option>
-                    <option value="小学生">小学生</option>
+                    <option value="">全部分类</option>
+                    <option value="1">青少年训练营</option>
+                    <option value="2">企事业单位</option>
+                    <option value="3">同事朋友</option>
+                    <option value="4">同乡会</option>
+                    <option value="5">校友会</option>
+                    <option value="6">大学生</option>
+                    <option value="7">高中生</option>
+                    <option value="8">初中生</option>
+                    <option value="9">小学生</option>
                 </select>
             </span>
         </div>
@@ -53,7 +54,7 @@
             </div>
         </div>
 
-        <input type="hidden" name="teamID" class="teamID" />
+        <!--<input type="hidden" name="teamID" class="teamID" />-->
 
     </div>
 
@@ -167,7 +168,7 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType, teamID) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/team/teamlist','','',true)}";
+                var url = "{:url('api/team/searchteamlist','','',true)}";
                 mui.ajax({
                     url: url,
                     data: {
@@ -175,8 +176,9 @@
                         province: sProvince,
                         city: sCity,
                         area: sArea,
-                        team_id: teamID,
-                        keyword: keyword,
+                        type: sTeamType,
+                        //team_id: teamID,
+                        keyword: keyword
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -189,9 +191,9 @@
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 var urls = "{:url('team/teaminfo')}" + '/team_id/' + data.data[i].id;
-                                newli += '<li class="mui-table-view-cell mui-media listli">'
-                                newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd60">球队名称';
-                                newli += '<p class="mui-ellipsis">平均年龄：32&nbsp;&nbsp;身高：172</p></div><div class="price-frame mui-text-center">'
+                                newli += '<li class="mui-table-view-cell mui-media listli">';
+                                newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd60">'+data.data[i].name;
+                                newli += '<p class="mui-ellipsis">平均年龄：'+ data.data[i].avg_age +'&nbsp;&nbsp;身高：'+ data.data[i].avg_height +'</p></div><div class="price-frame mui-text-center">'
                                 newli += '<p class="address">' + data.data[i].area + '</p></div></a></div>';
                                 newli += '</li>';
                             }
