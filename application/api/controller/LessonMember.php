@@ -11,6 +11,7 @@ class LessonMember extends Base{
         $this->LessonMemberService = new LessonMemberService;
 	}
 
+    // 获取训练营下的学生
     public function getLessonMemberListOfCampByPageApi(){
         try{
             $map = input('post.');
