@@ -11,126 +11,68 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .set-control {
+            position: absolute;
+            top: 0;
+            z-index: 2;
+        }
+    </style>
 </head>
 
 <body class=whitebg>
+    <header class="mui-bar mui-bar-nav for-tab">
+        <div class="camp-lesson-list">
+            <div id="segmentedControl" class="mui-segmented-control mb">
+                <a class="mui-control-item mui-active" href="{:url('plan/planList',['camp_id'=>$camp_id])}">教案</a>
+                <a class="mui-control-item" href="{:url('exercise/exerciseList',['camp_id'=>$camp_id])}">训练项目</a>
+            </div>
+        </div>
+        <div class="mui-segmented-control seg-control whitebg">
+            <a class="mui-control-item" href="#item4">平台教案</a>
+            <a class="mui-control-item mui-active" href="#item3">自定义教案</a>
+            <a class="mui-control-item" href="{:url('plan/createPlan',['camp_id'=>$camp_id])}">添加教案</a>
+        </div>
+    </header>
     <div class="mui-content">
 
-        <div class="list camp-list detalis-list mt">
-            <div class="camp-lesson-list">
-                <div id="segmentedControl" class="mui-segmented-control mb">
-                    <a class="mui-control-item mui-active" href="#item1">教案</a>
-                    <a class="mui-control-item" href="#item2">训练项目</a>
-                </div>
-            </div>
-            <div class="item-list">
-                <div id="item1" class="mui-control-content mui-active">
-                    <ul class="mui-table-view">
-                        <div class="mui-segmented-control seg-control">
-                            <a class="mui-control-item" href="#item4">平台教案</a>
-                            <a class="mui-control-item mui-active" href="#item3">自定义教案</a>
-                            <a class="mui-control-item" href="{:url('plan/createPlan',['camp_id'=>$camp_id])}">添加教案</a>
-                        </div>
-                        <div class="item-list">
-                            <div id="item3" class="mui-control-content mui-active">
-                                <ul class="mui-table-view">
-                                    {volist name="planListOfCamp" id="vol"}
-                                    <li class="mui-table-view-cell listli ">
-                                        <a class="mui-navigate-right" href="{:url('plan/planInfo',['plan_id'=>$vol['id']])}">
-                                            <div class="list-cont">
-                                                <h5>{$vol.outline}</h5>
-                                                <p>{$vol.grade_category}</p>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    {/volist}
-                                </ul>
-                            </div>
-                            <div id="item4" class="mui-control-contente">
-                                <ul class="mui-table-view">
-                                    {volist name="planListOfSys" id="vol"}
-                                    <li class="mui-table-view-cell">
-                                        <a class="mui-navigate-right">
-                                            <div class="list-cont">
-                                                <h4>{$vol.outline}</h4>
-                                                <p>{$vol.grade_category}</p>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    {/volist}
-                                </ul>
-                            </div>
-                        </div>
-                    </ul>
-                </div>
-                <div id="item2" class="mui-control-content mt55">
-                    <ul class="mui-table-view mb">
-                        <div class="mui-segmented-control seg-control">
-                            <a class="mui-control-item" href="#item6">平台项目</a>
-                            <a class="mui-control-item mui-active" href="#item5">自定义项目</a>
-                            <a class="mui-control-item" href="{:url('exercise/createexercise',['camp_id'=>$camp_id])}">添加项目</a>
-                        </div>
-                    </ul>
-                    <div class="item-list">
-                        <div id="item5" class="mui-control-content mui-active">
-                            <div class="page-header">
-                                <span class="course"><b>热身游戏</b></span>
-                            </div>
-                            <ul class="mui-table-view mb">
-                                <li class="mui-table-view-cell listli detalisli">
-                                    <a href="{:url('exercise/exerciseInfo')}" class="mui-navigate-right">
-                                    贴报纸跑(无球,运球)
-                                </a>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    <a href="" class="mui-navigate-right">
-                                    躲避报纸(橄榄球)
-                                </a>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    <a href="" class="mui-navigate-right">
-                                    穿越(无球,运球)
-                                </a>
-                                </li>
-                            </ul>
-                            <div class="page-header">
-                                <span class="course"><b>传球</b></span>
-                            </div>
-                            <ul class="mui-table-view mb">
-                                <li class="mui-table-view-cell listli detalisli">
-                                    <a href="" class="mui-navigate-right">
-                                    摆脱防守传接球
-                                </a>
-                                </li>
-                                <li class="mui-table-view-cell listli detalisli">
-                                    <a href="" class="mui-navigate-right">
-                                    踩呼啦圈传球
-                                </a>
-                                </li>
-                            </ul>
-                            <div class="page-header">
-                                <span class="course"><b>行进间运球</b></span>
-                            </div>
-                            <ul class="mui-table-view mb">
-                                <li class="mui-table-view-cell listli detalisli">
-                                    <a class="mui-navigate-right">
-                                    手拉手运球
-                                </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div id="item6" class="mui-control-content">
-                            <ul class="mui-table-view mb">
-                                <li class="mui-table-view-cell listli detalisli">
-                                    暂无数据
-                                </li>
-                            </ul>
+        <div class="list camp-list detalis-list">
 
-                        </div>
+
+            <ul class="mui-table-view">
+
+                <div class="item-list">
+                    <div id="item3" class="mui-control-content mui-active">
+                        <ul class="mui-table-view">
+                            {volist name="planListOfCamp" id="vol"}
+                            <li class="mui-table-view-cell listli ">
+                                <a class="mui-navigate-right" href="{:url('plan/planInfo',['plan_id'=>$vol['id']])}">
+                                    <div class="list-cont">
+                                        <h5>{$vol.outline}</h5>
+                                        <p>{$vol.grade_category}</p>
+                                    </div>
+                                </a>
+                            </li>
+                            {/volist}
+                        </ul>
                     </div>
-
+                    <div id="item4" class="mui-control-contente">
+                        <ul class="mui-table-view">
+                            {volist name="planListOfSys" id="vol"}
+                            <li class="mui-table-view-cell">
+                                <a class="mui-navigate-right">
+                                    <div class="list-cont">
+                                        <h4>{$vol.outline}</h4>
+                                        <p>{$vol.grade_category}</p>
+                                    </div>
+                                </a>
+                            </li>
+                            {/volist}
+                        </ul>
+                    </div>
                 </div>
-            </div>
+            </ul>
+
         </div>
 
     </div>
