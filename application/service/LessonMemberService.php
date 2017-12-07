@@ -51,6 +51,9 @@ class LessonMemberService{
     	return $result?$result:0;
     }
     
-    
+    // 预约课程
+    public function bookLesson($data){
+        
+    }
     
 }

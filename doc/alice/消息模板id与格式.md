@@ -123,6 +123,28 @@ RvMcKdoOyu5RRlT7ucXtAgF5-dOA-n3Gd61eho4k4lw
 报名详情：请查看官方公众号活动页面
 更多活动信息请关注官方微信公众号。
 
+8. 预约体验课
+模板ID:
+c3apkhh3Sd8k2NLlD8ezl_WPguo2KuQSP8ZJ652n2eg
+
+{{first.DATA}}
+预约活动：{{keyword1.DATA}}
+体验项目：{{keyword2.DATA}}
+时间：{{keyword3.DATA}}
+地点：{{keyword4.DATA}}
+人数：{{keyword5.DATA}}
+{{remark.DATA}}
+内容示例
+预约成功通知
+预约活动：澳级运动体验
+体验项目：大鹏湾帆船比赛/篝火晚会
+时间：2017-6-26 15:25
+地点：广东省深圳市XX***OO
+人数：3人
+祝您玩的开心
+
+
+
 ***
 wechatService调用
 $data = [
@@ -139,3 +161,7 @@ $data = [
 $w = new WechatService();
 $res = $w->sendmessage($data)			
 $res 成功返回json|失败返回false
+
+
+
+

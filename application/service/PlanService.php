@@ -88,7 +88,7 @@ class PlanService {
         if($res === false){
             return ['msg'=>$this->Plan->getError(),'code'=>100];
         }else{
-            return ['data'=>$res,'msg'=>__lang('MSG_200'),'code'=>200];
+            return ['data'=>$this->Plan->id,'msg'=>__lang('MSG_200'),'code'=>200];
         }
     }
 

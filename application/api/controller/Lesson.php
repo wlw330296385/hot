@@ -417,4 +417,21 @@ class Lesson extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+    // 预约体验课
+    public function bookLessonApi(){
+        try{
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $data['type'] =2;
+            $data['rest_schedule']=0;
+            $data['status'] = 1;
+            $result = $this->LessonService->bookLesson($data);
+            return json($result);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }

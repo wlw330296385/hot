@@ -28,8 +28,8 @@ class Student extends Base
 
         // 获取当前用户身份
         $power = db('camp_member')->where(['camp_id'=>$camp_id,'member_id'=>$this->memberInfo['id'],'status'=>1])->value('type');
-        // 如果是教练身份
-        if($power < 3){ 
+        // 如果是教练身份,并且排除学生自己
+        if($power < 3 && $power<>1){ 
             
             $coach_id = db('coach')->where(['member_id'=>$this->memberInfo['id']])->value('id');
             if(!$coach_id){
@@ -38,8 +38,11 @@ class Student extends Base
             $map = function ($query) use ($coach_id){
                 $query->where(['grade.coach_id'=>$coach_id])->whereOr('grade.assistant_id','like',"%\"$coach_id\"%");
             };
-            $gradeList = db('grade')->where($map)->column('id');
-            $is_power = db('grade_member')->where(['student_id'=>$student_id,['id'=>['in',]]])->value('grade_id');
+            $gradeIDS = db('grade')->where($map)->column('id');
+            $is_power = db('grade_member')
+            			->where(['student_id'=>$student_id])
+            			->where('grade_id','in',$gradeIDS)
+            			->value('grade_id');
             if(!$is_power){
             	$this->error('它不是您的学生,不可查看该学生信息');
             }
