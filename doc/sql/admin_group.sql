@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50553
 File Encoding         : 65001
 
-Date: 2017-12-05 17:55:39
+Date: 2017-12-06 18:00:03
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -30,7 +30,7 @@ CREATE TABLE `admin_group` (
   `create_time` int(11) NOT NULL,
   `update_time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin_group
@@ -38,3 +38,6 @@ CREATE TABLE `admin_group` (
 INSERT INTO `admin_group` VALUES ('1', '0', '超级管理员', 'woo', '0', '0', '1', '0', '0');
 INSERT INTO `admin_group` VALUES ('2', '0', '财务部', '财务部', '1', '[1,2,3,4,5,6,7,8,9,10]', '1', '0', '0');
 INSERT INTO `admin_group` VALUES ('3', '2', '出纳', '财务部的出纳', '1', '[1,2,3,5,6,7,8,9,10,12,13,14,15,16,17,18,19,20,22,21]', '1', '0', '0');
+INSERT INTO `admin_group` VALUES ('4', '0', '行政部', '行政部', '2', '[3,7,8,9,10,11,12,13,14,22]', '1', '0', '0');
+INSERT INTO `admin_group` VALUES ('5', '4', '行政专员', '行政专员', '1', '[3,7,8,9,10,11,12,13,14,22]', '1', '0', '0');
+INSERT INTO `admin_group` VALUES ('6', '4', '客服专员', '客服专员', '2', '[3,7,8,9,10,11,12,13,14,22]', '1', '0', '0');
