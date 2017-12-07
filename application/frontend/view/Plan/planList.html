@@ -9,145 +9,135 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
 </head>
 
 <body class=whitebg>
-<div class="mui-content">
+    <div class="mui-content">
 
-    <div class="list camp-list detalis-list mt">
-        <div class="camp-lesson-list">
-            <div id="segmentedControl" class="mui-segmented-control mb">
-                <a class="mui-control-item mui-active" href="#item1">教案</a>
-                <a class="mui-control-item" href="#item2">训练项目</a>
+        <div class="list camp-list detalis-list mt">
+            <div class="camp-lesson-list">
+                <div id="segmentedControl" class="mui-segmented-control mb">
+                    <a class="mui-control-item mui-active" href="#item1">教案</a>
+                    <a class="mui-control-item" href="#item2">训练项目</a>
+                </div>
             </div>
-        </div>
-        <div class="item-list">
-            <div id="item1" class="mui-control-content mui-active">
-                <ul class="mui-table-view">
-                    <li class="mui-table-view-cell">
+            <div class="item-list">
+                <div id="item1" class="mui-control-content mui-active">
+                    <ul class="mui-table-view">
                         <div class="mui-segmented-control seg-control">
                             <a class="mui-control-item" href="#item4">平台教案</a>
                             <a class="mui-control-item mui-active" href="#item3">自定义教案</a>
                             <a class="mui-control-item" href="{:url('plan/createPlan',['camp_id'=>$camp_id])}">添加教案</a>
                         </div>
-                    </li>
-                    <div class="item-list">
-                        <div id="item3" class="mui-control-content mui-active">
-                            <ul class="mui-table-view">
-                                {volist name="planListOfCamp" id="vol"}
-                                <li class="mui-table-view-cell">
-                                    <a class="mui-navigate-right" href="{:url('plan/planInfo',['plan_id'=>$vol['id']])}">
-                                        <div class="list-cont">
-                                            <h4>{$vol.outline}</h4>
-                                            <p>{$vol.grade_category}</p>
-                                        </div>
-                                        <span class="date">查看</span>
-                                    </a>
-                                </li>
-                                {/volist}
-                            </ul>
+                        <div class="item-list">
+                            <div id="item3" class="mui-control-content mui-active">
+                                <ul class="mui-table-view">
+                                    {volist name="planListOfCamp" id="vol"}
+                                    <li class="mui-table-view-cell listli ">
+                                        <a class="mui-navigate-right" href="{:url('plan/planInfo',['plan_id'=>$vol['id']])}">
+                                            <div class="list-cont">
+                                                <h5>{$vol.outline}</h5>
+                                                <p>{$vol.grade_category}</p>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    {/volist}
+                                </ul>
+                            </div>
+                            <div id="item4" class="mui-control-contente">
+                                <ul class="mui-table-view">
+                                    {volist name="planListOfSys" id="vol"}
+                                    <li class="mui-table-view-cell">
+                                        <a class="mui-navigate-right">
+                                            <div class="list-cont">
+                                                <h4>{$vol.outline}</h4>
+                                                <p>{$vol.grade_category}</p>
+                                            </div>
+                                        </a>
+                                    </li>
+
+                                    {/volist}
+                                </ul>
+                            </div>
                         </div>
-                        <div id="item4" class="mui-control-contente">
-                            <ul class="mui-table-view">
-                                {volist name="planListOfSys" id="vol"}
-                                <li class="mui-table-view-cell">
-                                    <a class="mui-navigate-right">
-                                        <div class="list-cont">
-                                            <h4>{$vol.outline}</h4>
-                                            <p>{$vol.grade_category}</p>
-                                        </div>
-                                        <span class="date">查看</span>
-                                    </a>
-                                </li>
-                                
-                                {/volist}
-                            </ul>
-                        </div>
-                    </div>
-                </ul>
-            </div>
-            <div id="item2" class="mui-control-content mt55">
-                <ul class="mui-table-view mb">
-                    <li class="mui-table-view-cell">
+                    </ul>
+                </div>
+                <div id="item2" class="mui-control-content mt55">
+                    <ul class="mui-table-view mb">
                         <div class="mui-segmented-control seg-control">
                             <a class="mui-control-item" href="#item6">平台项目</a>
                             <a class="mui-control-item mui-active" href="#item5">自定义项目</a>
-                            <a class="mui-control-item" href="{:url('plan/createPlan',['camp_id'=>$camp_id])}">添加项目</a>
+                            <a class="mui-control-item" href="{:url('plan/createproject',['camp_id'=>$camp_id])}">添加项目</a>
                         </div>
-                    </li>
-                </ul>
-                <div class="item-list">
-                    <div id="item5" class="mui-control-content mui-active">
-                        <div class="page-header">
-                            <span class="course"><b>热身游戏</b></span>
-                        </div>
-                        <ul class="mui-table-view mb">
-                            <li class="mui-table-view-cell listli detalisli">
-                                <a class="mui-navigate-right">
+                    </ul>
+                    <div class="item-list">
+                        <div id="item5" class="mui-control-content mui-active">
+                            <div class="page-header">
+                                <span class="course"><b>热身游戏</b></span>
+                            </div>
+                            <ul class="mui-table-view mb">
+                                <li class="mui-table-view-cell listli detalisli">
+                                    <a href="{:url('plan/projectInfo')}" class="mui-navigate-right">
                                     贴报纸跑(无球,运球)
                                 </a>
-                            </li>
-                            <li class="mui-table-view-cell listli detalisli">
-                                <a class="mui-navigate-right">
+                                </li>
+                                <li class="mui-table-view-cell listli detalisli">
+                                    <a href="{:url('plan/projectInfo')}" class="mui-navigate-right">
                                     躲避报纸(橄榄球)
                                 </a>
-                            </li>
-                            <li class="mui-table-view-cell listli detalisli">
-                                <a class="mui-navigate-right">
+                                </li>
+                                <li class="mui-table-view-cell listli detalisli">
+                                    <a href="{:url('plan/projectInfo')}" class="mui-navigate-right">
                                     穿越(无球,运球)
                                 </a>
-                            </li>
-                        </ul>
-                        <div class="page-header">
-                            <span class="course"><b>传球</b></span>
-                        </div>
-                        <ul class="mui-table-view mb">
-                            <li class="mui-table-view-cell listli detalisli">
-                                <a class="mui-navigate-right">
+                                </li>
+                            </ul>
+                            <div class="page-header">
+                                <span class="course"><b>传球</b></span>
+                            </div>
+                            <ul class="mui-table-view mb">
+                                <li class="mui-table-view-cell listli detalisli">
+                                    <a href="{:url('plan/projectInfo')}" class="mui-navigate-right">
                                     摆脱防守传接球
                                 </a>
-                            </li>
-                            <li class="mui-table-view-cell listli detalisli">
-                                <a class="mui-navigate-right">
+                                </li>
+                                <li class="mui-table-view-cell listli detalisli">
+                                    <a href="{:url('plan/projectInfo')}" class="mui-navigate-right">
                                     踩呼啦圈传球
                                 </a>
-                            </li>
-                        </ul>
-                        <div class="page-header">
-                            <span class="course"><b>行进间运球</b></span>
-                        </div>
-                        <ul class="mui-table-view mb">
-                            <li class="mui-table-view-cell listli detalisli">
-                                <a class="mui-navigate-right">
+                                </li>
+                            </ul>
+                            <div class="page-header">
+                                <span class="course"><b>行进间运球</b></span>
+                            </div>
+                            <ul class="mui-table-view mb">
+                                <li class="mui-table-view-cell listli detalisli">
+                                    <a class="mui-navigate-right">
                                     手拉手运球
                                 </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div id="item6" class="mui-control-content">
-                        <ul class="mui-table-view mb">
-                            <li class="mui-table-view-cell listli detalisli">
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="item6" class="mui-control-content">
+                            <ul class="mui-table-view mb">
+                                <li class="mui-table-view-cell listli detalisli">
                                     暂无数据
-                            </li>
-                        </ul>
+                                </li>
+                            </ul>
 
+                        </div>
                     </div>
-                </div>
 
+                </div>
             </div>
         </div>
+
     </div>
 
-</div>
-
-<!--底部导航-->
-{layout name="Layout/footer"}
+    <!--底部导航-->
+    {layout name="Layout/footer"}
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script>
@@ -155,8 +145,10 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-    mui("body").on("tap","a",function(){
-        window.top.location.href=this.href;
+    mui("body").on("tap", "a", function () {
+        window.top.location.href = this.href;
     });
+
 </script>
+
 </html>

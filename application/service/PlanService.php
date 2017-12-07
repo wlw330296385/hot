@@ -70,6 +70,7 @@ class PlanService {
      */
     public function createPlan($data){
         $validate = validate('PlanVal');
+
         if($data['exercise_ids']){
             $exercise_ids = explode(',', $data['exercise_ids']);
             $data['exercise_id'] = serialize($exercise_ids);
@@ -82,7 +83,7 @@ class PlanService {
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-        
+        // dump($data);die;
         $res = $this->Plan->save($data);
         if($res === false){
             return ['msg'=>$this->Plan->getError(),'code'=>100];

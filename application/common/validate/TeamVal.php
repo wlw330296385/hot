@@ -8,7 +8,8 @@ class TeamVal extends Validate {
     protected $rule = [
         'logo' => 'require',
         // 球队名称：必填|字段值长度2-16字符|值只能是汉字、字母、数字和下划线_及破折号-|名称team表唯一|表单token
-        'name' => 'require|length:2,16|chsDash|unique:team|token',
+//        'name' => 'require|length:2,16|chsDash|unique:team|token',
+        'name' => 'require|length:2,16|chsDash|token',
         // 会员id大于0表示已注册或登录会员
         'member_id' => 'require|gt:0',
         'type' => 'require',
@@ -37,9 +38,9 @@ class TeamVal extends Validate {
         'member_id.gt' => '请先注册会员或重新登录平台',
         'type.require' => '请选择球队类型',
         'camp_id.requireIf' => '请选择所属训练营',
-        'province.require' => '请选择所属地区（省）',
-        'city.require' => '请选择所属地区（市）',
-        'area.require' => '请选择所属地区（区）',
+        'province.require' => '请选择所属地区',
+        'city.require' => '请选择所属地区',
+        'area.require' => '请选择所属地区',
         'leader_id.require' => '请选择领队',
         'avg_age.number' => '平均年龄填写数字',
         'avg_height.number' => '平均身高填写数字',
@@ -49,7 +50,9 @@ class TeamVal extends Validate {
 
     // 验证场景
     protected $scene = [
-        'add' => ['name', 'member_id', 'type', 'camp_id','province', 'city', 'leader_id', 'avg_age', 'avg_height', 'avg_weight', 'logo', 'cover'],
+        'add' => [
+            'name' => 'require|length:2,16|chsDash|unique:team|token',
+            'member_id', 'type', 'camp_id','province', 'city', 'leader_id', 'avg_age', 'avg_height', 'avg_weight', 'logo', 'cover'],
         'edit' => ['name', 'member_id', 'type', 'camp_id','province', 'city', 'leader_id', 'avg_age', 'avg_height', 'avg_weight', 'logo', 'cover']
     ];
 }

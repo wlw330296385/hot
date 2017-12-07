@@ -23,7 +23,7 @@ class TeamService {
         $model = new Team();
         // 验证数据
         $validate = validate('TeamVal');
-        if (!$validate->check($data)) {
+        if (!$validate->scene('add')->check($data)) {
            return ['code' => 100, 'msg' => $validate->getError()];
         }
         // 保存数据，成功返回自增id，失败记录错误信息
@@ -41,7 +41,9 @@ class TeamService {
         $model = new Team();
         $res = $model->where($map)->find();
         if ($res) {
+            // 详情数据数组组合需要的元素
             $result = $res->toArray();
+            $result['status_num'] = $res->getData('status');
             $result['type_num'] = $res->getData('type');
             return $result;
         } else {
@@ -72,15 +74,16 @@ class TeamService {
     }
 
     // 修改球队信息
-    public function updateTeam($data) {
+    public function updateTeam($data, $id) {
         $model = new Team();
         // 验证数据
         $validate = validate('TeamVal');
-        if (!$validate->check($data)) {
+        if (!$validate->scene('edit')->check($data)) {
             return ['code' => 100, 'msg' => $validate->getError()];
         }
         // 保存数据，区分是否修改数据。成功返回true，失败记录错误信息
-        $res = $model->update($data);
+        //$res = $model->allowField(true)->update($data);
+        $res = $model->allowField(true)->save($data, ['id' => $id]);
         if ($res || ($res === 0)) {
             return ['code' => 200, 'msg' => __lang('MSG_200')];
         } else {
