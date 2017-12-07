@@ -77,9 +77,11 @@ class Team extends Base {
     // 修改球队
     public function updateteam() {
         try {
-            $data = input('param.');
+            $data = input('post.');
+            $team_id = input('post.id');
+            $data['member_id'] = $this->memberInfo['id'];
             $teamS = new TeamService();
-            $result = $teamS->updateTeam($data);
+            $result = $teamS->updateTeam($data, $team_id);
             return json($result);
         }catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -109,6 +111,41 @@ class Team extends Base {
         try {
             $map = input('param.');
             $page = input('page', 1);
+            unset($map['page']);
+            $teamS = new TeamService();
+            $result = $teamS->getTeamList($map, $page);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 平台首页-搜索球队列表
+    public function searchteamlist() {
+        try {
+            // 整合接收参数 组合查询条件
+            $map = input('param.');
+            $page = input('page', 1);
+            // 默认查询city下所有记录
+            if (empty($map['area'])) {
+                unset($map['area']);
+            }
+            // 默认查询所有分类记录
+            if (empty($map['type'])) {
+                unset($map['type']);
+            }
+            // 关键字搜索
+            if (!empty($map['keyword'])) {
+                $keyword = $map['keyword'];
+                $map['name'] = ['like', "%$keyword%"];
+
+            }
+            unset($map['keyword']);
             unset($map['page']);
             $teamS = new TeamService();
             $result = $teamS->getTeamList($map, $page);
