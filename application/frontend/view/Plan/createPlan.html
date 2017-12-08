@@ -115,7 +115,7 @@
                 {volist name="exerciseList" id="vol"} {eq name="vol.camp_id" value="0"}
                 <ul class="mui-table-view list">
                     <li class="mui-table-view-cell mui-collapse listli detalisli">
-                        <a class="mui-navigate-right daType" href="#" data-id="{$vol.id}" data-pid="{$vol.pid}" data-exercise="{$vol.exercise}">{$vol.exercise}</a>                        {volist name="vol._data" id="v"}
+                        <a class="mui-navigate-right daType" href="#" data-id="{$vol.id}" data-pid="{$vol.pid}" data-exercise="{$vol.exercise}">{$vol.exercise}<input type="checkbox" name="checkbox-dom" data-exercise="{$vol.exercise}" class="datype" style="display: none"></a>                        {volist name="vol._data" id="v"}
                         <div class="mui-collapse-content">
                             <div class="mui-input-row mui-checkbox mui-left">
                                 <label>{$v.exercise}</label>
@@ -158,25 +158,25 @@
             mui(".mui-popover.mui-active").popover("toggle");
         })
 
-
         //训练项目选择列表确认
         $("#domConfirm").click(function () {
             $(".exercises").empty();
+            $("input[name=exercises]").empty();
             $("input[name='checkbox-dom']:checked").each(function () {
                 var str = '<p class="domData">' + $(this).attr('data-exercise') + '</p>';
                 $(".exercises").append(str);
             });
-            $("input[name='exercise_ids']").val($("input[name='checkbox-dom']:checked").map(function () {
+
+            $("input[name=exercise_ids]").val($("input[name='checkbox-dom']:checked").map(function () {
                 return $(this).val();
             }).get().join(","));
+
             $("input[name=exercises]").val($("input[name='checkbox-dom']:checked").map(function () {
                 return $(this).attr('data-exercise');
             }).get().join(","));
-            // $("input[name=exercises]").val($("input[name='checkbox-dom']:checked").parent(".daType").map(function () {
-            //     return $(this).text();
-            // }).get().join(","));
 
-            // console.log($("input[name='checkbox-dom']:checked").find(".daType").text())
+            console.log($("input[name='checkbox-dom']:checked").parent().parent().siblings(".daType").text())
+            console.log($("input[name='checkbox-dom']:checked").parent().parent().siblings(".daType").attr("data-pid"))
             mui('#exercises').popover('toggle');
         })
 
@@ -189,7 +189,6 @@
             $('input[name=grade_category_id]').val(grade_category_id)
         })
 
-
         // 是否开放
         $('input[name=is_open]').on('change', function () {
             console.log($(this).val());
@@ -200,6 +199,7 @@
             }
         })
     })
+
 
     // 获取数据并进行提交
     function submitAction() {
