@@ -54,7 +54,7 @@ class Plan extends Base{
         $gradecateService = new \app\service\GradeService;
         $gradecateList = $gradecateService->getGradeCategory();
         $ExerciseService = new \app\service\ExerciseService;
-        $exerciseList = $ExerciseService->getExerciseList();
+        $exerciseList = $ExerciseService->getExerciseList([]);
         // 训练项目
         $this->assign('exerciseList',$exerciseList);
         $this->assign('gradecateList',$gradecateList);
