@@ -79,6 +79,7 @@
                 <a href="#exercises" class="mui-navigate-right">
                     <label class="wd36">选择训练项目</label>
                     <span class="exercises"></span>
+                    <input type="hidden" name="pid" class="data" value="1">
                     <input type="hidden" name="exercises" class="data" value="">
                     <input type="hidden" name="exercise_ids" class="data" value="">
                 </a>
@@ -89,13 +90,16 @@
             </div>
 
         </form>
-        <div class="tip-box">
+        <!--<div class="tip-box">
             <input type="checkbox" value="1" name="is_open" class="data" checked style="width:16px;height:16px;">
             <label>是否对外开放</label>
-        </div>
-        <div class="tjbtn mb44">
-            <button type=button class='btn' id="submitBtn" onclick="submitAction()">提交</button>
-        </div>
+        </div>-->
+    
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" onclick="submitAction()">
+                提交
+            </li>
+        </ul>
 
     </div>
 
@@ -103,57 +107,26 @@
     <!--选择训练项目-->
     <div id="exercises" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-
         <div class="page-header">
             <span class="course wd36"><strong>训练项目</strong></span>
             <span class="fr"><button class="mui-btn-blue" id="domConfirm">确认</button></span>
         </div>
-        <div class="camp-lesson-list">
-            <div class="mui-segmented-control mb">
-                <a class="mui-control-item mui-active" href="#item1">自定义项目</a>
-                <a class="mui-control-item" href="#item2">平台项目</a>
-            </div>
-        </div>
-
-        <div id="item1" class="mui-control-content mui-active">
-            <div class="mui-scroll-wrapper">
-                <div class="mui-scroll">
-                    {volist name="exerciseList" id="vol"} {neq name="vol.camp_id" value="0"}
-                    <ul class="mui-table-view">
-                        <li class="mui-table-view-cell mui-collapse">
-                            <a class="mui-navigate-right" href="#">{$vol.exercise}</a> {volist name="vol._data" id="v"}
-                            <div class="mui-collapse-content">
-                                <div class="mui-input-row mui-checkbox mui-left">
-                                    <label>{$v.exercise}</label>
-                                    <input name="checkbox-dom" value="{$v.id}" type="checkbox" data-exercise="{$v.exercise}">
-                                </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                {volist name="exerciseList" id="vol"} {eq name="vol.camp_id" value="0"}
+                <ul class="mui-table-view list">
+                    <li class="mui-table-view-cell mui-collapse listli detalisli">
+                        <a class="mui-navigate-right" href="#">{$vol.exercise}</a> {volist name="vol._data" id="v"}
+                        <div class="mui-collapse-content">
+                            <div class="mui-input-row mui-checkbox mui-left">
+                                <label>{$v.exercise}</label>
+                                <input name="checkbox-dom" value="{$v.id}" type="checkbox" data-exercise="{$v.exercise}" data-pid="{$v.pid}">
                             </div>
-                            {/volist}
-                        </li>
-                    </ul>
-                    {/neq} {/volist}
-                </div>
-            </div>
-        </div>
-
-        <div id="item2" class="mui-control-content">
-            <div class="mui-scroll-wrapper">
-                <div class="mui-scroll">
-                    {volist name="exerciseList" id="vol"} {eq name="vol.camp_id" value="0"}
-                    <ul class="mui-table-view">
-                        <li class="mui-table-view-cell mui-collapse">
-                            <a class="mui-navigate-right" href="#">{$vol.exercise}</a> {volist name="vol._data" id="v"}
-                            <div class="mui-collapse-content">
-                                <div class="mui-input-row mui-checkbox mui-left">
-                                    <label>{$v.exercise}</label>
-                                    <input name="checkbox-dom" value="{$v.id}" type="checkbox" data-exercise="{$v.exercise}">
-                                </div>
-                            </div>
-                            {/volist}
-                        </li>
-                    </ul>
-                    {/eq} {/volist}
-                </div>
+                        </div>
+                        {/volist}
+                    </li>
+                </ul>
+                {/eq} {/volist}
             </div>
         </div>
 
@@ -200,6 +173,9 @@
             $("input[name=exercises]").val($("input[name='checkbox-dom']:checked").map(function () {
                 return $(this).attr('data-exercise');
             }).get().join(","));
+            // $("input[name=pid]").val($("input[name='checkbox-dom']:checked").map(function () {
+            //     return $(this).attr('data-pid');
+            // }).get().join(","));
             mui('#exercises').popover('toggle');
         })
 
@@ -238,7 +214,7 @@
 
         if (ajaxResult.code == 200) {
             mui.alert(ajaxResult.msg, '教案创建成功', '确定', function () {
-                var goUrl = "{:url('plan/planinfo')}" + '/plan_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
+                var goUrl = "{:url('plan/planlist')}" + '/plan_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
                 window.top.location.href = goUrl;
             })
         } else {
