@@ -1,6 +1,7 @@
 <?php
 // 球队service
 namespace app\service;
+use app\model\Apply;
 use app\model\Team;
 use app\model\TeamMember;
 use app\model\TeamMemberRole;
@@ -92,6 +93,8 @@ class TeamService {
         }
     }
 
+
+
     // 保存team_member球队-会员关系信息
     public function saveTeamMember($data, $teamMember_id=0) {
         $model = new TeamMember();
@@ -139,8 +142,14 @@ class TeamService {
     // 获取球队-队员详细
     public function getTeamMemberInfo($map) {
         $model = new TeamMember();
-        $res = $model->where($map)->find()->toArray();
-        return $res;
+        $res = $model->where($map)->find();
+        if ($res) {
+            $result = $res->toArray();
+            $result['status_num'] = $res->getData('status');
+            return $result;
+        } else {
+            return $res;
+        }
     }
 
     // 保存team_member_role 会员-球队角色关联信息
@@ -179,10 +188,47 @@ class TeamService {
         return $list;
     }
 
+    // 获取会员在球队的身份角色
     public function checkMemberTeamRole($map) {
         $model = new TeamMemberRole();
         $res = $model->where($map)
             ->where(['status' => 1])->value('type');
         return $res ? $res : 0;
     }
+
+    // 查看会员加入球队申请记录
+    public function getApplyInfo($map) {
+        $model = new Apply();
+        $res = $model->where($map)->find();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
+    // 保存加入球队申请数据
+    public function saveApply($data) {
+        $model = new Apply();
+        // 如果有带更新条件记录id就更新数据
+        if (isset($data['id'])) {
+            $res = $model->allowField(true)->save($data, ['id' => $data['id']]);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400').$model->getError()];
+            }
+        } else {
+            // 插入一条加入球队申请数据
+            $res = $model->allowField(true)->save($data);
+            if ($res) {
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
+            } else {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400').$model->getError()];
+            }
+        }
+    }
+
 }

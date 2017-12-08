@@ -46,7 +46,10 @@ class Login extends Base{
                 $result = $memberS->saveLogin($response['id']);
                 if($result){
                     $lasturl = cookie('url');
-                    if ($lasturl && $lasturl != '/frontend') { // 记录最后访问地址, 注册成功返回该页面
+                    // 从首页跳注册页进行操作 注册成功前往注册成功页
+                    $checkfromurl = strlen(strstr($lasturl, 'frontend/index'));
+                    if ($lasturl && $checkfromurl === 0 && $lasturl != '/frontend/') {
+                        // 记录最后访问地址, 注册成功返回该页面
                         $response['goto'] = $lasturl;
                         cookie('url', null);
                     } else {

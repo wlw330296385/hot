@@ -3,6 +3,7 @@
 namespace app\api\controller;
 
 
+use app\service\MessageService;
 use app\service\TeamService;
 use think\Exception;
 
@@ -158,6 +159,81 @@ class Team extends Base {
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
+    }
+
+    // 会员申请加入球队
+    public function applyjointeam() {
+        try {
+            // 检查球队信息是否有传入
+            if (!input('?post.team_id')) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'请选择球队']);
+            }
+            // 处理接收参数
+            $data = input('post.');
+            $teamS = new TeamService();
+            $teamInfo = $teamS->getTeam(['id' => $data['team_id']]);
+            if (!$teamInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404').'无此球队信息']);
+            }
+            //dump($teamInfo);
+            // 会员有没在队信息
+            $teamMemberMap = [
+                'team_id' => $teamInfo['id'],
+                'member_id' => $this->memberInfo['id'],
+                'status' => 1
+            ];
+            $teamMember = $teamS->getTeamMemberInfo($teamMemberMap);
+            if ($teamMember) {
+                return json(['code' => 100, 'msg' => '你已经是球队的成员了，无需再次加入']);
+            }
+            // 有无申请记录
+            $mapApplyinfo = [
+                'type' => 1,
+                'apply_type' => 1,
+                'organization_id' => $teamInfo['id'],
+                'member_id' => $this->memberInfo['id']
+            ];
+            $hasApply = $teamS->getApplyInfo($mapApplyinfo);
+            if ($hasApply) {
+                return json(['code' => 100, 'msg' => '你已经提交了加入申请，请等待球队处理回复']);
+            }
+            // 插入申请记录
+            $dataApply = [
+                'member_id' => $this->memberInfo['id'],
+                'member' => $this->memberInfo['member'],
+                'organization_type' => 2,
+                'organization' => $teamInfo['name'],
+                'organization_id' => $teamInfo['id'],
+                'type' => 1,
+                'apply_type' => 1,
+                'remarks' => input('post.remarks')
+            ];
+            $saveApply = $teamS->saveApply($dataApply);
+            //dump($saveApply);
+            if ($saveApply['code'] == 200) {
+                // 插入message数据
+                // 发送加入申请消息给领队
+                $messageData = [
+                    'title' => '加入球队申请',
+                    'content' => '您好，会员'.$dataApply['member'].'申请加入您的'.$teamInfo['name'],
+                    'url' => url('frontend/message/index', '', '', true),
+                    'keyword1' => (!empty($this->memberInfo['realname'])) ? $this->memberInfo['realname'] : $this->memberInfo['member'],
+                    'keyword2' => date('Y年m月d日 H:i', time()),
+                    'remark' => '点击登录平台查看更多信息，对加入申请作同意或拒绝回复'
+                ];
+                //dump($messageData);
+                $messageS = new MessageService();
+                $messageS->sendMessageToMember($teamInfo['leader_id'], $messageData, config('wxTemplateID.successJoin'));
+            }
+            return json($saveApply);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球队查看申请加入列表
+    public function applylist() {
+
     }
 
     // 我的球队列表
