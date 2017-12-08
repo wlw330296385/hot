@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>训练营教案</title>
+    <title>训练营活动列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -11,17 +11,11 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <style>
-        .set-control {
-            position: absolute;
-            top: 0;
-            z-index: 2;
-        }
-    </style>
 </head>
 
-<body class=whitebg>
-    <header class="mui-bar mui-bar-nav for-tab">
+<body>
+
+    <header id="header" class="mui-bar mui-bar-nav for-tab">
         <div class="camp-lesson-list">
             <div id="segmentedControl" class="mui-segmented-control mb">
                 <a class="mui-control-item mui-active" href="{:url('plan/planList',['camp_id'=>$camp_id])}">教案</a>
@@ -29,66 +23,192 @@
             </div>
         </div>
         <div class="mui-segmented-control seg-control whitebg">
-            <a class="mui-control-item" href="#item4">平台教案</a>
-            <a class="mui-control-item mui-active" href="#item3">自定义教案</a>
+            <a class="mui-control-item" href="#onlinePlanList">平台教案</a>
+            <a class="mui-control-item mui-active" href="#offlinePlanList">自定义教案</a>
             <a class="mui-control-item" href="{:url('plan/createPlan',['camp_id'=>$camp_id])}">添加教案</a>
         </div>
     </header>
+
     <div class="mui-content">
 
-        <div class="list camp-list detalis-list">
-
-
-            <ul class="mui-table-view">
-
-                <div class="item-list">
-                    <div id="item3" class="mui-control-content mui-active">
-                        <ul class="mui-table-view">
-                            {volist name="planListOfCamp" id="vol"}
-                            <li class="mui-table-view-cell listli ">
-                                <a class="mui-navigate-right" href="{:url('plan/planInfo',['plan_id'=>$vol['id']])}">
-                                    <div class="list-cont">
-                                        <h5>{$vol.outline}</h5>
-                                        <p>{$vol.grade_category}</p>
-                                    </div>
-                                </a>
-                            </li>
-                            {/volist}
-                        </ul>
-                    </div>
-                    <div id="item4" class="mui-control-contente">
-                        <ul class="mui-table-view">
-                            {volist name="planListOfSys" id="vol"}
-                            <li class="mui-table-view-cell">
-                                <a class="mui-navigate-right">
-                                    <div class="list-cont">
-                                        <h4>{$vol.outline}</h4>
-                                        <p>{$vol.grade_category}</p>
-                                    </div>
-                                </a>
-                            </li>
-                            {/volist}
-                        </ul>
-                    </div>
+        <div class="tab-pullRefresh">
+            <div id="onlinePlanList" class="mui-scroll-wrapper mui-control-content" style="top: 80px">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b plan0"></ul>
                 </div>
-            </ul>
-
+            </div>
+            <div id="offlinePlanList" class="mui-scroll-wrapper mui-control-content  mui-active" style="top: 80px">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b plan"></ul>
+                </div>
+            </div>
         </div>
 
     </div>
-
-    <!--底部导航-->
-    {layout name="Layout/footer"}
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/common.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
     mui("body").on("tap", "a", function () {
         window.top.location.href = this.href;
     });
+
+    $(function () {
+
+        //初始化全局变量
+        var onCount = 1;
+        var offCount = 1;
+
+        mui('#onlinePlanList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOn
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOn
+            }
+        });
+
+        mui('#offlinePlanList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOff
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOff
+            }
+        });
+
+        //下拉刷新具体业务实现（上架）
+        function pulldownRefreshOn() {
+            setTimeout(function () {
+                onCount = 1;//刷新并显示第一页
+                var page = onCount;
+                var gType = 1;//代表下拉刷新
+                toList('onlinePlanList', page, gType, 0);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（上架）
+        function pullupRefreshOn() {
+            setTimeout(function () {
+                onCount++;//翻下一页
+                var page = onCount;
+                var gType = 2;//代表上拉加载
+                toList('onlinePlanList', page, gType, 0);//具体取数据的方法
+            }, 100);
+        }
+
+        //下拉刷新具体业务实现（下架）
+        function pulldownRefreshOff() {
+            setTimeout(function () {
+                offCount = 1;//刷新并显示第一页
+                var page = offCount;
+                var gType = 1;//代表下拉刷新
+                toList('offlinePlanList', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（下架）
+        function pullupRefreshOff() {
+            setTimeout(function () {
+                offCount++;//翻下一页
+                var page = offCount;
+                var gType = 2;//代表上拉加载
+                toList('offlinePlanList', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+    })
+
+    //自定义教案
+    var toList = function (wList, page, gType, pid, is_max) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/plan/planListApi')}" + '/?page=' + page;
+        var member = "{$memberInfo.member}";
+        var member_id = "{$memberInfo.id}";
+        mui.ajax({
+            url: url,
+            data: {
+                member: member,
+                member_id: member_id,
+                pid: pid
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                var newli0 = '';
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('plan/planInfo')}" + '/plan_id/' + data.data[i].id + '/camp_id/' + "{$camp_id}";
+                        if (pid == 0) {
+                            newli0 += '<li class="mui-table-view-cell listli "><a class="mui-navigate-right" href="' + urls + '"><div class="list-cont"><h5>' + data.data[i].outline + '</h5><p>' + data.data[i].grade_category + '</p></div></a></li>';
+                        }
+                        newli += '<li class="mui-table-view-cell listli "><a class="mui-navigate-right" href="' + urls + '"><div class="list-cont"><h5>' + data.data[i].outline + '</h5><p>' + data.data[i].grade_category + '</p></div></a></li>';
+                    }
+                }
+
+                if (gType == 1) {
+                    //上拉刷新
+                    $("ul.plan0").empty().append(newli0);
+                    $("ul.plan").empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli0 == '') {
+                        $("ul.plan0").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                    if (newli == '') {
+                        $("ul.plan").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("ul.plan0").append(newli0);
+                    $("ul.plan").append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
 
 </script>
 
