@@ -365,7 +365,7 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/libs/webuploader.min.js"></script>
     <script>
-    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'event'])}";
+                                                                                                                  var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'event'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -458,7 +458,7 @@
 
             });
         })(mui, document);
-        
+
         function add_id(id) {
             window.id = id;
             console.log(window.id);
@@ -582,7 +582,7 @@
                     mui.toast('上传失败,请重试', { 'duration': 'long' });
                 } else {
                     mui.toast('上传成功', { 'duration': 'long' });
-                    var $li = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img class="desimg" src="' + responce.path + '"></div>';
+                    var $li = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img class="desimg" src="' + responce.path + '" style="padding-top:5px"></div>';
                     $(".introBox").append($li);
                 }
             });
@@ -628,7 +628,18 @@
                 $(this).parent().html(YdivValue).addClass("bgorange");
             });
 
-
+            // 图片的移动操作
+            $(document).on('tap', '.desimg', function () {
+                var bgg = $(this).parent().hasClass("bgorange");
+                if (bgg == false) {
+                    $(this).parent().addClass("bgorange")
+                    return false;
+                } else {
+                    $(document).on('tap', 'body', function () {
+                        $(".desimg").parent().removeClass("bgorange")
+                    });
+                }
+            });
 
 
             // 上移动
