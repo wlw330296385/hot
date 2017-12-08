@@ -137,6 +137,7 @@ $(function(){
         var password = $(".reg_password").val();
         var repassword = $(".reg_confirm").val();
         var smscode = $('.reg_code').val();
+        var token = $('input[name=__token__]').val();
 
         if (!$('input[name=iagree]').is(':checked')) {
             mui.toast("请阅读并同意篮球管家用户协议，谢谢");
@@ -165,10 +166,11 @@ $(function(){
 
             mui.ajax("{:url('api/login/registerApi')}", {
                 data: {
-                    'member': member,
-                    'telephone': telephone,
-                    'password': password,
-                    'repassword': repassword
+                    member: member,
+                    telephone: telephone,
+                    password: password,
+                    repassword: repassword,
+                    __token__:token
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
