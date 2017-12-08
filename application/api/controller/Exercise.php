@@ -43,4 +43,19 @@ class Exercise extends Base{
         }
     }
 
+    //获取列表带分页
+    public function getExerciseByPageApi(){
+        try{
+            $map= input('post.');
+            $result = $this->ExerciseService->getExerciseListByPage($map);
+            if($result){
+                return json(['data'=>$result,'code'=>200,'msg'=>'OK']);
+            }else{
+                return json(['code'=>100,'msg'=>'未获取到数据']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
 }

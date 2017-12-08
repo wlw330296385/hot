@@ -152,10 +152,13 @@ class Student extends Base
 
 	// 编辑学生资料
 	public function updateStudent(){
-		$student_id = input('student_id');
+		$student_id = input('param.student_id');
 		$studentInfo = $this->studentService->getStudentInfo(['id'=>$student_id]);
 		if(!$studentInfo){
-			$studentInfo = [];
+			$this->error('找不到该学生数据');
+		}
+		if($studentInfo['member_id']<>$this->memberInfo['id']){
+			$this->error('您没有权限编辑学生资料');
 		}
 		$this->assign('studentInfo',$studentInfo);
 		return view('Student/updateStudent');

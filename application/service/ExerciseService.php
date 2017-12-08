@@ -68,6 +68,9 @@ class ExerciseService {
         }
     }
 
+    public function getExerciseListByPage(){
+        
+    }
 
     // 获取训练营下的训练项目
     public function getExerciseListOfCamp($camp_id){

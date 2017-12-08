@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>学员个人档案</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body class=whitebg>
+<header id="header" class="mui-bar mui-bar-nav subheader">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <h1 class="mui-title">学生档案</h1>
+</header>
+<div class="mui-content">
+
+    <div class="list camp-list camp-lesson-list detalis-list coach">
+        <div class="page-header">
+            <span class="course"><b>学员信息</b></span>
+        </div>
+         <form action="" class="mui-input-group" style="overflow: hidden;">
+            <div class="mui-input-row">
+                <label>学生姓名</label>
+                <input type="text" name="email" class="reg_email" data-id="{$studentInfo.id}" placeholder="{$studentInfo['student']}" required
+                    pattern="/^(\u4E00-\u9FA5)+/" disabled="disabled">
+            </div>
+            <span class="tipspan email_hint email_hint"></span>
+            <div class="mui-input-row">
+                <label>性别</label>
+                <select>
+                    <option value='{$studentInfo.student_sex}' selected="selected" >
+                        {if $studentInfo['student_sex'] == 1}男{else /}女{/if}
+                    </option>
+                    <option  value="{if $studentInfo['student_sex'] == 1}0{else /}1{/if}">
+                        {if $studentInfo['student_sex'] == 1}女{else /}男{/if}
+                    </option>
+                </select>
+                
+            </div>
+            <span class="tipspan email_hint email_hint"></span>
+        </form>
+            <li class="mui-table-view-cell listli detalisli">学员ID<span>{$studentInfo.id}</span></li>
+            <li class="mui-table-view-cell listli detalisli">姓名<span>{$studentInfo.student}</span></li>
+            <li class="mui-table-view-cell listli detalisli">性别<span><i class="icon iconfont icon-sex{$studentInfo.student_sex}"></i></span></li>
+            <li class="mui-table-view-cell listli detalisli">身高<span>{$studentInfo.student_height}cm</span></li>
+            <li class="mui-table-view-cell listli detalisli">体重<span>{$studentInfo.student_weight}kg</span></li>
+            <li class="mui-table-view-cell listli detalisli">性格特征<span>{$studentInfo.student_charater}</span></li>
+            <li class="mui-table-view-cell listli detalisli">出生日期<span>{$studentInfo.student_birthday}</span></li>
+            <li class="mui-table-view-cell listli detalisli">所属地区<span>{$studentInfo.student_province} {$studentInfo.student_city} {$studentInfo.student_area}</span></li>
+            <li class="mui-table-view-cell listli detalisli">所属学校<span>{$studentInfo.school}</span></li>
+            <li class="mui-table-view-cell listli detalisli">所属训练营<span class="wd52">训练营1,训练营2</span></li>
+            <li class="mui-table-view-cell listli detalisli">注册日期<span>{$studentInfo.create_time}</span></li>
+        <div class="page-header">
+            <span class="course"><b>安全设置</b></span>
+        </div>
+        <ul class="mui-table-view archives public-list">
+            <li class="mui-table-view-cell listli detalisli">监护人<span>{$studentInfo.parent}</span></li>
+            <li class="mui-table-view-cell listli detalisli">手机绑定<span>{$studentInfo.mobile}</span></li>
+            <li class="mui-table-view-cell listli detalisli">微信绑定<span>未绑定</span></li>
+            <li class="mui-table-view-cell listli detalisli">登录密码<span>设置</span></li>
+            <li class="mui-table-view-cell listli detalisli">紧急电话<span>{$studentInfo.emergency_telephone}</span></li>
+            <!-- <li class="mui-table-view-cell listli detalisli">电子邮箱<span>31351315@qq.com</span></li> -->
+        </ul>
+    </div>
+
+</div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+</script>
+</html>
