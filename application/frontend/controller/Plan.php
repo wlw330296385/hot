@@ -27,7 +27,7 @@ class Plan extends Base{
         $ids = '';
         if($planInfo['exercise_id']){
             $ExerciseService = new \app\service\ExerciseService;
-            $exerciseList = $ExerciseService->getExerciseList();
+            $exerciseList = $ExerciseService->getExerciseList([]);
             $pids = db('exercise')->where(['id'=>['in',$planInfo['exercise_id']]])->column('pid');
             $arrIds = unserialize($planInfo['exercise_id']);
             $ids = array_merge($arrIds,$pids);
