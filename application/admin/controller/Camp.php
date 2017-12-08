@@ -12,6 +12,9 @@ use app\model\Member as MemberModel;
 use app\service\CampService;
 
 class Camp extends Backend {
+    public function _initialize(){
+        parent::_initialize();
+    }
     // 训练营列表
     public function index() {
         $list = CampModel::order('id desc')->paginate(15)->each(function($item, $key){

@@ -117,11 +117,12 @@ class AdminGroup extends Model {
             $menu_auth = self::where('id', session('admin.group_id'))->value('menu_auth');
             $menu_auth = json_decode($menu_auth, true);
             $menu_auth = MenuModel::where('id', 'in', $menu_auth)->column('id,url_value');
+               
         }
         // 非开发模式，缓存数据
-        if (config('develop_mode') == 0) {
-            cache('group_id_menu_auth_'.session('admin.group_id'), $menu_auth);
-        }
+            if (config('develop_mode') == 0) { 
+                cache('group_id_menu_auth_'.session('admin.group_id'), $menu_auth);
+            }
 
         return $menu_auth;
     }

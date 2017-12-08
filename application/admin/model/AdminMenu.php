@@ -98,15 +98,15 @@ class AdminMenu extends Model {
             }
             $menus = self::where($map)->order('sort,id')->column('id,pid,module,title,url_value,url_type,url_target,icon');
             // 解析模块链接
-            foreach ($menus as $key => &$menu) {
-                // 没有访问权限的节点不显示
-                if (!AdminGroup::checkAuth($menu['id'])) {
-                    unset($menus[$key]);
-                    continue;
+            if(config('develop_mode') == 0){
+                foreach ($menus as $key => &$menu) {
+                    // 没有访问权限的节点不显示
+                    if (!AdminGroup::checkAuth($menu['id'])) {
+                        unset($menus[$key]);
+                        continue;
+                    }
                 }
-                
             }
-
             $menus = self::toLayer($menus);
 
             // 非开发模式，缓存菜单

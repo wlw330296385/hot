@@ -23,11 +23,12 @@ class Backend extends Base {
             $this->admin = session('admin');
         }
 
-        //存储权限节点
-        $this->AuthService->adminGroup();
-
-        //检查权限
-        if (!$this->AuthService->checkAuth()) $this->error('权限不足！');
+        if(config('develop_mode') == 0){
+            //存储权限节点
+            $this->AuthService->adminGroup();
+            //检查权限
+            if (!$this->AuthService->checkAuth()) $this->error('权限不足！');
+        }
         // 获取侧边栏菜单
         $sidebar_menu = MenuModel::getSidebarMenu();
         $this->assign('_sidebar_menus', $sidebar_menu);
@@ -35,7 +36,6 @@ class Backend extends Base {
         // 获取面包屑导航
         $_location =  MenuModel::getLocation('', true);
         $this->assign('_location',$_location);
-        // dump($_location);die;
     }
 
 }

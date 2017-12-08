@@ -44,7 +44,7 @@ class Exercise extends Base{
     }
 
     //获取列表带分页
-    public function getExerciseByPageApi(){
+    public function getExerciseListByPageApi(){
         try{
             $map= input('post.');
             $result = $this->ExerciseService->getExerciseListByPage($map);
