@@ -59,7 +59,7 @@ class ExerciseService {
     }
 
     public function getExerciseList($map){
-        $res = Exercise::all($map);
+        $res = Exercise::where($map)->select();
         if(!$res){
             return $res;
         }else{
