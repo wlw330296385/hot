@@ -12,7 +12,7 @@ class Exercise extends Base{
 
 
     // 获取列表
-    public function exerciseListApi(){
+    public function getExerciseListApi(){
         try{
             $map= input('post.');
             $result = $this->ExerciseService->getExerciseList($map);

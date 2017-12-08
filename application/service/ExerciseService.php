@@ -58,8 +58,8 @@ class ExerciseService {
         }
     }
 
-    public function getExerciseList($p = 1){
-        $res = Exercise::all();
+    public function getExerciseList($map){
+        $res = Exercise::all($map);
         if(!$res){
             return $res;
         }else{
@@ -68,8 +68,14 @@ class ExerciseService {
         }
     }
 
-    public function getExerciseListByPage(){
-        
+    public function getExerciseListByPage($map,$pagigate = 10){
+        $result = $this->exerciseModel->where($map)->pagigate($pagigate);
+        if($result){
+            $res = $result->toArray();
+            return $this->getExerciseTree($res);
+        }
+
+        return $result;
     }
 
     // 获取训练营下的训练项目
