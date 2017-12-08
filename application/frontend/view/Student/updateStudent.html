@@ -15,6 +15,9 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+        <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
 </head>
 
 <body class=whitebg>
@@ -31,11 +34,13 @@
          <form action="" class="mui-input-group" style="overflow: hidden;">
             <div class="mui-input-row">
                 <label>学生姓名</label>
-                <input type="text" name="email" class="reg_email" data-id="{$studentInfo.id}" placeholder="{$studentInfo['student']}" required
+                <input type="text" name="email" class="data" data-id="{$studentInfo.id}" placeholder="{$studentInfo['student']}" required
                     pattern="/^(\u4E00-\u9FA5)+/" disabled="disabled">
             </div>
             <div class="mui-input-row">
-                <label>性别</label>
+                <div class="mui-navigate-right">
+                        <label>性别</label>
+                        <span class="select-row">
                 <select>
                     <option value='{$studentInfo.student_sex}' selected="selected" >
                         <!-- <span><i class="icon iconfont icon-sex{$studentInfo.student_sex}"></i></span> -->
@@ -45,62 +50,130 @@
                         {if $studentInfo['student_sex'] == 1}女{else /}男{/if}
                     </option>
                 </select>
+            </span>
+        </div>
             </div>
             <div class="mui-input-row">
                 <label>身高</label>
-                <input type="number" name="student_height"  class="data" data-id="{$studentInfo.student_height}" placeholder="{$studentInfo['student_height']}">
+                <input type="number" name="student_height"  class="data" data-id="{$studentInfo.student_height}" value="{$studentInfo['student_height']}" placeholder="{$studentInfo['student_height']}">
             </div>
             <div class="mui-input-row">
                 <label>体重</label>
-                <input type="text" name="student_weight" class="data"  placeholder="{$studentInfo['student_weight']}" >
+                <input type="text" name="student_weight" class="data"  placeholder="{$studentInfo['student_weight']}" value="{$studentInfo['student_weight']}" >
             </div>
             <div class="mui-input-row">
                 <label>鞋码</label>
-                <input type="text" name="student_shoe_code" class="data" placeholder="{$studentInfo['student']}" value="{$studentInfo.student_shoe_code}">
+                <input type="text" name="student_shoe_code" class="data" placeholder="{$studentInfo['student_shoe_code']}" value="{$studentInfo.student_shoe_code}">
             </div>
             <div class="mui-input-row">
                 <label>喜欢的颜色</label>
-                <input type="text" name="email" class="data" data-id="{$studentInfo.id}" value="{$studentInfo['student']}">
+                <input type="text" name="color" class="data" data-color="{$studentInfo.color}" placeholder="{$studentInfo['color']}" value="{$studentInfo['color']}">
             </div>
             <div class="mui-input-row">
                 <label>性格特征</label>
-                <input type="text" name="email" class="reg_email" data-id="{$studentInfo.id}" placeholder="{$studentInfo['student']}" required
-                    pattern="/^(\u4E00-\u9FA5)+/" disabled="disabled">
+                <input type="text" name="student_charater" class="data" data-student_charater="{$studentInfo.student_charater}" placeholder="{$studentInfo['student_charater']}" >
             </div>
-            <div class="mui-input-row">
-                <label>出生日期</label>
-                <input type="text" name="email" class="reg_email" data-id="{$studentInfo.id}" placeholder="{$studentInfo['student']}" required
-                    pattern="/^(\u4E00-\u9FA5)+/" disabled="disabled">
+            <div class="mui-input-row picker btnEnd" id="demo3" data-options='{"beginYear":2017,"endYear":2050,"type":"date"}'>
+                <div class="mui-navigate-right">
+                    <label>出生日期</label>
+                    <span id="resultEnd" class="ui-alert domData" name="student_birthday"></span>
+                </div>
             </div>
-            <div class="mui-input-row">
-                <label>所属地区</label>
-                <input type="text" name="email" class="reg_email" data-id="{$studentInfo.id}" placeholder="{$studentInfo['student']}" required
-                    pattern="/^(\u4E00-\u9FA5)+/" disabled="disabled">
+            <div class="mui-input-row" id='showCityPicker3'>
+                <div class="mui-navigate-right">
+                    <label>所属地区</label>
+                    <span id="cityResult3" class="ui-alert domData" name="address">{$studentInfo.student_province} {$studentInfo.student_province} {$studentInfo.student_province}</span>
+                </div>
             </div>
             <div class="mui-input-row">
                 <label>所属学校</label>
-                <input type="text" name="email" class="reg_email" data-id="{$studentInfo.id}" placeholder="{$studentInfo['student']}" required
-                    pattern="/^(\u4E00-\u9FA5)+/" disabled="disabled">
+                <input type="text" name="school" class="data" data-school="{$studentInfo.school}" placeholder="{$studentInfo['school']}"  value="{$studentInfo['school']}">
             </div>
-
+            <div class="page-header">
+                    <span class="course"><b>安全设置</b></span>
+            </div>
+            <div class="mui-input-row">
+                <label>监护人</label>
+                <input type="text" name="parent" class="data" data-school="{$studentInfo.parent}" placeholder="{$studentInfo['parent']}"  value="{$studentInfo['parent']}">
+            </div>
+            <div class="mui-input-row">
+                <label>紧急电话</label>
+                <input type="number" name="emergency_telephone" class="data" data-school="{$studentInfo.emergency_telephone}" placeholder="{$studentInfo['emergency_telephone']}"  value="{$studentInfo['emergency_telephone']}">
+            </div>
         </form>
-        <div class="page-header">
-            <span class="course"><b>安全设置</b></span>
-        </div>
-        <ul class="mui-table-view archives public-list">
-            <li class="mui-table-view-cell listli detalisli">监护人<span>{$studentInfo.parent}</span></li>
-            <li class="mui-table-view-cell listli detalisli">紧急电话<span>{$studentInfo.emergency_telephone}</span></li>
-            <!-- <li class="mui-table-view-cell listli detalisli">电子邮箱<span>31351315@qq.com</span></li> -->
-        </ul>
+            <button class="mui-btn mui-btn-green  mui-btn-block" href="{:url('frontend/student/updateStudent',['student_id'=>$studentInfo['id']])}" >提交</button>
     </div>
 
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!-- 选择器 -->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
+
+<script src="/static/frontend/js/wooApi.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+
+
+    //选择器
+    var getProvince = '';
+    var getCity = '';
+    var getArea = '';
+    (function ($, doc) {
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+
+            ///级联示例
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
+            });
+
+            // 设置默认值
+            cityPicker3.pickers[0].setSelectedIndex(18);
+            cityPicker3.pickers[1].setSelectedIndex(2);
+            cityPicker3.pickers[2].setSelectedIndex(2);
+
+            cityPicker3.setData(cityData3);
+            var showCityPickerButton = doc.getElementById('showCityPicker3');
+            var cityResult3 = doc.getElementById('cityResult3');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                    getProvince = _getParam(items[0], 'text');
+                    getCity = _getParam(items[1], 'text');
+                    getArea = _getParam(items[2], 'text');
+                });
+            }, false);
+
+            //出生日期
+            var resultEnd = $('#resultEnd')[0];
+            var btnEnd = $('.btnEnd');
+            btnEnd.each(function (i, btn) {
+                btn.addEventListener('tap', function () {
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var id = this.getAttribute('id');
+                    var picker = new $.DtPicker(options);
+
+                    picker.show(function (rs) {
+                        resultEnd.innerText = rs.text;
+                        picker.dispose();
+                    });
+                }, false);
+            });
+
+        });
+    })(mui, document);
 </script>
 </html>

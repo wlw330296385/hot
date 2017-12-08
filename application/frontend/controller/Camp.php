@@ -26,8 +26,10 @@ class Camp extends Base{
         $member_id = $this->memberInfo['id'];
         $messageList = db('message')->page(1,10)->select();
         $CampMember = new \app\model\CampMember; 
-        $campList = $CampMember->where(['member_id'=>$member_id,'status'=>1])->select();
-        
+        $campList = $CampMember::with('camp')->where(['member_id'=>$member_id,'status'=>1])->select();
+        if($campList){
+            $campList = $campList->toArray();
+        }
         $this->assign('campList',$campList);
         $this->assign('messageList',$messageList);
         return view('Camp/index');

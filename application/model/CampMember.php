@@ -25,7 +25,9 @@ class CampMember extends Model {
         return $status[$value];
     }
 
-
+    public function camp(){
+        return $this->hasOne('camp','id','camp_id',[],'LEFT');
+    }
 
     public function coach(){
         return $this->hasOne('coach','member_id','member_id',[],'LEFT');

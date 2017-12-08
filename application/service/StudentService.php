@@ -33,6 +33,12 @@ class StudentService{
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
+        if($data['adress']){
+            $res = explode(' ', $data['adress']);
+            $data['student_province'] = $res[0];
+            $data['student_city'] = $res[1];
+            $data['student_area'] = isset($res[2])?$res[2]:$res[1];
+        }
 		$result = $this->studentModel->data($data)->save();
 		if($result){
 			return ['code'=>200,'msg'=>'ok','data'=>$result];
@@ -42,9 +48,15 @@ class StudentService{
 	}
 
 	public function updateStudent($data,$id){
-		$validate = validate('CampVal');
-        if(!$validate->scene('edit')->check($StudentVal)){
+		$validate = validate('StudentVal');
+        if(!$validate->scene('edit')->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
+        }
+        if($data['adress']){
+            $res = explode(' ', $data['adress']);
+            $data['student_province'] = $res[0];
+            $data['student_city'] = $res[1];
+            $data['student_area'] = isset($res[2])?$res[2]:$res[1];
         }
 		$result = $this->studentModel->save($data,['id'=>$id]);
 		if($result){
