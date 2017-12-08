@@ -341,4 +341,56 @@ class MessageService
             return 0;
         }
     }
+
+    /** 发送站内信息和模板消息给一个会员 2017-12-8
+     * @param $member_id 接收信息的会员id
+     * @param $data 消息内容
+     * $data = ['title' 'content', 'url', 'keyword1', 'keyword2', 'keyword3', 'remark']
+     * @param $template_id 公众号模板消息id 应用config config('wxTemplateID.')
+     * @return array
+     */
+    public function sendMessageToMember($member_id, $data=[], $template_id) {
+        if (!$member_id) {
+            return ['code' => 100, 'msg' => __lang('MSG_402')];
+        }
+        $wechatS = new WechatService();
+        $memberopenid = getMemberOpenid($member_id);
+        $sendTemplateData = [
+            'touser' => $memberopenid,
+            'template_id' => $template_id,
+            'url' => $data['url'].'/openid/'.$memberopenid,
+            'data' => [
+                'first' => ['value' => $data['content']],
+                'keyword1' => ['value' => $data['keyword1']],
+                'keyword2' => ['value' => $data['keyword2']],
+                'remark' => ['value' => $data['remark']]
+            ]
+        ];
+        if (isset($data['keyword3'])) {
+            $sendTemplateData['data']['keyword3'] = [ 'value' => $data['keyword3'] ];
+        }
+        $sendTemplateResult = $wechatS->sendTemplate($sendTemplateData);
+        $log_sendTemplateData = [
+            'wxopenid' => $sendTemplateData['touser'],
+            'member_id' => $member_id,
+            'url' => $sendTemplateData['url'],
+            'content' => serialize($sendTemplateData),
+            'create_time' => time()
+        ];
+        if ($sendTemplateResult) {
+            $log_sendTemplateData['status'] = 1;
+        } else {
+            $log_sendTemplateData['status'] = 0;
+        }
+        db('log_sendtemplatemsg')->insert($log_sendTemplateData);
+
+        db('message_member')->insert([
+            'title' => $data['title'],
+            'content' => $data['content'],
+            'url' => $sendTemplateData['url'],
+            'member_id' => $member_id,
+            'create_time' => time(),
+            'status' => 1
+        ]);
+    }
 }
