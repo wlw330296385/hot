@@ -135,7 +135,7 @@
                 offCount = 1;//刷新并显示第一页
                 var page = offCount;
                 var gType = 1;//代表下拉刷新
-                toList('offlineExerciseList', page, gType, 2);//具体取数据的方法
+                toList('offlineExerciseList', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -145,7 +145,7 @@
                 offCount++;//翻下一页
                 var page = offCount;
                 var gType = 2;//代表上拉加载
-                toList('offlineExerciseList', page, gType, 2);//具体取数据的方法
+                toList('offlineExerciseList', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -154,7 +154,7 @@
     //自定义教案
     var toList = function (wList, page, gType, status) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/exercise/exerciseListApi')}" + '/?page=' + page;
+        var url = "{:url('api/exercise/getExerciseListByPage')}" + '/?page=' + page;
         var member = "{$memberInfo.member}";
         var member_id = "{$memberInfo.id}";
         mui.ajax({
