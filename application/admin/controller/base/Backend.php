@@ -22,20 +22,23 @@ class Backend extends Base {
         }else{
             $this->admin = session('admin');
         }
-
         if(config('develop_mode') == 0){
             //存储权限节点
             $this->AuthService->adminGroup();
             //检查权限
             if (!$this->AuthService->checkAuth()) $this->error('权限不足！');
+            // 获取面包屑导航
+            $_location =  MenuModel::getLocation('', true);
+            $this->assign('_location',$_location);
+        }else{
+            // echo 1;die;
+            $this->assign('_location',[0=>['title'=>'开发者模式'],1=>['title'=>'不验证权限']]);
         }
         // 获取侧边栏菜单
         $sidebar_menu = MenuModel::getSidebarMenu();
         $this->assign('_sidebar_menus', $sidebar_menu);
         // dump($sidebar_menu);die;
-        // 获取面包屑导航
-        $_location =  MenuModel::getLocation('', true);
-        $this->assign('_location',$_location);
+        
     }
 
 }
