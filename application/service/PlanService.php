@@ -39,15 +39,6 @@ class PlanService {
      */
     public function updatePlan($data,$id) {
         $validate = validate('PlanVal');
-        if($data['exercise_ids']){
-            $exercise_ids = explode(',', $data['exercise_ids']);
-            $data['exercise_id'] = serialize($exercise_ids);
-        }
-
-        if($data['exercises']){
-            $exercises = explode(',', $data['exercises']);
-            $data['exercise'] = serialize($exercises);
-        }
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
@@ -70,16 +61,6 @@ class PlanService {
      */
     public function createPlan($data){
         $validate = validate('PlanVal');
-
-        if($data['exercise_ids']){
-            $exercise_ids = explode(',', $data['exercise_ids']);
-            $data['exercise_id'] = serialize($exercise_ids);
-        }
-
-        if($data['exercises']){
-            $exercises = explode(',', $data['exercises']);
-            $data['exercise'] = serialize($exercises);
-        }
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
@@ -96,17 +77,6 @@ class PlanService {
         $result = $this->Plan->where($map)->find();
         if($result){
             $res = $result->toArray();
-            if($res['exercise_id']){
-                $res['exercise_ids'] = implode(',', unserialize($res['exercise_id']));
-                
-            }else{
-                $res['exercise_ids'] = [];
-            }
-            if($res['exercise']){
-                $res['exercises'] = implode(',', unserialize($res['exercise']));
-            }else{
-                $res['exercises'] = [];
-            }
             return $res;
         }else{
             return $result;
