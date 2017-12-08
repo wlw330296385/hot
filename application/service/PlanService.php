@@ -99,9 +99,13 @@ class PlanService {
             if($res['exercise_id']){
                 $res['exercise_ids'] = implode(',', unserialize($res['exercise_id']));
                 
+            }else{
+                $res['exercise_ids'] = [];
             }
             if($res['exercise']){
                 $res['exercises'] = implode(',', unserialize($res['exercise']));
+            }else{
+                $res['exercises'] = [];
             }
             return $res;
         }else{

@@ -10,7 +10,7 @@ class PlanVal extends Validate{
         'member_id'    => 'require',
         'camp' =>  'require',
         'outline' => 'require',
-        'exercise'=>'require',
+        // 'exercise'=>'require',
     ];
     
     protected $message = [
@@ -19,12 +19,12 @@ class PlanVal extends Validate{
         'member'  => 'require',
         'camp' =>  '训练营必须',
         'outline' => 'outline必须',
-        'exercise'=>' exercise必须',
+        // 'exercise'=>' exercise必须',
     ];
     
     protected $scene = [
-        'add'   =>  ['member','camp','member_id','outline','camp_id','exercise'],
-        'edit'  =>  ['member','camp','member_id','outline','camp_id','exercise'],
+        'add'   =>  ['member','camp','member_id','outline','camp_id',],
+        'edit'  =>  ['member','camp','member_id','outline','camp_id',],
     ];    
 
 }
