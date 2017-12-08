@@ -68,11 +68,12 @@ class ExerciseService {
         }
     }
 
-    public function getExerciseListByPage($map,$pagigate = 10){
-        $result = $this->exerciseModel->where($map)->pagigate($pagigate);
+    public function getExerciseListByPage($map,$paginate = 10){
+        $result = $this->exerciseModel->where($map)->paginate($paginate);
         if($result){
             $res = $result->toArray();
-            return $this->getExerciseTree($res);
+             $res['data'] = $this->getExerciseTree($res['data']);
+             return $res;
         }
 
         return $result;
