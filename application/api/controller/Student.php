@@ -82,6 +82,8 @@ class Student extends Base
         try {
             $data = input('post.');
             $student_id = input('param.student_id');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
             $result = $this->studentService->updateStudent($data, $student_id);
             return json($result);
         } catch (Exception $e) {

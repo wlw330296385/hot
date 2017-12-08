@@ -101,7 +101,7 @@
                 <input type="number" name="emergency_telephone" class="data" data-school="{$studentInfo.emergency_telephone}" placeholder="{$studentInfo['emergency_telephone']}"  value="{$studentInfo['emergency_telephone']}">
             </div>
         </form>
-            <button class="mui-btn mui-btn-green  mui-btn-block" href="{:url('frontend/student/updateStudent',['student_id'=>$studentInfo['id']])}" >提交</button>
+            <button class="mui-btn mui-btn-green  mui-btn-block" onclick="updateStudent()">提交</button>
     </div>
 
 </div>
@@ -120,7 +120,25 @@
         swipeBack: true //启用右滑关闭功能
     });
 
-
+    function updateStudent(){
+        var url = "{:url('api/student/updateStudentApi',['student_id'=>$studentInfo['id']])}";
+        var data1 = wooApi.getInputData('input','data');
+        var data2 = wooApi.getInputData('select','data',data1);
+        var arrData = wooApi.getDomData('domData', data2);
+        var objData = wooApi.arrTOobj(arrData);
+        console.log(objData);
+         var ajaxResult = wooApi.asyncF(url, objData);
+        if (ajaxResult.code) {
+            if (ajaxResult.code === 200) {
+                //console.log(ajaxResult);
+                mui.alert('', ajaxResult.msg, '确定', function () {
+                    location.reload();
+                });
+            } else {
+                mui.alert(ajaxResult.msg, '失败');
+            }
+        }
+    }
 
     //选择器
     var getProvince = '';
