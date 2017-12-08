@@ -77,7 +77,7 @@ class Plan extends Base{
         $gradecateService = new \app\service\GradeService;
         $gradecateList = $gradecateService->getGradeCategory();
         $exerciseService = new \app\service\ExerciseService;
-        $exerciseList = $exerciseService->getExerciseList();
+        $exerciseList = $exerciseService->getExerciseList([]);
         // dump($exerciseList);die;
         // 训练营信息
         $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
