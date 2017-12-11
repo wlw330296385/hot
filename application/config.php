@@ -23,6 +23,23 @@ return [
     'key'   =>'93a793a3b611f19008432d0032251f34',//注：key为商户平台设置的密钥key
     'sslcert_path'=>'',
     'sslkey_path'=>'',
+
+    // 模板消息
+    'wxTemplateID' => [
+        'successBill' => 'oB1u_CWLR0h9HE4CpszWjFE-9dFAQ89aufv7C1y-NyU',//支付成功
+        'successJoin' => 'aOTMBdZbOKo8fFEKS5HWNaw9Gu-2c8ASTOcXlL6129Q',//申请加入
+        'successQiut' => 'ZeiTfOWQG2lPbLqZ6zj0Y8_UePEqB4htq9r1PEfTCUQ',//成员退出
+        'successRefund' => 'MHLQONFLdMBSEGQS2AW06V3sFV5zEXQYq_iqbPJpAgQ',//申请退款成功
+        'successCheck' => 'xohb4WrWcaDosmQWQL27-l-zNgnMc03hpPORPjVjS88',//审核通过
+        'errorCheck' => '   z03wxEVbhiEnXChfnBKEYhpYpCvIMLEPq0912RGgrQg',//未通过认证
+        'sendSchedule' => '_ld4qtOLJA1vl-oh0FxCliMK1tbGD0nOTq7Z4OmeFCE', //发送课时通知
+        'checkPend' => 'eq30-P4InOr-gndRqTdK8xAgpsMWdh3BWO1AArdxoeI',
+        'eventJoin' =>'rgF4hfyPKVxeP9HSOSbmzf7iqITPB_Bo5UgGyc9j36s',//付费活动报名成功
+        'eventBook' =>'RvMcKdoOyu5RRlT7ucXtAgF5-dOA-n3Gd61eho4k4lw',//免费活动报名成功通知
+        'lessonBook'=>'G1EeDZ-4CS7MUTND_sEPKAzbZElqRygKzbftYfvGYF8',//预约体验成功,
+        'applyResult' => 'fIaJMxa6cpenLyViHq10WiFkz2Wd_ANs3H1SV0PXDMk', //申请结果通知
+    ],
+
     // 七牛云
     //accessKey
     'qn_accesskey' => 'OOzGcbsIECVSx8uNY7d6iy8z8j60LruYL88dCGj8',
@@ -38,21 +55,8 @@ return [
     'sms_secret' => '9b3c9e8899a7484890ab1c100a8fca82',
 
 
-
-    // 模板消息
-    'wxTemplateID' => [
-        'successBill' => 'oB1u_CWLR0h9HE4CpszWjFE-9dFAQ89aufv7C1y-NyU',//支付成功
-        'successJoin' => 'aOTMBdZbOKo8fFEKS5HWNaw9Gu-2c8ASTOcXlL6129Q',//申请加入
-        'successQiut' => 'ZeiTfOWQG2lPbLqZ6zj0Y8_UePEqB4htq9r1PEfTCUQ',//成员退出
-        'successRefund' => 'MHLQONFLdMBSEGQS2AW06V3sFV5zEXQYq_iqbPJpAgQ',//申请退款成功
-        'successCheck' => 'xohb4WrWcaDosmQWQL27-l-zNgnMc03hpPORPjVjS88',//审核通过
-        'errorCheck' => '   z03wxEVbhiEnXChfnBKEYhpYpCvIMLEPq0912RGgrQg',//未通过认证
-        'sendSchedule' => '_ld4qtOLJA1vl-oh0FxCliMK1tbGD0nOTq7Z4OmeFCE', //发送课时通知
-        'checkPend' => 'eq30-P4InOr-gndRqTdK8xAgpsMWdh3BWO1AArdxoeI',
-        'eventJoin' =>'rgF4hfyPKVxeP9HSOSbmzf7iqITPB_Bo5UgGyc9j36s',//付费活动报名成功
-        'eventBook' =>'RvMcKdoOyu5RRlT7ucXtAgF5-dOA-n3Gd61eho4k4lw',//免费活动报名成功通知
-        'lessonBook'=>'G1EeDZ-4CS7MUTND_sEPKAzbZElqRygKzbftYfvGYF8',//预约体验成功
-    ],
+    //开发者模式,0:非|1:真
+    'develop_mode'=> 1,
 
     // +----------------------------------------------------------------------
     // | 应用设置
@@ -283,8 +287,4 @@ return [
         'var_page'  => 'page',
         'list_rows' => 15,
     ],
-
-
-    //开发者模式,0:非|1:真
-    'develop_mode'=> 1,
 ];

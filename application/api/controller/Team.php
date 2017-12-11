@@ -20,9 +20,9 @@ class Team extends Base {
             $data['captain_id'] = $this->memberInfo['id'];
             $data['captain'] = $this->memberInfo['member'];
             // 球队统计字段 初始值
-            $data['avg_age'] = 0;
-            $data['avg_height'] = $this->memberInfo['height'];
-            $data['avg_weight'] = $this->memberInfo['weight'];
+//            $data['avg_age'] = 0;
+//            $data['avg_height'] = $this->memberInfo['height'];
+//            $data['avg_weight'] = $this->memberInfo['weight'];
             $data['member_num'] = 1;
             //dump($data);
             // 执行创建球队
@@ -206,7 +206,7 @@ class Team extends Base {
                 'organization_id' => $teamInfo['id'],
                 'type' => 1,
                 'apply_type' => 1,
-                'remarks' => input('post.remarks')
+                'remarks' => $data['remarks']
             ];
             $saveApply = $teamS->saveApply($dataApply);
             //dump($saveApply);
@@ -231,9 +231,88 @@ class Team extends Base {
         }
     }
 
-    // 球队查看申请加入列表
-    public function applylist() {
-
+    // 回复球队申请加入
+    public function applyreply() {
+        try {
+            // 接收参数 判断正确有无传参
+            $apply_id = input('apply_id');
+            $reply = input('reply');
+            if (!$apply_id && !$reply) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'，请正确传参']);
+            }
+            if ( !in_array($reply, [2,3]) ) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'，请正确传参']);
+            }
+            // 查询apply数据
+            $teamS = new TeamService();
+            $applyInfo = $teamS->getApplyInfo(['id' => $apply_id]);
+            if (!$applyInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404').'，没有此申请记录']);
+            }
+            if ($applyInfo['status'] != 1) {
+                return json(['code' => 100, 'msg' => '此申请记录已回复结果，无需重复操作']);
+            }
+            // 查询team_member_role 判断当前会员有无操作权限
+            $checkRole = $teamS->checkMemberTeamRole($applyInfo['organization_id'], $this->memberInfo['id']);
+            if (!$checkRole) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403').'，您无法进行此操作']);
+            }
+            //dump($applyInfo);
+            // 更新apply数据，$reply=2同意，3拒绝
+            $applySaveResult = $teamS->saveApply(['id' => $applyInfo['id'], 'status' => $reply]);
+            //dump($applySave);
+            $replystr = '已拒绝';
+            if ($reply == 2) {
+                if ($applySaveResult['code'] == 200) {
+                    // 保存球队-会员信息，会员有真实姓名记录真实姓名否则记录会员名
+                    $dataTeamMember = [
+                        'team_id' => $applyInfo['organization_id'],
+                        'team' => $applyInfo['organization'],
+                        'member_id' => $applyInfo['member']['id'],
+                        'member' => (!empty($applyInfo['member']['realname'])) ? $applyInfo['member']['realname'] : $applyInfo['member']['member'],
+                        'member_sex' => $applyInfo['member']['sex'],
+                        'member_avatar' => $applyInfo['member']['avatar'],
+                        'age' => 1,
+                        'yearsexp' => $applyInfo['member']['yearsexp'],
+                        'height' => $applyInfo['member']['height'],
+                        'weight' => $applyInfo['member']['weight'],
+                        'status' => 1
+                    ];
+                    $teamS->saveTeamMember($dataTeamMember);
+                    // 获取现在球队队员的平均年龄、身高、体重
+                    $avgMap['team_id'] = $applyInfo['organization_id'];
+                    $avgMap['age'] = ['gt', 0];
+                    $avgMap['height'] = ['gt', 0];
+                    $avgMap['weight'] = ['gt', 0];
+                    $avg = db('team_member')->where($avgMap)->field('avg(age) avg_age, avg(height) avg_height, avg(weight) avg_weight')->select();
+                    // 更新team统计字段:队员数+1，更新平均年龄、身高、体重
+                    db('team')->where('id', $applyInfo['organization_id'])
+                        ->data([
+                            'avg_age' => $avg[0]['avg_age'],
+                            'avg_height' => $avg[0]['avg_height'],
+                            'avg_weight' => $avg[0]['avg_weight']
+                        ])
+                        ->inc('member_num', 1)
+                        ->update();
+                }
+                $replystr = '已通过';
+            }
+            // 发送消息模板给申请人
+            $messageData = [
+                'title' => '加入球队申请结果通知',
+                'content' => '加入球队'. $applyInfo['organization'] .'申请结果通知：'.$replystr,
+                'url' => url('frontend/message/index', '', '', true),
+                'keyword1' => '加入球队，队名：'.$applyInfo['organization'],
+                'keyword2' => $replystr,
+                'remark' => '点击登录平台查看更多信息'
+            ];
+            //dump($messageData);
+            $messageS = new MessageService();
+            $messageS->sendMessageToMember($applyInfo['member']['id'], $messageData, config('wxTemplateID.applyResult'));
+            return json($applySaveResult);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
     }
 
     // 我的球队列表

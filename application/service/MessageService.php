@@ -387,7 +387,7 @@ class MessageService
         db('message_member')->insert([
             'title' => $data['title'],
             'content' => $data['content'],
-            'url' => $sendTemplateData['url'],
+            'url' => $data['url'],
             'member_id' => $member_id,
             'create_time' => time(),
             'status' => 1
