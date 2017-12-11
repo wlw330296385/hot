@@ -154,7 +154,7 @@
     //自定义教案
     var toList = function (wList, page, gType, status) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/exercise/getExerciseListByPage')}" + '/?page=' + page;
+        var url = "{:url('api/exercise/getExerciseListByPageApi')}" + '/?page=' + page;
         var member = "{$memberInfo.member}";
         var member_id = "{$memberInfo.id}";
         mui.ajax({
@@ -168,13 +168,15 @@
             timeout: 10000,//超时时间设置为10秒；
             headers: { 'Content-Type': 'application/json' },
             success: function (data) {
+                console.log(data)
                 var newli = '';
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('Exercise/Info')}" + '/exercise_id/' + data.data[i].id ;
-                        newli += '<li class="mui-table-view-cell listli "><a class="mui-navigate-right" href="' + urls + '"><div class="list-cont"><h5>' + data.data[i].outline + '</h5><p>' + data.data[i].grade_category + '</p></div></a></li>';
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        var urls = "{:url('Exercise/Info')}" + '/exercise_id/' + data.data.data[i].id ;
+                        newli += '<li class="mui-table-view-cell listli "><a class="mui-navigate-right" href="' + urls + '"><div class="list-cont"><h5>' + data.data.data[i].exercise + '</h5><p>' + data.data.data[i].exercise_detail + '</p></div></a></li>';
                     }
                 }
+
 
                 if (gType == 1) {
                     //上拉刷新
@@ -182,7 +184,7 @@
                     mui('#' + wList).pullRefresh().endPulldownToRefresh();
                     mui('#' + wList).pullRefresh().refresh(true);
                     if (newli == '') {
-                        $("ul.exercise" + status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        $("ul.exercise2").append('<li class="nodata"><p>没有相关数据哦</p></li>');
                     }
                 } else {
                     //下拉加载 gType==2

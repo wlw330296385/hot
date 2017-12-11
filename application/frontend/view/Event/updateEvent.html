@@ -552,7 +552,7 @@
             //判断是否收费显示data
             isFree();
 
-            //添加标题
+             //添加标题
             $(".titleClass").on('tap', '', function () {
                 var title = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
                 $(".introBox").append(title);
@@ -582,7 +582,7 @@
                     mui.toast('上传失败,请重试', { 'duration': 'long' });
                 } else {
                     mui.toast('上传成功', { 'duration': 'long' });
-                    var $li = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img src="' + responce.path + '"></div>';
+                    var $li = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img class="desimg" src="' + responce.path + '" style="padding-top:5px"></div>';
                     $(".introBox").append($li);
                 }
             });
@@ -626,6 +626,20 @@
             $(document).on('tap', '.operationDiv p', function () {
                 var YdivValue = '<i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" value="' + $(this).text() + '"  class="mui-text-left text delClass textarea" placeholder="请输入正文">' + $(this).text() + '</div>';
                 $(this).parent().html(YdivValue).addClass("bgorange");
+            });
+
+
+            // 图片的移动操作
+            $(document).on('tap', '.desimg', function () {
+                var bgg = $(this).parent().hasClass("bgorange");
+                if (bgg == false) {
+                    $(this).parent().addClass("bgorange")
+                    return false;
+                } else {
+                    $(document).on('tap', 'body', function () {
+                        $(".desimg").parent().removeClass("bgorange")
+                    });
+                }
             });
 
              // 上移动

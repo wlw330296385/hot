@@ -30,6 +30,7 @@
     </style>
 </head>
 
+
 <body>
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
@@ -115,7 +116,8 @@
                 {volist name="exerciseList" id="vol"} {eq name="vol.camp_id" value="0"}
                 <ul class="mui-table-view list">
                     <li class="mui-table-view-cell mui-collapse listli detalisli">
-                        <a class="mui-navigate-right daType" href="#" data-id="{$vol.id}" data-pid="{$vol.pid}" data-exercise="{$vol.exercise}">{$vol.exercise}<input type="checkbox" name="checkbox-dom" data-exercise="{$vol.exercise}" class="datype" style="display: none"></a>                        {volist name="vol._data" id="v"}
+                        <a class="mui-navigate-right daType" href="#" data-id="{$vol.id}" data-pid="{$vol.pid}" data-Dexercise="{$vol.exercise}">{$vol.exercise}</a>{volist
+                        name="vol._data" id="v"}
                         <div class="mui-collapse-content">
                             <div class="mui-input-row mui-checkbox mui-left">
                                 <label>{$v.exercise}</label>
@@ -157,26 +159,61 @@
         $("body").on('click', '.mui-backdrop', function () {
             mui(".mui-popover.mui-active").popover("toggle");
         })
-
+        var exercise_str = '';
         //训练项目选择列表确认
         $("#domConfirm").click(function () {
             $(".exercises").empty();
-            $("input[name=exercises]").empty();
+            exercise_str = []
+
             $("input[name='checkbox-dom']:checked").each(function () {
-                var str = '<p class="domData">' + $(this).attr('data-exercise') + '</p>';
-                $(".exercises").append(str);
+                var data = '<ul class="mui-table-view list"><li class="mui-table-view-cell mui-collapse listli detalisli"><a class="mui-navigate-right" href="#" data-id="' + $(this).attr("data-id") + '" data-pid="' + $(this).attr("data-pid") + '" data-Dexercise="' + $(this).attr("data-Dexercise") + '">' + $(this).text() + '</a><div class="mui-collapse-content"><div class="mui-input-row mui-checkbox mui-left"><label></label><input name="checkbox-dom" value="' + $(this).val() + '" type="checkbox" data-exercise="' + $(this).attr("data-exercise") + ' " data-pid="' + $(this).attr("data-pid") + "></div></div></li></ul>'";
+                var data = '<p data-id="' + $(this).attr("data-id") + '" data-exercise="' + $(this).attr("data-exercise") + '"> </p>'
+                // var exercise = $(this).attr("data-exercise");
+                // var exercise_id = $(this).val();
+                // var pid = $(this).attr("data-pid");
+                // var Dexercise = $(this).parent().parent().siblings().attr("data-Dexercise");
+                // exercise_str.push({ Dexercise: Dexercise, children: [{ exercise: exercise, exercise_id: exercise_id, pid: pid }] })
+                // console.log(exercise_str)
+                // $(".exercises").append(str);
+
+                // var data = ret.data;
+                var exercise = $(this).attr("data-exercise");
+                var exercise_id = $(this).attr("data-id");
+                var exercise_str = [];
+                for (var i in data) {
+
+                    var Dexercise = {};
+                    Dexercise.sub = [];
+                    Dexercise.exercise = data[i].exercise;
+                    Dexercise.id = data[i].exercise_id;
+
+                    // var citydata = data[i].exercise;
+                    // for (var x in citydata) {
+                    //     var city = {};
+                    //     city.id = citydata[x].exercise_id;
+                    //     city.exercise = citydata[x].exercise;
+                    //     Dexercise.sub.push(city);
+                    // }
+                    exercise_str.push(Dexercise);
+                    console.log(exercise_str)
+                }
+
             });
 
-            $("input[name=exercise_ids]").val($("input[name='checkbox-dom']:checked").map(function () {
-                return $(this).val();
-            }).get().join(","));
 
-            $("input[name=exercises]").val($("input[name='checkbox-dom']:checked").map(function () {
-                return $(this).attr('data-exercise');
-            }).get().join(","));
+            // $("input[name='checkbox-dom']:checked").each(function () {
+            //     var str = '<p class="domData">' + $(this).attr('data-exercise') + '</p>';
+            //     $(".exercises").append(str);
+            // });
 
-            console.log($("input[name='checkbox-dom']:checked").parent().parent().siblings(".daType").text())
-            console.log($("input[name='checkbox-dom']:checked").parent().parent().siblings(".daType").attr("data-pid"))
+            // $("input[name=exercise_ids]").val($("input[name='checkbox-dom']:checked").map(function () {
+            //     return $(this).val();
+            // }).get().join(","));
+
+            // $("input[name=exercises]").val($("input[name='checkbox-dom']:checked").map(function () {
+            //     return $(this).attr('data-exercise');
+            // }).get().join(","));
+
             mui('#exercises').popover('toggle');
         })
 
@@ -188,6 +225,7 @@
             $('input[name=grade_category]').val(grade_category);
             $('input[name=grade_category_id]').val(grade_category_id)
         })
+
 
         // 是否开放
         $('input[name=is_open]').on('change', function () {
@@ -210,6 +248,7 @@
         var objData = wooApi.arrTOobj(arrData);
         var outline_detail = $('textarea.data').val();
         objData.outline_detail = outline_detail;
+        objData.exercise_str = JSON.stringify(exercise_str);
         var url = "{:url('api/plan/createPlanApi')}";
         var ajaxResult = wooApi.asyncF(url, objData);
 
