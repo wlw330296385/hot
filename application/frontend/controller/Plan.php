@@ -22,7 +22,7 @@ class Plan extends Base{
         // 判读权限
         $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
-        
+
         $this->assign('power',$is_power);
         $this->assign('planInfo',$planInfo);
     	return view('Plan/planInfo');
@@ -42,10 +42,6 @@ class Plan extends Base{
         // 获取适合阶段
         $gradecateService = new \app\service\GradeService;
         $gradecateList = $gradecateService->getGradeCategory();
-        $ExerciseService = new \app\service\ExerciseService;
-        $exerciseList = $ExerciseService->getExerciseList([]);
-        // 训练项目
-        $this->assign('exerciseList',$exerciseList);
         $this->assign('gradecateList',$gradecateList);
         $this->assign('planInfo',$planInfo);
 
@@ -65,14 +61,10 @@ class Plan extends Base{
         // 获取适合阶段
         $gradecateService = new \app\service\GradeService;
         $gradecateList = $gradecateService->getGradeCategory();
-        $exerciseService = new \app\service\ExerciseService;
-        $exerciseList = $exerciseService->getExerciseList([]);
-        // dump($exerciseList);die;
         // 训练营信息
         $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
 
         $this->assign('campInfo',$campInfo);
-        $this->assign('exerciseList',$exerciseList);
         $this->assign('gradecateList',$gradecateList);
         return view('Plan/createPlan');
     }
