@@ -16,7 +16,7 @@
             left: auto;
             right: 6px;
         }
-        
+
         .mui-input-row a {
             display: table;
             width: 100%;
@@ -26,7 +26,9 @@
 
 <body>
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
     </header>
     <div class="mui-content program mt">
         <form class="mui-input-group">
@@ -47,12 +49,12 @@
                         <select id="exercise">
                             <option>--请选择--</option>
                             {volist name="ExerciseType" id="vol"}
-                                <option value="{$vol.id}">{$vol.exercise}</option>
+                            <option value="{$vol.id}">{$vol.exercise}</option>
                             {/volist}
                         </select>
-                        <input type="hidden" name="exercise" value="{$ExerciseInfo.exercise}"  class="data" >
-                        <input type="hidden" name="pid" value="{$ExerciseInfo.pid}"  class="data" >
-                     </span>
+                        <input type="hidden" name="exercise" value="{$ExerciseInfo.exercise}" class="data">
+                        <input type="hidden" name="pid" value="{$ExerciseInfo.pid}" class="data">
+                    </span>
                 </a>
 
             </div>
@@ -70,13 +72,15 @@
             </div>
 
         </form>
-        <div class="tip-box">
+        <!-- <div class="tip-box">
             <input type="checkbox" value="1" name="is_open" class="data" checked style="width:16px;height:16px;">
             <label>是否对外开放</label>
-        </div>
-        <div class="tjbtn mb44">
-            <button type=button class='btn' id="submitBtn" onclick="submitAction()">提交</button>
-        </div>
+        </div> -->
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" onclick="submitAction()">
+                提交
+            </li>
+        </ul>
 
     </div>
 
@@ -142,12 +146,12 @@
         var ajaxResult = wooApi.asyncF(url, objData);
 
         if (ajaxResult.code == 200) {
-            mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
-                var goUrl = "{:url('exercise/exerciseInfo')}" + '/exercise_id/{$ExerciseInfo.id}' +  + '/camp_id/{$ExerciseInfo.camp_id}';
+            mui.alert(ajaxResult.msg, '项目修改成功', '确定', function () {
+                var goUrl = "{:url('exercise/exerciseInfo')}" + '/exercise_id/{$ExerciseInfo.id}' + + '/camp_id/{$ExerciseInfo.camp_id}';
                 window.top.location.href = goUrl;
             })
         } else {
-            mui.alert(ajaxResult.msg, '创建失败');
+            mui.alert(ajaxResult.msg, '修改失败');
             mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                 if (data.code === 200) {
                     $('input[name=__token__]').val(data.data);

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>创建教学大纲</title>
+    <title>编辑教学大纲</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -16,12 +16,12 @@
             left: auto;
             right: 6px;
         }
-        
+
         .mui-input-row a {
             display: table;
             width: 100%;
         }
-        
+
         .exercises p {
             margin: 0;
             line-height: 24px;
@@ -30,9 +30,12 @@
     </style>
 </head>
 
+
 <body>
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
     </header>
     <div class="mui-content program mt">
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
@@ -52,16 +55,16 @@
                     <label>适合阶段</label>
                     <span class="select-row">
                         <select id="gradecate">
+                            <option>--请选择--</option>
                             {volist name="gradecateList" id="vol"}
                             <optgroup label="{$vol.name}"></optgroup>
-                                {volist name="vol._data" id="v"}
-                                <option value="{$v.id}">{$v.name}</option>
-                                {/volist}
-                            {/volist}
+                            {volist name="vol._data" id="v"}
+                            <option value="{$v.id}">{$v.name}</option>
+                            {/volist} {/volist}
                         </select>
-                        <input type="hidden" name="grade_category" value=""  class="data" >
-                        <input type="hidden" name="grade_category_id" value=""  class="data" >
-                     </span>
+                        <input type="hidden" name="grade_category" value="{$planInfo.grade_category}" class="data">
+                        <input type="hidden" name="grade_category_id" value="{$planInfo.grade_category_id}" class="data">
+                    </span>
                 </a>
 
             </div>
@@ -77,10 +80,20 @@
             <div class="mui-input-row h-auto">
                 <a href="#exercises" class="mui-navigate-right">
                     <label class="wd36">选择训练项目</label>
-                    <span class="exercises">{$planInfo.exercises}</span>
-                    <input type="hidden" name="exercises" class="data" value="{$planInfo.exercises}">
-                    <input type="hidden" name="exercise_ids" class="data" value="{$planInfo.exercise_ids}">
+                    <input type="hidden" name="exercise_str" class="data" value="">
                 </a>
+                <div class="exercises">
+                    {volist name="planInfo.exercise_str" id="vo"}
+                    <ul class="mui-table-view list eType">
+                        <li class="mui-table-view-cell listli detalisli">
+                            <h5 class="daType">{$vo.exercise}</h5>
+                            {if condition="isset($vo.sub)"} {volist name="vo.sub" id="sub"}
+                            <P>{$sub.exercise}</P>
+                            {/volist} {/if}
+                        </li>
+                    </ul>
+                    {/volist}
+                </div>
             </div>
 
             <div class="mui-input-row">
@@ -88,13 +101,12 @@
             </div>
 
         </form>
-        <div class="tip-box">
-            <input type="checkbox" value="1" name="is_open" class="data" checked style="width:16px;height:16px;">
-            <label>是否对外开放</label>
-        </div>
-        <div class="tjbtn mb44">
-            <button type=button class='btn' id="submitBtn" onclick="submitAction()">提交</button>
-        </div>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" onclick="submitAction()">
+                提交
+            </li>
+        </ul>
 
     </div>
 
@@ -102,57 +114,17 @@
     <!--选择训练项目-->
     <div id="exercises" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-
         <div class="page-header">
-            <span class="course wd36"><strong>训练项目</strong></span>
-            <span class="fr"><button class="mui-btn-blue" id="domConfirm">确认</button></span>
+            <span class="course wd36">
+                <strong>训练项目</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="domConfirm">确认</button>
+            </span>
         </div>
-        <div class="camp-lesson-list">
-            <div class="mui-segmented-control mb">
-                <a class="mui-control-item mui-active" href="#item1">自定义项目</a>
-                <a class="mui-control-item" href="#item2">平台项目</a>
-            </div>
-        </div>
-
-        <div id="item1" class="mui-control-content mui-active">
-            <div class="mui-scroll-wrapper">
-                <div class="mui-scroll">
-                    {volist name="exerciseList" id="vol"} {neq name="vol.camp_id" value="0"}
-                    <ul class="mui-table-view">
-                        <li class="mui-table-view-cell mui-collapse">
-                            <a class="mui-navigate-right" href="#">{$vol.exercise}</a> {volist name="vol._data" id="v"}
-                            <div class="mui-collapse-content">
-                                <div class="mui-input-row mui-checkbox mui-left">
-                                    <label>{$v.exercise}</label>
-                                    <input name="checkbox-dom" value="{$v.id}" type="checkbox" data-exercise="{$v.exercise}">
-                                </div>
-                            </div>
-                            {/volist}
-                        </li>
-                    </ul>
-                    {/neq} {/volist}
-                </div>
-            </div>
-        </div>
-
-        <div id="item2" class="mui-control-content">
-            <div class="mui-scroll-wrapper">
-                <div class="mui-scroll">
-                    {volist name="exerciseList" id="vol"} {eq name="vol.camp_id" value="0"}
-                    <ul class="mui-table-view">
-                        <li class="mui-table-view-cell mui-collapse">
-                            <a class="mui-navigate-right" href="#">{$vol.exercise}</a> {volist name="vol._data" id="v"}
-                            <div class="mui-collapse-content">
-                                <div class="mui-input-row mui-checkbox mui-left">
-                                    <label>{$v.exercise}</label>
-                                    <input name="checkbox-dom" value="{$v.id}" type="checkbox" data-exercise="{$v.exercise}">
-                                </div>
-                            </div>
-                            {/volist}
-                        </li>
-                    </ul>
-                    {/eq} {/volist}
-                </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="exerciseList"></div>
             </div>
         </div>
 
@@ -178,27 +150,39 @@
         });
     })(mui);
 
+    var exercise_str = '';
+    var subexercise_str = '';
     $(function () {
 
         // 关闭弹出菜单
         $("body").on('click', '.mui-backdrop', function () {
             mui(".mui-popover.mui-active").popover("toggle");
         })
+
         $('#gradecate').find('option[value="{$planInfo.grade_category_id}"]').prop("selected", true);
 
         //训练项目选择列表确认
         $("#domConfirm").click(function () {
             $(".exercises").empty();
-            $("input[name='checkbox-dom']:checked").each(function () {
-                var str = '<p class="domData">' + $(this).attr('data-exercise') + '</p>';
-                $(".exercises").append(str);
+            exercise_str = [];
+            subexercise_str = [];
+            $("ul.eType").each(function () {
+                var data = '<ul class="mui-table-view list eType"><li class="mui-table-view-celllistli detalisli"><p style="padding-left:15px" class="daType" data-id="' + $(this).find(".daType").attr("data-id") + '" data-pid="' + $(this).find(".daType").attr("data-pid") + '" data-Dexercise="' + $(this).find(".daType").attr("data-Dexercise") + '"><b>' + $(this).find(".daType").text() + '</b></p><div style="padding-left:15px;"><p>' + $(this).find("input[name=checkbox-dom]:checked").siblings().text() + '</p><input name="checkbox-dom" value="' + $(this).find("input[name=checkbox-dom]").val() + '" type="hidden" data-exercise="' + $(this).find("input[name=checkbox-dom]").attr("data-exercise") + '" data-pid="' + $(this).find("input[name=checkbox-dom]").attr("data-pid") + '"></div></li></ul>'
+                var exercise = $(this).find(".daType").text();
+                var id = $(this).find(".daType").attr("data-id");
+                subexercise_str = [];
+                $(this).find("input[name=checkbox-dom]:checked").each(function () {
+                    var exercise = $(this).attr("data-exercise");
+                    var id = $(this).val();
+                    var pid = $(this).attr("data-pid");
+                    subexercise_str.push({ exercise: exercise, id: id, pid: pid });
+                });
+                if (subexercise_str != '') {
+                    exercise_str.push({ exercise: exercise, id: id, sub: subexercise_str });
+                    $(".exercises").append(data);
+                }
             });
-            $("input[name='exercise_ids']").val($("input[name='checkbox-dom']:checked").map(function () {
-                return $(this).val();
-            }).get().join(","));
-            $("input[name=exercises]").val($("input[name='checkbox-dom']:checked").map(function () {
-                return $(this).attr('data-exercise');
-            }).get().join(","));
+            console.log(exercise_str)
             mui('#exercises').popover('toggle');
         })
 
@@ -211,18 +195,28 @@
             $('input[name=grade_category_id]').val(grade_category_id)
         })
 
+
         // 是否开放
         $('input[name=is_open]').on('change', function () {
+            console.log($(this).val());
             if (($(this).val()) == 1) {
                 $(this).val(0)
             } else {
                 $(this).val(1)
             }
-        })
+        });
+
+        toExercisrList();
+
     })
+
 
     // 获取数据并进行提交
     function submitAction() {
+
+        var totalHtml = $(".exercises").html();
+        $("input[name=exercise_str]").val(totalHtml);
+
         var data = wooApi.getInputData('input', 'data');
         datas = wooApi.getInputData('select', 'data', data);
         // 获取其他标签值
@@ -230,16 +224,18 @@
         var objData = wooApi.arrTOobj(arrData);
         var outline_detail = $('textarea.data').val();
         objData.outline_detail = outline_detail;
-        var url = "{:url('api/plan/updatePlanApi')}";
+        // objData.exercise_str = JSON.stringify(totalHtml);
+        objData.exercise_str = totalHtml;
+        var url = "{:url('api/plan/createPlanApi')}";
         var ajaxResult = wooApi.asyncF(url, objData);
 
         if (ajaxResult.code == 200) {
-            mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
-                var goUrl = "{:url('plan/planinfo')}" + '/plan_id/{$planInfo.id}' + '/camp_id/{$planInfo.camp_id}';
+            mui.alert(ajaxResult.msg, '教案创建成功', '确定', function () {
+                var goUrl = "{:url('plan/planlist')}" + '/plan_id/' + "{$planInfo.id}" + '/camp_id/{$planInfo.id}';
                 window.top.location.href = goUrl;
             })
         } else {
-            mui.alert(ajaxResult.msg, '修改失败');
+            mui.alert(ajaxResult.msg, '创建失败');
             mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                 if (data.code === 200) {
                     $('input[name=__token__]').val(data.data);
@@ -247,6 +243,46 @@
             }, 'json');
         }
     };
+
+    //自定义获取项目列表
+    var toExercisrList = function () {
+        var url = "{:url('api/exercise/getExerciseListByPageApi','','',true)}";
+        var member = "{$memberInfo.member}";
+        var member_id = "{$memberInfo.id}";
+        mui.ajax({
+            url: url,
+            data: {
+                member: member,
+                member_id: member_id,
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            //processData:false,
+            success: function (data) {
+                console.log(data)
+                if (data.code == 200) {
+                    var exerciseli = '';
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        exerciseli = exerciseli + ' <ul class="mui-table-view list eType"><li class="mui-table-view-cell mui-collapse listli detalisli"><a class="mui-navigate-right daType" href="#" data-id="' + data.data.data[i].id + '" data-pid="' + data.data.data[i].pid + '" data-Dexercise="' + data.data.data[i].exercise + '">' + data.data.data[i].exercise + '</a><div class="mui-collapse-content"><div class="mui-input-row mui-checkbox mui-left"><label>' + data.data.data[i].exercise + '</label><input name="checkbox-dom" value="' + data.data.data[i].id + '" type="checkbox" data-exercise="' + data.data.data[i].exercise + '" data-pid="' + data.data.data[i].pid + '"></div></div></li></ul>'
+                    }
+                    $(".exerciseList").empty();
+                    if (exerciseli == '') {
+                        exerciseli = '<p class="mui-text-center">你还没有自定义的项目，到平台项目库找找吧。</p>'
+                    }
+                    $(".exerciseList").append(exerciseli);
+
+                } else {
+                    mui.toast('数据获取失败,请稍候再试');
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+            }
+        });
+    };
+
 
 </script>
 
