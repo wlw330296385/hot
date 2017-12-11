@@ -114,7 +114,7 @@ class Exercise extends Backend {
             if ( true !== $validate ) {
                 $this->error($validate);
             }
-
+            
             //dump($data);
             $execute = Db::name('exercise')->update($data);
             $AuthS = new AuthService();

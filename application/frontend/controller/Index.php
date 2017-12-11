@@ -11,14 +11,9 @@ class Index extends Base{
 	}
 
     public function index() {
-    	$o_id = input('param.o_id',0);
-        $o_type = input('param.o_type',0);
-        $bannerList = db('banner')->where(['organization_id'=>$o_id,'organization_type'=>$o_type,'status'=>1])->order('ord asc')->limit(3)->select();
-        // 如果banner不够三张
-        if( count($bannerList)<2 ){
-            $res = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1])->order('ord asc')->limit((2-count($bannerList)))->select();
-            $bannerList = array_merge($bannerList,$res);
-        }
+
+        $bannerList = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1])->order('ord asc')->limit(3)->select();
+  
                 
         // dump($bannerList);die;
     	// 热门课程
@@ -29,6 +24,19 @@ class Index extends Base{
     	// $this->assign('hotLessonList',$hotLessonList);
     	// $this->assign('sortLessonList',$sortLessonList);
         return view('Index/index');
+    }
+
+    public function indexOfCamp(){
+        
+        $bannerList = db('banner')->where(['organization_id'=>$this->o_id,'organization_type'=>$this->o_type,'status'=>1])->order('ord asc')->limit(3)->select();
+        // 如果banner不够三张
+        if( count($bannerList)<2 ){
+            $res = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1])->order('ord asc')->limit((3-count($bannerList)))->select();
+            $bannerList = array_merge($bannerList,$res);
+        }
+
+        $this->assign('bannerList',$bannerList);
+        return view('index/indexOfCamp');
     }
 
     // 微信用户授权回调

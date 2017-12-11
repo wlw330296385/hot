@@ -22,18 +22,7 @@ class Plan extends Base{
         // 判读权限
         $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
-        // 获取项目列表
-        $exerciseList = [];
-        $ids = '';
-        if($planInfo['exercise_id']){
-            $ExerciseService = new \app\service\ExerciseService;
-            $exerciseList = $ExerciseService->getExerciseList([]);
-            $pids = db('exercise')->where(['id'=>['in',$planInfo['exercise_id']]])->column('pid');
-            $arrIds = unserialize($planInfo['exercise_id']);
-            $ids = array_merge($arrIds,$pids);
-        }
-        $this->assign('ids',$ids);
-        $this->assign('exerciseList',$exerciseList);
+        
         $this->assign('power',$is_power);
         $this->assign('planInfo',$planInfo);
     	return view('Plan/planInfo');

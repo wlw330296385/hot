@@ -10,6 +10,8 @@ use app\service\WechatService;
 class Base extends Controller{
 	public $systemSetting;
 	public $memberInfo;
+    public $o_id;
+    public $o_type;
 	public function _initialize(){
         $memberS = new MemberService();
 	    // 从模板消息url进入 带有openid字段 保存会员登录信息
@@ -73,14 +75,31 @@ class Base extends Controller{
 
 
 	protected function footMenu(){
+        $o_type = cookie('o_type');
+        $o_id = cookie('o_id'); 
+        if(!$o_type && !$o_id){
+            $this->o_id = input('param.o_id',0);
+            $this->o_type = input('param.o_type',0);
+            cookie('o_id',$this->o_id);
+            cookie('o_type',$this->o_type);
+        }else{
+            $this->o_id = $o_id;
+            $this->o_type = $o_type;
+        }
+        
 		define('CONTROLLER_NAME',Request::instance()->controller());
 		define('MODULE_NAME',Request::instance()->module());
 		define('ACTION_NAME',Request::instance()->action());
+        if($this->o_id<>0 && $this->o_type<>0){
+            $indexAction = 'indexOfCamp';
+        }else{
+            $indexAction = 'index';
+        }
 		$footMenu =  [
 			[
 				'name'=>'首页',
 				'icon'=>'icon iconfont icon-nav-Home',
-				'action'=>'index',
+				'action'=>$indexAction,
 				'controller'=>'Index'
 			],
 			[
@@ -108,6 +127,8 @@ class Base extends Controller{
 				'controller'=>'Member'
 			],
 		];
+        $this->assign('o_id',$this->o_id);
+        $this->assign('o_type',$this->o_type);
 		$this->assign('footMenu',$footMenu);
 	}
 

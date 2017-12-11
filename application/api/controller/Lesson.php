@@ -61,6 +61,7 @@ class Lesson extends Base{
             $map['isprivate'] = input('param.isprivate', 0);
             $result = $this->LessonService->getLessonList($map,$page);
             if($result){
+                shuffle($result);
                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
                 return json(['code'=>100,'msg'=>'ok']);
