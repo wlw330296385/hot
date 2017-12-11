@@ -60,9 +60,10 @@ class Exercise extends Base{
 
     // 项目列表
     public function exerciseList(){
-
+        $camp_id = input('param.camp_id',0);
     	$result = $this->ExerciseService->getExerciseList();
         $this->assign('ecerciseList',$result);
+        $this->assign('camp_id',$camp_id);
         return view('Exercise/exerciseList');
     }
 

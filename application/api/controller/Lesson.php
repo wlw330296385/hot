@@ -365,19 +365,20 @@ class Lesson extends Base{
                     unset($map[$key]);
                 }
             }
-            $result = $this->LessonService->getLessonList($map,1,'hot desc',4);
-            if($result){
-                shuffle($result);
-                if( count($result)<4 ){
-                    $res = $this->LessonService->getLessonList(['status'=>1],1,'id desc',(4-count($result)));
-                    $result = array_merge($result,$res);
-                }
-                
-                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            if(isset($map['camp_id'])){
+                $result = $this->LessonService->getLessonList($map,1,'hot desc',4);   
             }else{
-                return json(['code'=>100,'msg'=>'传参错误']);
+                $result = $this->LessonService->getLessonList($map,1,'hot desc',4);
+                if($result){
+                    shuffle($result);
+                    if( count($result)<4 ){
+                        $res = $this->LessonService->getLessonList(['status'=>1],1,'id desc',(4-count($result)));
+                        $result = array_merge($result,$res);
+                    }
+                }
             }
             
+            return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
