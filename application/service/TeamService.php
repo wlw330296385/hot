@@ -33,7 +33,7 @@ class TeamService {
             return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
         } else {
             trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
-            return ['code' => 100, 'msg' => __lang('MSG_400').$model->getError()];
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
 
@@ -89,10 +89,9 @@ class TeamService {
             return ['code' => 200, 'msg' => __lang('MSG_200')];
         } else {
             trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
-            return ['code' => 100, 'msg' => __lang('MSG_400').$model->getError()];
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
-
 
 
     // 保存team_member球队-会员关系信息
@@ -105,7 +104,7 @@ class TeamService {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
-                return ['code' => 100, 'msg' => __lang('MSG_400').$model->getError()];
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
         } else {
             $res = $model->allowField(true)->save($data);
@@ -113,7 +112,7 @@ class TeamService {
                 return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
             } else {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
-                return ['code' => 100, 'msg' => __lang('MSG_400').$model->getError()];
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
         }
     }
@@ -162,7 +161,7 @@ class TeamService {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
-                return ['code' => 100, 'msg' => __lang('MSG_400').$model->getError()];
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
         } else {
             $res = $model->allowField(true)->save($data);
@@ -170,7 +169,7 @@ class TeamService {
                 return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
             } else {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
-                return ['code' => 100, 'msg' => __lang('MSG_400').$model->getError()];
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
         }
     }
@@ -189,9 +188,9 @@ class TeamService {
     }
 
     // 获取会员在球队的身份角色
-    public function checkMemberTeamRole($map) {
+    public function checkMemberTeamRole($team_id, $member_id) {
         $model = new TeamMemberRole();
-        $res = $model->where($map)
+        $res = $model->where(['team_id' => $team_id, 'member_id' => $member_id])
             ->where(['status' => 1])->value('type');
         return $res ? $res : 0;
     }
@@ -199,7 +198,7 @@ class TeamService {
     // 查看会员加入球队申请记录
     public function getApplyInfo($map) {
         $model = new Apply();
-        $res = $model->where($map)->find();
+        $res = $model->with('member')->where($map)->find();
         if ($res) {
             return $res->toArray();
         } else {
@@ -217,7 +216,7 @@ class TeamService {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
-                return ['code' => 100, 'msg' => __lang('MSG_400').$model->getError()];
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
         } else {
             // 插入一条加入球队申请数据
@@ -226,9 +225,8 @@ class TeamService {
                 return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
             } else {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
-                return ['code' => 100, 'msg' => __lang('MSG_400').$model->getError()];
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
         }
     }
-
 }

@@ -34,9 +34,8 @@ class Team extends Base {
     // 球队管理
     public function teammanage() {
         // 获取会员在球队角色身份
-        $checkMemberTeamRoleMap = ['team_id' => $this->team_id, 'member_id' => $this->memberInfo['id']];
         $teamS = new TeamService();
-        $teamrole = $teamS->checkMemberTeamRole($checkMemberTeamRoleMap);
+        $teamrole = $teamS->checkMemberTeamRole($this->team_id, $this->memberInfo['id']);
         //dump($teamrole);
         $this->assign('teamrole', $teamrole);
         return view('Team/teamManage');
@@ -95,6 +94,21 @@ class Team extends Base {
         $this->assign('teamMemberInfo', $teamMemberInfo);
         $this->assign('memberOtherTeam', $memberOtherTeam);
         return view('Team/teamMemberInfo');
+    }
+
+    // 申请加入列表
+    public function teamapplylist() {
+        return view('Team/teamApplyList');
+    }
+
+    // 申请加入详情
+    public function teamapplyinfo() {
+        $applyId = input('id');
+        $teamS = new TeamService();
+        $apply = $teamS->getApplyInfo(['id' => $applyId, 'organization_id' => $this->team_id]);
+
+        $this->assign('applyInfo', $apply);
+        return view('Team/teamApplyInfo');
     }
 
     // 粉丝列表
