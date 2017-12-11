@@ -101,6 +101,7 @@ class Bill extends Base{
             $this->assign('studentInfo',$studentInfo);
         }elseif ($billInfo['goods_type']=='活动') {
             $studentInfo = [];
+            $goodsInfo = db('event')->where(['id'=>$billInfo['goods_id']])->find();
             $this->assign('studentInfo',$studentInfo);
         }
         // 生成微信参数
@@ -119,7 +120,7 @@ class Bill extends Base{
             $jsApiParameters = $result['data']['jsApiParameters'];
         }
         
-
+        $this->assign('goodsInfo',$goodsInfo);
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('jsApi', $jsApi);
         $this->assign('billInfo',$billInfo);
