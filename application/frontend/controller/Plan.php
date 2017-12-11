@@ -18,7 +18,8 @@ class Plan extends Base{
 
     public function planInfo(){
     	$plan_id = input('param.plan_id');
-    	$planInfo = $this->PlanService->getPlanInfo(['id'=>$plan_id]);
+        $planInfo = $this->PlanService->getPlanInfo(['id'=>$plan_id]);
+        $planInfo['exercise_str'] = json_decode($planInfo['exercise_str'], true);
         // 判读权限
         $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
@@ -33,6 +34,7 @@ class Plan extends Base{
     public function updatePlan(){
     	$plan_id = input('param.plan_id');
         $planInfo = $this->PlanService->getPlanInfo(['id'=>$plan_id]);
+        $planInfo['exercise_str'] = json_decode($planInfo['exercise_str'], true);
         // 判读权限
         $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
