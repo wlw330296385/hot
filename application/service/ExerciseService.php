@@ -89,10 +89,9 @@ class ExerciseService {
         $list = [];
          foreach ($arr as $key => $value) {
             if($value['pid'] == $pid){
-                $value['daughter'] = $this->getExerciseTree($arr,$value['id']);
-              
-            } 
-            $list[] = $value;
+                $list[] = $value;
+                $list[]['daughter'] = $this->getExerciseTree($arr,$value['id']);
+            }
         }
         return $list;
     }
