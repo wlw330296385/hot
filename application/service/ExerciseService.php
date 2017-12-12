@@ -61,12 +61,12 @@ class ExerciseService {
     public function getExerciseList($map = []){
         $res = Exercise::where($map)->whereOr(['pid'=>0])->select();
         if(!$res){
-            return $res;
-            // return ['data'=>$res,'code'=>100,'msg'=>'无数据'];
+            // return $res;
+            return ['data'=>$res,'code'=>100,'msg'=>'无数据'];
         }else{
             $result = channelLevel($res->toArray(),0,'id','pid');
-            return $result;
-            // return ['data'=>$result,'code'=>200,'msg'=>'OK'];
+            // return $result;
+            return ['data'=>$result,'code'=>200,'msg'=>'OK'];
         }
     }
 
