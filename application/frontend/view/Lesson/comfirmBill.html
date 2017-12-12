@@ -149,8 +149,11 @@
         $('#addBtn').on('click', '', function () {
             var mID = "{$memberInfo.id}";
             if (mID <= 0) {
-                var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
-                mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', btnArray);
+                mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function(e) {
+                    if (e.index===1) {
+                        window.location.href="{$fasturl}";
+                    }
+                });
             } else {
                 var btnArray = ['确定', '取消'];
                 var addForm = '<div class="mui-popup-input"><span class="colororange">请勿同时填写多名学员姓名</span><input type="text" name="student" class="data" placeholder="学员姓名" autofocus=""><input type="text" name="parent" class="data" placeholder="家长姓名"><input type="text" name="emergency_telephone" class="data telephone" placeholder="联系电话" value="{$memberInfo.telephone}"></div>'
