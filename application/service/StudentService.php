@@ -33,7 +33,6 @@ class StudentService{
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-        //dump($data);die;
         if(isset($data['address'])){
             $res = explode(' ', $data['address']);
             $data['student_province'] = $res[0];
@@ -54,7 +53,7 @@ class StudentService{
         if(!$validate->scene('edit')->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-        if($data['address']){
+        if(isset($data['address'])){
             $res = explode(' ', $data['address']);
             $data['student_province'] = $res[0];
             $data['student_city'] = $res[1];
