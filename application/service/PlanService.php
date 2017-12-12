@@ -43,7 +43,7 @@ class PlanService {
             return ['msg' => $validate->getError(), 'code' => 100];
         }
         
-        $res = $this->Plan->save($data,$id);
+        $res = $this->Plan->save($data, ['id' => $id]);
         if($res === false){
             return ['msg'=>$this->Plan->getError(),'code'=>100];
         }else{
