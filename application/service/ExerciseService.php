@@ -59,7 +59,7 @@ class ExerciseService {
     }
 
     public function getExerciseList($map = []){
-        $res = Exercise::where($map)->whereOr(['pid'=>0])->select();
+        $res = Exercise::where($map)->whereOr(['pid'=>0])->order('id asc')->select();
         if(!$res){
             return $res;
         }else{

@@ -123,7 +123,8 @@ class RecruitmentService{
 
     // 获取参与者列表
      public function getRecruitmentMemberListByPage($map,$order = '',$paginate = 10){
-        $result = RecruitmentMember::where($map)
+        $result = RecruitmentMember::with('member')
+                ->where($map)
                 ->order($order)
                 ->paginate($paginate);
         if($result){

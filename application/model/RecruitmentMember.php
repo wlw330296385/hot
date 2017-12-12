@@ -16,4 +16,8 @@ class RecruitmentMember extends Model {
         $status = [1=>'申请中',2=>'正常',3=>'被拒绝'];
         return $status[$value];
     }
+
+    public function member(){
+        return $this->hasOne('member','id','member_id');
+    }
 }

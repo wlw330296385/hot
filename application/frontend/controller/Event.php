@@ -92,7 +92,15 @@ class Event extends Base{
         if($eventInfo['end'] <= time()){
             $variable = 4 ;
         }
-
+        //是否已报名
+        $EventMember = new \app\model\EventMember;
+        $result =  $EventMember->where(['member_id'=>$this->memberInfo['id'],'event_id'=>$event_id,'status'=>1])->select();
+        if($result){
+            $EventMemberList = $result->toArray();
+        }else{
+            $EventMemberList = [];
+        }
+        $this->assign('EventMemberList',$EventMemberList);
         $this->assign('variable',$variable);
         $this->assign('eventInfo',$eventInfo);
         return view('Event/eventInfo');

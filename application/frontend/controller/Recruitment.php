@@ -61,7 +61,7 @@ class Recruitment extends Base{
     public function recruitmentInfo(){
         $recruitment_id = input('recruitment_id');
         $recruitmentInfo = $this->RecruitmentService->getRecruitmentInfo(['id'=>$recruitment_id]);   
-        // 判断是否已经注册
+        // 判断是否已经报名
         $recruitmentMember = $this->RecruitmentService->getRecruitmentMember(['member_id'=>$this->memberInfo['id'],'recruitment_id'=>$recruitment_id,'status'=>1]);
         $this->assign('recruitmentMember',$recruitmentMember);
         $this->assign('recruitmentInfo',$recruitmentInfo);
