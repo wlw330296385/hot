@@ -63,7 +63,7 @@ class ExerciseService {
         if(!$res){
             return $res;
         }else{
-            $result = channelLevel($res->toArray(),0,'id','pid');
+            $result = $this->getExerciseTree($res->toArray(),0);
             return $result;
         }
     }
@@ -87,10 +87,10 @@ class ExerciseService {
 
     protected function getExerciseTree($arr = [],$pid = 0){
         $list = [];
-         foreach ($arr as $key => $value) {
+         foreach ($arr as $key => &$value) {
             if($value['pid'] == $pid){
+                $value['daughter'] = $this->getExerciseTree($arr,$value['id']);
                 $list[] = $value;
-                $list[]['daughter'] = $this->getExerciseTree($arr,$value['id']);
             }
         }
         return $list;
