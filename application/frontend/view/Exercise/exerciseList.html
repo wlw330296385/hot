@@ -24,8 +24,8 @@
         </div>
 
         <div class="mui-segmented-control seg-control whitebg" style="margin:10px;">
-            <a class="mui-control-item" href="#onlineExerciseList">平台项目库</a>
-            <a class="mui-control-item mui-active" href="#offlineExerciseList">我的项目库</a>
+            <a class="mui-control-item" href="#sysExerciseList">平台项目库</a>
+            <a class="mui-control-item mui-active" href="#myExerciseList">我的项目库</a>
             <a class="mui-control-item" href="{:url('Exercise/createExercise',['camp_id'=>$camp_id])}">添加项目</a>
         </div>
 
@@ -34,78 +34,14 @@
     <div class="mui-content" style="padding-top:100px;">
 
         <div class="tab-pullRefresh">
-            <div id="onlineExerciseList" class="mui-control-content">
-                <div class="sysList">
-                    <div class="page-header">
-                        <span class="course"><b>热身游戏</b></span>
-                    </div>
-                    <ul class="mui-table-view detalis-list list">
-                        <li class="mui-table-view-cell listli detalisli">
-                            <a href="{:url('exercise/exerciseInfo')}" class="mui-navigate-right">
-                                贴报纸跑(无球,运球)
-                            </a>
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            <a href="" class="mui-navigate-right">
-                                躲避报纸(橄榄球)
-                            </a>
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            <a href="" class="mui-navigate-right">
-                                穿越(无球,运球)
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="sysList">
-                    <div class="page-header">
-                        <span class="course"><b>热身游戏</b></span>
-                    </div>
-                    <ul class="mui-table-view detalis-list list">
-                        <li class="mui-table-view-cell listli detalisli">
-                            <a href="{:url('exercise/exerciseInfo')}" class="mui-navigate-right">
-                                贴报纸跑(无球,运球)
-                            </a>
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            <a href="" class="mui-navigate-right">
-                                躲避报纸(橄榄球)
-                            </a>
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            <a href="" class="mui-navigate-right">
-                                穿越(无球,运球)
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="sysList">
-                    <div class="page-header">
-                        <span class="course"><b>热身游戏</b></span>
-                    </div>
-                    <ul class="mui-table-view detalis-list list">
-                        <li class="mui-table-view-cell listli detalisli">
-                            <a href="{:url('exercise/exerciseInfo')}" class="mui-navigate-right">
-                                贴报纸跑(无球,运球)
-                            </a>
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            <a href="" class="mui-navigate-right">
-                                躲避报纸(橄榄球)
-                            </a>
-                        </li>
-                        <li class="mui-table-view-cell listli detalisli">
-                            <a href="" class="mui-navigate-right">
-                                穿越(无球,运球)
-                            </a>
-                        </li>
-                    </ul>
+            <div id="sysExerciseList" class="mui-control-content">
+                <div class="exerList">
+                    <div class="page-header"><span class="course"><b>热身游戏</b></span></div>
+                    <ul class="mui-table-view detalis-list list"><li class="mui-table-view-cell listli detalisli"><a href="{:url('exercise/exerciseInfo')}" class="mui-navigate-right">贴报纸跑(无球,运球)</a></li></ul>
                 </div>
             </div>
-            <div id="offlineExerciseList" class="mui-control-content  mui-active">
-                <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list border-b exercise2"></ul>
-                </div>
+            <div id="myExerciseList" class="mui-control-content  mui-active">
+
             </div>
         </div>
 
@@ -129,16 +65,16 @@
 
         //初始化全局变量
 
-        toList('sysExerciseList', 0); //平台训练项目
+//        toList('sysExerciseList', 0); //平台训练项目
         toList('myExerciseList', "{$camp_id}"); //平台训练项目
 
     })
 
     //自定义项目
-    var toList = function (wList, page, gType, status) {
+    var toList = function (wList, cID) {
         //搜索关键字不能完全为空，否则查询为空
         var url = "{:url('api/exercise/getExerciseListApi')}";
-        var camp_id = "{$camp_id}";
+        var camp_id = cID;
         mui.ajax({
             url: url,
             data: {
@@ -150,35 +86,30 @@
             headers: { 'Content-Type': 'application/json' },
             success: function (data) {
                 console.log(data)
-                var newli = '';
+                var newdiv = '';
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('Exercise/exerciseInfo')}" + '/exercise_id/' + data.data.data[i].id ;
-                        newli += '<li class="mui-table-view-cell listli "><a class="mui-navigate-right" href="' + urls + '"><div class="list-cont"><h5>' + data.data.data[i].exercise + '</h5><p>' + data.data.data[i].exercise_setion + '</p></div></a></li>';
+                    console.log(data.code)
+                    console.log(data.data.length)
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        newdiv += '<div class="exerList"><div class="page-header"><span class="course"><b>'+data.data[i].exercise_setion+'</b></span></div><ul class="mui-table-view detalis-list list">'
+                        var newli = '';
+                        for (var j = 0; j <= data.data._data.length - 1; j++) {
+                            var urls = "{:url('Exercise/exerciseInfo')}" + '/exercise_id/' + data.data._data[j].id ;
+                            newli += '<li class="mui-table-view-cell listli detalisli"><a href="'+urls+'" class="mui-navigate-right">'+data.data._data[j].exercise_setion+'</a></li>'
+                        }
+                        newdiv += '</ul></div>'
+
                     }
                 }
-
-
-                if (gType == 1) {
-                    //上拉刷新
-                    $("ul.exercise2").empty().append(newli);
-
-                    if (newli == '') {
-                        $("ul.exercise2").append('<li class="nodata"><p>没有相关数据哦</p></li>');
-                    }
-                } else {
-                    //下拉加载 gType==2
-                    $("ul.exercise2").append(newli);
-                }
-
+                $("#" + wList).append(newdiv);
 
             },
             error: function (xhr, type, errerThrown) {
                 mui.toast('网络异常,请稍候再试');
-                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
             }
         });
     };
+
 
 </script>
 
