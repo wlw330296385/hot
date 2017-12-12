@@ -25,13 +25,7 @@ class User extends Backend {
 
     public function store() {
         if (request()->isPost()) {
-            //dump(input('post.'));
             $data = input('post.');
-            // $data['username'] = input('username');
-            // $password = input('password');
-            // $data['password'] = passwd($password);
-            // $data['truename'] = input('truename');
-            // $data['avatar'] = '/static/default/avatar.png';
             $model = new Admin();
             $res = $model->save($data);
             if ($res) {

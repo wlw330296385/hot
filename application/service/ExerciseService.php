@@ -59,7 +59,7 @@ class ExerciseService {
     }
 
     public function getExerciseList($map = []){
-        $res = Exercise::where($map)->select();
+        $res = Exercise::where($map)->whereOr(['pid'=>0])->select();
         if(!$res){
             return $res;
         }else{
