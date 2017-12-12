@@ -155,7 +155,7 @@ class Coach extends Backend {
             if ( true !== $validate ) {
                 $this->error($validate);
             }
-            $data = [
+            /*$data = [
                 'id' => $id,
                 'coach_rank' => input('coach_rank'),
                 'coach_year' => input('coach_year'),
@@ -164,7 +164,11 @@ class Coach extends Backend {
                 'lesson_flow' => input('lesson_flow'),
                 'sys_remarks' => input('sys_remarks'),
                 'update_time' => time()
-            ];
+            ];*/
+            $data = input('post.');
+            $data['update_time'] = time();
+            unset($data['__token__']);
+            //dump($data);
             $execute = Db::name('coach')->update($data);
 
 
