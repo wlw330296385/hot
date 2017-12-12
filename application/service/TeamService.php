@@ -3,6 +3,7 @@
 namespace app\service;
 use app\model\Apply;
 use app\model\Team;
+use app\model\TeamEvent;
 use app\model\TeamMember;
 use app\model\TeamMemberRole;
 use think\Db;
@@ -227,6 +228,17 @@ class TeamService {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
+        }
+    }
+
+    // 球队活动分页
+    public function teamEventPaginator($map, $order='id desc', $paginate=10) {
+        $model = new TeamEvent();
+        $res = $model->where($map)->order($order)->paginate();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
         }
     }
 }
