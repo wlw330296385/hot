@@ -18,14 +18,14 @@
     <header id="header" class="mui-bar mui-bar-nav for-tab">
         <div class="camp-lesson-list">
             <div id="segmentedControl" class="mui-segmented-control mb">
-                <a class="mui-control-item" href="{:url('plan/planList')}">教案</a>
-                <a class="mui-control-item mui-active" href="{:url('exercise/exerciseList')}">训练项目</a>
+                <a class="mui-control-item" href="{:url('plan/planList',['camp_id'=>$camp_id])}">教案</a>
+                <a class="mui-control-item mui-active" href="{:url('exercise/exerciseList',['camp_id'=>$camp_id])}">训练项目</a>
             </div>
         </div>
         <div class="mui-segmented-control seg-control whitebg">
             <a class="mui-control-item" href="#onlineExerciseList">平台项目</a>
             <a class="mui-control-item mui-active" href="#offlineExerciseList">自定义项目</a>
-            <a class="mui-control-item" href="{:url('Exercise/createExercise')}">添加项目</a>
+            <a class="mui-control-item" href="{:url('Exercise/createExercise',['camp_id'=>$camp_id])}">添加项目</a>
         </div>
     </header>
 
@@ -172,8 +172,8 @@
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('Exercise/Info')}" + '/exercise_id/' + data.data.data[i].id ;
-                        newli += '<li class="mui-table-view-cell listli "><a class="mui-navigate-right" href="' + urls + '"><div class="list-cont"><h5>' + data.data.data[i].exercise + '</h5><p>' + data.data.data[i].exercise_detail + '</p></div></a></li>';
+                        var urls = "{:url('Exercise/exerciseInfo')}" + '/exercise_id/' + data.data.data[i].id ;
+                        newli += '<li class="mui-table-view-cell listli "><a class="mui-navigate-right" href="' + urls + '"><div class="list-cont"><h5>' + data.data.data[i].exercise + '</h5><p>' + data.data.data[i].exercise_setion + '</p></div></a></li>';
                     }
                 }
 

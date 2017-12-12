@@ -16,7 +16,7 @@
             left: auto;
             right: 6px;
         }
-        
+
         .mui-input-row a {
             display: table;
             width: 100%;
@@ -26,7 +26,9 @@
 
 <body class="whitebg">
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
     </header>
     <div class="mui-content program ">
         <form class="mui-input-group">
@@ -50,18 +52,18 @@
                         <select id="exercise">
                             <option>--请选择--</option>
                             {volist name="ExerciseType" id="vol"}
-                                <option value="{$vol.id}">{$vol.exercise}</option>
+                            <option value="{$vol.id}">{$vol.exercise}</option>
                             {/volist}
                         </select>
-                        <input type="hidden" name="exercise" value=""  class="data" >
-                        <input type="hidden" name="pid" value=""  class="data" >
-                     </span>
+                        <input type="hidden" name="exercise" value="" class="data">
+                        <input type="hidden" name="pid" value="" class="data">
+                    </span>
                 </a>
 
             </div>
             <div class="mui-input-row">
                 <label>项目名称</label>
-                <input type="text" placeholder="小学基础/小学增强/等阶段" name="exercise_setion" class="data">
+                <input type="text" placeholder="请填写项目名称" name="exercise_setion" class="data" value="">
             </div>
             <div class="mui-input-row h-auto">
                 <label>项目要领</label>
@@ -77,7 +79,7 @@
             <input type="checkbox" value="1" name="is_open" class="data" checked style="width:16px;height:16px;">
             <label>是否对外开放</label>
         </div>-->
-         <ul class="mui-table-view operation">
+        <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" onclick="submitAction()">
                 提交
             </li>
@@ -133,6 +135,16 @@
 
     // 获取数据并进行提交
     function submitAction() {
+
+        var exercis = $("#exercise option:selected").val();
+        var exercise_setion = $("input[name=exercise_setion]").val();
+        console.log(exercis)
+        console.log(exercise_setion)
+        if (exercis == '' || exercise_setion == '') {
+            mui.toast("请填写信息");
+            return false;
+        }
+
         var data = wooApi.getInputData('input', 'data');
         datas = wooApi.getInputData('select', 'data', data);
         // 获取其他标签值
@@ -145,7 +157,7 @@
 
         if (ajaxResult.code == 200) {
             mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
-                var goUrl = "{:url('exercise/exerciseInfo')}" + '/exercise_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
+                var goUrl = "{:url('exercise/exerciseList')}" + '/exercise_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
                 window.top.location.href = goUrl;
             })
         } else {

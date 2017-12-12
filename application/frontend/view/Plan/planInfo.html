@@ -38,13 +38,27 @@
                 <span class=fl>{$planInfo.grade_category}</span>
                 <span class=fr>{$planInfo.camp}</span>
             </div>
-            <div class="program-view3 border-b">
-                <h5>大纲介绍:</h5>
-                <p>{$planInfo.outline_detail}</p>
-            </div>
+
+            <ul class="mui-table-view list">
+                <li class="mui-table-view-cell listli">大纲介绍
+                    <span>{$planInfo.outline_detail}</span>
+                </li>
+            </ul>
+
             <div class="program-view4 border-b">
                 <h5>训练项目:</h5>
-               
+                <div>
+                    {volist name="planInfo.exercise_str" id="vo"}
+                    <ul class="mui-table-view list eType">
+                        <li class="mui-table-view-cell listli detalisli">
+                            <h5 class="daType">{$vo.exercise}</h5>
+                            {if condition="isset($vo.sub)"} {volist name="vo.sub" id="sub"}
+                            <P>{$sub.exercise}</P>
+                            {/volist} {/if}
+                        </li>
+                    </ul>
+                    {/volist}
+                </div>
             </div>
             <div class="program-view5 border-b">
                 <div class="image-items">

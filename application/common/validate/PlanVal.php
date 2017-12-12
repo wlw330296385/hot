@@ -17,8 +17,8 @@ class PlanVal extends Validate{
         'camp_id'  =>  'camp_id 必须大于0',
         'member_id'    => 'require',
         'member'  => 'require',
-        'camp' =>  '训练营必须',
-        'outline' => 'outline必须',
+        'camp' =>  '请填写训练营',
+        'outline' => '请填写大纲名称',
         // 'exercise'=>' exercise必须',
     ];
     

@@ -33,15 +33,17 @@ class StudentService{
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-        if($data['address']){
+        //dump($data);die;
+        if(isset($data['address'])){
             $res = explode(' ', $data['address']);
             $data['student_province'] = $res[0];
             $data['student_city'] = $res[1];
             $data['student_area'] = isset($res[2])?$res[2]:$res[1];
         }
-		$result = $this->studentModel->data($data)->save();
+
+		$result = $this->studentModel->allowField(true)->data($data)->save();
 		if($result){
-			return ['code'=>200,'msg'=>'ok','data'=>$result];
+			return ['code'=>200,'msg'=>'添加成功','data'=>$result];
 		}else{
 			return ['code'=>100,'msg'=>$this->studentModel->getError()];
 		}
