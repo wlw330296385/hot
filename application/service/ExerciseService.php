@@ -68,16 +68,7 @@ class ExerciseService {
         }
     }
 
-    public function getExerciseListByPage($map,$paginate = 10){
-        $result = $this->exerciseModel->where($map)->paginate($paginate);
-        if($result){
-            $res = $result->toArray();
-             $res['data'] = $this->getExerciseTree($res['data']);
-             return $res;
-        }
 
-        return $result;
-    }
 
     // 获取训练营下的训练项目
     public function getExerciseListOfCamp($camp_id){
