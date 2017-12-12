@@ -78,7 +78,7 @@
         mui.ajax({
             url: url,
             data: {
-                camp_id: camp_id
+                camp_id: 4
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -88,14 +88,17 @@
                 console.log(data)
                 var newdiv = '';
                 if (data.code == 200) {
-                    console.log(data.code)
-                    console.log(data.data.length)
+//                    console.log(data.code)
+                    //var sss = '['+data.data+']'
+//                    console.log(data.data.length)
                     for (var i = 0; i <= data.data.length - 1; i++) {
                         newdiv += '<div class="exerList"><div class="page-header"><span class="course"><b>'+data.data[i].exercise_setion+'</b></span></div><ul class="mui-table-view detalis-list list">'
                         var newli = '';
-                        for (var j = 0; j <= data.data._data.length - 1; j++) {
-                            var urls = "{:url('Exercise/exerciseInfo')}" + '/exercise_id/' + data.data._data[j].id ;
-                            newli += '<li class="mui-table-view-cell listli detalisli"><a href="'+urls+'" class="mui-navigate-right">'+data.data._data[j].exercise_setion+'</a></li>'
+                        console.log(data.data[i].daughter.length)
+                        for (var j = 0; j <= data.data[i].daughter.length - 1; j++) {
+                            console.log(data.data[i].daughter[j].exercise_setion)
+                            var urls = "{:url('Exercise/exerciseInfo')}" + '/exercise_id/' + data.data[i].daughter[j].id ;
+                            newli += '<li class="mui-table-view-cell listli detalisli"><a href="'+urls+'" class="mui-navigate-right">'+data.data[i].daughter[j].exercise_setion+'</a></li>'
                         }
                         newdiv += '</ul></div>'
 
