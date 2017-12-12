@@ -17,8 +17,6 @@ class Exercise extends Base{
             $map= input('post.');
             $result = $this->ExerciseService->getExerciseList($map);
             return json($result);
-
-            return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
