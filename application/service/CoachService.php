@@ -54,12 +54,13 @@ class CoachService{
 
 
     // 教练列表 分页
-    public function getCoachListByPage( $map=[],$order='',$paginate = 10) {
+    public function getCoachListByPage( $map=[],$order='id desc',$paginate = 10) {
         $res = Coach::with('member')->where($map)->order($order)->paginate($paginate);
         if($res){
             $result = $res->toArray();
+            return $result;
         }else{
-            $res;
+            return $res;
         }
     }
     
@@ -84,7 +85,7 @@ class CoachService{
 
 
     // 教练列表 分页
-    public function getCoachList($map=[],$page=1, $paginate = 10, $order='') {
+    public function getCoachList($map=[], $page=1, $order='id desc', $paginate = 10 ) {
         $result = $this->CoachModel->where($map)->order($order)->page($page,$paginate)->select();
         if($result){
             $res = $result->toArray();
