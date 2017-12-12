@@ -22,66 +22,87 @@
                 <a class="mui-control-item mui-active" href="{:url('exercise/exerciseList',['camp_id'=>$camp_id])}">训练项目</a>
             </div>
         </div>
-        <div class="mui-segmented-control seg-control whitebg">
-            <a class="mui-control-item" href="#onlineExerciseList">平台项目</a>
-            <a class="mui-control-item mui-active" href="#offlineExerciseList">自定义项目</a>
+
+        <div class="mui-segmented-control seg-control whitebg" style="margin:10px;">
+            <a class="mui-control-item" href="#onlineExerciseList">平台项目库</a>
+            <a class="mui-control-item mui-active" href="#offlineExerciseList">我的项目库</a>
             <a class="mui-control-item" href="{:url('Exercise/createExercise',['camp_id'=>$camp_id])}">添加项目</a>
         </div>
+
     </header>
 
-    <div class="mui-content">
+    <div class="mui-content" style="padding-top:100px;">
 
         <div class="tab-pullRefresh">
-            <div id="onlineExerciseList" class="mui-scroll-wrapper mui-control-content" style="top: 80px">
-                <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list border-b exercise1">
-                        <div class="page-header">
+            <div id="onlineExerciseList" class="mui-control-content">
+                <div class="sysList">
+                    <div class="page-header">
                         <span class="course"><b>热身游戏</b></span>
                     </div>
-                    <ul class="mui-table-view mb">
+                    <ul class="mui-table-view detalis-list list">
                         <li class="mui-table-view-cell listli detalisli">
                             <a href="{:url('exercise/exerciseInfo')}" class="mui-navigate-right">
-                                    贴报纸跑(无球,运球)
-                                </a>
+                                贴报纸跑(无球,运球)
+                            </a>
                         </li>
                         <li class="mui-table-view-cell listli detalisli">
                             <a href="" class="mui-navigate-right">
-                                    躲避报纸(橄榄球)
-                                </a>
+                                躲避报纸(橄榄球)
+                            </a>
                         </li>
                         <li class="mui-table-view-cell listli detalisli">
                             <a href="" class="mui-navigate-right">
-                                    穿越(无球,运球)
-                                </a>
+                                穿越(无球,运球)
+                            </a>
                         </li>
                     </ul>
+                </div>
+                <div class="sysList">
                     <div class="page-header">
-                        <span class="course"><b>传球</b></span>
+                        <span class="course"><b>热身游戏</b></span>
                     </div>
-                    <ul class="mui-table-view mb">
+                    <ul class="mui-table-view detalis-list list">
                         <li class="mui-table-view-cell listli detalisli">
-                            <a href="" class="mui-navigate-right">
-                                    摆脱防守传接球
-                                </a>
+                            <a href="{:url('exercise/exerciseInfo')}" class="mui-navigate-right">
+                                贴报纸跑(无球,运球)
+                            </a>
                         </li>
                         <li class="mui-table-view-cell listli detalisli">
                             <a href="" class="mui-navigate-right">
-                                    踩呼啦圈传球
-                                </a>
+                                躲避报纸(橄榄球)
+                            </a>
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            <a href="" class="mui-navigate-right">
+                                穿越(无球,运球)
+                            </a>
                         </li>
                     </ul>
+                </div>
+                <div class="sysList">
                     <div class="page-header">
-                        <span class="course"><b>行进间运球</b></span>
+                        <span class="course"><b>热身游戏</b></span>
                     </div>
-                    <ul class="mui-table-view mb">
+                    <ul class="mui-table-view detalis-list list">
                         <li class="mui-table-view-cell listli detalisli">
-                            <a class="mui-navigate-right">手拉手运球</a>
+                            <a href="{:url('exercise/exerciseInfo')}" class="mui-navigate-right">
+                                贴报纸跑(无球,运球)
+                            </a>
                         </li>
-                    </ul>
+                        <li class="mui-table-view-cell listli detalisli">
+                            <a href="" class="mui-navigate-right">
+                                躲避报纸(橄榄球)
+                            </a>
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli">
+                            <a href="" class="mui-navigate-right">
+                                穿越(无球,运球)
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
-            <div id="offlineExerciseList" class="mui-scroll-wrapper mui-control-content  mui-active" style="top: 80px">
+            <div id="offlineExerciseList" class="mui-control-content  mui-active">
                 <div class="mui-scroll">
                     <ul class="mui-table-view detalis-list list border-b exercise2"></ul>
                 </div>
@@ -107,61 +128,21 @@
     $(function () {
 
         //初始化全局变量
-        var offCount = 1;
 
-        mui('#offlineExerciseList').pullRefresh({
-            down: {
-                //下拉刷新
-                height: 50,//可选.默认50.触发下拉刷新拖动距离
-                auto: true,//可选,默认false.自动下拉刷新一次
-                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                callback: pulldownRefreshOff
-            },
-            up: {
-                //上拉加载
-                height: 150,//可选.默认50.触发上拉加载拖动距离
-                //auto:true,//可选,默认false.自动上拉加载一次
-                contentrefresh: '正在加载...',
-                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                callback: pullupRefreshOff
-            }
-        });
-
-        //下拉刷新具体业务实现（下架）
-        function pulldownRefreshOff() {
-            setTimeout(function () {
-                offCount = 1;//刷新并显示第一页
-                var page = offCount;
-                var gType = 1;//代表下拉刷新
-                toList('offlineExerciseList', page, gType);//具体取数据的方法
-            }, 100);
-        }
-
-        //上拉加载具体业务实现（下架）
-        function pullupRefreshOff() {
-            setTimeout(function () {
-                offCount++;//翻下一页
-                var page = offCount;
-                var gType = 2;//代表上拉加载
-                toList('offlineExerciseList', page, gType);//具体取数据的方法
-            }, 100);
-        }
+        toList('sysExerciseList', 0); //平台训练项目
+        toList('myExerciseList', "{$camp_id}"); //平台训练项目
 
     })
 
-    //自定义教案
+    //自定义项目
     var toList = function (wList, page, gType, status) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/exercise/getExerciseListByPageApi')}" + '/?page=' + page;
-        var member = "{$memberInfo.member}";
-        var member_id = "{$memberInfo.id}";
+        var url = "{:url('api/exercise/getExerciseListApi')}";
+        var camp_id = "{$camp_id}";
         mui.ajax({
             url: url,
             data: {
-                member: member,
-                member_id: member_id,
+                camp_id: camp_id
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -181,8 +162,7 @@
                 if (gType == 1) {
                     //上拉刷新
                     $("ul.exercise2").empty().append(newli);
-                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
-                    mui('#' + wList).pullRefresh().refresh(true);
+
                     if (newli == '') {
                         $("ul.exercise2").append('<li class="nodata"><p>没有相关数据哦</p></li>');
                     }
@@ -191,11 +171,6 @@
                     $("ul.exercise2").append(newli);
                 }
 
-                if (newli != '') {
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
-                } else {
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-                }
 
             },
             error: function (xhr, type, errerThrown) {
