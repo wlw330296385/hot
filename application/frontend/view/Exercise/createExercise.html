@@ -49,13 +49,13 @@
                 <a href="#" class="mui-navigate-right">
                     <label>项目类型</label>
                     <span class="select-row">
-                        <select id="exercise">
+                        <select id="exercise_setion">
                             <option>--请选择--</option>
                             {volist name="ExerciseType" id="vol"}
                             <option value="{$vol.id}">{$vol.exercise}</option>
                             {/volist}
                         </select>
-                        <input type="hidden" name="exercise" value="" class="data">
+                        <input type="hidden" name="exercise_setion" value="" class="data">
                         <input type="hidden" name="pid" value="" class="data">
                     </span>
                 </a>
@@ -63,7 +63,7 @@
             </div>
             <div class="mui-input-row">
                 <label>项目名称</label>
-                <input type="text" placeholder="请填写项目名称" name="exercise_setion" class="data" value="">
+                <input type="text" placeholder="请填写项目名称" name="exercise" class="data" value="">
             </div>
             <div class="mui-input-row h-auto">
                 <label>项目要领</label>
@@ -115,10 +115,10 @@
         })
 
         // 课程类型更改选择
-        $('#exercise').on('change', function () {
-            var exercise = $('#exercise option:selected').text();
-            var pid = $('#exercise option:selected').val();
-            $('input[name=exercise]').val(exercise);
+        $('#exercise_setion').on('change', function () {
+            var exercise_setion = $('#exercise_setion option:selected').text();
+            var pid = $('#exercise_setion option:selected').val();
+            $('input[name=exercise_setion]').val(exercise_setion);
             $('input[name=pid]').val(pid)
         })
 
@@ -136,11 +136,11 @@
     // 获取数据并进行提交
     function submitAction() {
 
-        var exercis = $("#exercise option:selected").val();
-        var exercise_setion = $("input[name=exercise_setion]").val();
-        console.log(exercis)
+        var exercise_setion = $("#exercise_setion option:selected").val();
+        var exercise = $("input[name=exercise]").val();
+        console.log(exercise)
         console.log(exercise_setion)
-        if (exercis == '' || exercise_setion == '') {
+        if (exercise == '' || exercise_setion == '') {
             mui.toast("请填写信息");
             return false;
         }
@@ -156,7 +156,7 @@
         var ajaxResult = wooApi.asyncF(url, objData);
 
         if (ajaxResult.code == 200) {
-            mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
+            mui.alert(ajaxResult.msg, '训练项目创建成功', '确定', function () {
                 var goUrl = "{:url('exercise/exerciseList')}" + '/exercise_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
                 window.top.location.href = goUrl;
             })
