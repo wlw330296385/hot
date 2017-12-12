@@ -77,23 +77,16 @@
                 <textarea rows="5" class="data outline_detail" name="outline_detail" placeholder="填写教案大纲简介"></textarea>
             </div>
 
-            <div class="mui-input-row h-auto">
+            <!--<div class="mui-input-row">-->
+                <!--<label>上传视频</label>-->
+            <!--</div>-->
+            <div class="mui-input-row">
                 <a href="#exercises" class="mui-navigate-right">
                     <label class="wd36">选择训练项目</label>
                 </a>
-                <div class="exercises">
-                    
-
-                </div>
             </div>
-
-
-
-            <div class="mui-input-row">
-                <label>上传视频</label>
-            </div>
-
         </form>
+        <div class="exercises"></div>
         <!--<div class="tip-box">
             <input type="checkbox" value="1" name="is_open" class="data" checked style="width:16px;height:16px;">
             <label>是否对外开放</label>
@@ -122,21 +115,21 @@
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll ">
                 <div class="exerciseList">
+                    {volist name = "exerciseList" id="vol"}
                      <ul class="mui-table-view list eType">
-                        {volist name = "exerciseList" id="vol"}
                         <li class="mui-table-view-cell mui-collapse listli detalisli">
-                            <a class="mui-navigate-right daType" href="#" data-id="{$vol.id}" data-pid="{$vol.pid}" data-exercise="{$vol.exercise}">{$vol.exercise}</a>
+                            <a class="mui-navigate-right daType" href="#" data-id="{$vol.id}" data-pid="{$vol.pid}" data-exercise="{$vol.exercise_setion}">{$vol.exercise_setion}</a>
                             <div class="mui-collapse-content">
                                 {volist name="$vol.daughter" id="v"}
                                 <div class="mui-input-row mui-checkbox mui-left">
                                     <label>{$v.exercise}</label>
-                                    <input name="checkbox-dom" value="{$v.id}" type="checkbox" data-exercise_detail="{$v.exercise_detail}" data-exercise_setion="{$v.exercise_setion}" data-pid="{$v.pid}">
+                                    <input name="checkbox-dom" value="{$v.id}" type="checkbox" data-exercise_detail="{$v.exercise_detail}" data-exercise="{$v.exercise}" data-pid="{$v.pid}">
                                 </div>
                                 {/volist}
                             </div>
                         </li>
-                        {/volist}
                     </ul>
+                    {/volist}
                 </div>
             </div>
         </div>
@@ -176,20 +169,27 @@
             $(".exercises").empty();
             exercise_str = [];
             subexercise_str = [];
+            var tList = ''; //类型列表
+            var eList = ''; //项目列表
             $("ul.eType").each(function () {
-                var data = '<ul class="mui-table-view list eType"><li class="mui-table-view-celllistli detalisli"><p style="padding-left:15px" class="daType" data-id="' + $(this).find(".daType").attr("data-id") + '" data-pid="' + $(this).find(".daType").attr("data-pid") + '" data-exercise="' + $(this).find(".daType").attr("data-Dexercise") + '"><b>' + $(this).find(".daType").text() + '</b></p><div style="padding-left:15px;"><p>' + $(this).find("input[name=checkbox-dom]:checked").siblings().text() + '</p><input name="checkbox-dom" value="' + $(this).find("input[name=checkbox-dom]").val() + '" type="hidden" data-exercise="' + $(this).find("input[name=checkbox-dom]").attr("data-exercise") + '" data-pid="' + $(this).find("input[name=checkbox-dom]").attr("data-pid") + '"></div></li></ul>'
-                var exercise = $(this).find(".daType").text();
+
+                var exercise_setion = $(this).find(".daType").text();
                 var id = $(this).find(".daType").attr("data-id");
+                tList = '';
+                eList = '';
                 subexercise_str = [];
                 $(this).find("input[name=checkbox-dom]:checked").each(function () {
                     var exercise = $(this).attr("data-exercise");
                     var id = $(this).val();
                     var pid = $(this).attr("data-pid");
                     subexercise_str.push({ exercise: exercise, id: id, pid: pid });
+                    eList += '<li class="mui-table-view-cell listli detalisli">'+exercise+'</li>'
+
                 });
                 if (subexercise_str != '') {
-                    exercise_str.push({ exercise: exercise, id: id, sub: subexercise_str });
-                    $(".exercises").append(data);
+                    exercise_str.push({ exercise: exercise_setion, id: id, sub: subexercise_str });
+                    tList = '<div class="page-header"><span class="course"><b>'+exercise_setion+'</b></span></div><ul class="mui-table-view detalis-list list">'+eList+'</ul>'
+                    $(".exercises").append(tList);
                 }
             });
             console.log(exercise_str)
@@ -251,43 +251,43 @@
 
 
     //自定义获取项目列表
-    var toExercisrList = function () {
-        var url = "{:url('api/exercise/getExerciseListByPageApi','','',true)}";
-        var member = "{$memberInfo.member}";
-        var member_id = "{$memberInfo.id}";
-        mui.ajax({
-            url: url,
-            data: {
-                member: member,
-                member_id: member_id,
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/json' },
-            //processData:false,
-            success: function (data) {
-                console.log(data)
-                if (data.code == 200) {
-                    var exerciseli = '';
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        exerciseli = exerciseli + ' <ul class="mui-table-view list eType"><li class="mui-table-view-cell mui-collapse listli detalisli"><a class="mui-navigate-right daType" href="#" data-id="' + data.data.data[i].id + '" data-pid="' + data.data.data[i].pid + '" data-Dexercise="' + data.data.data[i].exercise + '">' + data.data.data[i].exercise + '</a><div class="mui-collapse-content"><div class="mui-input-row mui-checkbox mui-left"><label>' + data.data.data[i].exercise_detail + '</label><input name="checkbox-dom" value="' + data.data.data[i].id + '" type="checkbox" data-exercise_detail="' + data.data.data[i].exercise_detail + '" data-pid="' + data.data.data[i].pid + '"></div></div></li></ul>'
-                    }
-                    $(".exerciseList").empty();
-                    if (exerciseli == '') {
-                        exerciseli = '<p class="mui-text-center">你还没有自定义的项目，到平台项目库找找吧。</p>'
-                    }
-                    $(".exerciseList").append(exerciseli);
-
-                } else {
-                    mui.toast('数据获取失败,请稍候再试');
-                }
-            },
-            error: function (xhr, type, errerThrown) {
-                mui.toast('网络异常,请稍候再试');
-            }
-        });
-    };
+//    var toExercisrList = function () {
+//        var url = "{:url('api/exercise/getExerciseListByPageApi','','',true)}";
+//        var member = "{$memberInfo.member}";
+//        var member_id = "{$memberInfo.id}";
+//        mui.ajax({
+//            url: url,
+//            data: {
+//                member: member,
+//                member_id: member_id,
+//            },
+//            dataType: 'json',//服务器返回json格式数据
+//            type: 'post',//HTTP请求类型
+//            timeout: 10000,//超时时间设置为10秒；
+//            headers: { 'Content-Type': 'application/json' },
+//            //processData:false,
+//            success: function (data) {
+//                console.log(data)
+//                if (data.code == 200) {
+//                    var exerciseli = '';
+//                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+//                        exerciseli = exerciseli + ' <ul class="mui-table-view list eType"><li class="mui-table-view-cell mui-collapse listli detalisli"><a class="mui-navigate-right daType" href="#" data-id="' + data.data.data[i].id + '" data-pid="' + data.data.data[i].pid + '" data-Dexercise="' + data.data.data[i].exercise + '">' + data.data.data[i].exercise + '</a><div class="mui-collapse-content"><div class="mui-input-row mui-checkbox mui-left"><label>' + data.data.data[i].exercise_detail + '</label><input name="checkbox-dom" value="' + data.data.data[i].id + '" type="checkbox" data-exercise_detail="' + data.data.data[i].exercise_detail + '" data-pid="' + data.data.data[i].pid + '"></div></div></li></ul>'
+//                    }
+//                    $(".exerciseList").empty();
+//                    if (exerciseli == '') {
+//                        exerciseli = '<p class="mui-text-center">你还没有自定义的项目，到平台项目库找找吧。</p>'
+//                    }
+//                    $(".exerciseList").append(exerciseli);
+//
+//                } else {
+//                    mui.toast('数据获取失败,请稍候再试');
+//                }
+//            },
+//            error: function (xhr, type, errerThrown) {
+//                mui.toast('网络异常,请稍候再试');
+//            }
+//        });
+//    };
 
 
 

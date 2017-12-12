@@ -31,36 +31,48 @@
 
     </header>
 
+
+
+
+
     <div class="mui-content" style="padding-top:100px;">
         
         <div class="tab-pullRefresh">
             <div id="sysExerciseList" class="mui-control-content">
-                <div class="exerList">
-                    {volist name="sysExerciseList" id="vol"}
-                    <div class="page-header"><span class="course"><b>{$vol.exercise}</b></span></div>
-                    <ul class="mui-table-view detalis-list list">
-                        {volist name="$vol.daughter" id="v"}
-                        <li class="mui-table-view-cell listli detalisli">
-                            <a href="{:url('exercise/exerciseInfo')}" class="mui-navigate-right">{$v.exercise}</a>
-                        </li>
-                        {/volist}
-                    </ul>
-                    {/volist}
-                </div>
+
+                {volist name = "sysExerciseList" id="vol"}
+                <ul class="mui-table-view list eType">
+                    <li class="mui-table-view-cell mui-collapse listli detalisli">
+                        <a class="mui-navigate-right daType" href="#">{$vol.exercise_setion}</a>
+                        <div class="mui-collapse-content">
+                            {volist name="$vol.daughter" id="v"}
+                            <div class="mui-input-row mui-checkbox mui-left">
+                                <a href="{:url('frontend/exercise/exerciseInfo',['id'=>$v['id']])}" class="mui-navigate-right">{$v.exercise}</a>
+                            </div>
+                            {/volist}
+                        </div>
+                    </li>
+                </ul>
+                {/volist}
+
             </div>
             <div id="myExerciseList" class="mui-control-content  mui-active">
-                <div class="exerList">
-                    {volist name="myExerciseList" id="vol"}
-                    <div class="page-header"><span class="course"><b>{$vol.exercise}</b></span></div>
-                    <ul class="mui-table-view detalis-list list">
-                        {volist name="$vol.daughter" id="v"}
-                        <li class="mui-table-view-cell listli detalisli">
-                            <a href="{:url('exercise/exerciseInfo')}" class="mui-navigate-right">{$v.exercise}</a>
-                        </li>
-                        {/volist}
-                    </ul>
-                    {/volist}
-                </div>
+
+                {volist name = "myExerciseList" id="vol"}
+                <ul class="mui-table-view list eType">
+                    <li class="mui-table-view-cell mui-collapse listli detalisli">
+                        <a class="mui-navigate-right daType" href="#">{$vol.exercise_setion}</a>
+                        <div class="mui-collapse-content">
+                            {volist name="$vol.daughter" id="v"}
+                            <div class="mui-input-row mui-checkbox mui-left">
+                                <a href="{:url('frontend/exercise/exerciseInfo',['id'=>$v['id']])}" class="mui-navigate-right">{$v.exercise}</a>
+                            </div>
+                            {/volist}
+                        </div>
+                    </li>
+                </ul>
+                {/volist}
+
             </div>
         </div>
 
