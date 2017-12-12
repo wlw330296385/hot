@@ -36,8 +36,16 @@
         <div class="tab-pullRefresh">
             <div id="sysExerciseList" class="mui-control-content">
                 <div class="exerList">
-                    <div class="page-header"><span class="course"><b>热身游戏</b></span></div>
-                    <ul class="mui-table-view detalis-list list"><li class="mui-table-view-cell listli detalisli"><a href="{:url('exercise/exerciseInfo')}" class="mui-navigate-right">贴报纸跑(无球,运球)</a></li></ul>
+                    {volist name="exerciseList" id="vol"}
+                    <div class="page-header"><span class="course"><b>{$vol.exercise}</b></span></div>
+                    <ul class="mui-table-view detalis-list list">
+                        {volist name="$vol.daughter" id="v"}
+                        <li class="mui-table-view-cell listli detalisli">
+                            <a href="{:url('exercise/exerciseInfo')}" class="mui-navigate-right">{$v.exercise}</a>
+                        </li>
+                        {/volist}
+                    </ul>
+                    {/volist}
                 </div>
             </div>
             <div id="myExerciseList" class="mui-control-content  mui-active">
@@ -61,57 +69,6 @@
         window.top.location.href = this.href;
     });
 
-    $(function () {
-
-        //初始化全局变量
-
-//        toList('sysExerciseList', 0); //平台训练项目
-        toList('myExerciseList', "{$camp_id}"); //平台训练项目
-
-    })
-
-    //自定义项目
-    var toList = function (wList, cID) {
-        //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/exercise/getExerciseListApi')}";
-        var camp_id = cID;
-        mui.ajax({
-            url: url,
-            data: {
-                camp_id: 4
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/json' },
-            success: function (data) {
-                console.log(data)
-                var newdiv = '';
-                if (data.code == 200) {
-//                    console.log(data.code)
-                    //var sss = '['+data.data+']'
-//                    console.log(data.data.length)
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        newdiv += '<div class="exerList"><div class="page-header"><span class="course"><b>'+data.data[i].exercise_setion+'</b></span></div><ul class="mui-table-view detalis-list list">'
-                        var newli = '';
-                        console.log(data.data[i].daughter.length)
-                        for (var j = 0; j <= data.data[i].daughter.length - 1; j++) {
-                            console.log(data.data[i].daughter[j].exercise_setion)
-                            var urls = "{:url('Exercise/exerciseInfo')}" + '/exercise_id/' + data.data[i].daughter[j].id ;
-                            newli += '<li class="mui-table-view-cell listli detalisli"><a href="'+urls+'" class="mui-navigate-right">'+data.data[i].daughter[j].exercise_setion+'</a></li>'
-                        }
-                        newdiv += '</ul></div>'
-
-                    }
-                }
-                $("#" + wList).append(newdiv);
-
-            },
-            error: function (xhr, type, errerThrown) {
-                mui.toast('网络异常,请稍候再试');
-            }
-        });
-    };
 
 
 </script>
