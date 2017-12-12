@@ -214,9 +214,6 @@
     // 获取数据并进行提交
     function submitAction() {
 
-        var totalHtml = $(".exercises").html();
-        $("input[name=exercise_str]").val(totalHtml);
-
         var data = wooApi.getInputData('input', 'data');
         datas = wooApi.getInputData('select', 'data', data);
         // 获取其他标签值
@@ -224,18 +221,17 @@
         var objData = wooApi.arrTOobj(arrData);
         var outline_detail = $('textarea.data').val();
         objData.outline_detail = outline_detail;
-        // objData.exercise_str = JSON.stringify(totalHtml);
-        objData.exercise_str = totalHtml;
-        var url = "{:url('api/plan/createPlanApi')}";
+        objData.exercise_str = exercise_str;
+        var url = "{:url('api/plan/updatePlanApi')}";
         var ajaxResult = wooApi.asyncF(url, objData);
 
         if (ajaxResult.code == 200) {
-            mui.alert(ajaxResult.msg, '教案创建成功', '确定', function () {
+            mui.alert(ajaxResult.msg, '教案修改成功', '确定', function () {
                 var goUrl = "{:url('plan/planlist')}" + '/plan_id/' + "{$planInfo.id}" + '/camp_id/{$planInfo.id}';
                 window.top.location.href = goUrl;
             })
         } else {
-            mui.alert(ajaxResult.msg, '创建失败');
+            mui.alert(ajaxResult.msg, '修改失败');
             mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                 if (data.code === 200) {
                     $('input[name=__token__]').val(data.data);
@@ -265,7 +261,7 @@
                 if (data.code == 200) {
                     var exerciseli = '';
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        exerciseli = exerciseli + ' <ul class="mui-table-view list eType"><li class="mui-table-view-cell mui-collapse listli detalisli"><a class="mui-navigate-right daType" href="#" data-id="' + data.data.data[i].id + '" data-pid="' + data.data.data[i].pid + '" data-Dexercise="' + data.data.data[i].exercise + '">' + data.data.data[i].exercise + '</a><div class="mui-collapse-content"><div class="mui-input-row mui-checkbox mui-left"><label>' + data.data.data[i].exercise + '</label><input name="checkbox-dom" value="' + data.data.data[i].id + '" type="checkbox" data-exercise="' + data.data.data[i].exercise + '" data-pid="' + data.data.data[i].pid + '"></div></div></li></ul>'
+                        exerciseli = exerciseli + ' <ul class="mui-table-view list eType"><li class="mui-table-view-cell mui-collapse listli detalisli"><a class="mui-navigate-right daType" href="#" data-id="' + data.data.data[i].id + '" data-pid="' + data.data.data[i].pid + '" data-Dexercise="' + data.data.data[i].exercise + '">' + data.data.data[i].exercise + '</a><div class="mui-collapse-content"><div class="mui-input-row mui-checkbox mui-left"><label>' + data.data.data[i].exercise_detail + '</label><input name="checkbox-dom" value="' + data.data.data[i].id + '" type="checkbox" data-exercise_detail="' + data.data.data[i].exercise_detail + '" data-pid="' + data.data.data[i].pid + '"></div></div></li></ul>'
                     }
                     $(".exerciseList").empty();
                     if (exerciseli == '') {
