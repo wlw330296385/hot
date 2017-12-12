@@ -33,7 +33,7 @@ class Exercise extends Base{
     public function createExercise(){
         $camp_id = input('param.camp_id');
         $CampService = new CampService();
-         $campInfo = $CampService->getCampInfo($camp_id);
+        $campInfo = $CampService->getCampInfo($camp_id);
         // 分类
         $ExerciseType = $this->ExerciseService->getExerciseType();
 
@@ -68,15 +68,6 @@ class Exercise extends Base{
     }
 
 
-    public function exerciseListApi(){
-        $result = $this->ExerciseService->getExerciseList();
-        if($result){
-            return json(['data'=>$result,'code'=>100,'msg'=>'OK']);
-        }else{
-            return json(['code'=>200,'msg'=>'未获取到数据']);
-        }
-        
-    }
 
 
 }
