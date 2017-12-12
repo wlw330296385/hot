@@ -65,7 +65,7 @@ class ExerciseService {
             return ['data'=>$res,'code'=>100,'msg'=>'无数据'];
         }else{
             $result = channelLevel($res->toArray(),0,'id','pid');
-            // return $result;
+            return $result;
             return ['data'=>$result,'code'=>200,'msg'=>'OK'];
         }
     }
