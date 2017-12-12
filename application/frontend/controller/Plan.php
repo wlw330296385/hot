@@ -65,7 +65,12 @@ class Plan extends Base{
         $gradecateList = $gradecateService->getGradeCategory();
         // 训练营信息
         $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
+        // 获取训练项目列表
+        $ExerciseService = new \app\service\ExerciseService;
+        $exerciseList = $ExerciseService->getExerciseList(['camp_id'=>$camp_id]);
 
+
+        $this->assign('exerciseList',$exerciseList);
         $this->assign('campInfo',$campInfo);
         $this->assign('gradecateList',$gradecateList);
         return view('Plan/createPlan');

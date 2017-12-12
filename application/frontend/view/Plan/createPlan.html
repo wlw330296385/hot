@@ -81,7 +81,10 @@
                 <a href="#exercises" class="mui-navigate-right">
                     <label class="wd36">选择训练项目</label>
                 </a>
-                <div class="exercises"></div>
+                <div class="exercises">
+                    
+
+                </div>
             </div>
 
 
@@ -118,7 +121,23 @@
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll ">
-                <div class="exerciseList"></div>
+                <div class="exerciseList">
+                     <ul class="mui-table-view list eType">
+                        {volist name = "exerciseList" id="vol"}
+                        <li class="mui-table-view-cell mui-collapse listli detalisli">
+                            <a class="mui-navigate-right daType" href="#" data-id="{$vol.id}" data-pid="{$vol.pid}" data-exercise="{$vol.exercise}">{$vol.exercise}</a>
+                            <div class="mui-collapse-content">
+                                {volist name="$vol.daughter" id="v"}
+                                <div class="mui-input-row mui-checkbox mui-left">
+                                    <label>{$v.exercise}</label>
+                                    <input name="checkbox-dom" value="{$v.id}" type="checkbox" data-exercise_detail="{$v.exercise_detail}" data-pid="{$v.pid}">
+                                </div>
+                                {/volist}
+                            </div>
+                        </li>
+                        {/volist}
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -197,7 +216,7 @@
             }
         })
 
-        toExercisrList();
+        // toExercisrList();
     })
 
 
