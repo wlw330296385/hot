@@ -30,9 +30,11 @@ class ExerciseService {
 
     // 新增 训练项目数据
     public function addExercise($data) {
-        $validate = new Validate('ExerciseVal');
+        $validate = validate('ExerciseVal');
+        $exercise = $data['exercise'];
+        $camp_id = $data['camp_id'];
         $validate->extend([
-            'exercise'=> function ($data['exercise'],$data['camp_id']) {
+            'exercise'=> function ($exercise,$camp_id) {
                 $isUnique = $this->exerciseModel->where(['camp_id'=>$data['camp_id'],'exercise'=>$data['exercise'],'status'=>1])->find();
                 return $isUnique?'项目名称已存在':true;
             }
@@ -50,13 +52,13 @@ class ExerciseService {
 
     // 更新 训练项目数据
     public function updateExercise($data, $condi) {
-        $validate = new Validate('ExerciseVal');
-        $validate->extend([
-            'exercise'=> function ($data['exercise'],$data['camp_id']) {
-                $isUnique = $this->exerciseModel->where(['camp_id'=>$data['camp_id'],'exercise'=>$data['exercise'],'status'=>1])->find();
-                return $isUnique?'项目名称已存在':true;
-            }
-        ]);
+        $validate = validate('ExerciseVal');
+        $exercise = $data['exercise'];
+        $camp_id = $data['camp_id'];
+        $isUnique = $this->exerciseModel->where(['camp_id'=>$camp_id,'exercise'=>$exercise,'status'=>1])->find();
+        if($isUnique){
+            return ['msg'=>'项目名已存在','code'=>100];
+        }
         $result = $validate->check($data);
         if(!$result){
             return ['msg'=>$validate->getError(),'code'=>100];
@@ -69,6 +71,17 @@ class ExerciseService {
     }
 
     public function createExercise($data){
+        $validate = validate('ExerciseVal');
+        $exercise = $data['exercise'];
+        $camp_id = $data['camp_id'];
+        $isUnique = $this->exerciseModel->where(['camp_id'=>$camp_id,'exercise'=>$exercise,'status'=>1])->find();
+        if($isUnique){
+            return ['msg'=>'项目名已存在','code'=>100];
+        }
+        $res = $validate->check($data);
+        if(!$res){
+            return ['msg'=>$validate->getError(),'code'=>100];
+        }
         $result = $this->exerciseModel->save($data);
         if($result){
             return ['code'=>200,'msg'=>__lang('MSG_200'),'data'=>$this->exerciseModel->id];
