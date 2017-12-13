@@ -35,8 +35,8 @@ class Team extends Base {
                     'team' => $data['name'],
                     'member_id' => $this->memberInfo['id'],
                     'member' => $this->memberInfo['member'],
-                    'member_sex' => $this->memberInfo['sex'],
-                    'member_avatar' => $this->memberInfo['avatar'],
+                    'sex' => $this->memberInfo['sex'],
+                    'avatar' => $this->memberInfo['avatar'],
                     'yearsexp' => $this->memberInfo['yearsexp'],
                     'height' => $this->memberInfo['height'],
                     'weight' => $this->memberInfo['weight'],
@@ -272,7 +272,7 @@ class Team extends Base {
                         'member' => (!empty($applyInfo['member']['realname'])) ? $applyInfo['member']['realname'] : $applyInfo['member']['member'],
                         'member_sex' => $applyInfo['member']['sex'],
                         'member_avatar' => $applyInfo['member']['avatar'],
-                        'age' => 1,
+                        'age' => getMemberAgeByBirthday($applyInfo['member']['id']),
                         'yearsexp' => $applyInfo['member']['yearsexp'],
                         'height' => $applyInfo['member']['height'],
                         'weight' => $applyInfo['member']['weight'],
@@ -355,4 +355,5 @@ class Team extends Base {
         }
     }
 
+    // 创建球队活动
 }
