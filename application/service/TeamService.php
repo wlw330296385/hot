@@ -44,9 +44,9 @@ class TeamService {
         $res = $model->where($map)->find();
         if ($res) {
             // 详情数据数组组合需要的元素
-            $result = $res->toArray();
-            $result['status_num'] = $res->getData('status');
-            $result['type_num'] = $res->getData('type');
+            $result = $res->getData();
+            $result['status_text'] = $res->status;
+            $result['type_text'] = $res->type;
             return $result;
         } else {
             return $res;
