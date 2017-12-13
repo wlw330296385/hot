@@ -1,10 +1,210 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <title>队员资料</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+
 </head>
-<body>
+
+<body class="whitebg">
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">{$teamInfo.name}队员资料</h1>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="list camp-list detalis-list coach mt55">
+
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media listli" id="logoframe">
+                    <img class="mui-media-object mui-pull-left logostyle" src="{$teamInfo.logo}">
+                    <div class="mui-media-body wd36">
+                        {$teamInfo.name}
+                        <i class="icon iconfont {$teamMemberInfo.sex}"></i>
+                        <p class="mui-ellipsis">{$teamInfo.city} {$teamInfo.area}</p>
+                    </div>
+                    <div class="price-frame">
+                        <button class="mui-btn bgred">加关注</button>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="nav-list mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>年龄</span>
+                            <div class="mui-media-body">{$teamMemberInfo.age}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>球龄</span>
+                            <div class="mui-media-body">{$teamMemberInfo.yearsexp}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>身高</span>
+                            <div class="mui-media-body">{$teamMemberInfo.height}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>体重</span>
+                            <div class="mui-media-body">{$teamMemberInfo.weight}</div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="impress border-b whitebg"></div>
+
+            <div class="mui-row teamMemberInfo whitebg border-b">
+                <div class="mui-col-sm-6 mui-col-xs-6 tmLeft">
+                    <h3 class="colorred">{$teamMemberInfo.team}</h3>
+                    <p>现任：</p>
+                    <h3 class="colorred">{$teamMemberInfo.match_num}</h3>
+                    <p>参与比赛次数</p>
+                </div>
+                <div class="mui-col-sm-6 mui-col-xs-6 tmRight">
+                    <h4>{$teamMemberInfo.position}</h4>
+                    <h3>{$teamMemberInfo.number}</h3>
+                </div>
+            </div>
+            <div class="page-header whitebg">
+                <span class="course">参与赛事总次数：83</span>
+                <span class="more pdr15">
+                    <a href="" class="mui-navigate-right">更多个人数据</a>
+                </span>
+            </div>
+
+
+            <div class="page-header">
+                <span class="course">他效力的其他球队（<font class="otherLength"></font>）</span>
+            </div>
+            <ul class="mui-table-view detalis-list list border-b teammember">
+                {volist name="memberOtherTeam" id="vol"}
+                <li class="mui-table-view-cell mui-media listli" id="logoframe">
+                    <a href="{:url('team/teamInfo',['team_id'=>$vol.team['id']])}" class="mui-navigate-right">
+                        <img class="mui-media-object mui-pull-left logostyle" src="{$vol.team.logo}">
+                        <div class="mui-media-body wd60">{$vol.team.name}
+                            <p class="mui-ellipsis">平均年龄:{$vol.team.avg_age} &nbsp;身高:{$vol.team.avg_height}cm</p>
+                        </div>
+                        <div class="price-frame" style="line-height: 52px;padding-right: 15px;padding-top: 0;">{$vol.team.area}
+                        </div>
+                    </a>
+                </li>
+                {/volist}
+            </ul>
+
+        </div>
+
+        <!--底部操作-->
+        <ul class="mui-table-view operation">
+            <a href="#Impress">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgblue myimpress" onclick="submitAction()">
+                    对他有印象，评价一下
+                </li>
+            </a>
+        </ul>
+
+    </div>
+
+    <!-- 发表印象 -->
+    <div id="Impress" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <ul class="mui-table-view operation">
+                <h5>
+                    <span>我的印象</span>
+                    <a href="#Impress" class="mui-icon mui-icon-closeempty"></a>
+                </h5>
+                <div class="impressSide whitebg">
+                        <span class="choiseTag">球风良好</span>
+                        <span class="choiseTag">诚信守时</span>
+                        <span class="choiseTag">尊重对手</span>
+                        <span class="choiseTag">年轻气盛</span>
+                        <span class="choiseTag">老当益壮</span>
+                        <span class="choiseTag">球风硬朗</span>
+                        <span class="choiseTag">拖拉迟到</span>
+                        <span class="choiseTag">有啦啦队</span>
+                        <span class="choiseTag">氛围很好</span>
+                        <span class="choiseTag">小动作很多</span>
+                        <span class="choiseTag">速度型</span>
+                        <span class="choiseTag">进攻极强</span>
+                        <span class="choiseTag">不尊重裁判</span>
+                        <span class="choiseTag">放飞机</span>
+                        <span class="choiseTag">防守极强</span>
+                        <span class="choiseTag">攻守兼备</span>
+                </div>
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="impressSubmit">提交</li>
+            </ul>
+        </div>
+    </div>
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/Designer.js"></script>
+    <script>
+        mui.init({
+            swipeBack: false
+        });
+        (function ($) {
+            $('.mui-scroll-wrapper').scroll({
+                indicators: true //是否显示滚    动条
+            });
+        })(mui);
+
+        $(function () {
+
+            // 印象评价
+            $(".choiseTag").on("tap", '', function () {
+                if ($(this).hasClass("bgorange")) {
+                    $(this).removeClass("bgorange");
+                } else {
+                    $(this).addClass("bgorange");
+                }
+            });
+
+            $(".myimpress").on("tap", '', function () {
+                $(".impressSide .bgorange").removeClass("bgorange");
+            });
+
+            $("#impressSubmit").on("tap", '', function () {
+                var hasOrange = $(".impressSide").children("span").hasClass("bgorange")
+                if (hasOrange == false) {
+                    mui.toast("你还没有选择印象标签");
+                    return false;
+                };
+                $(".impressSide .bgorange").each(function () {
+                    var span = '<span class="choiseTag">' + $(this).text() + '</span>';
+                    $(".impress").append(span);
+                })
+                mui('#Impress').popover('toggle');
+            });
+
+            otherLength(); // 其他效力球队长度
+
+        });
+
+        // 其他效力球队长度
+        function otherLength() {
+            var length = $(".teammember li").length;
+            $(".otherLength").text(length);
+        }
+
+
+    </script>
 
 </body>
+
 </html>
