@@ -44,6 +44,13 @@ class Plan extends Base{
         // 获取适合阶段
         $gradecateService = new \app\service\GradeService;
         $gradecateList = $gradecateService->getGradeCategory();
+
+        // 获取训练项目列表
+        $ExerciseService = new \app\service\ExerciseService;
+        $exerciseList = $ExerciseService->getExerciseList(['camp_id'=>$camp_id]);
+
+
+        $this->assign('exerciseList',$exerciseList);
         $this->assign('gradecateList',$gradecateList);
         $this->assign('planInfo',$planInfo);
 

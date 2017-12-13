@@ -36,7 +36,7 @@ class Index extends Base{
         }
 
         $this->assign('bannerList',$bannerList);
-        return view('index/indexOfCamp');
+        return view('Index/indexOfCamp');
     }
 
     // 微信用户授权回调
