@@ -11,6 +11,10 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .list p { font-size: 12px; }
+        .list .date { font-size: 12px; width:auto !important; margin-top: 10px; }
+    </style>
 </head>
 
 <body>
@@ -23,8 +27,8 @@
             </div>
         </div>
         <div class="mui-segmented-control seg-control whitebg" style="margin:10px;">
-            <a class="mui-control-item" href="#onlinePlanList">平台教案库</a>
-            <a class="mui-control-item mui-active" href="#offlinePlanList">训练营教案库</a>
+            <a class="mui-control-item" href="#sysPlanList">平台教案库</a>
+            <a class="mui-control-item mui-active" href="#myPlanList">训练营教案库</a>
             <a class="mui-control-item" href="{:url('plan/createPlan',['camp_id'=>$camp_id])}">添加教案</a>
         </div>
     </header>
@@ -33,14 +37,14 @@
     <div class="mui-content" style="padding-top:100px;">
 
         <div class="tab-pullRefresh">
-            <div id="onlinePlanList" class="mui-scroll-wrapper mui-control-content" style="top: 100px">
+            <div id="sysPlanList" class="mui-scroll-wrapper mui-control-content" style="top: 100px">
                 <div class="mui-scroll">
                     <ul class="mui-table-view detalis-list list border-b plan0"></ul>
                 </div>
             </div>
-            <div id="offlinePlanList" class="mui-scroll-wrapper mui-control-content  mui-active" style="top: 100px">
+            <div id="myPlanList" class="mui-scroll-wrapper mui-control-content  mui-active" style="top: 100px">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list border-b plan"></ul>
+                    <ul class="mui-table-view detalis-list list border-b plan{$camp_id}"></ul>
                 </div>
             </div>
         </div>
@@ -67,7 +71,7 @@
         var onCount = 1;
         var offCount = 1;
 
-        mui('#onlinePlanList').pullRefresh({
+        mui('#sysPlanList').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
@@ -87,7 +91,7 @@
             }
         });
 
-        mui('#offlinePlanList').pullRefresh({
+        mui('#myPlanList').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
@@ -113,7 +117,7 @@
                 onCount = 1;//刷新并显示第一页
                 var page = onCount;
                 var gType = 1;//代表下拉刷新
-                toList('onlinePlanList', page, gType, 0);//具体取数据的方法
+                toList('sysPlanList', page, gType, 0);//具体取数据的方法
             }, 100);
         }
 
@@ -123,7 +127,7 @@
                 onCount++;//翻下一页
                 var page = onCount;
                 var gType = 2;//代表上拉加载
-                toList('onlinePlanList', page, gType, 0);//具体取数据的方法
+                toList('sysPlanList', page, gType, 0);//具体取数据的方法
             }, 100);
         }
 
@@ -133,7 +137,7 @@
                 offCount = 1;//刷新并显示第一页
                 var page = offCount;
                 var gType = 1;//代表下拉刷新
-                toList('offlinePlanList', page, gType);//具体取数据的方法
+                toList('myPlanList', page, gType, {$camp_id});//具体取数据的方法
             }, 100);
         }
 
@@ -143,58 +147,46 @@
                 offCount++;//翻下一页
                 var page = offCount;
                 var gType = 2;//代表上拉加载
-                toList('offlinePlanList', page, gType);//具体取数据的方法
+                toList('myPlanList', page, gType, {$camp_id});//具体取数据的方法
             }, 100);
         }
 
     })
 
     //自定义教案
-    var toList = function (wList, page, gType, pid, is_max) {
+    var toList = function (wList, page, gType, cID) {
         //搜索关键字不能完全为空，否则查询为空
         var url = "{:url('api/plan/planListApi')}" + '/?page=' + page;
-        var member = "{$memberInfo.member}";
-        var member_id = "{$memberInfo.id}";
+        var camp_id = cID;
         mui.ajax({
             url: url,
             data: {
-                member: member,
-                member_id: member_id,
-                pid: pid
+                camp_id: camp_id
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
             timeout: 10000,//超时时间设置为10秒；
             headers: { 'Content-Type': 'application/json' },
             success: function (data) {
-                var newli0 = '';
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
                         var urls = "{:url('plan/planInfo')}" + '/plan_id/' + data.data[i].id + '/camp_id/' + "{$camp_id}";
-                        if (pid == 0) {
-                            newli0 += '<li class="mui-table-view-cell listli "><a class="mui-navigate-right" href="' + urls + '"><div class="list-cont"><h5>' + data.data[i].outline + '</h5><p>' + data.data[i].grade_category + '</p></div></a></li>';
-                        }
-                        newli += '<li class="mui-table-view-cell listli "><a class="mui-navigate-right" href="' + urls + '"><div class="list-cont"><h5>' + data.data[i].outline + '</h5><p>' + data.data[i].grade_category + '</p></div></a></li>';
+                        newli += '<li class="mui-table-view-cell listli "><a class="mui-navigate-right" href="' + urls + '"><span class="date">作者：' + data.data[i].member + '</span><strong>' + data.data[i].outline + '</strong><p>' + data.data[i].grade_category + '</p></a></li>';
                     }
                 }
 
                 if (gType == 1) {
                     //上拉刷新
-                    $("ul.plan0").empty().append(newli0);
-                    $("ul.plan").empty().append(newli);
+                    $("ul.plan"+cID).empty().append(newli);
                     mui('#' + wList).pullRefresh().endPulldownToRefresh();
                     mui('#' + wList).pullRefresh().refresh(true);
-                    if (newli0 == '') {
-                        $("ul.plan0").append('<li class="nodata"><p>没有相关数据哦</p></li>');
-                    }
                     if (newli == '') {
-                        $("ul.plan").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        $("ul.plan"+cID).append('<li class="nodata"><p>没有相关数据哦</p></li>');
                     }
                 } else {
                     //下拉加载 gType==2
-                    $("ul.plan0").append(newli0);
-                    $("ul.plan").append(newli);
+                    $("ul.plan"+cID).append(newli);
                 }
 
                 if (newli != '') {

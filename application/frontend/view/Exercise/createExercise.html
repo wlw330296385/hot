@@ -50,7 +50,7 @@
                     <label>项目类型</label>
                     <span class="select-row">
                         <select id="exercise_setion">
-                            <option>请选择</option>
+                            <option value="">请选择</option>
                             {volist name="ExerciseType" id="vol"}
                             <option value="{$vol.id}">{$vol.exercise}</option>
                             {/volist}
@@ -141,33 +141,33 @@
         console.log(exercise)
         console.log(exercise_setion)
         if (exercise == '' || exercise_setion == '') {
-            mui.toast("请填写信息");
+            mui.toast("必须选择项目类型和输入项目名称");
             return false;
         }
 
-        var data = wooApi.getInputData('input', 'data');
-        datas = wooApi.getInputData('select', 'data', data);
-        // 获取其他标签值
-        arrData = wooApi.getDomData('domData', datas);
-        var objData = wooApi.arrTOobj(arrData);
-        var exercise_detail = $('textarea.data').val();
-        objData.exercise_detail = exercise_detail;
-        var url = "{:url('api/Exercise/updateExerciseApi')}";
-        var ajaxResult = wooApi.asyncF(url, objData);
-
-        if (ajaxResult.code == 200) {
-            mui.alert(ajaxResult.msg, '训练项目创建成功', '确定', function () {
-                var goUrl = "{:url('exercise/exerciseList')}" + '/exercise_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
-                window.top.location.href = goUrl;
-            })
-        } else {
-            mui.alert(ajaxResult.msg, '创建失败');
-            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                if (data.code === 200) {
-                    $('input[name=__token__]').val(data.data);
-                }
-            }, 'json');
-        }
+//        var data = wooApi.getInputData('input', 'data');
+//        datas = wooApi.getInputData('select', 'data', data);
+//        // 获取其他标签值
+//        arrData = wooApi.getDomData('domData', datas);
+//        var objData = wooApi.arrTOobj(arrData);
+//        var exercise_detail = $('textarea.data').val();
+//        objData.exercise_detail = exercise_detail;
+//        var url = "{:url('api/Exercise/updateExerciseApi')}";
+//        var ajaxResult = wooApi.asyncF(url, objData);
+//
+//        if (ajaxResult.code == 200) {
+//            mui.alert(ajaxResult.msg, '训练项目创建成功', '确定', function () {
+//                var goUrl = "{:url('exercise/exerciseList')}" + '/exercise_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
+//                window.top.location.href = goUrl;
+//            })
+//        } else {
+//            mui.alert(ajaxResult.msg, '创建失败');
+//            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+//                if (data.code === 200) {
+//                    $('input[name=__token__]').val(data.data);
+//                }
+//            }, 'json');
+//        }
     };
 
 </script>
