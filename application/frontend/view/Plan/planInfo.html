@@ -14,23 +14,30 @@
 </head>
 
 <body class=whitebg>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-icon mui-icon-left-nav mui-pull-left arrow" href="{:url('plan/planlist',['camp_id'=>$planInfo['camp_id']])}">
+            <span class="return">返回教案列表</span>
+        </a>
+    </header>
+
     <div class="mui-content whitebg">
 
         <div class="camp-list camp-lesson-list detalis-list grade-list editor program">
             <ul class="mui-table-view list">
                 <li class="mui-table-view-cell mui-media listli listinitial">
 
-                    <img class="mui-media-object mui-pull-left" src="/static/frontend/images/program.png" style="width: 45px;height: 45px;">
+                    <img class="mui-media-object mui-pull-left" src="/static/frontend/images/program.png" style="width: 45px !important;height: 45px !important; margin-right: 15px;">
                     <div class="mui-media-body wd52">
                         <strong>{$planInfo.outline}</strong>
                         <p class="mui-ellipsis" style="text-indent: 0">作者:{$planInfo.member}</p>
                     </div>
                     {gt name="$power" value="2"}
-                    <a href="{:url('plan/updatePlan',['plan_id'=>$planInfo['id']])}" class="mui-navigate-right">
-                        <div class="price-frame">
-                            <span class="editor-btn">编辑</span>
-                        </div>
-                    </a>
+                    <div class="price-frame">
+                        <a href="{:url('plan/updatePlan',['plan_id'=>$planInfo['id']])}" class="mui-navigate-right">
+                                <span class="editor-btn">编辑</span>
+                        </a>
+                    </div>
                     {/gt}
                 </li>
             </ul>
@@ -39,19 +46,19 @@
                 <span class=fr>{$planInfo.camp}</span>
             </div>
 
-            <ul class="mui-table-view list">
+            <ul class="mui-table-view list border-b">
                 <li class="mui-table-view-cell listli">大纲介绍
                     <span>{$planInfo.outline_detail}</span>
                 </li>
             </ul>
 
             <div class="program-view4 border-b">
-                <h5>训练项目:</h5>
+                <h5>训练项目</h5>
                 <div>
                     {volist name="planInfo.exercise_str" id="vo"}
                     <ul class="mui-table-view list eType">
                         <li class="mui-table-view-cell listli detalisli">
-                            <h5 class="daType">{$vo.exercise}</h5>
+                            <strong class="daType">{$vo.exercise}</strong>
                             {if condition="isset($vo.sub)"} {volist name="vo.sub" id="sub"}
                             <P>{$sub.exercise}</P>
                             {/volist} {/if}

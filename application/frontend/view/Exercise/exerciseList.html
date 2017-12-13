@@ -11,6 +11,12 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .mui-collapse-content .mui-input-row { padding: 8px 5px; border-bottom: 1px solid #EEE;}
+        .mui-input-row:last-child { border-bottom: none !important; }
+        .mui-table-view-cell.mui-active .daType { font-weight: bold; background: #efeff4; }
+        .mui-collapse-content .mui-navigate-right:after { right: 0px; }
+    </style>
 </head>
 
 <body>
@@ -25,42 +31,51 @@
 
         <div class="mui-segmented-control seg-control whitebg" style="margin:10px;">
             <a class="mui-control-item" href="#sysExerciseList">平台项目库</a>
-            <a class="mui-control-item mui-active" href="#myExerciseList">我的项目库</a>
+            <a class="mui-control-item mui-active" href="#myExerciseList">训练营项目库</a>
             <a class="mui-control-item" href="{:url('Exercise/createExercise',['camp_id'=>$camp_id])}">添加项目</a>
         </div>
 
     </header>
 
+
     <div class="mui-content" style="padding-top:100px;">
         
         <div class="tab-pullRefresh">
-            <div id="sysExerciseList" class="mui-control-content">
-                <div class="exerList">
-                    {volist name="sysExerciseList" id="vol"}
-                    <div class="page-header"><span class="course"><b>{$vol.exercise}</b></span></div>
-                    <ul class="mui-table-view detalis-list list">
-                        {volist name="$vol.daughter" id="v"}
-                        <li class="mui-table-view-cell listli detalisli">
-                            <a href="{:url('exercise/exerciseInfo')}" class="mui-navigate-right">{$v.exercise}</a>
-                        </li>
-                        {/volist}
-                    </ul>
-                    {/volist}
-                </div>
+            <div id="sysExerciseList" class="mui-control-content mt">
+
+                {volist name = "sysExerciseList" id="vol"}
+                <ul class="mui-table-view list mb">
+                    <li class="mui-table-view-cell mui-collapse listli detalisli">
+                        <a class="mui-navigate-right daType" href="#">{$vol.exercise_setion}</a>
+                        <div class="mui-collapse-content">
+                            {volist name="$vol.daughter" id="v"}
+                            <div class="mui-input-row mui-navigate-right">
+                                <a href="{:url('frontend/exercise/exerciseInfo',['exercise_id'=>$v['id']])}">{$v.exercise}</a>
+                            </div>
+                            {/volist}
+                        </div>
+                    </li>
+                </ul>
+                {/volist}
+
             </div>
-            <div id="myExerciseList" class="mui-control-content  mui-active">
-                <div class="exerList">
-                    {volist name="myExerciseList" id="vol"}
-                    <div class="page-header"><span class="course"><b>{$vol.exercise}</b></span></div>
-                    <ul class="mui-table-view detalis-list list">
-                        {volist name="$vol.daughter" id="v"}
-                        <li class="mui-table-view-cell listli detalisli">
-                            <a href="{:url('exercise/exerciseInfo')}" class="mui-navigate-right">{$v.exercise}</a>
-                        </li>
-                        {/volist}
-                    </ul>
-                    {/volist}
-                </div>
+            <div id="myExerciseList" class="mui-control-content mt mui-active">
+
+                {volist name = "myExerciseList" id="vol"}
+                <ul class="mui-table-view list mb">
+                    <li class="mui-table-view-cell mui-collapse listli detalisli">
+                        <a class="mui-navigate-right daType" href="#">{$vol.exercise_setion}</a>
+                        <div class="mui-collapse-content">
+                            {volist name="$vol.daughter" id="v"}
+                            <div class="mui-input-row mui-navigate-right">
+                                <a href="{:url('frontend/exercise/exerciseInfo',['exercise_id'=>$v['id']])}">{$v.exercise}</a>
+                            </div>
+                            {/volist}
+                        </div>
+                    </li>
+                </ul>
+                {/volist}
+
             </div>
         </div>
 

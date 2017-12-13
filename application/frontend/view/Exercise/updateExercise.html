@@ -48,13 +48,13 @@
                 <a href="#" class="mui-navigate-right">
                     <label>项目类型</label>
                     <span class="select-row">
-                        <select id="exercise">
-                            <option>--请选择--</option>
+                        <select id="exercise_setion">
+                            <option>请选择</option>
                             {volist name="ExerciseType" id="vol"}
                             <option value="{$vol.id}">{$vol.exercise}</option>
                             {/volist}
                         </select>
-                        <input type="hidden" name="exercise" value="{$ExerciseInfo.exercise}" class="data">
+                        <input type="hidden" name="exercise_setion" value="{$ExerciseInfo.exercise_setion}" class="data">
                         <input type="hidden" name="pid" value="{$ExerciseInfo.pid}" class="data">
                     </span>
                 </a>
@@ -62,16 +62,16 @@
             </div>
             <div class="mui-input-row">
                 <label>项目名称</label>
-                <input type="text" placeholder="请填写项目名称" name="exercise_setion" class="data" value="{$ExerciseInfo.exercise_setion}">
+                <input type="text" placeholder="请填写项目名称" name="exercise" class="data" value="{$ExerciseInfo.exercise}">
             </div>
             <div class="mui-input-row h-auto">
                 <label>项目要领</label>
                 <textarea rows="5" class="data" name="exercise_detail" placeholder="填写项目要领">{$ExerciseInfo.exercise_detail}</textarea>
             </div>
 
-            <div class="mui-input-row">
-                <label>上传视频</label>
-            </div>
+            <!--<div class="mui-input-row">-->
+                <!--<label>上传视频</label>-->
+            <!--</div>-->
 
         </form>
         <!-- <div class="tip-box">
@@ -80,7 +80,7 @@
         </div> -->
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" onclick="submitAction()">
-                提交
+                提交修改
             </li>
         </ul>
 
@@ -113,13 +113,13 @@
             mui(".mui-popover.mui-active").popover("toggle");
         })
 
-        $('#exercise').find('option[value="{$ExerciseInfo.pid}"]').prop("selected", true);
+        $('#exercise_setion').find('option[value="{$ExerciseInfo.pid}"]').prop("selected", true);
 
         // 课程类型更改选择
-        $('#exercise').on('change', function () {
-            var exercise = $('#exercise option:selected').text();
-            var pid = $('#exercise option:selected').val();
-            $('input[name=exercise]').val(exercise);
+        $('#exercise_setion').on('change', function () {
+            var exercise_setion = $('#exercise_setion option:selected').text();
+            var pid = $('#exercise_setion option:selected').val();
+            $('input[name=exercise_setion]').val(exercise_setion);
             $('input[name=pid]').val(pid)
         })
 
