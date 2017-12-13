@@ -79,7 +79,7 @@
             </div>
 
             <div class="mui-input-row">
-                <a href="#exercises" class="mui-navigate-right">
+                <a href="#exercises" id="setExercisesBox" class="mui-navigate-right">
                     <label class="wd36">选择训练项目</label>
                     <input type="hidden" name="exercise_str" class="data" value="">
                 </a>
@@ -182,16 +182,14 @@
         $('#gradecate').find('option[value="{$planInfo.grade_category_id}"]').prop("selected", true);
 
         //训练项目列表复选框赋值
-        $("#setStudentCBox").on('tap', '', function () {
+        $("#setExercisesBox").on('tap', '', function () {
             //每次打开先清空所有选择
-            $("input[name='checkbox-dom']").prop("checked", false);
+            $(".exerciseList input[name='checkbox-dom']").prop("checked", false);
             //然后遍历出对应所选
-            $(".stdList").each(function (i) {
-                var id = $(this).attr("data-id");
-                var student_id = $(this).attr("data-student_id");
-                var student = $(this).attr("data-student");
-                $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
-                    return $(this).attr("data-student_id") == student_id
+            $(".exercises li").each(function (i) {
+                var exercises_name = $(this).text();
+                $(".exerciseList").find("input[name='checkbox-dom']").filter(function (index) {
+                    return $(this).attr("data-exercise") == exercises_name
                 }).prop("checked", true);
             });
         });
@@ -256,6 +254,16 @@
     // 获取数据并进行提交
     function submitAction() {
 
+        var gradecate = $("#gradecate option:selected").val();
+        var outline = $("input[name=outline]").val();
+        console.log(gradecate)
+        console.log(outline)
+        if (outline == '' || gradecate == '') {
+            mui.toast("必须选择教案适合阶段和输入教案名称");
+            return false;
+        }
+        
+
         var data = wooApi.getInputData('input', 'data');
         datas = wooApi.getInputData('select', 'data', data);
         // 获取其他标签值
@@ -263,7 +271,9 @@
         var objData = wooApi.arrTOobj(arrData);
         var outline_detail = $('textarea.data').val();
         objData.outline_detail = outline_detail;
-        objData.exercise_str = exercise_str;
+        objData.exercise_str = JSON.stringify(exercise_str);
+
+
         var url = "{:url('api/plan/updatePlanApi')}";
         var ajaxResult = wooApi.asyncF(url, objData);
 
