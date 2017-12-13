@@ -1,7 +1,7 @@
 <?php
 namespace app\service;
 use app\model\Exercise;
-
+use app\common\validate\ExerciseVal;
 class ExerciseService {
     protected $exerciseModel;
 
@@ -30,9 +30,18 @@ class ExerciseService {
 
     // 新增 训练项目数据
     public function addExercise($data) {
-        $model = new Exercise();
-        $res = $model->save($data);
-        //dump($res);
+        $validate = new Validate('ExerciseVal');
+        $validate->extend([
+            'exercise'=> function ($data['exercise'],$data['camp_id']) {
+                $isUnique = $this->exerciseModel->where(['camp_id'=>$data['camp_id'],'exercise'=>$data['exercise'],'status'=>1])->find();
+                return $isUnique?'项目名称已存在':true;
+            }
+        ]);
+        $result = $validate->check($data);
+        if(!$result){
+            return ['msg'=>$validate->getError(),'code'=>100];
+        }
+        $res = $this->exerciseModel->save($data);
         if (!$res)
             return ['msg' => __lang('MSG_400'), 'code' => 100];
 
@@ -41,8 +50,18 @@ class ExerciseService {
 
     // 更新 训练项目数据
     public function updateExercise($data, $condi) {
-        $model = new Exercise();
-        $res = $model->save($data, $condi);
+        $validate = new Validate('ExerciseVal');
+        $validate->extend([
+            'exercise'=> function ($data['exercise'],$data['camp_id']) {
+                $isUnique = $this->exerciseModel->where(['camp_id'=>$data['camp_id'],'exercise'=>$data['exercise'],'status'=>1])->find();
+                return $isUnique?'项目名称已存在':true;
+            }
+        ]);
+        $result = $validate->check($data);
+        if(!$result){
+            return ['msg'=>$validate->getError(),'code'=>100];
+        }
+        $res = $this->exerciseModel->save($data, $condi);
         if (!$res)
             return ['msg' => __lang('MSG_400'), 'code' => 100];
 
