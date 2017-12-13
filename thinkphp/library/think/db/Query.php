@@ -1333,7 +1333,7 @@ class Query
         if (!isset($total) && !$simple) {
             $options = $this->getOptions();
 
-            unset($this->options['order'], $this->options['limit'], $this->options['page'], $this->options['field']);
+            unset($this->options['limit'], $this->options['page'], $this->options['field']);
 
             $bind    = $this->bind;
             $total   = $this->count();

@@ -13,7 +13,7 @@ class Student extends Backend {
         // 搜索筛选
         $map = [];
         if ($cur_camp = $this->cur_camp) {
-            $map['camp_id'] = $cur_camp['camp_id'];
+            $map['grade_member.camp_id'] = $cur_camp['camp_id'];
         }
         $camp = input('camp');
         if ($camp) {
@@ -27,19 +27,15 @@ class Student extends Backend {
         if ($tel) {
             $map['member.telephone'] = $tel;
         }
-
         // 视图查询 grade_member - student
-        $list = Db::view('student')
-            ->view('member', ['member', 'hot_id','telephone'], 'member.id=student.member_id', 'left')
-            ->view('grade_member', ['camp', 'camp_id', 'grade', 'grade_id', 'type', 'status'], 'grade_member.student_id=student.id', 'LEFT')
+        $list = Db::view('student','student,member_id,id')
+            ->view('member', 'member,hot_id,telephone', 'member.id=student.member_id', 'left')
+            ->view('grade_member', 'camp,camp_id,grade,grade_id,status', 'grade_member.student_id=student.id', 'LEFT')
             ->where($map)
             ->where('grade_member.delete_time', null)
-            ->order(['student.id'=>'desc'])
+            ->order('student.member_id desc')
             ->paginate(15);
-
 //        dump($list->toArray());die;
-        $breadcrumb = ['title' => '学员列表', 'ptitle' => '训练营'];
-        $this->assign('breadcrumb', $breadcrumb);
         $this->assign('list', $list);
         return $this->fetch();
     }
@@ -51,11 +47,7 @@ class Student extends Backend {
         $data['_incamp'] = Db::view('student', 'id, student,member_id')
             ->view('grade_member', 'grade,camp,type,status', 'grade_member.student_id=student.id')
             ->where(['student_id' => $data['id']])->select();
-//        dump($data);
 
-        $breadcrumb = ['title' => '学员档案', 'ptitle' => '训练营'];
-        $this->assign('breadcrumb', $breadcrumb);
-        $this->assign('student', $data);
         return view();
     }
 }
