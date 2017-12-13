@@ -148,6 +148,10 @@ class Team extends Base {
 
     // 活动详情
     public function eventInfo() {
+        $event_id = input('param.event_id');
+        $teamS = new TeamService();
+        $eventInfo = $teamS->getTeamEventInfo(['id' => $event_id]);
+        $this->assign('eventInfo', $eventInfo);
         return view('Team/eventInfo');
     }
 

@@ -212,7 +212,7 @@ class TeamService {
         $model = new Apply();
         // 如果有带更新条件记录id就更新数据
         if (isset($data['id'])) {
-            $res = $model->allowField(true)->save($data, ['id' => $data['id']]);
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res || ($res === 0)) {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
@@ -231,12 +231,75 @@ class TeamService {
         }
     }
 
-    // 球队活动分页
+    // 创建球队活动
+    public function createTeamEvent($data) {
+        $model = new TeamEvent();
+        // 验证数据
+        $validate = validate('TeamEventVal');
+        if (!$validate->scene('add')->check($data)) {
+            return ['code' => 100, 'msg' => $validate->getError()];
+        }
+        // 保存数据，成功返回自增id，失败记录错误信息
+        $res = $model->allowField(true)->data($data)->save();
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+        } else {
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
+    // 修改球队活动
+    public function updateTeamEvent($data) {
+        $model = new TeamEvent();
+        // 验证数据
+        $validate = validate('TeamEventVal');
+        if (!$validate->scene('edit')->check($data)) {
+            return ['code' => 100, 'msg' => $validate->getError()];
+        }
+        // 保存数据，成功返回自增id，失败记录错误信息
+        $res = $model->allowField(true)->isUpdate(true)->save($data);
+        if ($res || ($res === 0)) {
+            return ['code' => 200, 'msg' => __lang('MSG_200')];
+        } else {
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
+    // 球队活动列表分页
     public function teamEventPaginator($map, $order='id desc', $paginate=10) {
         $model = new TeamEvent();
-        $res = $model->where($map)->order($order)->paginate();
+        $res = $model->where($map)->order($order)->paginate($paginate);
         if ($res) {
             return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
+    // 球队活动列表
+    public function teamEventList($map, $page=1, $order='id desc', $limit=10) {
+        $model = new TeamEvent();
+        $res = $model->where($map)->order($order)->page($page, $limit)->select();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+    
+    // 球队活动详情
+    public function getTeamEventInfo($map) {
+        $model = new TeamEvent();
+        $res = $model->where($map)->find();
+        if ($res) {
+            $result = $res->toArray();
+            $result['event_type_num'] = $res->getData('event_type');
+            $result['is_max_num'] = $res->getData('is_max');
+            $result['is_finished_num'] = $res->getData('is_finished');
+            $result['status_num'] = $res->getData('status');
+            return $result;
         } else {
             return $res;
         }

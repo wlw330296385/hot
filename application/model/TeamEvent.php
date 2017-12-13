@@ -33,4 +33,10 @@ class TeamEvent extends Model {
         $is_finished = [ 0 => '未完成', 1 => '已结束' ];
         return $is_finished[$value];
     }
+
+    // status 获取器
+    public function getStatusAttr($value) {
+        $status = [1=> '上架', -1 => '下架'];
+        return $status[$value];
+    }
 }

@@ -356,4 +356,78 @@ class Team extends Base {
     }
 
     // 创建球队活动
+    public function createteamevent() {
+        try {
+            // 接收传参
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            if (input('?start_time')) {
+                $data['start_time'] = strtotime(input('start_time'));
+            }
+            if (input('?end_time')) {
+                $data['end_time'] = strtotime(input('end_time'));
+            }
+            $teamS = new TeamService();
+            $res = $teamS->updateTeamEvent($data);
+            return json($res);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 修改球队活动
+    public function updateteamevent() {
+        try {
+            // 接收传参
+            $data = input('post.');
+            if (input('?start_time')) {
+                $data['start_time'] = strtotime(input('start_time'));
+            }
+            if (input('?end_time')) {
+                $data['end_time'] = strtotime(input('end_time'));
+            }
+            $teamS = new TeamService();
+            $res = $teamS->createTeamEvent($data);
+            return json($res);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球队活动列表（有页码）
+    public function teameventlistpage() {
+        try {
+            $map = input('post.');
+            $page = input('page', 1);
+            $teamS = new TeamService();
+            $result = $teamS->teamEventPaginator($map);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球队活动列表
+    public function teameventlist() {
+        try {
+            $map = input('post.');
+            $page = input('page', 1);
+            $teamS = new TeamService();
+            $result = $teamS->teamEventList($map, $page);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 }
