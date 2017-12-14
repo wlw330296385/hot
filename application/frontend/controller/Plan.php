@@ -99,7 +99,7 @@ class Plan extends Base{
         // $this->assign('planListOfCamp',$planListOfCamp);
         // $this->assign('planListOfSys',$planListOfSys);
         $CampService = new \app\service\CampService;
-        $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
+        $is_power = $CampService->isPower($camp_id,$this->memberInfo['id']);
         $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
         $this->assign('campInfo',$campInfo);
         $this->assign('camp_id',$camp_id);
