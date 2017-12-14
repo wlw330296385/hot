@@ -82,7 +82,7 @@ class Exercise extends Base{
         $this->assign('sysExerciseList',$sysExerciseList);
         // dump($sysExerciseList);die;
         $this->assign('campInfo',$campInfo);
-        dump($campInfo);die;
+        // dump($campInfo);die;
         return view('Exercise/exerciseList');
     }
 
