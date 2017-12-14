@@ -44,17 +44,22 @@ class Exercise extends Base{
 
     //编辑项目
     public function updateExercise(){
-    	   
     	$exercise_id = input('param.exercise_id');
-		$ExerciseInfo = $this->ExerciseService->getExerciseInfo(['id'=>$exercise_id]);
-        // if($ExerciseInfo['pid']==0){
-        //     $this->error('系统训练项目不允许编辑');
-        // }
+		$exerciseInfo = $this->ExerciseService->getExerciseInfo(['id'=>$exercise_id]);
+        if($exerciseInfo['camp_id']==0){
+            $this->error('系统训练项目不允许编辑');
+        }
+
+        // 权限判断
+        $power = $this->ExerciseService->isPower($exerciseInfo);
+        if($power<2){
+            $this->error('权限不足');
+        }
         // 分类
         $ExerciseType = $this->ExerciseService->getExerciseType();
 
         $this->assign('ExerciseType',$ExerciseType);
-		$this->assign('ExerciseInfo',$ExerciseInfo);
+		$this->assign('ExerciseInfo',$exerciseInfo);
     	return view('Exercise/updateExercise');
     }
 
@@ -62,9 +67,10 @@ class Exercise extends Base{
     public function exerciseList(){
         $camp_id = input('param.camp_id',0);
     	$myExerciseList = $this->ExerciseService->getExerciseList(['camp_id'=>$camp_id]);
-        $sysExerciseList = $this->ExerciseService->getExerciseList([]);
+        $sysExerciseList = $this->ExerciseService->getExerciseList(['camp_id'=>0]);
         $this->assign('myExerciseList',$myExerciseList);
         $this->assign('sysExerciseList',$sysExerciseList);
+        // dump($sysExerciseList);die;
         $this->assign('camp_id',$camp_id);
         return view('Exercise/exerciseList');
     }

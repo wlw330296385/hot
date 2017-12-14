@@ -184,14 +184,8 @@ class Plan extends Backend {
     public function show() {
         $id = input('id');
         $plan = PlanModel::get($id)->toArray();
-        $exercise = unserialize($plan['exercise']);
-        $plan['exercise_html'] = $this->exercise_setected_html($exercise);
-//        dump($exercise);
-//        dump($plan);
         $view = ($plan['type'] > 0) ? 'audit' : 'show';
 
-        $breadcrumb = ['title' => '教案详情', 'ptitle' => '训练营'];
-        $this->assign('breadcrumb', $breadcrumb);
         $this->assign('plan', $plan);
         return view($view);
     }

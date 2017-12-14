@@ -26,7 +26,7 @@ class GradeCategoryService {
         $list = [];
          foreach ($arr as $key => $value) {
             if($value['pid'] == $pid){
-                $value['daughter'] = $this->getGradeCategory($arr,$value['id']);
+                $value['daughter'] = $this->getGradeCategoryTree($arr,$value['id']);
                $list[] = $value;
             }
         }
