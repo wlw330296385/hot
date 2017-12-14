@@ -184,10 +184,10 @@
                     <a href="#pjpopover" class="mui-icon mui-icon-closeempty"></a>
                 </h5>
                 <li class="mui-table-view-cell listli">
-                    <textarea rows="4" name="comment" class="data"></textarea>
+                    <textarea rows="4" name="comment" class="data inputComment"></textarea>
                     <input type="hidden" name="camp_id" value="{$campInfo['id']}" class="data">
                     <input type="hidden" name="camp" value="{$campInfo['camp']}" class="data">
-
+                    <div class="mui-text-center" id="commentCount"></div>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="commentSubmit">提交</li>
             </ul>
@@ -243,6 +243,17 @@
                 pullupRefresh();
             })
 
+            $(".inputComment").keyup(function(){
+                var len = $(this).val().length;
+                var num = 200 - len;
+                if(len > 200){
+                    $(this).val($(this).val().substring(0,200));
+                }else{
+                    $("#commentCount").text("还可以输入"+num+"个字");
+                }
+
+            });
+
             //评价功能
             $("#commentSubmit").on('click', function () {
                 //判断是否登陆会员
@@ -264,6 +275,10 @@
                             var comment = $('textarea.data').val();
                             if (comment == "" || comment == null) {
                                 mui.toast("您没填写评论内容哦");
+                                return false;
+                            }
+                            if (comment.length>200) {
+                                mui.toast("很抱歉，您的评论内容不能超过200个字哦！");
                                 return false;
                             }
                             var objData = wooApi.arrTOobj(data1);
