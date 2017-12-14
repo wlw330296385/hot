@@ -49,6 +49,7 @@
                 <label>所属</label>
                 <input type="text" name="camp" value="{$planInfo.camp}" class="data" disabled="1">
                 <input type="hidden" name="camp_id" value="{$planInfo.camp_id}" class="data">
+                <input type="hidden" name="pid" value="-1" class="data">
             </div>
 
             <div class="mui-input-row">
@@ -81,14 +82,13 @@
             <div class="mui-input-row">
                 <a href="#exercises" id="setExercisesBox" class="mui-navigate-right">
                     <label class="wd36">选择训练项目</label>
-                    <input type="hidden" name="exercise_str" class="data" value="">
                 </a>
             </div>
 
         </form>
 
             <div class="mui-card exercises mt55">
-                {volist name="planInfo.exercise_str" id="vo"}
+                {volist name="planInfo.exercise_strarr" id="vo"}
                 <div class="page-header bggray2"><span class="course"><b>{$vo.exercise}</b></span></div>
                 <ul class="mui-table-view detalis-list list">
                     {if condition="isset($vo.sub)"} {volist name="vo.sub" id="sub"}
@@ -169,7 +169,7 @@
         });
     })(mui);
 
-    var exercise_str = '';
+    var exercise_str = {$planInfo.exercise_str};
     var subexercise_str = '';
 
     $(function () {
@@ -246,7 +246,6 @@
             }
         });
 
-        toExercisrList();
 
     })
 
@@ -262,7 +261,6 @@
             mui.toast("必须选择教案适合阶段和输入教案名称");
             return false;
         }
-        
 
         var data = wooApi.getInputData('input', 'data');
         datas = wooApi.getInputData('select', 'data', data);
@@ -273,13 +271,14 @@
         objData.outline_detail = outline_detail;
         objData.exercise_str = JSON.stringify(exercise_str);
 
+        console.log(objData);
 
         var url = "{:url('api/plan/updatePlanApi')}";
         var ajaxResult = wooApi.asyncF(url, objData);
 
         if (ajaxResult.code == 200) {
             mui.alert(ajaxResult.msg, '教案修改成功', '确定', function () {
-                var goUrl = "{:url('plan/planlist')}" + '/camp_id/{$planInfo.camp_id}';
+                var goUrl = "{:url('plan/planinfo')}" + '/plan_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
                 window.top.location.href = goUrl;
             })
         } else {
