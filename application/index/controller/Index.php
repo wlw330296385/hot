@@ -42,6 +42,35 @@ class Index extends Controller{
     }
     
 
+    public function exerciseSort(){
+        header("Content-Type:text/html;charset=utf-8");
+        $str = file_get_contents(ROOT_PATH.'/data/exercise.txt');
+        dump($str);
+        $arrr = ['a'=>['a'=>2,'b'=>2],'b'=>['a'=>2,'b'=>3]];
+        $strr = json_encode($arrr);
+
+
+        dump(json_decode($strr,true));
+        $arr = json_decode($str,true);
+        dump($arr);
+    }
+
+
+    public function getPOst(){
+        $model = new \app\model\Exercise;
+        $postData = input();
+        $arr = [];
+        foreach ($postData as $key => $value) {
+            // $save = ['exercise_setion'=>$value['exercise_setion'],'exercise'=>$value['exercise_setion'],'camp_id'=>0,'pid'=>0,'id'=>$key+1,'create_time'=>time(),'member'=>'平台'];
+            // db('exercise')->insert($save);
+            foreach ($value['sub'] as $k => $v) {
+                $save = ['exercise_setion'=>$value['exercise_setion'],'exercise'=>$v['exercise'],'camp_id'=>0,'pid'=>$v['pid'],'create_time'=>time(),'member'=>'平台'];
+                db('exercise')->insert($save);
+            }
+        }
+       
+    }
+
     public function xmltest(){
        $xml = '<xml><appid><![CDATA[wx19f60be0f2f24c31]]></appid>
                 <bank_type><![CDATA[CFT]]></bank_type>

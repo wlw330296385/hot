@@ -56,7 +56,7 @@ class Exercise extends Backend {
     public function show() {
         $id = input('id/d', 0);
         if (!$id) {
-            abort(404, __lang('MSG_202_MISSPARAM'));
+            abort(404, __lang('找不到id'));
         }
 
         $ExerciseS = new ExerciseService();

@@ -4,7 +4,7 @@ use think\Controller;
 use think\Request;
 use think\Validate;
 use app\service\AuthService;
-
+use think\Cache;
 class Login extends Controller
 {
     public function __construct()
@@ -58,8 +58,16 @@ class Login extends Controller
     }
 
     public function logout() {
+        $cache_tag  = strtolower('_sidebar_menus_'.session('admin.id'));
+        Cache::rm($cache_tag); 
         session('admin', null);
         cookie('keeplogin', null);
         $this->success('退出成功', url('Login/index'));
+    }
+
+    public function clearCache(){
+        $cache_tag  = strtolower('_sidebar_menus_'.session('admin.id'));
+        Cache::rm($cache_tag); 
+        $this->success('清空成功');
     }
 }

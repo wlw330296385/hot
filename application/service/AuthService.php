@@ -6,8 +6,9 @@ use app\admin\model\AdminMenu;
 class AuthService {
     public static function login($username, $password, $keeptime = 0) {
         $admin = Admin::get(['username' => $username]);
-        $admin_dataArr = $admin->toArray();
-        if (!$admin) {
+        if($admin){
+            $admin_dataArr = $admin->toArray();
+        }else{
             return false;
         }
         if ($admin->password != passwd($password) ) {

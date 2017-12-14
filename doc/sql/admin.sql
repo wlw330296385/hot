@@ -1,46 +1,40 @@
-/*
-Navicat MySQL Data Transfer
+-- phpMyAdmin SQL Dump
+-- version 4.7.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: 2017-12-13 16:17:54
+-- 服务器版本： 10.1.23-MariaDB-9+deb9u1
+-- PHP Version: 7.0.19-1
 
-Source Server         : mysql
-Source Server Version : 50553
-Source Host           : localhost:3306
-Source Database       : hot
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
 
-Target Server Type    : MYSQL
-Target Server Version : 50553
-File Encoding         : 65001
 
-Date: 2017-12-05 17:55:56
-*/
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
-SET FOREIGN_KEY_CHECKS=0;
+--
+-- Database: `hot`
+--
 
--- ----------------------------
--- Table structure for `admin`
--- ----------------------------
-DROP TABLE IF EXISTS `admin`;
-CREATE TABLE `admin` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) NOT NULL DEFAULT '' COMMENT '用户名',
-  `password` varchar(50) NOT NULL DEFAULT '' COMMENT '密码',
-  `truename` varchar(50) NOT NULL COMMENT '真实姓名',
-  `email` varchar(50) NOT NULL COMMENT '邮箱',
-  `avatar` varchar(200) NOT NULL DEFAULT '/static/default/avatar.png' COMMENT '头像',
-  `telephone` bigint(20) NOT NULL COMMENT '手机号',
-  `group_id` int(111) NOT NULL,
-  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态:1正常|0禁用',
-  `create_time` int(11) NOT NULL COMMENT '创建时间戳',
-  `update_time` int(11) NOT NULL COMMENT '更新时间戳',
-  `logintime` int(11) NOT NULL DEFAULT '0' COMMENT '登录次数',
-  `lastlogin_at` int(11) NOT NULL COMMENT '最后登录时间',
-  `lastlogin_ip` varchar(20) NOT NULL COMMENT '最后登录ip',
-  `lastlogin_ua` varchar(200) NOT NULL DEFAULT '' COMMENT '最后登录ua',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+--
+-- 转存表中的数据 `admin`
+--
 
--- ----------------------------
--- Records of admin
--- ----------------------------
-INSERT INTO `admin` VALUES ('1', 'admin', '56c1dea092bcdb3c77b072d6ee9914008f8a383d', '', '', '/static/default/avatar.png', '0', '1', '1', '0', '1512457231', '96', '1512457231', '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36');
-INSERT INTO `admin` VALUES ('2', 'test', '56c1dea092bcdb3c77b072d6ee9914008f8a383d', '', '', '/static/default/avatar.png', '0', '3', '1', '0', '1512454911', '16', '1512454911', '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36');
-INSERT INTO `admin` VALUES ('3', 'test2', '56c1dea092bcdb3c77b072d6ee9914008f8a383d', '111', '', '/static/default/avatar.png', '0', '3', '1', '1512456554', '1512456554', '0', '0', '', '');
+INSERT INTO `admin` (`id`, `username`, `password`, `truename`, `email`, `avatar`, `telephone`, `group_id`, `status`, `create_time`, `update_time`, `logintime`, `lastlogin_at`, `lastlogin_ip`, `lastlogin_ua`) VALUES
+(1, 'admin', '56c1dea092bcdb3c77b072d6ee9914008f8a383d', '', '', '/static/default/avatar.png', 0, 1, 1, 0, 1513146061, 103, 1513146061, '116.25.42.5', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36'),
+(2, 'yalu', '56c1dea092bcdb3c77b072d6ee9914008f8a383d', '', '', '/static/default/avatar.png', 0, 3, 1, 0, 1513141994, 18, 1513141994, '116.25.42.5', 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.104 Safari/537.36 Core/1.53.4295.400 QQBrowser/9.7.12661.400'),
+(3, 'xian', '56c1dea092bcdb3c77b072d6ee9914008f8a383d', '111', '', '/static/default/avatar.png', 0, 5, 1, 1512456554, 1513053076, 3, 1513053076, '116.25.42.5', 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.172 Safari/537.22'),
+(4, 'ho', '56c1dea092bcdb3c77b072d6ee9914008f8a383d', '陈烈侯', '', '/static/default/avatar.png', 0, 3, 1, 1513053616, 1513141648, 2, 1513141648, '116.25.42.5', 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.104 Safari/537.36 Core/1.53.4295.400 QQBrowser/9.7.12661.400'),
+(5, 'bingo', '56c1dea092bcdb3c77b072d6ee9914008f8a383d', '张文清', '', '/static/default/avatar.png', 0, 6, 1, 1513053730, 1513053730, 0, 0, '', ''),
+(6, 'yanzi', '56c1dea092bcdb3c77b072d6ee9914008f8a383d', '燕子', '', '/static/default/avatar.png', 0, 6, 1, 1513053901, 1513053901, 0, 0, '', '');
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

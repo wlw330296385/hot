@@ -75,13 +75,14 @@ class AdminMenu extends Model {
      * @param string $controller 控制器名
      * @return array|mixed
      */
-    public static function getSidebarMenu($id = '', $module = '', $controller = '')
+    public static function getSidebarMenu($id = '', $module = 'admin', $controller = '')
     {
-        $module     = $module == '' ? request()->module() : $module;
-        $controller = $controller == '' ? request()->controller() : $controller;
-        $cache_tag  = strtolower('_sidebar_menus_' . $module . '_' . $controller).'_role_'.session('user_auth.role');
+        // $module     = $module == '' ? request()->module() : $module;
+        // $controller = $controller == '' ? request()->controller() : $controller;
+        $cache_tag  = strtolower('_sidebar_menus_'.session('admin.id'));
+        // dump($cache_tag);
         $menus      = cache($cache_tag);
-
+        // dump($menus);
         if (!$menus) {
             // 获取当前节点地址
             $location = self::getLocation($id);
@@ -96,7 +97,10 @@ class AdminMenu extends Model {
             if (config('develop_mode') == 0) {
                 $map['online_hide'] = 1;
             }
+            $map['online_hide'] = 1;
+            // dump($map);
             $menus = self::where($map)->order('sort,id')->column('id,pid,module,title,url_value,url_type,url_target,icon');
+            // dump($menus);
             // 解析模块链接
             if(config('develop_mode') == 0){
                 foreach ($menus as $key => &$menu) {
@@ -108,7 +112,7 @@ class AdminMenu extends Model {
                 }
             }
             $menus = self::toLayer($menus);
-
+            // dump($menus);
             // 非开发模式，缓存菜单
             if (config('develop_mode') == 0) {
                 cache($cache_tag, $menus);

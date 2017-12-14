@@ -91,7 +91,7 @@ class ExerciseService {
     }
 
     public function getExerciseList($map = []){
-        $res = Exercise::where($map)->whereOr(['pid'=>0])->order('id asc')->select();
+        $res = $this->exerciseModel->where($map)->whereOr(['pid'=>0])->order('id asc')->select();
         if(!$res){
             return $res;
         }else{
@@ -129,5 +129,15 @@ class ExerciseService {
     }
 
 
-
+    /**
+     * 返回权限
+     */
+    public function isPower($camp_id,$member_id){
+        $is_power = db('camp_member')
+                    ->where(['member_id'=>$member_id,'camp_id'=>$camp_id,'status'=>1])
+                    // ->where(function ($query) {
+                            // $query->where('type', 2)->whereor('type', 3)->whereor('type',4);})
+                    ->value('type');
+        return $is_power?$is_power:0;
+    }
 }
