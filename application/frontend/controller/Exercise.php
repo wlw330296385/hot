@@ -60,7 +60,7 @@ class Exercise extends Base{
             $this->error('权限不足');
         }
         $CampService = new CampService();
-        $campInfo = $CampService->getCampInfo($camp_id);
+        $campInfo = $CampService->getCampInfo($exerciseInfo['camp_id']);
         // 分类
         $ExerciseType = $this->ExerciseService->getExerciseType();
 

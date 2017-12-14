@@ -15,17 +15,17 @@
                         <div class="col-sm-8 col-md-8">
                             <select name="pid"  class="form-control">
                                 {volist name="gradeCategoryP" id="vol"}
-                                <option value="{$vol.id}" {eq name="$gradeCategoryInfo.pid" value="$vol.id" } selected="selected"{/eq}>{$vol.name}</option>
+                                <option value="{$vol.id}">{$vol.name}</option>
                                 {/volist}
                             </select>
                         </div>
                         <div class="col-sm-2 col-md-2"></div>
-                        <button class="btn btn-success btn-flat">添加</button>
+                        <div class="btn btn-success btn-flat" id="add">添加</div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 col-md-2 control-label">课程|班级类型名称</label>
                         <div class="col-sm-8 col-md-8">
-                            <input type="text" name="name" class="form-control" value="{$gradeCategoryInfo.name}">
+                            <input type="text" name="name" class="form-control" required="required" value="">
                         </div>
                         <div class="col-sm-2 col-md-2"></div>
                     </div>
@@ -36,11 +36,11 @@
                         <label class="col-sm-2 col-md-2 control-label">图片</label>
                         <div class="col-sm-8 col-md-8">
                         <a class="btn-banner" href="#" title="点击替换图片">
-                                <img class="img-thumbnail" id="uploader-preview1" src="{$gradeCategoryInfo.url}">
+                                <img class="img-thumbnail" id="uploader-preview1" src="">
                                 <div class="row">
                                     <div id="filePicker1">选择上传</div>
                                 </div>
-                                <input id="uploader-input1" type="hidden" name="url" value="{$gradeCategoryInfo.url}">
+                                <input id="uploader-input1" type="hidden" name="url" value="">
                         </a>
                     </div>
                         <div class="col-sm-2 col-md-2"></div>
@@ -63,4 +63,38 @@
     var serverUrl = "{:url('Upload/gradeCategoryImg')}";
 </script>
 <script src="/static/backend/adminlte/js/upload/banner.js"></script>
+
+
+<script type="text/javascript">
+    layui.use('layer', function(){
+      var layer = layui.layer;
+      $('#add').on('click',function(){
+            layer.prompt({title: '添加父级课程|班级分类', formType: 3}, function(pass, index){
+                $.post({
+                url:"{:url('admin/gradecategory/updategradecategory')}",
+                data: {
+                    'name':pass
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                success: function (data) {
+                    if (data.code == 1) {
+                        layer.msg(data.msg)
+                        location.reload();
+                    } else {
+                        layer.msg(data.msg)
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                   alert('网络异常,请稍候再试');
+                }
+            });
+            });
+      })
+        
+    })
+</script>
+
+
 {/block}

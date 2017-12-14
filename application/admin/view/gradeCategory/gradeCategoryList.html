@@ -26,17 +26,19 @@
                     {volist name="gradeCategoryList" id="vo"}
                     <div class="col-sm-6 col-md-3 col-xs-12">
                         <ul class="list-group">
-                            <li class="list-group-item gradeCategory_p" data-id="{$vo.id}">
+                            <li class="list-group-item" data-id="{$vo.id}">
                                 <label>
                                     <input type="checkbox" class="gradeCategory_item"  value="{$vo.id}" data-pid="0">
-                                    {$vo.name}
+                                    <span class="gradeCategory_p" data-id="{$vo.id}"  >{$vo.name}</span>
                                 </label>
                             </li>
                             {if condition="$vo['daughter']"}
                             {volist name="vo['daughter']" id="vo2"}
                             <li class="list-group-item clearfix">
                                     <input type="checkbox" class="gradeCategory_item" name="gradeCategorycise-list" value="{$vo2.id}" data-pid="{$vo2.pid}">
-                                    <span>{$vo2.name}</span>
+                                    <a href="{:url('admin/gradecategory/updateGradeCategory',['gradeCategory_id'=>$vo2.id])}">
+                                        <span>{$vo2.name}</span>
+                                    </a>
                             </li>
                             {/volist}
                             {/if}
@@ -88,6 +90,31 @@ $(function() {
         
         
     });
+
+
+
+
+
+
+    // 修改父类
+    $('.gradeCategory_p').on('click',function(){
+        var id = $('.gradeCategory_p').attr('data-id');
+         layui.use('layer', function(){
+            layer.open({
+              type: 2,
+              title: '修改父类',
+              shadeClose: true,
+              shade: 0.8,
+              area: ['375px', '500px'],
+              content: "{:url('admin/gradecategory/updategradecategoryP')}"+'/gradeCategory_id/'+id //iframe的url
+            }); 
+         })
+    })
+
+
+
+
+
 })
 
 
@@ -95,6 +122,8 @@ function deleteAll(ids){
     
         return true;
 }
+
+
 
 
 </script>

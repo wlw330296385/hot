@@ -1,27 +1,33 @@
-{extend name="layout/common"/}
 
-{block name="page-content"}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>添加会员</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/backend/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/backend/plugins/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/master.css">
+<script src="/static/backend/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    
+    <script src="/static/backend/plugins/webuploader/webuploader.min.js"></script>
+<script>
+    var serverUrl = "{:url('Upload/gradeCategoryImg')}";
+</script>
+<script src="/static/backend/adminlte/js/upload/banner.js"></script>
+</head>
+<body>
+<div class="wrapper">
     <div class="row">
     <div class="col-md-12 col-sm-12">
         <div class="box box-info">
             <div class="box-header with-border">
-                <h3 class="box-title">添加课程|班级类型</h3>
+                <h3 class="box-title">添加课程|班级类型父类</h3>
             </div>
             <form action="" class="form-horizontal" method="post" enctype="multipart/form-data" >
                 {:token()}
                 <div class="box-body">
-                    <div class="form-group">
-                        <label class="col-sm-2 col-md-2 control-label">课程|班级父类</label>
-                        <div class="col-sm-8 col-md-8">
-                            <select name="pid"  class="form-control">
-                                {volist name="gradeCategoryP" id="vol"}
-                                <option value="{$vol.id}" {eq name="$gradeCategoryInfo.pid" value="$vol.id" } selected="selected"{/eq}>{$vol.name}</option>
-                                {/volist}
-                            </select>
-                        </div>
-                        <div class="col-sm-2 col-md-2"></div>
-                        <button class="btn btn-success btn-flat">添加</button>
-                    </div>
                     <div class="form-group">
                         <label class="col-sm-2 col-md-2 control-label">课程|班级类型名称</label>
                         <div class="col-sm-8 col-md-8">
@@ -29,9 +35,7 @@
                         </div>
                         <div class="col-sm-2 col-md-2"></div>
                     </div>
-
-                    
-
+                    <input type="hidden" name="pid" value="0">
                     <div class="form-group">
                         <label class="col-sm-2 col-md-2 control-label">图片</label>
                         <div class="col-sm-8 col-md-8">
@@ -55,12 +59,4 @@
         </div>
     </div>
 </div>
-{/block}
 
-{block name="js"}
-<script src="/static/backend/plugins/webuploader/webuploader.min.js"></script>
-<script>
-    var serverUrl = "{:url('Upload/gradeCategoryImg')}";
-</script>
-<script src="/static/backend/adminlte/js/upload/banner.js"></script>
-{/block}
