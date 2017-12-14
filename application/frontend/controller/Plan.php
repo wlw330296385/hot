@@ -26,6 +26,7 @@ class Plan extends Base{
         $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
         $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
         $this->assign('power',$is_power);
+        $this->assign('campInfo',$campInfo);
         $this->assign('planInfo',$planInfo);
     	return view('Plan/planInfo');
     }
@@ -97,7 +98,10 @@ class Plan extends Base{
 
         // $this->assign('planListOfCamp',$planListOfCamp);
         // $this->assign('planListOfSys',$planListOfSys);
-
+        $CampService = new \app\service\CampService;
+        $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
+        $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
+        $this->assign('campInfo',$campInfo);
         $this->assign('camp_id',$camp_id);
         return view('Plan/planList');
     }
