@@ -18,12 +18,13 @@ class Plan extends Base{
 
     public function planInfo(){
     	$plan_id = input('param.plan_id');
+        $camp_id = input('camp_id',0);
         $planInfo = $this->PlanService->getPlanInfo(['id'=>$plan_id]);
         $planInfo['exercise_str'] = json_decode($planInfo['exercise_str'], true);
         // 判读权限
         $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
-
+        $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
         $this->assign('power',$is_power);
         $this->assign('planInfo',$planInfo);
     	return view('Plan/planInfo');
@@ -38,10 +39,12 @@ class Plan extends Base{
         $planInfo['exercise_str'] = json_decode($planInfo['exercise_str'], true);
         // 判读权限
         $CampService = new \app\service\CampService;
+
         $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
         if($is_power < 2){
             $this->error('您没有权限');
-        }       
+        }   
+        $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);    
         // 获取适合阶段
         $gradecateService = new \app\service\GradeService;
         $gradecateList = $gradecateService->getGradeCategory();
@@ -54,7 +57,7 @@ class Plan extends Base{
         $this->assign('exerciseList',$exerciseList);
         $this->assign('gradecateList',$gradecateList);
         $this->assign('planInfo',$planInfo);
-
+        $this->assign('campInfo',$campInfo);
     	return view('Plan/updatePlan');
     }
 
