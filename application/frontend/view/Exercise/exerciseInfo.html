@@ -16,7 +16,7 @@
 <body class=whitebg>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-icon mui-icon-left-nav mui-pull-left arrow" href="{:url('exercise/exerciselist',['camp_id'=>$exerciseInfo['camp_id']])}">
+        <a class="mui-icon mui-icon-left-nav mui-pull-left arrow" href="{:url('exercise/exerciselist',['camp_id'=>$campInfo['id']])}">
             <span class="return">返回项目列表</span>
         </a>
     </header>
@@ -67,17 +67,21 @@
                     <input type="checkbox" checked>对外开放
                 </p>
             </div> -->
-            <ul class="mui-table-view operation" style="display: none">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" onclick="submitAction()">
-                    添加到我的教案库
+            {if $exerciseInfo.camp_id==0 }
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="submitAction()">
+                    添加到训练营项目库
                 </li>
             </ul>
+            {/if}
         </div>
     </div>
+
 
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
 <script>
     //初始化
     mui.init({
@@ -85,15 +89,34 @@
     });
 
     $(function () {
-        addShow();
+//        addShow();
     })
 
-    function addShow() {
-        var camp_id = "{$exerciseInfo.camp_id}"
-        if (camp_id == 0) {
-            $(".operation").show();
+    // 获取数据并进行提交
+    function submitAction() {
+
+        var objData=[];
+        objData.member = "{$memberInfo.member}";
+        objData.member_id = "{$memberInfo.id}";
+        objData.camp = "{$campInfo.camp}";
+        objData.camp_id = "{$campInfo.id}";
+        objData.pid = "{$exerciseInfo.pid}";
+        objData.exercise_setion = "{$exerciseInfo.exercise_setion}";
+        objData.exercise = "{$exerciseInfo.exercise}";
+        objData.exercise_detail = "{$exerciseInfo.exercise_detail}";
+        var url = "{:url('api/Exercise/updateExerciseApi')}";
+        var ajaxResult = wooApi.asyncF(url, objData);
+
+        if (ajaxResult.code == 200) {
+            mui.alert(ajaxResult.msg, '训练项目添加成功', '确定', function () {
+                var goUrl = "{:url('exercise/exerciseList')}" + '/exercise_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
+                window.top.location.href = goUrl;
+            })
+        } else {
+            mui.alert(ajaxResult.msg, '添加失败');
         }
-    }
+    };
+
 
 </script>
 

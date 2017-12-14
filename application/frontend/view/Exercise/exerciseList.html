@@ -25,15 +25,16 @@
     <header id="header" class="mui-bar mui-bar-nav for-tab">
         <div class="camp-lesson-list">
             <div id="segmentedControl" class="mui-segmented-control mb">
-                <a class="mui-control-item" href="{:url('plan/planList',['camp_id'=>$camp_id])}">教案</a>
-                <a class="mui-control-item mui-active" href="{:url('exercise/exerciseList',['camp_id'=>$camp_id])}">训练项目</a>
+                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id'=>$campInfo['id']])}"></a>
+                <a class="mui-control-item" href="{:url('plan/planList',['camp_id'=>$campInfo['id']])}">教案</a>
+                <a class="mui-control-item mui-active" href="{:url('exercise/exerciseList',['camp_id'=>$campInfo['id']])}">训练项目</a>
             </div>
         </div>
 
         <div class="mui-segmented-control seg-control whitebg" style="margin:10px;">
             <a class="mui-control-item" href="#sysExerciseList">平台项目库</a>
             <a class="mui-control-item mui-active" href="#myExerciseList">训练营项目库</a>
-            <a class="mui-control-item" href="{:url('Exercise/createExercise',['camp_id'=>$camp_id])}">添加项目</a>
+            <a class="mui-control-item" href="{:url('Exercise/createExercise',['camp_id'=>$campInfo['id']])}">添加项目</a>
         </div>
 
     </header>
@@ -49,9 +50,9 @@
                     <li class="mui-table-view-cell mui-collapse listli detalisli">
                         <a class="mui-navigate-right daType" href="#">{$vol.exercise_setion}</a>
                         <div class="mui-collapse-content">
-                            {volist name="$vol.daughter" id="v" empty="<a href='/frontend/exercise/createExercise/camp_id/$camp_id' class='noData'>没有此类项目，点击立即添加</a>" }
+                            {volist name="$vol.daughter" id="v" empty="<a href='/frontend/exercise/createExercise/camp_id/$campInfo[id]' class='noData'>没有此类项目，点击立即添加</a>" }
                             <div class="mui-input-row mui-navigate-right">
-                                <a href="{:url('frontend/exercise/exerciseInfo',['exercise_id'=>$v['id']])}">{$v.exercise}</a>
+                                <a href="{:url('frontend/exercise/exerciseInfo',['exercise_id'=>$v['id'],'camp_id'=>$campInfo['id'],'camp'=>$campInfo['camp']])}">{$v.exercise}</a>
                             </div>
                             {/volist}
                         </div>
@@ -67,7 +68,7 @@
                     <li class="mui-table-view-cell mui-collapse listli detalisli">
                         <a class="mui-navigate-right daType" href="#">{$vol.exercise_setion}</a>
                         <div class="mui-collapse-content">
-                            {volist name="$vol.daughter" id="v" empty="<a href='/frontend/exercise/createExercise/camp_id/$camp_id' class='noData'>没有此类项目，点击立即添加</a>"}
+                            {volist name="$vol.daughter" id="v" empty="<a href='/frontend/exercise/createExercise/camp_id/$campInfo[id]' class='noData'>没有此类项目，点击立即添加</a>"}
                             <div class="mui-input-row mui-navigate-right">
                                 <a href="{:url('frontend/exercise/exerciseInfo',['exercise_id'=>$v['id']])}">{$v.exercise}</a>
                             </div>

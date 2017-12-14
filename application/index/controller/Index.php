@@ -56,6 +56,17 @@ class Index extends Controller{
     }
 
 
+    public function getStudentAddress(){
+        $students = db('lesson_member')->field('lesson_member.student_id,lesson_member.lesson_id,lesson.area')->join('lesson','lesson.id=lesson_member.lesson_id')->distinct('student_id')->order('lesson_member.id')->select();
+
+
+        foreach ($students as $key => $value) {
+
+            $update = ['student_province'=>'广东省','student_city'=>'深圳市','student_area'=>$value['area']];
+            db('student')->where(['id'=>$value['student_id']])->update($update);
+        }
+    }
+
     public function getPOst(){
         $model = new \app\model\Exercise;
         $postData = input();
