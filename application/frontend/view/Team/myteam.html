@@ -2,8 +2,8 @@
 <html>
 
 <head>
-    <meta c t="utf-8">
-    <title>球队列表</title>
+    <meta charset="utf-8">
+    <title>我的球队</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -11,148 +11,128 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--自定义多色图标icon.js-->
+    <script src="/static/frontend/iconfont/iconfont.js"></script>
+    <style type="text/css">
+        .hints {
+            padding-top: 30px;
+        }
 
+        .hints p {
+            margin: 0;
+        }
+    </style>
 </head>
 
-<body class=whitebg>
+<body class="whitebg">
 
-    <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title"><a href="{:url('Team/createTeam')}"><button type="button" class="mui-btn mui-btn-danger bgblue" style="padding: 5px 12px;">创建球队</button></a></h1>
+    <header id="header" class="mui-bar mui-bar-transparent">
+        <a href="{:url('camp/index')}" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
     </header>
 
     <div class="mui-content">
 
+        <div id="tabbar" class="mui-control-content mui-active coach">
+            <!--操作模块-->
+            <div class="coach-info">
+                <ul class="mui-table-view mui-grid-view mui-grid-9">
 
-        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 44px">
-            <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b team">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <img class="coachicon" src="{$memberInfo['avatar']}">
+                            <div class="f16">{$memberInfo['member']}</div>
+                        </a>
+                    </li>
                 </ul>
+                <p class="coachid f12">ID:{$memberInfo['hot_id']}</p>
             </div>
+
+            <!--最新消息-->
+            <div class="page-header mb" style="background-color: #FFF;">
+                <a href="">
+                    <span class="course wd83">最新消息：陈某某报名周二的球队比赛</span>
+                    <span class="more">更多</span>
+                </a>
+            </div>
+            <div class="myteam">
+                {volist name="myTeamList" id="vol"}
+                <div class="mb">
+                    <ul class="mui-table-view list">
+                        <a href="{:url('team/teamManage',['team_id'=>$vol['team_id']])}">
+                            <li class="mui-table-view-cell listli" style="padding:15px;">
+                                <img src="{$vol.team.logo}" class="img24">{$vol.team.name}
+                                <span class="mui-navigate-right"></span>
+                            </li>
+                        </a>
+                    </ul>
+                    <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module2">
+                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                            <a href="{:url('team/teamInfo',['team_id'=>$vol['team_id']])}">
+                                <span class="icon iconfont icon-training-camp"></span>
+                                <div class="mui-media-body">球队主页</div>
+                            </a>
+                        </li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                            <a href="">
+                                <span class="icon iconfont icon-training-course"></span>
+                                <div class="mui-media-body">最新比赛</div>
+                            </a>
+                        </li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                            <a href="">
+                                <span class="icon iconfont icon-training-course"></span>
+                                <div class="mui-media-body">最新活动</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                {/volist}
+            </div>
+
+            <div class="hints mui-text-center hide whitebg">
+                <p>你还没加入任何球队哦</p>
+                <p>赶紧来查找或创建你的球队吧！</p>
+            </div>
+
+
+            <div class="success-frame success-frame2">
+                <div class="mui-row mui-text-center">
+                    <div class="mui-col-xs-6 mui-col-sm-6">
+                        <a href="{:url('team/teamlist')}">
+                            <button type="button" class="mui-btn f16" style="padding:6px 30px">找球队</button>
+                        </a>
+                    </div>
+                    <div class="mui-col-xs-6 mui-col-sm-6">
+                        <a href="{:url('team/createteam')}">
+                            <button type="button" class="mui-btn f16" style="padding:6px 30px">创建球队</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
         </div>
+
+
     </div>
-
-    <script src="/static/frontend/js/mui.min.js"></script>
-    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <script src="/static/frontend/js/wooApi.js"></script>
-    <script src="/static/frontend/js/common.js"></script>
-    <script src="/static/frontend/js/city.data-3.js"></script>
-    <script>
-        mui(".mui-content").on("tap", "a", function () {
-            window.top.location.href = this.href;
-        });
-
-        $(function () {
-
-            //初始化全局变量
-            var count = 1;
-            //搜索、下拉刷选后触发
-            function searchToList() {
-                count = 1;//显示第一页
-                var page = count;
-                var gType = 1;//代表下拉刷新
-                toList(page, gType);//具体取数据的方法
-            }
-
-            mui.init({
-                swipeBack: true, //启用右滑关闭功能
-                pullRefresh: {
-                    //下拉刷新上拉加载教练列表
-                    container: "#refreshContainer",
-                    down: {
-                        //下拉刷新
-                        height: 50,//可选.默认50.触发下拉刷新拖动距离
-                        auto: true,//可选,默认false.自动下拉刷新一次
-                        contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                        callback: pulldownRefresh
-                    },
-                    up: {
-                        //上拉加载
-                        height: 150,//可选.默认50.触发上拉加载拖动距离
-                        //auto:true,//可选,默认false.自动上拉加载一次
-                        contentrefresh: '正在加载...',
-                        contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                        callback: pullupRefresh
-                    }
-                }
-            });
-            //下拉刷新具体业务实现
-            function pulldownRefresh() {
-                setTimeout(function () {
-                    count = 1;//刷新并显示第一页
-                    var page = count;
-                    var gType = 1;//代表下拉刷新
-                    toList(page, gType);//具体取数据的方法
-                }, 100);
-            }
-            //上拉加载具体业务实现
-            function pullupRefresh() {
-                setTimeout(function () {
-                    count++;//翻下一页
-                    var page = count;
-                    var gType = 2;//代表上拉加载
-                    toList(page, gType);//具体取数据的方法
-                }, 100);
-            }
-
-            //接口获取数据并追加到页面
-            var toList = function (page, gType) {
-                //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/team/myteamlist','','',true)}";
-                mui.ajax({
-                    url: url,
-                    data: {
-                        page: page,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    //processData:false,
-                    success: function (data) {
-                        console.log(data);
-                        var newli = '';
-                        if (data.code == 200) {
-                            for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('team/teamManage')}" + '/team_id/' + data.data[i].id;
-                                newli += '<li class="mui-table-view-cell mui-media listli">'
-                                newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].team.cover + '"><div class="mui-media-body wd60">' + data.data[i].team.name + '';
-                                newli += '<p class="mui-ellipsis">平均年龄：'+ data.data[i].team.avg_age +'&nbsp;&nbsp;身高：'+ data.data[i].team.avg_height +'</p></div><div class="price-frame mui-text-center">';
-                                newli += '<p class="address">' + data.data[i].team.area + '</p></div></a></div>';
-                                newli += '</li>';
-                            }
-                        }
-                        if (gType == 1) {
-                            //上拉刷新
-                            $("ul.team").empty().append(newli);
-                            mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                            mui('#refreshContainer').pullRefresh().refresh(true);
-                            if (newli == '') {
-                                $("ul.team").html('<li class="nodata"><i class="icon iconfont icon-m-Trainingteam1"></i><p>没有相关数据哦</p></li>');
-                            }
-                        } else {
-                            //下拉加载 gType==2
-                            $("ul.team").append(newli);
-                        }
-                        if (newli != '') {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-                        } else {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                        }
-
-                    },
-                    error: function (xhr, type, errerThrown) {
-                        mui.toast('网络异常,请稍候再试');
-                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                    }
-                });
-            };
-
-
-        })
-    </script>
 </body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    $(function () {
+        myteam();
+    });
+
+    function myteam() {
+        if ($(".myteam").html() == '') {
+            $(".hints").show();
+        }
+    }
+
+</script>
 
 </html>

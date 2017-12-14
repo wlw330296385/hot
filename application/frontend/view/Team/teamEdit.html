@@ -58,6 +58,12 @@
             line-height: 43px;
             padding: 0 15px !important;
         }
+
+        small {
+            float: right;
+            line-height: 42px;
+            padding-right: 15px;
+        }
     </style>
 </head>
 
@@ -102,7 +108,7 @@
                         </label>
                         <span class="location-choise max">
                             <select id="teamType" class="data" name="type">
-                                <option>请选择</option>
+                                <option value="">--请选择--</option>
                                 <option value="1">青少年训练营</option>
                                 <option value="2">企事业单位</option>
                                 <option value="3">同事朋友</option>
@@ -207,17 +213,19 @@
 
                 <div class="mui-input-row price-input-row">
                     <label>平均年龄</label>
-                    <span class="avg_age domData" name="avg_age">{$teamInfo.avg_age}</span>
+                    <input type="text" name="avg_age" class="data" value="{$teamInfo.avg_age}" placeholder="请输入平均年龄">
                 </div>
 
                 <div class="mui-input-row price-input-row">
                     <label>平均身高</label>
-                    <span class="avg_height domData" name="avg_height">{$teamInfo.avg_height}</span>
+                    <small>cm</small>
+                    <input type="text" name="avg_height" class="data wd52" value="{$teamInfo.avg_height}" placeholder="请输入平均身高" style="padding-right:0">
                 </div>
 
                 <div class="mui-input-row price-input-row">
                     <label>平均体重</label>
-                    <span class="avg_weight domData" name="avg_weight">{$teamInfo.avg_weight}</span>
+                    <small>kg</small>
+                    <input type="text" name="avg_weight" class="data wd52" value="{$teamInfo.avg_weight}" placeholder="请输入平均体重" style="padding-right:0">
                 </div>
 
                 <div class="mui-input-row">
@@ -225,7 +233,7 @@
                         <label>球队特点</label>
                         <span class="location-choise max">
                             <select id="teamCharater" class="data" name="charater">
-                                <option value="">请选择</option>
+                                <option value="">--请选择--</option>
                                 <option value="球风良好">球风良好</option>
                                 <option value="诚信守时">诚信守时</option>
                                 <option value="尊重对手">尊重对手</option>
@@ -977,6 +985,23 @@
 
         // 获取数据并进行提交
         function submitAction() {
+
+            var avg_age = $("input[name=avg_age]").val();
+            var avg_height = $("input[name=avg_height]").val();
+            var avg_weight = $("input[name=avg_weight]").val();
+            if (!(/^[0-9]*$/).test(avg_age)) {
+                mui.toast("平均年龄请填写数字");
+                return false;
+            }
+            if (!(/^[0-9]*$/).test(avg_height)) {
+                mui.toast("平均身高请填写数字");
+                return false;
+            }
+            if (!(/^[0-9]*$/).test(avg_weight)) {
+                mui.toast("平均体重请填写数字");
+                return false;
+            }
+
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
