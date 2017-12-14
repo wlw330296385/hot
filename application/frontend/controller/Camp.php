@@ -15,7 +15,7 @@ class Camp extends Base{
         $this->CampService = new CampService;
         $this->CoachService = new CoachService;
         $camp_id = input('param.camp_id', 0);
-        $camp = $this->CampService->getCampInfo($camp_id);
+        $camp = $this->CampService->getCampInfo(['id'=>$camp_id]);
         $this->assign('camp_id', $camp_id);
         $this->assign('campInfo', $camp);
 	}
@@ -39,9 +39,9 @@ class Camp extends Base{
         $step = input('step', 1);
         $view = 'Camp/createCamp'.$step;
         $fast = input('fast', 0);
-        $campid = input('camp_id');
+        $camp_id = input('camp_id');
         $campS = new CampService();
-        $camp = $campS->getCampInfo($campid);
+        $camp = $campS->getCampInfo(['id'=>$camp_id]);
         
         $this->assign('fast', $fast);
         $this->assign('camp', $camp);
@@ -57,7 +57,7 @@ class Camp extends Base{
         $LessonService = new \app\service\LessonService;
         $lessonList = $LessonService->getLessonList(['camp_id'=>$camp_id,'status'=>1]);
         $lessonCount = count($lessonList);
-        $campInfo = $this->CampService->getCampInfo($camp_id);
+        $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
         // 查询是否跟训练营有关系
         $isPower = $this->CampService->isPower($camp_id,$this->memberInfo['id']);
 
@@ -213,7 +213,7 @@ class Camp extends Base{
         $camp_id = input('param.camp_id');
         $member_id = $this->memberInfo['id'];
         $power = $this->CampService->isPower($camp_id,$member_id);
-        $campInfo = $this->CampService->getCampInfo($camp_id);
+        $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
         $gradeCount = db('grade')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
         $scheduleCount = db('schedule')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
         $lessonCount = db('lesson')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
@@ -228,7 +228,7 @@ class Camp extends Base{
     // 非管理员的camp菜单
     public function clientOfcamp(){
         $camp_id = input('param.camp_id');
-        $campInfo = $this->CampService->getCampInfo($camp_id);
+        $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
         $LessonMember = new \app\model\LessonMember;
         $objStudentList = $LessonMember->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>$camp_id])->select();
         if($objStudentList){
@@ -255,7 +255,7 @@ class Camp extends Base{
         if($is_power == 0){
             $this->error('您没有权限');
         }
-        $campInfo = $this->CampService->getCampInfo($camp_id);
+        $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
         $gradeCount = db('grade')->where(['camp_id'=>$camp_id])->count();
         $scheduleCount = db('schedule')->where(['camp_id'=>$camp_id])->count();
         $lessonCount = db('lesson')->where(['camp_id'=>$camp_id])->count();
@@ -269,7 +269,7 @@ class Camp extends Base{
 
     /* public function coachListOfCamp(){
         $camp_id = input('param.camp_id');
-        $campInfo = $this->CampService->getCampInfo($camp_id);
+        $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
         $type = input('param.type')?input('param.type'):2;
         $status = input('param.status')?input('param.status'):1;
         $map = ['camp_member.camp_id'=>$camp_id,'camp_member.type'=>$type,'camp_member.status'=>$status];
@@ -284,7 +284,7 @@ class Camp extends Base{
         $step = input('param.step', 1);
         $view = 'Camp/campSetting'.$step;
         $camp_id = input('param.camp_id');
-        $campInfo = $this->CampService->getCampInfo($camp_id);
+        $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
         $is_power = $this->CampService->isPower($camp_id,$this->memberInfo['id']);
 
         if($is_power < 4){

@@ -62,8 +62,8 @@ class CampService {
     /**
      * 读取资源
      */
-    public function getCampInfo($id) {
-        $res = $this->Camp->get($id);
+    public function getCampInfo($map) {
+        $res = $this->Camp->find($map);
         if (!$res) {
             return false;
         }

@@ -37,7 +37,7 @@ class Exercise extends Base{
     public function createExercise(){
         $camp_id = input('param.camp_id',0);
         $CampService = new CampService();
-        $campInfo = $CampService->getCampInfo($camp_id);
+        $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
         // 分类
         $exerciseType = $this->ExerciseService->getExerciseType();
 
@@ -60,10 +60,10 @@ class Exercise extends Base{
             $this->error('权限不足');
         }
         $CampService = new CampService();
-        $campInfo = $CampService->getCampInfo($exerciseInfo['camp_id']);
+        $campInfo = $CampService->getCampInfo(['id'=>$exerciseInfo['camp_id']]);
         // 分类
         $exerciseType = $this->ExerciseService->getExerciseType();
-
+        $this->assign('power',$power);
         $this->assign('campInfo',$campInfo);
         $this->assign('exerciseType',$exerciseType);
 		$this->assign('exerciseInfo',$exerciseInfo);
@@ -74,7 +74,7 @@ class Exercise extends Base{
     public function exerciseList(){
         $camp_id = input('param.camp_id',0);
         $CampService = new CampService();
-        $campInfo = $CampService->getCampInfo($camp_id);
+        $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
 
     	$myExerciseList = $this->ExerciseService->getExerciseList(['camp_id'=>$camp_id]);
         $sysExerciseList = $this->ExerciseService->getExerciseList(['camp_id'=>0]);
@@ -82,6 +82,7 @@ class Exercise extends Base{
         $this->assign('sysExerciseList',$sysExerciseList);
         // dump($sysExerciseList);die;
         $this->assign('campInfo',$campInfo);
+        dump($campInfo);die;
         return view('Exercise/exerciseList');
     }
 
