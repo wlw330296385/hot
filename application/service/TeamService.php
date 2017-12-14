@@ -4,6 +4,7 @@ namespace app\service;
 use app\model\Apply;
 use app\model\Team;
 use app\model\TeamEvent;
+use app\model\TeamEventMember;
 use app\model\TeamMember;
 use app\model\TeamMemberRole;
 use think\Db;
@@ -169,6 +170,13 @@ class TeamService {
         if ($res) {
             $result = $res->toArray();
             $result['status_num'] = $res->getData('status');
+            // 获取成员在球队的角色身份
+            $roleModel = new TeamMemberRole();
+            $result['role_text'] = '';
+            $memberRole = $roleModel->where(['member_id' => $result['member_id'], 'team_id' => $result['team_id'], 'status' => 1])->select()->toArray();
+            foreach ($memberRole as $val) {
+                $result['role_text'] .= $val['type'].',';
+            }
             return $result;
         } else {
             return $res;
@@ -325,6 +333,41 @@ class TeamService {
             return $result;
         } else {
             return $res;
+        }
+    }
+
+    // 获取会员-球队活动关联
+    public function getMemberTeamEvent($map) {
+        $model = new TeamEventMember();
+        $res = $model->where($map)->find();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
+    // 保存会员-球队活动数据
+    public function saveTeamEventMember($data, $map=[]) {
+        $model = new TeamEventMember();
+        if (!empty($map)) {
+            // 更新数据
+            $res = $model->allowField(true)->save($data, $map);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        } else {
+            // 新增数据
+            $res = $model->allowField(true)->save($data);
+            if ($res) {
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+            } else {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
         }
     }
 }

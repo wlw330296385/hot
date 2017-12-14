@@ -430,4 +430,50 @@ class Team extends Base {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+
+    // 报名参加球队活动
+    public function jointeamevent() {
+        try {
+            // 接收参数
+            $event_id = input('post.event_id');
+            if (!$event_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'，请选择球队活动']);
+            }
+            $teamS = new TeamService();
+            // 查询球队活动数据，检查活动是否下架、已结束、已满人提示信息
+            $event = $teamS->getTeamEventInfo(['id' => $event_id]);
+            if (!$event) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404').'，请选择其他球队活动']);
+            }
+            if ($event['status_num'] === 2) {
+                return json(['code' => 100, 'msg' => '此活动已'.$event['status'].'，请选择其他球队活动']);
+            }
+            if ($event['is_finished_num'] === 1) {
+                return json(['code' => 100, 'msg' => '此活动'.$event['is_finished'].'，请选择其他球队活动']);
+            }
+            if ($event['is_max_num'] === -1) {
+                return json(['code' => 100, 'msg' => '此活动'.$event['is_max'].'，请选择其他球队活动']);
+            }
+            //dump($event);
+            // 会员是否已报名活动
+            $memberhadjoin = $teamS->getMemberTeamEvent(['event_id' => $event_id, 'member_id' => $this->memberInfo['id']]);
+            if ($memberhadjoin) {
+                return json(['code' => 100, 'msg' => '您已报名参加此活动，无需再次报名']);
+            }
+            // 保存报名参加活动记录
+            $data = [
+                'event_id' => $event['id'],
+                'event' => $event['event'],
+                'member_id' => $this->memberInfo['id'],
+                'member' => $this->memberInfo['member'],
+                'is_pay' => 1,
+                'is_sign' => 1,
+                'status' => 1,
+            ];
+            $joineventResult = $teamS->saveTeamEventMember($data);;
+            return json($joineventResult);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 }
