@@ -39,9 +39,9 @@ class Exercise extends Base{
         $CampService = new CampService();
         $campInfo = $CampService->getCampInfo($camp_id);
         // 分类
-        $ExerciseType = $this->ExerciseService->getExerciseType();
+        $exerciseType = $this->ExerciseService->getExerciseType();
 
-        $this->assign('ExerciseType',$ExerciseType);
+        $this->assign('exerciseType',$exerciseType);
         $this->assign('campInfo',$campInfo);
     	return view('Exercise/createExercise');
     }
@@ -62,11 +62,11 @@ class Exercise extends Base{
         $CampService = new CampService();
         $campInfo = $CampService->getCampInfo($exerciseInfo['camp_id']);
         // 分类
-        $ExerciseType = $this->ExerciseService->getExerciseType();
+        $exerciseType = $this->ExerciseService->getExerciseType();
 
         $this->assign('campInfo',$campInfo);
-        $this->assign('ExerciseType',$ExerciseType);
-		$this->assign('ExerciseInfo',$exerciseInfo);
+        $this->assign('exerciseType',$exerciseType);
+		$this->assign('exerciseInfo',$exerciseInfo);
     	return view('Exercise/updateExercise');
     }
 
