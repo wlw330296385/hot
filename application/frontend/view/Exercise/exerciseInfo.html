@@ -88,14 +88,11 @@
         swipeBack: true //启用右滑关闭功能
     });
 
-    $(function () {
-//        addShow();
-    })
 
     // 获取数据并进行提交
     function submitAction() {
 
-        var objData=[];
+        var objData={};
         objData.member = "{$memberInfo.member}";
         objData.member_id = "{$memberInfo.id}";
         objData.camp = "{$campInfo.camp}";
@@ -104,12 +101,16 @@
         objData.exercise_setion = "{$exerciseInfo.exercise_setion}";
         objData.exercise = "{$exerciseInfo.exercise}";
         objData.exercise_detail = "{$exerciseInfo.exercise_detail}";
+
+        console.log(objData)
+//        return false;
+
         var url = "{:url('api/Exercise/updateExerciseApi')}";
         var ajaxResult = wooApi.asyncF(url, objData);
 
         if (ajaxResult.code == 200) {
             mui.alert(ajaxResult.msg, '训练项目添加成功', '确定', function () {
-                var goUrl = "{:url('exercise/exerciseList')}" + '/exercise_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
+                var goUrl = "{:url('exercise/exerciseinfo')}" + '/exercise_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
                 window.top.location.href = goUrl;
             })
         } else {

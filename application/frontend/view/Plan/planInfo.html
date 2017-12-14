@@ -55,7 +55,7 @@
             <div class="program-view4">
                 <h5>训练项目</h5>
                 <div class="mt25">
-                    {volist name="planInfo.exercise_str" id="vo"}
+                    {volist name="planInfo.exercise_strarr" id="vo"}
                     <ul class="mui-table-view list eType">
                         <li class="mui-table-view-cell listli detalisli">
                             <p><strong class="daType">{$vo.exercise}</strong></p>
@@ -91,22 +91,47 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
 
-    $(function () {
-        addShow();
-    })
 
-    function addShow() {
-        var camp_id = "{$planInfo.camp_id}"
-        if (camp_id == 0) {
-            $(".operation").show();
+    // 获取数据并进行提交
+    function submitAction() {
+
+
+
+        var objData={};
+        objData.member = "{$memberInfo.member}";
+        objData.member_id = "{$memberInfo.id}";
+        objData.camp = "{$campInfo.camp}";
+        objData.camp_id = "{$campInfo.id}";
+        objData.pid = "0";
+        objData.grade_category = "{$planInfo.grade_category}";
+        objData.grade_category_id = "{$planInfo.grade_category_id}";
+        objData.outline = "{$planInfo.outline}";
+        objData.outline_detail = "{$planInfo.outline_detail}";
+        objData.exercise_str = JSON.stringify({$planInfo.exercise_str});
+
+        console.log(objData)
+//        return false;
+
+        var url = "{:url('api/plan/createPlanApi')}";
+        var ajaxResult = wooApi.asyncF(url, objData);
+
+        if (ajaxResult.code == 200) {
+            mui.alert(ajaxResult.msg, '教案添加成功', '确定', function () {
+                var goUrl = "{:url('plan/planinfo')}" + '/plan_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
+                window.top.location.href = goUrl;
+            })
+        } else {
+            mui.alert(ajaxResult.msg, '添加失败');
         }
-    }
+    };
+
 
 </script>
 
