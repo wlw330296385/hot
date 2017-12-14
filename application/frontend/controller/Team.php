@@ -67,8 +67,11 @@ class Team extends Base {
         return view('Team/teamInfo');
     }
 
-    // 我的球队列表（会员加入/所在球队列表）
+    // 我的球队列表（会员所在球队列表）
     public function myteam() {
+        $teamS = new TeamService();
+        $myTeamList = $teamS->myTeamWithRole($this->memberInfo['id']);
+        $this->assign('myTeamList', $myTeamList);
         return view('Team/myteam');
     }
 

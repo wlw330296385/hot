@@ -20,6 +20,29 @@ class TeamService {
         }
     }
 
+    // 我的球队列表（带输出在队职位角色）
+    public function myTeamWithRole($member_id) {
+        $model = new TeamMember();
+        $map['member_id'] = $member_id;
+        $map['status'] = 1;
+        $res = $model->with('team')->where($map)->select();
+        if ($res) {
+            // 遍历获取成员在球队的角色身份
+            $teammembers = $res->toArray();
+            $roleModel = new TeamMemberRole();
+            foreach ($teammembers as $k => $teammember) {
+                $teammembers[$k]['role_text'] = '';
+                $memberRole = $roleModel->where(['member_id' => $teammember['member_id'], 'team_id' => $teammember['team_id'], 'status' => 1])->select()->toArray();
+                foreach ($memberRole as $val) {
+                    $teammembers[$k]['role_text'] .= $val['type'].',';
+                }
+            }
+            return $teammembers;
+        } else {
+            return $res;
+        }
+    }
+
     // 创建球队
     public function createTeam($data) {
         $model = new Team();

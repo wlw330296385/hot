@@ -32,13 +32,13 @@
                         <strong>{$exerciseInfo.exercise}</strong>
                         <p class="mui-ellipsis" style="text-indent: 0">作者：{$exerciseInfo.member}</p>
                     </div>
-                    {//eq name="$power" value="1"}
+                    {eq name="$power" value="1"}
                     <div class="price-frame">
                         <a href="{:url('exercise/updateexercise',['exercise_id'=>$exerciseInfo['id']])}" class="mui-navigate-right">
                             <span class="editor-btn">编辑</span>
                         </a>
                     </div>
-                    {///eq}
+                    {/eq}
                 </li>
             </ul>
 
@@ -53,13 +53,13 @@
                     <span style="text-align: left">{$exerciseInfo.exercise_detail}</span>
                 </li>
             </ul>
-            
+
             <!--<div class="program-view5 border-b">-->
-                <!--<div class="image-items">-->
-                    <!--<div class="imagef image">-->
-                        <!--视频区域-->
-                    <!--</div>-->
-                <!--</div>-->
+            <!--<div class="image-items">-->
+            <!--<div class="imagef image">-->
+            <!--视频区域-->
+            <!--</div>-->
+            <!--</div>-->
             <!--</div>-->
 
             <!-- <div class="program-view6">
@@ -67,16 +67,33 @@
                     <input type="checkbox" checked>对外开放
                 </p>
             </div> -->
+            <ul class="mui-table-view operation" style="display: none">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" onclick="submitAction()">
+                    添加到我的教案库
+                </li>
+            </ul>
         </div>
     </div>
 
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+    $(function () {
+        addShow();
+    })
+
+    function addShow() {
+        var camp_id = "{$exerciseInfo.camp_id}"
+        if (camp_id == 0) {
+            $(".operation").show();
+        }
+    }
 
 </script>
 
