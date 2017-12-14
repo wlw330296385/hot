@@ -144,6 +144,16 @@ class Team extends Base {
         return view('Team/competition');
     }
 
+    // 添加活动
+    public function createEvent() {
+        return view('Team/createEvent');
+    }
+
+    // 编辑活动
+    public function EventEdit() {
+        return view('Team/EventEdit');
+    }
+
     // 活动列表
     public function eventlist() {
         return view('Team/eventList');

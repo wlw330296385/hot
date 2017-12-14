@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>添加活动</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
+    <style>
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+
+        .muicol {
+            padding: 0 15px;
+        }
+
+        .frame {
+            width: 100%;
+            padding: 15px 5px;
+            font-size: 14px;
+            border: 1px dashed #ddd;
+            color: #b1b0b0;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .pd {
+            padding: 7px 0;
+        }
+
+        .introBox .operationDiv {
+            position: relative;
+        }
+
+        .introBox .operationDiv .delbtn {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            line-height: initial !important;
+            font-size: 18px !important;
+        }
+
+        .introBox .operationDiv img {
+            width: 100%;
+            height: auto;
+            float: none;
+            margin: 0;
+            padding: 0 15px;
+        }
+
+        .introBox .operationDiv h5 {
+            padding: 10px 15px;
+            height: 40px;
+            line-height: 21px;
+            color: #000;
+            margin: 0;
+            font-weight: bold
+        }
+
+        .introBox .operationDiv p {
+            padding: 10px 15px;
+            margin: 0;
+            color: #000;
+        }
+
+        .textarea {
+            min-height: 20px;
+            padding: 10px 15px;
+            _height: 120px;
+            margin-left: auto;
+            margin-right: auto;
+            outline: 0;
+            font-size: 14px;
+            word-wrap: break-word;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .textarea:empty::before {
+            color: #b1b0b0;
+            content: attr(placeholder);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
+        <h1 class="mui-title"></h1>
+    </header>
+    <div class="mui-content pt">
+
+        <div class="camp-list camp-lesson-list" style="margin-top: 4px">
+            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+
+            <form action="" class="mui-input-group mt55">
+
+                <div class="mui-input-row h-auto">
+                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                        <label>活动封面</label>
+                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
+                        <input type="hidden" name="cover" value='' class="data">
+                    </a>
+                </div>
+
+                <div class="mui-input-row">
+                    <label>活动主题</label>
+                    <input type="text" name="event" class="data" value="" placeholder="请输入活动主题">
+                </div>
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>活动类型</label>
+                        <span class="select-row">
+                            <select id="eventType" class="data" name="event_type">
+                                <optgroup label="活动类型">
+                                    <option value="对内训练">对内训练</option>
+                                    <option value="团队建设">团队建设</option>
+                                    <option value="联谊活动">联谊活动</option>
+                                    <option value="日常娱乐">日常娱乐</option>
+                                    <option value="球队年会">球队年会</option>
+                                    <option value="庆功宴">庆功宴</option>
+                                </optgroup>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
+                    <div class="mui-navigate-right">
+                        <label>开始时间</label>
+                        <span id="resultStart" class="ui-alert domData" name="starts"></span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row picker btnEnd" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
+                    <div class="mui-navigate-right">
+                        <label>结束时间</label>
+                        <span id="resultEnd" class="ui-alert domData" name="ends"></span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row" id='showCityPicker3'>
+                    <div class="mui-navigate-right">
+                        <label>所属地区</label>
+                        <span id="cityResult3" class="ui-alert domData" name="address"></span>
+                    </div>
+                </div>
+                <div class="mui-input-row">
+                    <label>活动地点</label>
+                    <input type="text" name="location" value="" class="data location" placeholder="请输入活动地点">
+                </div>
+
+                <div class="mui-input-row h-auto">
+                    <label class="wd36">最少参与人数</label>
+                    <div class="mui-numbox">
+                        <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+                        <input class="mui-input-numbox data" type="number" name="min" value="">
+                        <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+                    </div>
+                </div>
+                <div class="mui-input-row h-auto">
+                    <label class="wd36">最多参与人数</label>
+                    <div class="mui-numbox">
+                        <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+                        <input class="mui-input-numbox data" type="number" name="max" value="">
+                        <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+                    </div>
+                </div>
+
+                <div class="mui-input-row">
+                    <label class="wd52">发布通知并通知队员</label>
+                    <div class="mui-switch isNegotiated wd39">
+                        <div class="mui-switch-handle"></div>
+                    </div>
+                </div>
+
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="course">活动详情</span>
+                </div>
+
+                <div class="mui-input-row h-auto">
+                    <div class="mui-input-row h-auto" style="margin-bottom: 10px">
+                        <textarea name="event_des" class="data event_des" style="display: none"></textarea>
+                        <div class="introBox"></div>
+                    </div>
+                    <div class="mui-row mui-text-center mui-row-operation">
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame up pd">上移</a>
+                            <a class="frame down pd">下移</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame titleClass">添加标题</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame textClass">添加正文</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame imageClass">
+                                <div id="uploader-demo">
+                                    <div id="fileList" class="uploader-list"></div>
+                                    <div id="filePicker">选择图片</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" onclick="submitAction()">
+                    提交
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/libs/webuploader.min.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'event'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        //弹出框滚动必须写在mui专用的初始化
+        (function ($) {
+            $(".mui-scroll-wrapper").scroll({
+                //bounce: false,//滚动条是否有弹力默认是true
+                indicators: true //是否显示滚动条,默认是true
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+        })(mui);
+
+        //选择器
+        var getProvince = '';
+        var getCity = '';
+        var getArea = '';
+        (function ($, doc) {
+            $.ready(function () {
+                var _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+
+                ///级联示例
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
+                });
+
+                // 设置默认值
+                cityPicker3.pickers[0].setSelectedIndex(18);
+                cityPicker3.pickers[1].setSelectedIndex(2);
+                cityPicker3.pickers[2].setSelectedIndex(2);
+
+                cityPicker3.setData(cityData3);
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                        getProvince = _getParam(items[0], 'text');
+                        getCity = _getParam(items[1], 'text');
+                        getArea = _getParam(items[2], 'text');
+                    });
+                }, false);
+
+                //开始时间
+                var resultStart = $('#resultStart')[0];
+                var btnStart = $('.btnStart');
+                btnStart.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+
+                        picker.show(function (rs) {
+                            resultStart.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+
+                //结束时间
+                var resultEnd = $('#resultEnd')[0];
+                var btnEnd = $('.btnEnd');
+                btnEnd.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+
+                        picker.show(function (rs) {
+                            resultEnd.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+
+            });
+        })(mui, document);
+
+        var all = '';
+        $(function () {
+
+            //添加标题
+            $(".titleClass").on('tap', '', function () {
+                var title = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
+                $(".introBox").append(title);
+            });
+
+
+            //添加正文
+            $(".textClass").on('tap', '', function () {
+                var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" name="" class="mui-text-left text delClass textarea" placeholder="请输入正文"></div>';
+                $(".introBox").append(text);
+            });
+
+            //添加图片start·····································································
+            // 初始化Web Uploader
+            var uploader = WebUploader.create({
+                auto: true,
+                server: uploadApiUrl,
+                pick: '#filePicker',
+                accept: {
+                    title: 'Images',
+                    extensions: 'gif,jpg,jpeg,bmp,png',
+                    mimeTypes: 'image/*'
+                }
+            });
+            // 上传成功
+            uploader.on('uploadSuccess', function (file, responce) {
+                if (eval('responce').status == 0) {
+                    mui.toast('上传失败,请重试', { 'duration': 'long' });
+                } else {
+                    mui.toast('上传成功', { 'duration': 'long' });
+                    var $li = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img class="desimg" src="' + responce.path + '" style="padding-top:5px"></div>';
+                    $(".introBox").append($li);
+                }
+            });
+            //添加图片end·····································································
+
+            //删除操作
+            $(document).on('tap', '.delbtn', function () {
+                $(this).parent().remove();
+            });
+
+            // 焦点离开后把内容放在h5标签里
+            $(document).on('blur', '.operationDiv input', function () {
+                $(this).siblings(".delbtn").remove();
+                if ($(this).val() != '') {
+                    var inputValue = '<h5>' + $(this).val() + '</h5>';
+                    $(this).parent().html(inputValue).removeClass("bgorange")
+                } else {
+                    var inputValueNull = '<h5>标题</h5>';
+                    $(this).parent().html(inputValueNull)
+                }
+            });
+            // 点击时显示input框
+            $(document).on('tap', '.operationDiv h5', function () {
+                var YinputValue = '<i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="title" autofocus value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="标题">';
+                $(this).parent(".operationDiv").html(YinputValue).addClass("bgorange");
+                console.log(YinputValue)
+            });
+
+            // 焦点离开后把内容放在p标签里
+            $(document).on('blur', '.operationDiv .textarea', function () {
+                $(this).siblings(".delbtn").remove();
+                if ($(this).text() != '') {
+                    var divValue = '<p>' + $(this).text() + '</p>';
+                    $(this).parent().html(divValue).removeClass("bgorange")
+                } else {
+                    var divValueNull = '<p>请输入正文</p>';
+                    $(this).parent().html(divValueNull)
+                }
+            });
+            // 点击时显示div框
+            $(document).on('tap', '.operationDiv p', function () {
+                var YdivValue = '<i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" value="' + $(this).text() + '"  class="mui-text-left text delClass textarea" placeholder="请输入正文">' + $(this).text() + '</div>';
+                $(this).parent().html(YdivValue).addClass("bgorange");
+            });
+
+            // 图片的移动操作
+            $(document).on('tap', '.desimg', function () {
+                var bgg = $(this).parent().hasClass("bgorange");
+                if (bgg == false) {
+                    $(this).parent().addClass("bgorange")
+                    return false;
+                } else {
+                    $(document).on('tap', 'body', function () {
+                        $(".desimg").parent().removeClass("bgorange")
+                    });
+                }
+            });
+
+
+            // 上移动
+            $(document).on('tap', '.up', function () {
+                $(".bgorange").prev().insertAfter(".bgorange");
+            });
+            // 上移动
+            $(document).on('tap', '.down', function () {
+                $(".bgorange").next().insertBefore(".bgorange");
+            });
+
+            toCampGradeList();
+
+        })
+
+        // 获取数据并进行提交
+        function submitAction() {
+
+        //     $('.delbtn').remove();
+        //     var totalHtml = $(".introBox").html();
+        //     $(".event_des").val(totalHtml);
+        //     console.log(totalHtml);
+
+        //     var data = wooApi.getInputData('input', 'data');
+        //     datas = wooApi.getInputData('select', 'data', data);
+        //     // 获取其他标签值
+        //     arrData = wooApi.getDomData('domData', datas);
+        //     var objData = wooApi.arrTOobj(arrData);
+        //     var event_des = $('textarea.data').val();
+        //     objData.event_des = event_des;
+        //     var url = "{:url('api/event/updateEventApi')}";
+        //     var ajaxResult = wooApi.asyncF(url, objData);
+        //     if (ajaxResult.code == 200) {
+        //         mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
+        //             var goUrl = "{:url('event/eventlistOfCamp')}" + '/event_id/' + ajaxResult.data;
+        //             window.top.location.href = goUrl;
+        //         })
+        //     } else {
+        //         mui.alert(ajaxResult.msg, '创建失败');
+        //         mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+        //             if (data.code === 200) {
+        //                 $('input[name=__token__]').val(data.data);
+        //             }
+        //         }, 'json');
+        //     }
+        };
+
+
+        //自定义获取训练营班级列表
+        var toCampGradeList = function () {
+            var url = "{:url('api/grade/getGradeListApi','','',true)}";
+            mui.ajax({
+                url: url,
+                data: {
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var gradeli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            gradeli = gradeli + '<li class="mui-table-view-cell listli detalisli target" data-id="' + data.data[i].id + '">' + data.data[i].grade + '</li>'
+                        }
+                        $("ul.campGradeList").empty();
+                        if (gradeli == '') {
+                            gradeli = '<p class="mui-text-center">没有查找到数据哦</p>'
+                        }
+                        $("ul.campGradeList").append(gradeli);
+
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+    </script>
+</body>
+
+</html>
