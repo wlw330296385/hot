@@ -91,7 +91,7 @@ class ExerciseService {
     }
 
     public function getExerciseList($map = []){
-        $res = $this->exerciseModel->where($map)->whereOr(['pid'=>0])->order('id asc')->select();
+        $res = $this->exerciseModel->where($map)->order('id asc')->select();
         if(!$res){
             return $res;
         }else{
