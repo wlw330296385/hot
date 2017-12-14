@@ -72,45 +72,12 @@
                     <b>球队成员</b>
                 </span>
                 <span class="more pdr15">
-                    <a href="{:url('team/teamMemberInfo',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">查看全部</a>
+                    <a href="{:url('team/teamMember',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">查看全部</a>
                 </span>
             </div>
 
-            <div class="nav-list  mb">
-                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame overflow-x ptb4">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli logostyle" id="logoframe">
-                        <img class="logostyle" src="{$memberInfo.avatar}" alt="">
-                        <div class="mui-media-body">领队</div>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli" id="logoframe">
-                        <img class="logostyle" src="/static/frontend/images/ads1.jpg" alt="">
-                        <div class="mui-media-body">教练</div>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli" id="logoframe">
-                        <img class="logostyle" src="/static/frontend/images/ads1.jpg" alt="">
-                        <div class="mui-media-body">队长</div>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli" id="logoframe">
-                        <img class="logostyle" src="/static/frontend/images/ads1.jpg" alt="">
-                        <div class="mui-media-body">球员</div>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli" id="logoframe">
-                        <img class="logostyle" src="/static/frontend/images/ads1.jpg" alt="">
-                        <div class="mui-media-body">球员</div>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli" id="logoframe">
-                        <img class="logostyle" src="/static/frontend/images/ads1.jpg" alt="">
-                        <div class="mui-media-body">球员</div>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli" id="logoframe">
-                        <img class="logostyle" src="/static/frontend/images/ads1.jpg" alt="">
-                        <div class="mui-media-body">球员</div>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli" id="logoframe">
-                        <img class="logostyle" src="/static/frontend/images/ads1.jpg" alt="">
-                        <div class="mui-media-body">球员</div>
-                    </li>
-                </ul>
+            <div class="nav-list mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame overflow-x teamMemberList ptb4"></ul>
             </div>
 
             <div class="nav-list mb">
@@ -295,12 +262,14 @@
 
             <!--底部操作-->
             <ul class="mui-table-view operation mt">
-                <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli">
-                    <a href="#pjpopover">关注球队</a>
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgred follow">
+                    关注球队
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli">
-                    <a href="#yqpopover">加入球队</a>
-                </li>
+                <a href="#yqpopover">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgblue">
+                        加入球队
+                    </li>
+                </a>
             </ul>
 
         </div>
@@ -393,9 +362,146 @@
                     $(".impress").append(span);
                 })
                 mui('#Impress').popover('toggle');
-            })
+            });
 
-        })
+            // 关注球队
+            $(".follow").on("tap", '', function () {
+                var team_id = "{$teamInfo.id}";
+                mui.ajax("{:url('api/follow/focus')}", {
+                    data: {
+                        type: 4,
+                        team_id: team_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                            followStatus();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+            // 申请加入球队
+            $(".joinBtn").on("tap", '', function () {
+                var team_id = "{$teamInfo.id}";
+                var remarks = $(".remarks").val();
+
+                if (remarks == '') {
+                    mui.toast("请填写申请理由");
+                    return false;
+                }
+
+                mui.ajax("{:url('api/team/applyjointeam')}", {
+                    data: {
+                        team_id: team_id,
+                        remarks: remarks
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast("操作成功，待球队审核...");
+                            mui('#yqpopover').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                            mui('#yqpopover').popover('toggle');
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+            //判断当前的关注状态
+            followStatus();
+            teamMemberlist();
+
+
+
+        });
+
+        // 判断当前的关注状态
+        function followStatus() {
+            var team_id = "{$teamInfo.id}"
+            mui.ajax("{:url('api/follow/getfollow')}", {
+                data: {
+                    type: 4,
+                    team_id: team_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data === 1) {
+                            $(".follow").text("取消关注");
+                        } else {
+                            $(".follow").text("关注球队");
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+
+        //自定义获取球员列表
+        var teamMemberlist = function () {
+            var url = "{:url('api/team/teammemberlist','','',true)}";
+            var team_id = "{$teamInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    team_id: team_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli += '<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli logostyle" id="logoframe"><img class="logostyle" src="' + data.data[i].avatar+ '" alt=""><div class="mui-media-body">' + data.data[i].role_text + '</div></li>'
+                        }
+                        $(".teamMemberList").empty();
+                        if (newli == '') {
+                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
+                        }
+                        $(".teamMemberList").append(newli);
+
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
 
 
     </script>

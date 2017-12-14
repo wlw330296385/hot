@@ -19,31 +19,31 @@
         .mui-popover .mui-scroll-wrapper {
             top: 43px;
         }
-        
+
         .mui-popover-arrow {
             left: auto;
             right: 6px;
         }
-        
+
         .mui-input-row a {
             display: table;
             width: 100%;
         }
-        
+
         .mui-input-group img {
             width: 42px;
             border-radius: 50%;
             background: #ddd;
             border: none
         }
-        
+
         i.tip {
             height: 0;
             color: red;
             float: right;
             font-size: 22px;
         }
-        
+
         i.color {
             width: 12px;
             height: 12px;
@@ -53,10 +53,16 @@
             margin-top: 15px;
             border: 1px solid #ddd;
         }
-        
+
         .colorLineHeight li {
             line-height: 43px;
             padding: 0 15px !important;
+        }
+
+        small {
+            float: right;
+            line-height: 42px;
+            padding-right: 15px;
         }
     </style>
 </head>
@@ -64,7 +70,9 @@
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
         <h1 class="mui-title"></h1>
     </header>
 
@@ -77,23 +85,29 @@
 
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
-                        <label><b>球队LOGO</b></label>
+                        <label>
+                            <b>球队LOGO</b>
+                        </label>
                         <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
                         <input type="hidden" name="logo" value='' class="data">
                     </a>
                 </div>
 
                 <div class="mui-input-row">
-                    <label>球队名称<i class="tip">*</i></label>
+                    <label>球队名称
+                        <i class="tip">*</i>
+                    </label>
                     <input type="text" name="name" value="" class="data" placeholder="请输入球队名称">
                 </div>
 
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
-                        <label>球队类型<i class="tip">*</i></label>
+                        <label>球队类型
+                            <i class="tip">*</i>
+                        </label>
                         <span class="location-choise max">
                             <select id="teamType" class="data" name="type">
-                                <option value="">请选择</option>
+                                <option value="">--请选择--</option>
                                 <option value="1">青少年训练营</option>
                                 <option value="2">企事业单位</option>
                                 <option value="3">同事朋友</option>
@@ -110,7 +124,9 @@
 
                 <div class="mui-input-row camp-input-row">
                     <a href="#camp" class="mui-navigate-right">
-                        <label class="wd36">所属训练营<i class="tip">*</i></label>
+                        <label class="wd36">所属训练营
+                            <i class="tip">*</i>
+                        </label>
                         <span class="campCont domData" name="camp"></span>
                         <input type="hidden" name="camp_id" value="" class="camp_id data">
                     </a>
@@ -119,7 +135,9 @@
                 <div class="mui-input-row" id='showCityPicker3'>
                     <a href="#" class="mui-navigate-right">
                         <div class="mui-navigate-right">
-                            <label>所属地区<i class="tip">*</i></label>
+                            <label>所属地区
+                                <i class="tip">*</i>
+                            </label>
                             <span id="cityResult3" class="ui-alert"></span>
                             <input type="hidden" name="province" value="" class="data" id="province">
                             <input type="hidden" name="city" value="" class="data" id="city">
@@ -155,7 +173,9 @@
                 </div>
 
                 <div class="mui-input-row">
-                    <label>领队<i class="tip">*</i></label>
+                    <label>领队
+                        <i class="tip">*</i>
+                    </label>
                     <span class="leader data" name="leader">{$memberInfo.member}</span>
                     <input type="hidden" name="leader_id" class="data" value="{$memberInfo.id}">
                 </div>
@@ -165,20 +185,21 @@
                     <span class="captain data" name="captain">{$memberInfo.member}</span>
                     <input type="hidden" name="captain_id" class="data" value="{$memberInfo.id}">
                 </div>
-
                 <div class="mui-input-row price-input-row">
                     <label>平均年龄</label>
-                    <span class="avg_age" name="avg_age"></span>
+                    <input type="text" name="avg_age" class="data" value="" placeholder="请输入平均年龄">
                 </div>
 
                 <div class="mui-input-row price-input-row">
                     <label>平均身高</label>
-                    <span class="avg_height domData" name="avg_height">{$memberInfo.height}</span>
+                    <small>cm</small>
+                    <input type="text" name="avg_height" class="data wd52" value="" placeholder="请输入平均身高" style="padding-right:0">
                 </div>
 
                 <div class="mui-input-row price-input-row">
                     <label>平均体重</label>
-                    <span class="avg_weight domData" name="avg_weight">{$memberInfo.weight}</span>
+                    <small>kg</small>
+                    <input type="text" name="avg_weight" class="data wd52" value="" placeholder="请输入平均体重" style="padding-right:0">
                 </div>
 
                 <div class="mui-input-row">
@@ -186,7 +207,7 @@
                         <label>球队特点</label>
                         <span class="location-choise max">
                             <select id="charater" class="data" name="charater">
-                                <option value="">请选择</option>
+                                <option value="">--请选择--</option>
                                 <option value="球风良好">球风良好</option>
                                 <option value="诚信守时">诚信守时</option>
                                 <option value="尊重对手">尊重对手</option>
@@ -206,7 +227,7 @@
                     <div class="mui-navigate-right">
                         <label>生效状态</label>
                         <span class="select-row freeStatus">
-                            <select  class="data" name="status">
+                            <select class="data" name="status">
                                 <option value="-1">默认下架</option>
                                 <option value="1">上架</option>
                             </select>
@@ -241,8 +262,12 @@
     <div id="camp" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course wd45"><strong>所属训练营</strong></span>
-            <span class="fr"><button class="mui-btn" id="CampDel">清除</button></span>
+            <span class="course wd45">
+                <strong>所属训练营</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="CampDel">清除</button>
+            </span>
         </div>
         <div class="pop-search">
             <input type="search" class="keywordLD" placeholder="请输入训练营名称搜索">
@@ -252,9 +277,16 @@
             <div class="mui-scroll">
                 <ul class="mui-table-view list campList"></ul>
                 <ul class="mui-pager">
-                    <li><a href="#" class="prev_page">上一页</a></li>
-                    <li><span class="currPage">0</span>/<span class="totalPage">0</span></li>
-                    <li><a href="#" class="next_page">下一页</a></li>
+                    <li>
+                        <a href="#" class="prev_page">上一页</a>
+                    </li>
+                    <li>
+                        <span class="currPage">0</span>/
+                        <span class="totalPage">0</span>
+                    </li>
+                    <li>
+                        <a href="#" class="next_page">下一页</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -264,8 +296,12 @@
     <div id="court" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course wd45"><strong>常驻球场</strong></span>
-            <span class="fr"><button class="mui-btn" id="CourtDel">清除</button></span>
+            <span class="course wd45">
+                <strong>常驻球场</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="CourtDel">清除</button>
+            </span>
         </div>
         <div class="pop-search">
             <input type="search" class="keywordLD" placeholder="请输入场地名称搜索">
@@ -275,9 +311,16 @@
             <div class="mui-scroll">
                 <ul class="mui-table-view list courtList"></ul>
                 <ul class="mui-pager">
-                    <li><a href="#" class="prev_page">上一页</a></li>
-                    <li><span class="currPage">0</span>/<span class="totalPage">0</span></li>
-                    <li><a href="#" class="next_page">下一页</a></li>
+                    <li>
+                        <a href="#" class="prev_page">上一页</a>
+                    </li>
+                    <li>
+                        <span class="currPage">0</span>/
+                        <span class="totalPage">0</span>
+                    </li>
+                    <li>
+                        <a href="#" class="next_page">下一页</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -287,23 +330,82 @@
     <div id="homeColor" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
-            <span class="course"><strong>主场颜色</strong></span>
-            <span class="fr"><button class="mui-btn" id="homeDel">清除</button></span>
+            <span class="course">
+                <strong>主场颜色</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="homeDel">清除</button>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <ul class="mui-table-view list homeColorList colorLineHeight">
-                    <li class="mui-table-view-cell listli detalisli"><i class="color black"><input type="hidden" name="color" value="black"></i><font>黑色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color white"><input type="hidden" name="color" value="white"></i><font>白色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color red"><input type="hidden" name="color" value="red"></i><font>红色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color blue"><input type="hidden" name="color" value="blue"></i><font>蓝色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color yellow"><input type="hidden" name="color" value="yellow"></i><font>黄色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color green"><input type="hidden" name="color" value="green"></i><font>绿色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color orange"><input type="hidden" name="color" value="orange"></i><font>橙色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color purple"><input type="hidden" name="color" value="purple"></i><font>紫色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color gray"><input type="hidden" name="color" value="gray"></i><font>灰色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color pink"><input type="hidden" name="color" value="pink"></i><font>粉色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color ching"><input type="hidden" name="color" value="ching"></i><font>青色</font></li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color black">
+                            <input type="hidden" name="color" value="black">
+                        </i>
+                        <font>黑色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color white">
+                            <input type="hidden" name="color" value="white">
+                        </i>
+                        <font>白色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color red">
+                            <input type="hidden" name="color" value="red">
+                        </i>
+                        <font>红色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color blue">
+                            <input type="hidden" name="color" value="blue">
+                        </i>
+                        <font>蓝色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color yellow">
+                            <input type="hidden" name="color" value="yellow">
+                        </i>
+                        <font>黄色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color green">
+                            <input type="hidden" name="color" value="green">
+                        </i>
+                        <font>绿色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color orange">
+                            <input type="hidden" name="color" value="orange">
+                        </i>
+                        <font>橙色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color purple">
+                            <input type="hidden" name="color" value="purple">
+                        </i>
+                        <font>紫色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color gray">
+                            <input type="hidden" name="color" value="gray">
+                        </i>
+                        <font>灰色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color pink">
+                            <input type="hidden" name="color" value="pink">
+                        </i>
+                        <font>粉色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color ching">
+                            <input type="hidden" name="color" value="ching">
+                        </i>
+                        <font>青色</font>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -313,23 +415,82 @@
     <div id="awayColor" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course"><strong>客场颜色</strong></span>
-            <span class="fr"><button class="mui-btn" id="awayDel">清除</button></span>
+            <span class="course">
+                <strong>客场颜色</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="awayDel">清除</button>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <ul class="mui-table-view list awayColorList colorLineHeight">
-                    <li class="mui-table-view-cell listli detalisli"><i class="color black"><input type="hidden" name="color" value="black"></i><font>黑色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color white"><input type="hidden" name="color" value="white"></i><font>白色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color red"><input type="hidden" name="color" value="red"></i><font>红色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color blue"><input type="hidden" name="color" value="blue"></i><font>蓝色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color yellow"><input type="hidden" name="color" value="yellow"></i><font>黄色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color green"><input type="hidden" name="color" value="green"></i><font>绿色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color orange"><input type="hidden" name="color" value="orange"></i><font>橙色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color purple"><input type="hidden" name="color" value="purple"></i><font>紫色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color gray"><input type="hidden" name="color" value="gray"></i><font>灰色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color pink"><input type="hidden" name="color" value="pink"></i><font>粉色</font></li>
-                    <li class="mui-table-view-cell listli detalisli"><i class="color ching"><input type="hidden" name="color" value="ching"></i><font>青色</font></li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color black">
+                            <input type="hidden" name="color" value="black">
+                        </i>
+                        <font>黑色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color white">
+                            <input type="hidden" name="color" value="white">
+                        </i>
+                        <font>白色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color red">
+                            <input type="hidden" name="color" value="red">
+                        </i>
+                        <font>红色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color blue">
+                            <input type="hidden" name="color" value="blue">
+                        </i>
+                        <font>蓝色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color yellow">
+                            <input type="hidden" name="color" value="yellow">
+                        </i>
+                        <font>黄色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color green">
+                            <input type="hidden" name="color" value="green">
+                        </i>
+                        <font>绿色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color orange">
+                            <input type="hidden" name="color" value="orange">
+                        </i>
+                        <font>橙色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color purple">
+                            <input type="hidden" name="color" value="purple">
+                        </i>
+                        <font>紫色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color gray">
+                            <input type="hidden" name="color" value="gray">
+                        </i>
+                        <font>灰色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color pink">
+                            <input type="hidden" name="color" value="pink">
+                        </i>
+                        <font>粉色</font>
+                    </li>
+                    <li class="mui-table-view-cell listli detalisli">
+                        <i class="color ching">
+                            <input type="hidden" name="color" value="ching">
+                        </i>
+                        <font>青色</font>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -339,7 +500,9 @@
     <div id="leader" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course"><strong>领队</strong></span>
+            <span class="course">
+                <strong>领队</strong>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -359,7 +522,7 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/libs/webuploader.min.js"></script>
     <script>
-                                                                                                                  var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'team'])}";
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'team'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -633,6 +796,23 @@
 
         // 获取数据并进行提交
         function submitAction() {
+
+            var avg_age = $("input[name=avg_age]").val();
+            var avg_height = $("input[name=avg_height]").val();
+            var avg_weight = $("input[name=avg_weight]").val();
+            if (!(/^[0-9]*$/).test(avg_age)) {
+                mui.toast("平均年龄请填写数字");
+                return false;
+            }
+            if (!(/^[0-9]*$/).test(avg_height)) {
+                mui.toast("平均身高请填写数字");
+                return false;
+            }
+            if (!(/^[0-9]*$/).test(avg_weight)) {
+                mui.toast("平均体重请填写数字");
+                return false;
+            }
+
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值

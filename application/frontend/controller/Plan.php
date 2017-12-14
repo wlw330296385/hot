@@ -20,7 +20,7 @@ class Plan extends Base{
     	$plan_id = input('param.plan_id');
         $camp_id = input('camp_id',0);
         $planInfo = $this->PlanService->getPlanInfo(['id'=>$plan_id]);
-        $planInfo['exercise_str'] = json_decode($planInfo['exercise_str'], true);
+        $planInfo['exercise_strarr'] = json_decode($planInfo['exercise_str'], true);
         // 判读权限
         $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
@@ -37,7 +37,7 @@ class Plan extends Base{
     	$plan_id = input('param.plan_id');
         $planInfo = $this->PlanService->getPlanInfo(['id'=>$plan_id]);
         $camp_id = $planInfo['camp_id'];
-        $planInfo['exercise_str'] = json_decode($planInfo['exercise_str'], true);
+        $planInfo['exercise_strarr'] = json_decode($planInfo['exercise_str'], true);
         // 判读权限
         $CampService = new \app\service\CampService;
 
