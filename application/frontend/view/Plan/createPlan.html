@@ -58,7 +58,7 @@
                     <label>适合阶段</label>
                     <span class="select-row">
                         <select id="gradecate">
-                            <option>请选择</option>
+                            <option value="">请选择</option>
                             {volist name="gradecateList" id="vol"}
                             <optgroup label="{$vol.name}"></optgroup>
                             {volist name="vol._data" id="v"}
@@ -72,11 +72,11 @@
 
             </div>
             <div class="mui-input-row">
-                <label>大纲名称</label>
-                <input type="text" placeholder="小学基础/小学增强/等阶段" name="outline" class="data" value="">
+                <label>教案名称</label>
+                <input type="text" placeholder="小学基础/小学增强/等" name="outline" class="data" value="">
             </div>
             <div class="mui-input-row height127">
-                <label>大纲介绍</label>
+                <label>教案介绍</label>
                 <textarea rows="5" class="data outline_detail" name="outline_detail" placeholder="填写教案大纲简介"></textarea>
             </div>
 
@@ -225,6 +225,15 @@
 
     // 获取数据并进行提交
     function submitAction() {
+
+        var gradecate = $("#gradecate option:selected").val();
+        var outline = $("input[name=outline]").val();
+        console.log(gradecate)
+        console.log(outline)
+        if (outline == '' || gradecate == '') {
+            mui.toast("必须选择教案适合阶段和输入教案名称");
+            return false;
+        }
 
         var data = wooApi.getInputData('input', 'data');
         datas = wooApi.getInputData('select', 'data', data);

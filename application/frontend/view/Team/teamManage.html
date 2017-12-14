@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>球队管理</title>
+    <title>{$teamInfo.name}-球队</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -15,15 +15,43 @@
 
 <body class="whitebg">
 
-    <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a href="{:url('team/myteam')}" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">{$teamInfo.name}球队管理</h1>
-    </header>
-
     <div class="mui-content">
 
-        <div class="whitebg">
-            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg">
+        <div id="tabbar" class="mui-control-content mui-active coach">
+            <!--操作模块-->
+            <div class="img4x3" style="background-image: url({$teamInfo.cover})">
+
+            </div>
+            <!--图文导航-->
+            <div class="page-header">
+                <a href="{:url('team/myteam')}" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow" style="font-size: 21px"></a>
+                <span class="more">{$teamInfo.name}球队管理</span>
+            </div>
+            <div class="nav-list">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>成员</span>
+                            <div class="mui-media-body num">{$teamInfo.member_num}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>比赛</span>
+                            <div class="mui-media-body num">{$teamInfo.match_num}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>活动</span>
+                            <div class="mui-media-body num">0</div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+
+            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg" style="margin-bottom:7px">
                 {//eq name="teamrole" value="4"}
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                     <a href="{:url('team/teamEdit',['team_id'=>$teamInfo['id']])}">
@@ -33,22 +61,33 @@
                 </li>
                 {///eq}
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                    <a href="{:url('team/teamInfo',['team_id'=>$teamInfo['id']])}">
+                        <span class="icon iconfont icon-training-case"></span>
+                        <div class="mui-media-body">球队主页</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                     <a href="">
                         <span class="icon iconfont icon-training-case"></span>
-                        <div class="mui-media-body">活动</div>
+                        <div class="mui-media-body">比赛</div>
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                     <a href="">
                         <span class="icon iconfont icon-training-site"></span>
-                        <div class="mui-media-body">比赛</div>
+                        <div class="mui-media-body">活动</div>
                     </a>
                 </li>
-
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                     <a href="">
+                        <span class="icon iconfont icon-training-coach"></span>
+                        <div class="mui-media-body">消息</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                    <a href="{:url('team/teamMember',['team_id'=>$teamInfo['id']])}">
                         <span class="icon iconfont icon-training-Experience"></span>
-                        <div class="mui-media-body">队员</div>
+                        <div class="mui-media-body">成员</div>
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
@@ -60,21 +99,24 @@
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                     <a href="">
                         <span class="icon iconfont icon-training-coach"></span>
-                        <div class="mui-media-body">消息</div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="">
-                        <span class="icon iconfont icon-training-coach"></span>
                         <div class="mui-media-body">相册</div>
                     </a>
                 </li>
-
             </ul>
+
+            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                    <a href="">
+                        <span class="icon iconfont icon-training-case"></span>
+                        <div class="mui-media-body">球队设置</div>
+                    </a>
+                </li>
+            </ul>
+
         </div>
 
     </div>
-    {//layout name="Layout/footer"}
+    {layout name="Layout/footer"}
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script>
@@ -82,10 +124,6 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-    mui(".mui-content").on("tap", "a", function () {
-        window.top.location.href = this.href;
-    });
-
 </script>
 
 </html>

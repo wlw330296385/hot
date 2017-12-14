@@ -18,7 +18,9 @@
 
     <header id="header" class="mui-bar mui-bar-nav search2">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title"><input type="search" class="mui-input-clear keyword" placeholder="请输入球队名称"></h1>
+        <h1 class="mui-title">
+            <input type="search" class="mui-input-clear keyword" placeholder="请输入球队名称">
+        </h1>
         <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
     </header>
 
@@ -27,7 +29,7 @@
         <div class="location-frame">
             <span class="location"></span>
             <span class="location-choise">
-                 <select id="areaSelect">
+                <select id="areaSelect">
                     <option value="">全部区域</option>
                 </select>
             </span>
@@ -176,25 +178,23 @@
                         province: sProvince,
                         city: sCity,
                         area: sArea,
-                        type: 1,
                         // team_id: teamID,
-                        keyword: keyword
+                        keyword: keyword,
+                        status: 1
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
                     headers: { 'Content-Type': 'application/json' },
-                    //processData:false,
                     success: function (data) {
                         console.log(data)
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 var urls = "{:url('team/teaminfo')}" + '/team_id/' + data.data[i].id;
-                                newli += '<li class="mui-table-view-cell mui-media listli">';
-                                newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd60">'+data.data[i].name;
-                                newli += '<p class="mui-ellipsis">平均年龄：'+ data.data[i].avg_age +'&nbsp;&nbsp;身高：'+ data.data[i].avg_height +'</p></div><div class="price-frame mui-text-center">'
-                                newli += '<p class="address">' + data.data[i].area + '</p></div></a></div>';
+                                newli += '<li class="mui-table-view-cell mui-media listli" id="logoframe">';
+                                newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left logostyle" src="' + data.data[i].cover + '"><div class="mui-media-body wd60">' + data.data[i].name;
+                                newli += '<p class="mui-ellipsis">平均年龄：' + data.data[i].avg_age + '&nbsp;&nbsp;身高：' + data.data[i].avg_height + '</p></div><div class="price-frame mui-text-center" style="line-height: 52px;padding-right: 15px;padding-top: 0;"><p class="address">' + data.data[i].area + '</p></div></a>'
                                 newli += '</li>';
                             }
                         }
