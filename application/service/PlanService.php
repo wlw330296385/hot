@@ -67,6 +67,9 @@ class PlanService {
      * 创建资源
      */
     public function createPlan($data){
+        $outline = $data['outline'];
+        $camp_id = $data['camp_id'];
+        $isUnique = $this->Plan->where(['camp_id'=>$camp_id,'outline'=>$outline,'status'=>1])->find();
         $validate = validate('PlanVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
