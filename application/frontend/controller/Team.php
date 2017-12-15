@@ -149,9 +149,14 @@ class Team extends Base {
         return view('Team/createEvent');
     }
 
-    // 编辑活动
+    // 编辑活动&活动录入
     public function EventEdit() {
         return view('Team/EventEdit');
+    }
+
+    // 活动列表管理
+    public function eventlistofteam(){
+        return view('Team/eventListOfTeam');
     }
 
     // 活动列表
@@ -168,15 +173,9 @@ class Team extends Base {
         return view('Team/eventInfo');
     }
 
-    // 活动报名
-
     // 活动报名人员名单
-
-    // 创建活动
-
-    // 编辑活动
-
-    // 活动录入
-
+    public function eventsignuplist() {
+        return view('Team/eventSignupList');
+    }
 
 }

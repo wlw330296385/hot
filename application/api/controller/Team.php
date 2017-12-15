@@ -270,8 +270,8 @@ class Team extends Base {
                         'team' => $applyInfo['organization'],
                         'member_id' => $applyInfo['member']['id'],
                         'member' => (!empty($applyInfo['member']['realname'])) ? $applyInfo['member']['realname'] : $applyInfo['member']['member'],
-                        'member_sex' => $applyInfo['member']['sex'],
-                        'member_avatar' => $applyInfo['member']['avatar'],
+                        'sex' => $applyInfo['member']['sex'],
+                        'avatar' => $applyInfo['member']['avatar'],
                         'age' => getMemberAgeByBirthday($applyInfo['member']['id']),
                         'yearsexp' => $applyInfo['member']['yearsexp'],
                         'height' => $applyInfo['member']['height'],
@@ -369,7 +369,7 @@ class Team extends Base {
                 $data['end_time'] = strtotime(input('end_time'));
             }
             $teamS = new TeamService();
-            $res = $teamS->updateTeamEvent($data);
+            $res = $teamS->createTeamEvent($data);
             return json($res);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -388,7 +388,7 @@ class Team extends Base {
                 $data['end_time'] = strtotime(input('end_time'));
             }
             $teamS = new TeamService();
-            $res = $teamS->createTeamEvent($data);
+            $res = $teamS->updateTeamEvent($data);
             return json($res);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -445,6 +445,11 @@ class Team extends Base {
             if (!$event) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404').'，请选择其他球队活动']);
             }
+            // 会员是否发布活动的球队成员
+            $checkteammember = $teamS->getTeamMemberInfo(['team_id' => $event['team_id'], 'member_id' => $this->memberInfo['id']]);
+            if (!$checkteammember) {
+                return json(['code' => 100, 'msg' => '您不是此活动的球队成员，请选择其他球队活动']);
+            }
             if ($event['status_num'] === 2) {
                 return json(['code' => 100, 'msg' => '此活动已'.$event['status'].'，请选择其他球队活动']);
             }
@@ -472,6 +477,42 @@ class Team extends Base {
             ];
             $joineventResult = $teamS->saveTeamEventMember($data);;
             return json($joineventResult);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球队活动-会员关联列表（有页码）
+    public function teameventmemberlistpage() {
+        try {
+            $map = input('post.');
+            $page = input('page', 1);
+            $teamS = new TeamService();
+            $result = $teamS->teamEventMemberPaginator($map);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球队活动-会员关联列表
+    public function teameventmemberlist() {
+        try {
+            $map = input('post.');
+            $page = input('page', 1);
+            $teamS = new TeamService();
+            $result = $teamS->teamEventMemberList($map, $page);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
