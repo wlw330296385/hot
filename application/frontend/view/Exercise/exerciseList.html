@@ -32,8 +32,8 @@
         </div>
 
         <div class="mui-segmented-control seg-control whitebg" style="margin:10px;">
-            <a class="mui-control-item" href="#sysExerciseList">平台项目库</a>
-            <a class="mui-control-item mui-active" href="#myExerciseList">训练营项目库</a>
+            <a class="mui-control-item sysExerciseList" href="#sysExerciseList">平台项目库</a>
+            <a class="mui-control-item myExerciseList mui-active" href="#myExerciseList">训练营项目库</a>
             <a class="mui-control-item" href="{:url('Exercise/createExercise',['camp_id'=>$campInfo['id']])}">添加项目</a>
         </div>
 
@@ -48,7 +48,7 @@
                 {volist name = "sysExerciseList" id="vol"}
                 <ul class="mui-table-view list mb">
                     <li class="mui-table-view-cell mui-collapse listli detalisli">
-                        <a class="mui-navigate-right daType" href="#">{$vol.exercise_setion}</a>
+                        <a class="mui-navigate-right daType" href="#">平台：{$vol.exercise_setion}</a>
                         <div class="mui-collapse-content">
                             <ol>
                             {volist name="$vol.daughter" id="v" empty="<a href='/frontend/exercise/createExercise/camp_id/$campInfo[id]' class='noData'>没有此类项目，点击立即添加</a>" }
@@ -102,6 +102,18 @@
     });
 
 
+    $(function () {
+
+        // 获取默认选项卡名字并选中对应选项
+        var witchTab = wooApi.GetQueryString('tab');
+        if(witchTab=="sysExerciseList"){
+            $(".mui-control-item,.mui-control-content").removeClass("mui-active");
+            $(".mui-control-item").removeClass("mui-active");
+            $(".sysExerciseList").addClass("mui-active");
+            $("#sysExerciseList").addClass("mui-active");
+        }
+
+    });
 
 </script>
 
