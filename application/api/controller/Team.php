@@ -362,6 +362,7 @@ class Team extends Base {
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
+            // 时间格式转换类型
             if (input('?start_time')) {
                 $data['start_time'] = strtotime(input('start_time'));
             }
@@ -386,10 +387,52 @@ class Team extends Base {
             }
             if (input('?end_time')) {
                 $data['end_time'] = strtotime(input('end_time'));
+                // 结束时间小于当前时间即活动已完成
+                if ($data['end_time'] < time()) {
+                    $data['status'] = 2;
+                }
             }
             $teamS = new TeamService();
-            $res = $teamS->updateTeamEvent($data);
-            return json($res);
+            $resUpdateTeamEvent = $teamS->updateTeamEvent($data);
+            if ($resUpdateTeamEvent['code'] == 200) {
+                if (input('?memberdata')) {
+                    $memberdata = json_decode($data['memberdata'], true);
+                    $teamS->saveAllTeamEventMember($memberdata);
+                }
+            }
+            return json($resUpdateTeamEvent);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 直接创建并录入活动
+    public function directcreateteamevent() {
+        try {
+            // 接收传参
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            // 时间格式转换类型
+            if (input('?start_time')) {
+                $data['start_time'] = strtotime(input('start_time'));
+            }
+            if (input('?end_time')) {
+                $data['end_time'] = strtotime(input('end_time'));
+                // 结束时间小于当前时间即活动已完成
+                if ($data['end_time'] < time()) {
+                    $data['status'] = 2;
+                }
+            }
+            $teamS = new TeamService();
+            $resCreateTeamEvent = $teamS->createTeamEvent($data);
+            if ($resCreateTeamEvent['code'] == 200) {
+                if (input('?memberdata')) {
+                    $memberdata = json_decode($data['memberdata'], true);
+                    $teamS->saveAllTeamEventMember($memberdata);
+                }
+            }
+            return json($resCreateTeamEvent);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }

@@ -347,7 +347,7 @@ class TeamService {
         }
     }
 
-    // 保存会员-球队活动数据
+    // 保存球队活动-会员关联数据
     public function saveTeamEventMember($data, $map=[]) {
         $model = new TeamEventMember();
         if (!empty($map)) {
@@ -379,6 +379,18 @@ class TeamService {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
+        }
+    }
+
+    // 批量更新球队活动-会员关联数据
+    public function saveAllTeamEventMember($data) {
+        $model = new TeamEventMember();
+        $res = $model->saveAll($data);
+        if ($res || ($res === 0)) {
+            return ['code' => 200, 'msg' => __lang('MSG_200')];
+        } else {
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
 
