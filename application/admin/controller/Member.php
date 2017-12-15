@@ -11,13 +11,11 @@ class Member extends Backend{
 
 
 	public function memberlist(){
-		$breadcrumb = ['ptitle' => '会员管理', 'title' => '会员列表'];
 
 		$memberList = $this->MemberService->getMemberListByPage();
-
+		// dump($memberList);die;
 		// 模板变量赋值
 		$this->assign('memberList', $memberList);
-		$this->assign('breadcrumb',$breadcrumb);
 		return view('member/memberlist');
 	}
 

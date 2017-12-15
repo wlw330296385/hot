@@ -9,9 +9,6 @@ class Index extends Backend {
 	}
     public function index() {
 
-    	// dump($_SESSION);die;
-        $breadcrumb = [ 'ptitle' => '' , 'title' => '控制台' ];
-        $this->assign( 'breadcrumb', $breadcrumb );
         return view();
     }
 }

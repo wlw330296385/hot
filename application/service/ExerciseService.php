@@ -51,11 +51,11 @@ class ExerciseService {
     }
 
     // 更新 训练项目数据
-    public function updateExercise($data, $condi) {
+    public function updateExercise($data, $map) {
         $validate = validate('ExerciseVal');
         $exercise = $data['exercise'];
         $camp_id = $data['camp_id'];
-        $isUnique = $this->exerciseModel->where(['camp_id'=>$camp_id,'exercise'=>$exercise,'status'=>1])->find();
+        $isUnique = $this->exerciseModel->where(['camp_id'=>$camp_id,'exercise'=>$exercise,'status'=>1])->where(['id'=>['<>',$map['id']]])->find();
         if($isUnique){
             return ['msg'=>'项目名已存在','code'=>100];
         }
@@ -63,7 +63,7 @@ class ExerciseService {
         if(!$result){
             return ['msg'=>$validate->getError(),'code'=>100];
         }
-        $res = $this->exerciseModel->save($data, $condi);
+        $res = $this->exerciseModel->save($data, $map);
         if (!$res)
             return ['msg' => __lang('MSG_400'), 'code' => 100];
 

@@ -18,7 +18,6 @@ class Gradecategory extends Backend {
     public function gradeCategoryList(){
 
         $gradeCategoryList = $this->GradeCategoryService->getGradeCategoryList();
-
         $this->assign('gradeCategoryList',$gradeCategoryList);
         return view('gradeCategory/gradeCategoryList');
     }

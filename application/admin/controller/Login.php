@@ -17,6 +17,10 @@ class Login extends Controller
             $this->error('你已经登录，无需重复登录', url('Index/index'));
         }
         if ( Request::instance()->isPost() ) {
+            $cache_tag  = strtolower('_sidebar_menus_'.session('admin.id'));
+            Cache::rm($cache_tag); 
+            session('admin', null);
+            cookie('keeplogin', null);
             //dump( Request::instance()->post() );
             $username = input('username/s');
             $password = input('password');
