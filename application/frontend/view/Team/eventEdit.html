@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>添加活动</title>
+    <title>编辑活动</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -46,6 +46,8 @@
         .pd {
             padding: 7px 0;
         }
+
+        /* 简介添加操作 */
 
         .introBox .operationDiv {
             position: relative;
@@ -99,6 +101,44 @@
             color: #b1b0b0;
             content: attr(placeholder);
         }
+
+        /* 录入-人员的添加操作 */
+        .operation-box {
+            background-color: #fff;
+            height: auto;
+            padding: 30px 15px;
+            padding-bottom: 0;
+            overflow: hidden;
+        }
+
+        .operation-box .operation-btn {
+            overflow: hidden;
+            padding: 10px 0;
+            font-size: 14px;
+        }
+
+        .operation-box .mui-input-row {
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            border-top: 1px solid #ddd;
+        }
+
+        .operation-box a {
+            color: #737373;
+            margin-left: 8px;
+        }
+
+        .operation-box .mui-badge {
+            margin-left: 8px;
+            color: #fff;
+            background: #f00;
+            font-size: 12px;
+        }
+
+        .operation-box .add {
+            float: right;
+            margin-right: 8px;
+        }
     </style>
 </head>
 
@@ -108,26 +148,27 @@
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
             <span class="return">返回</span>
         </a>
-        <h1 class="mui-title"></h1>
+        <h1 class="mui-title">{$teamInfo.name}</h1>
     </header>
     <div class="mui-content pt">
 
-        <div class="camp-list camp-lesson-list" style="margin-top: 4px">
+        <div class="camp-list camp-lesson-list editor ">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-
-            <form action="" class="mui-input-group mt55">
+            <input type="hidden" name="team_id" value="{$team_id}" class="data">
+            <input type="hidden" name="team" value="{$teamInfo.name}" class="data">
+            <form action="" class="mui-input-group  mt55">
 
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>活动封面</label>
-                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
+                        <img id="preview_1" class=" icon01 upload-preview" src="{$eventInfo.cover}" alt="">
                         <input type="hidden" name="cover" value='' class="data">
                     </a>
                 </div>
 
                 <div class="mui-input-row">
                     <label>活动主题</label>
-                    <input type="text" name="event" class="data" value="" placeholder="请输入活动主题">
+                    <input type="text" name="event" class="data" value="{$eventInfo.event}" placeholder="请输入活动主题">
                 </div>
 
                 <div class="mui-input-row">
@@ -135,14 +176,13 @@
                         <label>活动类型</label>
                         <span class="select-row">
                             <select id="eventType" class="data" name="event_type">
-                                <optgroup label="活动类型">
-                                    <option value="对内训练">对内训练</option>
-                                    <option value="团队建设">团队建设</option>
-                                    <option value="联谊活动">联谊活动</option>
-                                    <option value="日常娱乐">日常娱乐</option>
-                                    <option value="球队年会">球队年会</option>
-                                    <option value="庆功宴">庆功宴</option>
-                                </optgroup>
+                                <option value="">请选择</option>
+                                <option value="1">对内训练</option>
+                                <option value="2">团队建设</option>
+                                <option value="3">联谊活动</option>
+                                <option value="4">日常娱乐</option>
+                                <option value="5">球队年会</option>
+                                <option value="6">庆功宴</option>
                             </select>
                         </span>
                     </div>
@@ -151,33 +191,36 @@
                 <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>开始时间</label>
-                        <span id="resultStart" class="ui-alert domData" name="starts"></span>
+                        <span id="resultStart" class="ui-alert domData" name="start_time">{$eventInfo.start_time}</span>
                     </div>
                 </div>
 
                 <div class="mui-input-row picker btnEnd" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>结束时间</label>
-                        <span id="resultEnd" class="ui-alert domData" name="ends"></span>
+                        <span id="resultEnd" class="ui-alert domData" name="end_time">{$eventInfo.end_time}</span>
                     </div>
                 </div>
 
                 <div class="mui-input-row" id='showCityPicker3'>
                     <div class="mui-navigate-right">
                         <label>所属地区</label>
-                        <span id="cityResult3" class="ui-alert domData" name="address"></span>
+                        <span id="cityResult3" class="ui-alert">{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span>
+                        <input type="hidden" name="province" value="" class="data" id="province">
+                        <input type="hidden" name="city" value="" class="data" id="city">
+                        <input type="hidden" name="area" value="" class="data" id="area">
                     </div>
                 </div>
                 <div class="mui-input-row">
                     <label>活动地点</label>
-                    <input type="text" name="location" value="" class="data location" placeholder="请输入活动地点">
+                    <input type="text" name="location" value="{$eventInfo.location}" class="data location" placeholder="请输入活动地点">
                 </div>
 
                 <div class="mui-input-row h-auto">
                     <label class="wd36">最少参与人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data" type="number" name="min" value="">
+                        <input class="mui-input-numbox data" type="number" name="min" value="{$eventInfo.min}">
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
@@ -185,26 +228,58 @@
                     <label class="wd36">最多参与人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data" type="number" name="max" value="">
+                        <input class="mui-input-numbox data" type="number" name="max" value="{$eventInfo.max}">
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
 
                 <div class="mui-input-row">
                     <label class="wd52">发布通知并通知队员</label>
-                    <div class="mui-switch isNegotiated wd39">
+                    <div class="mui-switch isRelease">
                         <div class="mui-switch-handle"></div>
+                    </div>
+                    <input type="hidden" name="send_message" value="{$eventInfo.send_message}" class="data">
+                </div>
+
+                <p class="bggray2" style="height:4px"></p>
+
+                <div class="operation-box mb">
+                    <div class="mui-input-row">
+                        <label>活动人员</label>
+                    </div>
+                    <div class="box" id="inactiveList"></div>
+
+                    <div class="operation-btn">
+                        <span class="mui-badge">0</span>
+                        <a class="all">全选</a>
+                        <a class="cancel">取消</a>
+                        <a class="del">[删除]</a>
+                        <a href="#addTeamMember" id="setTeamMemberBox" class="mui-icon mui-icon-personadd add"></a>
                     </div>
                 </div>
 
-                <div class="page-header" style="background: #efeff4;">
+                <p class="bggray2" style="height:4px"></p>
+
+                <ul class="mui-table-view">
+                    <li class="mui-table-view-cell listli detalisli f14" style="line-height: 40px; color: #737373;">
+                        <a class="mui-navigate-right">
+                            <span class="h-auto">活动花絮
+                                <img src="/static/frontend/images/1.jpg" alt="" style="margin-right:16px">
+                                <img src="/static/frontend/images/1.jpg" alt="" style="margin-right:16px">
+                                <img src="/static/frontend/images/1.jpg" alt="" style="margin-right:16px">
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="page-header bggray2">
                     <span class="course">活动详情</span>
                 </div>
 
                 <div class="mui-input-row h-auto">
                     <div class="mui-input-row h-auto" style="margin-bottom: 10px">
                         <textarea name="event_des" class="data event_des" style="display: none"></textarea>
-                        <div class="introBox"></div>
+                        <div class="introBox">{$eventInfo.event_des}</div>
                     </div>
                     <div class="mui-row mui-text-center mui-row-operation">
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
@@ -229,12 +304,29 @@
                 </div>
 
             </form>
-
             <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" onclick="submitAction()">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="submitAction()">
                     提交
                 </li>
             </ul>
+        </div>
+    </div>
+
+    <!--球员名单-->
+    <div id="addTeamMember" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd36">
+                <strong>球员名单</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="teamMemberConfirm">确认</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form id="newdiv" class="mui-input-group addTeamMemberList"></form>
+            </div>
         </div>
     </div>
 
@@ -249,7 +341,7 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/libs/webuploader.min.js"></script>
     <script>
-        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'event'])}";
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'eventOfTeam'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -303,6 +395,9 @@
                         getProvince = _getParam(items[0], 'text');
                         getCity = _getParam(items[1], 'text');
                         getArea = _getParam(items[2], 'text');
+                        document.getElementById('province').value = getProvince;
+                        document.getElementById('city').value = getCity;
+                        document.getElementById('area').value = getArea;
                     });
                 }, false);
 
@@ -343,8 +438,105 @@
             });
         })(mui, document);
 
-        var all = '';
+        // 给是否发布通知赋值
+        function isRelease() {
+            var send_message = "{$eventInfo.send_message}";
+            if (send_message == 1) {
+                $(".isRelease").addClass("mui-active");
+            }
+        }
+
+        //更新学员序号
+        function changeIndex() {
+            var i = 1;
+            $(".checkboxCont").each(function () { //循环checkboxCont
+                $(this).find("label").text(i++);//更新序号
+            });
+        }
+
+        var totalNum = '';//序号总和的变量
+
         $(function () {
+
+            isRelease(); // 给是否发布通知赋值
+            toSignUpList();
+
+            // 设置活动类型默认值
+            $('#eventType option[value="{$eventInfo.event_type_num}"]').prop("selected", true);
+
+            // 是否发布通知操作
+            $(".isRelease").on("tap", '', function () {
+                var send_m = $("input[name=send_message]");
+                if (send_m.val() == "0") {
+                    send_m.val("1");
+                } else {
+                    send_m.val("0");
+                }
+            });
+
+            //全选
+            $(".all").click(function () {
+                $(".checkboxCont").find('input').prop('checked', true)
+            })
+
+            //取消全选
+            $(".cancel").click(function () {
+                $(".checkboxCont").find('input').prop('checked', false)
+            })
+
+            //删除
+            $(".del").click(function () {
+                $("input[name='member']:checked").parents(".checkboxCont").remove();
+                changeIndex();
+                $("#hideStList").empty();
+                $("#inactiveList input[type=checkbox]").each(function () {
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" ></div>';
+                    var id = $(this).attr("data-id");
+                    var member = $(this).attr("data-member");
+                    memberList.push({ member: member, id: id });
+                    $("#hideStList").append(str);
+                })
+
+            });
+
+
+            //角标随checkboxCont的数量变化
+            $(document).on('click', '.del', function () {
+                totalNum = $("#inactiveList .checkboxCont").length;
+                $(".mui-badge").text(totalNum);
+            });
+
+            //报名人员列表复选框赋值
+            $("#setTeamMemberBox").on('tap', '', function () {
+                //每次打开先清空所有选择
+                $("input[name='checkbox-member']").prop("checked", false);
+                //然后遍历出对应所选
+                $(".stdList").each(function (i) {
+                    var id = $(this).attr("data-id");
+                    var member = $(this).attr("data-member");
+                    $("#newdiv").find("input[name='checkbox-member']").filter(function (index) {
+                        return $(this).attr("data-id") == id
+                    }).prop("checked", true);
+                });
+            });
+
+            // 选择添加报名人员点击事件
+            $("#teamMemberConfirm").on('click', function () {
+
+                $("#inactiveList").empty();
+                $(".addTeamMemberList input[type=checkbox]:checked").each(function () {
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '"  type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" ></div>';
+                    $("#inactiveList").append(str);
+
+                });
+
+                changeIndex();//调用-更新序号
+                mui("#addTeamMember").popover("toggle");
+                totalNum = $("#inactiveList .checkboxCont").length;
+                console.log(totalNum)
+                $(".mui-badge").text(totalNum);
+            });
+
 
             //添加标题
             $(".titleClass").on('tap', '', function () {
@@ -436,7 +628,6 @@
                 }
             });
 
-
             // 上移动
             $(document).on('tap', '.up', function () {
                 $(".bgorange").prev().insertAfter(".bgorange");
@@ -446,74 +637,75 @@
                 $(".bgorange").next().insertBefore(".bgorange");
             });
 
-            toCampGradeList();
-
         })
 
         // 获取数据并进行提交
         function submitAction() {
 
-        //     $('.delbtn').remove();
-        //     var totalHtml = $(".introBox").html();
-        //     $(".event_des").val(totalHtml);
-        //     console.log(totalHtml);
+            $('.delbtn').remove();
+            var totalHtml = $(".introBox").html();
+            $(".event_des").val(totalHtml);
+            console.log(totalHtml);
 
-        //     var data = wooApi.getInputData('input', 'data');
-        //     datas = wooApi.getInputData('select', 'data', data);
-        //     // 获取其他标签值
-        //     arrData = wooApi.getDomData('domData', datas);
-        //     var objData = wooApi.arrTOobj(arrData);
-        //     var event_des = $('textarea.data').val();
-        //     objData.event_des = event_des;
-        //     var url = "{:url('api/event/updateEventApi')}";
-        //     var ajaxResult = wooApi.asyncF(url, objData);
-        //     if (ajaxResult.code == 200) {
-        //         mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
-        //             var goUrl = "{:url('event/eventlistOfCamp')}" + '/event_id/' + ajaxResult.data;
-        //             window.top.location.href = goUrl;
-        //         })
-        //     } else {
-        //         mui.alert(ajaxResult.msg, '创建失败');
-        //         mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-        //             if (data.code === 200) {
-        //                 $('input[name=__token__]').val(data.data);
-        //             }
-        //         }, 'json');
-        //     }
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var event_des = $('textarea.data').val();
+            objData.event_des = event_des;
+            // objData.memberData = JSON.stringify(memberList);
+            var url = "{:url('api/team/updateteamevent')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '活动修改成功', '确定', function () {
+                    var goUrl = "{:url('team/eventlistOfTeam')}" + '/event_id/' + ajaxResult.data;
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '修改失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
         };
 
-
-        //自定义获取训练营班级列表
-        var toCampGradeList = function () {
-            var url = "{:url('api/grade/getGradeListApi','','',true)}";
-            mui.ajax({
-                url: url,
+        //获取已经报名人员列表
+        var toSignUpList = function () {
+            var team_id = "{$teamInfo.id}";
+            var event_id = "{$eventInfo.id}";
+            mui.ajax("{:url('api/team/teammemberlist',['event_id'=>$eventInfo.id])}", {
                 data: {
+                    team_id: team_id,
+                    event_id: event_id
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
                 headers: { 'Content-Type': 'application/json' },
-                //processData:false,
                 success: function (data) {
                     console.log(data)
+                    var div = '';
                     if (data.code == 200) {
-                        var gradeli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            gradeli = gradeli + '<li class="mui-table-view-cell listli detalisli target" data-id="' + data.data[i].id + '">' + data.data[i].grade + '</li>'
+                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-member" class="member stdlist" value="' + data.data[i].member + '" data-member="' + data.data[i].member + '" data-id="' + data.data[i].id + '" type="checkbox" ></div>'
                         }
-                        $("ul.campGradeList").empty();
-                        if (gradeli == '') {
-                            gradeli = '<p class="mui-text-center">没有查找到数据哦</p>'
-                        }
-                        $("ul.campGradeList").append(gradeli);
+                        $("#newdiv").empty();
+                        $("#newdiv").append(div);
 
-                    } else {
-                        mui.toast('数据获取失败,请稍候再试');
+                        if (div == '') {
+                            $("#newdiv").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        }
+                        if ($("#inactiveList").html() == '') {
+                            $("#inactiveList").append('<p class="nohave">还没有活动人员哦</p>');
+                        }
                     }
                 },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
                 }
             });
         };
