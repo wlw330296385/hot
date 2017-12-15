@@ -68,7 +68,7 @@ class ExerciseService {
             return ['msg' => __lang('MSG_400'), 'code' => 100];
 
         return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $res];
-    }
+    }   
 
     public function createExercise($data){
         $validate = validate('ExerciseVal');
