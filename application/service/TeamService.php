@@ -363,11 +363,44 @@ class TeamService {
             // 新增数据
             $res = $model->allowField(true)->save($data);
             if ($res) {
+                // 更新球队活动统计字段
+                $eventModel = new TeamEvent();
+                $event_id = $data['event_id'];
+                $eventInfo = $eventModel->get($event_id)->toArray();
+                // 活动报名人数+1
+                $eventModel->where('id', $event_id)->setInc('reg_number', 1);
+                // 活动is_max字段更新
+                $nowEventMemberCount = $model->where(['event_id' => $event_id])->count();
+                if ($nowEventMemberCount == $eventInfo['max']) {
+                    $eventModel->where('id', $event_id)->update(['is_max' => -1]);
+                }
                 return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
             } else {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
+        }
+    }
+
+    // 球队活动-会员关联列表分页
+    public function teamEventMemberPaginator($map, $order='id desc', $paginate=10) {
+        $model = new TeamEventMember();
+        $res = $model->where($map)->order($order)->paginate($paginate);
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
+    // 球队活动-会员关联列表
+    public function teamEventMemberList($map, $page=1, $order='id desc', $limit=10) {
+        $model = new TeamEventMember();
+        $res = $model->where($map)->order($order)->page($page, $limit)->select();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
         }
     }
 }
