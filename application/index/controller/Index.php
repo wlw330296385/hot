@@ -67,15 +67,15 @@ class Index extends Controller{
         }
     }
 
-    public function getPOst(){
+    public function getPost(){
         $model = new \app\model\Exercise;
-        $postData = input();
+        $postData = input('post.');
         $arr = [];
         foreach ($postData as $key => $value) {
             // $save = ['exercise_setion'=>$value['exercise_setion'],'exercise'=>$value['exercise_setion'],'camp_id'=>0,'pid'=>0,'id'=>$key+1,'create_time'=>time(),'member'=>'平台'];
             // db('exercise')->insert($save);
             foreach ($value['sub'] as $k => $v) {
-                $save = ['exercise_setion'=>$value['exercise_setion'],'exercise'=>$v['exercise'],'camp_id'=>0,'pid'=>$v['pid'],'create_time'=>time(),'member'=>'平台'];
+                $save = ['exercise_setion'=>$value['exercise_setion'],'exercise'=>$v['exercise'],'camp_id'=>0,'pid'=>$v['pid'],'create_time'=>time(),'member'=>'平台','exercise_detail'=>$v['exercise_detail']];
                 db('exercise')->insert($save);
             }
         }

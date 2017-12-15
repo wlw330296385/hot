@@ -43,7 +43,7 @@ class User extends Backend {
         $user = Admin::get($id);
         $menu = db('admin_group')->select();
         $groupTree = Tree::toLayer($menu);
-        // dump($groupTree);die;
+        // dump($this->admin);die;
         $this->assign('groupTree',$groupTree);
         $this->assign('user', $user);
         return $this->fetch();

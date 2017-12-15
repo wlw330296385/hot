@@ -21,6 +21,7 @@ class Backend extends Base {
             $this->error('请登录后操作', url('Login/index'));
         }else{
             $this->admin = session('admin');
+            $this->assign('admin',$this->admin);
         }
         if(config('develop_mode') == 0){
             //存储权限节点
