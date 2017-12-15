@@ -145,12 +145,26 @@ class Team extends Base {
     }
 
     // 添加活动
-    public function createEvent() {
+    public function createevent() {
         return view('Team/createEvent');
     }
 
     // 编辑活动&活动录入
-    public function EventEdit() {
+    public function eventedit() {
+        $event_id = input('event_id', 0);
+        // $directentry 1为新增活动并录入活动
+        $directentry = 0;
+        // 如果有event_id参数即修改活动，没有就新增活动并录入活动（事后录活动）
+        if ($event_id === 0) {
+            $eventInfo = [];
+            $directentry = 1;
+        } else {
+            $teamS = new TeamService();
+            $eventInfo = $teamS->getTeamEventInfo(['id' => $event_id]);
+        }
+
+        $this->assign('eventInfo', $eventInfo);
+        $this->assign('directentry', $directentry);
         return view('Team/EventEdit');
     }
 
@@ -165,10 +179,15 @@ class Team extends Base {
     }
 
     // 活动详情
-    public function eventInfo() {
+    public function eventinfo() {
+        // 活动详情数据
         $event_id = input('param.event_id');
         $teamS = new TeamService();
         $eventInfo = $teamS->getTeamEventInfo(['id' => $event_id]);
+        // 获取会员在球队角色身份
+        $teamrole = $teamS->checkMemberTeamRole($eventInfo['team_id'], $this->memberInfo['id']);
+
+        $this->assign('teamrole', $teamrole);
         $this->assign('eventInfo', $eventInfo);
         return view('Team/eventInfo');
     }

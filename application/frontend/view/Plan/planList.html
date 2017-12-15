@@ -28,8 +28,8 @@
             </div>
         </div>
         <div class="mui-segmented-control seg-control whitebg" style="margin:10px;">
-            <a class="mui-control-item" href="#sysPlanList">平台教案库</a>
-            <a class="mui-control-item mui-active" href="#myPlanList">训练营教案库</a>
+            <a class="mui-control-item sysPlanList" href="#sysPlanList">平台教案库</a>
+            <a class="mui-control-item myPlanList mui-active" href="#myPlanList">训练营教案库</a>
             <a class="mui-control-item" href="{:url('plan/createPlan',['camp_id'=>$campInfo['id']])}">添加教案</a>
         </div>
     </header>
@@ -66,7 +66,17 @@
         window.top.location.href = this.href;
     });
 
+
     $(function () {
+
+        // 获取默认选项卡名字并选中对应选项
+        var witchTab = wooApi.GetQueryString('tab');
+        if(witchTab=="sysPlanList"){
+            $(".mui-control-item,.mui-control-content").removeClass("mui-active");
+            $(".mui-control-item").removeClass("mui-active");
+            $(".sysPlanList").addClass("mui-active");
+            $("#sysPlanList").addClass("mui-active");
+        }
 
         //初始化全局变量
         var onCount = 1;

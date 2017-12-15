@@ -14,7 +14,7 @@
     <style>
         .mui-table-view-cell.mui-active .daType { font-weight: bold; background: #efeff4; }
         a.noData { text-align: center; display: block;}
-        ol { padding-left: 20px; }
+        ol { padding-left: 25px; }
         ol li{ list-style: decimal; padding: 8px 10px; border-bottom: 1px solid #EEE; position: relative;}
         ol li:last-child { border-bottom: none !important; }
     </style>
@@ -32,8 +32,8 @@
         </div>
 
         <div class="mui-segmented-control seg-control whitebg" style="margin:10px;">
-            <a class="mui-control-item" href="#sysExerciseList">平台项目库</a>
-            <a class="mui-control-item mui-active" href="#myExerciseList">训练营项目库</a>
+            <a class="mui-control-item sysExerciseList" href="#sysExerciseList">平台项目库</a>
+            <a class="mui-control-item myExerciseList mui-active" href="#myExerciseList">训练营项目库</a>
             <a class="mui-control-item" href="{:url('Exercise/createExercise',['camp_id'=>$campInfo['id']])}">添加项目</a>
         </div>
 
@@ -102,6 +102,18 @@
     });
 
 
+    $(function () {
+
+        // 获取默认选项卡名字并选中对应选项
+        var witchTab = wooApi.GetQueryString('tab');
+        if(witchTab=="sysExerciseList"){
+            $(".mui-control-item,.mui-control-content").removeClass("mui-active");
+            $(".mui-control-item").removeClass("mui-active");
+            $(".sysExerciseList").addClass("mui-active");
+            $("#sysExerciseList").addClass("mui-active");
+        }
+
+    });
 
 </script>
 
