@@ -108,14 +108,19 @@
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
             <span class="return">返回</span>
         </a>
-        <h1 class="mui-title"></h1>
+        <h1 class="mui-title">{$teamInfo.name}</h1>
     </header>
     <div class="mui-content pt">
 
-        <div class="camp-list camp-lesson-list" style="margin-top: 4px">
+        <div class="camp-list camp-lesson-list">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-
+            <input type="hidden" name="team_id" value="{$team_id}" class="data">
+            <input type="hidden" name="team" value="{$teamInfo.name}" class="data">
             <form action="" class="mui-input-group mt55">
+
+                <div class="mui-input-row h-auto">
+                    <a class="mui-text-center f14 colorgreen">[直接录入活动]</a>
+                </div>
 
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
@@ -135,14 +140,13 @@
                         <label>活动类型</label>
                         <span class="select-row">
                             <select id="eventType" class="data" name="event_type">
-                                <optgroup label="活动类型">
-                                    <option value="对内训练">对内训练</option>
-                                    <option value="团队建设">团队建设</option>
-                                    <option value="联谊活动">联谊活动</option>
-                                    <option value="日常娱乐">日常娱乐</option>
-                                    <option value="球队年会">球队年会</option>
-                                    <option value="庆功宴">庆功宴</option>
-                                </optgroup>
+                                <option value="">请选择</option>
+                                <option value="1">对内训练</option>
+                                <option value="2">团队建设</option>
+                                <option value="3">联谊活动</option>
+                                <option value="4">日常娱乐</option>
+                                <option value="5">球队年会</option>
+                                <option value="6">庆功宴</option>
                             </select>
                         </span>
                     </div>
@@ -151,21 +155,24 @@
                 <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>开始时间</label>
-                        <span id="resultStart" class="ui-alert domData" name="starts"></span>
+                        <span id="resultStart" class="ui-alert domData" name="start_time"></span>
                     </div>
                 </div>
 
                 <div class="mui-input-row picker btnEnd" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>结束时间</label>
-                        <span id="resultEnd" class="ui-alert domData" name="ends"></span>
+                        <span id="resultEnd" class="ui-alert domData" name="end_time"></span>
                     </div>
                 </div>
 
                 <div class="mui-input-row" id='showCityPicker3'>
                     <div class="mui-navigate-right">
                         <label>所属地区</label>
-                        <span id="cityResult3" class="ui-alert domData" name="address"></span>
+                        <span id="cityResult3" class="ui-alert"></span>
+                        <input type="hidden" name="province" value="" class="data" id="province">
+                        <input type="hidden" name="city" value="" class="data" id="city">
+                        <input type="hidden" name="area" value="" class="data" id="area">
                     </div>
                 </div>
                 <div class="mui-input-row">
@@ -192,9 +199,10 @@
 
                 <div class="mui-input-row">
                     <label class="wd52">发布通知并通知队员</label>
-                    <div class="mui-switch isNegotiated wd39">
+                    <div class="mui-switch isRelease">
                         <div class="mui-switch-handle"></div>
                     </div>
+                    <input type="hidden" name="send_message" value="0" class="data">
                 </div>
 
                 <div class="page-header" style="background: #efeff4;">
@@ -231,7 +239,7 @@
             </form>
 
             <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" onclick="submitAction()">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="submitAction()">
                     提交
                 </li>
             </ul>
@@ -249,7 +257,7 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/libs/webuploader.min.js"></script>
     <script>
-        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'event'])}";
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'eventOfTeam'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -271,6 +279,8 @@
                 mui(".mui-popover.mui-active").popover("toggle");
             })
         })(mui);
+
+
 
         //选择器
         var getProvince = '';
@@ -303,6 +313,9 @@
                         getProvince = _getParam(items[0], 'text');
                         getCity = _getParam(items[1], 'text');
                         getArea = _getParam(items[2], 'text');
+                        document.getElementById('province').value = getProvince;
+                        document.getElementById('city').value = getCity;
+                        document.getElementById('area').value = getArea;
                     });
                 }, false);
 
@@ -343,8 +356,17 @@
             });
         })(mui, document);
 
-        var all = '';
         $(function () {
+
+            // 是否发布通知
+            $(".isRelease").on("tap", '', function () {
+                var send_m = $("input[name=send_message]");
+                if (send_m.val() == "0") {
+                    send_m.val("1");
+                } else {
+                    send_m.val("0");
+                }
+            });
 
             //添加标题
             $(".titleClass").on('tap', '', function () {
@@ -436,7 +458,6 @@
                 }
             });
 
-
             // 上移动
             $(document).on('tap', '.up', function () {
                 $(".bgorange").prev().insertAfter(".bgorange");
@@ -446,76 +467,38 @@
                 $(".bgorange").next().insertBefore(".bgorange");
             });
 
-            toCampGradeList();
-
         })
 
         // 获取数据并进行提交
         function submitAction() {
 
-            //     $('.delbtn').remove();
-            //     var totalHtml = $(".introBox").html();
-            //     $(".event_des").val(totalHtml);
-            //     console.log(totalHtml);
+            $('.delbtn').remove();
+            var totalHtml = $(".introBox").html();
+            $(".event_des").val(totalHtml);
+            console.log(totalHtml);
 
-            //     var data = wooApi.getInputData('input', 'data');
-            //     datas = wooApi.getInputData('select', 'data', data);
-            //     // 获取其他标签值
-            //     arrData = wooApi.getDomData('domData', datas);
-            //     var objData = wooApi.arrTOobj(arrData);
-            //     var event_des = $('textarea.data').val();
-            //     objData.event_des = event_des;
-            //     var url = "{:url('api/event/updateEventApi')}";
-            //     var ajaxResult = wooApi.asyncF(url, objData);
-            //     if (ajaxResult.code == 200) {
-            //         mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
-            //             var goUrl = "{:url('event/eventlistOfCamp')}" + '/event_id/' + ajaxResult.data;
-            //             window.top.location.href = goUrl;
-            //         })
-            //     } else {
-            //         mui.alert(ajaxResult.msg, '创建失败');
-            //         mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-            //             if (data.code === 200) {
-            //                 $('input[name=__token__]').val(data.data);
-            //             }
-            //         }, 'json');
-            //     }
-        };
-
-
-        //自定义获取训练营班级列表
-        var toCampGradeList = function () {
-            var url = "{:url('api/grade/getGradeListApi','','',true)}";
-            mui.ajax({
-                url: url,
-                data: {
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                //processData:false,
-                success: function (data) {
-                    console.log(data)
-                    if (data.code == 200) {
-                        var gradeli = '';
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            gradeli = gradeli + '<li class="mui-table-view-cell listli detalisli target" data-id="' + data.data[i].id + '">' + data.data[i].grade + '</li>'
-                        }
-                        $("ul.campGradeList").empty();
-                        if (gradeli == '') {
-                            gradeli = '<p class="mui-text-center">没有查找到数据哦</p>'
-                        }
-                        $("ul.campGradeList").append(gradeli);
-
-                    } else {
-                        mui.toast('数据获取失败,请稍候再试');
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var event_des = $('textarea.data').val();
+            objData.event_des = event_des;
+            var url = "{:url('api/team/createteamevent')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
+                    var goUrl = "{:url('team/eventlistOfTeam')}" + '/event_id/' + ajaxResult.data;
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
                     }
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                }
-            });
+                }, 'json');
+            }
         };
 
     </script>

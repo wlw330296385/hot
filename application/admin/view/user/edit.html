@@ -35,15 +35,22 @@
                     <div class="form-group">
                         <div class="col-sm-2 control-label">职位</div>
                         <div class="col-sm-5">
+                            {if $user.group_id<>1}
                             <select class="form-control" required="required" name="group_id" >
                                 {volist name="groupTree" id="vol" }
                                 <optgroup label="{$vol.name}" >
                                     {volist name="$vol.daughter" id="v" }
-                                    <option value="{$v.id}">{$v.name}</option>
+                                    <option value="{$v.id}"  {if $v.id == $user.group_id} selected="selected" {/if}  >{$v.name}</option>
                                     {/volist}
                                 </optgroup> 
                                 {/volist}
                             </select>
+                            {else /}
+                                <select class="form-control" required="required" name="group_id" >
+                                    <option value="1" selected="selected" disabled="disabled">超级管理员</option>
+                                </select>
+                            {/if}
+                            
                         </div>
                         <div class="col-sm-5"></div>
                     </div>

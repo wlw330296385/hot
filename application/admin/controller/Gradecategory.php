@@ -93,6 +93,6 @@ class Gradecategory extends Backend {
     // 删除班级类型
     public function del(){
         $ids = input('post.');
-
+        
     }
 }

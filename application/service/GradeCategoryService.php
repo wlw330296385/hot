@@ -53,8 +53,18 @@ class GradeCategoryService {
     }
 
     public function updateGradeCategory($data,$GradeCategory_id){
+        
+
         $result = $this->GradeCategory->save($data,['id'=>$GradeCategory_id]);
         if($result){
+            $name = $data['name'];
+            $pid = $data['pid'];
+            if($pid==0){
+
+            }else{
+                db('lesson')->where(['gradecate_id'=>$GradeCategory_id])->update(['gradecate'=>$name]);
+            }
+            
             return ['code'=>200,'msg'=>'操作成功'];
         }else{
             return ['code'=>100,'msg'=>'操作失败'];

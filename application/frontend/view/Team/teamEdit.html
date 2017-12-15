@@ -182,6 +182,7 @@
                         </label>
                         <span class="leader data" name="leader">{$teamInfo.leader}</span>
                         <input type="hidden" name="leader_id" value="{$teamInfo.leader_id}" class="leader_id data">
+                        <input type="hidden" name="leader" value="{$teamInfo.leader}" class="leader_id data">
                     </a>
                 </div>
 
@@ -190,6 +191,7 @@
                         <label>队长</label>
                         <span class="captain" name="captain">{$teamInfo.captain}</span>
                         <input type="hidden" name="captain_id" value="{$teamInfo.captain_id}" class="data">
+                        <input type="hidden" name="captain" value="{$teamInfo.captain}" class="data">
                     </a>
                 </div>
 
@@ -734,9 +736,9 @@
 
             colorShow(); // 调用主场客场颜色显示
             colorJudge(); //判断主场客场是否有值，显示data
-            toTeamMemberList() //获取球员列表
-            TeamMemberOfCocahList() //获取球员列表供选择教练
-            TeamMemberOfCommitteeList() //获取球员列表供选择队委
+            toTeamMemberList(); //获取球员列表
+            TeamMemberOfCocahList(); //获取球员列表供选择教练
+            TeamMemberOfCommitteeList(); //获取球员列表供选择队委
 
             // 设置球队类型默认值
             $('#teamType option[value="{$teamInfo.type}"]').prop("selected", true);
@@ -805,16 +807,18 @@
             $(".leaderList").on('click', 'li', function () {
                 var leader = $(this).text();
                 $(".leader").text(leader);
-                var leader_id = $(this).attr('data-member_id');
+                var leader_id = $(this).attr('data-memberid');
                 $("input[name=leader_id]").val(leader_id);
+                $("input[name=leader]").val( $(this).attr('data-member') );
                 mui("#leader").popover("toggle");
             });
             // 选择队长
             $(".captainList").on('click', 'li', function () {
                 var captain = $(this).text();
                 $(".captain").text(captain);
-                var captain_id = $(this).attr('data-member_id');
+                var captain_id = $(this).attr('data-memberid');
                 $("input[name=captain_id]").val(captain_id);
+                $("input[name=captain]").val( $(this).attr('data-member') );
                 mui("#captain").popover("toggle");
             });
 
@@ -828,7 +832,7 @@
                 coachMemberList = [];
                 $(".coachList input[type=checkbox]:checked").each(function () {
                     var member = $(this).attr("data-member");
-                    var member_id = $(this).attr("data-member_id");
+                    var member_id = $(this).attr("data-memberid");
                     coachMember += member + ','
                     coachMember_id += member_id + ','
                     $(".coach").text(coachMember.substring(0, coachMember.length - 1));
@@ -850,7 +854,7 @@
                 $(".coList").each(function () {
                     var member_id = $(this).attr("data-member_id");
                     $("#coachDiv").find("input[name='checkbox-coach']").filter(function () {
-                        return $(this).attr("data-member_id") == member_id
+                        return $(this).attr("data-memberid") == member_id
                     }).prop("checked", true);
                 });
             });
@@ -865,7 +869,7 @@
                 committeeMemberList = [];
                 $(".committeeList input[type=checkbox]:checked").each(function () {
                     var member = $(this).attr("data-member");
-                    var member_id = $(this).attr("data-member_id");
+                    var member_id = $(this).attr("data-memberid");
                     committeeMember += member + ','
                     committeeMember_id += member_id + ','
                     $(".committee").text(committeeMember.substring(0, committeeMember.length - 1));
@@ -887,7 +891,7 @@
                 $(".ctList").each(function (i) {
                     var member_id = $(this).attr("data-member_id");
                     $("#committeeDiv").find("input[name='checkbox-committee']").filter(function () {
-                        return $(this).attr("data-member_id") == member_id
+                        return $(this).attr("data-memberid") == member_id
                     }).prop("checked", true);
                 });
             });
@@ -1135,7 +1139,7 @@
                     if (data.code == 200) {
                         var teamli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            teamli = teamli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].member_id + '">' + data.data[i].member + '</li>'
+                            teamli = teamli + '<li class="mui-table-view-cell listli detalisli" data-memberid="' + data.data[i].member_id + '" data-member="'+ data.data[i].member +'">' + data.data[i].member + '</li>'
                         }
                         $("ul.teamMemberList").empty();
                         if (teamli == '') {
@@ -1172,7 +1176,7 @@
                     if (data.code == 200) {
                         var teamOfCoachli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            teamOfCoachli = '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-coach" class="coach" type="checkbox" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"></div>'
+                            teamOfCoachli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-coach" class="coach" type="checkbox" data-memberid="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"></div>'
                         }
                         $("#coachDiv").empty();
                         if (teamOfCoachli == '') {
@@ -1209,7 +1213,7 @@
                     if (data.code == 200) {
                         var teamOfCommitteehli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            teamOfCommitteehli = '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-coach" class="coach" type="checkbox" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"></div>'
+                            teamOfCommitteehli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-coach" class="coach" type="checkbox" data-memberid="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"></div>'
                         }
                         $("#committeeDiv").empty();
                         if (teamOfCommitteehli == '') {

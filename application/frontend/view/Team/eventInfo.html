@@ -9,17 +9,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
-        .show {
-            display: block;
-        }
-
-        .hide {
-            display: none;
-        }
-
         .intro {
             padding: 0 !important;
         }
@@ -73,80 +67,147 @@
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
     </header>
     <!--活动详情页-->
-    <div class="mui-content" style="padding: 0">
-        <div class="list camp-list detalis-list mt55">
-            <div class="img4x3" style="background-image:url('')"></div>
-            <ul class="mui-table-view mb" style="margin-top: -4px">
-                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+    <div class="mui-content">
+        <div class="list coach mt55">
+            <div class="img4x3" style="background-image:url('{$eventInfo.cover}')"></div>
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell mui-media listli">
                     <a href="javascript:;">
                         <div class="mui-media-body wd52">
-                            <strong>小梅沙烧烤</strong>
-                            <p class="mui-ellipsis">联谊活动</p>
+                            <strong>{$eventInfo.event}</strong>
+                            <p class="mui-ellipsis">{$eventInfo.event_type}</p>
                         </div>
-                        <div class="price-frame">
-                            <p class="price">
-                                <span class="nofloat">F-18</span>
-                            </p>
-                        </div>
+                        <div class="price-frame f18 rightLocation">F-18活动</div>
                     </a>
                 </li>
             </ul>
-            <ul class="mui-table-view">
-
+            <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
                     <label>开始时间</label>
-                    <span></span>
+                    <span>{$eventInfo.start_time}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
-                    <label>
-                        </span>结束时间</label>
-                    <span></span>
+                    <label>结束时间</label>
+                    <span>{$eventInfo.start_time}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>所属地区</label>
-                    <span></span>
+                    <span>{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>活动地点</label>
-                    <span></span>
+                    <span>{$eventInfo.location}</span>
                 </li>
-
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">活动详情</span>
                 </div>
-                <li class="mui-table-view-cell listli intro"></li>
+                <li class="mui-table-view-cell listli intro">{$eventInfo.event_des}</li>
             </ul>
 
             <ul class="mui-table-view detalis-list list mainInfo mb">
-                <li class="mui-table-view-cell listli">
-                    <p>报名 | 实际参与</p>
-                </li>
+                <div class="page-header">
+                    <span class="course">
+                        <font class="colororange">报名</font> | 实际参与</span>
+                    <span class="more">报名
+                        <b class="colororange">{$eventInfo.reg_number}</b> 人</span>
+                </div>
+
                 <li class="mui-table-view-cell listli">
                     <div class="imgShow">
-                        <img src="/static/frontend/images/ads1.jpg" alt="">
-                        <img src="/static/frontend/images/ads1.jpg" alt="">
-                        <img src="/static/frontend/images/ads1.jpg" alt="">
-                        <img src="/static/frontend/images/ads1.jpg" alt="">
-                        <img src="/static/frontend/images/ads1.jpg" alt="">
-                        <img src="/static/frontend/images/ads1.jpg" alt="">
-                        <img src="/static/frontend/images/ads1.jpg" alt="">
-                        <img src="/static/frontend/images/ads1.jpg" alt="">
-                        <img src="/static/frontend/images/ads1.jpg" alt="">
+                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
+                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
+                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
+                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
+                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
+                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
+                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
+                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
+                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
                     </div>
                 </li>
             </ul>
 
             <div class="page-header whitebg">
                 <span class="course wd52">活动花絮</span>
-                <span class="more">评论 16 | 点赞：65</span>
+                <span class="more">评论 16 |
+                    <i class="mui-icon-extra mui-icon-extra-like f16"></i>：65</span>
             </div>
+
+            <!--图片轮播-->
+            <div id="slider" class="mui-slider" style="height:120px">
+                <div class="mui-slider-group mui-slider-loop">
+                    <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+                    <div class="mui-slider-item mui-slider-item-duplicate">
+                        <a href="#">
+                            <img src="/static/frontend/images/1.jpg">
+                        </a>
+                    </div>
+                    <!-- 第一张 -->
+                    <div class="mui-slider-item">
+                        <a href="#">
+                            <img src="/static/frontend/images/1.jpg">
+                        </a>
+                    </div>
+                    <!-- 第二张 -->
+                    <div class="mui-slider-item">
+                        <a href="#">
+                            <img src="/static/frontend/images/2.jpg">
+                        </a>
+                    </div>
+                    <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+                    <div class="mui-slider-item mui-slider-item-duplicate">
+                        <a href="#">
+                            <img src="/static/frontend/images/2.jpg">
+                        </a>
+                    </div>
+                </div>
+                <div class="mui-slider-indicator">
+                    <div class="mui-indicator mui-active"></div>
+                    <div class="mui-indicator"></div>
+                </div>
+            </div>
+
+            <div class="page-header">
+                <span class="course" style="font-size: 14px">评论</span>
+            </div>
+            <ul class="mui-table-view comment-list">
+                <li class="mui-table-view-cell listli">
+                    <div class="mui-pull-right">2017-11-09 08:15</div>
+                    <img class="mui-pull-left coachicon" src="/static/frontend/images/1.jpg">钟声
+                    <p>训练营教学点，覆盖福田，南山，标准篮球场上课，强，强，强，</p>
+                </li>
+            </ul>
 
 
             <!--底部操作-->
+            <!-- <ul class="mui-table-view operation mt"> -->
+            <!-- 比赛报名阶段 -->
+            <!-- <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12 opli bgred">
+                    报名参加
+                </li> -->
+            <!-- 比赛结束之后 -->
+            <!-- <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12 opli bgblue">
+                    发表评论
+                </li> -->
+            <!-- </ul> -->
+            <!-- 队委以上身份进入页面使用的按钮 -->
             <ul class="mui-table-view operation mt">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12 opli bgred">
+                <!-- 比赛报名阶段 -->
+                <!-- <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgred">
                     报名参加
                 </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bggreen">
+                    编辑/录入
+                </li> -->
+                <!--  -->
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgblue">
+                    发表评论
+                </li>
+                <a href="{:url('team/eventEdit',['team_id'=>$teamInfo['id'],'event_id'=>$eventInfo['id']])}">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bggreen">
+                        编辑/录入
+                    </li>
+                </a>
             </ul>
 
         </div>
@@ -162,14 +223,25 @@
             swipeBack: true //启用右滑关闭功能
         });
 
+        // a标签跳转
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
 
+        //轮播
+        var slider = mui("#slider");
+        slider.slider({
+            interval: 5000
+        });
+
+        $(function () {
+            initialEds(); //活动详情为空的提示
+        })
+
         // 默认的样式
         function initialEds() {
             if ($(".intro").text() == '') {
-                $(".intro").append("<p class='nohave'>还没有活动简介哦</p>")
+                $(".intro").append("<p class='nohave'>还没有活动详情描述哦</p>")
             }
         }
     </script>
