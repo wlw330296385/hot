@@ -184,10 +184,10 @@ class TeamService {
     }
 
     // 保存team_member_role 会员-球队角色关联信息
-    public function saveTeamMemberRole($data, $teamMemberRole_id=0) {
+    public function saveTeamMemberRole($data, $team_id) {
         $model = new TeamMemberRole();
         // 有传入team_member_role表id 更新关系数据，否则新增关系数据
-        if ($teamMemberRole_id) {
+        /*if ($teamMemberRole_id) {
             $res = $model->where('id', $teamMemberRole_id)->update($data);
             if ($res || ($res === 0)) {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
@@ -203,7 +203,32 @@ class TeamService {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
+        }*/
+        //dump($data);
+        // 修改数组定义
+        $saveAlldata = [];
+        // 查询当前领队数据（领队一个）
+        $roleLeader = $model->where([ 'team_id' => $team_id, 'type' => 4 ])->find()->toArray();
+        // 领队有改变 组合修改数组
+        if ($roleLeader['member_id'] != $data['leader_id']) {
+            array_push($saveAlldata, [
+                'id' => $roleLeader['id'],
+                'member_id' => $data['leader_id']
+            ]);
         }
+        // 查询当前队长数据（队长一个）
+        $roleCaptain = $model->where([ 'team_id' => $team_id, 'type' => 3 ])->find()->toArray();
+        // 队长有改变 组合修改数组
+        if ($roleCaptain['member_id'] != $data['captain_id']) {
+            array_push($saveAlldata, [
+                'id' => $roleCaptain['id'],
+                'member_id' => $data['captain_id']
+            ]);
+        }
+        // 查询当前教练数据（教练可多个）
+        $roleCoachs = $model->where([ 'team_id' => $team_id, 'type' => 2 ])->select()->toArray();
+//        dump($roleCoachs);
+//        dump($saveAlldata);
     }
 
     // 获取球队有角色身份的会员列表

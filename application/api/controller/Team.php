@@ -82,6 +82,7 @@ class Team extends Base {
             $team_id = input('post.id');
             $data['member_id'] = $this->memberInfo['id'];
             $teamS = new TeamService();
+            //$teamS->saveTeamMemberRole($data, $team_id);
             $result = $teamS->updateTeam($data, $team_id);
             return json($result);
         }catch (Exception $e) {
