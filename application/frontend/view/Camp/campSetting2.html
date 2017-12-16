@@ -81,7 +81,9 @@
                 </div>
                 <div class="tjbtn mb44">
                     <button type="button" class="mui-btn btn" id="submit-form2">提交修改</button>
+                    {eq name="campInfo.status_num" value="1"}
                     <button type="button" class="mui-btn btn" id="close-camp" data-status="{$campInfo.status_num}" style="margin: 10px 0">{eq name="campInfo.status_num" value="1"}关闭{else/}开启{/eq}训练营</button>
+                    {/eq}
                     <!--<a  href="javascript:void(0);" class="mui-btn" data-status="{$campInfo.status_num}">{eq name="campInfo.status_num" value="1"}关闭{else/}开启{/eq}训练营</a>-->
                 </div>
 
@@ -94,8 +96,7 @@
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <!--选择器-->
 <script>
-                                                                          var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
-
+  var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
 </script>
 <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
 <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -164,7 +165,7 @@
 
         $('#close-camp').on('click', '', function () {
             var curcampstatus = $(this).attr('data-status');
-            if (curcampstatus == 1) { // 关闭训练营
+            if (curcampstatus === 1) { // 关闭训练营
                 campclosepost(curcampstatus, '关闭训练营会使课程的发布、展示、购买功能停止使用', '确认要关闭训练营吗？');
             } else { //开启训练营
                 campclosepost(curcampstatus, '开启训练营会使课程的发布、展示、购买功能恢复使用', '确认要开启训练营吗？');
