@@ -80,6 +80,8 @@
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="/static/frontend/libs/yzvalidate.js"></script>
+<script src="/static/frontend/js/common.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
 <script src="/static/frontend/js/smsCode.js"></script>
 <script>
     //初始化
@@ -116,6 +118,14 @@
     })(mui, document);
 
 $(function(){
+
+
+    //获取定位省市区
+    var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
+    var gCity = getLocationTB['city'];
+    var gProvince = getLocationTB['province'];
+    var gArea = getLocationTB['area'];
+
 
     //获取用户协议内容，放置弹出框中
     mui.ajax("{:url('frontend/member/userAgreement')}", {
