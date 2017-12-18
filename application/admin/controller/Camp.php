@@ -2,6 +2,7 @@
 // 训练营
 namespace app\admin\controller;
 use app\admin\controller\base\Backend;
+use app\service\MessageService;
 use app\service\WechatService;
 use think\Db;
 use think\Validate;
@@ -201,6 +202,18 @@ class Camp extends Backend {
             $setcampstatus = 2;
         } else { // 执行上架或审核通过
             $setcampstatus = 1;
+            //dump($camp);die;
+            $messageS = new MessageService();
+            $messageData = [
+                'title' => '您好,您所提交的"'. $camp['camp'] .'"训练营注册申请审核已通过',
+                'content' => '您好,您所提交的训练营注册申请审核已通过',
+                'url' => url('frontend/camp/powercamp', ['camp_id' => $camp['id']], '', true),
+                'keyword1' => '审核已通过',
+                'keyword2' => date('Y年m月d日 H时i分'),
+                'remark' => '点击进入训练营进行操作吧'
+            ];
+            $messageS->sendMessageToMember($camp['member_id'], $messageData, config('wxTemplateID.successCheck'));
+            
         }
         $result = CampModel::where('id', $camp['id'])->update(['status'=>$setcampstatus]);
         $Auth = new AuthService();
