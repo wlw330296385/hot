@@ -101,6 +101,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
@@ -118,7 +119,7 @@
             <form action="" class="mui-input-group mt55">
 
                 <div class="mui-input-row h-auto">
-                    <a class="mui-text-center f14 colorgreen">[直接录入活动]</a>
+                    <a href="{:url('team/eventEdit',['team_id' => $team_id])}" class="mui-text-center f14 colorgreen">[直接录入活动]</a>
                 </div>
 
                 <div class="mui-input-row h-auto">
@@ -265,6 +266,10 @@
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
+        });
+
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
         });
 
         //弹出框滚动必须写在mui专用的初始化

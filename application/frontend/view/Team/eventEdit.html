@@ -103,6 +103,7 @@
         }
 
         /* 录入-人员的添加操作 */
+
         .operation-box {
             background-color: #fff;
             height: auto;
@@ -161,14 +162,15 @@
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>活动封面</label>
-                        <img id="preview_1" class=" icon01 upload-preview" src="{$eventInfo.cover}" alt="">
+                        <img id="preview_1" class=" icon01 upload-preview" src="{eq name="directentry" value="1"}{else/}{$eventInfo.cover}{/eq}" alt="">
                         <input type="hidden" name="cover" value='' class="data">
                     </a>
                 </div>
 
                 <div class="mui-input-row">
                     <label>活动主题</label>
-                    <input type="text" name="event" class="data" value="{$eventInfo.event}" placeholder="请输入活动主题">
+                    <input type="text" name="event" class="data" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.event}"{/eq} placeholder="请输入活动主题">
+                    <input type="hidden" name="event_id" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.id}"{/eq} class="data">
                 </div>
 
                 <div class="mui-input-row">
@@ -191,21 +193,21 @@
                 <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>开始时间</label>
-                        <span id="resultStart" class="ui-alert domData" name="start_time">{$eventInfo.start_time}</span>
+                        <span id="resultStart" class="ui-alert domData" name="start_time">{eq name="directentry" value="1" } {else/} {$eventInfo.start_time}{/eq}</span>
                     </div>
                 </div>
 
                 <div class="mui-input-row picker btnEnd" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>结束时间</label>
-                        <span id="resultEnd" class="ui-alert domData" name="end_time">{$eventInfo.end_time}</span>
+                        <span id="resultEnd" class="ui-alert domData" name="end_time">{eq name="directentry" value="1" }{else/} {$eventInfo.end_time}{/eq}</span>
                     </div>
                 </div>
 
                 <div class="mui-input-row" id='showCityPicker3'>
                     <div class="mui-navigate-right">
                         <label>所属地区</label>
-                        <span id="cityResult3" class="ui-alert">{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span>
+                        <span id="cityResult3" class="ui-alert">{eq name="directentry" value="1" } {else/} {$eventInfo.province} {$eventInfo.city} {$eventInfo.area}{/eq}</span>
                         <input type="hidden" name="province" value="" class="data" id="province">
                         <input type="hidden" name="city" value="" class="data" id="city">
                         <input type="hidden" name="area" value="" class="data" id="area">
@@ -213,14 +215,16 @@
                 </div>
                 <div class="mui-input-row">
                     <label>活动地点</label>
-                    <input type="text" name="location" value="{$eventInfo.location}" class="data location" placeholder="请输入活动地点">
+                    <input type="text" name="location" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.location}" {/eq}
+                        class="data location" placeholder="请输入活动地点">
                 </div>
 
                 <div class="mui-input-row h-auto">
                     <label class="wd36">最少参与人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data" type="number" name="min" value="{$eventInfo.min}">
+                        <input class="mui-input-numbox data" type="number" name="min" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.min}"
+                            {/eq}>
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
@@ -228,7 +232,8 @@
                     <label class="wd36">最多参与人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data" type="number" name="max" value="{$eventInfo.max}">
+                        <input class="mui-input-numbox data" type="number" name="max" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.max}"
+                            {/eq}>
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
@@ -238,7 +243,7 @@
                     <div class="mui-switch isRelease">
                         <div class="mui-switch-handle"></div>
                     </div>
-                    <input type="hidden" name="send_message" value="{$eventInfo.send_message}" class="data">
+                    <input type="hidden" name="send_message" {eq name="directentry" value="1" } value="0" {else/} value="{$eventInfo.send_message}"{/eq} class="data">
                 </div>
 
                 <p class="bggray2" style="height:4px"></p>
@@ -279,7 +284,7 @@
                 <div class="mui-input-row h-auto">
                     <div class="mui-input-row h-auto" style="margin-bottom: 10px">
                         <textarea name="event_des" class="data event_des" style="display: none"></textarea>
-                        <div class="introBox">{$eventInfo.event_des}</div>
+                        <div class="introBox">{eq name="directentry" value="1" } {else/} {$eventInfo.event_des}{/eq}</div>
                     </div>
                     <div class="mui-row mui-text-center mui-row-operation">
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
@@ -350,6 +355,10 @@
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
+        });
+
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
         });
 
         //弹出框滚动必须写在mui专用的初始化
@@ -440,7 +449,10 @@
 
         // 给是否发布通知赋值
         function isRelease() {
-            var send_message = "{$eventInfo.send_message}";
+            var send_message = "$eventInfo.send_message";
+            if("{$directentry}" === 1){
+                alert(1111);
+            }
             if (send_message == 1) {
                 $(".isRelease").addClass("mui-active");
             }
@@ -459,10 +471,10 @@
         $(function () {
 
             isRelease(); // 给是否发布通知赋值
-            toSignUpList();
+            // toSignUpList();
 
             // 设置活动类型默认值
-            $('#eventType option[value="{$eventInfo.event_type_num}"]').prop("selected", true);
+            $('#eventType option[{eq name="directentry" value="1" } value=""{else/} value="{$eventInfo.event_type_num}"{/eq}]').prop("selected", true);
 
             // 是否发布通知操作
             $(".isRelease").on("tap", '', function () {
@@ -655,6 +667,8 @@
             var event_des = $('textarea.data').val();
             objData.event_des = event_des;
             // objData.memberData = JSON.stringify(memberList);
+
+
             var url = "{:url('api/team/updateteamevent')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
@@ -673,42 +687,7 @@
         };
 
         //获取已经报名人员列表
-        var toSignUpList = function () {
-            var team_id = "{$teamInfo.id}";
-            var event_id = "{$eventInfo.id}";
-            mui.ajax("{:url('api/team/teammemberlist',['event_id'=>$eventInfo.id])}", {
-                data: {
-                    team_id: team_id,
-                    event_id: event_id
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    var div = '';
-                    if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-member" class="member stdlist" value="' + data.data[i].member + '" data-member="' + data.data[i].member + '" data-id="' + data.data[i].id + '" type="checkbox" ></div>'
-                        }
-                        $("#newdiv").empty();
-                        $("#newdiv").append(div);
-
-                        if (div == '') {
-                            $("#newdiv").append('<li class="nodata"><p>没有相关数据哦</p></li>');
-                        }
-                        if ($("#inactiveList").html() == '') {
-                            $("#inactiveList").append('<p class="nohave">还没有活动人员哦</p>');
-                        }
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        };
+       
 
     </script>
 </body>
