@@ -506,4 +506,15 @@ class TeamService {
             return $res;
         }
     }
+
+    // 球队活动-会员关联列表（无分页）
+    public function teamEventMembers($map, $order='id desc') {
+        $model = new TeamEventMember();
+        $res = $model->where($map)->order($order)->select();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
 }
