@@ -101,7 +101,6 @@
         }
     </style>
 </head>
-
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
@@ -119,13 +118,13 @@
             <form action="" class="mui-input-group mt55">
 
                 <div class="mui-input-row h-auto">
-                    <a href="{:url('team/eventEdit',['team_id' => $team_id])}" class="mui-text-center f14 colorgreen">[直接录入活动]</a>
+                    <a href="{:url('team/eventEdit',['team_id' => $team_id])}" class="mui-text-center f14 colorgreen direct">[直接录入活动]</a>
                 </div>
 
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>活动封面</label>
-                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
+                        <img id="preview_1" class="upload-preview" alt="">
                         <input type="hidden" name="cover" value='' class="data">
                     </a>
                 </div>
@@ -268,7 +267,7 @@
             swipeBack: true //启用右滑关闭功能
         });
 
-        mui(".mui-content").on("tap", "a", function () {
+        mui(".direct").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
 
@@ -492,7 +491,7 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
-                    var goUrl = "{:url('team/eventlistOfTeam')}" + '/event_id/' + ajaxResult.data;
+                    var goUrl = "{:url('team/eventlistOfTeam')}" + '/event_id/' + ajaxResult.data + '/team_id/' + "{$team_id}";
                     window.top.location.href = goUrl;
                 })
             } else {
