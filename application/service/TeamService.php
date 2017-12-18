@@ -372,12 +372,15 @@ class TeamService {
     }
 
     // 修改球队活动
-    public function updateTeamEvent($data) {
+    public function updateTeamEvent($data, $noval=0) {
         $model = new TeamEvent();
-        // 验证数据
-        $validate = validate('TeamEventVal');
-        if (!$validate->scene('edit')->check($data)) {
-            return ['code' => 100, 'msg' => $validate->getError()];
+        // 传入$noval=1 忽略验证器
+        if ($noval === 0) {
+            // 验证数据
+            $validate = validate('TeamEventVal');
+            if (!$validate->scene('edit')->check($data)) {
+                return ['code' => 100, 'msg' => $validate->getError()];
+            }
         }
         // 保存数据，成功返回自增id，失败记录错误信息
         $res = $model->allowField(true)->isUpdate(true)->save($data);
@@ -387,6 +390,12 @@ class TeamService {
             trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
+    }
+
+    // 软删除球队活动
+    public function deleteTeamEvent($id) {
+        $res = TeamEvent::destroy($id);
+        return $res;
     }
 
     // 球队活动列表分页

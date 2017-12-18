@@ -469,6 +469,63 @@ class Team extends Base {
         }
     }
 
+    // 球队活动管理操作
+    public function removeevent() {
+        try {
+            // 接收参数
+            $event_id = input('post.eventid');
+            $action = input('post.action');
+            if (!$event_id || !$action) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            $teamS = new TeamService();
+            $event = $teamS->getTeamEventInfo(['id' => $event_id]);
+            if (!$event) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404').'，没有球队活动信息']);
+            }
+            // 检查当前会员有无操作权限
+            $role = $teamS->checkMemberTeamRole($event['team_id'], $this->memberInfo['id']);
+            if (!$role) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403').'，你在球队只是普通成员不能操作']);
+            }
+            // 根据活动当前状态(1上架,2下架)+不允许操作条件
+            // 根据action参数 editstatus执行上下架/del删除操作
+            // 更新数据 返回结果
+            switch ( $event['status_num'] ) {
+                case 1 : {
+                    if ($action == 'editstatus') {
+                        $response = $teamS->updateTeamEvent(['id' => $event['id'], 'status' => 2], 1);
+                    } else {
+                        $delRes = $teamS->deleteTeamEvent($event['id']);
+                        if ($delRes) {
+                            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+                        } else {
+                            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+                        }
+                    }
+                    return json($response);
+                    break;
+                }
+                case 2 : {
+                    if ($action == 'editstatus') {
+                        $response = $teamS->updateTeamEvent(['id' => $event['id'], 'status' => 1], 1);
+                    } else {
+                        $delRes = $teamS->deleteTeamEvent($event['id']);
+                        if ($delRes) {
+                            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+                        } else {
+                            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+                        }
+                    }
+                    return json($response);
+                    break;
+                }
+            }
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
     // 报名参加球队活动
     public function jointeamevent() {
         try {
@@ -509,6 +566,7 @@ class Team extends Base {
                 'event' => $event['event'],
                 'member_id' => $this->memberInfo['id'],
                 'member' => $this->memberInfo['member'],
+                'avatar' => $this->memberInfo['avatar'],
                 'is_pay' => 1,
                 'is_sign' => 1,
                 'status' => 1,
