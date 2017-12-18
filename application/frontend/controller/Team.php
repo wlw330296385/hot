@@ -163,6 +163,7 @@ class Team extends Base {
             $eventInfo = $teamS->getTeamEventInfo(['id' => $event_id]);
         }
 
+        $this->assign('event_id', $event_id);
         $this->assign('eventInfo', $eventInfo);
         $this->assign('directentry', $directentry);
         return view('Team/EventEdit');
