@@ -164,4 +164,33 @@ class Lesson extends Backend {
         return $this->fetch('lesson/buyLesson');
     }
 
+
+    // 编辑课程
+    public function edit(){
+        $lesson_id = input('param.lesson_id');
+        $LessonService = new \app\service\LessonService;
+        if(request()->isPost()){
+            $data = input('post.');
+
+            $result = db('lesson')->where(['id'=>$lesson_id])->update($data);
+            // echo db('lesson')->getlastsql();die;
+            if ($result) {
+                $this->success('成功','lesson/index');
+            }else{
+                $this->error('失败');
+            }
+        }else{
+
+            $lessonInfo = $LessonService->getLessonInfo(['id'=>$lesson_id]);
+
+            // 课程分类
+            $GradeCategoryService = new \app\service\GradeCategoryService;
+            $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
+
+            // dump($gradeCategoryList);die;
+            $this->assign('lessonInfo',$lessonInfo);
+            $this->assign('gradeCategoryList',$gradeCategoryList);
+            return view('lesson/edit');
+        }
+    }
 }

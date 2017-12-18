@@ -16,7 +16,7 @@ class Member extends Backend{
 		// dump($memberList);die;
 		// 模板变量赋值
 		$this->assign('memberList', $memberList);
-		return view('member/memberlist');
+		return view('member/memberList');
 	}
 
 

@@ -207,7 +207,10 @@ class Lesson extends Base{
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         // 教练列表
     	$staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
-        $gradeCategoryList = $this->GradeService->getGradeCategory(1);
+        // 课程分类
+        $GradeCategoryService = new \app\service\GradeCategoryService;
+        $gradeCategoryList = $this->GradeService->getGradeCategoryList();
+        
         $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         // 私密课程 获取指定会员列表

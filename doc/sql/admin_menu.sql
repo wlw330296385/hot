@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50553
 File Encoding         : 65001
 
-Date: 2017-12-15 11:17:48
+Date: 2017-12-18 18:17:38
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -34,7 +34,7 @@ CREATE TABLE `admin_menu` (
   `create_time` int(10) NOT NULL,
   `update_time` int(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=87 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=89 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin_menu
@@ -111,7 +111,7 @@ INSERT INTO `admin_menu` VALUES ('70', '4', 'admin', '缴费统计', 'fa fa-cog'
 INSERT INTO `admin_menu` VALUES ('71', '4', 'admin', '收益统计', 'fa fa-cog', '0', 'admin/finance/earings', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('72', '3', 'admin', '班级详情', 'fa fa-cog', '0', 'admin/grade/show', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('73', '3', 'admin', '课程详情', 'fa fa-cog', '0', 'admin/lesson/detail', '_self', '0', '0', '1', '0', '0');
-INSERT INTO `admin_menu` VALUES ('74', '3', 'admin', '课程编辑', 'fa fa-cog', '0', 'admin/lesson/audit', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('74', '3', 'admin', '课程审核', 'fa fa-cog', '0', 'admin/lesson/audit', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('75', '3', 'admin', '课程软删除', 'fa fa-cog', '0', 'admin/lesson/del', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('76', '3', 'admin', 'acalendar', 'fa fa-cog', '0', 'admin/schedule/calendar', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('77', '3', 'admin', '课时详情', 'fa fa-cog', '0', 'admin/schedule/detail', '_self', '0', '0', '1', '0', '0');
@@ -119,8 +119,10 @@ INSERT INTO `admin_menu` VALUES ('78', '3', 'admin', '学生详情', 'fa fa-cog'
 INSERT INTO `admin_menu` VALUES ('79', '2', 'admin', 'menu', 'fa fa-cog', '0', 'admin/wechat/menu', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('80', '24', 'admin', '修改管理员', 'fa fa-cog', '0', 'admin/user/update', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('81', '3', 'admin', '购买课程', 'fa fa-cog', '0', 'admin/lesson/buyLesson', '_self', '0', '0', '1', '0', '0');
-INSERT INTO `admin_menu` VALUES ('82', '5', 'admin', '创建会员', 'fa fa-cog', '0', 'admin/member/createMmeber', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('82', '5', 'admin', '创建会员', 'fa fa-cog', '0', 'admin/member/createMember', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('83', '3', 'admin', '班级类型管理', 'fa fa-cog', '0', 'admin/GradeCategory/gradeCategoryList', '_self', '1', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('84', '3', 'admin', '班级类型详情', 'fa fa-cog', '0', 'admin/GradeCategory/gradeCategory', '_self', '0', '0', '0', '0', '0');
 INSERT INTO `admin_menu` VALUES ('85', '3', 'admin', '添加/修改班级类型', 'fa fa-cog', '0', 'admin/GradeCategory/updateGradeCategory', '_self', '0', '0', '0', '0', '0');
 INSERT INTO `admin_menu` VALUES ('86', '3', 'admin', '更新父类', 'fa fa-cog', '0', 'admin/GradeCategory/updateGradeCategoryP', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('87', '3', 'admin', '删除课程类型', 'fa fa-cog', '0', 'admin/Gradecategory/del', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('88', '3', 'admin', '课程编辑', 'fa fa-cog', '0', 'admin/lesson/edit', '_self', '0', '0', '1', '0', '0');

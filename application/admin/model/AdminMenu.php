@@ -49,7 +49,7 @@ class AdminMenu extends Model {
 
             // 获取节点ID是所有父级节点
             $location = Tree::getParents(self::column('id,pid,title,url_value'), $curr_id);
-
+            // dump($location);die;
             if ($check && empty($location)) {
                 throw new Exception('获取不到当前节点地址，可能节点未收录,请联系woo添加节点', 9001);
             }

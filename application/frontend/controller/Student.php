@@ -90,15 +90,15 @@ class Student extends Base
 
 		// 学生订单
 		$billService = new \app\service\BillService;
-		$studentBillList = $billService->getBillList(['student_id'=>$student_id,'camp_id'=>$camp_id]);
+		$studentBillList = $billService->getBillList(['student_id'=>$student_id,'camp_id'=>$camp_id,'expire'=>0]);
 		$totalBill = count($studentBillList);
 		// 未付款订单
-		$notPayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>0,'status'=>1]);
+		$notPayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>0,'status'=>0,'expire'=>0]);
 		//退款订单 
-		$repayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>['lt',0],'status'=>1]);
+		$repayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>1,'status'=>['lt',0],'expire'=>0]);
 		$payBill = $totalBill - $notPayBill;
-		// 历史课时
-		$totalSchedule = db('bill')->where(['camp_id'=>$camp_id,'student_id'=>$student_id])->sum('total');
+		// 历史课时|当前所报
+		$totalSchedule = db('bill')->where(['camp_id'=>$camp_id,'student_id'=>$student_id,'status'=>1,'is_pay'=>1])->sum('total');
 
 		// 学员自己可操作区显示
         $studentcando = ($this->memberInfo['id'] == $studentInfo['member_id']) ? 1 : 0;
