@@ -48,24 +48,15 @@ class Team extends Base {
                     return json($saveTeamMemberRes);
                 }
 
-                // 保存创建者会员在球队角色信息team_member_role
+                // 保存创建者会员（领队、队长）在球队角色信息team_member_role
+                $team_id = $res['insid'];
                 // 领队身份
-                $teamMemberRoleData1 = [
-                    'team_id' => $res['insid'],
-                    'member_id' => $this->memberInfo['id'],
-                    'type' => 4,
-                    'status' => 1
+                $teamMemberRoleData = [
+                    'leader_id' => $this->memberInfo['id'],
+                    'captain_id' => $this->memberInfo['id']
                 ];
-                // 队长身份
-                $teamMemberRoleData2 = [
-                    'team_id' => $res['insid'],
-                    'member_id' => $this->memberInfo['id'],
-                    'type' => 3,
-                    'status' => 1
-                ];
-                $saveTeamMemberRoleRes1 = $teamS->saveTeamMemberRole($teamMemberRoleData1);
-                $saveTeamMemberRoleRes2 = $teamS->saveTeamMemberRole($teamMemberRoleData2);
-                if ($saveTeamMemberRoleRes1['code'] == 100 || $saveTeamMemberRoleRes2['code'] ==100) {
+                $saveTeamMemberRoleRes1 = $teamS->saveTeamMemberRole($teamMemberRoleData, $team_id);
+                if ($saveTeamMemberRoleRes1['code'] != 200) {
                     return json($saveTeamMemberRoleRes1);
                 }
             }
@@ -82,8 +73,11 @@ class Team extends Base {
             $team_id = input('post.id');
             $data['member_id'] = $this->memberInfo['id'];
             $teamS = new TeamService();
-            //$teamS->saveTeamMemberRole($data, $team_id);
+            $teamS->saveTeamMemberRole($data, $team_id);
             $result = $teamS->updateTeam($data, $team_id);
+            if ($result['code'] == 200) {
+                $teamS->saveTeamMemberRole($data, $team_id);
+            }
             return json($result);
         }catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);

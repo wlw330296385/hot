@@ -47,7 +47,31 @@ class Team extends Base {
         $teamS = new TeamService();
         $rolemembers = $teamS->getTeamRoleMembers($this->team_id);
         //dump($rolemembers);
+        // 教练、队委名单集合组合
+        $roleslist = [
+            'coach_ids' => '',
+            'coach_names' => '',
+            'committee_ids' => '',
+            'committee_names' => ''
+        ];
+        foreach ($rolemembers as $rolemember) {
+            if ($rolemember['type'] == 2) {
+                $roleslist['coach_ids'] .= $rolemember['member_id'].',';
+                $roleslist['coach_names'] .= $rolemember['member'].',';
+            }
+            if ($rolemember['type'] ==1 ) {
+                $roleslist['committee_ids'] .= $rolemember['member_id'].',';
+                $roleslist['committee_names'] .= $rolemember['member'].',';
+            }
+        }
+        // 去掉结尾最后一个逗号
+        $roleslist['coach_ids'] = rtrim($roleslist['coach_ids'], ',');
+        $roleslist['coach_names'] = rtrim($roleslist['coach_names'], ',');
+        $roleslist['committee_ids'] = rtrim($roleslist['committee_ids'], ',');
+        $roleslist['committee_names'] = rtrim($roleslist['committee_names'], ',');
+
         $this->assign('rolemembers', $rolemembers);
+        $this->assign('roleslist', $roleslist);
         return view('Team/teamEdit');
     }
 

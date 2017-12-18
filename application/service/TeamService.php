@@ -186,25 +186,6 @@ class TeamService {
     // 保存team_member_role 会员-球队角色关联信息
     public function saveTeamMemberRole($data, $team_id) {
         $model = new TeamMemberRole();
-        // 有传入team_member_role表id 更新关系数据，否则新增关系数据
-        /*if ($teamMemberRole_id) {
-            $res = $model->where('id', $teamMemberRole_id)->update($data);
-            if ($res || ($res === 0)) {
-                return ['code' => 200, 'msg' => __lang('MSG_200')];
-            } else {
-                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
-                return ['code' => 100, 'msg' => __lang('MSG_400')];
-            }
-        } else {
-            $res = $model->allowField(true)->save($data);
-            if ($res) {
-                return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
-            } else {
-                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
-                return ['code' => 100, 'msg' => __lang('MSG_400')];
-            }
-        }*/
-        //dump($data);
         // 修改数组定义
         $saveAlldata = [];
         // 查询当前领队数据（领队一个）
@@ -225,10 +206,95 @@ class TeamService {
                 'member_id' => $data['captain_id']
             ]);
         }
-        // 查询当前教练数据（教练可多个）
-        $roleCoachs = $model->where([ 'team_id' => $team_id, 'type' => 2 ])->select()->toArray();
-//        dump($roleCoachs);
-//        dump($saveAlldata);
+        // 查询当前教练数据member_id集合（教练可多个）
+        $roleCoachs = $model->where([ 'team_id' => $team_id, 'type' => 2, 'status' => 1])->column('member_id');
+        // 拆分提交的coach_id
+        if (isset($data['coach_id'])) {
+            $coachs = explode(',', $data['coach_id']);
+            foreach ($coachs as $val) {
+                // 教练有改变 组合修改数组
+                // 提交的coach_id查询球队教练数据以区分新增数据还是更新数据
+                $hasCoach = $model->where([ 'team_id' => $team_id, 'type' => 2, 'member_id' => $val ])->find();
+                if (!in_array($val, $roleCoachs)) {
+                    if (!$hasCoach) {
+                        // 新增
+                        array_push($saveAlldata, [
+                            'team_id' => $team_id,
+                            'member_id' => $val,
+                            'type' => 2,
+                            'status' => 1,
+                        ]);
+                    } else {
+                        // 更新原数据
+                        $hasCoach = $hasCoach->toArray();
+                        array_push($saveAlldata, [
+                            'id' => $hasCoach['id'],
+                            'status' => 1,
+                        ]);
+                    }
+                } else {
+                    // 将其他教练数据更新为失效
+                    $otherCoachs = $model->where([ 'team_id' => $team_id, 'type' => 2, 'member_id' => ['<>', $val] ])->select();
+                    if ($otherCoachs) {
+                        $otherCoachs = $otherCoachs->toArray();
+                        foreach ($otherCoachs as $otherCoach) {
+                            array_push($saveAlldata, [
+                                'id' => $otherCoach['id'],
+                                'status' => -1,
+                            ]);
+                        }
+                    }
+                }
+            }
+        }
+        // 查询当前队委数据member_id集合（可多个）
+        $roleCommittees = $model->where([ 'team_id' => $team_id, 'type' => 1, 'status' => 1 ])->column('member_id');
+        // 拆分提交的committee_id
+        if (isset($data['committee_id'])) {
+            $committees = explode(',', $data['committee_id']);
+            foreach ($committees as $val) {
+                // 队委有改变 组合修改数组
+                // 提交的committee_id查询球队队委数据以区分新增数据还是更新数据
+                $hasCommittee = $model->where([ 'team_id' => $team_id, 'type' => 1, 'member_id' => $val ])->find();
+                if (!in_array($val, $roleCommittees)) {
+                    if (!$hasCommittee) {
+                        // 新增
+                        array_push($saveAlldata, [
+                            'team_id' => $team_id,
+                            'member_id' => $val,
+                            'type' => 1,
+                            'status' => 1,
+                        ]);
+                    } else {
+                        // 更新原数据
+                        $hasCommittee = $hasCommittee->toArray();
+                        array_push($saveAlldata, [
+                            'id' => $hasCommittee['id'],
+                            'status' => 1,
+                        ]);
+                    }
+                } else {
+                    // 将其他队委数据更新为失效
+                    $otheCommittees = $model->where([ 'team_id' => $team_id, 'type' => 1, 'member_id' => ['<>', $val] ])->select();
+                    if ($otheCommittees) {
+                        $otheCommittees = $otheCommittees->toArray();
+                        foreach ($otheCommittees as $otheCommittee) {
+                            array_push($saveAlldata, [
+                                'id' => $otheCommittee['id'],
+                                'status' => -1,
+                            ]);
+                        }
+                    }
+                }
+            }
+        }
+        $res = $model->saveAll($saveAlldata);
+        if ($res || ($res === 0)) {
+            return ['code' => 200, 'msg' => __lang('MSG_200')];
+        } else {
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
     }
 
     // 获取球队有角色身份的会员列表
