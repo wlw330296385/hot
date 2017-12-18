@@ -297,4 +297,44 @@ class Index extends Controller{
         $StudentModel->saveAll($studentList);
         echo $StudentModel->getlastsql();
     }
+
+
+    public function sortGC(){
+        
+        $arr = db('test')->order('sort asc')->select();
+        $arr = $this->getGradeCategoryTree($arr);
+        $this->assign('arr',$arr);
+        return view('Index/sortGC');
+        // dump($arr);
+    }
+
+
+
+    protected function getGradeCategoryTree($arr = [],$pid = 0){
+        $list = [];
+         foreach ($arr as $key => $value) {
+            if($value['pid'] == $pid){
+                $value['daughter'] = $this->getGradeCategoryTree($arr,$value['id']);
+               $list[] = $value;
+            }
+        }
+        return $list;
+    }
+
+
+    public function gradecate(){
+        $arr = db('test')->where(['pid'=>0])->select();
+        foreach ($arr as $key => $value) {
+            $data1 = ['sort'=>99,'pid'=>$value['id'],'name'=>'花式篮球课程'];
+            $data2 = ['sort'=>99,'pid'=>$value['id'],'name'=>'专项训练课程'];
+            db('test')->insert($data1);
+            db('test')->insert($data2);
+        }
+        
+    }
+
+    public function getLocation(){
+        $aee = file_get_contents('https://api.map.baidu.com/location/ip?ak=g5XXhTU6gY4Ka68E5ktVMrGz2uiosuTE&coor=bd09ll');
+        dump($aee);die;
+    }
 }

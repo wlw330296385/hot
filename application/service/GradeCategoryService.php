@@ -32,7 +32,7 @@ class GradeCategoryService {
     }   
 
     public function getGradeCategoryList(){
-        $res = $this->GradeCategory->select();
+        $res = $this->GradeCategory->order('sort asc')->select();
         if(!$res){
             return $res;
         }else{
