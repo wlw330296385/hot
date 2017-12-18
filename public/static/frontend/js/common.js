@@ -25,9 +25,11 @@ function getLocationApi(locationApiUrl) {
 
     if(window.localStorage){
         //判断是否有本地存储城市
-        if(localStorage.currentCity==''||localStorage.currentCity==null||localStorage.currentCity=='undefined'){
+        //重要提示：如有增减修改本地存储变量，必须更新updatetime的时间，这样客户端可重新获取最新的区域本地存储值
+        if(localStorage.currentCity==''||localStorage.currentCity==null||localStorage.currentCity=='undefined'||localStorage.updatetime!='201712181650'){
             var city = '';
             var province = '';
+            var area = '';
             var areas = '';
             mui.ajax({
                 url: locationApiUrl,
@@ -39,6 +41,7 @@ function getLocationApi(locationApiUrl) {
                 async:false, //设置为false后会在success执行完才继续后面代码
                 success: function (data) {
                     if (data.code == 0) {
+                        area = data.data.area;
                         city = data.data.city;
                         province = data.data.region;
                         areas = getAreas(province,city);
@@ -47,7 +50,8 @@ function getLocationApi(locationApiUrl) {
                         var getDL = getDefaultLCT();
                         city = getDL['city'];
                         province = getDL['province'];
-                        areas = getDL['area'];
+                        area = getDL['area'];
+                        areas = getDL['areas'];
                     }
                 },
                 error: function (xhr, type, errorThrown) {
@@ -56,14 +60,17 @@ function getLocationApi(locationApiUrl) {
                     var getDL = getDefaultLCT();
                     city = getDL['city'];
                     province = getDL['province'];
-                    areas = getDL['area'];
+                    area = getDL['area'];
+                    areas = getDL['areas'];
                 }
             });
             localStorage.currentCity = city;
             localStorage.currentProvince = province;
+            localStorage.currentArea = area;
             localStorage.currentAreas = areas;
+            localStorage.updatetime = "201712181650";
         }
-        var returnLocation = {"province":localStorage.currentProvince,"city":localStorage.currentCity,"area":localStorage.currentAreas};
+        var returnLocation = {"province":localStorage.currentProvince,"city":localStorage.currentCity,"area":localStorage.currentArea,"areas":localStorage.currentAreas};
         return returnLocation;
     }else{
         //返回默认定位
@@ -92,6 +99,6 @@ function getAreas(province,city) {
 }
 //获取默认省市区
 function getDefaultLCT() {
-    var defaultLocation = {"province":"广东省","city":"深圳市","area":"罗湖区,福田区,南山区,宝安区,龙岗区,龙华区,盐田区,光明新区,其他区"};
+    var defaultLocation = {"province":"广东省","city":"深圳市","area":"南山区","areas":"罗湖区,福田区,南山区,宝安区,龙岗区,龙华区,盐田区,光明新区,其他区"};
     return defaultLocation
 }
