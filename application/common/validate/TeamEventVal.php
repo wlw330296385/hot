@@ -36,6 +36,6 @@ class TeamEventVal extends Validate {
 
     protected $scene = [
         'add' => ['team_id', 'member_id', 'cover', 'event', 'event_type', 'start_time', 'end_time', 'province', 'city', 'area'],
-        'edit' => ['member_id','event']
+        'edit' => ['event']
     ];
 }
