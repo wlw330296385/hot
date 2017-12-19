@@ -187,8 +187,10 @@ class Team extends Base {
             $teamS = new TeamService();
             $eventInfo = $teamS->getTeamEventInfo(['id' => $event_id]);
             $memberlist = $teamS->teamEventMembers(['event_id' => $event_id]);
+            if (!empty($eventInfo['album'])) {
+                $eventInfo['album'] = json_decode($eventInfo['album'], true);
+            }
         }
-
         $this->assign('event_id', $event_id);
         $this->assign('eventInfo', $eventInfo);
         $this->assign('directentry', $directentry);
@@ -212,6 +214,9 @@ class Team extends Base {
         $event_id = input('param.event_id');
         $teamS = new TeamService();
         $eventInfo = $teamS->getTeamEventInfo(['id' => $event_id]);
+        if (!empty($eventInfo['album'])) {
+            $eventInfo['album'] = json_decode($eventInfo['album'], true);
+        }
         // 获取会员在球队角色身份
         $teamrole = $teamS->checkMemberTeamRole($eventInfo['team_id'], $this->memberInfo['id']);
         $memberlist = $teamS->teamEventMembers(['event_id' => $event_id]);
