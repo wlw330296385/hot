@@ -24,10 +24,17 @@
         p {
             text-indent: 22px;
         }
+        label .mui-icon{ line-height: normal !important; }
         
         .mui-input-row a {
             display: table;
             width: 100%;
+        }
+        #lessonType .lessonType{
+            padding:12px 6px; border-bottom: 1px solid #EEE;
+        }
+        #lessonType .lessonType:last-child{
+            border-bottom: none;
         }
         
         .mui-navigate-right input[type='text'] {
@@ -75,8 +82,11 @@
                 <div class="mui-input-row">
                     <a href="#lessonType" class="mui-navigate-right">
                         <label>课程类型</label>
-                        <span class="lessonTypeCont domData" name="gradecate">{$lessonInfo.gradecate}</span>
-                        <input type="hidden" name="gradecate_id" class="gradecate_id data" value="">
+                        <span class="lessonTypeCont dataSpan">{$lessonInfo.gradecate_setion}{$lessonInfo.gradecate}</span>
+                        <input type="hidden" name="gradecate" class="gradecate data" value="{$lessonInfo.gradecate}">
+                        <input type="hidden" name="gradecate_id" class="gradecate_id data" value="{$lessonInfo.gradecate_id}">
+                        <input type="hidden" name="gradecate_setion" class="gradecate_setion data" value="{$lessonInfo.gradecate_setion}">
+                        <input type="hidden" name="gradecate_setion_id" class="gradecate_setion_id data" value="{$lessonInfo.gradecate_setion_id}">
                     </a>
                 </div>
                 <div class="mui-input-row">
@@ -100,14 +110,14 @@
                         <label>训练周期</label>
                         <span class="select-row">
                     <select class="data" name="week">
-                        <option {eq name="lessonInfo.week" value="可选"}selected{/eq}>可选</option>
-                        <option {eq name="lessonInfo.week" value="周日"}selected{/eq}>周日</option>
-                        <option {eq name="lessonInfo.week" value="周一"}selected{/eq}>周一</option>
-                        <option {eq name="lessonInfo.week" value="周二"}selected{/eq}>周二</option>
-                        <option {eq name="lessonInfo.week" value="周三"}selected{/eq}>周三</option>
-                        <option {eq name="lessonInfo.week" value="周四"}selected{/eq}>周四</option>
-                        <option {eq name="lessonInfo.week" value="周五"}selected{/eq}>周五</option>
-                        <option {eq name="lessonInfo.week" value="周六"}selected{/eq}>周六</option>
+                        <option value="不限">不限</option>
+                        <option value="周日">周日</option>
+                        <option value="周一">周一</option>
+                        <option value="周二">周二</option>
+                        <option value="周三">周三</option>
+                        <option value="周四">周四</option>
+                        <option value="周五">周五</option>
+                        <option value="周六">周六</option>
                     </select>
                 </span>
                     </a>
@@ -211,7 +221,7 @@
                 </div>
 
                 <div class="mui-input-row">
-                    <label class="wd49">是否设为私密课程</label>
+                    <label class="wd49" id="tipSiMi">设为私密课程 <span class="mui-icon mui-icon-info"></span></label>
                     <span class="select-row">
                         <select id="lessonPrivate" class="data" name="isprivate">
                             <option value="0">否</option>
@@ -277,18 +287,25 @@
     <!--课程类型-->
     <div id="lessonType" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course"><strong>课程类型</strong></span>
+        <div class="page-header border-b">
+            <span class="course">
+                <strong>课程类型</strong>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list">
-                    {volist name="gradeCategoryList" id="vol"}
-                    <!--<li class="mui-table-view-cell listli detalisli lessonType" data-id="{$vol.id}">{$vol.name}</li>-->
-                    {volist name="$vol['_data']" id="vo"}
-                    <li class="mui-table-view-cell listli detalisli lessonType" data-id="{$vo.id}">{$vo.name}</li>
-                    {/volist} {/volist}
+            <div class="mui-scroll ">
+                {volist name="gradeCategoryList" id="vol"}
+                <ul class="mui-table-view list lesType">
+                    <li class="mui-table-view-cell mui-collapse listli detalisli">
+                        <a class="mui-navigate-right daType" href="#" data-id="{$vol.id}">{$vol.name}</a>
+                        <div class="mui-collapse-content">
+                            {volist name="$vol['daughter']" id="vo"}
+                            <div class="mui-input-row lessonType"  data-id="{$vo.id}">{$vo.name}</div>
+                            {/volist}
+                        </div>
+                    </li>
                 </ul>
+                {/volist}
             </div>
         </div>
     </div>
@@ -483,6 +500,9 @@
         $("body").on('tap', '.mui-backdrop', function () {
             mui(".mui-popover.mui-active").popover("toggle");
         })
+        document.getElementById("tipSiMi").addEventListener('tap', function() {
+            mui.alert('私密课程是不对外公开的课程，只有被指定的会员才能购买。例如您想开设针对某个群体的特惠课程，只允许他们购买，那就把此课程定为私密课程，创建完成后不会出现在公开的课程列表，由训练营的工作人员直接发送该课程链接给指定会员进行购买。', '设为私密课程');
+        });
     })(mui);
 
     (function ($, doc) {
@@ -541,6 +561,7 @@
         $("input[name='doms']").val(cDoms);
 
 
+        $('select[name="week"]').find('option[value="{$lessonInfo.week}"]').prop("selected", true);
         //复选框赋值
         $("#setAsCoach").on('tap', '', function () {
             //每次打开先清空所有选择
@@ -574,11 +595,16 @@
         })
         // 课程类型
         $(".lessonType").click(function () {
-            var lessonType = $(this).html();
+            var gradecate_setion = $(this).parent().parent().find("a").text();
+            var gradecate_setion_id = $(this).parent().parent().find("a").attr('data-id');
+            var gradecate = $(this).text();
+            var gradecate_id = $(this).attr('data-id');
+            $("input[name='gradecate_setion']").val(gradecate_setion);
+            $("input[name='gradecate_setion_id']").val(gradecate_setion_id);
+            $("input[name='gradecate']").val(gradecate);
+            $("input[name='gradecate_id']").val(gradecate_id);
 
-            $(".lessonTypeCont").html(lessonType);
-            var id = $(this).attr('data-id');
-            $(".gradecate_id").val(id);
+            $(".lessonTypeCont").text(gradecate_setion+gradecate);
             mui("#lessonType").popover("toggle");
         })
         // 训练地点
