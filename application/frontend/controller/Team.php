@@ -15,9 +15,9 @@ class Team extends Base {
         $team_id = input('team_id');
         $teamS = new TeamService();
         $teamInfo = $teamS->getTeam(['id' => $team_id]);
-        if (!$teamInfo) {
+        /*if (!$teamInfo) {
             $this->error('没有球队信息');
-        }
+        }*/
         $this->team_id = $team_id;
         $this->teamInfo = $teamInfo;
         $this->assign('team_id', $team_id);
