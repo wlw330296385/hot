@@ -122,17 +122,18 @@
 
             <div class="page-header whitebg">
                 <span class="course wd52">活动花絮</span>
-                <span class="more">评论 16 |
-                    <i class="mui-icon-extra mui-icon-extra-like f16"></i>：65</span>
+                <span class="more">评论 16 | <i class="mui-icon-extra mui-icon-extra-like f16"></i>：65</span>
             </div>
 
             <!--图片轮播-->
+
             <div id="slider" class="mui-slider" style="height:120px">
+                {notempty name="eventInfo.album"}
                 <div class="mui-slider-group mui-slider-loop">
                     <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
-                    <!-- <div class="mui-slider-item mui-slider-item-duplicate">
-                        <img src="">
-                    </div> -->
+                    <div class="mui-slider-item mui-slider-item-duplicate">
+                        <img src="{$eventInfo.album[0]}">
+                    </div>
                     <!-- 第一张 -->
                     {volist name="eventInfo.album" id="vol"}
                     <div class="mui-slider-item">
@@ -140,13 +141,17 @@
                     </div>
                     {/volist}
                     <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
-                    <!-- <div class="mui-slider-item mui-slider-item-duplicate">
-                        <img src="">
-                    </div> -->
+                    <div class="mui-slider-item mui-slider-item-duplicate">
+                        <img src="{$eventInfo.album|array_pop}">
+                    </div>
                 </div>
+                {else/}
+                <p class="mui-text-center" style="padding-top:45px;">还没有上传花絮图哦</p>
+                {/notempty}
             </div>
 
-            <div class="page-header">
+
+            <div class="page-header whitebg border-b">
                 <span class="course" style="font-size: 14px">评论</span>
             </div>
             <ul class="mui-table-view comment-list">

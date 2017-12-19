@@ -181,6 +181,7 @@
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
             <input type="hidden" name="team_id" value="{$team_id}" class="data">
             <input type="hidden" name="team" value="{$teamInfo.name}" class="data">
+            <input type="hidden" name="status" value="{$teamInfo.status}" class="data">
             <input type="hidden" name="directentry" value="{$directentry}">
             <form action="" class="mui-input-group  mt55">
 
@@ -283,16 +284,7 @@
                     <div class="mui-input-row">
                         <label>活动人员</label>
                     </div>
-                    <div class="box" id="inactiveList">
-                        {volist name="memberList" id="vol"}
-                        <div class="mui-input-row mui-checkbox checkboxCont">
-                            <label class="number" style="width:20%">{$key+1}</label>
-                            <font>{$vol.member}</font>
-                            <input name="member" value="{$vol.member}" data-member_id="{$vol.member_id}" data-member="{$vol.member}" type="checkbox">
-                            <input type="hidden" class="stdList" data-member_id="{$vol.member_id}" data-member="{$vol.member}">
-                        </div>
-                        {/volist}
-                    </div>
+                    <div class="box" id="inactiveList"></div>
 
                     <div class="operation-btn">
                         <span class="mui-badge">0</span>
@@ -316,9 +308,11 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell listli albumBox">
-                        {volist name="eventInfo.album" id="vol"}
-                        <div class="fl albumImg"><i class="delbtn mui-icon mui-icon-close"></i><img src="{$vol}"></div>
-                        {/volist}
+                        {eq name="directentry" value="1" } {else/}{volist name="eventInfo.album" id="vol"}
+                        <div class="fl albumImg">
+                            <i class="delbtn mui-icon mui-icon-close"></i>
+                            <img src="{$vol}">
+                        </div>{/volist} {/eq}
                     </li>
                 </ul>
 
@@ -329,7 +323,7 @@
                 <div class="mui-input-row h-auto">
                     <div class="mui-input-row h-auto" style="margin-bottom: 10px">
                         <textarea name="event_des" class="data event_des" style="display: none"></textarea>
-                        <div class="introBox">{eq name="directentry" value="1" } {else/} {$eventInfo.event_des}{/eq}</div>
+                        <div class="introBox">{eq name="directentry" value="1" }{else/}{$eventInfo.event_des}{/eq}</div>
                     </div>
                     <div class="mui-row mui-text-center mui-row-operation">
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
@@ -490,6 +484,7 @@
 
         // 全局取 directentry 的值判断是否有 event_id
         var directentry = $("input[name=directentry]").val();
+        console.log(directentry)
         // 给是否发布通知赋值
         function isRelease() {
             if (directentry == 0) {
@@ -500,6 +495,14 @@
             }
         }
 
+        // 活动花絮图提示语
+        // function albumInitial() {
+        //     if ($(".albumBox").html() == '') {
+        //         var str = '<p class="mui-text-center">活动花絮图显示区</p>';
+        //         $(".albumBox").append(str);
+        //     } 
+        // }
+        // 活动花絮图提交数组
         function albumImg() {
             album = [];
             $(".albumImg img").each(function () {
@@ -508,6 +511,12 @@
             }).get().join(",");
             console.log(album)
         }
+
+        //角标随checkboxCont的数量变化
+        $(document).on('click', '.del', function () {
+            totalNum = $("#inactiveList .checkboxCont").length;
+            $(".mui-badge").text(totalNum);
+        });
 
         //更新学员序号
         function changeIndex() {
@@ -524,7 +533,8 @@
 
             isRelease(); // 给是否发布通知赋值
             toTeamMemberList() //获取成员列表
-            
+            // albumInitial(); //活动花絮图提示语
+            toSignUpList();
 
             // 设置活动类型默认值
             $('#eventType option[{eq name="directentry" value="1" } value=""{else/} value="{$eventInfo.event_type_num}"{/eq}]').prop("selected", true);
@@ -553,13 +563,13 @@
             $(".del").click(function () {
                 $("input[name='member']:checked").parents(".checkboxCont").remove();
                 changeIndex();
-                $("#hideStList").empty();
-                $("#inactiveList input[type=checkbox]").each(function () {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" ></div>';
-                    var id = $(this).attr("data-id");
-                    var member = $(this).attr("data-member");
-                    $("#hideStList").append(str);
-                })
+                // $("#hideStList").empty();
+                // $("#inactiveList input[type=checkbox]").each(function () {
+                //     var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" ></div>';
+                //     var id = $(this).attr("data-id");
+                //     var member = $(this).attr("data-member");
+                //     $("#hideStList").append(str);
+                // })
             });
 
 
@@ -589,11 +599,11 @@
                 $("#inactiveList").empty();
                 memberList = [];//报名人员列表数组
                 $(".addTeamMemberList input[type=checkbox]:checked").each(function () {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" ></div>';
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%"></label><font class="f14">' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" ></div>';
                     member = $(this).attr("data-member");
-                    id = $(this).attr("data-id");
+                    member_id = $(this).attr("data-member_id");
                     $("#inactiveList").append(str);
-                    memberList.push({ member: member, id: id });
+                    memberList.push({ member: member, member_id: member_id });
                 });
                 console.log(memberList)
 
@@ -752,12 +762,13 @@
             objData.event_des = event_des;
             objData.memberData = JSON.stringify(memberList);
             objData.album = JSON.stringify(album);
+
             if (directentry == 0) {
                 var url = "{:url('api/team/updateteamevent')}";
                 var ajaxResult = wooApi.asyncF(url, objData);
                 if (ajaxResult.code == 200) {
                     mui.alert(ajaxResult.msg, '活动修改成功', '确定', function () {
-                        var goUrl = "{:url('team/eventlistOfTeam')}/" + 'event_id/' + ajaxResult.data + '/team_id/' + "{$team_id}";
+                        var goUrl = "{:url('team/eventlistOfTeam')}/" +  '/team_id/' + "{$team_id}";
                         window.top.location.href = goUrl;
                     })
                 } else {
@@ -825,6 +836,47 @@
                 }
             });
         };
+
+        //获取已经报名的活动人员列表
+        var toSignUpList = function () {
+            var url = "{:url('api/team/teameventmemberall')}";
+            var event_id = "{$event_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    event_id: event_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var inactiveDiv = '';
+                        totalLength = data.data.length;
+                        $(".mui-badge").text(totalLength);
+
+                        $("#inactiveList").empty();
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            inactiveDiv += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].member + '</font><input name="member" value="' + data.data[i].member_id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" ></div>'
+                            $("#inactiveList").append(inactiveDiv);
+                        };
+
+                        if ($("#inactiveList").html() == '') {
+                            $(".checkChecked").append('<p class="nohave">没有学员哦</p>');
+                        }
+                        changeIndex();//调用-更新序号
+                        totalNum = $(".checkboxCont").length;
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    console.log(type);
+                }
+            });
+        };
+
 
     </script>
 </body>
