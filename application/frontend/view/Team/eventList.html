@@ -11,10 +11,31 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <style>
+        /* 日期选择器视图 */
+
+        [data-type="month"] .mui-dtpicker-title h5 {
+            width: 100% !important;
+        }
+
+        [data-type="month"] .mui-picker {
+            width: 100% !important;
+        }
+
+        [data-type="month"] [data-id="title-m"] {
+            display: none !important;
+        }
+
+        [data-type="month"] .mui-dtpicker-body [data-id="picker-m"] {
+            display: none !important;
+        }
+    </style>
 </head>
 
-<body>
-
+<body class=whitebg>
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
         <h1 class="mui-title">活动列表</h1>
@@ -22,25 +43,27 @@
 
     <div class="mui-content">
 
-        <div class="page-header whitebg mb">
-            <span class="course wd49">{$teamInfo.name}</span>
-            <span class="more mui-navigate-right">
-                <select style="margin:0;padding:0">
+        <div class="location-frame">
+            <span class="location">{$teamInfo.name}</span>
+            <span class="location-choise max">
+                <select id="Year" class="data" name="year">
                     <option value="">选择年份</option>
-                    <option value="1">2017-1</option>
-                    <option value="2">2017-1</option>
-                    <option value="3">2017-1</option>
-
+                    <option value="2017">2017</option>
+                    <option value="2018">2018</option>
+                    <option value="2019">2019</option>
+                    <option value="2020">2020</option>
+                    <option value="2021">2021</option>
                 </select>
             </span>
         </div>
 
-        <div id="refreshContainer" class="mui-scroll-wrapper whitebg" style="margin-top:90px">
+        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b teammember">
+                <ul class="mui-table-view detalis-list list border-b event">
                 </ul>
             </div>
         </div>
+
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -57,7 +80,15 @@
 
             //初始化全局变量
             var count = 1;
+            var sYear = '';
 
+
+            //选择活动类型下拉
+            $("#Year").on("change", function () {
+                sYear = $(this).find("option:checked").val();
+                searchToList();
+            });
+         
             //搜索、下拉刷选后触发
             function searchToList() {
                 count = 1;//显示第一页
@@ -109,42 +140,85 @@
                 }, 100);
             }
 
-
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/team/teammemberlist','','',true)}";
-                var team_id = "{$teamInfo.id}"
+                var url = "{:url('api/team/teameventlist','','',true)}";
+                var team_id = "{$team_id}"
                 mui.ajax({
                     url: url,
                     data: {
                         team_id: team_id,
+                        status: 1,
                         page: page,
+                        event: sYear,
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
                     headers: { 'Content-Type': 'application/json' },
+                    //processData:false,
                     success: function (data) {
-                        console.log(data)
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + data.data[i].id + '/member_id/' + data.data[i].member_id;
-                                newli += '<li class="mui-table-view-cell mui-media listli coach"><a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].avatar + '"><div class="mui-media-body wd">' + data.data[i].member + '</font  ><p class="mui-ellipsis">' + data.data[i].create_time + '</p></div>'
+                                // 获取当前时间
+                                var d = new Date()
+                                var minutes = d.getMinutes()
+                                var hours = d.getHours()
+                                var day = d.getDate()
+                                var month = d.getMonth() + 1
+                                var year = d.getFullYear()
+                                // var time = year + "-"+ month + "-" + day + " " + hours + ":" + minutes 
+                                var time = '';
+                                time += year + "-";
+                                if (month >= 10) {
+                                    time += month + "-";
+                                }
+                                else {
+                                    time += "0" + month + "-";
+                                }
+                                if (day >= 10) {
+                                    time += day;
+                                }
+                                else {
+                                    time += "0" + day;
+                                }
+                                time += " " + hours + ":" + minutes;
+                                console.log(time)
+                                var urls = "{:url('event/eventInfo')}" + '/event_id/' + data.data[i].id;
+
+                                newli += '<li class="mui-table-view-cell mui-media listli">'
+                                newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '" style="width:70px!important;height: 56px!important;"><div class="mui-media-body" style="width:55%;">' + data.data[i].event + '';
+                                if (data.data[i].is_max == "已满人") {
+                                    newli += '<font style="color:red">&nbsp;&nbsp;[满人]</font>';
+                                }
+                                if (data.data[i].ends < time) {
+                                    newli += '<font style="color:#b1b0b0">&nbsp;&nbsp;[过期]</font>';
+                                }
+                                newli += '<p class="mui-ellipsis">' + data.data[i].event_type + '&nbsp;&nbsp;' + data.data[i].starts + '</p></div><div class="price-frame mui-text-center">'
+                                if (data.data[i].is_free == 2) {
+                                    newli += '<p class="price">￥<strong>' + data.data[i].price + '</strong></p>';
+                                } else {
+                                    newli += '<p class="price" style="color:#59b200;font-size:14px;">免费</p>';
+                                }
+
+                                newli += '<p class="address">' + data.data[i].area + '</p></div></a></div><input type="hidden" class="is_overdue" value="' + data.data[i].is_overdue + '">';
+                                newli += '</li>';
+
                             }
                         }
                         if (gType == 1) {
                             //上拉刷新
-                            $("ul.teammember").empty().append(newli);
+                            $("ul.event").empty().append(newli);
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.teammember").html('<li class="nodata"><i class="icon iconfont icon-m-Trainingteam1"></i><p>没有相关数据哦</p></li>');
+                                $("ul.event").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
                             }
                         } else {
                             //下拉加载 gType==2
-                            $("ul.teammember").append(newli);
+                            $("ul.event").append(newli);
                         }
                         if (newli != '') {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
