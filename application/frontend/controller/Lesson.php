@@ -240,7 +240,7 @@ class Lesson extends Base{
         $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         // 课程分类
         $GradeCategoryService = new \app\service\GradeCategoryService;
-        $gradeCategoryList = $this->GradeService->getGradeCategoryList();
+        $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
         $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         $this->assign('campInfo',$campInfo);
