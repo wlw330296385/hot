@@ -199,7 +199,9 @@
                     <a href="#coach" id="setCoachBox" class="mui-navigate-right">
                         <label>教练</label>
                         <span class="coach" name="coach" style="width: 60%">{$roleslist.coach_names}</span>
-                        <div id="hideCoList"></div>
+                        <div id="hideCoList">
+                            <input type="hidden" class="coList" data-member="{$roleslist.coach_names}" data-member_id="{$roleslist.coach_ids}">
+                        </div>
                         <input type="hidden" name="coach_id" value="{$roleslist.coach_ids}" class="data">
                     </a>
                 </div>
@@ -208,7 +210,9 @@
                     <a href="#committee" id="setCommitteeBox" class="mui-navigate-right">
                         <label>队委</label>
                         <span class="committee" name="" style="width: 60%">{$roleslist.committee_names}</span>
-                        <div id="hideCtList"></div>
+                        <div id="hideCtList">
+                            <input type="hidden" class="ctList" data-member="{$roleslist.committee_names}" data-member_id="{$roleslist.committee_ids}">
+                        </div>
                         <input type="hidden" name="committee_id" value="{$roleslist.committee_ids}" class="data">
                     </a>
                 </div>
@@ -825,6 +829,7 @@
             // 选择教练
             $("#coachConfirm").on('tap', '', function () {
                 $(".coach").empty();
+                $("input[name=coach_id]").val("");
                 $("#hideCoList").empty();
                 var coachMember = "";
                 var coachMember_id = "";
@@ -837,7 +842,7 @@
                     coachMember_id += member_id + ','
                     $(".coach").text(coachMember.substring(0, coachMember.length - 1));
                     $("input[name=coach_id]").val(coachMember_id.substring(0, coachMember_id.length - 1));
-                    coList = '<input type="hidden" class="coList" data-member="' + member + '" data-member_id="' + member_id + '">';
+                    coList += '<input type="hidden" class="coList" data-member="' + member + '" data-member_id="' + member_id + '">';
                     // 数组
                     coachMemberList.push({ member: member, member_id: member_id });
                 });
@@ -874,7 +879,7 @@
                     committeeMember_id += member_id + ','
                     $(".committee").text(committeeMember.substring(0, committeeMember.length - 1));
                     $("input[name=committee_id]").val(committeeMember_id.substring(0, committeeMember_id.length - 1));
-                    ctList = '<input type="hidden" class="ctList" data-member="' + member + '" data-member_id="' + member_id + '">';
+                    ctList += '<input type="hidden" class="ctList" data-member="' + member + '" data-member_id="' + member_id + '">';
                     // 数组
                     committeeMemberList.push({ member: member, member_id: member_id });
                 });
