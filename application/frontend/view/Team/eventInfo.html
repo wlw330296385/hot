@@ -88,7 +88,7 @@
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>结束时间</label>
-                    <span>{$eventInfo.start_time}</span>
+                    <span>{$eventInfo.end_time}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>所属地区</label>
@@ -114,15 +114,8 @@
 
                 <li class="mui-table-view-cell listli">
                     <div class="imgShow">
-                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
-                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
-                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
-                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
-                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
-                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
-                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
-                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
-                        <img src="/static/frontend/images/ads1.jpg" alt="" style="margin-right:3px">
+                        {volist name="memberList" id="vol"}
+                        <img src="{$vol.avatar}" alt="" style="margin-right:3px"> {/volist}
                     </div>
                 </li>
             </ul>
@@ -179,28 +172,32 @@
             </ul>
 
             <!--底部操作-->
-            <!-- <ul class="mui-table-view operation mt"> -->
-            <!-- 比赛报名阶段 -->
-            <!-- <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12 opli bgred">
-                    报名参加
-                </li> -->
-            <!-- 比赛结束之后 -->
-            <!-- <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12 opli bgblue">
+            <ul class="mui-table-view operation mt status1" style="display:none">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12 opli bgblue comment">
                     发表评论
-                </li> -->
-            <!-- </ul> -->
-            <!-- 队委以上身份进入页面使用的按钮 -->
-            <ul class="mui-table-view operation mt">
-                <!-- 比赛报名阶段 -->
-                <!-- <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgred">
+                </li>
+            </ul>
+
+            <ul class="mui-table-view operation mt status2" style="display:none">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12 opli bgred signup">
                     报名参加
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bggreen">
-                    编辑/录入
-                </li> -->
-                <!--  -->
-                <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgblue">
+            </ul>
+
+            <ul class="mui-table-view operation mt status3" style="display:none">
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgblue comment">
                     发表评论
+                </li>
+                <a href="{:url('team/eventEdit',['team_id'=>$teamInfo['id'],'event_id'=>$eventInfo['id']])}">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bggreen">
+                        编辑/录入
+                    </li>
+                </a>
+            </ul>
+
+            <ul class="mui-table-view operation mt ststus4" style="display:none">
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgred signup">
+                    报名参加
                 </li>
                 <a href="{:url('team/eventEdit',['team_id'=>$teamInfo['id'],'event_id'=>$eventInfo['id']])}">
                     <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bggreen">
@@ -213,6 +210,7 @@
 
     </div>
 
+    
     <script src="/static/frontend/js/mui.min.js"></script>
     <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
@@ -234,13 +232,68 @@
         });
 
         $(function () {
+
             initialEds(); //活动详情为空的提示
+            ststuShow() //判断身份显示操作按钮
+
+            //评价功能
+            $(".signup").on('click', function () {
+                //判断是否登陆会员
+                var event_id = "{$eventInfo.id}";
+                mui.ajax("{:url('api/team/jointeamevent')}", {
+                    data: {
+                        event_id: event_id,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.alert('报名成功', '确定', function () {
+
+                            })
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            })
         })
 
         // 默认的样式
         function initialEds() {
             if ($(".intro").text() == '') {
                 $(".intro").append("<p class='nohave'>还没有活动详情描述哦</p>")
+            }
+        }
+
+        function ststuShow() {
+            // 获取当前时间
+            var d = new Date()
+            var minutes = d.getMinutes()
+            var hours = d.getHours()
+            var day = d.getDate()
+            var month = d.getMonth() + 1
+            var year = d.getFullYear()
+            var time = year + "-" + month + "-" + day + " " + hours + ":" + minutes;
+            var teamrole = "{$teamrole}";
+            var end_time = "{$eventInfo.end_time}";
+            if (teamrole > 0 && time > end_time) {
+                $(".ststus3").show();
+            } else {
+                $(".ststus4").show();
+            }
+
+            if (teamrole < 0 && time < end_time) {
+                $(".ststus2").show();
+            } else {
+                $(".ststus1").show();
             }
         }
     </script>
