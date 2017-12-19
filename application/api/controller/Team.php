@@ -436,8 +436,19 @@ class Team extends Base {
     // 球队活动列表（有页码）
     public function teameventlistpage() {
         try {
+            // 传递参数作为查询条件
             $map = input('post.');
             $page = input('page', 1);
+            // 如果有传入年份 查询条件 create_time在区间内
+            if (input('?year')) {
+                $year = input('year');
+                if (!is_numeric($year)) {
+                    return json(['code' => 100, '时间格式不合法']);
+                }
+                $tInterval = getStartAndEndUnixTimestamp($year);
+                $map['create_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
+                unset($map['year']);
+            }
             $teamS = new TeamService();
             $result = $teamS->teamEventPaginator($map);
             if ($result) {
@@ -454,8 +465,19 @@ class Team extends Base {
     // 球队活动列表
     public function teameventlist() {
         try {
+            // 传递参数作为查询条件
             $map = input('post.');
             $page = input('page', 1);
+            // 如果有传入年份 查询条件 create_time在区间内
+            if (input('?year')) {
+                $year = input('year');
+                if (!is_numeric($year)) {
+                    return json(['code' => 100, '时间格式不合法']);
+                }
+                $tInterval = getStartAndEndUnixTimestamp($year);
+                $map['create_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
+                unset($map['year']);
+            }
             $teamS = new TeamService();
             $result = $teamS->teamEventList($map, $page);
             if ($result) {
@@ -603,6 +625,23 @@ class Team extends Base {
             $page = input('page', 1);
             $teamS = new TeamService();
             $result = $teamS->teamEventMemberList($map, $page);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球队活动-会员列表（无分页）
+    public function teameventmemberall() {
+        try {
+            $map = input('post.');
+            $teamS = new TeamService();
+            $result = $teamS->teamEventMembers($map);
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             } else {
