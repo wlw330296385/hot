@@ -196,14 +196,38 @@ class Camp extends Backend {
         $camp['status_num'] = $campObj->getData('status');
 //        dump($camp);
         $setcampstatus = 0;
+        $messageS = new MessageService();
         if ($camp['status_num'] == 1) { // 执行下架
             $lessonM = new \app\model\Lesson();
             $lessonM->where(['camp_id' => $camp['id'], 'status'=>1])->setField('status', -1);
             $setcampstatus = 2;
-        } else { // 执行上架或审核通过
+            $messageData = [
+                'title' => '您好,您的"'. $camp['camp'] .'"训练营被平台设为下架状态',
+                'content' => '您好,您的训练营被平台设为下架状态',
+                'url' => url('frontend/message/index', '', '', true),
+                'keyword1' => '训练营状态发生变更',
+                'keyword2' => '被设为下架状态',
+                'keyword3' => date('Y年m月d日 H时i分'),
+                'remark' => '如有疑问，请联系客服'
+            ];
+            $messageS->sendMessageToMember($camp['member_id'], $messageData, config('wxTemplateID.statusChange'));
+        } else if ($camp['status_num'] == 2) { // 执行上架
             $setcampstatus = 1;
             //dump($camp);die;
-            $messageS = new MessageService();
+            $messageData = [
+                'title' => '您好,您的"'. $camp['camp'] .'"训练营被平台设为上架状态',
+                'content' => '您好,您的训练营被平台设为上架状态',
+                'url' => url('frontend/message/index', '', '', true),
+                'keyword1' => '训练营状态发生变更',
+                'keyword2' => '被设为上架状态',
+                'keyword3' => date('Y年m月d日 H时i分'),
+                'remark' => '如有疑问，请联系客服'
+            ];
+            $messageS->sendMessageToMember($camp['member_id'], $messageData, config('wxTemplateID.statusChange'));
+        } else {
+            // 审核通过
+            $setcampstatus = 1;
+            //dump($camp);die;
             $messageData = [
                 'title' => '您好,您所提交的"'. $camp['camp'] .'"训练营注册申请审核已通过',
                 'content' => '您好,您所提交的训练营注册申请审核已通过',
@@ -213,7 +237,6 @@ class Camp extends Backend {
                 'remark' => '点击进入训练营进行操作吧'
             ];
             $messageS->sendMessageToMember($camp['member_id'], $messageData, config('wxTemplateID.successCheck'));
-            
         }
         $result = CampModel::where('id', $camp['id'])->update(['status'=>$setcampstatus]);
         $Auth = new AuthService();
