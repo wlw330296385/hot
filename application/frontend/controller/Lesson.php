@@ -238,7 +238,9 @@ class Lesson extends Base{
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
         // 教练列表
         $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
-        $gradeCategoryList = $this->GradeService->getGradeCategory(1);
+        // 课程分类
+        $GradeCategoryService = new \app\service\GradeCategoryService;
+        $gradeCategoryList = $this->GradeService->getGradeCategoryList();
         $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         $this->assign('campInfo',$campInfo);
