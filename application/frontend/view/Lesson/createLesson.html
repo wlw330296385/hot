@@ -67,8 +67,11 @@
                 <div class="mui-input-row">
                     <a href="#lessonType" class="mui-navigate-right">
                         <label>课程类型</label>
-                        <span class="lessonTypeCont domData dataSpan" name="gradecate"></span>
+                        <span class="lessonTypeCont dataSpan"></span>
+                        <input type="hidden" name="gradecate" class="gradecate data" value="">
                         <input type="hidden" name="gradecate_id" class="gradecate_id data" value="">
+                        <input type="hidden" name="gradecate_setion" class="gradecate_setion data" value="">
+                        <input type="hidden" name="gradecate_setion_id" class="gradecate_setion_id data" value="">
                     </a>
                 </div>
                 <div class="mui-input-row">
@@ -249,21 +252,35 @@
     <!--课程类型-->
     <div id="lessonType" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course"><strong>课程类型</strong></span>
+        <div class="page-header border-b">
+            <span class="course">
+                <strong>课程类型</strong>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list">
+            <div class="mui-scroll ">
                     {volist name="gradeCategoryList" id="vol"}
-                    <!--<li class="mui-table-view-cell listli detalisli lessonType" data-id="{$vol.id}">{$vol.name}</li>-->
-                    {volist name="$vol['_data']" id="vo"}
-                    <li class="mui-table-view-cell listli detalisli lessonType" data-id="{$vo.id}">{$vo.name}</li>
-                    {/volist} {/volist}
-                </ul>
+                    <ul class="mui-table-view list lesType">
+                        <li class="mui-table-view-cell mui-collapse listli detalisli">
+                            <a class="mui-navigate-right daType" href="#" data-id="{$vol.id}">{$vol.name}</a>
+                            <div class="mui-collapse-content">
+                                {volist name="$vol['daughter']" id="vo"}
+                                <div class="mui-input-row lessonType"  data-id="{$vo.id}">
+                                    {$vo.name}
+                                </div>
+                                {/volist}
+                            </div>
+                        </li>
+                    </ul>
+                    {/volist}
             </div>
         </div>
+
     </div>
+
+
+
+
     <!--训练地点-->
     <div id="trainLocation" class="mui-popover">
         <div class="mui-popover-arrow"></div>
