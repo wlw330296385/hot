@@ -15,6 +15,9 @@ class Team extends Base {
         $team_id = input('team_id');
         $teamS = new TeamService();
         $teamInfo = $teamS->getTeam(['id' => $team_id]);
+        if (!$teamInfo) {
+            $this->error('没有球队信息');
+        }
         $this->team_id = $team_id;
         $this->teamInfo = $teamInfo;
         $this->assign('team_id', $team_id);
@@ -180,7 +183,10 @@ class Team extends Base {
         $directentry = 0;
         // 如果有event_id参数即修改活动，没有就新增活动并录入活动（事后录活动）
         if ($event_id === 0) {
-            $eventInfo = [];
+            $eventInfo = [
+                'id' => 0,
+                'send_message' => 0
+            ];
             $directentry = 1;
             $memberlist = [];
         } else {
@@ -191,6 +197,7 @@ class Team extends Base {
                 $eventInfo['album'] = json_decode($eventInfo['album'], true);
             }
         }
+
         $this->assign('event_id', $event_id);
         $this->assign('eventInfo', $eventInfo);
         $this->assign('directentry', $directentry);
