@@ -45,7 +45,7 @@ class Team extends Base {
     public function teamedit() {
         // 获取球队有角色身份的会员列表
         $teamS = new TeamService();
-        $rolemembers = $teamS->getTeamRoleMembers($this->team_id);
+        $rolemembers = $teamS->getTeamRoleMembers($this->team_id, 'team_member.member_id asc');
         //dump($rolemembers);
         // 教练、队委名单集合组合
         $roleslist = [
@@ -59,7 +59,7 @@ class Team extends Base {
                 $roleslist['coach_ids'] .= $rolemember['member_id'].',';
                 $roleslist['coach_names'] .= $rolemember['member'].',';
             }
-            if ($rolemember['type'] ==1 ) {
+            if ($rolemember['type'] == 1 ) {
                 $roleslist['committee_ids'] .= $rolemember['member_id'].',';
                 $roleslist['committee_names'] .= $rolemember['member'].',';
             }
