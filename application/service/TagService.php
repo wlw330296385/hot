@@ -59,20 +59,45 @@ class TagService {
      * @param $data = [
      *  'comment_type', 'commented', 'commented_id', 'member_id', 'member', 'member_avatar', 'tag_id, 'tag'
      * ]
-     * @param array $tag_idArr 提交的评论标签tag表id集合数组
      * @return array|false
      */
-    public function addTagComment($data, $tag_idArr=[]) {
+    public function addTagComment($data) {
+        // 拆分提交的tag_id集合、tag集合
+        $tag_idArr = explode(',', $data['tag_ids']);
+        $tagArr = explode(',', $data['tags']);
+        $saveData = [];
+        // 遍历拆分提交的tag_id
+        // 会员只能对评论实体发布一次评论标签
+        // 组合保存数据
         $commentModel = new TagComment();
-        //$comment = $commentModel->data($data)->save();
-        $comment = $commentModel->saveAll($data);
-        if ($comment) {
-            $tagModel = new Tag();
-            foreach ($tag_idArr as $tag_id) {
-                $tagModel->where('id', $tag_id)->setInc('comment_num', 1);
+        foreach ($tag_idArr as $k => $tag_id) {
+            $hadComment = $commentModel->where([ 'comment_type' => $data['comment_type'], 'commented_id' => $data['commented_id'], 'member_id' => $data['member_id'] ])->find();
+            if ($hadComment) {
+                return ['code' => 100, 'msg' => '您已经发表"'.$tagArr[$k].'"印象，不能再次发表喔'];
+            } else {
+                array_push($saveData, [
+                    'comment_type' => $data['comment_type'],
+                    'commented' => $data['commented'],
+                    'commented_id' => $data['commented_id'],
+                    'member_id' => $data['member_id'],
+                    'member' => $data['member'],
+                    'member_avatar' => $data['member_avatar'],
+                    'tag_id' => $tag_id,
+                    'tag' => $tagArr[$k]
+                ]);
             }
         }
-        return $comment;
+        // 保存评论记录
+        // 返回结果
+        $res = $commentModel->saveAll($saveData);
+        if ($res) {
+            // 评论成功 更新所提交的tag被评论次数统计+1
+            $tagModel = new Tag();
+            $tagModel->where('id','in', $data['tag_ids'])->setInc('comment_num', 1);
+            return ['code' => 200, 'msg' => __lang('MSG_200')];
+        } else {
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
     }
 
     /** 获取标签评论记录（带统计评论次数）
