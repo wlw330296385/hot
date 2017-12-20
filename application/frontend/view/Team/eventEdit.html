@@ -840,43 +840,46 @@
         var toSignUpList = function () {
             var url = "{:url('api/team/teameventmemberall')}";
             var event_id = "{$event_id}";
-            mui.ajax({
-                url: url,
-                data: {
-                    event_id: event_id,
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    if (data.code == 200) {
-                        var inactiveDiv = '';
-                        totalLength = data.data.length;
-                        $(".mui-badge").text(totalLength);
+            if (directentry == 0) {
+                mui.ajax({
+                    url: url,
+                    data: {
+                        event_id: event_id,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data)
+                        if (data.code == 200) {
+                            var inactiveDiv = '';
+                            totalLength = data.data.length;
+                            $(".mui-badge").text(totalLength);
 
-                        memberList = [];//报名人员列表数组
-                        $("#inactiveList").empty();
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            inactiveDiv += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].member + '</font><input name="member" value="' + data.data[i].member_id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" ></div>'
-                            $("#inactiveList").append(inactiveDiv);
-                            memberList.push({ member: data.data[i].member, member_id: data.data[i].member_id, id: data.data[i].id });
-                        };
-                        console.log(memberList)
+                            memberList = [];//报名人员列表数组
+                            $("#inactiveList").empty();
+                            for (var i = 0; i <= data.data.length - 1; i++) {
+                                inactiveDiv += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].member + '</font><input name="member" value="' + data.data[i].member_id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" ></div>'
+                                $("#inactiveList").append(inactiveDiv);
+                                memberList.push({ member: data.data[i].member, member_id: data.data[i].member_id, id: data.data[i].id });
+                            };
+                            console.log(memberList)
 
-                        if ($("#inactiveList").html() == '') {
-                            $(".checkChecked").append('<p class="nohave">没有学员哦</p>');
+                            if ($("#inactiveList").html() == '') {
+                                $(".checkChecked").append('<p class="nohave">没有学员哦</p>');
+                            }
+                            changeIndex();//调用-更新序号
+                            totalNum = $(".checkboxCont").length;
                         }
-                        changeIndex();//调用-更新序号
-                        totalNum = $(".checkboxCont").length;
-                    }
 
-                },
-                error: function (xhr, type, errerThrown) {
-                    console.log(type);
-                }
-            });
+                    },
+                    error: function (xhr, type, errerThrown) {
+                        console.log(type);
+                    }
+                });
+            }
+
         };
 
 

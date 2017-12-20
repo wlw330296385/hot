@@ -256,9 +256,7 @@
                     <a href="#Impress" class="mui-navigate-right myimpress">发表我的印象</a>
                 </span>
             </div>
-            <div class="impress whitebg">
-
-            </div>
+            <div class="impress whitebg tagCommentList"></div>
 
             <!--底部操作-->
             <ul class="mui-table-view operation mt">
@@ -299,26 +297,8 @@
                     <span>我的印象</span>
                     <a href="#Impress" class="mui-icon mui-icon-closeempty"></a>
                 </h5>
-                <div class="impressSide whitebg">
-                    <span class="choiseTag">球风良好</span>
-                    <span class="choiseTag">诚信守时</span>
-                    <span class="choiseTag">尊重对手</span>
-                    <span class="choiseTag">年轻气盛</span>
-                    <span class="choiseTag">老当益壮</span>
-                    <span class="choiseTag">球风硬朗</span>
-                    <span class="choiseTag">拖拉迟到</span>
-                    <span class="choiseTag">有啦啦队</span>
-                    <span class="choiseTag">氛围很好</span>
-                    <span class="choiseTag">小动作很多</span>
-                    <span class="choiseTag">速度型</span>
-                    <span class="choiseTag">进攻极强</span>
-                    <span class="choiseTag">不尊重裁判</span>
-                    <span class="choiseTag">放飞机</span>
-                    <span class="choiseTag">防守极强</span>
-                    <span class="choiseTag">攻守兼备</span>
-
-                </div>
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="impressSubmit">提交</li>
+                <div class="impressSide whitebg tagAll"></div>
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli commentBtn" id="impressSubmit">提交</li>
             </ul>
         </div>
     </div>
@@ -339,7 +319,7 @@
         $(function () {
 
             // 印象评价
-            $(".choiseTag").on("tap", '', function () {
+            $(document).on("tap", '.choiseTag', function () {
                 if ($(this).hasClass("bgorange")) {
                     $(this).removeClass("bgorange");
                 } else {
@@ -347,11 +327,11 @@
                 }
             });
 
-            $(".myimpress").on("tap", '', function () {
+            $(document).on("tap", '.myimpress', function () {
                 $(".impressSide .bgorange").removeClass("bgorange");
             });
 
-            $("#impressSubmit").on("tap", '', function () {
+            $(document).on("tap", '#impressSubmit', function () {
                 var hasOrange = $(".impressSide").children("span").hasClass("bgorange")
                 if (hasOrange == false) {
                     mui.toast("你还没有选择印象标签");
@@ -430,12 +410,44 @@
                 });
             });
 
+            // 发表印象标签
+            $(".commentBtn").on("tap", '', function () {
+                var commented = "{$teamInfo.name}";
+                var commented_id = "{$teamInfo.id}";
+
+                mui.ajax("{:url('api/team/applyjointeam')}", {
+                    data: {
+                        comment_type: 2,
+                        commented: commented,
+                        commented_id: commented_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast("操作成功，待球队审核...");
+                            mui('#yqpopover').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                            mui('#yqpopover').popover('toggle');
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
             //判断当前的关注状态
             followStatus();
             teamMemberlist();
-
-
-
+            toTagAllList(); //所有标签列表
+            toTagCommentList(); //已经评价的标签列表
         });
 
         // 判断当前的关注状态
@@ -485,7 +497,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli logostyle" id="logoframe"><img class="logostyle" src="' + data.data[i].avatar+ '" alt=""><div class="mui-media-body">' + data.data[i].role_text + '</div></li>'
+                            newli += '<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli logostyle" id="logoframe"><img class="logostyle" src="' + data.data[i].avatar + '" alt=""><div class="mui-media-body">' + data.data[i].role_text + '</div></li>'
                         }
                         $(".teamMemberList").empty();
                         if (newli == '') {
@@ -502,6 +514,72 @@
                 }
             });
         };
+
+
+        //获取所有标签列表
+        var toTagAllList = function () {
+            mui.ajax("{:url('api/tag/tagall')}", {
+                data: {},
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var div = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            div = div + '<span class="choiseTag">' + data.data[i].tag_name + '</span>'
+                        }
+                        $(".tagAll").empty();
+                        $(".tagAll").append(div);
+
+                        if (div == '') {
+                            $(".tagAll").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        };
+
+
+        //获取已评价标签列表
+        var toTagCommentList = function () {
+            mui.ajax("{:url('api/tag/commentlist')}", {
+                data: {
+                    comment_type: 2,
+                    commented_id: "{$teamInfo.id}",
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var div = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            div = div + '<span class="choiseTag">' + data.data[i].tag_name + '</span>'
+                        }
+                        $(".tagCommentList").empty();
+                        $(".tagCommentList").append(div);
+
+                        if (div == '') {
+                            $(".tagCommentList").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        };
+
 
 
     </script>
