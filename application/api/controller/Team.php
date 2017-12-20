@@ -390,9 +390,12 @@ class Team extends Base {
             $teamS = new TeamService();
             $resUpdateTeamEvent = $teamS->updateTeamEvent($data);
             if ($resUpdateTeamEvent['code'] == 200) {
-                if (input('?memberdata')) {
-                    $memberdata = json_decode($data['memberdata'], true);
-                    $teamS->saveAllTeamEventMember($memberdata);
+                if ( input('?memberData') && !empty($data['memberData']) ) {
+                    $memberArr = json_decode($data['memberData'], true);
+                    foreach ($memberArr as $k => $member) {
+                        $memberArr[$k]['status'] = 3;
+                    }
+                    $teamS->saveAllTeamEventMember($memberArr);
                 }
             }
             return json($resUpdateTeamEvent);
@@ -416,15 +419,20 @@ class Team extends Base {
                 $data['end_time'] = strtotime(input('end_time'));
                 // 结束时间小于当前时间即活动已完成
                 if ($data['end_time'] < time()) {
-                    $data['status'] = 2;
+                    $data['is_finished'] = 1;
                 }
             }
             $teamS = new TeamService();
             $resCreateTeamEvent = $teamS->createTeamEvent($data);
             if ($resCreateTeamEvent['code'] == 200) {
-                if (input('?memberdata')) {
-                    $memberdata = json_decode($data['memberdata'], true);
-                    $teamS->saveAllTeamEventMember($memberdata);
+                if (input('?memberData')) {
+                    $memberArr = json_decode($data['memberData'], true);
+                    foreach ($memberArr as $k => $member) {
+                        $memberArr[$k]['event_id'] = $resCreateTeamEvent['data'];
+                        $memberArr[$k]['event'] = $data['event'];
+                        $memberArr[$k]['status'] = 3;
+                    }
+                    $teamS->saveAllTeamEventMember($memberArr);
                 }
             }
             return json($resCreateTeamEvent);
