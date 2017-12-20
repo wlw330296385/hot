@@ -24,20 +24,26 @@
         p {
             text-indent: 22px;
         }
+        label .mui-icon{ line-height: normal !important; }
         
         .mui-input-row a {
             display: table;
             width: 100%;
         }
+        #lessonType .lessonType{
+            padding:12px 6px; border-bottom: 1px solid #EEE;
+        }
+        #lessonType .lessonType:last-child{
+            border-bottom: none;
+        }
         
-        .mui-navigate-right input[type='text'] {
+        .mui-navigate-right input[type='text'],.select-row {
             padding-right: 30px !important;
         }
         
         .number {
             width: 20% !important;
         }
-        
         .nohave {
             margin: 0;
             padding: 15px;
@@ -94,7 +100,7 @@
                         <label>训练周期</label>
                         <span class="select-row">
                     <select class="data" name="week">
-                        <option value="可选">可选</option>
+                        <option value="不限">不限</option>
                         <option value="周日">周日</option>
                         <option value="周一">周一</option>
                         <option value="周二">周二</option>
@@ -195,8 +201,8 @@
                 </div>
 
                 <div class="mui-input-row">
-                    <label class="wd49">是否设为私密课程</label>
-                    <span class="select-row">
+                    <label class="wd49" id="tipSiMi">设为私密课程 <span class="mui-icon mui-icon-info"></span></label>
+                    <span class="select-row mui-navigate-right">
                         <select id="lessonPrivate" class="data" name="isprivate">
                             <option value="0">否</option>
                             <option value="1">是</option>
@@ -265,9 +271,7 @@
                             <a class="mui-navigate-right daType" href="#" data-id="{$vol.id}">{$vol.name}</a>
                             <div class="mui-collapse-content">
                                 {volist name="$vol['daughter']" id="vo"}
-                                <div class="mui-input-row lessonType"  data-id="{$vo.id}">
-                                    {$vo.name}
-                                </div>
+                                <div class="mui-input-row lessonType"  data-id="{$vo.id}">{$vo.name}</div>
                                 {/volist}
                             </div>
                         </li>
@@ -472,6 +476,10 @@
         $("body").on('tap', '.mui-backdrop', function () {
             mui(".mui-popover.mui-active").popover("toggle");
         })
+
+        document.getElementById("tipSiMi").addEventListener('tap', function() {
+            mui.alert('私密课程是不对外公开的课程，只有被指定的会员才能购买。例如您想开设针对某个群体的特惠课程，只允许他们购买，那就把此课程定为私密课程，创建完成后不会出现在公开的课程列表，由训练营的工作人员直接发送该课程链接给指定会员进行购买。', '设为私密课程');
+        });
     })(mui);
 
     var getProvince = '';
@@ -526,6 +534,7 @@
         });
     })(mui, document);
 
+
     $(function () {
 
         // 上课星期
@@ -539,11 +548,23 @@
         })
         // 课程类型
         $(".lessonType").click(function () {
-            var lessonType = $(this).html();
 
-            $(".lessonTypeCont").html(lessonType);
-            var id = $(this).attr('data-id');
-            $(".gradecate_id").val(id);
+            var gradecate_setion = $(this).parent().parent().find("a").text();
+            var gradecate_setion_id = $(this).parent().parent().find("a").attr('data-id');
+            var gradecate = $(this).text();
+            var gradecate_id = $(this).attr('data-id');
+            $("input[name='gradecate_setion']").val(gradecate_setion);
+            $("input[name='gradecate_setion_id']").val(gradecate_setion_id);
+            $("input[name='gradecate']").val(gradecate);
+            $("input[name='gradecate_id']").val(gradecate_id);
+
+            console.log(gradecate_setion)
+            console.log(gradecate_setion_id)
+            console.log(gradecate)
+            console.log(gradecate_id)
+
+
+            $(".lessonTypeCont").text(gradecate_setion+gradecate);
             mui("#lessonType").popover("toggle");
         })
         // 训练地点
@@ -919,15 +940,13 @@
                         newli = newli + '<li class="mui-table-view-cell listli detalisli trainLocation" data-id="' + data.data[i].court_id + '" data-location="' + data.data[i].location + '">' + data.data[i].court + '</li>'
                     }
                     $("ul.courtlist").empty();
-                    if (newli == '') {
-                        var createCount = "{:url('/frontend/court/createcourt/camp_id/')}" + campID;
-                        newli = '<li class="mui-text-center"><p>没有查找到场地数据哦</p><a href="' + createCount + '" class="mui-btn mui-btn-primary">添加场地</a></li>'  ///// 添加场地按钮///////////////////////////////////////////////
-                    }
-                    $("ul.courtlist").append('<li class="mui-table-view-cell listli detalisli trainLocation" data-id="0" data-location="自选地点">非固定</li>'+newli);
+                    $("ul.courtlist").append('<li class="mui-table-view-cell listli detalisli trainLocation" data-id="-1" data-location="待定">待定</li><li class="mui-table-view-cell listli detalisli trainLocation" data-id="0" data-location="自选地点">非固定</li>'+newli);
 
                 } else {
 //                    mui.toast('您的训练营还没有自己训练场地，建议添加');
-                    $("ul.courtlist").append('<li class="mui-table-view-cell listli detalisli trainLocation" data-id="0" data-location="自选地点">非固定</li>');
+                    $("ul.courtlist").empty();
+                    $("ul.courtlist").append('<li class="mui-table-view-cell listli detalisli trainLocation" data-id="-1" data-location="待定">待定</li><li class="mui-table-view-cell listli detalisli trainLocation" data-id="0" data-location="自选地点">非固定</li>');
+                    $("ul.courtlist").after('<ul class="mui-table-view list mb"><li class="mui-table-view-cell listli detalisli">您的训练营还没有自己训练场地，建议先选择“待定”，稍后到场地管理页面添加了场地后再作修改。</li></ul><p class="ptb4 mui-text-center"><a href="' + createCount + '" class="mui-btn mui-btn-primary">我要立即添加场地</a></p>');
                 }
             },
             error: function (xhr, type, errerThrown) {

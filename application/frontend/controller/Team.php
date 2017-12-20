@@ -15,6 +15,9 @@ class Team extends Base {
         $team_id = input('team_id');
         $teamS = new TeamService();
         $teamInfo = $teamS->getTeam(['id' => $team_id]);
+        /*if (!$teamInfo) {
+            $this->error('没有球队信息');
+        }*/
         $this->team_id = $team_id;
         $this->teamInfo = $teamInfo;
         $this->assign('team_id', $team_id);
@@ -45,7 +48,7 @@ class Team extends Base {
     public function teamedit() {
         // 获取球队有角色身份的会员列表
         $teamS = new TeamService();
-        $rolemembers = $teamS->getTeamRoleMembers($this->team_id);
+        $rolemembers = $teamS->getTeamRoleMembers($this->team_id, 'team_member.member_id asc');
         //dump($rolemembers);
         // 教练、队委名单集合组合
         $roleslist = [
@@ -59,7 +62,7 @@ class Team extends Base {
                 $roleslist['coach_ids'] .= $rolemember['member_id'].',';
                 $roleslist['coach_names'] .= $rolemember['member'].',';
             }
-            if ($rolemember['type'] ==1 ) {
+            if ($rolemember['type'] == 1 ) {
                 $roleslist['committee_ids'] .= $rolemember['member_id'].',';
                 $roleslist['committee_names'] .= $rolemember['member'].',';
             }
@@ -180,13 +183,19 @@ class Team extends Base {
         $directentry = 0;
         // 如果有event_id参数即修改活动，没有就新增活动并录入活动（事后录活动）
         if ($event_id === 0) {
-            $eventInfo = [];
+            $eventInfo = [
+                'id' => 0,
+                'send_message' => 0
+            ];
             $directentry = 1;
             $memberlist = [];
         } else {
             $teamS = new TeamService();
             $eventInfo = $teamS->getTeamEventInfo(['id' => $event_id]);
             $memberlist = $teamS->teamEventMembers(['event_id' => $event_id]);
+            if (!empty($eventInfo['album'])) {
+                $eventInfo['album'] = json_decode($eventInfo['album'], true);
+            }
         }
 
         $this->assign('event_id', $event_id);
@@ -212,6 +221,9 @@ class Team extends Base {
         $event_id = input('param.event_id');
         $teamS = new TeamService();
         $eventInfo = $teamS->getTeamEventInfo(['id' => $event_id]);
+        if (!empty($eventInfo['album'])) {
+            $eventInfo['album'] = json_decode($eventInfo['album'], true);
+        }
         // 获取会员在球队角色身份
         $teamrole = $teamS->checkMemberTeamRole($eventInfo['team_id'], $this->memberInfo['id']);
         $memberlist = $teamS->teamEventMembers(['event_id' => $event_id]);

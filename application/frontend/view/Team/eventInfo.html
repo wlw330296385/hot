@@ -122,45 +122,36 @@
 
             <div class="page-header whitebg">
                 <span class="course wd52">活动花絮</span>
-                <span class="more">评论 16 |
-                    <i class="mui-icon-extra mui-icon-extra-like f16"></i>：65</span>
+                <span class="more">评论 16 | <i class="mui-icon-extra mui-icon-extra-like f16"></i>：65</span>
             </div>
 
             <!--图片轮播-->
+
             <div id="slider" class="mui-slider" style="height:120px">
+                {notempty name="eventInfo.album"}
                 <div class="mui-slider-group mui-slider-loop">
                     <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
                     <div class="mui-slider-item mui-slider-item-duplicate">
-                        <a href="#">
-                            <img src="/static/frontend/images/1.jpg">
-                        </a>
+                        <img src="{$eventInfo.album[0]}">
                     </div>
                     <!-- 第一张 -->
+                    {volist name="eventInfo.album" id="vol"}
                     <div class="mui-slider-item">
-                        <a href="#">
-                            <img src="/static/frontend/images/1.jpg">
-                        </a>
+                        <img src="{$vol}">
                     </div>
-                    <!-- 第二张 -->
-                    <div class="mui-slider-item">
-                        <a href="#">
-                            <img src="/static/frontend/images/2.jpg">
-                        </a>
-                    </div>
+                    {/volist}
                     <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
                     <div class="mui-slider-item mui-slider-item-duplicate">
-                        <a href="#">
-                            <img src="/static/frontend/images/2.jpg">
-                        </a>
+                        <img src="{$eventInfo.album|array_pop}">
                     </div>
                 </div>
-                <div class="mui-slider-indicator">
-                    <div class="mui-indicator mui-active"></div>
-                    <div class="mui-indicator"></div>
-                </div>
+                {else/}
+                <p class="mui-text-center" style="padding-top:45px;">还没有上传花絮图哦</p>
+                {/notempty}
             </div>
 
-            <div class="page-header">
+
+            <div class="page-header whitebg border-b">
                 <span class="course" style="font-size: 14px">评论</span>
             </div>
             <ul class="mui-table-view comment-list">
@@ -195,7 +186,7 @@
                 </a>
             </ul>
 
-            <ul class="mui-table-view operation mt ststus4" style="display:none">
+            <ul class="mui-table-view operation mt status4" style="display:none">
                 <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgred signup">
                     报名参加
                 </li>
@@ -210,7 +201,7 @@
 
     </div>
 
-    
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
@@ -285,15 +276,15 @@
             var teamrole = "{$teamrole}";
             var end_time = "{$eventInfo.end_time}";
             if (teamrole > 0 && time > end_time) {
-                $(".ststus3").show();
-            } else {
-                $(".ststus4").show();
+                $(".status3").show();
+            } else if (teamrole > 0 && time < end_time) {
+                $(".status4").show();
             }
 
             if (teamrole < 0 && time < end_time) {
-                $(".ststus2").show();
-            } else {
-                $(".ststus1").show();
+                $(".status2").show();
+            } else if (teamrole < 0 && time > end_time) {
+                $(".status1").show();
             }
         }
     </script>

@@ -91,6 +91,15 @@
                     </a>
                 </div>
 
+                <div class="mui-input-row">
+                        <label>课程类型</label>
+                        <span class="gradeTypeCont"></span>
+                        <input type="hidden" name="gradecate" class="gradecate data" value="">
+                        <input type="hidden" name="gradecate_id" class="gradecate_id data" value="">
+                        <input type="hidden" name="gradecate_setion" class="gradecate_setion data" value="">
+                        <input type="hidden" name="gradecate_setion_id" class="gradecate_setion_id data" value="">
+                </div>
+
                 <div class="mui-input-row h-auto">
                     <a href="#student" id="setStudentCBox" class="mui-navigate-right" style="display: flex">
                         <label>学员名单</label>
@@ -98,14 +107,6 @@
                         <div id="hideStList">
                         </div>
                         <input type="hidden" name="students" class="students data" value="">
-                    </a>
-                </div>
-
-                <div class="mui-input-row">
-                    <a href="#gradeType" class="mui-navigate-right">
-                        <label>班级类型</label>
-                        <span class="gradeTypeCont gradecate domData" name="gradecate"></span>
-                        <input type="hidden" name="gradecate_id" class="gradecate_id data" value="">
                     </a>
                 </div>
 
@@ -233,13 +234,13 @@
     <div id="lessonType" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course"><strong>课程类型</strong></span>
+            <span class="course"><strong>所属课程</strong></span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <ul class="mui-table-view list">
                     {volist name="lessonList" id="vol"}
-                    <li class="mui-table-view-cell listli detalisli lessonType lesson" data-id="{$vol.id}">{$vol.lesson}</li>
+                    <li class="mui-table-view-cell listli detalisli lessonType lesson" data-id="{$vol.id}" data-gradecate="{$vol.gradecate}" data-gradecate_id="{$vol.gradecate_id}" data-gradecate_setion="{$vol.gradecate_setion}" data-gradecate_setion_id="{$vol.gradecate_setion_id}">{$vol.lesson}</li>
                     {/volist}
                 </ul>
             </div>
@@ -385,33 +386,10 @@
             </div>
         </div>
     </div>
-    <!--班级类型-->
-    <div id="gradeType" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course"><strong>班级类型</strong></span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-
-                <ul class="mui-table-view list">
-                    {volist name="gradecateList" id="vol"}
-                    <li class="mui-table-view-cell listli detalisli">
-                        {$vol.name} {notempty name="vol._data"} {volist name="$vol['_data']" id="v"}
-                        <li class="mui-table-view-cell listli detalisli gradeType" data-id="{$v.id}">
-                            {$v.name}
-                        </li>
-                        {/volist} {/notempty}
-                    </li>
-                    {/volist}
-                </ul>
-            </div>
-        </div>
-    </div>
     <!--训练地点-->
     <div id="trainLocation" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
+        <div class="page-header border-b">
             <span class="course"><strong>训练地点</strong></span>
         </div>
         <div class="mui-scroll-wrapper">
@@ -690,17 +668,6 @@
             })
 
 
-
-            // 班级类型
-            var gradecate_id = "";
-            $(".gradeType").click(function () {
-                var gradeType = $.trim($(this).text());
-                gradecate_id = $(this).attr('data-id');
-                $(".gradecate_id").val(gradecate_id);
-                $(".gradeTypeCont").text(gradeType);
-                mui("#gradeType").popover("toggle");
-            })
-
             // 训练地点
             $(".courtlist").on('click', 'li.trainLocation', function () {
                 var trainLocation = $(this).text();
@@ -854,6 +821,17 @@
 
             //所属课程api
             $(".lessonType").click(function () {
+                //获取课程的大小类型及ID
+                var gradecate_setion = $(this).attr('data-gradecate_setion');
+                var gradecate_setion_id = $(this).attr('data-gradecate_setion_id');
+                var gradecate = $(this).attr('data-gradecate');
+                var gradecate_id = $(this).attr('data-gradecate_id');
+                $("input[name='gradecate_setion']").val(gradecate_setion);
+                $("input[name='gradecate_setion_id']").val(gradecate_setion_id);
+                $("input[name='gradecate']").val(gradecate);
+                $("input[name='gradecate_id']").val(gradecate_id);
+                $(".gradeTypeCont").text(gradecate_setion+gradecate);
+                //获取课程名称及ID并获取对应的学生
                 var lessonType = $(this).text();
                 var lesson_id = $(this).attr("data-id");
                 mui.ajax("{:url('api/lesson_member/getLessonMemberListNoPageApi')}", {
@@ -882,7 +860,6 @@
                         console.log(type);
                     }
                 });
-
                 $(".lesson_id").val(lesson_id);
                 $(".lessonTypeCont").val(lessonType);
                 mui('#lessonType').popover('toggle');
@@ -967,14 +944,14 @@
                             newli = newli + '<li class="mui-table-view-cell listli detalisli trainLocation" data-id="' + data.data[i].court_id + '" data-location="' + data.data[i].location + '">' + data.data[i].court + '</li>'
                         }
                         $("ul.courtlist").empty();
-                        if (newli == '') {
-                            var createCount = "{:url('/frontend/court/createcourt/camp_id/')}" + campID;
-                            newli = '<li class="mui-text-center"><p>没有查找到场地数据哦</p><a href="' + createCount + '" class="mui-btn mui-btn-primary">添加场地</a></li>'  ///// 添加场地按钮///////////////////////////////////////////////
-                        }
-                        $("ul.courtlist").append(newli);
+                        $("ul.courtlist").append('<li class="mui-table-view-cell listli detalisli trainLocation" data-id="-1" data-location="待定">待定</li><li class="mui-table-view-cell listli detalisli trainLocation" data-id="0" data-location="自选地点">非固定</li>'+newli);
 
                     } else {
-                        mui.toast('数据获取失败,请稍候再试');
+//                        mui.toast('数据获取失败,请稍候再试');
+                        $("ul.courtlist").empty();
+                        $("ul.courtlist").append('<li class="mui-table-view-cell listli detalisli trainLocation" data-id="-1" data-location="待定">待定</li><li class="mui-table-view-cell listli detalisli trainLocation" data-id="0" data-location="自选地点">非固定</li>');
+                        var createCount = "{:url('/frontend/court/createcourt/camp_id/')}" + campID;
+                        $("ul.courtlist").after('<ul class="mui-table-view list mb"><li class="mui-table-view-cell listli detalisli">您的训练营还没有自己训练场地，建议先选择“待定”，稍后到场地管理页面添加了场地后再作修改。</li></ul><p class="ptb4 mui-text-center"><a href="' + createCount + '" class="mui-btn mui-btn-primary">我要立即添加场地</a></p>');
                     }
                 },
                 error: function (xhr, type, errerThrown) {

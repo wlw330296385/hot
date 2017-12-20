@@ -63,12 +63,6 @@ AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geo
     });
     geolocation.getCurrentPosition(function (status, result) {
         console.log(result);
-        N = result.position.N;
-        Q = result.position.Q;
-        lng = result.position.lng;
-        lat = result.position.lat;
-        // console.log(lng)
-        // console.log(lat)
     });
 
 
@@ -85,5 +79,10 @@ AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geo
         //TODO 针对选中的poi实现自己的功能
         placeSearch.setCity(e.poi.adcode);
         placeSearch.search(e.poi.name)
+        console.log(e.poi)
+        console.log(e.poi.location.lng)
+        console.log(e.poi.location.lat)
+        lng = e.poi.location.lng
+        lat = e.poi.location.lat
     });
 });

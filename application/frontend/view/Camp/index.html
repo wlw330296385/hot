@@ -69,7 +69,7 @@
                         <a href="{:url('member/mygrade')}">
                             <div class="goConfirm">
                                 <svg class="coloricon" aria-hidden="true">
-                                    <use xlink:href="#icon-training-class"></use>
+                                    <use xlink:href="#icon-mine-class"></use>
                                 </svg>
                                 <div class="mui-media-body">班级</div>
                             </div>
@@ -107,7 +107,7 @@
                         <a href="{:url('member/invitation')}">
                             <div class="goConfirm">
                                 <svg class="coloricon" aria-hidden="true">
-                                    <use xlink:href="#icon-mine-attention"></use>
+                                    <use xlink:href="#icon-mine-invite"></use>
                                 </svg>
                                 <div class="mui-media-body">邀请</div>
                             </div>
@@ -135,6 +135,7 @@
                 </a>
                 </ul>
                 <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module2">
+                    {if condition="($vol.type == '粉丝') or ($vol.type == '学生')" }
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                         <a href="{:url('camp/campInfo',['camp_id'=>$vol['camp_id']])}">
                             <span class="icon iconfont icon-training-camp"></span>
@@ -145,17 +146,29 @@
                         <a href="{:url('lesson/lessonList')}?camp_id={$vol['camp_id']}&camp_name={$vol.camp.camp}">
                             <!-- <a href="lesson/lessonList/?camp_id={$vol.id}"> -->
                             <span class="icon iconfont icon-training-course"></span>
-                            <div class="mui-media-body">课程</div>
+                            <div class="mui-media-body">我的课时</div>
                         </a>
                     </li>
-                    {if condition="($vol.type == '粉丝') or ($vol.type == '学生')" }
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                         <a href="{:url('camp/clientOfcamp',['camp_id'=>$vol['camp_id']])}">
-                            <span class="icon iconfont icon-training-training"></span>
+                            <span class="icon iconfont icon-training-myfiles"></span>
                             <div class="mui-media-body colororange">我的档案</div>
                         </a>
                     </li>
                     {else/}
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="{:url('camp/powerCamp',['camp_id'=>$vol['camp_id']])}">
+                            <span class="icon iconfont icon-training-camp"></span>
+                            <div class="mui-media-body">训练营管理</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="{:url('lesson/lessonList')}?camp_id={$vol['camp_id']}&camp_name={$vol.camp.camp}">
+                            <!-- <a href="lesson/lessonList/?camp_id={$vol.id}"> -->
+                            <span class="icon iconfont icon-training-course"></span>
+                            <div class="mui-media-body">课程</div>
+                        </a>
+                    </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                         <a href="{:url('grade/gradeListWeek',['camp_id'=>$vol['camp_id']])}">
                             <span class="icon iconfont icon-training-record"></span>

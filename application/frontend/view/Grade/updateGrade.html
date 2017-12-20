@@ -90,6 +90,15 @@
                     <!--</a>-->
                 </div>
 
+                <div class="mui-input-row">
+                        <label>课程类型</label>
+                        <span class="gradeTypeCont">{$gradeInfo.gradecate_setion}{$gradeInfo.gradecate}</span>
+                        <input type="hidden" name="gradecate" class="gradecate data" value="{$gradeInfo.gradecate}">
+                        <input type="hidden" name="gradecate_id" class="gradecate_id data" value="{$gradeInfo.gradecate_id}">
+                        <input type="hidden" name="gradecate_setion" class="gradecate_setion data" value="{$gradeInfo.gradecate_setion}">
+                        <input type="hidden" name="gradecate_setion_id" class="gradecate_setion_id data" value="{$gradeInfo.gradecate_setion_id}">
+                </div>
+
                 <div class="mui-input-row h-auto">
                     <a href="#student" id="setStudentCBox" class="mui-navigate-right">
                         <label>学员名单</label>
@@ -106,14 +115,6 @@
                             <input type="hidden" class="stdListIni" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}" data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-lesson_id="{$vol.lesson_id}" data-lesson="{$vol.lesson}" data-member_id="{$vol.member_id}" data-member="{$vol.member}">
                             {/volist}
                         </div>
-                    </a>
-                </div>
-
-                <div class="mui-input-row">
-                    <a href="#gradeType" class="mui-navigate-right">
-                        <label>班级类型</label>
-                        <span class="gradeTypeCont gradecate domData" name="gradecate">{$gradeInfo.gradecate}</span>
-                        <input type="hidden" name="gradecate_id" class="gradecate_id data" value="{$gradeInfo.gradecate_id}">
                     </a>
                 </div>
 
@@ -388,7 +389,7 @@
     <!--训练地点-->
     <div id="trainLocation" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
+        <div class="page-header border-b">
             <span class="course"><strong>训练地点</strong></span>
         </div>
         <div class="mui-scroll-wrapper">
@@ -1005,14 +1006,13 @@
                             newli = newli + '<li class="mui-table-view-cell listli detalisli trainLocation" data-id="' + data.data[i].court_id + '" data-location="' + data.data[i].location + '">' + data.data[i].court + '</li>'
                         }
                         $("ul.courtlist").empty();
-                        if (newli == '') {
-                            var createCount = "{:url('/frontend/court/createcourt/camp_id/')}" + campID;
-                            newli = '<li class="mui-text-center"><p>没有查找到场地数据哦</p><a href="' + createCount + '" class="mui-btn mui-btn-primary">添加场地</a></li>'  ///// 添加场地按钮///////////////////////////////////////////////
-                        }
-                        $("ul.courtlist").append(newli);
+                        $("ul.courtlist").append('<li class="mui-table-view-cell listli detalisli trainLocation" data-id="-1" data-location="待定">待定</li><li class="mui-table-view-cell listli detalisli trainLocation" data-id="0" data-location="自选地点">非固定</li>'+newli);
 
                     } else {
-                        mui.toast('数据获取失败,请稍候再试');
+                        $("ul.courtlist").empty();
+                        $("ul.courtlist").append('<li class="mui-table-view-cell listli detalisli trainLocation" data-id="-1" data-location="待定">待定</li><li class="mui-table-view-cell listli detalisli trainLocation" data-id="0" data-location="自选地点">非固定</li>');
+                        var createCount = "{:url('/frontend/court/createcourt/camp_id/')}" + campID;
+                        $("ul.courtlist").after('<ul class="mui-table-view list mb"><li class="mui-table-view-cell listli detalisli">您的训练营还没有自己训练场地，建议先选择“待定”，稍后到场地管理页面添加了场地后再作修改。</li></ul><p class="ptb4 mui-text-center"><a href="' + createCount + '" class="mui-btn mui-btn-primary">我要立即添加场地</a></p>');
                     }
                 },
                 error: function (xhr, type, errerThrown) {
