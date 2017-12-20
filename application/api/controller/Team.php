@@ -384,7 +384,7 @@ class Team extends Base {
                 $data['end_time'] = strtotime(input('end_time'));
                 // 结束时间小于当前时间即活动已完成
                 if ($data['end_time'] < time()) {
-                    $data['status'] = 2;
+                    $data['is_finished'] = 1;
                 }
             }
             $teamS = new TeamService();
@@ -442,11 +442,10 @@ class Team extends Base {
             // 如果有传入年份 查询条件 create_time在区间内
             if (input('?year')) {
                 $year = input('year');
-                if (!is_numeric($year)) {
-                    return json(['code' => 100, '时间格式不合法']);
+                if (is_numeric($year)) {
+                    $tInterval = getStartAndEndUnixTimestamp($year);
+                    $map['create_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
                 }
-                $tInterval = getStartAndEndUnixTimestamp($year);
-                $map['create_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
                 unset($map['year']);
             }
             $teamS = new TeamService();
@@ -471,11 +470,10 @@ class Team extends Base {
             // 如果有传入年份 查询条件 create_time在区间内
             if (input('?year')) {
                 $year = input('year');
-                if (!is_numeric($year)) {
-                    return json(['code' => 100, '时间格式不合法']);
+                if (is_numeric($year)) {
+                    $tInterval = getStartAndEndUnixTimestamp($year);
+                    $map['create_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
                 }
-                $tInterval = getStartAndEndUnixTimestamp($year);
-                $map['create_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
                 unset($map['year']);
             }
             $teamS = new TeamService();
