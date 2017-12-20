@@ -12,7 +12,7 @@ class Court extends Model {
 		return $outdoor[$value];
 	}
     public function getStatusAttr($value){
-		$status = [-1=>'已拒绝',0=>'待审核',1=>'审核通过'];
+		$status = [-1=>'私有',0=>'待审核',1=>'系统公开'];
 		return $status[$value];
     }
 

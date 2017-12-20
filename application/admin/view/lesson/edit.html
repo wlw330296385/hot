@@ -17,12 +17,12 @@
                                 {volist name="gradeCategoryList" id="vol"}
                                 <optgroup label="{$vol.name}">
                                     {volist name="$vol.daughter" id="v"}
-                                    <option value="{$vol.id}" {eq name="$lessonInfo.gradecate_id" value="$vol.id" } selected="selected"{/eq}>{$v.name}{/volist}
-                                    </option>
+                                    <option value="{$v.id}" {eq name="$lessonInfo.gradecate_id" value="$v.id" } selected="true"{/eq}>{$v.name}{/volist}</option>
                                 </optgroup>
                                 
                                 {/volist}
                             </select>
+                            <input type="hidden" name="gradecate" value="{$lessonInfo.gradecate}">
                         </div>
                         <div class="col-sm-2 col-md-2"></div>
                         <button class="btn btn-success btn-flat">添加</button>
@@ -41,7 +41,7 @@
                         <label class="col-sm-2 col-md-2 control-label">图片</label>
                         <div class="col-sm-8 col-md-8">
                         <a class="btn-banner" href="#" title="点击替换图片">
-                                <img class="img-thumbnail" id="uploader-preview1" src="{$lessonInfo.cover}">
+                                <img class="img-thumbnail col-md-4" id="uploader-preview1" src="{$lessonInfo.cover}">
                                 <div class="row">
                                     <div id="filePicker1">选择上传</div>
                                 </div>
@@ -68,4 +68,13 @@
     var serverUrl = "{:url('Upload/gradeCategoryImg')}";
 </script>
 <script src="/static/backend/adminlte/js/upload/banner.js"></script>
+
+<script type="text/javascript">
+    
+    $(function(){
+        $('select[name=gradecate_id]').on('change',function(){
+            $('input[name=gradecate]').val($(this).find("option:selected").text());
+        })
+    })
+</script>
 {/block}

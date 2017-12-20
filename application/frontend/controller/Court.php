@@ -27,10 +27,10 @@ class Court extends Base{
         $courtInfo = $this->CourtService->getCourtInfoWithCourtCamp($court_id,$camp_id);
         $CampService = new \app\service\CampService;
         $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
-        if(!$courtInfo['campid'] && $power>2 && $courtInfo['camp_id'] == 0){
+        if(!$courtInfo['camp_id'] && $power>2 && $courtInfo['status'] == 1){
             // 可以将场地添加到自己场地
             $button = 1;
-        }elseif ( $courtInfo['camp_id']>0 && $power>2){
+        }elseif ( $courtInfo['camp_id'] == $camp_id && $power>2){
             //可以编辑
             $button = 2;
         }

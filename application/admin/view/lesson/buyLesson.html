@@ -23,6 +23,7 @@
 					</div>
 					<!-- /.box-header -->
 					<!-- form start -->
+					<form role="form" action="" method="post">
 						<div class="box-body">
 							<div class="form-group">
 								<label for="">选择训练营</label>
@@ -32,6 +33,7 @@
 									{/volist}
 								</select>
 							</div>
+							{:token()}
 							<div class="form-group">
 								<label for="">选择课程</label>
 								<select class="form-control data" name="lesson_id">
@@ -59,9 +61,10 @@
 						<!-- /.box-body -->
 
 						<div class="box-footer">
-							<button id="submit">提交</button>
+							<input type="submit" id="" value="提交">
 						</div>
-				</div>
+					</div>
+				</form>
 				<!-- /.box -->
 
 
@@ -92,15 +95,16 @@
 			getLessonList(camp_id);
 		});
 
-		$('#submit').on('click',function(){
-			var submiUrl = '';
-			var data = wooApi.getInputData('input', 'data');
-			var datas = wooApi.getInputData('number', 'data',data);
-        	var arrData = wooApi.getInputData('select', 'data', datas);
-        	var objData = wooApi.arrTOobj(arrData);
-        	var ajaxResult = wooApi.asyncF(submiUrl, objData);
-        	alert(ajaxResult.msg);
-		})
+		// $('#submit').on('click',function(){
+		// 	var submiUrl = '';
+		// 	var data = wooApi.getInputData('input', 'data');
+		// 	var datas = wooApi.getInputData('number', 'data',data);
+  //       	var arrData = wooApi.getInputData('select', 'data', datas);
+  //       	var objData = wooApi.arrTOobj(arrData);
+  //       	objData.__token__ = "{}";
+  //       	var ajaxResult = wooApi.asyncF(submiUrl, objData);
+  //       	alert(ajaxResult.msg);
+		// })
 
 
 

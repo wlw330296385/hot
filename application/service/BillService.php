@@ -171,7 +171,7 @@ class BillService {
                     if(!$re){
                         db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
                     }else{
-                        db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data),'staus'=>1]);
+                        db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data),'status'=>1]);
                     }
                 }
             }else{
@@ -183,7 +183,7 @@ class BillService {
                     if(!$re){
                         db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
                     }else{
-                        db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data),'staus'=>1]);
+                        db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data),'status'=>1]);
                     }
                 }
                 

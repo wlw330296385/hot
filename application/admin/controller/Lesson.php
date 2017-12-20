@@ -31,8 +31,7 @@ class Lesson extends Backend {
 
         $list = LessonModel::where($map)->paginate(15);
         
-        $breadcrumb = ['title' => '课程管理', 'ptitle' => '训练营'];
-        $this->assign( 'breadcrumb', $breadcrumb );
+        
         $this->assign('list', $list);
         return $this->fetch();
     }
@@ -120,6 +119,7 @@ class Lesson extends Backend {
                 // 生成订单号
                 $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
                 $billInfo = [
+                    '__token__' => $postData['__token__'],
                     'bill_order'=>$billOrder,
                     'goods'=>$lessonInfo['lesson'],
                     'goods_id'=>$lessonInfo['id'],
@@ -135,7 +135,7 @@ class Lesson extends Backend {
                     'student'=>$studentList[$postData['studentIndex']]['student'],
                     'student_id'=>$studentList[$postData['studentIndex']]['id'],
                     'total'=>$postData['total'],
-                    'sys_remarks'=>"system:{$this->admin['username']},id:{$this->admin['id']}",
+                    'system_remarks'=>"system:{$this->admin['username']},id:{$this->admin['id']}",
                     'bill_type'=>1
                 ];
                 $BillService = new \app\service\BillService;
@@ -143,9 +143,11 @@ class Lesson extends Backend {
                 if($result['code']==200){
                     $res = $BillService->pay(['pay_time'=>time(),'expire'=>0,'balance_pay'=>$lessonInfo['cost']*$postData['total'],'status'=>1,'is_pay'=>1],['bill_order'=>$billOrder]);
                     if($res){
-                        return json(['code'=>100,'msg'=>'操作成功']);
+                        echo '<script type="text/javascript">alert("'.$result["msg"].'")</script>';
+                        // return json(['code'=>100,'msg'=>'操作成功']);
                     }else{
-                        return json(['code'=>100,'msg'=>'后续操作有bug,请联系woo']);
+                        echo "<script type='text/javascript'>alert('后续操作有bug,请联系woo')</script>";
+                        // return json(['code'=>100,'msg'=>'后续操作有bug,请联系woo']);
                     }
                     
                 }else{
@@ -171,13 +173,15 @@ class Lesson extends Backend {
         $LessonService = new \app\service\LessonService;
         if(request()->isPost()){
             $data = input('post.');
-
-            $result = db('lesson')->where(['id'=>$lesson_id])->update($data);
+            $Lesson = new \app\model\Lesson;
+            $result =$Lesson->save($data,['id'=>$lesson_id]);
             // echo db('lesson')->getlastsql();die;
             if ($result) {
-                $this->success('成功','lesson/index');
+                // $this->success('成功','lesson/index');
+                echo "<script>alert('操作成功');window.location.href='".url('lesson/index')."';</script>";
             }else{
-                $this->error('失败');
+                // $this->error('失败');
+                echo "<script>alert('操作失败')</script>";
             }
         }else{
 

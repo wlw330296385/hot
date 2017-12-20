@@ -11,10 +11,33 @@ class Member extends Backend{
 
 
 	public function memberlist(){
+		$field = '请选择搜索关键词';
+		$map = [];
 
-		$memberList = $this->MemberService->getMemberListByPage();
-		// dump($memberList);die;
+		$field = input('param.field');
+		$keyword = input('param.keyword');
+		if($keyword==''){
+			$map = [];
+			$field = '请选择搜索关键词';
+		}else{
+			if($field){
+				$map = [$field=>['like',"%$keyword%"]];
+			}else{
+				$field = '请选择搜索关键词';
+				$map = function($query) use ($keyword){
+					$query->where(['member'=>['like',"%$keyword%"]])->whereOr(['telephone'=>['like',"%$keyword%"]])->whereOr(['nickname'=>['like',"%$keyword%"]])->whereOr(['hot_id'=>['like',"%$keyword%"]]);
+				};
+			}
+		}
+			
+		
+
+		$memberList = $this->MemberService->getMemberListByPage($map);
+		// dump($memberList->toArray());die;
 		// 模板变量赋值
+
+
+		$this->assign('field',$field);
 		$this->assign('memberList', $memberList);
 		return view('member/memberList');
 	}

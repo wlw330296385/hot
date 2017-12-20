@@ -26,7 +26,8 @@ class Backend extends Base {
         if(config('develop_mode') == 0){
             //存储权限节点
             $this->AuthService->adminGroup();
-            
+            // dump($_SESSION);
+            // dump(cache('group_id_menu_auth_5'));die;
             //检查权限
             if (!$this->AuthService->checkAuth()) $this->error('权限不足！');
             // 获取面包屑导航

@@ -62,16 +62,18 @@ class Login extends Controller
     }
 
     public function logout() {
-        $cache_tag  = strtolower('_sidebar_menus_'.session('admin.id'));
-        Cache::rm($cache_tag); 
+        // $cache_tag  = strtolower('_sidebar_menus_'.session('admin.id'));
+        // Cache::rm($cache_tag); 
+        // $group_id = session('admin.group_id');
+        // Cache::rm('group_id_menu_auth_'.$group_id); 
+        Cache::clear(); 
         session('admin', null);
         cookie('keeplogin', null);
         $this->success('退出成功', url('Login/index'));
     }
 
     public function clearCache(){
-        $cache_tag  = strtolower('_sidebar_menus_'.session('admin.id'));
-        Cache::rm($cache_tag); 
+        Cache::clear(); 
         $this->success('清空成功');
     }
 }

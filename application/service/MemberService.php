@@ -32,7 +32,8 @@ class MemberService{
 
 	//获取资源列表
 	public function getMemberListByPage($map = [],$order = '',$paginate = 10){
-		$result = $this->memberModel->where($map)->order($order)->paginate($paginate);
+		$result = $this->memberModel->with('student')->where($map)->order($order)->paginate($paginate);
+		// echo $this->memberModel->getlastsql();die;
 		// if($result){
 		// 	$res = $result->toArray();
 		// 	return $res;

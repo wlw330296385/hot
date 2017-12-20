@@ -50,4 +50,42 @@ class Student extends Backend {
 
         return view();
     }
+
+
+    // 创建|修改学生
+    public function updateStudent(){
+        $student_id = input('param.student_id');
+        $StudentService = new \app\service\StudentService;
+        $member_id = input('param.member_id');
+        $memberInfo = db('member')->where(['id'=>$member_id])->find();
+            
+            
+        if($student_id){
+            if(request()->isPost()){
+                $data = input('post.');
+                $result = $StudentService->updateStudent($data,$student_id);
+                if($result){
+                    echo  "<script>alert('".$result['msg']."');</script>";
+                }
+            }
+            // 编辑学生
+            $memberInfo = db('member')->where(['id'=>$member_id])->find();
+            $this->assign('memberInfo',$memberInfo);
+            return view('student/updateStudent');
+        }else{
+            if(request()->isPost()){
+                $data = input('post.');
+                $data['member'] = $memberInfo['member'];
+                $result = $StudentService->createStudent($data);
+                if($result){
+                    echo  "<script>alert('".$result['msg']."');</script>";
+                }
+            }
+            // 创建学生
+            $memberInfo = db('member')->where(['id'=>$member_id])->find();
+            $this->assign('memberInfo',$memberInfo);
+            return view('student/createStudent');
+        }
+        
+    }
 }

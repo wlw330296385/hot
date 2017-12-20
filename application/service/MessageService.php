@@ -74,10 +74,10 @@ class MessageService
                 $WechatService = new \app\service\WechatService();
                 $result = $WechatService->sendTemplate($messageData);
                 if ($result) {
-                    $logData = ['wxopenid' => $messageData['touser'], 'member_id' => $saveData['member_id'], 'status' => 1, 'content' => serialize($messageData),'system_remarks'=>'给用户的通知'];
+                    $logData = ['wxopenid' => $messageData['touser'], 'member_id' => $saveData['member_id'], 'status' => 1, 'content' => serialize($messageData),'system_remarks'=>'给用户的通知','url'=>$messageData['url']];
                     $this->insertLog($logData);
                 } else {
-                    $logData = ['wxopenid' => $messageData['touser'], 'member_id' => $saveData['member_id'], 'status' => 0, 'content' => serialize($messageData),'system_remarks'=>'给用户的通知'];
+                    $logData = ['wxopenid' => $messageData['touser'], 'member_id' => $saveData['member_id'], 'status' => 0, 'content' => serialize($messageData),'system_remarks'=>'给用户的通知','url'=>$messageData['url']];
                     $this->insertLog($logData);
                 }
                 return true;

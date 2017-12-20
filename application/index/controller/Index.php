@@ -23,6 +23,15 @@ class Index extends Controller{
         return view('Index/index');
     }
 
+    public function adminAuth(){
+        $res = db('admin_menu')
+                ->where(['pid'=>4])
+                ->whereOr('pid =5')
+                ->whereOr('pid = 3')
+                ->column('id');
+        echo json_encode($res);
+    }
+
 
     public function gdMap(){
 
@@ -193,46 +202,46 @@ class Index extends Controller{
         $MessageCampData = [
                         "touser" => '',
                         "template_id" => config('wxTemplateID.successBill'),
-                        "url" => url('frontend/bill/billInfoOfCamp',['bill_order'=>'1201711081030416766'],'',true),
+                        "url" => url('frontend/bill/billInfoOfCamp',['bill_order'=>'1201712190929205361'],'',true),
                         "topcolor"=>"#FF0000",
                         "data" => [
-                            'first' => ['value' => '李鸣轩购买课程订单支付成功补发通知'],
-                            'keyword1' => ['value' => '李鸣轩'],
-                            'keyword2' => ['value' => '1201711081030416766'],
-                            'keyword3' => ['value' => '1200元'],
-                            'keyword4' => ['value' => '李鸣轩购买课程'],
+                            'first' => ['value' => '强亦宸购买课程订单支付成功补发通知'],
+                            'keyword1' => ['value' => '强亦宸'],
+                            'keyword2' => ['value' => '1201712190929205361'],
+                            'keyword3' => ['value' => '1500元'],
+                            'keyword4' => ['value' => '强亦宸购买课程'],
                             'remark' => ['value' => '大热篮球']
                         ]
                     ];
         $MessageCampSaveData = [
-                                'title'=>"购买课程-龙岗民警子女篮球课程",
-                                'content'=>"订单号: 1201711081030416766<br/>支付金额: 1200元<br/>购买学生:李鸣轩<br/>购买理由: 系统补发",
-                                'member_id'=>125,
-                                'url'=>url('frontend/bill/billInfoOfCamp',['bill_order'=>'1201711081030416766'],'',true)
+                                'title'=>"购买课程-大热常规班",
+                                'content'=>"订单号: 1201712190929205361<br/>支付金额: 1200元<br/>购买学生:强亦宸<br/>购买理由: sys",
+                                'member_id'=>244,
+                                'url'=>url('frontend/bill/billInfoOfCamp',['bill_order'=>'1201712190929205361'],'',true)
                             ];
 
         // 发送个人消息
         $MessageData = [
-            "touser" => 'o83291A4UscsGS6_i1solCR2Ly4U',
+            "touser" => '',
             "template_id" => config('wxTemplateID.successBill'),
-            "url" => url('frontend/bill/billInfo',['bill_order'=>'1201711081030416766'],'',true),
+            "url" => url('frontend/bill/billInfo',['bill_order'=>'1201712190929205361'],'',true),
             "topcolor"=>"#FF0000",
             "data" => [
                 'first' => ['value' => '订单支付成功通知'],
-                'keyword1' => ['value' => '李鸣轩'],
-                'keyword2' => ['value' => '1201711081030416766'],
-                'keyword3' => ['value' => '1200元'],
-                'keyword4' => ['value' => '李鸣轩购买课程'],
+                'keyword1' => ['value' => '强亦宸'],
+                'keyword2' => ['value' => '1201712190929205361'],
+                'keyword3' => ['value' => '1500元'],
+                'keyword4' => ['value' => '强亦宸购买课程'],
                 'remark' => ['value' => '大热篮球']
             ]
         ];
         $saveData = [
-                        'title'=>"订单支付成功-龙岗民警子女篮球课程",
-                        'content'=>"订单号: 1201711081030416766<br/>支付金额: 1200元<br/>支付学生信息:李鸣轩",
-                        'url'=>url('frontend/bill/billInfo',['bill_order'=>'1201711081030416766']),
-                        'member_id'=>125
+                        'title'=>"订单支付成功-大热常规班",
+                        'content'=>"订单号: 1201712190929205361<br/>支付金额: 1200元<br/>支付学生信息:强亦宸",
+                        'url'=>url('frontend/bill/billInfo',['bill_order'=>'1201712190929205361']),
+                        'member_id'=>244
                     ];
-        $MessageService->sendMessageMember(125,$MessageData,$saveData);            
+        $MessageService->sendMessageMember(244,$MessageData,$saveData);            
         $MessageService->sendCampMessage(9,$MessageCampData,$MessageCampSaveData);
     }
 
@@ -301,7 +310,7 @@ class Index extends Controller{
 
     public function sortGC(){
         
-        $arr = db('test')->order('sort asc')->select();
+        $arr = db('grade_category')->order('sort asc')->select();
         $arr = $this->getGradeCategoryTree($arr);
         $this->assign('arr',$arr);
         return view('Index/sortGC');
@@ -321,6 +330,30 @@ class Index extends Controller{
         return $list;
     }
 
+    public function sortLesson(){
+        $list = Db::view('lesson','*')
+                ->view('grade_category','pid','lesson.gradecate_id=grade_category.id')
+                ->select();
+        
+        foreach ($list as $key => $value) {
+            $name = db('grade_category')->where(['id'=>$value['pid']])->value('name');    
+            $list[$key]['gradecate_setion'] = $name;
+            $list[$key]['gradecate_setion_id'] = $value['pid'];
+
+            db('lesson')->where(['id'=>$value['id']])->update(['gradecate_setion_id'=>$value['pid'],'gradecate_setion'=>$name]);
+        }     
+       
+    }
+
+    public function sortGrade(){
+        $list = Db::view('grade','*')
+                ->view('lesson','gradecate gradecates, gradecate_id gradecate_ids, gradecate_setion gradecate_setions,gradecate_setion_id gradecate_setion_ids','lesson.id=grade.lesson_id')
+                ->select();
+        foreach ($list as $key => $value) { 
+            db('grade')->where(['id'=>$value['id']])->update(['gradecate'=>$value['gradecates'],'gradecate_id'=>$value['gradecate_ids'],'gradecate_setion'=>$value['gradecate_setions'],'gradecate_setion_id'=>$value['gradecate_setion_ids']]);
+        }     
+       
+    }
 
     public function gradecate(){
         $arr = db('test')->where(['pid'=>0])->select();
@@ -336,5 +369,11 @@ class Index extends Controller{
     public function getLocation(){
         $aee = file_get_contents('https://api.map.baidu.com/location/ip?ak=g5XXhTU6gY4Ka68E5ktVMrGz2uiosuTE&coor=bd09ll');
         dump($aee);die;
+    }
+
+    public function getAdmin(){
+        $ids = db('admin_menu')->column('id');
+        dump(json_encode($ids));
+        db('admin_group')->where(['pid'=>1])->update(['menu_auth'=>json_encode($ids)]);
     }
 }

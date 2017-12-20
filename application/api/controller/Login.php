@@ -112,7 +112,7 @@ class Login extends Base{
     	cookie('member',md5($member['id'].$member['member'].config('salekey')));
         session('memberInfo',$member,'think');
         if ( session('memberInfo', '', 'think') ) {
-           return true;
+            return true;
         } else {
             return false;
         }
