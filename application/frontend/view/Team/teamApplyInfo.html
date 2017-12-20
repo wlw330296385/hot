@@ -1,10 +1,133 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <title>个人信息详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .examineBox {
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        .examine {
+            width: 100%;
+            min-height: 40px;
+            font-size: 14px;
+            color: #737373;
+        }
+    </style>
 </head>
-<body>
-申请加入详情
+
+<body class=whitebg>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+
+    <div class="mui-content">
+
+        <!-- 审核内容-->
+        <div class="examineBox">
+            <input id="applyid" type="hidden" value="{$applyInfo.id}">
+            <div class="examine">
+                <strong>申请的内容：</strong>{$applyInfo.remarks}</div>
+            <div class="mui-button-row">
+                <button class="mui-btn" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
+                <button class="mui-btn" type="button" onclick="check_status(3)">拒绝</button>
+            </div>
+        </div>
+
+        <form action="" class="mui-input-group mb">
+            <div class="mui-input-row h-auto">
+                <label>头像</label>
+                <img src="{$applyInfo.member.avatar}" alt="头像" style="margin-right: 18px">
+            </div>
+            <div class="mui-input-row">
+                <label>姓名</label>
+                <span class="name">{$applyInfo.member.member}</span>
+            </div>
+            <div class="mui-input-row">
+                <label>性别</label>
+                <span class="sex"></span>
+            </div>
+            <div class="mui-input-row">
+                <label>身高</label>
+                <span class="height">{$applyInfo.member.height}cm</span>
+            </div>
+            <div class="mui-input-row">
+                <label>体重</label>
+                <span class="weight">{$applyInfo.member.weight}kg</span>
+            </div>
+            <div class="mui-input-row">
+                <label>出生日期</label>
+                <span class="birthday">{$applyInfo.member.birthday}</span>
+            </div>
+            <div class="mui-input-row">
+                <label>所属地区</label>
+                <span>{$applyInfo.member.province} {$applyInfo.member.city} {$applyInfo.member.area}</span>
+            </div>
+        </form>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        $(function () {
+            sex();
+
+            
+        })
+        // 审核操作
+        function check_status(value) {
+                var apply_id = document.getElementById('applyid').value;
+                mui.ajax("{:url('api/team/applyreply')}", {
+                    data: {
+                        apply_id: apply_id,
+                        reply: value
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            mui.toast(res.msg);
+                            window.location.href = "{:url('frontend/team/teamApplyList')}/team_id/{$applyInfo.id}";
+                        } else {
+                            mui.toast(res.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                        mui.toast('网络异常');
+                    }
+                });
+            }
+        function sex() {
+            var sex = "{$applyInfo.member.sex}";
+            if (sex == 1) {
+                $(".sex").text("男");
+            } else {
+                $(".sex").text("女");
+            }
+        }
+    </script>
+
 </body>
+
 </html>
