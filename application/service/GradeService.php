@@ -137,8 +137,8 @@ class GradeService{
 
 
      // 获取学生列表
-     public function getStudentList($grade_id,$page = 1,$paginate = 10){
-        $result = GradeMember::where(['grade_id'=>$grade_id,'status'=>1])
+     public function getStudentList($map,$page = 1,$paginate = 10){
+        $result = GradeMember::where($map)
                 // ->page($page,$paginate)
                 ->select();
         if($result){

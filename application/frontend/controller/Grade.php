@@ -91,7 +91,7 @@ class Grade extends Base{
         $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['camp_id'=>$gradeInfo['camp_id'],'status'=>1]);
     	// 获取班级学生
-    	$students = $this->GradeService->getStudentList($grade_id);
+    	$students = $this->GradeService->getStudentList(['grade_id'=>$grade_id,'status'=>1]);
 
         // 教案列表
         $PlanService = new \app\service\PlanService;

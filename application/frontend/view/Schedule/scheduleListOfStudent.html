@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>课时列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body>
+
+    <header id="header" class="mui-bar mui-bar-nav for-tab">
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control mb">
+                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"></a>
+                <a class="mui-control-item campSceheduleList mui-active" href="#campSceheduleList">训练营</a>
+                <a class="mui-control-item onlineSceheduleList" href="#onlineSceheduleList">已审课时</a>
+                <a class="mui-control-item offlineSceheduleList" href="#offlineSceheduleList">未审课时</a>
+            </div>
+        </div>
+
+
+    </header>
+
+    <div class="mui-content">
+        <div class="list camp-list camp-lesson-list detalis-list coach">
+            <div class="nav-list">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
+                        <span>本月课量</span>
+                        <div class="mui-media-body curmonthcount">{$scheduleCount.month}</div>
+                    </a></li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
+                        <span>本年课量</span>
+                        <div class="mui-media-body">{$scheduleCount.year}</div>
+                    </a></li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
+                        <span>总课量</span>
+                        <div class="mui-media-body">{$scheduleCount.sum}</div>
+                    </a></li>
+                </ul>
+                <ul class="mui-table-view mui-text-center border-b">
+                    <li class="mui-table-view-cell">
+                        <ul class="mui-row table">
+                            <li class="mui-col-xs-4 mui-col-sm-4">日期</li>
+                            <li class="mui-col-xs-6 mui-col-sm-6">班级</li>
+                            <li class="mui-col-xs-2 mui-col-sm-2">人数</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-pullRefresh">
+                <div id="campSceheduleList" class="mui-scroll-wrapper mui-control-content mui-active" style="top:165px;">
+                    <div class="mui-scroll">
+                        <ul class="mui-table-view mui-text-center detalis-list list scheduleAll OA_task_schedule"></ul>
+                    </div>
+                </div>
+                <div id="onlineSceheduleList" class="mui-scroll-wrapper mui-control-content" style="top: 88px">
+                    <div class="mui-scroll">
+                        <ul class="mui-table-view mui-text-center detalis-list list schedule1 OA_task_schedule"></ul>
+                    </div>
+                </div>
+                <div id="offlineSceheduleList" class="mui-scroll-wrapper mui-control-content" style="top: 88px">
+                    <div class="mui-scroll">
+                        <ul class="mui-table-view mui-text-center detalis-list list schedule0 OA_task_schedule"></ul>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/common.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    mui("body").on("tap","a",function(){
+        window.top.location.href=this.href;
+    });
+
+
+    $(function () {
+
+        //初始化全局变量
+        var onCount = 1;
+        var offCount = 1;
+
+        mui('#onlineSceheduleList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOn
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOn
+            }
+        });
+
+        mui('#offlineSceheduleList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOff
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOff
+            }
+        });
+
+        mui('#campSceheduleList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshAll
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshAll
+            }
+        });
+
+
+        //下拉刷新具体业务实现（已审）
+        function pulldownRefreshOn() {
+            setTimeout(function () {
+                onCount = 1;//刷新并显示第一页
+                var page = onCount;
+                var gType = 1;//代表下拉刷新
+                toList('onlineSceheduleList', page, gType, 1);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（已审）
+        function pullupRefreshOn() {
+            setTimeout(function () {
+                onCount++;//翻下一页
+                var page = onCount;
+                var gType = 2;//代表上拉加载
+                toList('onlineSceheduleList', page, gType, 1);//具体取数据的方法
+            }, 100);
+        }
+
+        //下拉刷新具体业务实现（未审）
+        function pulldownRefreshOff() {
+            setTimeout(function () {
+                offCount = 1;//刷新并显示第一页
+                var page = offCount;
+                var gType = 1;//代表下拉刷新
+                toList('offlineSceheduleList', page, gType, 0);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（未审）
+        function pullupRefreshOff() {
+            setTimeout(function () {
+                offCount++;//翻下一页
+                var page = offCount;
+                var gType = 2;//代表上拉加载
+                toList('offlineSceheduleList', page, gType, 0);//具体取数据的方法
+            }, 100);
+        }
+
+        //下拉刷新具体业务实现（全部）
+        function pulldownRefreshAll() {
+            setTimeout(function () {
+                offCount = 1;//刷新并显示第一页
+                var page = offCount;
+                var gType = 1;//代表下拉刷新
+                toList('campSceheduleList', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（全部）
+        function pullupRefreshAll() {
+            setTimeout(function () {
+                offCount++;//翻下一页
+                var page = offCount;
+                var gType = 2;//代表上拉加载
+                toList('campSceheduleList', page, gType);//具体取数据的方法
+            }, 100);
+        }
+    })
+
+    // 切换tab显示隐藏所需内容
+    mui("body").on("tap",".campSceheduleList",function(){
+        $(".nav-list-frame").show();
+    });
+
+    mui("body").on("tap",".onlineSceheduleList",function(){
+        $(".nav-list-frame").hide();
+    });
+
+    mui("body").on("tap",".offlineSceheduleList",function(){
+        $(".nav-list-frame").hide();
+    });
+
+
+
+    //接口获取数据并追加到页面
+    var toList = function (wList, page, gType, status) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/schedule/getScheduleListByPageApi','','',true)}" + '/?page=' + page;
+        var campID = "{$camp_id}";
+        mui.ajax({
+            url: url,
+            data: {
+                camp_id: campID,
+                status: status
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+
+                var newli = '';
+                var newAllLi = '';
+                if (data.code == 200) {
+                    var newDate = new Date();
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + campID;
+                        var lession_time = data.data.data[i].lesson_time;
+                        // 已审，未审内容
+                        newli += '<li class="mui-table-view-cell mui-media">';
+                        if (status!=1) {
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为已审</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                            newli += '<div class="mui-slider-handle"><a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time  + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a></div>';
+                        } else {
+                            newli += '<a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time  + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a>';
+                        }
+
+                        newli += '</li>';
+                        // 全部内容
+                        newAllLi = newAllLi + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></li></a>';
+                    }
+                }
+
+
+                // 根据状态获取课时列表
+                if (gType == 1) {
+                    //上拉刷新
+                    $(".schedule" + status).empty().append(newli);
+                    $(".scheduleAll").empty().append(newAllLi);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $(".schedule" + status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                    if (newAllLi == '') {
+                        $(".scheduleAll").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                    
+                } else {
+                    //下拉加载 gType==2
+                    $(".schedule" + status).append(newli);
+                }
+
+                if (newli != '' || newAllLi != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+    //拖拽后显示操作图标，点击操作图标删除元素；
+    $('.OA_task_schedule').on('tap', '.mui-btn', function (event) {
+        var elem = this;
+        var li = elem.parentNode.parentNode;
+        var btnArray = ['确认', '取消'];
+        var txt = elem.innerHTML;
+        var scheduleid = elem.parentNode.getAttribute('data-id');
+        var action = elem.getAttribute('data-action');
+        mui.confirm('确认该课程' + txt + '?', '提示', btnArray, function (e) {
+            if (e.index == 0) {
+                var apiurl = "{:url('api/schedule/removeschedule')}";
+                mui.ajax(apiurl, {
+                    data: {
+                        scheduleid: scheduleid,
+                        action: action
+                    },
+                    dataType: 'json',
+                    type: 'post',
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        //console.log(data);
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                            if (action === 'editstatus') {
+                                mui.post("{:url('api/schedule/sendschedule')}", {
+                                    scheduleid: scheduleid
+                                }, function(res) {
+                                    console.log(res);
+                                }, 'json');
+                            }
+
+                            setTimeout(function () {
+                                li.parentNode.removeChild(li);
+                                location.reload();
+                            }, 2000);
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errotThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                    }
+                });
+            } else {
+                setTimeout(function () {
+                    mui.swipeoutClose(li);
+                }, 0);
+            }
+        });
+    });
+
+    // var curmonthbegin = new Date() // 2017-10-1 0:00
+    // var curmonthend = new Date() // 2017-10-30 23:59
+    // toScheduleTotal(curmonthbegin, curmonthend) 
+    // data.data.total 
+    // curmonthcount.text(data.data.total)
+
+    // var toScheduleTotal = function (begin, end) {
+    //     var url = "{:url('api/schedule/getScheduleListBetweenTimeByPageApi','','',true)}";
+    //     var campID = "{$camp_id}";
+    //     mui.ajax({
+    //         url: url,
+    //         data: {
+    //             begin: begin,
+    //             end: end
+    //             camp_id: campID,
+    //         },
+    //         dataType: 'json',//服务器返回json格式数据
+    //         type: 'post',//HTTP请求类型
+    //         timeout: 10000,//超时时间设置为10秒；
+    //         headers: {'Content-Type': 'application/json'},
+    //         //processData:false,
+    //         success: function (data) {
+               
+    //         },
+    //         error: function (xhr, type, errerThrown) {
+    //             mui.toast('网络异常,请稍候再试');
+    //         }
+    //     });
+    // };
+
+
+</script>
+</html>

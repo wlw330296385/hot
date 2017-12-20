@@ -43,6 +43,24 @@ class Schedule extends Base
 		return view('Schedule/scheduleList');
     }
 
+
+    // 课时列表
+    public function scheduleList(){
+    	$map = input();
+    	$map = $map?$map:[];
+    	$camp_id = input('camp_id');
+    	$scheduleList = $this->scheduleService->getscheduleList($map);
+
+        // 课时统计
+        $scheduleCount = $this->scheduleService->countSchedules(['camp_id' => $camp_id]);
+    	$this->assign('scheduleCount',$scheduleCount);
+  		$this->assign('scheduleList',$scheduleList);
+  		$this->assign('camp_id', $camp_id);
+		return view('Schedule/scheduleList');
+    }
+
+    
+
 	// 课时详情
 	public function scheduleInfo(){
 		$schedule_id = input('param.schedule_id');

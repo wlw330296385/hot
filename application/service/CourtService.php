@@ -156,7 +156,7 @@ class CourtService {
         if($is_own){
             return ['code'=>100,'msg'=>"重复添加"];
         }
-        $courtInfoOBJ = $this->courtModel->where(['id'=>$court_id,'camp_id'=>0,'status'=>1])->find();
+        $courtInfoOBJ = $this->courtModel->where(['id'=>$court_id,'status'=>1])->find();
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
         if(!$courtInfoOBJ || !$campInfo){
             return ['code'=>100,'msg'=>"查询不到该场地或者训练营"];

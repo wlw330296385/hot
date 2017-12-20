@@ -95,6 +95,11 @@ class CampMember extends Base
                     if (!$joinagain) {
                         return json(['code' => 100, 'msg' => '申请失败']);
                     } else {
+                        //添加一条粉丝记录
+                        $isFollow = db('follow')->where(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1])->find();
+                        if(!$isFollow){
+                            db('follow')->insert(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1,'follow_name'=>$campInfo['name'],'member'=>$this->memberInfo['member'],'follow_avatar'=>$campInfo['logo'],'member_avatar'=>$this->memberInfo['avatar'],'create_time'=>$time()]);
+                        }
                         return json(['code' => 200, 'msg' => '申请成功', 'insid' => $isType['id']]);
                     }
                 }
@@ -105,6 +110,11 @@ class CampMember extends Base
                     if ($isType['status'] == 1) {
                         return json(['code' => 100, 'msg' => '你已经是训练营的一员']);
                     } else {
+                        //添加一条粉丝记录
+                        $isFollow = db('follow')->where(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1])->find();
+                        if(!$isFollow){
+                            db('follow')->insert(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1,'follow_name'=>$campInfo['name'],'member'=>$this->memberInfo['member'],'follow_avatar'=>$campInfo['logo'],'member_avatar'=>$this->memberInfo['avatar'],'create_time'=>$time()]);
+                        }
                         return json(['code' => 100, 'msg' => '你已申请加入训练营,请等待审核']);
                     }
                 }
@@ -145,6 +155,11 @@ class CampMember extends Base
                         'follow_id' => $campInfo['id'], 'follow_name' => $campInfo['camp'], 'follow_avatar' => $campInfo['logo'],
                         'member_id' => $this->memberInfo['id'], 'member' => $this->memberInfo['member'], 'member_avatar' => $this->memberInfo['avatar']
                     ]);
+                }
+                //添加一条粉丝记录
+                $isFollow = db('follow')->where(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1])->find();
+                if(!$isFollow){
+                    db('follow')->insert(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1,'follow_name'=>$campInfo['name'],'member'=>$this->memberInfo['member'],'follow_avatar'=>$campInfo['logo'],'member_avatar'=>$this->memberInfo['avatar'],'create_time'=>$time()]);
                 }
                 return json(['code' => 200, 'msg' => '申请成功', 'insid' => $model->id]);
             } else {
