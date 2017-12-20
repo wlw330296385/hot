@@ -96,6 +96,10 @@ class CourtService {
 
     // 编辑场地
     public function updateCourt($data,$id){
+        $courtInfo = $this->Court->where(['id'=>$id,'status'=>1])->find();
+        if($courtInfo){
+            return ['msg' => '已公开的场地不允许编辑', 'code' => 100];
+        }
         $validate = validate('CourtVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
@@ -132,7 +136,7 @@ class CourtService {
                 'court' => $data['court'],
                 'camp_id' => $data['camp_id'],
                 'camp' => $data['camp'],
-                'status' => 1
+                'status' => -1
             ];
             $addCourtCamp = CourtCamp::create($dataCourtCamp);
             if (!$addCourtCamp) {
@@ -158,7 +162,7 @@ class CourtService {
             return ['code'=>100,'msg'=>"查询不到该场地或者训练营"];
         }else{
             $courtInfo = $courtInfoOBJ->toArray();
-            $data = ['camp_id'=>$camp_id,'court_id'=>$court_id,'court'=>$courtInfo['court'],'camp'=>$campInfo['camp']];
+            $data = ['camp_id'=>$camp_id,'court_id'=>$court_id,'court'=>$courtInfo['court'],'camp'=>$campInfo['camp'],'status'=>1];
             $res = $this->CourtCampModel->save($data);
             if($res){
                 db('camp')->where(['id'=>$camp_id])->setInc('camp_base',1);
