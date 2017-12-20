@@ -126,6 +126,20 @@ class Team extends Base {
         return view('Team/teamMemberInfo');
     }
 
+    // 队员编辑
+    public function teammemberedit() {
+        // 接收参数
+        $team_id = input('team_id', 0);
+        $member_id = input('member_id', 0);
+        $teamS = new TeamService();
+        // 获取队员在当前球队的数据信息
+        $map = ['team_id' => $team_id, 'member_id' => $member_id];
+        $teamMemberInfo = $teamS->getTeamMemberInfo($map);
+
+        $this->assign('teamMemberInfo', $teamMemberInfo);
+        return view('Team/teamMemberEdit');
+    }
+
     // 申请加入列表
     public function teamapplylist() {
         return view('Team/teamApplyList');
