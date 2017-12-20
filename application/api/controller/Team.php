@@ -384,7 +384,7 @@ class Team extends Base {
                 $data['end_time'] = strtotime(input('end_time'));
                 // 结束时间小于当前时间即活动已完成
                 if ($data['end_time'] < time()) {
-                    $data['status'] = 2;
+                    $data['is_finished'] = 2;
                 }
             }
             $teamS = new TeamService();
@@ -447,8 +447,8 @@ class Team extends Base {
                 }
                 $tInterval = getStartAndEndUnixTimestamp($year);
                 $map['create_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
-                unset($map['year']);
             }
+            unset($map['year']);
             $teamS = new TeamService();
             $result = $teamS->teamEventPaginator($map);
             if ($result) {
@@ -476,8 +476,8 @@ class Team extends Base {
                 }
                 $tInterval = getStartAndEndUnixTimestamp($year);
                 $map['create_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
-                unset($map['year']);
             }
+            unset($map['year']);
             $teamS = new TeamService();
             $result = $teamS->teamEventList($map, $page);
             if ($result) {
