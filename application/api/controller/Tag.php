@@ -29,29 +29,37 @@ class Tag extends Base {
             if (!input('?tag_ids')) {
                 return json(['code' => 100, 'msg' => '请选择印象标签']);
             }
-
-            /*$$data['member_id'] = $this->memberInfo['id'];
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             $data['member_avatar'] = $this->memberInfo['avatar'];
-            $tags_id = $data['tag_ids'];
-            dump($tags_id);*/
-            $tag_ids = input('tag_ids');
-            $tag_idArr = explode(',', $tag_ids);
-            $saveData = [];
-            //dump($tag_idArr);
-            foreach ($tag_idArr as $k => $tag_id) {
-                $saveData[$k] = [
-                    'comment_type' => input('post.comment_type'),
-                    'commented' => input('post.commented'),
-                    'commented_id' => input('post.commented_id'),
-                    'member_id' => $this->memberInfo['id'],
-                    'member' => $this->memberInfo['member'],
-                    'member_avatar' => $this->memberInfo['avatar'],
-                    'tag_id' => $tag_id
-                ];
-            }
-            //dump($data);
+            $tagS = new TagService();
+            $result = $tagS->addTagComment($data);
+            return json($result);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 
+    // 获取实体的评论记录列表
+    public function commentlist() {
+        try {
+            // 判断必传参数
+            $comment_type = input('post.comment_type');
+            $commented_id = input('post.commented_id');
+            if (!$comment_type || !$commented_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            // 组合接收参数作为查询提交
+            $map = input('post.');
+            $tagS = new TagService();
+            $result = $tagS->getTagComment($map);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
