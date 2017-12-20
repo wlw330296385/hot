@@ -385,7 +385,7 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/libs/webuploader.min.js"></script>
     <script>
-        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'eventOfTeam'])}";
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'teamevent'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -768,7 +768,7 @@
                 var ajaxResult = wooApi.asyncF(url, objData);
                 if (ajaxResult.code == 200) {
                     mui.alert(ajaxResult.msg, '活动修改成功', '确定', function () {
-                        var goUrl = "{:url('team/eventlistOfTeam')}/" +  '/team_id/' + "{$team_id}";
+                        var goUrl = "{:url('team/eventlistOfTeam')}/" + '/team_id/' + "{$team_id}";
                         window.top.location.href = goUrl;
                     })
                 } else {
@@ -799,7 +799,6 @@
 
 
         };
-
 
         //获取成员列表
         var toTeamMemberList = function () {
@@ -857,11 +856,14 @@
                         totalLength = data.data.length;
                         $(".mui-badge").text(totalLength);
 
+                        memberList = [];//报名人员列表数组
                         $("#inactiveList").empty();
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             inactiveDiv += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].member + '</font><input name="member" value="' + data.data[i].member_id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" ></div>'
                             $("#inactiveList").append(inactiveDiv);
+                            memberList.push({ member: data.data[i].member, member_id: data.data[i].member_id });
                         };
+                        console.log(memberList)
 
                         if ($("#inactiveList").html() == '') {
                             $(".checkChecked").append('<p class="nohave">没有学员哦</p>');
