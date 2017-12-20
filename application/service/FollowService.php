@@ -47,7 +47,7 @@ class FollowService {
 
     protected function saveCampMember($data) {
         $campmemberDb = db('camp_member');
-        $campmember = $campmemberDb->where(['camp_id' => $data['follow_id'], 'member_id' => $data['mebmer_id']])->find();
+        $campmember = $campmemberDb->where(['camp_id' => $data['follow_id'], 'member_id' => $data['member_id']])->find();
         if ($campmember) {
             if ($campmember['status'] != 1) {
                 $campmemberDb->where(['id' => $campmember['id']])->update(['status' => 1, 'type' => -1]);

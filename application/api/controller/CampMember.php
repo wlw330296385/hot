@@ -56,11 +56,20 @@ class CampMember extends Base
         $result = db('camp_member')->insert(['camp_id' => $campInfo['id'], 'camp' => $campInfo['camp'], 'member_id' => $this->memberInfo['id'], 'member' => $this->memberInfo['member'], 'type' => -1, 'status' => 1, 'create_time' => time()]);
         if ($result) {
             // 插入follow数据
-            db('follow')->insert([
-                'type' => 2, 'status' => 1,
-                'follow_id' => $campInfo['id'], 'follow_name' => $campInfo['camp'], 'follow_avatar' => $campInfo['logo'],
-                'member_id' => $this->memberInfo['id'], 'member' => $this->memberInfo['member'], 'member_avatar' => $this->memberInfo['avatar']
-            ]);
+            $followDb = db('follow');
+            $hasFollow = $followDb->where(['type' => 2, 'follow_id' => $campInfo['id'], 'member_id' => $this->memberInfo['id']])->find();
+            if ($hasFollow) {
+                if ($hasFollow['status'] == -1) {
+                    $followDb->where('id', $hasFollow)->update(['status' => 1, 'update_time' => time()]);
+                }
+            } else {
+                $followDb->insert([
+                    'type' => 2, 'status' => 1,
+                    'follow_id' => $campInfo['id'], 'follow_name' => $campInfo['camp'], 'follow_avatar' => $campInfo['logo'],
+                    'member_id' => $this->memberInfo['id'], 'member' => $this->memberInfo['member'], 'member_avatar' => $this->memberInfo['avatar'],
+                    'create_time' => time(), 'update_time' => time()
+                ]);
+            }
             return json(['code' => 200, 'msg' => $msg]);
         } else {
             return json(['code' => 100, 'msg' => '申请失败']);
@@ -139,11 +148,16 @@ class CampMember extends Base
                 // 插入follow数据
                 $followDb = db('follow');
                 $hasFollow = $followDb->where(['type' => 2, 'follow_id' => $campInfo['id'], 'member_id' => $this->memberInfo['id']])->find();
-                if (!$hasFollow) {
+                if ($hasFollow) {
+                    if ($hasFollow['status'] == -1) {
+                        $followDb->where('id', $hasFollow)->update(['status' => 1, 'update_time' => time()]);
+                    }
+                } else {
                     $followDb->insert([
                         'type' => 2, 'status' => 1,
                         'follow_id' => $campInfo['id'], 'follow_name' => $campInfo['camp'], 'follow_avatar' => $campInfo['logo'],
-                        'member_id' => $this->memberInfo['id'], 'member' => $this->memberInfo['member'], 'member_avatar' => $this->memberInfo['avatar']
+                        'member_id' => $this->memberInfo['id'], 'member' => $this->memberInfo['member'], 'member_avatar' => $this->memberInfo['avatar'],
+                        'create_time' => time(), 'update_time' => time()
                     ]);
                 }
                 return json(['code' => 200, 'msg' => '申请成功', 'insid' => $model->id]);
