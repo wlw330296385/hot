@@ -18,10 +18,7 @@
     <header id="header" class="mui-bar mui-bar-nav for-tab">
         <div class="camp-lesson-list">
             <div class="mui-segmented-control mb">
-                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"></a>
-                <a class="mui-control-item campSceheduleList mui-active" href="#campSceheduleList">训练营</a>
-                <a class="mui-control-item onlineSceheduleList" href="#onlineSceheduleList">已审课时</a>
-                <a class="mui-control-item offlineSceheduleList" href="#offlineSceheduleList">未审课时</a>
+                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}">返回</a>
             </div>
         </div>
 
@@ -219,18 +216,6 @@
         }
     })
 
-    // 切换tab显示隐藏所需内容
-    mui("body").on("tap",".campSceheduleList",function(){
-        $(".nav-list-frame").show();
-    });
-
-    mui("body").on("tap",".onlineSceheduleList",function(){
-        $(".nav-list-frame").hide();
-    });
-
-    mui("body").on("tap",".offlineSceheduleList",function(){
-        $(".nav-list-frame").hide();
-    });
 
 
 
@@ -308,86 +293,6 @@
         });
     };
 
-    //拖拽后显示操作图标，点击操作图标删除元素；
-    $('.OA_task_schedule').on('tap', '.mui-btn', function (event) {
-        var elem = this;
-        var li = elem.parentNode.parentNode;
-        var btnArray = ['确认', '取消'];
-        var txt = elem.innerHTML;
-        var scheduleid = elem.parentNode.getAttribute('data-id');
-        var action = elem.getAttribute('data-action');
-        mui.confirm('确认该课程' + txt + '?', '提示', btnArray, function (e) {
-            if (e.index == 0) {
-                var apiurl = "{:url('api/schedule/removeschedule')}";
-                mui.ajax(apiurl, {
-                    data: {
-                        scheduleid: scheduleid,
-                        action: action
-                    },
-                    dataType: 'json',
-                    type: 'post',
-                    headers: {'Content-Type': 'application/json'},
-                    success: function (data) {
-                        //console.log(data);
-                        if (data.code == 200) {
-                            mui.toast(data.msg);
-                            if (action === 'editstatus') {
-                                mui.post("{:url('api/schedule/sendschedule')}", {
-                                    scheduleid: scheduleid
-                                }, function(res) {
-                                    console.log(res);
-                                }, 'json');
-                            }
-
-                            setTimeout(function () {
-                                li.parentNode.removeChild(li);
-                                location.reload();
-                            }, 2000);
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errotThrown) {
-                        mui.toast('网络异常,请稍候再试');
-                    }
-                });
-            } else {
-                setTimeout(function () {
-                    mui.swipeoutClose(li);
-                }, 0);
-            }
-        });
-    });
-
-    // var curmonthbegin = new Date() // 2017-10-1 0:00
-    // var curmonthend = new Date() // 2017-10-30 23:59
-    // toScheduleTotal(curmonthbegin, curmonthend) 
-    // data.data.total 
-    // curmonthcount.text(data.data.total)
-
-    // var toScheduleTotal = function (begin, end) {
-    //     var url = "{:url('api/schedule/getScheduleListBetweenTimeByPageApi','','',true)}";
-    //     var campID = "{$camp_id}";
-    //     mui.ajax({
-    //         url: url,
-    //         data: {
-    //             begin: begin,
-    //             end: end
-    //             camp_id: campID,
-    //         },
-    //         dataType: 'json',//服务器返回json格式数据
-    //         type: 'post',//HTTP请求类型
-    //         timeout: 10000,//超时时间设置为10秒；
-    //         headers: {'Content-Type': 'application/json'},
-    //         //processData:false,
-    //         success: function (data) {
-               
-    //         },
-    //         error: function (xhr, type, errerThrown) {
-    //             mui.toast('网络异常,请稍候再试');
-    //         }
-    //     });
-    // };
 
 
 </script>
