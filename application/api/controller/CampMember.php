@@ -137,11 +137,15 @@ class CampMember extends Base
             $result = $model->save($data);
             if ($result) {
                 // 插入follow数据
-                db('follow')->insert([
-                    'type' => 2, 'status' => 1,
-                    'follow_id' => $campInfo['id'], 'follow_name' => $campInfo['camp'], 'follow_avatar' => $campInfo['logo'],
-                    'member_id' => $this->memberInfo['id'], 'member' => $this->memberInfo['member'], 'member_avatar' => $this->memberInfo['avatar']
-                ]);
+                $followDb = db('follow');
+                $hasFollow = $followDb->where(['type' => 2, 'follow_id' => $campInfo['id'], 'member_id' => $this->memberInfo['id']])->find();
+                if (!$hasFollow) {
+                    $followDb->insert([
+                        'type' => 2, 'status' => 1,
+                        'follow_id' => $campInfo['id'], 'follow_name' => $campInfo['camp'], 'follow_avatar' => $campInfo['logo'],
+                        'member_id' => $this->memberInfo['id'], 'member' => $this->memberInfo['member'], 'member_avatar' => $this->memberInfo['avatar']
+                    ]);
+                }
                 return json(['code' => 200, 'msg' => '申请成功', 'insid' => $model->id]);
             } else {
                 return json(['code' => 100, 'msg' => '申请失败']);

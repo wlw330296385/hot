@@ -11,6 +11,11 @@ class FollowService {
             $data['status'] = 1;
             $result = $model->allowField(true)->save($data);
             if ($result) {
+                // 操作camp_member数据
+                if ($data['type'] == 2) {
+                    $this->saveCampMember($data);
+                }
+
                 $response = ['code' => 200, 'msg' => '关注成功', 'data' => $model->id];
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -25,6 +30,10 @@ class FollowService {
             } else {
                 $data['status'] = 1;
                 $msg = '关注成功';
+                // 操作camp_member数据
+                if ($data['type'] == 2) {
+                    $this->saveCampMember($data);
+                }
             }
             $result = $model->allowField(true)->isUpdate()->save($data);
             if ($result) {
@@ -34,6 +43,25 @@ class FollowService {
             }
         }
         return $response;
+    }
+
+    protected function saveCampMember($data) {
+        $campmemberDb = db('camp_member');
+        $campmember = $campmemberDb->where(['camp_id' => $data['follow_id'], 'member_id' => $data['mebmer_id']])->find();
+        if ($campmember) {
+            if ($campmember['status'] != 1) {
+                $campmemberDb->where(['id' => $campmember['id']])->update(['status' => 1, 'type' => -1]);
+            }
+        } else {
+            $campmemberDb->insert([
+                'camp_id' => $data['follow_id'],
+                'camp' => $data['follow_name'],
+                'member_id' => $data['member_id'],
+                'member' => $data['member'],
+                'type' => -1, 'status' => 1,
+                'create_time' => time(), 'update_time' => time()
+            ]);
+        }
     }
 
     // 关注列表
