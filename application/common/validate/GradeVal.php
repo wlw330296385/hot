@@ -12,7 +12,7 @@ class GradeVal extends Validate{
         'lesson_time' => 'require',
         'area' => 'require',
         'court' => 'require',
-        'coach_id' => 'require',
+        // 'coach_id' => 'require',
         'coach_salary' => 'require|number',
         'assistant_salary' => 'number',
         'salary_base' => 'number'
@@ -29,7 +29,7 @@ class GradeVal extends Validate{
         'lesson_time.require' => '请选择训练时间',
         'area.require' => '请选择所属地区',
         'court.require' => '请选择训练地点',
-        'coach_id.require' => '请选择主教练',
+        // 'coach_id.require' => '请选择主教练',
         'coach_salary.require' => '请填写主教底薪',
         'coach_salary.number' => '请在主教底薪填写数字',
         'assistant_salary.number' => '请在助教底薪填写数字',
