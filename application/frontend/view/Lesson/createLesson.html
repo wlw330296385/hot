@@ -96,21 +96,19 @@
                 <input type="text" class="data" value="" name="score">
             </div>-->
                 <div class="mui-input-row">
-                    <a href="#" class="mui-navigate-right">
                         <label>训练周期</label>
-                        <span class="select-row">
-                    <select class="data" name="week">
-                        <option value="不限">不限</option>
-                        <option value="周日">周日</option>
-                        <option value="周一">周一</option>
-                        <option value="周二">周二</option>
-                        <option value="周三">周三</option>
-                        <option value="周四">周四</option>
-                        <option value="周五">周五</option>
-                        <option value="周六">周六</option>
-                    </select>
-                </span>
-                    </a>
+                        <span class="select-row mui-navigate-right">
+                            <select class="data" name="week">
+                                <option value="不限">不限</option>
+                                <option value="周日">周日</option>
+                                <option value="周一">周一</option>
+                                <option value="周二">周二</option>
+                                <option value="周三">周三</option>
+                                <option value="周四">周四</option>
+                                <option value="周五">周五</option>
+                                <option value="周六">周六</option>
+                            </select>
+                        </span>
                 </div>
                 <div class="mui-input-row picker btn" id="demo5" data-options='{"type":"time"}'>
                     <a href="#" class="mui-navigate-right">
@@ -157,7 +155,7 @@
                 <div class="mui-input-row">
                     <a href="#mainCoach" class="mui-navigate-right">
                         <label>主教练</label>
-                        <span class="mainCoachCont domData dataSpan" name="coach"></span>
+                        <input type="text" name="coach" class="mainCoachCont data pdr" value="" placeholder="选填">
                         <input type="hidden" name="coach_id" value="" class="data coach_id">
                     </a>
                 </div>
@@ -340,7 +338,7 @@
     <!--主教练-->
     <div id="mainCoach" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
+        <div class="page-header border-b">
             <span class="course"><strong>教练列表</strong></span>
         </div>
         <div class="mui-scroll-wrapper">
@@ -353,7 +351,7 @@
     <!--助理教练-->
     <div id="assistantCoach" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
+        <div class="page-header border-b">
             <span class="course wd36"><strong>教练列表</strong></span>
             <span class="fr"><button class="mui-btn-blue" id="assistantConfirm">确认</button></span>
         </div>
@@ -538,14 +536,14 @@
     $(function () {
 
         // 上课星期
-        $("#weekConfirm").click(function () {
-            //选择多个星期
-            $("input[name='dom']").val($("input[name='checkbox-week']:checked").map(function () {
-                return $(this).val()
-            }).get().join(","));
-            $(".weekCont").text($("input[name='dom']").val());
-            mui('#week').popover('toggle');
-        })
+//        $("#weekConfirm").click(function () {
+//            //选择多个星期
+//            $("input[name='dom']").val($("input[name='checkbox-week']:checked").map(function () {
+//                return $(this).val()
+//            }).get().join(","));
+//            $(".weekCont").text($("input[name='dom']").val());
+//            mui('#week').popover('toggle');
+//        })
         // 课程类型
         $(".lessonType").click(function () {
 
@@ -622,7 +620,7 @@
                 }
             });
             if (isStop == 'No') {
-                $(".mainCoachCont").text(mainCoach);
+                $(".mainCoachCont").val(mainCoach);
                 $(".coach_id").val(id);
                 mui("#mainCoach").popover("toggle");
             }

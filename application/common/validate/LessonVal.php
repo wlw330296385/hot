@@ -7,7 +7,7 @@ class LessonVal extends Validate{
 	protected $rule = [
         'lesson'        =>  'require|max:60|token',
         'gradecate'	=> 'require',
-        'cost'         => 'require',
+        'cost'         => 'require|number',
         'dom'         => 'require',
         // 'coach'         =>'require',
         'week'           =>'require',
@@ -22,8 +22,8 @@ class LessonVal extends Validate{
         'lesson.token'   =>'请不要重复提交',
         'lesson.require'        =>  '请输入课程名称',
         'gradecate.require'	=> '请选择课程类型',
-        'cost.require'      =>'请输入课程单价',
-        'dom'                 =>'缺少必填项目',
+        'cost.require'      =>'请输入课程单价（数字）',
+        'dom'                 =>'请添加课量选项',
         // 'coach'                 =>'请选择主教练',
         'week'                  =>'请选择周期（星期几）',
         'lesson_time'           =>'发布时间需要大于当前时间',
@@ -34,7 +34,7 @@ class LessonVal extends Validate{
     ];
     
     protected $scene = [
-        'add'   =>  ['gradecate','lesson','dom','cost','coach','week','lesson_time','province','city','area','court'],
+        'add'   =>  ['gradecate','lesson','dom','cost','week','lesson_time','province','city','area','court'],
         'edit'  =>  [],
     ];    
 
