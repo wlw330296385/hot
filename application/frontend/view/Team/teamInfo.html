@@ -193,7 +193,7 @@
             <div class="page-header whitebg border-b">
                 <span class="course">球队相册</span>
                 <span class="more pdr15">
-                    <a href="" class="mui-navigate-right">查看更多</a>
+                    <a href="{:url('team/album',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">查看更多</a>
                 </span>
             </div>
             <div class="picFrame whitebg">
@@ -331,18 +331,18 @@
                 $(".impressSide .bgorange").removeClass("bgorange");
             });
 
-            $(document).on("tap", '#impressSubmit', function () {
-                var hasOrange = $(".impressSide").children("span").hasClass("bgorange")
-                if (hasOrange == false) {
-                    mui.toast("你还没有选择印象标签");
-                    return false;
-                };
-                $(".impressSide .bgorange").each(function () {
-                    var span = '<span>' + $(this).text() + '</span>';
-                    $(".impress").append(span);
-                })
-                mui('#Impress').popover('toggle');
-            });
+            // $(document).on("tap", '#impressSubmit', function () {
+            //     var hasOrange = $(".impressSide").children("span").hasClass("bgorange")
+            //     if (hasOrange == false) {
+            //         mui.toast("你还没有选择印象标签");
+            //         return false;
+            //     };
+            //     $(".impressSide .bgorange").each(function () {
+            //         var span = '<span>' + $(this).text() + '</span>';
+            //         $(".impress").append(span);
+            //     })
+            //     mui('#Impress').popover('toggle');
+            // });
 
             // 关注球队
             $(".follow").on("tap", '', function () {
@@ -415,25 +415,43 @@
                 var commented = "{$teamInfo.name}";
                 var commented_id = "{$teamInfo.id}";
 
-                mui.ajax("{:url('api/team/applyjointeam')}", {
+                var tags = $(".tagAll .bgorange").map(function () {
+                    return $(this).attr("data-tag_name");
+                }).get().join(",");
+
+                var tag_ids = $(".tagAll .bgorange").map(function () {
+                    return $(this).attr("data-id");
+                }).get().join(",");
+
+                console.log(tags);
+                console.log(tag_ids);
+
+                if (!$(".tagAll .choiseTag").hasClass("bgorange")) {
+                    mui.toast("你还没有选择印象标签哦");
+                    return false;
+                }
+
+                mui.ajax("{:url('api/tag/addtagcomment')}", {
                     data: {
                         comment_type: 2,
                         commented: commented,
-                        commented_id: commented_id
+                        commented_id: commented_id,
+                        tags: tags,
+                        tag_ids: tag_ids,
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
                     headers: { 'Content-Type': 'application/json' },
                     success: function (data) {
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data);
                         if (data.code == 200) {
-                            mui.toast("操作成功，待球队审核...");
-                            mui('#yqpopover').popover('toggle');
+                            mui.toast("发表成功，感谢你的评价！");
+                            toTagCommentList();
+                            mui('#Impress').popover('toggle');
                         } else {
                             mui.toast(data.msg);
-                            mui('#yqpopover').popover('toggle');
+                            mui('#Impress').popover('toggle');
                         }
                     },
                     error: function (xhr, type, errorThrown) {
@@ -443,9 +461,9 @@
                 });
             });
 
-            //判断当前的关注状态
-            followStatus();
-            teamMemberlist();
+
+            followStatus(); //判断当前的关注状态
+            teamMemberlist(); //自定义获取球员列表
             toTagAllList(); //所有标签列表
             toTagCommentList(); //已经评价的标签列表
         });
@@ -529,7 +547,7 @@
                     var div = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<span class="choiseTag">' + data.data[i].tag_name + '</span>'
+                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag_name + '" data-id="' + data.data[i].id + '">' + data.data[i].tag_name + '</span>'
                         }
                         $(".tagAll").empty();
                         $(".tagAll").append(div);
@@ -563,7 +581,7 @@
                     var div = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<span class="choiseTag">' + data.data[i].tag_name + '</span>'
+                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag + '" data-tag_id="' + data.data[i].id + '">' + data.data[i].tag + '</span>'
                         }
                         $(".tagCommentList").empty();
                         $(".tagCommentList").append(div);
