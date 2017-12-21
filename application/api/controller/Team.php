@@ -689,4 +689,84 @@ class Team extends Base {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+
+    // 球队模块评论列表
+    public function teamcommentlist() {
+        try {
+            // 判断必传参数
+            // 评论类型
+            $comment_type = input('post.comment_type');
+            // 被评论实体id
+            $commented_id = input('post.commented_id');
+            if (!$comment_type || !$commented_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            // 组合传参作查询条件
+            $map = input('post.');
+            // 页码参数
+            $page = input('page', 1);
+            unset($map['page']);
+            $teamS = new TeamService();
+            // 返回结果
+            $result = [];
+            $result['data'] = $teamS->getCommentList($map, $page);
+            // 返回点赞数
+            $result['thumbup_count'] = $teamS->getCommentThumbCount($map);
+            return json($result);
+        } catch(Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球队模块评论列表（有页码）
+    public function teamcommentlistpage() {
+        try {
+            // 判断必传参数
+            // 评论类型
+            $comment_type = input('post.comment_type');
+            // 被评论实体id
+            $commented_id = input('post.commented_id');
+            if (!$comment_type || !$commented_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            // 组合传参作查询条件
+            $page = input('page', 1);
+            $map = input('post.');
+            $teamS = new TeamService();
+            // 返回结果
+            $result = [];
+            $result = $teamS->getCommentPaginator($map);
+            // 返回点赞数
+            $result['thumbup_count'] = $teamS->getCommentThumbCount($map);
+            return json($result);
+        } catch(Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 发布球队模块评论
+    public function addteamcomment() {
+        try {
+            // 将接收参数作提交数据
+            $data = input('post.');
+            // 防止有传入thumbup参数 过滤掉
+            if (isset($data['thumbup'])) {
+                unset($data['thumbup']);
+            }
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $data['member_avatar'] = $this->memberInfo['avatar'];
+            $teamS = new TeamService();
+            $hasCommented = $teamS->getCommentInfo($data);
+            if ($hasCommented && !is_null($hasCommented['comment']) ) {
+                return json(['code' => 100, 'msg' => '只能发表一次评论']);
+            } 
+            $res = $teamS->saveComment($data);
+            return json($res);
+        } catch(Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球队模块点赞
 }

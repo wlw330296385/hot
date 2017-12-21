@@ -3,6 +3,7 @@
 namespace app\service;
 use app\model\Apply;
 use app\model\Team;
+use app\model\TeamComment;
 use app\model\TeamEvent;
 use app\model\TeamEventMember;
 use app\model\TeamMember;
@@ -531,6 +532,58 @@ class TeamService {
     public function teamEventMembers($map, $order='id desc') {
         $model = new TeamEventMember();
         $res = $model->where($map)->order($order)->select();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
+    // 球队模块评论列表分页
+    public function getCommentPaginator($map, $order='id desc', $paginate=10) {
+        $model = new TeamComment();
+        $res = $model->where($map)->order($order)->paginate($paginate);
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
+    // 球队模块评论列表
+    public function getCommentList($map, $page=1, $order='id desc', $limit=10) {
+        $model = new TeamComment();
+        $res = $model->where($map)->order($order)->page($page, $limit)->select();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
+    // 球队模块点赞数统计
+    public function getCommentThumbCount($map) {
+        $model = new TeamComment();
+        $map['thumbsup'] = 1;
+        $res = $model->where($map)->count();
+        return $res;
+    }
+
+    // 保存球队模块评论
+    public function saveComment($data) {
+        $model = new TeamComment();
+        $res = $model->allowField(true)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+        } else {
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
+    // 获取球队模块评论详情
+    public function getCommentInfo($map) {
+        $model = new TeamComment();
+        $res = $model->where($map)->find();
         if ($res) {
             return $res->toArray();
         } else {
