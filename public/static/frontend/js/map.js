@@ -32,7 +32,14 @@ AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geo
         marker.setPosition(e.lnglat);
         geocoder.getAddress(e.lnglat, function (status, result) {
             if (status == 'complete') {
-                alert(result.regeocode.formattedAddress)
+                var glocation = result.regeocode.formattedAddress;
+                // alert(result.regeocode.formattedAddress)
+                if(window.confirm('你确定定位到【'+glocation+'】吗？')){
+                    $(".getFromMap").val(glocation);
+                    $(".getFromMap").text(glocation);
+                }else{
+                    return false;
+                }
             }
         })
     })

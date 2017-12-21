@@ -126,8 +126,8 @@
                             <div class="mui-collapse-content">
                                 {volist name="$vol.daughter" id="v"}
                                 <div class="mui-input-row mui-checkbox mui-left">
-                                    <label>{$v.exercise}</label>
-                                    <input name="checkbox-dom" value="{$v.id}" type="checkbox" data-exercise_detail="{$v.exercise_detail}" data-exercise="{$v.exercise}" data-pid="{$v.pid}">
+                                    <label>{$v.exercise} <i class="fr f12">{$v.exercise_time} 分钟</i></label>
+                                    <input name="checkbox-dom" value="{$v.id}" type="checkbox" data-exercise_time="{$v.exercise_time}" data-exercise_detail="{$v.exercise_detail}" data-exercise="{$v.exercise}" data-pid="{$v.pid}">
                                 </div>
                                 {/volist}
                             </div>
@@ -184,10 +184,11 @@
                 subexercise_str = [];
                 $(this).find("input[name=checkbox-dom]:checked").each(function () {
                     var exercise = $(this).attr("data-exercise");
+                    var exercise_time = $(this).attr("data-exercise_time");
                     var id = $(this).val();
                     var pid = $(this).attr("data-pid");
-                    subexercise_str.push({ exercise: exercise, id: id, pid: pid });
-                    eList += '<li class="mui-table-view-cell listli detalisli">'+exercise+'</li>'
+                    subexercise_str.push({ exercise: exercise,exercise_time: exercise_time, id: id, pid: pid });
+                    eList += '<li class="mui-table-view-cell listli detalisli">'+exercise+'<i class="fr f12">'+exercise_time+'分钟</i></li>'
 
                 });
                 if (subexercise_str != '') {

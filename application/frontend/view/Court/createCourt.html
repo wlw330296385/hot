@@ -46,42 +46,59 @@
         #container {
             width: 100%;
             height: 250px;
+            margin-top: 30px;
         }
         
         #mapFrame {
             height: 250px;
+            padding-bottom: 0px;
         }
-        
-        #map button {
-            top: 11px;
+
+        #map {
+            background-color: #EEE;
+        }
+        #map input[type=button] {
             position: absolute;
-            right: 3px;
-            padding: 5px 8px;
+            top: 0px;
+            right: 0px;
+            width: 20%;
+            height: 40px !important;
+            text-align: center;
+            color:#FFF;
         }
-        
+        #map .mui-icon-location{
+            width: 10%;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            height: 40px !important;
+            line-height: 35px;
+            background-color: #EEE;
+            font-size: 20px;
+            padding-right:0px !important;
+            text-align: center;
+        }
         #tip {
-            background-color: #ddf;
             color: #333;
-            border: 1px solid silver;
-            box-shadow: 3px 4px 3px 0px silver;
             position: absolute;
-            top: 10px;
-            left: 5px;
-            right: 55px;
-            border-radius: 5px;
+            top: 0px;
+            left: 10%;
+            right: 20%;
             overflow: hidden;
-            line-height: 20px;
-            width: 96%;
+            width: 70%;
         }
-        
         #tip input[type="text"] {
-            height: 25px;
+            background-color: #EEE;
             border: 0;
-            padding-left: 5px;
+            padding-left: 0px;
             width: 100%;
-            border-radius: 3px;
+            height: 40px !important;
             outline: none;
-            margin-bottom: 0;
+            text-align: left;
+        }
+        span.getFromMap {
+            width: 60%;
+            line-height: 18px !important;
         }
     </style>
 </head>
@@ -97,6 +114,24 @@
         <div class="mui-content pt">
             <div class="register">
                 <form action="" class="mui-input-group">
+                    <!-- map -->
+                    <div class="mui-input-row h-auto" id="mapFrame">
+                        <div id="map">
+                            <div>{:token()}</div>
+                            <div id="container"></div>
+                            <span class="mui-icon mui-icon-location"></span>
+                            <div id="tip">
+                                <input type="text" id="keyword" name="keyword" value="" onfocus='this.value=""' placeholder="请输入地址或直接点击地图" />
+                            </div>
+                            <input type="button" class="bgblue" id="mapConfirm" value="确认" />
+                        </div>
+                    </div>
+                    <div class="mui-input-row h-auto">
+                            <label>场地定位</label>
+                            <span class="getFromMap"></span>
+                            <input type="hidden" name="location" value="" class="location getFromMap">
+                    </div>
+
                     <div class="mui-input-row"><label>场地名称</label>
                         <input type="text" class="court" placeholder="请输入训练场地名称">
                         <input type="hidden" name="camp_id" value="{$campInfo['id']}">
@@ -110,12 +145,6 @@
                         </a>
                     </div>
 
-                    <div class="mui-input-row">
-                        <a href="#mapFrame">
-                            <label>具体地址</label>
-                            <input type="text" name="location" value="" class="location data pdr" placeholder="请输入具体地址">
-                        </a>
-                    </div>
 
                     <div class="mui-input-row h-auto"><label>营业时间</label>
                         <textarea rows="2" class="open_time" placeholder="请输入营业时间"></textarea>
@@ -180,17 +209,6 @@
             </div>
         </div>
 
-    </div>
-    <!-- map -->
-    <div id="mapFrame" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-        <div id="map">
-            <div>{:token()}</div>
-            <div id="container"></div>
-            <div id="tip">
-                <input type="text" id="keyword" name="keyword" value="" onfocus='this.value=""' placeholder="请输入关键字：(选定后搜索)" />
-            </div>
-            <button class="mui-btn-blue" id="mapConfirm">确认</button>
-        </div>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -261,8 +279,8 @@
         // map(选择具体地址)
         $("#mapConfirm").on('tap', '', function () {
             var mapkeyword = $("input[name='keyword']").val();
-            $("input[name='location']").val(mapkeyword)
-            mui("#mapFrame").popover("toggle");
+            $(".getFromMap").val(mapkeyword);
+            $(".getFromMap").text(mapkeyword);
         });
 
 

@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <style>
         .mui-popover-arrow {
             left: auto;
@@ -20,6 +23,21 @@
         .mui-input-row a {
             display: table;
             width: 100%;
+        }
+        [data-type="time"] .mui-dtpicker-title h5 {
+            width: 100% !important;
+        }
+
+        [data-type="time"] .mui-picker {
+            width: 100% !important;
+        }
+
+        [data-type="time"] [data-id="title-h"] {
+            display: none !important;
+        }
+
+        [data-type="time"] .mui-dtpicker-body [data-id="picker-h"] {
+            display: none !important;
         }
     </style>
 </head>
@@ -64,15 +82,15 @@
                 <label>项目名称</label>
                 <input type="text" placeholder="请填写项目名称" name="exercise" class="data" value="{$exerciseInfo.exercise}">
             </div>
+            <div class="mui-input-row picker exercise_time" id="demo3" data-options='{"type":"time"}'>
+                <div class="mui-navigate-right">
+                    <label class="wd49">练习时间（分钟）</label>
+                    <span id="exercise_time" class="domData" name="exercise_time">{$exerciseInfo.exercise_time}</span>
+                </div>
+            </div>
             <div class="mui-input-row h-auto">
                 <label>项目要领</label>
                 <textarea rows="5" class="data mui-text-left" name="exercise_detail" placeholder="填写项目要领">{$exerciseInfo.exercise_detail}</textarea>
-            </div>
-            <div class="mui-input-row picker exercise_time" id="demo3" data-options='{"type":"time"}'>
-                <div class="mui-navigate-right">
-                    <label>练习时间</label>
-                    <span id="exercise_time" class="domData" name="exercise_time">{$exerciseInfo.exercise_time}</span>
-                </div>
             </div>
             <!--<div class="mui-input-row">-->
                 <!--<label>上传视频</label>-->
@@ -101,6 +119,8 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
 <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
 <script>
     //初始化
@@ -113,6 +133,26 @@
         $(".mui-scroll-wrapper").scroll({
             //bounce: false,//滚动条是否有弹力默认是true
             indicators: true //是否显示滚动条,默认是true
+        });
+        $.ready(function () {
+
+            //练习时间
+            var resultTime = $('#exercise_time')[0];
+            var btnTime = $('.exercise_time');
+            btnTime.each(function (i, btn) {
+                btn.addEventListener('tap', function () {
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var id = this.getAttribute('id');
+                    var picker = new $.DtPicker(options);
+
+                    picker.show(function (rs) {
+                        resultTime.innerText = rs.i.text;
+                        picker.dispose();
+                    });
+                }, false);
+            });
+
         });
     })(mui);
 
