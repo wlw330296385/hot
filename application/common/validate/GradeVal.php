@@ -6,7 +6,7 @@ class GradeVal extends Validate{
         'grade'  =>  'require|max:60|token',
         'member_id'	=> 'require',
         'lesson_id' => 'require',
-        'students' => 'require',
+//        'students' => 'require',
         'gradecate_id' => 'require',
         'week' => 'require',
         'lesson_time' => 'require',
@@ -14,6 +14,7 @@ class GradeVal extends Validate{
         'court' => 'require',
         // 'coach_id' => 'require',
         // 'coach_salary' => 'require|number',
+        'coach_salary' => 'number',
         'assistant_salary' => 'number',
         'salary_base' => 'number'
     ];
@@ -23,7 +24,7 @@ class GradeVal extends Validate{
         'grade.require'  =>  '请填写班级名称',
         'member_id.require'	=> '会员信息过期,请重新登录平台',
         'lesson_id.require' => '请选择所属课程',
-        'students.require' => '请选择学员',
+//        'students.require' => '请选择学员',
         'gradecate_id.require' => '请选择班级类型',
         'week.require' => '请选择训练周期',
         'lesson_time.require' => '请选择训练时间',
@@ -37,8 +38,8 @@ class GradeVal extends Validate{
     ];
     
     protected $scene = [
-        'add'   =>  ['member_id','grade','lesson_id','students','gradecate_id','week','lesson_time','court','area'],
-        'edit'  =>  ['member_id','lesson_id','students','gradecate_id','week','lesson_time','court','area'],
+        'add'   =>  ['member_id','grade','lesson_id','gradecate_id','week','lesson_time','court','area'],
+        'edit'  =>  ['member_id','lesson_id','gradecate_id','week','lesson_time','court','area'],
     ];
 
 }
