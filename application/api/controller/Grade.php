@@ -113,6 +113,8 @@ class Grade extends Base{
                     $StudentService = new \app\service\StudentService;
                     $res = $StudentService->saveAllStudent($studentData);
                     return json($res);
+                }else{
+                    return json($result);
                 }
                 
             }
@@ -157,6 +159,8 @@ class Grade extends Base{
                     }
                     $res = $StudentService->saveAllStudent($studentData);
                     return json($res);
+                }else{
+                    return json($result);
                 }
             }else{
                 return json($result);

@@ -312,6 +312,21 @@ class ScheduleService
         return $count;
     }
 
+
+    // 统计学生课时数量
+    public function countScheduleMembers($map=[]) {
+        $ScheduleMember = new ScheduleMember();
+        $count = [];
+//        $map['camp_id'] = $camp_id;
+        $monthcount = $ScheduleMember->where($map)
+            ->whereTime('schedule_time', 'month')->count();
+        $yearcount = $ScheduleMember->where($map)
+            ->whereTime('schedule_time', 'year')->count();
+        $sumcount = $ScheduleMember->where($map)->count();
+        $count = ['month' => $monthcount, 'year' => $yearcount, 'sum' => $sumcount];
+        return $count;
+    }
+
     // 获得课时评论
     public function getCommentList($schedule_id, $paginate = 10)
     {
