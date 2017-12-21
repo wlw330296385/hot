@@ -46,15 +46,19 @@ class Schedule extends Base
 
     // 课时列表
     public function scheduleListOfStudent(){
-    	$map = input();
-    	// $map = $map?$map:[];
-    	$camp_id = input('camp_id');
-    	// $scheduleList = $this->scheduleService->getscheduleList($map);
-
+    	$student_id = input('param.student_id');
+    	$camp_id = input('param.camp_id');
+    	// 学生的班级
+    	$gradeList = db('grade_member')->where(['student_id'=>$student_id,'camp_id'=>$camp_id])->select();
+    	$gradeIDS = db('grade_member')->where(['student_id'=>$student_id,'camp_id'=>$camp_id])->column('grade_id');
+    	// 剩余课量
+    	$restSchedule = db('lesson_member')->where(['student_id'=>$student_id,'camp_id'=>$camp_id,'status'=>1])->sum('rest_schedule');
         // 课时统计
-        $scheduleCount = $this->scheduleService->countSchedules(['camp_id' => $camp_id]);
+        $scheduleCount = $this->scheduleService->countSchedules(['camp_id' => $camp_id,'grade_id'=>['in',$gradeIDS]]);
+        $this->assign('restSchedule',$restSchedule);
     	$this->assign('scheduleCount',$scheduleCount);
-  		// $this->assign('scheduleList',$scheduleList);
+  		$this->assign('gradeList',$gradeList);
+  		$this->assign('student_id',$student_id);
   		$this->assign('camp_id', $camp_id);
 		return view('Schedule/scheduleListOfStudent');
     }

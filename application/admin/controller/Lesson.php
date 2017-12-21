@@ -135,7 +135,7 @@ class Lesson extends Backend {
                     'student'=>$studentList[$postData['studentIndex']]['student'],
                     'student_id'=>$studentList[$postData['studentIndex']]['id'],
                     'total'=>$postData['total'],
-                    'system_remarks'=>"system:{$this->admin['username']},id:{$this->admin['id']}",
+                    'system_remarks'=>"system:{".$this->admin['username']."},id:{".$this->admin['id']."}",
                     'bill_type'=>1
                 ];
                 $BillService = new \app\service\BillService;

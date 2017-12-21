@@ -15,20 +15,17 @@
 
 <body>
 
-    <header id="header" class="mui-bar mui-bar-nav for-tab">
-        <div class="camp-lesson-list">
-            <div class="mui-segmented-control mb">
-                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}">返回</a>
-            </div>
-        </div>
-
-
+    <header class="mui-bar mui-bar-nav for-tab">
+        <div class="nav-list">
+           <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}">返回</a>
+       </div>
     </header>
 
     <div class="mui-content">
         <div class="list camp-list camp-lesson-list detalis-list coach">
             <div class="nav-list">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
                         <span>本月课量</span>
                         <div class="mui-media-body curmonthcount">{$scheduleCount.month}</div>
@@ -38,16 +35,24 @@
                         <div class="mui-media-body">{$scheduleCount.year}</div>
                     </a></li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
-                        <span>总课量</span>
-                        <div class="mui-media-body">{$scheduleCount.sum}</div>
+                        <span>剩余课量</span>
+                        <div class="mui-media-body">{$restSchedule}</div>
                     </a></li>
                 </ul>
                 <ul class="mui-table-view mui-text-center border-b">
                     <li class="mui-table-view-cell">
                         <ul class="mui-row table">
-                            <li class="mui-col-xs-4 mui-col-sm-4">日期</li>
-                            <li class="mui-col-xs-6 mui-col-sm-6">班级</li>
-                            <li class="mui-col-xs-2 mui-col-sm-2">人数</li>
+                            <li class="mui-col-xs-2 mui-col-sm-2">日期</li>
+                            <li class="mui-col-xs-8 mui-col-sm-8">
+                                <select class="select" name="grade_id">
+                                    <option>班级</option>
+                                    {volist name='gradeList' id='vol'}
+                                    <option value="{$vol.grade_id}">{$vol.grade}</option>
+                                    {/volist}
+                                </select>
+                                <i class="mui-icon mui-icon-arrowdown" style="float: none"></i>
+                            </li>
+                            <li class="mui-col-xs-2 mui-col-sm-2">学生名字</li>
                         </ul>
                     </li>
                 </ul>
@@ -114,45 +119,6 @@
             }
         });
 
-        mui('#offlineSceheduleList').pullRefresh({
-            down: {
-                //下拉刷新
-                height: 50,//可选.默认50.触发下拉刷新拖动距离
-                auto: true,//可选,默认false.自动下拉刷新一次
-                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                callback: pulldownRefreshOff
-            },
-            up: {
-                //上拉加载
-                height: 150,//可选.默认50.触发上拉加载拖动距离
-                //auto:true,//可选,默认false.自动上拉加载一次
-                contentrefresh: '正在加载...',
-                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                callback: pullupRefreshOff
-            }
-        });
-
-        mui('#campSceheduleList').pullRefresh({
-            down: {
-                //下拉刷新
-                height: 50,//可选.默认50.触发下拉刷新拖动距离
-                auto: true,//可选,默认false.自动下拉刷新一次
-                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                callback: pulldownRefreshAll
-            },
-            up: {
-                //上拉加载
-                height: 150,//可选.默认50.触发上拉加载拖动距离
-                //auto:true,//可选,默认false.自动上拉加载一次
-                contentrefresh: '正在加载...',
-                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                callback: pullupRefreshAll
-            }
-        });
 
 
         //下拉刷新具体业务实现（已审）
@@ -175,45 +141,7 @@
             }, 100);
         }
 
-        //下拉刷新具体业务实现（未审）
-        function pulldownRefreshOff() {
-            setTimeout(function () {
-                offCount = 1;//刷新并显示第一页
-                var page = offCount;
-                var gType = 1;//代表下拉刷新
-                toList('offlineSceheduleList', page, gType, 0);//具体取数据的方法
-            }, 100);
-        }
 
-        //上拉加载具体业务实现（未审）
-        function pullupRefreshOff() {
-            setTimeout(function () {
-                offCount++;//翻下一页
-                var page = offCount;
-                var gType = 2;//代表上拉加载
-                toList('offlineSceheduleList', page, gType, 0);//具体取数据的方法
-            }, 100);
-        }
-
-        //下拉刷新具体业务实现（全部）
-        function pulldownRefreshAll() {
-            setTimeout(function () {
-                offCount = 1;//刷新并显示第一页
-                var page = offCount;
-                var gType = 1;//代表下拉刷新
-                toList('campSceheduleList', page, gType);//具体取数据的方法
-            }, 100);
-        }
-
-        //上拉加载具体业务实现（全部）
-        function pullupRefreshAll() {
-            setTimeout(function () {
-                offCount++;//翻下一页
-                var page = offCount;
-                var gType = 2;//代表上拉加载
-                toList('campSceheduleList', page, gType);//具体取数据的方法
-            }, 100);
-        }
     })
 
 
@@ -222,13 +150,16 @@
     //接口获取数据并追加到页面
     var toList = function (wList, page, gType, status) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/schedule/getScheduleListByPageApi','','',true)}" + '/?page=' + page;
-        var campID = "{$camp_id}";
+        var url = "{:url('api/schedule_member/getScheduleMemberListByPageApi','','',true)}" + '/?page=' + page;
+        // var campID = ;
         mui.ajax({
             url: url,
             data: {
-                camp_id: campID,
-                status: status
+                user_id:"{$student_id}",
+                camp_id: "{$camp_id}",
+                status: 1,
+                type:1
+                // grade_id:'';
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -242,20 +173,20 @@
                 if (data.code == 200) {
                     var newDate = new Date();
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + campID;
-                        var lession_time = data.data.data[i].lesson_time;
+                        var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + "{$camp_id}";
+                        var lession_time = data.data.data[i].schedule_time;
                         // 已审，未审内容
                         newli += '<li class="mui-table-view-cell mui-media">';
                         if (status!=1) {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为已审</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
-                            newli += '<div class="mui-slider-handle"><a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time  + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a></div>';
+                            newli += '<div class="mui-slider-handle"><a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time  + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].schedule + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].user + '</li></ul></a></div>';
                         } else {
-                            newli += '<a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time  + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a>';
+                            newli += '<a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time  + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].schedule + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].user + '</li></ul></a>';
                         }
 
                         newli += '</li>';
                         // 全部内容
-                        newAllLi = newAllLi + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></li></a>';
+                        newAllLi = newAllLi + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].schedule + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].user + '</li></ul></li></a>';
                     }
                 }
 

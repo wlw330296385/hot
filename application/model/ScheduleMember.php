@@ -12,6 +12,10 @@ class ScheduleMember extends Model {
 //                            'type',
 //                            ];
 
+    public function getScheduleTimeAttr($value){
+        return date('Y-m-d H:i',$value);
+    }
+
     // 关联member
     public function member(){
     	return $this->hasOne('member','id','member_id',[],'left join');
