@@ -155,7 +155,7 @@
                 <div class="mui-input-row">
                     <a href="#mainCoach" class="mui-navigate-right">
                         <label>主教练</label>
-                        <span class="mainCoachCont domData" name="coach">{$gradeInfo.coach}</span>
+                        <input type="text" name="coach" class="mainCoachCont data pdr" value="{$gradeInfo.coach}" placeholder="选填">
                         <input type="hidden" name="coach_id" value="{$gradeInfo.coach_id}" class="data coach_id">
                     </a>
                 </div>
@@ -752,7 +752,7 @@
                     }
                 });
                 if (isStop == 'No') {
-                    $(".mainCoachCont").text(mainCoach);
+                    $(".mainCoachCont").val(mainCoach);
                     $(".coach_id").val(id);
                     mui("#mainCoach").popover("toggle");
                 }
@@ -878,10 +878,13 @@
                 if (noPass != "") {
                     mui.toast(noPass);
                     return false;
-                }else if ($('input[name="assistants"]').val() != "" && $('input[name="assistant_salary"]').val()=='') {
+                } else if ($('input[name="coach"]').val() != "" && $('input[name="coach_salary"]').val() == '') {
+                    mui.alert("已选择主教，请填写主教底薪");
+                    return false;
+                } else if ($('input[name="assistants"]').val() != "" && $('input[name="assistant_salary"]').val()=='') {
                     mui.alert("已选择助教，请填写助教底薪");
                     return false;
-                }else if($('input[name="assistants"]').val() == "" && $('input[name="assistant_salary"]').val()!='' && $('input[name="assistant_salary"]').val()!=0){
+                } else if($('input[name="assistants"]').val() == "" && $('input[name="assistant_salary"]').val()!='' && $('input[name="assistant_salary"]').val()!=0){
                     mui.alert("已填写助教底薪，还未选择助教");
                     return false;
                 } else {

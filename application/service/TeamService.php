@@ -124,7 +124,7 @@ class TeamService {
         $model = new TeamMember();
         // 有传入team_member表id 更新关系数据，否则新增关系数据
         if ($teamMember_id) {
-            $res = $model->where('id', $teamMember_id)->update($data);
+            $res = $model->allowField(true)->save($data, ['id' => $data['id']]);
             if ($res || ($res === 0)) {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
@@ -170,6 +170,7 @@ class TeamService {
         if ($res) {
             $result = $res->toArray();
             $result['status_num'] = $res->getData('status');
+            $result['position_num'] = $res->getData('position');
             // 获取成员在球队的角色身份
             $roleModel = new TeamMemberRole();
             $result['role_text'] = '';
@@ -309,7 +310,7 @@ class TeamService {
     {
         $list = Db::view('team_member_role', '*, status as role_status')
             ->view('team_member', '*', 'team_member.member_id=team_member_role.member_id', 'left')
-            ->where(['team_member_role.team_id' => $team_id, 'team_member_role.status' => 1, 'team_member.status' => 1])
+            ->where(['team_member.team_id' => $team_id, 'team_member_role.status' => 1, 'team_member.status' => 1])
             ->where('team_member.delete_time', null)
             ->where('team_member_role.delete_time', null)
             ->order($order)
@@ -371,6 +372,9 @@ class TeamService {
         // 保存数据，成功返回自增id，失败记录错误信息
         $res = $model->allowField(true)->data($data)->save();
         if ($res) {
+            // 球队活动数统计+1
+            $teamModel = new Team();
+            $teamModel->where('id', $data['team_id'])->setInc('event_num', 1);
             return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
         } else {
             trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');

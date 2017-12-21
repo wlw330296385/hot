@@ -147,14 +147,14 @@
                 <div class="mui-input-row">
                     <a href="#mainCoach" class="mui-navigate-right">
                         <label>主教练</label>
-                        <span class="mainCoachCont domData" name="coach"></span>
+                        <input type="text" name="coach" class="mainCoachCont data pdr" value="" placeholder="选填">
                         <input type="hidden" name="coach_id" value="" class="data coach_id">
                     </a>
                 </div>
 
                 <div class="mui-input-row">
                     <label>主教底薪<a href="#coach_salary"><i class="mui-icon mui-icon-info"></i></a></label>
-                    <input type="text" name="coach_salary" class="coach_salary data pdr" value="" placeholder="必填">
+                    <input type="text" name="coach_salary" class="coach_salary data pdr" value="" placeholder="选填">
                 </div>
 
                 <div class="mui-input-row">
@@ -233,7 +233,7 @@
     <!--课程类型-->
     <div id="lessonType" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
+        <div class="page-header border-b">
             <span class="course"><strong>所属课程</strong></span>
         </div>
         <div class="mui-scroll-wrapper">
@@ -250,7 +250,7 @@
     <!--学员名单-->
     <div id="student" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
+        <div class="page-header border-b">
             <span class="course wd36"><strong>学员名单</strong></span>
             <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
         </div>
@@ -267,7 +267,7 @@
     <!--周期选择-->
     <div id="weekSelect" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
+        <div class="page-header border-b">
             <span class="course"><strong>请选择训练周期</strong></span>
             <span class="fr"><button class="mui-btn-blue" id="weekConfirm">确认</button></span>
         </div>
@@ -310,7 +310,7 @@
     <!--主教练-->
     <div id="mainCoach" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
+        <div class="page-header border-b">
             <span class="course"><strong>教练列表</strong></span>
         </div>
         <div class="mui-scroll-wrapper">
@@ -322,7 +322,7 @@
     <!--助理教练-->
     <div id="assistantCoach" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
+        <div class="page-header border-b">
             <span class="course wd36"><strong>教练列表</strong></span>
             <span class="fr"><button class="mui-btn-blue" id="assistantConfirm">确认</button></span>
         </div>
@@ -402,7 +402,7 @@
     <!--班主任-->
     <div id="headMaster" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
+        <div class="page-header border-b">
             <span class="course wd36"><strong>选择班主任</strong></span>
             <span class="fr"><button class="mui-btn" id="teacherDel">清除</button></span>
         </div>
@@ -441,7 +441,7 @@
     <!--领队-->
     <div id="leader" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
+        <div class="page-header border-b">
             <span class="course wd36"><strong>选择领队</strong></span>
             <span class="fr"><button class="mui-btn" id="leaderDel">清除</button></span>
         </div>
@@ -709,7 +709,7 @@
                     }
                 });
                 if (isStop == 'No') {
-                    $(".mainCoachCont").text(mainCoach);
+                    $(".mainCoachCont").val(mainCoach);
                     $(".coach_id").val(id);
                     mui("#mainCoach").popover("toggle");
                 }
@@ -879,14 +879,15 @@
                 if (noPass != "") {
                     mui.alert(noPass);
                     return false;
-                } else if ($('input[name="assistants"]').val() != "" && $('input[name="assistant_salary"]').val() == '') {
+                } else if ($('input[name="coach"]').val() != "" && $('input[name="coach_salary"]').val() == '') {
+                    mui.alert("已选择主教，请填写主教底薪");
+                    return false;
+                }  else if ($('input[name="assistants"]').val() != "" && $('input[name="assistant_salary"]').val() == '') {
                     mui.alert("已选择助教，请填写助教底薪");
                     return false;
                 } else if ($('input[name="assistants"]').val() == "" && $('input[name="assistant_salary"]').val() != '') {
                     mui.alert("已填写助教底薪，还未选择助教");
                     return false;
-                } else if ($(".studentCont").text() == '') {
-                    mui.alert("请选择学员");
                 } else {
                     var data = wooApi.getInputData('input', 'data');
                     datas = wooApi.getInputData('select', 'data', data);
