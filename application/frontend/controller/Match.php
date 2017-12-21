@@ -22,4 +22,8 @@ class Match extends Base {
     public function matchedit() {
         return view('Match/matchEdit');
     }
+    // 比赛管理列表
+    public function matchlistofteam() {
+        return view('Match/matchlistofteam');
+    }
 }
