@@ -581,14 +581,12 @@
                     var div = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag + '" data-tag_id="' + data.data[i].id + '">' + data.data[i].tag + '</span>'
+                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag + '" data-tag_id="' + data.data[i].id + '">' + data.data[i].tag + '(<samll>' + data.data[i].count + '</samll>)</span>'
                         }
                         $(".tagCommentList").empty();
                         $(".tagCommentList").append(div);
-
-                        if (div == '') {
-                            $(".tagCommentList").append('<li class="nodata"><p>没有相关数据哦</p></li>');
-                        }
+                    } else {
+                        $(".tagCommentList").append('<p class="mui-text-center">还没有印象标签哦</p>');
                     }
                 },
                 error: function (xhr, type, errorThrown) {
