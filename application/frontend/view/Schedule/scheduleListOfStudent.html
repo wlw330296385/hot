@@ -15,10 +15,11 @@
 
 <body>
 
-    <header class="mui-bar mui-bar-nav for-tab">
-        <div class="nav-list">
-           <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}">返回</a>
-       </div>
+    <header class="mui-bar mui-bar-nav subheader">
+           <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"><span class="return">返回</span></a>
+            <h1 class="mui-title" style="font-size: 14px">
+                课时列表
+            </h1>
     </header>
 
     <div class="mui-content">
@@ -43,8 +44,8 @@
                     <li class="mui-table-view-cell">
                         <ul class="mui-row table">
                             <li class="mui-col-xs-2 mui-col-sm-2">日期</li>
-                            <li class="mui-col-xs-8 mui-col-sm-8">
-                                <select class="select" name="grade_id">
+                            <li class="mui-col-xs-6 mui-col-sm-6">
+                                <select class="select mui-text-center"  style="width: 60%"  name="grade_id">
                                     <option>班级</option>
                                     {volist name='gradeList' id='vol'}
                                     <option value="{$vol.grade_id}">{$vol.grade}</option>
@@ -52,25 +53,22 @@
                                 </select>
                                 <i class="mui-icon mui-icon-arrowdown" style="float: none"></i>
                             </li>
-                            <li class="mui-col-xs-2 mui-col-sm-2">学生名字</li>
+                            <li class="mui-col-xs-4 mui-col-sm-4">
+                                <select class="select" style="width: 60%" name="student_id">
+                                    {volist name='studentList' id='vol'}
+                                    <option value="{$vol.id}">{$vol.student}</option>
+                                    {/volist}
+                                </select>
+                                <i class="mui-icon mui-icon-arrowdown" style="float: none"></i>
+                            </li>
                         </ul>
                     </li>
                 </ul>
             </div>
             <div class="tab-pullRefresh">
-                <div id="campSceheduleList" class="mui-scroll-wrapper mui-control-content mui-active" style="top:165px;">
-                    <div class="mui-scroll">
-                        <ul class="mui-table-view mui-text-center detalis-list list scheduleAll OA_task_schedule"></ul>
-                    </div>
-                </div>
                 <div id="onlineSceheduleList" class="mui-scroll-wrapper mui-control-content" style="top: 88px">
                     <div class="mui-scroll">
                         <ul class="mui-table-view mui-text-center detalis-list list schedule1 OA_task_schedule"></ul>
-                    </div>
-                </div>
-                <div id="offlineSceheduleList" class="mui-sc roll-wrapper mui-control-content" style="top: 88px">
-                    <div class="mui-scroll">
-                        <ul class="mui-table-view mui-text-center detalis-list list schedule0 OA_task_schedule"></ul>
                     </div>
                 </div>
                 
@@ -155,7 +153,7 @@
         mui.ajax({
             url: url,
             data: {
-                user_id:"{$student_id}",
+                user_id:"{$studentList[0]['id']}",
                 camp_id: "{$camp_id}",
                 status: 1,
                 type:1
@@ -225,6 +223,10 @@
     };
 
 
+    $('select[name=grade_id]').on('change',function(){
 
+        var grade_id = $(this).val();
+        toList('onlineSceheduleList', 1, 1, 1);
+    })
 </script>
 </html>
