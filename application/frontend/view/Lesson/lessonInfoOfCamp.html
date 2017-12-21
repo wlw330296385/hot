@@ -19,6 +19,7 @@
         .hide {
             display: none;
         }
+        h5.fr { padding: 8px; }
     </style>
 </head>
 
@@ -29,8 +30,8 @@
     <div class="mui-content">
 
         <header id="header" class="mui-bar mui-bar-nav subheader">
-            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-            <h1 class="mui-title">{$lessonInfo.camp}</h1>
+            <a class="mui-pull-left" href="{:url('lesson/lessonlistofcamp',['camp_id'=>$lessonInfo['camp_id']])}"><span class="mui-icon mui-icon-left-nav"></span>课程列表</a>
+            <h5 class="fr">{$lessonInfo.camp}</h5>
         </header>
 
         <div class="camp-list camp-lesson-list pt">
@@ -88,6 +89,9 @@
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
+    });
+    mui("body").on("tap", "a", function () {
+        window.top.location.href = this.href;
     });
     $(function () {
         var cDoms = $(".courseDoms").text();
