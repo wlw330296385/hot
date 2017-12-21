@@ -198,9 +198,10 @@
                 <div class="mui-input-row price-input-row h-auto">
                     <a href="#coach" id="setCoachBox" class="mui-navigate-right">
                         <label>教练</label>
-                        <span class="coach" name="coach" style="width: 60%">{$roleslist.coach_names}</span>
+                        <span class="coach" name="coach" style="width: 60%">{volist name="roleslist.coach_names" id="vol"}{$vol.member},{/volist}</span>
                         <div id="hideCoList">
-                            <input type="hidden" class="coList" data-member="{$roleslist.coach_names}" data-member_id="{$roleslist.coach_ids}">
+                            {volist name="roleslist.coach_names" id="vol"}
+                            <input type="hidden" class="coList" data-member_id="{$vol.member_id}" data-member="{$vol.member}"> {/volist}
                         </div>
                         <input type="hidden" name="coach_id" value="{$roleslist.coach_ids}" class="data">
                     </a>
@@ -209,9 +210,10 @@
                 <div class="mui-input-row price-input-row h-auto">
                     <a href="#committee" id="setCommitteeBox" class="mui-navigate-right">
                         <label>队委</label>
-                        <span class="committee" name="" style="width: 60%">{$roleslist.committee_names}</span>
+                        <span class="committee" name="" style="width: 60%">{volist name="roleslist.committee_names" id="vol"}{$vol.member},{/volist}</span>
                         <div id="hideCtList">
-                            <input type="hidden" class="ctList" data-member="{$roleslist.committee_names}" data-member_id="{$roleslist.committee_ids}">
+                            {volist name="roleslist.committee_names" id="vol"}
+                            <input type="hidden" class="ctList" data-member_id="{$vol.member_id}" data-member="{$vol.member}"> {/volist}
                         </div>
                         <input type="hidden" name="committee_id" value="{$roleslist.committee_ids}" class="data">
                     </a>
@@ -725,6 +727,14 @@
             }
         }
 
+        //去除最后一个逗号
+        function delComma() {
+            var coachCont = $(".coach").text();
+            var committeeCont = $(".committee").text();
+            $(".coach").text(coachCont.substring(0, coachCont.length - 1));
+            $(".committee").text(committeeCont.substring(0, committeeCont.length - 1));
+        }
+
         var coachMemberList = '';
         $(function () {
 
@@ -738,6 +748,7 @@
             toCampList(wCamp, campKeyword, 1);
             toCourtList(wCourt, courtKeyword, 1);
 
+            delComma(); //去除最后一个逗号
             colorShow(); // 调用主场客场颜色显示
             colorJudge(); //判断主场客场是否有值，显示data
             toTeamMemberList(); //获取球员列表
@@ -813,7 +824,7 @@
                 $(".leader").text(leader);
                 var leader_id = $(this).attr('data-memberid');
                 $("input[name=leader_id]").val(leader_id);
-                $("input[name=leader]").val( $(this).attr('data-member') );
+                $("input[name=leader]").val($(this).attr('data-member'));
                 mui("#leader").popover("toggle");
             });
             // 选择队长
@@ -822,7 +833,7 @@
                 $(".captain").text(captain);
                 var captain_id = $(this).attr('data-memberid');
                 $("input[name=captain_id]").val(captain_id);
-                $("input[name=captain]").val( $(this).attr('data-member') );
+                $("input[name=captain]").val($(this).attr('data-member'));
                 mui("#captain").popover("toggle");
             });
 
@@ -1144,7 +1155,7 @@
                     if (data.code == 200) {
                         var teamli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            teamli = teamli + '<li class="mui-table-view-cell listli detalisli" data-memberid="' + data.data[i].member_id + '" data-member="'+ data.data[i].member +'">' + data.data[i].member + '</li>'
+                            teamli = teamli + '<li class="mui-table-view-cell listli detalisli" data-memberid="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '">' + data.data[i].member + '</li>'
                         }
                         $("ul.teamMemberList").empty();
                         if (teamli == '') {

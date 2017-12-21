@@ -71,7 +71,13 @@ class TagService {
         // 组合保存数据
         $commentModel = new TagComment();
         foreach ($tag_idArr as $k => $tag_id) {
-            $hadComment = $commentModel->where([ 'comment_type' => $data['comment_type'], 'commented_id' => $data['commented_id'], 'member_id' => $data['member_id'] ])->find();
+            $hadCommentMap = [
+                'comment_type' => $data['comment_type'],
+                'commented_id' => $data['commented_id'],
+                'member_id' => $data['member_id'],
+                'tag_id' => $tag_id
+            ];
+            $hadComment = $commentModel->where($hadCommentMap)->find();
             if ($hadComment) {
                 return ['code' => 100, 'msg' => '您已经发表"'.$tagArr[$k].'"印象，不能再次发表喔'];
             } else {
