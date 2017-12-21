@@ -2,6 +2,7 @@
 
 namespace app\service;
 
+use app\model\LessonMember;
 use app\model\Schedule;
 use app\model\ScheduleComment;
 use app\model\ScheduleGiftrecord;
@@ -231,12 +232,13 @@ class ScheduleService
      */
     function decStudentRestschedule($students, $schedule) {
         //$gradeMemberDb = db('grade_member');
-        $lessonDb = db('lesson_member');
-        $studentDb = db('student');
+        $lessonDb = new LessonMember();
+        $studentDb = new Student();
         foreach ($students as $student) {
             $gradeMemberWhere['student_id'] = $student['student_id'];
             $gradeMemberWhere['lesson_id'] = $schedule['lesson_id'];
             $gradeMemberWhere['camp_id'] = $schedule['camp_id'];
+            $gradeMemberWhere['type'] = 1;
             $studentWhere['id'] = $student['student_id'];
             $restschedule = $lessonDb->where($gradeMemberWhere)->value('rest_schedule');
             if ($restschedule <= 0) {

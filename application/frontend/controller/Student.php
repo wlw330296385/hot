@@ -73,7 +73,7 @@ class Student extends Base
             'student_id' => $student_id,
             'type' => $type,
             'status' => 1
-        ])->sum('rest_schedule');
+        ])->whereNull('delete_time')->sum('rest_schedule');
         if (!$restSchedule) {
             $restSchedule = 0;
         }
@@ -83,8 +83,10 @@ class Student extends Base
 								->where([
 								    'schedule.status' => 1,
 									'schedule_member.user_id'=>$student_id,
-									'schedule_member.status'=>1
-								])	
+									'schedule_member.status'=>1,
+								])
+                                ->whereNull('schedule.delete_time')
+                                ->whereNull('schedule_member.delete_time')
 								->order('schedule_member.id desc')
 								->select();	
 
@@ -98,7 +100,7 @@ class Student extends Base
 		$repayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>1,'status'=>['lt',0],'expire'=>0]);
 		$payBill = $totalBill - $notPayBill;
 		// 历史课时|当前所报
-		$totalSchedule = db('bill')->where(['camp_id'=>$camp_id,'student_id'=>$student_id,'status'=>1,'is_pay'=>1])->sum('total');
+		$totalSchedule = db('bill')->where(['camp_id'=>$camp_id,'student_id'=>$student_id,'status'=>1,'is_pay'=>1])->whereNull('delete_time')->sum('total');
 
 		// 学员自己可操作区显示
         $studentcando = ($this->memberInfo['id'] == $studentInfo['member_id']) ? 1 : 0;
