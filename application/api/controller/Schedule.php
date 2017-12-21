@@ -195,6 +195,11 @@ class Schedule extends Base
     {
         try {
             $map = input('post.');
+            if(isset($map['grade_id']) && $map['grade_id'] == 0){
+
+                unset($map['grade_id']);
+            }
+            // dump($map);die;
             $result = $this->ScheduleService->getScheduleListByPage($map);
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {

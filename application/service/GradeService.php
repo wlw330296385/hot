@@ -42,6 +42,24 @@ class GradeService{
         
     }
 
+    // 班级分页
+    public function getGradeListNoPage($map , $order='', $paginate=10) {
+        $result =  $this->GradeModel
+                // ->with('gradeMember')
+                ->where($map)
+                ->order($order)
+                ->select();
+
+        if($result){
+            $res = $result->toArray();
+            return $res;
+        }else{
+            return $result;
+        }
+        
+    }
+
+
     // 一个班级
     public function getGradeInfo($map=[]) {
         $res = $this->GradeModel->where($map)->find();

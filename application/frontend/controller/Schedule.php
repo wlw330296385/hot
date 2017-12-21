@@ -48,7 +48,6 @@ class Schedule extends Base
     public function scheduleListOfStudent(){
     	$student_id = input('param.student_id');
     	$studentList = db('student')->where(['member_id'=>$this->memberInfo['id']])->where('delete_time',null)->select();
-    	// dump($studentList);die;
     	if(!$studentList){
     		$this->error('您还没有创建学生');
     	}
@@ -68,6 +67,7 @@ class Schedule extends Base
     	$this->assign('scheduleCount',$scheduleCount);
   		$this->assign('gradeList',$gradeList);
   		$this->assign('studentList',$studentList);
+  		$this->assign('student_id',$student_id);
   		$this->assign('camp_id', $camp_id);
 		return view('Schedule/scheduleListOfStudent');
     }
