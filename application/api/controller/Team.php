@@ -350,6 +350,33 @@ class Team extends Base {
         }
     }
 
+    // 修改球队成员信息
+    public function updateteammember() {
+        try {
+            $data = input('post.');
+            $teamS = new TeamService();
+            // 球衣号码可提交空值，有填入值时检查同队有重复号码的队员 提示号码不能重复
+            if (empty($data['number'])) {
+                $data['number'] = null;
+            } else {
+                $numberIsUsedMap = [
+                    'team_id' => $data['team_id'],
+                    'number' => $data['number'],
+                    'member' => ['<>', $data['member']],
+                    'status' => 1
+                ];
+                $numberIsUsed = $teamS->getTeamMemberInfo($numberIsUsedMap);
+                if ($numberIsUsed) {
+                    return json(['code' => 100, 'msg' => '输入的球衣号码已有同队成员使用了，请输入其他号码']);
+                }
+            }
+            $res = $teamS->saveTeamMember($data, $data['id']);
+            return json($res);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
     // 创建球队活动
     public function createteamevent() {
         try {
@@ -526,6 +553,8 @@ class Team extends Base {
                     } else {
                         $delRes = $teamS->deleteTeamEvent($event['id']);
                         if ($delRes) {
+                            // 球队活动数统计-1
+                            db('team_event')->where(['id' => $event['team_id']])->setDec('event_num', 1);
                             $response = ['code' => 200, 'msg' => __lang('MSG_200')];
                         } else {
                             $response = ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -534,12 +563,14 @@ class Team extends Base {
                     return json($response);
                     break;
                 }
-                case 2 : {
+                case -1 : {
                     if ($action == 'editstatus') {
                         $response = $teamS->updateTeamEvent(['id' => $event['id'], 'status' => 1], 1);
                     } else {
                         $delRes = $teamS->deleteTeamEvent($event['id']);
                         if ($delRes) {
+                            // 球队活动数统计-1
+                            db('team_event')->where(['id' => $event['team_id']])->setDec('event_num', 1);
                             $response = ['code' => 200, 'msg' => __lang('MSG_200')];
                         } else {
                             $response = ['code' => 100, 'msg' => __lang('MSG_400')];

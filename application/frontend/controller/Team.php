@@ -49,29 +49,34 @@ class Team extends Base {
         // 获取球队有角色身份的会员列表
         $teamS = new TeamService();
         $rolemembers = $teamS->getTeamRoleMembers($this->team_id, 'team_member.member_id asc');
-        //dump($rolemembers);
         // 教练、队委名单集合组合
         $roleslist = [
             'coach_ids' => '',
-            'coach_names' => '',
             'committee_ids' => '',
-            'committee_names' => ''
+            'coach_names' => [],
+            'committee_names' => []
         ];
         foreach ($rolemembers as $rolemember) {
             if ($rolemember['type'] == 2) {
                 $roleslist['coach_ids'] .= $rolemember['member_id'].',';
-                $roleslist['coach_names'] .= $rolemember['member'].',';
+                array_push($roleslist['coach_names'], [
+                    'id' => $rolemember['id'],
+                    'member_id' => $rolemember['member_id'],
+                    'member' => $rolemember['member']
+                ]);
             }
             if ($rolemember['type'] == 1 ) {
                 $roleslist['committee_ids'] .= $rolemember['member_id'].',';
-                $roleslist['committee_names'] .= $rolemember['member'].',';
+                array_push($roleslist['committee_names'], [
+                    'id' => $rolemember['id'],
+                    'member_id' => $rolemember['member_id'],
+                    'member' => $rolemember['member']
+                ]);
             }
         }
         // 去掉结尾最后一个逗号
         $roleslist['coach_ids'] = rtrim($roleslist['coach_ids'], ',');
-        $roleslist['coach_names'] = rtrim($roleslist['coach_names'], ',');
         $roleslist['committee_ids'] = rtrim($roleslist['committee_ids'], ',');
-        $roleslist['committee_names'] = rtrim($roleslist['committee_names'], ',');
 
         $this->assign('rolemembers', $rolemembers);
         $this->assign('roleslist', $roleslist);
@@ -135,6 +140,11 @@ class Team extends Base {
         // 获取队员在当前球队的数据信息
         $map = ['team_id' => $team_id, 'member_id' => $member_id];
         $teamMemberInfo = $teamS->getTeamMemberInfo($map);
+        // 可访问页面人员判断：队员自己、球队队委及以上角色成员
+        $teamrole = $teamS->checkMemberTeamRole($this->team_id, $this->memberInfo['id']);
+        if (!$teamrole && ($teamMemberInfo['member_id'] != $this->memberInfo['id'])) {
+            $this->error('您只能编辑自己的球队成员信息');
+        }
 
         $this->assign('teamMemberInfo', $teamMemberInfo);
         return view('Team/teamMemberEdit');
