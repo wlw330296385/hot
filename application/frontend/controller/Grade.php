@@ -114,7 +114,7 @@ class Grade extends Base{
         $grade_id = input('grade_id');
         $gradeInfo = $this->GradeService->getGradeInfo(['id'=>$grade_id]);      
         // 班级同学
-        $studentList = $this->GradeService->getStudentList($grade_id);
+        $studentList = $this->GradeService->getStudentList(['grade_id'=>$grade_id,'status'=>]);
         $this->assign('studentList',$studentList);
         $this->assign('gradeInfo',$gradeInfo);
         return view('Grade/gradeInfo');
