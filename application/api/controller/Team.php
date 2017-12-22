@@ -708,11 +708,15 @@ class Team extends Base {
             unset($map['page']);
             $teamS = new TeamService();
             // 返回结果
-            $result = [];
-            $result['data'] = $teamS->getCommentList($map, $page);
-            // 返回点赞数
-            $result['thumbup_count'] = $teamS->getCommentThumbCount($map);
-            return json($result);
+            $result = $teamS->getCommentList($map, $page);
+            if ($result) {
+                // 返回点赞数
+                $thumbupCount = $teamS->getCommentThumbCount($map);
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result, 'thumbup_count' => $thumbupCount];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
         } catch(Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
@@ -734,11 +738,15 @@ class Team extends Base {
             $map = input('post.');
             $teamS = new TeamService();
             // 返回结果
-            $result = [];
             $result = $teamS->getCommentPaginator($map);
-            // 返回点赞数
-            $result['thumbup_count'] = $teamS->getCommentThumbCount($map);
-            return json($result);
+            if ($result) {
+                // 返回点赞数
+                $thumbupCount = $teamS->getCommentThumbCount($map);
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result, 'thumbup_count' => $thumbupCount];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
         } catch(Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
