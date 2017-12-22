@@ -125,6 +125,14 @@
                 {/volist}
             </ul>
 
+
+            <div class="success-frame success-frame2">
+                <div class="choise">
+                    <button type="button" class="mui-btn mui-btn-danger f16 signOut">移除此队员</button>
+                    <!-- <button type="button" class="mui-btn mui-btn-danger signOut f16">删除并退出</button> -->
+                </div>
+            </div>
+
         </div>
 
         <!--底部操作-->
@@ -177,7 +185,7 @@
         });
         (function ($) {
             $('.mui-scroll-wrapper').scroll({
-                indicators: true //是否显示滚    动条
+                indicators: true //是否显示滚动条
             });
         })(mui);
 
@@ -238,10 +246,46 @@
                 });
             });
 
+            // 移除/退队操作
+            // $(".signOut").on("tap", '', function () {
+            //     var btnArray = ['取消', '确认'];
+            //     mui.confirm('是否确认修改？', '', btnArray, function (e) {
+            //         if (e.index == 1) {
+            //             mui.ajax("{:url('api/team/signOut')}", {
+            //                 data: {},
+            //                 dataType: 'json',//服务器返回json格式数据
+            //                 type: 'post',//HTTP请求类型
+            //                 timeout: 10000,//超时时间设置为10秒；
+            //                 headers: { 'Content-Type': 'application/json' },
+            //                 success: function (data) {
+            //                     console.log(data)
+            //                     mui.toast(data.msg)
+            //                     location.reload();
+            //                 },
+            //                 error: function (xhr, type, errorThrown) {
+            //                     console.log(data);
+            //                     mui.toast("网络异常,请稍候再试");
+            //                 }
+            //             });
+            //         } else {
+            //             return;
+            //         }
+            //     })
+            // });
+
             otherLength(); // 其他效力球队长度
             followStatus(); //判断当前的关注状态
+            othertips(); //其他效力球队为空提示语s
 
         });
+
+        // 其他效力球队为空提示语
+        function othertips() {
+            var tips = $.trim($(".teammember").html())
+            if (tips == '') {
+                $(".teammember").append('<p class="nodata">还没有效力的其他球队</p>');
+            }
+        }
 
         // 其他效力球队长度
         function otherLength() {

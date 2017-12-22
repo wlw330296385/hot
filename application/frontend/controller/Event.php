@@ -60,6 +60,43 @@ class Event extends Base{
         return view('Event/comfirmBill');
     }
 
+    public function comfirmBillTEST() {
+        $event_id = input('param.event_id');
+        $total = input('param.total');
+        $domIndex = input('param.domIndex');
+        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]); 
+        $dom = json_decode($eventInfo['dom']);    
+        $billOrder = '2'.getOrderID(rand(0,9));
+        $jsonBillInfo = [
+            'goods'=>$eventInfo['event'].',套餐:'.$dom[$domIndex]['name'],
+            'goods_id'=>$eventInfo['id'],
+            'camp_id'=>$eventInfo['organization_id'],
+            'camp'=>$eventInfo['organization'],
+            'organization_type'=>1,
+            'price'=>$dom[$domIndex]['price'],
+            'score_pay'=>$eventInfo['score'],
+            'goods_type'=>2,
+            'pay_type'=>'wxpay',
+        ];
+        $amount = $total*$dom[$domIndex]['price'];
+        // $amount = 0.01;
+        $WechatJsPayService = new \app\service\WechatJsPayService;
+        $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
+        
+        $jsApiParameters = $result['data']['jsApiParameters'];
+        $shareurl = request()->url(true);
+        $wechatS = new \app\service\WechatService;
+        $jsapi = $wechatS->jsapi($shareurl);
+        // dump($jsApiParameters);
+        // dump($jsapi);die;
+        $this->assign('jsApiParameters',$jsApiParameters);
+        $this->assign('jsapi', $jsapi);
+        $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
+        $this->assign('eventInfo',$eventInfo);
+        $this->assign('billOrder',$billOrder);
+        return view('Event/comfirmBillTEST');
+    }
+
     // 创建活动
     public function createEvent() {
         $organization_id = input('param.organization_id');
@@ -106,6 +143,52 @@ class Event extends Base{
         return view('Event/eventInfo');
     }
 
+    // 创建活动
+    public function createEventTEST() {
+        $organization_id = input('param.organization_id');
+        $CampService = new \app\service\CampService;
+        $campInfo = $CampService->getCampInfo(['id'=>$organization_id]);
+        $isPower = $CampService->isPower($organization_id,$this->memberInfo['id']);
+        // 我是班主任的班级
+        $GradeModel = new \app\model\Grade;
+        $gradeList = $GradeModel->where(['teacher_id'=>$this->memberInfo['id']])->select();
+
+
+        $this->assign('gradeList',$gradeList);
+        $this->assign('power',$isPower);
+        $this->assign('campInfo',$campInfo);
+        $this->assign('organization_id', $organization_id);
+        return view('Event/createEventTEST');
+    }
+
+    public function eventInfoTEST() {
+        $event_id = input('param.event_id');
+        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
+        $variable = 1;
+        if($eventInfo['status']=='下架'){
+            $variable = 2 ;
+        }
+        if($eventInfo['is_max'] == '已满人'){
+            $variable = 3 ;
+        }
+
+        if($eventInfo['end'] <= time()){
+            $variable = 4 ;
+        }
+        //是否已报名
+        $EventMember = new \app\model\EventMember;
+        $result =  $EventMember->where(['member_id'=>$this->memberInfo['id'],'event_id'=>$event_id,'status'=>1])->select();
+        if($result){
+            $EventMemberList = $result->toArray();
+        }else{
+            $EventMemberList = [];
+        }
+        $this->assign('EventMemberList',$EventMemberList);
+        $this->assign('variable',$variable);
+        $this->assign('eventInfo',$eventInfo);
+        return view('Event/eventInfoTEST');
+    }
+
     public function eventInfoOfCamp() {
         $event_id = input('param.event_id');
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
@@ -145,6 +228,21 @@ class Event extends Base{
 
         $this->assign('eventInfo',$eventInfo);
         return view('Event/updateEvent');
+    }
+    // 活动编辑
+    public function updateEventTEST() {
+        $event_id = input('param.event_id');
+        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
+        if($eventInfo['member_id'] != $this->memberInfo['id']){
+            $isPower = $this->EventService->isPower($eventInfo['organization_type'],$eventInfo['organization_id'],$this->memberInfo['id']);
+            if($isPower<3){
+                $this->error('您没有权限');
+            }
+        }
+
+
+        $this->assign('eventInfo',$eventInfo);
+        return view('Event/updateEventTEST');
     }
     
     // 活动录入

@@ -542,7 +542,8 @@ class TeamService {
     // 球队模块评论列表分页
     public function getCommentPaginator($map, $order='id desc', $paginate=10) {
         $model = new TeamComment();
-        $res = $model->where($map)->order($order)->paginate($paginate);
+        // 只列出有评论文字内容的数据
+        $res = $model->where($map)->whereNotNull('comment')->order($order)->paginate($paginate);
         if ($res) {
             return $res->toArray();
         } else {
@@ -553,7 +554,8 @@ class TeamService {
     // 球队模块评论列表
     public function getCommentList($map, $page=1, $order='id desc', $limit=10) {
         $model = new TeamComment();
-        $res = $model->where($map)->order($order)->page($page, $limit)->select();
+        // 只列出有评论文字内容的数据
+        $res = $model->where($map)->whereNotNull('comment')->order($order)->page($page, $limit)->select();
         if ($res) {
             return $res->toArray();
         } else {
@@ -569,14 +571,26 @@ class TeamService {
         return $res;
     }
 
-    // 保存球队模块评论
+    // 保存球队模块评论、点赞数据
     public function saveComment($data) {
         $model = new TeamComment();
-        $res = $model->allowField(true)->save($data);
-        if ($res) {
-            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+        // 根据传参 有id字段更新数据否则新增数据
+        if (isset($data['id'])) {
+            // 更新数据
+            $res = $model->allowField(true)->save($data, ['id' => $data['id']]);
+            if ($res || ($res === 0) ) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
         } else {
-            return ['code' => 100, 'msg' => __lang('MSG_400')];
+            // 新增数据
+            $res = $model->allowField(true)->save($data);
+            if ($res) {
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+            } else {
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
         }
     }
 

@@ -195,11 +195,12 @@ class Schedule extends Base
     {
         try {
             $map = input('post.');
-            if(isset($map['grade_id']) && $map['grade_id'] == 0){
-
-                unset($map['grade_id']);
+            if(isset($map['grade_id'])){
+                $map['grade_id'] = json_decode($map['grade_id']);
             }
-            // dump($map);die;
+            if(is_array($map['grade_id']) ) {
+                $map['grade_id'] = ['in',$map['grade_id']];
+            }
             $result = $this->ScheduleService->getScheduleListByPage($map);
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {

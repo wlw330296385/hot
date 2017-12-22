@@ -63,6 +63,7 @@ class Schedule extends Base
         // 课时统计
         $scheuldeIDS = db('schedule')->where(['grade_id'=>['in',$gradeIDS],'camp_id'=>$camp_id])->where('delete_time',null)->column('id');
         $scheduleCount = $this->ScheduleService->countScheduleMembers(['camp_id' => $camp_id,'schedule_id'=>['in',$scheuldeIDS],'user_id'=>$student_id]);
+        $this->assign('gradeIDS',json_encode($gradeIDS));
         $this->assign('restSchedule',$restSchedule);
     	$this->assign('scheduleCount',$scheduleCount);
   		$this->assign('gradeList',$gradeList);

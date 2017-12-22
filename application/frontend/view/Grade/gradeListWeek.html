@@ -141,7 +141,7 @@
 
     //训练营教练列表接口获取数据并追加到页面
     var toGradeList = function() {
-        var url  = "{:url('api/grade/getGradeListByPageApi','','',true)}";
+        var url  = "{:url('api/grade/getGradeListNoPageApi','','',true)}";
         var campID = "{$camp_id}";
         mui.ajax({
             url:url,
@@ -156,18 +156,18 @@
             success: function (data) {
                 if (data.code == 200) {
                     var newli = '';
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('schedule/recordSchedule')}" + '/grade_id/' + data.data.data[i].id + '/lesson_id/' + data.data.data[i].lesson_id + '/camp_id/' + data.data.data[i].camp_id;
-                        var weekstr = data.data.data[i].week
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('schedule/recordSchedule')}" + '/grade_id/' + data.data[i].id + '/lesson_id/' + data.data[i].lesson_id + '/camp_id/' + data.data[i].camp_id;
+                        var weekstr = data.data[i].week
                         if(weekstr.indexOf(",")>=0){
                             //拆分周期是两次以上的班级
                             var wk = weekstr.split(',');
-                            var ts = data.data.data[i].lesson_time.split(',');
+                            var ts = data.data[i].lesson_time.split(',');
                             for(var j = 0;j<wk.length;j++){
-                                newli = newli + '<div class="mui-card"><div class="hideOpt"><span class="cWeek">' + wk[j] + '</span><span class="cID">' + data.data.data[i].coach_id + '</span><span class="aID">' + data.data.data[i].assistant_id + '</span></div><div class="mui-card-header"><div class="card-left"><span class="time">' + ts[j] + '</span><span class="court">' + data.data.data[i].court + '</span></div><div class="card-right"><a href="'+urls+'" class="mui-icon mui-icon-compose"></div></a></div><div class="mui-card-content"><a href="'+urls+'"><div class="mui-card-content-inner"><h4>' + data.data.data[i].grade + ' <span class="name">' + data.data.data[i].coach + '</span></h4><p class="students">' + data.data.data[i].student_str + '</p></div></a></div><div class="mui-card-footer"><div class="card-left">[ <strong>' + data.data.data[i].students + '</strong> 学员 ] ' + data.data.data[i].gradecate + '</div></div></div>'
+                                newli = newli + '<div class="mui-card"><div class="hideOpt"><span class="cWeek">' + wk[j] + '</span><span class="cID">' + data.data[i].coach_id + '</span><span class="aID">' + data.data[i].assistant_id + '</span></div><div class="mui-card-header"><div class="card-left"><span class="time">' + ts[j] + '</span><span class="court">' + data.data[i].court + '</span></div><div class="card-right"><a href="'+urls+'" class="mui-icon mui-icon-compose"></div></a></div><div class="mui-card-content"><a href="'+urls+'"><div class="mui-card-content-inner"><h4>' + data.data[i].grade + ' <span class="name">' + data.data[i].coach + '</span></h4><p class="students">' + data.data[i].student_str + '</p></div></a></div><div class="mui-card-footer"><div class="card-left">[ <strong>' + data.data[i].students + '</strong> 学员 ] ' + data.data[i].gradecate + '</div></div></div>'
                             }
                         }else{
-                            newli = newli + '<div class="mui-card"><div class="hideOpt"><span class="cWeek">' + data.data.data[i].week + '</span><span class="cID">' + data.data.data[i].coach_id + '</span><span class="aID">' + data.data.data[i].assistant_id + '</span></div><div class="mui-card-header"><div class="card-left"><span class="time">' + data.data.data[i].lesson_time + '</span><span class="court">' + data.data.data[i].court + '</span></div><div class="card-right"><a href="'+urls+'" class="mui-icon mui-icon-compose"></div></a></div><div class="mui-card-content"><a href="'+urls+'"><div class="mui-card-content-inner"><h4>' + data.data.data[i].grade + ' <span class="name">' + data.data.data[i].coach + '</span></h4><p class="students">' + data.data.data[i].student_str + '</p></div></a></div><div class="mui-card-footer"><div class="card-left">[ <strong>' + data.data.data[i].students + '</strong> 学员 ] ' + data.data.data[i].gradecate + '</div></div></div>'
+                            newli = newli + '<div class="mui-card"><div class="hideOpt"><span class="cWeek">' + data.data[i].week + '</span><span class="cID">' + data.data[i].coach_id + '</span><span class="aID">' + data.data[i].assistant_id + '</span></div><div class="mui-card-header"><div class="card-left"><span class="time">' + data.data[i].lesson_time + '</span><span class="court">' + data.data[i].court + '</span></div><div class="card-right"><a href="'+urls+'" class="mui-icon mui-icon-compose"></div></a></div><div class="mui-card-content"><a href="'+urls+'"><div class="mui-card-content-inner"><h4>' + data.data[i].grade + ' <span class="name">' + data.data[i].coach + '</span></h4><p class="students">' + data.data[i].student_str + '</p></div></a></div><div class="mui-card-footer"><div class="card-left">[ <strong>' + data.data[i].students + '</strong> 学员 ] ' + data.data[i].gradecate + '</div></div></div>'
                         }
                     }
                     $("#sourceList").empty();
