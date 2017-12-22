@@ -749,6 +749,30 @@ class Team extends Base {
         try {
             // 将接收参数作提交数据
             $data = input('post.');
+            // 判断必传参数
+            // 评论类型
+            $comment_type = input('post.comment_type');
+            // 被评论实体id
+            $commented_id = input('post.commented_id');
+            if (!$comment_type || !$commented_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            $teamS = new TeamService();
+            // 查询会员有无评论记录
+            $map = [
+                'comment_type' => $comment_type,
+                'commented_id' => $commented_id,
+                'member_id' => $this->memberInfo['id'],
+            ];
+            $hasCommented = $teamS->getCommentInfo($map);
+            if ($hasCommented) {
+                // 只能发表一次文字评论
+                if (!is_null($hasCommented['comment'])) {
+                    return json(['code' => 100, 'msg' => '只能发表一次评论']);
+                } else {
+                    $data['id'] = $hasCommented['id'];
+                }
+            }
             // 防止有传入thumbup参数 过滤掉
             if (isset($data['thumbup'])) {
                 unset($data['thumbup']);
@@ -756,11 +780,8 @@ class Team extends Base {
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             $data['member_avatar'] = $this->memberInfo['avatar'];
-            $teamS = new TeamService();
-            $hasCommented = $teamS->getCommentInfo($data);
-            if ($hasCommented && !is_null($hasCommented['comment']) ) {
-                return json(['code' => 100, 'msg' => '只能发表一次评论']);
-            } 
+            // 发表文字评论时间
+            $data['comment_time'] = time();
             $res = $teamS->saveComment($data);
             return json($res);
         } catch(Exception $e) {
@@ -769,4 +790,68 @@ class Team extends Base {
     }
 
     // 球队模块点赞
+    public function dianzan() {
+        try {
+            // 将接收参数作提交数据
+            $data = input('post.');
+            // 判断必传参数
+            // 评论类型
+            $comment_type = input('post.comment_type');
+            // 被评论实体id
+            $commented_id = input('post.commented_id');
+            if (!$comment_type || !$commented_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            $teamS = new TeamService();
+            // 查询会员有无评论记录
+            $map = [
+                'comment_type' => $comment_type,
+                'commented_id' => $commented_id,
+                'member_id' => $this->memberInfo['id'],
+            ];
+            $hasCommented = $teamS->getCommentInfo($map);
+            // 有评论记录就更新记录的thumbsup字段
+            if ($hasCommented) {
+                $data['id'] = $hasCommented['id'];
+            }
+            // 防止有传入comment参数 过滤掉
+            if (isset($data['comment'])) {
+                unset($data['comment']);
+            }
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $data['member_avatar'] = $this->memberInfo['avatar'];
+            $data['thumbsup'] = ($hasCommented && ($hasCommented['thumbsup'] == 1) ) ? 0 : 1;
+            $result = $teamS->saveComment($data);
+            return json($result);
+        } catch(Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    public function isthumbup() {
+        try {
+            // 判断必传参数
+            // 评论类型
+            $comment_type = input('post.comment_type');
+            // 被评论实体id
+            $commented_id = input('post.commented_id');
+            if (!$comment_type || !$commented_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            $teamS = new TeamService();
+            // 查询会员有无评论记录
+            $map = [
+                'comment_type' => $comment_type,
+                'commented_id' => $commented_id,
+                'member_id' => $this->memberInfo['id'],
+            ];
+            $commentInfo = $teamS->getCommentInfo($map);
+            // 点赞字段值
+            $thumbsup = ($commentInfo) ? $commentInfo['thumbsup'] : 0;
+            return json(['code' => 200, 'msg' => __lang('MSG_200'), 'thumbsup' => $thumbsup]);
+        } catch(Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 }

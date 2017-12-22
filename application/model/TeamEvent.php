@@ -36,7 +36,7 @@ class TeamEvent extends Model {
 
     // status 获取器
     public function getStatusAttr($value) {
-        $status = [1=> '上架', 2 => '下架'];
+        $status = [1=> '上架', -1 => '下架'];
         return $status[$value];
     }
 }
