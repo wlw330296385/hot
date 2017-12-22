@@ -254,13 +254,22 @@
             <span class="course wd36"><strong>学员名单</strong></span>
             <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
         </div>
-        <div class="mui-scroll-wrapper">
+        <div class="pop-search page-header border-b">
+            <input type="search" class="searchStudent" placeholder="请输入粉丝名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchStudent"></span>
+        </div>
+        <div class="mui-scroll-wrapper pt">
             <div class="mui-scroll">
 
                 <form id="newdiv" class="mui-input-group">
 
                 </form>
             </div>
+            <ul class="mui-pager">
+                <li><a href="#" class="prev_page">上一页</a></li>
+                <li><span class="currPageOfStudent">0</span>/<span class="totalPageOfStudent">0</span></li>
+                <li><a href="#" class="next_page">下一页</a></li>
+            </ul>
         </div>
     </div>
 
@@ -770,6 +779,14 @@
                 var pageHM = 1;
                 toFansList(keyword, "headMaster", pageHM);
             })
+
+            //搜索学生
+            $("#searchStudent").on("click", function () {
+                var keyword = $(".searchStudent").val();
+                var pageHM = 1;
+                var lesson_id = $('.lessonType').attr("data-id");
+                toFansList(lesson_id,keyword, "student", pageHM);
+            })
             //搜索领队粉丝
             $("#searchLD").on("click", function () {
                 var keyword = $(".keywordLD").val();
@@ -834,32 +851,7 @@
                 //获取课程名称及ID并获取对应的学生
                 var lessonType = $(this).text();
                 var lesson_id = $(this).attr("data-id");
-                mui.ajax("{:url('api/lesson_member/getLessonMemberListNoPageApi')}", {
-                    data: { "lesson_id": lesson_id ,status:1},
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data)
-                        var div = '';
-                        var tys = '';
-                        if (data.code == 200) {
-                            for (var i = 0; i <= data.data.length - 1; i++) {
-                                tys = '';
-                                if (data.data[i].type == 2) { tys = '<span class="tips">[ 体验生 ]</span>' }
-                                div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-camp="' + data.data[i].camp + '" data-camp_id="' + data.data[i].camp_id + '" data-lesson="' + data.data[i].lesson + '" data-lesson_id="' + data.data[i].lesson_id + '" data-member="' + data.data[i].member + '" data-member_id="' + data.data[i].member_id + '"></div>'
-                            }
-                            $("#newdiv").empty();
-                            $("#newdiv").append(div);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
+                toStudentList(lesson_id,'','student',1);
                 $(".lesson_id").val(lesson_id);
                 $(".lessonTypeCont").val(lessonType);
                 mui('#lessonType').popover('toggle');
@@ -1048,7 +1040,55 @@
                 }
             });
         };
-    </script>
+
+
+        var toStudentList = function (lesson_id,keyword, className, page) {
+            var url = "{:url('api/lesson_member/searchLessonMemberByPageApi','','',true)}/?page=" + page;
+            var campID = "{$campInfo.id}";
+            var classNameList = "form#newdiv";
+            var currPage = ".currPageOfStudent";
+            var totalPage = ".totalPageOfStudent";
+            if (keyword != '' && className != '') {
+                classNameList = "#" + className + " ul.student";
+                currPage = "#" + className + " .currPageOfStudent";
+                totalPage = "#" + className + " .totalPageOfStudent";
+            }
+             mui.ajax({
+                url: url,
+                data: {
+                    lesson_id:lesson_id,
+                    camp_id: campID,
+                    keyword: keyword
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data.data[i].student.student + data.data.data[i].type + '</label><input name="checkbox-student" class="student" value="' + data.data.data[i].student.student + '" type="checkbox" data-id="' + data.data.data[i].id + '"  data-student_id="' + data.data.data[i].student_id + '" data-student="' + data.data.data[i].student.student +'" data-camp="'+ data.data.data[i].camp +'" data-camp_id="'+ data.data.data[i].camp_id +'" data-lesson="'+ data.data.data[i].lesson +'" data-lesson_id="'+ data.data.data[i].lesson_id +'" data-member="'+ data.data.data[i].member +'" data-member_id="'+ data.data.data[i].member_id + '"></div>'
+                        }
+                        $(classNameList).empty();
+                        if (newli == '') {
+                            newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
+                        }
+                        $(classNameList).append(newli);
+                        $(currPage).text(data.data.current_page);
+                        $(totalPage).text(data.data.last_page);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+</script>
 
 </body>
 
