@@ -221,7 +221,6 @@ class TeamService {
                 'status' => 1
             ]);
         } else {
-
             $roleCaptain = $roleCaptain->toArray();
             // 队长有改变 组合修改数组
             if ($roleCaptain['member_id'] != $data['captain_id']) {
