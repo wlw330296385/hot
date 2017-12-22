@@ -313,7 +313,7 @@
                 });
             });
 
-            //评论功能
+            //点赞功能
             $(".thumbsup").on('click', function () {
                 var commented = "{$eventInfo.event}";
                 var commented_id = "{$eventInfo.id}";
@@ -330,6 +330,7 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
+                            $(".thumbup_count").text(data.thumbup_count);
                             isthumbsup();
                         } else {
                             mui.toast(data.msg);
@@ -395,6 +396,7 @@
             var time = year + "-" + month + "-" + day + " " + hours + ":" + minutes;
             var teamrole = "{$teamrole}";
             var end_time = "{$eventInfo.end_time}";
+            
             if (teamrole > 0 && time > end_time) {
                 $(".status3").show();
             } else if (teamrole > 0 && time < end_time) {
