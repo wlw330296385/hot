@@ -99,6 +99,14 @@
             color: #b1b0b0;
             content: attr(placeholder);
         }
+        #eventDom .fl {
+            text-align: left;
+        }
+        .cancel-dom{
+            font-size: 16px;
+            float: right;
+            margin:13px 10px;
+        }
     </style>
 </head>
 
@@ -174,13 +182,6 @@
                         </span>
                     </div>
                 </div>
-
-
-                <div class="mui-input-row price-input-row" style="display: none">
-                    <label>活动单价</label>
-                    <input type="text" name="price" class="" value="" placeholder="请填写活动单价">
-                </div>
-
                 <div class="mui-input-row price-input-row" style="display: none">
                     <a href="#cost" class="mui-navigate-right">
                         <label class="wd36">费用结算人</label>
@@ -188,6 +189,15 @@
                         <input type="hidden" name="finance_id" value="" class="finance_id">
                     </a>
                 </div>
+
+
+                <div class="mui-input-row">
+                    <a href="#eventDom" class="mui-navigate-right">
+                        <label>报名种类</label>
+                        <span class="eventDom dataSpan"></span>
+                    </a>
+                </div>
+
 
                 <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
@@ -299,6 +309,28 @@
                     提交
                 </li>
             </ul>
+        </div>
+    </div>
+
+    <!--报名种类选择-->
+    <div id="eventDom" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd36"><strong>报名种类</strong></span>
+            <span class="fr"><button class="mui-btn-blue" id="domConfirm">确认</button></span>
+            <span class="fr"><button id="domAdd">添加</button></span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form class="mui-input-group">
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称">
+                        <i class="cancel-dom mui-icon mui-icon-close"></i>
+                        <input type="text" name="event-dom_price" class="wd36 fr" value="" placeholder="对应价格">
+                    </div>
+                </form>
+                <div class="tjbtn"><br /><p>PS: 若活动没分类，可忽略不填。</p></div>
+            </div>
         </div>
     </div>
 
@@ -494,6 +526,29 @@
                     $(".target-input-row").hide();
                 }
             });
+
+
+            //报名种类确认
+            $("#domConfirm").on('tap', this, function () {
+                //把所选课量串在一起，以逗号分隔
+                $("input[name='doms']").val($("input[name='checkbox-dom']:checked").map(function () {
+                    return $(this).val();
+                }).get().join(","));
+                var doms = $("input[name='doms']").val();
+                console.log($("input[name='doms']").val())
+                $(".eventDom").text(doms);
+                mui('#eventDom').popover('toggle');
+            })
+            //添加
+            $("#domAdd").on('tap', this, function () {
+                $("#eventDom form").prepend('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i><input type="text" name="event-dom_price" class="wd36 fr" value="" placeholder="对应价格"></div>');
+            })
+            // 删除
+            $(".cancel-dom").on('tap', this, function () {
+                $(this).parent().remove();
+            });
+
+
 
             // 选择是否收费显示隐藏活动单价和费用结算人
             $("#eventPrice").change(function () {

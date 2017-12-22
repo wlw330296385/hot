@@ -52,6 +52,9 @@
             color: #AAAAAA;
             line-height: normal;
         }
+        #newdiv .matchStudent label {
+            color:#f90;
+        }
         
         .weekList label {
             width: 60%;
@@ -255,12 +258,11 @@
             <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
         </div>
         <div class="pop-search page-header border-b">
-            <input type="search" class="searchStudent" placeholder="请输入粉丝名称搜索">
+            <input type="search" class="searchStudent" placeholder="请输入关键字搜索">
             <span class="mui-icon mui-icon-search searchicon" id="searchStudent"></span>
         </div>
         <div class="mui-scroll-wrapper pt">
             <div class="mui-scroll">
-
                 <form id="newdiv" class="mui-input-group">
 
                 </form>
@@ -777,14 +779,6 @@
                 toFansList(keyword, "headMaster", pageHM);
             })
 
-            //搜索学生
-            $("#searchStudent").on("click", function () {
-                var keyword = $(".searchStudent").val();
-                var pageStudent = 1;
-                var lesson_id = $('.lessonType').attr("data-id");
-                // $('form#newdiv').empty();
-                toStudentList(lesson_id,keyword, "student", pageStudent);
-            })
             //搜索领队粉丝
             $("#searchLD").on("click", function () {
                 var keyword = $(".keywordLD").val();
@@ -833,30 +827,21 @@
                 }
             })
 
-            //学生弹出框页码控制
-            $("#student").on('click', '.next_page', function () {
-                var getTotalPage = $("#student .totalPageOfStudent").text();
-                pageStudent++;
-                if (pageStudent > getTotalPage) {
-                    mui.toast("已经最后一页了");
-                } else {
-                    var keyword = $(".searchStudent").val();
-                    var lesson_id = $('.lessonType').attr("data-id");
-                    // $('form#newdiv').empty();
-                    toStudentList(lesson_id,keyword, "student", pageStudent);
+
+            //搜索学生
+            $("#searchStudent").on("click", function () {
+                var keyword = $(".searchStudent").val();
+                $("#newdiv .mui-checkbox").removeClass("matchStudent");
+                if(keyword!=''){
+                    $("#newdiv label:contains('"+keyword+"')").parent().addClass("matchStudent");;
+                    $("#newdiv .matchStudent").each(function (i) {
+                        $("#newdiv .mui-checkbox:first-child").before($(this));
+                    });
+                }else{
+                    mui.toast("没输入关键字哦");
                 }
             })
-            $("#student").on('click', '.prev_page', function () {
-                pageStudent--;
-                if (pageStudent < 1) {
-                    mui.toast("已经是第一页了");
-                } else {
-                    var keyword = $(".searchStudent").val();
-                    var lesson_id = $('.lessonType').attr("data-id");
-                    // $('form#newdiv').empty();
-                    toStudentList(lesson_id,keyword, "student", pageStudent);
-                }
-            })
+
 
             //所属课程api
             $(".lessonType").click(function () {
@@ -1090,8 +1075,11 @@
                 success: function (data) {
                     if (data.code == 200) {
                         var newli = '';
+                        var tys = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + data.data[i].type + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student +'" data-camp="'+ data.data[i].camp +'" data-camp_id="'+ data.data[i].camp_id +'" data-lesson="'+ data.data[i].lesson +'" data-lesson_id="'+ data.data[i].lesson_id +'" data-member="'+ data.data[i].member +'" data-member_id="'+ data.data[i].member_id + '"></div>'
+                            tys = '';
+                            if (data.data[i].type == "体验生") { tys = '<span class="tips">体验生</span>' }
+                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student +'" data-camp="'+ data.data[i].camp +'" data-camp_id="'+ data.data[i].camp_id +'" data-lesson="'+ data.data[i].lesson +'" data-lesson_id="'+ data.data[i].lesson_id +'" data-member="'+ data.data[i].member +'" data-member_id="'+ data.data[i].member_id + '"></div>'
                         }
 
                         $(classNameList).empty();
