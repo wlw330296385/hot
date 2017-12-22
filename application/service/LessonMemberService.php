@@ -18,14 +18,16 @@ class LessonMemberService{
     }
 
     public function getLessonMemberListByPage($map,$paginate = 10){
-        $result = $this->LessonMemberModel->with('student')->where($map)->paginate($paginate);
+        $result = $this->LessonMemberModel->where($map)->paginate($paginate);
+
         if($result){
             return $result->toArray();
         }
         return $result;
     }
 
-    public function getLessonMemberListOfCampByPage($map,$paginate = 10){
+
+    public function getLessonMemberListOfCampWithStudentByPage($map,$paginate = 10){
         $result = $this->LessonMemberModel->with('student')->where($map)->distinct(true)->paginate($paginate);
         if($result){
             return $result->toArray();
