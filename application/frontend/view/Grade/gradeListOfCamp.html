@@ -44,7 +44,7 @@
                 <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
                     <a href="#">
                         <span>训练营班级</span>
-                        <div class="mui-media-body">{$gradeListCount}</div>
+                        <div class="mui-media-body gradeCounts" >0</div>
                     </a>
                 </li>
             </ul>
@@ -177,7 +177,7 @@
     //接口获取数据并追加到页面
     var toList = function(wList,page,gType,status) {
         //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/grade/getGradeListApi','','',true)}/?page="+page;
+        var url  = "{:url('api/grade/getGradeListByPageApi','','',true)}/?page="+page;
         var campID = "{$camp_id}";
         mui.ajax({
             url:url,
@@ -194,22 +194,27 @@
 
                 var newli='';
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('grade/gradeInfoOfCamp')}" + '/grade_id/' + data.data[i].id+'/camp_id/'+data.data[i].camp_id;
+                    if(status == 1){
+                        console.log(data.data.total)
+                        $('.gradeCounts').text(data.data.total);
+                    }
+                    
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        var urls = "{:url('grade/gradeInfoOfCamp')}" + '/grade_id/' + data.data.data[i].id+'/camp_id/'+data.data.data[i].camp_id;
                         newli += '<li class="mui-table-view-cell mui-media listli fulllist">';
                         if (status == 1) {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为预排</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为预排</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         } else {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为当前</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为当前</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><p class="fTop"><strong>'+ data.data[i].grade+'</strong><span>'+ data.data[i].court+'</span></p><p class="fMiddle">'+ data.data[i].student_str+'</p><p class="fBottom">学员：'+ data.data[i].students+' 人</p></a></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><p class="fTop"><strong>'+ data.data.data[i].grade+'</strong><span>'+ data.data.data[i].court+'</span></p><p class="fMiddle">'+ data.data.data[i].student_str+'</p><p class="fBottom">学员：'+ data.data.data[i].students+' 人</p></a></div>';
 
                         newli += '</li>';
                     }
 
-                    // for(var i=0;i<=data.data.length-1;i++){
-                    //     var urls = "{:url('grade/gradeInfoOfCamp')}" + '/grade_id/' + data.data[i].id+'/camp_id/'+data.data[i].camp_id;
-                    //     newli +=  '<li class="mui-table-view-cell mui-media listli" ><div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><a class="mui-btn mui-btn-red" data-action="del">删除</a></div><div class="mui-slider-handle"><a href="'+urls+'" ><div class="mui-media-body wd"><strong>'+ data.data[i].grade+'</strong><p class="mui-ellipsis">'+ data.data[i].gradecate+' | '+ data.data[i].court+'</p></div></a></div></li>';
+                    // for(var i=0;i<=data.data.data.length-1;i++){
+                    //     var urls = "{:url('grade/gradeInfoOfCamp')}" + '/grade_id/' + data.data.data[i].id+'/camp_id/'+data.data.data[i].camp_id;
+                    //     newli +=  '<li class="mui-table-view-cell mui-media listli" ><div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><a class="mui-btn mui-btn-red" data-action="del">删除</a></div><div class="mui-slider-handle"><a href="'+urls+'" ><div class="mui-media-body wd"><strong>'+ data.data.data[i].grade+'</strong><p class="mui-ellipsis">'+ data.data.data[i].gradecate+' | '+ data.data.data[i].court+'</p></div></a></div></li>';
                     // }
                     if(gType==1){
                         //上拉刷新
