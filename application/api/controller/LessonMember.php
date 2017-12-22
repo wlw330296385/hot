@@ -24,8 +24,33 @@ class LessonMember extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
+            $result = $this->LessonMemberService->getLessonMemberListByPage($map);    
+            if($result){
+                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'检查你的参数']);
+            }
 
-            $result = $this->LessonMemberService->getLessonMemberListWithStudentByPage($map);    
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 搜索学生
+    public function searchLessonMemberNoPageApi(){
+        try{
+
+            $map = input('post.');
+
+            $keyword = input('param.keyword');
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['student'] = ['LIKE','%'.$keyword.'%'];
+            } 
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            $LessonMember = new \app\model\LessonMember;
+            $result =  $LessonMember->where($map)->select();
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{

@@ -264,6 +264,11 @@
                 <form id="newdiv" class="mui-input-group">
 
                 </form>
+                <ul class="mui-pager">
+                    <li><a href="#" class="prev_page">上一页</a></li>
+                    <li><span class="currPageOfStudent">0</span>/<span class="totalPageOfStudent">0</span></li>
+                    <li><a href="#" class="next_page">下一页</a></li>
+                </ul>
             </div>
            
         </div>
@@ -1065,7 +1070,7 @@
 
 
         var toStudentList = function (lesson_id,keyword, className, page) {
-            var url = "{:url('api/lesson_member/searchLessonMemberNoPageApi','','',true)}/?page=" + page;
+            var url = "{:url('api/lesson_member/searchLessonMemberByPageApi','','',true)}/?page=" + page;
             var campID = "{$campInfo.id}";
             var classNameList = "form#newdiv";
             var currPage = ".currPageOfStudent";
@@ -1090,8 +1095,8 @@
                 success: function (data) {
                     if (data.code == 200) {
                         var newli = '';
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + data.data[i].type + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student +'" data-camp="'+ data.data[i].camp +'" data-camp_id="'+ data.data[i].camp_id +'" data-lesson="'+ data.data[i].lesson +'" data-lesson_id="'+ data.data[i].lesson_id +'" data-member="'+ data.data[i].member +'" data-member_id="'+ data.data[i].member_id + '"></div>'
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data.data[i].student + data.data.data[i].type + '</label><input name="checkbox-student" class="student" value="' + data.data.data[i].student + '" type="checkbox" data-id="' + data.data.data[i].id + '"  data-student_id="' + data.data.data[i].student_id + '" data-student="' + data.data.data[i].student +'" data-camp="'+ data.data.data[i].camp +'" data-camp_id="'+ data.data.data[i].camp_id +'" data-lesson="'+ data.data.data[i].lesson +'" data-lesson_id="'+ data.data.data[i].lesson_id +'" data-member="'+ data.data.data[i].member +'" data-member_id="'+ data.data.data[i].member_id + '"></div>'
                         }
 
                         $(classNameList).empty();

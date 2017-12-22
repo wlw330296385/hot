@@ -17,8 +17,9 @@ class LessonMemberService{
         return $result;
     }
 
-    public function getLessonMemberListWithStudentByPage($map,$paginate = 10){
-        $result = $this->LessonMemberModel->with('student')->where($map)->paginate($paginate);
+    public function getLessonMemberListByPage($map,$paginate = 10){
+        $result = $this->LessonMemberModel->where($map)->paginate($paginate);
+
         if($result){
             return $result->toArray();
         }
