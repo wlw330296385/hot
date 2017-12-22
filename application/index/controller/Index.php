@@ -10,6 +10,14 @@ class Index extends Controller{
         db('log_wxpay')->count('*');
         echo db('log_wxpay')->getlastsql();
     }
+    public function spu(){
+        $a = [
+            ['name'=>'包车','price'=>5200],
+            ['name'=>'不包车','price'=>5000]
+        ];
+
+        echo json_encode($a);
+    }
 
     public function index(){
         $timestr = strtotime('2017-11-16');
