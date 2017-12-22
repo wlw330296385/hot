@@ -11,6 +11,32 @@ class LessonMember extends Base{
         $this->LessonMemberService = new LessonMemberService;
 	}
 
+    // 搜索学生
+    public function searchLessonMemberByPageApi(){
+        try{
+
+            $map = input('post.');
+
+            $keyword = input('param.keyword');
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['student'] = ['LIKE','%'.$keyword.'%'];
+            } 
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+
+            $result = $this->LessonMemberService->getLessonMemberListWithStudentByPage($map);    
+            if($result){
+                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'检查你的参数']);
+            }
+
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
     // 获取训练营下的学生
     public function getLessonMemberListOfCampByPageApi(){
         try{
@@ -22,7 +48,7 @@ class LessonMember extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
-            $result = $this->LessonMemberService->getLessonMemberListOfCampByPage($map);    
+            $result = $this->LessonMemberService->getLessonMemberListOfCampWithStudentByPage($map);    
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
@@ -43,7 +69,7 @@ class LessonMember extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
-            $result = $this->LessonMemberService->getLessonMemberListByPage($map);    
+            $result = $this->LessonMemberService->getLessonMemberListWithStudentByPage($map);    
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
