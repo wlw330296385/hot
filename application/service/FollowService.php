@@ -27,12 +27,20 @@ class FollowService {
             if ($hadFollow['status']==1) {
                 $data['status'] = -1;
                 $msg = '取消关注成功';
+                // 若是球队，球队粉丝数-1
+                if ($data['type'] == 4) {
+                    db('team')->where('id', $data['follow_id'])->setDec('fans_num', 1);
+                }
             } else {
                 $data['status'] = 1;
                 $msg = '关注成功';
                 // 操作camp_member数据
                 if ($data['type'] == 2) {
                     $this->saveCampMember($data);
+                }
+                // 若是球队，球队粉丝数+1
+                if ($data['type'] == 4) {
+                    db('team')->where('id', $data['follow_id'])->setInc('fans_num', 1);
                 }
             }
             $result = $model->allowField(true)->isUpdate()->save($data);
@@ -43,25 +51,6 @@ class FollowService {
             }
         }
         return $response;
-    }
-
-    protected function saveCampMember($data) {
-        $campmemberDb = db('camp_member');
-        $campmember = $campmemberDb->where(['camp_id' => $data['follow_id'], 'member_id' => $data['member_id']])->find();
-        if ($campmember) {
-            if ($campmember['status'] != 1) {
-                $campmemberDb->where(['id' => $campmember['id']])->update(['status' => 1, 'type' => -1]);
-            }
-        } else {
-            $campmemberDb->insert([
-                'camp_id' => $data['follow_id'],
-                'camp' => $data['follow_name'],
-                'member_id' => $data['member_id'],
-                'member' => $data['member'],
-                'type' => -1, 'status' => 1,
-                'create_time' => time(), 'update_time' => time()
-            ]);
-        }
     }
 
     // 关注列表
@@ -81,4 +70,26 @@ class FollowService {
             return $result;
         }
     }
+
+    // 保存canmp_mebmer数据
+    protected function saveCampMember($data) {
+        $campmemberDb = db('camp_member');
+        $campmember = $campmemberDb->where(['camp_id' => $data['follow_id'], 'member_id' => $data['member_id']])->find();
+        if ($campmember) {
+            if ($campmember['status'] != 1) {
+                $campmemberDb->where(['id' => $campmember['id']])->update(['status' => 1, 'type' => -1]);
+            }
+        } else {
+            $campmemberDb->insert([
+                'camp_id' => $data['follow_id'],
+                'camp' => $data['follow_name'],
+                'member_id' => $data['member_id'],
+                'member' => $data['member'],
+                'type' => -1, 'status' => 1,
+                'create_time' => time(), 'update_time' => time()
+            ]);
+        }
+    }
+
+
 }

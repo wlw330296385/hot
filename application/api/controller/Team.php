@@ -377,6 +377,112 @@ class Team extends Base {
         }
     }
 
+    // 领队移除球队成员
+    public function removeteammember() {
+         try {
+             // 判断必传参数
+             $team_id = input('post.team_id');
+             $member_id = input('post.member_id');
+             if (!$team_id || !$member_id) {
+                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+             }
+             // 组合传入参数作查询条件
+             $map = input('post.');
+             $teamS = new TeamService();
+             // 判断是否领队，领队成员才能操作
+             $teamrole = $teamS->checkMemberTeamRole($team_id, $this->memberInfo['id']);
+             if ($teamrole != 4) {
+                 return json(['code' => 100, 'msg' => __lang('MSG_403').'，只有领队成员才能操作']);
+             }
+             // 领队不能移除自己
+             $teamInfo = $teamS->getTeam(['id' => $team_id]);
+             if ($teamInfo['leader_id'] == $member_id) {
+                 return json(['code' => 100, 'msg' => '您是领队不能移除，若要移除请先更换领队']);
+             }
+             // 查询球队成员数据
+             $teammember = $teamS->getTeamMemberInfo($map);
+             if (!$teammember) {
+                 return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+             }
+             // 成员已离队提示
+             if ($teammember['status_num'] != 1) {
+                 return json(['code' => 100, 'msg' => '该成员已离队']);
+             }
+             // 更新成员数据
+             $res = $teamS->saveTeamMember(['id' => $teammember['id'], 'status' => -1], $teammember['id']);
+             if ($res['code'] == 200) {
+                 // 更新成员的team_member_role表所有相关数据status=-1
+                 db('team_member_role')->where(['team_id' => $team_id, 'member_id' => $member_id])->update(['status' => -1, 'update_time' => time()]);
+                 // 更新球队的成员数统计
+                 db('team')->where('id', $team_id)->setDec('member_num', 1);
+                 // 发送消息通知给离队成员
+                 $messageS = new MessageService();
+                 $messageData = [
+                     'title' => '您已退出"'. $teammember['team'] .'"球队',
+                     'content' => '您已退出"'. $teammember['team'] .'"球队',
+                     'url' => url('frontend/message/index', '', '', true),
+                     'keyword1' => $teammember['member'],
+                     'keyword2' => date('Y年m月d日 H:i'),
+                     'remark' => '点击进入查看详细信息'
+                 ];
+                 $messageS->sendMessageToMember($member_id, $messageData, config('wxTemplateID.memberQuit'));
+             }
+             // 返回结果
+             return json($res);
+         } catch (Exception $e) {
+             return json(['code' => 100, 'msg' => $e->getMessage()]);
+         }
+    }
+
+    // 球队成员自己申请离队
+    public function applyleaveteam() {
+        try {
+            // 判断必传参数
+            $team_id = input('post.team_id');
+            $member_id = input('post.member_id');
+            if (!$team_id || !$member_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            // 组合传入参数作查询条件
+            $map = input('post.');
+            $teamS = new TeamService();
+            // 只能成员自己操作
+            if ($member_id != $this->memberInfo['id']) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403').'只能球队成员自己操作']);
+            }
+            // 查询球队成员数据
+            $teammember = $teamS->getTeamMemberInfo($map);
+            if (!$teammember) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+            }
+            // 成员已离队提示
+            if ($teammember['status_num'] != 1) {
+                return json(['code' => 100, 'msg' => '您已离队']);
+            }
+            // 发送消息通知给球队领队
+            $teamInfo = $teamS->getTeam(['id' => $team_id]);
+            $messageS = new MessageService();
+            $messageData = [
+                'title' => '您好，有球队成员申请离队',
+                'content' => '您好，球队成员'.$teammember['member'].'申请离开"'.$teammember['team'].'"球队',
+                'url' => url('frontend/message/index', '', '', true),
+                'keyword1' => '球队成员申请离队',
+                'keyword2' => $teammember['member'],
+                'keyword3' => date('Y年m月d日 H:i'),
+                'remark' => '请及时处理'
+            ];
+            $res = $messageS->sendMessageToMember($teamInfo['leader_id'], $messageData, config('wxTemplateID.checkPend'));
+            if ($res) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_200').'，请等待球队领队审核'];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_400').'，请重试'];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
     // 创建球队活动
     public function createteamevent() {
         try {
@@ -831,12 +937,21 @@ class Team extends Base {
             $data['member_avatar'] = $this->memberInfo['avatar'];
             $data['thumbsup'] = ($hasCommented && ($hasCommented['thumbsup'] == 1) ) ? 0 : 1;
             $result = $teamS->saveComment($data);
+            if ($result['code'] == 200) {
+                // 返回最新的点赞数统计
+                $thumbupCount = $teamS->getCommentThumbCount([
+                    'comment_type' => $comment_type,
+                    'commented_id' => $commented_id,
+                ]);
+                $result['thumbup_count'] = $thumbupCount;
+            }
             return json($result);
         } catch(Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
 
+    // 获取会员在球队模块活动、比赛当前点赞信息
     public function isthumbup() {
         try {
             // 判断必传参数

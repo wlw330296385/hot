@@ -27,7 +27,7 @@
                 <li class="mui-table-view-cell mui-media listli" id="logoframe">
                     <img class="mui-media-object mui-pull-left logostyle" src="{$teamMemberInfo.avatar}">
                     <div class="mui-media-body wd36">
-                        {$teamInfo.member}
+                        {$teamMemberInfo.member}
                         <i class="icon iconfont icon-sex{$teamMemberInfo.sex}"></i>
                         <p class="mui-ellipsis">{$memberInfo.city} {$memberInfo.area}</p>
                     </div>
@@ -125,11 +125,24 @@
                 {/volist}
             </ul>
 
+            <!-- {neq name="delbtnDisplay" value="0"} -->
+            <!--移除队员-->
+            <div class="success-frame success-frame2">
+                <div class="choise">
+                    <!-- {switch name="delbtnDisplay"}
+                    {case value="2"}<button type="button" class="mui-btn mui-btn-danger f16 signOut">移除此队员</button>{/case}
+                    {case value="1"}<button type="button" class="mui-btn mui-btn-danger f16 signOut">申请退出球队</button>{/case}
+                    {/switch} -->
+                    <!-- <button type="button" class="mui-btn mui-btn-danger signOut f16">删除并退出</button> -->
+
+                </div>
+            </div>
+            <!-- {/neq} -->
 
             <div class="success-frame success-frame2">
                 <div class="choise">
                     <button type="button" class="mui-btn mui-btn-danger f16 signOut">移除此队员</button>
-                    <!-- <button type="button" class="mui-btn mui-btn-danger signOut f16">删除并退出</button> -->
+                    <button type="button" class="mui-btn mui-btn-danger f16 signOut">申请退出球队</button>
                 </div>
             </div>
 
@@ -246,32 +259,39 @@
                 });
             });
 
-            // 移除/退队操作
-            // $(".signOut").on("tap", '', function () {
-            //     var btnArray = ['取消', '确认'];
-            //     mui.confirm('是否确认修改？', '', btnArray, function (e) {
-            //         if (e.index == 1) {
-            //             mui.ajax("{:url('api/team/signOut')}", {
-            //                 data: {},
-            //                 dataType: 'json',//服务器返回json格式数据
-            //                 type: 'post',//HTTP请求类型
-            //                 timeout: 10000,//超时时间设置为10秒；
-            //                 headers: { 'Content-Type': 'application/json' },
-            //                 success: function (data) {
-            //                     console.log(data)
-            //                     mui.toast(data.msg)
-            //                     location.reload();
-            //                 },
-            //                 error: function (xhr, type, errorThrown) {
-            //                     console.log(data);
-            //                     mui.toast("网络异常,请稍候再试");
-            //                 }
-            //             });
-            //         } else {
-            //             return;
-            //         }
-            //     })
-            // });
+
+            // 领队移除队员操作
+            $(".signOut").on("tap", '', function () {
+                var btnArray = ['取消', '确认'];
+                var team_id = "{$teamMemberInfo.team_id}";
+                var member_id = "{$teamMemberInfo.member_id}";
+                mui.confirm('是否确认移除此队员？', '', btnArray, function (e) {
+                    if (e.index == 1) {
+                        mui.ajax("{:url('api/team/removeteammember')}", {
+                            data: {
+                                team_id: team_id,
+                                member_id: member_id
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (data) {
+                                console.log(data)
+                                mui.toast(data.msg)
+                                // setTimeout(window.location.href = "{:url('team/teamMember',['team_id'=>$teamInfo['id']])}", 3000);
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                console.log(data);
+                                mui.toast("网络异常,请稍候再试");
+                            }
+                        });
+                    } else {
+                        return;
+                    }
+                })
+            });
+            
 
             otherLength(); // 其他效力球队长度
             followStatus(); //判断当前的关注状态

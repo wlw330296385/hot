@@ -133,8 +133,24 @@ class TeamService {
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
         } else {
+            // 新增球队成员
             $res = $model->allowField(true)->save($data);
             if ($res) {
+                // 查询有无关注数据保存关注数据
+                $followDb = db('follow');
+                $follow = $followDb->where(['type' => 4, 'follow_id' => $data['team_id'], 'member_id' => $data['member_id']])->find();
+                if ($follow) {
+                    if ($follow['status'] != 1 ) {
+                        $followDb->where('id', $follow['id'])->update(['status' => 1, 'update_time' => time()]);
+                    }
+                } else {
+                    $followDb->insert([
+                        'type' => 4, 'follow_id' => $data['team_id'], 'follow_name' => $data['team'],
+                        'member_id' => $data['member_id'], 'member' => $data['member'], 'member_avatar' => $data['avatar'],
+                        'status' => 1, 'create_time' => time()
+                    ]);
+                }
+
                 return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
             } else {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
@@ -221,7 +237,6 @@ class TeamService {
                 'status' => 1
             ]);
         } else {
-
             $roleCaptain = $roleCaptain->toArray();
             // 队长有改变 组合修改数组
             if ($roleCaptain['member_id'] != $data['captain_id']) {
