@@ -39,7 +39,7 @@ class Team extends Base {
         // 获取会员在球队角色身份
         $teamS = new TeamService();
         $teamrole = $teamS->checkMemberTeamRole($this->team_id, $this->memberInfo['id']);
-        dump($teamrole);
+        //dump($teamrole);
         $this->assign('teamrole', $teamrole);
         return view('Team/teamManage');
     }
