@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/bootstrap-table.min.css">
+    <link rel="stylesheet" href="/static/backend/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/backend/plugins/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/skins/skin-blue.min.css">
+</head>
+<body>
+	<!-- Main content -->
+	<section class="content">
+		<div class="row">
+			<!-- left column -->
+			<div class="col-md-6">
+				<!-- general form elements -->
+				<div class="box box-primary bg-gray disabled ">
+					<div class="box-header with-border">
+						<h3 class="box-title">创建支付</h3>
+					</div>
+					<!-- /.box-header -->
+					<!-- form start -->
+					<form role="form" action="" method="post">
+						<div class="box-body">
+							<div class="form-group">
+								<label for="">选择会员</label>
+								<select class="form-control " name="member_id">
+									{volist name="salaryInList" id="vol"}
+									<option value="{$vol.member_id}">{$vol.member}</option>
+									{/volist}
+								</select>
+							</div>
+							{:token()}
+                            <div class="form-group">
+                                <label for="">选择月份(限{:date('Y',time())}年)</label>
+                                <select class="form-control m" id="start_end">
+                                    {volist name='mList' id = 'vol'}
+                                    <option value="{$vol.start},{$vol.end}" >{$vol.m}月</option>
+                                    {/volist}}
+                                </select>
+                            </div>
+							<div class="form-group">
+								<label for="">可提现金额</label>
+								<li class="form-control" id="totalSalary" >111</li>
+							</div>
+							
+							<div class="form-group">
+								<label for="">填写提现金额</label>
+								<input type="number" class="form-control data" name="salary" placeholder="0" value="" >
+							</div>
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" checked=""> 是否发送模板消息
+								</label>
+							</div>
+						</div>
+						<!-- /.box-body -->
+
+						<div class="box-footer">
+							<input type="submit" id="" value="提交">
+						</div>
+					</div>
+				</form>
+				<!-- /.box -->
+
+
+
+				<!-- /input-group -->
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+
+	</div>
+	<!--/.col (left) -->
+
+	</div>
+	<!-- /.row -->
+	</section>
+</body>
+<script src="/static/backend/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="/static/backend/adminlte/js/bootstrap.min.js"></script>
+<script src="/static/backend/layui/layui.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+
+<script type="text/javascript">
+	var member_id = $('select[name=member_id]').val();
+    var start_end = $('select[name=start_end]').val();
+	$(function(){
+		$('select[name=member_id]').on('change',function(){
+			member_id = $(this).val();
+            start_end = $('select[name=start_end]').val();
+			getSalaryInList(member_id,start_end);
+		});
+
+		// $('#submit').on('click',function(){
+		// 	var submiUrl = '';
+		// 	var data = wooApi.getInputData('input', 'data');
+		// 	var datas = wooApi.getInputData('number', 'data',data);
+  //       	var arrData = wooApi.getInputData('select', 'data', datas);
+  //       	var objData = wooApi.arrTOobj(arrData);
+  //       	objData.__token__ = "{}";
+  //       	var ajaxResult = wooApi.asyncF(submiUrl, objData);
+  //       	alert(ajaxResult.msg);
+		// })
+
+
+
+		getSalaryInList(member_id,start_end);
+	})
+
+
+	//训练营场地列表接口获取数据并追加到页面
+    var getSalaryInList = function (member_id,start_end) {
+        var url = "{:url('api/Salaryin/getSalaryInfoByMonthApi')}";
+        $.post({
+            url: url,
+            data: {
+                "member_id":member_id,
+                "start_end_str" : start_end
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            success: function (data) {
+                if (data.code == 200) {
+                    var totalSalary = data.data.totalSalary;
+                    $("#totalSalary").text(totalSalary);
+                } else {
+                    console.log('没有数据');
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+               alert('网络异常,请稍候再试');
+            }
+        });
+    };
+</script>
+</html>
+

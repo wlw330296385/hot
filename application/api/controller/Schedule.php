@@ -198,7 +198,7 @@ class Schedule extends Base
             if(isset($map['grade_id'])){
                 $map['grade_id'] = json_decode($map['grade_id']);
             }
-            if(is_array($map['grade_id']) ) {
+            if(isset($map['grade_id']) && is_array($map['grade_id'])) {
                 $map['grade_id'] = ['in',$map['grade_id']];
             }
             $result = $this->ScheduleService->getScheduleListByPage($map);

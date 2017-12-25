@@ -114,39 +114,14 @@ class Finance extends Backend {
             //$salaryin['rebate'] = RebateModel::where(['salary_id' => $salaryin['id'], 'tier' => ['elt', 4]])->select()->toArray();
             $salaryin['rebate'] = [];
         //}
-        //dump($salaryin);
 
-        $breadcrumb = ['title' => '收入详情', 'ptitle' => '财务'];
-        $this->assign('breadcrumb', $breadcrumb);
         $this->assign('salaryin', $salaryin);
         return view();
     }
 
-    // 收入提现记录列表
-    public function salaryoutlist() {
-        $map=[];
-        $member = input('member');
-        if ($member) {
-            $map['member'] = ['like', '%'. $member .'%'];
-        }
-        $list = Db::name('salary_out')->where($map)->paginate(15);
 
-        $breadcrumb = ['title' => '提现记录', 'ptitle' => '财务'];
-        $this->assign('breadcrumb', $breadcrumb);
-        $this->assign('list', $list);
-        return view();
-    }
 
-    public function salaryout() {
-        $id = input('id', 0);
-        $salaryout = Db::name('salary_out')->where('id', $id)->find();
-        //dump($salaryout);
-
-        $breadcrumb = ['title' => '提现详情', 'ptitle' => '财务'];
-        $this->assign('breadcrumb', $breadcrumb);
-        $this->assign('salaryout', $salaryout);
-        return view();
-    }
+    
 
     // 订单对账
     public function reconciliation() {
@@ -414,5 +389,63 @@ class Finance extends Backend {
         $this->assign('camps', $camps);
         $this->assign('sum', $sum);
         return $this->fetch();
+    }
+
+
+
+
+
+    // 提现记录表
+    public function salaryOutList(){
+        $map=[];
+        $member = input('member');
+        if ($member) {
+            $map['member'] = ['like', '%'. $member .'%'];
+        }
+        $SalaryOut = new \app\model\SalaryOut;
+        $list = $SalaryOut->where($map)->paginate(15);
+        $this->assign('list', $list);
+        return view('finance/salaryOutList');
+    }
+
+    // 提现记录详情
+    public function salaryOutInfo(){
+        $salaryout_id = input('salaryout_id', 0);
+        $SalaryOut = new \app\model\SalaryOut;
+        $salaryOutInfo = $SalaryOut->where(['id'=>$salaryout_id])->find();
+        
+
+        $this->assign('salaryOutInfo', $salaryOutInfo);
+        return view('finance/salaryOutInfo');
+    }
+
+
+    // 手动添加提现记录
+    public function createSalaryOut(){
+        // 选择收入对象
+        $SalaryIn = new SalaryIn;
+        $salaryInList = $SalaryIn->distinct('true')->field('member_id,member')->select();
+        if($salaryInList){
+            $salaryInList = $salaryInList->toArray();
+        }else{
+            $salaryInList = [];
+        }
+        $m = date('m',time());
+
+        $mList = [];
+        for ($i=$m; $i > 1; $i--) { 
+            $mList[$i]['m'] = $i;
+            $BeginDate= date('Y').'-'.$i.'-01';
+            $mList[$i]['start'] = $BeginDate;
+            $endDate = date('Y-m-d', strtotime("$BeginDate +1 month -1 day"));
+            $mList[$i]['end'] = $endDate;    
+        }
+       // dump($mList);die;
+
+        $this->assign('mList',$mList);
+
+        $this->assign('salaryInList',$salaryInList);
+
+        return view('finance/createSalaryOut');
     }
 }

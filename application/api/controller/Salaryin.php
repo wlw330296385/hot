@@ -29,8 +29,15 @@ class Salaryin extends Base {
 
     public function getSalaryInfoByMonthApi(){
         try{
-            $start = input('start')?input('start'):date(strtotime('-1 month'));
-            $end = intpu('end')?input('end'):date('Y-m-d',time());
+            $start_end = input('start_end');
+            if($start_end){
+                $arr_start_end = explode(',', $start_end);
+                $start = $arr_start_end[0];
+                $end = $arr_start_end[1];
+            }else{
+                $start = input('start')?input('start'):date(strtotime('-1 month'));
+                $end = input('end')?input('end'):date('Y-m-d',time());  
+            }
             $startInt = strtotime($start);
             $endInt = strtotime($end);
             $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];

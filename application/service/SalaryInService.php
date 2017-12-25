@@ -28,7 +28,7 @@ class SalaryInService {
 
 
     // 获取工资列表
-    public function getSalaryInList($map,$order = 'id DESC'){
+    public function getSalaryInList($map = [],$order = 'id DESC'){
         $res = $this->SalaryIn->where($map)->order($order)->select();
         if($res){
             // 数据集转换为数组
