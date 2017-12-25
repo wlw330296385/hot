@@ -125,7 +125,7 @@ class TeamService {
         $model = new TeamMember();
         // 有传入team_member表id 更新关系数据，否则新增关系数据
         if ($teamMember_id) {
-            $res = $model->allowField(true)->save($data, ['id' => $data['id']]);
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res || ($res === 0)) {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {

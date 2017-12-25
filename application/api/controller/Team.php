@@ -178,7 +178,7 @@ class Team extends Base {
                 'status' => 1
             ];
             $teamMember = $teamS->getTeamMemberInfo($teamMemberMap);
-            if ($teamMember) {
+            if ($teamMember && $teamMember['status_num'] == 1) {
                 return json(['code' => 100, 'msg' => '你已经是球队的成员了，无需再次加入']);
             }
             // 有无申请记录
@@ -188,10 +188,6 @@ class Team extends Base {
                 'organization_id' => $teamInfo['id'],
                 'member_id' => $this->memberInfo['id']
             ];
-            $hasApply = $teamS->getApplyInfo($mapApplyinfo);
-            if ($hasApply) {
-                return json(['code' => 100, 'msg' => '你已经提交了加入申请，请等待球队处理回复']);
-            }
             // 插入申请记录
             $dataApply = [
                 'member_id' => $this->memberInfo['id'],
@@ -203,6 +199,14 @@ class Team extends Base {
                 'apply_type' => 1,
                 'remarks' => $data['remarks']
             ];
+            $hasApply = $teamS->getApplyInfo($mapApplyinfo);
+            if ($hasApply) {
+                if ($hasApply['status'] == 1) {
+                    return json(['code' => 100, 'msg' => '你已经提交了加入申请，请等待球队处理回复']);
+                } else {
+                    $dataApply['id'] = $hasApply['id'];
+                }
+            }
             $saveApply = $teamS->saveApply($dataApply);
             //dump($saveApply);
             if ($saveApply['code'] == 200) {
@@ -273,6 +277,11 @@ class Team extends Base {
                         'weight' => $applyInfo['member']['weight'],
                         'status' => 1
                     ];
+                    // 查询会员在球队有无原数据记录 有就更新数据/否则插入新数据
+                    $teamMemberInfo = $teamS->getTeamMemberInfo(['team_id' => $applyInfo['organization_id'], 'member_id' => $applyInfo['member']['id']]);
+                    if ($teamMemberInfo && $teamMemberInfo['status_num'] != 1) {
+                        $dataTeamMember['id'] = $teamMemberInfo['id'];
+                    }
                     $teamS->saveTeamMember($dataTeamMember);
                     // 获取现在球队队员的平均年龄、身高、体重
                     $avgMap['team_id'] = $applyInfo['organization_id'];
