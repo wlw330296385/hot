@@ -53,6 +53,10 @@
         #newdiv .matchStudent label {
             color:#f90;
         }
+        #setTop {
+            color:#999;
+            margin-right: 5px;
+        }
         
         .weekList label {
             width: 60%;
@@ -231,7 +235,7 @@
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
             <span class="course wd36"><strong>学员名单</strong></span>
-            <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
+            <span class="fr"><button class="mui-btn" id="setTop">置顶已选</button><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
         </div>
         <div class="pop-search page-header border-b">
             <input type="search" class="searchStudent" placeholder="请输入关键字搜索">
@@ -706,6 +710,8 @@
                 //班级成员
                 $("input[name=students]").val(studentList.length)
                 console.log($("input[name=students]").val());
+
+                $("#newdiv .mui-checkbox").removeClass("matchStudent");
                 mui('#student').popover('toggle');
             })
 
@@ -875,16 +881,24 @@
 
             //搜索学生
             $("#searchStudent").on("click", function () {
-                var keyword = $(".searchStudent").val();
+                var keywordSD = $(".searchStudent").val();
                 $("#newdiv .mui-checkbox").removeClass("matchStudent");
-                if(keyword!=''){
-                    $("#newdiv label:contains('"+keyword+"')").parent().addClass("matchStudent");;
+                if(keywordSD!=''){
+                    $("#newdiv label:contains('"+keywordSD+"')").parent().addClass("matchStudent");
                     $("#newdiv .matchStudent").each(function (i) {
                         $("#newdiv .mui-checkbox:first-child").before($(this));
                     });
+                    mui('#student .mui-scroll-wrapper').scroll().scrollTo(0, 0 , 100);
                 }else{
                     mui.toast("没输入关键字哦");
                 }
+            })
+            //置顶已选学生到列表
+            $("#setTop").on("click", function () {
+                $("input[name='checkbox-student']:checked").parent().each(function (i) {
+                    $("#newdiv .mui-checkbox:first-child").before($(this));
+                });
+                mui('#student .mui-scroll-wrapper').scroll().scrollTo(0, 0 , 100);
             })
 
             //编辑班级
