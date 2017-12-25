@@ -23,7 +23,19 @@ class Member extends Base{
 
 
     }
-
+    public function getMemberInfoApi(){
+        try{
+            $map = input('post.');
+            $result = $this->MemberService->getMemberInfo($map);
+            if($result){
+               return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+               return json(['code'=>100,'msg'=>'不存在该用户']);
+            }
+        }catch(Exception $e){
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+        }
+    }
 
 
     // 提现申请
@@ -36,8 +48,8 @@ class Member extends Base{
             if($memberInfo['balance']<$data['money']){
                 return json(['code'=>200,'msg'=>'余额不足']);die;
             }
-     	$result = $this->SalaryOut->saveSalaryOut($data);
-     	return json($result);
+         	$result = $this->SalaryOut->saveSalaryOut($data);
+         	return json($result);
     	}catch (Exception $e){
     		return json(['code'=>200,'msg'=>$e->getMessage()]);
     	}

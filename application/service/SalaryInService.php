@@ -130,8 +130,12 @@ class SalaryInService {
                     ->where(['member_id'=>$member_id])
                     ->where(['create_time'=>['between',[$startTime,$endTime]]])
                     ->sum('salary');
-        // echo $this->SalaryIn->getlastsql();
-        return $scheduleIn?$scheduleIn:0;
+        $push_salary = $this->SalaryIn
+        ->where(['member_id'=>$member_id])
+        ->where(['create_time'=>['between',[$startTime,$endTime]]])
+        ->sum('push_salary');
+        $total = $scheduleIn+$push_salary;
+        return $total?$total:0;
     }
 
     // 按月获取系统奖励总额

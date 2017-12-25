@@ -29,9 +29,9 @@ class Salaryin extends Base {
 
     public function getSalaryInfoByMonthApi(){
         try{
-            $start_end = input('start_end');
-            if($start_end){
-                $arr_start_end = explode(',', $start_end);
+            $start_end_str = input('start_end_str');
+            if($start_end_str){
+                $arr_start_end = explode(',', $start_end_str);
                 $start = $arr_start_end[0];
                 $end = $arr_start_end[1];
             }else{
@@ -40,13 +40,19 @@ class Salaryin extends Base {
             }
             $startInt = strtotime($start);
             $endInt = strtotime($end);
+            // dump($start);
+            // dump($end);
+            // dump($startInt);die;
             $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];
             // 组织分成分成:
             $rebateIn   = $this->SalaryInService->getReabteByMonth($startInt,$endInt,$member_id);
             $scheduleIn = $this->SalaryInService->getSalaryByMonth($startInt,$endInt,$member_id);
-            $sellsIn    = $this->SalaryInService->getSalaryByMonth($startInt,$endInt,$member_id);
-            $levelAward = $this->SalaryInService->getSalaryByMonth($startInt,$endInt,$member_id);
-            $rankAward  = $this->SalaryInService->getSalaryByMonth($startInt,$endInt,$member_id);   
+            // $sellsIn    = $this->SalaryInService->getSalaryByMonth($startInt,$endInt,$member_id);
+            $sellsIn = 0;
+            // $levelAward = $this->SalaryInService->getSalaryByMonth($startInt,$endInt,$member_id);
+            // $rankAward  = $this->SalaryInService->getSalaryByMonth($startInt,$endInt,$member_id);  
+            $levelAward = 0;
+            $rankAward  = 0;  
             $totalSalary = $rebateIn+$scheduleIn+$sellsIn+$levelAward+$rankAward;
             return json(['code'=>200,'msg'=>'ok','data'=>['rebateIn'=>$rebateIn,'scheduleIn'=>$scheduleIn,'sellsIn'=>$sellsIn,'levelAward'=>$levelAward,'rankAward'=>$rankAward,'totalSalary'=>$totalSalary]]);
         }catch (Exception $e){

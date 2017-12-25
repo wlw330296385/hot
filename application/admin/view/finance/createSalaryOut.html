@@ -43,12 +43,12 @@
                                 </select>
                             </div>
 							<div class="form-group">
-								<label for="">可提现金额</label>
-								<li class="form-control" id="totalSalary" >111</li>
+								<label for="">课时(shcedule)收入与业绩(rebate)收入/月</label>
+								<li class="form-control" id="totalSalary" >0</li>
 							</div>
 							
 							<div class="form-group">
-								<label for="">填写提现金额</label>
+								<label for="">填写提现金额   (最大:<span id="balance" style="color: red">0</span>) </label>
 								<input type="number" class="form-control data" name="salary" placeholder="0" value="" >
 							</div>
 							<div class="checkbox">
@@ -89,29 +89,49 @@
 <script type="text/javascript">
 	var member_id = $('select[name=member_id]').val();
     var start_end = $('select[name=start_end]').val();
+    var balance = 0;
 	$(function(){
 		$('select[name=member_id]').on('change',function(){
-			member_id = $(this).val();
-            start_end = $('select[name=start_end]').val();
+			member_id = $('select[name=member_id]').val();
+            start_end = $('#start_end').val();
 			getSalaryInList(member_id,start_end);
+            getMemberInfo();
 		});
 
-		// $('#submit').on('click',function(){
-		// 	var submiUrl = '';
-		// 	var data = wooApi.getInputData('input', 'data');
-		// 	var datas = wooApi.getInputData('number', 'data',data);
-  //       	var arrData = wooApi.getInputData('select', 'data', datas);
-  //       	var objData = wooApi.arrTOobj(arrData);
-  //       	objData.__token__ = "{}";
-  //       	var ajaxResult = wooApi.asyncF(submiUrl, objData);
-  //       	alert(ajaxResult.msg);
-		// })
+        $('#start_end').on('change',function(){
+            member_id = $('select[name=member_id]').val();
+            start_end = $('#start_end').val();
+            getSalaryInList(member_id,start_end);
+        })
 
-
+        getMemberInfo();
 
 		getSalaryInList(member_id,start_end);
 	})
-
+    var getMemberInfo = function(){
+        var url = "{:url('api/member/getmemberInfoApi')}";
+        member_id = $('select[name=member_id]').val();
+        $.post({
+            url: url,
+            data: {
+                "id":member_id,
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            success: function (data) {
+                if (data.code == 200) {
+                    balance = data.data.balance;
+                    $("#balance").text(balance);
+                } else {
+                    $("#balance").text(0);
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+               alert('网络异常,请稍候再试');
+            }
+        });
+    }
 
 	//训练营场地列表接口获取数据并追加到页面
     var getSalaryInList = function (member_id,start_end) {
@@ -127,10 +147,10 @@
             timeout: 10000,//超时时间设置为10秒；
             success: function (data) {
                 if (data.code == 200) {
-                    var totalSalary = data.data.totalSalary;
-                    $("#totalSalary").text(totalSalary);
+                    var scheduleIn = data.data.scheduleIn;
+                    $("#totalSalary").text(scheduleIn);
                 } else {
-                    console.log('没有数据');
+                    $("#totalSalary").text(0);
                 }
             },
             error: function (xhr, type, errerThrown) {
@@ -138,6 +158,19 @@
             }
         });
     };
+
+
+    // 提交
+    $('#submit').on('click',function(){
+            var submiUrl = "";
+            var data = wooApi.getInputData('input', 'data');
+            var datas = wooApi.getInputData('number', 'data',data);
+            var arrData = wooApi.getInputData('select', 'data', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.__token__ = "{:token()}";
+            var ajaxResult = wooApi.asyncF(submiUrl, objData);
+            alert(ajaxResult.msg);
+        })
 </script>
 </html>
 
