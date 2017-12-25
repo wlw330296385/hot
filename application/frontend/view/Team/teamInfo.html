@@ -163,7 +163,7 @@
                     </div>
                     <div class="mui-media-body mainInfoRight wd66">
                         <h5>
-                            <strong class="title">主题：对内训练</strong>
+                            <strong>主题：对内训练</strong>
                             <span class="colorgray status">[已结束]</span>
                         </h5>
                         <div class="divFrame">
@@ -176,7 +176,7 @@
                         </div>
                     </div>
                 </li>
-                <li class="mui-table-view-cell listli">
+                <li class="mui-table-view-cell listli liImgFrame">
                     <div class="imgShow fl wd66 imgShowEvent">
                         <img src="/static/frontend/images/ads1.jpg" alt="">
                         <img src="/static/frontend/images/ads1.jpg" alt="">
@@ -192,7 +192,7 @@
                 </li>
             </ul>
 
-            
+
             <!--球队相册-->
             <div class="page-header whitebg border-b">
                 <span class="course">球队相册</span>
@@ -452,11 +452,39 @@
                 });
             });
 
+            //报名功能
+            $(document).on('click', '.signupBtn', function () {
+                //判断是否登陆会员
+                var event_id = eventid;
+                mui.ajax("{:url('api/team/jointeamevent')}", {
+                    data: {
+                        event_id: eventid,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.alert('报名成功', '确定');
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
 
             followStatus(); //判断当前的关注状态
             teamMemberlist(); //自定义获取球员列表
             toTagAllList(); //所有标签列表
             toTagCommentList(); //已经评价的标签列表
+            toLastEventList()
         });
 
         // 判断当前的关注状态
@@ -495,7 +523,8 @@
             mui.ajax({
                 url: url,
                 data: {
-                    team_id: team_id
+                    team_id: team_id,
+                    status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -587,9 +616,76 @@
             });
         };
 
+        var eventid = ''
+        //获取最新活动列表
+        var toLastEventList = function () {
+            var team_id = "{$teamInfo.id}";
+            mui.ajax("{:url('api/team/lastevent')}", {
+                data: {
+                    team_id: team_id,
+                    // is_finished: 0,
+                    status: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var div = '';
+                    if (data.code == 200) {
+                        // 将时间戳转成日期格式
+                        var Tmonth = gettimem(data.data.start_time_stamp * 1000);
+                        var Tday = gettimed(data.data.start_time_stamp * 1000);
+                        var Ttime = gettimeh(data.data.start_time_stamp * 1000);
+
+                        eventid = data.data.id
+                        var url = "{:url('team/eventinfo')}" + '/team_id/' + data.data.team_id + '/event_id/' + data.data.id;
+                        div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblue">' + Tmonth + '月</p><h1 class="day">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
+                        div += '<div class="mui-media-body mainInfoRight wd66"><h5><strong>主题：' + data.data.event + '</strong>';
+                        if (data.data.is_finished_num = 0) {
+                            div += '<span class="colorgray status">[已结束]</span>';
+                        } else {
+                            div += '<span class="colororange status">[未结束]</span>';
+                        }
+                        div += '<div class="divFrame"><p>组织者：' + data.data.member + '</p><p>地点：' + data.data.location + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
+                        if (data.data.is_finished == 0) {
+                            div += '<button class="mui-btn opbtn bggray">已结束</button>';
+                        } else {
+                            div += '<button class="mui-btn opbtn bgred signupBtn">参加</button>';
+                        }
+                        div += ' </div></div></li>';
+                        div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl wd66 imgShowEvent"><img src="' + data.data.memberlist[0].avatar + '" alt=""></div><span class="singUpTip"><font class="colorred reg_number">' + data.data.reg_number + '</font>/<font class="reg_all">' + data.data.max + '</font> 已报名</span></li>';
+                        $(".newEvent").empty();
+                        $(".newEvent").append(div);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        };
+
+        // 将时间戳转成日期格式
+        function gettimem(m) {
+            var _time = new Date(m);
+            var month = _time.getMonth() + 1;
+            return month;
+        }
+        function gettimed(d) {
+            var _time = new Date(d);
+            var day = _time.getDate();
+            return day;
+        }
+        function gettimeh(h) {
+            var _time = new Date(h);
+            var hours = _time.getHours();
+            var minutes = _time.getMinutes();
+            return hours + "：" + minutes;
+        }
 
     </script>
-
 </body>
 
 </html>
