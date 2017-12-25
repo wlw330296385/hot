@@ -21,47 +21,47 @@
             height: 100%;
             display: block;
         }
-        
+
         .mui-popover-arrow {
             left: auto;
             right: 6px;
         }
-        
+
         .mui-popover {
             height: 300px;
         }
-        
+
         .mui-toast-container {
             top: 250px
         }
-        
+
         .number {
             width: 20% !important;
         }
-        
+
         .box {
             max-height: 300px;
             overflow: scroll;
             border-bottom: 1px solid #ddd;
         }
-        
+
         .editor .image-items .mui-input-group .mui-input-row {
             height: initial;
         }
-        
+
         #newdiv .tips {
             color: #AAAAAA;
             line-height: normal;
         }
-        
+
         .page-header {
             background: #efeff4;
         }
-        
+
         .explain-cont {
             padding: 15px;
         }
-        
+
         .explain-cont p {
             margin-bottom: 2px;
         }
@@ -71,14 +71,16 @@
 <body class="whitebg">
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
         <h1 class="mui-title">{$campInfo.camp}</h1>
         <input type="hidden" name="camp" value="{$campInfo.camp}" class="data">
         <input type="hidden" name="camp_id" value="{$campInfo.id}" class="data">
     </header>
 
     <div class="mui-content">
-
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         <form class="mui-input-group mt55">
 
             <div class="page-header">
@@ -95,12 +97,15 @@
 
             <div class="mui-input-row">
                 <label>课时单价</label>
-                <span><b class="colororange cost"></b>元</span>
+                <span>
+                    <b class="colororange cost"></b>元</span>
             </div>
 
             <div class="page-header">
                 <span class="course wd52">填写购买数量</span>
-                <span class="more" style="padding-right:0">剩余赠送：<b class="resi_giftschedule"></b></span>
+                <span class="more" style="padding-right:0">剩余赠送：
+                    <b class="resi_giftschedule"></b>
+                </span>
             </div>
 
             <div class="mui-input-row">
@@ -132,7 +137,9 @@
     <div id="Lesson" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course"><strong>课程列表</strong></span>
+            <span class="course">
+                <strong>课程列表</strong>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -206,9 +213,12 @@
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '购买课时失败', '确定', function () {
-
-                })
+                mui.alert(ajaxResult.msg, '购买课时失败', '确定');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
             }
         };
 

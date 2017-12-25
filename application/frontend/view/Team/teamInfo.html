@@ -133,7 +133,7 @@
                     </div>
                 </li>
                 <li class="mui-table-view-cell listli">
-                    <div class="imgShow fl wd66">
+                    <div class="imgShow fl wd66 imgShowMatch">
                         <img src="/static/frontend/images/ads1.jpg" alt="">
                         <img src="/static/frontend/images/ads1.jpg" alt="">
                         <img src="/static/frontend/images/ads1.jpg" alt="">
@@ -142,7 +142,8 @@
                         <img src="/static/frontend/images/ads1.jpg" alt="">
                     </div>
                     <span class="singUpTip">
-                        <font class=colorred>12</font>/20 已报名</span>
+                        <font class="colorred reg_number">12</font>/
+                        <font class="reg_all"></font> 已报名</span>
                 </li>
             </ul>
 
@@ -153,7 +154,7 @@
                     <a href="{:url('team/eventList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">历史活动</a>
                 </span>
             </div>
-            <ul class="mui-table-view detalis-list list mainInfo mb">
+            <ul class="mui-table-view detalis-list list mainInfo border-b newEvent">
                 <li class="mui-table-view-cell mui-media listli liFrame">
                     <div class="mainInfoLeft fl mui-text-center">
                         <p class="month bgblue">11月</p>
@@ -176,7 +177,8 @@
                     </div>
                 </li>
                 <li class="mui-table-view-cell listli">
-                    <div class="imgShow fl wd66">
+                    <div class="imgShow fl wd66 imgShowEvent">
+                        <img src="/static/frontend/images/ads1.jpg" alt="">
                         <img src="/static/frontend/images/ads1.jpg" alt="">
                         <img src="/static/frontend/images/ads1.jpg" alt="">
                         <img src="/static/frontend/images/ads1.jpg" alt="">
@@ -185,10 +187,12 @@
                         <img src="/static/frontend/images/ads1.jpg" alt="">
                     </div>
                     <span class="singUpTip">
-                        <font class=colorred>12</font>/20 已报名</span>
+                        <font class="colorred reg_number">12</font>/
+                        <font class="reg_all"></font> 已报名</span>
                 </li>
             </ul>
 
+            
             <!--球队相册-->
             <div class="page-header whitebg border-b">
                 <span class="course">球队相册</span>
@@ -310,7 +314,7 @@
         });
         (function ($) {
             $('.mui-scroll-wrapper').scroll({
-                indicators: true //是否显示滚    动条
+                indicators: true //是否显示滚动条
             });
         })(mui);
 
@@ -329,19 +333,6 @@
             $(document).on("tap", '.myimpress', function () {
                 $(".impressSide .bgorange").removeClass("bgorange");
             });
-
-            // $(document).on("tap", '#impressSubmit', function () {
-            //     var hasOrange = $(".impressSide").children("span").hasClass("bgorange")
-            //     if (hasOrange == false) {
-            //         mui.toast("你还没有选择印象标签");
-            //         return false;
-            //     };
-            //     $(".impressSide .bgorange").each(function () {
-            //         var span = '<span>' + $(this).text() + '</span>';
-            //         $(".impress").append(span);
-            //     })
-            //     mui('#Impress').popover('toggle');
-            // });
 
             // 关注球队
             $(".follow").on("tap", '', function () {
@@ -381,6 +372,7 @@
                     mui.toast("请填写申请理由");
                     return false;
                 }
+
 
                 mui.ajax("{:url('api/team/applyjointeam')}", {
                     data: {
@@ -594,7 +586,6 @@
                 }
             });
         };
-
 
 
     </script>

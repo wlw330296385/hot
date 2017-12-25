@@ -126,8 +126,21 @@ class Team extends Base {
         $memberOtherTeamMap = [ 'member_id' => $member_id, 'team_id' => ['neq', $team_id]];
         $memberOtherTeam = $teamS->getTeamMemberList($memberOtherTeamMap);
 
+        // 领队可移除除自己外的球队成员，成员自己申请退队 按钮显示
+        $delbtnDisplay = 0;
+        if ($this->teamInfo['leader_id'] != $teamMemberInfo['member_id']) {
+            if ($teamMemberInfo['member_id'] == $this->memberInfo['id']) {
+                $delbtnDisplay = 1;
+            }
+            $teamrole = $teamS->checkMemberTeamRole($this->team_id, $this->memberInfo['id']);
+            if ($teamrole == 4) {
+                $delbtnDisplay = 2;
+            }
+        }
+
         $this->assign('teamMemberInfo', $teamMemberInfo);
         $this->assign('memberOtherTeam', $memberOtherTeam);
+        $this->assign('delbtnDisplay', $delbtnDisplay);
         return view('Team/teamMemberInfo');
     }
 

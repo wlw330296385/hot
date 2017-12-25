@@ -21,55 +21,55 @@
             height: 100%;
             display: block;
         }
-        
+
         .mui-popover-arrow {
             left: auto;
             right: 6px;
         }
-        
+
         .mui-popover {
             height: 300px;
         }
-        
+
         .mui-toast-container {
             top: 250px
         }
-        
+
         .number {
             width: 20% !important;
         }
-        
+
         .box {
             max-height: 300px;
             overflow: scroll;
             border-bottom: 1px solid #ddd;
         }
-        
+
         .editor .image-items .mui-input-group .mui-input-row {
             height: initial;
         }
-        
+
         #newdiv .tips {
             color: #AAAAAA;
             line-height: normal;
         }
-        
+
         .page-header {
             background: #efeff4;
         }
-        
+
         .explain-cont {
             padding: 15px;
         }
-        
+
         .explain-cont p {
             margin-bottom: 2px;
         }
-        
+
         .checkboxCont font {
             font-size: 14px;
         }
-        
+
         .nohave {
             margin: 0;
             padding: 15px;
@@ -83,7 +83,9 @@
 <body class="whitebg">
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a href="{:url('camp/powercamp',['camp_id' => $camp_id])}" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <a href="{:url('camp/powercamp',['camp_id' => $camp_id])}" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
         <h1 class="mui-title">{$campInfo.camp}</h1>
         <input type="hidden" name="camp" value="{$campInfo.camp}" class="data">
         <input type="hidden" name="camp_id" value="{$campInfo.id}" class="data">
@@ -92,7 +94,7 @@
     <div class="mui-content">
 
         <div class="camp-list camp-lesson-list detalis-list grade-list editor mt">
-
+            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
             <form class="mui-input-group mt55">
 
                 <div class="page-header">
@@ -112,7 +114,7 @@
                         <label>选择班级</label>
                         <span class="gradeCont" name="grade"></span>
                         <input type="hidden" name="grade_id" value="" class="grade_id">
-                        <input type="hidden" name="lesson" value=""  data-lesson="">
+                        <input type="hidden" name="lesson" value="" data-lesson="">
                     </a>
                 </div>
 
@@ -125,7 +127,9 @@
                 </div>
 
                 <div class="page-header">
-                    <span class="course wd52 ">剩余赠送数量：<b class="resi_giftschedule"></b></span>
+                    <span class="course wd52 ">剩余赠送数量：
+                        <b class="resi_giftschedule"></b>
+                    </span>
                     <a href="{:url('schedule/giftbuy',['camp_id' => $camp_id])}" class="mui-navigate-right">
                         <span class="more" style="padding-right:0">购买课量</span>
                     </a>
@@ -168,7 +172,9 @@
     <div id="Lesson" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course"><strong>课程列表</strong></span>
+            <span class="course">
+                <strong>课程列表</strong>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -181,7 +187,9 @@
     <div id="Grade" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course"><strong>班级列表</strong></span>
+            <span class="course">
+                <strong>班级列表</strong>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -288,9 +296,12 @@
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '赠送课时失败', '确定', function () {
-
-                })
+                mui.alert(ajaxResult.msg, '赠送课时失败', '确定');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
             }
         };
 

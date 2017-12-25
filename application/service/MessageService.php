@@ -353,6 +353,7 @@ class MessageService
         if (!$member_id) {
             return ['code' => 100, 'msg' => __lang('MSG_402')];
         }
+        $res = false;
         $wechatS = new WechatService();
         $memberopenid = getMemberOpenid($member_id);
         $sendTemplateData = [
@@ -392,5 +393,11 @@ class MessageService
             'create_time' => time(),
             'status' => 1
         ]);
+        $res = true;
+        if ($res) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }
