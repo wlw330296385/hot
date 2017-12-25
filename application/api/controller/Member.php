@@ -27,22 +27,22 @@ class Member extends Base{
 
 
     // 提现申请
-    // public function withdrawApi(){
-    // 	try{
-    // 		$data = input('post.');
-    //         $data['member_id'] = $this->memberInfo['id'];
-    //         $data['member'] = $this->memberInfo['member'];
-    //         // 余额
-    //         if($memberInfo['balance']<$data['money']){
-    //             return json(['code'=>200,'msg'=>'余额不足']);die;
-    //         }
-    //  	$result = $this->SalaryOut->saveSalaryOut($data);
-    //  	return json($result);
-    // 	}catch (Exception $e){
-    // 		return json(['code'=>200,'msg'=>$e->getMessage()]);
-    // 	}
+    public function withdrawApi(){
+    	try{
+    		$data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            // 余额
+            if($memberInfo['balance']<$data['money']){
+                return json(['code'=>200,'msg'=>'余额不足']);die;
+            }
+     	$result = $this->SalaryOut->saveSalaryOut($data);
+     	return json($result);
+    	}catch (Exception $e){
+    		return json(['code'=>200,'msg'=>$e->getMessage()]);
+    	}
 
-    // }
+    }
 
 
     // 编辑个人资料

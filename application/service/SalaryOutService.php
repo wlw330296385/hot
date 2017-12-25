@@ -14,7 +14,10 @@ class SalaryOutService {
     }
 
     public function getSalaryOut($map){
-        $result = $this->SalaryOut->with('lesson')->where($map)->find();
+        $result = $this->SalaryOut
+                // ->with('lesson')
+                ->where($map)
+                ->find();
         return $result;
     }
 
