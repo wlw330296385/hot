@@ -30,7 +30,7 @@ class TeamEvent extends Model {
 
     // is_finished(是否完成)获取器
     public function getIsFinishedAttr($value) {
-        $is_finished = [ 0 => '未完成', 1 => '已结束' ];
+        $is_finished = [ 0 => '未开始', 1 => '已结束' ];
         return $is_finished[$value];
     }
 

@@ -199,8 +199,8 @@ function getMemberAgeByBirthday($member_id) {
     // 取出会员生日字段信息
     $birthday = $member['birthday'];
     $birthday_timestamp = strtotime($birthday);
-    if ($birthday_timestamp === false ) {
-        return false;
+    if ($birthday_timestamp == false ) {
+        return 0;
     }
     //格式化出生时间年月日
     $birth_y = date('Y', $birthday_timestamp);
