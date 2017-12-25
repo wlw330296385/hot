@@ -338,7 +338,9 @@ class TeamService {
     public function checkMemberTeamRole($team_id, $member_id) {
         $model = new TeamMemberRole();
         $res = $model->where(['team_id' => $team_id, 'member_id' => $member_id])
-            ->where(['status' => 1])->value('type');
+            ->where(['status' => 1])
+            ->order('type desc')
+            ->value('type');
         return $res ? $res : 0;
     }
 
