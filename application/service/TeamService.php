@@ -334,7 +334,7 @@ class TeamService {
         return $list;
     }
 
-    // 获取会员在球队的身份角色
+    // 获取会员在球队的最大身份角色
     public function checkMemberTeamRole($team_id, $member_id) {
         $model = new TeamMemberRole();
         $res = $model->where(['team_id' => $team_id, 'member_id' => $member_id])
@@ -450,11 +450,16 @@ class TeamService {
     }
     
     // 球队活动详情
-    public function getTeamEventInfo($map) {
+    public function getTeamEventInfo($map, $order='') {
         $model = new TeamEvent();
-        $res = $model->where($map)->find();
+        if ($order) {
+            $res = $model->where($map)->order($order)->find();
+        } else {
+            $res = $model->where($map)->find();
+        }
         if ($res) {
             $result = $res->toArray();
+            $result['start_time_stamp'] = $res->getData('start_time');
             $result['event_type_num'] = $res->getData('event_type');
             $result['is_max_num'] = $res->getData('is_max');
             $result['is_finished_num'] = $res->getData('is_finished');

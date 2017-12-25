@@ -331,13 +331,18 @@ class Team extends Base {
     // 球队成员列表
     public function teammemberlist() {
         try {
+            // 球队id比传
             $team_id = input('param.team_id');
             if (!$team_id) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402').',请选择球队']);
             }
+            // 组合传入参数作查询条件
+            $map = input('post.');
             $page = input('page', 1);
+            if (isset($map['page'])) {
+                unset($map['page']);
+            }
             $teamS = new TeamService();
-            $map['team_id'] = $team_id;
             $result = $teamS->getTeamMemberList($map, $page);
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
@@ -413,7 +418,7 @@ class Team extends Base {
              if ($res['code'] == 200) {
                  // 更新成员的team_member_role表所有相关数据status=-1
                  db('team_member_role')->where(['team_id' => $team_id, 'member_id' => $member_id])->update(['status' => -1, 'update_time' => time()]);
-                 // 更新球队的成员数统计
+                 // 更新球队的成员数统计-1
                  db('team')->where('id', $team_id)->setDec('member_num', 1);
                  // 发送消息通知给离队成员
                  $messageS = new MessageService();
@@ -478,6 +483,43 @@ class Team extends Base {
                 $response = ['code' => 100, 'msg' => __lang('MSG_400').'，请重试'];
             }
             return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 获取球队最新活动记录
+    public function lastevent() {
+        try {
+            // 球队id比传
+            $team_id = input('param.team_id');
+            if (!$team_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').',请选择球队']);
+            }
+            $teamS = new TeamService();
+            // 最新一条未发生的活动记录，若无未发生就列出最新一条活动
+            // $lastEventMap = ['team_id' => $this->team_id, 'status' => 1, 'is_finished' => 0];
+            $map = input('post.');
+            // 默认查询上架活动(status=1)
+            if (!isset($map['status'])) {
+                $map['status'] = 1;
+            }
+            // 默认查询未完成活动(is_finished=0)
+            if (!isset($map['is_finished'])) {
+                $map['is_finished'] = 0;
+            }
+            $lastEvent = $teamS->getTeamEventInfo($map, 'id desc');
+            // 如果没有未发生的活动记录，清理查询条件is_finished=0，再次执行查询
+            if (!$lastEvent) {
+                unset($map['is_finished']);
+                $lastEvent = $teamS->getTeamEventInfo($map, 'id desc');
+                // 球队无活动记录
+                if (!$lastEvent) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+                }
+            }
+            $lastEvent['memberlist'] = $teamS->teamEventMembers(['event_id' => $lastEvent['id']]);
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $lastEvent]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
