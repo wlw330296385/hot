@@ -39,7 +39,7 @@ class Team extends Base {
         // 获取会员在球队角色身份
         $teamS = new TeamService();
         $teamrole = $teamS->checkMemberTeamRole($this->team_id, $this->memberInfo['id']);
-        //dump($teamrole);
+        dump($teamrole);
         $this->assign('teamrole', $teamrole);
         return view('Team/teamManage');
     }
@@ -121,6 +121,9 @@ class Team extends Base {
         // 获取队员在当前球队的数据信息
         $map = ['team_id' => $team_id, 'member_id' => $member_id];
         $teamMemberInfo = $teamS->getTeamMemberInfo($map);
+        if (!$teamMemberInfo) {
+            $this->error('无此队员信息');
+        }
 
         // 该队员的其他球队列表
         $memberOtherTeamMap = [ 'member_id' => $member_id, 'team_id' => ['neq', $team_id]];
@@ -128,13 +131,15 @@ class Team extends Base {
 
         // 领队可移除除自己外的球队成员，成员自己申请退队 按钮显示
         $delbtnDisplay = 0;
-        if ($this->teamInfo['leader_id'] != $teamMemberInfo['member_id']) {
-            if ($teamMemberInfo['member_id'] == $this->memberInfo['id']) {
-                $delbtnDisplay = 1;
-            }
-            $teamrole = $teamS->checkMemberTeamRole($this->team_id, $this->memberInfo['id']);
-            if ($teamrole == 4) {
+        if ($this->memberInfo['id'] == $this->teamInfo['leader_id']) {
+            if ($teamMemberInfo['member_id'] == $this->teamInfo['leader_id']) {
+                $delbtnDisplay = 0;
+            } else {
                 $delbtnDisplay = 2;
+            }
+        } else {
+            if ($this->memberInfo['id'] == $teamMemberInfo['member_id']) {
+                $delbtnDisplay = 1;
             }
         }
 
