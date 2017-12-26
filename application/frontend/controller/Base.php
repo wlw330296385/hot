@@ -43,9 +43,9 @@ class Base extends Controller{
             $pmember = $memberS->getMemberInfo(['id' => $pid]);
             if ($pmember) {
                 cookie('pid', $pmember['id']);
+            } else {
+                cookie('pid', 0);
             }
-        } else {
-		    cookie('pid', 0);
         }
 		$this->systemSetting = SystemService::getSite();
 

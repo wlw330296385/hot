@@ -42,7 +42,6 @@
         .box {
             max-height: 300px;
             overflow: scroll;
-            border-bottom: 1px solid #ddd;
         }
         
         .editor .image-items .mui-input-group .mui-input-row {
@@ -52,10 +51,18 @@
         .pdr {
             padding-right: 30px !important;
         }
-        
+
         #newdiv .tips {
+            font-size: 12px;
             color: #AAAAAA;
             line-height: normal;
+        }
+        #newdiv .matchStudent label {
+            color:#f90;
+        }
+        #setTop {
+            color:#999;
+            margin-right: 5px;
         }
         
         .nohave {
@@ -94,13 +101,9 @@
                 </li>
             </ul>
 
-            <div class="page-header">
-                <span class="course">参训学员</span>
-            </div>
-
             <div class="image-items">
 
-                <form class="mui-input-group">
+                <form class="mui-input-group" style="margin-top:0px">
                     <div class="mui-input-row h-auto">
                         <a class="portraits filePicker" onclick="add_id(3)">
                             <label>上传合照</label>
@@ -111,7 +114,7 @@
                 </form>
 
                 <form class="mui-input-group">
-                    <div class="mui-input-row">
+                    <div class="mui-input-row bggray2">
                         <label>正式学员</label>
                     </div>
                     <div class="box checkChecked" id="inactiveList">
@@ -121,7 +124,7 @@
                                 value="{$vol.student}" data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox"></div>
                         {/foreach}
                     </div>
-                    <div class="mui-input-row">
+                    <div class="mui-input-row bggray2">
                         <label>体验生</label>
                     </div>
                     <div class="expbox checkChecked" id="expinactiveList">
@@ -355,9 +358,13 @@
             <div class="mui-popover-arrow"></div>
             <div class="page-header">
                 <span class="course wd36"><strong>学员名单</strong></span>
-                <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
+                <span class="fr"><button class="mui-btn" id="setTop">置顶已选</button><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
             </div>
-            <div class="mui-scroll-wrapper">
+            <div class="pop-search page-header border-b">
+                <input type="search" class="searchStudent" placeholder="请输入关键字搜索">
+                <span class="mui-icon mui-icon-search searchicon" id="searchStudent"></span>
+            </div>
+            <div class="mui-scroll-wrapper pt">
                 <div class="mui-scroll">
                     <form id="newdiv" class="mui-input-group addStudentList">
 
@@ -640,10 +647,33 @@
                     checkStudent();// 检查是否有学员数据
 
                     changeIndex();//调用-更新序号
+                    $("#newdiv .mui-checkbox").removeClass("matchStudent");
                     mui("#addStudent").popover("toggle");
                     totalNum = $(".checkboxCont").length;
                     $(".mui-badge").text(totalNum);
                 });
+
+                //搜索学生
+                $("#searchStudent").on("click", function () {
+                    var keywordSD = $(".searchStudent").val();
+                    $("#newdiv .mui-checkbox").removeClass("matchStudent");
+                    if(keywordSD!=''){
+                        $("#newdiv label:contains('"+keywordSD+"')").parent().addClass("matchStudent");
+                        $("#newdiv .matchStudent").each(function (i) {
+                            $("#newdiv .mui-checkbox:first-child").before($(this));
+                        });
+                        mui('#addStudent .mui-scroll-wrapper').scroll().scrollTo(0, 0 , 100);
+                    }else{
+                        mui.toast("没输入关键字哦");
+                    }
+                })
+                //置顶已选学生到列表
+                $("#setTop").on("click", function () {
+                    $("input[name='checkbox-student']:checked").parent().each(function (i) {
+                        $("#newdiv .mui-checkbox:first-child").before($(this));
+                    });
+                    mui('#addStudent .mui-scroll-wrapper').scroll().scrollTo(0, 0 , 100);
+                })
 
 
                 //获取已经分配班级的学员列表
@@ -991,7 +1021,7 @@
 
             //粉丝列表接口获取数据并追加到页面
             var toFansList = function (keyword, wFans, page) {
-                var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}/?page=" + page";
+                var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}/?page=" + page;
                 var campID = "{$scheduleInfo.camp_id}";
                 var typeID = "-1";
                 var wFansList = "ul.fans";
