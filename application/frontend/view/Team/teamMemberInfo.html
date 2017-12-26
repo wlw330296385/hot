@@ -33,6 +33,9 @@
                     </div>
                     <div class="price-frame">
                         <button class="mui-btn bgred follow">加关注</button>
+                        <a href="{:url('team/teamMemberEdit',['team_id'=>$teamInfo['id'],'member_id'=>$teamMemberInfo['member_id']])}">
+                            <button class="mui-btn memberEdit">编辑</button>
+                        </a>
                     </div>
                 </li>
             </ul>
@@ -68,20 +71,14 @@
 
             <div class="impress border-b whitebg tagCommentList"></div>
 
-            <div class="mui-row whitebg border-b">
-                <div class="mui-col-sm-12 mui-col-xs-12">
-                    <p style="padding-top:10px">
-                        <strong class="colorred f18">{$teamMemberInfo.team}&nbsp;</strong>现任球员,队长,领队,教练,队委
-                    </p>
-                    <p>
-                        <strong class="colorred f18">{$teamMemberInfo.match_num}</strong>参与比赛次数
-                    </p>
-                </div>
-                <div class="mui-col-sm-12 mui-col-xs-12 poplShirt">
-                    <div class="mui-text-center">
-                        <p class="position">{$teamMemberInfo.position}</p>
-                        <p class="number">{$teamMemberInfo.number}</p>
-                    </div>
+            <div class="whitebg border-b mui-text-center" style="padding: 10px 0;">
+                <h3 class="colorred">{$teamMemberInfo.team}</h3>
+                <p>现任球员,队长,领队,教练,队委</p>
+                <h3 class="colorred">{$teamMemberInfo.match_num}</h3>
+                <p>参与比赛次数</p>
+                <div class="poplShirt">
+                    <p class="position">{$teamMemberInfo.position}</p>
+                    <p class="number">{$teamMemberInfo.number}</p>
                 </div>
             </div>
             <!-- <div class="mui-row  whitebg border-b">
@@ -100,9 +97,9 @@
         </div> -->
             <div class="page-header whitebg">
                 <span class="course">参与赛事总次数：{$teamMemberInfo.match_num}</span>
-                <span class="more pdr15">
+                <!-- <span class="more pdr15">
                     <a href="" class="mui-navigate-right">更多个人数据</a>
-                </span>
+                </span> -->
             </div>
 
 
@@ -166,7 +163,6 @@
     </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <script src="/static/frontend/js/Designer.js"></script>
     <script>
         mui.init({
             swipeBack: false
@@ -178,33 +174,6 @@
         })(mui);
 
         $(function () {
-
-            // 印象评价
-            // $(".choiseTag").on("tap", '', function () {
-            //     if ($(this).hasClass("bgorange")) {
-            //         $(this).removeClass("bgorange");
-            //     } else {
-            //         $(this).addClass("bgorange");
-            //     }
-            // });
-
-            // $(".myimpress").on("tap", '', function () {
-            //     $(".impressSide .bgorange").removeClass("bgorange");
-            // });
-
-            // $("#impressSubmit").on("tap", '', function () {
-            //     var hasOrange = $(".impressSide").children("span").hasClass("bgorange")
-            //     if (hasOrange == false) {
-            //         mui.toast("你还没有选择印象标签");
-            //         return false;
-            //     }
-            //     ;
-            //     $(".impressSide .bgorange").each(function () {
-            //         var span = '<span class="choiseTag">' + $(this).text() + '</span>';
-            //         $(".impress").append(span);
-            //     })
-            //     mui('#Impress').popover('toggle');
-            // });
 
             // 印象评价
             $(document).on("tap", '.choiseTag', function () {
@@ -247,7 +216,6 @@
                     }
                 });
             });
-
 
             // 领队移除队员操作
             $(".signOut").on("tap", '', function () {
@@ -333,7 +301,6 @@
                 });
             });
 
-
             otherLength(); // 其他效力球队长度
             followStatus(); //判断当前的关注状态
             othertips(); //其他效力球队为空提示语
@@ -415,7 +382,6 @@
             });
         };
 
-
         //获取已评价标签列表
         function toTagCommentList() {
             mui.ajax("{:url('api/tag/commentlist')}", {
@@ -446,7 +412,6 @@
                 }
             });
         };
-
 
     </script>
 
