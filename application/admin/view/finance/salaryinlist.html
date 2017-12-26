@@ -14,18 +14,32 @@
     <div class="panel-body">
         <div class="bootstrap-table">
             <div class="search-form">
-                <form action="" class="form-inline" method="post">
+                <form action="" class="form-inline" method="get">
                     <fieldset>
                         {if condition="!isset($curcamp)"}
                         <div class="form-group">
                             <label class="control-label">训练营</label>
-                            <input class="form-control" type="text" name="camp" >
+                            <!--<input class="form-control" type="text" name="camp" >-->
+                            <select name="camp_id" class="form-control">
+                                <option value="">选择训练营</option>
+                                {volist name="camplist" id="vo"}
+                                <option value="{$vo.id}" {if condition="$camp_id eq $vo['id']"}selected{/if}>{$vo.camp}</option>
+                                {/volist}
+                            </select>
                         </div>
                         {/if}
                         <div class="form-group">
+                            <label class="control-label">工资结算月份</label>
+                            <input class="form-control layui-input" type="text" name="date" id="month-selecter1" value="{$Request.param.date}">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">课时月份</label>
+                            <input class="form-control layui-input" type="text" name="schedule_date" id="month-selecter2" value="{$Request.param.schedule_date}">
+                        </div>
+                        <!--<div class="form-group">
                             <label class="control-label">会员</label>
                             <input class="form-control" type="text" name="member" >
-                        </div>
+                        </div>-->
                         <div class="form-group">
                             <div class="col-sm-12 text-center">
                                 <button type="submit" class="btn btn-success btn-flat">搜索</button>
@@ -87,11 +101,10 @@
                                     </tbody>
                                 </table>
                             </div>
-                            {if condition="$list"}
                             <div class="box-footer clearfix">
-                                {$list->render()}
+                                {$page}
                             </div>
-                            {/if}
+
                         </div>
                     </div>
                 </div>
@@ -101,4 +114,22 @@
     </div>
 </div>
 
+{/block}
+{block name="js"}
+<script>
+    $(function() {
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+            // 年月选择
+            laydate.render({
+                elem: '#month-selecter1',
+                type: 'month'
+            });
+            laydate.render({
+                elem: '#month-selecter2',
+                type: 'month'
+            });
+        });
+    });
+</script>
 {/block}

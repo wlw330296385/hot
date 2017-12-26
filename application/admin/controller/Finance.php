@@ -54,7 +54,7 @@ class Finance extends Backend {
         }
         //$map['is_pay'] = 1;
         //$map['status'] = 1;
-        $list = Bill::where($map)->order('id desc')->paginate(15);
+        $list = Bill::where($map)->order('id desc')->paginate(15, false, ['query' => request()->param()]);
         //dump($list);
         $breadcrumb = ['title' => '支付订单', 'ptitle' => '财务'];
         $this->assign('breadcrumb', $breadcrumb);
@@ -83,15 +83,38 @@ class Finance extends Backend {
         if ($cur_camp = $this->cur_camp) {
             $map['camp_id'] = $cur_camp['camp_id'];
         }
-        $camp = input('camp');
+       /* $camp = input('camp');
         if ($camp) {
             $map['camp'] = ['like', '%'. $camp .'%'];
+        }*/
+        // 选择训练营
+        $camp_id = input('camp_id');
+        if ($camp_id) {
+            $map['camp_id']=$camp_id;
         }
-        $member = input('member');
+        /*$member = input('member');
         if ($member) {
             $map['member'] = ['like', '%'. $member .'%'];
+        }*/
+        // 工资结算月份
+        $date = input('date');
+        if ($date) {
+            $dateArr = explode('-', $date);
+            $when = getStartAndEndUnixTimestamp($dateArr[0], $dateArr[1]);
+            $start = $when['start'];
+            $end = $when['end'];
+            $map['create_time'] = ['between', [$start, $end]];
         }
-        $list = SalaryIn::with('schedule')->where($map)->order('id desc')->paginate(15)->each(function($item, $key) {
+        $schedule_date = input('schedule_date');
+        if ($schedule_date) {
+            $dateArr2 = explode('-', $schedule_date);
+            $when2 = getStartAndEndUnixTimestamp($dateArr2[0], $dateArr2[1]);
+            $start2 = $when2['start'];
+            $end2 = $when2['end'];
+            $map['schedule_time'] = ['between', [$start2, $end2]];
+        }
+
+        $list = SalaryIn::with('schedule')->where($map)->order('id desc')->paginate(15, false, ['query' => request()->param()])->each(function($item, $key) {
             $item['lesson'] = db('lesson')->where(['id' => $item['lesson_id']])->find();
             $item['schedule']['num_student'] = count( unserialize( $item['schedule']['student_str'] ) ) ;
             return $item;
@@ -101,6 +124,8 @@ class Finance extends Backend {
         $breadcrumb = ['title' => '收入记录', 'ptitle' => '财务'];
         $this->assign('breadcrumb', $breadcrumb);
         $this->assign('list', $list);
+        $this->assign('camp_id', $camp_id);
+        $this->assign('page', $list->render());
         return $this->fetch();
     }
 
