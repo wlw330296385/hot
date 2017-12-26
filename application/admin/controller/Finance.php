@@ -98,20 +98,24 @@ class Finance extends Backend {
         }*/
         // 工资结算月份
         $date = input('date');
+        $curdate = date('Y-m');
         if ($date) {
             $dateArr = explode('-', $date);
             $when = getStartAndEndUnixTimestamp($dateArr[0], $dateArr[1]);
             $start = $when['start'];
             $end = $when['end'];
             $map['create_time'] = ['between', [$start, $end]];
+            $curdate = $date;
         }
         $schedule_date = input('schedule_date');
+        $curschedule_date = date('Y-m');
         if ($schedule_date) {
             $dateArr2 = explode('-', $schedule_date);
             $when2 = getStartAndEndUnixTimestamp($dateArr2[0], $dateArr2[1]);
             $start2 = $when2['start'];
             $end2 = $when2['end'];
             $map['schedule_time'] = ['between', [$start2, $end2]];
+            $curschedule_date = $schedule_date;
         }
 
         $list = SalaryIn::with('schedule')->where($map)->order('id desc')->paginate(15, false, ['query' => request()->param()])->each(function($item, $key) {
@@ -126,6 +130,8 @@ class Finance extends Backend {
         $this->assign('list', $list);
         $this->assign('camp_id', $camp_id);
         $this->assign('page', $list->render());
+        $this->assign('curdate', $curdate);
+        $this->assign('curschedule_date', $curschedule_date);
         return $this->fetch();
     }
 
@@ -159,11 +165,13 @@ class Finance extends Backend {
             $map['camp_id'] = $camp_id;
         }
         $date = input('date');
+        $curdate = date('Y-m');
         if ($date) {
             $dateArr = explode('-', $date);
             $when = getStartAndEndUnixTimestamp($dateArr[0], $dateArr[1]);
             $start = $when['start'];
             $end = $when['end'];
+            $curdate = $date;
         } else {
             list($start, $end) = Time::month();
         }
@@ -202,7 +210,7 @@ class Finance extends Backend {
 
         $breadcrumb = ['title' => '订单对账', 'ptitle' => '财务'];
         $this->assign('breadcrumb', $breadcrumb);
-        $this->assign('curdate', $date);
+        $this->assign('curdate', $curdate);
         $this->assign('list', $listArr);
         $this->assign('sum', $sum);
         $this->assign('camp_id', $camp_id);
@@ -212,25 +220,28 @@ class Finance extends Backend {
 
     // 交费统计
     public function tuitionstatis() {
-        // 初始化日期显示
-        $datetime = initDateTime();
         // 查询筛选项接收
         $year = input('year');
+        $curyear = date('Y');
         if ($year){
             //dump($year);
             $when = getStartAndEndUnixTimestamp($year);
             $startTime = $when['start'];
             $endTime = $when['end'];
+            $curyear = $year;
         }
         $date = input('date');
+        $curdate = date('Y-m');
         if ($date) {
             $dateArr = explode('-', $date);
             $when = getStartAndEndUnixTimestamp($dateArr[0], $dateArr[1]);
             $startTime = $when['start'];
             $endTime = $when['end'];
+            $curdate = $date;
         }
         $start = input('start');
         $end = input('end');
+        $cur_range = '';
         if ($start && $end) {
             $startDate = explode('-', $start);
             $endDate = explode('-', $end);
@@ -238,6 +249,7 @@ class Finance extends Backend {
             $endWhen = getStartAndEndUnixTimestamp($endDate[0], $endDate[1]);
             $startTime = $startWhen['start'];
             $endTime = $endWhen['end'];
+            $cur_range = $start.' - '.$end;
         }
         if ( !$year && !$date && !$start && !$end ){
             list($startTime, $endTime) = Time::month();
@@ -323,6 +335,9 @@ class Finance extends Backend {
         $this->assign('breadcrumb', $breadcrumb);
         $this->assign('camps', $camps);
         $this->assign('sum', $sum);
+        $this->assign('curdate', $curdate);
+        $this->assign('curyear', $curyear);
+        $this->assign('cur_range', $cur_range);
         return $this->fetch();
     }
 
@@ -334,13 +349,15 @@ class Finance extends Backend {
         }
 
         $date = input('date');
+        $curdate = date('Y-m');
         if ($date) {
             $dateArr = explode('-', $date);
             $when = getStartAndEndUnixTimestamp($dateArr[0], $dateArr[1]);
             $start = $when['start'];
             $end = $when['end'];
+            $curdate = $date;
         } else {
-            list($start, $end) = Time::lastMonth();
+            list($start, $end) = Time::Month();
         }
         $map['create_time'] = ['between', [$start, $end]];
         //dump($map);
@@ -413,6 +430,7 @@ class Finance extends Backend {
         $this->assign('breadcrumb', $breadcrumb);
         $this->assign('camps', $camps);
         $this->assign('sum', $sum);
+        $this->assign('curdate', $curdate);
         return $this->fetch();
     }
 
