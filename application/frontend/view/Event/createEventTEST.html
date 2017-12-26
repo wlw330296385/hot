@@ -191,10 +191,10 @@
                 </div>
 
 
-                <div class="mui-input-row">
+                <div class="mui-input-row h-auto">
                     <a href="#eventDom" class="mui-navigate-right">
                         <label>报名种类</label>
-                        <span class="eventDom dataSpan"></span>
+                        <span class="eventDom wd73" style="line-height: 24px;"></span>
                     </a>
                 </div>
 
@@ -498,6 +498,8 @@
         var all = '';
         $(function () {
 
+            //初始化全局变量
+            var eventDomArr = [];
             //获取训练营粉丝列表
             var StudentKeyword = '';
             var wStudents = '';
@@ -530,25 +532,41 @@
 
             //报名种类确认
             $("#domConfirm").on('tap', this, function () {
+                var isTrue = true;
+                var eDoms = '';
+                var eDom = '';
+                var eDomPrice = '';
+                eventDomArr = [];
                 //把所选课量串在一起，以逗号分隔
-                $("input[name='doms']").val($("input[name='checkbox-dom']:checked").map(function () {
-                    return $(this).val();
-                }).get().join(","));
-                var doms = $("input[name='doms']").val();
-                console.log($("input[name='doms']").val())
-                $(".eventDom").text(doms);
-                mui('#eventDom').popover('toggle');
+                $("#eventDom .mui-checkbox").each(function () {
+                    eDom =  $(this).find("input[name='event-dom']").val();
+                    eDomPrice =  $(this).find("input[name='event-dom_price']").val();
+                    if(eDom==""||eDom.length>10||eDomPrice==""||!(/^\+?[0-9]\d*$/).test(eDomPrice)){ //////加上判断是否收费
+                        isTrue = false;
+                        return false;
+                    }else{
+                        eDoms+= eDom+"（"+eDomPrice+"）";
+                        eventDomArr.push({ name: eDom, price: eDomPrice });
+                    }
+                });
+                if(isTrue){
+                    $(".eventDom").text(eDoms);
+                    console.log(eventDomArr)
+                    mui('#eventDom').popover('toggle');
+                }else{
+                    mui.alert('请填写完整，并保证名称长度不超过10个字，价格为纯数字，谢谢！', '温馨提示', '确定', function () {
+                        eDoms = '';
+                    })
+                }
             })
             //添加
             $("#domAdd").on('tap', this, function () {
                 $("#eventDom form").prepend('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i><input type="text" name="event-dom_price" class="wd36 fr" value="" placeholder="对应价格"></div>');
             })
             // 删除
-            $(".cancel-dom").on('tap', this, function () {
+            $(document).on('tap', ".cancel-dom", function () {
                 $(this).parent().remove();
             });
-
-
 
             // 选择是否收费显示隐藏活动单价和费用结算人
             $("#eventPrice").change(function () {
@@ -748,6 +766,7 @@
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
             var event_des = $('textarea.data').val();
+            objData.dom = JSON.stringify(eventDomArr);
             objData.event_des = event_des;
             var url = "{:url('api/event/updateEventApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
