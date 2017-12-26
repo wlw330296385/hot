@@ -110,14 +110,15 @@
         </a>
         <h1 class="mui-title">{$teamInfo.name}</h1>
     </header>
+
     <div class="mui-content pt">
 
         <div class="camp-list camp-lesson-list">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
             <input type="hidden" name="team_id" value="{$team_id}" class="data">
             <input type="hidden" name="team" value="{$teamInfo.name}" class="data">
-            <form action="" class="mui-input-group mt55">
 
+            <form action="" class="mui-input-group mt55">
                 <div class="mui-input-row h-auto">
                     <a href="" class="mui-text-center f14 colorgreen direct">[直接录入活动]</a>
                 </div>
@@ -175,6 +176,7 @@
                         <input type="hidden" name="area" value="" class="data" id="area">
                     </div>
                 </div>
+
                 <div class="mui-input-row">
                     <label>活动地点</label>
                     <input type="text" name="location" value="" class="data location" placeholder="请输入活动地点">
@@ -188,6 +190,7 @@
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
+
                 <div class="mui-input-row h-auto">
                     <label class="wd36">最多参与人数</label>
                     <div class="mui-numbox">
@@ -243,9 +246,9 @@
                     提交
                 </li>
             </ul>
+
         </div>
     </div>
-
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -284,8 +287,6 @@
             })
         })(mui);
 
-
-
         //选择器
         var getProvince = '';
         var getCity = '';
@@ -313,7 +314,6 @@
                     cityPicker3.show(function (items) {
                         cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
                         //返回 false 可以阻止选择框的关闭
-                        //return false;
                         getProvince = _getParam(items[0], 'text');
                         getCity = _getParam(items[1], 'text');
                         getArea = _getParam(items[2], 'text');
@@ -377,25 +377,24 @@
                 }
             });
 
-            //添加标题
+            //添加活动详情标题
             $(".titleClass").on('tap', '', function () {
                 var title = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
                 $(".introBox").append(title);
             });
 
-
-            //添加正文
+            //添加活动详情正文
             $(".textClass").on('tap', '', function () {
                 var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" name="" class="mui-text-left text delClass textarea" placeholder="请输入正文"></div>';
                 $(".introBox").append(text);
             });
 
-            //添加图片start·····································································
+            //添加活动详情图片start·····································································
             // 初始化Web Uploader
             var uploader = WebUploader.create({
                 auto: true,
                 server: uploadApiUrl,
-                pick: '#filePicker',
+                pick: '#filePicker', //区分点
                 accept: {
                     title: 'Images',
                     extensions: 'gif,jpg,jpeg,bmp,png',
@@ -480,10 +479,16 @@
         // 获取数据并进行提交
         function submitAction() {
 
+            var min = $("input[name=min]").val();
+            var max = $("input[name=max]").val();
+            if (min > max) {
+                mui.toast("请选择正确的人数区间值");
+                return false;
+            }
+
             $('.delbtn').remove();
             var totalHtml = $(".introBox").html();
             $(".event_des").val(totalHtml);
-            console.log(totalHtml);
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);

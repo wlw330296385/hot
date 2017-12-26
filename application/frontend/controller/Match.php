@@ -15,6 +15,9 @@ class Match extends Base {
 
     // 创建比赛
     public function creatematch() {
+        // 从球队模块进入页面 带team_id处理
+        $homeTeamId = input('team_id', 0);
+        $this->assign('homeTeamId', $homeTeamId);
         return view('Match/createMatch');
     }
 

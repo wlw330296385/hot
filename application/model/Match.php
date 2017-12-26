@@ -37,4 +37,6 @@ class Match extends Model {
         $status = [1=> '上架', -1 => '下架'];
         return $status[$value];
     }
+
+
 }

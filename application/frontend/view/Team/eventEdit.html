@@ -175,6 +175,7 @@
         </a>
         <h1 class="mui-title">{$teamInfo.name}</h1>
     </header>
+
     <div class="mui-content pt">
 
         <div class="camp-list camp-lesson-list editor ">
@@ -182,8 +183,8 @@
             <input type="hidden" name="team_id" value="{$team_id}" class="data">
             <input type="hidden" name="team" value="{$teamInfo.name}" class="data">
             <input type="hidden" name="directentry" value="{$directentry}">
-            <form action="" class="mui-input-group  mt55">
 
+            <form action="" class="mui-input-group  mt55">
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>活动封面</label>
@@ -243,18 +244,17 @@
                             id="area">
                     </div>
                 </div>
+
                 <div class="mui-input-row">
                     <label>活动地点</label>
-                    <input type="text" name="location" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.location}" {/eq}
-                        class="data location" placeholder="请输入活动地点">
+                    <input type="text" name="location" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.location}" {/eq}class="data location" placeholder="请输入活动地点">
                 </div>
 
                 <div class="mui-input-row h-auto">
                     <label class="wd36">最少参与人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data" type="number" name="min" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.min}"
-                            {/eq}>
+                        <input class="mui-input-numbox data" type="number" name="min" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.min}"{/eq}>
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
@@ -262,8 +262,7 @@
                     <label class="wd36">最多参与人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data" type="number" name="max" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.max}"
-                            {/eq}>
+                        <input class="mui-input-numbox data" type="number" name="max" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.max}"{/eq}>
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
@@ -273,8 +272,7 @@
                     <div class="mui-switch isRelease">
                         <div class="mui-switch-handle"></div>
                     </div>
-                    <input type="hidden" name="send_message" {eq name="directentry" value="1" } value="0" {else/} value="{$eventInfo.send_message}"
-                        {/eq} class="data">
+                    <input type="hidden" name="send_message" {eq name="directentry" value="1" } value="0" {else/} value="{$eventInfo.send_message}"{/eq} class="data">
                 </div>
 
                 <p class="bggray2" style="height:4px"></p>
@@ -307,11 +305,11 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell listli albumBox">
-                        {eq name="directentry" value="1" } {else/}{volist name="eventInfo.album" id="vol"}
+                        {eq name="directentry" value="1" }{else/}{volist name="eventInfo.album" id="vol"}
                         <div class="fl albumImg">
                             <i class="delbtn mui-icon mui-icon-close"></i>
                             <img src="{$vol}">
-                        </div>{/volist} {/eq}
+                        </div>{/volist}{/eq}
                     </li>
                 </ul>
 
@@ -347,6 +345,7 @@
                 </div>
 
             </form>
+
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="submitAction()">
                     提交
@@ -372,7 +371,6 @@
             </div>
         </div>
     </div>
-
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -483,7 +481,7 @@
 
         // 全局取 directentry 的值判断是否有 event_id
         var directentry = $("input[name=directentry]").val();
-        console.log(directentry)
+
         // 给是否发布通知赋值
         function isRelease() {
             if (directentry == 0) {
@@ -494,13 +492,6 @@
             }
         }
 
-        // 活动花絮图提示语
-        // function albumInitial() {
-        //     if ($(".albumBox").html() == '') {
-        //         var str = '<p class="mui-text-center">活动花絮图显示区</p>';
-        //         $(".albumBox").append(str);
-        //     } 
-        // }
         // 活动花絮图提交数组
         function albumImg() {
             album = [];
@@ -508,14 +499,7 @@
                 var src = $(this).attr('src')
                 album.push(src);
             }).get().join(",");
-            console.log(album)
         }
-
-        //角标随checkboxCont的数量变化
-        $(document).on('click', '.del', function () {
-            totalNum = $("#inactiveList .checkboxCont").length;
-            $(".mui-badge").text(totalNum);
-        });
 
         //更新学员序号
         function changeIndex() {
@@ -524,6 +508,7 @@
                 $(this).find("label").text(i++);//更新序号
             });
         }
+
         album = [];
         memberList = [];
         var totalNum = '';//序号总和的变量
@@ -532,8 +517,7 @@
 
             isRelease(); // 给是否发布通知赋值
             toTeamMemberList() //获取成员列表
-            // albumInitial(); //活动花絮图提示语
-            toSignUpList();
+            toSignUpList(); //获取已经报名的活动人员列表
 
             // 设置活动类型默认值
             $('#eventType option[{eq name="directentry" value="1" } value=""{else/} value="{$eventInfo.event_type_num}"{/eq}]').prop("selected", true);
@@ -562,15 +546,7 @@
             $(".del").click(function () {
                 $("input[name='member']:checked").parents(".checkboxCont").remove();
                 changeIndex();
-                // $("#hideStList").empty();
-                // $("#inactiveList input[type=checkbox]").each(function () {
-                //     var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" ></div>';
-                //     var id = $(this).attr("data-id");
-                //     var member = $(this).attr("data-member");
-                //     $("#hideStList").append(str);
-                // })
             });
-
 
             //角标随checkboxCont的数量变化
             $(document).on('click', '.del', function () {
@@ -609,19 +585,16 @@
                 changeIndex();//调用-更新序号
                 mui("#addTeamMember").popover("toggle");
                 totalNum = $("#inactiveList .checkboxCont").length;
-                console.log(totalNum)
                 $(".mui-badge").text(totalNum);
             });
 
-
-            //添加标题
+            //添加活动详情标题
             $(".titleClass").on('tap', '', function () {
                 var title = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
                 $(".introBox").append(title);
             });
 
-
-            //添加正文
+            //添加活动详情正文
             $(".textClass").on('tap', '', function () {
                 var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" name="" class="mui-text-left text delClass textarea" placeholder="请输入正文"></div>';
                 $(".introBox").append(text);
@@ -649,10 +622,7 @@
                     $(".albumBox").append($li);
                 }
             });
-
             //活动花絮图片end·····································································
-
-
 
             //添加图片start·····································································
             // 初始化Web Uploader
@@ -695,6 +665,7 @@
                     $(this).parent().html(inputValueNull)
                 }
             });
+
             // 点击时显示input框
             $(document).on('tap', '.operationDiv h5', function () {
                 var YinputValue = '<i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="title" autofocus value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="标题">';
@@ -713,6 +684,7 @@
                     $(this).parent().html(divValueNull)
                 }
             });
+
             // 点击时显示div框
             $(document).on('tap', '.operationDiv p', function () {
                 var YdivValue = '<i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" value="' + $(this).text() + '"  class="mui-text-left text delClass textarea" placeholder="请输入正文">' + $(this).text() + '</div>';
@@ -745,6 +717,13 @@
 
         // 获取数据并进行提交
         function submitAction() {
+
+            var min = $("input[name=min]").val();
+            var max = $("input[name=max]").val();
+            if (min > max) {
+                mui.toast("请选择正确的人数区间值");
+                return false;
+            }
 
             $('.delbtn').remove();
             var totalHtml = $(".introBox").html();
@@ -795,12 +774,10 @@
                     }, 'json');
                 }
             }
-
-
         };
 
         //获取成员列表
-        var toTeamMemberList = function () {
+        function toTeamMemberList() {
             var team_id = "{$teamInfo.id}";
             mui.ajax("{:url('api/team/teammemberlist')}", {
                 data: {
@@ -836,7 +813,7 @@
         };
 
         //获取已经报名的活动人员列表
-        var toSignUpList = function () {
+        function toSignUpList() {
             var url = "{:url('api/team/teameventmemberall')}";
             var event_id = "{$event_id}";
             if (directentry == 0) {
@@ -871,14 +848,12 @@
                             changeIndex();//调用-更新序号
                             totalNum = $(".checkboxCont").length;
                         }
-
                     },
                     error: function (xhr, type, errerThrown) {
                         console.log(type);
                     }
                 });
             }
-
         };
 
 
