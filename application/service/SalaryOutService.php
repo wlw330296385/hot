@@ -8,7 +8,7 @@ use app\model\SystemAward;
 class SalaryOutService {
 
     private $SalaryOut;
-    public function __construct($memberId)
+    public function __construct()
     {
         $this->SalaryOut = new SalaryOut;
     }

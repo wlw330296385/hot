@@ -13,7 +13,7 @@ class Base extends Controller {
     public $AuthService;
     public $admin;
     public function _initialize() {
-
+        $this->AuthService = new AuthService;
         // 获取平台数据
         $SystemS = new SystemService();
         $site = $SystemS->getSite();

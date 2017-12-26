@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50553
 File Encoding         : 65001
 
-Date: 2017-12-18 18:17:38
+Date: 2017-12-26 15:51:02
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -34,7 +34,7 @@ CREATE TABLE `admin_menu` (
   `create_time` int(10) NOT NULL,
   `update_time` int(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=89 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=95 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin_menu
@@ -126,3 +126,9 @@ INSERT INTO `admin_menu` VALUES ('85', '3', 'admin', '添加/修改班级类型'
 INSERT INTO `admin_menu` VALUES ('86', '3', 'admin', '更新父类', 'fa fa-cog', '0', 'admin/GradeCategory/updateGradeCategoryP', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('87', '3', 'admin', '删除课程类型', 'fa fa-cog', '0', 'admin/Gradecategory/del', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('88', '3', 'admin', '课程编辑', 'fa fa-cog', '0', 'admin/lesson/edit', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('89', '0', 'admin', '编辑学生', 'fa fa-cog', '0', 'admin/student/updateStudent', '_self', '0', '6', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('90', '3', 'admin', '教练审核', 'fa fa-cog', '0', 'admin/coach/audit', '_self', '0', '9', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('91', '4', 'admin', '提现列表', 'fa fa-cog', '0', 'admin/finance/salaryOutList', '_self', '1', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('92', '4', 'admin', '提现详情', 'fa fa-cog', '0', 'admin/finance/salaryOutInfo', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('93', '4', 'admin', '手动新增提现', 'fa fa-cog', '0', 'admin/finance/createSalaryOut', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('94', '4', 'admin', '操作提现申请', 'fa fa-cog', '0', 'admin/finance/updateSalaryOut', '_self', '0', '0', '1', '0', '0');

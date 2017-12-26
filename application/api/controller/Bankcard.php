@@ -13,9 +13,14 @@ class Bankcard extends Base{
     public function getBankcardListApi(){
          try{
             $map = input('post.');
-             $page = input('param.page')?input('param.page'):1; 
-            $result = $this->BankcardService->getBankcardList($map,$page);    
-             return json($result);
+            $page = input('param.page')?input('param.page'):1; 
+            $result = $this->BankcardService->getBankcardList($map,$page);  
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'无数据']);
+            }  
+            
          }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
          }

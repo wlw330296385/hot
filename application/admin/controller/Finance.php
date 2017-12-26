@@ -93,13 +93,11 @@ class Finance extends Backend {
         }
         $list = SalaryIn::with('schedule')->where($map)->order('id desc')->paginate(15)->each(function($item, $key) {
             $item['lesson'] = db('lesson')->where(['id' => $item['lesson_id']])->find();
-            $item['schedule']['num_student'] = count( unserialize( $item['schedule']['student_str'] ) ) ;
             return $item;
         });
 //        dump($list->toArray());
 
-        $breadcrumb = ['title' => '收入记录', 'ptitle' => '财务'];
-        $this->assign('breadcrumb', $breadcrumb);
+        
         $this->assign('list', $list);
         return $this->fetch();
     }
@@ -410,9 +408,9 @@ class Finance extends Backend {
 
     // 提现记录详情
     public function salaryOutInfo(){
-        $salaryout_id = input('salaryout_id', 0);
+        $salaryOut_id = input('salaryOut_id', 0);
         $SalaryOut = new \app\model\SalaryOut;
-        $salaryOutInfo = $SalaryOut->where(['id'=>$salaryout_id])->find();
+        $salaryOutInfo = $SalaryOut->where(['id'=>$salaryOut_id])->find();
         
 
         $this->assign('salaryOutInfo', $salaryOutInfo);
@@ -422,30 +420,124 @@ class Finance extends Backend {
 
     // 手动添加提现记录
     public function createSalaryOut(){
-        // 选择收入对象
-        $SalaryIn = new SalaryIn;
-        $salaryInList = $SalaryIn->distinct('true')->field('member_id,member')->select();
-        if($salaryInList){
-            $salaryInList = $salaryInList->toArray();
+        if(request()->isPost()){
+            try{
+                 $SalaryOutService = new \app\service\SalaryOutService;
+                $data = input('post.');
+                // 用户信息
+                $memberInfo = db('member')->where(['id'=>$data['member_id']])->find();
+                // 卡信息
+                $bankcarInfo = db('bankcard')->where(['id'=>$data['bankcard_id']])->find();
+                $data['tid'] = getTID($this->admin['id']);
+                $data['member'] = $memberInfo['member'];
+                $data['realname'] = $bankcarInfo['realname'];
+                $data['telephone'] = $bankcarInfo['telephone'];
+                $data['openid'] = $memberInfo['openid'];
+                $data['bank_card'] = $bankcarInfo['bank_card'];
+                $data['bank'] = $bankcarInfo['bank'];
+                $data['bank_type'] = $bankcarInfo['bank_type'];
+                $result = $SalaryOutService->saveSalaryOut($data);
+                if($result['code'] == 200){
+                    $this->success($result['msg']);
+                }else{
+                    $this->error($result['msg']);
+                }
+            }catch(Exception $e){
+                $this->error($e->getMessage());
+            }
+           
         }else{
-            $salaryInList = [];
+            // 选择收入对象
+            $SalaryIn = new SalaryIn;
+            $salaryInList = $SalaryIn->distinct('true')->field('member_id,member')->select();
+            if($salaryInList){
+                $salaryInList = $salaryInList->toArray();
+            }else{
+                $salaryInList = [];
+            }
+            $m = date('m',time());
+
+            $mList = [];
+            for ($i=$m; $i > 1; $i--) { 
+                $mList[$i]['m'] = $i;
+                $BeginDate= date('Y').'-'.$i.'-01';
+                $mList[$i]['start'] = $BeginDate;
+                $endDate = date('Y-m-d', strtotime("$BeginDate +1 month -1 day"));
+                $mList[$i]['end'] = $endDate;    
+            }
+
+
+            $this->assign('mList',$mList);
+
+            $this->assign('salaryInList',$salaryInList);
+
+            return view('finance/createSalaryOut');
+
         }
-        $m = date('m',time());
-
-        $mList = [];
-        for ($i=$m; $i > 1; $i--) { 
-            $mList[$i]['m'] = $i;
-            $BeginDate= date('Y').'-'.$i.'-01';
-            $mList[$i]['start'] = $BeginDate;
-            $endDate = date('Y-m-d', strtotime("$BeginDate +1 month -1 day"));
-            $mList[$i]['end'] = $endDate;    
-        }
-       // dump($mList);die;
-
-        $this->assign('mList',$mList);
-
-        $this->assign('salaryInList',$salaryInList);
-
-        return view('finance/createSalaryOut');
+        
+        
     }
+
+
+
+    // 提现申请操作
+    public function updateSalaryOut(){
+        try{
+            $salaryOut_id = input('param.salaryOut_id');
+            $action = input('param.action');
+            $SalaryOut = new \app\model\SalaryOut;
+            switch ($action) {
+                // 同意打款
+                case '1':
+                $data = [
+                    'system_remarks'=>"[系统出账]id:{$this->admin['id']},admin:{$this->admin['username']};",
+                    'pay_time'=>time(),
+                    'is_pay'=>1,
+                    'status'=>1
+                    ];
+                    $result = $SalaryOut->save($data,['id'=>$salaryOut_id]);
+                    if($result){
+                        $this->AuthService->record('提现申请出账');
+                        $this->success('操作成功');
+                    }else{
+                        $this->error('操作失败');
+                    }
+                    
+                    break;
+                //拒绝打款
+               case '2':
+                    $data = [
+                    'system_remarks'=>"[系统拒绝提现申请]id:{$this->admin['id']},admin:{$this->admin['username']};",
+                    'is_pay'=>0,
+                    'status'=>2,
+                    ];
+                    $result = $SalaryOut->save($data,['id'=>$salaryOut_id]);
+                    if($result){
+                        $this->AuthService->record('拒绝提现申请');
+                        // 余额返回用户
+                        $salaryOutInfo = $SalaryOut->where(['id'=>$salaryOut_id])->find();
+                        db('member')->where(['id'=>$salaryOutInfo['member_id']])->setInc('balance',$salaryOutInfo['salary']);
+                        $this->success('操作成功');
+                    }else{
+                        $this->error('操作失败');
+                    }
+                    
+                    break;
+                case 3:
+                    $data = [
+                    'system_remarks'=>"[系统对冲]id:{$this->admin['id']},admin:{$this->admin['username']};",
+                    'is_pay'=>0,
+                    'status'=>-1,
+                    ];
+                    $result = $SalaryOut->save($data,['id'=>$salary_id]);
+                    $this->AuthService->record('提现对冲');
+                    break;
+            }
+
+
+        }catch(Exception $e){
+            $this->error($e->getMessage());
+        }
+    }
+
 }

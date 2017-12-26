@@ -49,8 +49,14 @@
 							
 							<div class="form-group">
 								<label for="">填写提现金额   (最大:<span id="balance" style="color: red">0</span>) </label>
-								<input type="number" class="form-control data" name="salary" placeholder="0" value="" >
+								<input type="number" class="form-control data" name="salary" placeholder="0" value="" id="salary" >
 							</div>
+                            <div class="form-group">
+                                <label for="">选择到账账号</label>
+                                <select class="form-control data " name="bankcard_id" id="bankcard">
+
+                                </select>
+                            </div>
 							<div class="checkbox">
 								<label>
 									<input type="checkbox" checked=""> 是否发送模板消息
@@ -91,10 +97,12 @@
     var start_end = $('select[name=start_end]').val();
     var balance = 0;
 	$(function(){
+        // 切换用户
 		$('select[name=member_id]').on('change',function(){
 			member_id = $('select[name=member_id]').val();
             start_end = $('#start_end').val();
 			getSalaryInList(member_id,start_end);
+            getBankcardList(member_id);
             getMemberInfo();
 		});
 
@@ -104,8 +112,25 @@
             getSalaryInList(member_id,start_end);
         })
 
-        getMemberInfo();
+        // 提交
+        $('form').on('submit',function(){
+            if(balance<$('#salary').val()){
+                alert('金额不允许大于余额('+balance+')');
+                return false ;
+            }
+            // console.log($('#salary').val());return false;
+            var submiUrl = "";
+            var data = wooApi.getInputData('input', 'data');
+            var datas = wooApi.getInputData('number', 'data',data);
+            var arrData = wooApi.getInputData('select', 'data', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.__token__ = "{$Request.token}";
+            var ajaxResult = wooApi.asyncF(submiUrl, objData);
+            alert(ajaxResult.msg);
+        })
 
+        getMemberInfo();
+        getBankcardList(member_id);
 		getSalaryInList(member_id,start_end);
 	})
     var getMemberInfo = function(){
@@ -133,7 +158,7 @@
         });
     }
 
-	//训练营场地列表接口获取数据并追加到页面
+	//月收入接口获取数据并追加到页面
     var getSalaryInList = function (member_id,start_end) {
         var url = "{:url('api/Salaryin/getSalaryInfoByMonthApi')}";
         $.post({
@@ -159,18 +184,37 @@
         });
     };
 
-
-    // 提交
-    $('#submit').on('click',function(){
-            var submiUrl = "";
-            var data = wooApi.getInputData('input', 'data');
-            var datas = wooApi.getInputData('number', 'data',data);
-            var arrData = wooApi.getInputData('select', 'data', datas);
-            var objData = wooApi.arrTOobj(arrData);
-            objData.__token__ = "{:token()}";
-            var ajaxResult = wooApi.asyncF(submiUrl, objData);
-            alert(ajaxResult.msg);
-        })
+    //月收入接口获取数据并追加到页面
+    var getBankcardList = function (member_id) {
+        var url = "{:url('api/bankcard/getBankcardListApi')}";
+        $.post({
+            url: url,
+            data: {
+                "member_id":member_id,
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            success: function (data) {
+                if (data.code == 200) {
+                    var newli = '';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        newli = newli + '<option value='+data.data[i].id+'>['+data.data[i].bank_type+']'+data.data[i].bank+'('+data.data[i].bank_card+')</option>';
+                    }
+                    if (newli == '') {
+                        newli = "<option disabled>没有账户</option>"
+                    }
+                    $("#bankcard").html(newli);
+                } else {
+                    
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+               alert('网络异常,请稍候再试');
+            }
+        });
+    };
+    
 </script>
 </html>
 

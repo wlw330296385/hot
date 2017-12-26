@@ -62,23 +62,14 @@
                                         <th>{$vo.bank_card}</th>
                                         <td>{$vo.fee}</td>
                                         <td>{$vo.telephone}</td>
-                                        <td>{$vo.create_time|date="Y-m-d H:i", ###}</td>
+                                        <td>{$vo.create_time}</td>
                                         <td>{$vo.pay_time|date="Y-m-d H:i", ###}</td>
+                                        <td>{$vo.is_pay}</td>
+                                        <td style="color:red">{$vo.status}</td>
                                         <td>
-                                            {switch name="vo.is_pay"}
-                                            {case value="1"}完成{/case}
-                                            {default/}失败
-                                            {/switch}
-                                        </td>
-                                        <td>
-                                            {switch name="vo.status"}
-                                            {case value="1"}正常{/case}
-                                            {default/}失败
-                                            {/switch}
-                                        </td>
-                                        <td>
-                                            <a href="{:url('finance/salaryOutInfo', ['salaryout_id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i></a>
-                                            <!--<a href="" class="btn btn-xs btn-danger del-btn"><i class="fa fa-trash"></i></a>-->
+                                            <a href="{:url('admin/finance/salaryOutInfo', ['salaryOut_id' => $vo['id']])}" class="btn btn-xs btn-info" title="查看详情" ><i class="fa fa-info-circle"></i></a>
+                                            <a href="{:url('admin/finance/updateSalaryOut', ['salaryOut_id' => $vo['id'],'action'=>2])}" title="拒绝" class="btn btn-xs btn-danger del-btn"><i class="fa fa-close"></i></a>
+                                            <a href="{:url('admin/finance/updateSalaryOut', ['salaryOut_id' => $vo['id'],'action'=>1])}" title="已打款" class="btn btn-xs btn-success del-btn"><i class="fa fa-check"></i></a>
                                         </td>
                                     </tr>
                                     {/volist}
