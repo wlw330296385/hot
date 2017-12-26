@@ -116,8 +116,7 @@
 
                 <li class="mui-table-view-cell listli">
                     <div class="imgShow">
-                        {volist name="memberList" id="vol"}
-                        <img src="{$vol.avatar}" alt="" style="margin-right:3px"> {/volist}
+
                     </div>
                 </li>
             </ul>
@@ -249,6 +248,7 @@
             ststuShow() //判断身份显示操作按钮
             pulldownRefresh(); //页面打开时获取一次最新评论信息
             isthumbsup(); //点赞状态
+            toSignUpList()
 
             //报名功能
             $(".signupBtn").on('click', function () {
@@ -412,6 +412,51 @@
             }
         }
 
+        //获取已经报名的活动人员列表
+        function toSignUpList(status) {
+
+            // 获取当前时间
+            var d = new Date()
+            var minutes = d.getMinutes()
+            var hours = d.getHours()
+            var day = d.getDate()
+            var month = d.getMonth() + 1
+            var year = d.getFullYear()
+            var time = year + "-" + month + "-" + day + " " + hours + ":" + minutes;
+
+            var url = "{:url('api/team/teameventmemberall')}";
+            var event_id = "{$eventInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    event_id: event_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var inactiveDiv = '';
+                        $(".imgShow").empty();
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            inactiveDiv += '<img src="' + data.data[i].avatar + '" style="margin-right:3px">'
+                            $(".imgShow").append(inactiveDiv);
+                        };
+
+                        if ($(".imgShow").html() == '') {
+                            $(".checkChecked").append('<p class="nohave">没有学员哦</p>');
+                        }
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    console.log(type);
+                }
+            });
+        };
+
+
         //下拉刷新具体业务实现
         function pulldownRefresh() {
             setTimeout(function () {
@@ -472,4 +517,5 @@
         };
     </script>
 </body>
+
 </html>
