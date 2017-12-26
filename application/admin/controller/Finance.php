@@ -120,6 +120,7 @@ class Finance extends Backend {
 
         $list = SalaryIn::with('schedule')->where($map)->order('id desc')->paginate(15, false, ['query' => request()->param()])->each(function($item, $key) {
             $item['lesson'] = db('lesson')->where(['id' => $item['lesson_id']])->find();
+
             return $item;
         });
 //        dump($list->toArray());
@@ -465,7 +466,7 @@ class Finance extends Backend {
     public function createSalaryOut(){
         if(request()->isPost()){
             try{
-                 $SalaryOutService = new \app\service\SalaryOutService;
+                $SalaryOutService = new \app\service\SalaryOutService;
                 $data = input('post.');
                 // 用户信息
                 $memberInfo = db('member')->where(['id'=>$data['member_id']])->find();
@@ -481,6 +482,7 @@ class Finance extends Backend {
                 $data['bank_type'] = $bankcarInfo['bank_type'];
                 $result = $SalaryOutService->saveSalaryOut($data);
                 if($result['code'] == 200){
+                    $this->AuthService->record('后台添加提现记录');
                     $this->success($result['msg']);
                 }else{
                     $this->error($result['msg']);
