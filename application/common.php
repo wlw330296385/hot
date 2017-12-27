@@ -112,7 +112,7 @@ function getChecked($value,$val){
 
 // 生成交易单号,int
 function getTID($salt){
-    $result = (date('YmdHis').rand(0000,9999))*10000+$salt;
+    $result = date('YmdHis').rand(0000,9999).$salt;
     return $result;
 }
 

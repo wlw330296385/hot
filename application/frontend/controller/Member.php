@@ -146,7 +146,7 @@ class Member extends Base{
         // 获取身份证号码
         $ident = db('cert')->where(['member_id'=>$this->memberInfo['id'],'cert_type'=>1])->value('cert_no');
         // 交易单号
-        $tid = getTID($this->memberInfo['id']);
+        $tid = getTID($this->memberInfo['hot_id']);
         //银行卡列表
         $bankcardList = db('bankcard')->where(['member_id'=>$this->memberInfo['id']])->select();
 

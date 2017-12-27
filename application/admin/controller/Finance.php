@@ -123,7 +123,6 @@ class Finance extends Backend {
 
             return $item;
         });
-//        dump($list->toArray());
 
         
         $this->assign('list', $list);

@@ -19,6 +19,11 @@ class Index extends Controller{
         echo json_encode($a);
     }
 
+    public function tid(){
+        $a = getTID(8);
+        dump($a);
+    }
+
     public function index(){
         $timestr = strtotime('2017-11-16');
         // 生成微信参数

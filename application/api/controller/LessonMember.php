@@ -11,7 +11,7 @@ class LessonMember extends Base{
         $this->LessonMemberService = new LessonMemberService;
 	}
 
-    // 搜索学生
+    // 搜索学生带page
     public function searchLessonMemberByPageApi(){
         try{
 
@@ -36,7 +36,7 @@ class LessonMember extends Base{
         }
     }
 
-    // 搜索学生
+    // 搜索课程学生不带page
     public function searchLessonMemberNoPageApi(){
         try{
 
@@ -48,6 +48,9 @@ class LessonMember extends Base{
             } 
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
+            }
+            if(isset($map['rest_schedule'])){
+                $map['rest_schedule'] = ['lt',$map['rest_schedule']];
             }
             $LessonMember = new \app\model\LessonMember;
             $result =  $LessonMember->where($map)->select();
@@ -62,7 +65,7 @@ class LessonMember extends Base{
         }
     }
 
-    // 获取训练营下的学生
+    // 获取训练营下的学生带page(唯一)
     public function getLessonMemberListOfCampByPageApi(){
         try{
             $map = input('post.');
@@ -72,6 +75,9 @@ class LessonMember extends Base{
             } 
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
+            }
+            if(isset($map['rest_schedule'])){
+                $map['rest_schedule'] = ['lt',$map['rest_schedule']];
             }
             $result = $this->LessonMemberService->getLessonMemberListOfCampWithStudentByPage($map);    
             if($result){
@@ -84,6 +90,7 @@ class LessonMember extends Base{
         }
     }
 
+    // 获取课程学生数据带page
     public function getLessonMemberListByPageApi(){
         try{
             $map = input('post.');
@@ -93,6 +100,9 @@ class LessonMember extends Base{
             } 
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
+            }
+            if(isset($map['rest_schedule'])){
+                $map['rest_schedule'] = ['lt',$map['rest_schedule']];
             }
             $result = $this->LessonMemberService->getLessonMemberListWithStudentByPage($map);    
             if($result){
@@ -116,6 +126,9 @@ class LessonMember extends Base{
             } 
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
+            }
+            if(isset($map['rest_schedule'])){
+                $map['rest_schedule'] = ['lt',$map['rest_schedule']];
             }
             $LessonMember = new \app\model\LessonMember;
             $result = $LessonMember->where($map)->select();
