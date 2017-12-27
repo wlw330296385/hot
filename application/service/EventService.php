@@ -17,7 +17,7 @@ class EventService {
 
     // 获取所有活动
     public function getEventList($map=[],$page = 1,$order='',$paginate = 10) {
-        $result = Event::where($map)->order($order)->page($page,$paginate)->select();
+        $result = Event::where($map)->order(['start'=>'desc','end'=>'asc'])->page($page,$paginate)->select();
 
         if($result){
             $res = $result->toArray();
