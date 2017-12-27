@@ -26,6 +26,7 @@
             <a class="mui-control-item mui-icon mui-icon-left-nav"
                href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"></a>
             <a class="mui-control-item mui-active" search-id="sOn" href="#onlineStudentList">在营</a>
+            <a class="mui-control-item " search-id="sGraduate" href="#graduateStudentList">毕业</a>
             <a class="mui-control-item" search-id="sOff" href="#offlineStudentList">离营</a>
             <a class="mui-control-item" search-id="sPend" href="#pendingStudentList">待处理</a>
         </div>
@@ -40,6 +41,9 @@
         <div class="mui-input-row mui-search" id="sOn">
             <input type="search" class="mui-input-clear keywordOn" placeholder="请输入在营学员名称">
         </div>
+        <div class="mui-input-row mui-search" id="sGraduate">
+            <input type="search" class="mui-input-clear keywordGraduate" placeholder="请毕业学员名称">
+        </div>
         <div class="mui-input-row mui-search" id="sOff" style="display: none;">
             <input type="search" class="mui-input-clear keywordOff" placeholder="请输入离营学员名称">
         </div>
@@ -47,6 +51,11 @@
             <input type="search" class="mui-input-clear keywordPend" placeholder="请输入未处理学员名称">
         </div>
         <div id="onlineStudentList" class="mui-control-content mui-scroll-wrapper mui-active" style="top:80px">
+            <div class="mui-scroll">
+                <ul class="mui-table-view coach list border-b student1 OA_task_student"></ul>
+            </div>
+        </div>
+        <div id="graduateStudentList" class="mui-control-content mui-scroll-wrapper" style="top:80px">
             <div class="mui-scroll">
                 <ul class="mui-table-view coach list border-b student1 OA_task_student"></ul>
             </div>
@@ -103,9 +112,13 @@
             keywordOn = $(this).val();
             toList('onlineStudentList', 1, 1, 1, keywordOn);
         })
+        $(".keywordGraduate").on("blur",'', function () {
+            keywordGraduate = $(this).val();
+            toList('graduateStudentList', 1, 1, 4, keywordGraduate);
+        })
         $(".keywordOff").on("blur",'', function () {
             keywordOff = $(this).val();
-            toList('offlineStudentList', 1, 1, 1, keywordOff);
+            toList('offlineStudentList', 1, 1, -1, keywordOff);
         })
         $(".keywordPend").on("blur",'', function () {
             keywordPend = $(this).val();
@@ -156,6 +169,47 @@
                 var page = onCount;
                 var gType = 2;//代表上拉加载
                 toList('onlineStudentList', page, gType, 1, keywordOn);//具体取数据的方法
+            }, 100);
+        }
+
+        // 获取毕业学生列表
+         mui('#graduateStudentList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshGraduate
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshGraduate
+            }
+        });
+
+        //下拉刷新具体业务实现（上架）
+        function pulldownRefreshGraduate() {
+            setTimeout(function () {
+                onCount = 1;//刷新并显示第一页
+                var page = onCount;
+                var gType = 1;//代表下拉刷新
+                toList('graduateStudentList', page, gType, 4, keywordOn);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（上架）
+        function pullupRefreshGraduate() {
+            setTimeout(function () {
+                onCount++;//翻下一页
+                var page = onCount;
+                var gType = 2;//代表上拉加载
+                toList('graduateStudentList', page, gType, 4, keywordOn);//具体取数据的方法
             }, 100);
         }
 
@@ -405,6 +459,6 @@
         });
     };
 
-
+    
 </script>
 </html>

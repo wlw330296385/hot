@@ -149,7 +149,7 @@ class LessonMember extends Base{
             // 已分配的学生IDs
             $IDs = db('grade_member')->where($map)->where('delete_time','null')->column('student_id');
             $map['student_id']=['not in',$IDs];
-            $result = $this->LessonMemberService->getLessonMemberListByPage($map);
+            $result = $this->LessonMemberService->getLessonMemberListWithStudentByPage($map);
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
             }else{
