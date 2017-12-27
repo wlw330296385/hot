@@ -19,9 +19,9 @@ class Grade extends Backend {
         if ($cur_camp = $this->cur_camp) {
             $map['camp_id'] = $cur_camp['camp_id'];
         }
-        $camp = input('camp');
-        if ($camp) {
-            $map['camp'] = ['like', '%'. $camp .'%'];
+        $camp_id = input('camp_id');
+        if ($camp_id) {
+            $map['camp_id'] = $camp_id;
         }
         $grade = input('grade');
         if ($grade) {
@@ -36,7 +36,7 @@ class Grade extends Backend {
             $map['coach'] = ['like', '%'. $coach .'%'];
         }
 
-        $list = GradeModel::where($map)->order('id desc')->paginate(15);
+        $list = GradeModel::where($map)->order('id desc')->paginate(15, false, ['query' => request()->param()]);
 
         $this->assign('list', $list);
         $breadcrumb = [ 'ptitle' => '训练营' , 'title' => '班级管理' ];
