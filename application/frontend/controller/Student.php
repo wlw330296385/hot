@@ -174,5 +174,12 @@ class Student extends Base
 		$this->assign('studentInfo',$studentInfo);
 		return view('Student/studentInfo');
 	}
+
+
+	public function tipStudentListOfCamp(){
+		$camp_id = input('param.camp_id');
+        $this->assign('camp_id',$camp_id);
+		return view('Student/tipStudentListOfCamp');
+	}
 		
 }
