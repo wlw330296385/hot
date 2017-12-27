@@ -448,6 +448,17 @@ class TeamService {
             return $res;
         }
     }
+
+    // 球队活动列表（无分页)
+    public function teamEventListAll($map, $order='id desc') {
+        $model = new TeamEvent();
+        $res = $model->where($map)->order($order)->select();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
     
     // 球队活动详情
     public function getTeamEventInfo($map, $order='') {
@@ -518,6 +529,7 @@ class TeamService {
 
     // 更新球队活动-会员关联数据
     public function saveAllTeamEventMember($data=[]) {
+        //dump($data);die;
         $model = new TeamEventMember();
         $res = $model->saveAll($data);
         if ($res || ($res === 0)) {

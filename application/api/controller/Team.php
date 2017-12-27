@@ -517,17 +517,20 @@ class Team extends Base {
             if (!isset($map['is_finished'])) {
                 $map['is_finished'] = 0;
             }
-            $lastEvent = $teamS->getTeamEventInfo($map, 'id desc');
+            $lastEvent = $teamS->teamEventListAll($map);
             // 如果没有未发生的活动记录，清理查询条件is_finished=0，再次执行查询
             if (!$lastEvent) {
                 unset($map['is_finished']);
-                $lastEvent = $teamS->getTeamEventInfo($map, 'id desc');
+                $lastEvent = $teamS->teamEventListAll($map, 'id desc');
                 // 球队无活动记录
                 if (!$lastEvent) {
                     return json(['code' => 100, 'msg' => __lang('MSG_000')]);
                 }
             }
-            $lastEvent['memberlist'] = $teamS->teamEventMembers(['event_id' => $lastEvent['id']]);
+            // 球队活动成员名单
+            foreach ($lastEvent as $k => $val) {
+                $lastEvent[$k]['memberlist'] = $teamS->teamEventMembers(['event_id' => $val['id']]);
+            }
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $lastEvent]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -542,11 +545,19 @@ class Team extends Base {
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             // 时间格式转换类型
+            // 检查开始时间和结束时间与当前时间比较是否合法
+            $nowTime = time();
             if (input('?start_time')) {
                 $data['start_time'] = strtotime(input('start_time'));
+                if ($nowTime > $data['start_time']) {
+                    return json(['code' => 100, 'msg' => '开始时间必须大于当前时间']);
+                }
             }
             if (input('?end_time')) {
                 $data['end_time'] = strtotime(input('end_time'));
+                if ($nowTime > $data['end_time']) {
+                    return json(['code' => 100, 'msg' => '结束时间必须大于当前时间']);
+                }
             }
             $teamS = new TeamService();
             $res = $teamS->createTeamEvent($data);
@@ -561,6 +572,8 @@ class Team extends Base {
         try {
             // 接收传参
             $data = input('post.');
+            // 活动人员状态修改值
+            $memberStatus = 1;
             if (input('?start_time')) {
                 $data['start_time'] = strtotime(input('start_time'));
             }
@@ -569,19 +582,51 @@ class Team extends Base {
                 // 结束时间小于当前时间即活动已完成
                 if ($data['end_time'] < time()) {
                     $data['is_finished'] = 1;
+                    $memberStatus = 3;
                 }
             }
             $teamS = new TeamService();
-            $resUpdateTeamEvent = $teamS->updateTeamEvent($data);
-            if ($resUpdateTeamEvent['code'] == 200) {
-                if ( input('?memberData') && !empty($data['memberData']) ) {
-                    $memberArr = json_decode($data['memberData'], true);
-                    foreach ($memberArr as $k => $member) {
-                        $memberArr[$k]['status'] = 3;
+            $event_id = $data['id'];
+            // 保存球队活动-会员 保留显示的数据
+            if ( input('?memberData') && !empty($data['memberData']) ) {
+                $memberArr = json_decode($data['memberData'], true);
+                $data['reg_number'] = count($memberArr);
+                foreach ($memberArr as $k => $member) {
+                    // 查询有无team_event_member原数据，有则更新原数据否则插入新数据
+                    $hasTeamEventMember = $teamS->getMemberTeamEvent([ 'event_id' => $data['id'], 'member_id' => $member['member_id'] ]);
+                    if ($hasTeamEventMember) {
+                        $memberArr[$k]['id'] = $hasTeamEventMember['id'];
+                    } else {
+                        $memberArr[$k]['event_id'] = $event_id;
+                        $memberArr[$k]['event'] = $data['event'];
+                        $memberArr[$k]['avatar'] = db('member')->where('id', $member['member_id'])->value('avatar');
                     }
-                    $teamS->saveAllTeamEventMember($memberArr);
+                    $memberArr[$k]['status'] = $memberStatus;
                 }
+                $saveTeamEventMemberResult1 = $teamS->saveAllTeamEventMember($memberArr);
+                /*if ($saveTeamEventMemberResult1['code'] == 100) {
+                    return json(['code' => 100, 'msg' => '修改活动人员出错']);
+                }*/
             }
+            // 保存球队活动-会员 被剔除的数据
+            if ( input('?memberDataDel') && !empty($data['memberDataDel']) ) {
+                $memberArr = json_decode($data['memberDataDel'], true);
+                
+                foreach ($memberArr as $k => $member) {
+                    // 查询有无team_event_member原数据，有则更新原数据否则插入新数据
+                    $hasTeamEventMember = $teamS->getMemberTeamEvent([ 'event_id' => $event_id, 'member_id' => $member['member_id'] ]);
+                    if ($hasTeamEventMember) {
+                        $memberArr[$k]['id'] = $hasTeamEventMember['id'];
+                    }
+                    $memberArr[$k]['status'] = -1;
+                }
+                $saveTeamEventMemberResult2 = $teamS->saveAllTeamEventMember($memberArr);
+                /*if ($saveTeamEventMemberResult2['code'] == 100) {
+                    return json(['code' => 100, 'msg' => '修改活动人员出错']);
+                }*/
+            }
+            // 修改球队活动主表数据
+            $resUpdateTeamEvent = $teamS->updateTeamEvent($data);
             return json($resUpdateTeamEvent);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -706,12 +751,12 @@ class Team extends Base {
             switch ( $event['status_num'] ) {
                 case 1 : {
                     if ($action == 'editstatus') {
-                        $response = $teamS->updateTeamEvent(['id' => $event['id'], 'status' => 2], 1);
+                        $response = $teamS->updateTeamEvent(['id' => $event['id'], 'status' => -1], 1);
                     } else {
                         $delRes = $teamS->deleteTeamEvent($event['id']);
                         if ($delRes) {
                             // 球队活动数统计-1
-                            db('team_event')->where(['id' => $event['team_id']])->setDec('event_num', 1);
+                            db('team')->where(['id' => $event['team_id']])->setDec('event_num', 1);
                             $response = ['code' => 200, 'msg' => __lang('MSG_200')];
                         } else {
                             $response = ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -727,7 +772,7 @@ class Team extends Base {
                         $delRes = $teamS->deleteTeamEvent($event['id']);
                         if ($delRes) {
                             // 球队活动数统计-1
-                            db('team_event')->where(['id' => $event['team_id']])->setDec('event_num', 1);
+                            db('team')->where(['id' => $event['team_id']])->setDec('event_num', 1);
                             $response = ['code' => 200, 'msg' => __lang('MSG_200')];
                         } else {
                             $response = ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -835,6 +880,7 @@ class Team extends Base {
         try {
             $map = input('post.');
             $teamS = new TeamService();
+            $map['status'] = ['>', 0];
             $result = $teamS->teamEventMembers($map);
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];

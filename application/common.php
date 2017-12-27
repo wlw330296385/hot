@@ -198,24 +198,26 @@ function getMemberAgeByBirthday($member_id) {
     }
     // 取出会员生日字段信息
     $birthday = $member['birthday'];
-    $birthday_timestamp = strtotime($birthday);
-    if ($birthday_timestamp == false ) {
+    // 检查生日日期是否是一个合法date格式
+    if (checkDatetimeIsValid($birthday)) {
+        $birthday_timestamp = strtotime($birthday);
+        //格式化出生时间年月日
+        $birth_y = date('Y', $birthday_timestamp);
+        $birth_m = date('m', $birthday_timestamp);
+        $birth_d = date('d', $birthday_timestamp);
+        //格式化当前时间年月日
+        $now_y = date('Y');
+        $now_m = date('m');
+        $now_d = date('d');
+        //开始计算年龄
+        $iage = $now_y-$birth_y;
+        if ($birth_m > $now_m || $birth_m == $now_m && $birth_d > $now_d) {
+            $iage--;
+        }
+        return $iage;
+    } else {
         return 0;
     }
-    //格式化出生时间年月日
-    $birth_y = date('Y', $birthday_timestamp);
-    $birth_m = date('Y', $birthday_timestamp);
-    $birth_d = date('Y', $birthday_timestamp);
-    //格式化当前时间年月日
-    $now_y = date('Y');
-    $now_m = date('m');
-    $now_d = date('d');
-    //开始计算年龄
-    $iage = $now_y-$birth_y;
-    if ($birth_m > $now_m || $birth_m == $now_m && $birth_d > $now_d) {
-        $iage--;
-    }
-    return $iage;
 }
 
 // 数字验证码 用于server-sent事件 生成guid

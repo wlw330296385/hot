@@ -15,9 +15,9 @@ class Team extends Base {
         $team_id = input('team_id');
         $teamS = new TeamService();
         $teamInfo = $teamS->getTeam(['id' => $team_id]);
-        /*if (!$teamInfo) {
+        if ($team_id && !$teamInfo) {
             $this->error('没有球队信息');
-        }*/
+        }
         $this->team_id = $team_id;
         $this->teamInfo = $teamInfo;
         $this->assign('team_id', $team_id);
@@ -143,9 +143,19 @@ class Team extends Base {
             }
         }
 
+        // 编辑成员资料入口显示：队委以上成员可编辑所有成员、成员自己操作自己
+        $editbtnDisplay = 0;
+        $teamRole = $teamS->checkMemberTeamRole($team_id, $this->memberInfo['id']);
+        if ($teamRole) {
+            $editbtnDisplay = 1;
+        } else if ($this->memberInfo['id'] == $teamMemberInfo['member_id']) {
+            $editbtnDisplay = 1;
+        }
+
         $this->assign('teamMemberInfo', $teamMemberInfo);
         $this->assign('memberOtherTeam', $memberOtherTeam);
         $this->assign('delbtnDisplay', $delbtnDisplay);
+        $this->assign('editbtnDisplay', $editbtnDisplay);
         return view('Team/teamMemberInfo');
     }
 
@@ -206,11 +216,6 @@ class Team extends Base {
     // 相册列表
     public function album() {
         return view('Team/album');
-    }
-
-    // 比赛列表（球队参与的）
-    public function competition() {
-        return view('Team/competition');
     }
 
     // 添加活动
@@ -281,4 +286,31 @@ class Team extends Base {
         return view('Team/eventSignupList');
     }
 
+    // 赛事列表（平台展示）
+    public function matchlist() {
+        return view('Team/matchList');
+    }
+
+    // 赛事详情
+    public function matchinfo() {
+        return view('Team/matchInfo');
+    }
+
+    // 创建比赛
+    public function creatematch() {
+        // 从球队模块进入页面 带team_id处理
+        $homeTeamId = input('team_id', 0);
+        $this->assign('homeTeamId', $homeTeamId);
+        return view('Team/createMatch');
+    }
+
+    // 编辑比赛
+    public function matchedit() {
+        return view('Team/matchEdit');
+    }
+
+    // 比赛管理列表
+    public function matchlistofteam() {
+        return view('Team/matchlistofteam');
+    }
 }
