@@ -86,7 +86,6 @@ class BankcardService {
         }
         $result = $this->BankcardModel->allowField(true)->save($data);
         if($result){
-            db('camp')->where(['id'=>$data['organization_id']])->setInc('total_events');
             return ['msg' => '操作成功', 'code' => 200, 'data' => $this->BankcardModel->id];
         }else{
             return ['msg'=>'操作失败', 'code' => 100];

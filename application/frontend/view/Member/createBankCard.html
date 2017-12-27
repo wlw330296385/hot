@@ -61,10 +61,6 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
     mui('body').on('tap', 'a', function () {
         window.top.location.href = this.href;
     });
@@ -73,10 +69,10 @@
         $('select[name=bank_type]').on('change',function(i){
             var bank_type = $(this).val();
             if(bank_type == 2){
-                $('input[name=bank_type]').val('');
+                $('input[name=bank]').val('');
                 $('#bank').show();
             }else{
-                $('input[name=bank_type]').val('支付宝');
+                $('input[name=bank]').val('支付宝');
                 $('#bank').hide();
             }
         });
@@ -87,6 +83,16 @@
             var data2 = wooApi.getInputData('select','data',data1);
             var objData = wooApi.arrTOobj(data2);
             console.log(objData);
+            var result = wooApi.asyncF("{:url('api/Bankcard/createBankcardApi')}",objData);
+            if(result.code == 200){
+                mui.alert('提示',result.msg,function(){
+                    history.back()
+                })
+            }else{
+                mui.alert('提示',result.msg,function(){
+                    // history.back()
+                })
+            }
         })
     })
 
