@@ -99,6 +99,14 @@
             color: #b1b0b0;
             content: attr(placeholder);
         }
+        #eventDom .fl {
+            text-align: left;
+        }
+        .cancel-dom{
+            font-size: 16px;
+            float: right;
+            margin:13px 10px;
+        }
     </style>
 </head>
 
@@ -175,10 +183,10 @@
                     </div>
                 </div>
 
-                <div class="mui-input-row price-input-row {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">
-                    <label>活动单价</label>
-                    <input type="text" name="price" class="" value="{$eventInfo.price}" placeholder="请填写活动单价">
-                </div>
+                <!--<div class="mui-input-row price-input-row {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">-->
+                    <!--<label>活动单价</label>-->
+                    <!--<input type="text" name="price" class="" value="{$eventInfo.price}" placeholder="请填写活动单价">-->
+                <!--</div>-->
 
                 <div class="mui-input-row price-input-row {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">
                     <a href="#cost" class="mui-navigate-right">
@@ -187,6 +195,23 @@
                         <input type="hidden" name="finance_id" class="finance_id" value="">
                     </a>
                 </div>
+
+                <div class="mui-input-row h-auto">
+                    <a href="#eventDom" class="mui-navigate-right">
+                        <label>报名种类</label>
+                        <span class="eventDom wd60" style="line-height: 24px;">
+
+                             <!--  循环出来，免费的列出这个
+                                    包车，不包车
+                             -->
+                            <!--  循环出来，收费的列出这个
+                                包车（100），不包车（80)
+                            -->
+
+                        </span>
+                    </a>
+                </div>
+
 
                 <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
@@ -288,6 +313,37 @@
             </ul>
         </div>
 
+    </div>
+
+
+    <!--报名种类选择-->
+    <div id="eventDom" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd36"><strong>报名种类</strong></span>
+            <span class="fr"><button class="mui-btn-blue" id="domConfirm">确认</button></span>
+            <span class="fr"><button id="domAdd">添加</button></span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form class="mui-input-group">
+                    <!--  循环出来，免费的列出这个
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称">
+                        <i class="cancel-dom mui-icon mui-icon-close"></i>
+                    </div>
+                    -->
+                    <!--  循环出来，收费的列出这个
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称">
+                        <i class="cancel-dom mui-icon mui-icon-close"></i>
+                        <input type="text" name="event-dom_price" class="wd36 fr" value="" placeholder="对应价格">
+                    </div>
+                    -->
+                </form>
+                <div class="tjbtn"><br /><p>PS: 若活动没分类，可忽略不填。</p></div>
+            </div>
+        </div>
     </div>
 
     <!--具体对象-->
@@ -446,6 +502,10 @@
         })(mui, document);
 
         $(function () {
+            //初始化全局变量
+            var eventDomArr = [];
+            //页面默认打开时隐藏报名种类的价格
+            $("input[name='event-dom_price']").hide();
             //获取训练营粉丝列表
             var StudentKeyword = '';
             var wStudents = '';
@@ -491,20 +551,82 @@
                 };
             });
 
+
+            //报名种类确认
+            $("#domConfirm").on('tap', this, function () {
+                var isTrue = true;
+                var eDoms = '';
+                var eDom = '';
+                var eDomPrice = '';
+                var ePrice =$("#eventPrice").val();
+                console.log(ePrice)
+                eventDomArr = [];
+                //把所选课量串在一起，以逗号分隔
+                $("#eventDom .mui-checkbox").each(function () {
+                    eDom =  $(this).find("input[name='event-dom']").val();
+                    eDomPrice =  $(this).find("input[name='event-dom_price']").val();
+                    if(eDom==""||eDom.length>10||ePrice==2&&(eDomPrice==""||!(/^\+?[0-9]\d*$/).test(eDomPrice))){ //////加上判断是否收费
+                        isTrue = false;
+                        return false;
+                    }else{
+                        if(ePrice==2){
+                            eDoms+= eDom+"（"+eDomPrice+"），";
+                        }else{
+                            eDoms+= eDom+"，";
+                        }
+                        eventDomArr.push({ name: eDom, price: eDomPrice });
+
+                    }
+                });
+                if(isTrue){
+                    eDoms = eDoms.substring(0, eDoms.length - 1);
+                    $(".eventDom").text(eDoms);
+                    console.log(eventDomArr)
+                    mui('#eventDom').popover('toggle');
+                }else{
+                    mui.alert('请填写完整，并保证名称长度不超过10个字，价格为纯数字，谢谢！', '温馨提示', '确定', function () {
+                        eDoms = '';
+                    })
+                }
+            })
+            //添加
+            $("#domAdd").on('tap', this, function () {
+                var addPrice = '';
+                if($("#eventPrice").val()==2){
+                    addPrice = '<input type="text" name="event-dom_price" class="wd36 fr" value="" placeholder="对应价格">'
+                }
+                $("#eventDom form").prepend('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i>'+addPrice+'</div>');
+            })
+            // 删除
+            $(document).on('tap', ".cancel-dom", function () {
+                $(this).parent().remove();
+            });
+
             // 选择是否收费显示隐藏活动单价和费用结算人
             $("#eventPrice").change(function () {
                 if ($(this).children('option:selected').text() == '免费') {
+                    $("input[name='event-dom_price']").val("0");
+                    $("input[name='event-dom_price']").hide();
+                    $(".eventDom").text("");
+                    $("#eventDom form").empty();
+                    $("#eventDom form").prepend('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i></div>');
                     $(".price-input-row").hide();
                     $("input[name='price']").removeClass("data");
                     $(".costCont").removeClass("domData");
                     $("input[name='finance_id']").removeClass("data");
                 } else {
+                    $("input[name='event-dom_price']").show();
+                    $("input[name='event-dom_price']").val("");
+                    $(".eventDom").text("");
+                    $("#eventDom form").empty();
+                    $("#eventDom form").prepend('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i><input type="text" name="event-dom_price" class="wd36 fr" value="" placeholder="对应价格"></div>');
                     $(".price-input-row").show();
                     $("input[name='price']").addClass("data");
                     $(".costCont").addClass("domData");
                     $("input[name='finance_id']").addClass("data");
                 }
             });
+
 
             // 费用结算人
             $(".campMemberType").on('click', 'li', function () {

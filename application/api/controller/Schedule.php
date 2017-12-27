@@ -378,25 +378,25 @@ class Schedule extends Base
             if ($lesson['resi_giftschedule'] < $numChangegiftschedule) {
                 return json(['code' => 100, 'msg' => '课程剩余赠送数量不足，点击"购买课量"进入购买']);
             } else {
+                //学员剩余课时更新
+                if (!empty($request['student_str'])) {
+                    $studentList = json_decode($request['student_str'], true);
+                    //dump($studentList);
+                    $studentMap = [];
+                    foreach ($studentList as $student) {
+                        $studentMap['camp_id'] = $request['camp_id'];
+                        $studentMap['student_id'] = $student['student_id'];
+                        $studentMap['lesson_id'] = $request['lesson_id'];
+                        $saveStudentRestschedule = $scheduleS->saveStudentRestschedule($studentMap, $request['gift_schedule']);
+                        if (!$saveStudentRestschedule) {
+                            return json(['code' => 100, 'msg' => '学员剩余课时更新' . $student['student'] . __lang('MSG_400')]);
+                        }
+                    }
+                }
                 $res = $scheduleS->recordgift($request);
                 if (!$res) {
                     $response = json(['code' => 100, 'msg' => '赠送课时' . __lang('MSG_400')]);
                 } else {
-                    //学员剩余课时更新
-                    if (!empty($request['student_str'])) {
-                        $studentList = json_decode($request['student_str'], true);
-                        //dump($studentList);
-                        $studentMap = [];
-                        foreach ($studentList as $student) {
-                            $studentMap['camp_id'] = $request['camp_id'];
-                            $studentMap['student_id'] = $student['student_id'];
-                            $studentMap['lesson_id'] = $request['lesson_id'];
-                            $saveStudentRestschedule = $scheduleS->saveStudentRestschedule($studentMap, $request['gift_schedule']);
-                            if (!$saveStudentRestschedule) {
-                                return json(['code' => 100, 'msg' => '学员剩余课时更新' . $student['student'] . __lang('MSG_400')]);
-                            }
-                        }
-                    }
                     // 课程赠送课程更新
                     $updateLesson = $lessonDb->where('id', $request['lesson_id'])
                         ->inc('total_giftschedule', $numChangegiftschedule)

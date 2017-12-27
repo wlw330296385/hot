@@ -2,6 +2,7 @@
 
 namespace app\service;
 
+use app\model\Grade;
 use app\model\LessonMember;
 use app\model\Schedule;
 use app\model\ScheduleComment;
@@ -234,6 +235,7 @@ class ScheduleService
         $gradeMemberDb = db('grade_member');
         $lessonDb = new LessonMember();
         $studentDb = new Student();
+        $gradeModel = new Grade();
         foreach ($students as $student) {
             $gradeMemberWhere['student_id'] = $student['student_id'];
             $gradeMemberWhere['lesson_id'] = $schedule['lesson_id'];
@@ -256,8 +258,18 @@ class ScheduleService
                     if (!$studentFinishedTotal) {
                         return ['code' => 100, 'msg' => $student['student'].'更新完成课程'.__lang('MSG_400')];
                     }
-                    // 学员从班级毕业
+                    // 学员从班级毕业（grade_member数据 status=4）
                     $gradeMemberDb->where($gradeMemberWhere)->whereNull('delete_time')->update(['status' => 4, 'update_time' => time(), 'system_remarks' => date('Ymd').'学员完成课时毕业']);
+                    // 更新学员所在班级学员名单，剔除学员（查询班级其他在班学员名单，更新班级数据）
+                    $reserveStudentList = $gradeMemberDb->where([ 'grade_id' => $schedule['grade_id'], 'status' => 1 ])->column('student');
+                    $reserveStudentStr = '';
+                    if ($reserveStudentList) {
+                        foreach ($reserveStudentList as $val) {
+                            $reserveStudentStr .= $val.',';
+                        }
+                        $reserveStudentStr = rtrim($reserveStudentStr, ',');
+                    }
+                    $gradeModel->where(['id' => $schedule['grade_id']])->update(['student_str' => $reserveStudentStr, 'students' => count($reserveStudentList)]);
                 } else {
                     $decRestSchedule = $lessonDb->where($gradeMemberWhere)->setDec('rest_schedule',1);
                     if (!$decRestSchedule) {
@@ -507,7 +519,7 @@ class ScheduleService
         if (!$validate->check($request)) {
             return ['code' => 100, 'msg' => $validate->getError()];
         }
-        $result = $model->save($request);
+        $result = $model->allowField(true)->save($request);
         if (!$result) {
             return ['code' => 100, 'msg' => '购买赠送课时'.__lang('MSG_400')];
         } else {
@@ -553,10 +565,10 @@ class ScheduleService
     public function saveStudentRestschedule($map, $gift_schedule){
         $lessonMemberRestSchedule = Db::name('lesson_member')->where($map)->setInc('rest_schedule', $gift_schedule);
         $studentTotalSchedule = db('student')->where(['id' => $map['student_id']])->setInc('total_schedule', $gift_schedule);
-        if (!$lessonMemberRestSchedule || !$studentTotalSchedule) {
-            return false;
-        } else {
+        if (($lessonMemberRestSchedule === 0) || ($studentTotalSchedule === 0)) {
             return true;
+        } else {
+            return false;
         }
     }
 
