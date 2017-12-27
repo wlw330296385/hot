@@ -247,14 +247,16 @@
 
                 <div class="mui-input-row">
                     <label>活动地点</label>
-                    <input type="text" name="location" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.location}" {/eq}class="data location" placeholder="请输入活动地点">
+                    <input type="text" name="location" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.location}" {/eq}class="data location"
+                        placeholder="请输入活动地点">
                 </div>
 
                 <div class="mui-input-row h-auto">
                     <label class="wd36">最少参与人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data" type="number" name="min" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.min}"{/eq}>
+                        <input class="mui-input-numbox data" type="number" name="min" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.min}"
+                            {/eq}>
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
@@ -262,7 +264,8 @@
                     <label class="wd36">最多参与人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data" type="number" name="max" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.max}"{/eq}>
+                        <input class="mui-input-numbox data" type="number" name="max" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.max}"
+                            {/eq}>
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
@@ -272,7 +275,8 @@
                     <div class="mui-switch isRelease">
                         <div class="mui-switch-handle"></div>
                     </div>
-                    <input type="hidden" name="send_message" {eq name="directentry" value="1" } value="0" {else/} value="{$eventInfo.send_message}"{/eq} class="data">
+                    <input type="hidden" name="send_message" {eq name="directentry" value="1" } value="0" {else/} value="{$eventInfo.send_message}"
+                        {/eq} class="data">
                 </div>
 
                 <p class="bggray2" style="height:4px"></p>
@@ -282,6 +286,8 @@
                         <label>活动人员</label>
                     </div>
                     <div class="box" id="inactiveList"></div>
+                    <div class="box" id="hideStList" style="display: none"></div>
+                    <div class="box" id="hideStListIni" style="display: none"></div>
 
                     <div class="operation-btn">
                         <span class="mui-badge">0</span>
@@ -546,6 +552,11 @@
             $(".del").click(function () {
                 $("input[name='member']:checked").parents(".checkboxCont").remove();
                 changeIndex();
+                $("#hideStList").empty();
+                $("#inactiveList input[type=checkbox]").each(function () {
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  type="checkbox"><input type="hidden" class="stdList"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"></div>';
+                    $("#hideStList").append(str);
+                })
             });
 
             //角标随checkboxCont的数量变化
@@ -570,17 +581,13 @@
 
             // 选择添加报名人员点击事件
             $("#teamMemberConfirm").on('click', function () {
-
                 $("#inactiveList").empty();
-                memberList = [];//报名人员列表数组
+                $("#hideStList").empty();
                 $(".addTeamMemberList input[type=checkbox]:checked").each(function () {
                     var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%"></label><font class="f14">' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" ></div>';
-                    member = $(this).attr("data-member");
-                    member_id = $(this).attr("data-member_id");
                     $("#inactiveList").append(str);
-                    memberList.push({ member: member, member_id: member_id });
+                    $("#hideStList").append(str);
                 });
-                console.log(memberList)
 
                 changeIndex();//调用-更新序号
                 mui("#addTeamMember").popover("toggle");
@@ -731,6 +738,40 @@
 
             albumImg();//调用活动花絮图片组好的数组
 
+            memberListDel = [];
+            memberList = [];
+            ////////////////////////最终选择的活动人员///////////////////////////////////////// 
+            $("#inactiveList input[name=member]").each(function () {
+                member = $(this).attr("data-member");
+                member_id = $(this).attr("data-member_id");
+                memberList.push({ member: member, member_id: member_id });
+            });
+            console.log(memberList)
+            ////////////////////////最终选择的活动人员///////////////////////////////////////// 
+
+            ////////////////////////在已选列表中删除了的人员///////////////////////////////////////// 
+            var idDelID = ""
+            //去除活动人员
+            $("#hideStListIni input[name=member]").each(function (i) {
+                var dsid = $(this).attr("data-member_id");
+                //默认为要去除的活动人员
+                idDelID = "Yes";
+                //该人员遍历新编辑的活动人员表判断是否存在
+                $("#hideStList input[name=member]").each(function () {
+                    if (dsid == $(this).attr("data-member_id")) {
+                        idDelID = "No";
+                        return false;
+                    }
+                });
+                //上面遍历过不存在就添加到最终变动活动人员列表中
+                if (idDelID == "Yes") {
+                    var member_id = $(this).attr("data-member_id");
+                    memberListDel.push({ member_id: member_id, status: -1 });
+                }
+                console.log(memberListDel)
+            });
+            ////////////////////////在已选列表中删除了的人员///////////////////////////////////////// 
+
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
@@ -738,7 +779,8 @@
             var objData = wooApi.arrTOobj(arrData);
             var event_des = $('textarea.data').val();
             objData.event_des = event_des;
-            objData.memberData = JSON.stringify(memberList);
+            objData.memberData = JSON.stringify(memberList); //最终选择的活动人员
+            // objData.memberDataDel = JSON.stringify(memberListDel); //在已选列表中删除了的人员
             objData.album = JSON.stringify(album);
 
             if (directentry == 0) {
@@ -836,11 +878,12 @@
                             memberList = [];//报名人员列表数组
                             $("#inactiveList").empty();
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                inactiveDiv += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].member + '</font><input name="member" value="' + data.data[i].member_id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" ></div>'
-                                $("#inactiveList").append(inactiveDiv);
+                                inactiveDiv = inactiveDiv + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].member + '</font><input name="member" value="' + data.data[i].member_id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" ></div>'
                                 memberList.push({ member: data.data[i].member, member_id: data.data[i].member_id, id: data.data[i].id });
                             };
-                            console.log(memberList)
+                            $("#inactiveList").append(inactiveDiv);
+                            $("#hideStList").append(inactiveDiv);
+                            $("#hideStListIni").append(inactiveDiv);
 
                             if ($("#inactiveList").html() == '') {
                                 $(".checkChecked").append('<p class="nohave">没有学员哦</p>');

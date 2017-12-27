@@ -78,7 +78,7 @@
                             <strong>{$eventInfo.event}</strong>
                             <p class="mui-ellipsis">{$eventInfo.event_type}</p>
                         </div>
-                        <div class="price-frame f18 rightLocation">{$eventInfo.event }</div>
+                        <div class="price-frame f18 rightLocation">{$eventInfo.team}</div>
                     </a>
                 </li>
             </ul>
@@ -108,16 +108,13 @@
 
             <ul class="mui-table-view detalis-list list mainInfo mb">
                 <div class="page-header">
-                    <span class="course">
-                        <font class="colororange">报名</font> | 实际参与</span>
-                    <span class="more">报名
+                    <span class="course colororange statusText">报名人员</span>
+                    <span class="more">
                         <b class="colororange">{$eventInfo.reg_number}</b> 人</span>
                 </div>
 
                 <li class="mui-table-view-cell listli">
-                    <div class="imgShow">
-
-                    </div>
+                    <div class="imgShow"></div>
                 </li>
             </ul>
 
@@ -405,25 +402,20 @@
                 $(".status4").show();
             }
 
-            if (teamrole < 0 && time < end_time) {
+            if (time < end_time) {
                 $(".status2").show();
-            } else if (teamrole < 0 && time > end_time) {
+            } else{
                 $(".status1").show();
+            }
+
+            // 报名/参与人员的文字显示
+            if (time > end_time) {
+                $(".statusText").text("参与者");
             }
         }
 
         //获取已经报名的活动人员列表
-        function toSignUpList(status) {
-
-            // 获取当前时间
-            var d = new Date()
-            var minutes = d.getMinutes()
-            var hours = d.getHours()
-            var day = d.getDate()
-            var month = d.getMonth() + 1
-            var year = d.getFullYear()
-            var time = year + "-" + month + "-" + day + " " + hours + ":" + minutes;
-
+        function toSignUpList() {
             var url = "{:url('api/team/teameventmemberall')}";
             var event_id = "{$eventInfo.id}";
             mui.ajax({
@@ -442,12 +434,11 @@
                         $(".imgShow").empty();
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             inactiveDiv += '<img src="' + data.data[i].avatar + '" style="margin-right:3px">'
-                            $(".imgShow").append(inactiveDiv);
                         };
-
-                        if ($(".imgShow").html() == '') {
-                            $(".checkChecked").append('<p class="nohave">没有学员哦</p>');
-                        }
+                        $(".imgShow").append(inactiveDiv);
+                    }
+                    if (data.code == 100) {
+                        $(".imgShow").append('<p class="mui-text-center">还没有人员哦</p>');
                     }
                 },
                 error: function (xhr, type, errerThrown) {

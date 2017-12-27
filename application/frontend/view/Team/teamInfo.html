@@ -497,7 +497,6 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += '<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli logostyle" id="logoframe"><img class="logostyle" src="' + data.data[i].avatar + '" alt=""><div class="mui-media-body role">' + data.data[i].role_text + '</div></li>'
                         }
-
                         $(".teamMemberList").empty();
                         if (newli == '') {
                             newli = '<p class="mui-text-center">没有查找到数据哦</p>'
@@ -587,7 +586,7 @@
                 data: {
                     team_id: team_id,
                     // is_finished: 0,
-                    status: 1
+                    // status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -603,16 +602,18 @@
                         var Ttime = gettimeh(data.data.start_time_stamp * 1000);
 
                         eventid = data.data.id
+                        console.log(data.data.is_finished)
+                        console.log(data.data.is_finished_num)
                         var url = "{:url('team/eventinfo')}" + '/team_id/' + data.data.team_id + '/event_id/' + data.data.id;
                         div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblue">' + Tmonth + '月</p><h1 class="day">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
                         div += '<div class="mui-media-body mainInfoRight wd66"><h5><strong>主题：' + data.data.event + '</strong>';
-                        if (data.data.is_finished_num = 0) {
+                        if (data.data.is_finished_num == 1) {
                             div += '<span class="colorgray status">[已结束]</span>';
                         } else {
                             div += '<span class="colororange status">[未结束]</span>';
                         }
                         div += '<div class="divFrame"><p>组织者：' + data.data.member + '</p><p>地点：' + data.data.location + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
-                        if (data.data.is_finished == 0) {
+                        if (data.data.is_finished_num == 1) {
                             div += '<button class="mui-btn opbtn bggray">已结束</button>';
                         } else {
                             div += '<button class="mui-btn opbtn bgred signupBtn">参加</button>';
