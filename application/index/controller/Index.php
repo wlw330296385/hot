@@ -24,6 +24,10 @@ class Index extends Controller{
         dump($a);
     }
 
+    public function totalSchedule(){
+        
+    }
+
     public function index(){
         $timestr = strtotime('2017-11-16');
         // 生成微信参数
