@@ -64,7 +64,7 @@
             <div class="tab-pullRefresh">
                 <div id="campScheduleList" class="mui-scroll-wrapper mui-control-content mui-active" style="top:165px;">
                     <div class="mui-scroll">
-                        <ul class="mui-table-view mui-text-center detalis-list list schedule OA_task_schedule"></ul>
+                        <ul class="mui-table-view mui-text-center detalis-list list scheduleAll OA_task_schedule"></ul>
                     </div>
                 </div>
                 <div id="onlineScheduleList" class="mui-scroll-wrapper mui-control-content" style="top: 88px">
@@ -262,7 +262,7 @@
                 if (data.code == 200) {
                     var newDate = new Date();
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + campID;
+                        var urls = "/frontend/schedule/scheduleinfo" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + campID;
                         var lession_time = data.data.data[i].lesson_time;
                         newli += '<li class="mui-table-view-cell mui-media">';
                         if (status == 0) {
@@ -274,12 +274,13 @@
                         newli += '</li>';
                     }
                 }
+
+
                 // 根据状态获取课时列表
                 if (gType == 1) {
                     //上拉刷新
-                    console.log(status)
                     if (status == undefined) {
-                        $(".schedule").empty().append(newli);
+                        $(".scheduleAll").empty().append(newli);
                     } else {
                         $(".schedule" + status).empty().append(newli);
                     }
@@ -288,6 +289,7 @@
                     if (newli == '') {
                         $(".schedule" + status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
                     }
+
                 } else {
                     //下拉加载 gType==2
                     $(".schedule" + status).append(newli);
