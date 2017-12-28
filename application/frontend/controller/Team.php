@@ -3,6 +3,7 @@
 namespace app\frontend\controller;
 
 
+use app\service\MatchService;
 use app\service\TeamService;
 
 class Team extends Base {
@@ -298,14 +299,33 @@ class Team extends Base {
 
     // 创建比赛
     public function creatematch() {
-        // 从球队模块进入页面 带team_id处理
-        $homeTeamId = input('team_id', 0);
-        $this->assign('homeTeamId', $homeTeamId);
         return view('Team/createMatch');
     }
 
     // 编辑比赛
     public function matchedit() {
+        $match_id = input('match_id', 0);
+        $matchS = new MatchService();
+
+        // $directentry 1为新增并录入比赛
+        $directentry = 0;
+        // 如果有event_id参数即修改活动，没有就新增活动并录入活动（事后录活动）
+        if ($match_id === 0) {
+            $matchInfo = [
+                'id' => 0
+            ];
+            $directentry = 1;
+            $memberlist = [];
+        } else {
+            $matchInfo = $matchS->getMatchRecord(['match_id' => $match_id]);
+            if (!empty($matchInfo['album'])) {
+                $matchInfo['album'] = json_decode($matchInfo['album'], true);
+            }
+        }
+        $this->assign('match_id', $match_id);
+        $this->assign('matchInfo', $matchInfo);
+        $this->assign('directentry', $directentry);
+        $this->assign('memberList', $memberlist);
         return view('Team/matchEdit');
     }
 

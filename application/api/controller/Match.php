@@ -18,22 +18,47 @@ class Match extends Base {
 
             $matchS = new MatchService();
             $teamS = new TeamService();
+            // 友谊赛类型 记录主队信息数据组合
+            $dataMatchRecord = [];
+            if ($data['type'] == 1) {
+                if (!$data['team_id']) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_402').'请选择主队球队']);
+                }
+                $homeTeamId = $data['team_id'];
+                $homeTeam = $teamS->getTeam(['id' => $homeTeamId]);
+                //dump($homeTeam);
+                $data['team'] = $homeTeam['name'];
+                $dataMatchRecord = [
+                    'home_team_id' => $homeTeam['id'],
+                    'home_team' => $homeTeam['name'],
+                    'home_team_logo' => $homeTeam['logo'],
+                    'home_team_color' => $data['home_team_color'],
+                    'home_team_colorstyle' => $data['home_team_colorstyle']
+                ];
+                if (!empty($data['opponent_id'])) {
+                    if ($data['opponent_id'] == $data['team_id']) {
+                        return json(['code' => 100, 'msg' => '请选择其他球队']);
+                    }
+                    $awayTeam = $teamS->getTeam(['id' => $data['opponent_id']]);
+                    $dataMatchRecord = [
+                        'away_team_id' => $awayTeam['id'],
+                        'away_team' => $awayTeam['name'],
+                        'away_team_logo' => $awayTeam['logo'],
+                        'away_team_color' => $data['away_team_color'],
+                        'away_team_colorstyle' => $data['away_team_colorstyle']
+                    ];
+                }
+            }
+
             $res = $matchS->saveMatch($data);
             // 比赛记录创建成功后操作
-            /*if ($res['code'] == 200) {
-                // 如果有传入主队team_id 保存比赛-球队数据
-                if ( input('?post.home_team_id') ) {
-                    $home_team_id = $data['home_team_id'];
-                    $homeTeam = $teamS->getTeam(['id' => $home_team_id]);
-                    $matchTeamData = [
-                        'match_id' => $res['data'],
-                        'home_team_id' => $homeTeam['id'],
-                        'home_team' => $homeTeam['name'],
-                        'home_team_logo' => $homeTeam['logo']
-                    ];
-                    $matchS->saveMatchTeam($matchTeamData);
+            if ($res['code'] == 200) {
+                // 友谊赛类型 记录主队信息
+                if ($data['type'] == 1) {
+                    $dataMatchRecord['match_id'] = $res['data'];
+                    $matchS->saveMatchRecord($dataMatchRecord);
                 }
-            }*/
+            }
             return json($res);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -150,5 +175,87 @@ class Match extends Base {
     }
 
     // 球队比赛列表+年份
+
     // 球队比赛列表（所有数据）
+
+    // 球队战绩列表（页码）+年份
+    public function matchrecordlistpage() {
+        try {
+            // 传入变量作为查询条件
+            $map = input('param.');
+            // 有传入查询年份
+            if (input('?year')) {
+                $year = input('year');
+                if (is_numeric($year)) {
+                    $tInterval = getStartAndEndUnixTimestamp($year);
+                    $map['finished_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
+                }
+                unset($map['year']);
+            }
+
+            // 获取数据列表
+            $matchS = new MatchService();
+            $result = $matchS->matchRecordListPaginator($map);
+            // 返回结果
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球队战绩列表+年份
+    public function matchrecordlist() {
+        try {
+            // 传入变量作为查询条件
+            $map = input('param.');
+            $page = input('page', 1);
+            // 有传入查询年份
+            if (input('?year')) {
+                $year = input('year');
+                if (is_numeric($year)) {
+                    $tInterval = getStartAndEndUnixTimestamp($year);
+                    $map['finished_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
+                }
+                unset($map['year']);
+            }
+
+            // 获取数据列表
+            $matchS = new MatchService();
+            $result = $matchS->matchRecordList($map, $page);
+            // 返回结果
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球队战绩列表（所有数据）
+    public function matchrecordlistall() {
+        try {
+            // 传入变量作为查询条件
+            $map = input('param.');
+            // 获取数据列表
+            $matchS = new MatchService();
+            $result = $matchS->matchRecordListAll($map);
+            // 返回结果
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 }
