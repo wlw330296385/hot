@@ -63,22 +63,21 @@ class Event extends Base{
     public function comfirmBillTEST() {
         $event_id = input('param.event_id');
         $total = input('param.total');
-        $domIndex = input('param.domIndex');
-        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]); 
-        $dom = json_decode($eventInfo['dom']);    
+        $domIndex = input('param.domIndex',0);
+        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);     
         $billOrder = '2'.getOrderID(rand(0,9));
         $jsonBillInfo = [
-            'goods'=>$eventInfo['event'].',套餐:'.$dom[$domIndex]['name'],
+            'goods'=>$eventInfo['event'].'-'.$eventInfo['doms'][$domIndex]['name'],
             'goods_id'=>$eventInfo['id'],
             'camp_id'=>$eventInfo['organization_id'],
             'camp'=>$eventInfo['organization'],
             'organization_type'=>1,
-            'price'=>$dom[$domIndex]['price'],
+            'price'=>$eventInfo['doms'][$domIndex]['price'],
             'score_pay'=>$eventInfo['score'],
             'goods_type'=>2,
             'pay_type'=>'wxpay',
         ];
-        $amount = $total*$dom[$domIndex]['price'];
+        $amount = $total*$eventInfo['doms'][$domIndex]['price'];
         // $amount = 0.01;
         $WechatJsPayService = new \app\service\WechatJsPayService;
         $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
@@ -87,15 +86,17 @@ class Event extends Base{
         $shareurl = request()->url(true);
         $wechatS = new \app\service\WechatService;
         $jsapi = $wechatS->jsapi($shareurl);
-        // dump($jsApiParameters);
-        // dump($jsapi);die;
+        $eventInfo['price'] = $eventInfo['doms'][$domIndex]['price'];
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('jsapi', $jsapi);
         $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
         $this->assign('eventInfo',$eventInfo);
         $this->assign('billOrder',$billOrder);
-        return view('Event/comfirmBillTEST');
+        return view('Event/comfirmBill');
     }
+
+
+
 
     // 创建活动
     public function createEvent() {
