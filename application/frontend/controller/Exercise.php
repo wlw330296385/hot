@@ -22,6 +22,7 @@ class Exercise extends Base{
         $camp_id = input('param.camp_id',0);
     	$exerciseInfo = $this->ExerciseService->getExerciseInfo(['id'=>$exercise_id]);
     	if ($exerciseInfo && !empty($exerciseInfo['exercise_detail'])) {
+            $exerciseInfo['exercise_detail'] = str_replace(array("/r/n", "/r", "/n"), '', $exerciseInfo['exercise_detail']);
             $exerciseInfo['exercise_detail'] = str_replace(PHP_EOL, '', $exerciseInfo['exercise_detail']);
         }
         $power = $exerciseInfo['member_id'] == $this->memberInfo['id'] ? 1 : 0;
