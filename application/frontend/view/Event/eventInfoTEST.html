@@ -84,7 +84,7 @@
                             <p class="mui-ellipsis">{$eventInfo.event_type}</p>
                         </div>
                         <div class="price-frame">
-                            <p class="price">￥<strong>{$eventInfo.price}</strong><span class="nofloat"> / 人</span></p>
+                            <p class="price">￥<strong>{$eventInfo['doms'][0]['price']}</strong><span class="nofloat"> / 人</span></p>
                             <p class="price"><span class="nofloat">已报名{$eventInfo.participator}人</span></p>
                         </div>
                     </a>
@@ -92,13 +92,12 @@
             </ul>
             <ul class="mui-table-view">
                 <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
-                <li class="mui-table-view-cell listli"><label>活动对象</label><span class="target_type"></span></li>
+                <li class="mui-table-view-cell listli"><label>活动对象</label><span class="target_type">{$eventInfo.target_type}</span></li>
                 <li class="mui-table-view-cell listli">报名种类
                     <span>
-
-                        <button type="button" class="mui-btn selectTotal" data="">包车</button>
-                        <button type="button" class="mui-btn selectTotal" data="">不包车</button>
-
+                        {volist name='$eventInfo.doms' id="vol"}
+                        <button type="button" class="mui-btn selectTotal  {if $key==0} bggreen{/if}   " value="{$vol.price}" data="">{$vol.name}</button>
+                        {/volist}
                     </span>
                 </li>
                 <li class="mui-table-view-cell listli {eq name='eventInfo.target_type' value='2||3'}show{else/}hide{/eq}">所属训练营<span>{$eventInfo.organization}</span></li>
@@ -224,18 +223,7 @@
 
         });
 
-        // 活动对象转换成文字显示
-        function targetType() {
-            target_type = "{$eventInfo.target_type}";
-            if (target_type == 1) {
-                target_type_name = "公开活动";
-            } else if (target_type == 2) {
-                target_type_name = "营内活动";
-            } else if (target_type == 3) {
-                target_type_name = "班内活动";
-            }
-            $(".target_type").text(target_type_name)
-        }
+  
         // 默认的样式
         function initialEds() {
             if ($(".intro").text() == '') {

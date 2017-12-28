@@ -11,6 +11,11 @@ class Event extends Model{
         $status = [1=>'正常',2=>'下架'];
         return $status[$value];
     }
+
+    public function getTargetTypeAttr($value){
+        $TargetType = [1=>'公开活动',2=>'营内活动',3=>'班内活动'];
+        return $TargetType[$value];
+    }
    	
    	public function getIsMaxAttr($value){
         $status = [1=>'正常',-1=>'已满人'];

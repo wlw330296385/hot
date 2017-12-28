@@ -198,7 +198,7 @@
 
                 <div class="mui-input-row h-auto">
                     <a href="#eventDom" class="mui-navigate-right">
-                        <label>报名种类</label>
+                        <label>活动套餐</label>
                         <span class="eventDom wd60" style="line-height: 24px;">
 
                              <!--  循环出来，免费的列出这个
@@ -500,10 +500,9 @@
 
             });
         })(mui, document);
-
+        //初始化全局变量
+        var eventDomArr = [{name:'默认',price:0}];
         $(function () {
-            //初始化全局变量
-            var eventDomArr = [];
             //页面默认打开时隐藏报名种类的价格
             $("input[name='event-dom_price']").hide();
             //获取训练营粉丝列表
@@ -595,7 +594,7 @@
                 if($("#eventPrice").val()==2){
                     addPrice = '<input type="text" name="event-dom_price" class="wd36 fr" value="" placeholder="对应价格">'
                 }
-                $("#eventDom form").prepend('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i>'+addPrice+'</div>');
+                $("#eventDom form").append('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i>'+addPrice+'</div>');
             })
             // 删除
             $(document).on('tap', ".cancel-dom", function () {
@@ -838,6 +837,11 @@
             var objData = wooApi.arrTOobj(arrData);
             var event_des = $('textarea.data').val();
             objData.event_des = event_des;
+            objData.price = eventDomArr[0].price;
+            if(objData.is_free == 2 && objData.price==0){
+                mui.alert("请添加活动套餐");
+                return false;
+            }
             var url = "{:url('api/event/updateEventApi')}" + '/event_id/{$eventInfo.id}';
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {

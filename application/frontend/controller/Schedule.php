@@ -47,14 +47,14 @@ class Schedule extends Base
     // 课时列表
     public function scheduleListOfStudent(){
     	$student_id = input('param.student_id');
-    	$studentList = db('student')->where(['member_id'=>$this->memberInfo['id']])->where('delete_time',null)->select();
+    	$camp_id = input('param.camp_id');
+    	$studentList = db('lesson_member')->distinct(true)->field("student_id,student")->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>$camp_id])->where('delete_time',null)->select();
     	if(!$studentList){
     		$this->error('您还没有创建学生');
     	}
     	if(!$student_id){
-    		$student_id = $studentList[0]['id'];
+    		$student_id = $studentList[0]['student_id'];
     	}
-    	$camp_id = input('param.camp_id');
     	// 学生的班级
     	$gradeList = db('grade_member')->where(['student_id'=>$student_id,'camp_id'=>$camp_id])->where('delete_time',null)->select();
     	$gradeIDS = db('grade_member')->where(['student_id'=>$student_id,'camp_id'=>$camp_id])->where('delete_time',null)->column('grade_id');

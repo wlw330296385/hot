@@ -193,7 +193,7 @@
 
                 <div class="mui-input-row h-auto">
                     <a href="#eventDom" class="mui-navigate-right">
-                        <label>报名种类</label>
+                        <label>活动套餐</label>
                         <span class="eventDom wd60" style="line-height: 24px;"></span>
                     </a>
                 </div>
@@ -493,13 +493,13 @@
 
         function add_id(id) {
             window.id = id;
-            console.log(window.id);
         }
+        //初始化全局变量
+        var eventDomArr = [{name:'默认',price:0}];
         var all = '';
         $(function () {
 
-            //初始化全局变量
-            var eventDomArr = [];
+            
             //页面默认打开时隐藏报名种类的价格
             $("input[name='event-dom_price']").hide();
             //获取训练营粉丝列表
@@ -512,9 +512,7 @@
             // 具体对象
             $(".campGradeList").on('tap', 'li', function () {
                 var target = $.trim($(this).text());
-                console.log(target)
                 var target_id = $(this).attr('data-id');
-                console.log(target_id)
                 $(".target_id").val(target_id);
                 $(".targetCont").text(target);
                 mui("#target").popover("toggle");
@@ -539,7 +537,6 @@
                 var eDom = '';
                 var eDomPrice = '';
                 var ePrice =$("#eventPrice").val();
-                console.log(ePrice)
                 eventDomArr = [];
                 //把所选课量串在一起，以逗号分隔
                 $("#eventDom .mui-checkbox").each(function () {
@@ -561,7 +558,7 @@
                 if(isTrue){
                     eDoms = eDoms.substring(0, eDoms.length - 1);
                     $(".eventDom").text(eDoms);
-                    console.log(eventDomArr)
+                    
                     mui('#eventDom').popover('toggle');
                 }else{
                     mui.alert('请填写完整，并保证名称长度不超过10个字，价格为纯数字，谢谢！', '温馨提示', '确定', function () {
@@ -575,7 +572,7 @@
                 if($("#eventPrice").val()==2){
                     addPrice = '<input type="text" name="event-dom_price" class="wd36 fr" value="" placeholder="对应价格">'
                 }
-                $("#eventDom form").prepend('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i>'+addPrice+'</div>');
+                $("#eventDom form").append('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i>'+addPrice+'</div>');
             })
             // 删除
             $(document).on('tap', ".cancel-dom", function () {
@@ -631,7 +628,6 @@
             $("#cost").on('click', '.next_page', function () {
                 var getTotalPage = $("#cost .totalPage").text();
                 pageLD++;
-                console.log(pageLD)
                 if (pageLD > getTotalPage) {
                     mui.toast("已经最后一页了");
                 } else {
@@ -706,7 +702,6 @@
             $(document).on('tap', '.operationDiv h5', function () {
                 var YinputValue = '<i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="title" autofocus value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="标题">';
                 $(this).parent(".operationDiv").html(YinputValue).addClass("bgorange");
-                console.log(YinputValue)
             });
 
             // 焦点离开后把内容放在p标签里
@@ -766,13 +761,13 @@
         // 获取数据并进行提交
         function submitAction() {
 
-            if ($("#eventPrice option:selected").text() == "收费") {
-                var price = $("input[name=price]").val();
-                if (!(/^\+?[1-9]\d*$/).test(price)) {
-                    mui.alert("请输入不为0的活动单价");
-                    return false;
-                }
-            };
+            // if ($("#eventPrice option:selected").text() == "收费") {
+            //     var price = $("input[name=price]").val();
+            //     if (!(/^\+?[1-9]\d*$/).test(price)) {
+            //         mui.alert("请输入不为0的活动单价");
+            //         return false;
+            //     }
+            // };
 
             if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
                 mui.alert("请输入正确的手机格式");
@@ -782,7 +777,6 @@
             $('.delbtn').remove();
             var totalHtml = $(".introBox").html();
             $(".event_des").val(totalHtml);
-            console.log(totalHtml);
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
@@ -792,6 +786,12 @@
             var event_des = $('textarea.data').val();
             objData.dom = JSON.stringify(eventDomArr);
             objData.event_des = event_des;
+
+            objData.price = eventDomArr[0].price;
+            if(objData.is_free == 2 && objData.price==0){
+                mui.alert("请添加活动套餐");
+                return false;
+            }
             var url = "{:url('api/event/updateEventApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
@@ -825,7 +825,6 @@
                 headers: { 'Content-Type': 'application/json' },
                 //processData:false,
                 success: function (data) {
-                    console.log(data)
                     if (data.code == 200) {
                         var gradeli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
@@ -862,7 +861,6 @@
                 timeout: 10000,//超时时间设置为10秒；
                 headers: { 'Content-Type': 'application/json' },
                 success: function (data) {
-                    console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
@@ -912,7 +910,6 @@
                 headers: { 'Content-Type': 'application/json' },
                 //processData:false,
                 success: function (data) {
-                    console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {

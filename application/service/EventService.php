@@ -22,6 +22,7 @@ class EventService {
         if($result){
             $res = $result->toArray();
             foreach ($res as $key => &$value) {
+                $value['doms'] = json_decode($value['dom'],true);
                 $value['event_times'] = date('Y-m-d H:i',$value['event_time']);
                 $value['ends'] = date('Y-m-d H:i',$value['end']);
                 $value['starts'] = date('Y-m-d H:i',$value['start']);
@@ -38,6 +39,7 @@ class EventService {
         if($result){
             $res =  $result->toArray();
             foreach ($res['data'] as $key => &$value) {
+                $value['doms'] = json_decode($value['dom'],true);
                 $value['event_times'] = date('Y-m-d H:i',$value['event_time']);
                 $value['ends'] = date('Y-m-d H:i',$value['end']);
                 $value['starts'] = date('Y-m-d H:i',$value['start']);
@@ -63,6 +65,8 @@ class EventService {
         $result = Event::where($map)->find();
         if ($result){
             $res = $result->toArray();
+
+            $res['doms'] = json_decode($res['dom'],true);
             $res['status_num'] = $result->getData('status');
             $res['event_times'] = date('Y-m-d H:i',$res['event_time']);
             $res['ends'] = date('Y-m-d H:i',$res['end']);

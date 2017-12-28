@@ -183,6 +183,7 @@ class Event extends Base{
         }else{
             $EventMemberList = [];
         }
+        // dump($eventInfo);die;
         $this->assign('EventMemberList',$EventMemberList);
         $this->assign('variable',$variable);
         $this->assign('eventInfo',$eventInfo);
