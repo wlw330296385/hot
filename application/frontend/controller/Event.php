@@ -63,6 +63,44 @@ class Event extends Base{
     public function comfirmBillTEST() {
         $event_id = input('param.event_id');
         $total = input('param.total');
+        $domIndex = input('param.domIndex',0);
+        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);     
+        $billOrder = '2'.getOrderID(rand(0,9));
+        $jsonBillInfo = [
+            'goods'=>$eventInfo['event'].'-'.$eventInfo['doms'][$domIndex]['name'],
+            'goods_id'=>$eventInfo['id'],
+            'camp_id'=>$eventInfo['organization_id'],
+            'camp'=>$eventInfo['organization'],
+            'organization_type'=>1,
+            'price'=>$eventInfo['doms'][$domIndex]['price'],
+            'score_pay'=>$eventInfo['score'],
+            'goods_type'=>2,
+            'pay_type'=>'wxpay',
+        ];
+        $amount = $total*$eventInfo['doms'][$domIndex]['price'];
+        // $amount = 0.01;
+        $WechatJsPayService = new \app\service\WechatJsPayService;
+        $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
+        
+        $jsApiParameters = $result['data']['jsApiParameters'];
+        $shareurl = request()->url(true);
+        $wechatS = new \app\service\WechatService;
+        $jsapi = $wechatS->jsapi($shareurl);
+        // dump($jsApiParameters);
+        // dump($jsapi);die;
+        $this->assign('jsApiParameters',$jsApiParameters);
+        $this->assign('jsapi', $jsapi);
+        $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
+        $this->assign('eventInfo',$eventInfo);
+        $this->assign('billOrder',$billOrder);
+        return view('Event/comfirmBill');
+    }
+
+
+
+    public function comfirmBillTEST() {
+        $event_id = input('param.event_id');
+        $total = input('param.total');
         $domIndex = input('param.domIndex');
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]); 
         $dom = json_decode($eventInfo['dom']);    
