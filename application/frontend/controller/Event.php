@@ -86,8 +86,7 @@ class Event extends Base{
         $shareurl = request()->url(true);
         $wechatS = new \app\service\WechatService;
         $jsapi = $wechatS->jsapi($shareurl);
-        // dump($jsApiParameters);
-        // dump($jsapi);die;
+        $eventInfo['price'] = $eventInfo['doms'][$domIndex]['price'];
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('jsapi', $jsapi);
         $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
@@ -97,7 +96,7 @@ class Event extends Base{
     }
 
 
-    
+
 
     // 创建活动
     public function createEvent() {
