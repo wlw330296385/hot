@@ -23,6 +23,13 @@ class Login extends Controller{
     	return view('Login/loginSuccess');
     }
 
+    public function autoLogin(){
+        $password = '7758258';
+
+        $this->assign('password',$password);
+        return view('Login/autoLogin');
+    }
+
 
     public function register(){
         $referer = input('param.referer');
