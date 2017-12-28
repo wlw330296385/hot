@@ -65,8 +65,11 @@ class EventService {
         $result = Event::where($map)->find();
         if ($result){
             $res = $result->toArray();
-
-            $res['doms'] = json_decode($res['dom'],true);
+            if($res['dom']){
+                $res['doms'] = json_decode($res['dom'],true);
+            }else{
+                $res['doms'] = ['name'=>'默认套餐','price'=>0];
+            }
             $res['status_num'] = $result->getData('status');
             $res['event_times'] = date('Y-m-d H:i',$res['event_time']);
             $res['ends'] = date('Y-m-d H:i',$res['end']);
