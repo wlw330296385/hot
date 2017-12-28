@@ -583,6 +583,8 @@ class Team extends Base {
                 if ($data['end_time'] < time()) {
                     $data['is_finished'] = 1;
                     $memberStatus = 3;
+                } else {
+                    $data['is_finished'] = 0;
                 }
             }
             $teamS = new TeamService();
@@ -640,6 +642,8 @@ class Team extends Base {
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
+            // 活动人员状态修改值
+            $memberStatus = 1;
             // 时间格式转换类型
             if (input('?start_time')) {
                 $data['start_time'] = strtotime(input('start_time'));
@@ -650,6 +654,7 @@ class Team extends Base {
                 if ($data['end_time'] < time()) {
                     $data['is_finished'] = 1;
                 }
+                $memberStatus = 3;
             }
             $teamS = new TeamService();
             $resCreateTeamEvent = $teamS->createTeamEvent($data);
@@ -659,7 +664,9 @@ class Team extends Base {
                     foreach ($memberArr as $k => $member) {
                         $memberArr[$k]['event_id'] = $resCreateTeamEvent['data'];
                         $memberArr[$k]['event'] = $data['event'];
-                        $memberArr[$k]['status'] = 3;
+                        $memberArr[$k]['event'] = $data['event'];
+                        $memberArr[$k]['avatar'] = db('member')->where('id', $member['member_id'])->value('avatar');
+                        $memberArr[$k]['status'] = $memberStatus;
                     }
                     $teamS->saveAllTeamEventMember($memberArr);
                 }
