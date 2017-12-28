@@ -191,20 +191,11 @@
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
                     headers: { 'Content-Type': 'application/json' },
-                    //processData:false,
                     success: function (data) {
                         console.log(data)
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                // 获取当前时间
-                                var d = new Date()
-                                var minutes = d.getMinutes()
-                                var hours = d.getHours()
-                                var day = d.getDate()
-                                var month = d.getMonth() + 1
-                                var year = d.getFullYear()
-                                var time = year + "-" + month + "-" + day + " " + hours + ":" + minutes;
 
                                 var urls = "{:url('team/eventInfo')}" + '/event_id/' + data.data.data[i].id + '/team_id/' + "{$team_id}";
                                 newli += '<li class="mui-table-view-cell mui-media listli">'
@@ -212,8 +203,8 @@
                                 if (data.data.data[i].is_max == "已满人") {
                                     newli += '<font style="color:red">&nbsp;&nbsp;[满人]</font>';
                                 }
-                                if (data.data.data[i].is_finished == "已完成") {
-                                    newli += '<font style="color:#b1b0b0">&nbsp;&nbsp;[完成]</font>';
+                                if (data.data.data[i].is_finished == "已结束") {
+                                    newli += '<font style="color:#b1b0b0">&nbsp;&nbsp;[结束]</font>';
                                 }
                                 newli += '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div><div class="price-frame rightLocation">' + data.data.data[i].reg_number + '人参与</div></a>'
                                 newli += '</li>';
