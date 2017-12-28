@@ -96,7 +96,7 @@
                 <li class="mui-table-view-cell listli">报名种类
                     <span>
                         {volist name='$eventInfo.doms' id="vol"}
-                        <button type="button" class="mui-btn selectTotal  {if $key==0} bggreen{/if}   " value="{$vol.price}" data="">{$vol.name}</button>
+                        <button type="button" class="mui-btn selectDom {if $key==0} bggreen{/if}" value="{$vol.price}" data="{$key}">{$vol.name}</button>
                         {/volist}
                     </span>
                 </li>
@@ -178,12 +178,19 @@
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
+        var domIndex = 0;
 
         $(function () {
             // 活动对象转换成文字显示
-            targetType();
             // 默认的样式
             initialEds();
+
+
+            // 选择套餐
+            $('.selectDom').on('click',function(){
+                $('.selectDom').removeClass('bggreen');
+                $(this).addClass('bggreen');
+            })
 
             var surplus = "{$eventInfo.max}" - "{$eventInfo.participator}";
             $(".surplus").text(surplus)
@@ -204,6 +211,8 @@
                     var addForm = '<div class="mui-popup-input"><input type="number" name="participator" class="data" placeholder="请输入报名人数" autofocus=""></div>'
                     mui.confirm(addForm, '报名人数', btnArray, function (e) {
                         if (e.index == 0) {
+                            // 获取套餐
+                            domIndex = $('.selectDom.bggreen').attr('data');
                             var eventTotal = $("input[name=participator]").val();
                             if (!(/^[0-9]*$/).test(eventTotal) || eventTotal == '') {
                                 mui.toast("请输入正确数字");
@@ -215,7 +224,7 @@
                             } else {
                                 buyUrl = "{:url('event/comfirmBill',['event_id'=>$eventInfo['id']])}";
                             }
-                            window.location.href = buyUrl + '?total=' + eventTotal;
+                            window.location.href = buyUrl + '?total=' + eventTotal+'&domIndex='+domIndex;
                         }
                     });
                 }

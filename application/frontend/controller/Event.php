@@ -24,7 +24,7 @@ class Event extends Base{
         return view('Event/bookBill');
     }
 
-    public function comfirmBill() {
+    public function comfirmBillTEST() {
         $event_id = input('param.event_id');
         $total = input('param.total');
 
@@ -60,7 +60,7 @@ class Event extends Base{
         return view('Event/comfirmBill');
     }
 
-    public function comfirmBillTEST() {
+    public function comfirmBill() {
         $event_id = input('param.event_id');
         $total = input('param.total');
         $domIndex = input('param.domIndex',0);
