@@ -16,27 +16,6 @@
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
     <style>
-        .mui-popover .mui-scroll-wrapper {
-            top: 43px;
-        }
-
-        .mui-popover-arrow {
-            left: auto;
-            right: 6px;
-        }
-
-        .mui-input-row a {
-            display: table;
-            width: 100%;
-        }
-
-        .mui-input-group img {
-            width: 42px;
-            border-radius: 50%;
-            background: #ddd;
-            border: none
-        }
-
         i.tip {
             height: 0;
             color: red;
@@ -58,12 +37,6 @@
             line-height: 43px;
             padding: 0 15px !important;
         }
-
-        small {
-            float: right;
-            line-height: 42px;
-            padding-right: 15px;
-        }
     </style>
 </head>
 
@@ -78,17 +51,17 @@
 
     <div class="mui-content pt">
 
-        <div class="camp-list camp-lesson-list ">
+        <div class="camp-list camp-lesson-list">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
 
-            <form action="" class="mui-input-group mt55">
+            <form action="" class="mui-input-group mt55" id="logoframe">
 
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>
                             <b>球队LOGO</b>
                         </label>
-                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
+                        <img id="preview_1" class="logostyle upload-preview" alt="">
                         <input type="hidden" name="logo" value='' class="data">
                     </a>
                 </div>
@@ -192,13 +165,13 @@
 
                 <div class="mui-input-row price-input-row">
                     <label>平均身高</label>
-                    <small>cm</small>
+                    <small class="unit">cm</small>
                     <input type="text" name="avg_height" class="data wd52" value="" placeholder="请输入平均身高" style="padding-right:0">
                 </div>
 
                 <div class="mui-input-row price-input-row">
                     <label>平均体重</label>
-                    <small>kg</small>
+                    <small class="unit">kg</small>
                     <input type="text" name="avg_weight" class="data wd52" value="" placeholder="请输入平均体重" style="padding-right:0">
                 </div>
 
@@ -238,7 +211,7 @@
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(2)">
                         <label>球队封面</label>
-                        <img id="preview_2" class="coachicon icon01 upload-preview" alt="">
+                        <img id="preview_2" class="logostyle upload-preview" alt="">
                         <input type="hidden" name="cover" value='' class="data">
                     </a>
                 </div>
@@ -881,6 +854,7 @@
                 }
             });
         };
+
 
         //场地列表接口获取数据并追加到页面 
         var toCourtList = function (keyword, wCourt, page) {

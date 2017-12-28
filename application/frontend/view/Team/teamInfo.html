@@ -576,8 +576,6 @@
             });
         };
 
-
-
         var eventid = ''
         //获取最新活动列表
         function toLastEventList() {
@@ -585,8 +583,6 @@
             mui.ajax("{:url('api/team/lastevent')}", {
                 data: {
                     team_id: team_id,
-                    // is_finished: 0,
-                    // status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -596,40 +592,36 @@
                     console.log(data)
                     var div = '';
                     if (data.code == 200) {
-                        // 将时间戳转成日期格式
-                        var Tmonth = gettimem(data.data.start_time_stamp * 1000);
-                        var Tday = gettimed(data.data.start_time_stamp * 1000);
-                        var Ttime = gettimeh(data.data.start_time_stamp * 1000);
 
-                        eventid = data.data.id
-                        console.log(data.data.is_finished)
-                        console.log(data.data.is_finished_num)
-                        var url = "{:url('team/eventinfo')}" + '/team_id/' + data.data.team_id + '/event_id/' + data.data.id;
-                        div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblue">' + Tmonth + '月</p><h1 class="day">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
-                        div += '<div class="mui-media-body mainInfoRight wd66"><h5><strong>主题：' + data.data.event + '</strong>';
-                        if (data.data.is_finished_num == 1) {
-                            div += '<span class="colorgray status">[已结束]</span>';
-                        } else {
-                            div += '<span class="colororange status">[未结束]</span>';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            // 将时间戳转成日期格式
+                            var Tmonth = gettimem(data.data[i].start_time_stamp * 1000);
+                            var Tday = gettimed(data.data[i].start_time_stamp * 1000);
+                            var Ttime = gettimeh(data.data[i].start_time_stamp * 1000);
+                            eventid = data.data[i].id
+
+                            var url = "{:url('team/eventinfo')}" + '/team_id/' + data.data[i].team_id + '/event_id/' + data.data[i].id;
+                            div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblue">' + Tmonth + '月</p><h1 class="day">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
+                            div += '<div class="mui-media-body mainInfoRight wd66"><h5 class="title">主题：' + data.data[i].event + '</h5>';
+                            div += '<div class="divFrame"><p>组织者：' + data.data[i].member + '</p><p>地点：' + data.data[i].location + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
+                            if (data.data[i].is_finished_num == 1) {
+                                div += '<button class="mui-btn opbtn bggray">已结束</button>';
+                            } else {
+                                div += '<button class="mui-btn opbtn bgred signupBtn">参加</button>';
+                            }
+                            div += ' </div></div></li>';
+                            // 人员头像版块
+                            div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl wd66 imgShowEvent">';
+                            for (var j = 0; j <= data.data[i].memberlist.length - 1; j++) {
+                                div += '<img src="' + data.data[i].memberlist[j].avatar + '" alt="">';
+                            }
+                            div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[i].reg_number + '</font>/<font class="reg_all">' + data.data[i].max + '</font> 已报名</span></li>';
                         }
-                        div += '<div class="divFrame"><p>组织者：' + data.data.member + '</p><p>地点：' + data.data.location + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
-                        if (data.data.is_finished_num == 1) {
-                            div += '<button class="mui-btn opbtn bggray">已结束</button>';
-                        } else {
-                            div += '<button class="mui-btn opbtn bgred signupBtn">参加</button>';
-                        }
-                        div += ' </div></div></li>';
-                        div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl wd66 imgShowEvent">';
-                        for (var i = 0; i <= data.data.memberlist.length - 1; i++) {
-                            div += '<img src="' + data.data.memberlist[i].avatar + '" alt="">';
-                        }
-                        div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data.reg_number + '</font>/<font class="reg_all">' + data.data.max + '</font> 已报名</span></li>';
 
                         if (div == '') {
                             div = '<p class="mui-text-center">没有查找到数据哦</p>'
                         }
-                        $(".newEvent").empty();
-                        $(".newEvent").append(div);
+                        $(".newEvent").empty().append(div);
                     }
                 },
                 error: function (xhr, type, errorThrown) {
@@ -640,16 +632,19 @@
         };
 
         // 将时间戳转成日期格式
+        // 年
         function gettimem(m) {
             var _time = new Date(m);
             var month = _time.getMonth() + 1;
             return month;
         }
+        // 月
         function gettimed(d) {
             var _time = new Date(d);
             var day = _time.getDate();
             return day;
         }
+        // 时间
         function gettimeh(h) {
             var _time = new Date(h);
             var hours = _time.getHours();
