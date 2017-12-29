@@ -46,13 +46,9 @@
         .mui-input-row label {
             line-height: 20px;
         }
-        .pline{
-            height: 4px;
-            margin: 0;
-            background: #efeff4 !important;
-        }
     </style>
 </head>
+
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
@@ -73,7 +69,7 @@
                 <div class="mui-input-row">
                     <label class="wd60">{$teamInfo.name}</label>
                     <span>
-                        <a href="{:url('team/matchEdit')}" style="color:#59b200" !important>[直接录入活动]</a>
+                        <a href="{:url('team/matchEdit')}" style="color:#59b200" !important>[直接录入比赛]</a>
                     </span>
                 </div>
 
@@ -111,7 +107,7 @@
                     <a href="#court" class="mui-navigate-right">
                         <label>球场</label>
                         <span class="courtCont domData" name="court"></span>
-                        <input type="hidden" name="court_id" value="" class="court_id data">
+                        <input type="hidden" name="court_id" value="" class="data">
                     </a>
                 </div>
 
@@ -352,7 +348,7 @@
             swipeBack: true //启用右滑关闭功能
         });
 
-        mui(".direct").on("tap", "a", function () {
+        mui("body").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
 
@@ -443,11 +439,6 @@
 
         $(function () {
 
-
-            colorShow(); // 调用主场客场颜色显示
-            toTeamList()
-            toCourtList();
-
             //获取训练营粉丝列表
             var teamKeyword = '';
             var courtKeyword = '';
@@ -511,20 +502,20 @@
                 var court = $(this).find("font").text();
                 $(".courtCont").text(court);
                 var id = $(this).attr('data-id');
-                $(".court_id").val(id);
+                $("input[name=court_id]").val(id);
                 mui("#court").popover("toggle");
             })
             //清除常驻球场
-            $("#courtDel").on('tap', '', function () {
-                $(".court").text('');
-                $(".court_id").val("");
+            $("#CourtDel").on('click', '', function () {
+                $(".contCont").text('');
+                $("input[name=court_id]").val("");
                 mui("#court").popover("toggle");
             })
             //搜索常驻球场
             $("#searchCR").on("click", function () {
                 var keyword = $(".keywordLD").val();
                 var pageCR = 1;
-                toCampList(keyword, "court", pageCR);
+                toCourtList(keyword, "court", pageCR);
             })
             //常驻球场弹出框页码控制
             $("#court").on('click', '.next_page', function () {
@@ -570,10 +561,6 @@
                 mui("#homeColor").popover("toggle");
             });
 
-            // 点击直接编辑录入
-            // $(".direct").on("tap", '', function () {
-            //     location.href = "{:url('match/matchEdit')}";
-            // });
 
             // 是否发布通知
             $(".isRelease").on("tap", '', function () {

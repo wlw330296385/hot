@@ -64,7 +64,10 @@
                 <div class="page-header">
                     <span class="course colororange statusText">报名人员</span>
                     <span class="more">
-                        <b class="colororange">{$eventInfo.reg_number}</b> 人</span>
+                        <a href="{:url('team/eventSignupList',['team_id'=>$teamInfo['id'],'event_id'=>$eventInfo['id']])}" class="mui-navigate-right">
+                            <b class="colororange">{$eventInfo.reg_number}</b> 人
+                        </a>
+                    </span>
                 </div>
 
                 <li class="mui-table-view-cell listli">
@@ -217,6 +220,7 @@
                         console.log(data);
                         if (data.code == 200) {
                             mui.alert('报名成功', '确定');
+                            location.reload();
                         } else {
                             mui.toast(data.msg);
                         }
