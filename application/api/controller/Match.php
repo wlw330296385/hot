@@ -18,9 +18,10 @@ class Match extends Base {
 
             $matchS = new MatchService();
             $teamS = new TeamService();
-            // 友谊赛类型 记录主队信息数据组合
+            // 友谊赛类型 记录比赛战绩数据
             $dataMatchRecord = [];
             if ($data['type'] == 1) {
+                // 主队信息保存数据组合
                 if (!$data['team_id']) {
                     return json(['code' => 100, 'msg' => __lang('MSG_402').'请选择主队球队']);
                 }
@@ -28,32 +29,35 @@ class Match extends Base {
                 $homeTeam = $teamS->getTeam(['id' => $homeTeamId]);
                 //dump($homeTeam);
                 $data['team'] = $homeTeam['name'];
-                $dataMatchRecord = [
+                $dataHometeam = [
                     'home_team_id' => $homeTeam['id'],
                     'home_team' => $homeTeam['name'],
                     'home_team_logo' => $homeTeam['logo'],
                     'home_team_color' => $data['home_team_color'],
                     'home_team_colorstyle' => $data['home_team_colorstyle']
                 ];
+                $dataMatchRecord = array_merge($dataMatchRecord, $dataHometeam);
+                // 客队信息保存数据组合
                 if (!empty($data['opponent_id'])) {
                     if ($data['opponent_id'] == $data['team_id']) {
                         return json(['code' => 100, 'msg' => '请选择其他球队']);
                     }
                     $awayTeam = $teamS->getTeam(['id' => $data['opponent_id']]);
-                    $dataMatchRecord = [
+                    $dataAwayteam = [
                         'away_team_id' => $awayTeam['id'],
                         'away_team' => $awayTeam['name'],
                         'away_team_logo' => $awayTeam['logo'],
-                        'away_team_color' => $data['away_team_color'],
-                        'away_team_colorstyle' => $data['away_team_colorstyle']
+                        //'away_team_color' => $data['away_team_color'],
+                        //'away_team_colorstyle' => $data['away_team_colorstyle']
                     ];
+                    $dataMatchRecord = array_merge($dataMatchRecord, $dataAwayteam);
                 }
             }
 
             $res = $matchS->saveMatch($data);
             // 比赛记录创建成功后操作
             if ($res['code'] == 200) {
-                // 友谊赛类型 记录主队信息
+                // 友谊赛类型 记录比赛战绩数据
                 if ($data['type'] == 1) {
                     $dataMatchRecord['match_id'] = $res['data'];
                     $matchS->saveMatchRecord($dataMatchRecord);
@@ -65,7 +69,7 @@ class Match extends Base {
         }
     }
 
-    // 编辑比赛
+    // 编辑比赛信息
     public function updatematch() {
         try {
             // 接收输入变量
@@ -83,7 +87,109 @@ class Match extends Base {
         }
     }
 
-    // 直接创建录入比赛
+    // 编辑比赛战绩
+    public function updatematchrecord() {
+        try {
+            // 接收输入变量
+            $data = input('post.');
+            $matchS = new MatchService();
+            // 当前时间大于输入的比赛时间 记录比赛完成时间和完成状态
+            $now = time();
+            $matchTimeStamp = strtotime($data['match_time']);
+            if ($now > $matchTimeStamp) {
+                $data['is_finished'] = 1;
+                $data['finished_time'] = 1;
+            }
+            // 保存比赛战绩数据
+            $res = $matchS->saveMatchRecord($data);
+            return json($res);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 直接创建录入比赛战绩
+    public function creatematchrecord() {
+         try {
+             // 接收输入变量
+             $data = input('post.');
+             $data['member_id'] = $this->memberInfo['id'];
+             $data['member'] = $this->memberInfo['member'];
+             $data['member_avatar'] = $this->memberInfo['avatar'];
+
+             $matchS = new MatchService();
+             $teamS = new TeamService();
+
+             // 友谊赛类型 记录比赛战绩数据
+             $dataMatchRecord = [];
+             if ($data['type'] == 1) {
+                 // 主队信息保存数据组合
+                 if (!$data['team_id']) {
+                     return json(['code' => 100, 'msg' => __lang('MSG_402').'请选择主队球队']);
+                 }
+                 $homeTeamId = $data['team_id'];
+                 $homeTeam = $teamS->getTeam(['id' => $homeTeamId]);
+                 //dump($homeTeam);
+                 $data['team'] = $homeTeam['name'];
+                 $dataHometeam = [
+                     'home_team_id' => $homeTeam['id'],
+                     'home_team' => $homeTeam['name'],
+                     'home_team_logo' => $homeTeam['logo'],
+                     'home_team_color' => $data['home_team_color'],
+                     'home_team_colorstyle' => $data['home_team_colorstyle'],
+                     'home_score' => $data['home_score']
+                 ];
+                 $dataMatchRecord = array_merge($dataMatchRecord, $dataHometeam);
+                 // 客队信息保存数据组合
+                 if (!$data['opponent_id']) {
+                     return json(['code' => 100, 'msg' => '请选择客队球队']);
+                 }
+                 if (!empty($data['opponent_id'])) {
+                     if ($data['opponent_id'] == $data['team_id']) {
+                         return json(['code' => 100, 'msg' => '请选择其他球队']);
+                     }
+                     $awayTeam = $teamS->getTeam(['id' => $data['opponent_id']]);
+                     $dataAwayteam = [
+                         'away_team_id' => $awayTeam['id'],
+                         'away_team' => $awayTeam['name'],
+                         'away_team_logo' => $awayTeam['logo'],
+                         'away_team_color' => $data['away_team_color'],
+                         'away_team_colorstyle' => $data['away_team_colorstyle'],
+                         'away_score' => $data['home_score']
+                     ];
+                     $dataMatchRecord = array_merge($dataMatchRecord, $dataAwayteam);
+                 }
+                 $dataMatchRecord['province'] = $data['province'];
+                 $dataMatchRecord['city'] = $data['city'];
+                 $dataMatchRecord['area'] = $data['area'];
+                 $dataMatchRecord['court_id'] = $data['court_id'];
+                 $dataMatchRecord['court'] = $data['court'];
+
+                 // 当前时间大于输入的比赛时间 记录比赛完成时间和完成状态
+                 $now = time();
+                 $matchTimeStamp = strtotime($data['match_time']);
+                 if ($now > $matchTimeStamp) {
+                     $dataMatchRecord['finished_time'] = $matchTimeStamp;
+                     $dataMatchRecord['is_finished'] = 1;
+                     $data['is_finished'] = 1;
+                     $data['finished_time'] = 1;
+                 }
+             }
+
+             $res = $matchS->saveMatch($data);
+             // 比赛记录创建成功后操作
+             if ($res['code'] == 200) {
+                 // 友谊赛类型 记录比赛战绩数据
+                 if ($data['type'] == 1) {
+                     $dataMatchRecord['match_id'] = $res['data'];
+                     $matchS->saveMatchRecord($dataMatchRecord);
+                 }
+             }
+             return json($res);
+         } catch(Exception $e) {
+             return json(['code' => 100, 'msg' => $e->getMessage()]);
+         }
+    }
 
     // 比赛列表（页码）+年份
     public function matchlistpage() {
