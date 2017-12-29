@@ -202,7 +202,7 @@
                         <span class="eventDom wd60" style="line-height: 24px;">
 
                             {volist name="$eventInfo.doms" id="vol"}
-                                {$vol.name}({$vol.price})
+                                {$vol.name}({$vol.price}),
                             {/volist}
                         </span>
                     </a>
@@ -818,6 +818,7 @@
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
             var event_des = $('textarea.data').val();
+            objData.dom = JSON.stringify(eventDomArr);
             objData.event_des = event_des;
             if(eventDomArr.length == 0 || eventDomArr == undefined){
                 eventDomArr = [{name:'默认',price:0}];
