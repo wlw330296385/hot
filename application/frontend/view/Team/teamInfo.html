@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-
     <style>
         .mui-popover {
             height: 260px;
@@ -24,10 +23,6 @@
         #arrRight {
             padding-top: 10px;
             float: right;
-        }
-
-        .pdr15 {
-            padding-right: 15px !important;
         }
     </style>
 </head>
@@ -60,7 +55,7 @@
             </ul>
 
             <div class="page-header whitebg mb">
-                <a href="#">
+                <a href="{:url('team/messagelist',['team_id'=>$teamInfo['id']])}">
                     <span class="course wd83">
                         <b class="colororange">公告</b>：欢迎新队员尼克杨加入F18加入大家庭！！</span>
                     <span class="more">更多</span>
@@ -592,7 +587,6 @@
                     console.log(data)
                     var div = '';
                     if (data.code == 200) {
-
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             // 将时间戳转成日期格式
                             var Tmonth = gettimem(data.data[i].start_time_stamp * 1000);
@@ -617,11 +611,10 @@
                             }
                             div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[i].reg_number + '</font>/<font class="reg_all">' + data.data[i].max + '</font> 已报名</span></li>';
                         }
-
-                        if (div == '') {
-                            div = '<p class="mui-text-center">没有查找到数据哦</p>'
-                        }
                         $(".newEvent").empty().append(div);
+                    }
+                    if (data.code == 100) {
+                        $(".newEvent").empty().append('<p class="nodata">还没有活动数据，赶紧去创建活动吧</p>');
                     }
                 },
                 error: function (xhr, type, errorThrown) {
