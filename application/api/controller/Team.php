@@ -143,7 +143,7 @@ class Team extends Base {
             unset($map['keyword']);
             unset($map['page']);
             $teamS = new TeamService();
-            $result = $teamS->getTeamListPaginator($map);
+            $result = $teamS->getTeamList($map, $page);
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             } else {
@@ -178,7 +178,7 @@ class Team extends Base {
             unset($map['keyword']);
             unset($map['page']);
             $teamS = new TeamService();
-            $result = $teamS->getTeamList($map, $page);
+            $result = $teamS->getTeamListPaginator($map);
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             } else {
