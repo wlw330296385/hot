@@ -155,7 +155,7 @@ class Match extends Base {
                          'away_team_logo' => $awayTeam['logo'],
                          'away_team_color' => $data['away_team_color'],
                          'away_team_colorstyle' => $data['away_team_colorstyle'],
-                         'away_score' => $data['home_score']
+                         'away_score' => $data['away_score']
                      ];
                      $dataMatchRecord = array_merge($dataMatchRecord, $dataAwayteam);
                  }
