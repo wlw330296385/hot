@@ -284,6 +284,12 @@ class Team extends Base {
 
     // 活动报名人员名单
     public function eventsignuplist() {
+        // 活动详情数据
+        $event_id = input('param.event_id');
+        $teamS = new TeamService();
+        $eventInfo = $teamS->getTeamEventInfo(['id' => $event_id]);
+        $this->assign('event_id', $event_id);
+        $this->assign('eventInfo', $eventInfo);
         return view('Team/eventSignupList');
     }
 

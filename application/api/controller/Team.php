@@ -835,6 +835,7 @@ class Team extends Base {
                 'member_id' => $this->memberInfo['id'],
                 'member' => $this->memberInfo['member'],
                 'avatar' => $this->memberInfo['avatar'],
+                'contact_tel' => $this->memberInfo['telephone'],
                 'is_pay' => 1,
                 'is_sign' => 1,
                 'status' => 1,
