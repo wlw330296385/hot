@@ -25,8 +25,66 @@ class Index extends Controller{
     }
 
     public function totalSchedule(){
+        $giftRecord = db('schedule_giftrecord')->select();
+        $list = [];
+        foreach ($giftRecord as $key => &$value) {
+            $studentList = json_decode($value['student_str'],true);
+            foreach ($studentList as $k => $val) {
+                
+                $list[] = [
+                    'student'=> $val['student'],
+                    'student_id'=>$val['student_id'],
+                    'member'=>$value['member'],
+                    'member_id'=>$value['member_id'],
+                    'camp'=>$value['camp'],
+                    'camp_id'=>$value['camp_id'],
+                    'lesson_id'=>$value['lesson_id'],
+                    'lesson'=>$value['lesson'],
+                    'grade'=>$value['grade'],
+                    'grade_id'=>$value['grade_id'],
+                    'gift_schedule'=>$value['gift_schedule'],
+                    'remarks'=>$value['remarks'],
+                    'status'=>$value['status'],
+                    'system_remarks'=>$value['system_remarks'],
+                    'create_time'=>time(),
+                    'update_time'=>time()
+                ];
+   
+                
+            }
+
+        }
+        dump($list);
+        foreach ($list as $key => $value) {
+            db('schedule_gift_student')->insert($value);
+        }
         
     }
+
+
+
+    public function totalLessonSchedule(){
+        // 赠送课时的数量
+        $scheduleGiftList = db('schedule_gift_student')
+        ->field("student_id,lesson_id,lesson,student,sum(gift_schedule) total ")
+        ->group('student_id,lesson_id')
+        ->select();
+        // dump($scheduleGiftList);
+        foreach ($scheduleGiftList as $key => $value) {
+            db('lesson_member')->where(['lesson_id'=>$value['lesson_id'],'student_id'=>$value['student_id'],'status'=>1,'type'=>1])->setInc('total_schedule',$value['total']);
+        }
+        $scheduleBuyList = db('bill')
+        ->field("student_id,goods_id as lesson_id,goods as lesson,student,sum(total) total ")
+        ->where(['status'=>1,'is_pay'=>1,'goods_type'=>1])
+        ->group('student_id,goods_id')
+        ->select();
+        foreach ($scheduleBuyList as $key => $value) {
+            db('lesson_member')->where(['lesson_id'=>$value['lesson_id'],'student_id'=>$value['student_id'],'status'=>1,'type'=>1])->setInc('total_schedule',$value['total']);
+        }
+        echo '<br /><br /><br />--------------------------------------------------------------------------<br />成功<br /><br /><br />--------------------------------------------------------------------------<br />';
+        dump($scheduleBuyList);
+    }
+
 
     public function index(){
         $timestr = strtotime('2017-11-16');
