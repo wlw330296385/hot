@@ -321,6 +321,7 @@ class Team extends Base {
             if (!empty($matchInfo['album'])) {
                 $matchInfo['album'] = json_decode($matchInfo['album'], true);
             }
+            $memberlist = [];
         }
         $this->assign('match_id', $match_id);
         $this->assign('matchInfo', $matchInfo);
