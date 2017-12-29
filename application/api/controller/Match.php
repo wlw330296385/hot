@@ -206,7 +206,7 @@ class Match extends Base {
                 }
                 unset($map['year']);
             }
-
+            unset($map['page']);
             $matchS = new MatchService();
             $result = $matchS->matchListPaginator($map);
             if ($result) {
@@ -298,7 +298,7 @@ class Match extends Base {
                 }
                 unset($map['year']);
             }
-
+            unset($map['page']);
             // 获取数据列表
             $matchS = new MatchService();
             $result = $matchS->matchRecordListPaginator($map);
@@ -329,7 +329,7 @@ class Match extends Base {
                 }
                 unset($map['year']);
             }
-
+            unset($map['page']);
             // 获取数据列表
             $matchS = new MatchService();
             $result = $matchS->matchRecordList($map, $page);

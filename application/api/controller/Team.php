@@ -141,6 +141,7 @@ class Team extends Base {
                 $map['name'] = ['like', "%$keyword%"];
             }
             unset($map['keyword']);
+            unset($map['page']);
             $teamS = new TeamService();
             $result = $teamS->getTeamListPaginator($map);
             if ($result) {
