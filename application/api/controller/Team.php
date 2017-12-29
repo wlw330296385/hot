@@ -139,6 +139,39 @@ class Team extends Base {
             if (!empty($map['keyword'])) {
                 $keyword = $map['keyword'];
                 $map['name'] = ['like', "%$keyword%"];
+            }
+            unset($map['keyword']);
+            $teamS = new TeamService();
+            $result = $teamS->getTeamListPaginator($map);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 搜索球队列表（有分页页码）
+    public function searchteamlistpage() {
+        try {
+            // 整合接收参数 组合查询条件
+            $map = input('param.');
+            $page = input('page', 1);
+            // 默认查询city下所有记录
+            if (empty($map['area'])) {
+                unset($map['area']);
+            }
+            // 默认查询所有分类记录
+            if (empty($map['type'])) {
+                unset($map['type']);
+            }
+            // 关键字搜索
+            if (!empty($map['keyword'])) {
+                $keyword = $map['keyword'];
+                $map['name'] = ['like', "%$keyword%"];
 
             }
             unset($map['keyword']);
@@ -835,6 +868,7 @@ class Team extends Base {
                 'member_id' => $this->memberInfo['id'],
                 'member' => $this->memberInfo['member'],
                 'avatar' => $this->memberInfo['avatar'],
+                'contact_tel' => $this->memberInfo['telephone'],
                 'is_pay' => 1,
                 'is_sign' => 1,
                 'status' => 1,
