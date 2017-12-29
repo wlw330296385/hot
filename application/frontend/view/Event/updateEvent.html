@@ -201,13 +201,9 @@
                         <label>活动套餐</label>
                         <span class="eventDom wd60" style="line-height: 24px;">
 
-                             <!--  循环出来，免费的列出这个
-                                    包车，不包车
-                             -->
-                            <!--  循环出来，收费的列出这个
-                                包车（100），不包车（80)
-                            -->
-
+                            {volist name="$eventInfo.doms" id="vol"}
+                                {$vol.name}({$vol.price})
+                            {/volist}
                         </span>
                     </a>
                 </div>
@@ -327,21 +323,15 @@
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <form class="mui-input-group">
-                    <!--  循环出来，免费的列出这个
+                    {volist name='$eventInfo.doms' id="vol"}
                     <div class="mui-input-row mui-checkbox mui-left">
-                        <input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称">
+                        <input type="text" name="event-dom" class="wd49 fl" value="{$vol.name}" placeholder="请填写种类名称">
                         <i class="cancel-dom mui-icon mui-icon-close"></i>
+                        <input type="text" name="event-dom_price" class="wd36 fr" value="{$vol.price}" placeholder="对应价格">
                     </div>
-                    -->
-                    <!--  循环出来，收费的列出这个
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称">
-                        <i class="cancel-dom mui-icon mui-icon-close"></i>
-                        <input type="text" name="event-dom_price" class="wd36 fr" value="" placeholder="对应价格">
-                    </div>
-                    -->
+                    {/volist}
                 </form>
-                <div class="tjbtn"><br /><p>PS: 若活动没分类，可忽略不填。</p></div>
+                <div class="tjbtn"><br /><p>PS:收费活动套餐必填,否则默认价格为0</p></div>
             </div>
         </div>
     </div>
@@ -503,8 +493,6 @@
         //初始化全局变量
         var eventDomArr = [{name:'默认',price:0}];
         $(function () {
-            //页面默认打开时隐藏报名种类的价格
-            $("input[name='event-dom_price']").hide();
             //获取训练营粉丝列表
             var StudentKeyword = '';
             var wStudents = '';
@@ -812,7 +800,8 @@
         // 获取数据并进行提交(编辑活动)
         function submitAction() {
 
-          
+           
+
             if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
                 mui.alert("请输入正确的手机格式");
                 return;
