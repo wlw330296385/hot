@@ -382,17 +382,19 @@ class Schedule extends Base
                 if (!empty($request['student_str'])) {
                     $studentList = json_decode($request['student_str'], true);
                     //dump($studentList);
-                    $studentMap = [];
+                    $lessonMemberMap = [];
                     foreach ($studentList as $student) {
-                        $studentMap['camp_id'] = $request['camp_id'];
-                        $studentMap['student_id'] = $student['student_id'];
-                        $studentMap['lesson_id'] = $request['lesson_id'];
-                        $saveStudentRestschedule = $scheduleS->saveStudentRestschedule($studentMap, $request['gift_schedule']);
+                        $lessonMemberMap['id'] = $student['id'];
+                        $lessonMemberMap['camp_id'] = $request['camp_id'];
+                        $lessonMemberMap['student_id'] = $student['student_id'];
+                        $lessonMemberMap['lesson_id'] = $request['lesson_id'];
+                        $saveStudentRestschedule = $scheduleS->saveStudentRestschedule($lessonMemberMap, $request['gift_schedule']);
                         if (!$saveStudentRestschedule) {
                             return json(['code' => 100, 'msg' => '学员剩余课时更新' . $student['student'] . __lang('MSG_400')]);
                         }
                     }
                 }
+                //die;
                 $res = $scheduleS->recordgift($request);
                 if (!$res) {
                     $response = json(['code' => 100, 'msg' => '赠送课时' . __lang('MSG_400')]);

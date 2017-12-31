@@ -563,12 +563,12 @@ class ScheduleService
 
     // 批量更新学员剩余课时
     public function saveStudentRestschedule($map, $gift_schedule){
-        $lessonMemberRestSchedule = Db::name('lesson_member')->where($map)->setInc('rest_schedule', $gift_schedule);
-        $studentTotalSchedule = db('student')->where(['id' => $map['student_id']])->setInc('total_schedule', $gift_schedule);
-        if (($lessonMemberRestSchedule === 0) || ($studentTotalSchedule === 0)) {
-            return true;
-        } else {
+        $lessonMemberRestSchedule = Db::name('lesson_member')->where($map)->whereNull('delete_time')->setInc('rest_schedule', $gift_schedule);
+        $studentTotalSchedule = db('student')->where(['id' => $map['student_id']])->whereNull('delete_time')->setInc('total_schedule', $gift_schedule);
+        if (!$lessonMemberRestSchedule || !$studentTotalSchedule ) {
             return false;
+        } else {
+            return true;
         }
     }
 
