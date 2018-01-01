@@ -84,7 +84,23 @@
             <li class="mui-table-view-cell listli">主教底薪<span>{$scheduleInfo.coach_salary}</span></li>
             <li class="mui-table-view-cell listli">助教底薪<span>{$scheduleInfo.assistant_salary}</span></li>
             <li class="mui-table-view-cell listli">备注<span>{$scheduleInfo.remarks}</span></li>
+            <li class="mui-table-view-cell listli">教案<span>{$scheduleInfo.plan}</span></li>
         </ul>
+        <div class="exerciseList">
+                <div class="page-header">
+                    <span class="course"><b>训练项目</b></span>
+                </div>
+                    {volist name = "$scheduleInfo.exerciseList" id="vol" empty="<p>没填写训练项目</p>"}
+                    <ul class="mui-table-view list eType">
+                        <li class="mui-table-view-cell listli detalisli">
+                            <h5><strong class="daType">{$vol.exercise}</strong></h5>
+                            {volist name="$vol.sub" id="v"}
+                            <p>{$v.exercise} <i class="fr f12">{$v.exercise_time} 分钟</i></p>
+                            {/volist}
+                        </li>
+                    </ul>
+                    {/volist}
+        </div>
 
         <div class="page-header mt">
             <span class="course"><b>学员评价</b></span>
