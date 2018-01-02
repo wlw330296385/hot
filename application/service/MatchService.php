@@ -4,6 +4,7 @@ namespace app\service;
 use app\model\Match;
 use app\model\MatchRecord;
 use app\model\MatchTeam;
+use think\Db;
 
 class MatchService {
     // 保存比赛数据

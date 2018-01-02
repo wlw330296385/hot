@@ -21,6 +21,7 @@ class Match extends Base {
             // 友谊赛类型 记录比赛战绩数据
             $dataMatchRecord = [];
             if ($data['type'] == 1) {
+                $dataMatchRecord['match_time'] = $data['match_time'];
                 // 主队信息保存数据组合
                 if (!$data['team_id']) {
                     return json(['code' => 100, 'msg' => __lang('MSG_402').'请选择主队球队']);
@@ -168,6 +169,7 @@ class Match extends Base {
                  // 当前时间大于输入的比赛时间 记录比赛完成时间和完成状态
                  $now = time();
                  $matchTimeStamp = strtotime($data['match_time']);
+                 $dataMatchRecord['match_time'] = $matchTimeStamp;
                  if ($now > $matchTimeStamp) {
                      $dataMatchRecord['finished_time'] = $matchTimeStamp;
                      $dataMatchRecord['is_finished'] = 1;
@@ -294,7 +296,7 @@ class Match extends Base {
                 $year = input('year');
                 if (is_numeric($year)) {
                     $tInterval = getStartAndEndUnixTimestamp($year);
-                    $map['finished_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
+                    $map['match_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
                 }
                 unset($map['year']);
             }
@@ -325,7 +327,7 @@ class Match extends Base {
                 $year = input('year');
                 if (is_numeric($year)) {
                     $tInterval = getStartAndEndUnixTimestamp($year);
-                    $map['finished_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
+                    $map['match_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
                 }
                 unset($map['year']);
             }
