@@ -63,7 +63,6 @@
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
             <input type="hidden" name="team_id" value="{$team_id}" class="data">
             <input type="hidden" name="team" value="{$teamInfo.name}" class="data">
-
             <form action="" class="mui-input-group mt55">
 
                 <div class="mui-input-row">
@@ -186,8 +185,8 @@
                             <a href="#" class="prev_page">上一页</a>
                         </li>
                         <li>
-                            <span class="currPage">0</span>/
-                            <span class="totalPage">0</span>
+                            <span class="currPageOp">0</span>/
+                            <span class="totalPageOp">0</span>
                         </li>
                         <li>
                             <a href="#" class="next_page">下一页</a>
@@ -474,7 +473,7 @@
 
             //////////////////////选择对手////////////////////////////////////
             // 选择对手
-            $(".teamList").on('click', 'li', function () {
+            $(".teamList").on('tap', 'li', function () {
                 var opponent = $(this).children(".name").text();
                 $(".opponentCont").text(opponent);
                 var id = $(this).attr('data-id');
@@ -489,15 +488,15 @@
             })
 
             //搜索球队
-            $("#searchHM").on("click", function () {
+            $("#searchHM").on("tap", function () {
                 var keyword = $(".keywordHM").val();
                 var pageHM = 1;
                 toTeamList(keyword, "opponent", pageHM);
             })
 
             //球队弹出框页码控制
-            $("#opponent").on('click', '.next_page', function () {
-                var getTotalPage = $("#opponent .totalPage").text();
+            $("#opponent").on('tap', '.next_page', function () {
+                var getTotalPage = $("#opponent .totalPageOp").text();
                 pageHM++;
                 if (pageHM > getTotalPage) {
                     mui.toast("已经最后一页了");
@@ -506,7 +505,7 @@
                     toTeamList(keyword, "opponent", pageHM);
                 }
             })
-            $("#opponent").on('click', '.prev_page', function () {
+            $("#opponent").on('tap', '.prev_page', function () {
                 pageHM--;
                 if (pageHM < 1) {
                     mui.toast("已经是第一页了");
@@ -519,7 +518,7 @@
 
             //////////////////////常驻球场////////////////////////////////////
             // 常驻球场
-            $(".courtList").on('click', 'li', function () {
+            $(".courtList").on('tap', 'li', function () {
                 var court = $(this).find("font").text();
                 $(".courtCont").text(court);
                 var id = $(this).attr('data-id');
@@ -527,22 +526,21 @@
                 mui("#court").popover("toggle");
             })
             //清除常驻球场
-            $("#CourtDel").on('click', '', function () {
+            $("#CourtDel").on('tap', '', function () {
                 $(".courtCont").text('');
                 $("input[name=court_id]").val("");
                 mui("#court").popover("toggle");
             })
             //搜索常驻球场
-            $("#searchCR").on("click", function () {
+            $("#searchCR").on("tap", function () {
                 var keyword = $(".keywordLD").val();
                 var pageCR = 1;
                 toCourtList(keyword, "court", pageCR);
             })
             //常驻球场弹出框页码控制
-            $("#court").on('click', '.next_page', function () {
+            $("#court").on('tap', '.next_page', function () {
                 var getTotalPage = $("#court .totalPage").text();
                 pageCR++;
-                console.log(pageCR)
                 if (pageCR > getTotalPage) {
                     mui.toast("已经最后一页了");
                 } else {
@@ -550,7 +548,7 @@
                     toCourtList(keyword, "court", pageCR);
                 }
             })
-            $("#court").on('click', '.prev_page', function () {
+            $("#court").on('tap', '.prev_page', function () {
                 pageCR--;
                 if (pageCR < 1) {
                     mui.toast("已经是第一页了");
@@ -601,14 +599,14 @@
 
         //粉丝列表接口获取数据并追加到页面
         function toTeamList(keyword, wTeams, page) {
-            var url = "{:url('api/team/searchteamlist','','',true)}/?page=" + page;
+            var url = "{:url('api/team/searchteamlistpage','','',true)}/?page=" + page;
             var wTeamList = "ul.teamList";
-            var currPage = ".currPage";
-            var totalPage = ".totalPage";
+            var currPage = ".currPageOp";
+            var totalPage = ".totalPageOp";
             if (keyword != '' && wTeams != '') {
                 wTeamList = "#" + wTeams + " ul.teamList";
-                currPage = "#" + wTeams + " .currPage";
-                totalPage = "#" + wTeams + " .totalPage";
+                currPage = "#" + wTeams + " .currPageOp";
+                totalPage = "#" + wTeams + " .totalPageOp";
             }
             mui.ajax({
                 url: url,
@@ -624,9 +622,9 @@
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            if (data.data[i].id != "{$team_id}") {
-                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '"><label class="name">' + data.data[i].name + '</label><span class="wd36">' + data.data[i].city + '&nbsp;' + data.data[i].area + '</span></li>'
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            if (data.data.data[i].id != "{$team_id}") {
+                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '"><label class="name">' + data.data.data[i].name + '</label><span class="wd36">' + data.data.data[i].city + '&nbsp;' + data.data.data[i].area + '</span></li>'
                             }
                         }
                         $(wTeamList).empty();
