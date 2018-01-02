@@ -92,49 +92,7 @@
 
             <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 170px">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list  event">
-                        <a href="" class="mui-navigate-right">
-                            <li class="mui-table-view-cell border-b">
-
-                                <div class="mui-row mui-text-center">
-                                    <div class="mui-col-sm-4 mui-col-xs-4">
-                                        <h4>F-18</h4>
-                                        <h4 class="colorred">103</h4>
-                                    </div>
-                                    <div class="mui-col-sm-4 mui-col-xs-4">
-                                        <p>12月08日</p>
-                                        <p>2017</p>
-                                        <p>联赛</p>
-                                    </div>
-                                    <div class="mui-col-sm-4 mui-col-xs-4">
-                                        <h4>STEAMSssssssssssssssssss</h4>
-                                        <h4 class="colorred">100</h4>
-                                    </div>
-                                </div>
-
-                            </li>
-                        </a>
-
-                        <li class="mui-table-view-cell border-b">
-                            <a href="" class="mui-navigate-right">
-                                <div class="mui-row mui-text-center">
-                                    <div class="mui-col-sm-4 mui-col-xs-4">
-                                        <h4>F-18</h4>
-                                        <h4 class="colorred">103</h4>
-                                    </div>
-                                    <div class="mui-col-sm-4 mui-col-xs-4">
-                                        <p>12月08日</p>
-                                        <p>2017</p>
-                                        <p>联赛</p>
-                                    </div>
-                                    <div class="mui-col-sm-4 mui-col-xs-4">
-                                        <h4>STEAMS</h4>
-                                        <h4 class="colorred">100</h4>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
+                    <ul class="mui-table-view mui-text-center match"></ul>
                 </div>
             </div>
         </div>
@@ -222,55 +180,71 @@
                 //搜索关键字不能完全为空，否则查询为空
                 var url = "{:url('api/match/matchrecordlistpage','','',true)}" + '/?page=' + page;
                 var team_id = "3"
-                // mui.ajax({
-                //     url: url,
-                //     data: {
-                //         team_id: team_id,
-                //         year: sYear,
-                //     },
-                //     dataType: 'json',//服务器返回json格式数据
-                //     type: 'post',//HTTP请求类型
-                //     timeout: 10000,//超时时间设置为10秒；
-                //     headers: { 'Content-Type': 'application/json' },
-                //     success: function (data) {
-                //         console.log(data)
-                //         var newli = '';
-                //         if (data.code == 200) {
-                //             for (var i = 0; i <= data.data.data.length - 1; i++) {
-                //                 var urls = "{:url('team/eventInfo')}" + '/event_id/' + data.data.data[i].id + '/team_id/' + "";
-                //                 newli += '<li class="mui-table-view-cell mui-media listli">'
-                //                 newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '" style="width:70px!important;height: 56px!important;"><div class="mui-media-body" style="width:51%">' + data.data.data[i].event + '';
-                //                 newli += '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div><div class="price-frame rightLocation">' + data.data.data[i].reg_number + '人参与</div></a>'
-                //                 newli += '</li>';
-                //             }
-                //         }
-                //         if (gType == 1) {
-                //             //上拉刷新
-                //             $("ul.event").empty().append(newli);
-                //             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                //             mui('#refreshContainer').pullRefresh().refresh(true);
-                //             if (newli == '') {
-                //                 $("ul.event").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
-                //             }
-                //         } else {
-                //             //下拉加载 gType==2
-                //             $("ul.event").append(newli);
-                //         }
-                //         if (newli != '') {
-                //             mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-                //         } else {
-                //             mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                //         }
+                mui.ajax({
+                    url: url,
+                    data: {
+                        team_id: team_id,
+                        year: sYear,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data)
+                        var newli = '';
+                        if (data.code == 200) {
+                            for (var i = 0; i <= data.data.data.length - 1; i++) {
+                                // 将时间戳转成日期格式
+                                var matchTimeM = gettimeM(data.data.data[i].match.match_time * 1000);
+                                var matchTimeY = gettimeY(data.data.data[i].match.match_time * 1000);
+                                var urls = "{:url('team/eventInfo')}" + '/event_id/' + data.data.data[i].id + '/team_id/' + "";
+                                newli += '<li class="mui-table-view-cell"><ul class="mui-row" style="padding:0">'
+                                newli += '<li class="mui-col-xs-4 mui-col-sm-4"><h4>' + data.data.data[i].home_team + '</h4><h4 class="colorred">' + data.data.data[i].home_score + '</h4></li>'
+                                newli += '<li class="mui-col-xs-4 mui-col-sm-4"><p>' + matchTimeM + '</p><p>' + matchTimeY + '</p><p>' + data.data.data[i].match.type + '</p></li>'
+                                newli += '<li class="mui-col-xs-4 mui-col-sm-4"><h4>' + data.data.data[i].away_team + '</h4><h4 class="colorred">' + data.data.data[i].away_score + '</h4></li>'
+                                newli += '</ul></li>'
+                            }
+                        }
+                        if (gType == 1) {
+                            //上拉刷新
+                            $("ul.match").empty().append(newli);
+                            mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                            mui('#refreshContainer').pullRefresh().refresh(true);
+                            if (newli == '') {
+                                $("ul.match").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
+                            }
+                        } else {
+                            //下拉加载 gType==2
+                            $("ul.match").append(newli);
+                        }
+                        if (newli != '') {
+                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                        } else {
+                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                        }
 
-                //     },
-                //     error: function (xhr, type, errerThrown) {
-                //         mui.toast('网络异常,请稍候再试');
-                //         mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                //     }
-                // });
+                    },
+                    error: function (xhr, type, errerThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                    }
+                });
             };
+        });
 
-        })
+        // 将时间戳转成日期格式
+        function gettimeM(M) {
+            var _time = new Date(M);
+            var month = _time.getMonth() + 1;
+            var day = _time.getDate();
+            return month + "月" + day + "日";
+        }
+        function gettimeY(Y) {
+            var _time = new Date(Y);
+            var year = _time.getYear();
+            return year;
+        }
     </script>
 </body>
 
