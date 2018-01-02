@@ -105,6 +105,15 @@ class Schedule extends Base
 				$updateSchedule = 1;
 			}
 		}
+
+
+        //课时指定的训练项目
+		if($scheduleInfo['exercise']){
+		    $scheduleInfo['exerciseList'] = json_decode($scheduleInfo['exercise'],true);
+		}else{
+		    $scheduleInfo['exerciseList'] = [];
+		}
+
         //dump($scheduleInfo);
 		$this->assign('updateSchedule',$updateSchedule);
 		$this->assign('studentList',$studentList);
@@ -144,17 +153,14 @@ class Schedule extends Base
 		// 教案
 		$PlanService = new \app\service\PlanService;
 		$planInfo = $PlanService->getPlanInfo(['id'=>$gradeInfo['plan_id']]);
-		if($planInfo){
-			$planInfo['exerciseList'] = [
-										'exercise'=> unserialize($planInfo['exercise']),
-										'exercise_id'=>unserialize($planInfo['exercise_id'])
-									];
+		if($planInfo['exercise_str']){
+		    $planInfo['exerciseList'] = json_decode($planInfo['exercise_str'],true);
 		}else{
-			$planInfo['exerciseList'] = [
-										'exercise'=>[],
-										'exercise_id'=>[]
-									];
+		    $planInfo['exerciseList'] = [];
 		}
+
+//		dump($planInfo['exerciseList']);die;
+
 		
 		// 班级学生
 		$studentList = db('grade_member')->where(['grade_id'=>$grade_id,'status'=>1,'type'=>1])->select();
@@ -198,6 +204,25 @@ class Schedule extends Base
         if ($scheduleInfo['expstudent_str']) {
             $expstudentList = unserialize($scheduleInfo['expstudent_str']);
         }
+
+
+        //课时指定的训练项目
+		if($scheduleInfo['exercise']){
+		    $scheduleInfo['exerciseList'] = json_decode($scheduleInfo['exercise'],true);
+		}else{
+		    $scheduleInfo['exerciseList'] = [];
+		}
+
+		// 教案
+		$PlanService = new \app\service\PlanService;
+		$planInfo = $PlanService->getPlanInfo(['id'=>$scheduleInfo['plan_id']]);
+		if($planInfo['exercise_str']){
+		    $planInfo['exerciseList'] = json_decode($planInfo['exercise_str'],true);
+		}else{
+		    $planInfo['exerciseList'] = [];
+		}
+
+		$this->assign('planInfo',$planInfo);
 		$this->assign('studentList',$studentList);
         $this->assign('expstudentList',$expstudentList);
 		$this->assign('scheduleInfo',$scheduleInfo);

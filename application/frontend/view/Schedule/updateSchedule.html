@@ -72,6 +72,13 @@
             border-top: none;
             text-align: center;
         }
+        .mui-table-view-cell.mui-collapse .mui-collapse-content{
+            padding:8px 0px;
+        }
+        .exerciseList p{
+            padding:25px;
+            color: #666;
+        }
     </style>
 </head>
 
@@ -146,7 +153,7 @@
 
             </div>
 
-            <form class="mui-input-group mt55">
+            <form class="mui-input-group">
 
                 <div class="mui-input-row picker btn" id="demo3" data-options='{"beginYear":2010,"endYear":2020}'>
                     <a href="#" class="mui-navigate-right">
@@ -221,7 +228,25 @@
                     <input type="text" class="remarks pdr" value="{$scheduleInfo.remarks}" placeholder="（选填）">
                 </div>
 
+                <div class="mui-input-row">
+                    <a href="#exercises" class="mui-navigate-right">
+                        <label>教案项目</label>
+                        <span class="planName">{$scheduleInfo.plan}</span>
+                        <input type="hidden" name="plan" value="{$scheduleInfo.plan}" />
+                        <input type="hidden" name="plan_id" value="{$scheduleInfo.plan_id}" />
+                    </a>
+                </div>
             </form>
+            <div class="mui-card exercises mt55">
+                {volist name = "$scheduleInfo.exerciseList" id="vol" empty="<p>没填写训练项目</p>"}
+                <div class="page-header bggray2"><span class="course"><b>{$vol.exercise}</b></span></div>
+                <ul class="mui-table-view detalis-list list">
+                    {volist name="$vol.sub" id="v"}
+                    <li class="mui-table-view-cell listli detalisli">{$v.exercise}<i class="fr f12">{$v.exercise_time} 分钟</i></li>
+                    {/volist}
+                </ul>
+                {/volist}
+            </div>
 
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen operationBtn" style="color: #fff">
@@ -352,6 +377,44 @@
                 </div>
             </div>
         </div>
+
+
+        <!-- 训练项目 -->
+        <div id="exercises" class="mui-popover">
+            <div class="mui-popover-arrow"></div>
+            <div class="page-header border-b">
+            <span class="course">
+                <strong>{$scheduleInfo.plan}</strong>
+            </span>
+                <span class="fr">
+                <button class="mui-btn-blue" id="domExerConfirm">确认</button>
+            </span>
+            </div>
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll ">
+                    <div class="exerciseList">
+                        {volist name = "$planInfo.exerciseList" id="vol" empty="<p>当前班级没有指定教案，请先编辑班级指定教案，再添加具体训练项目，谢谢！</p>"}
+                        <ul class="mui-table-view list eType">
+                            <li class="mui-table-view-cell mui-collapse listli detalisli">
+                                <a class="mui-navigate-right daType" href="#" data-id="{$vol.id}" data-exercise="{$vol.exercise}">{$vol.exercise}</a>
+                                <div class="mui-collapse-content">
+                                    {volist name="$vol.sub" id="v"}
+                                    <div class="mui-input-row mui-checkbox mui-left">
+                                        <label>{$v.exercise} <i class="fr f12">{$v.exercise_time} 分钟</i></label>
+                                        <input name="checkbox-dom" value="{$v.id}" type="checkbox" data-exercise_time="{$v.exercise_time}"  data-exercise="{$v.exercise}" data-pid="{$v.pid}">
+                                    </div>
+                                    {/volist}
+                                </div>
+                            </li>
+                        </ul>
+                        {/volist}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
 
         <!--学员名单-->
         <div id="addStudent" class="mui-popover">
@@ -486,6 +549,39 @@
             }
 
             $(function () {
+
+                //训练项目选择列表确认
+                $("#domExerConfirm").click(function () {
+                    $(".exercises").empty();
+                    exercise_str = [];
+                    subexercise_str = [];
+                    var tList = ''; //类型列表
+                    var eList = ''; //项目列表
+                    $("ul.eType").each(function () {
+
+                        var exercise_setion = $(this).find(".daType").text();
+                        var id = $(this).find(".daType").attr("data-id");
+                        tList = '';
+                        eList = '';
+                        subexercise_str = [];
+                        $(this).find("input[name=checkbox-dom]:checked").each(function () {
+                            var exercise = $(this).attr("data-exercise");
+                            var exercise_time = $(this).attr("data-exercise_time");
+                            var id = $(this).val();
+                            var pid = $(this).attr("data-pid");
+                            subexercise_str.push({ exercise: exercise,exercise_time: exercise_time, id: id, pid: pid });
+                            eList += '<li class="mui-table-view-cell listli detalisli">'+exercise+'<i class="fr f12">'+exercise_time+'分钟</i></li>'
+
+                        });
+                        if (subexercise_str != '') {
+                            exercise_str.push({ exercise: exercise_setion, id: id, sub: subexercise_str });
+                            tList = '<div class="page-header bggray2"><span class="course"><b>'+exercise_setion+'</b></span></div><ul class="mui-table-view detalis-list list">'+eList+'</ul>'
+                            $(".exercises").append(tList);
+                        }
+                    });
+                    console.log(exercise_str)
+                    mui('#exercises').popover('toggle');
+                })
 
                 //全选
                 $(".all").click(function () {
@@ -773,6 +869,8 @@
                     var assistant_salary = $(".assistant_salary").text();
                     var grade_category_id = $('input[name=grade_category_id]').val();
                     var grade_category = $('input[name=grade_category]').val();
+                    var plan = $("input[name=plan]").val();
+                    var plan_id = $("input[name=plan_id]").val();
 
                     if ($('.checkChecked input[name=student]').is(':checked')) {
                         mui.alert('请勿勾选学员名单');
@@ -809,7 +907,10 @@
                             'grade_category': grade_category,
                             'students': students,
                             'studentList': studentList,
-                            'expstudentList': expstudentList
+                            'expstudentList': expstudentList,
+                            'plan': plan,
+                            'plan_id': plan_id,
+                            'exercise': JSON.stringify(exercise_str)
                         },
                         dataType: 'json',//服务器返回json格式数据
                         type: 'post',//HTTP请求类型
