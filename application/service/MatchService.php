@@ -41,7 +41,10 @@ class MatchService {
         $model = new Match();
         $res = $model->where($map)->find();
         if ($res) {
-            return $res->toArray();
+            $result = $res->toArray();
+            $result['type_num'] = $res->getData('type');
+            $result['is_finished_num'] = $res->getData('is_finished');
+            return $result;
         } else {
             return $res;
         }
@@ -233,10 +236,21 @@ class MatchService {
         }
     }
 
+    // 比赛战绩详情（关联比赛主表信息）
+    public function getMatchRecordWith($map) {
+        $model = new MatchRecord();
+        $res = $model->with('match')->where($map)->find();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
     // 比赛战绩详情
     public function getMatchRecord($map) {
         $model = new MatchRecord();
-        $res = $model->with('match')->where($map)->find();
+        $res = $model->where($map)->find();
         if ($res) {
             return $res->toArray();
         } else {

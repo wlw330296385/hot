@@ -74,24 +74,37 @@ class ScheduleService
         }else{
             $data['assistant_id'] = '';
         }
-        $validate = validate('ScheduleVal');
+        /*$validate = validate('ScheduleVal');
         if (!$validate->check($data)) {
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-        $model = new Schedule();
         $result = $model->allowField(true)->save($data);
         if ($result === false) {
             return ['msg' => $this->scheduleModel->getError(), 'code' => 100];
         } else {
             db('camp')->where(['id'=>$data['camp_id']])->setInc('total_schedule');
             return ['msg'=>__lang('MSG_200'),'code'=>200,'data'=>$result];
+        }*/
+        $model = new Schedule();
+        // 验证数据
+        $validate = validate('ScheduleVal');
+        if (!$validate->scene('add')->check($data)) {
+            return ['code' => 100, 'msg' => $validate->getError()];
+        }
+        // 保存数据 
+        $result = $model->allowField(true)->save($data);
+        if ($result) {
+            db('camp')->where(['id'=>$data['camp_id']])->setInc('total_schedule');
+            return ['msg'=>__lang('MSG_200'),'code'=>200,'data'=>$model->getLastInsID()];
+        } else {
+            return ['msg' => $model->getError(), 'code' => 100];
         }
     }
 
     // 修改课时
     public function updateSchedule($data, $id)
     {
-        
+        dump($data);die;
         $scheduleInfo = $this->getScheduleInfo(['id'=>$id]);
         // 是否已被审核通过
         if($scheduleInfo['status'] == 1){
@@ -124,11 +137,19 @@ class ScheduleService
         if (!$validate->check($data)) {
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-        $result = $this->scheduleModel->save($data, ['id' => $id]);
+        /*$result = $this->scheduleModel->save($data, ['id' => $id]);
         if ($result === false) {
             return ['msg' => $this->scheduleModel->getError(), 'code' => 100];
         } else {
             return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $result];
+        }*/
+        $model = new Schedule();
+        // 保存数据
+        $result = $model->allowField(true)->save($data, ['id' => $id]);
+        if ($result || ($result === 0)) {
+            return ['msg'=>__lang('MSG_200'),'code'=>200];
+        } else {
+            return ['msg' => $model->getError(), 'code' => 100];
         }
     }
 

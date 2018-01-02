@@ -300,6 +300,20 @@ class Team extends Base {
 
     // 赛事详情
     public function matchinfo() {
+        $match_id = input('match_id', 0);
+        $matchS = new MatchService();
+        $matchInfo = $matchS->getMatch(['id' => $match_id]);
+        if ($matchInfo['type_num'] == 1) {
+            $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
+            if ($matchRecordInfo) {
+                if (!empty($matchRecordInfo['album'])) {
+                    $matchRecordInfo['album'] = json_decode($matchInfo['album'], true);
+                }
+                $matchInfo['record'] = $matchRecordInfo;
+            }
+        }
+
+        $this->assign('matchInfo', $matchInfo);
         return view('Team/matchInfo');
     }
 
@@ -323,12 +337,20 @@ class Team extends Base {
             $directentry = 1;
             $memberlist = [];
         } else {
-            $matchInfo = $matchS->getMatchRecord(['match_id' => $match_id]);
-            if (!empty($matchInfo['album'])) {
-                $matchInfo['album'] = json_decode($matchInfo['album'], true);
+            $matchInfo = $matchS->getMatch(['id' => $match_id]);
+            if ($matchInfo['type_num'] == 1) {
+                $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
+                if ($matchRecordInfo) {
+                    if (!empty($matchRecordInfo['album'])) {
+                        $matchRecordInfo['album'] = json_decode($matchInfo['album'], true);
+                    }
+                    $matchInfo['record'] = $matchRecordInfo;
+                }
             }
+
             $memberlist = [];
         }
+        
         $this->assign('match_id', $match_id);
         $this->assign('matchInfo', $matchInfo);
         $this->assign('directentry', $directentry);
