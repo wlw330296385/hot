@@ -46,6 +46,7 @@
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="/static/frontend/js/wooApi.js"></script>
 <script src="/static/frontend/js/common.js"></script>
+<script src="/static/frontend/js/smsCode.js"></script>
 <script>
     //初始化
     mui.init({
@@ -75,11 +76,7 @@
         })
 
 
-        //发送提醒
-        $(document).on("tap",'.sendTip', function () {
-            mui.alert("此功能暂未开放，请稍后再试");
-            return false;
-        })
+    
 
 
         //已付款订单
@@ -121,9 +118,58 @@
             }, 100);
         }
 
+
+
+
+
+
+
+        
+
+
+
+
+
+
     });
+    
+    var isTip = true;
+    // 发送模板消息
+    $(document).on("tap",'.sendTip', function () {
+        var aa = $(this);
+        var member_id = aa.attr('data-member_id');
 
-
+        var url = "{:url('api/message/sendMessageApi')}/member_id/"+member_id;
+        var total_schedule = aa.attr('data-total_schedule');
+        var rest_schedule = aa.attr('data-rest_schedule');
+        var lesson = aa.attr('data-lesson');
+        var messageData = {
+            touser:'',
+            template_id : "{:config('wxTemplateID.scheduleExpend')}",
+                url : "{:url('frontend/message/index','','',true)}",
+                topcolor:"#FF0000",
+                data : {
+                    'first' : {'value' : '您好，您所报的（课程）只剩下'+rest_schedule+'节课，请及时续费，谢谢。'},
+                    'keyword1' : {'value' : total_schedule},
+                    'keyword2' : {'value' : (total_schedule-rest_schedule)},
+                    'keyword3' : {'value' : rest_schedule},
+                    'remark' : {'value' : '如果您想续费,请重新购买课程'}
+                }
+                    
+        };
+        var saveData = {
+                title:'课时提醒',
+                content:'您好，您所报的（课程）只剩下'+rest_schedule+'节课，请及时续费，谢谢。',
+                url:"{:url('frontend/message/index','','',true)}",
+                member_id:member_id
+        };
+                
+        var postParam = {
+            messageData:JSON.stringify(messageData),
+            saveData:JSON.stringify(saveData),
+        }
+        sendMsg(aa,url,postParam);
+    })
 
     //训练营教练列表接口获取数据并追加到页面
     var toTipStudent = function(page,gType,keyword) {
@@ -146,7 +192,7 @@
                 if (data.code == 200) {
                     for(var i=0;i<=data.data.data.length-1;i++){
                         var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
-                        newli += '<li class="mui-table-view-cell listli"><div class="fr"><button type="button" class="mui-btn mui-btn-outlined sendTip">发送提醒</button></div><strong>' + data.data.data[i].student.student + '</strong> 剩余 ' + data.data.data[i].rest_schedule + ' 课时<p>' + data.data.data[i].lesson + '</p></li>'
+                        newli += '<li class="mui-table-view-cell listli"><div class="fr"><button type="button" class="mui-btn mui-btn-outlined sendTip" data-member_id = "'+data.data.data[i].member_id+'" data-total_schedule="'+data.data.data[i].total_schedule+'" data-rest_schedule="'+data.data.data[i].rest_schedule+'"  data-lesson="'+data.data.data[i].lesson+'" >发送提醒</button></div><strong>' + data.data.data[i].student.student + '</strong> 剩余 ' + data.data.data[i].rest_schedule + ' 课时<p>' + data.data.data[i].lesson + '</p></li>'
                     }
                 }
                 if(gType==1){

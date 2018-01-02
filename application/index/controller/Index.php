@@ -45,7 +45,7 @@ class Index extends Controller{
                     'gift_schedule'=>$value['gift_schedule'],
                     'remarks'=>$value['remarks'],
                     'status'=>$value['status'],
-                    'system_remarks'=>$value['system_remarks'],
+                    'system_remarks'=>'',
                     'create_time'=>time(),
                     'update_time'=>time()
                 ];
@@ -84,7 +84,7 @@ class Index extends Controller{
         echo '<br /><br /><br />--------------------------------------------------------------------------<br />成功<br /><br /><br />--------------------------------------------------------------------------<br />';
         dump($scheduleBuyList);
     }
-
+    
 
     public function index(){
         $timestr = strtotime('2017-11-16');

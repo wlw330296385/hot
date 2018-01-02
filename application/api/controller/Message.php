@@ -22,7 +22,7 @@ class Message extends Base{
                 return json(['code'=>100,'msg'=>'OK']);
             }
         }catch(Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMassege()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -40,7 +40,7 @@ class Message extends Base{
                 return json(['code'=>100,'msg'=>'OK']);
             }
         }catch(Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMassege()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -60,7 +60,7 @@ class Message extends Base{
                 return json(['code'=>100,'msg'=>'OK']);
             }
         }catch(Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMassege()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -77,7 +77,7 @@ class Message extends Base{
     			return json(['code'=>100,'msg'=>'没有这条消息']);
     		}
     	}catch (Exception $e){
-    		return json(['code'=>100,'msg'=>$e->getMassege()]);
+    		return json(['code'=>100,'msg'=>$e->getMessage()]);
     	}
     }
 
@@ -92,7 +92,7 @@ class Message extends Base{
                 return json(['code'=>200,'msg'=>'没有这条消息']);
             }
         }catch (Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMassege()]);
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -109,7 +109,29 @@ class Message extends Base{
             }
             
         }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMassege()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+    // 发送个人消息
+    public function sendMessageApi(){
+        try{
+
+            $messageDataStr = input('post.messageData');
+            $saveDataStr = input('post.saveData');
+            $member_id = input('param.member_id');
+            $messageData = json_decode($messageDataStr,true);
+            $saveData = json_decode($saveDataStr,true);
+            $result = $this->MessageService->sendMessageMember($member_id,$messageData,$saveData);
+            if($result){
+                return json(['code'=>200,'msg'=>'发送成功']);
+            }else{
+                return json(['code'=>100,'msg'=>'发送失败']);
+            }
+
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -131,7 +153,7 @@ class Message extends Base{
             }
 
         }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMassege()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -147,7 +169,7 @@ class Message extends Base{
             }
             
         }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMassege()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -165,7 +187,7 @@ class Message extends Base{
             }
 
         } catch (Exception $e) {
-            return json(['code' => 100, 'msg' => $e->getMassege()]);
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
 
@@ -198,7 +220,7 @@ class Message extends Base{
                 $messageS->campJoinAudit($data, $campmember['camp_id']);
             }
         }catch (Exception $e) {
-            return json(['code' => 100, 'msg' => $e->getMassege()]);
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
 
@@ -242,7 +264,7 @@ class Message extends Base{
                 $messageS->campJoinAuditResult($data, $campmember['member_id']);
             }
         }catch (Exception $e) {
-            return json(['code' => 100, 'msg' => $e->getMassege()]);
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
 
@@ -278,7 +300,7 @@ class Message extends Base{
             $messageS = new MessageService();
             $messageS->sendCampMessage($applydata['camp_id'], $messageData, $saveData);
         }catch (Exception $e) {
-            return json(['code' => 100, 'msg' => $e->getMassege()]);
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
 }

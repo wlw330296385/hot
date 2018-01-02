@@ -39,6 +39,7 @@ return [
         'lessonBook'=>'G1EeDZ-4CS7MUTND_sEPKAzbZElqRygKzbftYfvGYF8',//预约体验成功,
         'applyResult' => 'fIaJMxa6cpenLyViHq10WiFkz2Wd_ANs3H1SV0PXDMk', //申请结果通知
         'statusChange' => '_MXeO37KI0lygDDJ82GEFciIQYW0GXzTcLl0Y8HgWPY', //业务状态变更通知
+        'scheduleExpend'=>'squ4uaAVXJ52Dhfjtlol08cpo49FonbFwN-wUFObAV4',
     ],
 
     // 七牛云

@@ -86,7 +86,7 @@ class BillService {
 
 
     // 订单支付(不发送通知)
-    public function pay($data,$map){
+    public function payNoNotice($data,$map){
         $data['pay_time'] = time();
         $data['expire'] = 0;
         $result = $this->Bill->save($data,$map);      
@@ -182,7 +182,7 @@ class BillService {
             //添加一条学生数据
             if(!$is_student2){
                 if($data['balance_pay']>0){
-                    $re = $LessonMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'type'=>1]);
+                    $re = $LessonMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'total_schedule'=>$data['total'],'type'=>1]);
                     if(!$re){
                         db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
                     }else{
@@ -193,7 +193,7 @@ class BillService {
                 // 课量增加
                 // 只有正式学生课量增加,并且状态强制改为正式学生
                 if($data['balance_pay']>0){
-                    $re = $LessonMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->setInc('rest_schedule',$data['total']);
+                    $re = $LessonMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->setInc('rest_schedule',$data['total'])->setInc('total_schedule',$data['total']);
                     $ress = db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
                     if(!$re){
                         db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
@@ -283,7 +283,7 @@ class BillService {
             //添加一条学生数据
             if(!$is_student2){
                 if($data['balance_pay']>0){
-                    $re = $LessonMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'type'=>1]);
+                    $re = $LessonMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'total_schedule'=>$data['total'],'type'=>1]);
                     if(!$re){
                         db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
                     }else{
@@ -294,7 +294,7 @@ class BillService {
                 // 课量增加
                 // 只有正式学生课量增加,并且状态强制改为正式学生
                 if($data['balance_pay']>0){
-                    $re = $LessonMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->setInc('rest_schedule',$data['total']);
+                    $re = $LessonMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->setInc('rest_schedule',$data['total'])->setInc('total_schedule',$data['total']);
                     $ress = db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
                     if(!$re){
                         db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);

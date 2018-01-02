@@ -49,3 +49,40 @@ if (jQuery) {
         }
     }
 
+
+    /**
+    * dom必须为button
+    **/
+    var sendMsg = function(obj,url,postParam){
+        var obj = $(obj);
+            obj.attr("disabled", "disabled");
+            /*按钮倒计时*/
+            var time = 60;
+            var set = setInterval(function () {
+                obj.val(--time + "(s)");
+                obj.text('已发送('+time+')')
+            }, 1000);
+            console.log(obj)
+            /*等待时间*/
+            setTimeout(function () {
+                obj.attr("disabled", false).val("再次发送");
+                obj.text('再次发送')
+                /*倒计时*/
+                clearInterval(set);
+            }, 60000);
+
+            $.ajax({
+                url: url,
+                data: postParam,
+                async: false,
+                type: 'post',
+                success: function(msg) {
+                    console.log(msg.msg)
+                    mui.toast(msg.msg)
+                },  
+                error:function(msg){
+                    mui.toast(msg.msg)
+                }
+            });
+    }
+
