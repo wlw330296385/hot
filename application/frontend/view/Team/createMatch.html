@@ -52,7 +52,7 @@
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+        <a href="{:url('team/matchlistofteam',['team_id' => $team_id])}" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
             <span class="return">返回</span>
         </a>
     </header>
@@ -77,7 +77,7 @@
                     <div class="mui-navigate-right">
                         <label>类型</label>
                         <span class="select-row">
-                            <select id="matchType" class="data" name="match_type">
+                            <select class="data" name="type">
                                 <option value="">请选择</option>
                                 <option value="1">友谊赛</option>
                                 <option value="2">联赛</option>
@@ -125,8 +125,8 @@
                     <a href="#homeColor" class="mui-navigate-right">
                         <label>球服</label>
                         <span class="home_color_text"></span>
-                        <input type="hidden" name="home_color" class="" value="">
-                        <input type="hidden" name="home_color_style" class="" value="">
+                        <input type="hidden" name="home_team_color" class="data" value="">
+                        <input type="hidden" name="home_team_colorstyle" class="data" value="">
                     </a>
                 </div>
 
@@ -134,7 +134,7 @@
 
                 <div class="mui-input-row h-auto">
                     <label>温馨提示</label>
-                    <textarea name="introduce" class="data introduce" placeholder="请填写提示"></textarea>
+                    <textarea name="remarks" class="data" placeholder="请填写提示"></textarea>
                 </div>
 
                 <div class="mui-input-row">
@@ -144,7 +144,6 @@
                     </div>
                     <input type="hidden" name="send_message" value="0" class="data">
                 </div>
-
 
             </form>
 
@@ -402,7 +401,7 @@
                     });
                 }, false);
 
-                //开始时间
+                //时间
                 var result = $('#result')[0];
                 var btnStart = $('.btn');
                 btnStart.each(function (i, btn) {
@@ -450,6 +449,28 @@
             toTeamList(wTeams, teamKeyword, 1);
             toCourtList(wCourt, courtKeyword, 1);
             colorShow(); // 调用主场客场颜色显示
+
+
+            // 主场球服
+            $(".homeColorList").on('tap', 'li', function () {
+                //显示的内容
+                var home_color_text = $.trim($(this).html());
+                $(".home_color_text").html(home_color_text);
+                //颜色的中文赋值
+                var home_team_color = $(this).find("font").text();
+                $("input[name=home_team_color]").val(home_team_color).addClass("data");
+                //颜色的英文赋值
+                var home_team_colorstyle = $(this).find("input[name=color]").val();
+                $("input[name=home_team_colorstyle]").val(home_team_colorstyle).addClass("data");
+                mui("#homeColor").popover("toggle");
+            });
+            //清除主场颜色
+            $("#homeDel").on('tap', '', function () {
+                $(".home_color_text").text('');
+                $("input[name=home_team_color]").val("").removeClass("data");
+                $("input[name=home_team_colorstyle]").val("").removeClass("data");
+                mui("#homeColor").popover("toggle");
+            });
 
             //////////////////////选择对手////////////////////////////////////
             // 选择对手
@@ -507,7 +528,7 @@
             })
             //清除常驻球场
             $("#CourtDel").on('click', '', function () {
-                $(".contCont").text('');
+                $(".courtCont").text('');
                 $("input[name=court_id]").val("");
                 mui("#court").popover("toggle");
             })
@@ -538,29 +559,7 @@
                     toCourtList(keyword, "court", pageCR);
                 }
             })
-            //////////////////////常驻球场////////////////////////////////////
-
-            // 主场颜色
-            $(".homeColorList").on('tap', 'li', function () {
-                //显示的内容
-                var home_color_text = $.trim($(this).html());
-                $(".home_color_text").html(home_color_text);
-                //颜色的中文赋值
-                var home_color = $(this).find("font").text();
-                $("input[name=home_color]").val(home_color).addClass("data");
-                //颜色的英文赋值
-                var home_color_style = $(this).find("input[name=color]").val();
-                $("input[name=home_color_style]").val(home_color_style).addClass("data");
-                mui("#homeColor").popover("toggle");
-            });
-            //清除主场颜色
-            $("#homeDel").on('tap', '', function () {
-                $(".home_color_text").text('');
-                $("input[name=home_color]").val("").removeClass("data");
-                $("input[name=home_color_style]").val("").removeClass("data");
-                mui("#homeColor").popover("toggle");
-            });
-
+            //////////////////////常驻球场///////////////////////////////////
 
             // 是否发布通知
             $(".isRelease").on("tap", '', function () {
@@ -581,13 +580,13 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            var event_des = $('textarea.data').val();
-            objData.event_des = event_des;
-            var url = "{:url('api/team/createteamevent')}";
+            var remarks = $('textarea.data').val();
+            objData.remarks = remarks;
+            var url = "{:url('api/match/creatematch')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
-                    var goUrl = "{:url('team/eventlistOfTeam')}" + '/event_id/' + ajaxResult.data + '/team_id/' + "";
+                mui.alert(ajaxResult.msg, '比赛创建成功', '确定', function () {
+                    var goUrl = "{:url('team/matchlistOfTeam')}" + '/match_id/' + ajaxResult.data + '/team_id/' + "{$team_id}";
                     window.top.location.href = goUrl;
                 })
             } else {
@@ -626,7 +625,9 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '"><label class="name">' + data.data[i].name + '</label><span class="wd36">' + data.data[i].city + '&nbsp;' + data.data[i].area + '</span></li>'
+                            if (data.data[i].id != "{$team_id}") {
+                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '"><label class="name">' + data.data[i].name + '</label><span class="wd36">' + data.data[i].city + '&nbsp;' + data.data[i].area + '</span></li>'
+                            }
                         }
                         $(wTeamList).empty();
                         if (newli == '') {

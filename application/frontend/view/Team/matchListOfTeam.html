@@ -31,12 +31,12 @@
         <div class="tab-pullRefresh">
             <div id="onlineEventList" class="mui-scroll-wrapper mui-control-content mui-active">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list border-b event1 OA_task_event"></ul>
+                    <ul class="mui-table-view detalis-list list border-b match1 OA_task_event"></ul>
                 </div>
             </div>
             <div id="offlineEventList" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list border-b event2 OA_task_event"></ul>
+                    <ul class="mui-table-view detalis-list list border-b match-1 OA_task_event"></ul>
                 </div>
             </div>
         </div>
@@ -129,7 +129,7 @@
                 offCount = 1;//刷新并显示第一页
                 var page = offCount;
                 var gType = 1;//代表下拉刷新
-                toList('offlineEventList', page, gType, 2);//具体取数据的方法
+                toList('offlineEventList', page, gType, -1);//具体取数据的方法
             }, 100);
         }
 
@@ -139,7 +139,7 @@
                 offCount++;//翻下一页
                 var page = offCount;
                 var gType = 2;//代表上拉加载
-                toList('offlineEventList', page, gType, 2);//具体取数据的方法
+                toList('offlineEventList', page, gType, -1);//具体取数据的方法
             }, 100);
         }
 
@@ -148,12 +148,13 @@
     // 接口获取数据并追加到页面
     var toList = function (wList, page, gType, status) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/team/teameventlist')}" + '/?page=' + page;
-        var team_id = ""
+        var url = "{:url('api/match/matchlist')}";
+        var team_id = "{$team_id}"
         mui.ajax({
             url: url,
             data: {
-                team_id:team_id,
+                team_id: team_id,
+                page:page,
                 status: status,
             },
             dataType: 'json',//服务器返回json格式数据
@@ -166,46 +167,31 @@
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
 
-                        // 获取当前时间
-                        var d = new Date()
-                        var minutes = d.getMinutes()
-                        var hours = d.getHours()
-                        var day = d.getDate()
-                        var month = d.getMonth() + 1
-                        var year = d.getFullYear()
-                        var time = year + "-" + month + "-" + day + " " + hours + ":" + minutes;
-
-                        var urls = "{:url('team/eventInfo')}" + '/event_id/' + data.data[i].id + '/team_id/' + "";
-                        newli += '<li class="mui-table-view-cell mui-media listli">'
+                        var urls = "{:url('team/matchinfo')}" + '/match_id/' + data.data[i].id + '/team_id/' + "{$team_id}";
+                        newli += '<li class="mui-table-view-cell mui-media listli coach">'
                         if (status == 1) {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
-                        } else if (status == 2) {
+                        } else if (status == -1) {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '" style="width:70px!important;height: 56px!important;"><div class="mui-media-body" style="width:51%">' + data.data[i].event + '';
-                        if (data.data[i].is_max == "已满人") {
-                            newli += '<font style="color:red">&nbsp;&nbsp;[满人]</font>';
-                        }
-                        if (data.data[i].end_time < time) {
-                            newli += '<font style="color:#b1b0b0">&nbsp;&nbsp;[结束]</font>';
-                        }
-                        newli += '<p class="mui-ellipsis">' + data.data[i].create_time + '</p></div><div class="price-frame rightLocation" style="padding-right:0">' + data.data[i].reg_number + '人参与</a></div>'
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].member_avatar + '"><div class="mui-media-body" style="width:51%">' + data.data[i].type + '';
+
+                        newli += '<p class="mui-ellipsis">' + data.data[i].match_time + '</p></div><div class="price-frame rightLocation" style="padding-right:0">' + data.data[i].team + '球队</a></div>'
                         newli += '</li>';
                     }
                 }
 
-
                 if (gType == 1) {
                     //上拉刷新
-                    $("ul.event" + status).empty().append(newli);
+                    $("ul.match" + status).empty().append(newli);
                     mui('#' + wList).pullRefresh().endPulldownToRefresh();
                     mui('#' + wList).pullRefresh().refresh(true);
                     if (newli == '') {
-                        $("ul.event" + status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        $("ul.match" + status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
                     }
                 } else {
                     //下拉加载 gType==2
-                    $("ul.event" + status).append(newli);
+                    $("ul.match" + status).append(newli);
                 }
 
                 if (newli != '') {
