@@ -292,7 +292,7 @@
                 // 根据状态获取课时列表
                 if (gType == 1) {
                     //上拉刷新
-                    if (status == undefined) {
+                    if (status == undefined||status == "") {
                         $(".scheduleAll").empty().append(newli);
                     } else {
                         $(".schedule" + status).empty().append(newli);
@@ -305,7 +305,11 @@
 
                 } else {
                     //下拉加载 gType==2
-                    $(".schedule" + status).append(newli);
+                    if (status == undefined||status == "") {
+                        $(".scheduleAll").append(newli);
+                    } else {
+                        $(".schedule" + status).append(newli);
+                    }
                 }
 
                 if (newli != '') {
