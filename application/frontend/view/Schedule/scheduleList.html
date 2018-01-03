@@ -11,6 +11,17 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style type="text/css">
+        .mui-icon-checkmarkempty{
+            font-size: 32px !important;
+            margin-left: -5px;
+            margin-right: 5px;
+            vertical-align: sub;
+        }
+        .colorgray {
+            color:#CCC !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -261,15 +272,17 @@
                 var newli = '';
                 if (data.code == 200) {
                     var newDate = new Date();
+                    var sheng = 0;
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "/frontend/schedule/scheduleinfo" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + campID;
                         var lession_time = data.data.data[i].lesson_time;
+                        sheng = data.data.data[i].status==1?"colorgreen":"colorgray";
                         newli += '<li class="mui-table-view-cell mui-media">';
                         if (status == 0) {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为已审</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
-                            newli += '<div class="mui-slider-handle"><a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '['+((data.data.data[i].status==1)?'已审':'未审')+']</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a></div>';
+                            newli += '<div class="mui-slider-handle"><a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-5 mui-col-sm-5"><i class="mui-icon mui-icon-checkmarkempty ' + sheng + '"></i>' + lession_time + '</li><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a></div>';
                         } else {
-                            newli += '<a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lession_time + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '['+((data.data.data[i].status==1)?'已审':'未审')+']</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a>';
+                            newli += '<a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-5 mui-col-sm-5"><i class="mui-icon mui-icon-checkmarkempty ' + sheng + '"></i>' + lession_time + '</li><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a>';
                         }
                         newli += '</li>';
                     }
