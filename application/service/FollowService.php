@@ -11,11 +11,7 @@ class FollowService {
             $data['status'] = 1;
             $result = $model->allowField(true)->save($data);
             if ($result) {
-                // 操作camp_member数据
-                if ($data['type'] == 2) {
-                    $this->saveCampMember($data);
-                }
-
+                
                 $response = ['code' => 200, 'msg' => '关注成功', 'data' => $model->id];
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -34,10 +30,7 @@ class FollowService {
             } else {
                 $data['status'] = 1;
                 $msg = '关注成功';
-                // 操作camp_member数据
-                if ($data['type'] == 2) {
-                    $this->saveCampMember($data);
-                }
+                
                 // 若是球队，球队粉丝数+1
                 if ($data['type'] == 4) {
                     db('team')->where('id', $data['follow_id'])->setInc('fans_num', 1);

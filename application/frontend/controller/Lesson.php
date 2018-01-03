@@ -236,6 +236,10 @@ class Lesson extends Base{
         //训练营主教练
         $camp_id = input('param.camp_id');
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+        $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
+        if($is_power<2){
+            $this->error('您没有权限');
+        }
         // 教练列表
         $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         // 课程分类

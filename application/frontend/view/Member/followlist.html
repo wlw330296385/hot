@@ -161,7 +161,7 @@
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         // var urls = "{:url('event/eventInfoOfCamp')}" + '/event_id/' + data.data.data[i].id + '/organization_id/' + organizationID;
                         newli += '<li class="mui-table-view-cell mui-media listli">'
-                        newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del">取消关注</span></div>';
+                        newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del" data-type="'+data.data.data[i].type+'"  data-follow_id="'+data.data.data[i].follow_id+'" >取消关注</span></div>';
                         newli += '<div class="mui-slider-handle"><a ><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].follow_avatar + '"><div class="mui-media-body wd60">' + data.data.data[i].follow_name + '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div><div class="price-frame mui-text-center">';
                         if (data.data.data[i].type == 1) {
                             newli += "会员";
@@ -261,27 +261,33 @@
         var btnArray = ['确认', '取消'];
         var eventid = elem.parentNode.getAttribute('data-id');
         var action = elem.getAttribute('data-action');
+        var type = $(this).attr('data-type');
+        var team_id = camp_id = grade_id = $(this).attr('data-follow_id');
         mui.confirm('确认取消关注吗？', '提示', btnArray, function (e) {
             if (e.index == 0) {
-                var apiurl = "{:url('api/member/')}";
-                mui.ajax(apiurl, {
+                
+                mui.ajax("{:url('api/follow/focus')}", {
                     data: {
-                        eventid: eventid,
-                        action: action
+                        type: 2,
+                        camp_id: camp_id,
+                        grade_id:grade_id,
+                        team_id:team_id
                     },
-                    dataType: 'json',
-                    type: 'post',
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
                     headers: { 'Content-Type': 'application/json' },
                     success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
                         if (data.code == 200) {
-                            li.parentNode.removeChild(li);
-                            location.reload();
+                            mui.toast(data.msg);
                         } else {
                             mui.toast(data.msg);
                         }
                     },
-                    error: function (xhr, type, errotThrown) {
-                        mui.toast('网络异常,请稍候再试');
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
                     }
                 });
             } else {

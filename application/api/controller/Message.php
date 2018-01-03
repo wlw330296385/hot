@@ -202,7 +202,7 @@ class Message extends Base{
             }
             $campmember = $campmemberObj->toArray();
             $campmember['type_num'] = $campmemberObj->getData('type');
-            if ($campmember['type_num'] > 1) {
+            if ($campmember['type_num'] == -1 || ($campmember['type_num'] > 0 && $campmember['type_num'] < 4)) {
                 if ($campmember['type_num'] == 3) {
                     $baseurl = 'frontend/camp/teachlistofcamp';
                 } else {
@@ -218,6 +218,7 @@ class Message extends Base{
 
                 $messageS = new MessageService();
                 $messageS->campJoinAudit($data, $campmember['camp_id']);
+                return json(['code'=>100, 'msg'=>'操作成功']);
             }
         }catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -235,7 +236,7 @@ class Message extends Base{
             $campmember = $campmemberObj->toArray();
             $campmember['type_num'] = $campmemberObj->getData('type');
             $campmember['status_num'] = $campmemberObj->getData('status');
-            if ($campmember['type_num'] > 1) {
+            if ($campmember['type_num'] == -1 || ($campmember['type_num'] > 0 && $campmember['type_num'] < 4)) {
                 $url = '';
                 $checkstr = '';
                 switch ($campmember['status_num']) {
