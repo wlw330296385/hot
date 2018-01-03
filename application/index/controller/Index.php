@@ -19,9 +19,9 @@ class Index extends Controller{
         echo json_encode($a);
     }
 
-    public function tid(){
-        $a = getTID(8);
-        dump($a);
+    public function test(){
+        $StudentModel = new \app\model\Student;
+        $StudentModel->where(['member_id'=>8])->setInc(['parent_id','total_lesson'],5);
     }
 
     public function totalSchedule(){
@@ -251,19 +251,8 @@ class Index extends Controller{
         
     
 
-    public function test(){
-        $id = input('id',6);
-        $memberInfo = db('member')->find($id);
-        dump($memberInfo);
-        if($memberInfo['realname']){
-            dump($memberInfo['realname']) ;
-        }else{
-            // dump($memberInfo['realname']);
-            echo 22;
-        }
-    	// return view('Index/test');
-    }
-    
+
+
 
     
     public function sendMsg(){

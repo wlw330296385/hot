@@ -107,7 +107,7 @@ class CampMember extends Base
                         //添加一条粉丝记录
                         $isFollow = db('follow')->where(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1])->find();
                         if(!$isFollow){
-                            db('follow')->insert(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1,'follow_name'=>$campInfo['name'],'member'=>$this->memberInfo['member'],'follow_avatar'=>$campInfo['logo'],'member_avatar'=>$this->memberInfo['avatar'],'create_time'=>$time()]);
+                            db('follow')->insert(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1,'follow_name'=>$campInfo['camp'],'member'=>$this->memberInfo['member'],'follow_avatar'=>$campInfo['logo'],'member_avatar'=>$this->memberInfo['avatar'],'create_time'=>time()]);
                         }
                         return json(['code' => 200, 'msg' => '申请成功', 'insid' => $isType['id']]);
                     }
@@ -122,7 +122,7 @@ class CampMember extends Base
                         //添加一条粉丝记录
                         $isFollow = db('follow')->where(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1])->find();
                         if(!$isFollow){
-                            db('follow')->insert(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1,'follow_name'=>$campInfo['name'],'member'=>$this->memberInfo['member'],'follow_avatar'=>$campInfo['logo'],'member_avatar'=>$this->memberInfo['avatar'],'create_time'=>$time()]);
+                            db('follow')->insert(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1,'follow_name'=>$campInfo['camp'],'member'=>$this->memberInfo['member'],'follow_avatar'=>$campInfo['logo'],'member_avatar'=>$this->memberInfo['avatar'],'create_time'=>time()]);
                         }
                         return json(['code' => 100, 'msg' => '你已申请加入训练营,请等待审核']);
                     }

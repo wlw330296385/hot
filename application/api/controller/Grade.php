@@ -261,7 +261,7 @@ class Grade extends Base{
                         }
                     } else {
                         // 当前班级不能删除
-                        $response = json(['code' => 100, 'msg' => '当前班级不能删除,请先下架班级']);
+                        $response = json(['code' => 100, 'msg' => '当前班级不能删除,请先将班级设为预排班级']);
                     }
                     return $response;
                     break;

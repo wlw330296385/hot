@@ -317,7 +317,7 @@ class Lesson extends Base{
                         // 下架课程
                         $hasgradeused = $this->LessonService->hasgradeused($lesson['id']);
                         if ($hasgradeused) {
-                            return json(['code' => 100,'msg' => '该课程有班级所使用，不能操作']);
+                            return json(['code' => 100,'msg' => '该课程还有没上完课的班级,不可下架,请先设置班级为预排并删除班级']);
                         }
                         $response = $this->LessonService->updateLessonField($lesson['id'], "status", -1);
                         return json($response);
