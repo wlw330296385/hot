@@ -625,12 +625,16 @@
 
             //全选
             $(".all").click(function () {
-                $(".checkboxCont").find('input').prop('checked', true)
+                $(".checkboxCont").find('input').prop('checked', true);
+                //获取学生列表并写入对应位置
+                getStudentCount()
             })
 
             //取消全选
             $(".cancel").click(function () {
-                $(".checkboxCont").find('input').prop('checked', false)
+                $(".checkboxCont").find('input').prop('checked', false);
+                //获取学生列表并写入对应位置
+                getStudentCount()
             })
 
             // 训练地点
@@ -1101,7 +1105,8 @@
                 data: {
                     camp_id: campID,
                     lesson_id: lesson_id,
-                    grade_id: grade_id
+                    grade_id: grade_id,
+                    status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -1153,6 +1158,7 @@
             mui.ajax("{:url('api/lesson_member/getLessonMemberListNoPageApi',['lesson_id'=>$gradeInfo.lesson_id])}", {
                 data: {
                     'lesson_id': lesson_id,
+                    status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型

@@ -335,6 +335,7 @@
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
             <span class="course"><strong>教练列表</strong></span>
+            <span class="fr"><button class="mui-btn" id="mainCoachDel">清除</button></span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -348,6 +349,7 @@
         <div class="page-header border-b">
             <span class="course wd36"><strong>教练列表</strong></span>
             <span class="fr"><button class="mui-btn-blue" id="assistantConfirm">确认</button></span>
+            <span class="fr"><button class="mui-btn" id="assCoachDel">清除</button></span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -751,6 +753,12 @@
                     mui("#mainCoach").popover("toggle");
                 }
             })
+            //清除主教练
+            $("#mainCoachDel").on('tap', '', function () {
+                $(".mainCoachCont").val("");
+                $(".coach_id").val("");
+                mui("#mainCoach").popover("toggle");
+            })
             // 助理教练
             $("#assistantConfirm").click(function () {
                 $("input[name='assistants']").val($("input[name='checkbox-assistant']:checked").map(function () {
@@ -760,6 +768,12 @@
                     return $(this).attr('data-id');
                 }).get().join(","));
                 mui('#assistantCoach').popover('toggle');
+            })
+            //清除助理教练
+            $("#assCoachDel").on('tap', '', function () {
+                $("input[name='assistants']").val("");
+                $("input[name='assistant_ids']").val("");
+                mui("#assistantCoach").popover("toggle");
             })
             // 选择周期确认
             $("#weekConfirm").click(function () {
@@ -1137,7 +1151,8 @@
                 data: {
                     lesson_id:lesson_id,
                     camp_id: campID,
-                    keyword: keyword
+                    keyword: keyword,
+                    status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
