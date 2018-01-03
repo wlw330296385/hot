@@ -602,13 +602,14 @@
                 var id = $(this).attr("data-id");
                 var student_id = $(this).attr("data-student_id");
                 var student = $(this).attr("data-student");
+                var student_typenum = $(this).attr("data-student_typenum");
                 var camp = $(this).attr("data-camp");
                 var camp_id = $(this).attr("data-camp_id");
                 var lesson = $(this).attr("data-lesson");
                 var lesson_id = $(this).attr("data-lesson_id");
                 var member = $(this).attr("data-member");
                 var member_id = $(this).attr("data-member_id");
-                studentList[i] = {student:student, student_id:student_id, id: id, amp:camp, camp_id:camp_id, lesson:lesson, lesson_id:lesson_id, member:member, member_id:member_id};
+                studentList[i] = {student:student, student_id:student_id, id: id, amp:camp, camp_id:camp_id, lesson:lesson, lesson_id:lesson_id, member:member, member_id:member_id,type:student_typenum};
                 console.log(studentList)
             });
 
@@ -671,6 +672,7 @@
                     var id = $(this).attr("data-id");
                     var student_id = $(this).attr("data-student_id");
                     var student = $(this).val();
+                    var student_typenum = $(this).attr("data-student_typenum");
                     var camp = $(this).attr("data-camp");
                     var camp_id = $(this).attr("data-camp_id");
                     var lesson = $(this).attr("data-lesson");
@@ -678,8 +680,8 @@
                     var member = $(this).attr("data-member");
                     var member_id = $(this).attr("data-member_id");
 
-                    studentList[i] = {student:student, student_id:student_id, id: id, camp:camp, camp_id:camp_id, lesson:lesson, lesson_id:lesson_id, member:member, member_id:member_id};
-                    inputList += '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id +'" data-camp="'+ camp +'" data-camp_id="'+ camp_id +'" data-lesson="'+ lesson +'" data-lesson_id="'+ lesson_id +'" data-member="'+ member +'" data-member_id="'+ member_id +'" >';
+                    studentList[i] = {student:student, student_id:student_id, id: id, camp:camp, camp_id:camp_id, lesson:lesson, lesson_id:lesson_id, member:member, member_id:member_id,type:student_typenum};
+                    inputList += '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id +'" data-camp="'+ camp +'" data-camp_id="'+ camp_id +'" data-lesson="'+ lesson +'" data-lesson_id="'+ lesson_id +'" data-member="'+ member +'" data-member_id="'+ member_id +'" data-student_typenum="'+ student_typenum +'" >';
                     studentNames += student + ','
                 });
                 $("#hideStList").empty();
@@ -929,13 +931,14 @@
                         if(idNewID == "Yes"){
                             var student_id = $(this).attr("data-student_id");
                             var student = $(this).attr("data-student");
+                            var student_typenum = $(this).attr("data-student_typenum");
                             var camp = $(this).attr("data-camp");
                             var camp_id = $(this).attr("data-camp_id");
                             var lesson = $(this).attr("data-lesson");
                             var lesson_id = $(this).attr("data-lesson_id");
                             var member = $(this).attr("data-member");
                             var member_id = $(this).attr("data-member_id");
-                            studentList.push({student:student,student_id:student_id,camp:camp,camp_id:camp_id,lesson:lesson,lesson_id:lesson_id, member:member, member_id:member_id, grade:"{$gradeInfo.grade}",grade_id:"{$gradeInfo.id}"});
+                            studentList.push({student:student,student_id:student_id,camp:camp,camp_id:camp_id,lesson:lesson,lesson_id:lesson_id, member:member, member_id:member_id, type:student_typenum, grade:"{$gradeInfo.grade}",grade_id:"{$gradeInfo.id}"});
                         }
                     });
 
@@ -1194,7 +1197,7 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             tys = '';
                             if (data.data[i].type == "体验生") { tys = '<span class="tips">体验生</span>' }
-                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student +'" data-camp="'+ data.data[i].camp +'" data-camp_id="'+ data.data[i].camp_id +'" data-lesson="'+ data.data[i].lesson +'" data-lesson_id="'+ data.data[i].lesson_id +'" data-member="'+ data.data[i].member +'" data-member_id="'+ data.data[i].member_id + '"></div>'
+                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student +'" data-camp="'+ data.data[i].camp +'" data-camp_id="'+ data.data[i].camp_id +'" data-lesson="'+ data.data[i].lesson +'" data-lesson_id="'+ data.data[i].lesson_id +'" data-member="'+ data.data[i].member +'" data-member_id="'+ data.data[i].member_id + '" data-student_typenum="'+ data.data[i].type_num +'" ></div>'
                         }
 
                         $(classNameList).empty();

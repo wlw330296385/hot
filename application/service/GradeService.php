@@ -15,7 +15,7 @@ class GradeService{
 
 
     // 班级列表
-    public function getGradeList($map=[],$page = 1, $order='',$p=10) {
+    public function getGradeList($map=[],$page = 1, $order='id desc',$p=10) {
         $res = Grade::where($map)->order($order)->page($page,$p)->select();
         // echo Grade::getlastsql();
         if($res){   
@@ -25,7 +25,7 @@ class GradeService{
     }
 
     // 班级分页
-    public function getGradeListByPage($map , $order='', $paginate=10) {
+    public function getGradeListByPage($map , $order='id desc', $paginate=10) {
         $result =  $this->GradeModel
                 // ->with('gradeMember')
                 ->where($map)
@@ -43,7 +43,7 @@ class GradeService{
     }
 
     // 班级分页
-    public function getGradeListNoPage($map , $order='', $paginate=10) {
+    public function getGradeListNoPage($map , $order='id desc', $paginate=10) {
         $result =  $this->GradeModel
                 // ->with('gradeMember')
                 ->where($map)
@@ -144,7 +144,7 @@ class GradeService{
             $seria = serialize($assistan_list);
             $data['assistant_id'] = $seria;
         }
-        $result = $this->GradeModel->save($data,['id'=>$id]);
+        $result = $this->GradeModel->allowField(true)->save($data,['id'=>$id]);
          if (!$result) {
             return [ 'msg' => __lang('MSG_400'), 'code' =>100 ];
         }else{

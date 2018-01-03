@@ -26,7 +26,7 @@ class ScheduleService
 
 
     // 获取课时数据列表
-    public function getscheduleList($map = [], $page = 1, $p = '10', $order = '', $field = '*')
+    public function getscheduleList($map = [], $page = 1, $p = '10', $order = 'id desc', $field = '*')
     {
         $res = Schedule::where($map)->field($field)->order($order)->page($page, $p)->select();
         if ($res) {
@@ -37,7 +37,7 @@ class ScheduleService
         }
     }
 
-    public function getScheduleListByPage($map = [], $paginate = 10, $order = '')
+    public function getScheduleListByPage($map = [], $paginate = 10, $order = 'id desc')
     {
         $result = $this->scheduleModel->where($map)->order($order)->paginate($paginate);
         // echo $this->scheduleModel->getlastsql();die;
@@ -55,6 +55,7 @@ class ScheduleService
     // 发布课时
     public function createSchedule($data)
     {
+        //dump($data);die;
         // 查询权限
         $is_power = $this->isPower($data['camp_id'], $data['member_id']);
         if ($is_power < 2) {
@@ -104,7 +105,6 @@ class ScheduleService
     // 修改课时
     public function updateSchedule($data, $id)
     {
-        dump($data);die;
         $scheduleInfo = $this->getScheduleInfo(['id'=>$id]);
         // 是否已被审核通过
         if($scheduleInfo['status'] == 1){
