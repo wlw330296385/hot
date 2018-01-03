@@ -159,7 +159,7 @@ class Schedule extends Base
 		    $planInfo['exerciseList'] = [];
 		}
 
-//		dump($planInfo['exerciseList']);die;
+		//dump($planInfo['exerciseList']);die;
 
 		
 		// 班级学生
