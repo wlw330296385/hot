@@ -104,7 +104,6 @@ class ScheduleService
     // 修改课时
     public function updateSchedule($data, $id)
     {
-        dump($data);die;
         $scheduleInfo = $this->getScheduleInfo(['id'=>$id]);
         // 是否已被审核通过
         if($scheduleInfo['status'] == 1){
