@@ -27,53 +27,23 @@ class CampMember extends Base
     {
         $camp_id = input('param.camp_id');
         $remarks = input('param.remarks');
-        $campInfo = $this->CampService->getCampInfo($camp_id);
-        if (!$campInfo) {
-            return json(['code' => 100, 'msg' => '不存在此训练营']);
-        }
-        //是否已存在身份
-        $msg = '你已经成为该训练营的粉丝!';
-        $isType = db('camp_member')->where(['member_id' => $this->memberInfo['id'], 'camp_id' => $camp_id])->find();
-        if ($isType) {
-            // 被移除过 再次加入 更新原数据记录
-            if ($isType['status'] == -1) {
-                $joinagain = db('camp_member')->where(['id' => $isType['id']])->update([
-                    'status' => 1,
-                    'update_time' => time()
-                ]);
-                if (!$joinagain) {
-                    return json(['code' => 100, 'msg' => '申请失败']);
-                } else {
-                    return json(['code' => 200, 'msg' => $msg]);
-                }
+        // 插入follow数据
+        $followDb = db('follow');
+        $hasFollow = $followDb->where(['type' => 2, 'follow_id' => $campInfo['id'], 'member_id' => $this->memberInfo['id']])->find();
+        if ($hasFollow) {
+            if ($hasFollow['status'] == -1) {
+                $followDb->where('id', $hasFollow)->update(['status' => 1, 'update_time' => time()]);
             }
-
-            if ($isType['status'] == 1) {
-                return json(['code' => 100, 'msg' => '你已经是训练营的一员']);
-            }
-
-        }
-        $result = db('camp_member')->insert(['camp_id' => $campInfo['id'], 'camp' => $campInfo['camp'], 'member_id' => $this->memberInfo['id'], 'member' => $this->memberInfo['member'], 'type' => -1, 'status' => 1, 'create_time' => time()]);
-        if ($result) {
-            // 插入follow数据
-            $followDb = db('follow');
-            $hasFollow = $followDb->where(['type' => 2, 'follow_id' => $campInfo['id'], 'member_id' => $this->memberInfo['id']])->find();
-            if ($hasFollow) {
-                if ($hasFollow['status'] == -1) {
-                    $followDb->where('id', $hasFollow)->update(['status' => 1, 'update_time' => time()]);
-                }
-            } else {
-                $followDb->insert([
-                    'type' => 2, 'status' => 1,
-                    'follow_id' => $campInfo['id'], 'follow_name' => $campInfo['camp'], 'follow_avatar' => $campInfo['logo'],
-                    'member_id' => $this->memberInfo['id'], 'member' => $this->memberInfo['member'], 'member_avatar' => $this->memberInfo['avatar'],
-                    'create_time' => time(), 'update_time' => time()
-                ]);
-            }
-            return json(['code' => 200, 'msg' => $msg]);
         } else {
-            return json(['code' => 100, 'msg' => '申请失败']);
+            $followDb->insert([
+                'type' => 2, 'status' => 1,
+                'follow_id' => $campInfo['id'], 'follow_name' => $campInfo['camp'], 'follow_avatar' => $campInfo['logo'],
+                'member_id' => $this->memberInfo['id'], 'member' => $this->memberInfo['member'], 'member_avatar' => $this->memberInfo['avatar'],
+                'create_time' => time(), 'update_time' => time()
+            ]);
         }
+        return json(['code' => 200, 'msg' => $msg]);
+        
     }
 
     // 申请成为训练营的某个身份
@@ -92,68 +62,61 @@ class CampMember extends Base
             }
             //是否已存在身份
             $isType = db('camp_member')->where(['member_id' => $this->memberInfo['id'], 'camp_id' => $camp_id])->find();
+            // 存在身份
             if ($isType) {
-                // 被移除过 再次加入 更新原数据记录
-                if ($isType['status'] == -1) {
-                    $joinagain = db('camp_member')->where(['id' => $isType['id']])->update([
-                        'type' => $type,
-                        'status' => ($type == -1) ? 1 : 0,
-                        'remarks' => $remarks,
-                        'update_time' => time()
-                    ]);
-                    if (!$joinagain) {
-                        return json(['code' => 100, 'msg' => '申请失败']);
-                    } else {
-                        //添加一条粉丝记录
-                        $isFollow = db('follow')->where(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1])->find();
-                        if(!$isFollow){
-                            db('follow')->insert(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1,'follow_name'=>$campInfo['camp'],'member'=>$this->memberInfo['member'],'follow_avatar'=>$campInfo['logo'],'member_avatar'=>$this->memberInfo['avatar'],'create_time'=>time()]);
-                        }
-                        return json(['code' => 200, 'msg' => '申请成功', 'insid' => $isType['id']]);
-                    }
-                }
-
-                if ($type > $isType['type']) {  // 升级身份
+                // 升级身份
+                if ($type > $isType['type']) {  
+                    
                     $data['id'] = $isType['id'];
-                } else {
+                    if ($type == 2) {// 必须要有教练资格
+                        $coachS = new CoachService();
+                        $coach = $coachS->coachInfo(['member_id' => $this->memberInfo['id']]);
+                        if (!$coach && $coach['status_num'] != 1) {
+                            return json(['code' => 101, 'msg' => '请先注册教练资格', 'goto' => url('frontend/coach/createcoach')]);
+                        }
+                    }
+                    $status = 0;
+                    $data = [
+                        'camp_id' => $campInfo['id'],
+                        'camp' => $campInfo['camp'],
+                        'member_id' => $this->memberInfo['id'],
+                        'member' => $this->memberInfo['member'],
+                        'remarks' => $remarks,
+                        'type' => $type,
+                        'status' => $status
+                    ];
+                    // 改写身份
+                    $model = new \app\model\CampMember();
+                    $result = $model->save($data,['id'=>$isType['id']]);
+                //降低身份?
+                }else {
                     if ($isType['status'] == 1) {
                         return json(['code' => 100, 'msg' => '你已经是训练营的一员']);
-                    } else {
-                        //添加一条粉丝记录
-                        $isFollow = db('follow')->where(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1])->find();
-                        if(!$isFollow){
-                            db('follow')->insert(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1,'follow_name'=>$campInfo['camp'],'member'=>$this->memberInfo['member'],'follow_avatar'=>$campInfo['logo'],'member_avatar'=>$this->memberInfo['avatar'],'create_time'=>time()]);
-                        }
-                        return json(['code' => 100, 'msg' => '你已申请加入训练营,请等待审核']);
-                    }
+                    }else{
+                        return json(['code' => 100, 'msg' => '重复申请']);
+                    } 
                 }
-
+                $id = $isType['id'];
+            // 不存在身份
+            }else{
+                $status = 0;
+                $data = [
+                    'camp_id' => $campInfo['id'],
+                    'camp' => $campInfo['camp'],
+                    'member_id' => $this->memberInfo['id'],
+                    'member' => $this->memberInfo['member'],
+                    'remarks' => $remarks,
+                    'type' => $type,
+                    'status' => $status
+                ];
+                // 插入身份
+                $model = new \app\model\CampMember();
+                $result = $model->save($data);
+                $id = $model->id;
             }
-            // 必须要有教练资格
-            if ($type == 2) {
-                $coachS = new CoachService();
-                $coach = $coachS->coachInfo(['member_id' => $this->memberInfo['id']]);
-                if (!$coach && $coach['status_num'] != 1) {
-                    return json(['code' => 101, 'msg' => '请先注册教练资格', 'goto' => url('frontend/coach/createcoach')]);
-                }
-            }
 
-            $status = 0;
-            if ($type == -1) {
-                $status = 1;
-            }
-            $data = [
-                'camp_id' => $campInfo['id'],
-                'camp' => $campInfo['camp'],
-                'member_id' => $this->memberInfo['id'],
-                'member' => $this->memberInfo['member'],
-                'remarks' => $remarks,
-                'type' => $type,
-                'status' => $status
-            ];
-
-            $model = new \app\model\CampMember();
-            $result = $model->save($data);
+             
+            // 操作成功
             if ($result) {
                 // 插入follow数据
                 $followDb = db('follow');
@@ -170,12 +133,7 @@ class CampMember extends Base
                         'create_time' => time(), 'update_time' => time()
                     ]);
                 }
-                //添加一条粉丝记录
-                $isFollow = db('follow')->where(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1])->find();
-                if(!$isFollow){
-                    db('follow')->insert(['member_id' => $this->memberInfo['id'], 'type' =>1,'follow_id'=> $camp_id,'status'=>1,'follow_name'=>$campInfo['name'],'member'=>$this->memberInfo['member'],'follow_avatar'=>$campInfo['logo'],'member_avatar'=>$this->memberInfo['avatar'],'create_time'=>$time()]);
-                }
-                return json(['code' => 200, 'msg' => '申请成功', 'insid' => $model->id]);
+                return json(['code' => 200, 'msg' => '申请成功', 'insid' => $id]);
             } else {
                 return json(['code' => 100, 'msg' => '申请失败']);
             }

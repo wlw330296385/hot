@@ -269,20 +269,34 @@ class LessonService {
         $CampMember = new \app\model\CampMember;
         $camp_member = $CampMember->where(['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id'],'status'=>1])->find();
         if(!$camp_member){
-            $res = $CampMember->save($data);
+            $res = $CampMember->allowField(true)->save($data);
+            if(!$res){
+                return ['code'=>100,'msg'=>'预约失败,请稍后再试'];
+            }
+        }
+        // 检查学员有无lesson_member数据
+        $LessonMember = new \app\model\LessonMember;
+        //$lesson_member = $LessonMember->where(['lesson_id'=>$data['lesson_id'],'student_id'=>$data['student_id'],'status'=>1,'type'=>2])->find();
+        $lesson_member = $LessonMember->where(['lesson_id'=>$data['lesson_id'],'student_id'=>$data['student_id']])->find()->getData();
+        if (!$lesson_member) {
+            $res = $LessonMember->allowField(true)->save($data);
+            if(!$res){
+                return ['code'=>100,'msg'=>'预约失败,请稍后再试'];
+            }
+        } else {
+            // 正式生未完成课程
+            if ($lesson_member['type'] == 1) {
+                if ($lesson_member['status'] != 4) {
+                    return ['code'=>100,'msg'=>'学员未完成此课程，不能预约体验'];
+                }
+            }
+            // 其他情况更新数据
+            $res = $LessonMember->allowField(true)->isUpdate(true)->save($data, ['id' => $lesson_member['id']]);
             if(!$res){
                 return ['code'=>100,'msg'=>'预约失败,请稍后再试'];
             }
         }
 
-        $LessonMember = new \app\model\LessonMember;
-        $lesson_member = $LessonMember->where(['lesson_id'=>$data['lesson_id'],'student_id'=>$data['student_id'],'status'=>1,'type'=>2])->find();
-        if(!$lesson_member){
-            $res = $LessonMember->save($data);
-            if(!$res){
-                return ['code'=>100,'msg'=>'预约失败,请稍后再试'];
-            }
-        }
         // 发送训练营模板消息
          $MessageCampData = [
             "touser" => '',
