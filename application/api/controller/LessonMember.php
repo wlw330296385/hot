@@ -53,8 +53,15 @@ class LessonMember extends Base{
                 $map['rest_schedule'] = ['lt',$map['rest_schedule']];
             }
             $LessonMember = new \app\model\LessonMember;
-            $result =  $LessonMember->where($map)->select();
-            if($result){
+            $res =  $LessonMember->where($map)->select();
+            if($res){
+                $result = $res->toArray();
+                // 遍历获取数据原始值
+                foreach ($result as $k => $val) {
+                    $getData = $LessonMember->where(['id' => $val['id']])->find()->getData();
+                    $result[$k]['type_num'] = $getData['type'];
+                    $result[$k]['status_num'] = $getData['status'];
+                }
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
                 return json(['code'=>100,'msg'=>'检查你的参数']);
