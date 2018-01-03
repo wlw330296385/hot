@@ -84,6 +84,16 @@
             width:auto !important;
             float:none !important;
         }
+        .mui-input-group .bggray2 span {
+            font-size:12px;
+            color:#AAA;
+            vertical-align: middle;
+        }
+        .mui-input-group .bggray2 b {
+            font-size:14px;
+            font-weight: normal;
+            color: #999999;
+        }
     </style>
 </head>
 
@@ -131,20 +141,25 @@
                 <form class="mui-input-group">
                     <div class="mui-input-row bggray2">
                         <label>正式学员</label>
-                        <span id="inactiveCount"></span>
+                        <span>
+                            <b id="inactiveCount"></b> / <b id="inactiveALLCount"></b>
+                        </span>
                     </div>
                     <div class="box checkChecked" id="inactiveList">
 
                     </div>
                     <div class="mui-input-row bggray2">
                         <label>体验生</label>
-                        <span id="expinactiveCount"></span>
+                        <span>
+                            <b id="expinactiveCount"></b> / <b id="expinactiveAllCount"></b>
+                        </span>
                     </div>
                     <div class="expbox checkChecked" id="expinactiveList">
 
                     </div>
                     <div class="operation-btn">
                         <span class="mui-badge">0</span>
+                        <a class="showAll">只看已选</a>
                         <a class="all">全选</a>
                         <a class="cancel">取消</a>
                         <a href="#addStudent" id="setStudentCBox" class="mui-icon mui-icon-personadd add"></a>
@@ -235,7 +250,7 @@
                 </div>
 
                 <div class="mui-input-row">
-                    <a href="#exercises" class="mui-navigate-right">
+                    <a href="#exercises" id="setExercisesBox" class="mui-navigate-right">
                         <label>教案项目</label>
                         <span class="planName">{$gradeInfo.plan}</span>
                         <input type="hidden" name="plan" value="{$gradeInfo.plan}" />
@@ -552,6 +567,7 @@
                 //然后遍历出对应所选
                 $(".exercises li").each(function (i) {
                     var exercises_name = $(this).find("span").text();
+                    console.log(exercises_name)
                     $(".exerciseList").find("input[name='checkbox-dom']").filter(function (index) {
                         return $(this).attr("data-exercise") == exercises_name
                     }).prop("checked", true);
@@ -578,7 +594,7 @@
                         var id = $(this).val();
                         var pid = $(this).attr("data-pid");
                         subexercise_str.push({ exercise: exercise,exercise_time: exercise_time, id: id, pid: pid });
-                        eList += '<li class="mui-table-view-cell listli detalisli">'+exercise+'<i class="fr f12">'+exercise_time+'分钟</i></li>'
+                        eList += '<li class="mui-table-view-cell listli detalisli"><span>'+exercise+'</span><i class="fr f12">'+exercise_time+'分钟</i></li>'
 
                     });
                     if (subexercise_str != '') {
@@ -589,6 +605,22 @@
                 });
                 console.log(exercise_str)
                 mui('#exercises').popover('toggle');
+            })
+
+            //只看已选/查看全部
+            $(".showAll").click(function () {
+                if($(this).hasClass("justChecked")){
+                    $(".checkboxCont").show();
+                    $(this).removeClass("justChecked");
+                    $(this).text("只看已选");
+                    $(".checkChecked").addClass("box");
+                }else{
+                    $(".checkboxCont").hide();
+                    $("input[name=student]:checked").parent().show();
+                    $(this).addClass("justChecked");
+                    $(this).text("查看全部");
+                    $(".checkChecked").removeClass("box");
+                }
             })
 
             //全选
@@ -695,9 +727,8 @@
 
             //角标随checkboxCont的数量变化
             $(document).on('click', '.stdList', function () {
-                $("#inactiveCount").text("已选："+$("#inactiveList input[type=checkbox]:checked").length);
-                $("#expinactiveCount").text("已选："+$("#expinactiveList input[type=checkbox]:checked").length);
-                $(".mui-badge").text($(".checkboxCont input[type=checkbox]:checked").length);
+                //获取学生列表并写入对应位置
+                getStudentCount()
             });
 
             //学员列表复选框赋值
@@ -758,12 +789,9 @@
                 //去除搜索时的吻合样式
                 $("#newdiv .mui-checkbox").removeClass("matchStudent");
 
-                //获取学生列表长度
-                var iCount = $("#inactiveList input[type=checkbox]:checked").length;
-                var eCount = $("#expinactiveList input[type=checkbox]:checked").length;
-                $("#inactiveCount").text("已选："+iCount);
-                $("#expinactiveCount").text("已选："+eCount);
-                $(".mui-badge").text($(".checkboxCont input[type=checkbox]:checked").length);
+                //获取学生列表并写入对应位置
+                getStudentCount()
+
                 //判断是否没有学生
                 if ($("#inactiveList").html() == '') {
                     $("#inactiveList").append('<p class="nohave">没有正式学员哦</p>');
@@ -797,6 +825,7 @@
                 mui('#addStudent .mui-scroll-wrapper').scroll().scrollTo(0, 0 , 100);
             })
 
+            showTips();
             //获取已经分配班级的学员列表
             toExpStudentList();
             //获取学员列表
@@ -872,7 +901,7 @@
                 var city = getCity || $('input[name=city]').val();
                 var area = getArea || $('input[name=area]').val();
                 var cover = $(".cover").val();
-                var students = totalNum;
+                var students = $(".mui-badge").text();
                 var camp = $("input[name=camp]").val();
                 var campid = $('.camp').attr('data-id');
                 var grade = $(".grade").text();
@@ -994,7 +1023,7 @@
                                     'expstudentList': expstudentList,
                                     'plan': plan,
                                     'plan_id': plan_id,
-                                    'exercise': exercise_str
+                                    'exercise': JSON.stringify(exercise_str)
                                 },
                                 dataType: 'json',//服务器返回json格式数据
                                 type: 'post',//HTTP请求类型
@@ -1025,17 +1054,11 @@
             });
         })
 
-        // 检查是否有学员数据
-        var checkStudent = function () {
-            if ($("#inactiveList").html() == '') {
-                $("#inactiveList").append('<p class="nohave">没有正式学员哦</p>');
-            }
-            if ($("#expinactiveList").html() == '') {
-                $("#expinactiveList").append('<p class="nohave">没有体验生哦</p>');
-            };
+
+        //温馨提示
+        var showTips = function () {
+            mui.alert('您好，篮球管家根据用户的反馈，对“上课学员”选择的操作进行调整，从即日起请将实际上课学员勾选上即可', '温馨提示', function() {});
         };
-
-
 
         //根据默助教遍历出对应所选
         var toAssistantCheckbox = function () {
@@ -1047,6 +1070,25 @@
                 }).prop("checked", true);
             };
         };
+
+        // 检查是否有学员数据
+        var checkStudent = function () {
+            if ($("#inactiveList").html() == '') {
+                $("#inactiveList").append('<p class="nohave">没有正式学员哦</p>');
+            }
+            if ($("#expinactiveList").html() == '') {
+                $("#expinactiveList").append('<p class="nohave">没有体验生哦</p>');
+            };
+        };
+
+        // 获取学生列表并写入对应位置
+        var getStudentCount = function () {
+            $("#inactiveALLCount").text($("#inactiveList input[type=checkbox]").length);
+            $("#expinactiveAllCount").text($("#expinactiveList input[type=checkbox]").length);
+            $("#inactiveCount").text($("#inactiveList input[type=checkbox]:checked").length);
+            $("#expinactiveCount").text($("#expinactiveList input[type=checkbox]:checked").length);
+            $(".mui-badge").text($(".checkboxCont input[type=checkbox]:checked").length);
+        }
 
         //获取已经分配班级的学员列表
         var toExpStudentList = function () {
@@ -1088,9 +1130,12 @@
                         orgStudentList = $("#inactiveList").html();
                         orgExpStudentList = $("#expinactiveList").html();
 
-                        checkStudent();// 检查是否有学员数据
-
-                        changeIndex();//调用-更新序号
+                        //获取学生列表并写入对应位置
+                        getStudentCount()
+                        // 检查是否有学员数据
+                        checkStudent();
+                        //调用-更新序号
+                        changeIndex();
                         totalNum = 0;
                     }
 
