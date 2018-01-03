@@ -127,6 +127,7 @@ class Follow extends Base {
     public function myfollow() {
         try {
             $page = input('param.page', 1);
+            $map = input('post.');
             $map['member_id'] = $this->memberInfo['id'];
             $followS = new FollowService();
             $res = $followS->getfollowlist($map);
