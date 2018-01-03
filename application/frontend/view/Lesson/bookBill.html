@@ -169,7 +169,7 @@
                             }else{
                                 mui.toast(ajaxResult.msg);
                                 mui.get("{:url('api/frontend/reloadtoken')}", function(data){
-                                    if(data.code===200) {
+                                    if(data.code==200) {
                                         $('input[name=__token__]').val(data.data);
                                     }
                                 }, 'json');
@@ -238,10 +238,11 @@
         var remarks = $('.remarks').val();
         var student = $('.selectStudent').find("option:selected").text();
         var student_id = $('.selectStudent').val();
+        var token = $('input[name=__token__]').val();
         objLessonInfo.student_id = student_id;
         objLessonInfo.student = student;
         objLessonInfo.remarks = remarks;
-        objLessonInfo.__token__ = "{$Request.token}";
+        objLessonInfo.__token__ = token;
         console.log(objLessonInfo);
         var result = wooApi.asyncF("{:url('api/lesson/bookLessonApi')}",objLessonInfo);
         if(result.code == 200){
@@ -251,7 +252,12 @@
           });
 
         }else{
-        mui.toast(result.msg);
+            mui.toast(result.msg);
+            mui.get("{:url('api/frontend/reloadtoken')}", function(data){
+                if(data.code==200) {
+                    $('input[name=__token__]').val(data.data);
+                }
+            }, 'json');
         }
     }
 

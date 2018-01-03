@@ -13,45 +13,7 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <!-- <style>
-        .introBox {
-            padding: 0 !important;
-        }
 
-        .introBox img {
-            padding: 0px 15px;
-            width: 100%;
-            height: auto;
-        }
-
-        .operationDiv {
-            position: relative;
-        }
-
-        .operationDiv .delbtn {
-            position: absolute;
-            right: 15px;
-            top: 10px;
-            line-height: initial !important;
-            font-size: 18px !important;
-        }
-
-        .operationDiv h5 {
-            padding: 10px 15px;
-            height: 40px;
-            line-height: 21px;
-            color: #000;
-            margin: 0;
-            font-weight: bold
-        }
-
-        .operationDiv p {
-            padding: 10px 15px;
-            margin: 0;
-            color: #000;
-        }
-
-    </style> -->
 </head>
 
 <body class=whitebg>
@@ -129,9 +91,27 @@
             </div>
 
             <!--图片轮播-->
-
             <div id="slider" class="mui-slider" style="height:120px">
-
+                {notempty name="matchInfo.record.album"}
+                <div class="mui-slider-group mui-slider-loop">
+                    <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+                    <div class="mui-slider-item mui-slider-item-duplicate">
+                        <img src="{$matchInfo.record[0]}">
+                    </div>
+                    <!-- 第一张 -->
+                    {volist name="matchInfo.record.album" id="vol"}
+                    <div class="mui-slider-item">
+                        <img src="{$vol}">
+                    </div>
+                    {/volist}
+                    <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+                    <div class="mui-slider-item mui-slider-item-duplicate">
+                        <img src="{$matchInfo.record|array_pop}">
+                    </div>
+                </div>
+                {else/}
+                <p class="mui-text-center" style="padding-top:45px;">还没有上传花絮图哦</p>
+                {/notempty}
             </div>
 
             <div class="page-header whitebg border-b">
@@ -243,10 +223,10 @@
             //报名功能
             $(".signupBtn").on('click', function () {
                 //判断是否登陆会员
-                var event_id = "";
+                var match_id = "{$matchInfo.id}";
                 mui.ajax("{:url('api/team/jointeamevent')}", {
                     data: {
-                        event_id: event_id,
+                        match_id: match_id,
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -269,8 +249,7 @@
 
             //评论功能
             $(".commentBtn").on('click', function () {
-                var commented = "";
-                var commented_id = "";
+                var commented_id = "{$matchInfo.id}";
                 var comment = $(".comment").val();
 
                 if (comment == '') {
@@ -280,9 +259,8 @@
 
                 mui.ajax("{:url('api/team/addteamcomment')}", {
                     data: {
-                        commented: commented,
                         commented_id: commented_id,
-                        comment_type: 2,
+                        comment_type: 3,
                         comment: comment
                     },
                     dataType: 'json',//服务器返回json格式数据
@@ -294,6 +272,7 @@
                         if (data.code == 200) {
                             mui.alert('评价成功，感谢你的评价！', '确定');
                             mui('#fbcomment').popover('toggle');
+                            location.reload();
                         } else {
                             mui.toast(data.msg);
                         }
@@ -307,13 +286,11 @@
 
             //点赞功能
             $(".thumbsup").on('click', function () {
-                var commented = "";
-                var commented_id = "";
+                var commented_id = "{$matchInfo.id}";
                 mui.ajax("{:url('api/team/dianzan')}", {
                     data: {
-                        commented: commented,
                         commented_id: commented_id,
-                        comment_type: 2,
+                        comment_type: 3,
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -338,13 +315,13 @@
 
         // 点赞状态
         function isthumbsup() {
-            var commented = "";
-            var commented_id = "";
+            // var commented = "";
+            var commented_id = "{$matchInfo.id}";
             mui.ajax("{:url('api/team/isthumbup')}", {
                 data: {
-                    commented: commented,
+                    // commented: commented,
                     commented_id: commented_id,
-                    comment_type: 2,
+                    comment_type: 3,
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -394,7 +371,7 @@
             }
 
             // 报名/参与人员的文字显示
-            if (time > end_time) {
+            if (is_finished == 1) {
                 $(".statusText").text("参与者");
             }
         }
@@ -420,12 +397,12 @@
         //获取评论列表
         function toCommentList(page, gType) {
             var url = "{:url('api/team/teamcommentlist','','',true)}/?page=" + page;
-            var commented_id = "";
+            var commented_id = "{$matchInfo.id}";
             mui.ajax({
                 url: url,
                 data: {
                     commented_id: commented_id,
-                    comment_type: 2,
+                    comment_type: 3,
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
