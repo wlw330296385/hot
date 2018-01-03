@@ -13,12 +13,12 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <style>
-        .intro {
+    <!-- <style>
+        .introBox {
             padding: 0 !important;
         }
 
-        .intro img {
+        .introBox img {
             padding: 0px 15px;
             width: 100%;
             height: auto;
@@ -51,14 +51,7 @@
             color: #000;
         }
 
-        .nohave {
-            margin: 0;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-top: none;
-            text-align: center;
-        }
-    </style>
+    </style> -->
 </head>
 
 <body class=whitebg>
@@ -73,25 +66,25 @@
                 <li class="mui-table-view-cell listli mui-text-center" style="padding:35px 15px 25px 15px;">
                     <div class="mui-row">
                         <div class="mui-col-sm-4 mui-col-xs-4">
-                            <img src="/static/frontend/images/ads1.jpg" style="width: 100%;height: 80px;">
+                            <img src="{$matchInfo.record.home_team_logo}" style="width: 100%;height: 80px;">
                         </div>
                         <div class="mui-col-sm-4 mui-col-xs-4">
                             <h3>VS</h3>
                             <p>友谊赛</p>
                         </div>
                         <div class="mui-col-sm-4 mui-col-xs-4">
-                            <img src="/static/frontend/images/ads1.jpg" style="width: 100%;height: 80px;">
+                            <img src="{$matchInfo.record.away_team_logo}" style="width: 100%;height: 80px;">
                         </div>
                     </div>
                     <div class="mui-row">
-                        <div class="mui-col-sm-4 mui-col-xs-4">F-18</div>
+                        <div class="mui-col-sm-4 mui-col-xs-4">{$matchInfo.record.home_team}</div>
                         <div class="mui-col-sm-4 mui-col-xs-4"></div>
-                        <div class="mui-col-sm-4 mui-col-xs-4">Steam</div>
+                        <div class="mui-col-sm-4 mui-col-xs-4">{$matchInfo.record.away_team}</div>
                     </div>
                     <div class="mui-row">
-                        <h2 class="mui-col-sm-4 mui-col-xs-4 colorred">100</h2>
+                        <h2 class="mui-col-sm-4 mui-col-xs-4 colorred">{$matchInfo.record.home_score}</h2>
                         <div class="mui-col-sm-4 mui-col-xs-4"></div>
-                        <h2 class="mui-col-sm-4 mui-col-xs-4 colorred">97</h2>
+                        <h2 class="mui-col-sm-4 mui-col-xs-4 colorred">{$matchInfo.record.away_score}</h2>
                     </div>
                 </li>
             </ul>
@@ -99,19 +92,19 @@
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
                     <label>对手</label>
-                    <span></span>
+                    <span>{$matchInfo.record.away_team}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>地点</label>
-                    <span></span>
+                    <span>{$matchInfo.court}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>地区</label>
-                    <span></span>
+                    <span>{$matchInfo.province} {$matchInfo.city} {$matchInfo.area}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>时间</label>
-                    <span></span>
+                    <span>{$matchInfo.create_time}</span>
                 </li>
             </ul>
 
@@ -172,7 +165,7 @@
                 </li>
             </ul>
 
-            <ul class="mui-table-view operation mt status3" style="display:none">
+            <ul class="mui-table-view operation mt status3">
                 <a href="#fbcomment">
                     <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgblue">
                         发表评论
@@ -185,7 +178,7 @@
                 </a>
             </ul>
 
-            <ul class="mui-table-view operation mt status4">
+            <ul class="mui-table-view operation mt status4" style="display:none">
                 <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgred signupBtn">
                     报名参加
                 </li>
@@ -378,34 +371,31 @@
 
         // 默认的样式
         function initialEds() {
-            if ($(".intro").text() == '') {
-                $(".intro").append("<p class='nohave'>还没有活动详情描述哦</p>")
+            if ($(".introBox").text() == '') {
+                $(".introBox").append("<p class='nohave'>还没有活动详情描述哦</p>")
             }
         }
 
         // 判断身份显示操作按钮
         function ststuShow() {
-            // 获取当前时间
-            var d = new Date()
-            var minutes = d.getMinutes()
-            var hours = d.getHours()
-            var day = d.getDate()
-            var month = d.getMonth() + 1
-            var year = d.getFullYear()
-            var time = year + "-" + month + "-" + day + " " + hours + ":" + minutes;
             var teamrole = "";
-            var end_time = "";
+            var is_finished = "{$matchInfo.record.is_finished}";
 
-            if (teamrole > 0 && time > end_time) {
+            if (teamrole > 0 && is_finished == 1) {
                 $(".status3").show();
-            } else if (teamrole > 0 && time < end_time) {
+            } else if (teamrole > 0 && is_finished == 0) {
                 $(".status4").show();
             }
 
-            if (teamrole < 0 && time < end_time) {
+            if (is_finished == 0) {
                 $(".status2").show();
-            } else if (teamrole < 0 && time > end_time) {
+            } else {
                 $(".status1").show();
+            }
+
+            // 报名/参与人员的文字显示
+            if (time > end_time) {
+                $(".statusText").text("参与者");
             }
         }
 
