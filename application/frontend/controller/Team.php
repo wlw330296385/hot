@@ -86,17 +86,6 @@ class Team extends Base {
 
     // 球队首页
     public function teaminfo() {
-        // 球队胜率输出
-        $this->teamInfo['win_rate'] = 0;
-        if ($this->teamInfo['match_num']) {
-            if ($this->teamInfo['match_win']) {
-                $winrate = ($this->teamInfo['match_win']/$this->teamInfo['match_num']);
-                $winrate = sprintf("%.2f", $winrate);
-                $this->teamInfo['win_rate'] = $winrate*100;
-            }  else {
-                $this->teamInfo['win_rate'] = 0;
-            }
-        }
         return view('Team/teamInfo');
     }
 
@@ -302,8 +291,11 @@ class Team extends Base {
     public function matchinfo() {
         $match_id = input('match_id', 0);
         $matchS = new MatchService();
+        $teamS = new TeamService();
+        // 比赛详情
         $matchInfo = $matchS->getMatch(['id' => $match_id]);
         if ($matchInfo['type_num'] == 1) {
+            // 友谊赛 输出比赛战绩数据
             $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
             if ($matchRecordInfo) {
                 if (!empty($matchRecordInfo['album'])) {
@@ -312,7 +304,10 @@ class Team extends Base {
                 $matchInfo['record'] = $matchRecordInfo;
             }
         }
+        // 进入编辑录入入口判断 获取会员在球队角色身份
+        $teamrole = $teamS->checkMemberTeamRole($matchInfo['team_id'], $this->memberInfo['id']);
 
+        $this->assign('teamrole', $teamrole);
         $this->assign('matchInfo', $matchInfo);
         return view('Team/matchInfo');
     }

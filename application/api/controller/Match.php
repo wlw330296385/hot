@@ -93,10 +93,14 @@ class Match extends Base {
         try {
             // 接收输入变量
             $data = input('post.');
+            if (isset($data['record_id'])) {
+                $data['id'] = $data['record_id'];
+            }
             $matchS = new MatchService();
             // 当前时间大于输入的比赛时间 记录比赛完成时间和完成状态
             $now = time();
             $matchTimeStamp = strtotime($data['match_time']);
+            $data['match_time'] = $matchTimeStamp;
             if ($now > $matchTimeStamp) {
                 $data['is_finished'] = 1;
                 $data['finished_time'] = 1;
@@ -125,10 +129,10 @@ class Match extends Base {
              $dataMatchRecord = [];
              if ($data['type'] == 1) {
                  // 主队信息保存数据组合
-                 if (!$data['team_id']) {
+                 if (!$data['home_team_id']) {
                      return json(['code' => 100, 'msg' => __lang('MSG_402').'请选择主队球队']);
                  }
-                 $homeTeamId = $data['team_id'];
+                 $homeTeamId = $data['home_team_id'];
                  $homeTeam = $teamS->getTeam(['id' => $homeTeamId]);
                  //dump($homeTeam);
                  $data['team'] = $homeTeam['name'];
@@ -142,14 +146,14 @@ class Match extends Base {
                  ];
                  $dataMatchRecord = array_merge($dataMatchRecord, $dataHometeam);
                  // 客队信息保存数据组合
-                 if (!$data['opponent_id']) {
+                 if (!$data['away_team_id']) {
                      return json(['code' => 100, 'msg' => '请选择客队球队']);
                  }
-                 if (!empty($data['opponent_id'])) {
-                     if ($data['opponent_id'] == $data['team_id']) {
+                 if (!empty($data['away_team_id'])) {
+                     if ($data['away_team_id'] == $data['team_id']) {
                          return json(['code' => 100, 'msg' => '请选择其他球队']);
                      }
-                     $awayTeam = $teamS->getTeam(['id' => $data['opponent_id']]);
+                     $awayTeam = $teamS->getTeam(['id' => $data['away_team_id']]);
                      $dataAwayteam = [
                          'away_team_id' => $awayTeam['id'],
                          'away_team' => $awayTeam['name'],

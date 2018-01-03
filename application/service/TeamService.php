@@ -72,6 +72,12 @@ class TeamService {
             $result = $res->getData();
             $result['status_text'] = $res->status;
             $result['type_text'] = $res->type;
+            // 计算球队胜率
+            if ($result['match_num'] > 0) {
+                $result['win_rate'] = ($result['match_win']/$result['match_num'])*100 . '%';
+            } else {
+                $result['win_rate'] = 0;
+            }
             return $result;
         } else {
             return $res;
