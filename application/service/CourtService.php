@@ -5,9 +5,9 @@ use app\model\CourtCamp;
 use app\common\validate\CourtVal;
 use think\Db;
 class CourtService {
-    private $courtModel;
+    private $CourtModel;
     public function __construct(){
-        $this->courtModel = new Court;
+        $this->CourtModel = new Court;
         $this->CourtCampModel = new CourtCamp;
     }
     // 场地列表
@@ -97,7 +97,7 @@ class CourtService {
 
     // 编辑场地
     public function updateCourt($data,$id){
-        $courtInfo = $this->Court->where(['id'=>$id,'status'=>1])->find();
+        $courtInfo = $this->CourtModel->where(['id'=>$id,'status'=>1])->find();
         if($courtInfo){
             return ['msg' => '已公开的场地不允许编辑', 'code' => 100];
         }
@@ -110,11 +110,11 @@ class CourtService {
         }else{
              $data['cover'] = serialize(['/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg']);
         }
-        $result = $this->courtModel->save($data,['id'=>$id]);
+        $result = $this->CourtModel->save($data,['id'=>$id]);
         if($result){
             return ['code'=>100,'data'=>$result,'msg'=>__lang('MSG_200')];
         }else{
-            return ['code'=>100,'msg'=>$this->courtModel->getError()];
+            return ['code'=>100,'msg'=>$this->CourtModel->getError()];
         }
     }
 
@@ -146,7 +146,7 @@ class CourtService {
             db('camp')->where(['id'=>$data['camp_id']])->setInc('camp_base',1);
             return ['code'=>200,'data'=>$result,'msg'=>__lang('MSG_200')];
         }else{
-            return ['code'=>100,'msg'=>$this->courtModel->getError()];
+            return ['code'=>100,'msg'=>$this->CourtModel->getError()];
         }
     }
 
@@ -157,7 +157,7 @@ class CourtService {
         if($is_own){
             return ['code'=>100,'msg'=>"重复添加"];
         }
-        $courtInfoOBJ = $this->courtModel->where(['id'=>$court_id,'status'=>1])->find();
+        $courtInfoOBJ = $this->CourtModel->where(['id'=>$court_id,'status'=>1])->find();
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
         if(!$courtInfoOBJ || !$campInfo){
             return ['code'=>100,'msg'=>"查询不到该场地或者训练营"];

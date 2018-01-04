@@ -171,7 +171,7 @@ class BillService {
             $is_campMember = $CampMember->where(['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id']])->find();
             if($is_campMember){
                 // 强制更新
-                 $CampMember->save(['type'=>1],['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id']]);
+                 $CampMember->save(['type'=>1,'status'=>1],['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id']]);
             }else{
                 $CampMember->save(['type'=>1,'camp_id'=>$data['camp_id'],'member_id'=>$data['member_id'],'camp'=>$data['camp'],'member'=>$data['member'],'status'=>1]);
             }

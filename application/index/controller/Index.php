@@ -15,7 +15,7 @@ class Index extends Controller{
             ['name'=>'包车','price'=>5200],
             ['name'=>'不包车','price'=>5000]
         ];
-
+        
         echo json_encode($a);
     }
 

@@ -84,10 +84,12 @@
                 <div class="mui-input-row h-auto mt55">
                     <a class="portraits filePicker" onclick="add_id(1)">
                         <label>场地环境</label>
-                        {volist name="mediaList" id="v"}
-                        <img id="preview_1" class="coachicon icon01 upload-preview" src="{$v.url}" alt="">
+                        {if !empty($CourtInfo['covers'])}
+                        {volist name="$CourtInfo['covers']" id="v"}
+                        <img id="preview_1" class="coachicon icon01 upload-preview" src="{$v}" alt="">
                         <input type="hidden" name="portraits" value='' class="covers">
                         {/volist}
+                        {/if}
                     </a>
                 </div>
 
@@ -164,7 +166,7 @@
         var  remarks = $(".remarks").val();
         var  covers = $(".covers").val();
         if(court!=''&&location!=''&&open_time!=''&&contract!=''&&principal!=''&&chip_rent!=''&&half_rent!=''&&full_rent!=''&&outdoors!=''){
-            mui.ajax("{:url('api/court/updateCourtApi',['court_id'=>$CourtInfo['id']])}",{
+            mui.ajax("{:url('api/court/updateCourtApi',['court_id'=>$CourtInfo['id'],'camp_id'=>$CourtInfo['camp_id']])}",{
                 data:{
                     "court":court,
                     "court_id":court_id,
