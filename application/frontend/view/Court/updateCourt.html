@@ -15,6 +15,9 @@
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+    <style type="text/css">
+        .outdoors { vertical-align: middle; margin-left: 8px; }
+    </style>
 </head>
 
 <body>
@@ -61,24 +64,24 @@
                     <input type="text" class="chip_rent" name="" value="{$CourtInfo.chip_rent}">
                 </div>
 
-                <div class="mui-input-row"><label>半场包场(每小时)</label>
+                <div class="mui-input-row"><label>包半场(每小时)</label>
                     <input type="text" class="half_rent" name="" value="{$CourtInfo.half_rent}">
                 </div>
 
-                <div class="mui-input-row"><label>全场包场(每小时)</label>
+                <div class="mui-input-row"><label>包全场(每小时)</label>
                     <input type="text" class="full_rent" name="" value="{$CourtInfo.full_rent}">
                 </div>
 
                 <div class="mui-input-row"><label>场地类型</label>
                     <span>
-                        <input type="radio" class="outdoors" name="outdoors" value="0" {:getChecked(0,$CourtInfo['outdoors'])}/>室内
-                        <input type="radio" class="outdoors" name="outdoors" value="1" {:getChecked(1,$CourtInfo['outdoors'])}/>室外
-                        <input type="radio" class="outdoors" name="outdoors" value="3" {:getChecked(2,$CourtInfo['outdoors'])}/>室内|室外
+                        <input type="radio" class="outdoors" name="outdoors" value="0" data-name="室内" /> 室内
+                        <input type="radio" class="outdoors" name="outdoors" value="1" data-name="室外" /> 室外
+                        <input type="radio" class="outdoors" name="outdoors" value="3" data-name="室内|室外" /> 室内|室外
                     </span>
                 </div>
 
                 <div class="mui-input-row h-auto "><label>温馨提示</label>
-                    <textarea rows="5" class="remarks mui-text-left">1、篮球场包场2小时起订2、周一至周五的18:00至20:00,20:00至22:00为固定时间段预定3、如退订请提前12小时联系场馆客服人员</textarea>
+                    <textarea rows="5" class="remarks mui-text-left">{$CourtInfo.remarks}</textarea>
                 </div>
                 
                 <div class="mui-input-row h-auto mt55">
@@ -119,9 +122,9 @@
     });
 
     //选择器
-    var getProvince ='';
-    var getCity ='';
-    var getArea ='';
+    var getProvince ='{$CourtInfo.province}';
+    var getCity ='{$CourtInfo.city}';
+    var getArea ='{$CourtInfo.area}';
     (function ($, doc) {
         $.init();
         $.ready(function () {
@@ -148,66 +151,72 @@
         });
     })(mui, document);
 
-    //场地编辑
-    $(".updateBtn").click(function(){
-        var  court = $(".court").val();
-        var  court_id = "{$CourtInfo.id}";
-        var  province = getProvince;
-        var  city = getCity;
-        var  area = getArea;
-        var  location = $(".location").val();
-        var  open_time = $(".open_time").val();
-        var  contract = $(".contract").val();
-        var  principal = $(".principal").val();
-        var  outdoors = $("input:radio:checked").val();
-        var  chip_rent = $(".chip_rent").val();
-        var  half_rent = $(".half_rent").val();
-        var  full_rent = $(".full_rent").val();
-        var  remarks = $(".remarks").val();
-        var  covers = $(".covers").val();
-        if(court!=''&&location!=''&&open_time!=''&&contract!=''&&principal!=''&&chip_rent!=''&&half_rent!=''&&full_rent!=''&&outdoors!=''){
-            mui.ajax("{:url('api/court/updateCourtApi',['court_id'=>$CourtInfo['id'],'camp_id'=>$CourtInfo['camp_id']])}",{
-                data:{
-                    "court":court,
-                    "court_id":court_id,
-                    "province":getProvince,
-                    "city":getCity,
-                    "area":getArea,
-                    "location":location,
-                    "open_time":open_time,
-                    "contract":contract,
-                    "principal":principal,
-                    "chip_rent":chip_rent,
-                    "half_rent":half_rent,
-                    "full_rent":full_rent,
-                    "outdoors":outdoors,
-                    "remarks":remarks,
-                    "covers":covers
-                },
-                    dataType:'json',//服务器返回json格式数据
-                    type:'post',//HTTP请求类型
-                    timeout:10000,//超时时间设置为10秒；
-                    headers:{'Content-Type':'application/json'},                  
-                    success:function(data){
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data)
-                        if(data.code==200){
-                            mui.toast(data.msg);
-                            setTimeout(window.location.href="{:url('court/courtinfo')}",1000);
-                        }else{
-                            mui.toast(data.msg)
-                        }
-                    },
-                    error:function(xhr,type,errorThrown){
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-        }else{
-            mui.toast("选项不能为空");
-        }
-    })
+    $(function () {
 
+        $("input[name='outdoors']").filter(function (index) {
+            return $(this).attr("data-name") == "{$CourtInfo.outdoors}"
+        }).prop("checked", true);
+
+        //场地编辑
+        $(".updateBtn").click(function(){
+            var  court = $(".court").val();
+            var  court_id = "{$CourtInfo.id}";
+            var  province = getProvince;
+            var  city = getCity;
+            var  area = getArea;
+            var  location = $(".location").val();
+            var  open_time = $(".open_time").val();
+            var  contract = $(".contract").val();
+            var  principal = $(".principal").val();
+            var  outdoors = $("input:radio:checked").val();
+            var  chip_rent = $(".chip_rent").val();
+            var  half_rent = $(".half_rent").val();
+            var  full_rent = $(".full_rent").val();
+            var  remarks = $(".remarks").val();
+            var  covers = $(".covers").val();
+            if(court!=''&&location!=''&&open_time!=''&&contract!=''&&principal!=''&&chip_rent!=''&&half_rent!=''&&full_rent!=''&&outdoors!=''){
+                mui.ajax("{:url('api/court/updateCourtApi',['court_id'=>$CourtInfo['id'],'camp_id'=>$CourtInfo['camp_id']])}",{
+                    data:{
+                        "court":court,
+                        "court_id":court_id,
+                        "province":getProvince,
+                        "city":getCity,
+                        "area":getArea,
+                        "location":location,
+                        "open_time":open_time,
+                        "contract":contract,
+                        "principal":principal,
+                        "chip_rent":chip_rent,
+                        "half_rent":half_rent,
+                        "full_rent":full_rent,
+                        "outdoors":outdoors,
+                        "remarks":remarks,
+                        "covers":covers
+                    },
+                        dataType:'json',//服务器返回json格式数据
+                        type:'post',//HTTP请求类型
+                        timeout:10000,//超时时间设置为10秒；
+                        headers:{'Content-Type':'application/json'},
+                        success:function(data){
+                            //服务器返回响应，根据响应结果，分析是否登录成功；
+                            console.log(data)
+                            if(data.code==200){
+                                mui.toast(data.msg);
+                                setTimeout(window.location.href="{:url('court/courtinfo')}",1000);
+                            }else{
+                                mui.toast(data.msg)
+                            }
+                        },
+                        error:function(xhr,type,errorThrown){
+                            //异常处理；
+                            console.log(type);
+                        }
+                    });
+            }else{
+                mui.toast("选项不能为空");
+            }
+        })
+    })
 </script>
 </body>
 </html>
