@@ -299,7 +299,7 @@ class Team extends Base {
             $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
             if ($matchRecordInfo) {
                 if (!empty($matchRecordInfo['album'])) {
-                    $matchRecordInfo['album'] = json_decode($matchInfo['album'], true);
+                    $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
                 }
                 $matchInfo['record'] = $matchRecordInfo;
             }
@@ -337,7 +337,7 @@ class Team extends Base {
                 $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
                 if ($matchRecordInfo) {
                     if (!empty($matchRecordInfo['album'])) {
-                        $matchRecordInfo['album'] = json_decode($matchInfo['album'], true);
+                        $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
                     }
                     $matchInfo['record'] = $matchRecordInfo;
                 }
@@ -345,7 +345,6 @@ class Team extends Base {
 
             $memberlist = [];
         }
-        
         $this->assign('match_id', $match_id);
         $this->assign('matchInfo', $matchInfo);
         $this->assign('directentry', $directentry);
