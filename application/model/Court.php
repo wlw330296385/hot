@@ -8,7 +8,7 @@ class Court extends Model {
     protected $deleteTime = 'delete_time';
     protected $autoWriteTimestamp = true;
 	public function getOutdoorsAttr($value){
-		$outdoor = [0=>'室内',1=>'室外',2=>'室内|室外'];
+		$outdoor = [1=>'室内',2=>'室外',3=>'室内|室外'];
 		return $outdoor[$value];
 	}
     public function getStatusAttr($value){
