@@ -397,6 +397,8 @@ class Schedule extends Base
                             'member_id' => $this->memberInfo['id'],
                             'student' => $student['student'],
                             'student_id' => $student['student_id'],
+                            'lesson_id' => $request['lesson_id'],
+                            'lesson' => $request['lesson'],
                             'camp' => $request['camp'],
                             'camp_id' => $request['camp_id'],
                             'grade_id' => isset($request['grade_id']) ? $request['grade_id'] : 0,
