@@ -257,7 +257,7 @@ class Schedule extends Base
                 return json(['code' => 100, 'msg' => '课时' . __lang('MSG_404')]);
             }
             //dump($schedule);
-            if ($schedule['status'] != 0) {
+            if ($schedule['status'] != -1) {
                 return ['code' => 100, 'msg' => '该课时记录已审核，不能操作了'];
             }
 
