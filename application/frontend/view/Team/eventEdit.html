@@ -23,7 +23,7 @@
 
         .frame {
             width: 100%;
-            padding: 15px 5px;
+            padding: 15px 2px;
             font-size: 14px;
             border: 1px dashed #ddd;
             color: #b1b0b0;
@@ -438,7 +438,7 @@
             })
 
             //删除
-            $(".del").click(function () {
+            $(document).on('click', '.del', function () {
                 $("input[name='member']:checked").parents(".checkboxCont").remove();
                 changeIndex();
                 $("#hideStList").empty();
@@ -446,10 +446,6 @@
                     var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  type="checkbox"><input type="hidden" class="stdList"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"></div>';
                     $("#hideStList").append(str);
                 })
-            });
-
-            //角标随checkboxCont的数量变化
-            $(document).on('click', '.del', function () {
                 totalNum = $("#inactiveList .checkboxCont").length;
                 $(".mui-badge").text(totalNum);
             });
@@ -461,7 +457,6 @@
                 //然后遍历出对应所选
                 $(".stdList").each(function (i) {
                     var member_id = $(this).attr("data-member_id");
-                    var member = $(this).attr("data-member");
                     $("#newdiv").find("input[name='checkbox-member']").filter(function (index) {
                         return $(this).attr("data-member_id") == member_id
                     }).prop("checked", true);

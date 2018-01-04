@@ -162,11 +162,11 @@
                         <label>客队球服</label>
                         <span class="away_color_text">
                             {eq name="directentry" value="1" }{else/}
-                            <i class="color {eq name="directentry" value="1"}{else/}{$matchInfo.record.away_team_colorstyle} {/eq}">
-                                <input type="hidden" name="color" {eq name="directentry" value="1" } value="" {else/} value="{$matchInfo.record.away_team_colorstyle}"
-                                    {/eq}/>
-                            </i>{/eq}
-                            <font>{eq name="directentry" value="1" }{else/}{$matchInfo.record.away_team_color} {/eq} </font>
+                            <i class="color {eq name="directentry" value="1"}{else/}{$matchInfo.record.away_team_colorstyle}{/eq}">
+                                <input type="hidden" name="color" {eq name="directentry" value="1" } value="" {else/} value="{$matchInfo.record.away_team_colorstyle}"{/eq}/>
+                            </i>
+                            <font>{eq name="directentry" value="1" }{else/}{$matchInfo.record.away_team_color}{/eq}</font>
+                            {/eq}
                         </span>
                         <input type="hidden" name="away_team_color" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_team_color}"
                             {/eq}>
@@ -672,6 +672,13 @@
             $(".ching").css("background", "#00eaff");
         };
 
+        // 客队球服没有内容则隐藏i标签
+        function awayColor(){
+            if($(".away_color_text input[name=color]").val()==''){
+                $(".away_color_text input[name=color]").parent(".color").hide();
+            }
+        }
+
         // 活动花絮图提交数组
         function albumImg() {
             album = [];
@@ -713,13 +720,14 @@
             var pageHM = 1;
             var pageLD = 1;
             var pageCR = 1;
-
+            
             toTeamList(wTeams, teamKeyword, 1);
             toCourtList(wCourt, courtKeyword, 1);
             colorShow(); // 颜色选择显示
             toHomeMemberList(); //获取主队成员列表
             // toAwayMemberList(); //获取客队成员列表
             // toSignUpList(); //获取已经报名比赛的人员
+            awayColor(); //客队球服没有内容则隐藏i标签
 
             // 设置活动类型默认值
             $('#matchType option[{eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.type_num}"{/eq}]').prop("selected", true);

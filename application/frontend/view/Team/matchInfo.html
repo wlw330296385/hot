@@ -215,31 +215,31 @@
             isthumbsup(); //点赞状态
 
             //报名功能
-            $(".signupBtn").on('click', function () {
-                //判断是否登陆会员
-                var match_id = "{$matchInfo.id}";
-                mui.ajax("{:url('api/team/jointeamevent')}", {
-                    data: {
-                        match_id: match_id,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.alert('报名成功', '确定');
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            });
+            // $(".signupBtn").on('click', function () {
+            //     //判断是否登陆会员
+            //     var match_id = "{$matchInfo.id}";
+            //     mui.ajax("{:url('api/team/jointeamevent')}", {
+            //         data: {
+            //             match_id: match_id,
+            //         },
+            //         dataType: 'json',//服务器返回json格式数据
+            //         type: 'post',//HTTP请求类型
+            //         timeout: 10000,//超时时间设置为10秒；
+            //         headers: { 'Content-Type': 'application/json' },
+            //         success: function (data) {
+            //             console.log(data);
+            //             if (data.code == 200) {
+            //                 mui.alert('报名成功', '确定');
+            //             } else {
+            //                 mui.toast(data.msg);
+            //             }
+            //         },
+            //         error: function (xhr, type, errorThrown) {
+            //             //异常处理；
+            //             console.log(type);
+            //         }
+            //     });
+            // });
 
             //评论功能
             $(".commentBtn").on('click', function () {
@@ -310,11 +310,9 @@
 
         // 点赞状态
         function isthumbsup() {
-            // var commented = "";
             var commented_id = "{$matchInfo.id}";
             mui.ajax("{:url('api/team/isthumbup')}", {
                 data: {
-                    // commented: commented,
                     commented_id: commented_id,
                     comment_type: 3,
                 },
