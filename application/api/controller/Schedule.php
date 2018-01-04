@@ -383,8 +383,8 @@ class Schedule extends Base
                     $studentList = json_decode($request['student_str'], true);
                     //dump($studentList);
                     $lessonMemberMap = [];
-                    foreach ($studentList as $student) {
-                        $lessonMemberMap['id'] = $student['id'];
+                    $dataSaveScheduleGiftStudent = [];
+                    foreach ($studentList as $k => $student) {
                         $lessonMemberMap['camp_id'] = $request['camp_id'];
                         $lessonMemberMap['student_id'] = $student['student_id'];
                         $lessonMemberMap['lesson_id'] = $request['lesson_id'];
@@ -392,9 +392,24 @@ class Schedule extends Base
                         if (!$saveStudentRestschedule) {
                             return json(['code' => 100, 'msg' => '学员剩余课时更新' . $student['student'] . __lang('MSG_400')]);
                         }
+                        $dataSaveScheduleGiftStudent[$k] = [
+                            'member' => $this->memberInfo['member'],
+                            'member_id' => $this->memberInfo['id'],
+                            'student' => $student['student'],
+                            'student_id' => $student['student_id'],
+                            'lesson_id' => $request['lesson_id'],
+                            'lesson' => $request['lesson'],
+                            'camp' => $request['camp'],
+                            'camp_id' => $request['camp_id'],
+                            'grade_id' => isset($request['grade_id']) ? $request['grade_id'] : 0,
+                            'grade' => isset($request['grade']) ? $request['grade'] : '',
+                            'gift_schedule' => $request['gift_schedule'],
+                            'status' => 1
+                        ];
                     }
+                    // 保存赠课与学员关系记录
+                    $saveScheduleGiftStudentResult = $scheduleS->saveAllScheduleGiftStudent($dataSaveScheduleGiftStudent);
                 }
-                //die;
                 $res = $scheduleS->recordgift($request);
                 if (!$res) {
                     $response = json(['code' => 100, 'msg' => '赠送课时' . __lang('MSG_400')]);

@@ -16,7 +16,7 @@ class GradeService{
 
     // 班级列表
     public function getGradeList($map=[],$page = 1, $order='id desc',$p=10) {
-        $res = Grade::where($map)->order($order)->page($page,$p)->select();
+        $res = Grade::with('lesson')->where($map)->order($order)->page($page,$p)->select();
         // echo Grade::getlastsql();
         if($res){   
             $result = $res->toArray();

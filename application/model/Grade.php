@@ -25,7 +25,10 @@ class Grade extends Model {
         return $this->hasMany('student','grade_id','member_id',[],'left join');
     }
 
-
+    // 课程关系一对一
+    public function lesson() {
+        return $this->belongsTo('lesson');
+    }
 
     public function gradeMember(){
         return $this->hasMany('grade_member','grade_id')->field('student,grade_id');

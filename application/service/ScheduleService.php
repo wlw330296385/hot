@@ -7,6 +7,7 @@ use app\model\LessonMember;
 use app\model\Schedule;
 use app\model\ScheduleComment;
 use app\model\ScheduleGiftrecord;
+use app\model\ScheduleGiftStudent;
 use app\model\ScheduleMember;
 use app\model\Student;
 use app\model\ScheduleGiftbuy;
@@ -74,6 +75,9 @@ class ScheduleService
             $data['assistant_id'] = $seria;
         }else{
             $data['assistant_id'] = '';
+        }
+        if (!isset($data['status'])) {
+            $data['status'] = -1;
         }
         /*$validate = validate('ScheduleVal');
         if (!$validate->check($data)) {
@@ -578,13 +582,15 @@ class ScheduleService
         if (!$result) {
             return $result;
         } else {
-            return $model->id;
+            return $model->getLastInsID();
         }
     }
 
     // 批量更新学员剩余课时
     public function saveStudentRestschedule($map, $gift_schedule){
-        $lessonMemberRestSchedule = Db::name('lesson_member')->where($map)->whereNull('delete_time')->setInc('rest_schedule', $gift_schedule);
+        // 更新lesson_member课时数字段
+        //$lessonMemberRestSchedule = Db::name('lesson_member')->where($map)->whereNull('delete_time')->setInc('rest_schedule', $gift_schedule);
+        $lessonMemberRestSchedule = db('lesson_member')->where($map)->whereNull('delete_time')->inc('rest_schedule', $gift_schedule)->inc('total_schedule', $gift_schedule)->update();
         $studentTotalSchedule = db('student')->where(['id' => $map['student_id']])->whereNull('delete_time')->setInc('total_schedule', $gift_schedule);
         if (!$lessonMemberRestSchedule || !$studentTotalSchedule ) {
             return false;
@@ -592,6 +598,19 @@ class ScheduleService
             return true;
         }
     }
+
+    // 保存赠课与学员关系
+    public function saveAllScheduleGiftStudent($data) {
+        $model = new ScheduleGiftStudent();
+        $res = $model->saveAll($data);
+        if ($res) {
+            return $res;
+        } else {
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            return $res;
+        }
+    }
+
 
     // 赠送课时列表
     public function giftpage($map=[], $page=1, $order='id desc', $limit=10) {
