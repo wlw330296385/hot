@@ -141,7 +141,7 @@ class Lesson extends Backend {
                 $BillService = new \app\service\BillService;
                 $result = $BillService->createBill($billInfo);
                 if($result['code']==200){
-                    $res = $BillService->payNoNotic(['pay_time'=>time(),'expire'=>0,'balance_pay'=>$lessonInfo['cost']*$postData['total'],'status'=>1,'is_pay'=>1],['bill_order'=>$billOrder]);
+                    $res = $BillService->payNoNotice(['pay_time'=>time(),'expire'=>0,'balance_pay'=>$lessonInfo['cost']*$postData['total'],'status'=>1,'is_pay'=>1],['bill_order'=>$billOrder]);
                     if($res){
                         echo '<script type="text/javascript">alert("'.$result["msg"].'")</script>';
                         // return json(['code'=>100,'msg'=>'操作成功']);

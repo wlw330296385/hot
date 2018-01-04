@@ -85,7 +85,8 @@ class CourtService {
             ->view('court', ['cover', 'status'=>'courtisopen', 'location', 'area'], 'court.id=court_camp.court_id')
             ->where($map)
             ->limit(5)->page($page)->select();
-
+            // echo db('court')->getlastsql();
+            // die;
         foreach ($list as $key => $value) {
             if ($value['cover']) {
                 $list[$key]['covers'] = unserialize($value['cover']);
