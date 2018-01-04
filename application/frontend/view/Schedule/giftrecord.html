@@ -105,7 +105,7 @@
                     <a href="#Lesson" class="mui-navigate-right">
                         <label>选择课程</label>
                         <span class="lessonCont domData" name="lesson"></span>
-                        <input type="hidden" name="lesson_id" value="" data-cost="" class="lesson_id data">
+                        <input type="hidden" name="lesson_id" value="" class="lesson_id data">
                     </a>
                 </div>
 
@@ -114,7 +114,6 @@
                         <label>选择班级</label>
                         <span class="gradeCont" name="grade"></span>
                         <input type="hidden" name="grade_id" value="" class="grade_id">
-                        <input type="hidden" name="lesson" value="" data-lesson="">
                     </a>
                 </div>
 
@@ -243,6 +242,7 @@
                 $(".resi_giftschedule").text(resi_giftschedule);
                 toLessonStudentList();
                 $(".gradeCont").text('');
+                $("input[name=grade_id]").val('');
                 mui("#Lesson").popover("toggle");
             });
             // 选择班级
@@ -251,10 +251,12 @@
                 grade_id = $(this).attr('data-id');
                 lesson_id = $(this).attr('data-lesson_id');
                 var lessonOfGrade = $(this).attr('data-lesson');
+                var resi_giftschedule = $(this).attr('data-resi_giftschedule');
                 $(".gradeCont").text(grade);
                 $(".grade_id").val(grade_id);
                 $(".lessonCont").text(lessonOfGrade);
                 $(".lesson_id").val(lesson_id);
+                $(".resi_giftschedule").text(resi_giftschedule);
                 toGradeStudentList();
                 mui("#Grade").popover("toggle");
             });
@@ -344,6 +346,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 //processData:false,
                 success: function (data) {
+                    console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
@@ -423,7 +426,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '" data-lesson="' + data.data[i].lesson + '" data-lesson_id="' + data.data[i].lesson_id + '">' + data.data[i].grade + '</li>'
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '" data-lesson="' + data.data[i].lesson.lesson + '" data-lesson_id="' + data.data[i].lesson.id + '" data-resi_giftschedule="' + data.data[i].lesson.resi_giftschedule + '">' + data.data[i].grade + '</li>'
                         }
                         $("ul.gradelist").empty();
                         if (newli == '') {
