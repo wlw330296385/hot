@@ -259,7 +259,7 @@
                     </li>
                     <li>
                         <span class="currPage">0</span>/
-                        <span class="totalPage">0</span>
+                        <span class="camptotalPage">0</span>
                     </li>
                     <li>
                         <a href="#" class="next_page">下一页</a>
@@ -686,13 +686,13 @@
             $(".campList").on('click', 'li', function () {
                 var camp = $(this).find("font").text();
                 $(".campCont").text(camp);
-                var id = $(this).attr('data-id');
-                $(".camp_id").val(id);
+                var camp_id = $(this).attr('data-camp_id');
+                $(".camp_id").val(camp_id);
                 mui("#camp").popover("toggle");
             })
             //清除所属训练营
             $("#CampDel").on('tap', '', function () {
-                $(".camp").text('');
+                $(".campCont").text('');
                 $(".camp_id").val("");
                 mui("#camp").popover("toggle");
             })
@@ -704,7 +704,7 @@
             })
             //所属训练营弹出框页码控制
             $("#camp").on('click', '.next_page', function () {
-                var getTotalPage = $("#camp .totalPage").text();
+                var getTotalPage = $("#camp .camptotalPage").text();
                 pageLD++;
                 console.log(pageLD)
                 if (pageLD > getTotalPage) {
@@ -735,8 +735,8 @@
                 mui("#court").popover("toggle");
             })
             //清除常驻球场
-            $("#courtDel").on('tap', '', function () {
-                $(".court").text('');
+            $("#CourtDel").on('tap', '', function () {
+                $(".courtCont").text('');
                 $(".court_id").val("");
                 mui("#court").popover("toggle");
             })
@@ -816,20 +816,22 @@
 
         //训练营列表接口获取数据并追加到页面
         var toCampList = function (keyword, wCourt, page) {
-            var url = "{:url('api/camp/getCampListByPageApi','','',true)}/?page=" + page;
+            var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}/?page=" + page;
             var wCampList = "ul.campList";
             var currPage = ".currPage";
-            var totalPage = ".totalPage";
+            var totalPage = ".camptotalPage";
             if (keyword != '' && wCamp != '') {
                 wCampList = "#" + wCamp + " ul.campList";
                 currPage = "#" + wCamp + " .currPage";
-                totalPage = "#" + wCamp + " .totalPage";
+                totalPage = "#" + wCamp + " .camptotalPage";
             }
             mui.ajax({
                 url: url,
                 data: {
                     page: page,
-                    keyword: keyword
+                    keyword: keyword,
+                    member_id:"{$memberInfo.id}",
+                    status:1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -840,7 +842,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '"><font class="camp">' + data.data.data[i].camp + '</font></li>'
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-camp_id="' + data.data.data[i].camp_id + '"><font class="camp">' + data.data.data[i].camp + '</font></li>'
                         }
                         $(wCampList).empty();
                         if (newli == '') {

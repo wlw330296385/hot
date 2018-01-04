@@ -138,8 +138,8 @@
                         <label>主场颜色</label>
                         <span class="home_color_text">
                             <i class="color {$teamInfo.home_color_style}"></i>{$teamInfo.home_color}</span>
-                        <input type="hidden" name="home_color" class="homeshow" value="{$teamInfo.home_color}">
-                        <input type="hidden" name="home_color_style" class="homeshow" value="{$teamInfo.home_color_style}">
+                        <input type="hidden" name="home_color" class="homeshow data" value="{$teamInfo.home_color}">
+                        <input type="hidden" name="home_color_style" class="homeshow data" value="{$teamInfo.home_color_style}">
                     </a>
                 </div>
 
@@ -148,8 +148,8 @@
                         <label>客场颜色</label>
                         <span class="away_color_text">
                             <i class="color {$teamInfo.away_color_style}"></i>{$teamInfo.away_color}</span>
-                        <input type="hidden" name="away_color" class="awayshow" value="{$teamInfo.away_color}">
-                        <input type="hidden" name="away_color_style" class="awayshow" value="{$teamInfo.away_color_style}">
+                        <input type="hidden" name="away_color" class="awayshow data" value="{$teamInfo.away_color}">
+                        <input type="hidden" name="away_color_style" class="awayshow data" value="{$teamInfo.away_color_style}">
                     </a>
                 </div>
 
@@ -294,7 +294,7 @@
                     </li>
                     <li>
                         <span class="currPage">0</span>/
-                        <span class="totalPage">0</span>
+                        <span class="camptotalPage">0</span>
                     </li>
                     <li>
                         <a href="#" class="next_page">下一页</a>
@@ -680,6 +680,16 @@
             });
         })(mui, document);
 
+        // 客队球服没有内容则隐藏i标签
+        function awayColor() {
+            if ($("input[name=home_color]").val() == '') {
+                $("input[name=home_color]").siblings().find(".color").hide();
+            }
+            if ($("input[name=away_color]").val() == '') {
+                $("input[name=away_color]").siblings().find(".color").hide();
+            }
+        }
+
         // 主场客场颜色显示
         function colorShow() {
             $(".black").css("background", "black");
@@ -732,7 +742,7 @@
             toTeamMemberList(); //获取球员列表
             TeamMemberOfCocahList(); //获取球员列表供选择教练
             TeamMemberOfCommitteeList(); //获取球员列表供选择队委
-
+            awayColor();
             // 设置球队类型默认值
             $('#teamType option[value="{$teamInfo.type}"]').prop("selected", true);
             // 设置球队特点默认值
@@ -756,8 +766,8 @@
             //清除主场颜色
             $("#homeDel").on('tap', '', function () {
                 $(".home_color_text").text('');
-                $("input[name=home_color]").val("").removeClass("data");
-                $("input[name=home_color_style]").val("").removeClass("data");
+                $("input[name=home_color]").val("");
+                $("input[name=home_color_style]").val("");
                 mui("#homeColor").popover("toggle");
             });
 
@@ -769,17 +779,17 @@
                 $(".away_color_text").html(away_color_text);
                 //颜色的中文赋值
                 var away_color = $(this).find("font").text();
-                $("input[name=away_color]").val(away_color).addClass("data");
+                $("input[name=away_color]").val(away_color);
                 //颜色的英文赋值
                 var away_color_style = $(this).find("input[name=color]").val();
-                $("input[name=away_color_style]").val(away_color_style).addClass("data");
+                $("input[name=away_color_style]").val(away_color_style);
                 mui("#awayColor").popover("toggle");
             });
             //清除客场颜色
             $("#awayDel").on('tap', '', function () {
                 $(".away_color_text").text('');
-                $("input[name=away_color]").val("").removeClass("data");
-                $("input[name=away_color_style]").val("").removeClass("data");
+                $("input[name=away_color]").val("");
+                $("input[name=away_color_style]").val("");
                 mui("#awayColor").popover("toggle");
             });
 
@@ -896,13 +906,13 @@
             $(".campList").on('click', 'li', function () {
                 var camp = $(this).find("font").text();
                 $(".campCont").text(camp);
-                var id = $(this).attr('data-id');
-                $(".camp_id").val(id);
+                var camp_id = $(this).attr('data-camp_id');
+                $(".camp_id").val(camp_id);
                 mui("#camp").popover("toggle");
             })
             //清除所属训练营
             $("#CampDel").on('tap', '', function () {
-                $(".camp").text('');
+                $(".campCont").text("");
                 $(".camp_id").val("");
                 mui("#camp").popover("toggle");
             })
@@ -914,7 +924,7 @@
             })
             //所属训练营弹出框页码控制
             $("#camp").on('click', '.next_page', function () {
-                var getTotalPage = $("#camp .totalPage").text();
+                var getTotalPage = $("#camp .camptotalPage").text();
                 pageLD++;
                 console.log(pageLD)
                 if (pageLD > getTotalPage) {
@@ -945,8 +955,8 @@
                 mui("#court").popover("toggle");
             })
             //清除常驻球场
-            $("#courtDel").on('tap', '', function () {
-                $(".court").text('');
+            $("#CourtDel").on('tap', '', function () {
+                $(".courtCont").text('');
                 $(".court_id").val("");
                 mui("#court").popover("toggle");
             })
@@ -1026,20 +1036,23 @@
 
         //训练营列表接口获取数据并追加到页面
         var toCampList = function (keyword, wCourt, page) {
-            var url = "{:url('api/camp/getCampListByPageApi','','',true)}/?page=" + page;
+            var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}/?page=" + page;
             var wCampList = "ul.campList";
             var currPage = ".currPage";
-            var totalPage = ".totalPage";
+            var totalPage = ".camptotalPage";
+            var member_id = "{$memberInfo.id}"
             if (keyword != '' && wCamp != '') {
                 wCampList = "#" + wCamp + " ul.campList";
                 currPage = "#" + wCamp + " .currPage";
-                totalPage = "#" + wCamp + " .totalPage";
+                totalPage = "#" + wCamp + " .camptotalPage";
             }
             mui.ajax({
                 url: url,
                 data: {
                     page: page,
-                    keyword: keyword
+                    keyword: keyword,
+                    member_id: member_id,
+                    status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -1050,7 +1063,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '"><font class="camp">' + data.data.data[i].camp + '</font></li>'
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-camp_id="' + data.data.data[i].camp_id + '"><font class="camp">' + data.data.data[i].camp + '</font></li>'
                         }
                         $(wCampList).empty();
                         if (newli == '') {
