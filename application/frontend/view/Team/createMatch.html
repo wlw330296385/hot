@@ -46,6 +46,13 @@
         .mui-input-row label {
             line-height: 20px;
         }
+        .addInput{
+            margin-top: 15px;
+        }
+        .addBtn{
+            margin-top: 15px;
+            padding: 12px 11px;
+        }
     </style>
 </head>
 
@@ -569,6 +576,14 @@
                 }
             });
 
+             // 添加新的球队
+             $(document).on('tap','.addBtn',function(){
+                var addOpponent = $(".addInput").val();
+                $(".opponentCont").text(addOpponent);
+                $("input[name=opponent_id]").val("-1");
+                mui("#opponent").popover("toggle");
+            });
+
         })
 
         // 获取数据并进行提交
@@ -629,7 +644,7 @@
                         }
                         $(wTeamList).empty();
                         if (newli == '') {
-                            newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="请填写你要添加的球队" /><button class="mui-btn addBtn">确认</button></div>'
                         }
                         $(wTeamList).append(newli);
                         $(currPage).text(data.data.current_page);
