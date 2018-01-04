@@ -257,7 +257,7 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
-                            mui.alert('评价成功，感谢你的评价！',function(){
+                            mui.alert('评价成功，感谢你的评价！', function () {
                                 location.reload();
                             });
                             mui('#fbcomment').popover('toggle');
@@ -336,7 +336,7 @@
             });
         }
 
-        // 默认的样式
+        // 活动详情默认的提示
         function initialEds() {
             if ($(".introBox").html() == '') {
                 $(".introBox").append("<p class='nohave'>还没有活动详情描述哦</p>")
@@ -345,31 +345,23 @@
 
         // 判断身份显示操作按钮
         function ststuShow() {
-            // 获取当前时间
-            var d = new Date()
-            var minutes = d.getMinutes()
-            var hours = d.getHours()
-            var day = d.getDate()
-            var month = d.getMonth() + 1
-            var year = d.getFullYear()
-            var time = year + "-" + month + "-" + day + " " + hours + ":" + minutes;
             var teamrole = "{$teamrole}";
-            var end_time = "{$eventInfo.end_time}";
+            var is_finished = "{$eventInfo.is_finished}";
 
-            if (teamrole > 0 && time > end_time) {
+            if (teamrole > 0 && is_finished == "已结束") {
                 $(".status3").show();
-            } else if (teamrole > 0 && time < end_time) {
+            } else if (teamrole > 0 && is_finished == "未开始") {
                 $(".status4").show();
             }
 
-            if (time < end_time) {
+            if (is_finished == "已结束") {
                 $(".status2").show();
             } else {
                 $(".status1").show();
             }
 
             // 报名/参与人员的文字显示
-            if (time > end_time) {
+            if (is_finished == "已结束") {
                 $(".statusText").text("参与者");
             }
         }
