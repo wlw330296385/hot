@@ -10,13 +10,17 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--选择器样式-->
-    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
-    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
     <style type="text/css">
-        .outdoors { vertical-align: middle; margin-left: 8px; }
+        .outdoors {
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+
         .previewList {
             overflow: hidden;
             padding: 0 10px;
@@ -57,6 +61,7 @@
         #map {
             background-color: #EEE;
         }
+
         #map input[type=button] {
             position: absolute;
             top: 0px;
@@ -64,9 +69,10 @@
             width: 20%;
             height: 40px !important;
             text-align: center;
-            color:#FFF;
+            color: #FFF;
         }
-        #map .mui-icon-location{
+
+        #map .mui-icon-location {
             width: 10%;
             position: absolute;
             top: 0px;
@@ -75,9 +81,10 @@
             line-height: 35px;
             background-color: #EEE;
             font-size: 20px;
-            padding-right:0px !important;
+            padding-right: 0px !important;
             text-align: center;
         }
+
         #tip {
             color: #333;
             position: absolute;
@@ -87,6 +94,7 @@
             overflow: hidden;
             width: 70%;
         }
+
         #tip input[type="text"] {
             background-color: #EEE;
             border: 0;
@@ -96,9 +104,28 @@
             outline: none;
             text-align: left;
         }
+
         span.getFromMap {
             width: 60%;
             line-height: 18px !important;
+        }
+
+        .albumImg {
+            position: relative;
+        }
+
+        .albumImg .delbtn {
+            font-size: 16px;
+            right: 12px;
+            position: absolute;
+            top: 2px;
+            color: #fff;
+        }
+
+        .albumImg img {
+            float: left;
+            margin-right: 10px;
+            margin-bottom: 5px
         }
     </style>
 </head>
@@ -131,45 +158,54 @@
                     <input type="hidden" name="location" value="{$CourtInfo.location}" class="location getFromMap">
                 </div>
 
-                <div class="mui-input-row"><label>场地名称</label>
+                <div class="mui-input-row">
+                    <label>场地名称</label>
                     <input type="text" class="court" name="" value="{$CourtInfo.court}">
                     <input type="hidden" name="camp_id" value="{$CourtInfo.camp_id}">
                     <input type="hidden" name="camp" value="{$CourtInfo.camp}">
                 </div>
 
-                <div class="mui-input-row" id='showCityPicker3'><label>所属地区</label>
+                <div class="mui-input-row" id='showCityPicker3'>
+                    <label>所属地区</label>
                     <span id="cityResult3" class="ui-alert" style="color: #000">{$CourtInfo.province} {$CourtInfo.city} {$CourtInfo.area}</span>
                 </div>
 
-               <!--  <div class="mui-input-row"><label>地图位置</label>
+                <!--  <div class="mui-input-row"><label>地图位置</label>
                     <input type="text" class="" name="">
                 </div> -->
 
-                <div class="mui-input-row"><label>营业时间</label>
+                <div class="mui-input-row">
+                    <label>营业时间</label>
                     <input type="text" class="open_time" name="" value="{$CourtInfo.open_time}">
                 </div>
 
-                <div class="mui-input-row"><label>联系电话</label>
+                <div class="mui-input-row">
+                    <label>联系电话</label>
                     <input type="text" class="contract" name="" value="{$CourtInfo.contract}">
                 </div>
 
-                <div class="mui-input-row"><label>联系人</label>
+                <div class="mui-input-row">
+                    <label>联系人</label>
                     <input type="text" class="principal" name="" value="{$CourtInfo.principal}">
                 </div>
 
-                <div class="mui-input-row"><label>散场(一次)</label>
+                <div class="mui-input-row">
+                    <label>散场(一次)</label>
                     <input type="text" class="chip_rent" name="" value="{$CourtInfo.chip_rent}">
                 </div>
 
-                <div class="mui-input-row"><label>包半场(每小时)</label>
+                <div class="mui-input-row">
+                    <label>包半场(每小时)</label>
                     <input type="text" class="half_rent" name="" value="{$CourtInfo.half_rent}">
                 </div>
 
-                <div class="mui-input-row"><label>包全场(每小时)</label>
+                <div class="mui-input-row">
+                    <label>包全场(每小时)</label>
                     <input type="text" class="full_rent" name="" value="{$CourtInfo.full_rent}">
                 </div>
 
-                <div class="mui-input-row"><label>场地类型</label>
+                <div class="mui-input-row">
+                    <label>场地类型</label>
                     <span>
                         <input type="radio" class="outdoors" name="outdoors" value="0" data-name="室内" /> 室内
                         <input type="radio" class="outdoors" name="outdoors" value="1" data-name="室外" /> 室外
@@ -177,28 +213,29 @@
                     </span>
                 </div>
 
-                <div class="mui-input-row h-auto "><label>温馨提示</label>
+                <div class="mui-input-row h-auto ">
+                    <label>温馨提示</label>
                     <textarea rows="5" class="remarks mui-text-left">{$CourtInfo.remarks}</textarea>
                 </div>
 
-                <div class="mui-input-row h-auto ">
-                    <a class="mui-navigate-right portraits filePicker" onclick="add_id(1)">
-                        <label>场地环境</label>
-                        <input type="hidden" name="portraits" value='' class="covers">
-                    </a>
-                </div>
-
-                <div class="mui-input-row h-auto mt55">
-                    <ul class="previewList">
-                        {if !empty($CourtInfo['covers'])}
-                        {volist name="$CourtInfo['covers']" id="v"}
-                        <li><i id="del">X</i><img id="img" src="{$v}"></li>
-                        {/volist}
-                        {/if}
-
-                    </ul>
-                </div>
-
+                <ul class="mui-table-view mt55">
+                    <li class="mui-table-view-cell listli detalisli f14" style="line-height: 40px; color: #737373;">
+                        <a class="mui-navigate-right">
+                            <span class="h-auto">场地环境</span>
+                            <div id="uploader-demo1" class="fr pdr15">
+                                <div id="fileList" class="uploader-list"></div>
+                                <div id="filePicker1">选择图片</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell listli albumBox">
+                        {if !empty($CourtInfo['covers'])} {volist name="$CourtInfo['covers']" id="v"}
+                        <div class="fl albumImg">
+                            <i class="delbtn mui-icon mui-icon-close"></i>
+                            <img src="{$v}">
+                        </div>{/volist} {/if}
+                    </li>
+                </ul>
 
                 <ul class="mui-table-view operation list">
                     <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen updateBtn" style="color: #fff">提交场地</li>
@@ -218,125 +255,158 @@
         var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'court'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
     <!--获取地址-->
     <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
     <script src="/static/frontend/js/map.js"></script>
     <script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
 
-    //选择器
-    var getProvince ='{$CourtInfo.province}';
-    var getCity ='{$CourtInfo.city}';
-    var getArea ='{$CourtInfo.area}';
-    (function ($, doc) {
-        $.init();
-        $.ready(function () {
-            _getParam = function (obj, param) {
-                return obj[param] || '';
-            };
+        //选择器
+        var getProvince = '{$CourtInfo.province}';
+        var getCity = '{$CourtInfo.city}';
+        var getArea = '{$CourtInfo.area}';
+        (function ($, doc) {
+            $.init();
+            $.ready(function () {
+                _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
 
-            var cityPicker3 = new $.PopPicker({
-                layer: 3
-            });
-            cityPicker3.setData(cityData3);
-            var showCityPickerButton = doc.getElementById('showCityPicker3');
-            var cityResult3 = doc.getElementById('cityResult3');
-            showCityPickerButton.addEventListener('tap', function (event) {
-                cityPicker3.show(function (items) {
-                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
-                    //返回 false 可以阻止选择框的关闭
-                    //return false;
-                    getProvince = _getParam(items[0], 'text');
-                    getCity = _getParam(items[1], 'text');
-                    getArea = _getParam(items[2], 'text');
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
                 });
-            }, false);
-        });
-    })(mui, document);
+                cityPicker3.setData(cityData3);
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                        getProvince = _getParam(items[0], 'text');
+                        getCity = _getParam(items[1], 'text');
+                        getArea = _getParam(items[2], 'text');
+                    });
+                }, false);
+            });
+        })(mui, document);
 
-    $(function () {
+        var covers = [];
+        $(function () {
 
-        $("input[name='outdoors']").filter(function (index) {
-            return $(this).attr("data-name") == "{$CourtInfo.outdoors}"
-        }).prop("checked", true);
+            //多图上传start·····································································
+            // 初始化Web Uploader
+            var uploader = WebUploader.create({
+                auto: true,
+                server: uploadApiUrl,
+                pick: '#filePicker1',
+                accept: {
+                    title: 'Images',
+                    extensions: 'gif,jpg,jpeg,bmp,png',
+                    mimeTypes: 'image/*'
+                }
+            });
+            // 上传成功
+            uploader.on('uploadSuccess', function (file, responce) {
+                if (eval('responce').status == 0) {
+                    mui.toast('上传失败,请重试', { 'duration': 'long' });
+                } else {
+                    mui.toast('上传成功', { 'duration': 'long' });
+                    var $li = '<div class="fl albumImg"><i class="delbtn mui-icon mui-icon-close"></i><img src="' + responce.path + '"></div>';
+                    $(".albumBox").append($li);
+                }
+            });
+
+            //删除操作
+            $(document).on('tap', '.delbtn', function () {
+                $(this).parent().remove();
+            });
+            //多图上传end·····································································
 
 
-        // map(选择具体地址)
-        $("#mapConfirm").on('tap', '', function () {
-            var mapkeyword = $("input[name='keyword']").val();
-            $(".getFromMap").val(mapkeyword);
-            $(".getFromMap").text(mapkeyword);
-        });
+            $("input[name='outdoors']").filter(function (index) {
+                return $(this).attr("data-name") == "{$CourtInfo.outdoors}"
+            }).prop("checked", true);
 
-        //场地编辑
-        $(".updateBtn").click(function(){
-            var covers = [];
-            $(".previewList img").each(function () {
-                covers.push($(this).attr('src'));
-            }).get().join(",");
-            // 上面获取图片地址
-            var  court = $(".court").val();
-            var  court_id = "{$CourtInfo.id}";
-            var  province = getProvince;
-            var  city = getCity;
-            var  area = getArea;
-            var  location = $(".location").val();
-            var  open_time = $(".open_time").val();
-            var  contract = $(".contract").val();
-            var  principal = $(".principal").val();
-            var  outdoors = $("input:radio:checked").val();
-            var  chip_rent = $(".chip_rent").val();
-            var  half_rent = $(".half_rent").val();
-            var  full_rent = $(".full_rent").val();
-            var  remarks = $(".remarks").val();
 
-            if(court!=''&&location!=''&&open_time!=''&&contract!=''&&principal!=''&&chip_rent!=''&&half_rent!=''&&full_rent!=''&&outdoors!=''){
-                mui.ajax("{:url('api/court/updateCourtApi',['court_id'=>$CourtInfo['id'],'camp_id'=>$CourtInfo['camp_id']])}",{
-                    data:{
-                        "court":court,
-                        "court_id":court_id,
-                        "province":getProvince,
-                        "city":getCity,
-                        "area":getArea,
-                        "location":location,
-                        "open_time":open_time,
-                        "contract":contract,
-                        "principal":principal,
-                        "chip_rent":chip_rent,
-                        "half_rent":half_rent,
-                        "full_rent":full_rent,
-                        "outdoors":outdoors,
-                        "remarks":remarks,
-                        "covers":covers
-                    },
-                        dataType:'json',//服务器返回json格式数据
-                        type:'post',//HTTP请求类型
-                        timeout:10000,//超时时间设置为10秒；
-                        headers:{'Content-Type':'application/json'},
-                        success:function(data){
+            // map(选择具体地址)
+            $("#mapConfirm").on('tap', '', function () {
+                var mapkeyword = $("input[name='keyword']").val();
+                $(".getFromMap").val(mapkeyword);
+                $(".getFromMap").text(mapkeyword);
+            });
+
+            //场地编辑
+            $(".updateBtn").click(function () {
+                var covers = [];
+                $(".coversImg img").each(function () {
+                    var src = $(this).attr('src')
+                    covers.push(src);
+                }).get().join(",");
+                // 上面获取图片地址
+                var court = $(".court").val();
+                var court_id = "{$CourtInfo.id}";
+                var province = getProvince;
+                var city = getCity;
+                var area = getArea;
+                var location = $(".location").val();
+                var open_time = $(".open_time").val();
+                var contract = $(".contract").val();
+                var principal = $(".principal").val();
+                var outdoors = $("input:radio:checked").val();
+                var chip_rent = $(".chip_rent").val();
+                var half_rent = $(".half_rent").val();
+                var full_rent = $(".full_rent").val();
+                var remarks = $(".remarks").val();
+
+                if (court != '' && location != '' && open_time != '' && contract != '' && principal != '' && chip_rent != '' && half_rent != '' && full_rent != '' && outdoors != '') {
+                    mui.ajax("{:url('api/court/updateCourtApi',['court_id'=>$CourtInfo['id'],'camp_id'=>$CourtInfo['camp_id']])}", {
+                        data: {
+                            "court": court,
+                            "court_id": court_id,
+                            "province": getProvince,
+                            "city": getCity,
+                            "area": getArea,
+                            "location": location,
+                            "open_time": open_time,
+                            "contract": contract,
+                            "principal": principal,
+                            "chip_rent": chip_rent,
+                            "half_rent": half_rent,
+                            "full_rent": full_rent,
+                            "outdoors": outdoors,
+                            "remarks": remarks,
+                            "covers": covers
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
                             //服务器返回响应，根据响应结果，分析是否登录成功；
                             console.log(data)
-                            if(data.code==200){
-                                mui.toast(data.msg);
-                                setTimeout(window.location.href="{:url('court/courtinfo')}",1000);
-                            }else{
+                            if (data.code == 100) {
+                                mui.alert('场地修改成功。', function () {
+                                    window.location.href = "{:url('camp/courtlistofcamp',['camp_id'=>$CourtInfo.camp_id])}";
+                                });
+                            } else {
                                 mui.toast(data.msg)
                             }
                         },
-                        error:function(xhr,type,errorThrown){
+                        error: function (xhr, type, errorThrown) {
                             //异常处理；
                             console.log(type);
                         }
                     });
-            }else{
-                mui.toast("选项不能为空");
-            }
+                } else {
+                    mui.toast("选项不能为空");
+                }
+            })
         })
-    })
-</script>
+    </script>
 </body>
+
 </html>
