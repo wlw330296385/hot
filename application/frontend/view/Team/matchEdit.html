@@ -78,6 +78,7 @@
         <div class="camp-list camp-lesson-list">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
             <input type="hidden" name="directentry" value="{$directentry}">
+            <input type="hidden" name="team_id" value="{$team_id}" class="data">
             <input type="hidden" name="record_id" {eq name="directentry" value="1" }{else/}value="{$matchInfo.record.id}" {/eq} class="data">
             <form action="" class="mui-input-group mt55">
 
@@ -163,7 +164,8 @@
                         <span class="away_color_text">
                             {eq name="directentry" value="1" }{else/}
                             <i class="color {eq name="directentry" value="1"}{else/}{$matchInfo.record.away_team_colorstyle}{/eq}">
-                                <input type="hidden" name="color" {eq name="directentry" value="1" } value="" {else/} value="{$matchInfo.record.away_team_colorstyle}"{/eq}/>
+                                <input type="hidden" name="color" {eq name="directentry" value="1" } value="" {else/} value="{$matchInfo.record.away_team_colorstyle}"
+                                    {/eq}/>
                             </i>
                             <font>{eq name="directentry" value="1" }{else/}{$matchInfo.record.away_team_color}{/eq}</font>
                             {/eq}
@@ -218,7 +220,7 @@
                 <!-- 主队 -->
                 <div class="operation-box mb">
                     <div class="mui-input-row">
-                        <label>主队参赛人员</label>
+                        <label class="wd">主队参赛人员</label>
                     </div>
                     <div class="box" id="inactiveList"></div>
                     <div class="operation-btn">
@@ -249,8 +251,8 @@
 
                 <ul class="mui-table-view">
                     <li class="mui-table-view-cell listli detalisli f14" style="line-height: 40px; color: #737373;">
-                        <a class="mui-navigate-right">
-                            <span class="h-auto">比赛花絮</span>
+                        <span class="h-auto">比赛花絮</span>
+                        <a class="mui-navigate-right fr wd60">
                             <div id="uploader-demo1" class="fr pdr15">
                                 <div id="fileList" class="uploader-list"></div>
                                 <div id="filePicker1">选择图片</div>
@@ -672,9 +674,14 @@
             $(".ching").css("background", "#00eaff");
         };
 
-        // 客队球服没有内容则隐藏i标签
-        function awayColor(){
-            if($(".away_color_text input[name=color]").val()==''){
+
+
+        // 球服没有内容则隐藏i标签
+        function clothes() {
+            if ($(".home_color_text input[name=color]").val() == '') {
+                $(".home_color_text input[name=color]").parent(".color").hide();
+            }
+            if ($(".away_color_text input[name=color]").val() == '') {
                 $(".away_color_text input[name=color]").parent(".color").hide();
             }
         }
@@ -720,14 +727,14 @@
             var pageHM = 1;
             var pageLD = 1;
             var pageCR = 1;
-            
+
             toTeamList(wTeams, teamKeyword, 1);
             toCourtList(wCourt, courtKeyword, 1);
             colorShow(); // 颜色选择显示
             toHomeMemberList(); //获取主队成员列表
             // toAwayMemberList(); //获取客队成员列表
             // toSignUpList(); //获取已经报名比赛的人员
-            awayColor(); //客队球服没有内容则隐藏i标签
+            clothes(); //球服没有内容则隐藏i标签
 
             // 设置活动类型默认值
             $('#matchType option[{eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.type_num}"{/eq}]').prop("selected", true);
@@ -993,7 +1000,7 @@
             var objData = wooApi.arrTOobj(arrData);
             objData.HomeMemberData = JSON.stringify(HomeMemberList);
             // objData.AwayMemberData = JSON.stringify(AwayMemberList);
-            // objData.album = JSON.stringify(album);
+            objData.album = JSON.stringify(album);
 
             if (directentry == 0) {
                 var url = "{:url('api/match/updatematchrecord')}";

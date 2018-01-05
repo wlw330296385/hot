@@ -96,7 +96,7 @@
                 <div class="mui-slider-group mui-slider-loop">
                     <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
                     <div class="mui-slider-item mui-slider-item-duplicate">
-                        <img src="{$matchInfo.record[0]}">
+                        <img src="{$matchInfo.record.album[0]}">
                     </div>
                     <!-- 第一张 -->
                     {volist name="matchInfo.record.album" id="vol"}
@@ -264,7 +264,7 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
-                            mui.alert('评价成功，感谢你的评价！',function(){
+                            mui.alert('评价成功，感谢你的评价！', function () {
                                 location.reload();
                             });
                             mui('#fbcomment').popover('toggle');
@@ -325,6 +325,7 @@
                     if (data.code == 200) {
                         if (data.thumbsup == 1) {
                             $(".thumbsup").css("color", "red");
+                            $(".thumbup_count").text(data.thumbsup);
                         } else {
                             $(".thumbsup").css("color", "#737373");
                         }
@@ -362,11 +363,6 @@
             } else {
                 $(".status2").show();
             }
-
-            // 报名/参与人员的文字显示
-            // if (is_finished == 1) {
-            //     $(".statusText").text("参与者");
-            // }
         }
 
         //下拉刷新具体业务实现

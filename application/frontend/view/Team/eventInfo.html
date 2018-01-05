@@ -234,7 +234,6 @@
 
             //评论功能
             $(".commentBtn").on('click', function () {
-                var commented = "{$eventInfo.event}";
                 var commented_id = "{$eventInfo.id}";
                 var comment = $(".comment").val();
 
@@ -245,7 +244,6 @@
 
                 mui.ajax("{:url('api/team/addteamcomment')}", {
                     data: {
-                        commented: commented,
                         commented_id: commented_id,
                         comment_type: 2,
                         comment: comment
@@ -274,11 +272,9 @@
 
             //点赞功能
             $(".thumbsup").on('click', function () {
-                var commented = "{$eventInfo.event}";
                 var commented_id = "{$eventInfo.id}";
                 mui.ajax("{:url('api/team/dianzan')}", {
                     data: {
-                        commented: commented,
                         commented_id: commented_id,
                         comment_type: 2,
                     },
@@ -305,11 +301,9 @@
 
         // 点赞状态
         function isthumbsup() {
-            var commented = "{$eventInfo.event}";
             var commented_id = "{$eventInfo.id}";
             mui.ajax("{:url('api/team/isthumbup')}", {
                 data: {
-                    commented: commented,
                     commented_id: commented_id,
                     comment_type: 2,
                 },
@@ -355,9 +349,9 @@
             }
 
             if (is_finished == "已结束") {
-                $(".status2").show();
-            } else {
                 $(".status1").show();
+            } else {
+                $(".status2").show();
             }
 
             // 报名/参与人员的文字显示
