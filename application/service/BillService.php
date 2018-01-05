@@ -118,7 +118,7 @@ class BillService {
             $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
 
             if($ress){
-                db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$setting['sysrebate']),'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time()]);
+                db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$setting['sysrebate']),'system_rebate'=>$setting['sysrebate'],'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time()]);
             }
             //学生表的总课程和总课量+n;   
             db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
@@ -423,10 +423,26 @@ class BillService {
                                 // 剩余课时的变化
                                 $rest_schedule = $lesson_member['rest_schedule']-$refundTotal;
                                 if($rest_schedule == 0){
-                                    db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule,'status'=>4]);
+                                    db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule,'status'=>2]);
                                 }else{
                                     db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule]);
                                 }
+
+                                //训练营营业额对冲
+                                db('income')->insert([
+                                    'income'        => -($refundTotal*$billInfo['price']),
+                                    'lesson_id'     => $billInfo['goods_id'],
+                                    'lesson'        => $billInfo['goods'],
+                                    'camp_id'       => $billInfo['camp_id'],
+                                    'camp'          => $billInfo['camp'],
+                                    'system_rebate' => 0,
+                                    'member_id'     => $billInfo['member_id'],
+                                    'member'        => $billInfo['member'],
+                                    'create_time'   => time(),
+                                    'update_time'   => time(),
+                                ]);
+                                // 减少训练营营业额
+                                db('camp')->where(['id'=>$billInfo['camp_id']])->setDec('balance',($refundTotal*$billInfo['price']));
                             }
                         }else{
                             // 其他订单
@@ -493,25 +509,6 @@ class BillService {
 
 
 
-    // 订单支付
-    public function billPay($bill_order,$callback_str){
-        
-        $data = ['is_pay'=>1,'pay_time'=>time(),'callback_str'=>$callback_str];
-        // dump($data);
-        $result = $this->Bill->where(['bill_order'=>$bill_order])->update($data);
-        if($result){
-            $billInfo = $this->getBill(['bill_order'=>$bill_order]);
-            if($billInfo){
-                $balance_pay = $billInfo['balance_pay'];
-                // 返现返积分
-                return ['code'=>200,'msg'=>'支付成功'];
-            }else{
-                return ['code'=>100,'msg'=>'找不到订单信息'];
-            }
-            
-        }else{
-            return ['code'=>100,'msg'=>'支付失败,请联系客服'];
-        }
-    }
+    
 
 }

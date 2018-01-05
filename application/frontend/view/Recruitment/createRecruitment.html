@@ -20,20 +20,20 @@
             left: auto;
             right: 6px;
         }
-        
+
         .mui-input-row a {
             display: table;
             width: 100%;
         }
-        
+
         .mui-navigate-right input[type='text'] {
             padding-right: 30px !important;
         }
-        
+
         .muicol {
             padding: 0 15px;
         }
-        
+
         .frame {
             width: 100%;
             padding: 15px 5px;
@@ -41,20 +41,20 @@
             border: 1px dashed #ddd;
             color: #b1b0b0;
         }
-        
+
         .title {
             font-size: 16px;
             font-weight: bold;
         }
-        
+
         .pd {
             padding: 2px 0;
         }
-        
+
         .introBox .operationDiv {
             position: relative;
         }
-        
+
         .introBox .operationDiv .delbtn {
             position: absolute;
             right: 15px;
@@ -62,7 +62,7 @@
             line-height: initial !important;
             font-size: 18px !important;
         }
-        
+
         .introBox .operationDiv img {
             width: 100%;
             height: auto;
@@ -70,7 +70,7 @@
             margin: 0;
             padding: 0 15px;
         }
-        
+
         .introBox .operationDiv h5 {
             padding: 10px 15px;
             height: 40px;
@@ -79,7 +79,7 @@
             margin: 0;
             font-weight: bold
         }
-        
+
         .introBox .operationDiv p {
             padding: 10px 15px;
             margin: 0;
@@ -91,7 +91,9 @@
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
         <h1 class="mui-title">{$campInfo.camp}</h1>
     </header>
     <div class="mui-content pt">
@@ -109,9 +111,9 @@
                         <label>招募类型</label>
                         <span class="select-row ">
                             <select id="" class="data" name="recruitment_type">
-                                <option value="教练员" >教练员</option>
-                                <option value="兼职" >兼职</option>
-                                <option value="篮球队" >篮球队</option>
+                                <option value="教练员">教练员</option>
+                                <option value="兼职">兼职</option>
+                                <option value="篮球队">篮球队</option>
                             </select>
                         </span>
                     </div>
@@ -128,7 +130,8 @@
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
                         <input class="mui-input-numbox data" type="number" name="recruit_number" value="0">
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
-                    </div><span>0 为不限</span>
+                    </div>
+                    <span>0 为不限</span>
                 </div>
 
                 <div class="mui-input-row">
@@ -243,14 +246,18 @@
     <div id="recruitContract" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course"><strong>招募联系人</strong></span>
+            <span class="course">
+                <strong>招募联系人</strong>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <ul class="mui-table-view list campMemberList">
                     {volist name="staffList" id="vol"}
                     <li class="mui-table-view-cell listli detalisli" data-id="{$vol.member_id}">
-                        <font class="member">{$vol.member.member}</font><span class="wd36">{$vol.member.telephone}</span></li>
+                        <font class="member">{$vol.member.member}</font>
+                        <span class="wd36">{$vol.member.telephone}</span>
+                    </li>
                     {/volist}
                 </ul>
             </div>
@@ -267,7 +274,7 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/libs/webuploader.min.js"></script>
     <script>
-                                                                                                                  var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'event'])}";
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'event'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -378,8 +385,6 @@
                 mui("#recruitContract").popover("toggle");
             });
 
-
-
             var title = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
             var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><textarea name="" rows="3" class="mui-text-left text delClass" placeholder="请输入正文"></textarea></div>';
             // 招募简介········································
@@ -457,7 +462,7 @@
             if ($(".isNegotiated").hasClass("mui-active") == false) {
                 var vMin = $("input[name=min]").val();
                 var vMax = $("input[name=max]").val();
-                if ((/^\+?[1-9]\d*$/).test(vMin) == false || (/^\+?[1-9]\d*$/).test(vMax) == false) {
+                if ((/^[0-9]*$/).test(vMin) == false || (/^[0-9]*$/).test(vMax) == false) {
                     mui.alert("请输入正确的薪资");
                     return false;
                 } else if (vMin > vMax) {
