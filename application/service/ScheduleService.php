@@ -166,8 +166,14 @@ class ScheduleService
         }
         $res = false;
 
-        // 课时相关学员剩余课时-1
+
         $students = unserialize($schedule['student_str']);
+        // 检查课时相关学员剩余课时
+        $checkStudentRestscheduleResult = $this->checkstudentRestschedule($students, $schedule);
+        if ($checkStudentRestscheduleResult['code'] == 100) {
+            return $checkStudentRestscheduleResult;
+        }
+        // 课时相关学员剩余课时-1
         $decStudentRestscheduleResult = $this->decStudentRestschedule($students, $schedule);
         if ($decStudentRestscheduleResult['code'] != 200) {
             return $decStudentRestscheduleResult;
@@ -247,6 +253,25 @@ class ScheduleService
         return ['code' => 200, 'msg' => '课时审核'.__lang('MSG_200')];
     }
 
+    // 检查课时相关学员剩余课时是否还有
+    protected function checkstudentRestschedule($students, $schedule) {
+        $lessonDb = new LessonMember();
+        foreach ($students as $student) {
+            $gradeMemberWhere['student_id'] = $student['student_id'];
+            $gradeMemberWhere['lesson_id'] = $schedule['lesson_id'];
+            $gradeMemberWhere['camp_id'] = $schedule['camp_id'];
+            $gradeMemberWhere['type'] = 1;
+            $studentWhere['id'] = $student['student_id'];
+            $restschedule = $lessonDb->where($gradeMemberWhere)->value('rest_schedule');
+            // 某个学员无剩余课时 抛出提示
+            if (!$restschedule || $restschedule == 0) {
+                return ['code' => 100, 'msg' => $student['student'] . '已无剩余课时，请修改课时信息'];
+            }
+        }
+        // 课时所有学员剩余课时数返回code=200
+        return ['code' => 200, 'msg' => __lang('MSG_201')];
+    }
+
     /** 课时相关学员剩余课时-1
      * @param $students 学员列表数组
      * [
@@ -268,43 +293,38 @@ class ScheduleService
             $gradeMemberWhere['type'] = 1;
             $studentWhere['id'] = $student['student_id'];
             $restschedule = $lessonDb->where($gradeMemberWhere)->value('rest_schedule');
-            if ($restschedule <= 0) {
-                return ['code' => 100, 'msg' => $student['student'].'已无剩余课时，请修改课时信息'];
+            if ($restschedule == 1) {
+                // lesson_member剩余课时为0 毕业状态
+                $finishSchedule = $lessonDb->where($gradeMemberWhere)->update(['rest_schedule' => 0, 'status' => 4, 'update_time' => time(), 'system_remarks' => date('Ymd').'学员完成课时毕业']);
+                if (!$finishSchedule) {
+                    return ['code' => 100, 'msg' => $student['student'].'更新剩余课时'.__lang('MSG_400')];
+                }
+                // 学员档案完成课程数+1
+                $studentFinishedTotal = $studentDb->where($studentWhere)->setInc('finished_lesson', 1);
+                if (!$studentFinishedTotal) {
+                    return ['code' => 100, 'msg' => $student['student'].'更新完成课程'.__lang('MSG_400')];
+                }
+                // 学员从班级毕业（grade_member数据 status=4）
+                $gradeMemberDb->where($gradeMemberWhere)->whereNull('delete_time')->update(['status' => 4, 'update_time' => time(), 'system_remarks' => date('Ymd').'学员完成课时毕业']);
+                // 更新学员所在班级学员名单，剔除学员（查询班级其他在班学员名单，更新班级数据）
+                $reserveStudentList = $gradeMemberDb->where([ 'grade_id' => $schedule['grade_id'], 'status' => 1 ])->column('student');
+                $reserveStudentStr = '';
+                if ($reserveStudentList) {
+                    foreach ($reserveStudentList as $val) {
+                        $reserveStudentStr .= $val.',';
+                    }
+                    $reserveStudentStr = rtrim($reserveStudentStr, ',');
+                }
+                $gradeModel->where(['id' => $schedule['grade_id']])->update(['student_str' => $reserveStudentStr, 'students' => count($reserveStudentList)]);
             } else {
-                // 学员完成课时
-                if ($restschedule == 1) {
-                    // lesson_member剩余课时为0 毕业状态
-                    $finishSchedule = $lessonDb->where($gradeMemberWhere)->update(['rest_schedule' => 0, 'status' => 4, 'update_time' => time(), 'system_remarks' => date('Ymd').'学员完成课时毕业']);
-                    if (!$finishSchedule) {
-                        return ['code' => 100, 'msg' => $student['student'].'更新剩余课时'.__lang('MSG_400')];
-                    }
-                    // 学员档案完成课程数+1
-                    $studentFinishedTotal = $studentDb->where($studentWhere)->setInc('finished_lesson', 1);
-                    if (!$studentFinishedTotal) {
-                        return ['code' => 100, 'msg' => $student['student'].'更新完成课程'.__lang('MSG_400')];
-                    }
-                    // 学员从班级毕业（grade_member数据 status=4）
-                    $gradeMemberDb->where($gradeMemberWhere)->whereNull('delete_time')->update(['status' => 4, 'update_time' => time(), 'system_remarks' => date('Ymd').'学员完成课时毕业']);
-                    // 更新学员所在班级学员名单，剔除学员（查询班级其他在班学员名单，更新班级数据）
-                    $reserveStudentList = $gradeMemberDb->where([ 'grade_id' => $schedule['grade_id'], 'status' => 1 ])->column('student');
-                    $reserveStudentStr = '';
-                    if ($reserveStudentList) {
-                        foreach ($reserveStudentList as $val) {
-                            $reserveStudentStr .= $val.',';
-                        }
-                        $reserveStudentStr = rtrim($reserveStudentStr, ',');
-                    }
-                    $gradeModel->where(['id' => $schedule['grade_id']])->update(['student_str' => $reserveStudentStr, 'students' => count($reserveStudentList)]);
-                } else {
-                    $decRestSchedule = $lessonDb->where($gradeMemberWhere)->setDec('rest_schedule',1);
-                    if (!$decRestSchedule) {
-                        return ['code' => 100, 'msg' => $student['student'].'更新剩余课时'.__lang('MSG_400')];
-                    }
+                $decRestSchedule = $lessonDb->where($gradeMemberWhere)->setDec('rest_schedule',1);
+                if (!$decRestSchedule) {
+                    return ['code' => 100, 'msg' => $student['student'].'更新剩余课时'.__lang('MSG_400')];
                 }
-                $incStudentFinishedSchedule = $studentDb->where($studentWhere)->setInc('finished_schedule', 1);
-                if (!$incStudentFinishedSchedule) {
-                    return ['code' => 100, 'msg' => $student['student'].'更新完成课时'.__lang('MSG_400')];
-                }
+            }
+            $incStudentFinishedSchedule = $studentDb->where($studentWhere)->setInc('finished_schedule', 1);
+            if (!$incStudentFinishedSchedule) {
+                return ['code' => 100, 'msg' => $student['student'].'更新完成课时'.__lang('MSG_400')];
             }
         }
         return ['code' => 200, 'msg' => __lang('MSG_200')];

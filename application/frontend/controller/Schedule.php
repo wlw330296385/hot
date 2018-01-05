@@ -98,7 +98,7 @@ class Schedule extends Base
 		}
 		$updateSchedule = 0;
 		// 是否已被审核通过
-		if($scheduleInfo['status'] == 0){
+		if($scheduleInfo['status'] == -1){
 			// 判断权限
 			$isPower = $this->ScheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
 			if($isPower>=2){
@@ -185,7 +185,7 @@ class Schedule extends Base
 		$schedule_id = input('param.schedule_id');
 		$scheduleInfo = $this->ScheduleService->getScheduleInfo(['id'=>$schedule_id]);
 		// 是否已被审核通过
-		if($scheduleInfo['status'] != 0){
+		if($scheduleInfo['status'] != -1){
 			// 判断权限
 			$this->error('已审核的课时不允许修改');
 			
