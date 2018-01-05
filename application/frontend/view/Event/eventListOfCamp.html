@@ -168,15 +168,9 @@
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
 
-                        // 获取当前时间
-                        var d = new Date()
-                        var minutes = d.getMinutes()
-                        var hours = d.getHours()
-                        var day = d.getDate()
-                        var month = d.getMonth() + 1
-                        var year = d.getFullYear()
-                        var time = year + "-" + month + "-" + day + " " + hours + ":" + minutes;
-                     
+                        var time = gettime();
+                        console.log(time)
+                        console.log(data.data.data[i].ends)
                         var urls = "{:url('event/eventInfoOfCamp')}" + '/event_id/' + data.data.data[i].id + '/organization_id/' + organizationID;
 
                         newli += '<li class="mui-table-view-cell mui-media listli">'
@@ -271,6 +265,22 @@
             }
         });
     });
+
+    //创建补0函数
+    function p(s) {
+        return s < 10 ? '0' + s : s;
+    }
+    //获取时间
+    function gettime() {
+        // 获取当前时间
+        var d = new Date()
+        var minutes = d.getMinutes()
+        var hours = d.getHours()
+        var day = d.getDate()
+        var month = d.getMonth() + 1
+        var year = d.getFullYear()
+        return year + '-' + p(month) + '-' + p(day) + " " + p(hours) + ":" + p(minutes);
+    }
 
 </script>
 
