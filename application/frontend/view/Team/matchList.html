@@ -160,7 +160,7 @@
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
                 var url = "{:url('api/match/matchrecordlistpage','','',true)}" + '/?page=' + page;
-                var team_id = "3"
+                var team_id = "{$team_id}"
                 mui.ajax({
                     url: url,
                     data: {
@@ -177,14 +177,14 @@
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 // 将时间戳转成日期格式
-                                var matchTimeM = gettimeM(data.data.data[i].match.match_time * 1000);
-                                var matchTimeY = gettimeY(data.data.data[i].match.match_time * 1000);
-                                var urls = "{:url('team/eventInfo')}" + '/event_id/' + data.data.data[i].id + '/team_id/' + "";
-                                newli += '<li class="mui-table-view-cell"><ul class="mui-row" style="padding:0">'
-                                newli += '<li class="mui-col-xs-4 mui-col-sm-4"><h4>' + data.data.data[i].home_team + '</h4><h4 class="colorred">' + data.data.data[i].home_score + '</h4></li>'
+                                var matchTimeM = gettimeM(data.data.data[i].match_time * 1000);
+                                var matchTimeY = gettimeY(data.data.data[i].match_time * 1000);
+                                var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data.data[i].id + '/team_id/' + "{$team_id}";
+                                newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row" style="padding:0">'
+                                newli += '<li class="mui-col-xs-4 mui-col-sm-4"><h4>' + data.data.data[i].home_team + '</h4><h4 class="colorred" style="padding-top:8px">' + data.data.data[i].home_score + '</h4></li>'
                                 newli += '<li class="mui-col-xs-4 mui-col-sm-4"><p>' + matchTimeM + '</p><p>' + matchTimeY + '</p><p>' + data.data.data[i].match.type + '</p></li>'
-                                newli += '<li class="mui-col-xs-4 mui-col-sm-4"><h4>' + data.data.data[i].away_team + '</h4><h4 class="colorred">' + data.data.data[i].away_score + '</h4></li>'
-                                newli += '</ul></li>'
+                                newli += '<li class="mui-col-xs-4 mui-col-sm-4"><h4>' + data.data.data[i].away_team + '</h4><h4 class="colorred" style="padding-top:8px">' + data.data.data[i].away_score + '</h4></li>'
+                                newli += '</ul></a></li>'
                             }
                         }
                         if (gType == 1) {
@@ -219,7 +219,15 @@
             var _time = new Date(M);
             var month = _time.getMonth() + 1;
             var day = _time.getDate();
-            return month + "月" + day + "日";
+            if (month < 10 && day < 10) {
+                return "0" + month + "月" + "0" + day + "日";
+            }
+            if (month < 10 && day > 10) {
+                return "0" + month + "月" + day + "日";
+            } else if (month > 10 && day < 10) {
+                return month + "月" + "0" + day + "日";
+            }
+
         }
         function gettimeY(Y) {
             var _time = new Date(Y);
