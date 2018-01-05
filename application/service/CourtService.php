@@ -112,7 +112,7 @@ class CourtService {
         }
         $result = $this->CourtModel->save($data,['id'=>$id]);
         if($result){
-            return ['code'=>100,'data'=>$result,'msg'=>__lang('MSG_200')];
+            return ['code'=>200,'data'=>$result,'msg'=>__lang('MSG_200')];
         }else{
             return ['code'=>100,'msg'=>$this->CourtModel->getError()];
         }
