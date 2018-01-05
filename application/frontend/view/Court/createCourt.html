@@ -206,8 +206,8 @@
                             <span class="select-row">
                                 <select class="data" name="outdoors" class="outdoors">
                                     <option value="1">室外</option>
-                                    <option value="0">室内</option>
-                                    <option value="2">室内|室外</option>
+                                    <option value="2">室内</option>
+                                    <option value="3">室内|室外</option>
                                 </select>
                             </span>
                         </a>
@@ -253,7 +253,65 @@
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <!--获取地址-->
     <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
-    <script src="/static/frontend/js/map.js"></script>
+    <script>
+        var lng = '';
+        var lat = '';
+
+        // map(选择具体地址)
+        var map = new AMap.Map('container', {
+            resizeEnable: true,
+            zoom: 13,
+            // center:[];
+        });
+
+        //点击获取地址
+        AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geolocation'], function () {
+            var geocoder = new AMap.Geocoder({
+
+            });
+            var marker = new AMap.Marker({
+                map: map,
+                bubble: true
+            })
+
+            map.on('click', function (e) {
+                marker.setPosition(e.lnglat);
+                geocoder.getAddress(e.lnglat, function (status, result) {
+                    if (status == 'complete') {
+                        var glocation = result.regeocode.formattedAddress;
+                        // alert(result.regeocode.formattedAddress)
+                        if(window.confirm('你确定定位到【'+glocation+'】吗？')){
+                            $(".getFromMap").val(glocation);
+                            $(".getFromMap").text(glocation);
+                        }else{
+                            return false;
+                        }
+                    }
+                })
+            })
+
+            var autoOptions = {
+                city: "深圳市", //城市，默认全国
+                input: "keyword"//使用联想输入的input的id
+            };
+            autocomplete = new AMap.Autocomplete(autoOptions);
+            var placeSearch = new AMap.PlaceSearch({
+                city: '',
+                map: map
+            })
+            AMap.event.addListener(autocomplete, "select", function (e) {
+                //TODO 针对选中的poi实现自己的功能
+                placeSearch.setCity(e.poi.adcode);
+                placeSearch.search(e.poi.name)
+                console.log(e.poi)
+                console.log(e.poi.location.lng)
+                console.log(e.poi.location.lat)
+                lng = e.poi.location.lng
+                lat = e.poi.location.lat
+            });
+        });
+
+    </script>
     <script>
         //初始化
         mui.init({
