@@ -7251,10 +7251,39 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "441900",
-		text: "东莞市"
+		text: "东莞市",
+            children: [{
+				value: "441901",
+				text: "莞城"
+			}, {
+				value: "441902",
+				text: "南城"
+			}, {
+				value: "441903",
+				text: "万江"
+			}, {
+				value: "441904",
+				text: "东城"
+			}]
 	}, {
 		value: "442000",
-		text: "中山市"
+		text: "中山市",
+        children: [{
+            value: "442001",
+            text: "石岐区"
+        }, {
+            value: "442002",
+            text: "东区"
+        }, {
+            value: "442003",
+            text: "西区"
+        }, {
+            value: "442004",
+            text: "南区"
+        }, {
+            value: "442005",
+            text: "五桂山区"
+        }]
 	}, {
 		value: "445100",
 		text: "潮州市",
