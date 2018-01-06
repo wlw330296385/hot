@@ -5,6 +5,7 @@ use app\model\Rebate;
 use app\service\SystemService;
 use app\service\MemberService;
 use app\model\SalaryIn;
+use app\model\CampFinance;
 use think\Controller;
 use think\Db;
 use think\helper\Time;
@@ -50,7 +51,7 @@ class Crontab extends Controller {
                 // 课时总收入
                 $incomeSchedule = ($lesson['cost'] * ($numScheduleStudent-$numGiftSchedule));
                 //$incomeScheulde1 = $incomeSchedule * (1-$this->setting['sysrebate']);
-                // 学生人数提成
+                // 课时工资提成
                 $pushSalary = $schedule['salary_base']*$numScheduleStudent;
                 $coachMember = $this->getCoachMember($schedule['coach_id']);
                 // 主教练薪资
@@ -107,7 +108,7 @@ class Crontab extends Controller {
                     $this->insertSalaryIn($incomeAssistant, 1);
                 }
 
-                // 营主所得 课时收入*(1-平台抽取比例)-主教底薪-助教底薪-学员人数提成*教练人数。教练人数 = 助教人数+1（1代表主教人数）
+                // 营主所得 课时收入*(1-平台抽取比例)-主教底薪-助教底薪-课时工资提成*教练人数。教练人数 = 助教人数+1（1代表主教人数）
                 $incomeCampSalary = $incomeSchedule*(1-$this->setting['sysrebate'])-$schedule['coach_salary']-$schedule['assistant_salary']-($pushSalary*(count($incomeAssistant)+1));
                 $campMember = $this->getCampMember($schedule['camp_id']);
                 $incomeCamp = [
@@ -133,6 +134,18 @@ class Crontab extends Controller {
                 ];
                 $this->insertSalaryIn($incomeCamp);
                 Db::name('schedule')->where(['id' => $schedule['id']])->update(['update_time' => time(), 'is_settle' => 1, 'schedule_income' => $incomeSchedule]);
+
+                // 保存训练营财务支出信息
+                $dataCampFinance = [
+                    'camp_id' => $schedule['camp_id'],
+                    'camp' => $schedule['camp'],
+                    'finance_type' => 2,
+                    'schedule_salary' => $incomeSchedule,
+                    'schedule_id' => $schedule['id'],
+                    'date' => date('Ymd', $schedule['lesson_time']),
+                    'datetime' => $schedule['lesson_time']
+                ];
+                $this->insertcampfinance($dataCampFinance);
             }
         });
     }
@@ -231,6 +244,16 @@ class Crontab extends Controller {
                 file_put_contents(ROOT_PATH.'data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'error'=>$memberPiers], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND );
                 return false;
             }
+        }
+    }
+
+    // 保存训练营财务记录
+    private function insertcampfinance($data, $saveAll=0) {
+        $model = new CampFinance();
+        if ($saveAll == 1) {
+            $model->allowField(true)->saveAll($data);
+        } else {
+            $model->allowField(true)->save($data);
         }
     }
 }
