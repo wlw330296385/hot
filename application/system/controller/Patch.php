@@ -41,13 +41,21 @@ class Patch {
             //dump($total_schedule);
 
             // 学员剩余课时统计
+            // 已上课课时数
             $schedulenum = $modelScheduleMember->where(['camp_id' => $lessonmember['camp_id'], 'type' => 1, 'user_id' => $lessonmember['student_id']])->count();
+            $restschedulenum = 0;
+            // 没有课时记录 剩余课时数为学员总课时数
+            if ($schedulenum) {
+                $restschedulenum = $total_schedule-$schedulenum;
+            } else {
+                $restschedulenum = $total_schedule;
+            }
             //dump($schedulenum);
             
             // 组合批量保存数据数组
             $dataLessonMemberSaveAll[$k] = [
                 'id' => $lessonmember['id'],
-                'rest_schedule' => $schedulenum,
+                'rest_schedule' => $restschedulenum,
                 'total_schedule' => $total_schedule
             ];
             $dataStudentSaveAll[$k] = [
