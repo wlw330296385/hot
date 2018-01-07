@@ -239,6 +239,9 @@ class Patch extends Controller {
 
             // 训练营营主所得 课时收入*收入比例-主教底薪-助教底薪-学员人数提成*教练人数。教练人数 = 助教人数+1（1代表主教人数）
             $incomeCampSalary = $incomeSchedule*$incomeRebate-$schedule['coach_salary']-$schedule['assistant_salary']-($pushSalary*(count($incomeAssistant)+1));
+            if($incomeCampSalary < 0) {
+                $incomeCampSalary = 0;
+            }
             dump('训练营营主所得'.$incomeCampSalary);
             $campMember = $this->getCampMember($schedule['camp_id']);
             $incomeCamp = [
