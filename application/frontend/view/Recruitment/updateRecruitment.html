@@ -16,24 +16,21 @@
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
     <style>
+        
         .mui-popover-arrow {
             left: auto;
             right: 6px;
         }
-        
+
         .mui-input-row a {
             display: table;
             width: 100%;
         }
-        
+
         .mui-navigate-right input[type='text'] {
             padding-right: 30px !important;
         }
-        
-        .muicol {
-            padding: 0 15px;
-        }
-        
+
         .frame {
             width: 100%;
             padding: 15px 5px;
@@ -41,62 +38,24 @@
             border: 1px dashed #ddd;
             color: #b1b0b0;
         }
-        
+
         .title {
             font-size: 16px;
             font-weight: bold;
         }
-        
-        .pd {
-            padding: 2px 0;
-        }
-        
-        .introBox .operationDiv {
-            position: relative;
-        }
-        
-        .introBox .operationDiv .delbtn {
-            position: absolute;
-            right: 15px;
-            top: 10px;
-            line-height: initial !important;
-            font-size: 18px !important;
-        }
-        
-        .introBox .operationDiv img {
-            width: 100%;
-            height: auto;
-            float: none;
-            margin: 0;
-            padding: 0 15px;
-        }
-        
-        .introBox .operationDiv h5 {
-            padding: 10px 15px;
-            height: 40px;
-            line-height: 21px;
-            color: #000;
-            margin: 0;
-            font-weight: bold
-        }
-        
-        .introBox .operationDiv p {
-            padding: 10px 15px;
-            margin: 0;
-            color: #000;
-        }
+
     </style>
 </head>
 
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
         <h1 class="mui-title">{$recruitmentInfo.organization}</h1>
         <input type="hidden" name="recruitment_id" value="{$recruitmentInfo.id}" class="data">
     </header>
-
-
 
     <div class="mui-content pt">
 
@@ -114,9 +73,9 @@
                         <label>招募类型</label>
                         <span class="select-row ">
                             <select id="recruitment_type" class="data" name="recruitment_type">
-                                <option value="教练员" >教练员</option>
-                                <option value="兼职" >兼职</option>
-                                <option value="篮球队" >篮球队</option>
+                                <option value="教练员">教练员</option>
+                                <option value="兼职">兼职</option>
+                                <option value="篮球队">篮球队</option>
                             </select>
                         </span>
                     </div>
@@ -133,7 +92,8 @@
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
                         <input class="mui-input-numbox data" type="number" name="recruit_number" value="{$recruitmentInfo.recruit_number}">
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
-                    </div><span>0为不限</span>
+                    </div>
+                    <span>0为不限</span>
                 </div>
 
                 <!--<div class="mui-input-row h-auto">
@@ -258,14 +218,18 @@
     <div id="recruitContract" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course"><strong>招募联系人</strong></span>
+            <span class="course">
+                <strong>招募联系人</strong>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <ul class="mui-table-view list campMemberList">
                     {volist name="staffList" id="vol"}
                     <li class="mui-table-view-cell listli detalisli" data-id="{$vol.member_id}">
-                        <font class="member">{$vol.member.member}</font><span class="wd36">{$vol.member.telephone}</span></li>
+                        <font class="member">{$vol.member.member}</font>
+                        <span class="wd36">{$vol.member.telephone}</span>
+                    </li>
                     {/volist}
                 </ul>
             </div>
@@ -282,7 +246,7 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/libs/webuploader.min.js"></script>
     <script>
-                                                                                                                  var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'event'])}";
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'recruitment'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -292,10 +256,7 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-        mui(".mui-content").on("tap", "a", function () {
-            window.top.location.href = this.href;
-        });
-
+        
         mui('.mui-content .isNegotiated').each(function () { //循环所有toggle
             this.addEventListener('toggle', function (event) {
                 if (event.detail.isActive) {
@@ -401,8 +362,71 @@
                 mui("#recruitContract").popover("toggle");
             });
 
-        })
 
+            //添加标题
+            $(".titleClass").on('tap', '', function () {
+                var title = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
+                $(".introBox").append(title);
+            });
+
+            //添加正文
+            $(".textClass").on('tap', '', function () {
+                var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" name="" class="mui-text-left text delClass textarea" placeholder="请输入正文"></div>';
+                $(".introBox").append(text);
+            });
+
+
+            // 焦点离开后把内容放在h5标签里
+            $(document).on('blur', '.operationDiv input', function () {
+                $(this).siblings(".delbtn").remove();
+                if ($(this).val() != '') {
+                    var inputValue = '<h5>' + $(this).val() + '</h5>';
+                    $(this).parent().html(inputValue).removeClass("bgorange")
+                } else {
+                    var inputValueNull = '<h5>标题</h5>';
+                    $(this).parent().html(inputValueNull)
+                }
+            });
+            // 点击时显示input框
+            $(document).on('tap', '.operationDiv h5', function () {
+                var YinputValue = '<i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="title" autofocus value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="标题">';
+                $(this).parent(".operationDiv").html(YinputValue).addClass("bgorange");
+                console.log(YinputValue)
+            });
+
+            // 焦点离开后把内容放在p标签里
+            $(document).on('blur', '.operationDiv .textarea', function () {
+                $(this).siblings(".delbtn").remove();
+                if ($(this).text() != '') {
+                    var divValue = '<p>' + $(this).text() + '</p>';
+                    $(this).parent().html(divValue).removeClass("bgorange")
+                } else {
+                    var divValueNull = '<p>请输入正文</p>';
+                    $(this).parent().html(divValueNull)
+                }
+            });
+            // 点击时显示div框
+            $(document).on('tap', '.operationDiv p', function () {
+                var YdivValue = '<i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" value="' + $(this).text() + '"  class="mui-text-left text delClass textarea" placeholder="请输入正文">' + $(this).text() + '</div>';
+                $(this).parent().html(YdivValue).addClass("bgorange");
+            });
+
+            //删除操作
+            $(document).on('tap', '.delbtn', function () {
+                $(this).parent().remove();
+            });
+
+
+            // 上移动
+            $(document).on('tap', '.up', function () {
+                $(".bgorange").prev().insertAfter(".bgorange");
+            });
+            // 上移动
+            $(document).on('tap', '.down', function () {
+                $(".bgorange").next().insertBefore(".bgorange");
+            });
+
+        })
 
         // 获取数据并进行提交
         function submitAction(all) {
@@ -410,7 +434,7 @@
             if ($(".isNegotiated").hasClass("mui-active") == false) {
                 var vMin = $("input[name=min]").val();
                 var vMax = $("input[name=max]").val();
-                if ((/^\+?[1-9]\d*$/).test(vMin) == false || (/^\+?[1-9]\d*$/).test(vMax) == false) {
+                if ((/^[0-9]*$/).test(vMin) == false || (/^[0-9]*$/).test(vMax) == false) {
                     mui.alert("请输入正确的薪资");
                     return false;
                 } else if (vMin > vMax) {

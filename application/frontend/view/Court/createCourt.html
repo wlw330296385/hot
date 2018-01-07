@@ -86,9 +86,8 @@
             position: absolute;
             top: 0px;
             left: 10%;
-            right: 20%;
             overflow: hidden;
-            width: 70%;
+            width: 90%;
         }
 
         #tip input[type="text"] {
@@ -144,14 +143,14 @@
                             <div id="container"></div>
                             <span class="mui-icon mui-icon-location"></span>
                             <div id="tip">
-                                <input type="text" id="keyword" name="keyword" value="" onfocus='this.value=""' placeholder="请输入地址或直接点击地图" />
+                                <input type="text" id="keyword" name="keyword" value="" onfocus='this.value=""' placeholder="请输入地址后从下拉菜单中选择（或直接点击地图）" />
                             </div>
-                            <input type="button" class="bgblue" id="mapConfirm" value="确认" />
+                            <!--<input type="button" class="bgblue" id="mapConfirm" value="确认" />-->
                         </div>
                     </div>
                     <div class="mui-input-row h-auto">
                         <label>场地定位</label>
-                        <span class="getFromMap"></span>
+                        <span class="getFromMap">请查询或点选地图获取定位</span>
                         <input type="hidden" name="location" value="" class="location getFromMap">
                     </div>
 
@@ -205,8 +204,8 @@
                             <label>场地类型</label>
                             <span class="select-row">
                                 <select class="data" name="outdoors" class="outdoors">
-                                    <option value="1">室内</option>
-                                    <option value="2">室外</option>
+                                    <option value="1">室外</option>
+                                    <option value="2">室内</option>
                                     <option value="3">室内|室外</option>
                                 </select>
                             </span>
@@ -253,7 +252,79 @@
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <!--获取地址-->
     <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
-    <script src="/static/frontend/js/map.js"></script>
+    <script>
+        var lng = '';
+        var lat = '';
+        // map(选择具体地址)
+        var map = new AMap.Map('container', {
+            resizeEnable: true,
+            zoom: 13,
+            // center:[];
+        });
+
+        //点击获取地址
+        AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geolocation'], function () {
+            var geocoder = new AMap.Geocoder({
+
+            });
+            var marker = new AMap.Marker({
+                map: map,
+                bubble: true
+            })
+
+            map.on('click', function (e) {
+                marker.setPosition(e.lnglat);
+                geocoder.getAddress(e.lnglat, function (status, result) {
+                    if (status == 'complete') {
+                        var glocation = result.regeocode.formattedAddress;
+                        console.log(e.lnglat)
+                        // alert(result.regeocode.formattedAddress)
+                        if(window.confirm('你确定定位到【'+glocation+'】吗？')){
+                            $(".getFromMap").val(glocation);
+                            $(".getFromMap").text(glocation);
+                            lng = e.lnglat.lng;
+                            lat = e.lnglat.lat;
+                        }else{
+                            return false;
+                        }
+                    }
+                })
+            })
+
+            var autoOptions = {
+                city: "深圳市", //城市，默认全国
+                input: "keyword"//使用联想输入的input的id
+            };
+            autocomplete = new AMap.Autocomplete(autoOptions);
+            var placeSearch = new AMap.PlaceSearch({
+                city: '',
+                map: map
+            })
+            AMap.event.addListener(autocomplete, "select", function (e) {
+                //TODO 针对选中的poi实现自己的功能
+                placeSearch.setCity(e.poi.adcode);
+                placeSearch.search(e.poi.name);
+                console.log(e.poi)
+                console.log(e.poi.location.lng)
+                console.log(e.poi.location.lat)
+                lng = e.poi.location.lng;
+                lat = e.poi.location.lat;
+                $(".getFromMap").val(e.poi.name);
+                $(".getFromMap").text(e.poi.name);
+            });
+        });
+
+
+//        // map(选择具体地址)
+//        $("#mapConfirm").on('tap', '', function () {
+//
+//            var mapkeyword = $("input[name='keyword']").val();
+//            $(".getFromMap").val(mapkeyword);
+//            $(".getFromMap").text(mapkeyword);
+//
+//        });
+
+    </script>
     <script>
         //初始化
         mui.init({
@@ -300,6 +371,9 @@
         var covers = [];
         $(function () {
 
+
+
+
             //多图上传start·····································································
             // 初始化Web Uploader
             var uploader = WebUploader.create({
@@ -337,12 +411,8 @@
                     return false;
                 }
             });
-            // map(选择具体地址)
-            $("#mapConfirm").on('tap', '', function () {
-                var mapkeyword = $("input[name='keyword']").val();
-                $(".getFromMap").val(mapkeyword);
-                $(".getFromMap").text(mapkeyword);
-            });
+
+
 
 
             //创建场地

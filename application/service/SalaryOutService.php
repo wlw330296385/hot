@@ -38,7 +38,7 @@ class SalaryOutService {
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-        $result = $this->SalaryOut->save($data);
+        $result = $this->SalaryOut->allowField(true)->save($data);
         if($result){
             db('member')->where(['id'=>$data['member_id']])->setDec('balance',$data['salary']);
             $memberInfo = db('member')->where(['id'=>$data['member_id']])->find();
