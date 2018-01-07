@@ -12,5 +12,7 @@ class ItemCouponMember extends Model {
     //                         'type',
     //                         ];
 
-	
+	public function itemCoupon(){
+		return $this->hasOne('item_coupon','id','item_coupon_id',[],'LEFT JOIN');
+	}
 }

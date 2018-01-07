@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>我的卡券</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--自定义多色图标icon.js-->
+    <script src="/static/frontend/iconfont/iconfont.js"></script>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<h1 class="mui-title">我的卡券</h1>
+	</header>
+		<div class="mui-content">
+
+			{volist name="itemCouponList" id="vol"}
+			<div class="mui-card">
+				<div class="mui-card-header mui-card-media" style="height:40vw;background-image:url({$vol.itemCoupon.image_url});background-repeat: no-repeat;background-position:center center;  
+    				background-size: cover;">
+    			</div>
+				<div class="mui-card-content">
+					<div class="mui-card-content-inner">
+						<p>{$vol.item_coupon}</p>
+						<!-- <p style="color: #333;">{$vol.itemCoupon.coupon_des}</p> -->
+						<p style="color: red;font-size: 0.5em" >{$vol.itemCoupon.start|date="Y-m-d H:i:s",###} 至 {$vol.itemCoupon.end|date="Y-m-d H:i:s",###}</p>
+					</div>
+				</div>
+				<div class="mui-card-footer">
+					<a class="mui-card-link" href="{:url('frontend/itemCoupon/itemCouponInfo',['item_coupon_id'=>$vol['itemCoupon']['id']])}">卡券详情</a>
+					<a class="mui-card-link">
+
+						{if $vol.itemCoupon.start > time() || $vol.itemCoupon.end < time()}
+							<button type="button" class="mui-btn mui-btn-danger"  disabled="true"  >已失效  </button>
+						{elseif $vol.status == 1}
+						<button type="button" class="mui-btn mui-btn-danger useCard" data-itemCouponID="{$vol.itemCoupon.id}"   data-itemCouponMemberID = "{$vol.id}"   >立即使用  </button>
+						{else /}
+						<button type="button" class="mui-btn mui-btn-danger"  disabled="true"  >已使用  </button>
+						{/if} 
+					</a>
+				</div>
+			</div>
+			{/volist}
+		</div>
+</body>
+</html>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
+
+<script type="text/javascript">
+	//初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    $(function(){
+    	$('.useCard').on('tap',function(){
+    		var itemCouponID = $(this).attr("data-itemCouponID");
+    		var itemCouponMemberID = $(this).attr("data-itemCouponMemberID");
+    		var r = confirm('使用后不可在使用,确定使用吗?')
+    		if(r===true){
+	    		var objData = {
+	    			item_coupon_id:itemCouponID,
+	    			item_coupon_member_id : itemCouponMemberID
+	    		}
+	    		var ajaxResult = wooApi.asyncF("{:url('api/item_coupon/useItemCoupon')}", objData);
+	    		if(ajaxResult.code == 200){
+	    			$(this).attr("disabled", true);
+	    			$(this).text('已使用');
+	    			
+	    		}
+	    		mui.toast(ajaxResult.msg);    			
+    		}	
+
+    		
+    	})	
+    })
+</script>

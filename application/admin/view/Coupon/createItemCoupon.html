@@ -1,0 +1,120 @@
+{extend name="layout/common"/}
+{block name="page-content"}
+    <div class="wrapper">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="box no-border">
+                    <form role="form" action="" method="post">
+                        {:token()}
+                        <input type="hidden" class="form-control" placeholder="卡券名" name="organization_id" value="0" >
+                        <input type="hidden" class="form-control" placeholder="卡券名" name="organization_type" value="1">
+                        <input type="hidden" class="form-control" placeholder="卡券名" name="organization" value="篮球管家平台">
+                        <input type="hidden" class="form-control" placeholder="卡券名" name="member">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="">卡券名</label>
+                                <input type="text" class="form-control" placeholder="卡券名" name="coupon">
+                            </div>
+                            <div class="form-group">
+                                <label for="">发布数量</label>
+                                <input type="number" class="form-control" placeholder="0" name="max" >
+                            </div>
+                            <div class="form-group">
+                                <label for="">价值</label>
+                                <input type="text" class="form-control" placeholder="999" name="price">
+                            </div>
+                            <div class="form-group">
+                                <label for="">有效期</label>
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-clock-o"></i>
+                                    </div>
+                                    <input type="text" class="form-control pull-right" id="reservationtime" name="datetime">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="">卡券描述</label>
+                                <!-- Main content -->
+                                <section class="content">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="box box-info">
+                                                <div class="box-header">
+                                                    <h3 class="box-title">CK Editor
+                                                    <small>Advanced and full of features</small>
+                                                </h3>
+                                                <!-- tools box -->
+                                                <div class="pull-right box-tools">
+                                                    <button type="button" class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                                        <i class="fa fa-minus"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-info btn-sm" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                                      <i class="fa fa-times"></i>
+                                                    </button>
+                                                </div>
+                                                <!-- /. tools -->
+                                                </div>
+                                                <!-- /.box-header -->
+                                                <div class="box-body pad">
+                                                    <textarea id="editor1" name="coupon_des" rows="10" cols="80">
+                                                        卡片描述
+                                                    </textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                            <div class="form-group">
+                                <label for="">电话号码</label>
+                                <input type="text" class="form-control" placeholder="电话号码" name="telephone" >
+                            </div>
+                            <div class="form-group">
+                                <label for="">系统备注</label>
+                                <input type="text" class="form-control" placeholder="" name="system_remarks">
+                            </div>
+                            <div class="form-group">
+                                <label for="">赠送条件</label>
+                                <select name="student_sex">
+                                    <option value="1">购买课程赠送</option>
+                                    <option value="2">购买活动赠送</option>
+                                    <option value="3">产生订单赠送</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-success">提  交</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{/block}
+{block name='js'}
+<script src="/static/backend/layui/layui.js"></script>
+<!-- JQ -->
+<script src="/static/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- CK Editor -->
+<script src="https://cdn.ckeditor.com/4.5.7/standard/ckeditor.js"></script>
+<!-- Bootstrap WYSIHTML5 -->
+<script src="/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<!-- date-range-picker -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+<script src="/static/plugins/daterangepicker/daterangepicker.js"></script>
+<script>
+  $(function () {
+    // Replace the <textarea id="editor1"> with a CKEditor
+    // instance, using default configuration.
+    CKEDITOR.replace('coupon_des');
+    //bootstrap WYSIHTML5 - text editor
+    $(".textarea").wysihtml5();
+    //Date range picker with time picker
+    $('#reservationtime').daterangepicker({timePicker: true, timePickerIncrement: 30, format: 'YYYY/MM/DD h:m:i'});
+  });
+</script>
+{/block}
+
+

@@ -5,7 +5,6 @@ namespace app\service;
 use app\model\ItemCoupon;
 use app\model\ItemCouponMember;
 use think\Db;
-use app\common\validate\ItemItemCouponVal;
 class ItemCouponService {
     private $CouponModel;
     private $CouponMemberModel;
@@ -30,12 +29,7 @@ class ItemCouponService {
     // 分页获取卡券
     public function getItemCouponListByPage($map=[], $order='',$paginate=10){
         $result = $this->ItemCouponModel->where($map)->order($order)->paginate($paginate);
-        if($result){
-            $res =  $result->toArray();
-            return $res;
-        }else{
-            return $result;
-        }
+        return $result;
     }
 
     // 软删除
@@ -51,6 +45,17 @@ class ItemCouponService {
     // 获取一个卡券
     public function getItemCouponInfo($map) {
         $result = $this->ItemCouponModel->where($map)->find();
+        if ($result){
+            $res = $result->toArray();
+            return $res;
+        }else{
+            return $result;
+        }
+    }
+
+    // 获取一个卡券-用户
+    public function getItemCouponMemberInfo($map) {
+        $result = $this->ItemCouponMemberModel->where($map)->find();
         if ($result){
             $res = $result->toArray();
             return $res;
@@ -101,13 +106,24 @@ class ItemCouponService {
 
     public function useItemCoupon($item_coupon_member_id,$item_coupon_id){
         $itemCouponInfo = $this->ItemCouponModel->where(['id'=>$item_coupon_id])->find();
-        if($itemCouponInfo['end']>time() || $itemCouponInfo['start']<time()){
-            return json(['code'=>100,'msg'=>'卡券不在有效期内,无法使用']);
+        $itemCoupnMemberInfo = $this->ItemCouponMemberModel->where(['id'=>$item_coupon_member_id])->find();
+
+        if($itemCoupnMemberInfo){
+            if($itemCoupnMemberInfo['status']<>1){
+                return ['code'=>100,'msg'=>'卡券已被使用'];
+            }
+        }else{
+            return ['code'=>100,'msg'=>'卡券已被删除或不存在'];
         }
-        $result = $this->ItemCouponMemberModel->save(['status'=>1],['id'=>$item_coupon_member_id]);
+
+        if($itemCouponInfo['end']<time() || $itemCouponInfo['start']>time()){
+            return ['code'=>100,'msg'=>'卡券不在有效期内,无法使用'];
+        }
+        $result = $this->ItemCouponMemberModel->save(['status'=>2],['id'=>$item_coupon_member_id]);
         if($result){
             $this->ItemCouponModel->where(['id'=>$item_coupon_id])->setInc('used',1);
-            return ['msg' => '使用成功', 'code' => 200, 'data' => $item_coupon_member_id];
+
+            return ['msg' => '使用成功', 'code' => 200];
         }else{
             return ['msg'=>'使用失败', 'code' => 100];
         }
@@ -123,7 +139,7 @@ class ItemCouponService {
     public function createItemCouponMember($member_id,$member,$item_coupon_id){
         $itemCouponInfo = $this->ItemCouponModel->where(['id'=>$item_coupon_id])->find();
         if(($itemCouponInfo['max']-$itemCouponInfo['publish'])<1){
-            return json(['code'=>100,'msg'=>'卡券已经被领完']);
+            return ['code'=>100,'msg'=>'卡券已经被领完'];
         }
         $data = [
             'member_id'         =>$member_id,
@@ -133,13 +149,31 @@ class ItemCouponService {
             'status'            =>1,
             'coupon_number'     =>getTID($member_id),
         ];
+
+        $itemCouponMemberInfo = $this->ItemCouponMemberModel->where(['item_coupon_id'=>$item_coupon_id,'member_id'=>$member_id,'status'=>1])->find();
+        if($itemCouponMemberInfo){
+            return ['code'=>100,'msg'=>'您已经领过该卡'];
+        }
         $result = $this->ItemCouponMemberModel->save($data);
+
         if($result){
             $this->ItemCouponModel->where(['id'=>$item_coupon_id])->setInc('publish',1);
-            return ['msg' => '生成成功', 'code' => 200, 'data' => $this->ItemCouponMemberModel->id];
+            return ['msg' => '领取成功', 'code' => 200];
         }else{
-            return ['msg'=>'生成失败', 'code' => 100];
+            return ['msg'=>'领取失败', 'code' => 100];
         }
+    }
+
+
+    /**
+    * 卡券列表
+    * @param $member_id $member
+    * @param $item_coupon_id 主表id
+    **/ 
+    public function getItemCouponMemberListByPage($map = [],$paginate = 10){
+        $result = $this->ItemCouponMemberModel->with('itemCoupon')->where($map)->paginate($paginate);
+        // echo $this->ItemCouponMemberModel->getlastsql();
+        return $result;
     }
 
 
