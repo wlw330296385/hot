@@ -113,8 +113,7 @@ class Schedule extends Base
 		}else{
 		    $scheduleInfo['exerciseList'] = [];
 		}
-
-        //dump($scheduleInfo);
+        
 		$this->assign('updateSchedule',$updateSchedule);
 		$this->assign('studentList',$studentList);
         $this->assign('expstudentList',$expstudentList);

@@ -70,7 +70,14 @@
         <ul class="mui-table-view list detalis-list mb">
             <li class="mui-table-view-cell listli">训练时间<span>{$scheduleInfo.lesson_time|date="Y-m-d H:i",###}</span>
             </li>
-            <li class="mui-table-view-cell listli detalisli">学员名单<span class="students">{volist name="studentList" id="vol"}{$vol.student},{/volist}{volist name="expstudentList" id="vol"}{$vol.student},{/volist}</span>
+            <li class="mui-table-view-cell listli detalisli">学员名单<span class="students">
+                {notempty name="studentList"}
+                {volist name="studentList" id="vol"}{notempty name="vo"}{$vol.student},{/notempty}{/volist}
+                {/notempty}
+                {notempty name="expstudentList"}
+                {volist name="expstudentList" id="vol"}{notempty name="vo"}{$vol.student},{/notempty}{/volist}
+                {/notempty}
+            </span>
             </li>
             <li class="mui-table-view-cell listli">所属课程<span>{$scheduleInfo.lesson}</span></li>
             <li class="mui-table-view-cell listli">课程类型<span>{$scheduleInfo.grade}</span></li>
