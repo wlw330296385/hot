@@ -35,10 +35,21 @@ class Lesson extends Base{
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         $lessonInfo['cover'] = request()->root(true) . $lessonInfo['cover'];
         $isPower = $this->LessonService->isPower($lessonInfo['camp_id'],$this->memberInfo['id']);
-
+        //卡券列表
+        $map = function($query){
+                    $query->where(['target_type'=>1])
+                    ->whereOr(['target_type'=>3])
+                    ;
+                };
+        // 平台卡券
+        $couponListOfSystem = db('item_coupon')->where($map)->whereOr(['target_type'=>3])->select();
+        // 训练营卡券
+        $couponListOfCamp = db('item_coupon')->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id']])->where($map)->select();
+  
+        $this->assign('couponListOfSystem',$couponListOfSystem);
+        $this->assign('couponListOfCamp',$couponListOfCamp);
         $this->assign('isPower',$isPower);
         $this->assign('lessonInfo',$lessonInfo);
-        $this->assign('memberInfo', $this->memberInfo);
         return view('Lesson/lessonInfo');
     }
 

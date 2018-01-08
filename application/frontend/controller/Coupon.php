@@ -2,7 +2,7 @@
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\ItemCouponService;
-class ItemCoupon extends Base{
+class Coupon extends Base{
 	protected $ItemCouponService;
 	public function _initialize(){
 		parent::_initialize();

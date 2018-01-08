@@ -119,6 +119,7 @@ class Event extends Base{
     public function eventInfo() {
         $event_id = input('param.event_id');
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
+   
         $variable = 1;
         if($eventInfo['status']=='下架'){
             $variable = 2 ;
@@ -138,6 +139,19 @@ class Event extends Base{
         }else{
             $EventMemberList = [];
         }
+        //卡券列表
+        $map = function($query){
+                    $query->where(['target_type'=>2])
+                    ->whereOr(['target_type'=>3])
+                    ;
+                };
+        // 平台卡券
+        $couponListOfSystem = db('item_coupon')->where($map)->whereOr(['target_type'=>3])->select();
+        // 训练营卡券
+        $couponListOfCamp = db('item_coupon')->where(['organization_type'=>$eventInfo['organization_type'],'organization_id'=>$eventInfo['organization_id']])->where($map)->select();
+  
+        $this->assign('couponListOfSystem',$couponListOfSystem);
+        $this->assign('couponListOfCamp',$couponListOfCamp);
         $this->assign('EventMemberList',$EventMemberList);
         $this->assign('variable',$variable);
         $this->assign('eventInfo',$eventInfo);

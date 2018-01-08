@@ -26,7 +26,7 @@ class Coupon extends Backend{
     }
 
     public function itemCouponList(){
-        $itemCouponList = $this->ItemCouponService->getItemCouponListByPage();
+        
 
         $field = '请选择搜索关键词';
         $map = [];
@@ -51,7 +51,7 @@ class Coupon extends Backend{
             }
         }
             
-        
+        $itemCouponList = $this->ItemCouponService->getItemCouponListByPage($map);
         $this->assign('field',$field);
 
         // dump($itemCouponList->toArray());die;
