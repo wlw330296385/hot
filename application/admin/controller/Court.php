@@ -21,6 +21,25 @@ class Court extends Backend {
         return $this->fetch();
     }
 
+    // 新增场地
+    public function add() {
+        return view();
+    }
+
+    // 编辑场地
+    public function edit() {
+        $id = input('id');
+        $court = CourtModel::get($id);
+        //$court
+        $res = $court->toArray();
+        $res['status_num'] = $court->getData('status');
+
+        $breadcrumb = [ 'ptitle' => '教练管理' , 'title' => '教练详细' ];
+        $this->assign( 'breadcrumb', $breadcrumb );
+        $this->assign('court', $res);
+        return view();
+    }
+
     // 场地详情
     public function detail() {
         $id = input('id');
