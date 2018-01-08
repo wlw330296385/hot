@@ -15,17 +15,17 @@
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
-   <style>
+    <style>
         .mui-popover-arrow {
             left: auto;
             right: 6px;
         }
-        
+
         .mui-input-row a {
             display: table;
             width: 100%;
         }
-        
+
         .frame {
             width: 100%;
             padding: 15px 2px;
@@ -33,19 +33,20 @@
             border: 1px dashed #ddd;
             color: #b1b0b0;
         }
-        
+
         .title {
             font-size: 16px;
             font-weight: bold;
         }
-        
+
         #eventDom .fl {
             text-align: left;
         }
-        .cancel-dom{
+
+        .cancel-dom {
             font-size: 16px;
             float: right;
-            margin:13px 10px;
+            margin: 13px 10px;
         }
     </style>
 </head>
@@ -53,7 +54,9 @@
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
         <h1 class="mui-title">{$eventInfo.organization}</h1>
         <input type="hidden" name="organization" value="{$eventInfo.organization}" class="data">
         <input type="hidden" name="organization_id" value="{$eventInfo.organization_id}" class="data">
@@ -98,15 +101,15 @@
                     <div class="mui-navigate-right">
                         <label>活动类型</label>
                         <span class="select-row">
-                        <select id="eventType" class="data" name="event_type">
-                             <optgroup label="活动类型">
-                                <option value="团队建设">团队建设</option>
-                                <option value="校园活动">校园活动</option>
-                                <option value="亲子教育">亲子教育</option>
-                                <option value="社交娱乐">社交娱乐</option>
-                                <option value="学习交流">学习交流</option>
-                            </optgroup>
-                        </select>
+                            <select id="eventType" class="data" name="event_type">
+                                <optgroup label="活动类型">
+                                    <option value="团队建设">团队建设</option>
+                                    <option value="校园活动">校园活动</option>
+                                    <option value="亲子教育">亲子教育</option>
+                                    <option value="社交娱乐">社交娱乐</option>
+                                    <option value="学习交流">学习交流</option>
+                                </optgroup>
+                            </select>
                         </span>
                     </div>
                 </div>
@@ -124,8 +127,8 @@
                 </div>
 
                 <!--<div class="mui-input-row price-input-row {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">-->
-                    <!--<label>活动单价</label>-->
-                    <!--<input type="text" name="price" class="" value="{$eventInfo.price}" placeholder="请填写活动单价">-->
+                <!--<label>活动单价</label>-->
+                <!--<input type="text" name="price" class="" value="{$eventInfo.price}" placeholder="请填写活动单价">-->
                 <!--</div>-->
 
                 <div class="mui-input-row price-input-row {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">
@@ -139,12 +142,7 @@
                 <div class="mui-input-row h-auto">
                     <a href="#eventDom" class="mui-navigate-right">
                         <label>活动套餐</label>
-                        <span class="eventDom wd60" style="line-height: 24px;">
-
-                            {volist name="$eventInfo.doms" id="vol"}
-                                {$vol.name}({$vol.price}),
-                            {/volist}
-                        </span>
+                        <span class="eventDom wd60 hdDoms" style="line-height: 24px;">{volist name="$eventInfo.doms" id="vol"} {$vol.name}({$vol.price}),{/volist}</span>
                     </a>
                 </div>
 
@@ -213,7 +211,7 @@
                     <span class="course">活动简介</span>
                 </div>
 
-                       <div class="mui-input-row h-auto">
+                <div class="mui-input-row h-auto">
                     <div class="mui-input-row h-auto" style="margin-bottom: 10px">
                         <textarea name="event_des" class="data event_des" style="display: none"></textarea>
                         <div class="introBox">{$eventInfo.event_des}</div>
@@ -256,9 +254,15 @@
     <div id="eventDom" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course wd36"><strong>报名种类</strong></span>
-            <span class="fr"><button class="mui-btn-blue" id="domConfirm">确认</button></span>
-            <span class="fr"><button id="domAdd">添加</button></span>
+            <span class="course wd36">
+                <strong>报名种类</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="domConfirm">确认</button>
+            </span>
+            <span class="fr">
+                <button id="domAdd">添加</button>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -271,7 +275,10 @@
                     </div>
                     {/volist}
                 </form>
-                <div class="tjbtn"><br /><p>PS:收费活动套餐必填,否则默认价格为0</p></div>
+                <div class="tjbtn">
+                    <br />
+                    <p>PS:收费活动套餐必填,否则默认价格为0</p>
+                </div>
             </div>
         </div>
     </div>
@@ -280,7 +287,9 @@
     <div id="target" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course"><strong>具体对象</strong></span>
+            <span class="course">
+                <strong>具体对象</strong>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -288,12 +297,16 @@
             </div>
         </div>
     </div>
-     <!--费用结算人-->
+    <!--费用结算人-->
     <div id="cost" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course wd45"><strong>选择费用结算人</strong></span>
-            <span class="fr"><button class="mui-btn" id="StudentDel">清除</button></span>
+            <span class="course wd45">
+                <strong>选择费用结算人</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="StudentDel">清除</button>
+            </span>
         </div>
         <div class="camp-lesson-list">
             <div class="mui-segmented-control">
@@ -311,9 +324,16 @@
                     <ul class="mui-table-view list campMemberType campMemberStudent">
                     </ul>
                     <ul class="mui-pager">
-                        <li><a href="#" class="prev_page">上一页</a></li>
-                        <li><span class="currPage">0</span>/<span class="totalPage">0</span></li>
-                        <li><a href="#" class="next_page">下一页</a></li>
+                        <li>
+                            <a href="#" class="prev_page">上一页</a>
+                        </li>
+                        <li>
+                            <span class="currPage">0</span>/
+                            <span class="totalPage">0</span>
+                        </li>
+                        <li>
+                            <a href="#" class="next_page">下一页</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -338,7 +358,7 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/libs/webuploader.min.js"></script>
     <script>
-                                                                                                                  var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'event'])}";
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'event'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -431,8 +451,14 @@
             });
         })(mui, document);
         //初始化全局变量
-        var eventDomArr = [{name:'默认',price:0}];
+        var eventDomArr = [{ name: '默认', price: 0 }];
         $(function () {
+
+            var cDoms = $(".hdDoms").text();
+            console.log(cDoms)
+            cDoms = cDoms.substring(0, cDoms.length - 1);
+            $(".hdDoms").text(cDoms);
+
             //获取训练营粉丝列表
             var StudentKeyword = '';
             var wStudents = '';
@@ -485,32 +511,32 @@
                 var eDoms = '';
                 var eDom = '';
                 var eDomPrice = '';
-                var ePrice =$("#eventPrice").val();
+                var ePrice = $("#eventPrice").val();
                 console.log(ePrice)
                 eventDomArr = [];
                 //把所选课量串在一起，以逗号分隔
                 $("#eventDom .mui-checkbox").each(function () {
-                    eDom =  $(this).find("input[name='event-dom']").val();
-                    eDomPrice =  $(this).find("input[name='event-dom_price']").val();
-                    if(eDom==""||eDom.length>10||ePrice==2&&(eDomPrice==""||!(/^\+?[0-9]\d*$/).test(eDomPrice))){ //////加上判断是否收费
+                    eDom = $(this).find("input[name='event-dom']").val();
+                    eDomPrice = $(this).find("input[name='event-dom_price']").val();
+                    if (eDom == "" || eDom.length > 10 || ePrice == 2 && (eDomPrice == "" || !(/^\+?[0-9]\d*$/).test(eDomPrice))) { //////加上判断是否收费
                         isTrue = false;
                         return false;
-                    }else{
-                        if(ePrice==2){
-                            eDoms+= eDom+"（"+eDomPrice+"），";
-                        }else{
-                            eDoms+= eDom+"，";
+                    } else {
+                        if (ePrice == 2) {
+                            eDoms += eDom + "（" + eDomPrice + "），";
+                        } else {
+                            eDoms += eDom + "，";
                         }
                         eventDomArr.push({ name: eDom, price: eDomPrice });
 
                     }
                 });
-                if(isTrue){
+                if (isTrue) {
                     eDoms = eDoms.substring(0, eDoms.length - 1);
                     $(".eventDom").text(eDoms);
                     console.log(eventDomArr)
                     mui('#eventDom').popover('toggle');
-                }else{
+                } else {
                     mui.alert('请填写完整，并保证名称长度不超过10个字，价格为纯数字，谢谢！', '温馨提示', '确定', function () {
                         eDoms = '';
                     })
@@ -519,10 +545,10 @@
             //添加
             $("#domAdd").on('tap', this, function () {
                 var addPrice = '';
-                if($("#eventPrice").val()==2){
+                if ($("#eventPrice").val() == 2) {
                     addPrice = '<input type="text" name="event-dom_price" class="wd36 fr" value="" placeholder="对应价格">'
                 }
-                $("#eventDom form").append('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i>'+addPrice+'</div>');
+                $("#eventDom form").append('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i>' + addPrice + '</div>');
             })
             // 删除
             $(document).on('tap', ".cancel-dom", function () {
@@ -601,7 +627,7 @@
             //判断是否收费显示data
             isFree();
 
-             //添加标题
+            //添加标题
             $(".titleClass").on('tap', '', function () {
                 var title = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
                 $(".introBox").append(title);
@@ -691,7 +717,7 @@
                 }
             });
 
-             // 上移动
+            // 上移动
             $(document).on('tap', '.up', function () {
                 $(".bgorange").prev().insertAfter(".bgorange");
             });
@@ -740,7 +766,13 @@
         // 获取数据并进行提交(编辑活动)
         function submitAction() {
 
-           
+            //最终提交遍历套餐列表
+            eventDomArr =[];
+            $("#eventDom .mui-checkbox").each(function () {
+                eDom = $(this).find("input[name='event-dom']").val();
+                eDomPrice = $(this).find("input[name='event-dom_price']").val();
+                eventDomArr.push({ name: eDom, price: eDomPrice });
+            });
 
             if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
                 mui.alert("请输入正确的手机格式");
@@ -760,11 +792,11 @@
             var event_des = $('textarea.data').val();
             objData.dom = JSON.stringify(eventDomArr);
             objData.event_des = event_des;
-            if(eventDomArr.length == 0 || eventDomArr == undefined){
-                eventDomArr = [{name:'默认',price:0}];
+            if (eventDomArr.length == 0 || eventDomArr == undefined) {
+                eventDomArr = [{ name: '默认', price: 0 }];
             }
             objData.price = eventDomArr[0].price;
-            if(objData.is_free == 2 && objData.price==0){
+            if (objData.is_free == 2 && objData.price == 0) {
                 mui.alert("请添加活动套餐");
                 return false;
             }
@@ -822,7 +854,7 @@
         //自定义获取训练营身份列表没分页
         var toCampMemberList = function () {
             var url = "{:url('api/camp_member/getCampMemberListNoPageApi','','',true)}";
-           var campID = "{$eventInfo.organization_id}";
+            var campID = "{$eventInfo.organization_id}";
             mui.ajax({
                 url: url,
                 data: {
