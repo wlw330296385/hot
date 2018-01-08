@@ -87,6 +87,20 @@ class Event extends Base{
         $wechatS = new \app\service\WechatService;
         $jsapi = $wechatS->jsapi($shareurl);
         $eventInfo['price'] = $eventInfo['doms'][$domIndex]['price'];
+
+        //卡券列表
+        $map = function($query){
+                    $query->where(['target_type'=>2])
+                    ->whereOr(['target_type'=>3])
+                    ;
+                };
+        // 平台卡券
+        $couponListOfSystem = db('item_coupon')->where($map)->whereOr(['target_type'=>3])->select();
+        // 训练营卡券
+        $couponListOfCamp = db('item_coupon')->where(['organization_type'=>$eventInfo['organization_type'],'organization_id'=>$eventInfo['organization_id']])->where($map)->select();
+  
+        $this->assign('couponListOfSystem',$couponListOfSystem);
+        $this->assign('couponListOfCamp',$couponListOfCamp);
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('jsapi', $jsapi);
         $this->assign('jsonBillInfo',json_encode($jsonBillInfo));

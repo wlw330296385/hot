@@ -78,6 +78,7 @@ class BillService {
         if($result){
             $billInfo = $this->Bill->where($map)->find();
             $billData = $billInfo->toArray();
+            // 课程支付后操作
             $res = $this->finishBill($billData);
             return $res;
         }else{

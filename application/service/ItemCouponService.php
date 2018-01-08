@@ -119,6 +119,11 @@ class ItemCouponService {
         if($itemCouponInfo['end']<time() || $itemCouponInfo['start']>time()){
             return ['code'=>100,'msg'=>'卡券不在有效期内,无法使用'];
         }
+
+        if($member_id<>$itemCoupnMemberInfo['member_id']){
+            return ['code'=>100,'msg'=>'卡券不属于你,无法使用'];
+        }
+
         $result = $this->ItemCouponMemberModel->save(['status'=>2],['id'=>$item_coupon_member_id]);
         if($result){
             $this->ItemCouponModel->where(['id'=>$item_coupon_id])->setInc('used',1);
@@ -164,6 +169,37 @@ class ItemCouponService {
         }
     }
 
+    /**
+    * 发放一堆卡券
+    * @param $member_id $member
+    * @param $item_coupon_id 主表id
+    **/ 
+    public function createItemCouponMemberList($member_id,$member,$item_coupon_ids){
+        $itemCouponList = $this->ItemCouponModel->where(['id'=>['in'=>$item_coupon_ids]])->select();
+        $data = [];
+        foreach ($itemCouponList as $key => $value) {
+            if(($value['max']-$value['publish'])<1){
+                continue;
+            }
+            $data = [
+                'member_id'         =>$member_id,
+                'member'            =>$member,
+                'item_coupon_id'    =>$value['id'],
+                'item_coupon'       =>$value['coupon'],
+                'status'            =>1,
+                'coupon_number'     =>getTID($member_id),
+            ];         
+        }
+
+        $result = $this->ItemCouponMemberModel->saveAll($data);
+
+        if($result){
+            $this->ItemCouponModel->where(['id'=>['in'=>$item_coupon_ids]])->setInc('publish',1);
+            return ['msg' => '领取成功', 'code' => 200];
+        }else{
+            return ['msg'=>'领取失败', 'code' => 100];
+        }
+    }
 
     /**
     * 卡券列表

@@ -60,8 +60,8 @@ class ItemCoupon extends Base{
             $item_coupon_id = input('param.item_coupon_id');
             // $member_id = $this->memberInfo['id'];
             // $member = $this->memberInfo['member'];
-            $member_id = 8;
-            $member = 'woo';
+            // $member_id = 8;
+            // $member = 'woo';
             $result = $this->ItemCouponService->createItemCouponMember($member_id,$member,$item_coupon_id);
              return json($result);   
          }catch (Exception $e){
@@ -69,17 +69,31 @@ class ItemCoupon extends Base{
         }
     }
 
-
+    //发放一堆卡券
+    public function createItemCouponMemberListApi(){
+         try{
+            $item_coupon_id = input('param.item_coupon_ids');
+            // $member_id = $this->memberInfo['id'];
+            // $member = $this->memberInfo['member'];
+            $item_coupon_ids = json_decode($item_coupon_id,'true');
+            $member_id = 8;
+            $member = 'woo';
+            $result = $this->ItemCouponService->createItemCouponMemberList($member_id,$member,$item_coupon_ids);
+             return json($result);   
+         }catch (Exception $e){
+             return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
     //使用卡券
     public function useItemCoupon(){
         try{
             $item_coupon_member_id = input('param.item_coupon_member_id');
             $item_coupon_id = input('param.item_coupon_id');
-            // $member_id = $this->memberInfo['id'];
-            // $member = $this->memberInfo['member'];
-            $member_id = 8;
-            $member = 'woo';
+            $member_id = $this->memberInfo['id'];
+            $member = $this->memberInfo['member'];
+            // $member_id = 8;
+            // $member = 'woo';
             $result = $this->ItemCouponService->useItemCoupon($item_coupon_member_id,$item_coupon_id);
              return json($result);   
          }catch (Exception $e){

@@ -136,6 +136,19 @@ class Lesson extends Base{
         $wechatS = new WechatService();
         $jsapi = $wechatS->jsapi($shareurl);
 
+        //卡券列表
+        $map = function($query){
+                    $query->where(['target_type'=>1])
+                    ->whereOr(['target_type'=>3])
+                    ;
+                };
+        // 平台卡券
+        $couponListOfSystem = db('item_coupon')->where($map)->whereOr(['target_type'=>3])->select();
+        // 训练营卡券
+        $couponListOfCamp = db('item_coupon')->where(['organization_type'=>$lessonInfo['organization_type'],'organization_id'=>$lessonInfo['organization_id']])->where($map)->select();
+  
+        $this->assign('couponListOfSystem',$couponListOfSystem);
+        $this->assign('couponListOfCamp',$couponListOfCamp);
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('jsapi', $jsapi);
         $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
