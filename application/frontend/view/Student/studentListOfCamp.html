@@ -15,6 +15,9 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style type="text/css">
+        ..mui-table-view-cell p{ line-height: 27px; }
+    </style>
 </head>
 
 <body class=whitebg>
@@ -26,7 +29,7 @@
             <a class="mui-control-item mui-icon mui-icon-left-nav"
                href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"></a>
             <a class="mui-control-item mui-active" search-id="sOn" href="#onlineStudentList">在营</a>
-            <a class="mui-control-item " search-id="sGraduate" href="#graduateStudentList">毕业</a>
+            <a class="mui-control-item " search-id="sGraduate" href="#graduateStudentList">结业</a>
             <a class="mui-control-item" search-id="sOff" href="#offlineStudentList">离营</a>
             <a class="mui-control-item" search-id="sPend" href="#pendingStudentList">待处理</a>
         </div>
@@ -317,6 +320,7 @@
             success: function (data) {
 
                 var newli = '';
+                var lessonName = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
 
@@ -327,7 +331,7 @@
                         } else {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为在营</span></div>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '"><div class="mui-media-body wd45">' + data.data.data[i].student.student + '<i class="icon iconfont icon-sex'+data.data.data[i].student.student_sex+'"></i><p class="mui-ellipsis">学员ID：' + data.data.data[i].student_id + '</p></div></a></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '"><p class="fr f12">学号：'+ data.data.data[i].student_id +'</p><div class="mui-media-body wd60">' + data.data.data[i].student.student + '<i class="icon iconfont icon-sex'+data.data.data[i].student.student_sex+'"></i><p class="mui-ellipsis">' + data.data.data[i].lesson + '</p></div></a></div>';
                         newli += '</li>';
                     }
                 }
@@ -428,7 +432,7 @@
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
                         newli += '<li class="mui-table-view-cell mui-media listli">';
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].student.student_avatar + '"><div class="mui-media-body wd45">' + data.data.data[i].student.student + '<i class="icon iconfont icon-sex'+data.data.data[i].student.student_sex+'"></i><p class="mui-ellipsis">学员ID：' + data.data.data[i].student_id + '</p></div></a></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].student.student_avatar + '"><p class="fr f12">学号：'+ data.data.data[i].student_id +'</p><div class="mui-media-body wd60">' + data.data.data[i].student.student + '<i class="icon iconfont icon-sex'+data.data.data[i].student.student_sex+'"></i><p class="mui-ellipsis">学员ID：' + data.data.data[i].lesson + '</p></div></a></div>';
                         newli += '</li>';
                     }
                 }
