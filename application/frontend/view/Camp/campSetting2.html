@@ -31,7 +31,8 @@
             <div class="item-list">
                 <form id="form2" action="" class="mui-input-group">
                     <div class="mui-input-row">
-                        <label>训练营名称</label><span>{$campInfo.camp}</span>
+                        <label>训练营名称</label>
+                        <span>{$campInfo.camp}</span>
                         <input type="hidden" name="campid" value="{$campInfo.id}">
                     </div>
 
@@ -81,12 +82,10 @@
                 </div>
                 <div class="tjbtn mb44">
                     <button type="button" class="mui-btn btn" id="submit-form2">提交修改</button>
-                    {eq name="campInfo.status_num" value="1"}
+                    {neq name="campInfo.status_num" value="0"}
                     <button type="button" class="mui-btn btn" id="close-camp" data-status="{$campInfo.status_num}" style="margin: 10px 0">{eq name="campInfo.status_num" value="1"}关闭{else/}开启{/eq}训练营</button>
-                    {/eq}
-                    <!--<a  href="javascript:void(0);" class="mui-btn" data-status="{$campInfo.status_num}">{eq name="campInfo.status_num" value="1"}关闭{else/}开启{/eq}训练营</a>-->
+                    {/neq}
                 </div>
-
 
             </div>
         </div>
@@ -96,7 +95,7 @@
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <!--选择器-->
 <script>
-  var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
 </script>
 <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
 <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
