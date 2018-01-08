@@ -111,6 +111,11 @@ class Schedule extends Base
             if (isset($data['expstudentList'])) {
                 $data['expstudent_str'] = serialize($data['expstudentList']);
             }
+            // 训练时间不能大于当前时间
+            if ($data['lesson_time'] > time()) {
+                return json(['code' => 100, 'msg' => '训练时间不能大于当前时间']);
+            }
+
             $result = $this->ScheduleService->createSchedule($data);
             return json($result);
         } catch (Exception $e) {
@@ -132,6 +137,12 @@ class Schedule extends Base
             if (isset($data['expstudentList'])) {
                 $data['expstudent_str'] = serialize($data['expstudentList']);
             }
+            
+            // 训练时间不能大于当前时间
+            if ($data['lesson_time'] > time()) {
+                return json(['code' => 100, 'msg' => '训练时间不能大于当前时间']);
+            }
+
             $result = $this->ScheduleService->updateSchedule($data, $schedule_id);
             return json($result);
         } catch (Exception $e) {
@@ -201,7 +212,7 @@ class Schedule extends Base
             if(isset($map['grade_id']) && is_array($map['grade_id'])) {
                 $map['grade_id'] = ['in',$map['grade_id']];
             }
-            $result = $this->ScheduleService->getScheduleListByPage($map);
+            $result = $this->ScheduleService->getScheduleListByPage($map, 'lesson_time desc');
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);

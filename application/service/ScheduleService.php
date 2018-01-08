@@ -38,7 +38,7 @@ class ScheduleService
         }
     }
 
-    public function getScheduleListByPage($map = [], $paginate = 10, $order = 'id desc')
+    public function getScheduleListByPage($map = [],  $order = 'id desc', $paginate = 10)
     {
         $result = $this->scheduleModel->where($map)->order($order)->paginate($paginate);
         // echo $this->scheduleModel->getlastsql();die;
@@ -349,9 +349,9 @@ class ScheduleService
             }else{
                 $res['assistant_ids'] = '';
             }
-            if($res['student_str']){
+            /*if($res['student_str']){
                 $res['student_strs'] = unserialize($res['student_str']);
-            }
+            }*/
             return $res;
         }else{
             return $result;
