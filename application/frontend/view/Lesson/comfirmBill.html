@@ -48,6 +48,23 @@
                     所属训练营<span class="wd66">{$lessonInfo.camp}</span>
                 </a>
             </li>
+            <li class="mui-table-view-cell listli">
+                    赠送卡券
+            </li>
+            <li class="mui-table-view-cell listli">
+                {volist empty="无" name="couponListOfSystem" id="vol" }
+                <label>
+                    <img src="{$vol.image_url}"  style="border:2px red;width: 5em">
+                    {$vol.coupon}
+                </label>
+                    
+                {/volist}
+            </li>
+            <li class="mui-table-view-cell listli">
+                {volist name="couponListOfCamp" id="vol" }
+                    <img src="{$vol.image_url}"  style="border:2px red">
+                {/volist}
+            </li>
             <li class="mui-table-view-cell listli">课程单价<span><b class="colororange">￥{$lessonInfo.cost}</b> 元</span>
             </li>
             <li class="mui-table-view-cell listli">所选课量<span><b class="colororange total"></b> 节</span></li>
@@ -138,7 +155,7 @@
     var total_fee = "{$lessonInfo.cost}" * total;
     var strBillInfo = '{$jsonBillInfo}';
     var objBillInfo = JSON.parse(strBillInfo);
-
+    var item_coupon_ids = JSON.stringify({$item_coupon_ids});
     $(function () {
 
         $('.total').text(total);
@@ -331,11 +348,23 @@
         });
 
         if (result.code == 200) {
+            presentItemCoupon();
             mui.alert('欢迎加入本训练营，您的课程购买已完成，请留意课程消息及公告。', '购买成功', '确定', function () {
                 window.location.href = "{:url('frontend/bill/billInfo',['bill_order'=>$billOrder])}";
             });
         } else {
             mui.toast(result.msg);
+        }
+    }
+
+
+
+    // 赠送卡券操作
+    function presentItemCoupon(){
+        if({$item_coupon_ids}.length >0){
+            var res = wooApi.asyncT("{:url('api/Item_coupon/createItemCouponMemberListApi')}", {
+                'item_coupon_ids': item_coupon_ids,
+            });
         }
     }
 

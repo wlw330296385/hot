@@ -175,13 +175,15 @@ class ItemCouponService {
     * @param $item_coupon_id 主表id
     **/ 
     public function createItemCouponMemberList($member_id,$member,$item_coupon_ids){
-        $itemCouponList = $this->ItemCouponModel->where(['id'=>['in'=>$item_coupon_ids]])->select();
+
+        $itemCouponList = $this->ItemCouponModel->where(['id'=>['in',$item_coupon_ids]])->select();
+        // echo $this->ItemCouponModel->getlastsql();
         $data = [];
         foreach ($itemCouponList as $key => $value) {
             if(($value['max']-$value['publish'])<1){
                 continue;
             }
-            $data = [
+            $data[] = [
                 'member_id'         =>$member_id,
                 'member'            =>$member,
                 'item_coupon_id'    =>$value['id'],
@@ -190,11 +192,11 @@ class ItemCouponService {
                 'coupon_number'     =>getTID($member_id),
             ];         
         }
-
+// dump($data);die;
         $result = $this->ItemCouponMemberModel->saveAll($data);
 
         if($result){
-            $this->ItemCouponModel->where(['id'=>['in'=>$item_coupon_ids]])->setInc('publish',1);
+            $this->ItemCouponModel->where(['id'=>['in',$item_coupon_ids]])->setInc('publish',1);
             return ['msg' => '领取成功', 'code' => 200];
         }else{
             return ['msg'=>'领取失败', 'code' => 100];

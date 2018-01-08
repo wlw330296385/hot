@@ -179,7 +179,7 @@ class BillService {
             }
             // lesson_member操作
             $LessonMember = new LessonMember;
-            $is_student2 = $LessonMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->find();
+            $is_student2 = $LessonMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->find();
             
             //添加一条学生数据
             if(!$is_student2){
@@ -293,7 +293,7 @@ class BillService {
             }
             // lesson_member操作
             $LessonMember = new LessonMember;
-            $is_student2 = $LessonMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->find();
+            $is_student2 = $LessonMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->find();
             
             //添加一条学生数据
             if(!$is_student2){

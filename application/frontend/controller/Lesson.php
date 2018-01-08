@@ -45,7 +45,15 @@ class Lesson extends Base{
         $couponListOfSystem = db('item_coupon')->where($map)->whereOr(['target_type'=>3])->select();
         // 训练营卡券
         $couponListOfCamp = db('item_coupon')->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id']])->where($map)->select();
-  
+        $item_coupon_ids = [];
+        foreach ($couponListOfSystem as $key => $value) {
+            $item_coupon_ids[] = $value['id'];
+        }
+        foreach ($couponListOfCamp as $key => $value) {
+            $item_coupon_ids[] = $value['id'];
+        }
+        // dump($item_coupon_ids);die;
+        $this->assign('item_coupon_ids',json_encode($item_coupon_ids));
         $this->assign('couponListOfSystem',$couponListOfSystem);
         $this->assign('couponListOfCamp',$couponListOfCamp);
         $this->assign('isPower',$isPower);

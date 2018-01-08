@@ -60,6 +60,23 @@
             <ul class="mui-table-view">
                 <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
                 <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='2||3'}show{else/}hide{/eq}">所属训练营<span>{$eventInfo.organization}</span></li>
+                <li class="mui-table-view-cell listli">
+                    赠送卡券
+                </li>
+                <li class="mui-table-view-cell listli">
+                    {volist empty="无" name="couponListOfSystem" id="vol" }
+                    <label>
+                        <img src="{$vol.image_url}"  style="border:2px red;width: 5em">
+                        {$vol.coupon}
+                    </label>
+                        
+                    {/volist}
+                </li>
+                <li class="mui-table-view-cell listli">
+                    {volist name="couponListOfCamp" id="vol" }
+                        <img src="{$vol.image_url}"  style="border:2px red">
+                    {/volist}
+                </li>
                 <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='3'}show{else/}hide{/eq}">所属班级<span>{$eventInfo.target}</span></li>
                 <li class="mui-table-view-cell listli">活动单价<span><b class="colororange">￥{$eventInfo.price}</b>（元）</span></li>
                 <li class="mui-table-view-cell listli">活动开始时间<span>{$eventInfo.starts}</span></li>
@@ -148,6 +165,7 @@
         $('.eventTotal').text('￥'+total_fee+'元');
         var studentList = [{ student: "{$memberInfo.member}", student_id: 0, member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"}];
         // var studentList = new Array();
+        var item_coupon_ids = JSON.stringify({$item_coupon_ids});
         $(function () {
             $('.eventNum').val(total);
 
@@ -228,6 +246,7 @@
             var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
             var result = wooApi.asyncF(url+'/total/'+total,objData);
             if(result.code == 200){
+                presentItemCoupon()
                 mui.alert("您已报名成功，请留意活动消息及公告。",result.msg,function(){
                     window.location.href="{:url('frontend/event/eventList')}";
                 });
@@ -235,6 +254,16 @@
                 mui.alert(result.msg);
             }
         }
+
+
+        // 赠送卡券操作
+        function presentItemCoupon(){
+            if({$item_coupon_ids}.length >0){
+                var res = wooApi.asyncT("{:url('api/Item_coupon/createItemCouponMemberListApi')}", {
+                    'item_coupon_ids': item_coupon_ids,
+                });
+        }
+    }
 
     </script>
 

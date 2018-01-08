@@ -75,7 +75,9 @@ class ItemCoupon extends Base{
             $item_coupon_id = input('param.item_coupon_ids');
             // $member_id = $this->memberInfo['id'];
             // $member = $this->memberInfo['member'];
+            // dump($item_coupon_id);
             $item_coupon_ids = json_decode($item_coupon_id,'true');
+            // dump($item_coupon_ids);
             $member_id = 8;
             $member = 'woo';
             $result = $this->ItemCouponService->createItemCouponMemberList($member_id,$member,$item_coupon_ids);
