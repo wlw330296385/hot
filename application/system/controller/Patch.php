@@ -88,6 +88,12 @@ class Patch extends Controller {
 
     // 重新结算训练营课时工资收入
     public function countschedulesalaryin() {
+        // 10月时间区间
+        $month10 = getStartAndEndUnixTimestamp(2017, 10);
+        // 11月时间区间
+        $month11 = getStartAndEndUnixTimestamp(2017, 11);
+        // 12月时间区间
+        $month12 = getStartAndEndUnixTimestamp(2017,12);
         // 重置所有会员余额
         db('member')->whereNull('delete_time')->update(['balance' => 0]);
         $campFinanceModel = new CampFinance();
@@ -95,12 +101,6 @@ class Patch extends Controller {
         $schedules = db('schedule')->where(['status' => 1, 'is_settle' => 1])->whereNull('delete_time')->order('id asc')->select();
         //dump($schedules);
         foreach ($schedules as $k => $schedule) {
-            // 10月时间区间
-            $month10 = getStartAndEndUnixTimestamp(2017, 10);
-            // 11月时间区间
-            $month11 = getStartAndEndUnixTimestamp(2017, 11);
-            // 12月时间区间
-            $month12 = getStartAndEndUnixTimestamp(2017,12);
             //dump('课时记录'.$schedule);
             dump('课时记录 grade:'.$schedule['grade'].'camp_id:'.$schedule['camp_id'].'lesson_time:'.date('Y-m-d H:i', $schedule['lesson_time']));
             // 获取课时的课程信息
@@ -239,9 +239,6 @@ class Patch extends Controller {
 
             // 训练营营主所得 课时收入*收入比例-主教底薪-助教底薪-学员人数提成*教练人数。教练人数 = 助教人数+1（1代表主教人数）
             $incomeCampSalary = $incomeSchedule*$incomeRebate-$schedule['coach_salary']-$schedule['assistant_salary']-($pushSalary*(count($incomeAssistant)+1));
-            if($incomeCampSalary < 0) {
-                $incomeCampSalary = 0;
-            }
             dump('训练营营主所得'.$incomeCampSalary);
             $campMember = $this->getCampMember($schedule['camp_id']);
             $incomeCamp = [
