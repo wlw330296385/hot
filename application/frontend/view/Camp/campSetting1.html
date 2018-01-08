@@ -31,12 +31,12 @@
                 </div>
             </header>
 
-
             <div class="item-list">
 
                 <form id="form1" action="" class="mui-input-group">
                     <div class="mui-input-row">
-                        <label>训练营名称</label><span>{$campInfo.camp}</span>
+                        <label>训练营名称</label>
+                        <span>{$campInfo.camp}</span>
                         <input type="hidden" name="campid" value="{$campInfo.id}">
                     </div>
                     <div class="mui-input-row h-auto">
@@ -69,8 +69,9 @@
                     <div class="mui-input-row" id='showCityPicker3'>
                         <a href="#" class="mui-navigate-right">
                             <label>所属地区</label>
-                            <span id="cityResult3" class="ui-alert location" style="color:#737373">{if condition="$campInfo['province'] || $campInfo['city'] || $campInfo['area']"}{$campInfo.province}  {$campInfo.city}  {$campInfo.area}{else/}选择{/if}
-                        </span>
+                            <span id="cityResult3" class="ui-alert location" style="color:#737373">{if condition="$campInfo['province'] || $campInfo['city'] || $campInfo['area']"}{$campInfo.province}
+                                {$campInfo.city} {$campInfo.area}{else/}选择{/if}
+                            </span>
                         </a>
                         <input id="location-input" type="hidden" name="locationStr" value="{if condition='$campInfo.province'}{$campInfo.province}|{/if}{if condition='$campInfo.city'}{$campInfo.city}|{/if}{if condition='$campInfo.area'}{$campInfo.area}{/if}">
                     </div>
@@ -97,7 +98,7 @@
 <script src="/static/frontend/js/mui.poppicker.js"></script>
 <script src="/static/frontend/js/city.data-3.js"></script>
 <script>
-                                                                                                               var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'banner'])}";
+    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'banner'])}";
 
 </script>
 <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
@@ -155,8 +156,11 @@
             var intro = $('.intro').val();
             var camp_telephone = $('.camp_telephone').val();
 
-            if (logo == "" || banner == "") {
-                mui.toast('请上传图片');
+            if (logo == "") {
+                mui.toast('请上传训练营Logo');
+                return false;
+            } else if (banner == "") {
+                mui.toast('请上传训练营封面');
                 return false;
             } else if (locationStr == "") {
                 mui.toast('请选择所属地区');
@@ -186,7 +190,9 @@
                 headers: { 'Content-Type': 'application/json' },
                 success: function (res) {
                     if (res.code == 200) {
-                        setTimeout(window.location.href = "{:url('camp/editsuccess')}", 3000);
+                        mui.alert("修改成功", function () {
+                            window.location.href = "{:url('camp/editsuccess')}";
+                        });
                     } else {
                         mui.toast(res.msg);
                     }

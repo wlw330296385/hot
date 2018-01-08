@@ -16,7 +16,6 @@
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
     <style>
-        
         .mui-popover-arrow {
             left: auto;
             right: 6px;
@@ -43,7 +42,6 @@
             font-size: 16px;
             font-weight: bold;
         }
-
     </style>
 </head>
 
@@ -96,16 +94,6 @@
                     <span>0为不限</span>
                 </div>
 
-                <!--<div class="mui-input-row h-auto">
-                    <label>招募简介</label>
-                    <textarea rows="5" class="data mui-text-left" name="recruitment_des" placeholder="填写简介">{$recruitmentInfo.recruitment_des}</textarea>
-                </div>
-
-                <div class="mui-input-row h-auto">
-                    <label>招募要求</label>
-                    <textarea rows="5" class="data mui-text-left" name="requirement" placeholder="填写要求">{$recruitmentInfo.requirement}</textarea>
-                </div>-->
-
                 <div class="mui-input-row">
                     <label>是否面议</label>
                     <div class="mui-switch isNegotiated">
@@ -133,7 +121,10 @@
                 <div class="mui-input-row" id='showCityPicker3'>
                     <div class="mui-navigate-right">
                         <label>所属地区</label>
-                        <span id="cityResult3" class="ui-alert domData" name="address">{$recruitmentInfo.province} {$recruitmentInfo.city} {$recruitmentInfo.area}</span>
+                        <span id="cityResult3" class="ui-alert">{$recruitmentInfo.province} {$recruitmentInfo.city} {$recruitmentInfo.area}</span>
+                        <input type="hidden" name="province" value="" class="data" id="province">
+                        <input type="hidden" name="city" value="" class="data" id="city">
+                        <input type="hidden" name="area" value="" class="data" id="area">
                     </div>
                 </div>
 
@@ -153,7 +144,7 @@
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>招募封面</label>
-                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="" src="{$recruitmentInfo.cover}">
+                        <img id="preview_1" class="upload-preview" alt="" src="{$recruitmentInfo.cover}">
                         <input type="hidden" name="cover" value="{$recruitmentInfo.cover}" class="data">
                     </a>
                 </div>
@@ -256,7 +247,7 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-        
+
         mui('.mui-content .isNegotiated').each(function () { //循环所有toggle
             this.addEventListener('toggle', function (event) {
                 if (event.detail.isActive) {
@@ -285,7 +276,6 @@
             });
 
         })(mui);
-
 
         //选择器
         var getProvince = '';
@@ -318,6 +308,9 @@
                         getProvince = _getParam(items[0], 'text');
                         getCity = _getParam(items[1], 'text');
                         getArea = _getParam(items[2], 'text');
+                        document.getElementById('province').value = getProvince;
+                        document.getElementById('city').value = getCity;
+                        document.getElementById('area').value = getArea;
                     });
                 }, false);
 
@@ -362,19 +355,30 @@
                 mui("#recruitContract").popover("toggle");
             });
 
-
-            //添加标题
-            $(".titleClass").on('tap', '', function () {
-                var title = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
-                $(".introBox").append(title);
+            var title = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
+            var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" name="" class="mui-text-left text delClass textarea" placeholder="请输入正文"></div>';
+            // 招募简介········································
+            $(".titleDes").on('tap', '', function () {
+                $(".recruitment_des_box").append(title);
             });
-
-            //添加正文
-            $(".textClass").on('tap', '', function () {
-                var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" name="" class="mui-text-left text delClass textarea" placeholder="请输入正文"></div>';
-                $(".introBox").append(text);
+            $(".textDes").on('tap', '', function () {
+                $(".recruitment_des_box").append(text);
             });
+            // 招募简介········································
 
+            // 招募要求········································
+            $(".titleReq").on('tap', '', function () {
+                $(".requirement_box").append(title);
+            });
+            $(".textReq").on('tap', '', function () {
+                $(".requirement_box").append(text);
+            });
+            // 招募要求········································
+
+            //删除操作
+            $(document).on('tap', '.delbtn', function () {
+                $(this).parent().remove();
+            });
 
             // 焦点离开后把内容放在h5标签里
             $(document).on('blur', '.operationDiv input', function () {
@@ -411,12 +415,6 @@
                 $(this).parent().html(YdivValue).addClass("bgorange");
             });
 
-            //删除操作
-            $(document).on('tap', '.delbtn', function () {
-                $(this).parent().remove();
-            });
-
-
             // 上移动
             $(document).on('tap', '.up', function () {
                 $(".bgorange").prev().insertAfter(".bgorange");
@@ -442,7 +440,7 @@
                     return false;
                 }
             };
-
+            
             if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
                 mui.alert("请输入正确的手机格式");
                 return false;
@@ -459,20 +457,19 @@
             var datass = wooApi.getInputData('textarea', 'data', datas);
             var datasss = wooApi.getDomData('domData', datass);
             var objData = wooApi.arrTOobj(datasss);
-            console.log(objData);
-            var recruitment_des = $('textarea.data').val();
+            var requirement = $('.requirement').val();
+            var recruitment_des = $('.recruitment_des').val();
             objData.recruitment_des = recruitment_des;
-            var requirement = $('textarea.data').val();
             objData.requirement = requirement;
             var url = "{:url('api/recruitment/updateRecruitmentApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '招募创建成功', '确定', function () {
+                mui.alert(ajaxResult.msg, '招募修改成功', '确定', function () {
                     var goUrl = "{:url('recruitment/recruitmentInfoOfCamp')}" + '/recruitment_id/{$recruitmentInfo.id}/organization_id/{$recruitmentInfo.organization_id}';
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '招募创建失败', '确定', function () {
+                mui.alert(ajaxResult.msg, '招募修改失败', '确定', function () {
                     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                         if (data.code === 200) {
                             $('input[name=__token__]').val(data.data);
