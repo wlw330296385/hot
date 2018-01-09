@@ -3,6 +3,8 @@ namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CourtService;
 use think\Db;
+use think\Exception;
+
 class Court extends Base{
 	protected $CourtService;
 
@@ -143,6 +145,24 @@ class Court extends Base{
             if($power<2){
                 return json(['code'=>100,'msg'=>__lang('MSG_403')]);
             }
+            $result = $this->CourtService->updateCourt($data,$court_id);
+            return json($result);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 控制台修改场地
+    public function adminupdatecourtapi() {
+        try{
+            if (!session('?admin')) {
+                return json(['code'=>100,'msg'=>__lang('MSG_403')]);
+            }
+            $data = input('post.');
+            $court_id = input('param.court_id');
+            $data['member_id'] = session('admin.id');
+            $data['member'] = session('admin.username');
+            $data['system_remark'] = 'system:{'.session('admin.username').'}修改场地信息';
             $result = $this->CourtService->updateCourt($data,$court_id);
             return json($result);
         }catch (Exception $e){

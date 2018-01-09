@@ -224,7 +224,7 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell listli albumBox">
-                        {if !empty($court['covers'])} {volist name="$court['covers']" id="v"}
+                        {if !empty($court['cover'])} {volist name="$court['cover']" id="v"}
                         <div class="fl albumImg">
                             <i class="delbtn mui-icon mui-icon-close"></i>
                             <img src="{$v}">
@@ -426,10 +426,10 @@
             var remarks = $(".remarks").val();
 
             if (court != '' && location != '' && open_time != '' && contract != '' && principal != '' && chip_rent != '' && half_rent != '' && full_rent != '' && outdoors != '') {
-                mui.ajax("{:url('api/court/updateCourtApi')}", {
+                mui.ajax("{:url('api/court/adminupdateCourtApi')}", {
                     data: {
                         "court": court,
-                        "id": court_id,
+                        "court_id": court_id,
                         "province": getProvince,
                         "city": getCity,
                         "area": getArea,
@@ -455,7 +455,8 @@
                         console.log(data)
                         if (data.code == 200) {
                             mui.alert('场地修改成功。', function () {
-                                window.location.href = "{:url('camp/courtlistofcamp',['camp_id'=>$court.camp_id])}";
+                                //window.location.href = "{:url('camp/courtlistofcamp',['camp_id'=>$court.camp_id])}";
+                                window.location.reload();
                             });
                         } else {
                             mui.toast(data.msg)

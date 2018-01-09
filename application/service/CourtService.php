@@ -98,9 +98,9 @@ class CourtService {
     // 编辑场地
     public function updateCourt($data,$id){
         $courtInfo = $this->CourtModel->where(['id'=>$id,'status'=>1])->find();
-        if($courtInfo){
+       /* if($courtInfo){
             return ['msg' => '已公开的场地不允许编辑', 'code' => 100];
-        }
+        }*/
         $validate = validate('CourtVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
@@ -110,7 +110,7 @@ class CourtService {
         }else{
              $data['cover'] = serialize(['/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg']);
         }
-        $result = $this->CourtModel->save($data,['id'=>$id]);
+        $result = $this->CourtModel->allowField(true)->save($data,['id'=>$id]);
         if($result){
             return ['code'=>200,'data'=>$result,'msg'=>__lang('MSG_200')];
         }else{
