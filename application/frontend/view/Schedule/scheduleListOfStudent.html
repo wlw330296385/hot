@@ -10,25 +10,28 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style type="text/css">
-        select[name=grade_id]{
-            width: 79%; direction:rtl
-        }
-        select[name=grade_id] option{
-             direction:ltr;
+        select[name=grade_id] {
+            width: 50%;
+            direction: rtl
         }
 
+        select[name=grade_id] option {
+            direction: ltr;
+        }
     </style>
 </head>
 
 <body>
 
     <header class="mui-bar mui-bar-nav subheader">
-           <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/index',['camp_id'=>$camp_id])}"><span class="return">返回</span></a>
-            <h1 class="mui-title" style="font-size: 14px">
-                我的课时进度
-            </h1>
+        <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/index',['camp_id'=>$camp_id])}">
+            <span class="return">返回</span>
+        </a>
+        <h1 class="mui-title" style="font-size: 14px">
+            我的课时进度
+        </h1>
     </header>
 
     <div class="mui-content">
@@ -36,18 +39,24 @@
             <div class="nav-list">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
 
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
-                        <span>本月课量</span>
-                        <div class="mui-media-body curmonthcount">{$scheduleCount.month}</div>
-                    </a></li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
-                        <span>本年课量</span>
-                        <div class="mui-media-body">{$scheduleCount.year}</div>
-                    </a></li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
-                        <span>剩余课量</span>
-                        <div class="mui-media-body">{$restSchedule}</div>
-                    </a></li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>本月课量</span>
+                            <div class="mui-media-body curmonthcount">{$scheduleCount.month}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>本年课量</span>
+                            <div class="mui-media-body">{$scheduleCount.year}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>剩余课量</span>
+                            <div class="mui-media-body">{$restSchedule}</div>
+                        </a>
+                    </li>
                 </ul>
                 <ul class="mui-table-view mui-text-center border-b">
                     <li class="mui-table-view-cell">
@@ -61,7 +70,7 @@
                                 <i class="mui-icon mui-icon-arrowdown" style="float: none"></i>
                             </li>
                             <li class="mui-col-xs-8 mui-col-sm-8">
-                                <select class="select mui-text-center"  name="grade_id">
+                                <select class="select mui-text-center" name="grade_id">
                                     <option>所有班级</option>
                                     {volist name='gradeList' id='vol'}
                                     <option value="{$vol.grade_id}">{$vol.grade}</option>
@@ -79,7 +88,7 @@
                         <ul class="mui-table-view mui-text-center detalis-list list schedule"></ul>
                     </div>
                 </div>
-                
+
             </div>
         </div>
     </div>
@@ -94,10 +103,10 @@
         swipeBack: true //启用右滑关闭功能
     });
 
-    mui("body").on("tap","a",function(){
-        window.top.location.href=this.href;
+    mui("body").on("tap", "a", function () {
+        window.top.location.href = this.href;
     });
-    var grade_id = JSON.stringify({$gradeIDS}) ;
+    var grade_id = JSON.stringify({$gradeIDS});
 
     $(function () {
 
@@ -133,7 +142,7 @@
                 onCount = 1;//刷新并显示第一页
                 var page = onCount;
                 var gType = 1;//代表下拉刷新
-                toList('onlineScheduleList', page, gType,grade_id);//具体取数据的方法
+                toList('onlineScheduleList', page, gType, grade_id);//具体取数据的方法
             }, 100);
         }
 
@@ -146,24 +155,18 @@
                 toList('onlineScheduleList', page, gType, grade_id);//具体取数据的方法
             }, 100);
         }
-
-
     })
-
-
-
 
     //接口获取数据并追加到页面
     var toList = function (wList, page, gType, grade_id) {
         //搜索关键字不能完全为空，否则查询为空
-        // var url = "{:url('api/schedule_member/getScheduleMemberListByPageApi','','',true)}" + '/?page=' + page;
         var url = "{:url('api/schedule/getScheduleListByPageApi','','',true)}" + '/?page=' + page;
         // var campID = ;
         mui.ajax({
             url: url,
             data: {
                 // student_id:"{$studentList[0]['student_id']}",
-                grade_id:grade_id,
+                grade_id: grade_id,
                 camp_id: "{$camp_id}",
                 status: 1,
                 // type:1
@@ -172,10 +175,10 @@
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
             timeout: 10000,//超时时间设置为10秒；
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             //processData:false,
             success: function (data) {
-
+                console.log(data)
                 var newli = '';
                 if (data.code == 200) {
                     var newDate = new Date();
@@ -183,13 +186,11 @@
                         var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + "{$camp_id}";
                         var lesson_time = data.data.data[i].lesson_time;
                         // 已审，未审内容
-                        newli += '<li class="mui-table-view-cell mui-media">';
-                        newli += '<a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lesson_time  + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a>';
-
-                        newli += '</li>';
+                        newli += '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b">';
+                        newli += '<ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lesson_time + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul>';
+                        newli += '</li></a>';
                     }
                 }
-
 
                 // 根据状态获取课时列表
                 if (gType == 1) {
@@ -200,7 +201,7 @@
                     if (newli == '') {
                         $(".schedule").append('<li class="nodata"><p>没有相关数据哦</p></li>');
                     }
-                    
+
                 } else {
                     //下拉加载 gType==2
                     $(".schedule").append(newli);
@@ -211,7 +212,6 @@
                 } else {
                     mui('#' + wList).pullRefresh().endPullupToRefresh(true);
                 }
-
             },
             error: function (xhr, type, errerThrown) {
                 mui.toast('网络异常,请稍候再试');
@@ -220,17 +220,15 @@
         });
     };
 
-
-    $('select[name=grade_id]').on('change',function(){
-
+    $('select[name=grade_id]').on('change', function () {
         grade_id = $(this).val();
         toList('onlineScheduleList', 1, 1, grade_id);
     })
 
-    $('select[name=student_id]').on('change',function(){
-
+    $('select[name=student_id]').on('change', function () {
         student_id = $(this).val();
-        window.location.href = "{:url('frontend/schedule/scheduleListOfStudent',['camp_id'=>$camp_id])}/student_id/"+student_id;
+        window.location.href = "{:url('frontend/schedule/scheduleListOfStudent',['camp_id'=>$camp_id])}/student_id/" + student_id;
     })
 </script>
+
 </html>
