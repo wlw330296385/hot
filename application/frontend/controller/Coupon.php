@@ -34,14 +34,22 @@ class Coupon extends Base{
     }
 
     public function updateItemCoupon(){   	
-    	$itemCoupon_id = input('param.itemCoupon_id');
-        $ItemCouponInfo = $this->ItemCouponService->getItemCouponInfo(['id'=>$itemCoupon_id]);
-        $CampService = new \app\service\CampService;
-        $power = $CampService->isPower($ItemCouponInfo['camp_id'],$this->memberInfo['id']);
-        if($power<2){
-            $this->error('请先加入一个训练营并成为管理员或者创建训练营');
+    	$itemCoupon_id = input('param.item_coupon_id');
+
+        $itemCouponInfo = $this->ItemCouponService->getItemCouponInfo(['id'=>$itemCoupon_id]);
+        if($itemCouponInfo['organization_type'] == 1){
+            $CampService = new \app\service\CampService;
+            $power = $CampService->isPower($itemCouponInfo['organization_id'],$this->memberInfo['id']);
+            if($power<2){
+                $this->error('请先加入一个训练营并成为管理员或者创建训练营');
+            }
+            $eventList = db('event')->where(['organization_id'=>$itemCouponInfo['organization_id'],'organization_type'=>$itemCouponInfo['organization_type']])->where('delete_time',null)->select();
+            $lessontList = db('lesson')->where(['camp_id'=>$itemCouponInfo['organization_id']])->where('delete_time',null)->select();
         }
-		$this->assign('ItemCouponInfo',$ItemCouponInfo);
+
+        $this->assign('itemCouponInfo',$itemCouponInfo);
+        $this->assign('eventList',$eventList);
+        $this->assign('lessontList',$lessontList);
     	return view('Coupon/updateItemCoupon');
     }
 

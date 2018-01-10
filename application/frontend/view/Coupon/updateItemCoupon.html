@@ -54,9 +54,9 @@
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-        <h1 class="mui-title">{$organizationInfo.camp}</h1>
-        <input type="hidden" name="organization" value="{$organizationInfo.camp}" class="data">
-        <input type="hidden" name="organization_id" value="{$organization_id}" class="data">
+        <h1 class="mui-title">{$itemCouponInfo.organization}</h1>
+        <input type="hidden" name="organization" value="{$itemCouponInfo.organization}" class="data">
+        <input type="hidden" name="organization_id" value="{$itemCouponInfo.organization_id}" class="data">
         <input type="hidden" name="organization_type" value="1" class="data">
     </header>
     <div class="mui-content pt">
@@ -66,13 +66,9 @@
 
             <form action="" class="mui-input-group mt55">
 
-                
-
-            
-
                 <div class="mui-input-row">
                     <label>物品券名称</label>
-                    <input type="text" name="coupon" class="data" value="" placeholder="请输入物品券名称,3-5个字">
+                    <input type="text" name="coupon" class="data" value="{$itemCouponInfo.coupon}" placeholder="请输入物品券名称,3-5个字">
                 </div>
 
                 <div class="mui-input-row">
@@ -80,22 +76,22 @@
                         <label>发行对象</label>
                         <span class="select-row ">
                             <select id="eventObject" class="data" name="target_type">
-                                <option value="3" >产生订单则赠送</option>
-                                <option value="2" >活动</option>
-                                <option value="1" >课程</option>
+                                <option value="3">产生订单则赠送</option>
+                                <option value="2" {if $itemCouponInfo.target_type==2} selected="selected" {/if}>活动</option>
+                                <option value="1" {if $itemCouponInfo.target_type==1} selected="selected" {/if}>课程</option>
                             </select>
                         </span>
                     </div>
                 </div>
 
-                <div class="mui-input-row target-input-row1 h-auto" style="display: none">
+                <div class="mui-input-row target-input-row1 h-auto" {if $itemCouponInfo.target_type==2} {else /} style="display: none" {/if} >
                     <a href="#target1" class="mui-navigate-right">
                         <label>具体对象</label>
-                        <span class="targetCont" name="target"></span>
+                        <span class="targetCont" name="target">{$itemCouponInfo.organization}</span>
                         <input type="hidden" name="target_id" class="target_id" value="">
                     </a>
                 </div>
-                <div class="mui-input-row target-input-row2 h-auto" style="display: none">
+                <div class="mui-input-row target-input-row2 h-auto" {if $itemCouponInfo.target_type==1} {else /} style="display: none" {/if}>
                     <a href="#target2" class="mui-navigate-right">
                         <label>具体对象</label>
                         <span class="targetCont" name="target"></span>
@@ -138,40 +134,40 @@
                 <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>有效期开始时间</label>
-                        <span id="resultStart" class="ui-alert domData" name="starts"></span>
+                        <span id="resultStart" class="ui-alert domData" name="starts">{$itemCouponInfo.start|date="Y-m-d",###}</span>
                     </div>
                 </div>
 
                 <div class="mui-input-row picker btnEnd" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>有效期结束时间</label>
-                        <span id="resultEnd" class="ui-alert domData" name="ends"></span>
+                        <span id="resultEnd" class="ui-alert domData" name="ends">{$itemCouponInfo.end|date="Y-m-d",###}</span>
                     </div>
                 </div>
                 <div class="mui-input-row h-auto">
                     <label class="wd36">发行数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data" type="number" name="max" value="">
+                        <input class="mui-input-numbox data" type="number" name="max" value="{$itemCouponInfo.max}">
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
                 <div class="mui-input-row">
                     <label>卡片价值</label>
-                    <input type="text" name="price" class="data" value="" placeholder="请输入联系人">
+                    <input type="text" name="price" class="data" value="{$itemCouponInfo.price}" placeholder="请输入价值">
                 </div>
                 <div class="mui-input-row">
                     <label>联系人</label>
-                    <input type="text" name="contact" class="data" value="" placeholder="请输入联系人">
+                    <input type="text" name="contact" class="data" value="{$itemCouponInfo.contact}" placeholder="请输入联系人">
                 </div>
 
                 <div class="mui-input-row">
                     <label>联系电话</label>
-                    <input type="text" name="telephone" class="data telephoneBlur" value="" placeholder="请输入联系电话">
+                    <input type="text" name="telephone" class="data telephoneBlur" value="{$itemCouponInfo.telephone}" placeholder="请输入联系电话">
                 </div>
                 <div class="mui-input-row">
                     <label>备注</label>
-                    <input type="remarks" name="contact" class="data" value="" placeholder="选填">
+                    <input type="remarks" name="contact" class="data" value="{$itemCouponInfo.remarks}" placeholder="选填">
                 </div>
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
@@ -188,7 +184,7 @@
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>卡片图片</label>
-                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
+                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="" src="{$itemCouponInfo.image_url}" >
                         <input type="hidden" name="image_url" value='' class="data">
                     </a>
                 </div>
@@ -200,7 +196,7 @@
                 <div class="mui-input-row h-auto">
                     <div class="mui-input-row h-auto" style="margin-bottom: 10px">
                         <textarea name="coupon_des" class="data coupon_des" style="display: none"></textarea>
-                        <div class="introBox"></div>
+                        <div class="introBox">{$itemCouponInfo.coupon_des}</div>
                     </div>
                     <div class="mui-row mui-text-center mui-row-operation">
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
@@ -472,11 +468,11 @@
             var objData = wooApi.arrTOobj(arrData);
             var coupon_des = $('.coupon_des.data').val();
             objData.coupon_des = coupon_des;
-            var url = "{:url('api/item_coupon/updateItemCouponApi')}";
+            var url = "{:url('api/item_coupon/updateItemCouponApi',['item_coupon_id'=>$itemCouponInfo['id']])}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
-                    var goUrl = "{:url('api/item_coupon/itemCouponlistOfCamp')}" + '/camp_id/' + ajaxResult.data + '/organization_id/{$organization_id}';
+                    var goUrl = "{:url('api/item_coupon/itemCouponlistOfCamp')}" + '/camp_id/' + ajaxResult.data;
                     window.top.location.href = goUrl;
                 })
             } else {
