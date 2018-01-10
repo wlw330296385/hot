@@ -17,56 +17,24 @@
             border-radius: 3px !important;
         }
 
-        .coupon * {
-            padding: 0;
-            margin: 0;
-            list-style:none;
-            font-family:"Microsoft YaHei", 'Source Code Pro', Menlo, Consolas, Monaco, monospace;
+        .coupon {list-style:none; margin: 0px; padding:0px;}
+        .coupon li{position:relative;width:45%;height:28px;margin-right:4%; line-height:26px;background:#FFA826;display:inline-block; color: #FFF; font-size: 12px;}
+        .coupon li:last-child{margin-right:0;}
+        .coupon li:before{content:"";position:absolute;left:0px;top:0;width:10px;height:100%; z-index: -1px;}
+        .coupon li:before,
+        .coupon li:after{content: "";position: absolute;top: -20px;display: block;width:10px;height: 100%;margin-top: 20px;background-size: 20px 10px;}
+        .coupon li:after{right: -10px;background-color: #FFA826;background-position: 100% 20%;
+            background-image: linear-gradient(-45deg, #fff 25%, transparent 25%, transparent),
+            linear-gradient(-135deg, #fff 25%, transparent 25%, transparent),
+            linear-gradient(-45deg, transparent 75%, #fff 75%),
+            linear-gradient(-135deg, transparent 75%, #fff 75%);
         }
-        .coupon {
-            width: 100px;
-            height: 28px;
-            line-height: 26px;
-            padding: 0 10px;
-            position: relative;
-            overflow: hidden;
-            font-size:12px;
-            color:#FFF;
-        }
-        .coupon:before {
-            content: '';
-            position: absolute;
-            top:0;
-            bottom:0;
-            left:10px;
-            right:10px;
-            z-index: -1;
-        }
-        .coupon b {
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 180px;
-            width: 200px;
-            background-color: rgba(255, 255, 255, .15);
-            transform: rotate(-30deg);
-        }
-        .coupon i{
-            border-right:2px dotted rgba(255, 255, 255, .3);
-            font-size: 12px !important;
-            padding-right: 8px;
-        }
-        .stamp04 {
-            width: 120px;
-            background: radial-gradient(rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 2px, #F39B00 4px);
-            background-size: 12px 8px;
-            background-position: -6px 10px;
-        }
-        .stamp04:before {
-            background-color:#F39B00;
-            left: 5px;
-            right: 5px;
-        }
+        .coupon div { width: 95%; position: relative; height: 28px; overflow: hidden; text-align: right; }
+        .coupon span { width: 75% !important; text-align: center !important; border-right:1px dashed #FFC20D; padding: 0px 8px 0px 10px; position: absolute; left:0px; z-index:2; }
+        .coupon i { position: absolute; left: -170%; top: -100px; height: 190px; width: 390px; background-color: #F39B00; transform: rotate(-30deg); z-index: 1; }
+
+
+
     </style>
 </head>
 
@@ -94,6 +62,16 @@
             </ul>
 
             <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    <ul class="coupon">
+                    {volist empty="" name="couponListOfSystem" id="vol" }
+                            <li><div><span>{$vol.coupon}</span>赠券<i></i></div></li>
+                    {/volist}
+                    {volist empty="" name="couponListOfCamp" id="vol" }
+                    <li><div><span>{$vol.coupon}</span>赠券<i></i></div></li>
+                    {/volist}
+                    </ul>
+                </li>
                 <li class="mui-table-view-cell listli">选择课量
                     <span>
                         {volist name="lessonInfo['doms']" id="vol" }
@@ -105,26 +83,6 @@
                     <a class="mui-navigate-right" href="{:url('frontend/camp/campInfo',['camp_id'=>$lessonInfo['camp_id']])}">
                     所属训练营<span class="wd66" id="aaa">{$lessonInfo.camp}</span>
                     </a>
-                </li>
-                <li class="mui-table-view-cell listli">
-                    <label>平台赠券</label>
-                    <span>
-                        {volist empty="无" name="couponListOfSystem" id="vol" }
-                        <div class="coupon stamp04">
-                            <i>券</i> {$vol.coupon}<b></b>
-                        </div>
-                        {/volist}
-                    </span>
-                </li>
-                <li class="mui-table-view-cell listli">
-                    <label>训练营赠券</label>
-                    <span>
-                    {volist name="couponListOfCamp" id="vol" }
-                        <div class="coupon stamp04">
-                            <i class="mui-icon mui-icon-videocam"></i> {$vol.coupon}
-                        </div>
-                    {/volist}
-                    </span>
                 </li>
                 <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-Startingtim colororange"></span>训练时间</label><span>{$lessonInfo.week} {$lessonInfo.lesson_time |} </span></li>
                 <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-Activeobjec colororange"></span>训练地点</label><span>{$lessonInfo.court}</span></li>
