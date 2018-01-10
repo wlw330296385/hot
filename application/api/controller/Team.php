@@ -645,7 +645,7 @@ class Team extends Base {
                 }*/
             }
             // 保存球队活动-会员 被剔除的数据
-            if ( input('?memberDataDel') && !empty($data['memberDataDel']) ) {
+            if ( input('?memberDataDel') && $data['memberDataDel'] != "[]" ) {
                 $memberArr = json_decode($data['memberDataDel'], true);
                 
                 foreach ($memberArr as $k => $member) {
