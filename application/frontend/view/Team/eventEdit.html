@@ -413,6 +413,7 @@
             isRelease(); // 给是否发布通知赋值
             toTeamMemberList() //获取成员列表
             toSignUpList(); //获取已经报名的活动人员列表
+            delbtnFunction(); // 插入删除按钮
 
             // 设置活动类型默认值
             $('#eventType option[{eq name="directentry" value="1" } value=""{else/} value="{$eventInfo.event_type_num}"{/eq}]').prop("selected", true);
@@ -513,6 +514,10 @@
                     $(".albumBox").append($li);
                 }
             });
+            // 上传失败
+            uploader.on('uploadError', function (file, reason) {
+                mui.alert('图片太大，上传失败');
+            });
             //活动花絮图片end·····································································
 
             //添加图片start·····································································
@@ -589,7 +594,7 @@
                     $(this).parent().addClass("bgorange")
                     return false;
                 } else {
-                    $(document).on('tap', 'body', function () {
+                    $(document).on('tap', function () {
                         $(".desimg").parent().removeClass("bgorange")
                     });
                 }
@@ -606,6 +611,12 @@
 
         })
 
+        // 插入删除按钮
+        function delbtnFunction() {
+            var delbtn = '<i class="delbtn mui-icon mui-icon-close"></i>';
+            $(".operationDiv img").before(delbtn);
+        }
+
         // 获取数据并进行提交
         function submitAction() {
 
@@ -616,7 +627,6 @@
                 return false;
             }
 
-            $('.delbtn').remove();
             var totalHtml = $(".introBox").html();
             $(".event_des").val(totalHtml);
 

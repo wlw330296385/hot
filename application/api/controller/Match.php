@@ -100,6 +100,7 @@ class Match extends Base {
                 $data['id'] = $data['record_id'];
             }
             $matchS = new MatchService();
+            $teamS = new TeamService();
             // 当前时间大于输入的比赛时间 记录比赛完成时间和完成状态
             $now = time();
             $matchTimeStamp = strtotime($data['match_time']);
@@ -108,6 +109,26 @@ class Match extends Base {
                 $data['is_finished'] = 1;
                 $data['finished_time'] = 1;
             }
+
+            // 保存球队参赛人员
+            // 主队成员
+            if (isset($data['HomeMemberData']) && $data['HomeMemberData'] != "[]") {
+                $homeMember = json_decode($data['HomeMemberData'], true);
+                $homeTeam = $teamS->getTeam(['id' => $data['home_team_id']]);
+                foreach ($homeMember as $k => $val) {
+                    $homeMember[$k]['match_id'] = $data['match_id'];
+                    $homeMember[$k]['team_id'] = $homeTeam['id'];
+                    $homeMember[$k]['team'] = $homeTeam['name'];
+                    $homeMember[$k]['match_record_id'] = $data['record_id'];
+                    $homeMember[$k]['member_avatar'] = db('member')->where('id', $val['member_id'])->value('avatar');
+                    $homeMember[$k]['status'] = 2;
+                }
+                $saveHomeTeamMemberRes = $matchS->saveAllMatchRecordMember($homeMember);
+                if ($saveHomeTeamMemberRes['code'] != 200) {
+                    return json($saveHomeTeamMemberRes);
+                }
+            }
+            // 保存球队参赛人员end
             // 保存比赛战绩数据
             $res = $matchS->saveMatchRecord($data);
             return json($res);
@@ -183,6 +204,26 @@ class Match extends Base {
                      $data['is_finished'] = 1;
                      $data['finished_time'] = 1;
                  }
+
+                 // 保存球队参赛人员
+                 // 主队成员
+                 if (isset($data['HomeMemberData']) && $data['HomeMemberData'] != "[]") {
+                     $homeMember = json_decode($data['HomeMemberData'], true);
+                     $homeTeam = $teamS->getTeam(['id' => $data['home_team_id']]);
+                     foreach ($homeMember as $k => $val) {
+                         $homeMember[$k]['match_id'] = $data['match_id'];
+                         $homeMember[$k]['team_id'] = $homeTeam['id'];
+                         $homeMember[$k]['team'] = $homeTeam['name'];
+                         $homeMember[$k]['match_record_id'] = $data['record_id'];
+                         $homeMember[$k]['member_avatar'] = db('member')->where('id', $val['member_id'])->value('avatar');
+                         $homeMember[$k]['status'] = 2;
+                     }
+                     $saveHomeTeamMemberRes = $matchS->saveAllMatchRecordMember($homeMember);
+                     if ($saveHomeTeamMemberRes['code'] != 200) {
+                         return json($saveHomeTeamMemberRes);
+                     }
+                 }
+                 // 保存球队参赛人员end
              }
 
              $res = $matchS->saveMatch($data);

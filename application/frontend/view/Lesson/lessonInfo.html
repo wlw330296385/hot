@@ -16,6 +16,57 @@
             padding: 3px 6px !important;
             border-radius: 3px !important;
         }
+
+        .coupon * {
+            padding: 0;
+            margin: 0;
+            list-style:none;
+            font-family:"Microsoft YaHei", 'Source Code Pro', Menlo, Consolas, Monaco, monospace;
+        }
+        .coupon {
+            width: 100px;
+            height: 28px;
+            line-height: 26px;
+            padding: 0 10px;
+            position: relative;
+            overflow: hidden;
+            font-size:12px;
+            color:#FFF;
+        }
+        .coupon:before {
+            content: '';
+            position: absolute;
+            top:0;
+            bottom:0;
+            left:10px;
+            right:10px;
+            z-index: -1;
+        }
+        .coupon b {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 180px;
+            width: 200px;
+            background-color: rgba(255, 255, 255, .15);
+            transform: rotate(-30deg);
+        }
+        .coupon i{
+            border-right:2px dotted rgba(255, 255, 255, .3);
+            font-size: 12px !important;
+            padding-right: 8px;
+        }
+        .stamp04 {
+            width: 120px;
+            background: radial-gradient(rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 2px, #F39B00 4px);
+            background-size: 12px 8px;
+            background-position: -6px 10px;
+        }
+        .stamp04:before {
+            background-color:#F39B00;
+            left: 5px;
+            right: 5px;
+        }
     </style>
 </head>
 
@@ -56,21 +107,24 @@
                     </a>
                 </li>
                 <li class="mui-table-view-cell listli">
-                    赠送卡券
+                    <label>平台赠券</label>
+                    <span>
+                        {volist empty="无" name="couponListOfSystem" id="vol" }
+                        <div class="coupon stamp04">
+                            <i>券</i> {$vol.coupon}<b></b>
+                        </div>
+                        {/volist}
+                    </span>
                 </li>
                 <li class="mui-table-view-cell listli">
-                    {volist empty="无" name="couponListOfSystem" id="vol" }
-                    <label>
-                        <img src="{$vol.image_url}"  style="border:2px red;width: 5em">
-                        {$vol.coupon}
-                    </label>
-                        
-                    {/volist}
-                </li>
-                <li class="mui-table-view-cell listli">
+                    <label>训练营赠券</label>
+                    <span>
                     {volist name="couponListOfCamp" id="vol" }
-                        <img src="{$vol.image_url}"  style="border:2px red">
+                        <div class="coupon stamp04">
+                            <i class="mui-icon mui-icon-videocam"></i> {$vol.coupon}
+                        </div>
                     {/volist}
+                    </span>
                 </li>
                 <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-Startingtim colororange"></span>训练时间</label><span>{$lessonInfo.week} {$lessonInfo.lesson_time |} </span></li>
                 <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-Activeobjec colororange"></span>训练地点</label><span>{$lessonInfo.court}</span></li>

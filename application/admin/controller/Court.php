@@ -33,7 +33,12 @@ class Court extends Backend {
         //$court
         $res = $court->toArray();
         $res['status_num'] = $court->getData('status');
-
+        if (!empty($res['cover'])) {
+            $cover = unserialize($res['cover']);
+            if (!empty($cover)) {
+                $res['cover'] = $cover;
+            }
+        }
         $breadcrumb = [ 'ptitle' => '教练管理' , 'title' => '教练详细' ];
         $this->assign( 'breadcrumb', $breadcrumb );
         $this->assign('court', $res);

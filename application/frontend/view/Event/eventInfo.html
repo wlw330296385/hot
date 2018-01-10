@@ -15,25 +15,25 @@
         .show {
             display: block;
         }
-        
+
         .hide {
             display: none;
         }
-        
+
         .intro {
             padding: 0 !important;
         }
-        
+
         .intro img {
             padding: 0px 15px;
             width: 100%;
             height: auto;
         }
-        
+
         .operationDiv {
             position: relative;
         }
-        
+
         .operationDiv .delbtn {
             position: absolute;
             right: 15px;
@@ -41,7 +41,7 @@
             line-height: initial !important;
             font-size: 18px !important;
         }
-        
+
         .operationDiv h5 {
             padding: 10px 15px;
             height: 40px;
@@ -50,13 +50,13 @@
             margin: 0;
             font-weight: bold
         }
-        
+
         .operationDiv p {
             padding: 10px 15px;
             margin: 0;
             color: #000;
         }
-        
+
         .nohave {
             margin: 0;
             padding: 15px;
@@ -84,15 +84,23 @@
                             <p class="mui-ellipsis">{$eventInfo.event_type}</p>
                         </div>
                         <div class="price-frame">
-                            <p class="price">￥<strong>{$eventInfo['doms'][0]['price']}</strong><span class="nofloat"> / 人</span></p>
-                            <p class="price"><span class="nofloat">已报名{$eventInfo.participator}人</span></p>
+                            <p class="price">￥
+                                <strong>{$eventInfo['doms'][0]['price']}</strong>
+                                <span class="nofloat"> / 人</span>
+                            </p>
+                            <p class="price">
+                                <span class="nofloat">已报名{$eventInfo.participator}人</span>
+                            </p>
                         </div>
                     </a>
                 </li>
             </ul>
             <ul class="mui-table-view">
                 <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
-                <li class="mui-table-view-cell listli"><label>活动对象</label><span class="target_type">{$eventInfo.target_type}</span></li>
+                <li class="mui-table-view-cell listli">
+                    <label>活动对象</label>
+                    <span class="target_type">{$eventInfo.target_type}</span>
+                </li>
                 <li class="mui-table-view-cell listli">报名种类
                     <span>
                         {volist name='$eventInfo.doms' id="vol"}
@@ -100,32 +108,62 @@
                         {/volist}
                     </span>
                 </li>
-                <li class="mui-table-view-cell listli {eq name='eventInfo.target_type' value='2||3'}show{else/}hide{/eq}">所属训练营<span>{$eventInfo.organization}</span></li>
+                <li class="mui-table-view-cell listli {eq name='eventInfo.target_type' value='2||3'}show{else/}hide{/eq}">所属训练营
+                    <span>{$eventInfo.organization}</span>
+                </li>
                 <li class="mui-table-view-cell listli">
                     赠送卡券
                 </li>
                 <li class="mui-table-view-cell listli">
                     {volist empty="无" name="couponListOfSystem" id="vol" }
                     <label>
-                        <img src="{$vol.image_url}"  style="border:2px red;width: 5em">
-                        {$vol.coupon}
+                        <img src="{$vol.image_url}" style="border:2px red;width: 5em"> {$vol.coupon}
                     </label>
-                        
+
                     {/volist}
                 </li>
                 <li class="mui-table-view-cell listli">
                     {volist name="couponListOfCamp" id="vol" }
-                        <img src="{$vol.image_url}"  style="border:2px red">
-                    {/volist}
+                    <img src="{$vol.image_url}" style="border:2px red"> {/volist}
                 </li>
-                <li class="mui-table-view-cell listli {eq name='eventInfo.target_type' value='3'}show{else/}hide{/eq}">所属班级<span>{$eventInfo.target}</span></li>
-                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-Startingtim colororange"></span>开始时间</label><span>{$eventInfo.starts}</span></li>
-                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-EndTime colororange"></span>结束时间</label><span>{$eventInfo.ends}</span></li>
-                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-Location colororange"></span>所属地区</label><span>{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span></li>
-                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-EventLocati colororange"></span>活动地点</label><span>{$eventInfo.location}</span></li>
-                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-Quantity colororange"></span>人数范围</label><span>{$eventInfo.min}-{$eventInfo.max}人</span></li>
-                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-Contact colororange"></span>联系人</label><span>{$eventInfo.contact}</span></li>
-                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-phone colororange"></span>联系电话</label><span>{$eventInfo.telephone}</span></li>
+                <li class="mui-table-view-cell listli {eq name='eventInfo.target_type' value='3'}show{else/}hide{/eq}">所属班级
+                    <span>{$eventInfo.target}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Startingtim colororange"></span>开始时间</label>
+                    <span>{$eventInfo.starts}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EndTime colororange"></span>结束时间</label>
+                    <span>{$eventInfo.ends}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Location colororange"></span>所属地区</label>
+                    <span>{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>活动地点</label>
+                    <span>{$eventInfo.location}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Quantity colororange"></span>人数范围</label>
+                    <span>{$eventInfo.min}-{$eventInfo.max}人</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Contact colororange"></span>联系人</label>
+                    <span>{$eventInfo.contact}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-phone colororange"></span>联系电话</label>
+                    <span>{$eventInfo.telephone}</span>
+                </li>
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">活动简介</span>
                 </div>
@@ -140,13 +178,16 @@
             </div>
             <form action="" class="mui-input-group">
                 <div class="mui-input-row h-auto">
-                    <label>头像</label><img src="{$pmember['avatar']}" style="margin-right: 18px">
+                    <label>头像</label>
+                    <img src="{$pmember['avatar']}" style="margin-right: 18px">
                 </div>
                 <div class="mui-input-row">
-                    <label>推荐人</label><span>{$pmember.nickname}</span>
+                    <label>推荐人</label>
+                    <span>{$pmember.nickname}</span>
                 </div>
                 <div class="mui-input-row">
-                    <label>电话</label><span>{$pmember.telephone}</span>
+                    <label>电话</label>
+                    <span>{$pmember.telephone}</span>
                 </div>
             </form>
             {/notempty}
@@ -155,29 +196,33 @@
 
         </div>
         <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-media mui-col-xs-2 opli"><a href="/frontend/"><span
-                    class="mui-icon icon iconfont icon-nav-Home"></span></a></li>
-        {switch name="variable"} {case value='1'}
-        <!--报名状态-->
-            <li class="mui-table-view-cell mui-media mui-col-xs-3 opli"><a href="tel:{$eventInfo.telephone}"><span
-                    class="mui-icon mui-icon-phone"></span> 咨询</a></li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-2 opli">
+                <a href="/frontend/">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            {switch name="variable"} {case value='1'}
+            <!--报名状态-->
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 opli">
+                <a href="tel:{$eventInfo.telephone}">
+                    <span class="mui-icon mui-icon-phone"></span> 咨询</a>
+            </li>
             <li class="mui-table-view-cell mui-media mui-col-xs-4 opli ">剩余
                 <font class="surplus colororange"></font>名额</li>
             {if empty($EventMemberList)}
             <li class="mui-table-view-cell mui-media mui-col-xs-3 opli bggreen signupbtn">报名</li>
             {else /}
-            <li class="mui-table-view-cell mui-media mui-col-xs-3 opli ">已报名</li>    
-            {/if}
-        {/case} {case value='3'}
-        <!--报名人数已满-->
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 opli ">已报名</li>
+            {/if} {/case} {case value='3'}
+            <!--报名人数已满-->
             <li class="mui-table-view-cell mui-media mui-col-xs-10 opli bggray">报名人数已满</li>
-        {/case} {case value='2'}
-        <!--已下架-->
+            {/case} {case value='2'}
+            <!--已下架-->
             <li class="mui-table-view-cell mui-media mui-col-xs-10 opli bggray">已下架</li>
-        {/case} {case value='4'}
-        <!--已过期-->
+            {/case} {case value='4'}
+            <!--已过期-->
             <li class="mui-table-view-cell mui-media mui-col-xs-10 opli bggray">已过期</li>
-        {/case} {/switch}
+            {/case} {/switch}
         </ul>
     </div>
 
@@ -199,12 +244,24 @@
 
         $(function () {
             // 活动对象转换成文字显示
+            function targetType() {
+                var target_type_name = '';
+                var target_type = "{$eventInfo.target_type}";
+                if (target_type == 1) {
+                    target_type_name = "公开活动";
+                } else if (target_type == 2) {
+                    target_type_name = "营内活动";
+                } else if (target_type == 3) {
+                    target_type_name = "班内活动";
+                }
+                $(".target_type").text(target_type_name)
+            }
             // 默认的样式
             initialEds();
-
+            targetType();  // 活动对象转换成文字显示
 
             // 选择套餐
-            $('.selectDom').on('click',function(){
+            $('.selectDom').on('click', function () {
                 $('.selectDom').removeClass('bggreen');
                 $(this).addClass('bggreen');
                 $('.price-frame strong').text($(this).val());
@@ -242,7 +299,7 @@
                             } else {
                                 buyUrl = "{:url('event/comfirmBill',['event_id'=>$eventInfo['id']])}";
                             }
-                            window.location.href = buyUrl + '?total=' + eventTotal+'&domIndex='+domIndex;
+                            window.location.href = buyUrl + '?total=' + eventTotal + '&domIndex=' + domIndex;
                         }
                     });
                 }
@@ -250,7 +307,7 @@
 
         });
 
-  
+
         // 默认的样式
         function initialEds() {
             if ($(".intro").text() == '') {
@@ -274,33 +331,33 @@
             ]
         });
         wx.ready(function () {
-           
+
             // 分享到朋友圈
             wx.onMenuShareTimeline({
                 title: "{$eventInfo.event}",
-                link: "{$shareurl}/pid/{$mid}", 
-                imgUrl: "{:request()->root(true)}{$eventInfo.cover}", 
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$eventInfo.cover}",
                 success: function () {
-                   
+
                 },
                 cancel: function () {
-                    
+
                 }
             });
 
             // 分享给朋友
             wx.onMenuShareAppMessage({
-                title: '{$eventInfo.event}', 
-                desc: '{$eventInfo.organization}', 
-                link: "{$shareurl}/pid/{$mid}", 
+                title: '{$eventInfo.event}',
+                desc: '{$eventInfo.organization}',
+                link: "{$shareurl}/pid/{$mid}",
                 imgUrl: "{:request()->root(true)}{$eventInfo.cover}",
                 type: "",
                 dataUrl: '',
                 success: function () {
-                    
+
                 },
                 cancel: function () {
-                   
+
                 }
             });
 

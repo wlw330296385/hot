@@ -3,6 +3,7 @@
 namespace app\service;
 use app\model\Match;
 use app\model\MatchRecord;
+use app\model\MatchRecordMember;
 use app\model\MatchTeam;
 use think\Db;
 
@@ -256,6 +257,18 @@ class MatchService {
             return $res->toArray();
         } else {
             return $res;
+        }
+    }
+
+    // 批量保存比赛战绩-会员关系
+    public function saveAllMatchRecordMember($data) {
+        $model = new MatchRecordMember();
+        $res = $model->saveAll($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $res];
+        } else {
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
 }

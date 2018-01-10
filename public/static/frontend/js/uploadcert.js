@@ -32,7 +32,7 @@ var uploader = WebUploader.create({
 });*/
 // 上传过程
 uploader.on('uploadProgress', function(file, percentage){
-    mui.toast('正在上传...');
+    mui.toast('正在上传...', {duration: 'long'});
    /* var container = mui("#p1");
     if (container.progressbar({
             progress: 0
