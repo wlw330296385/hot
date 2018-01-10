@@ -46,16 +46,32 @@ class Coupon extends Base{
     }
 
     public function createItemCoupon(){
-        $camp_id = input('param.camp_id');
-        $CampService = new \app\service\CampService;
-        $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
+        $organization_id = input('param.organization_id');
+        $organization_type = input('param.organization_type',1);
+        $eventList = [];
+        $lessontList = [];
+        if($organization_type == 1){
+            $CampService = new \app\service\CampService;
+            $power = $CampService->isPower($organization_id,$this->memberInfo['id']);
 
-        if($power<2){
-            $this->error('请先加入一个训练营并成为管理员或者创建训练营');
+            if($power<2){
+                $this->error('请先加入一个训练营并成为管理员或者创建训练营');
+            }
+
+            $eventList = db('event')->where(['organization_id'=>$organization_id,'organization_type'=>$organization_type])->where('delete_time',null)->select();
+            $lessontList = db('lesson')->where(['camp_id'=>$organization_id])->where('delete_time',null)->select();
+
+
+
+            $organizationInfo = $CampService->getCampInfo(['id'=>$organization_id]);
+
         }
 
-        $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
-        $this->assign('campInfo',$campInfo);
+
+        $this->assign('eventList',$eventList);
+        $this->assign('lessontList',$lessontList);
+        $this->assign('organization_id',$organization_id);
+        $this->assign('organizationInfo',$organizationInfo);
         return view('Coupon/createItemCoupon');
     }
     // 分页获取数据

@@ -260,9 +260,11 @@ class Camp extends Base{
     public function getHotCampList(){
         $province = input('param.province');
         $city = input('param.city');
+        $status = input('param.status',1);
         $map['province']=$province;
         $map['city'] = $city;
         $map['hot'] = 1;
+        $map['status'] = $status;
         foreach ($map as $key => $value) {
             if($value == ''|| empty($value) || $value==' '){
                 unset($map[$key]);

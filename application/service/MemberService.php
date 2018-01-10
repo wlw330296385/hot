@@ -43,7 +43,7 @@ class MemberService{
 
 	//修改会员资料
 	public function updateMemberInfo($data,$map){
-
+		
 		$result = $this->memberModel->save($data,$map);
 		
 		if($result ===false){

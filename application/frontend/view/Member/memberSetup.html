@@ -357,15 +357,15 @@
                     <form action="" class="mui-input-group ">
                         <div class="mui-input-row">
                             <label>原密码</label>
-                            <input type="text" name="password" class="reg_password" placeholder="请输入原密码">
+                            <input type="password" name="password" class="reg_password" placeholder="请输入原密码">
                         </div>
                         <div class="mui-input-row">
                             <label>新密码</label>
-                            <input type="text" name="newpassword" class="reg_password reg_newpassword" placeholder="请输入新密码">
+                            <input type="password" name="newpassword" class="reg_password reg_newpassword" placeholder="请输入新密码">
                         </div>
                         <div class="mui-input-row">
                             <label>确认密码</label>
-                            <input type="text" name="confirm" class="reg_confirm" placeholder="请输入确认密码">
+                            <input type="password" name="confirm" class="reg_confirm" placeholder="请输入确认密码">
                         </div>
                     </form>
 
@@ -557,41 +557,43 @@
             });
 
             // 修改密码
-            //  $(".passwordBtn").click(function(){
-            //     var password =$(".reg_password").val();
-            //     var newpassword =$(".reg_newpassword").val();
-            //     var confirm =$(".reg_confirm").val();
-            //     if(/^[a-z0-9_-]{6,16}$/.test(password)&&/^[a-z0-9_-]{6,16}$/.test(newpassword)&&newpassword==confirm){
-            //         $('.password_hint').text("");
-            //         $('.confirm_hint').text("");
-            //         mui.ajax("{:url('api/member/updateMemberApi')}", {
-            //             data: {
-            //                 'password': password
-            //             },
-            //         dataType: 'json',//服务器返回json格式数据
-            //         type: 'post',//HTTP请求类型
-            //         timeout: 10000,//超时时间设置为10秒；
-            //         headers: {'Content-Type': 'application/json'},
-            //         success: function (data) {
-            //             console.log(data)
-            //             if (data.code == 200) {
-            //                 mui.toast(data.msg);
-            //                 viewApi.back();
-            //             }
-            //         },
-            //         error: function (xhr, type, errorThrown) {
-            //             console.log(data);
-            //         }
-            //     });
+             $(".passwordBtn").click(function(){
+                var password =$(".reg_password").val();
+                var newpassword =$(".reg_newpassword").val();
+                var confirm =$(".reg_confirm").val();
+                if((/^[a-z0-9_-]{6,16}$/.test(password)&&/^[a-z0-9_-]{6,16}$/.test(newpassword))&&(newpassword==confirm)){
+                    $('.password_hint').text("");
+                    $('.confirm_hint').text("");
+                    mui.ajax("{:url('api/member/updatePasswordApi')}", {
+                        data: {
+                            'password': password,
+                            'repassword':confirm,
+                            'newpassword':newpassword
+                        },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        console.log(data)
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                            viewApi.back();
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                });
 
-            //     }else{
-            //         if(newpassword!=confirm){
-            //             $(".confirm_hint").text("两次密码不正确").css("color", "red");
-            //         }else{
-            //             $(".password_hint").text("请输入6-16位的密码").css("color", "red");
-            //         }
-            //     }
-            // })
+                }else{
+                    if(newpassword!=confirm){
+                        $(".confirm_hint").text("两次密码不正确").css("color", "red");
+                    }else{
+                        $(".password_hint").text("请输入6-16位的密码").css("color", "red");
+                    }
+                }
+            })
 
             //验证短信验证码
             $('#code').on("blur", function () {

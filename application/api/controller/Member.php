@@ -267,7 +267,28 @@ class Member extends Base{
     }
 
 
+    // 修改密码
+    public function updatePasswordApi(){
+        try{
+            $data = input('post.');
+            $password = passwd($data['password']);
+            $newpassword = passwd($data['newpassword']);
+            $repassword = passwd($data['repassword']);
+            // dump($data);die;
+            if($newpassword<>$repassword){
+                return json(['code'=>100,'msg'=>'两次密码不一样']);
+            }
+            $memberInfo = $this->MemberService->getMemberInfo(['id'=>$this->memberInfo['id']]);
+            if($password<>$memberInfo['password']){
+                return json(['code'=>100,'msg'=>'原密码错误']);
+            }
 
+            $result = $this->MemberService->updateMemberInfo(['password'=>$newpassword],['id'=>$this->memberInfo['id']]);
+            return json($result);
+        }catch (Exception $e){
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 
 
 
