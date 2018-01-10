@@ -661,6 +661,10 @@
                     $(".introBox").append($li);
                 }
             });
+            // 上传失败
+            uploader.on('uploadError', function (file, reason) {
+                mui.alert('图片太大，上传失败');
+            });
             //添加图片end·····································································
 
             //删除操作
@@ -767,7 +771,7 @@
         function submitAction() {
 
             //最终提交遍历套餐列表
-            eventDomArr =[];
+            eventDomArr = [];
             $("#eventDom .mui-checkbox").each(function () {
                 eDom = $(this).find("input[name='event-dom']").val();
                 eDomPrice = $(this).find("input[name='event-dom_price']").val();

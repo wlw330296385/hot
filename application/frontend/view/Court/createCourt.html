@@ -277,12 +277,12 @@
                         var glocation = result.regeocode.formattedAddress;
                         console.log(e.lnglat)
                         // alert(result.regeocode.formattedAddress)
-                        if(window.confirm('你确定定位到【'+glocation+'】吗？')){
+                        if (window.confirm('你确定定位到【' + glocation + '】吗？')) {
                             $(".getFromMap").val(glocation);
                             $(".getFromMap").text(glocation);
                             lng = e.lnglat.lng;
                             lat = e.lnglat.lat;
-                        }else{
+                        } else {
                             return false;
                         }
                     }
@@ -393,6 +393,11 @@
                     var $li = '<div class="fl albumImg"><i class="delbtn mui-icon mui-icon-close"></i><img src="' + responce.path + '"></div>';
                     $(".albumBox").append($li);
                 }
+            });
+
+            // 上传失败
+            uploader.on('uploadError', function (file, reason) {
+                mui.alert('图片太大，上传失败');
             });
 
             //删除操作

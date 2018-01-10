@@ -21,48 +21,48 @@
             height: 100%;
             display: block;
         }
-        
+
         .mui-popover-arrow {
             left: auto;
             right: 6px;
         }
-        
+
         .mui-input-row a {
             display: table;
             width: 100%;
         }
-        
+
         .mui-popover {
             height: 300px;
         }
-        
+
         .mui-toast-container {
             top: 250px
         }
-        
+
         .number {
             width: 20% !important;
         }
-        
+
         .box {
             max-height: 300px;
             overflow: scroll;
             border-bottom: 1px solid #ddd;
         }
-        
+
         .editor .image-items .mui-input-group .mui-input-row {
             height: initial;
         }
-        
+
         .pdr {
             padding-right: 30px !important;
         }
-        
+
         #newdiv .tips {
             color: #AAAAAA;
             line-height: normal;
         }
-        
+
         .frame {
             width: 100%;
             padding: 15px 2px;
@@ -70,19 +70,20 @@
             border: 1px dashed #ddd;
             color: #b1b0b0;
         }
-        
+
         .title {
             font-size: 16px;
             font-weight: bold;
         }
-        
     </style>
 </head>
 
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
         <h1 class="mui-title">{$eventInfo.organization}</h1>
     </header>
 
@@ -216,8 +217,12 @@
         <div id="addMember" class="mui-popover">
             <div class="mui-popover-arrow"></div>
             <div class="page-header">
-                <span class="course wd36"><strong>报名名单</strong></span>
-                <span class="fr"><button class="mui-btn-blue" id="memberConfirm">确认</button></span>
+                <span class="course wd36">
+                    <strong>报名名单</strong>
+                </span>
+                <span class="fr">
+                    <button class="mui-btn-blue" id="memberConfirm">确认</button>
+                </span>
             </div>
             <div class="mui-scroll-wrapper">
                 <div class="mui-scroll">
@@ -449,6 +454,10 @@
                         var $li = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img src="' + responce.path + '"></div>';
                         $(".introBox").append($li);
                     }
+                });
+                // 上传失败
+                uploader.on('uploadError', function (file, reason) {
+                    mui.alert('图片太大，上传失败');
                 });
                 //添加图片end·····································································
 
