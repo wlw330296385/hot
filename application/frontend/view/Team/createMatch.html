@@ -46,10 +46,12 @@
         .mui-input-row label {
             line-height: 20px;
         }
-        .addInput{
+
+        .addInput {
             margin-top: 15px;
         }
-        .addBtn{
+
+        .addBtn {
             margin-top: 15px;
             padding: 12px 11px;
         }
@@ -149,6 +151,30 @@
                         <div class="mui-switch-handle"></div>
                     </div>
                     <input type="hidden" name="send_message" value="0" class="data">
+                </div>
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>是否约战</label>
+                        <span class="select-row">
+                            <select class="data" id="islive" name="islive">
+                                <option value="0">否</option>
+                                <option value="1">是</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>是否公开</label>
+                        <span class="select-row">
+                            <select class="data" name="status">
+                                <option value="1">是</option>
+                                <option value="-1">否</option>
+                            </select>
+                        </span>
+                    </div>
                 </div>
 
             </form>
@@ -442,6 +468,17 @@
             $(".ching").css("background", "#00eaff");
         };
 
+        //  判断约战与对手的存在关系
+        var isOpponent = '';
+        var isLive = '';
+        function isLivepd() {
+            isOpponent = $(".opponentCont").text();
+            isLive = $("#islive").children('option:selected').val()
+            if (isOpponent != '' && isLive == 1) {
+                mui.alert("已选择对手不能设为约战")
+            }
+        }
+
         $(function () {
 
             //获取训练营粉丝列表
@@ -576,8 +613,13 @@
                 }
             });
 
-             // 添加新的球队
-             $(document).on('tap','.addBtn',function(){
+            // 选择是否约战操作触发
+            $("#islive").change(function () {
+                isLivepd();
+            });
+
+            // 添加新的球队
+            $(document).on('tap', '.addBtn', function () {
                 var addOpponent = $(".addInput").val();
                 $(".opponentCont").text(addOpponent);
                 $("input[name=opponent_id]").val("-1");
@@ -586,8 +628,10 @@
 
         })
 
+
         // 获取数据并进行提交
         function submitAction() {
+
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值

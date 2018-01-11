@@ -46,8 +46,9 @@ class Index extends Controller{
                     'remarks'=>$value['remarks'],
                     'status'=>$value['status'],
                     'system_remarks'=>'',
-                    'create_time'=>time(),
-                    'update_time'=>time()
+                    'delete_time'=>$value['delete_time'],
+                    'create_time'=>$value['create_time'],
+                    'update_time'=>$value['update_time'],
                 ];
    
                 
@@ -67,6 +68,7 @@ class Index extends Controller{
         // 赠送课时的数量
         $scheduleGiftList = db('schedule_gift_student')
         ->field("student_id,lesson_id,lesson,student,sum(gift_schedule) total ")
+        ->where('delete_time',null)
         ->group('student_id,lesson_id')
         ->select();
         // dump($scheduleGiftList);

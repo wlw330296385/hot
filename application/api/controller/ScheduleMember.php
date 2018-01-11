@@ -36,10 +36,19 @@ class ScheduleMember extends Base{
     public function getScheduleMemberListByPageApi(){
         try{
             $map = input('post.');
+            $y = input('param.y');
+            $m = input('param.m');
+            $d = input('param.d',1);
+            if($y&&$m){
+                $betweenTime = getStartAndEndUnixTimestamp($y,$m,$d);
+                $map['schedule_time'] = ['BETWEEN',[$betweenTime['start'],$betweenTime['end']]];
+            }
+            
             $keyword = input('param.keyword');
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['user'] = ['LIKE','%'.$keyword.'%'];
             } 
+
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }

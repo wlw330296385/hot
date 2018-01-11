@@ -19,8 +19,10 @@
         <div class="camp-lesson-list">
             <div class="mui-segmented-control mb">
                 <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('team/teamManage',['team_id' => $team_id])}"></a>
-                <a class="mui-control-item mui-active" href="#onlineEventList">上架</a>
-                <a class="mui-control-item" href="#offlineEventList">下架</a>
+                <a class="mui-control-item mui-active" href="#onlineMatchList">公开</a>
+                <a class="mui-control-item" href="#offlineMatchList">未公开</a>
+                <a class="mui-control-item" href="#finishedlineMatchList">完成</a>
+                <a class="mui-control-item" href="#notfinishedlineMatchList">未完成</a>
                 <a class="mui-control-item" href="{:url('team/createMatch', ['team_id' => $team_id])}">添加</a>
             </div>
         </div>
@@ -29,14 +31,24 @@
     <div class="mui-content">
 
         <div class="tab-pullRefresh">
-            <div id="onlineEventList" class="mui-scroll-wrapper mui-control-content mui-active">
+            <div id="onlineMatchList" class="mui-scroll-wrapper mui-control-content mui-active">
                 <div class="mui-scroll">
                     <ul class="mui-table-view detalis-list list border-b match1 OA_task_event"></ul>
                 </div>
             </div>
-            <div id="offlineEventList" class="mui-scroll-wrapper mui-control-content">
+            <div id="offlineMatchList" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
                     <ul class="mui-table-view detalis-list list border-b match-1 OA_task_event"></ul>
+                </div>
+            </div>
+            <div id="notfinishedlineMatchList" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b is_finished1 OA_task_event"></ul>
+                </div>
+            </div>
+            <div id="finishedlineMatchList" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b is_finished0 OA_task_event"></ul>
                 </div>
             </div>
         </div>
@@ -62,8 +74,10 @@
         //初始化全局变量
         var onCount = 1;
         var offCount = 1;
+        var finishedCount = 1;
+        var notfinishedCount = 1;
 
-        mui('#onlineEventList').pullRefresh({
+        mui('#onlineMatchList').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
@@ -83,7 +97,7 @@
             }
         });
 
-        mui('#offlineEventList').pullRefresh({
+        mui('#offlineMatchList').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
@@ -103,13 +117,53 @@
             }
         });
 
+        mui('#finishedlineMatchList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pullupRefreshFinished
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshFinished
+            }
+        });
+
+        mui('#notfinishedlineMatchList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pullupRefreshNotFinished
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshNotFinished
+            }
+        });
+
         //下拉刷新具体业务实现（上架）
         function pulldownRefreshOn() {
             setTimeout(function () {
                 onCount = 1;//刷新并显示第一页
                 var page = onCount;
                 var gType = 1;//代表下拉刷新
-                toList('onlineEventList', page, gType, 1);//具体取数据的方法
+                toList('onlineMatchList', page, gType, 1);//具体取数据的方法
             }, 100);
         }
 
@@ -119,7 +173,7 @@
                 onCount++;//翻下一页
                 var page = onCount;
                 var gType = 2;//代表上拉加载
-                toList('onlineEventList', page, gType, 1);//具体取数据的方法
+                toList('onlineMatchList', page, gType, 1);//具体取数据的方法
             }, 100);
         }
 
@@ -129,7 +183,7 @@
                 offCount = 1;//刷新并显示第一页
                 var page = offCount;
                 var gType = 1;//代表下拉刷新
-                toList('offlineEventList', page, gType, -1);//具体取数据的方法
+                toList('offlineMatchList', page, gType, -1);//具体取数据的方法
             }, 100);
         }
 
@@ -139,7 +193,47 @@
                 offCount++;//翻下一页
                 var page = offCount;
                 var gType = 2;//代表上拉加载
-                toList('offlineEventList', page, gType, -1);//具体取数据的方法
+                toList('offlineMatchList', page, gType, -1);//具体取数据的方法
+            }, 100);
+        }
+
+        //下拉刷新具体业务实现（完成）
+        function pullupRefreshFinished() {
+            setTimeout(function () {
+                finishedCount = 1;//刷新并显示第一页
+                var page = finishedCount;
+                var gType = 1;//代表下拉刷新
+                toIsFinishedList('finishedlineMatchList', page, gType, 1);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（完成）
+        function pullupRefreshFinished() {
+            setTimeout(function () {
+                finishedCount++;//翻下一页
+                var page = finishedCount;
+                var gType = 2;//代表上拉加载
+                toIsFinishedList('finishedlineMatchList', page, gType, 1);//具体取数据的方法
+            }, 100);
+        }
+
+        //下拉刷新具体业务实现（未完成）
+        function pullupRefreshNotFinished() {
+            setTimeout(function () {
+                notfinishedCount = 1;//刷新并显示第一页
+                var page = notfinishedCount;
+                var gType = 1;//代表下拉刷新
+                toIsFinishedList('notfinishedlineMatchList', page, gType, 0);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（未完成）
+        function pullupRefreshNotFinished() {
+            setTimeout(function () {
+                notfinishedCount++;//翻下一页
+                var page = notfinishedCount;
+                var gType = 2;//代表上拉加载
+                toIsFinishedList('notfinishedlineMatchList', page, gType, 0);//具体取数据的方法
             }, 100);
         }
 
@@ -201,7 +295,68 @@
                 } else {
                     mui('#' + wList).pullRefresh().endPullupToRefresh(true);
                 }
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
 
+    var toIsFinishedList = function (wList, page, gType, is_finished) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/match/matchlist')}";
+        var team_id = "{$team_id}"
+        mui.ajax({
+            url: url,
+            data: {
+                team_id: team_id,
+                page: page,
+                is_finished: is_finished
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data)
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('team/matchinfo')}" + '/match_id/' + data.data[i].id + '/team_id/' + "{$team_id}";
+                        newli += '<li class="mui-table-view-cell mui-media listli coach">'
+                        // if (is_finished == 1) {
+                        //     newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                        // } else if (is_finished == 0) {
+                        //     newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                        // }
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><div class="mui-media-body wd83">' + data.data[i].court + '';
+                        // if (data.data[i].is_finished == "已结束") {
+                        //     newli += '<font style="color:#b1b0b0">&nbsp;&nbsp;[结束]</font>';
+                        // }
+                        newli += '<p class="mui-ellipsis">' + data.data[i].match_time + '</p></div><div class="price-frame rightLocation" style="padding-right:0">' + data.data[i].type + '</a></div>'
+                        newli += '</li>';
+                    }
+                }
+
+                if (gType == 1) {
+                    //上拉刷新
+                    $("ul.is_finished" + is_finished).empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("ul.is_finished" + is_finished).append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("ul.is_finished" + is_finished).append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
             },
             error: function (xhr, type, errerThrown) {
                 mui.toast('网络异常,请稍候再试');

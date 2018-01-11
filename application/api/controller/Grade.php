@@ -298,9 +298,17 @@ class Grade extends Base{
     public function getGradeListOfCoachByPageApi(){
         try{
             $coach_id = input('param.coach_id');
-            $map = function ($query) use ($coach_id){
-                $query->where(['grade.coach_id'=>$coach_id])->whereOr('grade.assistant_id','like',"%\"$coach_id\"%");
-            };
+            $camp_id = input('param.camp_id');
+            if($camp_id){
+                $map = function ($query) use ($coach_id,$camp_id){
+                    $query->where(['grade.coach_id'=>$coach_id,'grade.camp_id'=>$camp_id])->whereOr('grade.assistant_id','like',"%\"$coach_id\"%");
+                };
+            }else{
+                $map = function ($query) use ($coach_id){
+                    $query->where(['grade.coach_id'=>$coach_id])->whereOr('grade.assistant_id','like',"%\"$coach_id\"%");
+                };
+            }
+            
             $result = $this->GradeService->getGradeListByPage($map);
             if($result){
                 return json(['code' => 200, 'msg' => '获取成功','data'=>$result]);
