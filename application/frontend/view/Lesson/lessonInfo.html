@@ -11,29 +11,12 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
     <style>
         .selectTotal {
             padding: 3px 6px !important;
             border-radius: 3px !important;
         }
-
-        .coupon {list-style:none; margin: 0px; padding:0px;}
-        .coupon li{position:relative;width:45%;height:28px;margin-right:4%; line-height:26px;background:#FFA826;display:inline-block; color: #FFF; font-size: 12px;}
-        .coupon li:last-child{margin-right:0;}
-        .coupon li:before{content:"";position:absolute;left:0px;top:0;width:10px;height:100%; z-index: -1px;}
-        .coupon li:before,
-        .coupon li:after{content: "";position: absolute;top: -20px;display: block;width:10px;height: 100%;margin-top: 20px;background-size: 20px 10px;}
-        .coupon li:after{right: -10px;background-color: #FFA826;background-position: 100% 20%;
-            background-image: linear-gradient(-45deg, #fff 25%, transparent 25%, transparent),
-            linear-gradient(-135deg, #fff 25%, transparent 25%, transparent),
-            linear-gradient(-45deg, transparent 75%, #fff 75%),
-            linear-gradient(-135deg, transparent 75%, #fff 75%);
-        }
-        .coupon div { width: 95%; position: relative; height: 28px; overflow: hidden; text-align: right; }
-        .coupon span { width: 75% !important; text-align: center !important; border-right:1px dashed #FFC20D; padding: 0px 8px 0px 10px; position: absolute; left:0px; z-index:2; }
-        .coupon i { position: absolute; left: -170%; top: -100px; height: 190px; width: 390px; background-color: #F39B00; transform: rotate(-30deg); z-index: 1; }
-
-
 
     </style>
 </head>
@@ -63,14 +46,16 @@
 
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
+                    <a href="#cppopover">
                     <ul class="coupon">
                     {volist empty="" name="couponListOfSystem" id="vol" }
-                            <li><div><span>{$vol.coupon}</span>赠券<i></i></div></li>
+                        <li><div><span>{$vol.coupon}</span>赠券<i></i></div></li>
                     {/volist}
                     {volist empty="" name="couponListOfCamp" id="vol" }
-                    <li><div><span>{$vol.coupon}</span>赠券<i></i></div></li>
+                        <li><div><span>{$vol.coupon}</span>赠券<i></i></div></li>
                     {/volist}
                     </ul>
+                    </a>
                 </li>
                 <li class="mui-table-view-cell listli">选择课量
                     <span>
@@ -127,6 +112,25 @@
         </ul>
     </div>
     <input type="hidden" name="{$shareurl}">
+
+
+    <!-- 卡券弹框 -->
+    <div id="cppopover" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header explain-title">
+            <span class="course">本课程赠送卡券</span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="stamp stamp01">
+                    <div class="par"><p>XXXXXX折扣店</p><sub class="sign">￥</sub><span>50.00</span><sub>优惠券</sub><p>订单满100.00元</p></div>
+                    <div class="copy">副券<p>2015-08-13<br>2016-08-13</p></div>
+                    <i></i>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -136,7 +140,10 @@
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
-    });
+    })
+
+    //弹出菜单
+    mui('.mui-scroll-wrapper').scroll();
 
     mui("body").on("tap", "a", function () {
         window.top.location.href = this.href;

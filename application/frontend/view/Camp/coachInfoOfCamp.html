@@ -151,23 +151,12 @@
                             </li>
                         </ul>
                     </div>
-                    <ul class="mui-table-view list detalis-list page-header location-frame mb">
+                    <ul class="mui-table-view list detalis-list mb">
                         <li class="mui-table-view-cell listli">
-                            <p class="mui-navigate-right">
-                                已上课表<span class="btnTime" id="scheduleTime" data-options='{"type":"month"}'>{$y}年 {$m}月</span>
-                            </p>
+                            <p class="mui-navigate-right">已上课表<span class="btnTime" id="scheduleTime" data-options='{"type":"month"}'><b class="sYear">{$y}</b> 年 <b class="sMonth">{$m}</b> 月</span></p>
                         </li>
                     </ul>
-                    <ul class="mui-table-view">
-                        <li class="mui-table-view-cell">
-                            <ul class="mui-row table">
-                                <li class="mui-col-xs-5">日期</li>
-                                <li class="mui-col-xs-5">班级</li>
-                                <li class="mui-col-xs-2">人数</li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <ul class="mui-table-view detalis-list list schedule">
+                    <ul class="mui-table-view mui-text-center detalis-list list schedule">
                         <li class="mui-table-view-cell">
                             <ul class="mui-row table">
                                 <li class="mui-col-sm-4 mui-col-xs-5">create_time</li>
@@ -255,7 +244,10 @@
 
                     picker.show(function (rs) {
                         //wTime.innerText = rs.text;
-                        wTime.innerText = rs.y.text + '年 ' + rs.m.text + '月';
+                        wTime.innerHTML = '<b class="sYear">' +rs.y.text + '</b> 年 <b class="sMonth">' + rs.m.text + '</b> 月';
+                        //选完日期后
+                        sCount = 1;
+                        toScheduleList('tabSchedule', sCount, 1, rs.y.text, rs.m.text);
                         picker.dispose();
                     });
                 }, false);
@@ -354,38 +346,42 @@
         //下拉刷新具体业务实现（上架）
         function pulldownRefreshG() {
             setTimeout(function () {
-                gCount = 1;//刷新并显示第一页
+                gCount = 1; //刷新并显示第一页
                 var page = gCount;
-                var gType = 1;//代表下拉刷新
-                toGradeList('tabGrade', page, gType);//具体取数据的方法
+                var gType = 1; //代表下拉刷新
+                toGradeList('tabGrade', page, gType); //具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现（上架）
         function pullupRefreshG() {
             setTimeout(function () {
-                gCount++;//翻下一页
+                gCount++; //翻下一页
                 var page = gCount;
-                var gType = 2;//代表上拉加载
-                toGradeList('tabGrade', page, gType);//具体取数据的方法
+                var gType = 2; //代表上拉加载
+                toGradeList('tabGrade', page, gType); //具体取数据的方法
             }, 100);
         }
 
         //下拉刷新具体业务实现（下架）
         function pulldownRefreshS() {
             setTimeout(function () {
-                sCount = 1;//刷新并显示第一页
+                sCount = 1; //刷新并显示第一页
                 var page = sCount;
-                var gType = 1;//代表下拉刷新
-                toScheduleList('tabSchedule', page, gType);//具体取数据的方法
+                var gType = 1; //代表下拉刷新
+                var sYear = $(".sYear").text();
+                var sMonth = $(".sMonth").text();
+                toScheduleList('tabSchedule', page, gType, sYear, sMonth); //具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现（下架）
         function pullupRefreshS() {
             setTimeout(function () {
-                sCount++;//翻下一页
+                sCount++; //翻下一页
                 var page = sCount;
-                var gType = 2;//代表上拉加载
-                toScheduleList('tabSchedule', page, gType);//具体取数据的方法
+                var gType = 2; //代表上拉加载
+                var sYear = $(".sYear").text();
+                var sMonth = $(".sMonth").text();
+                toScheduleList('tabSchedule', page, gType, sYear, sMonth); //具体取数据的方法
             }, 100);
         }
 
@@ -447,9 +443,11 @@
         });
     };
 
-    var toScheduleList = function (wList, page, gType) {
+    var toScheduleList = function (wList, page, gType, sYear, sMonth) {
+        console.log(sYear)
+        console.log(sMonth)
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/schedule/getScheduleListOfCoachByPageApi','','',true)}/?page=" + page;
+        var url = "{:url('api/schedule/getScheduleListOfCoachByPageApi','','',true)}/?page=" + page + "&y="+sYear+"&m="+sMonth;
         var campID = "{$camp_id}";
         var coachID = "{$coachInfo['id']}";
         mui.ajax({
@@ -469,7 +467,8 @@
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + campID;
-                        newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].lesson_time + '</li><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></li></a>';
+                        newli += '<li class="mui-table-view-cell mui-media"><a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-10 mui-col-sm-10 mui-text-left">' + data.data.data[i].grade + '<p>' + data.data.data[i].lesson_time + '</p></li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a></li>';
+
                     }
                     if (gType == 1) {
                         //上拉刷新
