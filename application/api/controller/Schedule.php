@@ -224,9 +224,18 @@ class Schedule extends Base
     {
         try {
             $coach_id = input('param.coach_id');
-            $map = function ($query) use ($coach_id) {
-                $query->where(['schedule.coach_id' => $coach_id])->whereOr('schedule.assistant_id', 'like', "%\"$coach_id\"%");
-            };
+            $camp_id = input('param.camp_id');
+            if($camp_id){
+                $map = function ($query) use ($coach_id,$camp_id) {
+                    $query->where(['schedule.coach_id' => $coach_id,'schedule.camp_id'=>$camp_id])->whereOr('schedule.assistant_id', 'like', "%\"$coach_id\"%");
+                };
+            }else{
+
+                $map = function ($query) use ($coach_id) {
+                    $query->where(['schedule.coach_id' => $coach_id])->whereOr('schedule.assistant_id', 'like', "%\"$coach_id\"%");
+                };
+            }
+            
             $result = $this->ScheduleService->getScheduleListByPage($map);
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {
