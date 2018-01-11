@@ -54,6 +54,7 @@ class Crontab extends Controller {
                 // 课时工资提成
                 $pushSalary = $schedule['salary_base']*$numScheduleStudent;
                 $coachMember = $this->getCoachMember($schedule['coach_id']);
+
                 // 主教练薪资
                 if ($schedule['coach_salary'] > 0) {
                     $incomeCoach = [
@@ -105,6 +106,7 @@ class Crontab extends Controller {
                             'type' => 1,
                         ];
                     }
+                    //dump($incomeAssistant);
                     $this->insertSalaryIn($incomeAssistant, 1);
                 }
 
@@ -167,7 +169,7 @@ class Crontab extends Controller {
     // 获取教练会员
     private function getCoachMember($coach_id) {
         $coachM = new Coach();
-        $member = $coachM->with('member')->where(['id' => $coach_id])->find()->toArray();
+        $member = $coachM->with('member')->where(['id' => $coach_id])->find();
         return $member;
     }
 
@@ -204,7 +206,7 @@ class Crontab extends Controller {
             $memberDb = db('member');
             if ($saveAll ==1) {
                 foreach ($data as $val) {
-                    $memberDb->where('id', $val['member_id'])->setInc('balance', $data['salary']+$data['push_salary']);
+                    $memberDb->where('id', $val['member_id'])->setInc('balance', $val['salary']+$val['push_salary']);
                 }
             } else {
                 $memberDb->where('id', $data['member_id'])->setInc('balance', $data['salary']+$data['push_salary']);
