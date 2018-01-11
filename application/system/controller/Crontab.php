@@ -170,7 +170,9 @@ class Crontab extends Controller {
     private function getCoachMember($coach_id) {
         $coachM = new Coach();
         $member = $coachM->with('member')->where(['id' => $coach_id])->find();
-        return $member;
+        if ($member) {
+            return $member->toArray();
+        }
     }
 
     // 获取营主会员
