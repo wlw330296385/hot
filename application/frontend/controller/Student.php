@@ -67,16 +67,23 @@ class Student extends Base
 							])
 							->order('grade_member.id desc')
 							->select();
-		// 剩余课量
-        $restSchedule = Db::name('lesson_member')->where([
-            'camp_id' => $camp_id,
-            'student_id' => $student_id,
-            'type' => $type,
-            'status' => 1
-        ])->whereNull('delete_time')->sum('rest_schedule');
-        if (!$restSchedule) {
+		// 学员-课程课量
+        $schedulenum = db('lesson_member')->whereNull('delete_time')
+            ->where([
+                'camp_id' => $camp_id,
+                'student_id' => $student_id,
+                'type' => $type,
+                'status' => 1
+            ])->field("sum(rest_schedule) as rest_schedule, sum(total_schedule) as total_scheulde")->select();
+        //dump($schedulenum);
+        if (!$schedulenum) {
             $restSchedule = 0;
+            $totalScheule = 0;
+        } else {
+            $restSchedule = $schedulenum[0]['rest_schedule'];
+            $totalScheule = $schedulenum[0]['total_scheulde'];
         }
+
 		// 学生课量
 		$studentScheduleList = Db::view('schedule_member','*')
 								->view('schedule','students,leave','schedule.id=schedule_member.schedule_id')
@@ -104,6 +111,7 @@ class Student extends Base
 		// 学员自己可操作区显示
         $studentcando = ($this->memberInfo['id'] == $studentInfo['member_id']) ? 1 : 0;
 		$this->assign('restSchedule',$restSchedule);
+        $this->assign('totalScheule',$totalScheule);
 		$this->assign('campInfo',$campInfo);
 		$this->assign('studentInfo',$studentInfo);
 		$this->assign('studentGradeList',$studentGradeList);
