@@ -28,7 +28,8 @@ class LessonMemberService{
 
 
     public function getLessonMemberListOfCampWithStudentByPage($map = [],$paginate = 10){
-        $result = $this->LessonMemberModel->with('student')->where($map)->distinct(true)->paginate($paginate);
+        $result = $this->LessonMemberModel->distinct(true)->field('student_id,student,lesson')->with('student')->where($map)->paginate($paginate);
+        // echo $this->LessonMemberModel->getlastsql();
         if($result){
             return $result->toArray();
         }

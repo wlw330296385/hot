@@ -271,10 +271,13 @@ class Member extends Base{
     public function updatePasswordApi(){
         try{
             $data = input('post.');
+            if(!isset($data['newpassword']{5}) || isset($data['newpassword']{16})){
+                return json(['code'=>100,'msg'=>'长度须6~16之间']);
+            }
             $password = passwd($data['password']);
             $newpassword = passwd($data['newpassword']);
             $repassword = passwd($data['repassword']);
-            // dump($data);die;
+            
             if($newpassword<>$repassword){
                 return json(['code'=>100,'msg'=>'两次密码不一样']);
             }

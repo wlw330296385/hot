@@ -99,13 +99,10 @@ class Student extends Base
 		//退款订单 
 		$repayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>1,'status'=>-2,'expire'=>0]);
 		$payBill = $totalBill - $notPayBill;
-		// 历史课时|当前所报
-		$totalSchedule = db('bill')->where(['camp_id'=>$camp_id,'student_id'=>$student_id,'status'=>1,'is_pay'=>1])->whereNull('delete_time')->sum('total');
+
 
 		// 学员自己可操作区显示
         $studentcando = ($this->memberInfo['id'] == $studentInfo['member_id']) ? 1 : 0;
-
-		$this->assign('totalSchedule',$totalSchedule);
 		$this->assign('restSchedule',$restSchedule);
 		$this->assign('campInfo',$campInfo);
 		$this->assign('studentInfo',$studentInfo);
