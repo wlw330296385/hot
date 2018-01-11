@@ -40,8 +40,10 @@ class ScheduleService
 
     public function getScheduleListByPage($map = [],  $order = 'id desc', $paginate = 10)
     {
-        $result = $this->scheduleModel->where($map)->order($order)->paginate($paginate);
-        // echo $this->scheduleModel->getlastsql();die;
+        $result = $this->scheduleModel->where($map)->order($order)->paginate($paginate)->each(
+            function($item, $key){
+                $item->student_strs = unserialize($item->student_str);    
+            });
         if ($result) {
             $list = $result->toArray();
             foreach ($list['data'] as $key => $val) {

@@ -223,19 +223,18 @@ class Schedule extends Base
     public function getScheduleListOfCoachByPageApi()
     {
         try {
+            $map = input('post.');
+            $y = input('param.y');
+            $m = input('param.m');
+            $d = input('param.d',1);
             $coach_id = input('param.coach_id');
-            $camp_id = input('param.camp_id');
-            if($camp_id){
-                $map = function ($query) use ($coach_id,$camp_id) {
-                    $query->where(['schedule.coach_id' => $coach_id,'schedule.camp_id'=>$camp_id])->whereOr('schedule.assistant_id', 'like', "%\"$coach_id\"%");
-                };
-            }else{
-
-                $map = function ($query) use ($coach_id) {
-                    $query->where(['schedule.coach_id' => $coach_id])->whereOr('schedule.assistant_id', 'like', "%\"$coach_id\"%");
-                };
+            if($y&&$m){
+                $betweenTime = getStartAndEndUnixTimestamp($y,$m,$d);
+                $map['lesson_time'] = ['BETWEEN',[$betweenTime['start'],$betweenTime['end']]];
             }
-            
+            $map = function ($query) use ($map,$coach_id) {
+                $query->where($map)->whereOr('schedule.assistant_id', 'like', "%\"$coach_id\"%");
+            };
             $result = $this->ScheduleService->getScheduleListByPage($map);
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {
