@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>个人资料</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .mui-views,
+        .mui-view,
+        .mui-pages,
+        .mui-page,
+        .mui-page-content {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #efeff4;
+        }
+
+        .mui-pages {
+            top: 46px;
+            height: auto;
+        }
+
+        .mui-scroll-wrapper,
+        .mui-scroll {
+            background-color: #efeff4;
+        }
+
+        .mui-page.mui-transitioning {
+            -webkit-transition: -webkit-transform 300ms ease;
+            transition: transform 300ms ease;
+        }
+
+        .mui-page-left {
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+        }
+
+        .mui-ios .mui-page-left {
+            -webkit-transform: translate3d(-20%, 0, 0);
+            transform: translate3d(-20%, 0, 0);
+        }
+
+
+        .mui-navbar {
+            position: fixed;
+            right: 0;
+            left: 0;
+            z-index: 10;
+            height: 44px;
+            background-color: #f7f7f8;
+        }
+
+        .mui-navbar .mui-bar {
+            position: absolute;
+            background: transparent;
+            text-align: center;
+        }
+
+        .mui-android .mui-navbar-inner.mui-navbar-left {
+            opacity: 0;
+        }
+
+        .mui-ios .mui-navbar-left .mui-left,
+        .mui-ios .mui-navbar-left .mui-center,
+        .mui-ios .mui-navbar-left .mui-right {
+            opacity: 0;
+        }
+
+        .mui-navbar .mui-btn-nav {
+            -webkit-transition: none;
+            transition: none;
+            -webkit-transition-duration: .0s;
+            transition-duration: .0s;
+        }
+
+        .mui-navbar .mui-bar .mui-title {
+            margin-left: 0 !important;
+        }
+
+        .mui-page-shadow {
+            position: absolute;
+            right: 100%;
+            top: 0;
+            width: 16px;
+            height: 100%;
+            z-index: -1;
+            content: '';
+        }
+
+        .mui-page-shadow {
+            background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
+            background: linear-gradient(to right, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
+        }
+
+        .mui-navbar-inner.mui-transitioning,
+        .mui-navbar-inner .mui-transitioning {
+            -webkit-transition: opacity 300ms ease, -webkit-transform 300ms ease;
+            transition: opacity 300ms ease, transform 300ms ease;
+        }
+
+        .mui-page {
+            display: none;
+        }
+
+        .mui-pages .mui-page {
+            display: block;
+        }
+
+        .mui-table-view span.mui-pull-right {
+            color: #999;
+        }
+
+        .mui-table-view-divider {
+            background-color: #efeff4;
+            font-size: 14px;
+        }
+
+        .mui-table-view-divider:before,
+        .mui-table-view-divider:after {
+            height: 0;
+        }
+
+        .mui-fullscreen {
+            position: fixed;
+            z-index: 20;
+            background-color: #000;
+        }
+
+        /*·····*/
+
+        .tipspan {
+            font-size: 14px;
+            text-align: center;
+            display: block;
+            padding: 10px;
+            height: 41px;
+        }
+
+        .success {
+            padding: 20px 0;
+            width: 60%;
+            margin: 0 auto;
+        }
+
+        .success img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .success span {
+            float: right;
+            line-height: 40px;
+        }
+
+        .forgetPW {
+            float: right;
+            font-size: 14px;
+            padding: 5px 15px;
+        }
+
+        .tip {
+            padding: 0 15px;
+        }
+
+        .tip .tipp {
+            margin-bottom: 0
+        }
+    </style>
+</head>
+
+<body class="mui-fullscreen">
+    <!--页面主结构开始-->
+    <div id="app" class="mui-views">
+        <div class="mui-view">
+            <div class="mui-navbar">
+            </div>
+            <div class="mui-pages">
+            </div>
+        </div>
+    </div>
+    <!--页面主结构结束-->
+
+    <!--单页面开始-->
+    <div id="setting" class="mui-page">
+        <!--页面标题栏开始-->
+        <div class="mui-navbar-inner mui-bar mui-bar-nav">
+            <button type="button" class="mui-left mui-action-back mui-btn mui-btn-link mui-btn-nav mui-pull-left ">
+                <span class="mui-icon mui-icon-left-nav stepback"></span>
+            </button>
+            <h1 class="mui-center mui-title">个人设置</h1>
+        </div>
+        <!--页面标题栏结束-->
+
+        <!--页面主内容区开始-->
+        <div class="mui-page-content">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="list camp-list camp-lesson-list detalis-list coach">
+                        <div class="page-header">
+                            <span class="course">
+                                <b>安全设置</b>
+                            </span>
+                        </div>
+                        <ul class="mui-table-view public-list">
+                            <li class="mui-table-view-cell listli listinitial">
+                                <a href="#telephone" class="mui-navigate-right">更换手机
+                                    <span>{$memberInfo['telephone']}</span>
+                                </a>
+                            </li>
+                            <li class="mui-table-view-cell listli listinitial">
+                                <a href="#wechat" class="mui-navigate-right changewx">微信绑定
+                                    <span>{$memberInfo['nickname']}</span>
+                                </a>
+                            </li>
+                            <li class="mui-table-view-cell listli listinitial">
+                                <a href="#email" class="mui-navigate-right">电子邮箱
+                                    <span>{$memberInfo['email']}</span>
+                                </a>
+                            </li>
+                            <li class="mui-table-view-cell listli listinitial">
+                                <a href="#password" class="mui-navigate-right">登录密码
+                                    <span>设置</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="page-header">
+                            <span class="course">
+                                <b>注销账号</b>
+                            </span>
+                        </div>
+                        <ul class="mui-table-view  public-list border-b">
+                            <li class="mui-table-view-cell listli ">
+                                <a href="#" id="logout" class="mui-navigate-right">{$memberInfo['member']}
+                                    <span>退出</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--页面主内容区结束-->
+    </div>
+    <!--单页面结束-->
+
+
+    <div id="telephone" class="mui-page">
+        <div class="mui-navbar-inner mui-bar mui-bar-nav">
+            <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+                <span class="mui-icon mui-icon-left-nav"></span>
+            </button>
+            <h1 class="mui-center mui-title">修改手机号</h1>
+        </div>
+        <div class="mui-page-content">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+
+                    <!-- 第一步 -->
+                    <div class="step1">
+                        <div class="page-header">
+                            <div class="course">验证新手机</div>
+                        </div>
+
+                        <form action="" class="mui-input-group ">
+                            <div class="mui-input-row">
+                                <label>新手机号码</label>
+                                <input type="text" name="" class="telephone reg_mobile" value="" placeholder="请输入新手机号码">
+                            </div>
+
+                            <div class="mui-input-row">
+                                <label>短信验证码</label>
+                                <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)">
+                                <input id="code" type="text" class="input reg_code reg_validate" placeholder="输入验证码" style="width: 40%;">
+                            </div>
+                        </form>
+
+                        <span class="tipspan mobile_hint validate_hint"></span>
+                        <div class="tjbtn tjbtn-next">
+                            <button type="button" class="btn stepBtn">
+                                确定更换
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- 第二步 -->
+                    <div class="step2" style="display: none">
+
+                        <ul class="mui-table-view " style="overflow: hidden;">
+                            <div class="success">
+                                <img src="/static/frontend/images/icon01.jpg" alt="">
+                                <span class="colorgreen">手机号更换成功</span>
+                            </div>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="wechat" class="mui-page">
+        <div class="mui-navbar-inner mui-bar mui-bar-nav">
+            <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left stop-wxtimer">
+                <span class="mui-icon mui-icon-left-nav"></span>
+            </button>
+            <h1 class="mui-center mui-title">修改微信绑定</h1>
+        </div>
+        <div class="mui-page-content">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="list camp-list camp-lesson-list detalis-list coach">
+                        <div class="success-frame">
+                            <div class="choise-identity" style="padding-bottom: 20px;padding-top: 30px;">
+                                请用新的微信扫描二维码，成功扫描后当前账号将自动退出
+                            </div>
+                            <img id="bindwxqrcode" alt="大热篮球" data-url="">
+                            <input id="wxsse" type="hidden" name="wxsse">
+                            <div class="choise">
+                                <p>此二维码两分钟后失效</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="email" class="mui-page">
+        <div class="mui-navbar-inner mui-bar mui-bar-nav">
+            <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+                <span class="mui-icon mui-icon-left-nav"></span>
+            </button>
+            <h1 class="mui-center mui-title">修改邮箱</h1>
+        </div>
+        <div class="mui-page-content">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <form action="" class="mui-input-group" style="overflow: hidden;">
+                        <div class="mui-input-row">
+                            <label>邮箱地址</label>
+                            <input type="text" name="email" class="reg_email" data-id={$memberInfo.id} placeholder="{$memberInfo['email']}" required
+                                pattern="/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/">
+                        </div>
+                        <span class="tipspan email_hint email_hint"></span>
+                        <div class="tjbtn tjbtn-next">
+                            <button type="button" class="btn emailBtn">
+                                修改
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="password" class="mui-page">
+        <div class="mui-navbar-inner mui-bar mui-bar-nav">
+            <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+                <span class="mui-icon mui-icon-left-nav"></span>
+            </button>
+            <h1 class="mui-center mui-title">修改密码</h1>
+        </div>
+        <div class="mui-page-content">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="page-header">
+                        <div class="course">密码设置</div>
+                    </div>
+                    <form action="" class="mui-input-group ">
+                        <div class="mui-input-row">
+                            <label>原密码</label>
+                            <input type="password" name="password" class="reg_password" placeholder="请输入原密码">
+                        </div>
+                        <div class="mui-input-row">
+                            <label>新密码</label>
+                            <input type="password" name="newpassword" class="reg_password reg_newpassword" placeholder="请输入新密码">
+                        </div>
+                        <div class="mui-input-row">
+                            <label>确认密码</label>
+                            <input type="password" name="confirm" class="reg_confirm" placeholder="请输入确认密码">
+                        </div>
+                    </form>
+                    <a href="#forgetPassWord" class="forgetPW">忘记密码</a>
+                    <span class="tipspan password_hint confirm_hint newpassword_hint"></span>
+                    <div class="tjbtn tjbtn-next">
+                        <button type="sumbit" class="btn passwordBtn">
+                            修改
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="forgetPassWord" class="mui-page">
+        <div class="mui-navbar-inner mui-bar mui-bar-nav">
+            <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+                <span class="mui-icon mui-icon-left-nav"></span>
+            </button>
+            <h1 class="mui-center mui-title">找回密码</h1>
+        </div>
+        <div class="mui-page-content">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="list camp-list camp-lesson-list detalis-list ">
+                        <ul class="mui-table-view public-list">
+                            <li class="mui-table-view-cell listli listinitial">
+                                用户手机
+                                <span>{$memberInfo['telephone']}</span>
+                            </li>
+                        </ul>
+
+                    </div>
+                    <div class="tjbtn tjbtn-next">
+                        <button type="sumbit" class="btn forgetPWBtn">
+                            发送
+                        </button>
+                    </div>
+                    <div class="tip">
+                        <h5>修改密码说明：</h5>
+                        <p class="tipp">1、请确保该手机号码是账号本人手机</p>
+                        <p class="tipp">2、点击发送将发送初始密码到该手机号</p>
+                        <p class="tipp">3、得到初始密码后可在修改密码处重新修改密码</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js "></script>
+    <script src="/static/frontend/js/mui.view.js "></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/libs/yzvalidate.js"></script>
+    <script src="/static/frontend/js/smsCode.js"></script>
+    <script>
+        mui.init();
+        //初始化单页view
+        var viewApi = mui('#app').view({
+            defaultPage: '#setting'
+        });
+        var view = viewApi.view;
+        (function ($) {
+            //处理view的后退与webview后退
+            var oldBack = $.back;
+            $.back = function () {
+                if (viewApi.canBack()) { //如果view可以后退，则执行view的后退
+                    viewApi.back();
+                } else { //执行webview后退
+                    oldBack();
+                }
+            };
+        })(mui);
+
+        mui('.mui-table-view-cell').on('tap', '.changewx', function () {
+            // 生成二维码
+            mui.ajax("{:url('api/member/changewxqrcode')}", {
+                data: '',
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (res) {
+                    console.log(res);
+                    if (res.code == 200) {
+                        $('#bindwxqrcode').attr('src', res.data.qrcode);
+                        $('#bindwxqrcode').attr('data-url', res.data.url);
+                        $("#wxsse").val(res.data.sseurl).change();
+                    } else {
+                        mui.toast(res.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(xhr + type + errorThrown);
+                }
+            });
+        });
+
+        // 监听 修改微信绑定操作结果
+        var changewxTimer;
+        function changewxTime() {
+            //var today = new Date();
+            //console.log("the time is:"+today.toString());
+            var sseurl = document.getElementById('wxsse').value;
+            $.ajax({
+                async: true,
+                type: "POST",
+                url: sseurl,
+                dataType: "json",
+                success: function (res) {
+                    console.log(res);
+                    if (res.code == 200) {
+                        clearInterval(changewxTimer);
+                        mui.toast('会员已成功绑定新微信号,请重新登录平台');
+                        setTimeout(location.href = "{:url('frontend/index/index')}", 3000);
+                    }
+                }
+            })
+        }
+        // 返回个人设置view 关闭计时器
+        mui('.mui-bar').on('tap', '.stop-wxtimer', function () {
+            clearInterval(changewxTimer);
+        });
+
+        $(function () {
+            // 开启监听计时器
+            $('#wxsse').on("change", '', function () {
+                changewxTimer = setInterval(changewxTime, 3000);
+            });
+
+            //退出登陆
+            $("#logout").on("click", '', function () {
+                mui.ajax("{:url('api/Member/logout')}", {
+                    data: '',
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                            window.location.href = "{:url('login/login')}";
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        console.log(xhr + type + errorThrown);
+                    }
+                });
+            })
+
+            //登录切换
+            $(".otherbtn").click(function () {
+                $(".loginbox").show();
+                $(".otherbox").hide();
+                $(".logo").addClass("logo1")
+            })
+
+            // 修改手机号
+            $(".stepBtn").on("tap", '', function () {
+                var validate = $(".reg_validate").val();
+                var telephone = $(".telephone").val();
+                if (/^1[34578]\d{9}$/.test(telephone) && /^\d{6}$/.test(validate)) {
+                    mui.ajax("{:url('api/member/updateMemberApi')}", {
+                        data: {
+                            'telephone': telephone
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            console.log(data)
+                            if (data.code == 200) {
+                                mui.alert('手机号更换成功', '', function () {
+                                    setTimeout(viewApi.back(), 3000);
+                                })
+                                // $(".step1").hide();
+                                // $(".step2").show();
+                                // $(".stepback").click(function () {
+                                //     setTimeout(window.location.href = "{:url('member/membersetup')}", 2500);
+                                // })
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            console.log(data);
+                        }
+                    });
+                } else {
+                    if (!/^1[34578]\d{9}$/.test(telephone)) {
+                        $(".mobile_hint").text("请输入正确的手机格式").css("color", "red");
+                    } else if (!/^\d{6}$/.test(validate)) {
+                        $(".validate_hint").text("验证码格式不正确").css("color", "red");
+                    }
+
+                }
+            });
+
+            // 修改邮箱
+            $(".emailBtn").click(function () {
+                var email = $(".reg_email").val();
+                if (/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/.test(email)) {
+                    $('.email_hint').text("");
+                    mui.ajax("{:url('api/member/updateMemberApi')}", {
+                        data: {
+                            'email': email
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            console.log(data)
+                            if (data.code == 200) {
+                                mui.toast(data.msg);
+                                setTimeout(viewApi.back(), 2500);
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            console.log(data);
+                        }
+                    });
+                } else {
+                    $(".email_hint").text("请输入正确的邮箱格式").css("color", "red");
+                }
+            });
+
+            // 修改密码
+            $(".passwordBtn").click(function () {
+                var password = $(".reg_password").val();
+                var newpassword = $(".reg_newpassword").val();
+                var confirm = $(".reg_confirm").val();
+                if ((/^[a-z0-9_-]{6,16}$/.test(password) && /^[a-z0-9_-]{6,16}$/.test(newpassword)) && (newpassword == confirm)) {
+                    $('.password_hint').text("");
+                    $('.confirm_hint').text("");
+                    mui.ajax("{:url('api/member/updatePasswordApi')}", {
+                        data: {
+                            'password': password,
+                            'repassword': confirm,
+                            'newpassword': newpassword
+                        },
+<<<<<<< HEAD
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            console.log(data)
+                            if (data.code == 200) {
+                                mui.toast(data.msg);
+                                location.reload();
+                                viewApi.back();
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            console.log(errorThrown);
+=======
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        console.log(data)
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                            viewApi.back();
+                        }else{
+                            mui.toast(data.msg);
+>>>>>>> b20bb2f8ddea10d8ebdad5b50239736a121f9961
+                        }
+                    });
+
+                } else {
+                    if (newpassword != confirm) {
+                        $(".confirm_hint").text("两次密码不正确").css("color", "red");
+                    } else {
+                        $(".password_hint").text("请输入6-16位的密码").css("color", "red");
+                    }
+                }
+            })
+
+            //验证短信验证码
+            $('#code').on("blur", function () {
+                var code = document.getElementById('code').value;
+                var codeReg = /^\d{6,6}$/;
+                if (!codeReg.test(code)) {
+                    mui.toast('请填写正确的验证码');
+                    flag = false;
+                } else {
+                    telephone = $(".telephone").val();
+                    console.log(telephone)
+                    var result = smsCode.validateSmsCodeApi(telephone, code, "{:url('api/sms/validateSmsCodeApi','','',true)}");
+                    if (result == 200) {
+                        flag = true;
+                        mui.toast(result.msg);
+                    } else {
+                        flag = false;
+                        mui.toast(result.msg);
+                    }
+                }
+            });
+        })
+
+        // 发送短信验证码
+        function sendCode(obj) {
+            telephone = $(".telephone").val();
+            var telephoneReg = /^\d{11,11}$/;
+            if (!telephoneReg.test(telephone)) {
+                mui.toast('请填写正确的手机号码');
+                flag = false;
+            } else {
+                var result = smsCode.getMobileCodeApi(obj, telephone, "{:url('api/sms/getMobileCodeApi','','',true)}");
+                if (result.code == 200) {
+                    flag = true;
+                    mui.toast(result.msg);
+                } else {
+                    flag = false;
+                    mui.toast(result.msg);
+
+                }
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>
