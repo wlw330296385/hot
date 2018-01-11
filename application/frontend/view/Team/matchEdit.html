@@ -79,8 +79,11 @@
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
             <input type="hidden" name="directentry" value="{$directentry}">
             <input type="hidden" name="team_id" value="{$team_id}" class="data">
-            <input type="hidden" name="record_id" {eq name="directentry" value="1" }{else/}value="{$matchInfo.record.id}" {/eq} class="data">
-            <input type="hidden" name="match_id" class="data" {eq name="directentry" value="1" }{else/}value="{$matchInfo.id}"{/eq} >
+            {eq name="directentry" value="0"}
+            <!-- 区分创建/更新数据 -->
+            <input type="hidden" name="record[id]" value="{$matchInfo.record.id}" class="data">
+            <input type="hidden" name="id" class="data" value="{$matchInfo.id}">
+            {/eq}
             <form action="" class="mui-input-group mt55">
 
                 <div class="mui-input-row">
@@ -101,16 +104,16 @@
                 <!-- 主队信息 -->
                 <div class="mui-input-row">
                     <label>主队</label>
-                    <span class="domData" name="home_team">{$teamInfo.name}</span>
-                    <input type="hidden" name="home_team_id" {eq name="directentry" value="1" } value="{$team_id}" {else/}value="{$matchInfo.record.home_team_id}"
-                        {/eq} class="data">
-                    <input type="hidden" name="home_team_logo" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.home_team_logo}"
+                    <span class="domData" name="record[home_team]">{$teamInfo.name}</span>
+                    <input type="hidden" name="record[home_team_id]" class="data" {eq name="directentry" value="1" } value="{$team_id}" {else/}value="{$matchInfo.record.home_team_id}"
+                        {/eq} >
+                    <input type="hidden" name="record[home_team_logo]" class="data" {eq name="directentry" value="1" } value="{$teamInfo.logo}" {else/}value="{$matchInfo.record.home_team_logo}"
                         {/eq} />
                 </div>
 
                 <div class="mui-input-row">
                     <label>主队得分</label>
-                    <input type="text" class="data" name="home_score" placeholder="请输入主队得分" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.home_score}"
+                    <input type="text" class="data" name="record[home_score]" placeholder="请输入主队得分" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.home_score}"
                         {/eq}>
                 </div>
 
@@ -125,9 +128,9 @@
                             </i>{/eq}
                             <font>{eq name="directentry" value="1" }{else/}{$matchInfo.record.home_team_color} {/eq} </font>
                         </span>
-                        <input type="hidden" name="home_team_color" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.home_team_color}"
+                        <input type="hidden" name="record[home_team_color]" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.home_team_color}"
                             {/eq} />
-                        <input type="hidden" name="home_team_colorstyle" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.home_team_colorstyle}"
+                        <input type="hidden" name="record[home_team_colorstyle]" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.home_team_colorstyle}"
                             {/eq} />
                     </a>
                 </div>
@@ -139,23 +142,22 @@
                     {eq name="directentry" value="1" }
                     <a href="#opponent" class="mui-navigate-right">
                         <label>客队</label>
-                        <span class="opponentCont domData" name="away_team"></span>
-                        <input type="hidden" name="away_team_id" value="" class="data">
+                        <span class="opponentCont domData" name="record[away_team]"></span>
                     </a>
                     {else/}
                     <label>客队</label>
-                    <span class="domData" name="away_team">{eq name="directentry" value="1" }{else/}{$matchInfo.record.away_team}{/eq}</span>
+                    <span class="domData" name="record[away_team]">{eq name="directentry" value="1" }{else/}{$matchInfo.record.away_team}{/eq}</span>
                     {/eq}
 
-                    <input type="hidden" name="away_team_id" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_team_id}"
+                    <input type="hidden" name="record[away_team_id]" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_team_id}"
                         {/eq} class="data">
-                    <input type="hidden" name="away_team_logo" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_team_logo}"
+                    <input type="hidden" name="record[away_team_logo]" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_team_logo}"
                         {/eq} />
                 </div>
 
                 <div class="mui-input-row">
                     <label>客队得分</label>
-                    <input type="text" class="data" name="away_score" placeholder="请输入主队得分" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_score}"
+                    <input type="text" class="data" name="record[away_score]" placeholder="请输入主队得分" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_score}"
                         {/eq}>
                 </div>
 
@@ -171,9 +173,9 @@
                             <font>{eq name="directentry" value="1" }{else/}{$matchInfo.record.away_team_color}{/eq}</font>
                             {/eq}
                         </span>
-                        <input type="hidden" name="away_team_color" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_team_color}"
+                        <input type="hidden" name="record[away_team_color]" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_team_color}"
                             {/eq}>
-                        <input type="hidden" name="away_team_colorstyle" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_team_colorstyle}"
+                        <input type="hidden" name="record[away_team_colorstyle]" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_team_colorstyle}"
                             {/eq}>
                     </a>
                 </div>
@@ -747,14 +749,14 @@
                 $(".opponentCont").text(opponent);
                 var id = $(this).attr('data-id');
                 var awayLogo = $(this).attr('data-logo');
-                $("input[name=away_team_id]").val(id);
-                $("input[name=away_team_logo]").val(awayLogo);
+                $("input[name='record[away_team_id]']").val(id);
+                $("input[name='record[away_team_logo]']").val(awayLogo);
                 mui("#opponent").popover("toggle");
             })
             //清除球队
             $("#opponentDel").on('tap', '', function () {
                 $(".opponentCont").text("");
-                $("input[name=away_team_id]").val("");
+                $("input[name='record[away_team_id]']").val("");
                 mui("#opponent").popover("toggle");
             })
 
@@ -794,17 +796,17 @@
                 $(".home_color_text").html(home_color_text);
                 //颜色的中文赋值
                 var home_team_color = $(this).find("font").text();
-                $("input[name=home_team_color]").val(home_team_color).addClass("data");
+                $("input[name='record[home_team_color]']").val(home_team_color).addClass("data");
                 //颜色的英文赋值
                 var home_team_colorstyle = $(this).find("input[name=color]").val();
-                $("input[name=home_team_colorstyle]").val(home_team_colorstyle).addClass("data");
+                $("input[name='record[home_team_colorstyle]']").val(home_team_colorstyle).addClass("data");
                 mui("#homeColor").popover("toggle");
             });
             //清除主场颜色
             $("#homeDel").on('tap', '', function () {
                 $(".home_color_text").text('');
-                $("input[name=home_team_color]").val("").removeClass("data");
-                $("input[name=home_team_colorstyle]").val("").removeClass("data");
+                $("input[name='record[home_team_color]']").val("").removeClass("data");
+                $("input[name='record[home_team_colorstyle]']").val("").removeClass("data");
                 mui("#homeColor").popover("toggle");
             });
 
@@ -815,17 +817,17 @@
                 $(".away_color_text").html(away_color_text);
                 //颜色的中文赋值
                 var away_team_color = $(this).find("font").text();
-                $("input[name=away_team_color]").val(away_team_color).addClass("data");
+                $("input[name='record[away_team_color]']").val(away_team_color).addClass("data");
                 //颜色的英文赋值
                 var away_team_colorstyle = $(this).find("input[name=color]").val();
-                $("input[name=away_team_colorstyle]").val(away_team_colorstyle).addClass("data");
+                $("input[name='record[away_team_colorstyle]']").val(away_team_colorstyle).addClass("data");
                 mui("#awayColor").popover("toggle");
             });
             //清除客场颜色
             $("#awayDel").on('tap', '', function () {
                 $(".away_color_text").text('');
-                $("input[name=away_team_color]").val("").removeClass("data");
-                $("input[name=away_team_colorstyle]").val("").removeClass("data");
+                $("input[name='record[away_team_color]']").val("").removeClass("data");
+                $("input[name='record[away_team_colorstyle]']").val("").removeClass("data");
                 mui("#awayColor").popover("toggle");
             });
 
@@ -969,6 +971,14 @@
             $(document).on('tap', '.delbtn', function () {
                 $(this).parent().remove();
             });
+
+            // 添加新的球队
+            $(document).on('tap','.addBtn',function(){
+                var addOpponent = $(".addInput").val();
+                $(".opponentCont").text(addOpponent);
+                $("input[name='record[away_team_id]']").val("-1");
+                mui("#opponent").popover("toggle");
+            });
         })
 
         // 获取数据并进行提交
@@ -1004,10 +1014,10 @@
             objData.album = JSON.stringify(album);
 
             if (directentry == 0) {
-                var url = "{:url('api/match/updatematchrecord')}";
+                var url = "{:url('api/match/storefriendlymatchrecord')}";
                 var ajaxResult = wooApi.asyncF(url, objData);
             } else {
-                var url = "{:url('api/match/creatematchrecord')}";
+                var url = "{:url('api/match/storefriendlymatchrecord')}";
                 var ajaxResult = wooApi.asyncF(url, objData);
             }
             if (ajaxResult.code == 200) {
@@ -1057,7 +1067,7 @@
                         }
                         $(wTeamList).empty();
                         if (newli == '') {
-                            newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="请填写你要添加的球队" /><button class="mui-btn addBtn">确认</button></div>'
                         }
                         $(wTeamList).append(newli);
                         $(currPage).text(data.data.current_page);

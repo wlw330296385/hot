@@ -170,6 +170,17 @@ class MatchService {
         }
     }
 
+    // 获取一条比赛出赛会员数据
+    public function getMatchRecordMember($map) {
+        $model = new MatchRecord();
+        $res = $model->where($map)->find();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
     // 比赛球队战绩列表Pagigator
     public function matchRecordListPaginator($map, $order='id desc', $paginate=10) {
         $model = new MatchRecord();
