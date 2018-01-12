@@ -13,14 +13,14 @@ class Lesson extends Model{
         return $status[$value];
     }
 
-    public function getEndAttr($value){
-        return date('Y-m-d',$value);           
-    }
+    // public function getEndAttr($value){
+    //     return date('Y-m-d',$value);           
+    // }
     
 
-    public function getStartAttr($value){
-        return date('Y-m-d',$value);    
-    }    
+    // public function getStartAttr($value){
+    //     return date('Y-m-d',$value);    
+    // }    
 
 
 
