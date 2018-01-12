@@ -171,7 +171,14 @@ class LessonMember extends Base{
     // 课程转移
     public function transferLessonApi(){
         try{
-            $map = input('post.');
+            $data = input('post.');
+            $new_lesson_id = $data['new_lesson_id'];
+            $lesson_id = $data['lesson_id'];
+            $student_id = $data['student_id'];
+            $isGrade = db('grade_member')->where(['lesson_id'=>$lesson_id,'student_id'=>$student_id,'status'=>1])->find();
+            if($isGrade){
+                return json(['code'=>100,'msg'=>'请先把学生移除出'.$isGrade['grade'].'班级']);
+            }
                         
             $result = $this->LessonMemberService->updateLessonMember($data,$map);
             return json($result);

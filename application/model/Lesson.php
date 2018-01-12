@@ -12,6 +12,18 @@ class Lesson extends Model{
         $status = [0=>'未审核',1=>'上架', -1 => '下架'];
         return $status[$value];
     }
+
+    public function getEndAttr($value){
+        return date('Y-m-d',$value);           
+    }
+    
+
+    public function getStartAttr($value){
+        return date('Y-m-d',$value);    
+    }    
+
+
+
 	// 关联场地表
 	public function court(){
 		return $this->hasOne('court','court_id','id',[],'LEFT JOIN')->field('province,city,area,location,principal,contract,chip_rent,full_rent,half_rent');

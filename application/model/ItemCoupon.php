@@ -12,5 +12,12 @@ class ItemCoupon extends Model {
     //                         'type',
     //                         ];
 
-	
+	public function getEndAttr($value){
+        return date('Y-m-d H:i',$value);           
+    }
+    
+
+    public function getStartAttr($value){
+        return date('Y-m-d H:i',$value);    
+    }
 }

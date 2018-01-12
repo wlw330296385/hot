@@ -17,6 +17,16 @@ class Event extends Model{
     //     return $TargetType[$value];
     // }
    	
+    public function getEndAttr($value){
+        return date('Y-m-d',$value);           
+    }
+    
+
+    public function getStartAttr($value){
+        return date('Y-m-d',$value);    
+    }  
+
+    
    	public function getIsMaxAttr($value){
         $status = [1=>'正常',-1=>'已满人'];
         return $status[$value];
