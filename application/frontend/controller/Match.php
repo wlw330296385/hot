@@ -3,11 +3,14 @@
 namespace app\frontend\controller;
 
 
+use app\service\MatchService;
+
 class Match extends Base {
     // 赛事列表（平台展示）
     public function matchlist() {
         return view('Match/matchList');
     }
+
     // 赛事详情
     public function matchinfo() {
         return view('Match/matchInfo');
@@ -28,5 +31,19 @@ class Match extends Base {
     // 比赛管理列表
     public function matchlistofteam() {
         return view('Match/matchlistofteam');
+    }
+
+    // 约战比赛列表
+    public function friendlylist() {
+        return view('Match/friendlylist');
+    }
+
+    // 约战比赛详情
+    public function friendlyinfo() {
+        $id = input('match_id');
+        $matchS = new MatchService();
+        $matchInfo = $matchS->getMatch(['id' => $id]);
+        $this->assign('matchInfo', $matchInfo);
+        return view('Match/friendlyinfo');
     }
 }

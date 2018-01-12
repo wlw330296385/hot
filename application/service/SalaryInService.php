@@ -46,6 +46,25 @@ class SalaryInService {
         }
     }
 
+    // 获取工资列表（page页码）
+    public function getSalaryInPagintor($map = [],$order = 'id DESC', $paginate=10){
+        $res = $this->SalaryIn->where($map)->order($order)->paginate($paginate);
+        if($res){
+            // 数据集转换为数组
+            $result = $res->toArray();
+            // 数据字段内容格式转换
+            foreach ($result['data'] as $k => $val) {
+                // 课时上课时间(schedule_time)格式化
+                if ($val['schedule_time']) {
+                    $result['data'][$k]['schedule_time'] = date('Y-m-d H:i', $val['schedule_time']);
+                }
+            }
+            return $result;
+        }else{
+            return $res;
+        }
+    }
+
     /**
      * 参数:  
      * 递归分销
