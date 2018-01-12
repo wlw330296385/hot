@@ -9,13 +9,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
     <!--选择器样式-->
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css" />
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
@@ -35,18 +31,18 @@
 <body>
 
     <header class="mui-bar mui-bar-nav subheader header2">
-        <a class="mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title">注册教练身份</h1>
     </header>
     <div class="mui-content pt">
 
-        <div class="register mt25">
+        <div class="register">
             <form action="" class="mui-input-group">
                 <input type="hidden" name="memberid" value="{$mid}"> {notempty name="memberInfo.nickname"}
                 <div class="mui-input-row">
                     <label>微信昵称</label>
                     <span>
-                {$memberInfo['nickname']}</span>
+                        {$memberInfo['nickname']}</span>
                 </div>
                 {/notempty}
                 <div class="mui-input-row">
@@ -112,7 +108,8 @@
             </form>
 
             <div class="tip-box">
-                <input name="iagree" type="checkbox" />&nbsp;<a href="#userAgreement" >已阅读并同意篮球管家用户协议（点击查看）</a>
+                <input name="iagree" type="checkbox" />&nbsp;
+                <a href="#userAgreement">已阅读并同意篮球管家用户协议（点击查看）</a>
             </div>
             <div class="tjbtn mb44">
                 <button type="button" class="mui-btn btn registerbtn2">注册</button>
@@ -123,7 +120,9 @@
 
     <div id="userAgreement" class="mui-popover mui-popover-action mui-popover-bottom whitebg">
         <div class="page-header">
-            <span class="course"><strong>篮球管家服务平台与用户共同确认：</strong></span>
+            <span class="course">
+                <strong>篮球管家服务平台与用户共同确认：</strong>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll"></div>
@@ -137,7 +136,7 @@
     <script src="/static/frontend/js/mui.poppicker.js"></script>
     <script src="/static/frontend/js/city.data-3.js"></script>
     <script>
-                                                                      var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -198,7 +197,7 @@
                 timeout: 10000,//超时时间设置为10秒；
                 headers: { 'Content-Type': 'application/json' },
                 success: function (data) {
-                    console.log(data);
+                    // console.log(data);
                     $("#userAgreement .mui-scroll").append(data);
 
                 },
