@@ -394,13 +394,15 @@
                             <input type="password" name="confirm" class="reg_confirm" placeholder="请输入确认密码">
                         </div>
                     </form>
-                    <a href="#forgetPassWord" class="forgetPW">忘记密码</a>
+                   
                     <span class="tipspan password_hint confirm_hint newpassword_hint"></span>
                     <div class="tjbtn tjbtn-next">
                         <button type="sumbit" class="btn passwordBtn">
                             修改
                         </button>
+
                     </div>
+                    <a href="#forgetPassWord" class="forgetPW">忘记密码</a>
                 </div>
             </div>
         </div>
@@ -587,6 +589,35 @@
 
                 }
             });
+
+
+            // 忘记密码
+            $('.forgetPWBtn').on('tap','',function(){
+                mui.ajax("{:url('api/member/forgetPassword')}", {
+                    data: {
+                        
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        if (data.code == 200) {
+                            mui.alert(data.msg, '', function () {
+                                setTimeout(viewApi.back(), 3000);
+                            })
+                            // $(".step1").hide();
+                            // $(".step2").show();
+                            // $(".stepback").click(function () {
+                            //     setTimeout(window.location.href = "{:url('member/membersetup')}", 2500);
+                            // })
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        console.log(data);
+                    }
+                });
+            })
 
             // 修改邮箱
             $(".emailBtn").click(function () {

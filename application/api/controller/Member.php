@@ -293,7 +293,29 @@ class Member extends Base{
         }
     }
 
-
+    // 忘记密码
+    public function forgetPassword(){
+        try{
+            $code = mt_rand(100000, 999999);
+            $content = ['code'=>$code,'minute' => 5, 'comName' => '重置密码'];
+            $smsApi = new \app\api\controller\Sms;
+            $result = $smsApi->sendSmsCodeApi($content,$this->memberInfo['telephone'],'忘记密码'); 
+            if($result['code']==200){
+                $res = db('member')->where(['id'=>$this->memberInfo['id']])->update(['password'=>passwd($code)]);
+                if($res){
+                    return json(['code'=>200,'msg'=>'密码已重置']);
+                }else{
+                    return json(['code'=>100,'msg'=>'密码重置失败']);
+                }
+                
+            }else{
+                return json($result); 
+            }
+              
+        }catch(Exception $e){
+            return json(['code' => 100, 'msg' => $e->getMessage()]);  
+        }
+    }
 
     // 清理模板缓存
     public function clearTempAhce(){

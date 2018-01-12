@@ -61,4 +61,28 @@ class LessonMemberService{
     	return $result?$result:0;
     }
     
+    // 修改lesson_member
+    public function updateLessonMember($data,$map){
+        $result = $this->LessonMemberModel->save($data,$map);
+        if($result){
+            return ['code'=>200,'msg'=>'操作成功'];
+        }else{
+            return ['code'=>100,'msg'=>$this->LessonMemberModel->getError()];
+        }    
+    }
+
+    // 添加lesson_member
+    public function updateLessonMember($data){
+        $result = $this->LessonMemberModel->save($data);
+        if($result){
+            return ['code'=>200,'msg'=>'操作成功'];
+        }else{
+            return ['code'=>100,'msg'=>$this->LessonMemberModel->getError()];
+        }    
+    }
+
+    // 课程转移
+    public function transferLesson(){
+            
+    }
 }

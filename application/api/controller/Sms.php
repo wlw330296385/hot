@@ -57,4 +57,32 @@ class Sms {
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+    // 发送信息
+    public function sendSmsCodeApi($content,$telephone,$remarks = '通用'){
+        try{
+
+            $smsApi = new SmsApi();
+            $smsApi->paramArr = [
+                'mobile' => $telephone,
+                'content' => json_encode($content),
+                'tNum' => 'T150606060601'
+            ];
+            $sendsmsRes = $smsApi->sendsms();
+            if ($sendsmsRes == 0) {
+                $data = ['smscode' => $content['code'], 'phone' => $telephone, 'content' => $content,'create_time' => time(), 'use' => $remarks];
+                $savesms = db('smsverify')->insert($data);
+                if (!$savesms) {
+                    return [ 'code' => 100, 'msg' => '短信记录异常' ];
+                }
+
+                return [ 'code' => 200, 'msg' => '短信已发送,请注意查收' ];
+            } else {
+                return [ 'code' => 100, 'msg' => '短信发送失败,请重试' ];
+            }
+        }catch(Exception $e){
+            return json(['code' => 100, 'msg' => $e->getMessage()]);  
+        }
+    }
 }

@@ -166,4 +166,17 @@ class LessonMember extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+    // 课程转移
+    public function transferLessonApi(){
+        try{
+            $map = input('post.');
+                        
+            $result = $this->LessonMemberService->updateLessonMember($data,$map);
+            return json($result);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }
