@@ -33,6 +33,14 @@ class Coupon extends Base{
         return view('Coupon/itemCouponList');
     }
 
+    public function couponListOfCamp(){
+
+
+        
+        return view('Coupon/couponListOfCamp');
+    }
+
+
     public function updateItemCoupon(){   	
     	$itemCoupon_id = input('param.item_coupon_id');
 
