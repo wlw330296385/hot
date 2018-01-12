@@ -179,8 +179,31 @@ class LessonMember extends Base{
             if($isGrade){
                 return json(['code'=>100,'msg'=>'请先把学生移除出'.$isGrade['grade'].'班级']);
             }
-                        
-            $result = $this->LessonMemberService->updateLessonMember($data,$map);
+            $lessonMemberInfo = $this->LessonMemberService->getLessonMemberInfo(['lesson_id'=>$lesson_id,'student_id'=>$student_id,'status'=>1]);
+            if(!$lessonMemberInfo){
+                return json(['code'=>100,'msg'=>'该学生状态已改变']);
+            }            
+
+            if($lessonMemberInfo['transfer']==1){
+                return json(['code'=>100,'msg'=>'该生已转过课,不允许再次转课']);
+            }
+
+            $newLessonInfo = db('lesson')->where(['id'=>$new_lesson_id])->find();
+            $lessonInfo = db('lesson')->where(['id'=>$lesson_id])->find();
+            if($newLessonInfo['price']<>$lessonInfo['price']){
+                return json(['code'=>100,'msg'=>'课程单价不一样,不允许转课']);
+            }
+            //旧的
+            $data1 = ['rest_schedule'=>0,'status'=>2];
+            $map1 = ['id'=>$lessonMemberInfo['id']];
+            // 新的
+            $data2 = $lessonInfo;
+            $data['transfer'] = 1;
+            unset($data['create_time']);
+            unset($data['update_time']);
+
+            $res = $this->LessonMemberService->createLessonMember($data2);
+            $result = $this->LessonMemberService->updateLessonMember($data1,$map1);
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

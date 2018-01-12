@@ -19,7 +19,7 @@ class Coupon extends Base{
     	$itemCoupon_id = input('param.item_coupon_id');
         $itemCouponInfo = $this->ItemCouponService->getItemCouponInfo(['id'=>$itemCoupon_id]);
         $itemCouponMemberInfo = $this->ItemCouponService->getItemCouponMemberInfo(['item_coupon_id'=>$itemCoupon_id,'member_id'=>$this->memberInfo['id']]);
-        // dump($itemCouponMemberInfo);die;
+
         $this->assign('itemCouponMemberInfo',$itemCouponMemberInfo);
         $this->assign('itemCouponInfo',$itemCouponInfo);
     	return view('Coupon/itemCouponInfo');
