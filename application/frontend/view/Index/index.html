@@ -9,10 +9,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css" />
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--顶部下滑菜单 menu-wrapper.css-->
@@ -30,7 +26,7 @@
             fill: currentColor;
             overflow: hidden;
         }
-        
+
         .goConfirm .mui-media-body {
             height: 24px !important;
             line-height: 24px !important;
@@ -40,15 +36,15 @@
 
 <body class="mt44">
 
-
-    <!--首页-->
     <div class="mui-content">
         <!--定位、搜索触发-->
         <header id="header" class="mui-bar mui-bar-nav search1">
             <div class="mui-pull-left mui-icon mui-icon-location" id="showCityPicker3">
                 <span class="address" id="cityResult3">大热市</span>
             </div>
-            <div class="mui-pull-left"><input type="search" id="search-input" placeholder="搜课程/活动/球场等"></div>
+            <div class="mui-pull-left">
+                <input type="search" id="search-input" placeholder="搜课程/活动/球场等">
+            </div>
             <span class="mui-icon mui-icon-search searchicon" id="search-Btn"></span>
         </header>
 
@@ -120,12 +116,12 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <div class="goConfirm">
+                        <a href="{:url('match/friendlylist')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-home-VS"></use>
                             </svg>
                             <div class="mui-media-body">约战</div>
-                        </div>
+                        </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
                         <a href="{:url('camp/campList')}">
@@ -172,16 +168,13 @@
 
             <!--热门课程-->
             <div class=show-list>
-
                 <div class="page-header border-b">
                     <span class="course">热门课程</span>
-                    <span class="more"><a href="{:url('lesson/lessonList')}" class="mui-navigate-right">更多</a></span>
+                    <span class="more">
+                        <a href="{:url('lesson/lessonList')}" class="mui-navigate-right">更多</a>
+                    </span>
                 </div>
-
-                <ul class="mui-table-view mui-grid-view show-list-cont" id="hot-lesson">
-
-                </ul>
-
+                <ul class="mui-table-view mui-grid-view show-list-cont" id="hot-lesson"></ul>
             </div>
 
             <div class="show-list hot-ads">
@@ -190,31 +183,28 @@
 
             <!--热门训练营-->
             <div class="show-list mt mb44">
-
                 <div class="page-header border-b">
                     <span class="course">热门训练营</span>
-                    <span class="more"><a href="{:url('camp/campList')}" class="mui-navigate-right">更多</a></span>
+                    <span class="more">
+                        <a href="{:url('camp/campList')}" class="mui-navigate-right">更多</a>
+                    </span>
                 </div>
-
-                <ul class="mui-table-view mui-grid-view show-list-cont" id="hot-camp">
-
-                </ul>
-
+                <ul class="mui-table-view mui-grid-view show-list-cont border-b" id="hot-camp"></ul>
             </div>
             <input type="hidden" name="mid" value="{$mid}">
+
         </div>
     </div>
-
 
     <div id="menu-wrapper" class="menu-wrapper hidden">
         <div id="menu" class="menu search">
             <!--搜索执行-->
             <header id="header-search" class="mui-bar mui-bar-nav search1" style="position: relative !important;">
                 <div class="mui-pull-left mui-icon mui-icon-back" id="close-search"></div>
-                <div class="mui-pull-left searchType">
-                    搜<span>课程</span>
+                <div class="mui-pull-left searchType">搜课程</div>
+                <div class="mui-pull-left">
+                    <input type="search" id="searchInput" class="mui-input-clear" placeholder="请输入搜索关键字">
                 </div>
-                <div class="mui-pull-left"><input type="search" id="searchInput" class="mui-input-clear" placeholder="请输入搜索关键字"></div>
                 <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
             </header>
             <div class="search">
@@ -228,15 +218,33 @@
                 <div class="hot-search">
                     <h4>热门搜索</h4>
                     <ul class="hot-search-frame">
-                        <li s-keyword="" s-table=""><span>幼儿课程</span></li>
-                        <li s-keyword="" s-table=""><span>基础课程</span></li>
-                        <li s-keyword="" s-table=""><span>强化课程</span></li>
-                        <li s-keyword="" s-table=""><span>初中课程</span></li>
-                        <li s-keyword="" s-table=""><span>室内球场</span></li>
-                        <li s-keyword="" s-table=""><span>室外球场</span></li>
-                        <li s-keyword="" s-table=""><span>特色课程</span></li>
-                        <li s-keyword="" s-table=""><span>男教练</span></li>
-                        <li s-keyword="" s-table=""><span>女教练</span></li>
+                        <li s-keyword="" s-table="">
+                            <span>幼儿课程</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>基础课程</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>强化课程</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>初中课程</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>室内球场</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>室外球场</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>特色课程</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>男教练</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>女教练</span>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -271,6 +279,8 @@
                 layer: 3
             });
             cityPicker3.setData(cityData3);
+            // 设置默认值
+            cityPicker3.pickers[0].setSelectedIndex(18);
             var showCityPickerButton = doc.getElementById('showCityPicker3');
             var cityResult3 = doc.getElementById('cityResult3');
             showCityPickerButton.addEventListener('tap', function (event) {
@@ -301,9 +311,7 @@
         window.top.location.href = this.href;
     });
 
-
     $(function () {
-
 
         //未开发提示
         $(".goConfirm").click(function () {
@@ -311,7 +319,6 @@
         })
 
         // if(window.localStorage){ alert("浏览支持localStorage") }else{ alert("浏览暂不支持localStorage") }
-
         //localStorage.clear();
 
         //获取定位省市区
@@ -327,9 +334,9 @@
 
         //提示框
         if ($('input[name=mid]').val() == 0) {
-            mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function(e) {
-                if (e.index===1) {
-                    window.location.href="{$fasturl}";
+            mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                if (e.index === 1) {
+                    window.location.href = "{$fasturl}";
                 }
             });
         }
@@ -351,7 +358,6 @@
         })
 
     })
-
 
     //拼接搜索地址
     function getSearchUrl(tb, ty, kw) {
@@ -394,7 +400,6 @@
             busying = false;
         }, 500);
     }
-
 
     //获取热门课程并追加到页面
     var toLessonList = function (sCity, sProvince) {
