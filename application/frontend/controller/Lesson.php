@@ -38,21 +38,36 @@ class Lesson extends Base{
         //卡券列表
         $map = function($query){
                     $query->where(['target_type'=>1])
+                    ->where(['start'=>['lt',time()]])
+                    ->where(['end'=>['gt',time()]])
                     ->whereOr(['target_type'=>3])
                     ;
                 };
-        // 平台卡券
-        $couponListOfSystem = db('item_coupon')->where($map)->whereOr(['target_type'=>3])->select();
-        // 训练营卡券
-        $couponListOfCamp = db('item_coupon')->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id']])->where($map)->select();
+        // 卡券系统        
         $item_coupon_ids = [];
-        foreach ($couponListOfSystem as $key => $value) {
-            $item_coupon_ids[] = $value['id'];
+        $ItemCoupon = new \app\model\ItemCoupon;
+        // 平台卡券
+        $couponListOfSystem = $ItemCoupon->where($map)->whereOr(['target_type'=>3])->select();
+        // 训练营卡券
+        $couponListOfCamp = $ItemCoupon->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id']])->where($map)->select();
+        if($couponListOfSystem){
+            $couponListOfSystem = $couponListOfSystem->toArray();
+            foreach ($couponListOfSystem as $key => $value) {
+                $item_coupon_ids[] = $value['id'];
+            }
+        }else{
+            $couponListOfSystem = [];
         }
-        foreach ($couponListOfCamp as $key => $value) {
-            $item_coupon_ids[] = $value['id'];
+        if($couponListOfCamp){
+            $couponListOfCamp = $couponListOfCamp->toArray();
+            foreach ($couponListOfCamp as $key => $value) {
+                $item_coupon_ids[] = $value['id'];
+            }
+        }else{
+            $couponListOfCamp = [];
         }
-        // dump($item_coupon_ids);die;
+        
+        
         $this->assign('item_coupon_ids',json_encode($item_coupon_ids));
         $this->assign('couponListOfSystem',$couponListOfSystem);
         $this->assign('couponListOfCamp',$couponListOfCamp);
