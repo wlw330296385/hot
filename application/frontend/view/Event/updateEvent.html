@@ -385,7 +385,7 @@
         var getCity = '';
         var getArea = '';
         (function ($, doc) {
-            $.ready(function () {
+            $.ready(function (i, j, k) {
                 var _getParam = function (obj, param) {
                     return obj[param] || '';
                 };
@@ -396,10 +396,26 @@
                 });
 
                 // 设置默认值
-                cityPicker3.pickers[0].setSelectedIndex(18);
-                cityPicker3.pickers[1].setSelectedIndex(2);
-                cityPicker3.pickers[2].setSelectedIndex(2);
+                cityPicker3.pickers[0].setSelectedIndex(searchProvince(cityData3, "{$eventInfo.province}"));
+                // cityPicker3.pickers[1].setSelectedIndex(searchCity(cityData3[i].children[j], "{$eventInfo.city}"));
+                // cityPicker3.pickers[2].setSelectedIndex(2);
 
+                // for (i = 0; i < cityData3.length; i++) {
+                //     cityData3[i].index = i;
+                //     console.log(cityData3.length)
+                //     console.log(cityData3[i].text + '第一级')
+                //     for (j = 0; j < cityData3.length; i++) {
+                //         cityData3[i].children[j].index = j;
+                //         console.log(cityData3[i].children[j].length)
+                //         console.log(cityData3[i].children[j].text + '第二级')
+                //         for (k = 0; k < cityData3.length; i++) {
+                //             cityData3[i].children[j].children[k].index = k;
+                //             console.log(cityData3[i].children[j].children[k].text + '第三级')
+                //         }
+                //     }
+
+                // }
+                // console.log(cityData3)
                 cityPicker3.setData(cityData3);
                 var showCityPickerButton = doc.getElementById('showCityPicker3');
                 var cityResult3 = doc.getElementById('cityResult3');
@@ -450,6 +466,18 @@
 
             });
         })(mui, document);
+
+        function searchProvince(cityData3, province) {
+            var i = cityData3.length;
+            while (i -= 1) {
+                if (cityData3[i].text == province) {
+                    return i;
+                }
+            }
+            return false;
+        }
+
+
         //初始化全局变量
         var eventDomArr = [{ name: '默认', price: 0 }];
         $(function () {
