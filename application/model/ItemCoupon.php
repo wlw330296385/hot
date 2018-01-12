@@ -20,4 +20,13 @@ class ItemCoupon extends Model {
     public function getStartAttr($value){
         return date('Y-m-d H:i',$value);    
     }
+
+    public function getPublishEndAttr($value){
+        return date('Y-m-d H:i',$value);           
+    }
+    
+
+    public function getPublishStartAttr($value){
+        return date('Y-m-d H:i',$value);    
+    }
 }
