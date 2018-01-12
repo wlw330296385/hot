@@ -46,6 +46,7 @@ class MatchService {
             $result = $res->toArray();
             $result['type_num'] = $res->getData('type');
             $result['is_finished_num'] = $res->getData('is_finished');
+            $result['status'] = $res->getData('status');
             return $result;
         } else {
             return $res;
@@ -83,6 +84,12 @@ class MatchService {
         } else {
             return $res;
         }
+    }
+    
+    // 软删除比赛记录
+    public function deleteMatch($id) {
+        $res = Match::destroy($id);
+        return $res;
     }
 
     // 保存比赛球队数据
@@ -170,8 +177,8 @@ class MatchService {
         }
     }
 
-    // 获取一条比赛出赛会员数据
-    public function getMatchRecordMember($map) {
+    // 获取一条比赛战绩数据
+    public function getMatchRecord($map) {
         $model = new MatchRecord();
         $res = $model->where($map)->find();
         if ($res) {
@@ -192,6 +199,7 @@ class MatchService {
                 ->with('match')
                 ->where($map)
                 ->where('home_team_id|away_team_id', $team_id)
+                ->whereOr('team_id', $team_id)
                 ->order($order)->paginate($paginate);
         } else {
             $res = $model->with('match')->where($map)->order($order)->paginate($paginate);
@@ -215,6 +223,7 @@ class MatchService {
                 ->with('match')
                 ->where($map)
                 ->where('home_team_id|away_team_id', $team_id)
+                ->whereOr('team_id', $team_id)
                 ->order($order)->page($page)->limit($limit)->select();
         } else {
             $res = $model->with('match')->where($map)->order($order)->page($page)->limit($limit)->select();
@@ -237,6 +246,7 @@ class MatchService {
                 ->with('match')
                 ->where($map)
                 ->where('home_team_id|away_team_id', $team_id)
+                ->whereOr('team_id', $team_id)
                 ->order($order)->order($order)->select();
         } else {
             $res = $model->with('match')->where($map)->order($order)->select();
@@ -249,20 +259,9 @@ class MatchService {
         }
     }
 
-    // 比赛战绩详情（关联比赛主表信息）
-    public function getMatchRecordWith($map) {
-        $model = new MatchRecord();
-        $res = $model->with('match')->where($map)->find();
-        if ($res) {
-            return $res->toArray();
-        } else {
-            return $res;
-        }
-    }
-
-    // 比赛战绩详情
-    public function getMatchRecord($map) {
-        $model = new MatchRecord();
+    // 查询比赛战绩-会员关系
+    public function getMatchRecordMember($map) {
+        $model = new MatchRecordMember();
         $res = $model->where($map)->find();
         if ($res) {
             return $res->toArray();
@@ -271,10 +270,22 @@ class MatchService {
         }
     }
 
+    // 保存比赛战绩-会员关系
+    public function saveMatchRecordMember($data) {
+        $model = new MatchRecordMember();
+        $res = $model->allowField(true)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $res];
+        } else {
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
     // 批量保存比赛战绩-会员关系
     public function saveAllMatchRecordMember($data) {
         $model = new MatchRecordMember();
-        $res = $model->saveAll($data);
+        $res = $modell->allowField(true)->saveAll($data);
         if ($res) {
             return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $res];
         } else {

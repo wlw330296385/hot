@@ -95,10 +95,11 @@
                 </div>
 
                 <div class="mui-input-row">
-                    <a href="#opponent" class="mui-navigate-right">
+                    <a href="#awayTeam" class="mui-navigate-right">
                         <label>对手</label>
-                        <span class="opponentCont domData" name="opponent"></span>
-                        <input type="hidden" name="opponent_id" value="" class="data">
+                        <span class="away_team_Cont domData" name="away_team"></span>
+                        <input type="hidden" name="away_team_id" value="" class="data">
+                        <input type="hidden" name="away_team_logo" value="" class="data">
                     </a>
                 </div>
 
@@ -158,8 +159,8 @@
                         <label>是否约战</label>
                         <span class="select-row">
                             <select class="data" id="islive" name="islive">
-                                <option value="0">否</option>
-                                <option value="1">是</option>
+                                <option value="0">不约战</option>
+                                <option value="1">约战</option>
                             </select>
                         </span>
                     </div>
@@ -170,8 +171,8 @@
                         <label>是否公开</label>
                         <span class="select-row">
                             <select class="data" name="status">
-                                <option value="1">是</option>
-                                <option value="-1">否</option>
+                                <option value="1">公开</option>
+                                <option value="-1">不公开</option>
                             </select>
                         </span>
                     </div>
@@ -189,14 +190,14 @@
 
 
     <!--选择对手-->
-    <div id="opponent" class="mui-popover" style="margin: 0">
+    <div id="awayTeam" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
             <span class="course wd36">
                 <strong>选择对手</strong>
             </span>
             <span class="fr">
-                <button class="mui-btn" id="opponentDel">清除</button>
+                <button class="mui-btn" id="awayTeamDel">清除</button>
             </span>
         </div>
         <div class="camp-lesson-list">
@@ -469,13 +470,14 @@
         };
 
         //  判断约战与对手的存在关系
-        var isOpponent = '';
+        var isaway_team_Cont = '';
         var isLive = '';
         function isLivepd() {
-            isOpponent = $(".opponentCont").text();
+            isaway_team_Cont = $(".away_team_Cont").text();
             isLive = $("#islive").children('option:selected').val()
-            if (isOpponent != '' && isLive == 1) {
-                mui.alert("已选择对手不能设为约战")
+            if (isaway_team_Cont != '' && isLive == 1) {
+                mui.alert("已选择对手不能设为约战");
+                return false;
             }
         }
 
@@ -518,44 +520,47 @@
             //////////////////////选择对手////////////////////////////////////
             // 选择对手
             $(".teamList").on('tap', 'li', function () {
-                var opponent = $(this).children(".name").text();
-                $(".opponentCont").text(opponent);
+                var away_team_Cont = $(this).children(".name").text();
+                $(".away_team_Cont").text(away_team_Cont);
                 var id = $(this).attr('data-id');
-                $("input[name=opponent_id]").val(id);
-                mui("#opponent").popover("toggle");
+                $("input[name=away_team_id]").val(id);
+                var away_team_logo = $(this).attr('data-logo');
+                $("input[name=away_team_logo]").val(away_team_logo);
+                mui("#awayTeam").popover("toggle");
             })
             //清除球队
-            $("#opponentDel").on('tap', '', function () {
-                $(".opponentCont").text("");
-                $("input[name=opponent_id]").val("");
-                mui("#opponent").popover("toggle");
+            $("#awayTeamDel").on('tap', '', function () {
+                $(".away_team_Cont").text("");
+                $("input[name=away_team_id]").val("");
+                $("input[name=away_team_logo").val("");
+                mui("#awayTeam").popover("toggle");
             })
 
             //搜索球队
             $("#searchHM").on("tap", function () {
                 var keyword = $(".keywordHM").val();
                 var pageHM = 1;
-                toTeamList(keyword, "opponent", pageHM);
+                toTeamList(keyword, "awayTeam", pageHM);
             })
 
             //球队弹出框页码控制
-            $("#opponent").on('tap', '.next_page', function () {
-                var getTotalPage = $("#opponent .totalPageOp").text();
+            $("#awayTeam").on('tap', '.next_page', function () {
+                var getTotalPage = $("#awayTeam .totalPageOp").text();
                 pageHM++;
                 if (pageHM > getTotalPage) {
                     mui.toast("已经最后一页了");
                 } else {
                     var keyword = $(".keywordHM").val();
-                    toTeamList(keyword, "opponent", pageHM);
+                    toTeamList(keyword, "awayTeam", pageHM);
                 }
             })
-            $("#opponent").on('tap', '.prev_page', function () {
+            $("#away_team").on('tap', '.prev_page', function () {
                 pageHM--;
                 if (pageHM < 1) {
                     mui.toast("已经是第一页了");
                 } else {
                     var keyword = $(".keywordHM").val();
-                    toTeamList(keyword, "opponent", pageHM);
+                    toTeamList(keyword, "awayTeam", pageHM);
                 }
             })
             //////////////////////选择对手////////////////////////////////////
@@ -620,10 +625,10 @@
 
             // 添加新的球队
             $(document).on('tap', '.addBtn', function () {
-                var addOpponent = $(".addInput").val();
-                $(".opponentCont").text(addOpponent);
-                $("input[name=opponent_id]").val("-1");
-                mui("#opponent").popover("toggle");
+                var addAway_team = $(".addInput").val();
+                $(".away_team_Cont").text(addAway_team);
+                $("input[name=away_team_id]").val("-1");
+                mui("#awayTeam").popover("toggle");
             });
 
         })
@@ -682,7 +687,7 @@
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             if (data.data.data[i].id != "{$team_id}") {
-                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '"><label class="name">' + data.data.data[i].name + '</label><span class="wd36">' + data.data.data[i].city + '&nbsp;' + data.data.data[i].area + '</span></li>'
+                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '" data-logo="' + data.data.data[i].logo + '"><label class="name">' + data.data.data[i].name + '</label><span class="wd45">' + data.data.data[i].city + '&nbsp;' + data.data.data[i].area + '</span></li>'
                             }
                         }
                         $(wTeamList).empty();

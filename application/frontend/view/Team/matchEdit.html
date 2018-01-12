@@ -62,6 +62,14 @@
             line-height: 43px;
             padding: 0 15px !important;
         }
+        .addInput {
+            margin-top: 15px;
+        }
+
+        .addBtn {
+            margin-top: 15px;
+            padding: 12px 11px;
+        }
     </style>
 </head>
 
@@ -78,12 +86,10 @@
         <div class="camp-list camp-lesson-list">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
             <input type="hidden" name="directentry" value="{$directentry}">
-            <input type="hidden" name="team_id" value="{$team_id}" class="data">
-            {eq name="directentry" value="0"}
+            <input type="hidden" name="team_id" value="{$team_id}" class="data"> {eq name="directentry" value="0"}
             <!-- 区分创建/更新数据 -->
             <input type="hidden" name="record[id]" value="{$matchInfo.record.id}" class="data">
-            <input type="hidden" name="id" class="data" value="{$matchInfo.id}">
-            {/eq}
+            <input type="hidden" name="id" class="data" value="{$matchInfo.id}"> {/eq}
             <form action="" class="mui-input-group mt55">
 
                 <div class="mui-input-row">
@@ -106,15 +112,15 @@
                     <label>主队</label>
                     <span class="domData" name="record[home_team]">{$teamInfo.name}</span>
                     <input type="hidden" name="record[home_team_id]" class="data" {eq name="directentry" value="1" } value="{$team_id}" {else/}value="{$matchInfo.record.home_team_id}"
-                        {/eq} >
-                    <input type="hidden" name="record[home_team_logo]" class="data" {eq name="directentry" value="1" } value="{$teamInfo.logo}" {else/}value="{$matchInfo.record.home_team_logo}"
-                        {/eq} />
+                        {/eq}>
+                    <input type="hidden" name="record[home_team_logo]" class="data" {eq name="directentry" value="1" } value="{$teamInfo.logo}"
+                        {else/}value="{$matchInfo.record.home_team_logo}" {/eq} />
                 </div>
 
                 <div class="mui-input-row">
                     <label>主队得分</label>
-                    <input type="text" class="data" name="record[home_score]" placeholder="请输入主队得分" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.home_score}"
-                        {/eq}>
+                    <input type="text" class="data" name="record[home_score]" placeholder="请输入主队得分" {eq name="directentry" value="1" } value=""
+                        {else/}value="{$matchInfo.record.home_score}" {/eq}>
                 </div>
 
                 <div class="mui-input-row">
@@ -137,28 +143,28 @@
                 <!-- 主队信息  end-->
                 <p class="pline"></p>
 
+
                 <!-- 客队信息 -->
                 <div class="mui-input-row">
-                    {eq name="directentry" value="1" }
-                    <a href="#opponent" class="mui-navigate-right">
+                    <a href="#awayTeam" class="mui-navigate-right">
                         <label>客队</label>
-                        <span class="opponentCont domData" name="record[away_team]"></span>
+                        {eq name="directentry" value="1"}
+                        <span class="away_team_Cont domData" name="record[away_team]"></span>
+                        <input type="hidden" name="record[away_team_id]" value="" class="data">
+                        <input type="hidden" name="record[away_team_logo]" value="" class="data">
+                        {else/}
+                        <span class="away_team_Cont domData" name="record[away_team]">{$matchInfo.record.away_team}</span>
+                        <input type="hidden" name="record[away_team_id]" value="{$matchInfo.record.away_team_id}" class="data"> 
+                        <input type="hidden" name="record[away_team_logo]" class="data" value="{$matchInfo.record.away_team_logo}"/>
+                        {/eq}
                     </a>
-                    {else/}
-                    <label>客队</label>
-                    <span class="domData" name="record[away_team]">{eq name="directentry" value="1" }{else/}{$matchInfo.record.away_team}{/eq}</span>
-                    {/eq}
-
-                    <input type="hidden" name="record[away_team_id]" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_team_id}"
-                        {/eq} class="data">
-                    <input type="hidden" name="record[away_team_logo]" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_team_logo}"
-                        {/eq} />
+                   
                 </div>
 
                 <div class="mui-input-row">
                     <label>客队得分</label>
-                    <input type="text" class="data" name="record[away_score]" placeholder="请输入主队得分" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_score}"
-                        {/eq}>
+                    <input type="text" class="data" name="record[away_score]" placeholder="请输入主队得分" {eq name="directentry" value="1" } value=""
+                        {else/}value="{$matchInfo.record.away_score}" {/eq}>
                 </div>
 
                 <div class="mui-input-row">
@@ -282,14 +288,14 @@
     </div>
 
     <!--选择对手-->
-    <div id="opponent" class="mui-popover" style="margin: 0">
+    <div id="awayTeam" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
             <span class="course wd36">
                 <strong>选择对手</strong>
             </span>
             <span class="fr">
-                <button class="mui-btn" id="opponentDel">清除</button>
+                <button class="mui-btn" id="awayTeamDel">清除</button>
             </span>
         </div>
         <div class="camp-lesson-list">
@@ -553,20 +559,52 @@
         </div>
     </div>
 
-    <!--客队人员名单-->
-    <!-- <div id="addAwayMember" class="mui-popover">
+    <!--选择对手-->
+    <!-- <div id="awayTeam" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
+        <div class="page-header border-b">
             <span class="course wd36">
-                <strong>客队球员名单</strong>
+                <strong>选择对手</strong>
             </span>
             <span class="fr">
-                <button class="mui-btn-blue" id="AwayMemberConfirm">确认</button>
+                <button class="mui-btn" id="opponentDel">清除</button>
             </span>
         </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <form id="Awaynewdiv" class="mui-input-group addAwayMemberList"></form>
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control">
+                <a class="mui-control-item mui-active" href="#item1">搜索球队</a>
+                <a class="mui-control-item" href="#item2">历史对手</a>
+            </div>
+        </div>
+        <div id="item1" class="mui-control-content mui-active">
+            <div class="pop-search">
+                <input type="search" class="keywordHM" placeholder="请输入球队名称搜索">
+                <span class="mui-icon mui-icon-search searchicon" id="searchHM"></span>
+            </div>
+            <div class="mui-scroll-wrapper" style="top:40px !important;">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view list teamList"></ul>
+                    <ul class="mui-pager">
+                        <li>
+                            <a href="#" class="prev_page">上一页</a>
+                        </li>
+                        <li>
+                            <span class="currPageOp">0</span>/
+                            <span class="totalPageOp">0</span>
+                        </li>
+                        <li>
+                            <a href="#" class="next_page">下一页</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="item2" class="mui-control-content">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view list teamListHistory coach">
+                    </ul>
+                </div>
             </div>
         </div>
     </div> -->
@@ -745,40 +783,41 @@
             //////////////////////选择对手////////////////////////////////////
             // 选择对手
             $(".teamList").on('tap', 'li', function () {
-                var opponent = $(this).children(".name").text();
-                $(".opponentCont").text(opponent);
+                var away_team_Cont = $(this).children(".name").text();
+                $(".away_team_Cont").text(away_team_Cont);
                 var id = $(this).attr('data-id');
-                var awayLogo = $(this).attr('data-logo');
                 $("input[name='record[away_team_id]']").val(id);
-                $("input[name='record[away_team_logo]']").val(awayLogo);
-                mui("#opponent").popover("toggle");
+                var away_team_logo = $(this).attr('data-logo');
+                $("input[name='record[away_team_logo]']").val(away_team_logo);
+                mui("#awayTeam").popover("toggle");
             })
             //清除球队
-            $("#opponentDel").on('tap', '', function () {
-                $(".opponentCont").text("");
+            $("#awayTeamDel").on('tap', '', function () {
+                $(".away_team_Cont").text("");
                 $("input[name='record[away_team_id]']").val("");
-                mui("#opponent").popover("toggle");
+                $("input[name='record[away_team_logo]']").val("");
+                mui("#awayTeam").popover("toggle");
             })
 
             //搜索球队
             $("#searchHM").on("tap", function () {
                 var keyword = $(".keywordHM").val();
                 var pageHM = 1;
-                toTeamList(keyword, "opponent", pageHM);
+                toTeamList(keyword, "awayTeam", pageHM);
             })
 
             //球队弹出框页码控制
-            $("#opponent").on('tap', '.next_page', function () {
-                var getTotalPage = $("#opponent .totalPageOp").text();
+            $("#awayTeam").on('tap', '.next_page', function () {
+                var getTotalPage = $("#awayTeam .totalPageOp").text();
                 pageHM++;
                 if (pageHM > getTotalPage) {
                     mui.toast("已经最后一页了");
                 } else {
                     var keyword = $(".keywordHM").val();
-                    toTeamList(keyword, "opponent", pageHM);
+                    toTeamList(keyword, "awayTeam", pageHM);
                 }
             })
-            $("#opponent").on('tap', '.prev_page', function () {
+            $("#awayTeam").on('tap', '.prev_page', function () {
                 pageHM--;
                 if (pageHM < 1) {
                     mui.toast("已经是第一页了");
@@ -943,6 +982,14 @@
             //////////////////////常驻球场////////////////////////////////////
 
 
+            // 添加新的球队
+            $(document).on('tap', '.addBtn', function () {
+                var addAway_team = $(".addInput").val();
+                $(".away_team_Cont").text(addAway_team);
+                $("input[name=away_team_id]").val("-1");
+                mui("#awayTeam").popover("toggle");
+            });
+
             //活动花絮图片start·····································································
             // 初始化Web Uploader
             var uploader = WebUploader.create({
@@ -973,7 +1020,7 @@
             });
 
             // 添加新的球队
-            $(document).on('tap','.addBtn',function(){
+            $(document).on('tap', '.addBtn', function () {
                 var addOpponent = $(".addInput").val();
                 $(".opponentCont").text(addOpponent);
                 $("input[name='record[away_team_id]']").val("-1");
@@ -1062,7 +1109,7 @@
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             if (data.data.data[i].id != "{$team_id}") {
-                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '" data-logo="' + data.data.data[i].logo + '"><label class="name">' + data.data.data[i].name + '</label><span class="wd36">' + data.data.data[i].city + '&nbsp;' + data.data.data[i].area + '</span></li>'
+                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '" data-logo="' + data.data.data[i].logo + '"><label class="name">' + data.data.data[i].name + '</label><span class="wd45">' + data.data.data[i].city + '&nbsp;' + data.data.data[i].area + '</span></li>'
                             }
                         }
                         $(wTeamList).empty();

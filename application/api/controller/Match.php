@@ -2,6 +2,7 @@
 // 比赛api
 namespace app\api\controller;
 
+use app\model\MatchRecord;
 use app\service\MatchService;
 use app\service\TeamService;
 use think\Exception;
@@ -42,20 +43,20 @@ class Match extends Base
                 ];
                 $dataMatchRecord = array_merge($dataMatchRecord, $dataHometeam);
                 // 客队信息保存数据组合
-                if (!empty($data['opponent_id'])) {
-                    if ($data['opponent_id'] == $data['team_id']) {
+                if (!empty($data['away_team_id'])) {
+                    if ($data['away_team_id'] == $data['team_id']) {
                         return json(['code' => 100, 'msg' => '请选择其他球队']);
                     }
                     //$awayTeam = $teamS->getTeam(['id' => $data['opponent_id']]);
                     $dataAwayteam = [
-                        'away_team_id' => $data['opponent_id'],
-                        'away_team' => $data['opponent'],
-                        //'away_team_logo' => $awayTeam['logo'],
+                        'away_team_id' => $data['away_team_id'],
+                        'away_team' => $data['away_team'],
+                        'away_team_logo' => $data['away_team_logo'],
                         //'away_team_color' => $data['away_team_color'],
                         //'away_team_colorstyle' => $data['away_team_colorstyle']
                     ];
                     $dataMatchRecord = array_merge($dataMatchRecord, $dataAwayteam);
-                    $data['name'] = $homeTeam['name'] . 'vs' . $data['opponent'];
+                    $data['name'] = $homeTeam['name'] . 'vs' . $data['away_team'];
                 } else {
                     $data['name'] = $homeTeam['name'] . '友谊赛（对手待定）';
                 }
@@ -271,7 +272,7 @@ class Match extends Base
                     if (isset($post['album']) && $post['album'] != "[]") {
                         $recordData['album'] = $post['album'];
                     }
-                    
+
                     // 保存球队参赛人员
                     // 主队成员
                     if (isset($post['HomeMemberData']) && $post['HomeMemberData'] != "[]") {
@@ -294,7 +295,7 @@ class Match extends Base
                         $memberArr = json_decode($post['HomeMemberDataDel'], true);
                         foreach ($memberArr as $k => $member) {
                             // 查询有无team_event_member原数据，有则更新原数据否则插入新数据
-                            $hasMatchRecordMember = $matchS->getMatchRecordMember(['match_id' => $match['id'], 'match_record_id' =>$recordData['id'],  'member_id' => $member['member_id']]);
+                            $hasMatchRecordMember = $matchS->getMatchRecordMember(['match_id' => $match['id'], 'match_record_id' => $recordData['id'], 'member_id' => $member['member_id']]);
                             if ($hasMatchRecordMember) {
                                 $memberArr[$k]['id'] = $hasMatchRecordMember['id'];
                             }
@@ -319,11 +320,11 @@ class Match extends Base
                             $dataMatch['is_finished'] = 1;
                             $dataMatch['id'] = $match['id'];
                             $resultSaveMatch = $matchS->saveMatch($dataMatch);
-                            if ($resultSaveMatch['code'] ==100) {
+                            if ($resultSaveMatch['code'] == 100) {
                                 return json(['code' => 100, 'msg' => '更新比赛信息失败']);
                             }
                         }
-                        return json($resultSaveMatchRecord);    
+                        return json($resultSaveMatchRecord);
                     }
                 }
             } else {
@@ -475,11 +476,146 @@ class Match extends Base
         }
     }
 
+    // 比赛管理操作
+    public function removematch()
+    {
+        try {
+            // 接收参数
+            $id = input('post.matchid');
+            $action = input('post.action');
+            if (!$id || !$action) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            $matchS = new MatchService();
+            $match = $matchS->getMatch(['id' => $id]);
+            if (!$match) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404') . '，没有此比赛信息']);
+            }
+            // 根据比赛当前状态(1上架,2下架)+不允许操作条件
+            // 根据action参数 editstatus执行上下架/del删除操作
+            // 更新数据 返回结果
+            switch ($match['status_num']) {
+                case 1 : {
+                    if ($action == 'editstatus') {
+                        $response = $matchS->saveMatch(['id' => $match['id'], 'status' => -1]);
+                    } else {
+                        $delRes = $matchS->deleteMatch($match['id']);
+                        if ($delRes) {
+                            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+                        } else {
+                            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+                        }
+                    }
+                    return json($response);
+                    break;
+                }
+                case -1 : {
+                    if ($action == 'editstatus') {
+                        $response = $matchS->saveMatch(['id' => $match['id'], 'status' => 1]);
+                    } else {
+                        $delRes = $matchS->deleteMatch($match['id']);
+                        if ($delRes) {
+                            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+                        } else {
+                            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+                        }
+                    }
+                    return json($response);
+                    break;
+                }
+            }
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 报名参加比赛
+    public function joinmatch() {
+        try {
+            // 接收输入变量
+            $id = input('match_id');
+            $matchS = new MatchService();
+            $teamS = new TeamService();
+            // 查询比赛match数据
+            $match = $matchS->getMatch(['id' => $id]);
+            if (!$match) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404').'，请选择其他比赛']);
+            }
+            if ($match['is_finished_num'] == 1) {
+                return json(['code' => 100, 'msg' => '此比赛'.$match['is_finished'].'，请选择其他比赛']);
+            }
+            // 友谊赛获取match_record数据
+            if ($match['type_num'] ==1) {
+                $matchRecord = $matchS->getMatchRecord(['match_id' => $match['id']]);
+                if ($matchRecord) {
+                    $match['record'] = $matchRecord;
+                }
+
+                // 查询会员有无在比赛的相关球队
+                $inHomeTeam = 0;
+                $inAwayTeam = 0;
+                if ($match['record']['home_team_id']) {
+                    $whereMemberInHomeTeam = [
+                        'team_id' => $match['record']['home_team_id'],
+                        'member_id' => $this->memberInfo['id'],
+                        'status' => 1
+                    ];
+                    $inHomeTeam = $teamS->getTeamMemberInfo($whereMemberInHomeTeam);
+                }
+                if ($match['record']['away_team_id'] > 0) {
+                    $whereMemberInAwayTeam = [
+                        'team_id' => $match['record']['away_team_id'],
+                        'member_id' => $this->memberInfo['id'],
+                        'status' => 1
+                    ];
+                    $inAwayTeam = $teamS->getTeamMemberInfo($whereMemberInAwayTeam);
+                }
+                if (!$inHomeTeam && !$inAwayTeam) {
+                    return json(['code' => 100, 'msg' => '您不是此比赛的球队成员，请选择其他比赛或加入球队']);
+                }
+
+                // 检查是否已有match_record_member数据
+                $hasJoinMatch = $matchS->getMatchRecordMember([
+                    'match_id' => $match['id'],
+                    'member_id' => $this->memberInfo['id'],
+                    'status' => 1
+                ]);
+                if ($hasJoinMatch) {
+                    return json(['code' => 100, 'msg' => '您已报名参加此比赛，无需再次报名']);
+                }
+
+                // 组合保存报名比赛信息
+                $dataRecordMember = [
+                    'match_id' => $match['id'],
+                    'match' => $match['name'],
+                    'match_record_id' => $match['record']['id'],
+                    'member_id' => $this->memberInfo['id'],
+                    'member' => $this->memberInfo['member'],
+                    'member_avatar' => $this->memberInfo['avatar'],
+                    'status' => 1
+                ];
+                if ($inHomeTeam) {
+                    $dataRecordMember['team_id'] = $inHomeTeam['team_id'];
+                    $dataRecordMember['team'] = $inHomeTeam['team'];
+                } elseif ($inAwayTeam) {
+                    $dataRecordMember['team_id'] = $inAwayTeam['team_id'];
+                    $dataRecordMember['team'] = $inAwayTeam['team'];
+                }
+//                dump($dataRecordMember);
+                // 保存报名比赛信息数据
+                $result = $matchS->saveMatchRecordMember($dataRecordMember);
+                return json($result);
+            }
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
     // 最新比赛记录
 
     // 球队历史对手
 
-    // 球队比赛列表（页码）+年份
+    // 比赛球队列表（页码）
     public function matchteamlistpage()
     {
         try {
@@ -489,11 +625,11 @@ class Match extends Base
         }
     }
 
-    // 球队比赛列表+年份
+    // 比赛球队列表
 
-    // 球队比赛列表（所有数据）
+    // 比赛球队列表（所有数据）
 
-    // 球队战绩列表（页码）+年份
+    // 比赛战绩列表（页码）+年份
     public function matchrecordlistpage()
     {
         try {
@@ -510,21 +646,21 @@ class Match extends Base
             }
             unset($map['page']);
             // 获取数据列表
-            $matchS = new MatchService();
-            $result = $matchS->matchRecordListPaginator($map);
-            // 返回结果
-            if ($result) {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
-            } else {
-                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
-            }
-            return json($response);
+             $matchS = new MatchService();
+             $result = $matchS->matchRecordListPaginator($map);
+             // 返回结果
+             if ($result) {
+                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+             } else {
+                 $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+             }
+             return json($response);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
 
-    // 球队战绩列表+年份
+    // 比赛战绩列表+年份
     public function matchrecordlist()
     {
         try {
@@ -556,7 +692,7 @@ class Match extends Base
         }
     }
 
-    // 球队战绩列表（所有数据）
+    // 比赛战绩列表（所有数据）
     public function matchrecordlistall()
     {
         try {
@@ -576,4 +712,10 @@ class Match extends Base
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+
+    // 比赛战绩-会员关系列表（页码）
+
+    // 比赛战绩-会员关系列表
+
+    // 比赛战绩-会员关系列表（所有数据）
 }

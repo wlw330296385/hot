@@ -9,13 +9,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
     <!--选择器样式-->
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css" />
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
@@ -32,12 +28,13 @@
 <body>
 
     <header class="mui-bar mui-bar-nav subheader header2">
-        <a class="mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title">完善教练信息</h1>
     </header>
+
     <div class="mui-content pt">
 
-        <div class="register mt25">
+        <div class="register">
             <form action="" class="mui-input-group">
                 <input type="hidden" name="coachid" value="{$coachInfo.id}">
                 <input type="hidden" name="memberid" value="{$coachInfo.member_id}">
@@ -85,7 +82,8 @@
                 <div class="mui-input-row" id='showCityPicker3'>
                     <a href="#" class="mui-navigate-right">
                         <label>所属地区</label>
-                        <span id="cityResult3" class="ui-alert location" style="color:#737373">{if condition="$coachInfo['province'] || $coachInfo['city'] || $coachInfo['area']"}{$coachInfo.province}  {$coachInfo.city}  {$coachInfo.area}{else/}选择{/if}
+                        <span id="cityResult3" class="ui-alert location" style="color:#737373">{if condition="$coachInfo['province'] || $coachInfo['city'] || $coachInfo['area']"}{$coachInfo.province}
+                            {$coachInfo.city} {$coachInfo.area}{else/}选择{/if}
                         </span>
                     </a>
                     <input id="location-input" type="hidden" name="locationStr" value="{if condition='$coachInfo.province'}{$coachInfo.province}|{/if}{if condition='$coachInfo.city'}{$coachInfo.city}|{/if}{if condition='$coachInfo.area'}{$coachInfo.area}{/if}">
@@ -114,8 +112,8 @@
             </div>
             <div class="tjbtn mb44">
                 <button type="button" class="mui-btn btn registerbtn2">
-                完成
-            </button>
+                    完成
+                </button>
             </div>
             <!--<p class="pass"><a href="{:url('index/index')}">[跳过，稍后完善]</a></p>-->
         </div>
@@ -129,7 +127,7 @@
     <script src="/static/frontend/js/mui.poppicker.js"></script>
     <script src="/static/frontend/js/city.data-3.js"></script>
     <script>
-                                                                      var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -231,7 +229,7 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
-                            setTimeout(window.location.href = "{:url('coach/registersuccess')}",3000);
+                            setTimeout(window.location.href = "{:url('coach/registersuccess')}", 3000);
                         } else {
                             mui.toast(data.msg);
                         }

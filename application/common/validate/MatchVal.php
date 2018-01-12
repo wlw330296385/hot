@@ -18,11 +18,11 @@ class MatchVal extends Validate {
     protected $message = [
         'member_id.require' => '请先注册会员或重新登录平台',
         'member_id.gt' => '请先注册会员或重新登录平台',
-        'type.require' => '请选择球队类型',
+        'type.require' => '请选择比赛类型',
         'member_id.token' => '请不要重复点击提交',
-        'province.require' => '请选择所属地区',
-        'city.require' => '请选择所属地区',
-        'area.require' => '请选择所属地区',
+        'province.require' => '请选择地区',
+        'city.require' => '请选择地区',
+        'area.require' => '请选择地区',
     ];
 
     // 验证场景
