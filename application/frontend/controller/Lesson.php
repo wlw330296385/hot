@@ -37,38 +37,20 @@ class Lesson extends Base{
         $isPower = $this->LessonService->isPower($lessonInfo['camp_id'],$this->memberInfo['id']);
         //卡券列表
         $map = function($query){
-                    $query->where(['target_type'=>1])
-                    ->where(['start'=>['lt',time()]])
-                    ->where(['end'=>['gt',time()]])
-                    ->whereOr(['target_type'=>3])
-                    ;
-                };
+            $query->where(['target_type'=>1])
+            ->where(['publish_start'=>['lt',time()]])
+            ->where(['publish_end'=>['gt',time()]])
+            ->where(['is_max'=>1])
+            ->whereOr(['target_type'=>3])
+            ;
+        };
         // 卡券系统        
-        $item_coupon_ids = [];
         $ItemCoupon = new \app\model\ItemCoupon;
         // 平台卡券
-        $couponListOfSystem = $ItemCoupon->where($map)->whereOr(['target_type'=>3])->select();
+        $couponListOfSystem = $ItemCoupon->where($map)->where(['organization_type'=>1])->select();
         // 训练营卡券
         $couponListOfCamp = $ItemCoupon->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id']])->where($map)->select();
-        if($couponListOfSystem){
-            $couponListOfSystem = $couponListOfSystem->toArray();
-            foreach ($couponListOfSystem as $key => $value) {
-                $item_coupon_ids[] = $value['id'];
-            }
-        }else{
-            $couponListOfSystem = [];
-        }
-        if($couponListOfCamp){
-            $couponListOfCamp = $couponListOfCamp->toArray();
-            foreach ($couponListOfCamp as $key => $value) {
-                $item_coupon_ids[] = $value['id'];
-            }
-        }else{
-            $couponListOfCamp = [];
-        }
         
-        
-        $this->assign('item_coupon_ids',json_encode($item_coupon_ids));
         $this->assign('couponListOfSystem',$couponListOfSystem);
         $this->assign('couponListOfCamp',$couponListOfCamp);
         $this->assign('isPower',$isPower);
@@ -158,20 +140,30 @@ class Lesson extends Base{
         $shareurl = request()->url(true);
         $wechatS = new WechatService();
         $jsapi = $wechatS->jsapi($shareurl);
-
+        
         //卡券列表
-        $map = function($query){
-                    $query->where(['target_type'=>1])
-                    ->whereOr(['target_type'=>3])
-                    ;
-                };
+        $map1 = function($query){
+            $query->where(['target_type'=>1])
+            ->where(['publish_start'=>['lt',time()]])
+            ->where(['publish_end'=>['gt',time()]])
+            ->where(['is_max'=>1])
+            ->whereOr(['target_type'=>3])
+            ->where(['organization_type'=>1])
+            ;
+        };
+        $map2 = function($query){
+            $query->where(['target_type'=>1])
+            ->where(['publish_start'=>['lt',time()]])
+            ->where(['publish_end'=>['gt',time()]])
+            ->where(['is_max'=>1])
+            ->whereOr(['target_type'=>3])
+            ->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id']])
+            ;
+        };
         // 平台卡券
-        $couponListOfSystem = db('item_coupon')->where($map)->whereOr(['target_type'=>3])->select();
-        // 训练营卡券
-        $couponListOfCamp = db('item_coupon')->where(['organization_type'=>$lessonInfo['organization_type'],'organization_id'=>$lessonInfo['organization_id']])->where($map)->select();
-  
-        $this->assign('couponListOfSystem',$couponListOfSystem);
-        $this->assign('couponListOfCamp',$couponListOfCamp);
+        $ItemCoupon = new \app\model\ItemCoupon;
+        $item_coupon_ids = $ItemCoupon->where($map)->whereOr($map2)->column('id');
+        $this->assign('item_coupon_ids',json_encode($item_coupon_ids));
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('jsapi', $jsapi);
         $this->assign('jsonBillInfo',json_encode($jsonBillInfo));

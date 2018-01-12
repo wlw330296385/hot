@@ -89,18 +89,28 @@ class Event extends Base{
         $eventInfo['price'] = $eventInfo['doms'][$domIndex]['price'];
 
         //卡券列表
-        $map = function($query){
-                    $query->where(['target_type'=>2])
-                    ->whereOr(['target_type'=>3])
-                    ;
-                };
+        $map1 = function($query){
+            $query->where(['target_type'=>2])
+            ->where(['publish_start'=>['lt',time()]])
+            ->where(['publish_end'=>['gt',time()]])
+            ->where(['is_max'=>1])
+            ->whereOr(['target_type'=>3])
+            ->where(['organization_type'=>1])
+            ;
+        };
+        $map2 = function($query){
+            $query->where(['target_type'=>2])
+            ->where(['publish_start'=>['lt',time()]])
+            ->where(['publish_end'=>['gt',time()]])
+            ->where(['is_max'=>1])
+            ->whereOr(['target_type'=>3])
+            ->where(['organization_type'=>$eventInfo['organization_type'],'organization_id'=>$eventInfo['organization_id']])
+            ;
+        };
         // 平台卡券
-        $couponListOfSystem = db('item_coupon')->where($map)->whereOr(['target_type'=>3])->select();
-        // 训练营卡券
-        $couponListOfCamp = db('item_coupon')->where(['organization_type'=>$eventInfo['organization_type'],'organization_id'=>$eventInfo['organization_id']])->where($map)->select();
-  
-        $this->assign('couponListOfSystem',$couponListOfSystem);
-        $this->assign('couponListOfCamp',$couponListOfCamp);
+        $ItemCoupon = new \app\model\ItemCoupon;
+        $item_coupon_ids = $ItemCoupon->where($map)->whereOr($map2)->column('id');
+        $this->assign('item_coupon_ids',json_encode($item_coupon_ids));
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('jsapi', $jsapi);
         $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
@@ -155,14 +165,21 @@ class Event extends Base{
         }
         //卡券列表
         $map = function($query){
-                    $query->where(['target_type'=>2])
-                    ->whereOr(['target_type'=>3])
-                    ;
-                };
+            $query->where(['target_type'=>2])
+            ->where(['publish_start'=>['lt',time()]])
+            ->where(['publish_end'=>['gt',time()]])
+            ->where(['is_max'=>1])
+            ->whereOr(['target_type'=>3])
+            ;
+        };
         // 平台卡券
-        $couponListOfSystem = db('item_coupon')->where($map)->whereOr(['target_type'=>3])->select();
+        $ItemCoupon = new \app\model\ItemCoupon;
+        $couponListOfSystem = $ItemCoupon
+            ->where($map)
+            ->where(['organization_type'=>1])
+            ->select();
         // 训练营卡券
-        $couponListOfCamp = db('item_coupon')->where(['organization_type'=>$eventInfo['organization_type'],'organization_id'=>$eventInfo['organization_id']])->where($map)->select();
+        $couponListOfCamp = $ItemCoupon->where(['organization_type'=>$eventInfo['organization_type'],'organization_id'=>$eventInfo['organization_id']])->where($map)->select();
   
         $this->assign('couponListOfSystem',$couponListOfSystem);
         $this->assign('couponListOfCamp',$couponListOfCamp);

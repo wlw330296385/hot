@@ -203,8 +203,13 @@ class LessonMember extends Base{
             unset($data['update_time']);
 
             $res = $this->LessonMemberService->createLessonMember($data2);
-            $result = $this->LessonMemberService->updateLessonMember($data1,$map1);
-            return json($result);
+            if($res['code'] == 200){
+                $result = $this->LessonMemberService->updateLessonMember($data1,$map1);
+                return json($result);
+            }else{
+                return json($res);
+            }
+            
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
