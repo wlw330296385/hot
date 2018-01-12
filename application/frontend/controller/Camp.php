@@ -462,9 +462,21 @@ class Camp extends Base{
         $SalaryInService = new \app\service\SalaryInService($member_id);
         $salaryList = $SalaryInService->getSalaryInList(['member_id'=>$coachInfo['member_id'],'type'=>1,'camp_id'=>$camp_id]);
         // 平均月薪
-        $averageSalaryByMonth = $SalaryInService->getAverageSalaryByMonth($coachInfo['member_id'],$camp_id);
+        $monthStamp = getStartAndEndUnixTimestamp(date('Y'), date('m'));
+        $mapMonth = [
+            'camp_id' => $camp_id,
+            'member_id' => $coachInfo['member_id'],
+            'schedule_time' => ['between', [$monthStamp['start'], $monthStamp['end']]]
+        ];
+        $SalaryMonth = $SalaryInService->countSalaryin($mapMonth);
         // 平均年薪
-        $averageSalaryByYear = $SalaryInService->getAverageSalaryByYear($coachInfo['member_id'],$camp_id);
+        $yearStamp = getStartAndEndUnixTimestamp(date('Y'));
+        $mapYear = [
+            'camp_id' => $camp_id,
+            'member_id' => $coachInfo['member_id'],
+            'schedule_time' => ['between', [$yearStamp['start'], $yearStamp['end']]]
+        ];
+        $SalaryYear = $SalaryInService->countSalaryin($mapYear);
         // dump($salaryList);die;
         $this->assign('monthScheduleOfCoachList',$monthScheduleOfCoachList);//教练当月的课量
         $this->assign('monthScheduleOfCoach',$monthScheduleOfCoach);//当月课量数量
@@ -478,8 +490,8 @@ class Camp extends Base{
         $this->assign('coachInfo',$coachInfo);
         $this->assign('identCert',$identCert);
         $this->assign('coachCert',$coachCert);
-        $this->assign('averageSalaryByMonth',$averageSalaryByMonth);
-        $this->assign('averageSalaryByYear',$averageSalaryByYear);
+        $this->assign('SalaryMonth',$SalaryMonth);
+        $this->assign('SalaryYear',$SalaryYear);
         $this->assign('camp_id', $camp_id);
         return view('Camp/coachInfoOfCamp');
     }

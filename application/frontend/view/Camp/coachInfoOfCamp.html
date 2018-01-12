@@ -173,24 +173,21 @@
                     <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                         <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
                             <a href="#">
-                                <span>平均月薪</span>
-                                <div class="mui-media-body">{$averageSalaryByMonth}</div>
+                                <span>本月工资</span>
+                                <div class="mui-media-body">{$SalaryMonth}</div>
                             </a>
                         </li>
                         <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
                             <a href="#">
-                                <span>平均年薪</span>
-                                <div class="mui-media-body">{$averageSalaryByYear}</div>
+                                <span>本年工资</span>
+                                <div class="mui-media-body">{$SalaryYear}</div>
                             </a>
                         </li>
                     </ul>
                 </div>
                 <ul class="mui-table-view list detalis-list page-header location-frame mb">
                     <li class="mui-table-view-cell listli">
-                        <p class="mui-navigate-right">
-                            工资表<span id="yearPicker">{$y}年</span>
-                        </p>
-                        <input id="salaryYear" type="hidden" value="{$y}">
+                        <p class="mui-navigate-right">工资表<span class="btnTime" id="salaryinTime" data-options='{"type":"month"}'><b class="salaryYear">{$y}</b> 年 <b class="salaryMonth">{$m}</b> 月</span></p>
                     </li>
                 </ul>
                 <ul class="mui-table-view list detalis-list mb">
@@ -243,52 +240,24 @@
                     var picker = new $.DtPicker(options);
 
                     picker.show(function (rs) {
+                        //选完日期后
+                       // if (id=="salaryinTime") {
+                             //工资
+                            //salaryCount =1;
+                            //toCoachSalaryinList('tabSalay', salaryCount, 1, rs.y.text, rs.m.text);
+                       // } else {
+                            // 课时
+                            sCount = 1;
+                            toScheduleList('tabSchedule', sCount, 1, rs.y.text, rs.m.text);
+                        //}
                         //wTime.innerText = rs.text;
                         wTime.innerHTML = '<b class="sYear">' +rs.y.text + '</b> 年 <b class="sMonth">' + rs.m.text + '</b> 月';
-                        //选完日期后
-                        sCount = 1;
-                        toScheduleList('tabSchedule', sCount, 1, rs.y.text, rs.m.text);
                         picker.dispose();
                     });
                 }, false);
             });
 
-            // 自定义年份选择器
-            var yearPicker = new $.PopPicker();
-            yearPicker.setData([
-                {
-                    value: '2017',
-                    text: '2017年'
-                },
-                {
-                    value: '2016',
-                    text: '2016年'
-                },
-                {
-                    value: '2015',
-                    text: '2015年'
-                },
-                {
-                    value: '2014',
-                    text: '2014年'
-                },
-                {
-                    value: '2013',
-                    text: '2013年'
-                },
-                {
-                    value: '2012',
-                    text: '2012年'
-                }
-            ]);
-            var showYearPickerBtn = document.getElementById('yearPicker');
-            var yearResult = document.getElementById('salaryYear');
-            showYearPickerBtn.addEventListener('tap', function (e) {
-                yearPicker.show(function (items) {
-                    yearResult.value = items[0].value;
-                    showYearPickerBtn.innerText = items[0].text;
-                });
-            }, false);
+
         });
     })(mui, document);
 
@@ -302,6 +271,7 @@
         //初始化全局变量
         var gCount = 1;
         var sCount = 1;
+        var salaryCount =1;
 
         mui('#tabGrade').pullRefresh({
             down: {
@@ -499,6 +469,39 @@
             }
         });
     };
+
+    var toCoachSalaryinList = function (wList, page, gType, sYear, sMonth) {
+        var url = "{:url('api/salaryin/coachSalaryinListPage','','',true)}/?page=" + page + "&y="+sYear+"&m="+sMonth;
+        mui.ajax(url, {
+            data: {
+                camp_id: "{$camp_id}",
+                member_id: "{$coachInfo.member_id}"
+            },
+            dataType:'json',
+            type:'post',
+            timeout:10000,
+            headers:{'Content-Type':'application/json'},
+            success:function(data){
+                //console.log(data);
+                var newli = '';
+                if (data.code === 200) {
+                    // 返回为空 显示无数据
+                    if (data.data.length != 0) {
+
+                    } else {
+
+                    }
+                    //console.log(newli);
+
+                } else {
+
+                }
+            },
+            error:function(xhr,type,errorThrown){
+                mui.toast('网络异常,请稍候再试');
+            }
+        })
+    }
 
 </script>
 

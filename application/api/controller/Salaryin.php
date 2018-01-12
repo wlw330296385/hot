@@ -131,17 +131,18 @@ class Salaryin extends Base {
     // 教练工资列表明细
     public function coachSalaryinList() {
         try {
+            // 传入参数
+            $request = input('param.');
             // 组合查询条件
             $map = [];
             // 有参数camp_id 则查教练在该训练营的工资列表 否则查教练个人的工资列表
-            if (input('?camp_id')) {
-                $camp_id = input('camp_id');
+            if (isset($request['camp_id'])) {
                 // 判断当前会员在训练营有无教练或以上身份，没有就抛出提示
-                $campPower = getCampPower($camp_id, $this->memberInfo['id']);
+                $campPower = getCampPower($request['camp_id'], $this->memberInfo['id']);
                 if (!$campPower || $campPower < 2) {
                     return json(['code' => 100, 'msg' => __lang('MSG_403').',你无权查看此训练营相关信息']);
                 }
-                $map['camp_id'] = $camp_id;
+                $map['camp_id'] = $request['camp_id'];
             }
             // 要查询的时间段（年、月），默认当前年月
             if (input('?param.year') || input('?param.month')) {
@@ -160,12 +161,68 @@ class Salaryin extends Base {
                 list($start, $end) = Time::month();
                 $map['create_time'] = ['between', [$start, $end]];
             }
-            $map['member_id'] = $this->memberInfo['id'];
+            //$map['member_id'] = $this->memberInfo['id'];
+            // 传入教练的会员id查询该教练会员工资 否则默认查询当前会员
+            $map['member_id'] = isset($request['member_id']) ? $request['member_id'] : $this->memberInfo['id'];
             $map['member_type'] = ['lt', 5];
             $map['type'] = 1;
 //            dump($map);
             // 获取工资数据
             $salaryList = $this->SalaryInService->getSalaryInList($map);
+            $salarySum = $this->SalaryInService->countSalaryin($map);
+            //dump($salaryList);
+            if (!$salaryList) {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            } else {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $salaryList, 'sum' => $salarySum];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 教练工资列表page
+    public function coachSalaryinListPage() {
+        try {
+            // 传入参数
+            $request = input('param.');
+            // 组合查询条件
+            $map = [];
+            // 有参数camp_id 则查教练在该训练营的工资列表 否则查教练个人的工资列表
+            if (isset($request['camp_id'])) {
+                // 判断当前会员在训练营有无教练或以上身份，没有就抛出提示
+                $campPower = getCampPower($request['camp_id'], $this->memberInfo['id']);
+                if (!$campPower || $campPower < 2) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_403').',你无权查看此训练营相关信息']);
+                }
+                $map['camp_id'] = $request['camp_id'];
+            }
+            // 要查询的时间段（年、月），默认当前年月
+            if (input('?param.year') || input('?param.month')) {
+                // 判断年、月参数是否为数字格式
+                $year = input('year', date('Y'));
+                $month = input('month', date('m'));
+                if (!is_numeric($year) || !is_numeric($month) ) {
+                    return json(['code' => 100, 'msg' => '时间格式错误']);
+                }
+                // 根据传入年、月 获取月份第一天和最后一天，拼接时间查询条件
+                $when = $year.'-'.$month;
+                $start = date('Y-m-01', strtotime($when));
+                $end = date('Y-m-d', strtotime("$start +1 month -1 day"));
+                $map['create_time'] = ['between time', [$start, $end]];
+            } else {
+                list($start, $end) = Time::month();
+                $map['create_time'] = ['between', [$start, $end]];
+            }
+            //$map['member_id'] = $this->memberInfo['id'];
+            // 传入教练的会员id查询该教练会员工资 否则默认查询当前会员
+            $map['member_id'] = isset($request['member_id']) ? $request['member_id'] : $this->memberInfo['id'];
+            $map['member_type'] = ['lt', 5];
+            $map['type'] = 1;
+//            dump($map);
+            // 获取工资数据
+            $salaryList = $this->SalaryInService->getSalaryInPagintor($map);
             $salarySum = $this->SalaryInService->countSalaryin($map);
             //dump($salaryList);
             if (!$salaryList) {
