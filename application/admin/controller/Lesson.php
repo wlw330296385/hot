@@ -146,12 +146,12 @@ class Lesson extends Backend {
                         echo '<script type="text/javascript">alert("'.$result["msg"].'")</script>';
                         // return json(['code'=>100,'msg'=>'操作成功']);
                     }else{
-                        echo "<script type='text/javascript'>alert('后续操作有bug,请联系woo')</script>";
+                        echo "<script type='text/javascript'>alert('".$result['msg']."并联系woo')</script>";
                         // return json(['code'=>100,'msg'=>'后续操作有bug,请联系woo']);
                     }
                     
                 }else{
-                    return json(['code'=>100,'msg'=>'订单生成失败']);
+                    return json(['code'=>100,'msg'=>$result['msg']]);
                 }
             }catch (Exception $e){
                 return json(['code'=>100,'msg'=>$e->getMessage()]);
