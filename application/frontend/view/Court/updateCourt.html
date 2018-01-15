@@ -223,7 +223,7 @@
                         <a class="mui-navigate-right fr wd60">
                             <div id="uploader-demo1" class="fr pdr15">
                                 <div id="fileList" class="uploader-list"></div>
-                                <div id="filePicker1">选择图片</div>
+                                <div id="filePickerOne">选择图片</div>
                             </div>
                         </a>
                     </li>
@@ -254,6 +254,7 @@
         var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'court'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
     <!--获取地址-->
     <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
 
@@ -371,44 +372,9 @@
         var covers = [];
         $(function () {
 
-            //多图上传start·····································································
-            // 初始化Web Uploader
-            var uploader = WebUploader.create({
-                auto: true,
-                server: uploadApiUrl,
-                pick: '#filePicker1',
-                accept: {
-                    title: 'Images',
-                    extensions: 'gif,jpg,jpeg,bmp,png',
-                    mimeTypes: 'image/*'
-                }
-            });
-            // 上传成功
-            uploader.on('uploadSuccess', function (file, responce) {
-                if (eval('responce').status == 0) {
-                    mui.toast('上传失败,请重试', { 'duration': 'long' });
-                } else {
-                    mui.toast('上传成功', { 'duration': 'long' });
-                    var $li = '<div class="fl albumImg"><i class="delbtn mui-icon mui-icon-close"></i><img src="' + responce.path + '"></div>';
-                    $(".albumBox").append($li);
-                }
-            });
-            // 上传失败
-            uploader.on('uploadError', function (file, reason) {
-                mui.alert('图片太大，上传失败');
-            });
-
-            //删除操作
-            $(document).on('tap', '.delbtn', function () {
-                $(this).parent().remove();
-            });
-            //多图上传end·····································································
-
-
             $("input[name='outdoors']").filter(function (index) {
                 return $(this).attr("data-name") == "{$CourtInfo.outdoors}"
             }).prop("checked", true);
-
 
             // map(选择具体地址)
 //            $("#mapConfirm").on('tap', '', function () {

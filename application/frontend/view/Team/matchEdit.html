@@ -62,6 +62,7 @@
             line-height: 43px;
             padding: 0 15px !important;
         }
+
         .addInput {
             margin-top: 15px;
         }
@@ -151,14 +152,12 @@
                         {eq name="directentry" value="1"}
                         <span class="away_team_Cont domData" name="record[away_team]"></span>
                         <input type="hidden" name="record[away_team_id]" value="" class="data">
-                        <input type="hidden" name="record[away_team_logo]" value="" class="data">
-                        {else/}
+                        <input type="hidden" name="record[away_team_logo]" value="" class="data"> {else/}
                         <span class="away_team_Cont domData" name="record[away_team]">{$matchInfo.record.away_team}</span>
-                        <input type="hidden" name="record[away_team_id]" value="{$matchInfo.record.away_team_id}" class="data"> 
-                        <input type="hidden" name="record[away_team_logo]" class="data" value="{$matchInfo.record.away_team_logo}"/>
-                        {/eq}
+                        <input type="hidden" name="record[away_team_id]" value="{$matchInfo.record.away_team_id}" class="data">
+                        <input type="hidden" name="record[away_team_logo]" class="data" value="{$matchInfo.record.away_team_logo}" /> {/eq}
                     </a>
-                   
+
                 </div>
 
                 <div class="mui-input-row">
@@ -264,7 +263,7 @@
                         <a class="mui-navigate-right fr wd60">
                             <div id="uploader-demo1" class="fr pdr15">
                                 <div id="fileList" class="uploader-list"></div>
-                                <div id="filePicker1">选择图片</div>
+                                <div id="filePickerOne">选择图片</div>
                             </div>
                         </a>
                     </li>
@@ -624,7 +623,7 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
     <script>
         //初始化
         mui.init({
@@ -981,7 +980,6 @@
             })
             //////////////////////常驻球场////////////////////////////////////
 
-
             // 添加新的球队
             $(document).on('tap', '.addBtn', function () {
                 var addAway_team = $(".addInput").val();
@@ -989,30 +987,6 @@
                 $("input[name=away_team_id]").val("-1");
                 mui("#awayTeam").popover("toggle");
             });
-
-            //活动花絮图片start·····································································
-            // 初始化Web Uploader
-            var uploader = WebUploader.create({
-                auto: true,
-                server: uploadApiUrl,
-                pick: '#filePicker1',
-                accept: {
-                    title: 'Images',
-                    extensions: 'gif,jpg,jpeg,bmp,png',
-                    mimeTypes: 'image/*'
-                }
-            });
-            // 上传成功
-            uploader.on('uploadSuccess', function (file, responce) {
-                if (eval('responce').status == 0) {
-                    mui.toast('上传失败,请重试', { 'duration': 'long' });
-                } else {
-                    mui.toast('上传成功', { 'duration': 'long' });
-                    var $li = '<div class="fl albumImg"><i class="delbtn mui-icon mui-icon-close"></i><img src="' + responce.path + '"></div>';
-                    $(".albumBox").append($li);
-                }
-            });
-            //活动花絮图片end·····································································
 
             //删除操作
             $(document).on('tap', '.delbtn', function () {

@@ -61,7 +61,7 @@
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a href="{:url('team/matchlistofteam',['team_id' => $team_id])}" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
             <span class="return">返回</span>
         </a>
     </header>
@@ -77,7 +77,7 @@
                 <div class="mui-input-row">
                     <label class="wd60">{$teamInfo.name}</label>
                     <span>
-                        <a href="{:url('team/matchEdit',['team_id' => $team_id])}" style="color:#59b200" !important>[直接录入比赛]</a>
+                        <a class="direct" style="color:#59b200" !important>[直接录入比赛]</a>
                     </span>
                 </div>
 
@@ -94,8 +94,8 @@
                     </div>
                 </div>
 
-                <div class="mui-input-row">
-                    <a href="#awayTeam" class="mui-navigate-right">
+                <div class="mui-input-row awayT">
+                    <a href="#awayTeam" class="mui-navigate-right awayTeamBtn isHref">
                         <label>对手</label>
                         <span class="away_team_Cont domData" name="away_team"></span>
                         <input type="hidden" name="away_team_id" value="" class="data">
@@ -160,7 +160,7 @@
                         <span class="select-row">
                             <select class="data" id="islive" name="islive">
                                 <option value="0">不约战</option>
-                                <option value="1">约战</option>
+                                <option value="1" class="isyz">约战</option>
                             </select>
                         </span>
                     </div>
@@ -380,10 +380,6 @@
             swipeBack: true //启用右滑关闭功能
         });
 
-        mui("body").on("tap", "a", function () {
-            window.top.location.href = this.href;
-        });
-
         //弹出框滚动必须写在mui专用的初始化
         (function ($) {
             $(".mui-scroll-wrapper").scroll({
@@ -469,18 +465,6 @@
             $(".ching").css("background", "#00eaff");
         };
 
-        //  判断约战与对手的存在关系
-        var isaway_team_Cont = '';
-        var isLive = '';
-        function isLivepd() {
-            isaway_team_Cont = $(".away_team_Cont").text();
-            isLive = $("#islive").children('option:selected').val()
-            if (isaway_team_Cont != '' && isLive == 1) {
-                mui.alert("已选择对手不能设为约战");
-                return false;
-            }
-        }
-
         $(function () {
 
             //获取训练营粉丝列表
@@ -495,6 +479,10 @@
             toCourtList(wCourt, courtKeyword, 1);
             colorShow(); // 调用主场客场颜色显示
 
+            // 点击直接编辑录入
+            $(".direct").on("tap", '', function () {
+                location.href = "{:url('team/matchEdit',['team_id' => $team_id])}";
+            });
 
             // 主场球服
             $(".homeColorList").on('tap', 'li', function () {
@@ -517,6 +505,28 @@
                 mui("#homeColor").popover("toggle");
             });
 
+            // 添加新对手
+            $(document).on("tap", ".addBtn", function () {
+                var addAway_team = $(".addInput").val();
+                $(".away_team_Cont").text(addAway_team);
+                $("input[name=away_team_id]").val("-1");
+                mui("#awayTeam").popover("toggle");
+            })
+
+            // 选择是否约战操作触发
+            $("#islive").change(function () {
+                var islive = $(this).children("option:selected").val()
+                if (islive == 1) {
+                    $(".isHref").attr("href", "#")
+                    $(".awayTeamBtn").on("click", function () {
+                        mui.alert("已经选择约战类型则不能选择对手");
+                    });
+                } else {
+                    $(".isHref").attr("href", "#awayTeam");
+                }
+            });
+
+
             //////////////////////选择对手////////////////////////////////////
             // 选择对手
             $(".teamList").on('tap', 'li', function () {
@@ -526,6 +536,7 @@
                 $("input[name=away_team_id]").val(id);
                 var away_team_logo = $(this).attr('data-logo');
                 $("input[name=away_team_logo]").val(away_team_logo);
+                $(".isyz").hide(); // 选择了对手则不能约战
                 mui("#awayTeam").popover("toggle");
             })
             //清除球队
@@ -533,6 +544,7 @@
                 $(".away_team_Cont").text("");
                 $("input[name=away_team_id]").val("");
                 $("input[name=away_team_logo").val("");
+                $(".isyz").show();  // 清除对手则能约战
                 mui("#awayTeam").popover("toggle");
             })
 
@@ -616,19 +628,6 @@
                 } else {
                     send_m.val("0");
                 }
-            });
-
-            // 选择是否约战操作触发
-            $("#islive").change(function () {
-                isLivepd();
-            });
-
-            // 添加新的球队
-            $(document).on('tap', '.addBtn', function () {
-                var addAway_team = $(".addInput").val();
-                $(".away_team_Cont").text(addAway_team);
-                $("input[name=away_team_id]").val("-1");
-                mui("#awayTeam").popover("toggle");
             });
 
         })

@@ -146,7 +146,6 @@
                     </a>
                 </div>
 
-
                 <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>开始时间</label>
@@ -167,6 +166,7 @@
                         <span id="cityResult3" class="ui-alert domData" name="address">{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span>
                     </div>
                 </div>
+
                 <div class="mui-input-row">
                     <label>活动地点</label>
                     <input type="text" name="location" value="{$eventInfo.location}" class="data location" placeholder="请输入活动地点">
@@ -180,6 +180,7 @@
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
+
                 <div class="mui-input-row h-auto">
                     <label class="wd36">最多参与人数</label>
                     <div class="mui-numbox">
@@ -231,7 +232,7 @@
                             <a class="frame imageClass">
                                 <div id="uploader-demo">
                                     <div id="fileList" class="uploader-list"></div>
-                                    <div id="filePicker">选择图片</div>
+                                    <div id="filePickerTwo">选择图片</div>
                                 </div>
                             </a>
                         </div>
@@ -297,6 +298,7 @@
             </div>
         </div>
     </div>
+
     <!--费用结算人-->
     <div id="cost" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
@@ -362,6 +364,7 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
     <script>
         //初始化
         mui.init({
@@ -467,6 +470,7 @@
             });
         })(mui, document);
 
+        // 获取省索引值
         function searchProvince(cityData3, province) {
             var i = cityData3.length;
             while (i -= 1) {
@@ -476,7 +480,6 @@
             }
             return false;
         }
-
 
         //初始化全局变量
         var eventDomArr = [{ name: '默认', price: 0 }];
@@ -492,7 +495,8 @@
             var wStudents = '';
             var pageLD = 1;
             toStudentList(StudentKeyword, wStudents, 1);
-
+            freeStatus(); //判断只有大热俱乐部可以收费
+            isFree();  //判断是否收费显示data
 
             // 具体对象
             $(".campGradeList").on('tap', 'li', function () {
@@ -502,7 +506,6 @@
                 $(".targetCont").text(target);
                 mui("#target").popover("toggle");
             });
-
 
             // 设置活动对象默认值
             $('#eventObject option[value="{$eventInfo.target_type}"]').prop("selected", true);
@@ -531,7 +534,6 @@
                     $(".target_id").removeClass("data");
                 };
             });
-
 
             //报名种类确认
             $("#domConfirm").on('tap', this, function () {
@@ -570,6 +572,7 @@
                     })
                 }
             })
+
             //添加
             $("#domAdd").on('tap', this, function () {
                 var addPrice = '';
@@ -578,6 +581,7 @@
                 }
                 $("#eventDom form").append('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i>' + addPrice + '</div>');
             })
+
             // 删除
             $(document).on('tap', ".cancel-dom", function () {
                 $(this).parent().remove();
@@ -607,7 +611,6 @@
                     $("input[name='finance_id']").addClass("data");
                 }
             });
-
 
             // 费用结算人
             $(".campMemberType").on('click', 'li', function () {
@@ -650,11 +653,6 @@
                 }
             })
 
-            //判断只有大热俱乐部可以收费
-            freeStatus();
-            //判断是否收费显示data
-            isFree();
-
             //添加标题
             $(".titleClass").on('tap', '', function () {
                 var title = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
@@ -666,34 +664,6 @@
                 var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" name="" class="mui-text-left text delClass textarea" placeholder="请输入正文"></div>';
                 $(".introBox").append(text);
             });
-
-            //添加图片start·····································································
-            // 初始化Web Uploader
-            var uploader = WebUploader.create({
-                auto: true,
-                server: uploadApiUrl,
-                pick: '#filePicker',
-                accept: {
-                    title: 'Images',
-                    extensions: 'gif,jpg,jpeg,bmp,png',
-                    mimeTypes: 'image/*'
-                }
-            });
-            // 上传成功
-            uploader.on('uploadSuccess', function (file, responce) {
-                if (eval('responce').status == 0) {
-                    mui.toast('上传失败,请重试', { 'duration': 'long' });
-                } else {
-                    mui.toast('上传成功', { 'duration': 'long' });
-                    var $li = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img class="desimg" src="' + responce.path + '" style="padding-top:5px"></div>';
-                    $(".introBox").append($li);
-                }
-            });
-            // 上传失败
-            uploader.on('uploadError', function (file, reason) {
-                mui.alert('图片太大，上传失败');
-            });
-            //添加图片end·····································································
 
             //删除操作
             $(document).on('tap', '.delbtn', function () {
@@ -729,12 +699,12 @@
                     $(this).parent().html(divValueNull)
                 }
             });
+
             // 点击时显示div框
             $(document).on('tap', '.operationDiv p', function () {
                 var YdivValue = '<i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" value="' + $(this).text() + '"  class="mui-text-left text delClass textarea" placeholder="请输入正文">' + $(this).text() + '</div>';
                 $(this).parent().html(YdivValue).addClass("bgorange");
             });
-
 
             // 图片的移动操作
             $(document).on('tap', '.desimg', function () {
@@ -763,8 +733,6 @@
             delbtnFunction()//调用删除按钮
 
         });
-
-
 
         // 插入删除按钮
         function delbtnFunction() {

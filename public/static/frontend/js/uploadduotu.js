@@ -1,102 +1,68 @@
-if (jQuery) { 
-// jQuery 已加载 
-} else { 
-    document.write('<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>');   
-} 
-// 图片上传
-window.id=0;
-function add_id(id) {
-    window.id=id;
-    console.log(window.id);
+if (jQuery) {
+    // jQuery 已加载 
+} else {
+    document.write('<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>');
 }
-
-// 初始化 webuloader
-var uploader = WebUploader.create({
+// 针对花絮小图多图上传实例
+// 初始化Web Uploader
+var uploaderOne = WebUploader.create({
     auto: true,
     server: uploadApiUrl,
-    pick: {
-        id:'.filePicker',
-        multiple: false
-    },
+    pick: '#filePickerOne',
     accept: {
         title: 'Images',
         extensions: 'gif,jpg,jpeg,bmp,png',
         mimeTypes: 'image/*'
-    },
-    fileNumLimit: 5,
+    }
 });
-// 预览图
-/*uploader.on('fileQueued', function(file) {
-    var $li = $('#preview_'+window.id);
-    uploader.makeThumb(file, function(error, src) {
-        if (error) {
-
-        }
-        $li.attr('src', src);
-    })
-});*/
 // 上传过程
-uploader.on('uploadProgress', function(file, percentage){
+uploaderOne.on('uploadProgress', function (file, percentage) {
     mui.toast('正在上传...');
-   /* var container = mui("#p1");
-    if (container.progressbar({
-            progress: 0
-        }).show()) {
-        simulateLoading(container, percentage*100);
-    }*/
 });
 // 上传成功
-uploader.on('uploadSuccess', function(file, responce) {
-    //console.log(responce);
-    // var $li = $('#preview_'+window.id);
-    var $li = $(".previewList");
-    if ( eval('responce').status == 0 ) {
-        // alert('上传失败');
-        mui.toast('上传失败,请重试', {'duration':'long'});
+uploaderOne.on('uploadSuccess', function (file, responce) {
+    if (eval('responce').status == 0) {
+        mui.toast('上传失败,请重试', { 'duration': 'long' });
     } else {
-        mui.toast('上传成功', {'duration':'long'});
-        $li.append("<li><i id='del'>X</i><img id='img' src="+responce.path+"></li>");
-
+        mui.toast('上传成功', { 'duration': 'long' });
+        var $li = '<div class="fl albumImg"><i class="delbtn mui-icon mui-icon-close"></i><img src="' + responce.path + '"></div>';
+        $(".albumBox").append($li);
     }
 });
 // 上传失败
-uploader.on('uploadError', function(file, reason) {
-    // alert('上传的图片有问题,请换另一张');
-    mui.alert('上传的图片有问题,请换另一张');
+uploaderOne.on('uploadError', function (file, reason) {
+    mui.alert('图片太大，上传失败');
 });
 
-function simulateLoading(container, progress) {
-    if (typeof container === 'number') {
-        progress = container;
-        container = 'body';
+//////////////////////////////////////////////////////////////////////////////////////// 
+
+// 针对详情大图多图上传实例
+// 初始化Web Uploader
+var uploaderTwo = WebUploader.create({
+    auto: true,
+    server: uploadApiUrl,
+    pick: '#filePickerTwo',
+    accept: {
+        title: 'Images',
+        extensions: 'gif,jpg,jpeg,bmp,png',
+        mimeTypes: 'image/*'
     }
-    setTimeout(function() {
-        // progress += Math.random() * 20;
-        mui(container).progressbar().setProgress(progress);
-        if (progress < 100) {
-            simulateLoading(container, progress);
-        } else {
-            mui(container).progressbar().hide();
-        }
-    }, Math.random() * 200 + 200);
-}
-
-$(document).on( 'click', '#del', function() {
-    $(this).parent().remove()
 });
-
-var covers ='';
-$(function(){
-    covers =[];
-    $(document).ready(function(){
-        $(".createBtn").on('click',function(){
-            $(".previewList img").each(function(){
-                covers.push($(this).attr('src'));
-            }).get().join(",")
-            console.log(covers)
-        })
-    })
-    
-})
-
-
+// 上传过程
+uploaderTwo.on('uploadProgress', function (file, percentage) {
+    mui.toast('正在上传...');
+});
+// 上传成功
+uploaderTwo.on('uploadSuccess', function (file, responce) {
+    if (eval('responce').status == 0) {
+        mui.toast('上传失败,请重试', { 'duration': 'long' });
+    } else {
+        mui.toast('上传成功', { 'duration': 'long' });
+        var $li = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img class="desimg" src="' + responce.path + '" style="padding-top:5px"></div>';
+        $(".introBox").append($li);
+    }
+});
+// 上传失败
+uploaderTwo.on('uploadError', function (file, reason) {
+    mui.alert('图片太大，上传失败');
+});
