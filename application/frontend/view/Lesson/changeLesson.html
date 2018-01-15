@@ -139,7 +139,7 @@
             </form>
 
             <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen operationBtn" style="color: #fff" onclick="submitAction()">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen submitBtn">
                     确定转换
                 </li>
             </ul>
@@ -242,7 +242,7 @@
                 //每次打开先清空所有选择
                 $("input[name='checkbox-student']").prop("checked", false);
                 //然后遍历出对应所选
-                $(".stdList").each(function (i) {
+                $("#studentList li").each(function (i) {
                     //var id = $(this).attr("data-id");
                     var student_id = $(this).attr("data-student_id");
                     //var student = $(this).attr("data-student");
@@ -257,17 +257,17 @@
 
                 var sList = "";
                 $("input[name='checkbox-student']:checked").each(function (i) {
-                    //                    var id = $(this).attr("data-id");
+                    var id = $(this).attr("data-id");
                     var student_id = $(this).attr("data-student_id");
                     var student = $(this).val();
-                    var student_typenum = $(this).attr("data-student_typenum");
+                    var rest_schedule = $(this).attr("data-rest_schedule");
                     var camp = $(this).attr("data-camp");
                     var camp_id = $(this).attr("data-camp_id");
                     var lesson = $(this).attr("data-lesson");
                     var lesson_id = $(this).attr("data-lesson_id");
                     var member = $(this).attr("data-member");
                     var member_id = $(this).attr("data-member_id");
-                    sList += '<li class="mui-table-view-cell listli detalisli" data-student="' + student + '" data-student_id="' + student_id + '" data-camp="' + camp + '" data-camp_id="' + camp_id + '" data-lesson="' + lesson + '" data-lesson_id="' + lesson_id + '" data-member="' + member + '" data-member_id="' + member_id + '" data-student_typenum="'+ student_typenum +'"><label class="number">' + (i + 1) + '</label>'+student+'</li>';
+                    sList += '<li class="mui-table-view-cell listli detalisli" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id + '" data-camp="' + camp + '" data-camp_id="' + camp_id + '" data-lesson="' + lesson + '" data-lesson_id="' + lesson_id + '" data-member="' + member + '" data-member_id="' + member_id + '" data-rest_schedule="'+ rest_schedule +'"><label class="number">' + (i + 1) + '</label>'+student+'<span>剩余课量：'+rest_schedule+'</span></li>';
                 });
                 $("#studentList").empty();
                 $("#studentList").html('<ul class="mui-table-view list">'+sList+'</ul>');
@@ -322,55 +322,66 @@
             })
 
 
-            //创建班级
-            $(".editorbtn").on('tap', '', function () {
+            //课程转换提交
+            $(".submitBtn").on('tap', '', function () {
 
-                //检测提成和基数输入是否为数字
-                var noPass = "";
-                //检查是否输入班级名称
-                if ($('input[name="grade"]').val() == "") {
-                    noPass += "班级名称必须填写！！"
+                //验证填写项是否齐全
+                if ($('input[name="original_lesson_id"]').val() == ""||$('input[name="target_lesson_id"]').val() == "") {
+                    mui.alert("提交失败，原课程和目标课程不能为空");
+                    return false;
+                }
+                if ($('input[name="original_lesson_id"]').val() == $('input[name="target_lesson_id"]').val()) {
+                    mui.alert("提交失败，原课程和目标课程不能相同");
+                    return false;
+                }
+                if ($("#studentList li").length == 0) {
+                    mui.alert("提交失败，请指定学员！");
+                    return false;
                 }
 
-                if (noPass != "") {
-                    mui.alert(noPass);
-                    return false;
-                } else if ($('input[name="coach"]').val() != "" && $('input[name="coach_salary"]').val() == '') {
-                    mui.alert("已选择主教，请填写主教底薪");
-                    return false;
-                }  else if ($('input[name="assistants"]').val() != "" && $('input[name="assistant_salary"]').val() == '') {
-                    mui.alert("已选择助教，请填写助教底薪");
-                    return false;
-                } else if ($('input[name="assistants"]').val() == "" && $('input[name="assistant_salary"]').val() != '') {
-                    mui.alert("已填写助教底薪，还未选择助教");
-                    return false;
-                } else {
-                    var data = wooApi.getInputData('input', 'data');
-                    datas = wooApi.getInputData('select', 'data', data);
-                    // 获取其他标签值
-                    arrData = wooApi.getDomData('domData', datas);
-                    var objData = wooApi.arrTOobj(arrData);
-                    // var studentList = [{student:1,student_id:1,id:1},{student:2,student_id:2,id:2}];
-                    objData.studentData = JSON.stringify(studentList);
-                    //            console.log(studentList);
-                    console.log(objData);
 
-                    var url = "{:url('api/grade/createGradeApi')}";
-                    var ajaxResult = wooApi.asyncF(url, objData);
-                    //                    return false;
-                    if (ajaxResult.code == 200) {
-                        mui.alert(ajaxResult.msg, '创建成功', '确定', function () {
-                            window.location.href = "{:url('frontend/grade/gradelistofcamp',['camp_id'=>$campInfo['id']])}";
-                        })
-                    } else {
-                        mui.alert(ajaxResult.msg, '创建失败', '确定', function () {
-                            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                                if (data.code === 200) {
-                                    $('input[name=__token__]').val(data.data);
-                                }
-                            }, 'json');
-                        })
-                    }
+                //遍历正式和体验生学员组合数组
+                var studentList = [];//学员列表数组
+                //然后遍历出对应所选
+                $("#studentList li").each(function () {
+                    var id = $(this).attr("data-id");
+                    var student_id = $(this).attr("data-student_id");
+                    var student = $(this).attr("data-student");
+                    var member_id = $(this).attr("data-member_id");
+                    var member = $(this).attr("data-member");
+                    var lesson_id = $(this).attr("data-lesson_id");
+                    var lesson = $(this).attr("data-lesson");
+                    studentList.push({ id: id, student: student, student_id: student_id, member: member, member_id: member_id, lesson: lesson, lesson_id: lesson_id });
+                });
+                console.log(studentList)
+
+                var data = wooApi.getInputData('input', 'data');
+                datas = wooApi.getInputData('select', 'data', data);
+                // 获取其他标签值
+                arrData = wooApi.getDomData('domData', datas);
+                var objData = wooApi.arrTOobj(arrData);
+                // var studentList = [{student:1,student_id:1,id:1},{student:2,student_id:2,id:2}];
+                objData.studentData = JSON.stringify(studentList);
+                //            console.log(studentList);
+                console.log(objData);
+
+
+                return false;
+                var url = "{:url('api/lesson/changeLessonApi')}";
+                var ajaxResult = wooApi.asyncF(url, objData);
+                //                    return false;
+                if (ajaxResult.code == 200) {
+                    mui.alert(ajaxResult.msg, '提交成功', '确定', function () {
+                        window.location.href = "{:url('frontend/lesson/changeLessonList',['camp_id'=>$campInfo['id']])}";
+                    })
+                } else {
+                    mui.alert(ajaxResult.msg, '提交失败', '确定', function () {
+                        mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                            if (data.code === 200) {
+                                $('input[name=__token__]').val(data.data);
+                            }
+                        }, 'json');
+                    })
                 }
             })
 
@@ -384,12 +395,6 @@
             var url = "{:url('api/lesson_member/searchLessonMemberNoPageApi','','',true)}/?page=" + page;
             var campID = "{$campInfo.id}";
             var classNameList = "form#newdiv";
-            var currPage = ".currPageOfStudent";
-            var totalPage = ".totalPageOfStudent";
-            if (keyword != '' && className != '') {
-                currPage = "#" + className + " .currPageOfStudent";
-                totalPage = "#" + className + " .totalPageOfStudent";
-            }
 
             mui.ajax({
                 url: url,
@@ -397,6 +402,7 @@
                     lesson_id:lesson_id,
                     camp_id: campID,
                     keyword: keyword,
+                    type: 1,
                     status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
@@ -407,11 +413,8 @@
                 success: function (data) {
                     if (data.code == 200) {
                         var newli = '';
-                        var tys = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            tys = '';
-                            if (data.data[i].type == "体验生") { tys = '<span class="tips">体验生</span>' }
-                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student +'" data-camp="'+ data.data[i].camp +'" data-camp_id="'+ data.data[i].camp_id +'" data-lesson="'+ data.data[i].lesson +'" data-lesson_id="'+ data.data[i].lesson_id +'" data-member="'+ data.data[i].member +'" data-member_id="'+ data.data[i].member_id + '" data-student_typenum="'+ data.data[i].type_num +'" ></div>'
+                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student +'" data-camp="'+ data.data[i].camp +'" data-camp_id="'+ data.data[i].camp_id +'" data-lesson="'+ data.data[i].lesson +'" data-lesson_id="'+ data.data[i].lesson_id +'" data-member="'+ data.data[i].member +'" data-member_id="'+ data.data[i].member_id + '" data-rest_schedule="'+ data.data[i].rest_schedule +'" ></div>'
                         }
 
                         $(classNameList).empty();
@@ -419,8 +422,6 @@
                             newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
                         }
                         $(classNameList).append(newli);
-                        $(currPage).text(data.data.current_page);
-                        $(totalPage).text(data.data.last_page);
                     } else {
                         mui.toast('数据获取失败,请稍候再试');
                     }
