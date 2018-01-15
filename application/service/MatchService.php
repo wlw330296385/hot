@@ -50,7 +50,7 @@ class MatchService {
             $result = $res->toArray();
             $result['type_num'] = $res->getData('type');
             $result['is_finished_num'] = $res->getData('is_finished');
-            $result['status'] = $res->getData('status');
+            $result['status_num'] = $res->getData('status');
             return $result;
         } else {
             return $res;

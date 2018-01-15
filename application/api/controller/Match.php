@@ -273,6 +273,22 @@ class Match extends Base
                         $recordData['album'] = $post['album'];
                     }
 
+                    // 更新match_name
+                    if (isset($post['record']['away_team_id'])) {
+                        $post['name'] = $post['record']['home_team'] . ' vs ' . $post['record']['away_team'] . '（友谊赛）';
+                    }
+
+                    // 组合更新match数据
+                    $dataMatch = $post;
+                    $memberStatus = 1;
+                    // 当前时间大于比赛时间 即比赛完成
+                    if ($nowTime > $matchTimeStamp) {
+                        $dataMatch['finished_time'] = $matchTimeStamp;
+                        $dataMatch['is_finished'] = 1;
+                        //$dataMatch['id'] = $match['id'];
+                        $memberStatus = 2;
+                    }
+
                     // 保存球队参赛人员
                     // 主队成员
                     if (isset($post['HomeMemberData']) && $post['HomeMemberData'] != "[]") {
@@ -289,7 +305,7 @@ class Match extends Base
                             $homeMember[$k]['team'] = $recordData['home_team'];
                             $homeMember[$k]['match_record_id'] = $recordData['id'];
                             $homeMember[$k]['member_avatar'] = db('member')->where('id', $val['member_id'])->value('avatar');
-                            $homeMember[$k]['status'] = 2;
+                            $homeMember[$k]['status'] = $memberStatus;
                         }
                         $saveHomeTeamMemberRes = $matchS->saveAllMatchRecordMember($homeMember);
                         if ($saveHomeTeamMemberRes['code'] == 100) {
@@ -320,17 +336,20 @@ class Match extends Base
                         return json(['code' => 100, 'msg' => '保存比赛比分失败']);
                     } else {
                         // 更新match数据
-                        $dataMatch = $post;
-                        // 当前时间大于比赛时间 即比赛完成
-                        $matchTimeStamp = strtotime($post['match_time']);
-                        if ($nowTime > $matchTimeStamp) {
-                            $dataMatch['finished_time'] = $matchTimeStamp;
-                            $dataMatch['is_finished'] = 1;
-                            //$dataMatch['id'] = $match['id'];
-                        }
                         $resultSaveMatch = $matchS->saveMatch($dataMatch);
                         if ($resultSaveMatch['code'] == 100) {
                             return json(['code' => 100, 'msg' => '更新比赛信息失败']);
+                        }
+                        // 更新球队比赛场数、胜场数
+                        $homeScore= $post['record']['home_score'];
+                        $awayScore = $post['record']['away_score'];
+                        if ($homeScore > 0 && $awayScore > 0 ) {
+                            if ($homeScore > $awayScore) {
+                                db('team')->where('id', $post['team_id'])->inc('match_win', 1)->update();
+                            }
+                            if ($homeScore < $awayScore) {
+                                db('team')->where('id', $post['team_id'])->dec('match_win', -1)->update();
+                            }
                         }
                         return json($resultSaveMatchRecord);
                     }
@@ -397,8 +416,15 @@ class Match extends Base
                     // 保存球队参赛人员end
                 }
                 // 更新球队比赛场数、胜场数
-                if ($post['record']['home_score'] > 0 && $post['record']['away_score'] > 0 ) {
-
+                $homeScore= $post['record']['home_score'];
+                $awayScore = $post['record']['away_score'];
+                if ($homeScore > 0 && $awayScore > 0 ) {
+                    if ($homeScore > $awayScore) {
+                        db('team')->where('id', $post['team_id'])->inc('match_num', 1)->inc('match_win', 1)->update();
+                    }
+                    if ($homeScore < $awayScore) {
+                        db('team')->where('id', $post['team_id'])->inc('match_num', 1)->update();
+                    }
                 }
                 // 返回结果
                 return json($resultSaveMatch);
@@ -509,7 +535,13 @@ class Match extends Base
             switch ($match['status_num']) {
                 case 1 : {
                     if ($action == 'editstatus') {
-                        $response = $matchS->saveMatch(['id' => $match['id'], 'status' => -1]);
+                        //$response = $matchS->saveMatch(['id' => $match['id'], 'status' => -1]);
+                        $query = db('match')->where('id', $match['id'])->setField('status', -1);
+                        if ($query) {
+                            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+                        } else {
+                            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+                        }
                     } else {
                         $delRes = $matchS->deleteMatch($match['id']);
                         if ($delRes) {
@@ -523,7 +555,13 @@ class Match extends Base
                 }
                 case -1 : {
                     if ($action == 'editstatus') {
-                        $response = $matchS->saveMatch(['id' => $match['id'], 'status' => 1]);
+                        //$response = $matchS->saveMatch(['id' => $match['id'], 'status' => 1]);
+                        $query = db('match')->where('id', $match['id'])->setField('status', 1);
+                        if ($query) {
+                            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+                        } else {
+                            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+                        }
                     } else {
                         $delRes = $matchS->deleteMatch($match['id']);
                         if ($delRes) {
