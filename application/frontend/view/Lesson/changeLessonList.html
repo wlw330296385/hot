@@ -29,7 +29,7 @@
         <div class="camp-lesson-list">
             <div class="mui-segmented-control mb">
                 <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id' => $camp_id])}"></a>
-                <a class="mui-control-item" href="#changeList">历史转换记录</a>
+                <a class="mui-control-item mui-active" href="#changeList">历史转换记录</a>
                 <a class="mui-control-item" href="{:url('lesson/changeLesson',['camp_id'=>$campInfo['id']])}">课程转换</a>
             </div>
         </div>
@@ -114,19 +114,22 @@
 
         // 赠送记录列表
         var toChangeLessonList = function (wList, page, gType) {
+
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/lesson_member/changeListOfCampByPage','','',true)}" + '/?page=' + page;
+            var campID = "{$camp_id}";
+
+
             var newli = '';
             for (var i = 0; i <= 10 - 1; i++) {
                 var urls = "{:url('lesson/changeLessonInfo')}" + '/camp_id/' + campID + '/id/1';
-                newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><div class="mui-media-body wd83 ">陈同学 <i>2018-01-23 14:32:00</i><p class="mui-ellipsis">大热常规班 &nbsp; => &nbsp; 小热不常规班</p></div><div class="price-frame mui-text-center"><p class="price">转10节</p></div></a></li>';
+                newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><div class="mui-media-body wd83 ">陈同学 <i>2018-01-23 14:32:00</i><p class="mui-ellipsis">大热常规班 &nbsp; <strong>=&gt;</strong> &nbsp; 小热不常规班</p></div><div class="price-frame mui-text-center"><p class="price">转10节</p></div></a></li>';
             }
             $(".changeList").empty().append(newli);
             return false;
 
 
 
-            //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/lesson_member/changeListOfCampByPage','','',true)}" + '/?page=' + page;
-            var campID = "{$camp_id}";
             mui.ajax({
                 url: url,
                 data: {
@@ -142,7 +145,7 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             var urls = "{:url('lesson/changeLessonInfo')}" + '/camp_id/' + campID + '/id/' + data.data[i].id;
-                            newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><div class="mui-media-body wd83 ">' + data.data[i].student + '<i>' + data.data[i].create_time + '</i><p class="mui-ellipsis">' + data.data[i].original_lesson + ' &nbsp; => &nbsp; ' + data.data[i].new_lesson + '</p></div><div class="price-frame mui-text-center"><p class="price">转' + data.data[i].total_schedule + '</p></div></a></li>';
+                            newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><div class="mui-media-body wd83 ">' + data.data[i].student + '<i>' + data.data[i].create_time + '</i><p class="mui-ellipsis">' + data.data[i].original_lesson + ' &nbsp; &rarr; &nbsp; ' + data.data[i].new_lesson + '</p></div><div class="price-frame mui-text-center"><p class="price">转' + data.data[i].total_schedule + '</p></div></a></li>';
                         }
                     };
 
