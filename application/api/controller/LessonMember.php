@@ -172,40 +172,64 @@ class LessonMember extends Base{
     public function transferLessonApi(){
         try{
             $data = input('post.');
+            $remarks = input('param.remarks');
             $new_lesson_id = $data['new_lesson_id'];
-            $lesson_id = $data['lesson_id'];
-            $student_id = $data['student_id'];
-            $isGrade = db('grade_member')->where(['lesson_id'=>$lesson_id,'student_id'=>$student_id,'status'=>1])->find();
+            $lesson_id = $data['original_lesson_id'];
+            $student_ids = json_decode($data['studentData'],true);
+            // print_r($student_ids);die;
+            $isGrade = db('grade_member')->where(['lesson_id'=>$lesson_id,'student_id'=>['in',$student_ids],'status'=>1])->find();
             if($isGrade){
                 return json(['code'=>100,'msg'=>'请先把学生移除出'.$isGrade['grade'].'班级']);
             }
-            $lessonMemberInfo = $this->LessonMemberService->getLessonMemberInfo(['lesson_id'=>$lesson_id,'student_id'=>$student_id,'status'=>1]);
-            if(!$lessonMemberInfo){
-                return json(['code'=>100,'msg'=>'该学生状态已改变']);
-            }            
-
-            if($lessonMemberInfo['transfer']==1){
-                return json(['code'=>100,'msg'=>'该生已转过课,不允许再次转课']);
-            }
-
             $newLessonInfo = db('lesson')->where(['id'=>$new_lesson_id])->find();
             $lessonInfo = db('lesson')->where(['id'=>$lesson_id])->find();
-            if($newLessonInfo['price']<>$lessonInfo['price']){
+            if($newLessonInfo['cost']<>$lessonInfo['cost']){
                 return json(['code'=>100,'msg'=>'课程单价不一样,不允许转课']);
             }
-            //旧的
-            $data1 = ['rest_schedule'=>0,'status'=>2];
-            $map1 = ['id'=>$lessonMemberInfo['id']];
-            // 新的
-            $data2 = $lessonInfo;
-            $data['transfer'] = 1;
-            unset($data['create_time']);
-            unset($data['update_time']);
+            $LessonMember = new \app\model\LessonMember;
+            $lessonMemberList = $LessonMember->where(['lesson_id'=>$lesson_id,'student_id'=>['in',$student_ids],'status'=>1])->select();
+            if(!$lessonMemberList){
+                return json(['code'=>100,'msg'=>'学生状态已改变']);
+            }    
+            $lessonMemberList = $lessonMemberList->toArray();        
+            $data1 = [];
+            $data2 = [];
+            $msg = '';
+            foreach ($lessonMemberList as $key => &$value) {
+                if($value['transfer'] == 1 && $value['rest_schedule'] == 0){
+                    $msg.= $value['stduent'].',';
+                    continue;
+                }
+                //旧的
+                $data1 = ['rest_schedule'=>0,'status'=>2,'transfer'=>1,'remarks'=>$remarks,'system_remarks'=>'转课转走'];
+                $map1[] = $value['id'];
+                // 新的
+                $value['transfer'] = 1;
+                $value['create_time'] = time();
+                $value['status'] = 1;
+                $value['type'] = 1;
+                $value['system_remarks'] = '转课学生';
+                unset($value['id']);
+                unset($value['update_time']);
+                $data2[] = $value;
+            }
+            // if($lessonMemberInfo['transfer']==1){
+            //     return json(['code'=>100,'msg'=>'该生已转过课,不允许再次转课']);
+            // }
+            
+            
+            
+            $LessonMember = new \app\model\LessonMember;
+            $res = $LessonMember->saveAll($data2);
+            if($res){
+                $result = $this->LessonMemberService->updateLessonMember($data1,['id'=>['in',$map1]]);
 
-            $res = $this->LessonMemberService->createLessonMember($data2);
-            if($res['code'] == 200){
-                $result = $this->LessonMemberService->updateLessonMember($data1,$map1);
-                return json($result);
+                if($msg == ''){
+                    return json(['code'=>200,'msg'=>'操作成功']);
+                }else{
+                    return json(['code'=>200,'msg'=>$msg.'已经转过课或者课时为0不允许再次转课']);
+                }
+                
             }else{
                 return json($res);
             }

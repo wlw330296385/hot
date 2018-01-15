@@ -118,7 +118,7 @@
                     <a href="#target_lesson" class="mui-navigate-right">
                         <label>目标课程</label>
                         <input type="text" value="" name="target_lesson" class="target_lessonCont data" placeholder="请选择转换的目标课程">
-                        <input type="hidden" name="target_lesson_id" class="target_lesson_id data" value="">
+                        <input type="hidden" name="new_lesson_id" class="target_lesson_id data" value="">
                     </a>
                 </div>
 
@@ -351,7 +351,7 @@
                     var member = $(this).attr("data-member");
                     var lesson_id = $(this).attr("data-lesson_id");
                     var lesson = $(this).attr("data-lesson");
-                    studentList.push({ id: id, student: student, student_id: student_id, member: member, member_id: member_id, lesson: lesson, lesson_id: lesson_id });
+                    studentList.push(student_id);
                 });
                 console.log(studentList)
 
@@ -362,25 +362,18 @@
                 var objData = wooApi.arrTOobj(arrData);
                 // var studentList = [{student:1,student_id:1,id:1},{student:2,student_id:2,id:2}];
                 objData.studentData = JSON.stringify(studentList);
-                //            console.log(studentList);
                 console.log(objData);
 
-
-                return false;
-                var url = "{:url('api/lesson/changeLessonApi')}";
+                var url = "{:url('api/lesson_member/transferLessonApi')}";
                 var ajaxResult = wooApi.asyncF(url, objData);
-                //                    return false;
                 if (ajaxResult.code == 200) {
                     mui.alert(ajaxResult.msg, '提交成功', '确定', function () {
                         window.location.href = "{:url('frontend/lesson/changeLessonList',['camp_id'=>$campInfo['id']])}";
                     })
                 } else {
                     mui.alert(ajaxResult.msg, '提交失败', '确定', function () {
-                        mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                            if (data.code === 200) {
-                                $('input[name=__token__]').val(data.data);
-                            }
-                        }, 'json');
+                       
+                       location.reload();
                     })
                 }
             })

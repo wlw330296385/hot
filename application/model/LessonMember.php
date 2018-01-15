@@ -8,8 +8,6 @@ class LessonMember extends Model {
 	protected $autoWriteTimestamp = true;
     protected $readonly = [
                             'create_time',
-                            'status',
-                            'type',
                             ];
 
 
