@@ -233,9 +233,9 @@ class LessonMember extends Base{
             $result = $this->LessonMemberService->updateLessonMember($data1,['id'=>['in',$map1]]);
             if($result['code']==200){
                 if($msg == ''){
-                    return json(['code'=>200,'msg'=>'操作成功']);
+                    return json(['code'=>200,'msg'=>'全部操作成功']);
                 }else{
-                    return json(['code'=>200,'msg'=>$msg.'已经转过课或者课时为0不允许再次转课']);
+                    return json(['code'=>200,'msg'=>$msg.'已经转过课或者课时为0不允许再次转课,剩下的操作成功']);
                 }
             }else{
                 return json($result);

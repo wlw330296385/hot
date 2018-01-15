@@ -315,11 +315,32 @@ class Lesson extends Base{
 
     //转课列表
     public function changeLessonList(){
+        //训练营
+        $camp_id = input('param.camp_id');
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+        $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
+        if($is_power<2){
+            $this->error('您没有权限');
+        }
+
+        $this->assign('camp_id',$camp_id);
+        $this->assign('campInfo',$campInfo);
         return view('Lesson/changeLessonList');
     }
 
     // 转课详情
     public function changeLessonInfo(){
+        //训练营
+        $camp_id = input('param.camp_id');
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+        $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
+        if($is_power<2){
+            $this->error('您没有权限');
+        }
+
+
+        $this->assign('camp_id',$camp_id);
+        $this->assign('campInfo',$campInfo);
         return view('Lesson/changeLessonInfo');
     }
 }
