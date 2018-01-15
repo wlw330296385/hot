@@ -44,6 +44,7 @@ class ScheduleService
             function($item, $key){
                 $item->student_strs = unserialize($item->student_str);    
             });
+        echo $this->scheduleModel->getlastsql();die;
         if ($result) {
             $list = $result->toArray();
             foreach ($list['data'] as $key => $val) {

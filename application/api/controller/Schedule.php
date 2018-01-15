@@ -226,17 +226,28 @@ class Schedule extends Base
             $map = input('post.');
             $y = input('param.y');
             $m = input('param.m');
-            $d = input('param.d',1);
+            $d = input('param.d');
             $coach_id = input('param.coach_id');
+            unset($map['coach_id']);
             if($y&&$m){
-                $betweenTime = getStartAndEndUnixTimestamp($y,$m,$d);
+                $betweenTime = getStartAndEndUnixTimestamp($y,$m);
                 $map['lesson_time'] = ['BETWEEN',[$betweenTime['start'],$betweenTime['end']]];
             }
-            $map = function ($query) use ($map,$coach_id) {
-                $query->where($map)->whereOr('schedule.assistant_id', 'like', "%\"$coach_id\"%");
+            $mapAnd = function ($query) use ($map,$coach_id) {
+                $query->where($map)->where('schedule.assistant_id', 'like', "%\"$coach_id\"%");
             };
-            $result = $this->ScheduleService->getScheduleListByPage($map);
-            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+
+            $mapOr = function ($query) use ($map,$coach_id) {
+                $query->where($map)->where(['schedule.coach_id'=>$coach_id]);
+            };
+            $Schedule = new \app\model\Schedule;
+            $result = $Schedule->where($mapAnd)->whereOr($mapOr)->paginate(10);
+            if($result){
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result->toArray()]);
+            }else{
+                return json(['code' => 100, 'msg' => '无数据','data'=>[]]);
+            }
+            
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }

@@ -297,12 +297,12 @@ class Lesson extends Base{
     // 课程转换
     public function changeLesson(){
     	//训练营
-                $camp_id = input('param.camp_id');
-                $campInfo = db('camp')->where(['id'=>$camp_id])->find();
-                $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
-                if($is_power<2){
-                    $this->error('您没有权限');
-                }
+        $camp_id = input('param.camp_id');
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+        $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
+        if($is_power<2){
+            $this->error('您没有权限');
+        }
 
         // 课程列表
         $lessonList = db('lesson')->where(['camp_id'=>$camp_id,'status'=>1])->where('delete_time','null')->select();
