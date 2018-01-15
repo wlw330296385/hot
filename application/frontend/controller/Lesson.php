@@ -313,4 +313,13 @@ class Lesson extends Base{
         return view('Lesson/changeLesson');
     }
 
+    //转课列表
+    public function changeLessonList(){
+        return view('Lesson/changeLessonList');
+    }
+
+    // 转课详情
+    public function changeLessonInfo(){
+        return view('Lesson/changeLessonInfo');
+    }
 }
