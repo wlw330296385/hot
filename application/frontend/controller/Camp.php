@@ -461,23 +461,36 @@ class Camp extends Base{
         //教练工资
         $SalaryInService = new \app\service\SalaryInService($member_id);
         $salaryList = $SalaryInService->getSalaryInList(['member_id'=>$coachInfo['member_id'],'type'=>1,'camp_id'=>$camp_id]);
-        // 平均月薪
+
+        // 本月工资
         $monthStamp = getStartAndEndUnixTimestamp(date('Y'), date('m'));
         $mapMonth = [
             'camp_id' => $camp_id,
             'member_id' => $coachInfo['member_id'],
-            'schedule_time' => ['between', [$monthStamp['start'], $monthStamp['end']]]
+            'schedule_time' => ['between', [$monthStamp['start'], $monthStamp['end']]],
+            //'member_type' => ['lt', 5]
+            'type' => 1,
         ];
-        $SalaryMonth = $SalaryInService->countSalaryin($mapMonth);
-        // 平均年薪
+        // 本年工资
         $yearStamp = getStartAndEndUnixTimestamp(date('Y'));
         $mapYear = [
             'camp_id' => $camp_id,
             'member_id' => $coachInfo['member_id'],
-            'schedule_time' => ['between', [$yearStamp['start'], $yearStamp['end']]]
+            'schedule_time' => ['between', [$yearStamp['start'], $yearStamp['end']]],
+            //'member_type' => ['lt', 5]
+            'type' => 1,
         ];
+        // 如果教练是训练营营主 统计算入营主的份额
+        $coachIsCampPower4 = getCampPower($camp_id, $coachInfo['member_id']);
+        if ($coachIsCampPower4 && $coachIsCampPower4 != 4) {
+            $mapMonth['member_type'] = ['lt', 5];
+            $mapYear['member_type'] = ['lt', 5];
+        }
+        
+        $SalaryMonth = $SalaryInService->countSalaryin($mapMonth);
         $SalaryYear = $SalaryInService->countSalaryin($mapYear);
         // dump($salaryList);die;
+
         $this->assign('monthScheduleOfCoachList',$monthScheduleOfCoachList);//教练当月的课量
         $this->assign('monthScheduleOfCoach',$monthScheduleOfCoach);//当月课量数量
         $this->assign('gradeOfCoachList',$gradeOfCoachList);//教练班级
