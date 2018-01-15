@@ -101,13 +101,15 @@ class Salaryin extends Base {
                     return json(['code' => 100, 'msg' => '时间格式错误']);
                 }
                 // 根据传入年、月 获取月份第一天和最后一天，拼接时间查询条件
-                $when = $year.'-'.$month;
-                $start = date('Y-m-01', strtotime($when));
-                $end = date('Y-m-d', strtotime("$start +1 month -1 day"));
-                $map['create_time'] = ['between time', [$start, $end]];
+                //$when = $year.'-'.$month;
+                //$start = date('Y-m-01', strtotime($when));
+                //$end = date('Y-m-d', strtotime("$start +1 month -1 day"));
+                //$map['schedule_time'] = ['between time', [$start, $end]];
+                $when = getStartAndEndUnixTimestamp($year, $month);
+                $map['schedule_time'] = ['between', $when['start'], $when['end']];
             } else {
                 list($start, $end) = Time::month();
-                $map['create_time'] = ['between', [$start, $end]];
+                $map['schedule_time'] = ['between', [$start, $end]];
             }
             $map['camp_id'] = $camp_id;
             $map['member_type'] = ['lt', 5];
@@ -135,6 +137,8 @@ class Salaryin extends Base {
             $request = input('param.');
             // 组合查询条件
             $map = [];
+            // 传入教练的会员id查询该教练会员工资 否则默认查询当前会员
+            $map['member_id'] = isset($request['member_id']) ? $request['member_id'] : $this->memberInfo['id'];
             // 有参数camp_id 则查教练在该训练营的工资列表 否则查教练个人的工资列表
             if (isset($request['camp_id'])) {
                 // 判断当前会员在训练营有无教练或以上身份，没有就抛出提示
@@ -143,6 +147,11 @@ class Salaryin extends Base {
                     return json(['code' => 100, 'msg' => __lang('MSG_403').',你无权查看此训练营相关信息']);
                 }
                 $map['camp_id'] = $request['camp_id'];
+                // 如果训练营营主也是教练身份 也列出工资列表
+                $coachIsCampPower4 = getCampPower($map['camp_id'], $map['member_id']);
+                if ($coachIsCampPower4 && $coachIsCampPower4 != 4) {
+                    $map['member_type'] = ['lt', 5];
+                }
             }
             // 要查询的时间段（年、月），默认当前年月
             if (input('?param.year') || input('?param.month')) {
@@ -153,18 +162,17 @@ class Salaryin extends Base {
                     return json(['code' => 100, 'msg' => '时间格式错误']);
                 }
                 // 根据传入年、月 获取月份第一天和最后一天，拼接时间查询条件
-                $when = $year.'-'.$month;
-                $start = date('Y-m-01', strtotime($when));
-                $end = date('Y-m-d', strtotime("$start +1 month -1 day"));
-                $map['create_time'] = ['between time', [$start, $end]];
+                //$when = $year.'-'.$month;
+                //$start = date('Y-m-01', strtotime($when));
+                //$end = date('Y-m-d', strtotime("$start +1 month -1 day"));
+                //$map['schedule_time'] = ['between time', [$start, $end]];
+                $when = getStartAndEndUnixTimestamp($year, $month);
+                $map['schedule_time'] = ['between', $when['start'], $when['end']];
             } else {
                 list($start, $end) = Time::month();
-                $map['create_time'] = ['between', [$start, $end]];
+                $map['schedule_time'] = ['between', [$start, $end]];
             }
-            //$map['member_id'] = $this->memberInfo['id'];
-            // 传入教练的会员id查询该教练会员工资 否则默认查询当前会员
-            $map['member_id'] = isset($request['member_id']) ? $request['member_id'] : $this->memberInfo['id'];
-            $map['member_type'] = ['lt', 5];
+
             $map['type'] = 1;
 //            dump($map);
             // 获取工资数据
@@ -189,6 +197,8 @@ class Salaryin extends Base {
             $request = input('param.');
             // 组合查询条件
             $map = [];
+            // 传入教练的会员id查询该教练会员工资 否则默认查询当前会员
+            $map['member_id'] = isset($request['member_id']) ? $request['member_id'] : $this->memberInfo['id'];
             // 有参数camp_id 则查教练在该训练营的工资列表 否则查教练个人的工资列表
             if (isset($request['camp_id'])) {
                 // 判断当前会员在训练营有无教练或以上身份，没有就抛出提示
@@ -197,28 +207,32 @@ class Salaryin extends Base {
                     return json(['code' => 100, 'msg' => __lang('MSG_403').',你无权查看此训练营相关信息']);
                 }
                 $map['camp_id'] = $request['camp_id'];
+                // 如果训练营营主也是教练身份 也列出工资列表
+                $coachIsCampPower4 = getCampPower($map['camp_id'], $map['member_id']);
+                if ($coachIsCampPower4 && $coachIsCampPower4 != 4) {
+                    $map['member_type'] = ['lt', 5];
+                }
             }
             // 要查询的时间段（年、月），默认当前年月
-            if (input('?param.year') || input('?param.month')) {
+            if (input('?param.y') || input('?param.m')) {
                 // 判断年、月参数是否为数字格式
-                $year = input('year', date('Y'));
-                $month = input('month', date('m'));
+                $year = input('y');
+                $month = input('m');
                 if (!is_numeric($year) || !is_numeric($month) ) {
                     return json(['code' => 100, 'msg' => '时间格式错误']);
                 }
                 // 根据传入年、月 获取月份第一天和最后一天，拼接时间查询条件
-                $when = $year.'-'.$month;
-                $start = date('Y-m-01', strtotime($when));
-                $end = date('Y-m-d', strtotime("$start +1 month -1 day"));
-                $map['create_time'] = ['between time', [$start, $end]];
+                //$when = $year.'-'.$month;
+                //$start = date('Y-m-01', strtotime($when));
+                //$end = date('Y-m-d', strtotime("$start +1 month -1 day"));
+                //$map['schedule_time'] = ['between time', [$start, $end]];
+                $when = getStartAndEndUnixTimestamp($year, $month);
+                $map['schedule_time'] = ['between', [ $when['start'], $when['end'] ]];
             } else {
                 list($start, $end) = Time::month();
-                $map['create_time'] = ['between', [$start, $end]];
+                $map['schedule_time'] = ['between', [$start, $end]];
             }
-            //$map['member_id'] = $this->memberInfo['id'];
-            // 传入教练的会员id查询该教练会员工资 否则默认查询当前会员
-            $map['member_id'] = isset($request['member_id']) ? $request['member_id'] : $this->memberInfo['id'];
-            $map['member_type'] = ['lt', 5];
+
             $map['type'] = 1;
 //            dump($map);
             // 获取工资数据
