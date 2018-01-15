@@ -231,6 +231,8 @@
                         <label class="wd">主队参赛人员</label>
                     </div>
                     <div class="box" id="inactiveList"></div>
+                    <div class="box" id="hideStList" style="display:none"></div>
+                    <div class="box" id="hideStListIni" style="display:none"></div>
                     <div class="operation-btn">
                         <span class="mui-badge badgeHome">0</span>
                         <a class="all">全选</a>
@@ -773,7 +775,7 @@
             colorShow(); // 颜色选择显示
             toHomeMemberList(); //获取主队成员列表
             // toAwayMemberList(); //获取客队成员列表
-            // toSignUpList(); //获取已经报名比赛的人员
+            toSignUpList(); //获取已经报名比赛的人员
             clothes(); //球服没有内容则隐藏i标签
 
             // 设置活动类型默认值
@@ -880,9 +882,20 @@
             })
 
             //删除
+            // $(document).on('click', '.del', function () {
+            //     $(this).parents().siblings().find("input[name='member']:checked").parents(".checkboxCont").remove();
+            //     totalNum = $(this).parents().siblings().find(".checkboxCont").length;
+            //     $(".mui-badge").text(totalNum);
+            // });
             $(document).on('click', '.del', function () {
                 $(this).parents().siblings().find("input[name='member']:checked").parents(".checkboxCont").remove();
-                totalNum = $(this).parents().siblings().find(".checkboxCont").length;
+                changeIndexHome();
+                $("#hideStList").empty();
+                $("#inactiveList input[type=checkbox]").each(function () {
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  type="checkbox"><input type="hidden" class="stdList"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"></div>';
+                    $("#hideStList").append(str);
+                })
+                totalNum = $("#inactiveList .checkboxCont").length;
                 $(".mui-badge").text(totalNum);
             });
 
@@ -901,9 +914,11 @@
             // 选择添加主队参赛人员点击事件
             $("#HomeMemberConfirm").on('click', function () {
                 $("#inactiveList").empty();
+                $("#hideStList").empty();
                 $(".addTeamMemberList input[type=checkbox]:checked").each(function () {
                     var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%"></label><font class="f14">' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" ></div>';
                     $("#inactiveList").append(str);
+                    $("#hideStList").append(str);
                 });
                 changeIndexHome();//调用-更新序号
                 mui("#addTeamMember").popover("toggle");
@@ -1008,13 +1023,47 @@
             albumImg();//调用活动花絮图片组好的数组
 
             // 主队人员
+            // HomeMemberList = [];
+            // $("#inactiveList input[name=member]").each(function () {
+            //     member = $(this).attr("data-member");
+            //     member_id = $(this).attr("data-member_id");
+            //     HomeMemberList.push({ member: member, member_id: member_id });
+            // });
+            // console.log(HomeMemberList)
+
+            HomeMemberListDel = [];
             HomeMemberList = [];
+            ////////////////////////最终选择的活动人员///////////////////////////////////////// 
             $("#inactiveList input[name=member]").each(function () {
                 member = $(this).attr("data-member");
                 member_id = $(this).attr("data-member_id");
                 HomeMemberList.push({ member: member, member_id: member_id });
             });
             console.log(HomeMemberList)
+            ////////////////////////最终选择的活动人员///////////////////////////////////////// 
+
+            ////////////////////////在已选列表中删除了的人员///////////////////////////////////////// 
+            var idDelID = ""
+            //去除活动人员
+            $("#hideStListIni input[name=member]").each(function (i) {
+                var dsid = $(this).attr("data-member_id");
+                //默认为要去除的活动人员
+                idDelID = "Yes";
+                //该人员遍历新编辑的活动人员表判断是否存在
+                $("#hideStList input[name=member]").each(function () {
+                    if (dsid == $(this).attr("data-member_id")) {
+                        idDelID = "No";
+                        return false;
+                    }
+                });
+                //上面遍历过不存在就添加到最终变动活动人员列表中
+                if (idDelID == "Yes") {
+                    var member_id = $(this).attr("data-member_id");
+                    HomeMemberListDel.push({ member_id: member_id, status: -1 });
+                }
+                console.log(HomeMemberListDel)
+            });
+            ////////////////////////在已选列表中删除了的人员///////////////////////////////////////// 
 
             // 客队人员
             // AwayMemberList = [];
@@ -1031,6 +1080,7 @@
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
             objData.HomeMemberData = JSON.stringify(HomeMemberList);
+            objData.HomeMemberDataDel = JSON.stringify(HomeMemberListDel); //在已选列表中删除了的人员
             // objData.AwayMemberData = JSON.stringify(AwayMemberList);
             objData.album = JSON.stringify(album);
 
@@ -1043,7 +1093,7 @@
             }
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '比赛编辑成功', '确定', function () {
-                    var goUrl = "{:url('team/matchlistOfTeam')}/" + 'match_id/' + ajaxResult.data + '/team_id/' + "{$team_id}";
+                    var goUrl = "{:url('team/matchlistOfTeam')}/" + '/team_id/' + "{$team_id}";
                     window.top.location.href = goUrl;
                 })
             } else {
@@ -1176,48 +1226,51 @@
         // };
 
         //获取已经报名的活动人员列表
-        // var toSignUpList = function () {
-        //     var url = "{:url('api/team/teameventmemberall')}";
-        //     var team_id = "{$team_id}";
-        //     mui.ajax({
-        //         url: url,
-        //         data: {
-        //             match_id: match_id,
-        //         },
-        //         dataType: 'json',//服务器返回json格式数据
-        //         type: 'post',//HTTP请求类型
-        //         timeout: 10000,//超时时间设置为10秒；
-        //         headers: { 'Content-Type': 'application/json' },
-        //         success: function (data) {
-        //             console.log(data)
-        //             if (data.code == 200) {
-        //                 var inactiveDiv = '';
-        //                 totalLength = data.data.length;
-        //                 $(".mui-badge").text(totalLength);
+        var toSignUpList = function () {
+            var url = "{:url('api/match/recordmemberlist')}";
+            var match_id = "{$matchInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    match_id: match_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var inactiveDiv = '';
+                        totalLength = data.data.length;
+                        $(".mui-badge").text(totalLength);
 
-        //                 memberList = [];//报名人员列表数组
-        //                 $("#inactiveList").empty();
-        //                 for (var i = 0; i <= data.data.length - 1; i++) {
-        //                     inactiveDiv += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].member + '</font><input name="member" value="' + data.data[i].member_id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" ></div>'
-        //                     memberList.push({ member: data.data[i].member, member_id: data.data[i].member_id, id: data.data[i].id });
-        //                 };
-        //                 $("#inactiveList").append(inactiveDiv);
-        //                 console.log(memberList)
+                        HomeMemberList = [];//报名人员列表数组
+                        $("#inactiveList").empty();
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            inactiveDiv += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].member + '</font><input name="member" value="' + data.data[i].member_id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" ></div>'
+                            HomeMemberList.push({ member: data.data[i].member, member_id: data.data[i].member_id, id: data.data[i].id });
+                        };
+                        console.log(HomeMemberList)
+                     
+                        $("#inactiveList").append(inactiveDiv);
+                        $("#hideStList").append(inactiveDiv);
+                        $("#hideStListIni").append(inactiveDiv);
 
-        //                 if ($("#inactiveList").html() == '') {
-        //                     $(".checkChecked").append('<p class="nohave">没有学员哦</p>');
-        //                 }
+                        if ($("#inactiveList").html() == '') {
+                            $(".checkChecked").append('<p class="nohave">没有学员哦</p>');
+                        }
 
-        //                 changeIndex();//调用-更新序号
-        //                 totalNum = $(".checkboxCont").length;
-        //             }
+                        changeIndexHome();//调用-更新序号
+                        totalNum = $(".checkboxCont").length;
+                    }
 
-        //         },
-        //         error: function (xhr, type, errerThrown) {
-        //             console.log(type);
-        //         }
-        //     });
-        // };
+                },
+                error: function (xhr, type, errerThrown) {
+                    console.log(type);
+                }
+            });
+        };
 
         //场地列表接口获取数据并追加到页面 
         function toCourtList(keyword, wCourt, page) {
