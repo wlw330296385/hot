@@ -396,6 +396,10 @@ class Match extends Base
                     }
                     // 保存球队参赛人员end
                 }
+                // 更新球队比赛场数、胜场数
+                if ($post['record']['home_score'] > 0 && $post['record']['away_score'] > 0 ) {
+
+                }
                 // 返回结果
                 return json($resultSaveMatch);
             }

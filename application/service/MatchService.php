@@ -11,13 +11,13 @@ class MatchService {
     // 保存比赛数据
     public function saveMatch($data) {
         $model = new Match();
-        // 验证数据
         $validate = validate('MatchVal');
-        if (!$validate->check($data)) {
-            return ['code' => 100, 'msg' => $validate->getError()];
-        }
         // 根据提交的参数有无id 识别执行更新/插入数据
         if (isset($data['id'])) {
+            // 验证数据
+            if (!$validate->scene('edit')->check($data)) {
+                return ['code' => 100, 'msg' => $validate->getError()];
+            }
             // 更新数据
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res || ($res === 0)) {
@@ -27,6 +27,10 @@ class MatchService {
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
         } else {
+            // 验证数据
+            if (!$validate->scene('add')->check($data)) {
+                return ['code' => 100, 'msg' => $validate->getError()];
+            }
             // 插入数据
             $res = $model->allowField(true)->save($data);
             if ($res) {

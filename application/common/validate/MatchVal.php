@@ -28,6 +28,6 @@ class MatchVal extends Validate {
     // 验证场景
     protected $scene = [
         'add' => [ 'member_id', 'type', 'province', 'city' ],
-        'edit' => [ 'member_id', 'type', 'province', 'city' ]
+        'edit' => [ 'type', 'province', 'city' ]
     ];
 }
