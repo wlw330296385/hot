@@ -278,7 +278,13 @@ class Match extends Base
                     if (isset($post['HomeMemberData']) && $post['HomeMemberData'] != "[]") {
                         $homeMember = json_decode($post['HomeMemberData'], true);
                         foreach ($homeMember as $k => $val) {
+                            // 查询有无team_event_member原数据，有则更新原数据否则插入新数据
+                            $hasMatchRecordMember = $matchS->getMatchRecordMember(['match_id' => $match['id'], 'match_record_id' => $recordData['id'], 'member_id' => $val['member_id']]);
+                            if ($hasMatchRecordMember) {
+                                $homeMember[$k]['id'] = $hasMatchRecordMember['id'];
+                            }
                             $homeMember[$k]['match_id'] = $match['id'];
+                            $homeMember[$k]['match'] = $match['name'];
                             $homeMember[$k]['team_id'] = $recordData['home_team_id'];
                             $homeMember[$k]['team'] = $recordData['home_team'];
                             $homeMember[$k]['match_record_id'] = $recordData['id'];
@@ -295,9 +301,9 @@ class Match extends Base
                         $memberArr = json_decode($post['HomeMemberDataDel'], true);
                         foreach ($memberArr as $k => $member) {
                             // 查询有无team_event_member原数据，有则更新原数据否则插入新数据
-                            $hasMatchRecordMember = $matchS->getMatchRecordMember(['match_id' => $match['id'], 'match_record_id' => $recordData['id'], 'member_id' => $member['member_id']]);
-                            if ($hasMatchRecordMember) {
-                                $memberArr[$k]['id'] = $hasMatchRecordMember['id'];
+                            $hasMatchRecordMember2 = $matchS->getMatchRecordMember(['match_id' => $match['id'], 'match_record_id' => $recordData['id'], 'member_id' => $member['member_id']]);
+                            if ($hasMatchRecordMember2) {
+                                $memberArr[$k]['id'] = $hasMatchRecordMember2['id'];
                             }
                             $memberArr[$k]['status'] = -1;
                         }
@@ -376,6 +382,7 @@ class Match extends Base
                         $homeMember = json_decode($post['HomeMemberData'], true);
                         foreach ($homeMember as $k => $val) {
                             $homeMember[$k]['match_id'] = $resultSaveMatch['data'];
+                            $homeMember[$k]['match'] = $post['name'];
                             $homeMember[$k]['team_id'] = $recordData['team_id'];
                             $homeMember[$k]['team'] = $recordData['home_team'];
                             $homeMember[$k]['match_record_id'] = $resultSaveMatchRecord['data'];
@@ -482,7 +489,7 @@ class Match extends Base
     {
         try {
             // 接收参数
-            $id = input('post.matchid');
+            $id = input('post.match_id');
             $action = input('post.action');
             if (!$id || !$action) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
@@ -492,7 +499,7 @@ class Match extends Base
             if (!$match) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404') . '，没有此比赛信息']);
             }
-            // 根据比赛当前状态(1上架,2下架)+不允许操作条件
+            // 根据比赛当前状态(1上架,-1下架)+不允许操作条件
             // 根据action参数 editstatus执行上下架/del删除操作
             // 更新数据 返回结果
             switch ($match['status_num']) {
@@ -530,7 +537,7 @@ class Match extends Base
         }
     }
 
-    // 报名参加比赛
+    // 球队成员报名参加比赛
     public function joinmatch()
     {
         try {
