@@ -107,7 +107,6 @@
                 </li>
             </ul>
 
-
             <div class="image-items">
 
                 <form class="mui-input-group">
@@ -178,7 +177,7 @@
                 <div class="mui-input-row h-auto">
                     <div class="mui-input-row h-auto" style="margin-bottom: 10px">
                         <textarea name="remarks" class="data remarks" style="display: none"></textarea>
-                        <div class="introBox"></div>
+                        <div class="introBox">{$eventInfo.remarks}</div>
                     </div>
                     <div class="mui-row mui-text-center mui-row-operation">
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
@@ -195,7 +194,7 @@
                             <a class="frame imageClass">
                                 <div id="uploader-demo">
                                     <div id="fileList" class="uploader-list"></div>
-                                    <div id="filePicker">选择图片</div>
+                                    <div id="filePickerTwo">选择图片</div>
                                 </div>
                             </a>
                         </div>
@@ -211,7 +210,6 @@
             </ul>
 
         </div>
-
 
         <!--学员名单-->
         <div id="addMember" class="mui-popover">
@@ -245,14 +243,12 @@
         </script>
         <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
         <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+        <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
         <script>
             //初始化
             mui.init({
                 swipeBack: true //启用右滑关闭功能
             });
-
-            //弹出菜单
-            mui('.mui-scroll-wrapper').scroll();
 
             //弹出框滚动必须写在mui专用的初始化
             (function ($) {
@@ -399,18 +395,11 @@
 
                     $("#inactiveList").empty();
                     $("#hideStList").empty();
-                    // memberList = [];//报名人员列表数组
                     $(".addMemberList input[type=checkbox]:checked").each(function () {
                         var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
-                        // var id = $(this).attr("data-id");
-                        // var member_id = $(this).attr("data-member_id");
-                        // var member = $(this).attr("data-member");
-                        // var status = $(this).attr("data-status");
                         $("#inactiveList").append(str);
                         $("#hideStList").append(str);
-                        // memberList.push({ member: member, member_id: member_id, id: id, status: 3 });
                     });
-                    // console.log(memberList)
 
                     changeIndex();//调用-更新序号
                     mui("#addMember").popover("toggle");
@@ -428,38 +417,9 @@
 
                 //添加正文
                 $(".textClass").on('tap', '', function () {
-                    var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><textarea name="" rows="3" class="mui-text-left text delClass" placeholder="请输入正文"></textarea></div>';
+                    var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" name="" class="mui-text-left text delClass textarea" placeholder="请输入正文"></div>';
                     $(".introBox").append(text);
                 });
-
-
-                //添加图片start·····································································
-                // 初始化Web Uploader
-                var uploader = WebUploader.create({
-                    auto: true,
-                    server: uploadApiUrl,
-                    pick: '#filePicker',
-                    accept: {
-                        title: 'Images',
-                        extensions: 'gif,jpg,jpeg,bmp,png',
-                        mimeTypes: 'image/*'
-                    }
-                });
-                // 上传成功
-                uploader.on('uploadSuccess', function (file, responce) {
-                    if (eval('responce').status == 0) {
-                        mui.toast('上传失败,请重试', { 'duration': 'long' });
-                    } else {
-                        mui.toast('上传成功', { 'duration': 'long' });
-                        var $li = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img src="' + responce.path + '"></div>';
-                        $(".introBox").append($li);
-                    }
-                });
-                // 上传失败
-                uploader.on('uploadError', function (file, reason) {
-                    mui.alert('图片太大，上传失败');
-                });
-                //添加图片end·····································································
 
                 //删除操作
                 $(document).on('tap', '.delbtn', function () {
@@ -485,22 +445,35 @@
                 });
 
                 // 焦点离开后把内容放在p标签里
-                $(document).on('blur', '.operationDiv textarea', function () {
+                $(document).on('blur', '.operationDiv .textarea', function () {
                     $(this).siblings(".delbtn").remove();
-                    if ($(this).val() != '') {
-                        var textAreaValue = '<p>' + $(this).val() + '</p>';
-                        $(this).parent().html(textAreaValue).removeClass("bgorange")
+                    if ($(this).text() != '') {
+                        var divValue = '<p>' + $(this).text() + '</p>';
+                        $(this).parent().html(divValue).removeClass("bgorange")
                     } else {
-                        var textAreaValueNull = '<p>请输入正文</p>';
-                        $(this).parent().html(textAreaValueNull)
+                        var divValueNull = '<p>请输入正文</p>';
+                        $(this).parent().html(divValueNull)
                     }
                 });
-                // 点击时显示textarea框
+
+                // 点击时显示div框
                 $(document).on('tap', '.operationDiv p', function () {
-                    var YtextAreaValue = '<i class="delbtn mui-icon mui-icon-close"></i><textarea rows="3" value="' + $(this).text() + '" class="mui-text-left text delClass" placeholder="请输入正文">' + $(this).text() + '</textarea>';
-                    $(this).parent().html(YtextAreaValue).addClass("bgorange");
+                    var YdivValue = '<i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" value="' + $(this).text() + '"  class="mui-text-left text delClass textarea" placeholder="请输入正文">' + $(this).text() + '</div>';
+                    $(this).parent().html(YdivValue).addClass("bgorange");
                 });
 
+                // 图片的移动操作
+                $(document).on('tap', '.desimg', function () {
+                    var bgg = $(this).parent().hasClass("bgorange");
+                    if (bgg == false) {
+                        $(this).parent().addClass("bgorange")
+                        return false;
+                    } else {
+                        $(document).on('tap', 'body', function () {
+                            $(".desimg").parent().removeClass("bgorange")
+                        });
+                    }
+                });
 
                 // 上移动
                 $(document).on('tap', '.up', function () {

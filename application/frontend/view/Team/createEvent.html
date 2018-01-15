@@ -167,7 +167,7 @@
                             <a class="frame imageClass">
                                 <div id="uploader-demo">
                                     <div id="fileList" class="uploader-list"></div>
-                                    <div id="filePicker">选择图片</div>
+                                    <div id="filePickerTwo">选择图片</div>
                                 </div>
                             </a>
                         </div>
@@ -199,7 +199,7 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
     <script>
         //初始化
         mui.init({
@@ -323,34 +323,6 @@
                 var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" name="" class="mui-text-left text delClass textarea" placeholder="请输入正文"></div>';
                 $(".introBox").append(text);
             });
-
-            //添加活动详情图片start·····································································
-            // 初始化Web Uploader
-            var uploader = WebUploader.create({
-                auto: true,
-                server: uploadApiUrl,
-                pick: '#filePicker', //区分点
-                accept: {
-                    title: 'Images',
-                    extensions: 'gif,jpg,jpeg,bmp,png',
-                    mimeTypes: 'image/*'
-                }
-            });
-            // 上传成功
-            uploader.on('uploadSuccess', function (file, responce) {
-                if (eval('responce').status == 0) {
-                    mui.toast('上传失败,请重试', { 'duration': 'long' });
-                } else {
-                    mui.toast('上传成功', { 'duration': 'long' });
-                    var $li = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img class="desimg" src="' + responce.path + '" style="padding-top:5px"></div>';
-                    $(".introBox").append($li);
-                }
-            });
-            // 上传失败
-            uploader.on('uploadError', function (file, reason) {
-                mui.alert('图片太大，上传失败');
-            });
-            //添加图片end·····································································
 
             //删除操作
             $(document).on('tap', '.delbtn', function () {
