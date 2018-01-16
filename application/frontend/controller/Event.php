@@ -20,45 +20,39 @@ class Event extends Base{
 
     public function bookBill(){
         $event_id = input('param.event_id');
-        $total = input('param.total');
+        $event_id = input('param.event_id');
+
+        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]); 
+        //卡券列表
+        $map1 = function($query){
+            $query->where(['target_type'=>2])
+            ->where(['publish_start'=>['lt',time()]])
+            ->where(['publish_end'=>['gt',time()]])
+            ->where(['is_max'=>1])
+            ->whereOr(['target_type'=>3])
+            ->where(['organization_type'=>1])
+            ;
+        };
+        $map2 = function($query) use($eventInfo){
+            $query->where(['target_type'=>2])
+            ->where(['publish_start'=>['lt',time()]])
+            ->where(['publish_end'=>['gt',time()]])
+            ->where(['is_max'=>1])
+            ->whereOr(['target_type'=>3])
+            ->where(['organization_type'=>$eventInfo['organization_type'],'organization_id'=>$eventInfo['organization_id']])
+            ;
+        };
+        // 平台卡券
+        $ItemCoupon = new \app\model\ItemCoupon;
+        $item_coupon_ids = $ItemCoupon->where($map1)->whereOr($map2)->column('id');
+
+
+
+        $this->assign('item_coupon_ids',json_encode($item_coupon_ids));
+        $this->assign('eventInfo',$eventInfo);
         return view('Event/bookBill');
     }
 
-    public function comfirmBillTEST() {
-        $event_id = input('param.event_id');
-        $total = input('param.total');
-
-        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);     
-        $billOrder = '2'.getOrderID(rand(0,9));
-        $jsonBillInfo = [
-            'goods'=>$eventInfo['event'],
-            'goods_id'=>$eventInfo['id'],
-            'camp_id'=>$eventInfo['organization_id'],
-            'camp'=>$eventInfo['organization'],
-            'organization_type'=>1,
-            'price'=>$eventInfo['price'],
-            'score_pay'=>$eventInfo['score'],
-            'goods_type'=>2,
-            'pay_type'=>'wxpay',
-        ];
-        $amount = $total*$eventInfo['price'];
-        // $amount = 0.01;
-        $WechatJsPayService = new \app\service\WechatJsPayService;
-        $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
-        
-        $jsApiParameters = $result['data']['jsApiParameters'];
-        $shareurl = request()->url(true);
-        $wechatS = new \app\service\WechatService;
-        $jsapi = $wechatS->jsapi($shareurl);
-        // dump($jsApiParameters);
-        // dump($jsapi);die;
-        $this->assign('jsApiParameters',$jsApiParameters);
-        $this->assign('jsapi', $jsapi);
-        $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
-        $this->assign('eventInfo',$eventInfo);
-        $this->assign('billOrder',$billOrder);
-        return view('Event/comfirmBill');
-    }
 
     public function comfirmBill() {
         $event_id = input('param.event_id');
@@ -207,34 +201,6 @@ class Event extends Base{
         return view('Event/createEventTEST');
     }
 
-    public function eventInfoTEST() {
-        $event_id = input('param.event_id');
-        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
-        $variable = 1;
-        if($eventInfo['status']=='下架'){
-            $variable = 2 ;
-        }
-        if($eventInfo['is_max'] == '已满人'){
-            $variable = 3 ;
-        }
-
-        if($eventInfo['end'] <= time()){
-            $variable = 4 ;
-        }
-        //是否已报名
-        $EventMember = new \app\model\EventMember;
-        $result =  $EventMember->where(['member_id'=>$this->memberInfo['id'],'event_id'=>$event_id,'status'=>1])->select();
-        if($result){
-            $EventMemberList = $result->toArray();
-        }else{
-            $EventMemberList = [];
-        }
-        // dump($eventInfo);die;
-        $this->assign('EventMemberList',$EventMemberList);
-        $this->assign('variable',$variable);
-        $this->assign('eventInfo',$eventInfo);
-        return view('Event/eventInfoTEST');
-    }
 
     public function eventInfoOfCamp() {
         $event_id = input('param.event_id');
