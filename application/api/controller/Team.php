@@ -608,17 +608,17 @@ class Team extends Base {
             $data = input('post.');
             // 活动人员状态修改值
             $memberStatus = 1;
+            // 时间格式转化时间戳
             if (input('?start_time')) {
                 $data['start_time'] = strtotime(input('start_time'));
             }
             if (input('?end_time')) {
                 $data['end_time'] = strtotime(input('end_time'));
-                // 结束时间小于当前时间即活动已完成
-                if ($data['end_time'] < time()) {
-                    $data['is_finished'] = 1;
+            }
+            // 活动完成标识
+            if (isset($data['is_finished'])) {
+                if ($data['is_finished'] == 1) {
                     $memberStatus = 3;
-                } else {
-                    $data['is_finished'] = 0;
                 }
             }
             $teamS = new TeamService();
@@ -678,17 +678,18 @@ class Team extends Base {
             $data['member'] = $this->memberInfo['member'];
             // 活动人员状态修改值
             $memberStatus = 1;
-            // 时间格式转换类型
+            // 时间格式转化时间戳
             if (input('?start_time')) {
                 $data['start_time'] = strtotime(input('start_time'));
             }
             if (input('?end_time')) {
                 $data['end_time'] = strtotime(input('end_time'));
-                // 结束时间小于当前时间即活动已完成
-                if ($data['end_time'] < time()) {
-                    $data['is_finished'] = 1;
+            }
+            // 活动完成标识
+            if (isset($data['is_finished'])) {
+                if ($data['is_finished'] == 1) {
+                    $memberStatus = 3;
                 }
-                $memberStatus = 3;
             }
             $teamS = new TeamService();
             $resCreateTeamEvent = $teamS->createTeamEvent($data);

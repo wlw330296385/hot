@@ -327,7 +327,9 @@ class Team extends Base {
         // 如果有event_id参数即修改活动，没有就新增活动并录入活动（事后录活动）
         if ($match_id === 0) {
             $matchInfo = [
-                'id' => 0
+                'id' => 0,
+                'is_finished_num' => 0,
+                'is_finished' => '未完成'
             ];
             $directentry = 1;
             $memberlist = [];
