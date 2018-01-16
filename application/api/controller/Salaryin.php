@@ -176,7 +176,7 @@ class Salaryin extends Base {
             $map['type'] = 1;
 //            dump($map);
             // 获取工资数据
-            $salaryList = $this->SalaryInService->getSalaryInList($map);
+            $salaryList = $this->SalaryInService->getSalaryInList($map, 'schedule_time desc');
             $salarySum = $this->SalaryInService->countSalaryin($map);
             //dump($salaryList);
             if (!$salaryList) {
@@ -236,7 +236,7 @@ class Salaryin extends Base {
             $map['type'] = 1;
 //            dump($map);
             // 获取工资数据
-            $salaryList = $this->SalaryInService->getSalaryInPagintor($map);
+            $salaryList = $this->SalaryInService->getSalaryInPagintor($map, 'schedule_time desc');
             $salarySum = $this->SalaryInService->countSalaryin($map);
             //dump($salaryList);
             if (!$salaryList) {
