@@ -319,10 +319,15 @@
                 console.log(e.poi)
                 console.log(e.poi.location.lng)
                 console.log(e.poi.location.lat)
-                lng = e.poi.location.lng;
-                lat = e.poi.location.lat;
-                $(".getFromMap").val(e.poi.name);
-                $(".getFromMap").text(e.poi.name);
+
+                if(e.poi.location.lng==undefined||e.poi.location.lat==undefined||e.poi.location.lng===''||e.poi.location.lat===''){
+                    mui.alert('没有获取到此地址的地图定位，请直接点击地图获取定位！');
+                }else{
+                    lng = e.poi.location.lng;
+                    lat = e.poi.location.lat;
+                    $(".getFromMap").val(e.poi.name);
+                    $(".getFromMap").text(e.poi.name);
+                }
             });
         });
 
@@ -411,7 +416,30 @@
                 var full_rent = $(".full_rent").val();
                 var remarks = $(".remarks").val();
 
-                if (court != '' && location != '' && open_time != '' && contract != '' && principal != '' && chip_rent != '' && half_rent != '' && full_rent != '' && outdoors != '') {
+
+                if (contract != '' && !(/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$|^400[0-9]{7}/).test(contract)) {
+                    mui.alert('请填写正确的手机号码或区号加固话（例：0755-26650702）');
+                    return false;
+                };
+                if (isNaN(chip_rent)) {
+                    mui.toast("请填写正确的价格");
+                    return false;
+                };
+                if (isNaN(half_rent)) {
+                    mui.toast("请填写正确的价格");
+                    return false;
+                };
+                if (isNaN(full_rent)) {
+                    mui.toast("请填写正确的价格");
+                    return false;
+                };
+
+                if(lng==undefined||lat==undefined||lng===''||lat===''){
+                    mui.alert('没有获取到此地址的地图定位，请直接点击地图获取定位！');
+                    return false;
+                }
+
+//                if (court != '' && location != '' && open_time != '' && contract != '' && principal != '' && chip_rent != '' && half_rent != '' && full_rent != '' && outdoors != '') {
                     mui.ajax("{:url('api/court/updateCourtApi',['court_id'=>$CourtInfo['id'],'camp_id'=>$CourtInfo['camp_id']])}", {
                         data: {
                             "court": court,
@@ -452,9 +480,9 @@
                             console.log(type);
                         }
                     });
-                } else {
-                    mui.toast("选项不能为空");
-                }
+//                } else {
+//                    mui.toast("选项不能为空");
+//                }
             })
         })
     </script>

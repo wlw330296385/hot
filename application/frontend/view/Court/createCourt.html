@@ -199,14 +199,12 @@
                     </div>
 
                     <div class="mui-input-row">
-                        <a href="#" class="mui-navigate-right">
                             <label>场地类型</label>
                             <span>
                                 <input type="radio" class="outdoors" name="outdoors" value="1" data-name="室内" /> 室内
                                 <input type="radio" class="outdoors" name="outdoors" value="2" data-name="室外" /> 室外
                                 <input type="radio" class="outdoors" name="outdoors" value="3" data-name="室内|室外" /> 室内|室外
                             </span>
-                        </a>
                     </div>
 
                     <div class="mui-input-row h-auto">
@@ -305,10 +303,14 @@
                 console.log(e.poi)
                 console.log(e.poi.location.lng)
                 console.log(e.poi.location.lat)
-                lng = e.poi.location.lng;
-                lat = e.poi.location.lat;
-                $(".getFromMap").val(e.poi.name);
-                $(".getFromMap").text(e.poi.name);
+                if(e.poi.location.lng==undefined||e.poi.location.lat==undefined||e.poi.location.lng===''||e.poi.location.lat===''){
+                    mui.alert('没有获取到此地址的地图定位，请直接点击地图获取定位！');
+                }else{
+                    lng = e.poi.location.lng;
+                    lat = e.poi.location.lat;
+                    $(".getFromMap").val(e.poi.name);
+                    $(".getFromMap").text(e.poi.name);
+                }
             });
         });
 
@@ -424,6 +426,11 @@
                     mui.toast("请填写正确的价格");
                     return false;
                 };
+
+                if(lng==undefined||lat==undefined||lng===''||lat===''){
+                    mui.alert('没有获取到此地址的地图定位，请直接点击地图获取定位！');
+                    return false;
+                }
 
                 mui.ajax("{:url('api/court/createCourtApi')}", {
                     data: {
