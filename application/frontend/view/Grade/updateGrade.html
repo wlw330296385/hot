@@ -611,8 +611,7 @@
                 var lesson_id = $(this).attr("data-lesson_id");
                 var member = $(this).attr("data-member");
                 var member_id = $(this).attr("data-member_id");
-                studentList[i] = {student:student, student_id:student_id, id: id, amp:camp, camp_id:camp_id, lesson:lesson, lesson_id:lesson_id, member:member, member_id:member_id,type:student_typenum};
-                console.log(studentList)
+                studentList[i] = {student:student, student_id:student_id, status:1,id: id, amp:camp, camp_id:camp_id, lesson:lesson, lesson_id:lesson_id, member:member, member_id:member_id,type:student_typenum};
             });
 
             //学员列表复选框赋值
@@ -682,16 +681,13 @@
                     var member = $(this).attr("data-member");
                     var member_id = $(this).attr("data-member_id");
 
-                    studentList[i] = {student:student, student_id:student_id, id: id, camp:camp, camp_id:camp_id, lesson:lesson, lesson_id:lesson_id, member:member, member_id:member_id,type:student_typenum};
+                    studentList[i] = {student:student, student_id:student_id,id: id, camp:camp, camp_id:camp_id, lesson:lesson, lesson_id:lesson_id, member:member, member_id:member_id,type:student_typenum, status :1};
                     inputList += '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id +'" data-camp="'+ camp +'" data-camp_id="'+ camp_id +'" data-lesson="'+ lesson +'" data-lesson_id="'+ lesson_id +'" data-member="'+ member +'" data-member_id="'+ member_id +'" data-student_typenum="'+ student_typenum +'" >';
                     studentNames += student + ','
                 });
                 $("#hideStList").empty();
                 $("#hideStList").html(inputList);
-                $(".students").text(studentNames.substring(0, studentNames.length - 1))
-                console.log(inputList)
-                console.log(studentList)
-                console.log(studentNames)
+                $(".students").text(studentNames.substring(0, studentNames.length - 1));
 
                 //班级成员
                 $("input[name=students]").val(studentList.length)
@@ -953,7 +949,7 @@
                             var lesson_id = $(this).attr("data-lesson_id");
                             var member = $(this).attr("data-member");
                             var member_id = $(this).attr("data-member_id");
-                            studentList.push({student:student,student_id:student_id,camp:camp,camp_id:camp_id,lesson:lesson,lesson_id:lesson_id, member:member, member_id:member_id, type:student_typenum, grade:"{$gradeInfo.grade}",grade_id:"{$gradeInfo.id}"});
+                            studentList.push({student:student,student_id:student_id,camp:camp,camp_id:camp_id,lesson:lesson,lesson_id:lesson_id, member:member, member_id:member_id, type:student_typenum, grade:"{$gradeInfo.grade}",grade_id:"{$gradeInfo.id}",status:1});
                         }
                     });
 
@@ -973,7 +969,7 @@
                         //上面遍历过不存在就添加到最终变动学员列表中
                         if(idDelID == "Yes"){
                             var id = $(this).attr("data-id");
-                            studentList.push({id: id,delete_time:"{$delete_time}"});
+                            studentList.push({id: id,status:2});
 
                         }
                     });

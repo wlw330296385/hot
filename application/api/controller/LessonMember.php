@@ -205,7 +205,7 @@ class LessonMember extends Base{
                 }
 
                 
-                $transferData = ['new_lesson_id'=>$new_lesson_id,'new_lesson'=>$new_lesson,'original_lesson_id'=>$value['lesson_id'],'original_lesson'=>$value['lesson'],'camp_id'=>$value['camp_id'],'camp'=>$value['camp'],'student_id'=>$value['student_id'],'student'=>$value['student'],'member_id'=>$value['member_id'],'member'=>$value['member'],'rest_schedule'=>$value['rest_schedule'],'total_schedule'=>$value['total_schedule'],'hamal'=>session('memberInfo.member','','think'),'hamal_id'=>session('memberInfo.id','','think'),'create_time'=>time()];
+                $transferData = ['new_lesson_id'=>$new_lesson_id,'new_lesson'=>$new_lesson,'original_lesson_id'=>$value['lesson_id'],'original_lesson'=>$value['lesson'],'camp_id'=>$value['camp_id'],'camp'=>$value['camp'],'student_id'=>$value['student_id'],'student'=>$value['student'],'member_id'=>$value['member_id'],'member'=>$value['member'],'rest_schedule'=>$value['rest_schedule'],'total_schedule'=>$value['total_schedule'],'hamal'=>session('memberInfo.member','','think'),'hamal_id'=>session('memberInfo.id','','think'),'create_time'=>time(),'remarks'=>$remarks];
                 // 转课记录
                 $res = Db::transaction(function() use ($transferData){
                     
@@ -213,7 +213,7 @@ class LessonMember extends Base{
                     // return $TransferLesson->id;
                 });
                 //旧的
-                $data1 = ['transfer'=>1,'remarks'=>$remarks,'system_remarks'=>'转课操作'];
+                $data1 = ['transfer'=>1,'system_remarks'=>'转课操作'];
                 $map1[] = $value['id'];
                 unset($value['id']);
                 unset($value['update_time']);

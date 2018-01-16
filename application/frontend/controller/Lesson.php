@@ -330,6 +330,7 @@ class Lesson extends Base{
 
     // 转课详情
     public function changeLessonInfo(){
+        $transfer_lesson_id = input('param.transfer_lesson_id');
         //训练营
         $camp_id = input('param.camp_id');
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
@@ -338,7 +339,11 @@ class Lesson extends Base{
             $this->error('您没有权限');
         }
 
+        $TransferLesson = new \app\model\TransferLesson;
+        $changeLessonInfo = $TransferLesson->where(['id'=>$transfer_lesson_id])->find();
+        
 
+        $this->assign('changeLessonInfo',$changeLessonInfo);
         $this->assign('camp_id',$camp_id);
         $this->assign('campInfo',$campInfo);
         return view('Lesson/changeLessonInfo');
