@@ -151,7 +151,7 @@ class Lesson extends Base{
             ->where(['organization_type'=>1])
             ;
         };
-        $map2 = function($query){
+        $map2 = function($query) use($lessonInfo){
             $query->where(['target_type'=>1])
             ->where(['publish_start'=>['lt',time()]])
             ->where(['publish_end'=>['gt',time()]])
@@ -162,7 +162,7 @@ class Lesson extends Base{
         };
         // 平台卡券
         $ItemCoupon = new \app\model\ItemCoupon;
-        $item_coupon_ids = $ItemCoupon->where($map)->whereOr($map2)->column('id');
+        $item_coupon_ids = $ItemCoupon->where($map1)->whereOr($map2)->column('id');
         $this->assign('item_coupon_ids',json_encode($item_coupon_ids));
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('jsapi', $jsapi);

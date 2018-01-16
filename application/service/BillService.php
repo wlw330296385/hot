@@ -146,28 +146,26 @@ class BillService {
                             'member_id'=>$data['member_id']
                         ];
             //给训练营营主发送消息
-            if($data['balance_pay'] > 0){
-                $MessageCampData = [
-                    "touser" => '',
-                    "template_id" => config('wxTemplateID.successBill'),
-                    "url" => url('frontend/bill/billInfoOfCamp',['bill_order'=>$data['bill_order']],'',true),
-                    "topcolor"=>"#FF0000",
-                    "data" => [
-                        'first' => ['value' => '订单支付成功通知'],
-                        'keyword1' => ['value' => $data['student']],
-                        'keyword2' => ['value' => $data['bill_order']],
-                        'keyword3' => ['value' => $data['balance_pay'].'元'],
-                        'keyword4' => ['value' => $data['goods_des']],
-                        'remark' => ['value' => '篮球管家']
-                    ]
-                ];
-                $MessageCampSaveData = [
-                    'title'=>"购买-{$data['goods']}",
-                    'content'=>"订单号: {$data['bill_order']}<br/>支付金额: {$data['balance_pay']}元<br/>购买人:{$data['member']}<br/>购买理由: {$data['remarks']}",
-                    'member_id'=>$data['member_id'],
-                    'url'=>url('frontend/bill/billInfoOfCamp',['bill_order'=>$data['bill_order']],'',true)
-                ];
-            }
+            $MessageCampData = [
+                "touser" => '',
+                "template_id" => config('wxTemplateID.successBill'),
+                "url" => url('frontend/bill/billInfoOfCamp',['bill_order'=>$data['bill_order']],'',true),
+                "topcolor"=>"#FF0000",
+                "data" => [
+                    'first' => ['value' => '订单支付成功通知'],
+                    'keyword1' => ['value' => $data['student']],
+                    'keyword2' => ['value' => $data['bill_order']],
+                    'keyword3' => ['value' => $data['balance_pay'].'元'],
+                    'keyword4' => ['value' => $data['goods_des']],
+                    'remark' => ['value' => '篮球管家']
+                ]
+            ];
+            $MessageCampSaveData = [
+                'title'=>"购买-{$data['goods']}",
+                'content'=>"订单号: {$data['bill_order']}<br/>支付金额: {$data['balance_pay']}元<br/>购买人:{$data['member']}<br/>购买理由: {$data['remarks']}",
+                'member_id'=>$data['member_id'],
+                'url'=>url('frontend/bill/billInfoOfCamp',['bill_order'=>$data['bill_order']],'',true)
+            ];
             // camp_member操作
             $CampMember = new CampMember;
             $is_campMember = $CampMember->where(['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id']])->find();
@@ -192,17 +190,13 @@ class BillService {
                     }
                 }
             }else{
-                // 课量增加
-                // 只有正式学生课量增加,并且状态强制改为正式学生
-                if($data['balance_pay']>0){
-                    //$re = db('lesson_member')->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->inc('rest_schedule',$data['total'])->inc('total_schedule',$data['total'])->update();
-                    $re = db('lesson_member')->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->whereNull('delete_time')->inc('rest_schedule',$data['total'])->inc('total_schedule',$data['total'])->update(['status' => 1,'type' => 1]);
-                    $ress = db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->update();
-                    if(!$re){
-                        db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
-                    }else{
-                        db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data),'status'=>1]);
-                    }
+                //$re = db('lesson_member')->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->inc('rest_schedule',$data['total'])->inc('total_schedule',$data['total'])->update();
+                $re = db('lesson_member')->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->whereNull('delete_time')->inc('rest_schedule',$data['total'])->inc('total_schedule',$data['total'])->update(['status' => 1,'type' => 1]);
+                $ress = db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->update();
+                if(!$re){
+                    db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
+                }else{
+                    db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data),'status'=>1]);
                 }
                 
             }
@@ -260,28 +254,26 @@ class BillService {
             db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
             
             //给训练营营主发送消息
-            if($data['balance_pay'] > 0){
-                $MessageCampData = [
-                    "touser" => '',
-                    "template_id" => config('wxTemplateID.successBill'),
-                    "url" => url('frontend/bill/billInfoOfCamp',['bill_order'=>$data['bill_order']],'',true),
-                    "topcolor"=>"#FF0000",
-                    "data" => [
-                        'first' => ['value' => '订单支付成功通知'],
-                        'keyword1' => ['value' => $data['student']],
-                        'keyword2' => ['value' => $data['bill_order']],
-                        'keyword3' => ['value' => $data['balance_pay'].'元'],
-                        'keyword4' => ['value' => $data['goods_des']],
-                        'remark' => ['value' => '篮球管家']
-                    ]
-                ];
-                $MessageCampSaveData = [
-                    'title'=>"购买-{$data['goods']}",
-                    'content'=>"订单号: {$data['bill_order']}<br/>支付金额: {$data['balance_pay']}元<br/>购买人:{$data['member']}<br/>购买理由: {$data['remarks']}",
-                    'member_id'=>$data['member_id'],
-                    'url'=>url('frontend/bill/billInfoOfCamp',['bill_order'=>$data['bill_order']],'',true)
-                ];
-            }
+            $MessageCampData = [
+                "touser" => '',
+                "template_id" => config('wxTemplateID.successBill'),
+                "url" => url('frontend/bill/billInfoOfCamp',['bill_order'=>$data['bill_order']],'',true),
+                "topcolor"=>"#FF0000",
+                "data" => [
+                    'first' => ['value' => '订单支付成功通知'],
+                    'keyword1' => ['value' => $data['student']],
+                    'keyword2' => ['value' => $data['bill_order']],
+                    'keyword3' => ['value' => $data['balance_pay'].'元'],
+                    'keyword4' => ['value' => $data['goods_des']],
+                    'remark' => ['value' => '篮球管家']
+                ]
+            ];
+            $MessageCampSaveData = [
+                'title'=>"购买-{$data['goods']}",
+                'content'=>"订单号: {$data['bill_order']}<br/>支付金额: {$data['balance_pay']}元<br/>购买人:{$data['member']}<br/>购买理由: {$data['remarks']}",
+                'member_id'=>$data['member_id'],
+                'url'=>url('frontend/bill/billInfoOfCamp',['bill_order'=>$data['bill_order']],'',true)
+            ];
             // camp_member操作
             $CampMember = new CampMember;
             $is_campMember = $CampMember->where(['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id']])->find();
@@ -307,15 +299,12 @@ class BillService {
                 }
             }else{
                 // 课量增加
-                // 只有正式学生课量增加,并且状态强制改为正式学生
-                if($data['balance_pay']>0){
-                    $re = db('lesson_member')->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->inc('rest_schedule',$data['total'])->inc('total_schedule',$data['total'])->update();
-                    $ress = db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
-                    if(!$re){
-                        db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
-                    }else{
-                        db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data),'status'=>1]);
-                    }
+                $re = db('lesson_member')->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->inc('rest_schedule',$data['total'])->inc('total_schedule',$data['total'])->update();
+                $ress = db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
+                if(!$re){
+                    db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
+                }else{
+                    db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data),'status'=>1]);
                 }
                 
             }
