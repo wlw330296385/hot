@@ -165,6 +165,8 @@
                     url: url,
                     data: {
                         team_id: team_id,
+                        // is_finished:1,
+                        // status:1,
                         year: sYear,
                     },
                     dataType: 'json',//服务器返回json格式数据
@@ -214,25 +216,21 @@
             };
         });
 
+        //创建补0函数
+        function p(s) {
+            return s < 10 ? '0' + s : s;
+        }
         // 将时间戳转成日期格式
         function gettimeM(M) {
             var _time = new Date(M);
             var month = _time.getMonth() + 1;
             var day = _time.getDate();
-            if (month < 10 && day < 10) {
-                return "0" + month + "月" + "0" + day + "日";
-            }
-            if (month < 10 && day > 10) {
-                return "0" + month + "月" + day + "日";
-            } else if (month > 10 && day < 10) {
-                return month + "月" + "0" + day + "日";
-            }
-
+            return p(month) + "月" + p(day) + "日"
         }
         function gettimeY(Y) {
             var _time = new Date(Y);
-            var year = _time.getYear();
-            return year;
+            var year = _time.getFullYear();
+            return p(year) + "年";
         }
     </script>
 </body>
