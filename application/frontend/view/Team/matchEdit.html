@@ -152,7 +152,8 @@
                         {eq name="directentry" value="1"}
                         <span class="away_team_Cont domData" name="record[away_team]"></span>
                         <input type="hidden" name="record[away_team_id]" value="" class="data">
-                        <input type="hidden" name="record[away_team_logo]" value="" class="data"> {else/}
+                        <input type="hidden" name="record[away_team_logo]" value="" class="data"> 
+                        {else/}
                         <span class="away_team_Cont domData" name="record[away_team]">{$matchInfo.record.away_team}</span>
                         <input type="hidden" name="record[away_team_id]" value="{$matchInfo.record.away_team_id}" class="data">
                         <input type="hidden" name="record[away_team_logo]" class="data" value="{$matchInfo.record.away_team_logo}" /> {/eq}
@@ -217,11 +218,24 @@
                     </div>
                 </div>
 
+                <div class="mui-input-row">
+                        <div class="mui-navigate-right">
+                            <label>是否完成录入</label>
+                            <span class="select-row">
+                                <select id="isFinished" class="data" name="is_finished">
+                                    <option value="1">是</option>
+                                    <option value="0">否</option>
+                                </select>
+                            </span>
+                        </div>
+                    </div>
+
                 <div class="mui-input-row h-auto">
                     <label>备注</label>
                     <input type="text" name="remarks" class="data" placeholder="请填写提示" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.remarks}"
                         {/eq} />
                 </div>
+
                 <!-- 公共信息 end-->
 
                 <p class="pline"></p>
@@ -281,9 +295,7 @@
             </form>
 
             <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="submitAction()">
-                    提交
-                </li>
+                <li class="mui-col-xs-12 opli bggreen" onclick="submitAction()">提交</li>
             </ul>
         </div>
     </div>
@@ -716,8 +728,6 @@
             $(".ching").css("background", "#00eaff");
         };
 
-
-
         // 球服没有内容则隐藏i标签
         function clothes() {
             if ($(".home_color_text input[name=color]").val() == '') {
@@ -780,6 +790,8 @@
 
             // 设置活动类型默认值
             $('#matchType option[{eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.type_num}"{/eq}]').prop("selected", true);
+            // 设置是否完成比赛默认值
+            $('#isFinished option[{eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.is_finished_num}"{/eq}]').prop("selected", true);
 
             //////////////////////选择对手////////////////////////////////////
             // 选择对手
@@ -1015,10 +1027,32 @@
                 $("input[name='record[away_team_id]']").val("-1");
                 mui("#opponent").popover("toggle");
             });
+
+            // 是否完成提示
+            $("#isFinished").on("change", '', '', function () {
+                var selection = $(this).find("option:selected").val();
+                console.log(selection)
+                if (selection == 1) {
+                    mui.alert('比赛将设置为已比赛完成状态', '说明');
+                }else{
+                    mui.alert('比赛将设置为未比赛完成状态', '说明');
+                };
+            });
+
         })
 
         // 获取数据并进行提交
         function submitAction() {
+
+            var away_team = $(".away_team_Cont").text();
+            var away_team_color = $("input[name='record[away_team_color]']").val();
+            var isFinished = $("#isFinished").children("option:selected").val();
+            if( isFinished == 1 ){
+                if( away_team == '' || away_team_color == ''){
+                    mui.alert("如果选择完成比赛录入，请完善客队信息。");
+                    return false;
+                }
+            }
 
             albumImg();//调用活动花絮图片组好的数组
 
@@ -1084,13 +1118,8 @@
             // objData.AwayMemberData = JSON.stringify(AwayMemberList);
             objData.album = JSON.stringify(album);
 
-            if (directentry == 0) {
-                var url = "{:url('api/match/storefriendlymatchrecord')}";
-                var ajaxResult = wooApi.asyncF(url, objData);
-            } else {
-                var url = "{:url('api/match/storefriendlymatchrecord')}";
-                var ajaxResult = wooApi.asyncF(url, objData);
-            }
+            var url = "{:url('api/match/storefriendlymatchrecord')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '比赛编辑成功', '确定', function () {
                     var goUrl = "{:url('team/matchlistOfTeam')}/" + '/team_id/' + "{$team_id}";
@@ -1252,7 +1281,7 @@
                             HomeMemberList.push({ member: data.data[i].member, member_id: data.data[i].member_id, id: data.data[i].id });
                         };
                         console.log(HomeMemberList)
-                     
+
                         $("#inactiveList").append(inactiveDiv);
                         $("#hideStList").append(inactiveDiv);
                         $("#hideStListIni").append(inactiveDiv);
