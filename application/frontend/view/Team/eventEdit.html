@@ -168,6 +168,18 @@
                         {/eq} class="data">
                 </div>
 
+                <div class="mui-input-row">
+                        <div class="mui-navigate-right">
+                            <label>是否完成录入</label>
+                            <span class="select-row">
+                                <select id="isFinished" class="data" name="is_finished">
+                                    <option value="1">是</option>
+                                    <option value="0">否</option>
+                                </select>
+                            </span>
+                        </div>
+                    </div>
+
                 <p class="bggray2" style="height:4px"></p>
 
                 <div class="operation-box mb">
@@ -242,9 +254,7 @@
             </form>
 
             <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="submitAction()">
-                    提交
-                </li>
+                <li class="mui-col-xs-12 opli bggreen" onclick="submitAction()">提交</li>
             </ul>
         </div>
     </div>
@@ -316,10 +326,26 @@
                 });
 
                 // 设置默认值
-                cityPicker3.pickers[0].setSelectedIndex(18);
-                cityPicker3.pickers[1].setSelectedIndex(2);
-                cityPicker3.pickers[2].setSelectedIndex(2);
+                // cityPicker3.pickers[0].setSelectedIndex(searchProvince(cityData3, "{eventInfo.province}"));
+                // cityPicker3.pickers[1].setSelectedIndex(searchCity(cityData3[i].children[j], "{eventInfo.city}"));
+                // cityPicker3.pickers[2].setSelectedIndex(2);
 
+                // for (i = 0; i < cityData3.length; i++) {
+                //     cityData3[i].index = i;
+                //     console.log(cityData3.length)
+                //     console.log(cityData3[i].text + '第一级')
+                //     for (j = 0; j < cityData3.length; i++) {
+                //         cityData3[i].children[j].index = j;
+                //         console.log(cityData3[i].children[j].length)
+                //         console.log(cityData3[i].children[j].text + '第二级')
+                //         for (k = 0; k < cityData3.length; i++) {
+                //             cityData3[i].children[j].children[k].index = k;
+                //             console.log(cityData3[i].children[j].children[k].text + '第三级')
+                //         }
+                //     }
+
+                // }
+                console.log(cityData3)
                 cityPicker3.setData(cityData3);
                 var showCityPickerButton = doc.getElementById('showCityPicker3');
                 var cityResult3 = doc.getElementById('cityResult3');
@@ -374,6 +400,23 @@
             });
         })(mui, document);
 
+        var i = ''
+        var j = ''
+        // 获取省索引值
+        function searchProvince(cityData3, province) {
+            for (i = 0; i <= cityData3.length; i++) {
+                if (cityData3[i].text == province) {
+                    return i;
+                }
+            }
+            // while (i -= 1) {
+            //     if (cityData3[i].text == province) {
+            //         return i;
+            //     }
+            // }
+            return false;
+        }
+
         // 全局取 directentry 的值判断是否有 event_id
         var directentry = $("input[name=directentry]").val();
 
@@ -409,7 +452,6 @@
         var totalNum = '';//序号总和的变量
 
         $(function () {
-
             isRelease(); // 给是否发布通知赋值
             toTeamMemberList() //获取成员列表
             toSignUpList(); //获取已经报名的活动人员列表
@@ -417,6 +459,9 @@
 
             // 设置活动类型默认值
             $('#eventType option[{eq name="directentry" value="1" } value=""{else/} value="{$eventInfo.event_type_num}"{/eq}]').prop("selected", true);
+            // 设置活动类型默认值
+            $('#isFinished option[{eq name="directentry" value="1" } value=""{else/} value="{$eventInfo.is_finished_num}"{/eq}]').prop("selected", true);
+
 
             // 是否发布通知操作
             $(".isRelease").on("tap", '', function () {
@@ -556,6 +601,16 @@
                 $(".bgorange").next().insertBefore(".bgorange");
             });
 
+            // 是否完成提示
+            $("#isFinished").on("change", '', '', function () {
+                var selection = $(this).find("option:selected").val();
+                if (selection == 1) {
+                    mui.alert('活动将设置为已比赛完成状态', '说明');
+                }else{
+                    mui.alert('活动将设置为未比赛完成状态', '说明');
+                };
+            });
+
         })
 
         // 插入删除按钮
@@ -627,23 +682,11 @@
             if (directentry == 0) {
                 var url = "{:url('api/team/updateteamevent')}";
                 var ajaxResult = wooApi.asyncF(url, objData);
-                if (ajaxResult.code == 200) {
-                    mui.alert(ajaxResult.msg, '活动修改成功', '确定', function () {
-                        var goUrl = "{:url('team/eventlistOfTeam')}/" + '/team_id/' + "{$team_id}";
-                        window.top.location.href = goUrl;
-                    })
-                } else {
-                    mui.alert(ajaxResult.msg, '修改失败');
-                    mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                        if (data.code === 200) {
-                            $('input[name=__token__]').val(data.data);
-                        }
-                    }, 'json');
-                }
             } else {
                 var url = "{:url('api/team/directcreateteamevent')}";
                 var ajaxResult = wooApi.asyncF(url, objData);
-                if (ajaxResult.code == 200) {
+            }
+             if (ajaxResult.code == 200) {
                     mui.alert(ajaxResult.msg, '活动录入成功', '确定', function () {
                         var goUrl = "{:url('team/eventlistOfTeam')}/" + 'event_id/' + ajaxResult.data + '/team_id/' + "{$team_id}";
                         window.top.location.href = goUrl;
@@ -656,7 +699,6 @@
                         }
                     }, 'json');
                 }
-            }
         };
 
         //获取成员列表

@@ -15,6 +15,57 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <!--自定义多色图标icon.js-->
     <script src="/static/frontend/iconfont/iconfont.js"></script>
+	<style>
+		.coupon{
+			width:400px;
+			background-color:#FFFFFF;
+			color:#FFFFFF;
+			margin-bottom:10px;
+			border-radius:4px;
+		}
+		.coupon .tips {
+			padding:10px;
+			font-size:10px;
+			color:#AAAAAA;
+		}
+		.bg {
+			width: 100%;
+			height: 150px;
+			border-radius:4px;
+			background: #ff9900;
+			background-image: -webkit-gradient(linear, 50% 0, 0 100%, from(transparent), color-stop(.5, transparent), color-stop(.5, #FFFFFF), to(#FFFFFF)),
+			-webkit-gradient(linear, 50% 0, 100% 100%, from(transparent), color-stop(.5, transparent), color-stop(.5, #FFFFFF), to(#FFFFFF));
+			background-size: 10px 5px;
+			background-repeat: repeat-x;
+			background-position: -4px 100%;
+			position:relative;
+			overflow:hidden;
+		}
+		.bg div{
+			padding:10px 15px 0px;
+		}
+		.cFrom {
+			font-size:16px;
+		}
+		.cName {
+			margin-top:15px;
+			font-size:34px;
+			font-weight:bold;
+		}
+		.cDate {
+			font-size:12px;
+		}
+		.cNum {
+			font-size:54px;
+			font-weight:bold;
+			position:absolute;
+			right:10px;
+			bottom:15px;
+		}
+		.cNum span{
+			font-size:14px;
+		}
+	</style>
 </head>
 <body>
 	<header class="mui-bar mui-bar-nav">
@@ -24,28 +75,25 @@
 		<div class="mui-content">
 
 			{volist name="itemCouponList" id="vol"}
-			<div class="mui-card">
-				<div class="mui-card-header mui-card-media" style="height:40vw;background-image:url({$vol.itemCoupon.image_url});background-repeat: no-repeat;background-position:center center;  
-    				background-size: cover;">
-    			</div>
-				<div class="mui-card-content">
-					<div class="mui-card-content-inner">
-						<p>{$vol.item_coupon}</p>
-						<p style="color: black;font-weight: bolder;">{$vol.coupon_number}</p>
-						<p style="color: red;font-size: 0.5em" >{$vol.itemCoupon.start|date="Y-m-d H:i:s",###} 至 {$vol.itemCoupon.end|date="Y-m-d H:i:s",###}</p>
-					</div>
+
+			<div class="coupon">
+				<div class="bg">
+					<div class="cNum">{$vol.price}<span>元</span></div>
+					<div class="cFrom">{$vol.organization}{$vol.coupon_number}</div>
+					<div class="cName">{$vol.item_coupon}</div>
+					<div class="cDate">{$vol.itemCoupon.start|date="Y-m-d H:i:s",###} 至 {$vol.itemCoupon.end|date="Y-m-d H:i:s",###}</div>
 				</div>
-				<div class="mui-card-footer">
+				<div class="tips">使用说明：
 					<a class="mui-card-link" href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['itemCoupon']['id']])}">卡券详情</a>
 					<a class="mui-card-link">
 
 						{if $vol.itemCoupon.start > time() || $vol.itemCoupon.end < time()}
-							<button type="button" class="mui-btn mui-btn-danger"  disabled="true"  >已失效  </button>
+						<button type="button" class="mui-btn mui-btn-danger"  disabled="true"  >已失效  </button>
 						{elseif $vol.status == 1}
 						<button type="button" class="mui-btn mui-btn-danger useCard" data-itemCouponID="{$vol.itemCoupon.id}"   data-itemCouponMemberID = "{$vol.id}"   >立即使用  </button>
 						{else /}
 						<button type="button" class="mui-btn mui-btn-danger"  disabled="true"  >已使用  </button>
-						{/if} 
+						{/if}
 					</a>
 				</div>
 			</div>

@@ -102,7 +102,7 @@
             <div class="page-header whitebg border-b">
                 <span class="course">最新赛事</span>
                 <span class="more pdr15">
-                    <a href="" class="mui-navigate-right">历史赛事</a>
+                    <a href="{:url('team/matchList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">历史赛事</a>
                 </span>
             </div>
             <ul class="mui-table-view detalis-list list mainInfo mb">
@@ -487,13 +487,25 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli logostyle" id="logoframe"><img class="logostyle" src="' + data.data[i].avatar + '" alt=""><div class="mui-media-body role">' + data.data[i].role_text + '</div></li>'
+
+                            // 去除角色名称逗号
+                            var cDoms = data.data[i].role_text;
+                            cDoms = cDoms.substring(0, cDoms.length - 1);
+
+                            newli += '<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli logostyle" id="logoframe"><img class="logostyle" src="' + data.data[i].avatar + '" alt="">'
+                            if (data.data[i].role_text != '') {
+                                newli += '<div class="mui-media-body role">' + cDoms + '</div>'
+                            } else {
+                                newli += '<div class="mui-media-body role">队员</div>'
+                            }
+                            newli += '</li>'
                         }
                         $(".teamMemberList").empty();
                         if (newli == '') {
                             newli = '<p class="mui-text-center">没有查找到数据哦</p>'
                         }
                         $(".teamMemberList").append(newli);
+
 
                     } else {
                         mui.toast('数据获取失败,请稍候再试');

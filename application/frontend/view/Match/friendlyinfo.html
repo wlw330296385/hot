@@ -14,7 +14,7 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
-        #matchPK input{
+        #matchPK input {
             color: #737373
         }
     </style>
@@ -32,14 +32,14 @@
                 <li class="mui-table-view-cell listli mui-text-center" style="padding:35px 15px 25px 15px;">
                     <div class="mui-row">
                         <div class="mui-col-sm-4 mui-col-xs-4">
-                            <img src="" style="width: 100%;height: 80px;">
+                            <img src="{$matchInfo.record.home_team_logo}" style="width: 100%;height: 80px;">
                         </div>
                         <div class="mui-col-sm-4 mui-col-xs-4">
                             <h3>VS</h3>
                             <p style="padding-top:20px">友谊赛</p>
                         </div>
                         <div class="mui-col-sm-4 mui-col-xs-4">
-                            <img src="" style="width: 100%;height: 80px;">
+                            <img src="{$matchInfo.record.away_team_logo}" style="width: 100%;height: 80px;">
                         </div>
                     </div>
                     <div class="mui-row">
@@ -148,7 +148,7 @@
 
     <!-- 应战信息填写 -->
     <div id="matchPK" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-        <ul class="mui-table-view">
+        <ul class="mui-table-view operation">
             <h5>
                 <span class="type">基本信息</span>
                 <a href="#matchPK" class="mui-icon mui-icon-closeempty"></a>
@@ -163,6 +163,14 @@
                     <input type="text" name="" value="" placeholder="请填写联系人手机">
                 </div>
                 <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label class="mui-text-left">所属球队</label>
+                        <span class="select-row selectTeam">
+                            <select class="data selectTeam" name="team"></select>
+                        </span>
+                    </div>
+                </div>
+                <div class="mui-input-row">
                     <label class="mui-text-left">备注信息</label>
                     <input type="text" name="" value="" class="" placeholder="请填写其他备注信息">
                 </div>
@@ -170,24 +178,6 @@
             <li class="mui-table-view-cell mui-media mui-col-xs-12 opli matchPKBtn">发送</li>
         </ul>
     </div>
-
-
-    <!-- 发表评论 -->
-    <div id="fbcomment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
-            <ul class="mui-table-view operation">
-                <h5>
-                    <span class="type"></span>
-                    <a href="#fbcomment" class="mui-icon mui-icon-closeempty"></a>
-                </h5>
-                <li class="mui-table-view-cell listli">
-                    <textarea rows="4" class="comment" placeholder="为这个活动做做评价吧。"></textarea>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli commentBtn">提交申请</li>
-            </ul>
-        </div>
-    </div>
-
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
@@ -217,6 +207,7 @@
             ststuShow() //判断身份显示操作按钮
             pulldownRefresh(); //页面打开时获取一次最新评论信息
             isthumbsup(); //点赞状态
+            toTeam()
 
             //评论功能
             $(".commentBtn").on('click', function () {
@@ -360,6 +351,7 @@
                 toCommentList(page, gType);//具体取数据的方法
             }, 100);
         }
+
         //获取评论列表
         function toCommentList(page, gType) {
             var url = "{:url('api/team/teamcommentlist','','',true)}/?page=" + page;
@@ -393,6 +385,36 @@
                     } else {
                         //下拉加载 gType==2
                         $("ul.comment-list").append(newli);
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //获取在队的球队列表
+        function toTeam(page, gType) {
+            var url = "{:url('api/team/myteamlist','','',true)}";
+            mui.ajax({
+                url: url,
+                data: {
+                    status: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli = newli + '<select class="data" name="team"><option value="' + data.data[i].team.id + '">' + data.data[i].team.name + '</option></select>'
+                        }
+                        $(".selectTeam").empty().append(newli);
+                    } else {
+                        $(".selectTeam").empty().append("没有效力的球队");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
