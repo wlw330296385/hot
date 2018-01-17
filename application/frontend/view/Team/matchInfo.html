@@ -72,15 +72,17 @@
 
             <ul class="mui-table-view detalis-list list mainInfo mb">
                 <div class="page-header">
-                    <span class="course">
-                        出勤率 60%</span>
+                    <span class="course">出勤率<b class="rate">66%</b></span>
                     <span class="more">
-                        <b class="colororange">12</b>/18</span>
+                        <a href="{:url('team/matchSignupList',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}" class="mui-navigate-right">
+                            <b class="colororange signup_num">0</b>/0
+                        </a>
+                    </span>
+
                 </div>
 
                 <li class="mui-table-view-cell listli">
                     <div class="imgShow">
-
                         <img src="" alt="" style="margin-right:3px">
                     </div>
                 </li>
@@ -167,7 +169,6 @@
 
     </div>
 
-
     <!-- 发表评论 -->
     <div id="fbcomment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
@@ -213,6 +214,7 @@
             ststuShow() //判断身份显示操作按钮
             pulldownRefresh(); //页面打开时获取一次最新评论信息
             isthumbsup(); //点赞状态
+            toSignUpList()
 
             //报名功能
             $(".signupBtn").on('click', function () {
@@ -363,6 +365,7 @@
             } else {
                 $(".status2").show();
             }
+
         }
 
         //下拉刷新具体业务实现
@@ -420,6 +423,42 @@
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //获取已经报名的活动人员列表
+        function toSignUpList() {
+            var url = "{:url('api/match/recordmemberlist')}";
+            var match_id = "{$matchInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    match_id: match_id,
+                    status: 1,
+                    is_apply: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var inactiveDiv = '';
+                        $(".imgShow").empty();
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            $(".signup_num").text(data.data.length);
+                            inactiveDiv += '<img src="' + data.data[i].member_avatar + '" style="margin-right:3px">'
+                        };
+                        $(".imgShow").append(inactiveDiv);
+                    }
+                    if (data.code == 100) {
+                        $(".imgShow").append('<p class="mui-text-center">还没有参赛人员哦</p>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    console.log(type);
                 }
             });
         };
