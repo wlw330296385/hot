@@ -358,4 +358,15 @@ class Team extends Base {
     public function matchlistofteam() {
         return view('Team/matchlistofteam');
     }
+
+    // 比赛报名/出席人员名单
+    public function matchsignuplist() {
+        // 活动详情数据
+        $match_id = input('param.match_id');
+        $matchS = new MatchService();
+        $matchInfo = $matchS->getMatch(['id' => $match_id]);
+        $this->assign('match_id', $match_id);
+        $this->assign('matchInfo', $matchInfo);
+        return view('Team/matchSignupList');
+    }
 }
