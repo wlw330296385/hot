@@ -20,10 +20,10 @@ class Match extends Model {
         'reg_end_time' => 'timestamp:Y-m-d H:i',
     ];
 
-    // event_type（活动类型）获取器
+    // type（活动类型）获取器
     public function getTypeAttr($value) {
-        $event_type = [ 1 => '友谊赛', 2 => '联赛' ];
-        return $event_type[$value];
+        $type = [ 1 => '友谊赛', 2 => '联赛' ];
+        return $type[$value];
     }
 
     // is_finished(是否完成)获取器
@@ -34,7 +34,7 @@ class Match extends Model {
 
     // status 获取器
     public function getStatusAttr($value) {
-        $status = [1=> '公开', -1 => '未公开'];
+        $status = [1=> '公开', -1 => '不公开'];
         return $status[$value];
     }
 

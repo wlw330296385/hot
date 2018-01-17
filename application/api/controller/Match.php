@@ -296,10 +296,12 @@ class Match extends Base
                     $dataMatch = $post;
                     // 更新比赛名称match_name 有选择对手队：当前球队名vs对手队名|无选择对手队：当前球队名友谊赛（对手待定）
                     if (isset($post['record']['away_team_id'])) {
-                        $dataMatch['name'] = $post['record']['home_team'] . ' vs ' . $post['record']['away_team'] . '（友谊赛）';
+                        $matchName = $post['record']['home_team'] . ' vs ' . $post['record']['away_team'];
                     } else {
-                        $dataMatch['name'] = $post['record']['home_team'] . '友谊赛（对手待定）';
+                        $matchName = $post['record']['home_team'] . 'vs （待定）';
                     }
+                    $recordData['match'] = $matchName;
+                    $dataMatch['name'] = $matchName;
                     // 保存比赛球队成员
                     // 保留显示的成员名单（status=1 报名is_apply=1 、出席is_attend=1）
                     if (isset($post['HomeMemberData']) && $post['HomeMemberData'] != "[]") {
@@ -311,7 +313,7 @@ class Match extends Base
                                 $homeMember[$k]['id'] = $hasMatchRecordMember['id'];
                             }
                             $homeMember[$k]['match_id'] = $match['id'];
-                            $homeMember[$k]['match'] = $dataMatch['name'];
+                            $homeMember[$k]['match'] = $matchName;
                             $homeMember[$k]['team_id'] = $recordData['home_team_id'];
                             $homeMember[$k]['team'] = $recordData['home_team'];
                             $homeMember[$k]['match_record_id'] = $recordData['id'];
@@ -403,9 +405,9 @@ class Match extends Base
                 $post['member_avatar'] = $this->memberInfo['avatar'];
                 // 比赛名称match_name 有选择对手队：当前球队名vs对手队名|无选择对手队：当前球队名友谊赛（对手待定）
                 if (isset($post['record']['away_team_id'])) {
-                    $post['name'] = $post['record']['home_team'] . ' vs ' . $post['record']['away_team'] . '（友谊赛）';
+                    $post['name'] = $post['record']['home_team'] . ' vs ' . $post['record']['away_team'];
                 } else {
-                    $post['name'] = $post['record']['home_team'] . '友谊赛（对手待定）';
+                    $post['name'] = $post['record']['home_team'] . 'vs（待定）';
                 }
                 // 组合match保存数据 end
 
@@ -725,7 +727,74 @@ class Match extends Base
 
     // 最新比赛记录
 
-    // 球队历史对手
+    // 历史对手球队列表（页码）
+    public function historyteampage() {
+        try {
+            // 传递参数作为查询条件
+            $map = input('param.');
+            // 剔除map[page]
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            $matchS = new MatchService();
+            // 获取历史对手球队分页数据
+            $result = $matchS->getHistoryTeamPaginator($map);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            // 返回结果
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 历史对手球队列表
+    public function historyteamlist() {
+        try {
+            // 传递参数作为查询条件
+            $map = input('param.');
+            $page = input('page', 1);
+            // 剔除map[page]
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            $matchS = new MatchService();
+            // 获取历史对手球队列表数据
+            $result = $matchS->getHistoryTeamList($map, $page);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            // 返回结果
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 历史对手球队列表（所有数据）
+    public function historyteamall() {
+        try {
+            // 传递参数作为查询条件
+            $map = input('param.');
+            $matchS = new MatchService();
+            // 获取历史对手球队列表所有数据
+            $result = $matchS->getHistoryTeamAll($map);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            // 返回结果
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 
     // 比赛球队列表（页码）
     public function matchteamlistpage()
@@ -748,15 +817,23 @@ class Match extends Base
             // 传入变量作为查询条件
             $map = input('param.');
             // 有传入查询年份
-            if (input('?year')) {
-                $year = input('year');
-                if (is_numeric($year)) {
+            if (input('?param.year')) {
+                $year = input('param.year');
+                //if (is_numeric($year)) {
                     $tInterval = getStartAndEndUnixTimestamp($year);
-                    $map['match_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
-                }
+                    $map['match_record.match_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
+                //}
                 unset($map['year']);
             }
-            unset($map['page']);
+            // 传入球队team_id 组合复合查询 查询作为主队或客队
+            if (input('?param.team_id')) {
+                $team_id = input('param.team_id');
+                $map['match_record.home_team_id|match_record.away_team_id|match_record.team_id'] = $team_id;
+                unset($map['team_id']);
+            }
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
             // 获取数据列表
             $matchS = new MatchService();
             $result = $matchS->matchRecordListPaginator($map);
@@ -784,11 +861,19 @@ class Match extends Base
                 $year = input('year');
                 if (is_numeric($year)) {
                     $tInterval = getStartAndEndUnixTimestamp($year);
-                    $map['match_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
+                    $map['match_record.match_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
                 }
                 unset($map['year']);
             }
-            unset($map['page']);
+            // 传入球队team_id 组合复合查询 查询作为主队或客队
+            if (input('?param.team_id')) {
+                $team_id = input('param.team_id');
+                $map['match_record.home_team_id|match_record.away_team_id|match_record.team_id'] = $team_id;
+                unset($map['team_id']);
+            }
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
             // 获取数据列表
             $matchS = new MatchService();
             $result = $matchS->matchRecordList($map, $page);
@@ -812,6 +897,12 @@ class Match extends Base
             $map = input('param.');
             // 获取数据列表
             $matchS = new MatchService();
+            // 传入球队team_id 组合复合查询 查询作为主队或客队
+            if (input('?param.team_id')) {
+                $team_id = input('param.team_id');
+                $map['match_record.home_team_id|match_record.away_team_id|match_record.team_id'] = $team_id;
+                unset($map['team_id']);
+            }
             $result = $matchS->matchRecordListAll($map);
             // 返回结果
             if ($result) {

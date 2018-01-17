@@ -11,4 +11,9 @@ class MatchHistoryTeam extends Model
     // 软删除
     use SoftDelete;
     protected $deleteTime = 'delete_time';
+
+    // 对手球队一对一 关联球队
+    public function opponentTeam() {
+        return $this->belongsTo('team', 'opponent_team_id', 'id', 'left');
+    }
 }

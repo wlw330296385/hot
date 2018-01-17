@@ -356,6 +356,7 @@ class Team extends Base {
     // 我的球队列表
     public function myteamlist() {
         try {
+            $map = input('param.');
             $map['member_id'] = $this->memberInfo['id'];
             $page = input('page', 1);
             $teamS = new TeamService();
