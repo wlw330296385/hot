@@ -108,7 +108,7 @@
                 <div class="mui-input-row picker btn" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>时间</label>
-                        <span id="result" class="ui-alert domData" name="match_time"></span>
+                        <span id="result" class="ui-alert match_time domData" name="match_time"></span>
                     </div>
                 </div>
 
@@ -145,15 +145,7 @@
                     <label>温馨提示</label>
                     <textarea name="remarks" class="data" placeholder="请填写提示"></textarea>
                 </div>
-
-                <div class="mui-input-row">
-                    <label class="wd52">发布通知并通知队员</label>
-                    <div class="mui-switch isRelease">
-                        <div class="mui-switch-handle"></div>
-                    </div>
-                    <input type="hidden" name="send_message" value="0" class="data">
-                </div>
-
+                
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
                         <label>是否约战</label>
@@ -177,6 +169,15 @@
                         </span>
                     </div>
                 </div>
+
+                <div class="mui-input-row">
+                    <label class="wd52">发布通知并通知队员</label>
+                    <div class="mui-switch isRelease">
+                        <div class="mui-switch-handle"></div>
+                    </div>
+                    <input type="hidden" name="send_message" value="0" class="data">
+                </div>
+
 
             </form>
 
@@ -634,6 +635,11 @@
 
         // 获取数据并进行提交
         function submitAction() {
+
+            if ($(".match_time").text() == '') {
+                mui.alert("请选择比赛时间");
+                return false;
+            }
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
