@@ -152,8 +152,7 @@
                         {eq name="directentry" value="1"}
                         <span class="away_team_Cont domData" name="record[away_team]"></span>
                         <input type="hidden" name="record[away_team_id]" value="" class="data">
-                        <input type="hidden" name="record[away_team_logo]" value="" class="data"> 
-                        {else/}
+                        <input type="hidden" name="record[away_team_logo]" value="" class="data"> {else/}
                         <span class="away_team_Cont domData" name="record[away_team]">{$matchInfo.record.away_team}</span>
                         <input type="hidden" name="record[away_team_id]" value="{$matchInfo.record.away_team_id}" class="data">
                         <input type="hidden" name="record[away_team_logo]" class="data" value="{$matchInfo.record.away_team_logo}" /> {/eq}
@@ -219,16 +218,16 @@
                 </div>
 
                 <div class="mui-input-row">
-                        <div class="mui-navigate-right">
-                            <label>是否完成录入</label>
-                            <span class="select-row">
-                                <select id="isFinished" class="data" name="is_finished">
-                                    <option value="1">是</option>
-                                    <option value="0">否</option>
-                                </select>
-                            </span>
-                        </div>
+                    <div class="mui-navigate-right">
+                        <label>是否完成录入</label>
+                        <span class="select-row">
+                            <select id="isFinished" class="data" name="is_finished">
+                                <option value="1">是</option>
+                                <option value="0">否</option>
+                            </select>
+                        </span>
                     </div>
+                </div>
 
                 <div class="mui-input-row h-auto">
                     <label>备注</label>
@@ -1034,7 +1033,7 @@
                 console.log(selection)
                 if (selection == 1) {
                     mui.alert('比赛将设置为已比赛完成状态', '说明');
-                }else{
+                } else {
                     mui.alert('比赛将设置为未比赛完成状态', '说明');
                 };
             });
@@ -1047,8 +1046,8 @@
             var away_team = $(".away_team_Cont").text();
             var away_team_color = $("input[name='record[away_team_color]']").val();
             var isFinished = $("#isFinished").children("option:selected").val();
-            if( isFinished == 1 ){
-                if( away_team == '' || away_team_color == ''){
+            if (isFinished == 1) {
+                if (away_team == '' || away_team_color == '') {
                     mui.alert("如果选择完成比赛录入，请完善客队信息。");
                     return false;
                 }
@@ -1254,7 +1253,7 @@
         //     });
         // };
 
-        //获取已经报名的活动人员列表
+        //获取已经报名的参赛人员列表
         var toSignUpList = function () {
             var url = "{:url('api/match/recordmemberlist')}";
             var match_id = "{$matchInfo.id}";
@@ -1262,6 +1261,8 @@
                 url: url,
                 data: {
                     match_id: match_id,
+                    status: 1,
+                    is_apply: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型

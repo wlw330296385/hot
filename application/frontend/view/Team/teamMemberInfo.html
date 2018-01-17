@@ -75,7 +75,9 @@
 
             <div class="whitebg border-b mui-text-center" style="padding: 10px 0;">
                 <h3 class="colorred">{$teamMemberInfo.team}</h3>
-                <p>现任球员,队长,领队,教练,队委</p>
+                <p>现任
+                    <span class="role">{$teamMemberInfo.role_text}</span>
+                </p>
                 <h3 class="colorred">{$teamMemberInfo.match_num}</h3>
                 <p>参与比赛次数</p>
                 <div class="poplShirt">
@@ -177,6 +179,11 @@
 
         $(function () {
 
+            // 去除逗号
+            var cDoms = $(".role").text();
+            cDoms = cDoms.substring(0, cDoms.length - 1);
+            $(".role").text(cDoms);
+
             // 印象评价
             $(document).on("tap", '.choiseTag', function () {
                 if ($(this).hasClass("bgorange")) {
@@ -185,7 +192,6 @@
                     $(this).addClass("bgorange");
                 }
             });
-
             $(document).on("tap", '.myimpress', function () {
                 $(".impressSide .bgorange").removeClass("bgorange");
             });
@@ -264,9 +270,6 @@
                 var tag_ids = $(".tagAll .bgorange").map(function () {
                     return $(this).attr("data-id");
                 }).get().join(",");
-
-                console.log(tags);
-                console.log(tag_ids);
 
                 if (!$(".tagAll .choiseTag").hasClass("bgorange")) {
                     mui.toast("你还没有选择印象标签哦");
@@ -373,7 +376,7 @@
                         $(".tagAll").append(div);
 
                         if (div == '') {
-                            $(".tagAll").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                            $(".tagAll").append('<p class="nohave">没有相关数据哦</p>');
                         }
                     }
                 },
