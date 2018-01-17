@@ -32,11 +32,36 @@ class Member extends Backend{
 			
 		
 
-		$memberList = $this->MemberService->getMemberListByPage($map);
+		//$memberList = $this->MemberService->getMemberListByPage($map);
 		// dump($memberList->toArray());die;
 		// 模板变量赋值
+        $model = new \app\model\Member();
+		$memberList = $model->with('student')->where($map)->order('id desc')->paginate(10)->each(function($item, $key) {
+		    // 显示推荐人
+            $item['refer1_member'] = '';
+            $item['refer1_avatar'] = '';
+            $item['refer2_member'] = '';
+            $item['refer2_avatar'] = '';
+		    if ($item['pid'] > 0) {
+                // 一层推荐人
+                $refer1member = db('member')->where(['id' => $item['pid']])->find();
+                if ($refer1member) {
+                    // 推荐人信息返回到结果集
+                    $item['refer1_member'] = $refer1member['member'];
+                    $item['refer1_avatar'] = $refer1member['avatar'];
+                    // 二层推荐人
+                    if ($refer1member['pid'] > 0) {
+                        $refer2member = db('member')->where(['id' => $refer1member['pid']])->find();
+                        if ($refer2member) {
+                            $item['refer2_member'] = $refer2member['member'];
+                            $item['refer2_avatar'] = $refer2member['avatar'];
+                        }
+                    }
+                }
 
-
+            }
+        });
+        //dump($memberList);
 		$this->assign('field',$field);
 		$this->assign('memberList', $memberList);
 		return view('member/memberList');
