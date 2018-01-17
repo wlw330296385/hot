@@ -57,9 +57,9 @@ class Match extends Base
                         //'away_team_colorstyle' => $data['away_team_colorstyle']
                     ];
                     $dataMatchRecord = array_merge($dataMatchRecord, $dataAwayteam);
-                    $data['name'] = $homeTeam['name'] . 'vs' . $data['away_team'];
+                    $data['name'] = $homeTeam['name'] . ' vs ' . $data['away_team'];
                 } else {
-                    $data['name'] = $homeTeam['name'] . '友谊赛（对手待定）';
+                    $data['name'] = $homeTeam['name'] . ' vs （待定）';
                 }
             }
             $res = $matchS->saveMatch($data);
@@ -295,10 +295,10 @@ class Match extends Base
                     // 组合match保存数据
                     $dataMatch = $post;
                     // 更新比赛名称match_name 有选择对手队：当前球队名vs对手队名|无选择对手队：当前球队名友谊赛（对手待定）
-                    if (isset($post['record']['away_team_id'])) {
+                    if (!empty($post['record']['away_team'])) {
                         $matchName = $post['record']['home_team'] . ' vs ' . $post['record']['away_team'];
                     } else {
-                        $matchName = $post['record']['home_team'] . 'vs （待定）';
+                        $matchName = $post['record']['home_team'] . ' vs （待定）';
                     }
                     $recordData['match'] = $matchName;
                     $dataMatch['name'] = $matchName;
@@ -404,10 +404,10 @@ class Match extends Base
                 $post['member'] = $this->memberInfo['member'];
                 $post['member_avatar'] = $this->memberInfo['avatar'];
                 // 比赛名称match_name 有选择对手队：当前球队名vs对手队名|无选择对手队：当前球队名友谊赛（对手待定）
-                if (isset($post['record']['away_team_id'])) {
+                if (!empty($post['record']['away_team'])) {
                     $post['name'] = $post['record']['home_team'] . ' vs ' . $post['record']['away_team'];
                 } else {
-                    $post['name'] = $post['record']['home_team'] . 'vs（待定）';
+                    $post['name'] = $post['record']['home_team'] . ' vs （待定）';
                 }
                 // 组合match保存数据 end
 
