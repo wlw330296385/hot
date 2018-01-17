@@ -4,6 +4,7 @@ namespace app\api\controller;
 
 use app\model\MatchRecord;
 use app\service\MatchService;
+use app\service\MessageService;
 use app\service\TeamService;
 use think\Exception;
 
@@ -317,7 +318,9 @@ class Match extends Base
                             $homeMember[$k]['team_id'] = $recordData['home_team_id'];
                             $homeMember[$k]['team'] = $recordData['home_team'];
                             $homeMember[$k]['match_record_id'] = $recordData['id'];
-                            $homeMember[$k]['member_avatar'] = db('member')->where('id', $val['member_id'])->value('avatar');
+                            $member = db('member')->where('id', $val['member_id'])->find();
+                            $homeMember[$k]['member_avatar'] = $member['avatar'];
+                            $homeMember[$k]['member_tel'] = $member['telephone'];
                             $homeMember[$k]['status'] = 1;
                             // 若比赛完成 比赛参赛球队成员 match_record_member is_attend=1
                             if ($isFinished == 1) {
@@ -358,12 +361,16 @@ class Match extends Base
                         }
                         // 比赛完成的操作
                         if ($isFinished == 1) {
-                            // 更新球队比赛场数、胜场数
+                            // 更新球队胜场数
                             if ($homeScore > $awayScore) {
                                 db('team')->where('id', $post['team_id'])->inc('match_win', 1)->update();
                             }
                             if ($homeScore < $awayScore) {
-                                db('team')->where('id', $post['team_id'])->dec('match_win', -1)->update();
+                                db('team')->where('id', $post['team_id'])->dec('match_win', 1)->update();
+                            }
+                            // 更新球队比赛场数（比赛数据已完成不更新）
+                            if ($match['is_finished_num'] === 0 ) {
+                                db('team')->where('id', $post['team_id'])->inc('match_num', 1)->update();
                             }
 
                             // 保存球队历史比赛对手信息
@@ -441,7 +448,9 @@ class Match extends Base
                             $homeMember[$k]['team_id'] = $recordData['team_id'];
                             $homeMember[$k]['team'] = $recordData['home_team'];
                             $homeMember[$k]['match_record_id'] = $resultSaveMatchRecord['data'];
-                            $homeMember[$k]['member_avatar'] = db('member')->where('id', $val['member_id'])->value('avatar');
+                            $member = db('member')->where('id', $val['member_id'])->find();
+                            $homeMember[$k]['member_avatar'] = $member['avatar'];
+                            $homeMember[$k]['member_tel'] = $member['telephone'];
                             $homeMember[$k]['status'] = 1;
                             $homeMember[$k]['is_attend'] = 1;
                         }
@@ -705,6 +714,7 @@ class Match extends Base
                     'member_id' => $this->memberInfo['id'],
                     'member' => $this->memberInfo['member'],
                     'member_avatar' => $this->memberInfo['avatar'],
+                    'member_tel' => $this->memberInfo['telephone'],
                     'status' => 1,
                     'is_apply' => 1
                 ];
@@ -981,6 +991,60 @@ class Match extends Base
                 $response = ['code' => 100, 'msg' => __lang('MSG_401')];
             }
             return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球队参加比赛申请
+    public function joinmatchapply() {
+        try {
+            // 输入变量
+            $request = input('post.');
+            $matchS = new MatchService();
+            $teamS = new TeamService();
+            $messageS = new MessageService();
+            // 输入变量必须要有的字段
+            if (!isset($request['match_id'])) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'请选择比赛']);
+            }
+            if (!isset($request['team_id'])) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'请选择球队']);
+            }
+            // 检查比赛的信息
+            $matchInfo = $matchS->getMatch(['id' => $request['match_id']]);
+            if (!$matchInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404').'请选择其他比赛']);
+            }
+            if ($matchInfo['is_finished_num'] == 1) {
+                return json(['code' => 100, 'msg' => '此比赛'.$matchInfo['is_finished'].'请选择其他比赛']);
+            }
+            //dump($matchInfo);
+
+            // 补充提交数据字段
+            $request['member_id'] = $this->memberInfo['id'];
+            $request['member'] = $this->memberInfo['member'];
+            $request['member_avatar'] = $this->memberInfo['avatar'];
+
+            // 保存球队参加比赛申请
+            //$resultJoinMatchApply = $matchS->saveMatchApply($request);
+            //if ($resultJoinMatchApply['code'] == 200) {
+                $teamInfo = $teamS->getTeam(['id' => $matchInfo['team_id']]);
+                //dump($teamInfo);
+                $dataMessage = [
+                    'title' => '您好，您发布的比赛有球队报名迎战',
+                    'content' => '您好，您发布的比赛有球队报名迎战',
+                    'url' => url('frontend/team/matchapplylist', ['team_id' => $teamInfo['id']], '', true),
+                    'keyword1' => '约战应战申请',
+                    'keyword2' => $this->memberInfo['member'],
+                    'keyword3' => date('Y-m-d h:i', time()),
+                    'remark' => '请及时登录平台进入球队管理-》约战申请回复处理'
+                ];
+                // 推送消息给发布比赛的球队领队
+                $messageS->sendMessageToMember($teamInfo['leader_id'], $dataMessage, config('wxTemplateID.checkPend'));
+                // 保存球队公告
+            //}
+            //return json($resultJoinMatchApply);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }

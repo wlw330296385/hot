@@ -369,4 +369,9 @@ class Team extends Base {
         $this->assign('matchInfo', $matchInfo);
         return view('Team/matchSignupList');
     }
+    
+    // 申请参加比赛的球队列表
+    public function matchapplylist() {
+        return view('Team/matchApplyList');
+    }
 }
