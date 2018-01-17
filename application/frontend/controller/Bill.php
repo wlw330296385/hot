@@ -32,8 +32,9 @@ class Bill extends Base{
         $studentInfo = [];
         // 课程信息
         if($billInfo['goods_type'] == '课程'){
-            $LessonService = new \app\service\LessonService;
-            $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
+            // $LessonService = new \app\service\LessonService;
+            // $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
+            $lessonInfo = db('lesson')->where(['id'=>$billInfo['goods_id']])->find();
             // 学生信息
             $StudentService = new \app\service\StudentService;
             $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
@@ -65,9 +66,9 @@ class Bill extends Base{
         }
         // 课程信息
         if($billInfo['goods_type'] == '课程'){
-            $LessonService = new \app\service\LessonService;
-            $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
-           
+            // $LessonService = new \app\service\LessonService;
+            // $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
+            $lessonInfo = db('lesson')->where(['id'=>$billInfo['goods_id']])->find();
             // 学生信息
             $StudentService = new \app\service\StudentService;
             $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
@@ -84,17 +85,18 @@ class Bill extends Base{
 
     // 会员查看自己的订单信息
     public function billInfo(){
+        $bill_id = input('param.bill_id');
         $bill_order = input('param.bill_order');
-        if(!$bill_order){
-           $this->error('找不到订单号');
+        if($bill_id){
+            $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+        }else{
+            
+            $billInfo = $this->BillService->getBill(['bill_order'=>$bill_order]);
         }
-            
-        $billInfo = $this->BillService->getBill(['bill_order'=>$bill_order]);
-
         if($billInfo['goods_type']=='课程'){
-            $LessonService = new \app\service\LessonService;
-            $goodsInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
-            
+            // $LessonService = new \app\service\LessonService;
+            // $goodsInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
+            $goodsInfo = db('lesson')->where(['id'=>$billInfo['goods_id']])->find();
             // 学生信息
             $StudentService = new \app\service\StudentService;
             $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
@@ -104,21 +106,24 @@ class Bill extends Base{
             $goodsInfo = db('event')->where(['id'=>$billInfo['goods_id']])->find();
             $this->assign('studentInfo',$studentInfo);
         }
-        // 生成微信参数
+        $jsApiParameters = 0;
+        // 生成微信分享参数
         $shareurl = request()->url(true);
         $WechatService = new WechatService();
         $jsApi = $WechatService->jsapi($shareurl);
-        $amount = ($billInfo['total']*$billInfo['price'])?($billInfo['total']*$billInfo['price']):1;
-        // $amount = 0.01;
-        $WechatJsPayService = new \app\service\WechatJsPayService;
-       
-        $result = $WechatJsPayService->pay(['order_no'=>$billInfo['bill_order'],'amount'=>$amount]);
+        //微信支付参数
+        if($billInfo['status']=='1' || $billInfo['is_pay']=='已付款'){
+            $amount = ($billInfo['total']*$billInfo['price'])?($billInfo['total']*$billInfo['price']):1;
+            // $amount = 0.01;
+            $WechatJsPayService = new \app\service\WechatJsPayService;
+           
+            $result = $WechatJsPayService->pay(['order_no'=>$billInfo['bill_order'],'amount'=>$amount]);
 
-        if($result['code']==100){
-            $jsApiParameters = 0;
-        }else{
-            $jsApiParameters = $result['data']['jsApiParameters'];
+            if($result['code']==200){
+                $jsApiParameters = $result['data']['jsApiParameters'];
+            }
         }
+        
         
         $this->assign('goodsInfo',$goodsInfo);
         $this->assign('jsApiParameters',$jsApiParameters);

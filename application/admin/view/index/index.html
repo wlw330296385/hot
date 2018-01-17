@@ -7,14 +7,122 @@
             <em>控制台</em>
         </div>
         <ul class="nav nav-tabs">
-            <li class="active"><a href="" data-toggle="tab">控制台</a></li>
-            <li><a href="" data-toggle="tab">微信统计</a></li>
+            <li class="active"><a href="#sysCount" data-toggle="tab">控制台</a></li>
+            <li><a href="#wxCount" data-toggle="tab">微信统计</a></li>
         </ul>
     </div>
     <div class="panel-body">
-        Panel content
+        <div class="tab-content">
+            <!-- 系统统计 -->
+            <div class="tab-pane fade active in" id="sysCount">
+                <div class="col-md-12 col-sm-12">
+                    <div class="box no-border">
+                        <!-- Info boxes -->
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-aqua"><i class="fa fa-sign-in"></i></span>
+
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">平台注册量</span>
+                                        <span class="info-box-number">{$memberCount}<small></small></span>
+                                    </div>
+                                    <!-- /.info-box-content -->
+                                </div>
+                                <!-- /.info-box -->
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-red"><i class="fa fa-pie-chart"></i></span>
+
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">训练营数量</span>
+                                        <span class="info-box-number">{$campCount}</span>
+                                    </div>
+                                    <!-- /.info-box-content -->
+                                </div>
+                                <!-- /.info-box -->
+                            </div>
+                            <!-- /.col -->
+
+                            <!-- fix for small devices only -->
+                            <div class="clearfix visible-sm-block"></div>
+
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-green"><i class="fa fa-odnoklassniki"></i></span>
+
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">教练数量</span>
+                                        <span class="info-box-number">{$coachCount}</span>
+                                    </div>
+                                    <!-- /.info-box-content -->
+                                </div>
+                                <!-- /.info-box -->
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-yellow"><i class="fa fa-object-group"></i></span>
+
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">球场数量</span>
+                                        <span class="info-box-number">{$courtCount}</span>
+                                    </div>
+                                    <!-- /.info-box-content -->
+                                </div>
+                                <!-- /.info-box -->
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                        <!-- /.row -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 微信统计 -->
+            <div class="tab-pane fade" id="wxCount">
+                <div class="col-md-12 col-sm-12">
+                    <div class="box no-border">
+                        <!-- Info boxes -->
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
+
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">公众号关注数量</span>
+                                        <span class="info-box-number" id="wxGroups"></span>
+                                    </div>
+                                    <!-- /.info-box-content -->
+                                </div>
+                                <!-- /.info-box -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+      
 
 
+{/block}
+
+{block name='js'}
+<script type="text/javascript" src="/static/frontend/js/wooApi.js" ></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+
+        var result = wooApi.asyncT("{:url('api/wx/getGroups')}",'',function(msg){
+            var jsonMsg = JSON.parse(msg);
+            $('#wxGroups').text(jsonMsg.groups[0].count)
+        });
+
+    })
+</script>
 {/block}

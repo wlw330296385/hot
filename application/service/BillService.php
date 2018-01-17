@@ -377,7 +377,7 @@ class BillService {
                         $MessageCampData = [
                             "touser" => '',
                             "template_id" => config('wxTemplateID.successRefund'),
-                            "url" => url('frontend/bill/billInfoOfCamp',$map,'',true),
+                            "url" => url('frontend/bill/billInfoOfCamp',['bill_id'=>$map['id']],'',true),
                             "topcolor"=>"#FF0000",
                             "data" => [
                                 'first' => ['value' => '['.$billInfo['goods'].']收到一笔申请退款'],
@@ -390,7 +390,7 @@ class BillService {
                         $saveData = [
                                 'title'=>"退款申请-{$billInfo['goods']}",
                                 'content'=>"订单号: {$billInfo['bill_order']}<br/>退款金额: {$billInfo['balance_pay']}元<br/>退款理由:{$billInfo['remarks']}",
-                                'url'=>url('frontend/bill/billInfoOfCamp',$map)
+                                'url'=>url('frontend/bill/billInfoOfCamp',['bill_id'=>$map['id']])
                             ];
                         $MessageService->sendCampMessage($billInfo['camp_id'],$MessageCampData,$saveData);
                     }

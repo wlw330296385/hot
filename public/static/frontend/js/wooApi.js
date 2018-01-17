@@ -24,7 +24,7 @@ var wooApi = {
         return postMsgF.responseJSON;
     },
     //异步访问接口
-    'asyncT':function (url,data) {
+    'asyncT':function (url,data,Fn) {
 
         //访问接口
         var postMsgT = $.ajax({
@@ -33,11 +33,11 @@ var wooApi = {
             async: true,
             type: 'post',
             dataType:'json',
-            success: function(msg) {
-
+            complete: function(msg) {
+                Fn(msg.responseJSON);
             }
         });
-        return postMsgT.responseJSON;
+        
     },
     // 一键获取已有变量
     'getJson':function(str){
