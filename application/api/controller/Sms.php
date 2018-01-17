@@ -60,14 +60,14 @@ class Sms {
 
 
     // 发送信息
-    public function sendSmsCodeApi($content,$telephone,$remarks = '通用'){
+    public function sendSmsCodeApi($content,$telephone,$tNum = 'T150606060601',$remarks = '通用'){
         try{
-
+            
             $smsApi = new SmsApi();
             $smsApi->paramArr = [
                 'mobile' => $telephone,
                 'content' => json_encode($content),
-                'tNum' => 'T150606060601'
+                'tNum' => $tNum
             ];
             $sendsmsRes = $smsApi->sendsms();
             if ($sendsmsRes == 0) {

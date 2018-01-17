@@ -65,5 +65,23 @@ class GradeMember extends Base{
         }
     }
 
+    // 获取与课程|班级|训练营相关的学生|体验生-不带page
+    public function getGradeMemberListWithGradeNoPageApi(){
+        try{
+            $map = input('post.');
+            $keyword = input('param.keyword');
+            $GradeMember = new \app\model\GradeMember;
+            $res = $GradeMember->with('grade')->where(['grade_member.member_id'=>$map['member_id']])->select();
 
+            if($res){
+                $result = $res->toArray();
+                // dump($result);die;
+                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'检查你的参数']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }

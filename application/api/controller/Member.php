@@ -297,13 +297,13 @@ class Member extends Base{
     public function forgetPassword(){
         try{
             $code = mt_rand(100000, 999999);
-            $content = ['code'=>$code,'minute' => 5, 'comName' => '重置密码'];
+            $content = ['code'=>$code, 'comName' => '篮球管家'];
             $smsApi = new \app\api\controller\Sms;
-            $result = $smsApi->sendSmsCodeApi($content,$this->memberInfo['telephone'],'忘记密码'); 
+            $result = $smsApi->sendSmsCodeApi($content,$this->memberInfo['telephone'],'T170317001882','[忘记密码]'); 
             if($result['code']==200){
                 $res = db('member')->where(['id'=>$this->memberInfo['id']])->update(['password'=>passwd($code)]);
                 if($res){
-                    return json(['code'=>200,'msg'=>'密码已重置']);
+                    return json(['code'=>200,'msg'=>'密码已重置,请注意收到的手机短信']);
                 }else{
                     return json(['code'=>100,'msg'=>'密码重置失败']);
                 }

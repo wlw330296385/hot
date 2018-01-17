@@ -36,9 +36,8 @@ class GradeMember extends Model {
 
     // 关联班级
     public function grade(){
-    	return $this->hasOne('grade','id','grade_id',[],'left join');
+        return $this->hasOne('grade','id','grade_id',['gradeInfo'],'left join');
     }
-
 
     // 关联??多对多???
     public function coach(){

@@ -122,7 +122,7 @@ class LessonMember extends Base{
         }
     }
 
-   
+    
     // 获取与课程|班级|训练营相关的学生|体验生-不带page
     public function getLessonMemberListNoPageApi(){
         try{
@@ -141,6 +141,34 @@ class LessonMember extends Base{
             $result = $LessonMember->where($map)->select();
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result->toArray()]);
+            }else{
+                return json(['code'=>100,'msg'=>'检查你的参数']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    public function getSamePriceLessonMemberListNoPageApi(){
+        try{
+            $lesson_id = input('param.lesson_id');
+            $keyword = input('param.keyword');
+            $cost = input('param.cost'); 
+            $rest_schedule = input('param.rest_schedule');
+            $map = [];
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['lesson_member.student'] = ['LIKE','%'.$keyword.'%'];
+            } 
+            if(isset($rest_schedule)){
+                $map['lesson_member.rest_schedule'] = ['lt',$rest_schedule];
+            }
+            $result = Db::view('lesson','id,cost')
+                    ->view('lesson_member','*','lesson_member.lesson_id = lesson.id')
+                    ->where($map)
+                    ->having('lesson.cost='.$cost)
+                    ->select();
+            if($result){
+                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
                 return json(['code'=>100,'msg'=>'检查你的参数']);
             }
