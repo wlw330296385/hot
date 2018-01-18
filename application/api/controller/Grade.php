@@ -85,7 +85,7 @@ class Grade extends Base{
                 unset($map['page']);
             }
 
-            $result = $this->GradeService->getGradeListNoPage($map);
+            $result = $this->GradeService->getGradeAllWithLesson($map);
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             } else {

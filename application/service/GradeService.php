@@ -24,6 +24,16 @@ class GradeService{
         return $res;
     }
 
+    // 获取班级列表（关联课程信息、无分页)
+    public function getGradeAllWithLesson($map , $order='id desc') {
+        $query = Grade::with('lesson')->where($map)->order($order)->select();
+        if($query){
+            return $query->toArray();
+        } else {
+            return $query;
+        }
+    }
+
     // 班级分页
     public function getGradeListByPage($map , $order='id desc', $paginate=10) {
         $result =  $this->GradeModel
