@@ -35,8 +35,10 @@ class Coupon extends Base{
 
     public function couponListOfCamp(){
 
+        $organization_id = input('param.organization_id');
 
-        
+
+        $this->assign('organization_id',$organization_id);
         return view('Coupon/couponListOfCamp');
     }
 
