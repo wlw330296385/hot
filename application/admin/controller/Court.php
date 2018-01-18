@@ -13,8 +13,8 @@ class Court extends Backend {
     }
     // 场地管理
     public function index() {
-        $court = CourtModel::paginate(15);
-
+        $court = CourtModel::order('id desc')->paginate(15);
+        //dump($court);
         $breadcrumb = [ 'ptitle' => '训练营' , 'title' => '场地管理' ];
         $this->assign( 'breadcrumb', $breadcrumb );
         $this->assign('list', $court);
