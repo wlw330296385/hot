@@ -505,13 +505,12 @@ class Match extends Base
         }
     }
 
-    // 比赛列表（页码）+年份
+    // 比赛列表（分页）
     public function matchlistpage()
     {
         try {
             // 传递参数作为查询条件
             $map = input('param.');
-            $page = input('page', 1);
             // 如果有传入年份 查询条件 create_time在区间内
             if (input('?year')) {
                 $year = input('year');
@@ -521,7 +520,49 @@ class Match extends Base
                 }
                 unset($map['year']);
             }
-            unset($map['page']);
+            // 传入比赛未来时间选择 1：7天/2：15天/3：30天
+            if (input('?choice_time')) {
+                $choiceTime = input('choice_time');
+                // 生成未来时间戳
+                switch ($choiceTime) {
+                    case 1: {
+                        $dateTimeStamp = strtotime("+7 days");
+                        break;
+                    }
+                    case 2: {
+                        $dateTimeStamp = strtotime("+15 days");
+                        break;
+                    }
+                    case 3: {
+                        $dateTimeStamp = strtotime("+30 days");
+                        break;
+                    }
+                    default: {
+                        // 当天时间戳
+                        $dateTimeStamp = time();
+                    }
+                }
+                unset($map['choice_time']);
+                //dump($dateTimeStamp);
+                // match_time区间 查询条件组合:当前时间至所选未来时间
+                $endDate = getStartAndEndUnixTimestamp(date('Y', $dateTimeStamp), date('m', $dateTimeStamp), date('d', $dateTimeStamp));
+                //dump($endDate);
+                $map['match_time'] = ['between', [ time(), $endDate['end'] ]];
+            }
+            // 关键字搜索：发布比赛的球队名(match_team)
+            if (input('?keyword')) {
+                $keyword =input('keyword');
+                // 关键字内容
+                if (!empty($keyword) && !ctype_space($keyword) ) {
+                    $map['team'] = ['like', "%$keyword%"];
+                }
+                unset($map['keyword']);
+            }
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            // 组合查询条件 end
+
             $matchS = new MatchService();
             $result = $matchS->matchListPaginator($map);
             if ($result) {
@@ -551,7 +592,49 @@ class Match extends Base
                 }
                 unset($map['year']);
             }
-            unset($map['page']);
+            // 传入比赛未来时间选择 1：7天/2：15天/3：30天
+            if (input('?choice_time')) {
+                $choiceTime = input('choice_time');
+                // 生成未来时间戳
+                switch ($choiceTime) {
+                    case 1: {
+                        $dateTimeStamp = strtotime("+7 days");
+                        break;
+                    }
+                    case 2: {
+                        $dateTimeStamp = strtotime("+15 days");
+                        break;
+                    }
+                    case 3: {
+                        $dateTimeStamp = strtotime("+30 days");
+                        break;
+                    }
+                    default: {
+                        // 当天时间戳
+                        $dateTimeStamp = time();
+                    }
+                }
+                unset($map['choice_time']);
+                //dump($dateTimeStamp);
+                // match_time区间 查询条件组合:当前时间至所选未来时间
+                $endDate = getStartAndEndUnixTimestamp(date('Y', $dateTimeStamp), date('m', $dateTimeStamp), date('d', $dateTimeStamp));
+                //dump($endDate);
+                $map['match_time'] = ['between', [ time(), $endDate['end'] ]];
+            }
+            // 关键字搜索：发布比赛的球队名(match_team)
+            if (input('?keyword')) {
+                $keyword =input('keyword');
+                // 关键字内容
+                if (!empty($keyword) && !ctype_space($keyword) ) {
+                    $map['team'] = ['like', "%$keyword%"];
+                }
+                unset($map['keyword']);
+            }
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            // 组合查询条件 end
+
             $matchS = new MatchService();
             $result = $matchS->matchList($map, $page);
             if ($result) {
@@ -742,6 +825,15 @@ class Match extends Base
         try {
             // 传递参数作为查询条件
             $map = input('param.');
+            // 关键字搜索：对手球队名 opponent_team
+            if (input('?keyword')) {
+                $keyword =input('keyword');
+                // 关键字内容
+                if (!empty($keyword) && !ctype_space($keyword) ) {
+                    $map['opponent_team'] = ['like', "%$keyword%"];
+                }
+                unset($map['keyword']);
+            }
             // 剔除map[page]
             if (input('?param.page')) {
                 unset($map['page']);
@@ -767,6 +859,15 @@ class Match extends Base
             // 传递参数作为查询条件
             $map = input('param.');
             $page = input('page', 1);
+            // 关键字搜索：对手球队名 opponent_team
+            if (input('?keyword')) {
+                $keyword =input('keyword');
+                // 关键字内容
+                if (!empty($keyword) && !ctype_space($keyword) ) {
+                    $map['opponent_team'] = ['like', "%$keyword%"];
+                }
+                unset($map['keyword']);
+            }
             // 剔除map[page]
             if (input('?param.page')) {
                 unset($map['page']);
