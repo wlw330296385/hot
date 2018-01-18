@@ -2,6 +2,7 @@
 // 比赛service
 namespace app\service;
 use app\model\Match;
+use app\model\MatchApply;
 use app\model\MatchRecord;
 use app\model\MatchRecordMember;
 use app\model\MatchTeam;
@@ -511,6 +512,31 @@ class MatchService {
             return $query->toArray();
         } else {
             return $query;
+        }
+    }
+
+    // 保存球队参加比赛申请
+    public function saveMatchApply($data) {
+        $model = new MatchApply();
+        // 根据提交的参数有无id 识别执行更新/插入数据
+        if (isset($data['id'])) {
+            // 更新数据
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        } else {
+            // 插入数据
+            $res = $model->allowField(true)->save($data);
+            if ($res) {
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->getLastInsID()];
+            } else {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
         }
     }
 }

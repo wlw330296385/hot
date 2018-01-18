@@ -68,13 +68,13 @@
                     <label>地区</label>
                     <span>{$matchInfo.province} {$matchInfo.city} {$matchInfo.area}</span>
                 </li>
-                <li class="mui-table-view-cell listli">
+                <li class="mui-table-view-cell listli border-b">
                     <label>时间</label>
                     <span>{$matchInfo.match_time}</span>
                 </li>
             </ul>
 
-            <ul class="mui-table-view detalis-list list mainInfo mb">
+            <!-- <ul class="mui-table-view detalis-list list mainInfo mb">
                 <div class="page-header">
                     <span class="course">
                         出勤率 60%</span>
@@ -92,33 +92,33 @@
 
             <div class="page-header whitebg">
                 <span class="course">比赛花絮</span>
-            </div>
+            </div> -->
 
             <!--图片轮播-->
-            <div id="slider" class="mui-slider" style="height:120px">
-                {notempty name="matchInfo.record.album"}
-                <div class="mui-slider-group mui-slider-loop">
-                    <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
-                    <div class="mui-slider-item mui-slider-item-duplicate">
+            <!-- <div id="slider" class="mui-slider" style="height:120px"> -->
+            <!-- {notempty name="matchInfo.record.album"} -->
+            <!-- <div class="mui-slider-group mui-slider-loop"> -->
+            <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+            <!-- <div class="mui-slider-item mui-slider-item-duplicate">
                         <img src="{matchInfo.record.album[0]}">
-                    </div>
-                    <!-- 第一张 -->
-                    {volist name="matchInfo.record.album" id="vol"}
-                    <div class="mui-slider-item">
+                    </div> -->
+            <!-- 第一张 -->
+            <!-- {volist name="matchInfo.record.album" id="vol"} -->
+            <!-- <div class="mui-slider-item">
                         <img src="{vol}">
-                    </div>
-                    {/volist}
-                    <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
-                    <div class="mui-slider-item mui-slider-item-duplicate">
+                    </div> -->
+            <!-- {/volist} -->
+            <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+            <!-- <div class="mui-slider-item mui-slider-item-duplicate">
                         <img src="{matchInfo.record|array_pop}">
                     </div>
-                </div>
-                {else/}
-                <p class="mui-text-center" style="padding-top:45px;">还没有上传花絮图哦</p>
-                {/notempty}
-            </div>
+                </div> -->
+            <!-- {else/} -->
+            <!-- <p class="mui-text-center" style="padding-top:45px;">还没有上传花絮图哦</p> -->
+            <!-- {/notempty} -->
+            <!-- </div> -->
 
-            <div class="page-header whitebg border-b">
+            <!-- <div class="page-header whitebg border-b">
                 <span class="course wd52">评论</span>
                 <span class="more">评论
                     <small class="comment_count">0</small>&nbsp;|&nbsp;
@@ -126,7 +126,7 @@
                     <samll class="thumbup_count">0</samll>
                 </span>
             </div>
-            <ul class="mui-table-view comment-list"></ul>
+            <ul class="mui-table-view comment-list"></ul> -->
 
             <!--底部操作-->
             <ul class="mui-table-view operation mt">
@@ -380,7 +380,7 @@
                         //上拉刷新
                         $("ul.comment-list").empty().append(newli);
                         if (newli == '') {
-                            $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>还没有评论哦，你来说几句吧！</p></li>');
+                            $("ul.comment-list").html('<p class="nodata">还没有评论哦，你来说几句吧！</p>');
                         }
                     } else {
                         //下拉加载 gType==2
@@ -414,7 +414,7 @@
                         }
                         $(".selectTeam").empty().append(newli);
                     } else {
-                        $(".selectTeam").empty().append("没有效力的球队");
+                        $(".selectTeam").empty().append("<a href='{:url('team/createteam')}'>没有效力的球队,赶紧去创建吧</a>");
                     }
                 },
                 error: function (xhr, type, errerThrown) {

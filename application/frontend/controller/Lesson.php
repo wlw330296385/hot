@@ -48,9 +48,18 @@ class Lesson extends Base{
         $ItemCoupon = new \app\model\ItemCoupon;
         // 平台卡券
         $couponListOfSystem = $ItemCoupon->where($map)->where(['organization_type'=>1])->select();
+        if($couponListOfSystem){
+            $couponListOfSystem = $couponListOfSystem->toArray();
+        }else{
+            $couponListOfSystem = [];
+        }
         // 训练营卡券
         $couponListOfCamp = $ItemCoupon->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id']])->where($map)->select();
-        
+        if($couponListOfCamp){
+                    $couponListOfCamp = $couponListOfCamp->toArray();
+                }else{
+                    $couponListOfCamp = [];
+                }
         $this->assign('couponListOfSystem',$couponListOfSystem);
         $this->assign('couponListOfCamp',$couponListOfCamp);
         $this->assign('isPower',$isPower);
