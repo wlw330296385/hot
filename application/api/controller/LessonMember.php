@@ -152,10 +152,11 @@ class LessonMember extends Base{
     // 获取训练营相同价格的课程带分页带搜索
     public function getSamePriceLessonMemberListNoPageApi(){
         try{
-            $camp_id = input('param.camp_id');
+            $lesson_id = input('param.lesson_id');
             $keyword = input('param.keyword');
             $cost = input('param.cost'); 
             $rest_schedule = input('param.rest_schedule');
+            $lessonInfo = db('lesson')->where(['id'=>$lesson_id])->find();
             $map = [];
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['lesson_member.student'] = ['LIKE','%'.$keyword.'%'];
@@ -166,7 +167,7 @@ class LessonMember extends Base{
             $result = Db::view('lesson','id lid,cost,camp_id')
                     ->view('lesson_member','*','lesson_member.lesson_id = lesson.id')
                     ->where($map)
-                    ->where("lesson.cost=$cost and lesson.camp_id=$camp_id")
+                    ->where("lesson.cost=$lessonInfo['cost'] and lesson.camp_id=$lessonInfo['camp_id']")
                     // ->having("lesson.cost=$cost and lesson.camp_id=$camp_id")
                     ->order('lesson_member.id desc')
                     ->paginate(10);
