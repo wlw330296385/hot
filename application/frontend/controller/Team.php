@@ -374,4 +374,10 @@ class Team extends Base {
     public function matchapplylist() {
         return view('Team/matchApplyList');
     }
+
+    
+    // 申请参加比赛的球队详情
+    public function matchapplyinfo() {
+        return view('Team/matchApplyInfo');
+    }
 }

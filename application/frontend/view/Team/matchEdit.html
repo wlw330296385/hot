@@ -84,7 +84,6 @@
     </header>
     <div class="mui-content pt">
 
-        <div class="camp-list camp-lesson-list">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
             <input type="hidden" name="directentry" value="{$directentry}">
             <input type="hidden" name="team_id" value="{$team_id}" class="data"> {eq name="directentry" value="0"}
@@ -191,7 +190,7 @@
                 <div class="mui-input-row picker btn" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>时间</label>
-                        <span id="result" class="ui-alert domData" name="match_time">{eq name="directentry" value="1" } {else/}{$matchInfo.match_time}{/eq}</span>
+                        <span id="result" class="ui-alert domData match_time" name="match_time">{eq name="directentry" value="1" } {else/}{$matchInfo.match_time}{/eq}</span>
                     </div>
                 </div>
 
@@ -296,7 +295,6 @@
             <ul class="mui-table-view operation">
                 <li class="mui-col-xs-12 opli bggreen" onclick="submitAction()">提交</li>
             </ul>
-        </div>
     </div>
 
     <!--选择对手-->
@@ -727,6 +725,16 @@
             $(".ching").css("background", "#00eaff");
         };
 
+        // 时间待定显示
+        function timeShow() {
+            if(directentry == 0){
+                var match_time = "{$matchInfo.match_time}";
+                if (match_time == "1970-01-01 08:00") {
+                $(".match_time").text("待定");
+                } 
+            }
+        }
+
         // 球服没有内容则隐藏i标签
         function clothes() {
             if ($(".home_color_text input[name=color]").val() == '') {
@@ -786,6 +794,7 @@
             // toAwayMemberList(); //获取客队成员列表
             toSignUpList(); //获取已经报名比赛的人员
             clothes(); //球服没有内容则隐藏i标签
+            timeShow()
 
             // 设置活动类型默认值
             $('#matchType option[{eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.type_num}"{/eq}]').prop("selected", true);
@@ -893,11 +902,6 @@
             })
 
             //删除
-            // $(document).on('click', '.del', function () {
-            //     $(this).parents().siblings().find("input[name='member']:checked").parents(".checkboxCont").remove();
-            //     totalNum = $(this).parents().siblings().find(".checkboxCont").length;
-            //     $(".mui-badge").text(totalNum);
-            // });
             $(document).on('click', '.del', function () {
                 $(this).parents().siblings().find("input[name='member']:checked").parents(".checkboxCont").remove();
                 changeIndexHome();
@@ -1121,7 +1125,7 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '比赛编辑成功', '确定', function () {
-                    var goUrl = "{:url('team/matchlistOfTeam')}/" + '/team_id/' + "{$team_id}";
+                    var goUrl = "{:url('team/matchlistOfTeam')}" + '/team_id/' + "{$team_id}";
                     window.top.location.href = goUrl;
                 })
             } else {
