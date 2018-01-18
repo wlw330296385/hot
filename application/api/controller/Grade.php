@@ -57,6 +57,46 @@ class Grade extends Base{
         }
     }
 
+    // 班级列表（不分页所有数据)
+    public function getGradeListAll(){
+        try{
+            $map = input('post.');
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $page = input('param.page', 1);
+            $city = input('param.city');
+            $area = input('param.area');
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value==' '){
+                    unset($map[$key]);
+                }
+            }
+            $map['status'] = input('status',1);
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != '' && $keyword!=NULL){
+                $map['grade'] = ['LIKE','%'.$keyword.'%'];
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+
+            $result = $this->GradeService->getGradeAllWithLesson($map);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
     public function getGradeListByPageApi(){
         try{
             $map = input('post.');

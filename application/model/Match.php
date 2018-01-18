@@ -32,6 +32,12 @@ class Match extends Model {
         return $is_finished[$value];
     }
 
+    // apply_status(约战申请)获取器
+    public function getApplyStatusAttr($value) {
+        $apply_status = [ 0 => '接收约战', 1 => '约战匹配中', '2' => '约战已完成' ];
+        return $apply_status[$value];
+    }
+
     // status 获取器
     public function getStatusAttr($value) {
         $status = [1=> '公开', -1 => '不公开'];

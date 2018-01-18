@@ -8,6 +8,7 @@ use app\model\TeamEvent;
 use app\model\TeamEventMember;
 use app\model\TeamMember;
 use app\model\TeamMemberRole;
+use app\model\TeamMessage;
 use think\Db;
 
 class TeamService {
@@ -645,6 +646,39 @@ class TeamService {
     public function getCommentInfo($map) {
         $model = new TeamComment();
         $res = $model->where($map)->find();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
+    // 保存球队公告信息
+    public function saveTeamMessage($data) {
+        $model = new TeamMessage();
+        $res = $model->allowField(true)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->getLastInsID()];
+        } else {
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
+    // 球队公告信息列表分页
+    public function getTeamMessagePaginator($map, $order='id desc', $paginate=10) {
+        $model = new TeamMessage();
+        $res = $model->where($map)->order($order)->paginate($paginate);
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
+    // 球队公告信息列表
+    public function getTeamMessageList($map, $page=1, $order='id desc', $limit=10) {
+        $model = new TeamMessage();
+        $res = $model->where($map)->order($order)->page($page, $limit)->select();
         if ($res) {
             return $res->toArray();
         } else {

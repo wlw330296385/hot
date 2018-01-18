@@ -270,7 +270,7 @@ class Team extends Base {
             // 接收参数 判断正确有无传参
             $apply_id = input('apply_id');
             $reply = input('reply');
-            if (!$apply_id && !$reply) {
+            if (!$apply_id || !$reply) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402').'，请正确传参']);
             }
             if ( !in_array($reply, [2,3]) ) {
@@ -1115,6 +1115,47 @@ class Team extends Base {
             $thumbsup = ($commentInfo) ? $commentInfo['thumbsup'] : 0;
             return json(['code' => 200, 'msg' => __lang('MSG_200'), 'thumbsup' => $thumbsup]);
         } catch(Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球队公告信息列表分页
+    public function teammessagepage() {
+        try {
+            $map = input('param.');
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            $teamS = new TeamService();
+            $result = $teamS->teamEventMemberPaginator($map);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球队公告信息列表
+    public function teammessagelist() {
+        try {
+            $map = input('param.');
+            $page = input('page', 1);
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            $teamS = new TeamService();
+            $result = $teamS->teamEventMemberList($map, $page);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
