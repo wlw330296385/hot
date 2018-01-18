@@ -73,6 +73,7 @@ class Login extends Controller
     }
 
     public function clearCache(){
+        cookie('keeplogin', null);
         Cache::clear(); 
         $this->success('清空成功');
     }

@@ -167,7 +167,7 @@ class LessonMember extends Base{
             $result = Db::view('lesson','id lid,cost,camp_id')
                     ->view('lesson_member','*','lesson_member.lesson_id = lesson.id')
                     ->where($map)
-                    ->where("lesson.cost=$lessonInfo['cost'] and lesson.camp_id=$lessonInfo['camp_id']")
+                    ->where("lesson.cost={$lessonInfo['cost']} and lesson.camp_id={$lessonInfo['camp_id']}")
                     // ->having("lesson.cost=$cost and lesson.camp_id=$camp_id")
                     ->order('lesson_member.id desc')
                     ->paginate(10);
