@@ -67,6 +67,26 @@ class Member extends Backend{
 		return view('member/memberList');
 	}
 
+	public function memberInfo(){
+		$member_id = input('param.member_id');
+		$memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);
+		// 教练信息
+		$Coach = new \app\model\Coach;
+		$coachInfo = $Coach->where(['member_id'=>$member_id])->find();
+		// 证书
+		$certList = db('cert')->where(['member_id'=>$member_id])->select();
+		// 学生档案
+		$studentList = db('student')->where(['member_id'=>$member_id])->select();
+		// 推荐人
+		$referer = $this->MemberService->getMemberInfo(['id'=>$memberInfo['pid']]);
+
+		$this->assign('referer',$referer);
+		$this->assign('studentList',$studentList);
+		$this->assign('certList',$certList);
+		$this->assign('coachInfo',$coachInfo);
+		$this->assign('memberInfo',$memberInfo);
+		return view('member/memberInfo');
+	}
 
 	public function createMember(){
 

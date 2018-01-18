@@ -154,4 +154,16 @@ class Login extends Base{
             return json( session('memberInfo', '','think') );
         }
     }
+
+
+    // 搜索推荐人
+    public function searchReferer(){
+        try{
+            $telephone = input('param.telephone');
+            $result = db('member')->where(['telephone'=>['like',"%$telephone%"]])->select();
+            return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }
