@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>个人信息详情</title>
+    <title>约战球队详情</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -23,49 +23,141 @@
 
         <!-- 审核内容-->
         <div class="examineBox">
-            <input id="applyid" type="hidden" value="{$applyInfo.id}">
+            <input id="applyid" type="hidden" value="{applyInfo.id}">
             <div class="examine">
-                <strong>申请的内容：</strong>{$applyInfo.remarks}</div>
+                <strong>申请的内容：</strong>{applyInfo.remarks}</div>
             <div class="mui-button-row">
                 <button class="mui-btn" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
                 <button class="mui-btn" type="button" onclick="check_status(3)">拒绝</button>
             </div>
         </div>
 
-        <form action="" class="mui-input-group mb">
-            <div class="mui-input-row h-auto">
-                <label>头像</label>
-                <img src="{$applyInfo.member.avatar}" alt="头像" style="margin-right: 18px">
+        <div class="list">
+
+            <div class="img4x3" style="background-image:url('{$teamInfo.cover}')"></div>
+
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media listli de " style="padding:11px 15px;">
+                    <a href="javascript:;">
+                        <img class="mui-media-object mui-pull-left coachicon" src="{$teamInfo.logo}" style="width:45px !important;height:45px !important">
+                        <div class="mui-media-body wd36">
+                            {$teamInfo.name}
+                            <p class="mui-ellipsis">{$teamInfo.city} {$teamInfo.area}</p>
+                        </div>
+                        <div class="price-frame" style="line-height:46px;width:45%">
+                            <p style="font-size:12px">队员：{$teamInfo.member_num}人 | 粉丝：{$teamInfo.fans_num}</p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="page-header">
+                <span class="course">
+                    <b>球队成员</b>
+                </span>
+                <span class="more pdr15">
+                    <a href="{:url('team/teamMember',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">查看全部</a>
+                </span>
             </div>
-            <div class="mui-input-row">
-                <label>姓名</label>
-                <span class="name">{$applyInfo.member.member}</span>
+
+            <div class="nav-list mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame overflow-x teamMemberList ptb4"></ul>
             </div>
-            <div class="mui-input-row">
-                <label>性别</label>
-                <span class="sex"></span>
+
+            <div class="nav-list mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>平均年龄</span>
+                            <div class="mui-media-body">{$teamInfo.avg_age}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>平均身高</span>
+                            <div class="mui-media-body">{$teamInfo.avg_height}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>平均体重</span>
+                            <div class="mui-media-body">{$teamInfo.avg_weight}</div>
+                        </a>
+                    </li>
+                </ul>
             </div>
-            <div class="mui-input-row">
-                <label>身高</label>
-                <span class="height">{$applyInfo.member.height}cm</span>
+
+            <!--球队相册-->
+            <div class="page-header whitebg border-b">
+                <span class="course">球队相册</span>
+                <span class="more pdr15">
+                    <a href="{:url('team/album',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">查看更多</a>
+                </span>
             </div>
-            <div class="mui-input-row">
-                <label>体重</label>
-                <span class="weight">{$applyInfo.member.weight}kg</span>
+            <div class="picFrame whitebg">
+                <ul>
+                    <li>
+                        <img src="/static/frontend/images/ads1.jpg">
+                    </li>
+                    <li>
+                        <img src="/static/frontend/images/ads1.jpg">
+                    </li>
+                    <li>
+                        <img src="/static/frontend/images/ads1.jpg">
+                    </li>
+                    <li>
+                        <img src="/static/frontend/images/ads1.jpg">
+                    </li>
+                </ul>
             </div>
-            <div class="mui-input-row">
-                <label>出生日期</label>
-                <span class="birthday">{$applyInfo.member.birthday}</span>
+
+            <!--球队战绩-->
+            <div class="page-header">
+                <span class="course">球队战绩</span>
+                <span class="more pdr15">
+                    <a href="" class="mui-navigate-right">查看更多</a>
+                </span>
             </div>
-            <div class="mui-input-row">
-                <label>所属地区</label>
-                <span>{$applyInfo.member.province} {$applyInfo.member.city} {$applyInfo.member.area}</span>
+            <div class="nav-list record mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>场次</span>
+                            <div class="mui-media-body colorred">{$teamInfo.match_num}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>胜</span>
+                            <div class="mui-media-body colorred">{$teamInfo.match_win}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>负</span>
+                            <div class="mui-media-body colorred">{$teamInfo.match_lose}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>胜率</span>
+                            <div class="mui-media-body colorred">70%</div>
+                        </a>
+                    </li>
+                </ul>
             </div>
-        </form>
+
+            <!--球队印象-->
+            <div class="page-header whitebg border-b">
+                <span class="course">球队印象</span>
+            </div>
+            <div class="impress whitebg tagCommentList">{teamInfo.}</div>
+
+        </div>
 
     </div>
 
-    
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>
@@ -73,47 +165,69 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-
-        $(function () {
-            sex();
-
-            
-        })
+        
+        $(function(){
+            toTagCommentList();
+        })        
         // 审核操作
         function check_status(value) {
-                var apply_id = document.getElementById('applyid').value;
-                mui.ajax("{:url('api/team/applyreply')}", {
-                    data: {
-                        apply_id: apply_id,
-                        reply: value
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (res) {
-                        if (res.code == 200) {
-                            mui.toast(res.msg);
-                            window.location.href = "{:url('frontend/team/teamApplyList')}/team_id/{$teamInfo.id}";
-                        } else {
-                            mui.toast(res.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                        mui.toast('网络异常');
+            var apply_id = document.getElementById('applyid').value;
+            mui.ajax("{:url('api/team/applyreply')}", {
+                data: {
+                    apply_id: apply_id,
+                    reply: value
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (res) {
+                    if (res.code == 200) {
+                        mui.toast(res.msg);
+                        window.location.href = "{:url('frontend/team/teamApplyList')}/team_id/{$teamInfo.id}";
+                    } else {
+                        mui.toast(res.msg);
                     }
-                });
-            }
-        function sex() {
-            var sex = "{$applyInfo.member.sex}";
-            if (sex == 1) {
-                $(".sex").text("男");
-            } else {
-                $(".sex").text("女");
-            }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                    mui.toast('网络异常');
+                }
+            });
         }
+
+        //获取已评价标签列表
+        function toTagCommentList() {
+            mui.ajax("{:url('api/tag/commentlist')}", {
+                data: {
+                    comment_type: 2,
+                    commented_id: "{$teamInfo.id}",
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var div = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag + '" data-tag_id="' + data.data[i].id + '">' + data.data[i].tag + '(<samll>' + data.data[i].count + '</samll>)</span>'
+                        }
+                        $(".tagCommentList").empty();
+                        $(".tagCommentList").append(div);
+                    } else {
+                        $(".tagCommentList").append('<p class="mui-text-center">还没有印象标签哦</p>');
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        };
+
     </script>
 
 </body>
