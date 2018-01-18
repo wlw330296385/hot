@@ -43,7 +43,7 @@ class GradeService{
     }
 
     // 班级分页
-    public function getGradeListNoPage($map , $order='id desc', $paginate=10) {
+    public function getGradeListNoPage($map , $order='id desc') {
         $result =  $this->GradeModel
                 // ->with('gradeMember')
                 ->where($map)
