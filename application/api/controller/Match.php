@@ -1019,6 +1019,13 @@ class Match extends Base
             if ($matchInfo['is_finished_num'] == 1) {
                 return json(['code' => 100, 'msg' => '此比赛'.$matchInfo['is_finished'].'请选择其他比赛']);
             }
+            if ($matchInfo['apply_status_num'] > 0) {
+                return json(['code' => 100, 'msg' => '此比赛'.$matchInfo['apply_status'].'请选择其他比赛']);
+            }
+            // 发布比赛的球队不能应战
+            if ($matchInfo['team_id'] == $request['team_id']) {
+                return json(['code' => 100, 'msg' => '您提交的球队是发布比赛的球队，不能应战']);
+            }
             //dump($matchInfo);
 
             // 补充提交数据字段
@@ -1027,24 +1034,164 @@ class Match extends Base
             $request['member_avatar'] = $this->memberInfo['avatar'];
 
             // 保存球队参加比赛申请
-            //$resultJoinMatchApply = $matchS->saveMatchApply($request);
-            //if ($resultJoinMatchApply['code'] == 200) {
+            $resultJoinMatchApply = $matchS->saveMatchApply($request);
+            if ($resultJoinMatchApply['code'] == 200) {
+                // 更新比赛信息
+                db('match')->where('id', $matchInfo['id'])->update(['apply_status' => 1]);
+                // 获取比赛的发布球队信息
                 $teamInfo = $teamS->getTeam(['id' => $matchInfo['team_id']]);
-                //dump($teamInfo);
+                // 组合推送消息内容
                 $dataMessage = [
                     'title' => '您好，您发布的比赛有球队报名迎战',
-                    'content' => '您好，您发布的比赛有球队报名迎战',
+                    'content' => '您所在球队'. $teamInfo['name'] .'发布的比赛'. $request['team'] .'报名迎战',
                     'url' => url('frontend/team/matchapplylist', ['team_id' => $teamInfo['id']], '', true),
                     'keyword1' => '约战应战申请',
                     'keyword2' => $this->memberInfo['member'],
                     'keyword3' => date('Y-m-d h:i', time()),
-                    'remark' => '请及时登录平台进入球队管理-》约战申请回复处理'
+                    'remark' => '请及时登录平台进入球队管理-》约战申请回复处理',
+                    // 比赛发布球队id
+                    'team_id' => $teamInfo['id']
                 ];
                 // 推送消息给发布比赛的球队领队
                 $messageS->sendMessageToMember($teamInfo['leader_id'], $dataMessage, config('wxTemplateID.checkPend'));
                 // 保存球队公告
-            //}
-            //return json($resultJoinMatchApply);
+                $teamS->saveTeamMessage($dataMessage);
+            }
+            return json($resultJoinMatchApply);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 回复球队参加比赛申请
+    public function replymatchapply() {
+        try {
+            // 输入变量
+            $request = input('post.');
+            $matchS = new MatchService();
+            $teamS = new TeamService();
+            $messageS = new MessageService();
+            // 判断正确有无传参
+            if ( !isset($request['apply_id']) || !isset($request['reply']) ) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'，请正确传参']);
+            }
+            $reply = $request['reply'];
+            if ( !in_array($reply, [2,3]) ) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'，请正确传参']);
+            }
+            // 查询match_apply数据
+            $applyInfo = $matchS->getMatchApply(['id' => $request['apply_id']]);
+            if (!$applyInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404').'，没有此申请记录']);
+            }
+            if ($applyInfo['status'] != 1) {
+                return json(['code' => 100, 'msg' => '此申请记录已回复结果，无需重复操作']);
+            }
+            // 获取match_apply的match信息
+            $matchInfo = $matchS->getMatch(['id' => $applyInfo['match_id']]);
+            //dump($matchInfo);
+            // 回复结果字样
+            $replystr = '已拒绝';
+            // 更新match_apply数据组合
+            $dataSaveApply = ['id' => $applyInfo['id'], 'status' => $reply];
+            if ($reply ==2) {
+                // 同意操作
+                // 更新比赛战绩对手球队信息
+                $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
+                //dump($matchRecordInfo);
+                // 获取对手球队信息
+                $awayTeamInfo = $teamS->getTeam(['id' => $applyInfo['team_id']]);
+                // match_name更新新内容
+                $matchName = $matchRecordInfo['home_team'].' vs '. $awayTeamInfo['name'];
+                $resultSaveMatchRecord = $matchS->saveMatchRecord([
+                    'id' => $matchRecordInfo['id'],
+                    'match' => $matchName,
+                    'away_team_id' => $awayTeamInfo['id'],
+                    'away_team' => $awayTeamInfo['name'],
+                    'away_team_logo' => $awayTeamInfo['logo']
+                ]);
+                if ($resultSaveMatchRecord['code'] == 100) {
+                    return json(['code' => 100, 'msg' => '更新比赛对手信息失败，请重试']);
+                }
+                // 更新比赛match信息
+                db('match')->where('id', $matchInfo['id'])->update([
+                    'name' => $matchName,
+                    'apply_status' => 2
+                ]);
+
+                // 组合推送消息内容
+                $replystr = '已同意';
+                $dataSaveApply['match'] = $matchName;
+                // 同意操作 end
+            }
+            // 更新match_apply数据，post[reply]=2同意，3拒绝
+            $applySaveResult = $matchS->saveMatchApply($dataSaveApply);
+            // 更新match_apply数据成功 发送消息给申请人
+            if ($applySaveResult['code'] == 200) {
+                // 组合推送消息内容
+                $dataMessage = [
+                    'title' => '约战应战申请结果通知',
+                    'content' => $matchInfo['team'].'发布的约战应战申请结果通知：'.$replystr,
+                    'url' => url('frontend/message/index', '', '', true),
+                    'keyword1' => $matchInfo['team'].'发布的约战应战申请结果',
+                    'keyword2' => $replystr,
+                    'remark' => '点击登录平台查看更多信息',
+                    'team_id' => $applyInfo['team_id']
+                ];
+                // 发送消息模板给申请人
+                $messageS = new MessageService();
+                $messageS->sendMessageToMember($applyInfo['member_id'], $dataMessage, config('wxTemplateID.applyResult'));
+                // 球队公告
+                $teamS->saveTeamMessage($dataMessage);
+            }
+            return json($applySaveResult);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球队参加比赛申请列表分页
+    public function matchapplypage() {
+        try {
+            // 传入变量作为查询条件
+            $map = input('param.');
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            // 获取数据列表
+            $matchS = new MatchService();
+            $result = $matchS->getMatchApplyPaginator($map);
+            // 返回结果
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球队参加比赛申请列表
+    public function matchapplylist() {
+        try {
+            // 传入变量作为查询条件
+            $map = input('param.');
+            $page = input('page', 1);
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            // 获取数据列表
+            $matchS = new MatchService();
+            $result = $matchS->getMatchApplyList($map, $page);
+            // 返回结果
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }

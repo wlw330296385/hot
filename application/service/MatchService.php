@@ -53,6 +53,7 @@ class MatchService {
             $result['type_num'] = $res->getData('type');
             $result['is_finished_num'] = $res->getData('is_finished');
             $result['status_num'] = $res->getData('status');
+            $result['apply_status_num'] = $res->getData('apply_status');
             return $result;
         } else {
             return $res;
@@ -62,22 +63,42 @@ class MatchService {
     // 比赛列表Pagigator
     public function matchListPaginator($map, $order='id desc', $paginate=10) {
         $model = new Match();
-        $res = $model->where($map)->order($order)->paginate($paginate);
-        if ($res) {
-            return $res->toArray();
-        } else {
+        $query = $model->where($map)->order($order)->paginate($paginate);
+        if ($query) {
+            //return $res->toArray();
+            $res = $query->toArray();
+            // 获取器原始数据
+            foreach ($res['data'] as $k => $val) {
+                $getData = $model->where('id', $val['id'])->find()->getData();
+                $res['data'][$k]['type_num'] = $getData['type'];
+                $res['data'][$k]['is_finished_num'] = $getData['is_finished'];
+                $res['data'][$k]['status_num'] = $getData['status'];
+                $res['data'][$k]['apply_status_num'] = $getData['apply_status'];
+            }
             return $res;
+        } else {
+            return $query;
         }
     }
 
     // 比赛列表
     public function matchList($map, $page=1, $order='id desc', $limit=10) {
         $model = new Match();
-        $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
-        if ($res) {
-            return $res->toArray();
-        } else {
+        $query = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if ($query) {
+            //return $res->toArray();
+            $res = $query->toArray();
+            // 获取器原始数据
+            foreach ($res as $k => $val) {
+                $getData = $model->where('id', $val['id'])->find()->getData();
+                $res[$k]['type_num'] = $getData['type'];
+                $res[$k]['is_finished_num'] = $getData['is_finished'];
+                $res[$k]['status_num'] = $getData['status'];
+                $res[$k]['apply_status_num'] = $getData['apply_status'];
+            }
             return $res;
+        } else {
+            return $query;
         }
     }
 
@@ -537,6 +558,39 @@ class MatchService {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
+        }
+    }
+
+    // 获取球队参加比赛申请
+    public function getMatchApply($map) {
+        $model = new MatchApply();
+        $query = $model->where($map)->find();
+        if ($query) {
+            return $query->toArray();
+        } else {
+            return $query;
+        }
+    }
+
+    // 球队参加比赛申请列表（页码）
+    public function getMatchApplyPaginator($map, $order='id desc', $paginate=10) {
+        $model = new MatchApply();
+        $query = $model->where($map)->order($order)->paginate($paginate);
+        if ($query) {
+            return $query->toArray();
+        } else {
+            return $query;
+        }
+    }
+
+    // 球队参加比赛申请列表
+    public function getMatchApplyList($map, $page=1, $order='id desc', $limit=10) {
+        $model = new MatchApply();
+        $query = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if ($query) {
+            return $query->toArray();
+        } else {
+            return $query;
         }
     }
 }
