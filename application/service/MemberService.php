@@ -61,8 +61,14 @@ class MemberService{
 		// 生成一个随机id
 		$hot_id = $this->getHotID();
 		$MemberModel = new Member();
-        $request['password'] = passwd($request['password']);
-        $request['repassword'] = passwd($request['repassword']);
+		if(isset($request['password'])){
+			$request['password'] = passwd($request['password']);
+        	$request['repassword'] = passwd($request['repassword']);
+		}else{
+			$request['password'] = passwd(123456);
+        	$request['repassword'] = passwd(123456);
+		}
+        
         $request['hot_id'] = $hot_id;
         if (!isset($request['avatar'])) {
             $request['avatar'] = '/static/default/avatar.png';

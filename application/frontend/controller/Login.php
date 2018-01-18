@@ -36,6 +36,7 @@ class Login extends Controller{
         $pid = input('param.pid');
         $this->assign('pid',$pid);
         $this->assign('referer',$referer);
+       
         return view('Login/register');
     }
 
@@ -157,6 +158,13 @@ class Login extends Controller{
             cookie('member', md5($member['id'].$member['member'].config('salekey')) );
             session('memberInfo', $member, 'think');
         }
+        $pid = cookie('pid');
+        if($pid){
+            $memberInfoP = db('member')->where(['id'=>$pid])->find();
+        }else{
+            $memberInfoP = [];
+        }
+        $this->assign('memberInfoP',$memberInfoP);
         $this->assign('userinfo', $userinfo);
         return view('Login/fastRegister');
     }

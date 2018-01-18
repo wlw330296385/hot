@@ -32,14 +32,6 @@
                     <input type="text" name="username" class="reg_user inputname" placeholder="请输入会员名" {if condition="$userinfo"}value="{$userinfo.nickname}"{/if}>
                 </div>
                 <div class="mui-input-row">
-                    <label>密码</label>
-                    <input type="password" name="password" class="reg_password" placeholder="请输入登陆密码">
-                </div>
-                <div class="mui-input-row">
-                    <label>确认密码</label>
-                    <input type="password" name="confim" class="reg_confirm" placeholder="请确认登陆密码">
-                </div>
-                <div class="mui-input-row">
                     <label>手机号码</label>
                     <input id="telephone" type="text" name="mobile" class="reg_mobile" placeholder="请输入手机号码" id="telephone">
                 </div>
@@ -48,6 +40,19 @@
                     <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)" >
                     <input id="code" type="text" class="input reg_code" placeholder="输入验证码" style="width: 40%;" >
                 </div>
+                {if $memberInfoP}
+                    <div class="mui-input-row">
+                        <label>推荐人</label>
+                        <input  type="text" class="input" placeholder="" value="{$memberInfoP.member}">
+                        <input  type="hidden" class="input" placeholder="" name="pid" value="{$memberInfoP.id}">
+                    </div>
+                {else/}
+                    <div class="mui-input-row">
+                        <label>推荐人</label>
+                        <input type="button" class="code-btn" value="选择一个推荐人">
+                        <input  type="text" class="input " placeholder="" style="width: 40%;" >
+                    </div>
+                {/if}
             </form>
 
             <span class="tip-box validate-result"></span>
@@ -126,10 +131,6 @@ $(function(){
     var gProvince = getLocationTB['province'];
     var gArea = getLocationTB['area'];
 
-    console.log(gCity)
-    console.log(gProvince)
-    console.log(gArea)
-
     //获取用户协议内容，放置弹出框中
     mui.ajax("{:url('frontend/member/userAgreement')}", {
         data: {},
@@ -152,11 +153,9 @@ $(function(){
         var member = $(".reg_user").val();
         
         var telephone = $(".reg_mobile").val();
-        var password = $(".reg_password").val();
-        var repassword = $(".reg_confirm").val();
         var smscode = $('.reg_code').val();
         var token = $('input[name=__token__]').val();
-
+        var pid =  $('input[name=pid]').val();
         if (!$('input[name=iagree]').is(':checked')) {
             mui.toast("请阅读并同意篮球管家用户协议，谢谢");
             return false;
@@ -177,7 +176,7 @@ $(function(){
         //////////////////////////////////////////////////////////////////////////////////
 
         var validateResult = $(".validate-result span").text();
-        if(validateResult!=""||member==""||telephone==""||password==""||repassword==""||smscode==""){
+        if(validateResult!=""||member==""||telephone==""||smscode==""){
             mui.toast("提交失败，请填写完整并保证信息格式正确！");
             return false;
         }
@@ -186,12 +185,11 @@ $(function(){
                 data: {
                     member: member,
                     telephone: telephone,
-                    password: password,
-                    repassword: repassword,
                     province: gProvince,
                     city: gCity,
                     area: gArea,
-                    __token__:token
+                    __token__:token,
+                    pid:pid
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
