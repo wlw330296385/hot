@@ -33,6 +33,13 @@
                     <option value="">全部区域</option>
                 </select>
             </span>
+            <span class="location-choise">
+                <select id="chosieTime" class="data" name="time">
+                    <option value="1">近7天</option>
+                    <option value="2">近15天</option>
+                    <option value="3">近30天</option>
+                </select>
+            </span>
         </div>
 
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
@@ -58,33 +65,33 @@
 
             //初始化全局变量
             var count = 1;
-            // var sTeamType = '';
-            // var sArea = '';
-            // var keyword = wooApi.GetQueryString('keyword');
-            // $('.keyword').val(keyword);
-            // var teamID = wooApi.GetQueryString('team_id');
-            // var teamName = wooApi.GetQueryString('team_name');
+            var sTeamType = '';
+            var sArea = '';
+            var keyword = wooApi.GetQueryString('keyword');
+            $('.keyword').val(keyword);
+            var teamID = wooApi.GetQueryString('team_id');
+            var teamName = wooApi.GetQueryString('team_name');
 
             //获取定位省市区
-            // var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
-            // var sCity = getLocationTB['city'];
-            // var sProvince = getLocationTB['province'];
-            // var allArea = getLocationTB['areas'];
-            // $('.location').text(sCity);
-            // if (teamName != '' && teamName != null) {
-            //     $('.location').text(teamName);
-            //     $('.keyword').attr('placeholder', '请输入' + teamName + '球队名称');
-            //     $("#areaSelect").parent().hide();
-            // }
+            var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
+            var sCity = getLocationTB['city'];
+            var sProvince = getLocationTB['province'];
+            var allArea = getLocationTB['areas'];
+            $('.location').text(sCity);
+            if (teamName != '' && teamName != null) {
+                $('.location').text(teamName);
+                $('.keyword').attr('placeholder', '请输入' + teamName + '球队名称');
+                $("#areaSelect").parent().hide();
+            }
 
             //生成区域选择下拉菜单
-            // var arrArea = allArea.split(',');
-            // var selectArea = '';
-            // $.each(arrArea, function (i, areaName) {
-            //     selectArea += '<option value="' + areaName + '">' + areaName + '</option>';
-            // });
+            var arrArea = allArea.split(',');
+            var selectArea = '';
+            $.each(arrArea, function (i, areaName) {
+                selectArea += '<option value="' + areaName + '">' + areaName + '</option>';
+            });
 
-            // $('#areaSelect').append(selectArea);
+            $('#areaSelect').append(selectArea);
 
             //搜索约战球队
             // $("#searchBtn").on("click", function () {
@@ -100,10 +107,10 @@
             // });
 
             // //选择地区下拉
-            // $("#areaSelect").on("change", function () {
-            //     sArea = $(this).val();
-            //     searchToList();
-            // });
+            $("#areaSelect").on("change", function () {
+                sArea = $(this).val();
+                searchToList();
+            });
 
             //搜索、下拉刷选后触发
             function searchToList() {
