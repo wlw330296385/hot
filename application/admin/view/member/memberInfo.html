@@ -33,10 +33,10 @@
                             {if $referer}
                             {$referer.member}
                             {else /}
-                            <button type="button" class="btn btn-block btn-danger">添加推荐人</button>
+                            <a  class="btn btn-block btn-danger pop-iframe" data-href="{:url('admin/member/addReferer')}">添加推荐人</a>
                             {/if}
                         </div>
-
+                        
                         <div class="col-sm-5">
                             
                         </div>
@@ -278,6 +278,28 @@
 <script>
     "use strict";
     
+    $(function(){
+        $('.pop-iframe').click(function() {
+            var iframeurl = $(this).attr('data-href');
+            // alert(iframeurl);return;
+            var title = $(this).text();
+            layui.use('layer', function() {
+                var layer = layui.layer;
+                    
+                    layer.open({
+                    skin:'layui-layer-lan',
+                    type: 2,
+                    title: title,
+                    shadeClose: true,
+                    shade: false,
+                    maxmin: true, //开启最大化最小化按钮
+                    area: ['900px', '650px'],
+                    content: iframeurl
+                });
+            });
+        });
+
+    })
 
     function sendpost(memberInfo, code, sremarks) {
         var serverurl = "{:url('memberInfo/audit')}";
