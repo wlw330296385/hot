@@ -74,7 +74,7 @@
             <form action="" class="mui-input-group mt55">
 
                 <div class="mui-input-row">
-                    <label>物品券名称</label>
+                    <label>礼品券名称</label>
                     <input type="text" name="coupon" class="data" value="{$itemCouponInfo.coupon}" placeholder="请输入物品券名称,3-5个字">
                 </div>
 
@@ -102,14 +102,14 @@
                 <div class="mui-input-row btnTime" data-options='{"beginYear":2017,"endYear":2030,"type":"date"}'>
                     <div class="mui-navigate-right">
                         <label>发行开始时间</label>
-                        <span id="resultPublishstart" class="domData" name="publishStarts"></span>
+                        <span id="resultPublishstart" class="domData" name="publish_starts">{$itemCouponInfo.publish_start}</span>
                     </div>
                 </div>
 
                 <div class="mui-input-row btnTime" data-options='{"beginYear":2017,"endYear":2030,"type":"date"}'>
                     <div class="mui-navigate-right">
                         <label>发行结束时间</label>
-                        <span id="resultPublishEnd" class="domData" name="publishEnds"></span>
+                        <span id="resultPublishEnd" class="domData" name="publish_ends">{$itemCouponInfo.publish_end}</span>
                     </div>
                 </div>
 
@@ -125,7 +125,7 @@
                 <div class="mui-input-row btnTime" data-options='{"beginYear":2017,"endYear":2030,"type":"date"}'>
                     <div class="mui-navigate-right">
                         <label>有效期开始时间</label>
-                        <span id="resultStart" class="ui-alert domData" name="starts">{$itemCouponInfo.start}</span>
+                        <span id="resultStart" class="domData" name="starts">{$itemCouponInfo.start}</span>
                     </div>
                 </div>
 
@@ -136,7 +136,7 @@
                     </div>
                 </div>
                 <div class="mui-input-row">
-                    <label>卡片价值</label>
+                    <label>卡券价值</label>
                     <input type="text" name="price" class="data" value="{$itemCouponInfo.price}" placeholder="请输入价值">
                 </div>
                 <div class="mui-input-row">
@@ -150,7 +150,7 @@
                 </div>
                 <div class="mui-input-row">
                     <label>备注</label>
-                    <input type="remarks" name="contact" class="data" value="{$itemCouponInfo.remarks}" placeholder="选填">
+                    <input type="text" name="remarks" class="data" value="{$itemCouponInfo.remarks}" placeholder="选填">
                 </div>
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
@@ -166,14 +166,14 @@
 
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
-                        <label>卡片图片</label>
+                        <label>卡券封面</label>
                         <img id="preview_1" class="coachicon icon01 upload-preview" alt="" src="{$itemCouponInfo.image_url}" >
                         <input type="hidden" name="image_url" value='' class="data">
                     </a>
                 </div>
 
                 <div class="page-header" style="background: #efeff4;">
-                    <span class="course">卡片简介</span>
+                    <span class="course">卡券简介</span>
                 </div>
 
                 <div class="mui-input-row h-auto">
@@ -207,7 +207,7 @@
 
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" onclick="submitAction()">
-                    提交
+                    提交修改
                 </li>
             </ul>
         </div>
@@ -311,15 +311,13 @@
             });
         })(mui, document);
 
-        function add_id(id) {
-            window.id = id;
-        }
+
         $(function () {
 
             //初始值赋值
             $('#eventObject').find('option[value="{$itemCouponInfo.target_type}"]').prop("selected", true);
-            var iniTargetType = "{$itemCouponInfo.target_type}";
-
+            //页面打开时执行一次下拉选项
+            changeType("{$itemCouponInfo.target_type}");
 
             // 具体课程对象课程
             $(".campLessonList").on('tap', 'li', function () {
@@ -339,17 +337,7 @@
             });
             // 选择活动对象显示隐藏具体对象
             $("#eventObject").change(function () {
-                if ($(this).val() == '1'||$(this).val() == '2') {
-                    $(".target-input-row a").attr("href","#target"+$(this).val());
-                    $(".target-input-row").show();
-                    $(".targetCont").addClass("domData").text('');
-                    $(".target_id").addClass("data");
-                }else{
-                    $(".target-input-row").hide();
-                    $(".target-input-row a").attr("href","#");
-                    $(".targetCont").removeClass("domData").text('');
-                    $(".target_id").removeClass("data");
-                }
+                changeType($(this).val());
             });
 
 
@@ -450,6 +438,29 @@
             });
 
         })
+
+
+        //发行对象下拉操作
+        function changeType(tID) {
+            if (tID == '1'||tID == '2') {
+                $(".target-input-row a").attr("href","#target"+tID);
+                $(".target-input-row").show();
+                $(".targetCont").addClass("domData").text('');
+                $(".target_id").addClass("data");
+            }else{
+                $(".target-input-row").hide();
+                $(".target-input-row a").attr("href","#");
+                $(".targetCont").removeClass("domData").text('');
+                $(".target_id").removeClass("data");
+            }
+        }
+
+        //上传图片
+        function add_id(id) {
+            window.id = id;
+        }
+
+
         // 获取数据并进行提交
         function submitAction() {
             if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
@@ -472,7 +483,7 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
-                    var goUrl = "{:url('api/item_coupon/itemCouponlistOfCamp')}" + '/camp_id/' + ajaxResult.data;
+                    var goUrl = "{:url('frontend/coupon/couponListOfCamp')}" + '/camp_id/' + ajaxResult.data + '/organization_id/{$organization_id}';
                     window.top.location.href = goUrl;
                 })
             } else {
