@@ -158,7 +158,7 @@ class Lesson extends Base{
         $jsapi = $wechatS->jsapi($shareurl);
         
         //卡券列表
-        $map = function($query){
+        $map = function($query) use($lessonInfo){
             $query->where('target_type',['=',1],['=',3],'or')
                   ->where('target_id',['=',$lessonInfo['id']],['=',0],'or');
         };

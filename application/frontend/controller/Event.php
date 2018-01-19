@@ -23,9 +23,9 @@ class Event extends Base{
 
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]); 
         //卡券列表
-        $map = function($query){
+        $map = function($query) use($eventInfo){
             $query->where('target_type',['=',2],['=',3],'or')
-                  ->where('target_id',['=',$lessonInfo['id']],['=',0],'or');
+                  ->where('target_id',['=',$eventInfo['id']],['=',0],'or');
         };
         // 平台卡券
         $ItemCoupon = new \app\model\ItemCoupon;
@@ -35,7 +35,7 @@ class Event extends Base{
                         ->column('id');
         // 训练营卡券
         $item_coupon_ids2 = $ItemCoupon
-                        ->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->where(['organization_type'=>2,'organization_id'=>$eventInfo['camp_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
                         ->where($map)
                         ->column('id');
         $item_coupon_ids = array_merge($item_coupon_ids1,$item_coupon_ids2);
@@ -94,9 +94,9 @@ class Event extends Base{
         //     ;
         // };
         //卡券列表
-        $map = function($query){
+        $map = function($query) use($eventInfo){
             $query->where('target_type',['=',2],['=',3],'or')
-                  ->where('target_id',['=',$lessonInfo['id']],['=',0],'or');
+                  ->where('target_id',['=',$eventInfo['id']],['=',0],'or');
         };
         // 平台卡券
         $ItemCoupon = new \app\model\ItemCoupon;
@@ -106,7 +106,7 @@ class Event extends Base{
                         ->column('id');
         // 训练营卡券
         $item_coupon_ids2 = $ItemCoupon
-                        ->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->where(['organization_type'=>2,'organization_id'=>$eventInfo['organization_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
                         ->where($map)
                         ->column('id');
         $item_coupon_ids = array_merge($item_coupon_ids1,$item_coupon_ids2);
@@ -163,9 +163,9 @@ class Event extends Base{
             $EventMemberList = [];
         }
         //卡券列表
-        $map = function($query){
+        $map = function($query) use($eventInfo){
             $query->where('target_type',['=',2],['=',3],'or')
-                  ->where('target_id',['=',$lessonInfo['id']],['=',0],'or');
+                  ->where('target_id',['=',$eventInfo['id']],['=',0],'or');
         };
         // 平台卡券
         $ItemCoupon = new \app\model\ItemCoupon;
@@ -175,10 +175,9 @@ class Event extends Base{
                         ->select();
         // 训练营卡券
         $couponListOfCamp = $ItemCoupon
-                        ->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->where(['organization_type'=>2,'organization_id'=>$eventInfo['organization_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
                         ->where($map)
                         ->select();
-        $item_coupon_ids = array_merge($item_coupon_ids1,$item_coupon_ids2); 
   
         $this->assign('couponListOfSystem',$couponListOfSystem);
         $this->assign('couponListOfCamp',$couponListOfCamp);
@@ -188,23 +187,7 @@ class Event extends Base{
         return view('Event/eventInfo');
     }
 
-    // 创建活动
-    public function createEventTEST() {
-        $organization_id = input('param.organization_id');
-        $CampService = new \app\service\CampService;
-        $campInfo = $CampService->getCampInfo(['id'=>$organization_id]);
-        $isPower = $CampService->isPower($organization_id,$this->memberInfo['id']);
-        // 我是班主任的班级
-        $GradeModel = new \app\model\Grade;
-        $gradeList = $GradeModel->where(['teacher_id'=>$this->memberInfo['id']])->select();
 
-
-        $this->assign('gradeList',$gradeList);
-        $this->assign('power',$isPower);
-        $this->assign('campInfo',$campInfo);
-        $this->assign('organization_id', $organization_id);
-        return view('Event/createEventTEST');
-    }
 
 
     public function eventInfoOfCamp() {
