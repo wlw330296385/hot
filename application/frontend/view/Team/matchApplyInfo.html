@@ -20,7 +20,7 @@
     </header>
 
     <div class="mui-content pt">
-
+        <input id="apply_id" type="hidden" value="{$applyInfo.id}">
         <form action="" class="mui-input-group mb">
             <div class="page-header" style="background: #efeff4;">
                 <span class="course">约战信息</span>
@@ -224,9 +224,9 @@
             <!--球队印象-->
             <div class="page-header whitebg border-b">
                 <span class="course">球队印象</span>
-                <span class="more pdr15">
+                <!-- <span class="more pdr15">
                     <a href="#Impress" class="mui-navigate-right myimpress">发表我的印象</a>
-                </span>
+                </span> -->
             </div>
             <div class="impress whitebg tagCommentList"></div>
 
@@ -251,13 +251,13 @@
         <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
             <ul class="mui-table-view operation">
                 <h5>
-                    <span class="type"></span>
+                    <span class="type">申请加入</span>
                     <a href="#yqpopover" class="mui-icon mui-icon-closeempty"></a>
                 </h5>
-                <li class="mui-table-view-cell listli">
+                <li class="listli">
                     <textarea rows="4" class="remarks" placeholder="请填写你加入球队的理由"></textarea>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli joinBtn">提交申请</li>
+                <li class="mui-col-xs-12 opli joinBtn">提交申请</li>
             </ul>
         </div>
     </div>
@@ -270,7 +270,7 @@
                     <a href="#Impress" class="mui-icon mui-icon-closeempty"></a>
                 </h5>
                 <div class="impressSide whitebg tagAll"></div>
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli commentBtn" id="impressSubmit">提交</li>
+                <li class="mui-col-xs-12 opli commentBtn" id="impressSubmit">提交</li>
             </ul>
         </div>
     </div>
@@ -442,12 +442,42 @@
                 });
             });
 
+
             followStatus(); //判断当前的关注状态
             teamMemberlist(); //自定义获取球员列表
             toTagAllList(); //所有标签列表
             toTagCommentList(); //已经评价的标签列表
             toLastEventList() //获取最新活动列表
         });
+
+        // 审核操作
+        function check_status(value) {
+            var apply_id = document.getElementById('apply_id').value;
+            mui.ajax("{:url('api/match/replymatchapply')}", {
+                data: {
+                    apply_id: apply_id,
+                    reply: value
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (res) {
+                    if (res.code == 200) {
+                        mui.alert(res.msg,function () {
+                            window.location.href = "{:url('frontend/team/matchApplyList')}/team_id/{$team_id}";
+                        })
+                    } else {
+                        mui.toast(res.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                    mui.toast('网络异常');
+                }
+            });
+        }
 
         // 判断当前的关注状态
         function followStatus() {
@@ -639,34 +669,6 @@
                 }
             });
         };
-
-        // 审核操作
-        function check_status(value) {
-            var apply_id = document.getElementById('applyid').value;
-            mui.ajax("{:url('api/team/applyreply')}", {
-                data: {
-                    apply_id: apply_id,
-                    reply: value
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (res) {
-                    if (res.code == 200) {
-                        mui.toast(res.msg);
-                        window.location.href = "{:url('frontend/team/teamApplyList')}/team_id/{$applyInfo.team.id}";
-                    } else {
-                        mui.toast(res.msg);
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                    mui.toast('网络异常');
-                }
-            });
-        }
 
         //创建补0函数
         function p(s) {
