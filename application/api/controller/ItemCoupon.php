@@ -48,9 +48,9 @@ class ItemCoupon extends Base{
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             $data['start'] = strtotime($data['starts']);
-            $data['end'] = strtotime($data['ends']);
+            $data['end'] = strtotime($data['ends'])+86399;
             $data['publish_start'] = strtotime($data['publish_starts']);
-            $data['publish_end'] = strtotime($data['publish_ends']);
+            $data['publish_end'] = strtotime($data['publish_ends'])+86399;
             $result = $this->ItemCouponService->updateItemCoupon($data,$item_coupon_id);
              return json($result);
          }catch (Exception $e){
@@ -65,9 +65,9 @@ class ItemCoupon extends Base{
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             $data['start'] = strtotime($data['starts']);
-            $data['end'] = strtotime($data['ends']);
+            $data['end'] = strtotime($data['ends'])+86399;
             $data['publish_start'] = strtotime($data['publish_starts']);
-            $data['publish_end'] = strtotime($data['publish_ends']);
+            $data['publish_end'] = strtotime($data['publish_ends'])+86399;
             $result = $this->ItemCouponService->createItemCoupon($data);
              return json($result);   
          }catch (Exception $e){
