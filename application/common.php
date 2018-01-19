@@ -341,3 +341,21 @@ function checkDatetimeIsValid($date) {
         return false;
     }
 }
+
+// 下载远程图片保存到本地
+function download($url, $path = 'images/')
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+    $file = curl_exec($ch);
+    curl_close($ch);
+    $filename = pathinfo($url, PATHINFO_DIRNAME);
+    $filename = sha1($filename);
+    $resource = fopen($path . $filename, 'a');
+    fwrite($resource, $file);
+    fclose($resource);
+    // 返回保存的文件名
+    return $filename;
+}

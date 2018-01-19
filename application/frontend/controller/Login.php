@@ -2,6 +2,7 @@
 namespace app\frontend\controller;
 use think\Controller;
 use app\service\WechatService;
+use app\service\MemberService;
 use think\Cookie;
 
 class Login extends Controller{
@@ -43,16 +44,23 @@ class Login extends Controller{
     // 微信用户授权回调
     public function wxlogin() {
         $WechatS = new WechatService;
+        $memberS = new MemberService();
         $userinfo = $WechatS->oauthUserinfo();
         if ($userinfo) {
             cache('userinfo_'.$userinfo['openid'], $userinfo);
-            $isMember = db('member')->where(['openid' => $userinfo['openid']])->find();
+            //$avatar = str_replace("http://", "https://", $userinfo['headimgurl']);
+            $avatar = $memberS->downwxavatar($userinfo);
+            // 查询有无member数据
+            $dbMember = db('member');
+            $isMember = $dbMember->where(['openid' => $userinfo['openid']])->whereNotNull('delete_time')->find();
             if ($isMember) {
+
                 unset($isMember['password']);
                 cookie('mid', $isMember['id']);
                 cookie('openid', $isMember['openid']);
                 cookie('member', md5($isMember['id'].$isMember['member'].config('salekey')));
                 session('memberInfo', $isMember, 'think');
+
                 // if (session('memberInfo', '', 'think')) {
                  if( Cookie::has('url') ){
                      $url = cookie('url');
@@ -70,7 +78,7 @@ class Login extends Controller{
                     'openid' => $userinfo['openid'],
                     'member' => $userinfo['nickname'],
                     'nickname' => $userinfo['nickname'],
-                    'avatar' => str_replace("http://", "https://", $userinfo['headimgurl']),
+                    'avatar' => $avatar,
                     'hp' => 0,
                     'level' => 0,
                     'telephone' =>'',

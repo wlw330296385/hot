@@ -2,6 +2,7 @@
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\LessonService;
+use app\service\MemberService;
 use app\service\WechatService;
 class Index extends Base{
 	protected $LessonService;
@@ -42,10 +43,14 @@ class Index extends Base{
     // 微信用户授权回调
     public function wxindex() {
         $WechatS = new WechatService;
+        $memberS = new MemberService();
         $userinfo = $WechatS->oauthUserinfo();
         if ($userinfo) {
             cache('userinfo_'.$userinfo['openid'], $userinfo);
-            $isMember = db('member')->where(['openid' => $userinfo['openid']])->find();
+            //$avatar = str_replace("http://", "https://", $userinfo['headimgurl']);
+            $avatar = $memberS->downwxavatar($userinfo);
+            $dbMember = db('member');
+            $isMember = $dbMember->where(['openid' => $userinfo['openid']])->find();
             if ($isMember) {
                 unset($isMember['password']);
                 cookie('mid', $isMember['id']);
@@ -59,7 +64,7 @@ class Index extends Base{
                     'openid' => $userinfo['openid'],
                     'member' => $userinfo['nickname'],
                     'nickname' => $userinfo['nickname'],
-                    'avatar' => str_replace("http://", "https://", $userinfo['headimgurl']),
+                    'avatar' => $avatar,
                     'hp' => 0,
                     'level' => 0,
                     'telephone' =>'',
