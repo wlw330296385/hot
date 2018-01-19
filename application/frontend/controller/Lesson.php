@@ -36,30 +36,37 @@ class Lesson extends Base{
         $lessonInfo['cover'] = request()->root(true) . $lessonInfo['cover'];
         $isPower = $this->LessonService->isPower($lessonInfo['camp_id'],$this->memberInfo['id']);
         //卡券列表
-        $map = function($query){
-            $query->where(['target_type'=>1])
-            ->where(['publish_start'=>['lt',time()]])
-            ->where(['publish_end'=>['gt',time()]])
-            ->where(['is_max'=>1])
-            ->whereOr(['target_type'=>3])
-            ;
+        $map = function($query)use($lessonInfo){
+            // $query->where(['target_type'=>1,'target_id'=>0])
+            // ->whereOr(['target_type'=>3])
+            // ->whereOr(['target_type'=>1,'target_id'=>$lessonInfo]);
+            // ;
+            $query->where('target_type',['=',1],['=',3],'or')
+                  ->where('target_id',['=',$lessonInfo['id']],['=',0],'or');
         };
+
+        // dump($map);die;
         // 卡券系统        
         $ItemCoupon = new \app\model\ItemCoupon;
         // 平台卡券
-        $couponListOfSystem = $ItemCoupon->where($map)->where(['organization_type'=>1])->select();
+        $couponListOfSystem = $ItemCoupon
+                            ->where($map)
+                            ->where(['organization_type'=>1,'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                            ->select();
+        // echo $ItemCoupon->getlastsql();die;
         if($couponListOfSystem){
             $couponListOfSystem = $couponListOfSystem->toArray();
         }else{
             $couponListOfSystem = [];
         }
+        // dump($couponListOfSystem);die;
         // 训练营卡券
-        $couponListOfCamp = $ItemCoupon->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id']])->where($map)->select();
+        $couponListOfCamp = $ItemCoupon->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])->where($map)->select();
         if($couponListOfCamp){
-                    $couponListOfCamp = $couponListOfCamp->toArray();
-                }else{
-                    $couponListOfCamp = [];
-                }
+            $couponListOfCamp = $couponListOfCamp->toArray();
+        }else{
+            $couponListOfCamp = [];
+        }
         $this->assign('couponListOfSystem',$couponListOfSystem);
         $this->assign('couponListOfCamp',$couponListOfCamp);
         $this->assign('isPower',$isPower);
@@ -151,27 +158,22 @@ class Lesson extends Base{
         $jsapi = $wechatS->jsapi($shareurl);
         
         //卡券列表
-        $map1 = function($query){
-            $query->where(['target_type'=>1])
-            ->where(['publish_start'=>['lt',time()]])
-            ->where(['publish_end'=>['gt',time()]])
-            ->where(['is_max'=>1])
-            ->whereOr(['target_type'=>3])
-            ->where(['organization_type'=>1])
-            ;
-        };
-        $map2 = function($query) use($lessonInfo){
-            $query->where(['target_type'=>1])
-            ->where(['publish_start'=>['lt',time()]])
-            ->where(['publish_end'=>['gt',time()]])
-            ->where(['is_max'=>1])
-            ->whereOr(['target_type'=>3])
-            ->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id']])
-            ;
+        $map = function($query){
+            $query->where('target_type',['=',1],['=',3],'or')
+                  ->where('target_id',['=',$lessonInfo['id']],['=',0],'or');
         };
         // 平台卡券
         $ItemCoupon = new \app\model\ItemCoupon;
-        $item_coupon_ids = $ItemCoupon->where($map1)->whereOr($map2)->column('id');
+        $item_coupon_ids1 = $ItemCoupon
+                        ->where($map)
+                        ->where(['organization_type'=>1,'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->column('id');
+        // 训练营卡券
+        $item_coupon_ids2 = $ItemCoupon
+                        ->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->where($map)
+                        ->column('id');
+        $item_coupon_ids = array_merge($item_coupon_ids1,$item_coupon_ids2);
         $this->assign('item_coupon_ids',json_encode($item_coupon_ids));
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('jsapi', $jsapi);

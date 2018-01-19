@@ -20,8 +20,9 @@ class Index extends Controller{
     }
 
     public function test(){
-        $StudentModel = new \app\model\Student;
-        $StudentModel->where(['member_id'=>8])->setInc(['parent_id','total_lesson'],5);
+        $a = strtotime('2018-1-19');
+        echo $a ;
+        echo date('Y-m-d H:i:s',1516291200);
     }
 
     public function totalSchedule(){

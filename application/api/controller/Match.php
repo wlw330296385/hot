@@ -549,20 +549,20 @@ class Match extends Base
                 //dump($endDate);
                 $map['match_time'] = ['between', [ time(), $endDate['end'] ]];
             }
-            // 关键字搜索：发布比赛的球队名(match_team)
-            if (input('?keyword')) {
+            // 关键字搜索：发布比赛的球队名(team)
+            //if (input('?param.keyword')) {
                 $keyword =input('keyword');
                 // 关键字内容
-                if (!empty($keyword) && !ctype_space($keyword) ) {
+                if (!empty($keyword) || !ctype_space($keyword) ) {
                     $map['team'] = ['like', "%$keyword%"];
                 }
                 unset($map['keyword']);
-            }
+            //}
             if (input('?param.page')) {
                 unset($map['page']);
             }
             // 组合查询条件 end
-
+            
             $matchS = new MatchService();
             $result = $matchS->matchListPaginator($map);
             if ($result) {
