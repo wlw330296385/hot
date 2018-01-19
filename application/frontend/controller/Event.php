@@ -74,29 +74,42 @@ class Event extends Base{
         $jsapi = $wechatS->jsapi($shareurl);
         $eventInfo['price'] = $eventInfo['doms'][$domIndex]['price'];
 
+        // //卡券列表
+        // $map1 = function($query){
+        //     $query->where(['target_type'=>2])
+        //     ->where(['publish_start'=>['lt',time()]])
+        //     ->where(['publish_end'=>['gt',time()]])
+        //     ->where(['is_max'=>1])
+        //     ->whereOr(['target_type'=>3])
+        //     ->where(['organization_type'=>1])
+        //     ;
+        // };
+        // $map2 = function($query) use($eventInfo){
+        //     $query->where(['target_type'=>2])
+        //     ->where(['publish_start'=>['lt',time()]])
+        //     ->where(['publish_end'=>['gt',time()]])
+        //     ->where(['is_max'=>1])
+        //     ->whereOr(['target_type'=>3])
+        //     ->where(['organization_type'=>$eventInfo['organization_type'],'organization_id'=>$eventInfo['organization_id']])
+        //     ;
+        // };
         //卡券列表
-        $map1 = function($query){
-            $query->where(['target_type'=>2])
-            ->where(['publish_start'=>['lt',time()]])
-            ->where(['publish_end'=>['gt',time()]])
-            ->where(['is_max'=>1])
-            ->whereOr(['target_type'=>3])
-            ->where(['organization_type'=>1])
-            ;
-        };
-        $map2 = function($query) use($eventInfo){
-            $query->where(['target_type'=>2])
-            ->where(['publish_start'=>['lt',time()]])
-            ->where(['publish_end'=>['gt',time()]])
-            ->where(['is_max'=>1])
-            ->whereOr(['target_type'=>3])
-            ->where(['organization_type'=>$eventInfo['organization_type'],'organization_id'=>$eventInfo['organization_id']])
-            ;
+        $map = function($query){
+            $query->where('target_type',['=',2],['=',3],'or')
+                  ->where('target_id',['=',$lessonInfo['id']],['=',0],'or');
         };
         // 平台卡券
         $ItemCoupon = new \app\model\ItemCoupon;
-        $item_coupon_ids = $ItemCoupon->where($map1)->whereOr($map2)->column('id');
-        $this->assign('item_coupon_ids',json_encode($item_coupon_ids));
+        $item_coupon_ids1 = $ItemCoupon
+                        ->where($map)
+                        ->where(['organization_type'=>1,'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->column('id');
+        // 训练营卡券
+        $item_coupon_ids2 = $ItemCoupon
+                        ->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->where($map)
+                        ->column('id');
+        $item_coupon_ids = array_merge($item_coupon_ids1,$item_coupon_ids2);
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('jsapi', $jsapi);
         $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
@@ -151,21 +164,21 @@ class Event extends Base{
         }
         //卡券列表
         $map = function($query){
-            $query->where(['target_type'=>2])
-            ->where(['publish_start'=>['lt',time()]])
-            ->where(['publish_end'=>['gt',time()]])
-            ->where(['is_max'=>1])
-            ->whereOr(['target_type'=>3])
-            ;
+            $query->where('target_type',['=',2],['=',3],'or')
+                  ->where('target_id',['=',$lessonInfo['id']],['=',0],'or');
         };
         // 平台卡券
         $ItemCoupon = new \app\model\ItemCoupon;
         $couponListOfSystem = $ItemCoupon
-            ->where($map)
-            ->where(['organization_type'=>1])
-            ->select();
+                        ->where($map)
+                        ->where(['organization_type'=>1,'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->select();
         // 训练营卡券
-        $couponListOfCamp = $ItemCoupon->where(['organization_type'=>$eventInfo['organization_type'],'organization_id'=>$eventInfo['organization_id']])->where($map)->select();
+        $couponListOfCamp = $ItemCoupon
+                        ->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->where($map)
+                        ->select();
+        $item_coupon_ids = array_merge($item_coupon_ids1,$item_coupon_ids2); 
   
         $this->assign('couponListOfSystem',$couponListOfSystem);
         $this->assign('couponListOfCamp',$couponListOfCamp);
