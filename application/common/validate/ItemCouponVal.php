@@ -31,6 +31,7 @@ class ItemCouponVal extends Validate{
     protected $scene = [
         'add'   =>  ['member_id','coupon','coupon_des'],
         'edit'  =>  ['member_id','coupon','coupon_des'],
+        'other' => [],
     ];    
 
 }

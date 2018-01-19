@@ -184,11 +184,11 @@
                         var urls = "{:url('coupon/updateItemCoupon')}" + '/item_coupon_id/' + data.data.data[i].id+'/organization_id/'+data.data.data[i].organization_id;
                         newli += '<li class="mui-table-view-cell mui-media listli fulllist">';
                         if (status == 1) {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="stoppublish">终止发布</span></div>';
                         } else {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><p class="fTop"><strong>'+ data.data.data[i].coupon+'</strong><span>发行量：'+ data.data.data[i].max+'</span></p><p class="fBottom">发布期限：'+ data.data.data[i].publish_start +'至'+ data.data.data[i].publish_end+' <span class="fr">已使用 '+data.data.data[i].used+'</span></p></a></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><p class="fTop"><strong>'+ data.data.data[i].coupon+'</strong><span>已使用：'+ data.data.data[i].used+'</span></p><p class="fBottom">发布期限：'+ data.data.data[i].publish_start +'至'+ data.data.data[i].publish_end+' <span class="fr">发行量： '+data.data.data[i].max+'</span></p></a></div>';
 
                         newli += '</li>';
                     }
@@ -223,22 +223,37 @@
         });
     };
 
+    var optData ={};
+
     //拖拽后显示操作图标，点击操作图标删除元素；
     $('.OA_task_coupon').on('tap', '.mui-btn', function (event) {
         var elem = this;
         var li = elem.parentNode.parentNode;
         var btnArray = ['确认', '取消'];
         var txt = elem.innerHTML;
-        var gradeid = elem.parentNode.getAttribute('data-id');
+        var couponid = elem.parentNode.getAttribute('data-id');
         var action = elem.getAttribute('data-action');
-        mui.confirm('确认该班级' + txt + '?', '提示', btnArray, function (e) {
+        //获取昨天日期
+        var curDate = new Date();
+        curDate.setTime(curDate.getTime()-24*60*60*1000);
+        var preDate =(curDate.setTime(curDate.getTime()))/1000;
+        var deltimestamp = Date.parse(new Date());
+        //组合要提交的字段
+        if(action=="stoppublish"){
+            optData = {publish_end:preDate};
+        }else if(action=="editstatus"){
+            optData = {status:1};
+        }else{
+            optData = {delete_time:deltimestamp};
+        }
+
+        mui.confirm('确认该卡券' + txt + '?', '提示', btnArray, function (e) {
             if (e.index == 0) {
-                var apiurl = "{:url('api/coupon/removecoupon')}";
+
+
+                var apiurl = "{:url('api/item_coupon/editItemCouponApi')}"+'/item_coupon_id/'+couponid;
                 mui.ajax(apiurl, {
-                    data: {
-                        gradeid: gradeid,
-                        action: action
-                    },
+                    data: optData,d
                     dataType: 'json',
                     type: 'post',
                     headers: {'Content-Type': 'application/json'},
