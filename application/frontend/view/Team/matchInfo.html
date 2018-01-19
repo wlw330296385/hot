@@ -54,7 +54,7 @@
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
                     <label>对手</label>
-                    <span>{$matchInfo.record.away_team}</span>
+                    <span class="away_team">{$matchInfo.record.away_team}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>地点</label>
@@ -72,7 +72,9 @@
 
             <ul class="mui-table-view detalis-list list mainInfo mb">
                 <div class="page-header">
-                    <span class="course">出勤率<b class="rate">66%</b></span>
+                    <span class="course">出勤率
+                        <b class="rate">66%</b>
+                    </span>
                     <span class="more">
                         <a href="{:url('team/matchSignupList',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}" class="mui-navigate-right">
                             <b class="colororange signup_num">0</b>/0
@@ -216,6 +218,7 @@
             isthumbsup(); //点赞状态
             toSignUpList(); // 报名/参赛人员
             timeShow(); // 时间转换显示
+            awayTeamTips(); //如果对手为空
 
             //报名功能
             $(".signupBtn").on('click', function () {
@@ -350,6 +353,13 @@
             }
         }
 
+        // 如果对手为空
+        function awayTeamTips() {
+            if ($(".away_team").text() == '') {
+                $(".away_team").text("待定");
+            }
+        }
+
         // 判断身份显示操作按钮
         function ststuShow() {
             var teamrole = "{$teamrole}";
@@ -373,8 +383,8 @@
             var match_time = "{$matchInfo.match_time}";
 
             if (match_time == "1970-01-01 08:00") {
-               $(".match_time").text("待定");
-            } 
+                $(".match_time").text("待定");
+            }
         }
 
 
