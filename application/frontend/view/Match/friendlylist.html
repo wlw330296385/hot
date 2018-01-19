@@ -35,6 +35,7 @@
             </span>
             <span class="location-choise">
                 <select id="chosieTime" class="data" name="time">
+                    <option value="">全部</option>
                     <option value="1">近7天</option>
                     <option value="2">近15天</option>
                     <option value="3">近30天</option>
@@ -65,7 +66,7 @@
 
             //初始化全局变量
             var count = 1;
-            var sTeamType = '';
+            var choice_time = '';
             var sArea = '';
             var keyword = wooApi.GetQueryString('keyword');
             $('.keyword').val(keyword);
@@ -94,19 +95,18 @@
             $('#areaSelect').append(selectArea);
 
             //搜索约战球队
-            // $("#searchBtn").on("click", function () {
-            //     keyword = $(".keyword").val();
-            //     // teamID = '';
-            //     searchToList();
-            // })
+            $("#searchBtn").on("click", function () {
+                keyword = $(".keyword").val();
+                searchToList();
+            })
 
-            //选择活动类型下拉
-            // $("#teamType").on("change", function () {
-            //     sTeamType = $(this).find("option:checked").val();
-            //     searchToList();
-            // });
+            //选择时间类型下拉
+            $("#chosieTime").on("change", function () {
+                choice_time = $(this).find("option:checked").val();
+                searchToList();
+            });
 
-            // //选择地区下拉
+            // 选择地区下拉
             $("#areaSelect").on("change", function () {
                 sArea = $(this).val();
                 searchToList();
@@ -170,10 +170,11 @@
                 mui.ajax({
                     url: url,
                     data: {
-                        // province: sProvince,
-                        // city: sCity,
-                        // area: sArea,
-                        // keyword: keyword,
+                        province: sProvince,
+                        city: sCity,
+                        area: sArea,
+                        keyword: keyword,
+                        choice_time: choice_time,
                         type: 1,
                         islive: 1,
                         status: 1
