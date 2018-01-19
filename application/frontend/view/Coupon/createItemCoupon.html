@@ -63,7 +63,7 @@
         <h1 class="mui-title">{$organizationInfo.camp}</h1>
         <input type="hidden" name="organization" value="{$organizationInfo.camp}" class="data">
         <input type="hidden" name="organization_id" value="{$organization_id}" class="data">
-        <input type="hidden" name="organization_type" value="1" class="data">
+        <input type="hidden" name="organization_type" value="2" class="data">
     </header>
     <div class="mui-content pt">
 
@@ -102,14 +102,14 @@
                 <div class="mui-input-row btnTime" data-options='{"beginYear":2017,"endYear":2030,"type":"date"}'>
                     <div class="mui-navigate-right">
                         <label>发行开始时间</label>
-                        <span id="resultPublishstart" class="domData" name="publishStarts"></span>
+                        <span id="resultPublishstart" class="domData" name="publish_starts"></span>
                     </div>
                 </div>
 
                 <div class="mui-input-row btnTime" data-options='{"beginYear":2017,"endYear":2030,"type":"date"}'>
                     <div class="mui-navigate-right">
                         <label>发行结束时间</label>
-                        <span id="resultPublishEnd" class="domData" name="publishEnds"></span>
+                        <span id="resultPublishEnd" class="domData" name="publish_ends"></span>
                     </div>
                 </div>
 
@@ -150,7 +150,7 @@
                 </div>
                 <div class="mui-input-row">
                     <label>备注</label>
-                    <input type="text" name="remarks" name="contact" class="data" value="" placeholder="选填">
+                    <input type="text" name="remarks"  class="data" value="" placeholder="选填">
                 </div>
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
@@ -471,7 +471,7 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
-                    var goUrl = "{:url('api/item_coupon/itemCouponlistOfCamp')}" + '/camp_id/' + ajaxResult.data + '/organization_id/{$organization_id}';
+                    var goUrl = "{:url('frontend/coupon/couponListOfCamp')}" + '/camp_id/' + ajaxResult.data + '/organization_id/{$organization_id}';
                     window.top.location.href = goUrl;
                 })
             } else {
