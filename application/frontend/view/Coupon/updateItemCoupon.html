@@ -125,7 +125,7 @@
                 <div class="mui-input-row btnTime" data-options='{"beginYear":2017,"endYear":2030,"type":"date"}'>
                     <div class="mui-navigate-right">
                         <label>有效期开始时间</label>
-                        <span id="resultStart" class="ui-alert domData" name="starts">{$itemCouponInfo.start}</span>
+                        <span id="resultStart" class="domData" name="starts">{$itemCouponInfo.start}</span>
                     </div>
                 </div>
 
@@ -317,7 +317,7 @@
             //初始值赋值
             $('#eventObject').find('option[value="{$itemCouponInfo.target_type}"]').prop("selected", true);
             //页面打开时执行一次下拉选项
-            changeType("{$itemCouponInfo.target_type}")
+            changeType("{$itemCouponInfo.target_type}");
 
             // 具体课程对象课程
             $(".campLessonList").on('tap', 'li', function () {
@@ -483,7 +483,7 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
-                    var goUrl = "{:url('api/item_coupon/itemCouponlistOfCamp')}" + '/camp_id/' + ajaxResult.data;
+                    var goUrl = "{:url('frontend/coupon/couponListOfCamp')}" + '/camp_id/' + ajaxResult.data + '/organization_id/{$organization_id}';
                     window.top.location.href = goUrl;
                 })
             } else {
