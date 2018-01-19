@@ -157,7 +157,7 @@
                         <label>生效状态</label>
                         <span class="select-row freeStatus">
                             <select  class="data" name="status">
-                                <option value="2">默认下架</option>
+                                <option value="-1">默认下架</option>
                                 <option value="1">上架</option>
                             </select>
                         </span>
@@ -340,13 +340,13 @@
                 if ($(this).val() == '1'||$(this).val() == '2') {
                     $(".target-input-row a").attr("href","#target"+$(this).val());
                     $(".target-input-row").show();
-                    $(".targetCont").addClass("domData").text('');
-                    $(".target_id").addClass("data");
+                    $(".targetCont").addClass("domData").text('全部'+$(this).text());
+                    $(".target_id").addClass("data").val('0');;
                 }else{
                     $(".target-input-row").hide();
                     $(".target-input-row a").attr("href","#");
                     $(".targetCont").removeClass("domData").text('');
-                    $(".target_id").removeClass("data");
+                    $(".target_id").removeClass("data").val("");
                 }
             });
 
@@ -470,7 +470,7 @@
             var url = "{:url('api/item_coupon/createItemCouponApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
+                mui.alert(ajaxResult.msg, '卡券创建成功', '确定', function () {
                     var goUrl = "{:url('frontend/coupon/couponListOfCamp')}" + '/camp_id/' + ajaxResult.data + '/organization_id/{$organization_id}';
                     window.top.location.href = goUrl;
                 })

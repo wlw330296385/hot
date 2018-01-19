@@ -45,9 +45,10 @@ class Coupon extends Base{
 
     public function updateItemCoupon(){   	
     	$itemCoupon_id = input('param.item_coupon_id');
-
+        $lessontList = [];
+        $eventList = [];
         $itemCouponInfo = $this->ItemCouponService->getItemCouponInfo(['id'=>$itemCoupon_id]);
-        if($itemCouponInfo['organization_type'] == 1){
+        if($itemCouponInfo['organization_type'] == 2){
             $CampService = new \app\service\CampService;
             $power = $CampService->isPower($itemCouponInfo['organization_id'],$this->memberInfo['id']);
             if($power<2){
@@ -56,7 +57,7 @@ class Coupon extends Base{
             $eventList = db('event')->where(['organization_id'=>$itemCouponInfo['organization_id'],'organization_type'=>$itemCouponInfo['organization_type']])->where('delete_time',null)->select();
             $lessontList = db('lesson')->where(['camp_id'=>$itemCouponInfo['organization_id']])->where('delete_time',null)->select();
         }
-
+//        dump($itemCouponInfo);die;
         $this->assign('itemCouponInfo',$itemCouponInfo);
         $this->assign('eventList',$eventList);
         $this->assign('lessontList',$lessontList);

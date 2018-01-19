@@ -94,7 +94,7 @@
                 <div class="mui-input-row target-input-row" style="display: none">
                     <a href="#" class="mui-navigate-right">
                         <label>具体对象</label>
-                        <span class="targetCont" name="target">{$itemCouponInfo.target_id}</span>
+                        <span class="targetCont" name="target">{$itemCouponInfo.target}</span>
                         <input type="hidden" name="target_id" class="target_id" value="{$itemCouponInfo.target_id}">
                     </a>
                 </div>
@@ -157,7 +157,7 @@
                         <label>生效状态</label>
                         <span class="select-row freeStatus">
                             <select  class="data" name="status">
-                                <option value="2">默认下架</option>
+                                <option value="-1">默认下架</option>
                                 <option value="1">上架</option>
                             </select>
                         </span>
@@ -337,6 +337,8 @@
             });
             // 选择活动对象显示隐藏具体对象
             $("#eventObject").change(function () {
+                $(".targetCont").text('全部'+$(this).find('option:selected').text());
+                $(".target_id").val('0');
                 changeType($(this).val());
             });
 
@@ -445,13 +447,13 @@
             if (tID == '1'||tID == '2') {
                 $(".target-input-row a").attr("href","#target"+tID);
                 $(".target-input-row").show();
-                $(".targetCont").addClass("domData").text('');
+                $(".targetCont").addClass("domData");
                 $(".target_id").addClass("data");
             }else{
                 $(".target-input-row").hide();
                 $(".target-input-row a").attr("href","#");
                 $(".targetCont").removeClass("domData").text('');
-                $(".target_id").removeClass("data");
+                $(".target_id").removeClass("data").text('');
             }
         }
 
@@ -483,7 +485,7 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
-                    var goUrl = "{:url('frontend/coupon/couponListOfCamp')}" + '/camp_id/' + ajaxResult.data + '/organization_id/{$organization_id}';
+                    var goUrl = "{:url('frontend/coupon/couponListOfCamp')}" + '/camp_id/' + ajaxResult.data + '/organization_id/{$itemCouponInfo.organization_id}';
                     window.top.location.href = goUrl;
                 })
             } else {
