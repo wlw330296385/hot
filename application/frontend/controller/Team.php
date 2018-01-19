@@ -378,6 +378,16 @@ class Team extends Base {
     
     // 申请参加比赛的球队详情
     public function matchapplyinfo() {
+        $id = input('apply_id');
+        $matchS = new MatchService();
+        $teamS = new TeamService();
+        // 获取match_apply内容
+        $applyInfo = $matchS->getMatchApply(['id' => $id]);
+        // 获取申请的球队信息
+        $applyTeam = $teamS->getTeam(['id' => $applyInfo['team_id']]);
+        $applyInfo['team'] = $applyTeam;
+
+        $this->assign('applyInfo', $applyInfo);
         return view('Team/matchApplyInfo');
     }
 }

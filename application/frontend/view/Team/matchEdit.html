@@ -84,179 +84,179 @@
     </header>
     <div class="mui-content pt">
 
-            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-            <input type="hidden" name="directentry" value="{$directentry}">
-            <input type="hidden" name="team_id" value="{$team_id}" class="data"> {eq name="directentry" value="0"}
-            <!-- 区分创建/更新数据 -->
-            <input type="hidden" name="record[id]" value="{$matchInfo.record.id}" class="data">
-            <input type="hidden" name="id" class="data" value="{$matchInfo.id}"> {/eq}
-            <form action="" class="mui-input-group mt55">
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+        <input type="hidden" name="directentry" value="{$directentry}">
+        <input type="hidden" name="team_id" value="{$team_id}" class="data"> {eq name="directentry" value="0"}
+        <!-- 区分创建/更新数据 -->
+        <input type="hidden" name="record[id]" value="{$matchInfo.record.id}" class="data">
+        <input type="hidden" name="id" class="data" value="{$matchInfo.id}"> {/eq}
+        <form action="" class="mui-input-group mt55">
 
-                <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label>类型</label>
-                        <span class="select-row">
-                            <select id="matchType" class="data" name="type">
-                                <option value="">请选择</option>
-                                <option value="1">友谊赛</option>
-                                <option value="2">联赛</option>
-                            </select>
-                        </span>
-                    </div>
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>类型</label>
+                    <span class="select-row">
+                        <select id="matchType" class="data" name="type">
+                            <option value="">请选择</option>
+                            <option value="1">友谊赛</option>
+                            <option value="2">联赛</option>
+                        </select>
+                    </span>
                 </div>
+            </div>
 
-                <p class="pline"></p>
+            <p class="pline"></p>
 
-                <!-- 主队信息 -->
-                <div class="mui-input-row">
-                    <label>主队</label>
-                    <span class="domData" name="record[home_team]">{$teamInfo.name}</span>
-                    <input type="hidden" name="record[home_team_id]" class="data" {eq name="directentry" value="1" } value="{$team_id}" {else/}value="{$matchInfo.record.home_team_id}"
-                        {/eq}>
-                    <input type="hidden" name="record[home_team_logo]" class="data" {eq name="directentry" value="1" } value="{$teamInfo.logo}"
-                        {else/}value="{$matchInfo.record.home_team_logo}" {/eq} />
-                </div>
+            <!-- 主队信息 -->
+            <div class="mui-input-row">
+                <label>主队</label>
+                <span class="domData" name="record[home_team]">{$teamInfo.name}</span>
+                <input type="hidden" name="record[home_team_id]" class="data" {eq name="directentry" value="1" } value="{$team_id}" {else/}value="{$matchInfo.record.home_team_id}"
+                    {/eq}>
+                <input type="hidden" name="record[home_team_logo]" class="data" {eq name="directentry" value="1" } value="{$teamInfo.logo}"
+                    {else/}value="{$matchInfo.record.home_team_logo}" {/eq} />
+            </div>
 
-                <div class="mui-input-row">
-                    <label>主队得分</label>
-                    <input type="text" class="data" name="record[home_score]" placeholder="请输入主队得分" {eq name="directentry" value="1" } value=""
-                        {else/}value="{$matchInfo.record.home_score}" {/eq}>
-                </div>
+            <div class="mui-input-row">
+                <label>主队得分</label>
+                <input type="text" class="data" name="record[home_score]" placeholder="请输入主队得分" {eq name="directentry" value="1" } value=""
+                    {else/}value="{$matchInfo.record.home_score}" {/eq}>
+            </div>
 
-                <div class="mui-input-row">
-                    <a href="#homeColor" class="mui-navigate-right">
-                        <label>主队球服</label>
-                        <span class="home_color_text">
-                            {eq name="directentry" value="1" }{else/}
-                            <i class="color {eq name="directentry" value="1"}{else/}{$matchInfo.record.home_team_colorstyle} {/eq}">
-                                <input type="hidden" name="color" {eq name="directentry" value="1" } value="" {else/} value="{$matchInfo.record.home_team_colorstyle}"
-                                    {/eq}/>
-                            </i>{/eq}
-                            <font>{eq name="directentry" value="1" }{else/}{$matchInfo.record.home_team_color} {/eq} </font>
-                        </span>
-                        <input type="hidden" name="record[home_team_color]" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.home_team_color}"
-                            {/eq} />
-                        <input type="hidden" name="record[home_team_colorstyle]" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.home_team_colorstyle}"
-                            {/eq} />
-                    </a>
-                </div>
-                <!-- 主队信息  end-->
-                <p class="pline"></p>
-
-
-                <!-- 客队信息 -->
-                <div class="mui-input-row">
-                    <a href="#awayTeam" class="mui-navigate-right">
-                        <label>客队</label>
-                        {eq name="directentry" value="1"}
-                        <span class="away_team_Cont domData" name="record[away_team]"></span>
-                        <input type="hidden" name="record[away_team_id]" value="" class="data">
-                        <input type="hidden" name="record[away_team_logo]" value="" class="data"> {else/}
-                        <span class="away_team_Cont domData" name="record[away_team]">{$matchInfo.record.away_team}</span>
-                        <input type="hidden" name="record[away_team_id]" value="{$matchInfo.record.away_team_id}" class="data">
-                        <input type="hidden" name="record[away_team_logo]" class="data" value="{$matchInfo.record.away_team_logo}" /> {/eq}
-                    </a>
-
-                </div>
-
-                <div class="mui-input-row">
-                    <label>客队得分</label>
-                    <input type="text" class="data" name="record[away_score]" placeholder="请输入主队得分" {eq name="directentry" value="1" } value=""
-                        {else/}value="{$matchInfo.record.away_score}" {/eq}>
-                </div>
-
-                <div class="mui-input-row">
-                    <a href="#awayColor" class="mui-navigate-right">
-                        <label>客队球服</label>
-                        <span class="away_color_text">
-                            {eq name="directentry" value="1" }{else/}
-                            <i class="color {eq name="directentry" value="1"}{else/}{$matchInfo.record.away_team_colorstyle}{/eq}">
-                                <input type="hidden" name="color" {eq name="directentry" value="1" } value="" {else/} value="{$matchInfo.record.away_team_colorstyle}"
-                                    {/eq}/>
-                            </i>
-                            <font>{eq name="directentry" value="1" }{else/}{$matchInfo.record.away_team_color}{/eq}</font>
-                            {/eq}
-                        </span>
-                        <input type="hidden" name="record[away_team_color]" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_team_color}"
-                            {/eq}>
-                        <input type="hidden" name="record[away_team_colorstyle]" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_team_colorstyle}"
-                            {/eq}>
-                    </a>
-                </div>
-                <!-- 客队信息  end-->
-                <p class="pline"></p>
-
-                <!-- 公共信息 -->
-                <div class="mui-input-row picker btn" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
-                    <div class="mui-navigate-right">
-                        <label>时间</label>
-                        <span id="result" class="ui-alert domData match_time" name="match_time">{eq name="directentry" value="1" } {else/}{$matchInfo.match_time}{/eq}</span>
-                    </div>
-                </div>
-
-                <div class="mui-input-row">
-                    <a href="#court" class="mui-navigate-right">
-                        <label>球场</label>
-                        <span class="courtCont domData" name="court">{eq name="directentry" value="1" }{else/}{$matchInfo.court}{/eq}</span>
-                        <input type="hidden" name="court_id" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.court_id}" {/eq}
-                            class="data">
-                    </a>
-                </div>
-
-                <div class="mui-input-row" id='showCityPicker3'>
-                    <div class="mui-navigate-right">
-                        <label>地区</label>
-                        <span id="cityResult3" class="ui-alert">{eq name="directentry" value="1" }{else/}{$matchInfo.province} {$matchInfo.city} {$matchInfo.area}{/eq}</span>
-                        <input type="hidden" name="province" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.province}" {/eq}
-                            class="data" id="province">
-                        <input type="hidden" name="city" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.city}" {/eq}class="data"
-                            id="city">
-                        <input type="hidden" name="area" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.area}" {/eq}class="data"
-                            id="area">
-                    </div>
-                </div>
-
-                <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label>是否完成录入</label>
-                        <span class="select-row">
-                            <select id="isFinished" class="data" name="is_finished">
-                                <option value="1">是</option>
-                                <option value="0">否</option>
-                            </select>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="mui-input-row h-auto">
-                    <label>备注</label>
-                    <input type="text" name="remarks" class="data" placeholder="请填写提示" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.remarks}"
+            <div class="mui-input-row">
+                <a href="#homeColor" class="mui-navigate-right">
+                    <label>主队球服</label>
+                    <span class="home_color_text">
+                        {eq name="directentry" value="1" }{else/}
+                        <i class="color {eq name="directentry" value="1"}{else/}{$matchInfo.record.home_team_colorstyle} {/eq}">
+                            <input type="hidden" name="color" {eq name="directentry" value="1" } value="" {else/} value="{$matchInfo.record.home_team_colorstyle}"
+                                {/eq}/>
+                        </i>{/eq}
+                        <font>{eq name="directentry" value="1" }{else/}{$matchInfo.record.home_team_color} {/eq} </font>
+                    </span>
+                    <input type="hidden" name="record[home_team_color]" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.home_team_color}"
                         {/eq} />
+                    <input type="hidden" name="record[home_team_colorstyle]" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.home_team_colorstyle}"
+                        {/eq} />
+                </a>
+            </div>
+            <!-- 主队信息  end-->
+            <p class="pline"></p>
+
+
+            <!-- 客队信息 -->
+            <div class="mui-input-row">
+                <a href="#awayTeam" class="mui-navigate-right">
+                    <label>客队</label>
+                    {eq name="directentry" value="1"}
+                    <span class="away_team_Cont domData" name="record[away_team]"></span>
+                    <input type="hidden" name="record[away_team_id]" value="" class="data">
+                    <input type="hidden" name="record[away_team_logo]" value="" class="data"> {else/}
+                    <span class="away_team_Cont domData" name="record[away_team]">{$matchInfo.record.away_team}</span>
+                    <input type="hidden" name="record[away_team_id]" value="{$matchInfo.record.away_team_id}" class="data">
+                    <input type="hidden" name="record[away_team_logo]" class="data" value="{$matchInfo.record.away_team_logo}" /> {/eq}
+                </a>
+
+            </div>
+
+            <div class="mui-input-row">
+                <label>客队得分</label>
+                <input type="text" class="data" name="record[away_score]" placeholder="请输入主队得分" {eq name="directentry" value="1" } value=""
+                    {else/}value="{$matchInfo.record.away_score}" {/eq}>
+            </div>
+
+            <div class="mui-input-row">
+                <a href="#awayColor" class="mui-navigate-right">
+                    <label>客队球服</label>
+                    <span class="away_color_text">
+                        {eq name="directentry" value="1" }{else/}
+                        <i class="color {eq name="directentry" value="1"}{else/}{$matchInfo.record.away_team_colorstyle}{/eq}">
+                            <input type="hidden" name="color" {eq name="directentry" value="1" } value="" {else/} value="{$matchInfo.record.away_team_colorstyle}"
+                                {/eq}/>
+                        </i>
+                        <font>{eq name="directentry" value="1" }{else/}{$matchInfo.record.away_team_color}{/eq}</font>
+                        {/eq}
+                    </span>
+                    <input type="hidden" name="record[away_team_color]" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_team_color}"
+                        {/eq}>
+                    <input type="hidden" name="record[away_team_colorstyle]" class="data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.record.away_team_colorstyle}"
+                        {/eq}>
+                </a>
+            </div>
+            <!-- 客队信息  end-->
+            <p class="pline"></p>
+
+            <!-- 公共信息 -->
+            <div class="mui-input-row picker btn" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
+                <div class="mui-navigate-right">
+                    <label>时间</label>
+                    <span id="result" class="ui-alert domData match_time" name="match_time">{eq name="directentry" value="1" } {else/}{$matchInfo.match_time}{/eq}</span>
                 </div>
+            </div>
 
-                <!-- 公共信息 end-->
+            <div class="mui-input-row">
+                <a href="#court" class="mui-navigate-right">
+                    <label>球场</label>
+                    <span class="courtCont domData" name="court">{eq name="directentry" value="1" }{else/}{$matchInfo.court}{/eq}</span>
+                    <input type="hidden" name="court_id" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.court_id}" {/eq}
+                        class="data">
+                </a>
+            </div>
 
-                <p class="pline"></p>
-                <!-- 主队 -->
-                <div class="operation-box mb">
-                    <div class="mui-input-row">
-                        <label class="wd">主队参赛人员</label>
-                    </div>
-                    <div class="box" id="inactiveList"></div>
-                    <div class="box" id="hideStList" style="display:none"></div>
-                    <div class="box" id="hideStListIni" style="display:none"></div>
-                    <div class="operation-btn">
-                        <span class="mui-badge badgeHome">0</span>
-                        <a class="all">全选</a>
-                        <a class="cancel">取消</a>
-                        <a class="del">[删除]</a>
-                        <a href="#addTeamMember" id="setTeamMemberBox" class="mui-icon mui-icon-personadd add"></a>
-                    </div>
+            <div class="mui-input-row" id='showCityPicker3'>
+                <div class="mui-navigate-right">
+                    <label>地区</label>
+                    <span id="cityResult3" class="ui-alert">{eq name="directentry" value="1" }{else/}{$matchInfo.province} {$matchInfo.city} {$matchInfo.area}{/eq}</span>
+                    <input type="hidden" name="province" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.province}" {/eq}
+                        class="data" id="province">
+                    <input type="hidden" name="city" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.city}" {/eq}class="data"
+                        id="city">
+                    <input type="hidden" name="area" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.area}" {/eq}class="data"
+                        id="area">
                 </div>
-                <p class="pline"></p>
+            </div>
 
-                <!-- 客队 -->
-                <!-- <div class="operation-box mb">
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>是否完成录入</label>
+                    <span class="select-row">
+                        <select id="isFinished" class="data" name="is_finished">
+                            <option value="1">是</option>
+                            <option value="0">否</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+
+            <div class="mui-input-row h-auto">
+                <label>备注</label>
+                <input type="text" name="remarks" class="data" placeholder="请填写提示" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.remarks}"
+                    {/eq} />
+            </div>
+
+            <!-- 公共信息 end-->
+
+            <p class="pline"></p>
+            <!-- 主队 -->
+            <div class="operation-box mb">
+                <div class="mui-input-row">
+                    <label class="wd">主队参赛人员</label>
+                </div>
+                <div class="box" id="inactiveList"></div>
+                <div class="box" id="hideStList" style="display:none"></div>
+                <div class="box" id="hideStListIni" style="display:none"></div>
+                <div class="operation-btn">
+                    <span class="mui-badge badgeHome">0</span>
+                    <a class="all">全选</a>
+                    <a class="cancel">取消</a>
+                    <a class="del">[删除]</a>
+                    <a href="#addTeamMember" id="setTeamMemberBox" class="mui-icon mui-icon-personadd add"></a>
+                </div>
+            </div>
+            <p class="pline"></p>
+
+            <!-- 客队 -->
+            <!-- <div class="operation-box mb">
                     <div class="mui-input-row">
                         <label>客队参赛人员</label>
                     </div>
@@ -269,32 +269,32 @@
                         <a href="#addAwayMember" id="setAwayMemberBox" class="mui-icon mui-icon-personadd add"></a>
                     </div>
                 </div> -->
-                <!-- <p class="pline"></p> -->
+            <!-- <p class="pline"></p> -->
 
-                <ul class="mui-table-view">
-                    <li class="mui-table-view-cell listli detalisli f14" style="line-height: 40px; color: #737373;">
-                        <span class="h-auto">比赛花絮</span>
-                        <a class="mui-navigate-right fr wd60">
-                            <div id="uploader-demo1" class="fr pdr15">
-                                <div id="fileList" class="uploader-list"></div>
-                                <div id="filePickerOne">选择图片</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell listli albumBox">
-                        {eq name="directentry" value="1" }{else/}{volist name="matchInfo.record.album" id="vol"}
-                        <div class="fl albumImg">
-                            <i class="delbtn mui-icon mui-icon-close"></i>
-                            <img src="{$vol}">
-                        </div>{/volist}{/eq}
-                    </li>
-                </ul>
-
-            </form>
-
-            <ul class="mui-table-view operation">
-                <li class="mui-col-xs-12 opli bggreen" onclick="submitAction()">提交</li>
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell listli detalisli f14" style="line-height: 40px; color: #737373;">
+                    <span class="h-auto">比赛花絮</span>
+                    <a class="mui-navigate-right fr wd60">
+                        <div id="uploader-demo1" class="fr pdr15">
+                            <div id="fileList" class="uploader-list"></div>
+                            <div id="filePickerOne">选择图片</div>
+                        </div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli albumBox">
+                    {eq name="directentry" value="1" }{else/}{volist name="matchInfo.record.album" id="vol"}
+                    <div class="fl albumImg">
+                        <i class="delbtn mui-icon mui-icon-close"></i>
+                        <img src="{$vol}">
+                    </div>{/volist}{/eq}
+                </li>
             </ul>
+
+        </form>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-col-xs-12 opli bggreen" onclick="submitAction()">提交</li>
+        </ul>
     </div>
 
     <!--选择对手-->
@@ -319,7 +319,7 @@
                 <input type="search" class="keywordHM" placeholder="请输入球队名称搜索">
                 <span class="mui-icon mui-icon-search searchicon" id="searchHM"></span>
             </div>
-            <div class="mui-scroll-wrapper" style="top:40px !important;">
+            <div class="mui-scroll-wrapper" style="top:38px !important;">
                 <div class="mui-scroll">
                     <ul class="mui-table-view list teamList"></ul>
                     <ul class="mui-pager">
@@ -338,9 +338,24 @@
             </div>
         </div>
         <div id="item2" class="mui-control-content">
-            <div class="mui-scroll-wrapper">
+            <div class="pop-search">
+                <input type="search" class="keywordHi" placeholder="请输入历史对手球队名称搜索">
+                <span class="mui-icon mui-icon-search searchicon" id="searchHi"></span>
+            </div>
+            <div class="mui-scroll-wrapper" style="top:38px !important;">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view list teamListHistory coach">
+                    <ul class="mui-table-view list teamListHistory "></ul>
+                    <ul class="mui-pager">
+                        <li>
+                            <a href="#" class="prev_pageHi">上一页</a>
+                        </li>
+                        <li>
+                            <span class="currPageHi">0</span>/
+                            <span class="totalPageHi">0</span>
+                        </li>
+                        <li>
+                            <a href="#" class="next_pageHi">下一页</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -727,11 +742,11 @@
 
         // 时间待定显示
         function timeShow() {
-            if(directentry == 0){
+            if (directentry == 0) {
                 var match_time = "{$matchInfo.match_time}";
                 if (match_time == "1970-01-01 08:00") {
-                $(".match_time").text("待定");
-                } 
+                    $(".match_time").text("待定");
+                }
             }
         }
 
@@ -780,14 +795,17 @@
 
             //获取训练营粉丝列表
             var teamKeyword = '';
+            var teamHistoryKeyword = '';
             var courtKeyword = '';
             var wTeams = '';
+            var wTeamsHistory = '';
             var wCourt = '';
             var pageHM = 1;
+            var pageHi = 1;
             var pageLD = 1;
             var pageCR = 1;
-
             toTeamList(wTeams, teamKeyword, 1);
+            toTeamListHistory(wTeamsHistory, teamHistoryKeyword, 1);
             toCourtList(wCourt, courtKeyword, 1);
             colorShow(); // 颜色选择显示
             toHomeMemberList(); //获取主队成员列表
@@ -848,6 +866,45 @@
                 }
             })
             //////////////////////选择对手////////////////////////////////////
+            //////////////////////选择历史对手////////////////////////////////////
+            //选择历史对手
+            $(".teamListHistory").on('tap', 'li', function () {
+                var away_team_Cont = $(this).children(".nameHistory").text();
+                $(".away_team_Cont").text(away_team_Cont);
+                var id = $(this).attr('data-id');
+                $("input[name=away_team_id]").val(id);
+                var away_team_logo = $(this).attr('data-logo');
+                $("input[name=away_team_logo]").val(away_team_logo);
+                $(".isyz").hide(); // 选择了对手则不能约战
+                mui("#awayTeam").popover("toggle");
+            })
+            //搜索球队
+            $("#searchHi").on("tap", function () {
+                var keywordHi = $(".keywordHi").val();
+                var pageHi = 1;
+                toTeamListHistory(keywordHi, "awayTeam", pageHi);
+            })
+            //球队弹出框页码控制
+            $("#awayTeam").on('tap', '.next_pageHi', function () {
+                var getTotalPage = $("#awayTeam .totalPageHi").text();
+                pageHi++;
+                if (pageHi > getTotalPage) {
+                    mui.toast("已经最后一页了");
+                } else {
+                    var keyword = $(".keywordHi").val();
+                    toTeamListHistory(keywordHi, "awayTeam", pageHi);
+                }
+            })
+            $("#away_team").on('tap', '.prev_pageHi', function () {
+                pageHi--;
+                if (pageHi < 1) {
+                    mui.toast("已经是第一页了");
+                } else {
+                    var keywordHi = $(".keywordHi").val();
+                    toTeamListHistory(keywordHi, "awayTeam", pageHi);
+                }
+            })
+            //////////////////////选择历史对手////////////////////////////////////
 
             // 主场球服
             $(".homeColorList").on('tap', 'li', function () {
@@ -1185,6 +1242,54 @@
             });
         };
 
+        //历史对手列表接口获取数据并追加到页面
+        function toTeamListHistory(keyword, wTeamsHistory, page) {
+            var url = "{:url('api/match/historyteampage','','',true)}/?page=" + page;
+            var team_id = "{$team_id}";
+            var wTeamList = "ul.teamListHistory";
+            var currPage = ".currPageHi";
+            var totalPage = ".totalPageHi";
+            if (keyword != '' && wTeamsHistory != '') {
+                wTeamList = "#" + wTeamsHistory + " ul.teamListHistory";
+                currPage = "#" + wTeamsHistory + " .currPageHi";
+                totalPage = "#" + wTeamsHistory + " .totalPageHi";
+            }
+            mui.ajax({
+                url: url,
+                data: {
+                    team_id: team_id,
+                    keyword: keyword,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            if (data.data.data[i].id != "{$team_id}") {
+                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].opponent_team.id + '" data-logo="' + data.data.data[i].opponent_team.logo + '"><label class="nameHistory">' + data.data.data[i].opponent_team.name + '</label><span class="wd45">' + data.data.data[i].opponent_team.city + '&nbsp;' + data.data.data[i].opponent_team.area + '</span></li>'
+                            }
+                        }
+                        $(wTeamList).empty();
+                        if (newli == '') {
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="请填写你要添加的球队" /><button class="mui-btn addBtn">确认</button></div>'
+                        }
+                        $(wTeamList).append(newli);
+                        $(currPage).text(data.data.current_page);
+                        $(totalPage).text(data.data.last_page);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
         //获取主队成员列表
         function toHomeMemberList() {
             var team_id = "{$team_id}";
@@ -1350,6 +1455,8 @@
                 }
             });
         };
+
+
 
 
     </script>

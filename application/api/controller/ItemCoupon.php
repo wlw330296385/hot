@@ -18,7 +18,7 @@ class ItemCoupon extends Base{
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
             }else{
-                return json(['code'=>100,'msg'=>'无数据']);
+                return json(['code'=>100,'msg'=>'查询有误']);
             }  
             
          }catch (Exception $e){
@@ -33,7 +33,7 @@ class ItemCoupon extends Base{
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result->toArray()]);
             }else{
-                return json(['code'=>100,'msg'=>'无数据']);
+                return json(['code'=>100,'msg'=>'查询有误']);
             }  
 
         }catch (Exception $e){
