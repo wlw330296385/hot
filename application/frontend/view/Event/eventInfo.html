@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
     <style>
         .show {
             display: block;
@@ -97,6 +98,7 @@
             </ul>
             <ul class="mui-table-view">
                 <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
+
                 <li class="mui-table-view-cell listli">
                     <label>活动对象</label>
                     <span class="target_type">{$eventInfo.target_type}</span>
@@ -108,6 +110,23 @@
                         {/volist}
                     </span>
                 </li>
+                {if !empty($couponListOfSystem)|| !empty($couponListOfCamp)}
+                <li class="mui-table-view-cell listli">
+                    <a href="#cppopover">
+                    <ul class="mini-coupon">
+
+                    {volist empty="" name="couponListOfSystem" id="vol" }
+                        <li><div><span>{$vol.coupon}</span>赠券</div><i></i></li>
+                    {/volist}
+
+                    {volist empty="" name="couponListOfCamp" id="vol" }
+                        <li><div><span>{$vol.coupon}</span>赠券</div><i></i></li>
+                    {/volist}
+
+                    </ul>
+                    </a>
+                </li>
+                {/if}
                 <li class="mui-table-view-cell listli {eq name='eventInfo.target_type' value='2||3'}show{else/}hide{/eq}">所属训练营
                     <span>{$eventInfo.organization}</span>
                 </li>
