@@ -147,10 +147,6 @@ class ItemCoupon extends Base{
         try{
             $item_coupon_member_id = input('param.item_coupon_member_id');
             $item_coupon_id = input('param.item_coupon_id');
-            $member_id = $this->memberInfo['id'];
-            $member = $this->memberInfo['member'];
-            // $member_id = 8;
-            // $member = 'woo';
             $result = $this->ItemCouponService->useItemCoupon($item_coupon_member_id,$item_coupon_id);
              return json($result);   
          }catch (Exception $e){

@@ -116,11 +116,11 @@ class ItemCouponService {
             return ['code'=>100,'msg'=>'卡券已被删除或不存在'];
         }
 
-        if($itemCouponInfo['end']<time() || $itemCouponInfo['start']>time()){
+        if(strtotime($itemCouponInfo['end'])<time() || strtotime($itemCouponInfo['start'])>time()){
             return ['code'=>100,'msg'=>'卡券不在有效期内,无法使用'];
         }
 
-        if($member_id<>$itemCoupnMemberInfo['member_id']){
+        if(session('memberInfo.id','','think')<>$itemCoupnMemberInfo['member_id']){
             return ['code'=>100,'msg'=>'卡券不属于你,无法使用'];
         }
 
