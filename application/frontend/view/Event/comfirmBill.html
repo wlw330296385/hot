@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
     <style>
 
         .mui-popover {
@@ -60,18 +61,26 @@
             <ul class="mui-table-view">
                 <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
                 <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='2||3'}show{else/}hide{/eq}">所属训练营<span>{$eventInfo.organization}</span></li>
-                <li class="mui-table-view-cell listli">
-                    赠送卡券
-                </li>
-                <li class="mui-table-view-cell listli">
-                    {volist empty="无" name="couponListOfSystem" id="vol" }
-                    <label>
-                        <img src="{$vol.image_url}"  style="border:2px red;width: 5em">
-                        {$vol.coupon}
-                    </label>
-                        
+                {if !empty($couponListOfSystem)|| !empty($couponListOfCamp)}
+            <li class="mui-table-view-cell listli">
+                赠送卡券
+                <span>
+                    <a href="#cppopover">
+                    <ul class="mini-coupon">
+
+                    {volist empty="" name="couponListOfSystem" id="vol" }
+                        <li><div><span>{$vol.coupon}</span>赠券</div><i></i></li>
                     {/volist}
-                </li>
+
+                    {volist empty="" name="couponListOfCamp" id="vol" }
+                        <li><div><span>{$vol.coupon}</span>赠券</div><i></i></li>
+                    {/volist}
+
+                    </ul>
+                    </a>
+                </span>
+            </li>
+            {/if}
                 <li class="mui-table-view-cell listli">
                     {volist name="couponListOfCamp" id="vol" }
                         <img src="{$vol.image_url}"  style="border:2px red">

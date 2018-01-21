@@ -15,6 +15,7 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
 </head>
 
 <body class=whitebg>
@@ -55,7 +56,28 @@
             <li class="mui-table-view-cell listli">训练地点<span>{$lessonInfo.location}</span></li>
             <li class="mui-table-view-cell listli">所属地区<span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span>
             </li>
+            {if !empty($couponListOfSystem)|| !empty($couponListOfCamp)}
+            <li class="mui-table-view-cell listli">
+                赠送卡券
+                <span>
+                    <a href="#cppopover">
+                    <ul class="mini-coupon">
+
+                    {volist empty="" name="couponListOfSystem" id="vol" }
+                        <li><div><span>{$vol.coupon}</span>赠券</div><i></i></li>
+                    {/volist}
+
+                    {volist empty="" name="couponListOfCamp" id="vol" }
+                        <li><div><span>{$vol.coupon}</span>赠券</div><i></i></li>
+                    {/volist}
+
+                    </ul>
+                    </a>
+                </span>
+            </li>
+            {/if}
             <li class="mui-table-view-cell listli mb mt"><span>课程总价<b class="colororange total_fee"></b></span></li>
+
         </ul>
 
         <div class="page-header">

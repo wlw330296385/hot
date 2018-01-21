@@ -174,6 +174,28 @@ class Lesson extends Base{
                         ->where($map)
                         ->column('id');
         $item_coupon_ids = array_merge($item_coupon_ids1,$item_coupon_ids2);
+
+         // 平台卡券
+        $couponListOfSystem = $ItemCoupon
+                            ->where($map)
+                            ->where(['organization_type'=>1,'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                            ->select();
+        // echo $ItemCoupon->getlastsql();die;
+        if($couponListOfSystem){
+            $couponListOfSystem = $couponListOfSystem->toArray();
+        }else{
+            $couponListOfSystem = [];
+        }
+        // dump($couponListOfSystem);die;
+        // 训练营卡券
+        $couponListOfCamp = $ItemCoupon->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])->where($map)->select();
+        if($couponListOfCamp){
+            $couponListOfCamp = $couponListOfCamp->toArray();
+        }else{
+            $couponListOfCamp = [];
+        }
+        $this->assign('couponListOfSystem',$couponListOfSystem);
+        $this->assign('couponListOfCamp',$couponListOfCamp);
         $this->assign('item_coupon_ids',json_encode($item_coupon_ids));
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('jsapi', $jsapi);
