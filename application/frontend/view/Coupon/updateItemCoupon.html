@@ -157,8 +157,8 @@
                         <label>生效状态</label>
                         <span class="select-row freeStatus">
                             <select  class="data" name="status">
-                                <option value="-1">默认下架</option>
-                                <option value="1">上架</option>
+                                <option value="-1">暂不发布</option>
+                                <option value="1">立即发布</option>
                             </select>
                         </span>
                     </div>
@@ -316,8 +316,17 @@
 
             //初始值赋值
             $('#eventObject').find('option[value="{$itemCouponInfo.target_type}"]').prop("selected", true);
+            $('select[name="status"]').find('option[value="{$itemCouponInfo.status}"]').prop("selected", true);
             //页面打开时执行一次下拉选项
             changeType("{$itemCouponInfo.target_type}");
+            var cStatus = "{$itemCouponInfo.status}";
+            if(cStatus=="1"){
+                $('select[name="status"]').find('option[value="1"]').prop("disabled", true);
+                $('input[name="coupon"]').prop("readonly", true);
+                $('input[name="price"]').prop("readonly", true);
+            }
+
+
 
             // 具体课程对象课程
             $(".campLessonList").on('tap', 'li', function () {

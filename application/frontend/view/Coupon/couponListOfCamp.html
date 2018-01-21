@@ -24,8 +24,8 @@
         <div class="camp-lesson-list">
             <div class="mui-segmented-control mb">
                 <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id'=>$organization_id])}"></a>
-                <a class="mui-control-item mui-active" href="#onCouponList">上架卡券</a>
-                <a class="mui-control-item" href="#offCouponList">下架卡券</a>
+                <a class="mui-control-item mui-active" href="#onCouponList">已发布卡券</a>
+                <a class="mui-control-item" href="#offCouponList">未发布卡券</a>
                 <a class="mui-control-item" href="{:url('coupon/createItemCoupon',['organization_id'=>$organization_id])}">添加卡券</a>
             </div>
         </div>
@@ -69,13 +69,6 @@
 
 
     $(function () {
-
-        var sdate="2018-01-21";
-        sdate = new Date(Date.parse(sdate.replace(/-/g, "/")));
-        sdate = sdate.getTime();
-        console.log(sdate)
-        var currtimestamp = Date.parse(new Date());
-        console.log(currtimestamp)
 
         //初始化全局变量
         var onCount = 1;
@@ -182,16 +175,23 @@
             success: function (data) {
 
                 var newli='';
-                var currtimestamp = Date.parse(new Date());
                 if (data.code == 200) {
+                    var currtimestamp = Date.parse(new Date());
 
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('coupon/updateItemCoupon')}" + '/item_coupon_id/' + data.data.data[i].id+'/organization_id/'+data.data.data[i].organization_id;
                         newli += '<li class="mui-table-view-cell mui-media listli fulllist">';
-                        if (status == 1) {
+                        //转换发布结束时间为时间戳
+                        var sdate = data.data.data[i].publish_end+" 23:59:59";
+                        sdate = new Date(Date.parse(sdate.replace(/-/g, "/")));
+                        sdate = sdate.getTime();
+
+                        if (status == -1) {
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">立即发布</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                        } else if (status == 1&&sdate>=currtimestamp) {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="stoppublish">终止发布</span></div>';
                         } else {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="exppublish">已停止发布</span></div>';
                         }
                         newli += '<div class="mui-slider-handle"><a href="' + urls + '"><p class="fTop"><strong>'+ data.data.data[i].coupon+'</strong><span>已使用：'+ data.data.data[i].used+'</span></p><p class="fBottom">发布期限：'+ data.data.data[i].publish_start +' 至 '+ data.data.data[i].publish_end+' <span class="fr">发行量： '+data.data.data[i].max+'</span></p></a></div>';
 
@@ -248,8 +248,11 @@
             optData = {publish_end:preDate};
         }else if(action=="editstatus"){
             optData = {status:1};
-        }else{
+        }else if(action=="del"){
             optData = {delete_time:deltimestamp};
+        }else{
+            mui.toast("此卡券已经过了发布期限");
+            return false;
         }
 
         mui.confirm('确认该卡券' + txt + '?', '提示', btnArray, function (e) {
