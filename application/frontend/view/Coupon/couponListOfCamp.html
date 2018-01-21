@@ -53,13 +53,10 @@
 
     </div>
 
-
-
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/js/common.js"></script>
-
 
     <script>
     //初始化
@@ -72,6 +69,13 @@
 
 
     $(function () {
+
+        var sdate="2018-01-21";
+        sdate = new Date(Date.parse(sdate.replace(/-/g, "/")));
+        sdate = sdate.getTime();
+        console.log(sdate)
+        var currtimestamp = Date.parse(new Date());
+        console.log(currtimestamp)
 
         //初始化全局变量
         var onCount = 1;
@@ -178,6 +182,7 @@
             success: function (data) {
 
                 var newli='';
+                var currtimestamp = Date.parse(new Date());
                 if (data.code == 200) {
 
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
@@ -188,7 +193,7 @@
                         } else {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><p class="fTop"><strong>'+ data.data.data[i].coupon+'</strong><span>已使用：'+ data.data.data[i].used+'</span></p><p class="fBottom">发布期限：'+ data.data.data[i].publish_start +'至'+ data.data.data[i].publish_end+' <span class="fr">发行量： '+data.data.data[i].max+'</span></p></a></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><p class="fTop"><strong>'+ data.data.data[i].coupon+'</strong><span>已使用：'+ data.data.data[i].used+'</span></p><p class="fBottom">发布期限：'+ data.data.data[i].publish_start +' 至 '+ data.data.data[i].publish_end+' <span class="fr">发行量： '+data.data.data[i].max+'</span></p></a></div>';
 
                         newli += '</li>';
                     }
@@ -249,11 +254,9 @@
 
         mui.confirm('确认该卡券' + txt + '?', '提示', btnArray, function (e) {
             if (e.index == 0) {
-
-
                 var apiurl = "{:url('api/item_coupon/editItemCouponApi')}"+'/item_coupon_id/'+couponid;
                 mui.ajax(apiurl, {
-                    data: optData,d
+                    data: optData,
                     dataType: 'json',
                     type: 'post',
                     headers: {'Content-Type': 'application/json'},
