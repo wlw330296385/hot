@@ -37,7 +37,8 @@ class Login extends Base{
                 } else {
                     $data['openid'] = $memberInfo['openid'];
                     $data['nickname'] = $memberInfo['nickname'];
-                    $data['avatar'] = $memberInfo['avatar'];
+                    //$data['avatar'] = $memberInfo['avatar'];
+                    $data['avatar'] = $memberS->downwxavatar($memberInfo['avatar']);
                 }
             }
 

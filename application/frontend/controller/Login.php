@@ -48,8 +48,8 @@ class Login extends Controller{
         $userinfo = $WechatS->oauthUserinfo();
         if ($userinfo) {
             cache('userinfo_'.$userinfo['openid'], $userinfo);
-            //$avatar = str_replace("http://", "https://", $userinfo['headimgurl']);
-            $avatar = $memberS->downwxavatar($userinfo);
+            $avatar = str_replace("http://", "https://", $userinfo['headimgurl']);
+            //$avatar = $memberS->downwxavatar($userinfo);
             // 查询有无member数据
             $dbMember = db('member');
             $isMember = $dbMember->where(['openid' => $userinfo['openid']])->whereNotNull('delete_time')->find();
@@ -127,15 +127,18 @@ class Login extends Controller{
 
     public function fastRegister(){
         $WechatS = new WechatService;
+        $memberS = new MemberService();
         $userinfo = $WechatS->oauthUserinfo();
         if ($userinfo) {
             cache('userinfo_'.$userinfo['openid'], $userinfo);
+            $avatar = str_replace("http://", "https://", $userinfo['headimgurl']);
+//            $avatar = $memberS->downwxavatar($userinfo);
             $member = [
                 'id' => 0,
                 'openid' => $userinfo['openid'],
                 'member' => $userinfo['nickname'],
                 'nickname' => $userinfo['nickname'],
-                'avatar' => str_replace("http://", "https://", $userinfo['headimgurl']),
+                'avatar' => $avatar,
                 'hp' => 0,
                 'level' => 0,
                 'telephone' =>'',

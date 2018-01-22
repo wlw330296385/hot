@@ -23,8 +23,7 @@
 
         <div id="refreshContainer" class="mui-scroll-wrapper mt44">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b event">
-                </ul>
+                <ul class="mui-table-view detalis-list list border-b fans"></ul>
             </div>
         </div>
 
@@ -102,22 +101,22 @@
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 newli += '<li class="mui-table-view-cell mui-media listli">'
-                                newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].member_avatar + '"><div class="mui-media-body">' + data.data.data[i].member + '';
-                                newli += '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div><div class="price-frame rightLocation" style="padding-right:0">' + data.data.data[i].follow_name + '</div>'
+                                newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].member_avatar + '" style="width:44px !important;height:44px !important;"><div class="mui-media-body">' + data.data.data[i].member + '';
+                                newli += '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div>'
                                 newli += '</li>';
                             }
                         }
                         if (gType == 1) {
                             //上拉刷新
-                            $("ul.event").empty().append(newli);
+                            $("ul.fans").empty().append(newli);
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.event").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
+                                $("ul.fans").html('<p class="nodata">没有相关数据哦</p>');
                             }
                         } else {
                             //下拉加载 gType==2
-                            $("ul.event").append(newli);
+                            $("ul.fans").append(newli);
                         }
                         if (newli != '') {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
@@ -132,8 +131,6 @@
                     }
                 });
             };
-
-
         })
     </script>
 </body>

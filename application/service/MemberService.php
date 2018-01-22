@@ -230,15 +230,15 @@ class MemberService{
     }
 
     // 提取微信受案信息头像 下载到本地
-    public function downwxavatar($userinfo) {
-        $avatar = str_replace("http://", "https://", $userinfo['headimgurl']);
+    public function downwxavatar($avatar) {
+        //$avatar = str_replace("http://", "https://", $userinfo['headimgurl']);
         // 上传目录（绝对路径，用于保存文件）
         $dirName =  "uploads" . DS . "images". DS ."avatar";
         $saveDir = ROOT_PATH  . "public" . DS. $dirName . DS;
 	    // 用户没有头像时该项为空 不操作
 	    if (!empty($avatar)) {
             $savefilename = download($avatar, $saveDir);
-            return $dirName.DS.$savefilename;
+            return DS.$dirName.DS.$savefilename;
         }
         return 0;
     }

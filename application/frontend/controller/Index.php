@@ -40,15 +40,16 @@ class Index extends Base{
         return view('Index/indexOfCamp');
     }
 
-    // 微信用户授权回调
+    // 微信授权回调
     public function wxindex() {
         $WechatS = new WechatService;
         $memberS = new MemberService();
         $userinfo = $WechatS->oauthUserinfo();
         if ($userinfo) {
             cache('userinfo_'.$userinfo['openid'], $userinfo);
-            //$avatar = str_replace("http://", "https://", $userinfo['headimgurl']);
-            $avatar = $memberS->downwxavatar($userinfo);
+            $avatar = str_replace("http://", "https://", $userinfo['headimgurl']);
+            //$avatar = $memberS->downwxavatar($userinfo);
+
             $dbMember = db('member');
             $isMember = $dbMember->where(['openid' => $userinfo['openid']])->find();
             if ($isMember) {

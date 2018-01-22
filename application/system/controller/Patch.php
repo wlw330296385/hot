@@ -11,9 +11,11 @@ use app\model\ScheduleGiftStudent;
 use app\model\ScheduleMember;
 use app\model\Student;
 use app\model\Coach;
+use app\service\MemberService;
 use app\service\SystemService;
 use think\Controller;
 use think\Db;
+use think\Exception;
 
 class Patch extends Controller {
     public $setting;
@@ -398,6 +400,23 @@ class Patch extends Controller {
         } else {
             file_put_contents(ROOT_PATH.'data/salaryin/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'error'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND  );
             return false;
+        }
+    }
+
+
+    // 遍历会员头像将链接头像保存至本地
+    public function memberavatardownload() {
+        try {
+            $memberS = new MemberService();
+            $members = db('member')->whereNull('delete_time')->where('avatar', 'neq', '/static/default/avatar.png')->where('avatar', 'neq', '/0')->select();
+            //dump($members);
+            foreach ($members as $k => $member) {
+                //dump($member['avatar']);
+                $newAvatar = $memberS->downwxavatar($member['avatar']);
+                db('member')->where('id', $member['id'])->update(['avatar' => $newAvatar]);
+            }
+        } catch (Exception $e) {
+            dump($e->getMessage());
         }
     }
 }

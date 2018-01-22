@@ -73,7 +73,7 @@ class Student extends Base
                 'camp_id' => $camp_id,
                 'student_id' => $student_id,
                 'type' => $type,
-                'status' => 1
+                //'status' => 1
             ])->field("sum(rest_schedule) as rest_schedule, sum(total_schedule) as total_scheulde")->select();
         //dump($schedulenum);
         if (!$schedulenum) {
