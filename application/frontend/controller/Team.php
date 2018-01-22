@@ -329,7 +329,8 @@ class Team extends Base {
             $matchInfo = [
                 'id' => 0,
                 'is_finished_num' => 0,
-                'is_finished' => '未完成'
+                'is_finished' => '未完成',
+                'match_time' => 0
             ];
             $directentry = 1;
             $memberlist = [];
