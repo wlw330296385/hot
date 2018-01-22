@@ -97,8 +97,6 @@ class Lesson extends Backend {
     public function buyLesson(){
         $LessonService = new LessonService;
         $lessonList = $LessonService->getLessonList();
-        $breadcrumb = ['ptitle' => '课程管理', 'title' => '帮购买课程'];
-        $this->assign('breadcrumb',$breadcrumb);
         $member_id = input('param.member_id');
         $memebrInfo = db('member')->where(['id'=>$member_id])->find();
         if(!$memebrInfo){
@@ -143,7 +141,7 @@ class Lesson extends Backend {
                 if($result['code']==200){
                     $res = $BillService->payNoNotice(['pay_time'=>time(),'expire'=>0,'balance_pay'=>$lessonInfo['cost']*$postData['total'],'status'=>1,'is_pay'=>1],['bill_order'=>$billOrder]);
                     if($res){
-                        echo '<script type="text/javascript">alert("'.$result["msg"].'")</script>';
+                        echo '<script type="text/javascript">alert("'.$result["msg"].'");window.opener=null;window.close();</script>';
                         // return json(['code'=>100,'msg'=>'操作成功']);
                     }else{
                         echo "<script type='text/javascript'>alert('".$result['msg']."并联系woo')</script>";

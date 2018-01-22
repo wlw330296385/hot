@@ -147,6 +147,7 @@ class MessageService
             ->where($map)
             ->order('id desc')
             ->paginate($paginate);
+            // echo $this->MessageMemberModel->getlastsql();die;
         if ($result) {
             $res = $result->toArray();
             return $res;

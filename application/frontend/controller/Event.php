@@ -56,6 +56,16 @@ class Event extends Base{
                         ->where(['organization_type'=>2,'organization_id'=>$eventInfo['organization_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
                         ->where($map)
                         ->select();
+        if($couponListOfCamp){
+            $couponListOfCamp = $couponListOfCamp->toArray();
+        }else{
+            $couponListOfCamp = [];
+        }
+        if($couponListOfSystem){
+            $couponListOfSystem = $couponListOfSystem->toArray();
+        }else{
+            $couponListOfSystem = [];
+        }
         // ---------------------------------------------------卡券系统
     
         $this->assign('couponListOfSystem',$couponListOfSystem);
@@ -112,7 +122,16 @@ class Event extends Base{
                         ->where($map)
                         ->select();
   
-        
+        if($couponListOfCamp){
+            $couponListOfCamp = $couponListOfCamp->toArray();
+        }else{
+            $couponListOfCamp = [];
+        }
+        if($couponListOfSystem){
+            $couponListOfSystem = $couponListOfSystem->toArray();
+        }else{
+            $couponListOfSystem = [];
+        }
         //卡券列表
         $map = function($query) use($eventInfo){
             $query->where('target_type',['=',2],['=',3],'or')
@@ -203,6 +222,16 @@ class Event extends Base{
                         ->where(['organization_type'=>2,'organization_id'=>$eventInfo['organization_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
                         ->where($map)
                         ->select();
+        if($couponListOfCamp){
+            $couponListOfCamp = $couponListOfCamp->toArray();
+        }else{
+            $couponListOfCamp = [];
+        }
+        if($couponListOfSystem){
+            $couponListOfSystem = $couponListOfSystem->toArray();
+        }else{
+            $couponListOfSystem = [];
+        }
         // ---------------------------------------------------卡券系统
   
         $this->assign('couponListOfSystem',$couponListOfSystem);
