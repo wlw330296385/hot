@@ -205,7 +205,7 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>胜率</span>
-                            <div class="mui-media-body colorred">70%</div>
+                            <div class="mui-media-body colorred">0</div>
                         </a>
                     </li>
                 </ul>
@@ -219,6 +219,27 @@
                 </span>
             </div>
             <div class="impress whitebg tagCommentList"></div>
+
+            <!--推荐人信息-->
+            {notempty name="pmember"}
+            <div class="page-header">
+                <span class="course">推荐人信息</span>
+            </div>
+            <form action="" class="mui-input-group">
+                <div class="mui-input-row h-auto">
+                    <label>头像</label>
+                    <img src="{$pmember['avatar']}" style="margin-right: 18px">
+                </div>
+                <div class="mui-input-row">
+                    <label>推荐人</label>
+                    <span>{$pmember.nickname}</span>
+                </div>
+                <div class="mui-input-row">
+                    <label>电话</label>
+                    <span>{$pmember.telephone}</span>
+                </div>
+            </form>
+            {/notempty}
 
             <!--底部操作-->
             <ul class="mui-table-view operation mt">
@@ -266,6 +287,7 @@
     </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
         mui.init({
             swipeBack: false
@@ -279,7 +301,7 @@
         $(function () {
 
             // 印象评价
-            $(document).on("tap", '.choiseTag', function () {
+            $(document).on("tap", '.impressSide .choiseTag', function () {
                 if ($(this).hasClass("bgorange")) {
                     $(this).removeClass("bgorange");
                 } else {
@@ -406,7 +428,7 @@
             });
 
             //报名功能
-            $(document).on('click', '.signupBtn', function () {
+            $(document).on('tap', '.signupBtn', function () {
                 //判断是否登陆会员
                 var event_id = eventid;
                 mui.ajax("{:url('api/team/jointeamevent')}", {
@@ -650,6 +672,44 @@
             var minutes = _time.getMinutes();
             return p(hours) + ":" + p(minutes);
         }
+    </script>
+    <script>
+        wx.config({
+            //debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: "{$jsapi['timestamp']}",
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]
+        });
+        wx.ready(function () {
+            // 分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: "{$teamInfo.name}",
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$teamInfo.logo}",
+                success: function () { },
+                cancel: function () { }
+            });
+            // 分享给朋友
+            wx.onMenuShareAppMessage({
+                title: '{$teamInfo.name}',
+                desc: '{$teamInfo.introduce}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$teamInfo.logo}",
+                type: "",
+                dataUrl: '',
+                success: function () { },
+                cancel: function () { }
+            });
+
+        });
     </script>
 </body>
 

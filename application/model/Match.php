@@ -13,7 +13,7 @@ class Match extends Model {
 
     // 字段类型转换
     protected $type = [
-        'match_time' => 'timestamp:Y-m-d H:i',
+        //'match_time' => 'timestamp:Y-m-d H:i',
         'start_time' => 'timestamp:Y-m-d H:i',
         'end_time' => 'timestamp:Y-m-d H:i',
         'reg_start_time' => 'timestamp:Y-m-d H:i',
