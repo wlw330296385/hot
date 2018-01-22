@@ -327,7 +327,6 @@
 
         $(function () {
 
-            delbtnFunction();
             //初始值赋值
             $('#eventObject').find('option[value="{$itemCouponInfo.target_type}"]').prop("selected", true);
             $('select[name="status"]').find('option[value="{$itemCouponInfo.status}"]').prop("selected", true);
@@ -336,6 +335,7 @@
             var cStatus = "{$itemCouponInfo.status}";
             if(cStatus=="1"){
                 $('select[name="status"]').find('option[value="1"]').parent().prop("disabled", true);
+                $('select[name="status"]').parent().parent().removeClass("mui-navigate-right");
                 $('input[name="coupon"]').prop("readonly", true);
                 $('input[name="price"]').prop("readonly", true);
             }
@@ -390,6 +390,10 @@
             //添加图片end·····································································
 
             {if $itemCouponInfo.status == -1}
+
+            //页面打开插入删除图标
+            var delbtn = '<i class="delbtn mui-icon mui-icon-close"></i>';
+            $(".operationDiv img").before(delbtn);
 
             //添加标题
             $(".titleClass").on('tap', '', function () {
@@ -467,12 +471,6 @@
 
         })
 
-
-        // 插入删除按钮
-        function delbtnFunction() {
-            var delbtn = '<i class="delbtn mui-icon mui-icon-close"></i>';
-            $(".operationDiv img").before(delbtn);
-        }
 
         //发行对象下拉操作
         function changeType(tID) {
