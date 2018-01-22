@@ -176,13 +176,13 @@
         <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
             <ul class="mui-table-view operation">
                 <h5>
-                    <span class="type"></span>
+                    <span class="type">评价一下</span>
                     <a href="#fbcomment" class="mui-icon mui-icon-closeempty"></a>
                 </h5>
-                <li class="mui-table-view-cell listli">
-                    <textarea rows="4" class="comment" placeholder="为这个活动做做评价吧。"></textarea>
+                <li class="listli">
+                    <textarea rows="4" class="comment" placeholder="为这个比赛做做评价吧。"></textarea>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli commentBtn">提交申请</li>
+                <li class="mui-col-xs-12 opli commentBtn">发表</li>
             </ul>
         </div>
     </div>
@@ -360,6 +360,14 @@
             }
         }
 
+        // 时间待定显示
+        function timeShow() {
+            var match_time = "{$matchInfo.match_time}";
+            if (match_time == "1970-01-01 08:00") {
+                $(".match_time").text("待定");
+            }
+        }
+
         // 判断身份显示操作按钮
         function ststuShow() {
             var teamrole = "{$teamrole}";
@@ -371,21 +379,14 @@
                 $(".status4").show();
             }
 
-            if (is_finished == 1) {
-                $(".status1").show();
-            } else {
-                $(".status2").show();
-            }
+            // if (is_finished == 1) {
+            //     $(".status1").show();
+            // } else {
+            //     $(".status2").show();
+            // }
         }
 
-        // 时间待定显示
-        function timeShow() {
-            var match_time = "{$matchInfo.match_time}";
 
-            if (match_time == "1970-01-01 08:00") {
-                $(".match_time").text("待定");
-            }
-        }
 
 
         //下拉刷新具体业务实现
@@ -422,6 +423,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 success: function (data) {
                     console.log(data)
+                    console.log(00)
                     var newli = '';
                     if (data.code == 200) {
                         $(".comment_count").text(data.data.length);

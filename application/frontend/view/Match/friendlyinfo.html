@@ -70,7 +70,7 @@
                 </li>
                 <li class="mui-table-view-cell listli border-b">
                     <label>时间</label>
-                    <span>{$matchInfo.match_time}</span>
+                    <span class="match_time">{$matchInfo.match_time}</span>
                 </li>
             </ul>
 
@@ -165,8 +165,7 @@
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
                         <label class="mui-text-left">所属球队</label>
-                        <span class="select-row selectTeam">
-                        </span>
+                        <span class="select-row selectTeam wd60"></span>
                     </div>
                 </div>
                 <div class="mui-input-row">
@@ -205,6 +204,7 @@
             pulldownRefresh(); //页面打开时获取一次最新评论信息
             isthumbsup(); //点赞状态
             toTeam();
+            timeShow();
 
             //点赞功能
             $(".thumbsup").on('click', function () {
@@ -271,7 +271,7 @@
                             mui.toast("已发送应战申请，请耐心等待回复。");
                             mui('#matchPK').popover('toggle');
                         } else {
-                            mui.toast(data.msg);
+                            mui.toast("请选择球队");
                         }
                     },
                     error: function (xhr, type, errorThrown) {
@@ -281,6 +281,14 @@
                 });
             })
         })
+
+        // 时间待定显示
+        function timeShow() {
+            var match_time = "{$matchInfo.match_time}";
+            if (match_time == "1970-01-01 08:00") {
+                $(".match_time").text("待定");
+            }
+        }
 
         // 点赞状态
         function isthumbsup() {
