@@ -121,20 +121,29 @@
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
-
+                {if $itemCouponInfo.status == -1}
                 <div class="mui-input-row btnTime" data-options='{"beginYear":2017,"endYear":2030,"type":"date"}'>
                     <div class="mui-navigate-right">
                         <label>有效期开始时间</label>
-                        <span id="resultStart" class="domData" name="starts">{$itemCouponInfo.start}</span>
+                        <span class="domData" name="starts">{$itemCouponInfo.start}</span>
                     </div>
                 </div>
-
                 <div class="mui-input-row btnTime" data-options='{"beginYear":2017,"endYear":2030,"type":"date"}'>
                     <div class="mui-navigate-right">
                         <label>有效期结束时间</label>
-                        <span id="resultEnd" class="domData" name="ends">{$itemCouponInfo.end}</span>
+                        <span class="domData" name="ends">{$itemCouponInfo.end}</span>
                     </div>
                 </div>
+                {else /}
+                <div class="mui-input-row">
+                        <label>有效期开始时间</label>
+                        <span class="domData" name="starts">{$itemCouponInfo.start}</span>
+                </div>
+                <div class="mui-input-row">
+                        <label>有效期结束时间</label>
+                        <span class="domData" name="ends">{$itemCouponInfo.end}</span>
+                </div>
+                {/if}
                 <div class="mui-input-row">
                     <label>卡券价值</label>
                     <input type="text" name="price" class="data" value="{$itemCouponInfo.price}" placeholder="请输入价值">
@@ -154,7 +163,7 @@
                 </div>
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
-                        <label>生效状态</label>
+                        <label>发布状态</label>
                         <span class="select-row freeStatus">
                             <select  class="data" name="status">
                                 <option value="-1">暂不发布</option>
@@ -176,11 +185,12 @@
                     <span class="course">卡券简介</span>
                 </div>
 
+                <div class="mui-input-row h-auto" style="margin-bottom: 10px">
+                    <textarea name="coupon_des" class="data coupon_des" style="display: none"></textarea>
+                    <div class="introBox">{$itemCouponInfo.coupon_des}</div>
+                </div>
                 <div class="mui-input-row h-auto">
-                    <div class="mui-input-row h-auto" style="margin-bottom: 10px">
-                        <textarea name="coupon_des" class="data coupon_des" style="display: none"></textarea>
-                        <div class="introBox">{$itemCouponInfo.coupon_des}</div>
-                    </div>
+                    {if $itemCouponInfo.status == -1}
                     <div class="mui-row mui-text-center mui-row-operation">
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
                             <a class="frame up pd">上移</a>
@@ -201,6 +211,9 @@
                             </a>
                         </div>
                     </div>
+                    {else /}
+                    <p class="mui-text-center f12">温馨提示：已发布卡券的有效期、价值及详情不允许修改。</p>
+                    {/if}
                 </div>
 
             </form>
@@ -314,6 +327,7 @@
 
         $(function () {
 
+            delbtnFunction();
             //初始值赋值
             $('#eventObject').find('option[value="{$itemCouponInfo.target_type}"]').prop("selected", true);
             $('select[name="status"]').find('option[value="{$itemCouponInfo.status}"]').prop("selected", true);
@@ -321,7 +335,7 @@
             changeType("{$itemCouponInfo.target_type}");
             var cStatus = "{$itemCouponInfo.status}";
             if(cStatus=="1"){
-                $('select[name="status"]').find('option[value="1"]').prop("disabled", true);
+                $('select[name="status"]').find('option[value="1"]').parent().prop("disabled", true);
                 $('input[name="coupon"]').prop("readonly", true);
                 $('input[name="price"]').prop("readonly", true);
             }
@@ -374,6 +388,8 @@
                 }
             });
             //添加图片end·····································································
+
+            {if $itemCouponInfo.status == -1}
 
             //添加标题
             $(".titleClass").on('tap', '', function () {
@@ -438,7 +454,6 @@
                 }
             });
 
-
             // 上移动
             $(document).on('tap', '.up', function () {
                 $(".bgorange").prev().insertAfter(".bgorange");
@@ -448,8 +463,16 @@
                 $(".bgorange").next().insertBefore(".bgorange");
             });
 
+            {/if}
+
         })
 
+
+        // 插入删除按钮
+        function delbtnFunction() {
+            var delbtn = '<i class="delbtn mui-icon mui-icon-close"></i>';
+            $(".operationDiv img").before(delbtn);
+        }
 
         //发行对象下拉操作
         function changeType(tID) {
