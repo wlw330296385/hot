@@ -524,46 +524,58 @@ class Match extends Base
             if (input('?choice_time')) {
                 $choiceTime = input('choice_time');
                 // 生成未来时间戳
-                switch ($choiceTime) {
-                    case 1: {
-                        $dateTimeStamp = strtotime("+7 days");
-                        break;
+                if (!empty($choiceTime)) {
+                    switch ($choiceTime) {
+                        case 1: {
+                            $dateTimeStamp = strtotime("+7 days");
+                            break;
+                        }
+                        case 2: {
+                            $dateTimeStamp = strtotime("+15 days");
+                            break;
+                        }
+                        case 3: {
+                            $dateTimeStamp = strtotime("+30 days");
+                            break;
+                        }
                     }
-                    case 2: {
-                        $dateTimeStamp = strtotime("+15 days");
-                        break;
-                    }
-                    case 3: {
-                        $dateTimeStamp = strtotime("+30 days");
-                        break;
-                    }
-                    default: {
-                        // 当天时间戳
-                        $dateTimeStamp = time();
-                    }
+                    //dump($dateTimeStamp);
+                    // match_time区间 查询条件组合:当前时间至所选未来时间
+                    $endDate = getStartAndEndUnixTimestamp(date('Y', $dateTimeStamp), date('m', $dateTimeStamp), date('d', $dateTimeStamp));
+                    //dump($endDate);
+                    $map['match_time'] = ['between', [ time(), $endDate['end'] ]];
                 }
                 unset($map['choice_time']);
-                //dump($dateTimeStamp);
-                // match_time区间 查询条件组合:当前时间至所选未来时间
-                $endDate = getStartAndEndUnixTimestamp(date('Y', $dateTimeStamp), date('m', $dateTimeStamp), date('d', $dateTimeStamp));
-                //dump($endDate);
-                $map['match_time'] = ['between', [ time(), $endDate['end'] ]];
             }
             
             // 关键字搜索：发布比赛的球队名(team)
-            //if (input('?param.keyword')) {
-                $keyword =input('keyword');
-                // 关键字内容
-                if (!empty($keyword) || !ctype_space($keyword) ) {
-                    $map['team'] = ['like', "%$keyword%"];
-                }
+            $keyword =input('keyword');
+            if (input('?param.keyword') ) {
                 unset($map['keyword']);
-            //}
+                // 关键字内容
+                if ($keyword != null) {
+                    if (!empty($keyword) || !ctype_space($keyword) ) {
+                        $map['team'] = ['like', "%$keyword%"];
+                    }
+                }
+            }
+            // 关键字null情况处理
+            if ($keyword ==null) {
+                unset($map['keyword']);
+            }
+
+            // 默认地区为空
+            if (input('?param.area') ) {
+                if (empty($map['area'])) {
+                    unset($map['area']);
+                }
+            }
+            
             if (input('?param.page')) {
                 unset($map['page']);
             }
             // 组合查询条件 end
-            
+
             $matchS = new MatchService();
             $result = $matchS->matchListPaginator($map);
             if ($result) {
@@ -594,43 +606,57 @@ class Match extends Base
                 unset($map['year']);
             }
             // 传入比赛未来时间选择 1：7天/2：15天/3：30天
+            // 传入比赛未来时间选择 1：7天/2：15天/3：30天
             if (input('?choice_time')) {
                 $choiceTime = input('choice_time');
                 // 生成未来时间戳
-                switch ($choiceTime) {
-                    case 1: {
-                        $dateTimeStamp = strtotime("+7 days");
-                        break;
+                if (!empty($choiceTime)) {
+                    switch ($choiceTime) {
+                        case 1: {
+                            $dateTimeStamp = strtotime("+7 days");
+                            break;
+                        }
+                        case 2: {
+                            $dateTimeStamp = strtotime("+15 days");
+                            break;
+                        }
+                        case 3: {
+                            $dateTimeStamp = strtotime("+30 days");
+                            break;
+                        }
                     }
-                    case 2: {
-                        $dateTimeStamp = strtotime("+15 days");
-                        break;
-                    }
-                    case 3: {
-                        $dateTimeStamp = strtotime("+30 days");
-                        break;
-                    }
-                    default: {
-                        // 当天时间戳
-                        $dateTimeStamp = time();
-                    }
+                    //dump($dateTimeStamp);
+                    // match_time区间 查询条件组合:当前时间至所选未来时间
+                    $endDate = getStartAndEndUnixTimestamp(date('Y', $dateTimeStamp), date('m', $dateTimeStamp), date('d', $dateTimeStamp));
+                    //dump($endDate);
+                    $map['match_time'] = ['between', [ time(), $endDate['end'] ]];
                 }
                 unset($map['choice_time']);
-                //dump($dateTimeStamp);
-                // match_time区间 查询条件组合:当前时间至所选未来时间
-                $endDate = getStartAndEndUnixTimestamp(date('Y', $dateTimeStamp), date('m', $dateTimeStamp), date('d', $dateTimeStamp));
-                //dump($endDate);
-                $map['match_time'] = ['between', [ time(), $endDate['end'] ]];
             }
-            // 关键字搜索：发布比赛的球队名(match_team)
-            if (input('?keyword')) {
-                $keyword =input('keyword');
+
+            // 关键字搜索：发布比赛的球队名(team)
+            $keyword =input('keyword');
+            if (input('?param.keyword') ) {
+                unset($map['keyword']);
                 // 关键字内容
-                if (!empty($keyword) && !ctype_space($keyword) ) {
-                    $map['team'] = ['like', "%$keyword%"];
+                if ($keyword != null) {
+                    if (!empty($keyword) || !ctype_space($keyword) ) {
+                        $map['team'] = ['like', "%$keyword%"];
+                    }
                 }
+            }
+            // 关键字null情况处理
+            if ($keyword ==null) {
                 unset($map['keyword']);
             }
+
+            // 默认地区为空
+            if (input('?param.area') ) {
+                if (empty($map['area'])) {
+                    unset($map['area']);
+                }
+            }
+
             if (input('?param.page')) {
                 unset($map['page']);
             }
