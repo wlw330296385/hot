@@ -75,6 +75,7 @@ class TeamService {
             $result['type_text'] = $res->type;
             // 计算球队胜率
             if ($result['match_num'] > 0) {
+                $result['match_lose'] = $result['match_num']-$result['match_win'];
                 $result['win_rate'] = ($result['match_win']/$result['match_num'])*100 . '%';
             } else {
                 $result['win_rate'] = 0;

@@ -12,5 +12,7 @@ class Apply extends Model {
     //                         'type',
     //                         ];
 
-  
+    public function member() {
+        return $this->belongsTo('Member');
+    }
 }

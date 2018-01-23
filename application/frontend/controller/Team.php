@@ -86,6 +86,16 @@ class Team extends Base {
 
     // 球队首页
     public function teaminfo() {
+        // 变量标识$isMemberInTeam：判断当前会员有无在球队正式成员
+        $teamS = new TeamService();
+        $teamMemberInfo = $teamS->getTeamMemberInfo([
+            'team_id' => $this->team_id,
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        $isMemberInTeam = ($teamMemberInfo) ? 1 : 0;
+        
+        $this->assign('isMemberInTeam', $isMemberInTeam);
         return view('Team/teamInfo');
     }
 

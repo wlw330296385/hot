@@ -12,7 +12,5 @@ class Article extends Model {
     //                         'type',
     //                         ];
 
-    public function member() {
-        return $this->belongsTo('Member');
-    }
+
 }
