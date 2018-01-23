@@ -7,47 +7,62 @@
 {block name="page-content"}
 <div class="col-md-12 col-sm-12">
     <div class="box no-border">
-        <form role="form" action="" method="post">
+        <form role="form" action="" method="post" enctype="multipart/form-data" >
             {:token()}
             <div class="box-body">
                 <div class="form-group">
                     <label for="">标题</label>
-                    <input type="text" class="form-control" placeholder="用户名" name="member">
+                    <input type="text" class="form-control" placeholder="请输入标题" name="title">
                 </div>
                 <div class="form-group">
                     <label for="">摘要</label>
-                    <input type="text" class="form-control" placeholder="电话号码" name="telephone">
+                    <input type="text" class="form-control" placeholder="请输入摘要" name="abstract">
                 </div>
+
                 <div class="form-group">
                     <label for="">封面图</label>
-                    <input type="text" class="form-control" placeholder="学生姓名" name="student">
-                </div>
-                <div class="form-group">
-                    <label for="">内容</label>
-                    <div class="row">
-                        <div class="box box-info">
-                            <div class="box-header">
-                                <h3 class="box-title">CK Editor
-                                    <small>Advanced and full of features</small>
-                                </h3>
-                                <!-- tools box -->
-                                <div class="pull-right box-tools">
-                                    <button type="button" class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                        <i class="fa fa-minus"></i></button>
-                                        <button type="button" class="btn btn-info btn-sm" data-widget="remove" data-toggle="tooltip" title="Remove">
-                                            <i class="fa fa-times"></i></button>
+                    <div class="box-header">
+                            
+                                
+
+                    
+                        <div class="col-sm-12 col-md-12">
+                            <a class="btn-banner" href="#" title="点击替换图片">
+                                <img class="img-thumbnail" id="uploader-preview1" src="">
+                                <div class="row">
+                                    <div id="filePicker1">选择上传</div>
                                 </div>
-                            <!-- /. tools -->
-                            </div>
-                            <!-- /.box-header -->
-                            <div class="box-body pad">
-                                <textarea id="editor1" name="editor1" rows="10" cols="80">
-                                    请在次编辑文章内容
-                                </textarea>
-                            </div>
+                                <input id="uploader-input1" type="hidden" name="covers" value="">
+                            </a>
                         </div>
+                        <!-- <div class="col-sm-2 col-md-2"></div> -->
+                        <small>文章封面图</small>
                     </div>
                 </div>
+
+
+
+            
+
+
+                
+                <div class="form-group">    
+                    <div class="box box-info">
+                    
+                        <div class="box-header">
+                            <h3 class="box-title">内容
+                                <small>文章图文内容</small>
+                            </h3>
+
+                        </div>
+                        <script type="text/javascript" charset="utf-8" src="/static/UEditor/ueditor.config.js"></script>
+                        <script type="text/javascript" charset="utf-8" src="/static/UEditor/ueditor.all.js"></script>
+                        <script type="text/plain" id="content" name="content" style="width:800px;"></script>
+                        <script type="text/javascript">var ue_info = UE.getEditor("content");</script>
+                    </div>
+                </div>
+
+
             </div>
 
         <div class="box-footer">
@@ -63,16 +78,10 @@
 
 
 {block name='js'}
-<!-- CK Editor -->
-<script src="https://cdn.ckeditor.com/4.5.7/standard/ckeditor.js"></script>
 
+<script src="/static/backend/plugins/webuploader/webuploader.min.js"></script>
 <script>
-  $(function () {
-    // Replace the <textarea id="editor1"> with a CKEditor
-    // instance, using default configuration.
-    CKEDITOR.replace('editor1');
-    //bootstrap WYSIHTML5 - text editor
-    $(".textarea").wysihtml5();
-  });
+var serverUrl = "{:url('Upload/uploadImg',['dir'=>'article'])}";
 </script>
+<script src="/static/backend/adminlte/js/upload/banner.js"></script>
 {/block}

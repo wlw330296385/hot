@@ -150,7 +150,7 @@ class LessonMember extends Base{
     }
 
     // 获取训练营相同价格的课程带分页带搜索
-    public function getSamePriceLessonMemberListNoPageApi(){
+    public function getSamePriceLessonMemberListByPageApi(){
         try{
             $lesson_id = input('param.lesson_id');
             $keyword = input('param.keyword');

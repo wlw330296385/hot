@@ -36,20 +36,51 @@ class Article extends Backend {
     }
 
     public function articleInfo(){
+        $article_id = input('param.article_id');
+        $map['id'] = $article_id;
+        $articleInfo = $this->ArticleService->getArticleInfo($map);
 
-
+        $this->assign('articleInfo',$articleInfo);
         return  view('article/articleInfo');
     }
 
     public function createArticle(){
-
+        if(request()->isPost()){
+            $data = input('post.');
+            $data['member_id']=$this->admin['id'];
+            $data['member'] = $this->admin['username'];
+            $result = $this->ArticleService->createArticle($data);
+            if($result['code'] == 200){
+                $this->success($result['msg'],'/admin/Article/articleList');
+            }else{
+                $this->error($result['msg']);
+            }
+        }
 
         return view('article/createArticle');
     }
 
 
     public function updateArticle(){
+        $article_id = input('param.article_id');
+        $map['id'] = $article_id;
+        $articleInfo = $this->ArticleService->getArticleInfo($map);
 
+
+        if(request()->isPost()){
+            $data = input('post.');
+            $data['member_id']=$this->admin['id'];
+            $data['member'] = $this->admin['username'];
+            $result = $this->ArticleService->createArticle($data);
+            if($result['code'] == 200){
+                $this->success($result['msg'],url('admin/Article/articleInfo',['article_id'=>$article_id]));
+            }else{
+                $this->error($result['msg']);
+            }
+        }
+
+
+        $this->assign('articleInfo',$articleInfo);
 
         return view('article/updateArticle');
     }

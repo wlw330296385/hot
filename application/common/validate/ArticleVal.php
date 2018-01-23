@@ -1,7 +1,7 @@
 <?php 
 namespace app\common\validate;
 use think\Validate;
-class ArticledVal extends Validate{
+class ArticleVal extends Validate{
 
 
    protected $rule = [
