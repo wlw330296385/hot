@@ -198,11 +198,35 @@
 
         $(function () {
 
-            initialEds(); //活动详情为空的提示
-            ststuShow() //判断身份显示操作按钮
             pulldownRefresh(); //页面打开时获取一次最新评论信息
             isthumbsup(); //点赞状态
             toSignUpList()
+
+            // 活动详情默认的提示
+            if ($(".introBox").html() == '') {
+                $(".introBox").append("<p class='nohave'>还没有活动详情描述哦</p>")
+            }
+
+            // 判断身份显示操作按钮
+            var teamrole = "{$teamrole}";
+            var is_finished = "{$eventInfo.is_finished}";
+
+            if (teamrole > 0 && is_finished == "已结束") {
+                $(".status3").show();
+            } else if (teamrole > 0 && is_finished == "未开始") {
+                $(".status4").show();
+            }
+
+            if (teamrole == 0 && is_finished == "已结束") {
+                $(".status1").show();
+            } else if (teamrole == 0 && is_finished == "未开始") {
+                $(".status2").show();
+            }
+
+            // 报名/参与人员的文字显示
+            if (is_finished == "已结束") {
+                $(".statusText").text("参与者");
+            }
 
             //报名功能
             $(".signupBtn").on('tap', function () {
@@ -219,8 +243,9 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
-                            mui.alert('报名成功', '确定');
-                            location.reload();
+                            mui.alert('报名成功', function () {
+                                location.reload();
+                            });
                         } else {
                             mui.toast(data.msg);
                         }
@@ -314,6 +339,7 @@
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
+                        $(".thumbup_count").text(data.thumbsup_count);
                         if (data.thumbsup == 1) {
                             $(".thumbsup").css("color", "red");
                         } else {
@@ -328,36 +354,6 @@
                     console.log(type);
                 }
             });
-        }
-
-        // 活动详情默认的提示
-        function initialEds() {
-            if ($(".introBox").html() == '') {
-                $(".introBox").append("<p class='nohave'>还没有活动详情描述哦</p>")
-            }
-        }
-
-        // 判断身份显示操作按钮
-        function ststuShow() {
-            var teamrole = "{$teamrole}";
-            var is_finished = "{$eventInfo.is_finished}";
-
-            if (teamrole > 0 && is_finished == "已结束") {
-                $(".status3").show();
-            } else if (teamrole > 0 && is_finished == "未开始") {
-                $(".status4").show();
-            }
-
-            // if (is_finished == "已结束") {
-            //     $(".status1").show();
-            // } else {
-            //     $(".status2").show();
-            // }
-
-            // 报名/参与人员的文字显示
-            if (is_finished == "已结束") {
-                $(".statusText").text("参与者");
-            }
         }
 
         //获取已经报名的活动人员列表
@@ -431,7 +427,6 @@
                     var newli = '';
                     if (data.code == 200) {
                         $(".comment_count").text(data.data.length);
-                        $(".thumbup_count").text(data.thumbup_count);
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }

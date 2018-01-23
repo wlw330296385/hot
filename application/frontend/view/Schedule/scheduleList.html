@@ -11,18 +11,30 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <style type="text/css">
-        .mui-icon-checkmarkempty{
+        .mui-icon-checkmarkempty {
             font-size: 32px !important;
             margin-left: -5px;
             margin-right: 5px;
             vertical-align: sub;
         }
+
         .colorgray {
-            color:#CCC !important;
+            color: #CCC !important;
         }
-        .mui-row .mui-text-left{
-            color:#333;
+
+        .mui-row .mui-text-left {
+            color: #333;
+        }
+
+        .location-choise{
+            padding-right: 6px !important
+        }
+        .location-choise:after {
+           display: none !important
         }
     </style>
 </head>
@@ -38,8 +50,6 @@
                 <a class="mui-control-item offlineScheduleList" href="#offlineScheduleList">未审课时</a>
             </div>
         </div>
-
-
     </header>
 
     <div class="mui-content">
@@ -66,8 +76,33 @@
                     </li>
                 </ul>
             </div>
+
+            <div class="mui-row location-frame" style="padding:0;border-bottom:3px solid #efeff4">
+                <div class="mui-col-sm-6 mui-col-xs-6 mui-search">
+                    <input type="search" class="mui-sreach keyword" placeholder="请输入班级名称">
+                </div>
+                <div class="mui-col-sm-1 mui-col-xs-1">
+                    <span id="searchBtn" class="fr colororange" style="line-height:34px;">搜索</span>
+                </div>
+                <div class="mui-col-sm-2 mui-col-xs-2" style="line-height:27px">
+                    <span class="location-choise" style="margin-left:0">
+                        <select class="searchType">
+                            <option value="班级">搜班级</option>
+                            <option value="学生">搜学生</option>
+                        </select>
+                    </span>
+                </div>
+                <div class="mui-col-sm-3 mui-col-xs-3 mui-text-center" style="line-height:34px">
+                    <span id="demo3" data-options='{"type":"month"}' class="btn">
+                        <span id="result" class="ui-alert">2018年01月</span>
+                    </span>
+                    <input id="year" type="hidden" name="year" value="">
+                    <input id="month" type="hidden" name="month" value="">
+                </div>
+            </div>
+
             <div class="tab-pullRefresh">
-                <div id="campScheduleList" class="mui-scroll-wrapper mui-control-content mui-active" style="top:125px;">
+                <div id="campScheduleList" class="mui-scroll-wrapper mui-control-content mui-active" style="top:156px;">
                     <div class="mui-scroll">
                         <ul class="mui-table-view mui-text-center detalis-list list scheduleAll"></ul>
                     </div>
@@ -91,6 +126,8 @@
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="/static/frontend/js/wooApi.js"></script>
 <script src="/static/frontend/js/common.js"></script>
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
 <script>
     //初始化
     mui.init({
@@ -101,8 +138,65 @@
         window.top.location.href = this.href;
     });
 
+    (function ($, doc) {
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+            //开始时间
+            var result = $('#result')[0];
+            var btns = $('.btn');
+            btns.each(function (i, btn) {
+                btn.addEventListener('tap', function () {
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var id = this.getAttribute('id');
+                    var picker = new $.DtPicker(options);
+                    picker.show(function (rs) {
+                        result.innerText = rs.y.text + '年' + rs.m.text + '月';
+                        document.getElementById('month').value = rs.m.text;
+                        document.getElementById('year').value = rs.y.text;
+                        picker.dispose();
+                    });
+                }, false);
+            });
+        });
+    })(mui, document);
 
+    var keyword = '';
     $(function () {
+
+        // // 月份选择改变
+        // $('.month-select').change(function () {
+        //     var month_txt = $(this).val();
+        //     month_txt = month_txt.substring(0, month_txt.length - 1);
+        //     $('input[name=month]').val(month_txt);
+        //     toList();
+        // });
+
+        // // 年份选择改变
+        // $('.year-select').change(function () {
+        //     var year_txt = $(this).val();
+        //     year_txt = year_txt.substring(0, year_txt.length - 1);
+        //     $('input[name=year]').val(year_txt);
+        //     toList();
+        // });
+
+        // //搜索课时
+        // $("#searchBtn").on("tap", function () {
+        //     keyword = $(".keyword").val();
+        //     toList();
+        // });
+
+        //选择搜索对应显示内容
+        $(".searchType").change('', function () {
+            var chValue = $(this).children("option:selected").val();
+            if (chValue == "班级") {
+                $(".mui-sreach").attr('placeholder', '请输入班级名称');
+            } else {
+                $(".mui-sreach").attr('placeholder', '请输入学生名称');
+            }
+        });
 
         //初始化全局变量
         var onCount = 1;
@@ -233,17 +327,18 @@
     // 切换tab显示隐藏所需内容
     mui("body").on("tap", ".campScheduleList", function () {
         $(".nav-list-frame").show();
+        $(".location-frame").show();
     });
 
     mui("body").on("tap", ".onlineScheduleList", function () {
         $(".nav-list-frame").hide();
+        $(".location-frame").hide();
     });
 
     mui("body").on("tap", ".offlineScheduleList", function () {
         $(".nav-list-frame").hide();
+        $(".location-frame").hide();
     });
-
-
 
     //接口获取数据并追加到页面
     var toList = function (wList, page, gType, status) {
@@ -253,6 +348,7 @@
         mui.ajax({
             url: url,
             data: {
+                // keyword:keyword,
                 camp_id: campID,
                 status: status
             },
@@ -269,7 +365,7 @@
                     var sheng = 0;
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "/frontend/schedule/scheduleinfo" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + campID;
-                        sheng = data.data.data[i].status==1?"colorgreen":"colorgray";
+                        sheng = data.data.data[i].status == 1 ? "colorgreen" : "colorgray";
                         newli += '<li class="mui-table-view-cell mui-media">';
                         if (status == -1) {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为已审</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
@@ -281,11 +377,10 @@
                     }
                 }
 
-
                 // 根据状态获取课时列表
                 if (gType == 1) {
                     //上拉刷新
-                    if (status == undefined||status == "") {
+                    if (status == undefined || status == "") {
                         $(".scheduleAll").empty().append(newli);
                     } else {
                         $(".schedule" + status).empty().append(newli);
@@ -293,12 +388,12 @@
                     mui('#' + wList).pullRefresh().endPulldownToRefresh();
                     mui('#' + wList).pullRefresh().refresh(true);
                     if (newli == '') {
-                        $(".schedule" + status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        $(".schedule" + status).append('<p class="nodata">没有相关数据哦</p>');
                     }
 
                 } else {
                     //下拉加载 gType==2
-                    if (status == undefined||status == "") {
+                    if (status == undefined || status == "") {
                         $(".scheduleAll").append(newli);
                     } else {
                         $(".schedule" + status).append(newli);
