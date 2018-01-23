@@ -959,7 +959,7 @@ class Team extends Base {
             if ($result) {
                 // 返回点赞数
                 $thumbupCount = $teamS->getCommentThumbCount($map);
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result, 'thumbup_count' => $thumbupCount];
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_401')];
             }
@@ -989,7 +989,7 @@ class Team extends Base {
             if ($result) {
                 // 返回点赞数
                 $thumbupCount = $teamS->getCommentThumbCount($map);
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result, 'thumbup_count' => $thumbupCount];
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result, 'thumbsup_count' => $thumbupCount];
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_401')];
             }
@@ -1080,11 +1080,11 @@ class Team extends Base {
             $result = $teamS->saveComment($data);
             if ($result['code'] == 200) {
                 // 返回最新的点赞数统计
-                $thumbupCount = $teamS->getCommentThumbCount([
+                $thumbsupCount = $teamS->getCommentThumbCount([
                     'comment_type' => $comment_type,
                     'commented_id' => $commented_id,
                 ]);
-                $result['thumbup_count'] = $thumbupCount;
+                $result['thumbsup_count'] = $thumbsupCount;
             }
             return json($result);
         } catch(Exception $e) {
@@ -1113,7 +1113,12 @@ class Team extends Base {
             $commentInfo = $teamS->getCommentInfo($map);
             // 点赞字段值
             $thumbsup = ($commentInfo) ? $commentInfo['thumbsup'] : 0;
-            return json(['code' => 200, 'msg' => __lang('MSG_200'), 'thumbsup' => $thumbsup]);
+            // 点赞数统计
+            $thumbupCount = $teamS->getCommentThumbCount([
+                'comment_type' => $comment_type,
+                'commented_id' => $commented_id,
+            ]);
+            return json(['code' => 200, 'msg' => __lang('MSG_200'), 'thumbsup' => $thumbsup, 'thumbsup_count' => $thumbupCount]);
         } catch(Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
