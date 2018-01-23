@@ -271,9 +271,19 @@ class Team extends Base {
         if (!empty($eventInfo['album'])) {
             $eventInfo['album'] = json_decode($eventInfo['album'], true);
         }
-        // 获取会员在球队角色身份
-        $teamrole = $teamS->checkMemberTeamRole($eventInfo['team_id'], $this->memberInfo['id']);
         $memberlist = $teamS->teamEventMembers(['event_id' => $event_id]);
+
+        // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
+        $teamMemberInfo = $teamS->getTeamMemberInfo([
+            'team_id' => $this->team_id,
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if ($teamMemberInfo) {
+            $teamrole = $teamS->checkMemberTeamRole($eventInfo['team_id'], $this->memberInfo['id']);
+        } else {
+            $teamrole = -1;
+        }
 
         $this->assign('teamrole', $teamrole);
         $this->assign('eventInfo', $eventInfo);
@@ -314,10 +324,25 @@ class Team extends Base {
                 $matchInfo['record'] = $matchRecordInfo;
             }
         }
-        // 进入编辑录入入口判断 获取会员在球队角色身份
-        $teamrole = $teamS->checkMemberTeamRole($matchInfo['team_id'], $this->memberInfo['id']);
+
+        // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
+        $teamMemberInfo = $teamS->getTeamMemberInfo([
+            'team_id' => $this->team_id,
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if ($teamMemberInfo) {
+            $teamrole = $teamS->checkMemberTeamRole($matchInfo['team_id'], $this->memberInfo['id']);
+        } else {
+            $teamrole = -1;
+        }
+
+        // 当前球队成员总数
+        $countTeamMember = $teamS->getTeamMemberCount([ 'team_id' => $matchInfo['team_id'] ]);
+
 
         $this->assign('teamrole', $teamrole);
+        $this->assign('countTeamMember', $countTeamMember);
         $this->assign('matchInfo', $matchInfo);
         return view('Team/matchInfo');
     }
@@ -334,7 +359,7 @@ class Team extends Base {
 
         // $directentry 1为新增并录入比赛
         $directentry = 0;
-        // 如果有event_id参数即修改活动，没有就新增活动并录入活动（事后录活动）
+        // 如果有match_id参数即修改活动，没有就新增比赛并录入比赛成绩（事后录比赛）
         if ($match_id === 0) {
             $matchInfo = [
                 'id' => 0,
@@ -367,7 +392,7 @@ class Team extends Base {
 
     // 比赛管理列表
     public function matchlistofteam() {
-        return view('Team/matchlistofteam');
+        return view('Team/matchListOfTeam');
     }
 
     // 比赛报名/出席人员名单

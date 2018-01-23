@@ -209,6 +209,13 @@ class TeamService {
         }
     }
 
+    // 获取球队-队员统计数
+    public function getTeamMemberCount($map) {
+        $model = new TeamMember();
+        $query = $model->where($map)->count();
+        return $query;
+    }
+
     // 保存team_member_role 会员-球队角色关联信息
     public function saveTeamMemberRole($data, $team_id) {
         $model = new TeamMemberRole();

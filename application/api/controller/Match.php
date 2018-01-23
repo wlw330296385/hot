@@ -319,8 +319,8 @@ class Match extends Base
                             $homeMember[$k]['team'] = $recordData['home_team'];
                             $homeMember[$k]['match_record_id'] = $recordData['id'];
                             $member = db('member')->where('id', $val['member_id'])->find();
-                            $homeMember[$k]['member_avatar'] = $member['avatar'];
-                            $homeMember[$k]['member_tel'] = $member['telephone'];
+                            $homeMember[$k]['avatar'] = $member['avatar'];
+                            $homeMember[$k]['contact_tel'] = $member['telephone'];
                             $homeMember[$k]['status'] = 1;
                             // 若比赛完成 比赛参赛球队成员 match_record_member is_attend=1
                             if ($isFinished == 1) {
@@ -341,6 +341,7 @@ class Match extends Base
                             if ($hasMatchRecordMember2) {
                                 $memberArr[$k]['id'] = $hasMatchRecordMember2['id'];
                             }
+                            $homeMember[$k]['match'] = $matchName;
                             $memberArr[$k]['status'] = -1;
                         }
                         $resultsaveMatchRecordMember2 = $matchS->saveAllMatchRecordMember($memberArr);
@@ -396,6 +397,9 @@ class Match extends Base
                             }
                             $matchS->saveHistoryTeam($dataHistoryTeam);
                             // 保存球队历史比赛对手信息 end
+
+                            // 发送比赛完成信息给对手球队
+                            // 发送比赛完成信息给对手球队 end
                         }
                         // 比赛完成的操作 end
                         // 返回响应结果
@@ -449,8 +453,8 @@ class Match extends Base
                             $homeMember[$k]['team'] = $recordData['home_team'];
                             $homeMember[$k]['match_record_id'] = $resultSaveMatchRecord['data'];
                             $member = db('member')->where('id', $val['member_id'])->find();
-                            $homeMember[$k]['member_avatar'] = $member['avatar'];
-                            $homeMember[$k]['member_tel'] = $member['telephone'];
+                            $homeMember[$k]['avatar'] = $member['avatar'];
+                            $homeMember[$k]['contact_tel'] = $member['telephone'];
                             $homeMember[$k]['status'] = 1;
                             $homeMember[$k]['is_attend'] = 1;
                         }
@@ -494,6 +498,9 @@ class Match extends Base
                         }
                         $matchS->saveHistoryTeam($dataHistoryTeam);
                         // 保存球队历史比赛对手信息 end
+
+                        // 发送比赛完成信息给对手球队
+                        // 发送比赛完成信息给对手球队 end
                     }
                     // 比赛完成的操作 end
                 }
@@ -823,8 +830,8 @@ class Match extends Base
                     'match_record_id' => $match['record']['id'],
                     'member_id' => $this->memberInfo['id'],
                     'member' => $this->memberInfo['member'],
-                    'member_avatar' => $this->memberInfo['avatar'],
-                    'member_tel' => $this->memberInfo['telephone'],
+                    'avatar' => $this->memberInfo['avatar'],
+                    'contact_tel' => $this->memberInfo['telephone'],
                     'status' => 1,
                     'is_apply' => 1
                 ];
@@ -1134,10 +1141,10 @@ class Match extends Base
             $messageS = new MessageService();
             // 输入变量必须要有的字段
             if (!isset($request['match_id'])) {
-                return json(['code' => 100, 'msg' => __lang('MSG_402').'请选择比赛']);
+                return json(['code' => 100, 'msg' => '请选择比赛']);
             }
             if (!isset($request['team_id'])) {
-                return json(['code' => 100, 'msg' => __lang('MSG_402').'请选择球队']);
+                return json(['code' => 100, 'msg' => '请选择球队']);
             }
             // 检查比赛的信息
             $matchInfo = $matchS->getMatch(['id' => $request['match_id']]);
