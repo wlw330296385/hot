@@ -255,9 +255,10 @@ class Match extends Base
         try {
             // 接收输入变量 其中post[record]为match_record保存数据
             $post = input('post.');
-            //dump($post);
-            // 比赛service
+            //dump($post);die;
+            // service
             $matchS = new MatchService();
+            $teamS = new TeamService();
             // post[match_time] 比赛时间转为时间戳格式
             $matchTimeStamp = strtotime($post['match_time']);
             // 比赛完成状态match is_finished标识
@@ -295,6 +296,7 @@ class Match extends Base
                     // 组合match_record保存数据 end
                     // 组合match保存数据
                     $dataMatch = $post;
+                    $dataMatch['match_time'] = $matchTimeStamp;
                     // 更新比赛名称match_name 有选择对手队：当前球队名vs对手队名|无选择对手队：当前球队名友谊赛（对手待定）
                     if (!empty($post['record']['away_team'])) {
                         $matchName = $post['record']['home_team'] . ' vs ' . $post['record']['away_team'];
@@ -307,6 +309,7 @@ class Match extends Base
                     // 保留显示的成员名单（status=1 报名is_apply=1 、出席is_attend=1）
                     if (isset($post['HomeMemberData']) && $post['HomeMemberData'] != "[]") {
                         $homeMember = json_decode($post['HomeMemberData'], true);
+                        $dataUpdateTeamMember = [];
                         foreach ($homeMember as $k => $val) {
                             // 查询有无match_record_member原数据，有则更新原数据否则插入新数据
                             $hasMatchRecordMember = $matchS->getMatchRecordMember(['match_id' => $match['id'], 'match_record_id' => $recordData['id'], 'member_id' => $val['member_id']]);
@@ -325,12 +328,22 @@ class Match extends Base
                             // 若比赛完成 比赛参赛球队成员 match_record_member is_attend=1
                             if ($isFinished == 1) {
                                 $homeMember[$k]['is_attend'] = 1;
+
+                                // 批量更新team_member 比赛数match_num （比赛数据已完成不更新）
+                                $teamMember = $teamS->getTeamMemberInfo(['team_id' => $recordData['home_team_id'], 'member_id' => $val['member_id']]);
+                                //dump($teamMember);
+                                if ($teamMember) {
+                                    $dataUpdateTeamMember[$k]['id'] = $teamMember['id'];
+                                    $dataUpdateTeamMember[$k]['match_num'] = $teamMember['match_num']+1;
+                                }
                             }
                         }
+                        //dump($dataUpdateTeamMember);
                         $saveHomeTeamMemberRes = $matchS->saveAllMatchRecordMember($homeMember);
 //                        if ($saveHomeTeamMemberRes['code'] == 100) {
 //                            return json($saveHomeTeamMemberRes);
 //                        }
+                        $teamS->saveAllTeamMember($dataUpdateTeamMember);
                     }
                     // 剔除不显示的成员名单（无效 status=-1）
                     if (input('?HomeMemberDataDel') && $post['HomeMemberDataDel'] != "[]") {
@@ -362,7 +375,7 @@ class Match extends Base
                         }
                         // 比赛完成的操作
                         if ($isFinished == 1) {
-                            // 更新球队胜场数
+                            // 更新球队胜场数（比赛数据已完成不更新）
                             if ($homeScore > $awayScore) {
                                 db('team')->where('id', $post['team_id'])->inc('match_win', 1)->update();
                             }
@@ -446,6 +459,7 @@ class Match extends Base
                     // 保存参赛球队成员（match_record_member is_attend=1）
                     if (isset($post['HomeMemberData']) && $post['HomeMemberData'] != "[]") {
                         $homeMember = json_decode($post['HomeMemberData'], true);
+                        $dataUpdateTeamMember = [];
                         foreach ($homeMember as $k => $val) {
                             $homeMember[$k]['match_id'] = $resultSaveMatch['data'];
                             $homeMember[$k]['match'] = $post['name'];
@@ -457,11 +471,20 @@ class Match extends Base
                             $homeMember[$k]['contact_tel'] = $member['telephone'];
                             $homeMember[$k]['status'] = 1;
                             $homeMember[$k]['is_attend'] = 1;
+
+                            // 批量更新team_member 比赛数match_num
+                            $teamMember = $teamS->getTeamMemberInfo(['team_id' => $recordData['home_team_id'], 'member_id' => $val['member_id']]);
+                            //dump($teamMember);
+                            if ($teamMember) {
+                                $dataUpdateTeamMember[$k]['id'] = $teamMember['id'];
+                                $dataUpdateTeamMember[$k]['match_num'] = $teamMember['match_num']+1;
+                            }
                         }
                         $saveHomeTeamMemberRes = $matchS->saveAllMatchRecordMember($homeMember);
                         if ($saveHomeTeamMemberRes['code'] == 100) {
                             return json($saveHomeTeamMemberRes);
                         }
+                        $teamS->saveAllTeamMember($dataUpdateTeamMember);
                     }
                     // 保存参赛球队成员 end
 

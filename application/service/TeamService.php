@@ -167,6 +167,18 @@ class TeamService {
         }
     }
 
+    // 批量保存team_member 数据
+    public function saveAllTeamMember($data) {
+        $model = new TeamMember();
+        $query = $model->saveAll($data);
+        if ($query || ($query === 0)) {
+            return ['code' => 200, 'msg' => __lang('MSG_200')];
+        } else {
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
     // 获取球队成员列表
     public function getTeamMemberList($map=[], $page=1, $order='id asc', $limit=10) {
         $model = new TeamMember();
