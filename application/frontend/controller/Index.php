@@ -17,12 +17,13 @@ class Index extends Base{
   
                 
         // dump($bannerList);die;
-    	// 热门课程
-    	// $hotLessonList = $this->LessonService->getLessonList([],$page,'hot ASC',4);
+    	// 热门文章
+        $ArticleService= new \app\service\ArticleService;
+    	$ArticleList = $ArticleService->getArticleList([],1,'hot DESC',4);
     	//推荐课程
     	// $sortLessonList = $this->LessonService->getLessonList([],$page,'sort ASC',4);
     	$this->assign('bannerList',$bannerList);
-    	// $this->assign('hotLessonList',$hotLessonList);
+    	$this->assign('ArticleList',$ArticleList);
     	// $this->assign('sortLessonList',$sortLessonList);
         return view('Index/index');
     }

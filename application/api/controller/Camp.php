@@ -15,6 +15,7 @@ class Camp extends Base{
     public function searchCampApi(){
         try{
             $map = input('post.');
+            $orderBy = input('param.orderBy')?input('param.orderBy'):'total_schedule DESC';
             $keyword = input('param.keyword');
             $province = input('param.province');
             $page = input('param.page')?input('param.page'):1;
@@ -37,7 +38,7 @@ class Camp extends Base{
             if( isset($map['page']) ){
                 unset($map['page']);
             }
-            $result = $this->CampService->getCampList($map,$page);
+            $result = $this->CampService->getCampList($map,$page,10,$orderBy);
              if($result){
                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{

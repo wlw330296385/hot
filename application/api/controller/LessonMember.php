@@ -154,7 +154,6 @@ class LessonMember extends Base{
         try{
             $lesson_id = input('param.lesson_id');
             $keyword = input('param.keyword');
-            $cost = input('param.cost'); 
             $rest_schedule = input('param.rest_schedule');
             $lessonInfo = db('lesson')->where(['id'=>$lesson_id])->find();
             $map = [];

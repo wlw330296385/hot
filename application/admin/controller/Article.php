@@ -69,9 +69,11 @@ class Article extends Backend {
 
         if(request()->isPost()){
             $data = input('post.');
+            $id = $data['id'];
+
             $data['member_id']=$this->admin['id'];
             $data['member'] = $this->admin['username'];
-            $result = $this->ArticleService->createArticle($data);
+            $result = $this->ArticleService->updateArticle($data,['id'=>$id]);
             if($result['code'] == 200){
                 $this->success($result['msg'],url('admin/Article/articleInfo',['article_id'=>$article_id]));
             }else{

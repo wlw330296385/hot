@@ -46,16 +46,16 @@ class ArticleService {
 
 
     // 编辑银行卡
-    public function updateArticle($data,$id){
+    public function updateArticle($data,$map){
         
         $validate = validate('ArticleVal');
         if(!$validate->scene('edit')->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
         
-        $result = $this->ArticleModel->allowField(true)->save($data,['id'=>$id]);
+        $result = $this->ArticleModel->allowField(true)->save($data,$map);
         if($result){
-            return ['msg' => '操作成功', 'code' => 200, 'data' => $id];
+            return ['msg' => '操作成功', 'code' => 200, 'data' => $map];
         }else{
             return ['msg'=>'操作失败', 'code' => 100];
         }
