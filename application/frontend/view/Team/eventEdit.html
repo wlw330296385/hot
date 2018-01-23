@@ -169,16 +169,16 @@
                 </div>
 
                 <div class="mui-input-row">
-                        <div class="mui-navigate-right">
-                            <label class="wd36">是否完成录入</label>
-                            <span class="select-row">
-                                <select id="isFinished" class="data" name="is_finished">
-                                    <option value="1">是</option>
-                                    <option value="0">否</option>
-                                </select>
-                            </span>
-                        </div>
+                    <div class="mui-navigate-right">
+                        <label class="wd36">是否完成录入</label>
+                        <span class="select-row">
+                            <select id="isFinished" class="data" name="is_finished">
+                                <option value="1">是</option>
+                                <option value="0">否</option>
+                            </select>
+                        </span>
                     </div>
+                </div>
 
                 <p class="bggray2" style="height:4px"></p>
 
@@ -334,20 +334,18 @@
                 cityPicker3.pickers[1].setSelectedIndex(2);
                 cityPicker3.pickers[2].setSelectedIndex(2);
 
-                // cityPicker3.pickers[0].setSelectedIndex(searchProvince(cityData3, "{eventInfo.province}"));
-                // cityPicker3.pickers[1].setSelectedIndex(searchCity(cityData3[i].children[j], "{eventInfo.city}"));
+                // cityPicker3.pickers[0].setSelectedIndex(searchProvince(cityData3, "{$eventInfo.province}"));
+                // cityPicker3.pickers[1].setSelectedIndex(searchCity(cityData3[i].children[j], "{$eventInfo.city}"));
                 // cityPicker3.pickers[2].setSelectedIndex(2);
-
+                // var i = '';
+                // var j = '';
+                // var k = '';
                 // for (i = 0; i < cityData3.length; i++) {
-                //     cityData3[i].index = i;
-                //     console.log(cityData3.length)
                 //     console.log(cityData3[i].text + '第一级')
-                //     for (j = 0; j < cityData3.length; i++) {
-                //         cityData3[i].children[j].index = j;
-                //         console.log(cityData3[i].children[j].length)
+                //     console.log(searchCity(cityData3, "{$eventInfo.city}"))
+                //     for (j = 0; j < cityData3[i].children.length; j++) {
                 //         console.log(cityData3[i].children[j].text + '第二级')
-                //         for (k = 0; k < cityData3.length; i++) {
-                //             cityData3[i].children[j].children[k].index = k;
+                //         for (k = 0; k < cityData3[i].children[j].children.length; k++) {
                 //             console.log(cityData3[i].children[j].children[k].text + '第三级')
                 //         }
                 //     }
@@ -408,22 +406,36 @@
             });
         })(mui, document);
 
-        var i = ''
-        var j = ''
+        var i = '';
+        var j = '';
+        var k = '';
+        var children = '';
         // 获取省索引值
-        function searchProvince(cityData3, province) {
-            for (i = 0; i <= cityData3.length; i++) {
-                if (cityData3[i].text == province) {
-                    return i;
-                }
-            }
-            // while (i -= 1) {
-            //     if (cityData3[i].text == province) {
-            //         return i;
-            //     }
-            // }
-            return false;
-        }
+        // function searchProvince(cityData3, province) {
+        //     for (i = 0; i <= cityData3.length; i++) {
+        //         if (cityData3[i].text == province) {
+        //             return i;
+        //         }
+        //     }
+        //     // while (i -= 1) {
+        //     //     if (cityData3[i].text == province) {
+        //     //         return i;
+        //     //     }
+        //     // }
+        //     return false;
+        // }
+
+        // function searchCity(cityData3, city) {
+        //     for (i = 0; i <= cityData3.length; i++) {
+        //         for (j = 0; j <= cityData3[i].children.length; j++) {
+        //             console.log(cityData3[i].children[j].text)
+        //             if (cityData3[i].children[j].text == city) {
+        //                 return j;
+        //             }
+        //         }
+        //     }
+        //     return false;
+        // }
 
         // 全局取 directentry 的值判断是否有 event_id
         var directentry = $("input[name=directentry]").val();
@@ -482,17 +494,17 @@
             });
 
             //全选
-            $(".all").click(function () {
+            $(".all").on('tap', function () {
                 $(".checkboxCont").find('input').prop('checked', true)
             })
 
             //取消全选
-            $(".cancel").click(function () {
+            $(".cancel").on('tap', function () {
                 $(".checkboxCont").find('input').prop('checked', false)
             })
 
             //删除
-            $(document).on('click', '.del', function () {
+            $(document).on('tap', '.del', function () {
                 $("input[name='member']:checked").parents(".checkboxCont").remove();
                 changeIndex();
                 $("#hideStList").empty();
@@ -518,7 +530,7 @@
             });
 
             // 选择添加报名人员点击事件
-            $("#teamMemberConfirm").on('click', function () {
+            $("#teamMemberConfirm").on('tap', function () {
                 $("#inactiveList").empty();
                 $("#hideStList").empty();
                 $(".addTeamMemberList input[type=checkbox]:checked").each(function () {
@@ -614,7 +626,7 @@
                 var selection = $(this).find("option:selected").val();
                 if (selection == 1) {
                     mui.alert('活动将设置为已完成状态', '说明');
-                }else{
+                } else {
                     mui.alert('活动将设置为未完成状态', '说明');
                 };
             });
@@ -636,7 +648,7 @@
                 mui.toast("请选择正确的人数区间值");
                 return false;
             }
-            
+
             $('.delbtn').remove();
             var totalHtml = $(".introBox").html();
             $(".event_des").val(totalHtml);
@@ -696,19 +708,19 @@
                 var url = "{:url('api/team/directcreateteamevent')}";
                 var ajaxResult = wooApi.asyncF(url, objData);
             }
-             if (ajaxResult.code == 200) {
-                    mui.alert(ajaxResult.msg, '活动录入成功', '确定', function () {
-                        var goUrl = "{:url('team/eventlistOfTeam')}/" + 'event_id/' + ajaxResult.data + '/team_id/' + "{$team_id}";
-                        window.top.location.href = goUrl;
-                    })
-                } else {
-                    mui.alert(ajaxResult.msg, '活动录入失败');
-                    mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                        if (data.code === 200) {
-                            $('input[name=__token__]').val(data.data);
-                        }
-                    }, 'json');
-                }
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '活动录入成功', '确定', function () {
+                    var goUrl = "{:url('team/eventlistOfTeam')}/" + 'event_id/' + ajaxResult.data + '/team_id/' + "{$team_id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '活动录入失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
         };
 
         //获取成员列表
@@ -717,7 +729,7 @@
             mui.ajax("{:url('api/team/teammemberlist')}", {
                 data: {
                     team_id: team_id,
-                    status:1
+                    status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型

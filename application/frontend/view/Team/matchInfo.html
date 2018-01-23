@@ -73,14 +73,13 @@
             <ul class="mui-table-view detalis-list list mainInfo mb">
                 <div class="page-header">
                     <span class="course">出勤率
-                        <b class="rate">66%</b>
+                        <b class="rate">0%</b>
                     </span>
                     <span class="more">
                         <a href="{:url('team/matchSignupList',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}" class="mui-navigate-right">
                             <b class="colororange signup_num">0</b>/{$countTeamMember}
                         </a>
                     </span>
-
                 </div>
 
                 <li class="mui-table-view-cell listli">
@@ -212,13 +211,36 @@
 
         $(function () {
 
-            initialEds(); //活动详情为空的提示
-            ststuShow() //判断身份显示操作按钮
             pulldownRefresh(); //页面打开时获取一次最新评论信息
             isthumbsup(); //点赞状态
             toSignUpList(); // 报名/参赛人员
-            timeShow(); // 时间转换显示
-            awayTeamTips(); //如果对手为空
+
+            // 如果对手为空
+            if ($(".away_team").text() == '') {
+                $(".away_team").text("待定");
+            }
+
+            // 时间待定显示
+            var match_time = "{$matchInfo.match_time}";
+            if (match_time == 0) {
+                $(".match_time").text("待定");
+            }
+
+            // 判断身份显示操作按钮
+            var teamrole = "{$teamrole}";
+            var is_finished = "{$matchInfo.is_finished_num}";
+
+            if (teamrole > 0 && is_finished == 1) {
+                $(".status3").show();
+            } else if (teamrole > 0 && is_finished == 0) {
+                $(".status4").show();
+            }
+
+            if (teamrole == 0 && is_finished == 1) {
+                $(".status1").show();
+            } else if (teamrole == 0 && is_finished == 0) {
+                $(".status2").show();
+            }
 
             //报名功能
             $(".signupBtn").on('tap', function () {
@@ -235,7 +257,9 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
-                            mui.alert('报名成功', '确定');
+                            mui.alert('报名成功', function () {
+                                location.reload();
+                            });
                         } else {
                             mui.toast(data.msg);
                         }
@@ -329,9 +353,9 @@
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
+                        $(".thumbup_count").text(data.thumbsup_count);
                         if (data.thumbsup == 1) {
                             $(".thumbsup").css("color", "red");
-                            $(".thumbup_count").text(data.thumbsup);
                         } else {
                             $(".thumbsup").css("color", "#737373");
                         }
@@ -345,49 +369,6 @@
                 }
             });
         }
-
-        // 默认的样式
-        function initialEds() {
-            if ($(".introBox").text() == '') {
-                $(".introBox").append("<p class='nohave'>还没有活动详情描述哦</p>")
-            }
-        }
-
-        // 如果对手为空
-        function awayTeamTips() {
-            if ($(".away_team").text() == '') {
-                $(".away_team").text("待定");
-            }
-        }
-
-        // 时间待定显示
-        function timeShow() {
-            var match_time = "{$matchInfo.match_time}";
-            if (match_time == 0) {
-                $(".match_time").text("待定");
-            }
-        }
-
-        // 判断身份显示操作按钮
-        function ststuShow() {
-            var teamrole = "{$teamrole}";
-            var is_finished = "{$matchInfo.is_finished_num}";
-
-            if (teamrole > 0 && is_finished == 1) {
-                $(".status3").show();
-            } else if (teamrole > 0 && is_finished == 0) {
-                $(".status4").show();
-            }
-
-            // if (is_finished == 1) {
-            //     $(".status1").show();
-            // } else {
-            //     $(".status2").show();
-            // }
-        }
-
-
-
 
         //下拉刷新具体业务实现
         function pulldownRefresh() {
@@ -423,11 +404,9 @@
                 headers: { 'Content-Type': 'application/json' },
                 success: function (data) {
                     console.log(data)
-                    console.log(00)
                     var newli = '';
                     if (data.code == 200) {
                         $(".comment_count").text(data.data.length);
-                        $(".thumbup_count").text(data.thumbup_count);
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }
@@ -471,6 +450,8 @@
                         $(".imgShow").empty();
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             $(".signup_num").text(data.data.length);
+                            // 出勤率
+                            $(".rate").text(data.data.length / "{$countTeamMember}" * 100 + "%")
                             inactiveDiv += '<img src="' + data.data[i].avatar + '" style="margin-right:3px">'
                         };
                         $(".imgShow").append(inactiveDiv);
