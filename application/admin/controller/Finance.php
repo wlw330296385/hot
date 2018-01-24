@@ -118,7 +118,7 @@ class Finance extends Backend {
             $curschedule_date = $schedule_date;
         }
 
-        $list = SalaryIn::with('schedule')->where($map)->order('id desc')->paginate(15, false, ['query' => request()->param()])->each(function($item, $key) {
+        $list = SalaryIn::with('schedule')->where($map)->order('schedule_time desc')->paginate(15, false, ['query' => request()->param()])->each(function($item, $key) {
             $item['lesson'] = db('lesson')->where(['id' => $item['lesson_id']])->find();
             $scheduleStudentStr = unserialize($item['schedule']['student_str']);
             if (!empty($scheduleStudentStr)) {
