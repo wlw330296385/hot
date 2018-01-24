@@ -169,7 +169,7 @@ class LessonMember extends Base{
                     ->where("lesson.cost={$lessonInfo['cost']} and lesson.camp_id={$lessonInfo['camp_id']}")
                     // ->having("lesson.cost=$cost and lesson.camp_id=$camp_id")
                     ->order('lesson_member.id desc')
-                    ->paginate(10);
+                    ->paginate(30);
                     // ->select();
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
