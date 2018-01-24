@@ -20,6 +20,11 @@ class Match extends Model {
         'reg_end_time' => 'timestamp:Y-m-d H:i',
     ];
 
+    // match_time （比赛时间）获取器 时间戳转换日期格式
+    public function getMatchTimeAttr($value) {
+        return ($value>0) ? date('Y-m-d H:i') : 0;
+    }
+    
     // type（活动类型）获取器
     public function getTypeAttr($value) {
         $type = [ 1 => '友谊赛', 2 => '联赛' ];
@@ -28,13 +33,13 @@ class Match extends Model {
 
     // is_finished(是否完成)获取器
     public function getIsFinishedAttr($value) {
-        $is_finished = [ 0 => '未完成', 1 => '已完成' ];
+        $is_finished = [ -1 => '未完成', 1 => '已完成' ];
         return $is_finished[$value];
     }
 
     // apply_status(约战申请)获取器
     public function getApplyStatusAttr($value) {
-        $apply_status = [ 0 => '接收约战', 1 => '约战匹配中', '2' => '约战已完成' ];
+        $apply_status = [ -1 => '接收约战', 1 => '约战匹配中', '2' => '约战已完成' ];
         return $apply_status[$value];
     }
 

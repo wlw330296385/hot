@@ -17,11 +17,17 @@
                             {if condition="!isset($curcamp)"}
                             <div class="form-group">
                                 <label class="control-label">训练营</label>
-                                <input class="form-control" type="text" name="camp" >
+                                <!--<input class="form-control" type="text" name="camp" >-->
+                                <select name="camp_id" class="form-control">
+                                    <option value="">选择训练营</option>
+                                    {volist name="camplist" id="vo"}
+                                    <option value="{$vo.id}" {if condition="$camp_id eq $vo['id']"}selected{/if}>{$vo.camp}</option>
+                                    {/volist}
+                                </select>
                             </div>
                             {/if}
                             <div class="form-group">
-                                <label class="control-label">姓名</label>
+                                <label class="control-label">学员姓名</label>
                                 <input class="form-control" type="text" name="name" >
                             </div>
                             <div class="form-group">
@@ -64,7 +70,7 @@
                                             <td>
                                                 {$vo.student}
                                             </td>
-                                            <td>{$vo.member_id}</td>
+                                            <td>{$vo.hot_id}</td>
                                             <td>{$vo.member}</td>
                                             <td>{$vo.telephone}</td>
                                             <td>{$vo.camp}</td>

@@ -44,29 +44,14 @@
 
     <div class="mui-content">
 
-        <div class="location-frame">
-            <span class="location">{$teamInfo.name}</span>
-            <span class="location-choise max">
-                <select id="Year" class="data wd52" name="year">
-                    <option value="">选择年份</option>
-                    <option value="2017">2017</option>
-                    <option value="2018">2018</option>
-                    <option value="2019">2019</option>
-                    <option value="2020">2020</option>
-                    <option value="2021">2021</option>
-                    <option value="2022">2022</option>
-                    <option value="2023">2023</option>
-                </select>
-            </span>
-        </div>
-        <!-- <form action="" class="mui-input-group">
+        <form action="" class="mui-input-group">
             <div class="mui-input-row picker btn" id="demo6" data-options='{"type":"month"}'>
                 <div class="mui-navigate-right">
                     <label>{$teamInfo.name}</label>
-                    <span id="result" class="ui-alert year"></span>
+                    <span id="result" class="ui-alert year">选择年份</span>
                 </div>
             </div>
-        </form> -->
+        </form>
 
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
             <div class="mui-scroll">
@@ -112,15 +97,10 @@
             var sYear = '';
 
             //选择年份
-            $("#Year").on("change", function () {
-                sYear = $(this).find("option:checked").val();
+            $(document).on('tap', '.mui-dtpicker-header .mui-btn', function () {
+                sYear = $(".year").text();
                 searchToList();
             });
-
-            // $(".mui-dtpicker-header").on("tap",'.mui-btn', function () {
-            //     sYear = $(".year").text();
-            //     searchToList();
-            // });
 
             //搜索、下拉刷选后触发
             function searchToList() {

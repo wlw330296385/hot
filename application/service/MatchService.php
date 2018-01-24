@@ -50,9 +50,6 @@ class MatchService {
         $res = $model->where($map)->find();
         if ($res) {
             $result = $res->toArray();
-            if ($result['match_time']) {
-                $result['match_time'] = date('Y-m-d H:i', $result['match_time']);
-            }
             $result['type_num'] = $res->getData('type');
             $result['is_finished_num'] = $res->getData('is_finished');
             $result['status_num'] = $res->getData('status');
@@ -72,9 +69,6 @@ class MatchService {
             $res = $query->toArray();
             // 获取器原始数据
             foreach ($res['data'] as $k => $val) {
-                if ($val['match_time']) {
-                    $res['data'][$k]['match_time'] = date('Y-m-d H:i', $val['match_time']);
-                }
                 $getData = $model->where('id', $val['id'])->find()->getData();
                 $res['data'][$k]['type_num'] = $getData['type'];
                 $res['data'][$k]['is_finished_num'] = $getData['is_finished'];
@@ -96,9 +90,6 @@ class MatchService {
             $res = $query->toArray();
             // 获取器原始数据
             foreach ($res as $k => $val) {
-                if ($val['match_time']) {
-                    $res[$k]['match_time'] = date('Y-m-d H:i', $val['match_time']);
-                }
                 $getData = $model->where('id', $val['id'])->find()->getData();
                 $res[$k]['type_num'] = $getData['type'];
                 $res[$k]['is_finished_num'] = $getData['is_finished'];

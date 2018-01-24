@@ -18,7 +18,8 @@ class Backend extends Base {
         // 检查控制台登录
         $this->AuthService = new AuthService();
         if ( !$this->AuthService->islogin() ) {
-            $this->error('请登录后操作', url('Login/index'));
+            //$this->error('请登录后操作', url('Login/index'));
+            $this->redirect('Login/index');
         }else{
             $this->admin = session('admin');
             $this->assign('admin',$this->admin);
