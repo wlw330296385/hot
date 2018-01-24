@@ -204,7 +204,12 @@
             pulldownRefresh(); //页面打开时获取一次最新评论信息
             isthumbsup(); //点赞状态
             toTeam();
-            timeShow();
+
+            // 时间显示待定
+            var match_time = $(".match_time").text();
+            if (match_time == 0) {
+                $(".match_time").text("待定")
+            }
 
             //点赞功能
             $(".thumbsup").on('click', function () {
@@ -233,6 +238,38 @@
                     }
                 });
             });
+
+            // 点赞状态
+            function isthumbsup() {
+                var commented_id = "{$matchInfo.id}";
+                mui.ajax("{:url('api/team/isthumbup')}", {
+                    data: {
+                        commented_id: commented_id,
+                        comment_type: 3,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            $(".thumbup_count").text(data.thumbsup_count);
+                            if (data.thumbsup == 1) {
+                                $(".thumbsup").css("color", "red");
+                            } else {
+                                $(".thumbsup").css("color", "#737373");
+                            }
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            }
 
             // 我要应战
             $(".matchPKBtn").on("tap", "", function () {
@@ -271,7 +308,7 @@
                             mui.toast("已发送应战申请，请耐心等待回复。");
                             mui('#matchPK').popover('toggle');
                         } else {
-                            mui.toast("请选择球队");
+                            mui.toast(data.msg);
                         }
                     },
                     error: function (xhr, type, errorThrown) {
@@ -281,46 +318,6 @@
                 });
             })
         })
-
-        // 时间待定显示
-        function timeShow() {
-            var match_time = "{$matchInfo.match_time}";
-            if (match_time == "1970-01-01 08:00") {
-                $(".match_time").text("待定");
-            }
-        }
-
-        // 点赞状态
-        function isthumbsup() {
-            var commented_id = "{$matchInfo.id}";
-            mui.ajax("{:url('api/team/isthumbup')}", {
-                data: {
-                    commented_id: commented_id,
-                    comment_type: 3,
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data);
-                    if (data.code == 200) {
-                        if (data.thumbsup == 1) {
-                            $(".thumbsup").css("color", "red");
-                            $(".thumbup_count").text(data.thumbsup);
-                        } else {
-                            $(".thumbsup").css("color", "#737373");
-                        }
-                    } else {
-                        mui.toast(data.msg);
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        }
 
         //下拉刷新具体业务实现
         function pulldownRefresh() {
@@ -360,7 +357,6 @@
                     var newli = '';
                     if (data.code == 200) {
                         $(".comment_count").text(data.data.length);
-                        $(".thumbup_count").text(data.thumbup_count);
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }

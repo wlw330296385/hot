@@ -390,7 +390,7 @@ class Patch extends Controller {
             $memberDb = db('member');
             if ($saveAll ==1) {
                 foreach ($data as $val) {
-                    $memberDb->where('id', $val['member_id'])->setInc('balance', $data['salary']+$data['push_salary']);
+                    $memberDb->where('id', $val['member_id'])->setInc('balance', $val['salary']+$val['push_salary']);
                 }
             } else {
                 $memberDb->where('id', $data['member_id'])->setInc('balance', $data['salary']+$data['push_salary']);
