@@ -584,17 +584,6 @@
             }
         });
 
-
-
-//        // 上课星期
-//        $("#weekConfirm").click(function () {
-//            //选择多个星期
-//            $("input[name='dom']").val($("input[name='checkbox-week']:checked").map(function () {
-//                return $(this).val()
-//            }).get().join(","));
-//            $(".weekCont").text($("input[name='dom']").val());
-//            mui('#week').popover('toggle');
-//        })
         // 课程类型
         $(".lessonType").click(function () {
             var gradecate_setion = $(this).parent().parent().find("a").text();
@@ -864,7 +853,43 @@
             }
         })
 
+
+
+
+
+
+
+        // 判断课程是否存在订单
+        $('input[name=lesson]').on('tap',function(){
+            wooApi.asyncT("{:url('api/bill/getBillListApi')}",{'goods_id':'{$lessonInfo.id}',goods_type:1},function(msg){
+                console.log(msg);
+                if(msg.data.length > 0){
+                    $('input[name=lesson]').attr('disabled',true);
+                    mui.alert('已被购买的课程不允许修改课程名称');
+
+                }
+            });
+        })
     });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// --------------------------------------------------------------------------------这里是全局定义的fn
 
     //更新序号函数
     function changeIndex() {
