@@ -75,7 +75,8 @@
 
             <div class="whitebg border-b mui-text-center" style="padding: 10px 0;">
                 <h3 class="colorred">{$teamMemberInfo.team}</h3>
-                <p>现任<span class="role">{$teamMemberInfo.role_text}</span>
+                <p>现任
+                    <span class="role">{$teamMemberInfo.role_text}</span>
                 </p>
                 <h3 class="colorred">{$teamMemberInfo.match_num}</h3>
                 <p>参与比赛次数</p>
@@ -182,6 +183,16 @@
             var cDoms = $(".role").text();
             cDoms = cDoms.substring(0, cDoms.length - 1);
             $(".role").text(cDoms);
+
+            // 其他效力球队为空提示语
+            var tips = $.trim($(".teammember").html())
+            if (tips == '') {
+                $(".teammember").append('<p class="nodata">还没有效力的其他球队</p>');
+            }
+
+            // 其他效力球队长度
+            var length = $(".teammember li").length;
+            $(".otherLength").text(length);
 
             // 印象评价
             $(document).on("tap", '.impressSide .choiseTag', function () {
@@ -305,27 +316,13 @@
                 });
             });
 
-            otherLength(); // 其他效力球队长度
             followStatus(); //判断当前的关注状态
-            othertips(); //其他效力球队为空提示语
             toTagAllList(); //所有标签列表
             toTagCommentList(); //已经评价的标签列表
 
         });
 
-        // 其他效力球队为空提示语
-        function othertips() {
-            var tips = $.trim($(".teammember").html())
-            if (tips == '') {
-                $(".teammember").append('<p class="nodata">还没有效力的其他球队</p>');
-            }
-        }
 
-        // 其他效力球队长度
-        function otherLength() {
-            var length = $(".teammember li").length;
-            $(".otherLength").text(length);
-        }
 
         // 判断当前的关注状态
         function followStatus() {
