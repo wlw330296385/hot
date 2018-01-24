@@ -14,6 +14,25 @@
     <!--选择器样式-->
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <style>
+        /* 日期选择器视图 */
+
+        [data-type="month"] .mui-dtpicker-title h5 {
+            width: 100% !important;
+        }
+
+        [data-type="month"] .mui-picker {
+            width: 100% !important;
+        }
+
+        [data-type="month"] [data-id="title-m"] {
+            display: none !important;
+        }
+
+        [data-type="month"] .mui-dtpicker-body [data-id="picker-m"] {
+            display: none !important;
+        }
+    </style>
 </head>
 
 <body class=whitebg>
@@ -26,21 +45,14 @@
 
         <div class="list camp-list detalis-list otherInfo mt55">
 
-            <div class="location-frame">
-                <span class="location">{$teamInfo.name}战绩</span>
-                <span class="location-choise max">
-                    <select id="Year" class="data wd52" name="year">
-                        <option value="">选择年份</option>
-                        <option value="2017">2017</option>
-                        <option value="2018">2018</option>
-                        <option value="2019">2019</option>
-                        <option value="2020">2020</option>
-                        <option value="2021">2021</option>
-                        <option value="2022">2022</option>
-                        <option value="2023">2023</option>
-                    </select>
-                </span>
-            </div>
+            <form action="" class="mui-input-group">
+                <div class="mui-input-row picker btn" id="demo6" data-options='{"type":"month"}'>
+                    <div class="mui-navigate-right">
+                        <label class="wd73">{$teamInfo.name}战绩</label>
+                        <span id="result" class="ui-alert year">选择年份</span>
+                    </div>
+                </div>
+            </form>
 
             <div class="nav-list mb" id="personalData">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ">
@@ -90,6 +102,24 @@
             window.top.location.href = this.href;
         });
 
+        (function ($) {
+            var result = $('#result')[0];
+            var btns = $('.btn');
+            btns.each(function (i, btn) {
+                btn.addEventListener('tap', function () {
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var id = this.getAttribute('id');
+
+                    var picker = new $.DtPicker(options);
+                    picker.show(function (rs) {
+                        result.innerText = rs.y.text;
+                        picker.dispose();
+                    });
+                }, false);
+            });
+        })(mui);
+
         $(function () {
 
             //初始化全局变量
@@ -97,8 +127,8 @@
             var sYear = '';
 
             //选择年份
-            $("#Year").on("change", function () {
-                sYear = $(this).find("option:checked").val();
+            $(document).on('tap', '.mui-dtpicker-header .mui-btn', function () {
+                sYear = $(".year").text();
                 searchToList();
             });
 
