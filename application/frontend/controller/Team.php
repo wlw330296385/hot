@@ -336,6 +336,7 @@ class Team extends Base {
         } else {
             $teamrole = -1;
         }
+        dump($teamrole);
 
         // 当前球队成员总数
         $countTeamMember = $teamS->getTeamMemberCount([ 'team_id' => $matchInfo['team_id'] ]);
@@ -383,6 +384,8 @@ class Team extends Base {
 
             $memberlist = [];
         }
+       
+        
         $this->assign('match_id', $match_id);
         $this->assign('matchInfo', $matchInfo);
         $this->assign('directentry', $directentry);
@@ -392,7 +395,7 @@ class Team extends Base {
 
     // 比赛比分编辑
     public function recordedit() {
-        
+
     }
 
     // 比赛管理列表
