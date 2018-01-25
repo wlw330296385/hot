@@ -562,6 +562,7 @@ class Team extends Base {
 
             // serivce
             $matchS = new MatchService();
+            $teamS = new TeamService();
             $lastMatch = $matchS->matchRecordListAll($map);
             // 如果没有未完成的活动记录，清理查询条件is_finished=-1，再次执行查询
             if (!$lastMatch) {
@@ -572,10 +573,16 @@ class Team extends Base {
                     return json(['code' => 100, 'msg' => __lang('MSG_000')]);
                 }
             }
-            // 比赛成员名单（列出当前球队）
+            // 比赛成员名单+人数统计（列出当前球队）
+            // 当前球队成员数
+            $teamInfo = $teamS->getTeam(['id' => $team_id]);
             foreach ($lastMatch as $k => $val) {
-                $lastMatch[$k]['memberlist'] = $matchS->getMatchRecordMemberListAll([ 'match_record_id' => $val['id'], 'team_id' => $team_id ]);
+                $matchMembers = $matchS->getMatchRecordMemberListAll([ 'match_record_id' => $val['id'], 'team_id' => $team_id, 'status' => ['>', 0] ]);
+                $lastMatch[$k]['memberlist'] = $matchMembers;
+                $lastMatch[$k]['reg_number'] = count($matchMembers);
+                $lastMatch[$k]['max'] = $teamInfo['member_num'];
             }
+
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $lastMatch]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -614,7 +621,7 @@ class Team extends Base {
             }
             // 球队活动成员名单
             foreach ($lastEvent as $k => $val) {
-                $lastEvent[$k]['memberlist'] = $teamS->teamEventMembers(['event_id' => $val['id']]);
+                $lastEvent[$k]['memberlist'] = $teamS->teamEventMembers(['event_id' => $val['id'], 'status' => ['>', 0]]);
             }
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $lastEvent]);
         } catch (Exception $e) {
