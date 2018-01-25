@@ -33,30 +33,13 @@
                     <option value="">全部区域</option>
                 </select>
             </span>
-            <!--<span class="location-choise max">
-                <select id="teamType" class="data" name="type">
-                    <option value="">全部分类</option>
-                    <option value="1">青少年训练营</option>
-                    <option value="2">企事业单位</option>
-                    <option value="3">同事朋友</option>
-                    <option value="4">同乡会</option>
-                    <option value="5">校友会</option>
-                    <option value="6">大学生</option>
-                    <option value="7">高中生</option>
-                    <option value="8">初中生</option>
-                    <option value="9">小学生</option>
-                </select>
-            </span>-->
         </div>
 
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b team">
-                </ul>
+                <ul class="mui-table-view detalis-list list border-b team"></ul>
             </div>
         </div>
-
-        <!--<input type="hidden" name="teamID" class="teamID" />-->
 
     </div>
 
@@ -64,7 +47,6 @@
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/js/common.js"></script>
-    <script src="/static/frontend/js/city.data-3.js"></script>
     <script>
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
@@ -100,17 +82,13 @@
                 selectArea += '<option value="' + areaName + '">' + areaName + '</option>';
             });
             $('#areaSelect').append(selectArea);
+
             //搜索活动
             $("#searchBtn").on("click", function () {
                 keyword = $(".keyword").val();
-                teamID = '';
                 searchToList();
             })
-            //选择活动类型下拉
-            $("#teamType").on("change", function () {
-                sTeamType = $(this).find("option:checked").val();
-                searchToList();
-            });
+           
             //选择地区下拉
             $("#areaSelect").on("change", function () {
                 sArea = $(this).val();
@@ -121,7 +99,7 @@
                 count = 1;//显示第一页
                 var page = count;
                 var gType = 1;//代表下拉刷新
-                toList(page, gType, teamID);//具体取数据的方法
+                toList(page, gType);//具体取数据的方法
             }
 
             mui.init({
@@ -154,7 +132,7 @@
                     count = 1;//刷新并显示第一页
                     var page = count;
                     var gType = 1;//代表下拉刷新
-                    toList(page, gType, teamID);//具体取数据的方法
+                    toList(page, gType);//具体取数据的方法
                 }, 100);
             }
             //上拉加载具体业务实现
@@ -163,12 +141,12 @@
                     count++;//翻下一页
                     var page = count;
                     var gType = 2;//代表上拉加载
-                    toList(page, gType, teamID);//具体取数据的方法
+                    toList(page, gType);//具体取数据的方法
                 }, 100);
             }
 
             //接口获取数据并追加到页面
-            var toList = function (page, gType, teamID) {
+            var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
                 var url = "{:url('api/team/searchteamlist','','',true)}";
                 mui.ajax({
@@ -178,7 +156,6 @@
                         province: sProvince,
                         city: sCity,
                         area: sArea,
-                        // team_id: teamID,
                         keyword: keyword,
                         status: 1
                     },
@@ -215,7 +192,6 @@
                         } else {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                         }
-
                     },
                     error: function (xhr, type, errerThrown) {
                         mui.toast('网络异常,请稍候再试');

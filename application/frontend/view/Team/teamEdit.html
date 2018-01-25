@@ -680,16 +680,6 @@
             });
         })(mui, document);
 
-        // 客队球服没有内容则隐藏i标签
-        function awayColor() {
-            if ($("input[name=home_color]").val() == '') {
-                $("input[name=home_color]").siblings().find(".color").hide();
-            }
-            if ($("input[name=away_color]").val() == '') {
-                $("input[name=away_color]").siblings().find(".color").hide();
-            }
-        }
-
         // 主场客场颜色显示
         function colorShow() {
             $(".black").css("background", "black");
@@ -705,24 +695,6 @@
             $(".ching").css("background", "#00eaff");
         };
 
-        //判断主场客场是否有值，显示data
-        function colorJudge() {
-            if ($(".homeshow").val() != '') {
-                $(".homeshow").addClass("data");
-            }
-            if ($(".awayshow").val() != '') {
-                $(".awayshow").addClass("data");
-            }
-        }
-
-        //去除最后一个逗号
-        function delComma() {
-            var coachCont = $(".coach").text();
-            var committeeCont = $(".committee").text();
-            $(".coach").text(coachCont.substring(0, coachCont.length - 1));
-            $(".committee").text(committeeCont.substring(0, committeeCont.length - 1));
-        }
-
         var coachMemberList = '';
         $(function () {
 
@@ -736,19 +708,39 @@
             toCampList(wCamp, campKeyword, 1);
             toCourtList(wCourt, courtKeyword, 1);
 
-            delComma(); //去除最后一个逗号
             colorShow(); // 调用主场客场颜色显示
-            colorJudge(); //判断主场客场是否有值，显示data
             toTeamMemberList(); //获取球员列表
             TeamMemberOfCocahList(); //获取球员列表供选择教练
             TeamMemberOfCommitteeList(); //获取球员列表供选择队委
-            awayColor();
+
             // 设置球队类型默认值
             $('#teamType option[value="{$teamInfo.type}"]').prop("selected", true);
             // 设置球队特点默认值
             $('#teamCharater option[value="{$teamInfo.charater}"]').prop("selected", true);
             // 设置球队状态默认值
             $('#teamStatus option[value="{$teamInfo.status}"]').prop("selected", true);
+
+            //去除最后一个逗号
+            var coachCont = $(".coach").text();
+            var committeeCont = $(".committee").text();
+            $(".coach").text(coachCont.substring(0, coachCont.length - 1));
+            $(".committee").text(committeeCont.substring(0, committeeCont.length - 1));
+
+            //判断主场客场是否有值，显示data
+            if ($(".homeshow").val() != '') {
+                $(".homeshow").addClass("data");
+            }
+            if ($(".awayshow").val() != '') {
+                $(".awayshow").addClass("data");
+            }
+
+            // 客队球服没有内容则隐藏i标签
+            if ($("input[name=home_color]").val() == '') {
+                $("input[name=home_color]").siblings().find(".color").hide();
+            }
+            if ($("input[name=away_color]").val() == '') {
+                $("input[name=away_color]").siblings().find(".color").hide();
+            }
 
             // 主场颜色
             $(".homeColorList").on('tap', 'li', function () {
@@ -770,7 +762,6 @@
                 $("input[name=home_color_style]").val("");
                 mui("#homeColor").popover("toggle");
             });
-
 
             // 客场颜色
             $(".awayColorList").on('tap', 'li', function () {
@@ -899,7 +890,6 @@
                     }).prop("checked", true);
                 });
             });
-
 
             //////////////////////训练营////////////////////////////////////
             // 所属训练营
@@ -1140,7 +1130,6 @@
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
                 headers: { 'Content-Type': 'application/json' },
-                //processData:false,
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
@@ -1177,7 +1166,6 @@
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
                 headers: { 'Content-Type': 'application/json' },
-                //processData:false,
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
@@ -1214,7 +1202,6 @@
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
                 headers: { 'Content-Type': 'application/json' },
-                //processData:false,
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {

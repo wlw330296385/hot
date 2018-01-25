@@ -95,13 +95,25 @@
                 </div>
 
                 <div class="mui-input-row awayT">
-                    <a href="#awayTeam" class="mui-navigate-right awayTeamBtn isHref">
+                    <a href="#awayTeam" class="mui-navigate-right isHref">
                         <label>对手</label>
                         <span class="away_team_Cont domData" name="away_team"></span>
                         <input type="hidden" name="away_team_id" value="" class="data">
                         <input type="hidden" name="away_team_logo" value="" class="data">
                     </a>
                 </div>
+
+                <div class="mui-input-row">
+                        <div class="mui-navigate-right">
+                            <label>是否约战</label>
+                            <span class="select-row">
+                                <select class="data" id="islive" name="islive">
+                                    <option value="0">不约战</option>
+                                    <option value="1" class="isyz">约战</option>
+                                </select>
+                            </span>
+                        </div>
+                    </div>
 
                 <p class="pline"></p>
 
@@ -144,18 +156,6 @@
                 <div class="mui-input-row h-auto">
                     <label>温馨提示</label>
                     <textarea name="remarks" class="data" placeholder="请填写提示"></textarea>
-                </div>
-
-                <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label>是否约战</label>
-                        <span class="select-row">
-                            <select class="data" id="islive" name="islive">
-                                <option value="0">不约战</option>
-                                <option value="1" class="isyz">约战</option>
-                            </select>
-                        </span>
-                    </div>
                 </div>
 
                 <div class="mui-input-row">
@@ -537,12 +537,12 @@
             $("#islive").change(function () {
                 var islive = $(this).children("option:selected").val()
                 if (islive == 1) {
-                    $(".isHref").attr("href", "#")
-                    $(".awayTeamBtn").on("tap", function () {
-                        mui.alert("已经选择约战类型则不能选择对手");
-                    });
-                } else {
-                    $(".isHref").attr("href", "#awayTeam");
+                    $(".isHref").attr("href", "#").addClass("awayTeamBtn");
+                    $(document).on("tap",'.awayTeamBtn', function(){
+                        mui.toast("已经选择约战类型则不能选择对手");
+                    })
+                } else{
+                    $(".isHref").attr("href", "#awayTeam").removeClass("awayTeamBtn");
                 }
             });
 
