@@ -362,7 +362,7 @@ class Match extends Base
                         $teamS->saveAllTeamMember($dataUpdateTeamMember);
                     }
                     // 剔除不显示的成员名单（无效 status=-1）
-                    if (input('?HomeMemberDataDel') && $post['HomeMemberDataDel'] != "[]") {
+                    if (isset($post['HomeMemberDataDel']) && $post['HomeMemberDataDel'] != "[]") {
                         $memberArr = json_decode($post['HomeMemberDataDel'], true);
                         $dataUpdateTeamMemberDec = [];
                         foreach ($memberArr as $k => $member) {
@@ -371,11 +371,11 @@ class Match extends Base
                             if ($hasMatchRecordMember2) {
                                 $memberArr[$k]['id'] = $hasMatchRecordMember2['id'];
                             }
-                            $homeMember[$k]['match'] = $matchName;
+                            $memberArr[$k]['match'] = $matchName;
                             $memberArr[$k]['status'] = -1;
 
                             // 批量更新team_member 比赛数match_num
-                            $teamMember = $teamS->getTeamMemberInfo(['team_id' => $recordData['home_team_id'], 'member_id' => $val['member_id']]);
+                            $teamMember = $teamS->getTeamMemberInfo(['team_id' => $recordData['home_team_id'], 'member_id' => $member['member_id']]);
                             //dump($teamMember);
                             if ($teamMember) {
                                 $dataUpdateTeamMemberDec[$k]['id'] = $teamMember['id'];
