@@ -116,4 +116,10 @@ class WechatService
         $weObj = new TPwechat($this->options);
         return $weObj->getJsSign($url, 0, '', $appid);
     }
+
+    // 获取关注者详细信息
+    public function getUserInfo($openid) {
+        $weObj = new TPwechat($this->options);
+        return $weObj->getUserinfo($openid);
+    }
 }

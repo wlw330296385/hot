@@ -298,6 +298,8 @@ class Team extends Base {
             $replystr = '已拒绝';
             if ($reply == 2) {
                 if ($applySaveResult['code'] == 200) {
+                    // 获取球队信息
+                    $teamInfo = $teamS->getTeam(['id' => $applyInfo['organization_id']]);
                     // 保存球队-会员信息，会员有真实姓名记录真实姓名否则记录会员名
                     $dataTeamMember = [
                         'team_id' => $applyInfo['organization_id'],
@@ -333,6 +335,22 @@ class Team extends Base {
                         ])
                         ->inc('member_num', 1)
                         ->update();
+
+                    // 查询有无关注数据保存关注数据
+                    $followDb = db('follow');
+                    $follow = $followDb->where(['type' => 4, 'follow_id' => $dataTeamMember['team_id'], 'member_id' => $dataTeamMember['member_id']])->find();
+                    if ($follow) {
+                        if ($follow['status'] != 1 ) {
+                            $followDb->where('id', $follow['id'])->update(['status' => 1, 'update_time' => time()]);
+                        }
+                    } else {
+                        $followDb->insert([
+                            'type' => 4, 'follow_id' => $dataTeamMember['team_id'], 'follow_name' => $dataTeamMember['team'],
+                            'follow_avatar' => ($teamInfo['logo']) ? $teamInfo['logo'] : '',
+                            'member_id' => $dataTeamMember['member_id'], 'member' => $dataTeamMember['member'], 'member_avatar' => $dataTeamMember['avatar'],
+                            'status' => 1, 'create_time' => time()
+                        ]);
+                    }
                 }
                 $replystr = '已通过';
             }
