@@ -10,6 +10,7 @@ class ItemCoupon extends Base{
        $this->ItemCouponService = new ItemCouponService;
     }
  
+    // 获取卡券列表
     public function getItemCouponListApi(){
          try{
             $map = input('post.');
@@ -25,11 +26,28 @@ class ItemCoupon extends Base{
              return json(['code'=>100,'msg'=>$e->getMessage()]);
          }
      }
-    
+    // 获取卡券列表带page
      public function getItemCouponListByPageApi(){
         try{
             $map = input('post.');
             $result = $this->ItemCouponService->getItemCouponListByPage($map);  
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result->toArray()]);
+            }else{
+                return json(['code'=>100,'msg'=>'查询有误']);
+            }  
+
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+    // 获取用户卡券带page
+    public function getItemCouponMemberListByPageApi(){
+        try{
+            $map = input('post.');
+            $result = $this->ItemCouponService->getItemCouponMemberListByPage($map);  
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result->toArray()]);
             }else{
