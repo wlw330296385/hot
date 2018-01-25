@@ -105,42 +105,7 @@
                     <a href="{:url('team/matchList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">历史赛事</a>
                 </span>
             </div>
-            <ul class="mui-table-view detalis-list list mainInfo mb">
-                <li class="mui-table-view-cell mui-media listli liFrame">
-                    <div class="mainInfoLeft fl mui-text-center">
-                        <p class="month bgred">11月</p>
-                        <h1 class="day">22</h1>
-                        <p class="hours">10：30</p>
-                    </div>
-                    <div class="mui-media-body mainInfoRight wd66">
-                        <h5>
-                            <strong class="title">主题：篮球比赛</strong>
-                            <span class="colororange status">[未开始]</span>
-                        </h5>
-                        <div class="divFrame">
-                            <p>对手：向南小学六二班</p>
-                            <p>地点：向南小学篮球场</p>
-                        </div>
-                        <div class=opFrame>
-                            <button class="mui-btn opbtn" style="margin-right: 8px">详情</button>
-                            <button class="mui-btn opbtn bgred">参加</button>
-                        </div>
-                    </div>
-                </li>
-                <li class="mui-table-view-cell listli">
-                    <div class="imgShow fl wd66 imgShowMatch">
-                        <img src="/static/frontend/images/ads1.jpg" alt="">
-                        <img src="/static/frontend/images/ads1.jpg" alt="">
-                        <img src="/static/frontend/images/ads1.jpg" alt="">
-                        <img src="/static/frontend/images/ads1.jpg" alt="">
-                        <img src="/static/frontend/images/ads1.jpg" alt="">
-                        <img src="/static/frontend/images/ads1.jpg" alt="">
-                    </div>
-                    <span class="singUpTip">
-                        <font class="colorred reg_number">12</font>/
-                        <font class="reg_all"></font> 已报名</span>
-                </li>
-            </ul>
+            <ul class="mui-table-view detalis-list list mainInfo border-b newMatch"></ul>
 
             <!--最新活动-->
             <div class="page-header whitebg border-b">
@@ -458,7 +423,7 @@
             toTagAllList(); //所有标签列表
             toTagCommentList(); //已经评价的标签列表
             toLastEventList() //获取最新活动列表
-            // toLastMatchList(); //获取最新比赛列表
+            toLastMatchList(); //获取最新比赛列表
         });
 
         // 判断当前的关注状态
@@ -653,56 +618,62 @@
         };
 
         var matchid = ''
-        //获取最新活动列表
-        // function toLastMatchList() {
-        //     var team_id = "{$teamInfo.id}";
-        //     mui.ajax("{:url('api/team/lastmatch')}", {
-        //         data: {
-        //             team_id: team_id,
-        //         },
-        //         dataType: 'json',//服务器返回json格式数据
-        //         type: 'post',//HTTP请求类型
-        //         timeout: 10000,//超时时间设置为10秒；
-        //         headers: { 'Content-Type': 'application/json' },
-        //         success: function (data) {
-        //             console.log(data)
-        //             var div = '';
-        //             if (data.code == 200) {
-        //                 for (var i = 0; i <= data.data.length - 1; i++) {
-        //                     // 将时间戳转成日期格式
-        //                     var Tmonth = gettimem(data.data[i].start_time_stamp * 1000);
-        //                     var Tday = gettimed(data.data[i].start_time_stamp * 1000);
-        //                     var Ttime = gettimeh(data.data[i].start_time_stamp * 1000);
-        //                     eventid = data.data[i].id
-        //                     var url = "{:url('team/matchtinfo')}" + '/team_id/' + data.data[i].team_id + '/event_id/' + data.data[i].id;
-        //                     div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblue">' + Tmonth + '月</p><h1 class="day">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
-        //                     div += '<div class="mui-media-body mainInfoRight wd66"><h5 class="title">主题：' + data.data[i].name + '</h5>';
-        //                     div += '<div class="divFrame"><p>组织者：' + data.data[i].member + '</p><p>地点：' + data.data[i].location + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
-        //                     if (data.data[i].is_finished_num == 1) {
-        //                         div += '<button class="mui-btn opbtn bggray">已结束</button>';
-        //                     } else {
-        //                         div += '<button class="mui-btn opbtn bgred signupBtn">参加</button>';
-        //                     }
-        //                     div += ' </div></div></li>';
-        //                     // 人员头像版块
-        //                     div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl wd66 imgShowEvent">';
-        //                     for (var j = 0; j <= data.data[i].memberlist.length - 1; j++) {
-        //                         div += '<img src="' + data.data[i].memberlist[j].avatar + '" alt="">';
-        //                     }
-        //                     div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[i].reg_number + '</font>/<font class="reg_all">' + data.data[i].max + '</font> 已报名</span></li>';
-        //                 }
-        //                 $(".newEvent").empty().append(div);
-        //             }
-        //             if (data.code == 100) {
-        //                 $(".newEvent").empty().append('<p class="nodata">还没有活动数据，赶紧去创建活动吧</p>');
-        //             }
-        //         },
-        //         error: function (xhr, type, errorThrown) {
-        //             //异常处理；
-        //             console.log(type);
-        //         }
-        //     });
-        // };
+        //获取最新比赛列表
+        function toLastMatchList() {
+            var team_id = "{$teamInfo.id}";
+            mui.ajax("{:url('api/team/lastmatch')}", {
+                data: {
+                    team_id: team_id,
+                    status: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var div = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            // 将时间戳转成日期格式
+                            var Tmonth = gettimem(data.data[i].match_time * 1000);
+                            var Tday = gettimed(data.data[i].match_time * 1000);
+                            var Ttime = gettimeh(data.data[i].match_time * 1000);
+                            matchid = data.data[i].id
+                            var url = "{:url('team/matchinfo')}" + '/team_id/' + data.data[i].team_id + '/match_id/' + data.data[i].id;
+                            div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center">';
+                            if (data.data[i].match_time == 0) {
+                                div += '<p class="month bgblue">0月</p><h1 class="day" style="font-size: 25px;padding: 15px 21px;">待定</h1><p class="hours">00:00</p>';
+                            } else {
+                                div += '<p class="month bgblue">' + Tmonth + '月</p><h1 class="day">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
+                            }
+                            div += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">主题：' + data.data[i].match + '</h5>';
+                            div += '<div class="divFrame"><p>组织者：' + data.data[i].home_team + '</p><p>地点：' + data.data[i].court + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
+                            if (data.data[i].is_finished_num == 1) {
+                                div += '<button class="mui-btn opbtn bggray">已结束</button>';
+                            } else {
+                                div += '<button class="mui-btn opbtn bgred signupBtn">参加</button>';
+                            }
+                            div += ' </div></div></li>';
+                            // 人员头像版块
+                            div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl wd66 imgShowEvent">';
+                            for (var j = 0; j <= data.data[i].memberlist.length - 1; j++) {
+                                div += '<img src="' + data.data[i].memberlist[j].avatar + '" alt="">';
+                            }
+                            div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[i].reg_number + '</font>/<font class="reg_all">' + data.data[i].max + '</font> 已报名</span></li>';
+                        }
+                        $(".newMatch").empty().append(div);
+                    }
+                    if (data.code == 100) {
+                        $(".newMatch").empty().append('<p class="nodata">还没有比赛数据，赶紧去创建比赛吧</p>');
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        };
 
         //创建补0函数
         function p(s) {
