@@ -211,7 +211,7 @@ class ItemCouponService {
     }
 
     /**
-    * 卡券列表
+    * 获取我的卡券列表
     * @param $member_id $member
     * @param $item_coupon_id 主表id
     **/ 
