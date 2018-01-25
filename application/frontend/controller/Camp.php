@@ -546,4 +546,9 @@ class Camp extends Base{
         return view('Camp/teachInfoOfCamp');
     }
 
+    // 训练营-粉丝列表
+    public function fanslist() {
+        return view('Camp/fansList');
+    }
+
 }

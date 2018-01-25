@@ -22,8 +22,8 @@
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
     </header>
 
-    <div class="mui-content">
-        <div class="list coach mt55">
+    <div class="mui-content" style="padding-top:0">
+        <div class="list mb44">
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli mui-text-center" style="padding:35px 15px 25px 15px;">
                     <div class="mui-row">
@@ -83,9 +83,7 @@
                 </div>
 
                 <li class="mui-table-view-cell listli">
-                    <div class="imgShow">
-                        <img src="" alt="" style="margin-right:3px">
-                    </div>
+                    <div class="imgShow"></div>
                 </li>
             </ul>
 
@@ -437,7 +435,7 @@
                 data: {
                     match_id: match_id,
                     status: 1,
-                    is_apply: 1
+                    // is_apply: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -451,7 +449,8 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             $(".signup_num").text(data.data.length);
                             // 出勤率
-                            $(".rate").text(data.data.length / "{$countTeamMember}" * 100 + "%")
+                            var rateNum = data.data.length / "{$countTeamMember}" * 100; 
+                            $(".rate").text(parseInt(rateNum)+ "%");
                             inactiveDiv += '<img src="' + data.data[i].avatar + '" style="margin-right:3px">'
                         };
                         $(".imgShow").append(inactiveDiv);

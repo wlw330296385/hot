@@ -100,7 +100,11 @@ class Patch extends Controller {
         db('member')->whereNull('delete_time')->update(['balance' => 0]);
         $campFinanceModel = new CampFinance();
         // 遍历所有已审核课时
-        $schedules = db('schedule')->where(['status' => 1, 'is_settle' => 1])->whereNull('delete_time')->order('id asc')->select();
+        $where['status'] = 1;
+        $where['is_settle'] = 1;
+        //$where['is_settle'] = 0;
+        //$where['update_time'] = ['<', 1516723200];
+        $schedules = db('schedule')->where($where)->whereNull('delete_time')->order('id asc')->select();
         //dump($schedules);
         foreach ($schedules as $k => $schedule) {
             //dump('课时记录'.$schedule);
@@ -266,7 +270,11 @@ class Patch extends Controller {
                 'create_time' => $schedule['lesson_time'],
             ];
             $this->insertSalaryIn($incomeCamp);
-            Db::name('schedule')->where(['id' => $schedule['id']])->update(['update_time' => time(), 'schedule_income' => $incomeSchedule]);
+            Db::name('schedule')->where(['id' => $schedule['id']])->update([
+                'update_time' => time(),
+                'schedule_income' => $incomeSchedule,
+                //'is_settle' => 1
+            ]);
 
             // 大热训练营收入金额
             if ( $incomeRebateCampId9 > 0) {
