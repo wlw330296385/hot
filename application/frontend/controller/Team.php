@@ -249,7 +249,7 @@ class Team extends Base {
         $this->assign('eventInfo', $eventInfo);
         $this->assign('directentry', $directentry);
         $this->assign('memberList', $memberlist);
-        return view('Team/EventEdit');
+        return view('Team/eventEdit');
     }
 
     // 活动列表管理
