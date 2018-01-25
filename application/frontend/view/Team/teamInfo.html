@@ -170,7 +170,7 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>胜率</span>
-                            <div class="mui-media-body colorred">0</div>
+                            <div class="mui-media-body colorred">{$teamInfo.win_rate}</div>
                         </a>
                     </li>
                 </ul>
@@ -391,8 +391,35 @@
                 });
             });
 
-            //报名功能
-            $(document).on('tap', '.signupBtn', function () {
+            //比赛报名功能
+            $(document).on('tap', '.signupMatchBtn', function () {
+                //判断是否登陆会员
+                var match_id = matchid;
+                mui.ajax("{:url('api/match/joinmatch')}", {
+                    data: {
+                        match_id: matchid,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.alert('报名成功', '确定');
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+            //活动报名功能
+            $(document).on('tap', '.signupEventBtn', function () {
                 //判断是否登陆会员
                 var event_id = eventid;
                 mui.ajax("{:url('api/team/jointeamevent')}", {
@@ -594,7 +621,7 @@
                             if (data.data[i].is_finished_num == 1) {
                                 div += '<button class="mui-btn opbtn bggray">已结束</button>';
                             } else {
-                                div += '<button class="mui-btn opbtn bgred signupBtn">参加</button>';
+                                div += '<button class="mui-btn opbtn bgred signupEventBtn">参加</button>';
                             }
                             div += ' </div></div></li>';
                             // 人员头像版块
@@ -652,7 +679,7 @@
                             if (data.data[i].is_finished_num == 1) {
                                 div += '<button class="mui-btn opbtn bggray">已结束</button>';
                             } else {
-                                div += '<button class="mui-btn opbtn bgred signupBtn">参加</button>';
+                                div += '<button class="mui-btn opbtn bgred signupMatchBtn">参加</button>';
                             }
                             div += ' </div></div></li>';
                             // 人员头像版块

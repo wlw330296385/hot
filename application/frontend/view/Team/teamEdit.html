@@ -143,7 +143,7 @@
                     </a>
                 </div>
 
-                <div class="mui-input-row">
+                <!-- <div class="mui-input-row">
                     <a href="#awayColor" class="mui-navigate-right">
                         <label>客场颜色</label>
                         <span class="away_color_text">
@@ -151,7 +151,7 @@
                         <input type="hidden" name="away_color" class="awayshow data" value="{$teamInfo.away_color}">
                         <input type="hidden" name="away_color_style" class="awayshow data" value="{$teamInfo.away_color_style}">
                     </a>
-                </div>
+                </div> -->
 
                 <div class="mui-input-row">
                     <a href="#leader" class="mui-navigate-right">
@@ -952,9 +952,9 @@
             })
             //搜索常驻球场
             $("#searchCR").on("tap", function () {
-                var keyword = $(".keywordLD").val();
+                var keyword = $(".keywordCR").val();
                 var pageCR = 1;
-                toCampList(keyword, "court", pageCR);
+                toCourtList(keyword, "court", pageCR);
             })
             //常驻球场弹出框页码控制
             $("#court").on('tap', '.next_page', function () {
@@ -964,7 +964,7 @@
                 if (pageCR > getTotalPage) {
                     mui.toast("已经最后一页了");
                 } else {
-                    var keyword = $(".keywordLD").val();
+                    var keyword = $(".keywordCR").val();
                     toCourtList(keyword, "court", pageCR);
                 }
             })
@@ -973,7 +973,7 @@
                 if (pageCR < 1) {
                     mui.toast("已经是第一页了");
                 } else {
-                    var keyword = $(".keywordLD").val();
+                    var keyword = $(".keywordCR").val();
                     toCourtList(keyword, "court", pageCR);
                 }
             })
@@ -1025,7 +1025,7 @@
         };
 
         //训练营列表接口获取数据并追加到页面
-        var toCampList = function (keyword, wCourt, page) {
+        var toCampList = function (keyword, wCamp, page) {
             var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}/?page=" + page;
             var wCampList = "ul.campList";
             var currPage = ".currPage";
@@ -1057,7 +1057,7 @@
                         }
                         $(wCampList).empty();
                         if (newli == '') {
-                            newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
+                            newli = '<p class="nodata">没有查找到数据哦</p>'
                         }
                         $(wCampList).append(newli);
                         $(currPage).text(data.data.current_page);
@@ -1102,7 +1102,7 @@
                         }
                         $(wCourtList).empty();
                         if (newli == '') {
-                            newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
+                            newli = '<p class="nodata">没有查找到数据哦</p>'
                         }
                         $(wCourtList).append(newli);
                         $(currPage).text(data.data.current_page);
