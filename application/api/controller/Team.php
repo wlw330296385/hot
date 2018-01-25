@@ -3,6 +3,7 @@
 namespace app\api\controller;
 
 
+use app\service\MatchService;
 use app\service\MessageService;
 use app\service\TeamService;
 use think\Exception;
@@ -532,6 +533,55 @@ class Team extends Base {
         }
     }
 
+    // 获取球队最新比赛记录
+    public function lastmatch() {
+        try {
+            // 接收请求参数作查询条件
+            $map = input('param.');
+            // 必传参数:球队team_id 组合复合查询 查询作为主队或客队
+            if (isset($map['team_id'])) {
+                $team_id = input('param.team_id');
+                $map['match_record.home_team_id|match_record.away_team_id|match_record.team_id'] = $team_id;
+                unset($map['team_id']);
+            } else {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'请选择球队']);
+            }
+            // 默认查询上架比赛(status=1)
+            if (!isset($map['status'])) {
+                $map['status'] = 1;
+            }
+            // 默认查询未完成比赛(is_finished=-1)
+            if (!isset($map['is_finished'])) {
+                $map['is_finished'] = -1;
+            }
+
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            // 查询条件组合end
+
+            // serivce
+            $matchS = new MatchService();
+            $lastMatch = $matchS->matchRecordListAll($map);
+            // 如果没有未完成的活动记录，清理查询条件is_finished=-1，再次执行查询
+            if (!$lastMatch) {
+                unset($map['is_finished']);
+                $lastMatch = $matchS->matchRecordListAll($map, 'id desc');
+                // 球队无比赛记录
+                if (!$lastMatch) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+                }
+            }
+            // 比赛成员名单（列出当前球队）
+            foreach ($lastMatch as $k => $val) {
+                $lastMatch[$k]['memberlist'] = $matchS->getMatchRecordMemberListAll([ 'match_record_id' => $val['id'], 'team_id' => $team_id ]);
+            }
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $lastMatch]);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+    
     // 获取球队最新活动记录
     public function lastevent() {
         try {
