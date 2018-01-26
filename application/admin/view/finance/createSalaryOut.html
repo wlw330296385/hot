@@ -13,9 +13,9 @@
 <body>
 	<!-- Main content -->
 	<section class="content">
-		<div class="row">
+		<div class="row col-md-12 col-lg-12">
 			<!-- left column -->
-			<div class="col-md-6">
+			<div class="col-md-6 col-lg-6">
 				<!-- general form elements -->
 				<div class="box box-primary bg-gray disabled ">
 					<div class="box-header with-border">
@@ -35,11 +35,11 @@
 							</div>
 							{:token()}
                             <div class="form-group">
-                                <label for="">选择月份(限{:date('Y',time())}年)</label>
-                                <select class="form-control m" id="start_end">
+                                <label for="">选择月份(限12个月)</label>
+                                <select class="form-control m data" id="start_end" name="system_remarks">
                                     {volist name='mList' id = 'vol'}
-                                    <option value="{$vol.start},{$vol.end}" >{$vol.m}月</option>
-                                    {/volist}}
+                                    <option value="{$vol.mm}" data = '{$vol.start},{$vol.end}' >{$vol.mm}</option>
+                                    {/volist}
                                 </select>
                             </div>
 							<div class="form-group">
@@ -94,21 +94,25 @@
 
 <script type="text/javascript">
 	var member_id = $('select[name=member_id]').val();
-    var start_end = $('select[name=start_end]').val();
+    var start_end = $('select#start_end option:selected').attr('data');
     var balance = 0;
 	$(function(){
         // 切换用户
 		$('select[name=member_id]').on('change',function(){
 			member_id = $('select[name=member_id]').val();
-            start_end = $('#start_end').val();
+            // start_end = $('#start_end').val();
+            start_end = $('select#start_end option:selected').attr('data');
 			getSalaryInList(member_id,start_end);
             getBankcardList(member_id);
+            
             getMemberInfo();
 		});
 
         $('#start_end').on('change',function(){
             member_id = $('select[name=member_id]').val();
-            start_end = $('#start_end').val();
+            start_end = $('select#start_end option:selected').attr('data');
+            var betweenTime = $('select#start_end option:selected').attr('data').split(',');
+            getSalaryOutList({member_id:member_id,start:betweenTime[0],end:betweenTime[1]});
             getSalaryInList(member_id,start_end);
         })
 
@@ -185,6 +189,26 @@
     };
 
     //月收入接口获取数据并追加到页面
+    var getSalaryOutList = function (data) {
+        var url = "{:url('api/Salary_out/getSalaryoutListApi')}";
+        $.post({
+            url: url,
+            data: data,
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            success: function (msg) {
+                if(msg.data.length>0){
+                    alert(`该用户这个月份已有${msg.data.length}笔提现,确定还要提现吗?`);
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+               alert('网络异常,请稍候再试');
+            }
+        });
+    };
+
+    //月收入接口获取数据并追加到页面
     var getBankcardList = function (member_id) {
         var url = "{:url('api/bankcard/getBankcardListApi')}";
         $.post({
@@ -202,11 +226,12 @@
                         newli = newli + '<option value='+data.data[i].id+'>['+data.data[i].bank_type+']'+data.data[i].bank+'('+data.data[i].bank_card+')</option>';
                     }
                     if (newli == '') {
-                        newli = "<option disabled>没有账户</option>"
+                        newli = "<option>没有账户</option>"
                     }
                     $("#bankcard").html(newli);
                 } else {
-                    
+                    newli = "<option>没有账户</option>"
+                    $("#bankcard").html(newli);
                 }
             },
             error: function (xhr, type, errerThrown) {

@@ -504,15 +504,15 @@ class Finance extends Backend {
             }else{
                 $salaryInList = [];
             }
-            $m = date('m',time());
-
             $mList = [];
-            for ($i=$m; $i > 1; $i--) { 
-                $mList[$i]['m'] = $i;
-                $BeginDate= date('Y').'-'.$i.'-01';
+
+            for ($i=0; $i < 12; $i++) { 
+                
+                $BeginDate= date('Y-m', strtotime("-{$i} month"));
                 $mList[$i]['start'] = $BeginDate;
-                $endDate = date('Y-m-d', strtotime("$BeginDate +1 month -1 day"));
-                $mList[$i]['end'] = $endDate;    
+                $endDate = date('Y-m', strtotime("$BeginDate -{$i}+1 month"));
+                $mList[$i]['end'] = $endDate; 
+                $mList[$i]['mm'] =  $BeginDate.'月';
             }
 
 
@@ -544,8 +544,19 @@ class Finance extends Backend {
                     'is_pay'=>1,
                     'status'=>1
                     ];
+                    $salaryOutInfo = $SalaryOut->where(['id'=>$salaryOut_id])->find();
+                    $memberInfo = db('member')->where(['id'=>$salaryOutInfo['member_id']])->find();
+                    if($memberInfo['balance']<$salaryOutInfo['salary']){
+                        $this->error('用户余额不足');
+                    }
                     $result = $SalaryOut->save($data,['id'=>$salaryOut_id]);
                     if($result){
+                        if($salaryOutInfo['salary']>0){
+                            db('member')->where(['id'=>$salaryOutInfo['member_id']])->setDec('balance',$salaryOutInfo['salary']);
+                        }else{
+                            db('member')->where(['id'=>$salaryOutInfo['member_id']])->setInc('balance',-($salaryOutInfo['salary']));
+                        }
+                        
                         $this->AuthService->record('提现申请出账');
                         $this->success('操作成功');
                     }else{

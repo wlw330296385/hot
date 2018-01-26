@@ -34,13 +34,17 @@ class SalaryOutService {
         $data['paytime'] = '';
         $data['is_pay'] = 0;
         $data['status'] = 0;
+        $memberInfo = db('member')->where(['id'=>$data['member_id']])->find();
+        if($data['salary']>$memberInfo['balance']){
+             return ['msg' => '余额不足', 'code' => 100];
+        }
         $validate = validate('SalaryOutVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
         $result = $this->SalaryOut->allowField(true)->save($data);
         if($result){
-            db('member')->where(['id'=>$data['member_id']])->setDec('balance',$data['salary']);
+           
             $memberInfo = db('member')->where(['id'=>$data['member_id']])->find();
             session('memberInfo',$memberInfo,'think');
             return ['code'=>200,'msg'=>'申请成功','data'=>$data];
