@@ -476,4 +476,57 @@ class Schedule extends Base
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+
+    // 2018-01-26 删除已申课时
+    public function delcheckedschedule() {
+        try {
+            // 接收请求变量
+            $schedule_id = input('param.schedule_id');
+            if (!isset($schedule_id)) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            $scheduleS = new ScheduleService();
+            // 获取课时数据
+            $scheduleInfo = $scheduleS->getScheduleInfo(['id' => $schedule_id]);
+            if (!$scheduleInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+            }
+            //dump($scheduleInfo);
+            // 课时学员名单
+            if ($scheduleInfo['student_str']) {
+                // 更新课时学员剩余课时+1、完成课时-1
+                $scheduleStudents = unserialize($scheduleInfo['student_str']);
+                //dump($scheduleStudents);
+                $dataUpdateLessonMember = [];
+                $dataUpdateStudent = [];
+                $modelLessonMember = new \app\model\LessonMember();
+                $modelStudent = new \app\model\Student();
+                // 系统备注文字
+                $systemRemarks = '|'.date('Ymd').'已申课时记录id:'. $schedule_id .'删除,补回剩余课时';
+                foreach ($scheduleStudents as $k => $student) {
+                    // 获取课时学员的lesson_member数据
+                    $studentLessonMember = $modelLessonMember->where(['student_id' => $student['student_id'], 'camp_id' => $scheduleInfo['camp_id'], 'lesson_id' => $scheduleInfo['lesson_id']])->find()->toArray();
+                    //dump($studentLessonMember);
+                    // 课时学员剩余课时+1 批量更新组合
+                    $dataUpdateLessonMember[$k]['id'] = $studentLessonMember['id'];
+                    $dataUpdateLessonMember[$k]['rest_schedule'] = $studentLessonMember['rest_schedule']+1;
+                    $dataUpdateLessonMember[$k]['system_remarks'] = $studentLessonMember['system_remarks'].$systemRemarks;
+
+                    // 获取课时学员的student数据
+                    $studentInfo = $modelStudent->where(['id' => $student['student_id']])->find()->toArray();
+                    $dataUpdateStudent[$k]['id'] = $studentInfo['id'];
+                    $dataUpdateStudent[$k]['finished_schedule'] = $studentInfo['finished_schedule']-1;
+                    $dataUpdateStudent[$k]['system_remarks'] = $studentInfo['system_remarks'].$systemRemarks;
+                    // 课时学员完成课时-1 批量更新组合
+                }
+                //dump($dataUpdateLessonMember);
+                //$resUpdateLessonMember = $modelLessonMember->saveAll($dataUpdateLessonMember);
+                //$resUpdateStudent = $modelStudent->saveAll($dataUpdateStudent);
+                // 更新课时学员剩余课时+1、完成课时-1 end
+            }
+
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 }

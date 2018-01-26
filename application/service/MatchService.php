@@ -399,6 +399,25 @@ class MatchService {
         }
     }
 
+    // 根据比赛战绩统计更新球队的比赛场数与胜场数
+    public function countTeamNumByRecord($map) {
+        $modelRecord = new MatchRecord();
+        $dbTeam = db('team');
+        // 获取比赛战绩数据
+        $query = $modelRecord->where($map)->find();
+        if ($query) {
+            $res = $query->toArray();
+            // 统计比赛胜方球队的胜场数
+            // 统计比赛球队的比赛数
+            $homeTeamWinNum = $modelRecord->where(['win_team_id' => $res['home_team_id']])->count();
+            $homeTeamMatchNum = $modelRecord->where('home_team_id|away_team_id', $res['home_team_id'])->count();
+            $awayTeamWinNum = $modelRecord->where(['win_team_id' => $res['away_team_id']])->count();
+            $awayTeamMatchNum = $modelRecord->where('home_team_id|away_team_id', $res['away_team_id'])->count();
+            $dbTeam->where('id', $res['home_team_id'])->update(['match_num' => $homeTeamMatchNum, 'match_win' => $homeTeamWinNum]);
+            $dbTeam->where('id', $res['away_team_id'])->update(['match_num' => $awayTeamMatchNum, 'match_win' => $awayTeamWinNum]);
+        }
+    }
+
     // 查询比赛战绩-会员关系
     public function getMatchRecordMember($map) {
         $model = new MatchRecordMember();
@@ -466,6 +485,7 @@ class MatchService {
             return $query;
         }
     }
+
 
     // 保存历史对手球队
     public function saveHistoryTeam($data) {
@@ -593,4 +613,5 @@ class MatchService {
             return $query;
         }
     }
+
 }

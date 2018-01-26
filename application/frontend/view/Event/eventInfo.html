@@ -143,7 +143,7 @@
                 <div class="mui-col-sm-3 mui-col-xs-3 recomLine"></div>
             </div>
             {/notempty}
-            
+
         </div>
 
         <ul class="mui-table-view operation">
@@ -192,22 +192,23 @@
         var domIndex = 0;
 
         $(function () {
+
             // 活动对象转换成文字显示
-            function targetType() {
-                var target_type_name = '';
-                var target_type = "{$eventInfo.target_type}";
-                if (target_type == 1) {
-                    target_type_name = "公开活动";
-                } else if (target_type == 2) {
-                    target_type_name = "营内活动";
-                } else if (target_type == 3) {
-                    target_type_name = "班内活动";
-                }
-                $(".target_type").text(target_type_name)
+            var target_type_name = '';
+            var target_type = "{$eventInfo.target_type}";
+            if (target_type == 1) {
+                target_type_name = "公开活动";
+            } else if (target_type == 2) {
+                target_type_name = "营内活动";
+            } else if (target_type == 3) {
+                target_type_name = "班内活动";
             }
-            // 默认的样式
-            initialEds();
-            targetType();  // 活动对象转换成文字显示
+            $(".target_type").text(target_type_name)
+
+            // 简介默认的样式
+            if ($(".intro").text() == '') {
+                $(".intro").append("<p class='nohave'>还没有活动简介哦</p>")
+            }
 
             // 选择套餐
             $('.selectDom').on('click', function () {
@@ -256,13 +257,6 @@
 
         });
 
-
-        // 默认的样式
-        function initialEds() {
-            if ($(".intro").text() == '') {
-                $(".intro").append("<p class='nohave'>还没有活动简介哦</p>")
-            }
-        }
     </script>
     <script>
         wx.config({
