@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <style>
+    <!-- <style>
         .show {
             display: block;
         }
@@ -64,13 +64,15 @@
             border-top: none;
             text-align: center;
         }
-    </style>
+    </style> -->
 </head>
 
 <body class="whitebg">
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回活动列表</span></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回活动列表</span>
+        </a>
         <h1 class="mui-title">{$eventInfo.organization}</h1>
     </header>
 
@@ -95,52 +97,83 @@
 
             <ul class="mui-table-view list">
                 <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
-                <li class="mui-table-view-cell listli">活动对象<span class="target_type"></span></li>
-                <li class="mui-table-view-cell listli {eq name='eventInfo.target_type' value='2||3'}show{else/}hide{/eq}">所属训练营<span>{$eventInfo.organization}</span></li>
-                <li class="mui-table-view-cell listli {eq name='eventInfo.target_type' value='3'}show{else/}hide{/eq}">所属班级<span>{$eventInfo.target}</span></li>
-                <li class="mui-table-view-cell listli">活动套餐
-                    <span class="wd83">
+                <li class="mui-table-view-cell listli">活动对象
+                    <span class="target_type"></span>
+                </li>
+                <li class="mui-table-view-cell listli {eq name='eventInfo.target_type' value='2||3'}show{else/}hide{/eq}">所属训练营
+                    <span>{$eventInfo.organization}</span>
+                </li>
+                <li class="mui-table-view-cell listli {eq name='eventInfo.target_type' value='3'}show{else/}hide{/eq}">所属班级
+                    <span>{$eventInfo.target}</span>
+                </li>
+                <li class="mui-table-view-cell listli" style="line-height:37px">活动套餐
+                    <span class="wd">
                         {volist name='$eventInfo.doms' id="vol"}
                         <button type="button" class="mui-btn selectDom" value="{$vol.price}" data="{$key}">{$vol.name}-{$vol.price}</button>
                         {/volist}
                     </span>
                 </li>
-                <li class="mui-table-view-cell listli {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">费用结算人<span>{$eventInfo.finance}</span></li>
-                <li class="mui-table-view-cell listli">活动开始时间<span>{$eventInfo.starts}</span></li>
-                <li class="mui-table-view-cell listli">活动结束时间<span>{$eventInfo.ends}</span></li>
-                <li class="mui-table-view-cell listli">所属地区<span>{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span></li>
-                <li class="mui-table-view-cell listli">活动地点<span>{$eventInfo.location}</span></li>
-                <li class="mui-table-view-cell listli">人数范围<span>{$eventInfo.min}-{$eventInfo.max}人</span></li>
-                <li class="mui-table-view-cell listli">联系人<span>{$eventInfo.contact}</span></li>
-                <li class="mui-table-view-cell listli">联系电话<span>{$eventInfo.telephone}</span></li>
+                <li class="mui-table-view-cell listli {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">费用结算人
+                    <span>{$eventInfo.finance}</span>
+                </li>
+                <li class="mui-table-view-cell listli">活动开始时间
+                    <span>{$eventInfo.starts}</span>
+                </li>
+                <li class="mui-table-view-cell listli">活动结束时间
+                    <span>{$eventInfo.ends}</span>
+                </li>
+                <li class="mui-table-view-cell listli">所属地区
+                    <span>{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span>
+                </li>
+                <li class="mui-table-view-cell listli">活动地点
+                    <span>{$eventInfo.location}</span>
+                </li>
+                <li class="mui-table-view-cell listli">人数范围
+                    <span>{$eventInfo.min}-{$eventInfo.max}人</span>
+                </li>
+                <li class="mui-table-view-cell listli">联系人
+                    <span>{$eventInfo.contact}</span>
+                </li>
+                <li class="mui-table-view-cell listli">联系电话
+                    <span>{$eventInfo.telephone}</span>
+                </li>
                 <li class="mui-table-view-cell listli">报名人员
                     <a href="{:url('event/eventOfSignUpList',['event_id'=>$eventInfo['id']])}" class="mui-navigate-right fr">
                         <span style="display: table">点击查看列表</span>
                     </a>
                 </li>
-                <div class="page-header" style="background: #efeff4;">
-                    <span class="course">活动简介</span>
-                </div>
             </ul>
 
-            <!--活动录入的信息-->
-            <ul class="mui-table-view list mt55">
-                <li class="mui-table-view-cell listli intro intro1">{$eventInfo.event_des}</li>
-                <div class="page-header" style="background: #efeff4;">
-                    <span class="course">已参与人员</span>
-                </div>
-                <li class="mui-table-view-cell listli intro ">
-                    <div class="box  intro2" id="inactiveList"></div>
+            <!--活动简介-->
+            <div class="page-header" style="background: #efeff4;">
+                <span class="course">活动简介</span>
+            </div>
+            <ul class="mui-table-view list">
+                <li class="mui-table-view-cell listli introBox intro1">{$eventInfo.event_des}</li>
+            </ul>
+
+            <!--已参与人员-->
+            <div class="page-header" style="background: #efeff4;">
+                <span class="course">已参与人员</span>
+            </div>
+            <ul class="mui-table-view list">
+                <li class="mui-table-view-cell listli introBox">
+                    <div class="box intro2" id="inactiveList"></div>
                 </li>
-                <div class="page-header" style="background: #efeff4;">
-                    <span class="course">备注信息</span>
-                </div>
-                <li class="mui-table-view-cell listli intro intro3">{$eventInfo.remarks}</li>
+            </ul>
+
+            <!--备注信息-->
+            <div class="page-header" style="background: #efeff4;">
+                <span class="course">备注信息</span>
+            </div>
+            <ul class="mui-table-view list mt55">
+                <li class="mui-table-view-cell listli introBox intro3">{$eventInfo.remarks}</li>
             </ul>
 
             {egt name="power" value='2'}
             <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen"><a href="{:url('event/recordEvent',['event_id'=>$eventInfo['id']])}">活动录入</a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen">
+                    <a href="{:url('event/recordEvent',['event_id'=>$eventInfo['id']])}">活动录入</a>
                 </li>
             </ul>
             {/egt}
@@ -156,15 +189,17 @@
         });
 
         $(function () {
-            
-            initialEds();// 默认的样式
-            targetType(); //活动对象转换成文字显示
             toExpMemberList();
-        });
 
+            // 简介默认的提示
+            if ($(".intro1").text() == '') {
+                $(".intro1").append("<p class='nohave'>没有活动简介哦</p>")
+            }
+            if ($(".intro3").text() == '') {
+                $(".intro3").append("<p class='nohave'>没有备注信息哦</p>")
+            }
 
-        // 活动对象转换成文字显示
-        function targetType() {
+            // 活动对象转换成文字显示
             var target_type_name = '';
             var target_type = "{$eventInfo.target_type}";
             if (target_type == 1) {
@@ -175,17 +210,7 @@
                 target_type_name = "班内活动";
             }
             $(".target_type").text(target_type_name)
-        }
-
-        // 默认的样式
-        function initialEds() {
-            if ($(".intro1").text() == '') {
-                $(".intro1").append("<p class='nohave'>没有活动简介哦</p>")
-            }
-            if ($(".intro3").text() == '') {
-                $(".intro3").append("<p class='nohave'>没有备注信息哦</p>")
-            }
-        }
+        });
 
         //更新学员序号
         function changeIndex() {

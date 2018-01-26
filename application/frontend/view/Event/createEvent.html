@@ -50,8 +50,8 @@
             margin: 13px 10px;
         }
 
-        input[name=event-dom_price]{
-            border-left:1px dotted #DDD;
+        input[name=event-dom_price] {
+            border-left: 1px dotted #DDD;
             text-align: center !important;
         }
     </style>
@@ -71,7 +71,7 @@
 
     <div class="mui-content pt">
 
-        <div class="camp-list camp-lesson-list" style="margin-top: 4px">
+        <div class="camp-list camp-lesson-list">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
 
             <form action="" class="mui-input-group mt55">
@@ -143,7 +143,7 @@
                 <div class="mui-input-row h-auto">
                     <a href="#eventDom" class="mui-navigate-right">
                         <label>活动套餐</label>
-                        <span class="eventDom wd60" style="line-height: 24px;"></span>
+                        <span class="eventDom wd60" style="line-height:37px;"></span>
                     </a>
                 </div>
 
@@ -220,15 +220,16 @@
                     </a>
                 </div>
 
+                <!-- 活动简介 -->
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">活动简介</span>
                 </div>
+                <div class="mui-input-row h-auto" style="margin-bottom: 10px">
+                    <textarea name="event_des" class="data event_des" style="display: none"></textarea>
+                    <div class="introBox"></div>
+                </div>
 
                 <div class="mui-input-row h-auto">
-                    <div class="mui-input-row h-auto" style="margin-bottom: 10px">
-                        <textarea name="event_des" class="data event_des" style="display: none"></textarea>
-                        <div class="introBox"></div>
-                    </div>
                     <div class="mui-row mui-text-center mui-row-operation">
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
                             <a class="frame up pd">上移</a>
@@ -530,10 +531,10 @@
             })
             //添加
             $("#domAdd").on('tap', this, function () {
-//                var addPrice = '';
-//                if ($("#eventPrice").val() == 2) {
-//                    addPrice = '<input type="text" name="event-dom_price" class="wd27 fr" value="" placeholder="价格">'
-//                }
+                //                var addPrice = '';
+                //                if ($("#eventPrice").val() == 2) {
+                //                    addPrice = '<input type="text" name="event-dom_price" class="wd27 fr" value="" placeholder="价格">'
+                //                }
                 $("#eventDom form").append('<div class="mui-input-row mui-checkbox mui-left"><i class="cancel-dom mui-icon mui-icon-close"></i><input type="text" name="event-dom" class="wd58 fl" value="" placeholder="请填写种类名称"><input type="text" name="event-dom_price" class="wd27 fr" value="" placeholder="价格"></div>');
                 if ($("#eventPrice").val() == 1) {
                     $("input[name='event-dom_price']").hide();
@@ -549,24 +550,24 @@
             // 选择是否收费显示隐藏活动单价和费用结算人
             $("#eventPrice").change(function () {
                 if ($(this).children('option:selected').text() == '免费') {
-//                    $("input[name='event-dom_price']").val("0");
+                    //                    $("input[name='event-dom_price']").val("0");
                     $("input[name='event-dom_price']").hide();
                     $(".eventDom").text("");
                     eventDomArr = [{ name: '默认', price: 0 }];
-//                    $("#eventDom form").empty();
-//                    $("#eventDom form").prepend('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i></div>');
-//                    $("input[name='price']").hide();
+                    //                    $("#eventDom form").empty();
+                    //                    $("#eventDom form").prepend('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i></div>');
+                    //                    $("input[name='price']").hide();
                     $(".price-input-row").hide();
                     $(".finance").removeClass("domData");
                     $("input[name='finance_id']").removeClass("data");
                 } else {
                     $("input[name='event-dom_price']").show();
-//                    $("input[name='event-dom_price']").val("");
+                    //                    $("input[name='event-dom_price']").val("");
                     $(".eventDom").text("");
                     eventDomArr = [{ name: '默认', price: 0 }];
-//                    $("#eventDom form").empty();
-//                    $("#eventDom form").prepend('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i><input type="text" name="event-dom_price" class="wd36 fr" value="" placeholder="对应价格"></div>');
-//                    $("input[name='price']").addClass("data").val('');
+                    //                    $("#eventDom form").empty();
+                    //                    $("#eventDom form").prepend('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i><input type="text" name="event-dom_price" class="wd36 fr" value="" placeholder="对应价格"></div>');
+                    //                    $("input[name='price']").addClass("data").val('');
                     $(".price-input-row").show();
                     $(".finance").addClass("domData").val('');
                     $("input[name='finance_id']").addClass("data").val('');
@@ -598,7 +599,7 @@
                 var getTotalPage = $("#cost .totalPage").text();
                 pageLD++;
                 if (pageLD > getTotalPage) {
-                    pageLD=getTotalPage;
+                    pageLD = getTotalPage;
                     mui.toast("已经最后一页了");
                 } else {
                     var keyword = $(".keywordLD").val();
@@ -608,7 +609,7 @@
             $("#cost").on('click', '.prev_page', function () {
                 pageLD--;
                 if (pageLD < 1) {
-                    pageLD=1;
+                    pageLD = 1;
                     mui.toast("已经是第一页了");
                 } else {
                     var keyword = $(".keywordLD").val();
@@ -732,8 +733,8 @@
                 return false;
             }
 
-//            console.log(eventDomArr)
-//            return false;
+            //            console.log(eventDomArr)
+            //            return false;
             var url = "{:url('api/event/updateEventApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
