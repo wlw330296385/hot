@@ -251,7 +251,8 @@ class Match extends Base
     }
 
     // 保存球队友谊赛比赛+比赛战绩数据
-    public function storefriendlymatchrecord() {
+    public function storefriendlymatchrecord()
+    {
         try {
             // 接收输入变量 其中post[record]为match_record保存数据
             $post = input('post.');
@@ -264,12 +265,12 @@ class Match extends Base
             // 比赛完成状态match is_finished标识
             $isFinished = 0;
             // 提取输入比分变量
-            $homeScore= $post['record']['home_score'];
+            $homeScore = $post['record']['home_score'];
             $awayScore = $post['record']['away_score'];
             // 提交is_finished=1 即比赛完成（match记录完成状态is_finished）
             if (isset($post['is_finished'])) {
                 if ($post['is_finished'] == 1) {
-                    if(empty($post['record']['away_team_id']) && empty($post['record']['away_team']) ) {
+                    if (empty($post['record']['away_team_id']) && empty($post['record']['away_team'])) {
                         return json(['code' => 100, 'msg' => '请填写客队信息']);
                     }
                     $isFinished = 1;
@@ -285,7 +286,7 @@ class Match extends Base
                 $match_id = $post['id'];
                 $match = $matchS->getMatch(['id' => $match_id]);
                 if (!$match) {
-                    return json(['code' => 100, 'msg' => __lang('MSG_404').'请选择其他比赛']);
+                    return json(['code' => 100, 'msg' => __lang('MSG_404') . '请选择其他比赛']);
                 }
                 if ($match['type_num'] == 1) {
                     // 组合match_record保存数据
@@ -303,7 +304,6 @@ class Match extends Base
                             } else {
                                 $recordData['win_team_id'] = $recordData['away_team_id'];
                             }
-                            $winTeamId = $recordData['win_team_id'];
                         }
                     }
                     // 组合match_record保存数据 end
@@ -349,7 +349,7 @@ class Match extends Base
                                     //dump($teamMember);
                                     if ($teamMember) {
                                         $dataUpdateTeamMember[$k]['id'] = $teamMember['id'];
-                                        $dataUpdateTeamMember[$k]['match_num'] = $teamMember['match_num']+1;
+                                        $dataUpdateTeamMember[$k]['match_num'] = $teamMember['match_num'] + 1;
                                     }
                                 }
                             }
@@ -373,13 +373,14 @@ class Match extends Base
                             }
                             $memberArr[$k]['match'] = $matchName;
                             $memberArr[$k]['status'] = -1;
+                            $memberArr[$k]['is_checkin'] = -1;
 
                             // 批量更新team_member 比赛数match_num
                             $teamMember = $teamS->getTeamMemberInfo(['team_id' => $recordData['home_team_id'], 'member_id' => $member['member_id']]);
                             //dump($teamMember);
                             if ($teamMember) {
                                 $dataUpdateTeamMemberDec[$k]['id'] = $teamMember['id'];
-                                $dataUpdateTeamMemberDec[$k]['match_num'] = $teamMember['match_num']-1;
+                                $dataUpdateTeamMemberDec[$k]['match_num'] = $teamMember['match_num'] - 1;
                             }
                         }
                         $resultsaveMatchRecordMember2 = $matchS->saveAllMatchRecordMember($memberArr);
@@ -401,36 +402,38 @@ class Match extends Base
                         }
                         // 比赛完成的操作
                         if ($isFinished == 1) {
-                            // 更新球队胜场数（比赛数据已完成不更新）
-
-                            // 更新球队比赛场数（比赛数据已完成不更新）
-
-                            // 保存球队历史比赛对手信息
-                            // 查询有无原数据
-                            $mapHistoryTeam = [
-                                'team_id' => $post['record']['home_team_id'],
-                                'opponent_team_id' => $post['record']['away_team_id']
-                            ];
-                            $historyTeam = $matchS->getHistoryTeam($mapHistoryTeam);
-                            // 插入新数据
-                            if (!$historyTeam) {
-                                $dataHistoryTeam = [
+                            // (比赛未完成执行的操作)
+                            if ($match['is_finished_num'] === 0) {
+                                // 保存球队历史比赛对手信息
+                                // 查询有无原数据
+                                $mapHistoryTeam = [
                                     'team_id' => $post['record']['home_team_id'],
-                                    'team' => $post['record']['home_team'],
-                                    'opponent_team_id' => $post['record']['away_team_id'],
-                                    'opponent_team' => $post['record']['away_team'],
-                                    'match_num' => 1
+                                    'opponent_team_id' => $post['record']['away_team_id']
                                 ];
-                            } else {
-                                // 更新原数据 比赛次数+1
-                                $dataHistoryTeam['id'] = $historyTeam['id'];
-                                $dataHistoryTeam['match_num'] = $historyTeam['match_num']+1;
-                            }
-                            $matchS->saveHistoryTeam($dataHistoryTeam);
-                            // 保存球队历史比赛对手信息 end
+                                $historyTeam = $matchS->getHistoryTeam($mapHistoryTeam);
+                                // 插入新数据
+                                if (!$historyTeam) {
+                                    $dataHistoryTeam = [
+                                        'team_id' => $post['record']['home_team_id'],
+                                        'team' => $post['record']['home_team'],
+                                        'opponent_team_id' => $post['record']['away_team_id'],
+                                        'opponent_team' => $post['record']['away_team'],
+                                        'match_num' => 1
+                                    ];
+                                } else {
+                                    // 更新原数据 比赛次数+1
+                                    $dataHistoryTeam['id'] = $historyTeam['id'];
+                                    $dataHistoryTeam['match_num'] = $historyTeam['match_num'] + 1;
+                                }
+                                //$matchS->saveHistoryTeam($dataHistoryTeam);
+                                // 保存球队历史比赛对手信息 end
 
-                            // 发送比赛完成信息给对手球队
-                            // 发送比赛完成信息给对手球队 end
+                                // 发送比赛完成信息给对手球队
+                                // 发送比赛完成信息给对手球队 end
+                            }
+
+                            // 更新球队胜场数、比赛场数
+                            $matchS->countTeamNumByRecord(['id' => $recordData['id']]);
                         }
                         // 比赛完成的操作 end
                         // 返回响应结果
@@ -456,7 +459,7 @@ class Match extends Base
                 // 保存match数据
                 $resultSaveMatch = $matchS->saveMatch($post);
                 // 保存match数据成功 保存match_record数据
-                if ($resultSaveMatch['code'] ==200) {
+                if ($resultSaveMatch['code'] == 200) {
                     // 组合match_record保存数据
                     $recordData = $post['record'];
                     $recordData['match_id'] = $resultSaveMatch['data'];
@@ -506,7 +509,7 @@ class Match extends Base
                             //dump($teamMember);
                             if ($teamMember) {
                                 $dataUpdateTeamMember[$k]['id'] = $teamMember['id'];
-                                $dataUpdateTeamMember[$k]['match_num'] = $teamMember['match_num']+1;
+                                $dataUpdateTeamMember[$k]['match_num'] = $teamMember['match_num'] + 1;
                             }
                         }
                         $saveHomeTeamMemberRes = $matchS->saveAllMatchRecordMember($homeMember);
@@ -519,8 +522,8 @@ class Match extends Base
 
                     // 比赛完成的操作
                     if ($isFinished == 1) {
-                        // 根据填写的比分 更新球队比赛场数、胜场数
-
+                        // 更新球队胜场数、比赛场数
+                        $matchS->countTeamNumByRecord(['id' => $resultSaveMatchRecord['data']]);
 
                         // 保存球队历史比赛对手信息
                         // 查询有无原数据
@@ -541,7 +544,7 @@ class Match extends Base
                         } else {
                             // 更新原数据 比赛次数+1
                             $dataHistoryTeam['id'] = $historyTeam['id'];
-                            $dataHistoryTeam['match_num'] = $historyTeam['match_num']+1;
+                            $dataHistoryTeam['match_num'] = $historyTeam['match_num'] + 1;
                         }
                         $matchS->saveHistoryTeam($dataHistoryTeam);
                         // 保存球队历史比赛对手信息 end
@@ -597,34 +600,34 @@ class Match extends Base
                     // match_time区间 查询条件组合:当前时间至所选未来时间
                     $endDate = getStartAndEndUnixTimestamp(date('Y', $dateTimeStamp), date('m', $dateTimeStamp), date('d', $dateTimeStamp));
                     //dump($endDate);
-                    $map['match_time'] = ['between', [ time(), $endDate['end'] ]];
+                    $map['match_time'] = ['between', [time(), $endDate['end']]];
                 }
                 unset($map['choice_time']);
             }
-            
+
             // 关键字搜索：发布比赛的球队名(team)
-            $keyword =input('keyword');
-            if (input('?param.keyword') ) {
+            $keyword = input('keyword');
+            if (input('?param.keyword')) {
                 unset($map['keyword']);
                 // 关键字内容
                 if ($keyword != null) {
-                    if (!empty($keyword) || !ctype_space($keyword) ) {
+                    if (!empty($keyword) || !ctype_space($keyword)) {
                         $map['team'] = ['like', "%$keyword%"];
                     }
                 }
             }
             // 关键字null情况处理
-            if ($keyword ==null) {
+            if ($keyword == null) {
                 unset($map['keyword']);
             }
 
             // 默认地区为空
-            if (input('?param.area') ) {
+            if (input('?param.area')) {
                 if (empty($map['area'])) {
                     unset($map['area']);
                 }
             }
-            
+
             if (input('?param.page')) {
                 unset($map['page']);
             }
@@ -683,29 +686,29 @@ class Match extends Base
                     // match_time区间 查询条件组合:当前时间至所选未来时间
                     $endDate = getStartAndEndUnixTimestamp(date('Y', $dateTimeStamp), date('m', $dateTimeStamp), date('d', $dateTimeStamp));
                     //dump($endDate);
-                    $map['match_time'] = ['between', [ time(), $endDate['end'] ]];
+                    $map['match_time'] = ['between', [time(), $endDate['end']]];
                 }
                 unset($map['choice_time']);
             }
 
             // 关键字搜索：发布比赛的球队名(team)
-            $keyword =input('keyword');
-            if (input('?param.keyword') ) {
+            $keyword = input('keyword');
+            if (input('?param.keyword')) {
                 unset($map['keyword']);
                 // 关键字内容
                 if ($keyword != null) {
-                    if (!empty($keyword) || !ctype_space($keyword) ) {
+                    if (!empty($keyword) || !ctype_space($keyword)) {
                         $map['team'] = ['like', "%$keyword%"];
                     }
                 }
             }
             // 关键字null情况处理
-            if ($keyword ==null) {
+            if ($keyword == null) {
                 unset($map['keyword']);
             }
 
             // 默认地区为空
-            if (input('?param.area') ) {
+            if (input('?param.area')) {
                 if (empty($map['area'])) {
                     unset($map['area']);
                 }
@@ -902,15 +905,16 @@ class Match extends Base
     // 最新比赛记录
 
     // 历史对手球队列表（页码）
-    public function historyteampage() {
+    public function historyteampage()
+    {
         try {
             // 传递参数作为查询条件
             $map = input('param.');
             // 关键字搜索：对手球队名 opponent_team
             if (input('?keyword')) {
-                $keyword =input('keyword');
+                $keyword = input('keyword');
                 // 关键字内容
-                if (!empty($keyword) && !ctype_space($keyword) ) {
+                if (!empty($keyword) && !ctype_space($keyword)) {
                     $map['opponent_team'] = ['like', "%$keyword%"];
                 }
                 unset($map['keyword']);
@@ -935,16 +939,17 @@ class Match extends Base
     }
 
     // 历史对手球队列表
-    public function historyteamlist() {
+    public function historyteamlist()
+    {
         try {
             // 传递参数作为查询条件
             $map = input('param.');
             $page = input('page', 1);
             // 关键字搜索：对手球队名 opponent_team
             if (input('?keyword')) {
-                $keyword =input('keyword');
+                $keyword = input('keyword');
                 // 关键字内容
-                if (!empty($keyword) && !ctype_space($keyword) ) {
+                if (!empty($keyword) && !ctype_space($keyword)) {
                     $map['opponent_team'] = ['like', "%$keyword%"];
                 }
                 unset($map['keyword']);
@@ -969,7 +974,8 @@ class Match extends Base
     }
 
     // 历史对手球队列表（所有数据）
-    public function historyteamall() {
+    public function historyteamall()
+    {
         try {
             // 传递参数作为查询条件
             $map = input('param.');
@@ -1012,8 +1018,8 @@ class Match extends Base
             if (input('?param.year')) {
                 $year = input('param.year');
                 //if (is_numeric($year)) {
-                    $tInterval = getStartAndEndUnixTimestamp($year);
-                    $map['match_record.match_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
+                $tInterval = getStartAndEndUnixTimestamp($year);
+                $map['match_record.match_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
                 //}
                 unset($map['year']);
             }
@@ -1179,7 +1185,8 @@ class Match extends Base
     }
 
     // 球队参加比赛申请
-    public function joinmatchapply() {
+    public function joinmatchapply()
+    {
         try {
             // 输入变量
             $request = input('post.');
@@ -1196,13 +1203,13 @@ class Match extends Base
             // 检查比赛的信息
             $matchInfo = $matchS->getMatch(['id' => $request['match_id']]);
             if (!$matchInfo) {
-                return json(['code' => 100, 'msg' => __lang('MSG_404').'请选择其他比赛']);
+                return json(['code' => 100, 'msg' => __lang('MSG_404') . '请选择其他比赛']);
             }
             if ($matchInfo['is_finished_num'] == 1) {
-                return json(['code' => 100, 'msg' => '此比赛'.$matchInfo['is_finished'].'请选择其他比赛']);
+                return json(['code' => 100, 'msg' => '此比赛' . $matchInfo['is_finished'] . '请选择其他比赛']);
             }
             if ($matchInfo['apply_status_num'] > 0) {
-                return json(['code' => 100, 'msg' => '此比赛'.$matchInfo['apply_status'].'请选择其他比赛']);
+                return json(['code' => 100, 'msg' => '此比赛' . $matchInfo['apply_status'] . '请选择其他比赛']);
             }
             // 发布比赛的球队不能应战
             if ($matchInfo['team_id'] == $request['team_id']) {
@@ -1225,7 +1232,7 @@ class Match extends Base
                 // 组合推送消息内容
                 $dataMessage = [
                     'title' => '您好，您发布的比赛有球队报名迎战',
-                    'content' => '您所在球队'. $teamInfo['name'] .'发布的比赛'. $request['team'] .'报名迎战',
+                    'content' => '您所在球队' . $teamInfo['name'] . '发布的比赛' . $request['team'] . '报名迎战',
                     'url' => url('frontend/team/matchapplylist', ['team_id' => $teamInfo['id']], '', true),
                     'keyword1' => '约战应战申请',
                     'keyword2' => $this->memberInfo['member'],
@@ -1246,7 +1253,8 @@ class Match extends Base
     }
 
     // 回复球队参加比赛申请
-    public function replymatchapply() {
+    public function replymatchapply()
+    {
         try {
             // 输入变量
             $request = input('post.');
@@ -1254,17 +1262,17 @@ class Match extends Base
             $teamS = new TeamService();
             $messageS = new MessageService();
             // 判断正确有无传参
-            if ( !isset($request['apply_id']) || !isset($request['reply']) ) {
-                return json(['code' => 100, 'msg' => __lang('MSG_402').'，请正确传参']);
+            if (!isset($request['apply_id']) || !isset($request['reply'])) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请正确传参']);
             }
             $reply = $request['reply'];
-            if ( !in_array($reply, [2,3]) ) {
-                return json(['code' => 100, 'msg' => __lang('MSG_402').'，请正确传参']);
+            if (!in_array($reply, [2, 3])) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请正确传参']);
             }
             // 查询match_apply数据
             $applyInfo = $matchS->getMatchApply(['id' => $request['apply_id']]);
             if (!$applyInfo) {
-                return json(['code' => 100, 'msg' => __lang('MSG_404').'，没有此申请记录']);
+                return json(['code' => 100, 'msg' => __lang('MSG_404') . '，没有此申请记录']);
             }
             if ($applyInfo['status'] != 1) {
                 return json(['code' => 100, 'msg' => '此申请记录已回复结果，无需重复操作']);
@@ -1276,7 +1284,7 @@ class Match extends Base
             $replystr = '已拒绝';
             // 更新match_apply数据组合
             $dataSaveApply = ['id' => $applyInfo['id'], 'status' => $reply];
-            if ($reply ==2) {
+            if ($reply == 2) {
                 // 同意操作
                 // 更新比赛战绩对手球队信息
                 $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
@@ -1284,7 +1292,7 @@ class Match extends Base
                 // 获取对手球队信息
                 $awayTeamInfo = $teamS->getTeam(['id' => $applyInfo['team_id']]);
                 // match_name更新新内容
-                $matchName = $matchRecordInfo['home_team'].' vs '. $awayTeamInfo['name'];
+                $matchName = $matchRecordInfo['home_team'] . ' vs ' . $awayTeamInfo['name'];
                 $resultSaveMatchRecord = $matchS->saveMatchRecord([
                     'id' => $matchRecordInfo['id'],
                     'match' => $matchName,
@@ -1313,9 +1321,9 @@ class Match extends Base
                 // 组合推送消息内容
                 $dataMessage = [
                     'title' => '约战应战申请结果通知',
-                    'content' => $matchInfo['team'].'发布的约战应战申请结果通知：'.$replystr,
+                    'content' => $matchInfo['team'] . '发布的约战应战申请结果通知：' . $replystr,
                     'url' => url('frontend/message/index', '', '', true),
-                    'keyword1' => $matchInfo['team'].'发布的约战应战申请结果',
+                    'keyword1' => $matchInfo['team'] . '发布的约战应战申请结果',
                     'keyword2' => $replystr,
                     'remark' => '点击登录平台查看更多信息',
                     'team_id' => $applyInfo['team_id']
@@ -1333,7 +1341,8 @@ class Match extends Base
     }
 
     // 球队参加比赛申请列表分页
-    public function matchapplypage() {
+    public function matchapplypage()
+    {
         try {
             // 传入变量作为查询条件
             $map = input('param.');
@@ -1356,7 +1365,8 @@ class Match extends Base
     }
 
     // 球队参加比赛申请列表
-    public function matchapplylist() {
+    public function matchapplylist()
+    {
         try {
             // 传入变量作为查询条件
             $map = input('param.');
