@@ -80,6 +80,11 @@ class TeamService {
             } else {
                 $result['win_rate'] = 0;
             }
+            // 球衣颜色
+            if (!empty($result['colors'])) {
+                $colors = json_decode($result['colors'], true);
+                $result['colors'] = $colors;
+            }
             return $result;
         } else {
             return $res;
