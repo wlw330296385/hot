@@ -21,6 +21,21 @@
             width: 100%;
         }
 
+        .frame {
+            width: 100%;
+            padding: 15px 2px;
+            font-size: 14px;
+            border: 1px dashed #ddd;
+            color: #b1b0b0;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* 球衣颜色 */
+
         i.tip {
             height: 0;
             color: red;
@@ -31,11 +46,20 @@
         i.color {
             width: 12px;
             height: 12px;
-            display: block;
-            float: left;
+            display: inline-block;
             margin-right: 10px;
-            margin-top: 15px;
             border: 1px solid #ddd;
+        }
+
+        .colorCont i.color {
+            margin-top: 15px;
+            margin-right: 0;
+            margin-left: 5px;
+        }
+
+        .colorLineHeight li {
+            line-height: 43px;
+            padding: 0 15px !important;
         }
 
         .colorLineHeight li {
@@ -133,25 +157,12 @@
                     </a>
                 </div>
 
-                <div class="mui-input-row">
-                    <a href="#homeColor" class="mui-navigate-right">
-                        <label>主场颜色</label>
-                        <span class="home_color_text">
-                            <i class="color {$teamInfo.home_color_style}"></i>{$teamInfo.home_color}</span>
-                        <input type="hidden" name="home_color" class="homeshow data" value="{$teamInfo.home_color}">
-                        <input type="hidden" name="home_color_style" class="homeshow data" value="{$teamInfo.home_color_style}">
+                <div class="mui-input-row price-input-row h-auto">
+                    <a href="#colors" class="mui-navigate-right">
+                        <label>球衣颜色</label>
+                        <span class="colorCont wd60" name="color">{$teamInfo.colors}</span>
                     </a>
                 </div>
-
-                <!-- <div class="mui-input-row">
-                    <a href="#awayColor" class="mui-navigate-right">
-                        <label>客场颜色</label>
-                        <span class="away_color_text">
-                            <i class="color {$teamInfo.away_color_style}"></i>{$teamInfo.away_color}</span>
-                        <input type="hidden" name="away_color" class="awayshow data" value="{$teamInfo.away_color}">
-                        <input type="hidden" name="away_color_style" class="awayshow data" value="{$teamInfo.away_color_style}">
-                    </a>
-                </div> -->
 
                 <div class="mui-input-row">
                     <a href="#leader" class="mui-navigate-right">
@@ -255,9 +266,39 @@
                     </a>
                 </div>
 
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="course">球队介绍</span>
+                </div>
+                <div class="mui-input-row h-auto" style="margin-bottom: 10px">
+                    <textarea name="introduce" class="data introduce" style="display: none"></textarea>
+                    <div class="introBox">{$teamInfo.introduce}</div>
+                </div>
+
                 <div class="mui-input-row h-auto">
-                    <label>球队介绍</label>
-                    <textarea rows="3" name="introduce" class="data introduce" placeholder="请填写球队介绍">{$teamInfo.introduce}</textarea>
+                    <div class="mui-row mui-text-center mui-row-operation">
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame up pd">上移</a>
+                            <a class="frame down pd">下移</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame titleClass">添加标题</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame textClass">添加正文</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame imageClass">
+                                <div id="uploader-demo">
+                                    <div id="fileList" class="uploader-list"></div>
+                                    <div id="filePickerTwo">选择图片</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="f12">说明：点击添加均为插入一段文字或一张图片，不可换行，如需换行请再次点击添加。</span>
                 </div>
 
             </form>
@@ -338,175 +379,101 @@
         </div>
     </div>
 
-    <!--主场颜色-->
-    <div id="homeColor" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header border-b">
-            <span class="course">
-                <strong>主场颜色</strong>
-            </span>
-            <span class="fr">
-                <button class="mui-btn" id="homeDel">清除</button>
-            </span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list homeColorList colorLineHeight">
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color black">
-                            <input type="hidden" name="color" value="black">
-                        </i>
-                        <font>黑色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color white">
-                            <input type="hidden" name="color" value="white">
-                        </i>
-                        <font>白色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color red">
-                            <input type="hidden" name="color" value="red">
-                        </i>
-                        <font>红色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color blue">
-                            <input type="hidden" name="color" value="blue">
-                        </i>
-                        <font>蓝色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color yellow">
-                            <input type="hidden" name="color" value="yellow">
-                        </i>
-                        <font>黄色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color green">
-                            <input type="hidden" name="color" value="green">
-                        </i>
-                        <font>绿色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color orange">
-                            <input type="hidden" name="color" value="orange">
-                        </i>
-                        <font>橙色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color purple">
-                            <input type="hidden" name="color" value="purple">
-                        </i>
-                        <font>紫色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color gray">
-                            <input type="hidden" name="color" value="gray">
-                        </i>
-                        <font>灰色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color pink">
-                            <input type="hidden" name="color" value="pink">
-                        </i>
-                        <font>粉色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color ching">
-                            <input type="hidden" name="color" value="ching">
-                        </i>
-                        <font>青色</font>
-                    </li>
-                </ul>
+    <!--球衣颜色-->
+    <div id="colors" class="mui-popover">
+            <div class="mui-popover-arrow"></div>
+            <div class="page-header">
+                <span class="course">
+                    <strong>球衣颜色</strong>
+                </span>
+                <span class="fr">
+                    <button class="mui-btn-blue" id="colorConfirm">确认</button>
+                </span>
+            </div>
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <form class="mui-input-group colorList">
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>
+                                <i class="color black"></i>
+                                <font>黑色</font>
+                            </label>
+                            <input type="checkbox" value="black">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>
+                                <i class="color white"></i>
+                                <font>白色</font>
+                            </label>
+                            <input type="checkbox" value="white">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>
+                                <i class="color red"></i>
+                                <font>红色</font>
+                            </label>
+                            <input class="" type="checkbox" value="red">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>
+                                <i class="color blue"></i>
+                                <font>蓝色</font>
+                            </label>
+                            <input type="checkbox" value="blue">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>
+                                <i class="color yellow"></i>
+                                <font>黄色</font>
+                            </label>
+                            <input name="checkbox-popl" class="" type="checkbox" value="yellow">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>
+                                <i class="color green"></i>
+                                <font>绿色</font>
+                            </label>
+                            <input type="checkbox" value="green">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>
+                                <i class="color orange"></i>
+                                <font>橙色</font>
+                            </label>
+                            <input type="checkbox" value="orange">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>
+                                <i class="color purple"></i>
+                                <font>紫色</font>
+                            </label>
+                            <input type="checkbox" value="purple">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>
+                                <i class="color gray"></i>
+                                <font>灰色</font>
+                            </label>
+                            <input type="checkbox" value="gray">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>
+                                <i class="color pink"></i>
+                                <font>粉色</font>
+                            </label>
+                            <input type="checkbox" value="pink">
+                        </div>
+                        <div class="mui-input-row mui-checkbox mui-left">
+                            <label>
+                                <i class="color ching"></i>
+                                <font>青色</font>
+                            </label>
+                            <input type="checkbox" value="ching">
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-
-    <!--客场颜色-->
-    <div id="awayColor" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course">
-                <strong>客场颜色</strong>
-            </span>
-            <span class="fr">
-                <button class="mui-btn" id="awayDel">清除</button>
-            </span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list awayColorList colorLineHeight">
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color black">
-                            <input type="hidden" name="color" value="black">
-                        </i>
-                        <font>黑色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color white">
-                            <input type="hidden" name="color" value="white">
-                        </i>
-                        <font>白色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color red">
-                            <input type="hidden" name="color" value="red">
-                        </i>
-                        <font>红色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color blue">
-                            <input type="hidden" name="color" value="blue">
-                        </i>
-                        <font>蓝色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color yellow">
-                            <input type="hidden" name="color" value="yellow">
-                        </i>
-                        <font>黄色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color green">
-                            <input type="hidden" name="color" value="green">
-                        </i>
-                        <font>绿色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color orange">
-                            <input type="hidden" name="color" value="orange">
-                        </i>
-                        <font>橙色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color purple">
-                            <input type="hidden" name="color" value="purple">
-                        </i>
-                        <font>紫色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color gray">
-                            <input type="hidden" name="color" value="gray">
-                        </i>
-                        <font>灰色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color pink">
-                            <input type="hidden" name="color" value="pink">
-                        </i>
-                        <font>粉色</font>
-                    </li>
-                    <li class="mui-table-view-cell listli detalisli">
-                        <i class="color ching">
-                            <input type="hidden" name="color" value="ching">
-                        </i>
-                        <font>青色</font>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
 
     <!--领队-->
     <div id="leader" class="mui-popover">
@@ -590,6 +557,7 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
 
     <script>
         //初始化
@@ -726,63 +694,24 @@
             $(".coach").text(coachCont.substring(0, coachCont.length - 1));
             $(".committee").text(committeeCont.substring(0, committeeCont.length - 1));
 
-            //判断主场客场是否有值，显示data
-            if ($(".homeshow").val() != '') {
-                $(".homeshow").addClass("data");
-            }
-            if ($(".awayshow").val() != '') {
-                $(".awayshow").addClass("data");
-            }
-
-            // 客队球服没有内容则隐藏i标签
-            if ($("input[name=home_color]").val() == '') {
-                $("input[name=home_color]").siblings().find(".color").hide();
-            }
-            if ($("input[name=away_color]").val() == '') {
-                $("input[name=away_color]").siblings().find(".color").hide();
-            }
-
-            // 主场颜色
-            $(".homeColorList").on('tap', 'li', function () {
-                //显示的内容
-                var home_color_text = $.trim($(this).html());
-                $(".home_color_text").html(home_color_text);
-                //颜色的中文赋值
-                var home_color = $(this).find("font").text();
-                $("input[name=home_color]").val(home_color).addClass("data");
-                //颜色的英文赋值
-                var home_color_style = $(this).find("input[name=color]").val();
-                $("input[name=home_color_style]").val(home_color_style).addClass("data");
-                mui("#homeColor").popover("toggle");
-            });
-            //清除主场颜色
-            $("#homeDel").on('tap', '', function () {
-                $(".home_color_text").text('');
-                $("input[name=home_color]").val("");
-                $("input[name=home_color_style]").val("");
-                mui("#homeColor").popover("toggle");
+            // 球衣颜色
+            $("#colorConfirm").on('tap', '', function () {
+                $(".colorCont").empty();
+                var colorFrame_text = "";
+                colors = [];
+                $(".colorList input[type=checkbox]:checked").each(function () {
+                    var color = $(this).siblings().find("font").text();
+                    var color_style = $(this).val();
+                    var color_text = $.trim($(this).siblings().html());
+                    colorFrame_text += color_text + ','
+                    $(".colorCont").html(colorFrame_text.substring(0, colorFrame_text.length - 1));
+                    // 数组
+                    colors.push({ color: color, color_style: color_style });
+                });
+                console.log(colors)
+                mui("#colors").popover("toggle");
             });
 
-            // 客场颜色
-            $(".awayColorList").on('tap', 'li', function () {
-                //显示的内容
-                var away_color_text = $.trim($(this).html());
-                $(".away_color_text").html(away_color_text);
-                //颜色的中文赋值
-                var away_color = $(this).find("font").text();
-                $("input[name=away_color]").val(away_color);
-                //颜色的英文赋值
-                var away_color_style = $(this).find("input[name=color]").val();
-                $("input[name=away_color_style]").val(away_color_style);
-                mui("#awayColor").popover("toggle");
-            });
-            //清除客场颜色
-            $("#awayDel").on('tap', '', function () {
-                $(".away_color_text").text('');
-                $("input[name=away_color]").val("");
-                $("input[name=away_color_style]").val("");
-                mui("#awayColor").popover("toggle");
-            });
 
             // 选择球队类型判断是否显示所属训练营
             $("#teamType").change(function () {
@@ -979,6 +908,79 @@
             })
             //////////////////////////训练营///////////////////////////////////
 
+            //添加活动详情标题
+            $(".titleClass").on('tap', '', function () {
+                var title = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
+                $(".introBox").append(title);
+            });
+
+            //添加活动详情正文
+            $(".textClass").on('tap', '', function () {
+                var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" name="" class="mui-text-left text delClass textarea"></div>';
+                $(".introBox").append(text);
+            });
+
+            //删除操作
+            $(document).on('tap', '.delbtn', function () {
+                $(this).parent().remove();
+            });
+
+            // 焦点离开后把内容放在h5标签里
+            $(document).on('blur', '.operationDiv input', function () {
+                $(this).siblings(".delbtn").remove();
+                if ($(this).val() != '') {
+                    var inputValue = '<h5>' + $(this).val() + '</h5>';
+                    $(this).parent().html(inputValue).removeClass("bgorange")
+                } else {
+                    var inputValueNull = '<h5>标题</h5>';
+                    $(this).parent().html(inputValueNull)
+                }
+            });
+            // 点击时显示input框
+            $(document).on('tap', '.operationDiv h5', function () {
+                var YinputValue = '<i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="title" autofocus value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="标题">';
+                $(this).parent(".operationDiv").html(YinputValue).addClass("bgorange");
+                console.log(YinputValue)
+            });
+            // 焦点离开后把内容放在p标签里
+            $(document).on('blur', '.operationDiv .textarea', function () {
+                $(this).siblings(".delbtn").remove();
+                if ($(this).text() != '') {
+                    var divValue = '<p>' + $(this).text() + '</p>';
+                    $(this).parent().html(divValue).removeClass("bgorange")
+                } else {
+                    var divValueNull = '<p>请输入正文</p>';
+                    $(this).parent().html(divValueNull)
+                }
+            });
+            // 点击时显示div框
+            $(document).on('tap', '.operationDiv p', function () {
+                var YdivValue = '<i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" value="' + $(this).text() + '"  class="mui-text-left text delClass textarea">' + $(this).text() + '</div>';
+                $(this).parent().html(YdivValue).addClass("bgorange");
+            });
+
+            // 图片的移动操作
+            $(document).on('tap', '.desimg', function () {
+                var bgg = $(this).parent().hasClass("bgorange");
+                if (bgg == false) {
+                    $(this).parent().addClass("bgorange")
+                    return false;
+                } else {
+                    $(document).on('tap',function () {
+                        $(".desimg").parent().removeClass("bgorange")
+                    });
+                }
+            });
+
+            // 上移动
+            $(document).on('tap', '.up', function () {
+                $(".bgorange").prev().insertAfter(".bgorange");
+            });
+            // 上移动
+            $(document).on('tap', '.down', function () {
+                $(".bgorange").next().insertBefore(".bgorange");
+            });
+
         });
 
         // 获取数据并进行提交
@@ -1000,12 +1002,18 @@
                 return false;
             }
 
+            $(".delbtn").remove();
+            var totalHtml = $(".introBox").html();
+            $(".introduce").val(totalHtml);
+
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
+            objData.colors = JSON.stringify(colors);
             var introduce = $('textarea.data').val();
+            console.log(introduce)
             objData.introduce = introduce;
             var url = "{:url('api/team/updateteam')}";
             var ajaxResult = wooApi.asyncF(url, objData);
