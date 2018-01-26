@@ -5,6 +5,7 @@ namespace app\system\controller;
 
 use app\model\Bill;
 use app\model\CampFinance;
+use app\model\Follow;
 use app\model\LessonMember;
 use app\model\Schedule;
 use app\model\ScheduleGiftStudent;
@@ -13,6 +14,7 @@ use app\model\Student;
 use app\model\Coach;
 use app\service\MemberService;
 use app\service\SystemService;
+use app\service\WechatService;
 use think\Controller;
 use think\Db;
 use think\Exception;
@@ -416,13 +418,60 @@ class Patch extends Controller {
     public function memberavatardownload() {
         try {
             $memberS = new MemberService();
+            $wechatS = new WechatService();
             $members = db('member')->whereNull('delete_time')->where('avatar', 'neq', '/static/default/avatar.png')->where('avatar', 'neq', '/0')->select();
             //dump($members);
             foreach ($members as $k => $member) {
+                //dump($member['openid']);
+                $userinfo = $wechatS->getUserInfo($member['openid']);
+                // dump($userinfo);
+                if ($userinfo['subscribe']) {
+                    $headimgurl = str_replace("http://", "https://", $userinfo['headimgurl']);
+                    //$newAvatar = $memberS->downwxavatar($headimgurl);
+                } else {
+                    $newAvatar = '/static/default/avatar.png';
+                }
+                //dump($newAvatar);
                 //dump($member['avatar']);
-                $newAvatar = $memberS->downwxavatar($member['avatar']);
-                db('member')->where('id', $member['id'])->update(['avatar' => $newAvatar]);
+                //$newAvatar = $memberS->downwxavatar($member['avatar']);
+                //db('member')->where('id', $member['id'])->update(['avatar' => $newAvatar]);
             }
+        } catch (Exception $e) {
+            dump($e->getMessage());
+        }
+    }
+
+    // 遍历follow表 完善avatar字段数据
+    public function followavatars() {
+        try {
+            $follows = db('follow')->select();
+            $modelFollow = new Follow();
+            //dump($follows);
+            $updateData = [];
+            foreach ($follows as $k => $follow) {
+                // 被关注的会员头像
+                if ($follow['type'] == 1) {
+                    $member = db('member')->where('id', $follow['follow_id'])->find();
+                    $updateData[$k]['follow_avatar'] = $member['avatar'];
+                } else if ($follow['type'] == 4) {
+                    // 被关注的球队logo
+                    $team = db('team')->where('id', $follow['follow_id'])->find();
+                    $updateData[$k]['follow_avatar'] = $team['logo'];
+                }
+
+                // 关注会员头像
+                $fansMember = db('member')->where('id', $follow['member_id'])->find();
+                if (!$fansMember) {
+                    $updateData[$k]['delete_time'] = time();
+                }
+                $updateData[$k]['member_avatar'] =$fansMember['avatar'];
+                $updateData[$k]['id']= $follow['id'];
+                if ($follow['create_time'] === 0) {
+                    $updateData[$k]['create_time'] = time();
+                }
+            }
+            $result = $modelFollow->saveAll($updateData);
+            dump($result);
         } catch (Exception $e) {
             dump($e->getMessage());
         }

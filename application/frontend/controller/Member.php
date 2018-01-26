@@ -56,11 +56,20 @@ class Member extends Base{
         return view('Member/registerSuccess');
     }
     
+    //个人信息-会员看
     public function memberInfo(){
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
         $memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);
         $this->assign('memberInfo',$memberInfo);
     	return view('Member/memberInfo');
+    }
+
+    //个人信息-他人看
+    public function memberInfoOther(){
+        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        $memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);
+        $this->assign('memberInfo',$memberInfo);
+    	return view('Member/memberInfoOther');
     }
 
     // 完善会员资料

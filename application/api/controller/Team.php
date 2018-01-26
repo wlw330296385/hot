@@ -298,6 +298,8 @@ class Team extends Base {
             $replystr = '已拒绝';
             if ($reply == 2) {
                 if ($applySaveResult['code'] == 200) {
+                    // 获取球队信息
+                    $teamInfo = $teamS->getTeam(['id' => $applyInfo['organization_id']]);
                     // 保存球队-会员信息，会员有真实姓名记录真实姓名否则记录会员名
                     $dataTeamMember = [
                         'team_id' => $applyInfo['organization_id'],
@@ -333,6 +335,22 @@ class Team extends Base {
                         ])
                         ->inc('member_num', 1)
                         ->update();
+
+                    // 查询有无关注数据保存关注数据
+                    $followDb = db('follow');
+                    $follow = $followDb->where(['type' => 4, 'follow_id' => $dataTeamMember['team_id'], 'member_id' => $dataTeamMember['member_id']])->find();
+                    if ($follow) {
+                        if ($follow['status'] != 1 ) {
+                            $followDb->where('id', $follow['id'])->update(['status' => 1, 'update_time' => time()]);
+                        }
+                    } else {
+                        $followDb->insert([
+                            'type' => 4, 'follow_id' => $dataTeamMember['team_id'], 'follow_name' => $dataTeamMember['team'],
+                            'follow_avatar' => ($teamInfo['logo']) ? $teamInfo['logo'] : '',
+                            'member_id' => $dataTeamMember['member_id'], 'member' => $dataTeamMember['member'], 'member_avatar' => $dataTeamMember['avatar'],
+                            'status' => 1, 'create_time' => time()
+                        ]);
+                    }
                 }
                 $replystr = '已通过';
             }
@@ -562,6 +580,7 @@ class Team extends Base {
 
             // serivce
             $matchS = new MatchService();
+            $teamS = new TeamService();
             $lastMatch = $matchS->matchRecordListAll($map);
             // 如果没有未完成的活动记录，清理查询条件is_finished=-1，再次执行查询
             if (!$lastMatch) {
@@ -572,10 +591,16 @@ class Team extends Base {
                     return json(['code' => 100, 'msg' => __lang('MSG_000')]);
                 }
             }
-            // 比赛成员名单（列出当前球队）
+            // 比赛成员名单+人数统计（列出当前球队）
+            // 当前球队成员数
+            $teamInfo = $teamS->getTeam(['id' => $team_id]);
             foreach ($lastMatch as $k => $val) {
-                $lastMatch[$k]['memberlist'] = $matchS->getMatchRecordMemberListAll([ 'match_record_id' => $val['id'], 'team_id' => $team_id ]);
+                $matchMembers = $matchS->getMatchRecordMemberListAll([ 'match_record_id' => $val['id'], 'team_id' => $team_id, 'status' => ['>', 0] ]);
+                $lastMatch[$k]['memberlist'] = $matchMembers;
+                $lastMatch[$k]['reg_number'] = count($matchMembers);
+                $lastMatch[$k]['max'] = $teamInfo['member_num'];
             }
+
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $lastMatch]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -614,7 +639,7 @@ class Team extends Base {
             }
             // 球队活动成员名单
             foreach ($lastEvent as $k => $val) {
-                $lastEvent[$k]['memberlist'] = $teamS->teamEventMembers(['event_id' => $val['id']]);
+                $lastEvent[$k]['memberlist'] = $teamS->teamEventMembers(['event_id' => $val['id'], 'status' => ['>', 0]]);
             }
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $lastEvent]);
         } catch (Exception $e) {
