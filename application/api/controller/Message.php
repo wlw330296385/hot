@@ -174,12 +174,13 @@ class Message extends Base{
     }
 
     //获取个人消息列表
-    public function getUnReadMessageMmeberListApi()
+    public function getMessageMmeberCountApi()
     {
         try {
             $map = input('post.');
             $map['member_id'] = $this->memberInfo['id'];
-            $result = $this->MessageService->getMessageMemberListByPage($map);
+            $MessageMember = new \app\model\MessageMember;
+            $result = $MessageMember->where($map)->count();
             if ($result) {
                 return json(['code' => 200, 'msg' => '获取成功', 'data' => $result]);
             } else {

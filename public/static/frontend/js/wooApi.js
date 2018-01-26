@@ -164,7 +164,26 @@ var wooApi = {
         return data;
     },
 
+    // 获取消息小红点
+    'getUnreadMessage':function(url,data){
+        $.ajax({
+            url: url,
+            data: data,
+            async: true,
+            type: 'post',
+            dataType:'json',
+            complete: function(msg) {
 
+                if(msg.responseJSON.code == 200){
+                    var html = `<span class="mui-badge">${msg.responseJSON.data}</span>`;
+                    $('#Message').html(html);
+                }else{
+                    $('#Message').html('');
+                } 
+            }
+        })
+        
+    },
 
     // 获取路径上?的参数
     GetQueryString:function (name){
@@ -173,7 +192,7 @@ var wooApi = {
         if (r != null) return decodeURI(r[2]); return null;   
     },
 
-    // 时间戳转换为日期
+    // 时间戳转换为日期nS为时间戳
     timeTOstr:function(nS) {  
         //           将时间戳换成毫秒        转换时间格式     去掉秒
         return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');  

@@ -44,7 +44,7 @@ class SalaryOutService {
         }
         $result = $this->SalaryOut->allowField(true)->save($data);
         if($result){
-           
+            db('member')->where(['id'=>$data['member_id']])->setDec('balance',$data['salary']);
             $memberInfo = db('member')->where(['id'=>$data['member_id']])->find();
             session('memberInfo',$memberInfo,'think');
             return ['code'=>200,'msg'=>'申请成功','data'=>$data];

@@ -551,14 +551,8 @@ class Finance extends Backend {
                     }
                     $result = $SalaryOut->save($data,['id'=>$salaryOut_id]);
                     if($result){
-                        if($salaryOutInfo['salary']>0){
-                            db('member')->where(['id'=>$salaryOutInfo['member_id']])->setDec('balance',$salaryOutInfo['salary']);
-                        }else{
-                            db('member')->where(['id'=>$salaryOutInfo['member_id']])->setInc('balance',-($salaryOutInfo['salary']));
-                        }
-                        
                         $this->AuthService->record('提现申请出账');
-                        $this->success('操作成功');
+                        $this->success('操作成功,账户余额不变');
                     }else{
                         $this->error('操作失败');
                     }
@@ -577,7 +571,7 @@ class Finance extends Backend {
                         // 余额返回用户
                         $salaryOutInfo = $SalaryOut->where(['id'=>$salaryOut_id])->find();
                         db('member')->where(['id'=>$salaryOutInfo['member_id']])->setInc('balance',$salaryOutInfo['salary']);
-                        $this->success('操作成功');
+                        $this->success('操作成功,返还余额');
                     }else{
                         $this->error('操作失败');
                     }
@@ -590,7 +584,7 @@ class Finance extends Backend {
                     'status'=>-1,
                     ];
                     $result = $SalaryOut->save($data,['id'=>$salary_id]);
-                    $this->AuthService->record('提现对冲');
+                    $this->AuthService->record('提现对冲,返还余额');
                     break;
             }
 

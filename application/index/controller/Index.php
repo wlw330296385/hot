@@ -19,10 +19,30 @@ class Index extends Controller{
         echo json_encode($a);
     }
 
+
+    /** 
+    * @desc 根据两点间的经纬度计算距离 
+    * @param float $lat 纬度值 
+    * @param float $lng 经度值 
+    */
     public function test(){
-        $a = strtotime('2018-1-19');
-        echo $a ;
-        echo date('Y-m-d H:i:s',1516291200);
+        $earthRadius = 6367000;//地球半径(米);
+        $a = [113.9108100000,22.5235500000];//lng,lat;阳光文体中心坐标
+        $b = [113.9128589630,22.5232210498];//lng,lat阳光小学坐标
+        $lat1 = ($a[0] * pi())/180;//纬度换算;
+        $lng1 = ($a[1] * pi())/180;//经度换算;
+
+        $lat2 = ($b[0] * pi())/180;//纬度换算;
+        $lng2 = ($b[1] * pi())/180;//经度换算;
+        $calcLongitude = $lng2 - $lng1; 
+        $calcLatitude = $lat2 - $lat1; 
+        $stepOne = pow(sin($calcLatitude / 2), 2) + cos($lat1) * cos($lat2) * pow(sin($calcLongitude / 2), 2); 
+        $stepTwo = 2 * asin(min(1, sqrt($stepOne))); 
+        $calculatedDistance = $earthRadius * $stepTwo; 
+        // echo floor($calculatedDistance);
+        echo round($calculatedDistance); 
+
+        return view('Index/test');
     }
 
     public function totalSchedule(){
