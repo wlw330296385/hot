@@ -138,7 +138,7 @@
 
                 <form class="mui-input-group">
                     <div class="mui-input-row bggray2">
-                        <label>请勾选参与训练学员</label>
+                        <label class="wd60">请勾选参与训练学员</label>
                         <span>
                             <b id="inactiveCount"></b> / <b id="inactiveALLCount"></b>
                         </span>
@@ -758,9 +758,15 @@
                 });
 
                 //角标随checkboxCont的数量变化
-                $(document).on('tap', '.stdList', function () {
-                    //获取学生列表并写入对应位置
-                    getStudentCount()
+//            $(document).on('tap', '.stdList', function () {
+//                //获取学生列表选中数量并写入对应位置
+//                getStudentCount()
+//            });
+                //上面这段无效，通过click()和trigger方法来触发的事件顺序都是先执行绑定的事件在实现原生选中的效果，所以获取的checked值是不准确
+
+                //角标随checkboxCont的数量变化
+                $(document).on('change', '.stdList', function () {
+                    getStudentCount();
                 });
 
 
@@ -1098,7 +1104,7 @@
             var toScheduleList = function (keyword, page) {
 
                 var url = "{:url('api/lesson_member/getSamePriceLessonMemberListByPageApi','','',true)}/?page=" + page;
-                var lesson_id = "{$gradeInfo.lesson_id}";
+                var lesson_id = "{$scheduleInfo.lesson_id}";
                 mui.ajax({
                     url: url,
                     data: {
@@ -1217,9 +1223,8 @@
 
             //粉丝列表接口获取数据并追加到页面
             var toFansList = function (keyword, wFans, page) {
-                var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}/?page=" + page;
+                var url = "{:url('api/follow/myfans','','',true)}" + '/?page=' + page;
                 var campID = "{$scheduleInfo.camp_id}";
-                var typeID = "-1";
                 var wFansList = "#" + wFans + " ul.fans";
                 var currPage = "#" + wFans + " .currPage";
                 var totalPage = "#" + wFans + " .totalPage";
@@ -1228,7 +1233,7 @@
                     url: url,
                     data: {
                         camp_id: campID,
-                        type: typeID,
+                        type: 2,
                         keyword: keyword
                     },
                     dataType: 'json',//服务器返回json格式数据
