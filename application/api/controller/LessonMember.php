@@ -156,6 +156,7 @@ class LessonMember extends Base{
             $keyword = input('param.keyword');
             $rest_schedule = input('param.rest_schedule');
             $lessonInfo = db('lesson')->where(['id'=>$lesson_id])->find();
+            $model = new \app\model\LessonMember();
             $map = [];
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['lesson_member.student'] = ['LIKE','%'.$keyword.'%'];
@@ -169,20 +170,19 @@ class LessonMember extends Base{
                     ->where("lesson.cost={$lessonInfo['cost']} and lesson.camp_id={$lessonInfo['camp_id']}")
                     // ->having("lesson.cost=$cost and lesson.camp_id=$camp_id")
                     ->order('lesson_member.id desc')
-                    ->paginate(30)->each(function($item, $key) {
-                        $model = new \app\model\LessonMember();
-                        $lessonmember = $model->where('id', $item['id'])->find();
-                        if ($lessonmember) {
-                            $lessonmember = $lessonmember->toArray();
-                            $item['type_num'] = $item['type'];
-                            $item['type'] = $lessonmember['type'];
-                            $item['status_num'] = $item['status'];
-                            $item['status'] = $lessonmember['status'];
-                        }
-                        return $item;
-                });
+                    ->paginate(30);
+                    // ->select();
             if($result){
-                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+                $list = $result->toArray();
+                foreach ($list['data'] as $k => $val) {
+                    $lessonmember = $model->where(['id' => $val['id']])->find();
+                    if ($lessonmember) {
+                        $lessonmemberArr = $lessonmember->toArray();
+                        $list['data'][$k]['type'] = $lessonmemberArr['type'];
+                        $list['data'][$k]['status'] = $lessonmemberArr['status'];
+                    }
+                }
+                return json(['code'=>200,'msg'=>'ok','data'=>$list]);
             }else{
                 return json(['code'=>100,'msg'=>'检查你的参数']);
             }
