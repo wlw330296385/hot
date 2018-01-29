@@ -156,7 +156,6 @@ class LessonMember extends Base{
             $keyword = input('param.keyword');
             $rest_schedule = input('param.rest_schedule');
             $lessonInfo = db('lesson')->where(['id'=>$lesson_id])->find();
-            $model = new \app\model\LessonMember();
             $map = [];
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['lesson_member.student'] = ['LIKE','%'.$keyword.'%'];
@@ -182,9 +181,6 @@ class LessonMember extends Base{
                         }
                         return $item;
                 });
-
-            
-                    // ->select();
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
