@@ -454,4 +454,5 @@ class Team extends Base {
         $this->assign('applyInfo', $apply);
         return view('Team/memberApplyInfo');
     }
+    
 }
