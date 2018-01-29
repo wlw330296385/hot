@@ -485,10 +485,8 @@ class Finance extends Backend {
                 $data = input('post.');
                 // 用户信息
                 $memberInfo = db('member')->where(['id'=>$data['member_id']])->find();
-                if($memberInfo['balance']<$data['salary']){
-                    $this->error('余额不足,个人余额冻结失败');
-                }
-                if($res){
+                
+                if($memberInfo){
                     // 卡信息
                     $bankcarInfo = db('bankcard')->where(['id'=>$data['bankcard_id']])->find();
                     $data['tid'] = getTID($this->admin['id']);
@@ -567,11 +565,6 @@ class Finance extends Backend {
                     'buffer'=>0
                     ];
                     $salaryOutInfo = $SalaryOut->where(['id'=>$salaryOut_id])->find();
-                    $memberInfo = db('member')->where(['id'=>$salaryOutInfo['member_id']])->find();
-                    if($memberInfo['balance']<$salaryOutInfo['salary']){
-                        $this->error('用户余额不足');
-                    }
-
                     $result = $SalaryOut->save($data,['id'=>$salaryOut_id]);
                     if($result){
                         $this->AuthService->record('提现申请出账');
