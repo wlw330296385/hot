@@ -31,10 +31,10 @@ class Crontab extends Controller {
             list($start, $end) = Time::yesterday();
             $map['status'] = 1;
             $map['update_time'] = ['between', [$start, $end]];
-            //$map['is_settle'] = 0;
+            $map['is_settle'] = 0;
             Db::name('schedule')->where($map)->where('delete_time', null)->chunk(50, function ($schedules) {
                 foreach ($schedules as $schedule) {
-                    dump($schedule);
+                    //dump($schedule);
                     // 课时正式学员人数
                     $numScheduleStudent = count(unserialize($schedule['student_str']));
                     $lesson = $lesson = Db::name('lesson')->where('id', $schedule['lesson_id'])->find();
