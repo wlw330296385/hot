@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>记录非会员信息</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+</head>
+
+<body>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+        </a>
+        <h1 class="mui-title"></h1>
+    </header>
+
+    <div class="mui-content pt">
+
+        <div class="camp-list camp-lesson-list">
+            <input type="hidden" name="id" class="data" value="{$teamInfo.id}">
+            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+
+            <form action="" class="mui-input-group mt55" id="logoframe">
+
+                <div class="mui-input-row price-input-row">
+                    <label>姓名</label>
+                    <input type="text" name="name" class="data" value="" placeholder="请输入姓名">
+                </div>
+
+                <div class="mui-input-row price-input-row">
+                    <label>手机号</label>
+                    <input type="text" name="telephone" class="data" value="" placeholder="请输入手机号">
+                </div>
+
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="f12">说明：请确保填写的手机号码准确无误，该手机号将作为会员注册时候认领数据的依据。</span>
+                </div>
+
+            </form>
+
+            <ul class="mui-table-view operation">
+                <li class="mui-col-xs-12 opli bggreen" onclick="submitAction()">
+                    提交
+                </li>
+            </ul>
+            
+        </div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script>
+        // 获取数据并进行提交
+        function submitAction() {
+
+            var name = $("input[name=name]").val();
+            if (name == '') {
+                mui.toast("请填写非会员的姓名");
+                return false;
+            }
+            if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
+                mui.toast("请输入正确的手机格式");
+                return false;
+            };
+
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var url = "{:url('api/')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, function () {
+                    var goUrl = "{:url('team/teamMember')}" + '/team_id/{$teamInfo.id}';
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg);
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
+        };
+    </script>
+</body>
+
+</html>

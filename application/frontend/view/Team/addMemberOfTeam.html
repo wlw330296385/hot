@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>约战列表</title>
+    <title>会员列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -19,45 +19,18 @@
     <header id="header" class="mui-bar mui-bar-nav search2">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
         <h1 class="mui-title">
-            <input type="search" class="mui-input-clear keyword" placeholder="请输入球队名称">
+            <input type="search" class="mui-input-clear keyword" placeholder="请输入会员名称或手机号">
         </h1>
         <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
     </header>
 
     <div class="mui-content">
 
-        <div class="location-frame">
-            <span class="location"></span>
-            <span class="location-choise">
-                <select id="areaSelect">
-                    <option value="">全部区域</option>
-                </select>
-            </span>
-            <span class="location-choise">
-                <select id="chosieTime" class="data" name="time">
-                    <option value="">全部</option>
-                    <option value="1">近7天</option>
-                    <option value="2">近15天</option>
-                    <option value="3">近30天</option>
-                </select>
-            </span>
-        </div>
-
-        
-        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
+        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 44px">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b team">
-                </ul>
+                <ul class="mui-table-view detalis-list list border-b memberList"></ul>
             </div>
         </div>
-
-        <ul class="mui-table-view operation">
-            <a href="{:url('team/createMatch')}">
-                <li class="mui-col-xs-12 mui-col-sm-12 opli bgblue">
-                    发布约战
-                </li>
-            </a>
-        </ul>
 
     </div>
 
@@ -65,7 +38,6 @@
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/js/common.js"></script>
-    <script src="/static/frontend/js/city.data-3.js"></script>
     <script>
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
@@ -73,53 +45,42 @@
 
         $(function () {
 
-            //初始化全局变量
-            var count = 1;
-            var choice_time = '';
-            var sArea = '';
-            var keyword = wooApi.GetQueryString('keyword');
-            $('.keyword').val(keyword);
-            var teamID = wooApi.GetQueryString('team_id');
-            var teamName = wooApi.GetQueryString('team_name');
-
-            //获取定位省市区
-            var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
-            var sCity = getLocationTB['city'];
-            var sProvince = getLocationTB['province'];
-            var allArea = getLocationTB['areas'];
-            $('.location').text(sCity);
-            if (teamName != '' && teamName != null) {
-                $('.location').text(teamName);
-                $('.keyword').attr('placeholder', '请输入' + teamName + '球队名称');
-                $("#areaSelect").parent().hide();
-            }
-
-            //生成区域选择下拉菜单
-            var arrArea = allArea.split(',');
-            var selectArea = '';
-            $.each(arrArea, function (i, areaName) {
-                selectArea += '<option value="' + areaName + '">' + areaName + '</option>';
+            $(document).on("tap", ".addMember", function () {
+                var team_id = "{$team_id}";
+                mui.ajax("{:url('api/team/addMember')}", {
+                    data: { 
+                        team_id: team_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast("已经发送请求，请耐心等待回复");
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
             });
 
-            $('#areaSelect').append(selectArea);
+            //初始化全局变量
+            var count = 1;
+            var keyword = wooApi.GetQueryString('keyword');
+            $('.keyword').val(keyword);
 
-            //搜索约战球队
-            $("#searchBtn").on("click", function () {
+            //搜索活动
+            $("#searchBtn").on("tap", function () {
                 keyword = $(".keyword").val();
                 searchToList();
             })
-
-            //选择时间类型下拉
-            $("#chosieTime").on("change", function () {
-                choice_time = $(this).find("option:checked").val();
-                searchToList();
-            });
-
-            // 选择地区下拉
-            $("#areaSelect").on("change", function () {
-                sArea = $(this).val();
-                searchToList();
-            });
 
             //搜索、下拉刷选后触发
             function searchToList() {
@@ -172,21 +133,15 @@
                 }, 100);
             }
 
+
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/match/matchlistpage')}?page=" + page;
+                var url = "{:url('api/member/getmemberlistpage','','',true)}" + '/?page=' + page;
                 mui.ajax({
                     url: url,
                     data: {
-                        province: sProvince,
-                        city: sCity,
-                        area: sArea,
                         keyword: keyword,
-                        choice_time: choice_time,
-                        type: 1,
-                        islive: 1,
-                        status: 1
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -197,39 +152,29 @@
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                var urls = "{:url('match/friendlyinfo')}" + '/match_id/' + data.data.data[i].id;
-                                newli += '<li class="mui-table-view-cell mui-media listli">';
-                                newli += '<a href="' + urls + '" class="mui-navigate-right"><div class="mui-media-body wd">' + data.data.data[i].name;
-                                if (data.data.data[i].apply_status_num == 2) {
-                                    newli += '<font class="tipCorner bgorange">完成约战</font>';
-                                }
-                                if (data.data.data[i].match_time == 0) {
-                                    newli += '<p class="mui-ellipsis">比赛时间待定</p>'
-                                } else {
-                                    newli += '<p class="mui-ellipsis">' + data.data.data[i].match_time + '</p>'
-                                }
-                                newli += '</div><div class="price-frame mui-text-center" style="line-height: 52px;padding-right: 15px;padding-top: 0;"><p class="address">' + data.data.data[i].area + '</p></div></a>'
+                                newli += '<li class="mui-table-view-cell mui-media listli" id="logoframe">';
+                                newli += '<img class="mui-media-object mui-pull-left logostyle" src="' + data.data.data[i].avatar + '"><div class="mui-media-body wd60">' + data.data.data[i].member;
+                                newli += '<p>手机号：' + data.data.data[i].telephone + '</p></div><div class="price-frame"><button type="button" class="btn bgred addMember" style="margin-top:5px">邀请</button></div>'
                                 newli += '</li>';
                             }
                         }
                         if (gType == 1) {
                             //上拉刷新
-                            $("ul.team").empty().append(newli);
+                            $("ul.memberList").empty().append(newli);
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.team").html('<li class="nodata"><i class="icon iconfont icon-m-Trainingteam1"></i><p>没有相关数据哦</p></li>');
+                                $("ul.memberList").html('<p class="nodata">没有相关数据哦</p>');
                             }
                         } else {
                             //下拉加载 gType==2
-                            $("ul.team").append(newli);
+                            $("ul.memberList").append(newli);
                         }
                         if (newli != '') {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
                         } else {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                         }
-
                     },
                     error: function (xhr, type, errerThrown) {
                         mui.toast('网络异常,请稍候再试');

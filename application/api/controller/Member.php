@@ -330,11 +330,21 @@ class Member extends Base{
             // 输入变量做查询条件
             $map = input('param.');
             // 关键字搜索:member、telephone
-            if (isset($map['keyword']) && !empty($map['keyword'])) {
-                $keyword = $map['keyword'];
-                $map['member|telephone'] = ['like', "%$keyword%"];
+            $keyword = input('keyword');
+            if (input('?param.keyword')) {
+                unset($map['keyword']);
+                // 关键字内容
+                if ($keyword != null) {
+                    if (!empty($keyword) || !ctype_space($keyword)) {
+                        $map['member|telephone'] = ['like', "%$keyword%"];
+                    }
+                }
+            }
+            // 关键字null情况处理
+            if ($keyword == null) {
                 unset($map['keyword']);
             }
+
             if (input('?param.page')) {
                 unset($map['page']);
             }
@@ -357,9 +367,18 @@ class Member extends Base{
             // 输入变量做查询条件
             $map = input('param.');
             // 关键字搜索:member、telephone
-            if (isset($map['keyword']) && !empty($map['keyword'])) {
-                $keyword = $map['keyword'];
-                $map['member|telephone'] = ['like', "%$keyword%"];
+            $keyword = input('keyword');
+            if (input('?param.keyword')) {
+                unset($map['keyword']);
+                // 关键字内容
+                if ($keyword != null) {
+                    if (!empty($keyword) || !ctype_space($keyword)) {
+                        $map['member|telephone'] = ['like', "%$keyword%"];
+                    }
+                }
+            }
+            // 关键字null情况处理
+            if ($keyword == null) {
                 unset($map['keyword']);
             }
             if (input('?param.page')) {

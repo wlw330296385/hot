@@ -145,13 +145,14 @@ class Follow extends Base {
     // 粉丝（被关注）的列表
     public function myfans() {
         try {
+            $map = input('param.');
             $page = input('param.page', 1);
-            $type = input('param.type');
-            if (!$type) {
+            $keyword = input('param.keyword');
+            if (!isset($map['type'])) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
 
-            switch ($type) {
+            switch ($map['type']) {
                 case 1: {
                     $map['follow_id'] = $this->memberInfo['id'];
                     break;
@@ -162,6 +163,7 @@ class Follow extends Base {
                         return json(['code' => 100, 'msg' => '训练营'.__lang('MSG_402')]);
                     }
                     $map['follow_id'] = $camp_id;
+                    unset($map['camp_id']);
                     break;
                 }
                 case 3: {
@@ -170,6 +172,7 @@ class Follow extends Base {
                         return json(['code' => 100, 'msg' => '班级'.__lang('MSG_402')]);
                     }
                     $map['follow_id'] = $grade_id;
+                    unset($map['grade_id']);
                     break;
                 }
                 case 4: {
@@ -178,10 +181,26 @@ class Follow extends Base {
                         return json(['code' => 100, 'msg' => '球队'.__lang('MSG_402')]);
                     }
                     $map['follow_id'] = $team_id;
+                    unset($map['team_id']);
                     break;
                 }
             }
-            $map['type'] = $type;
+            if (input('?param.keyword')) {
+                unset($map['keyword']);
+                // 关键字内容
+                if ($keyword != null) {
+                    if (!empty($keyword) || !ctype_space($keyword)) {
+                        $map['member'] = ['like', "%$keyword%"];
+                    }
+                }
+            }
+            // 关键字null情况处理
+            if ($keyword == null) {
+                unset($map['keyword']);
+            }
+            if (isset($map['page'])) {
+                unset($map['page']);
+            }
             $map['status'] = 1;
             $followS = new FollowService();
             $res = $followS->getfollowlist($map);

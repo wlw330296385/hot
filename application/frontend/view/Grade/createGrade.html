@@ -439,7 +439,7 @@
         </div>
         <div id="item1" class="mui-control-content mui-active">
             <div class="pop-search">
-                <input type="search" class="keywordHM" placeholder="请输入粉丝名称搜索">
+                <input type="search" class="keywordHM wd60" placeholder="请输入粉丝名称搜索">
                 <span class="mui-icon mui-icon-search searchicon" id="searchHM"></span>
             </div>
             <div class="mui-scroll-wrapper" style="top:40px !important;">
@@ -601,11 +601,10 @@
             toCoachList();
             //获取训练营粉丝列表
             var fansKeyword = '';
-            var wFans = '';
             var pageHM = 1;
             var pageLD = 1;
-            var pageStudent = 1;
-            toFansList(fansKeyword, wFans, 1);
+            toFansList(fansKeyword, "headMaster", 1);
+            toFansList(fansKeyword, "leader", 1);
 
             //学员列表复选框赋值
             $("#setStudentCBox").on('tap', '', function () {
@@ -1089,22 +1088,17 @@
         };
         //粉丝列表接口获取数据并追加到页面
         var toFansList = function (keyword, wFans, page) {
-            var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}/?page=" + page;
+            var url = "{:url('api/follow/myfans','','',true)}" + '/?page=' + page;
             var campID = "{$campInfo.id}";
-            var typeID = "-1";
-            var wFansList = "ul.fans";
-            var currPage = ".currPage";
-            var totalPage = ".totalPage";
-            if (keyword != '' && wFans != '') {
-                wFansList = "#" + wFans + " ul.fans";
-                currPage = "#" + wFans + " .currPage";
-                totalPage = "#" + wFans + " .totalPage";
-            }
+            var wFansList = "#" + wFans + " ul.fans";
+            var currPage = "#" + wFans + " .currPage";
+            var totalPage = "#" + wFans + " .totalPage";
+
             mui.ajax({
                 url: url,
                 data: {
                     camp_id: campID,
-                    type: typeID,
+                    type: 2,
                     keyword: keyword
                 },
                 dataType: 'json',//服务器返回json格式数据
