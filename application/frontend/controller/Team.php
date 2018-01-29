@@ -444,4 +444,14 @@ class Team extends Base {
     public function recordmemberofteam() {
         return view('Team/recordMemberOfTeam');
     }
+
+    // 会员回复球队邀请
+    public function memberApplyInfo() {
+        $applyId = input('id');
+        $teamS = new TeamService();
+        $apply = $teamS->getApplyInfo(['id' => $applyId, 'organization_id' => $this->team_id]);
+
+        $this->assign('applyInfo', $apply);
+        return view('Team/memberApplyInfo');
+    }
 }
