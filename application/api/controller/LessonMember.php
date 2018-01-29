@@ -182,6 +182,8 @@ class LessonMember extends Base{
                         }
                         return $item;
                 });
+
+            
                     // ->select();
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
