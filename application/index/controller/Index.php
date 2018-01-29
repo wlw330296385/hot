@@ -19,7 +19,16 @@ class Index extends Controller{
         echo json_encode($a);
     }
 
+    public function insql(){
+        $service = new \app\service\ItemCouponService;
+        $ids = [];
+        for ($i=0; $i < 30;$i++) { 
+            $ids[] = $i;    
+        }
+        $service->createItemCouponMemberList(8,'woo',$ids);
 
+
+    }
     /** 
     * @desc 根据两点间的经纬度计算距离 
     * @param float $lat 纬度值 

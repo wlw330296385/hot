@@ -137,7 +137,7 @@ class ItemCouponService {
 
 
     /**
-    * 发放卡券
+    * 发放一张卡券
     * @param $member_id $member
     * @param $item_coupon_id 主表id
     **/ 
@@ -173,7 +173,7 @@ class ItemCouponService {
     }
 
     /**
-    * 发放一堆卡券
+    * 向用户发放一堆卡券
     * @param $member_id $member
     * @param $item_coupon_id 主表id
     **/ 
@@ -184,7 +184,7 @@ class ItemCouponService {
         $data = [];
         $ids = [];
         foreach ($itemCouponList as $key => $value) {
-            if(($value['max']-$value['publish'])<1){
+            if(($value['max']-$value['publish'])<1 || $value['status'] <> 1){
                 continue;
             }
             $data[] = [
@@ -195,15 +195,13 @@ class ItemCouponService {
                 'status'            =>1,
                 'coupon_number'     =>getTID($member_id),
             ];
-            $ids[] = [
-                $value['id'],
-            ];         
+            $ids[] = $value['id'];      
         }
         $result = $this->ItemCouponMemberModel->saveAll($data);
 
         if($result){
             $this->ItemCouponModel->where(['id'=>['in',$ids]])->setInc('publish',1);
-            $this->ItemCouponModel->save(['is_max'=>1],['id'=>['in',$ids]]);
+            // $this->ItemCouponModel->save(['is_max'=>1],['id'=>['in',$ids]]);
             return ['msg' => '领取成功', 'code' => 200];
         }else{
             return ['msg'=>'领取失败', 'code' => 100];
