@@ -488,8 +488,6 @@ class Finance extends Backend {
                 if($memberInfo['balance']<$data['salary']){
                     $this->error('余额不足,个人余额冻结失败');
                 }
-                //扣除余额
-                $res = db('member')->where(['id'=>$data['member_id']])->dec('balance',$data['salary'])->update();
                 if($res){
                     // 卡信息
                     $bankcarInfo = db('bankcard')->where(['id'=>$data['bankcard_id']])->find();
@@ -501,7 +499,7 @@ class Finance extends Backend {
                     $data['bank_card'] = $bankcarInfo['bank_card'];
                     $data['bank'] = $bankcarInfo['bank'];
                     $data['bank_type'] = $bankcarInfo['bank_type'];
-
+                    //添加记录并且个人余额扣除
                     $result = $SalaryOutService->saveSalaryOut($data);
                     if($result['code'] == 200){
                         $this->AuthService->record('后台添加提现记录');
