@@ -43,7 +43,6 @@
             </span>
         </div>
 
-        
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
             <div class="mui-scroll">
                 <ul class="mui-table-view detalis-list list border-b team">
@@ -52,8 +51,8 @@
         </div>
 
         <ul class="mui-table-view operation">
-            <a href="{:url('team/createMatch')}">
-                <li class="mui-col-xs-12 mui-col-sm-12 opli bgblue">
+            <a href="#fbyuezhan">
+                <li class="mui-col-xs-12 mui-col-sm-12 opli bgblue fbBtn">
                     发布约战
                 </li>
             </a>
@@ -61,17 +60,68 @@
 
     </div>
 
+    <!-- 请选择要发布比赛的球队 -->
+    <div id="fbyuezhan" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course">
+                <strong>请选择要发布比赛的球队</strong>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="list">
+                    <ul class="mui-table-view selectTeam"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/js/common.js"></script>
-    <script src="/static/frontend/js/city.data-3.js"></script>
     <script>
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
 
         $(function () {
+            $(".fbBtn").on("tap", '', function () {
+                var url = "{:url('api/team/myteamlist','','',true)}";
+                mui.ajax({
+                    url: url,
+                    data: {
+                        status: 1
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data)
+                        var newli = '';
+                        if (data.code == 200) {
+                            for (var i = 0; i <= data.data.length - 1; i++) {
+                                newli = newli + '<li class="mui-table-view-cell listli choiseType" data-team_id="' + data.data[i].team.id + '">' + data.data[i].team.name + '</li>'
+                            }
+                            $(".selectTeam").empty().append(newli);
+
+                        } else {
+                            $(".selectTeam").empty().append("<p class='nohave'><a href='{:url('team/createteam')}'>还没有效力的球队,赶紧去创建吧</a></p>");
+                        }
+                    },
+                    error: function (xhr, type, errerThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                    }
+                });
+            });
+
+            // 选择球队创建比赛
+            $(document).on("tap", ".selectTeam li", function () {
+                var team_id = $(this).attr("data-team_id");
+                location.href = "{:url('team/createMatch')}" + "/team_id/" + team_id;
+            })
 
             //初始化全局变量
             var count = 1;
@@ -238,8 +288,10 @@
                 });
             };
 
-
         })
+
+
+
     </script>
 </body>
 
