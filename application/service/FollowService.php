@@ -11,6 +11,10 @@ class FollowService {
             $data['status'] = 1;
             $result = $model->allowField(true)->save($data);
             if ($result) {
+                // 若是球队，球队粉丝数+1
+                if ($data['type'] == 4) {
+                    db('team')->where('id', $data['follow_id'])->setInc('fans_num', 1);
+                }
                 
                 $response = ['code' => 200, 'msg' => '关注成功', 'data' => $model->id];
             } else {

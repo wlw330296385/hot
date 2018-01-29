@@ -322,5 +322,59 @@ class Member extends Base{
         $Cache = new \think\Cache;
         $Cache::clear();
         return json(['code' => 200, 'msg' => '清理成功']);
-    }  
+    }
+
+    // 获取会员列表
+    public function getmemberlist() {
+        try {
+            // 输入变量做查询条件
+            $map = input('param.');
+            // 关键字搜索:member、telephone
+            if (isset($map['keyword']) && !empty($map['keyword'])) {
+                $keyword = $map['keyword'];
+                $map['member|telephone'] = ['like', "%$keyword%"];
+                unset($map['keyword']);
+            }
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            $memberS = new MemberService();
+            $result = $memberS->getMemberList($map);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
+            }
+            return json($response);
+        } catch(Exception $e){
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+    
+    // 获取会员列表（分页）
+    public function getmemberlistpage() {
+        try {
+            // 输入变量做查询条件
+            $map = input('param.');
+            // 关键字搜索:member、telephone
+            if (isset($map['keyword']) && !empty($map['keyword'])) {
+                $keyword = $map['keyword'];
+                $map['member|telephone'] = ['like', "%$keyword%"];
+                unset($map['keyword']);
+            }
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            $memberS = new MemberService();
+            $result = $memberS->getMemberPaginator($map);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
+            }
+            return json($response);
+        } catch(Exception $e){
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 }

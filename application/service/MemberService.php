@@ -8,7 +8,7 @@ use app\common\validate\MemberVal;
 class MemberService{
 	private $memberModel;	
 	public function __construct(){
-		$this->memberModel = new Member;
+		$this->memberModel = new Member();
 	}
 	// 获取会员
 	public function getMemberInfo($map){
@@ -20,17 +20,29 @@ class MemberService{
 		return $result;
 	}
 
-	//获取资源列表
-	public function getMemberList($map = []){
-		$result = $this->memberModel->where($map)->select();
-		if($result){
-			$res = $result->toArray();
-			return $res;
-		}
-		return $result;
+	// 会员列表
+	public function getMemberList($map = [], $order='id desc',$page=1, $limit=10){
+	    $model = new Member();
+        $query = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if ($query) {
+            return $query->toArray();
+        } else {
+            return $query;
+        }
 	}
 
-	//获取资源列表
+	// 会员列表（分页）
+	public function getMemberPaginator($map = [], $order='id desc',$paginate = 10) {
+        $model = new Member();
+        $query = $model->where($map)->order($order)->paginate($paginate);
+        if ($query) {
+            return $query->toArray();
+        } else {
+            return $query;
+        }
+    }
+
+	// 会员（关联学员）列表（分页）
 	public function getMemberListByPage($map = [],$order = '',$paginate = 10){
 		$result = $this->memberModel->with('student')->where($map)->order($order)->paginate($paginate);
 		// echo $this->memberModel->getlastsql();die;
