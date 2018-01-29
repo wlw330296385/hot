@@ -48,7 +48,9 @@
                             <p class="mui-ellipsis">{$teamInfo.city} {$teamInfo.area}</p>
                         </div>
                         <div class="price-frame">
-                            <p class="f12">积分</p>
+                            <p class="colororange">
+                                <strong>积分：0</strong>
+                            </p>
                             <p class="f12">队员：{$teamInfo.member_num}人 | 粉丝：{$teamInfo.fans_num}</p>
                         </div>
                     </a>
@@ -203,18 +205,13 @@
             <!--底部操作-->
             <ul class="mui-table-view operation mt">
                 {eq name="isMemberInTeam" value="1"}
-                <li class="mui-col-xs-12 mui-col-sm-12 opli bgred follow">
-                    关注球队
-                </li>
+                <li class="mui-col-xs-12 mui-col-sm-12 opli bgred follow">关注球队</li>
                 {else/}
-                <li class="mui-col-xs-6 mui-col-sm-6 opli bgred follow">
-                    关注球队
-                </li>
+                <li class="mui-col-xs-4 mui-col-sm-4 opli bgred follow">关注球队</li>
                 <a href="#yqpopover">
-                    <li class="mui-col-xs-6 mui-col-sm-6 opli bgblue">
-                        加入球队
-                    </li>
+                    <li class="mui-col-xs-4 mui-col-sm-4 opli bgblue">加入球队</li>
                 </a>
+                <li class="mui-col-xs-4 mui-col-sm-4 opli bggreen yaoyue">邀约比赛</li>
                 {/eq}
             </ul>
 
@@ -343,6 +340,33 @@
                     }
                 });
             });
+
+            // 邀约比赛
+            // $(".yaoyue").on("tap", '', function () {
+            //     var team_id = "{$teamInfo.id}";
+            //     mui.ajax("{:url('api/')}", {
+            //         data: {
+            //             team_id: team_id
+            //         },
+            //         dataType: 'json',//服务器返回json格式数据
+            //         type: 'post',//HTTP请求类型
+            //         timeout: 10000,//超时时间设置为10秒；
+            //         headers: { 'Content-Type': 'application/json' },
+            //         success: function (data) {
+            //             //服务器返回响应，根据响应结果，分析是否登录成功；
+            //             console.log(data);
+            //             if (data.code == 200) {
+            //                 mui.toast(data.msg);
+            //             } else {
+            //                 mui.toast(data.msg);
+            //             }
+            //         },
+            //         error: function (xhr, type, errorThrown) {
+            //             //异常处理；
+            //             console.log(type);
+            //         }
+            //     });
+            // });
 
             // 发表印象标签
             $(".commentBtn").on("tap", '', function () {
