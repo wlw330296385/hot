@@ -28,12 +28,18 @@ class SalaryOutService {
         return $result;
     }
 
+    // 获取提现记录列表带(page)
+    public function getSalaryOutListByPage($map,$paginate = 10,$order = 'id DESC'){
+        $result = $this->SalaryOut->where($map)->order('id DESC')->paginate($paginate);
+        return $result;
+    }
     
     // 提交提现申请
     public function saveSalaryOut($data){
         $data['paytime'] = '';
         $data['is_pay'] = 0;
         $data['status'] = 0;
+        $data['buffer'] = $data['salary'];
         $memberInfo = db('member')->where(['id'=>$data['member_id']])->find();
         if($data['salary']>$memberInfo['balance']){
              return ['msg' => '余额不足', 'code' => 100];

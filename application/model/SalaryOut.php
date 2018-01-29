@@ -27,5 +27,9 @@ class SalaryOut extends Model{
         return $BankType[$value];
     }
 
+    // 关联member
+    public function member(){
+        return $this->hasOne('member','id','member_id',[],'left join');
+    }
 }
 

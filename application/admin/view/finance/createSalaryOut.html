@@ -95,7 +95,7 @@
 <script type="text/javascript">
 	var member_id = $('select[name=member_id]').val();
     var start_end = $('select#start_end option:selected').attr('data');
-    var balance = 0;
+    var balance;
 	$(function(){
         // 切换用户
 		$('select[name=member_id]').on('change',function(){
@@ -104,8 +104,9 @@
             start_end = $('select#start_end option:selected').attr('data');
 			getSalaryInList(member_id,start_end);
             getBankcardList(member_id);
-            
-            getMemberInfo();
+            console.log(balance)
+            balance = getMemberInfo();
+            console.log(balance)
 		});
 
         $('#start_end').on('change',function(){
@@ -133,7 +134,7 @@
             alert(ajaxResult.msg);
         })
 
-        getMemberInfo();
+        balance = getMemberInfo();
         getBankcardList(member_id);
 		getSalaryInList(member_id,start_end);
 	})
@@ -145,19 +146,25 @@
             data: {
                 "id":member_id,
             },
+            async:false,
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
             timeout: 10000,//超时时间设置为10秒；
             success: function (data) {
                 if (data.code == 200) {
-                    balance = data.data.balance;
-                    $("#balance").text(balance);
+
+                    result = data.data.balance;
+                    $("#balance").text(result);
+                    console.log(result)
+                    return result;
                 } else {
                     $("#balance").text(0);
+                    return 0;
                 }
             },
             error: function (xhr, type, errerThrown) {
                alert('网络异常,请稍候再试');
+               return 0;
             }
         });
     }

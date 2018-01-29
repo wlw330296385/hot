@@ -448,8 +448,19 @@ class Finance extends Backend {
         if ($member) {
             $map['member'] = ['like', '%'. $member .'%'];
         }
-        $SalaryOut = new \app\model\SalaryOut;
-        $list = $SalaryOut->where($map)->paginate(15);
+        // $SalaryOut = new \app\model\SalaryOut;
+        // $list = $SalaryOut->with('member')->where($map)->paginate(1);
+        // foreach ($list as $key => &$value) {
+        //    $value['member'] = (array)$value;
+        //     dump($value);
+        //    dump($value['member']);
+        // }
+        $list = Db::view('salary_out')
+                ->view('member','balance,id mid','member.id = salary_out.member_id')
+                // ->where('salary_out.delete_time',null)
+                ->order('salary_out.create_time desc')
+                ->paginate(2);
+        // dump($list->toArray());die;
         $this->assign('list', $list);
         return view('finance/salaryOutList');
     }
@@ -474,23 +485,34 @@ class Finance extends Backend {
                 $data = input('post.');
                 // 用户信息
                 $memberInfo = db('member')->where(['id'=>$data['member_id']])->find();
-                // 卡信息
-                $bankcarInfo = db('bankcard')->where(['id'=>$data['bankcard_id']])->find();
-                $data['tid'] = getTID($this->admin['id']);
-                $data['member'] = $memberInfo['member'];
-                $data['realname'] = $bankcarInfo['realname'];
-                $data['telephone'] = $bankcarInfo['telephone'];
-                $data['openid'] = $memberInfo['openid'];
-                $data['bank_card'] = $bankcarInfo['bank_card'];
-                $data['bank'] = $bankcarInfo['bank'];
-                $data['bank_type'] = $bankcarInfo['bank_type'];
-                $result = $SalaryOutService->saveSalaryOut($data);
-                if($result['code'] == 200){
-                    $this->AuthService->record('后台添加提现记录');
-                    $this->success($result['msg']);
-                }else{
-                    $this->error($result['msg']);
+                if($memberInfo['balance']<$data['salary']){
+                    $this->error('余额不足,个人余额冻结失败');
                 }
+                //扣除余额
+                $res = db('member')->where(['id'=>$data['member_id']])->dec('balance',$data['salary'])->update();
+                if($res){
+                    // 卡信息
+                    $bankcarInfo = db('bankcard')->where(['id'=>$data['bankcard_id']])->find();
+                    $data['tid'] = getTID($this->admin['id']);
+                    $data['member'] = $memberInfo['member'];
+                    $data['realname'] = $bankcarInfo['realname'];
+                    $data['telephone'] = $bankcarInfo['telephone'];
+                    $data['openid'] = $memberInfo['openid'];
+                    $data['bank_card'] = $bankcarInfo['bank_card'];
+                    $data['bank'] = $bankcarInfo['bank'];
+                    $data['bank_type'] = $bankcarInfo['bank_type'];
+
+                    $result = $SalaryOutService->saveSalaryOut($data);
+                    if($result['code'] == 200){
+                        $this->AuthService->record('后台添加提现记录');
+                        $this->success($result['msg']);
+                    }else{
+                        $this->error($result['msg']);
+                    }
+                }else{
+                    $this->error('个人余额冻结失败');
+                }
+                
             }catch(Exception $e){
                 $this->error($e->getMessage());
             }
@@ -542,17 +564,20 @@ class Finance extends Backend {
                     'system_remarks'=>"[系统出账]id:{$this->admin['id']},admin:{$this->admin['username']};",
                     'pay_time'=>time(),
                     'is_pay'=>1,
-                    'status'=>1
+                    'status'=>1,
+                    'update_time'=>time(),
+                    'buffer'=>0
                     ];
                     $salaryOutInfo = $SalaryOut->where(['id'=>$salaryOut_id])->find();
                     $memberInfo = db('member')->where(['id'=>$salaryOutInfo['member_id']])->find();
                     if($memberInfo['balance']<$salaryOutInfo['salary']){
                         $this->error('用户余额不足');
                     }
+
                     $result = $SalaryOut->save($data,['id'=>$salaryOut_id]);
                     if($result){
                         $this->AuthService->record('提现申请出账');
-                        $this->success('操作成功,账户余额不变');
+                        $this->success('操作成功,该笔冻结款解冻');
                     }else{
                         $this->error('操作失败');
                     }
@@ -564,14 +589,19 @@ class Finance extends Backend {
                     'system_remarks'=>"[系统拒绝提现申请]id:{$this->admin['id']},admin:{$this->admin['username']};",
                     'is_pay'=>0,
                     'status'=>2,
+                    'update_time'=>time(),
+                    'buffer'=>0
                     ];
+                    $salaryOutInfo = $SalaryOut->where(['id'=>$salaryOut_id])->find();
                     $result = $SalaryOut->save($data,['id'=>$salaryOut_id]);
+           
                     if($result){
                         $this->AuthService->record('拒绝提现申请');
                         // 余额返回用户
-                        $salaryOutInfo = $SalaryOut->where(['id'=>$salaryOut_id])->find();
-                        db('member')->where(['id'=>$salaryOutInfo['member_id']])->setInc('balance',$salaryOutInfo['salary']);
-                        $this->success('操作成功,返还余额');
+                        
+                        db('member')->where(['id'=>$salaryOutInfo['member_id']])->inc('balance',$salaryOutInfo['buffer'])->update();
+          
+                        $this->success('操作成功,该笔冻结款解冻,返还用户余额');
                     }else{
                         $this->error('操作失败');
                     }
@@ -582,9 +612,13 @@ class Finance extends Backend {
                     'system_remarks'=>"[系统对冲]id:{$this->admin['id']},admin:{$this->admin['username']};",
                     'is_pay'=>0,
                     'status'=>-1,
+                    'buffer'=>0,
+                    'update_time'=>time(),
                     ];
-                    $result = $SalaryOut->save($data,['id'=>$salary_id]);
-                    $this->AuthService->record('提现对冲,返还余额');
+                    $salaryOutInfo = $SalaryOut->where(['id'=>$salaryOut_id])->find();
+                    $result = $SalaryOut->save($data,['id'=>$salaryOut_id]);
+                    db('member')->where(['id'=>$salaryOutInfo['member_id']])->setInc('balance',$salaryOutInfo['buffer']);
+                    $this->AuthService->record('提现对冲,返还余额,该笔冻结款解冻');
                     break;
             }
 

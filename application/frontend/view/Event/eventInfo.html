@@ -56,7 +56,7 @@
                         {/volist}
                     </span>
                 </li>
-                <!-- //这里是旧的? -->
+                <!-- 活动卡券 -->
                 {if !empty($couponListOfSystem)|| !empty($couponListOfCamp)}
                 <li class="mui-table-view-cell listli">
                     <a href="#cppopover">
@@ -177,7 +177,52 @@
             {/case} {/switch}
         </ul>
     </div>
+     <!-- 卡券弹框 -->
+    <div id="cppopover" class="mui-popover" style="width: 95% !important;">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header explain-title">
+            <span class="course">本课程赠送卡券</span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
 
+                {volist empty="" name="couponListOfSystem" id="vol" }
+
+                <div class="coupon">
+                    <div class="orangebg">
+                        <div class="cNum">{$vol.price}<span>元</span></div>
+                        <div class="cFrom">{$vol.organization}</div>
+                        <div class="cName">{$vol.coupon}</div>
+                        <div class="cDate">{$vol.start} 至 {$vol.end}</div>
+                        <i></i>
+                    </div>
+                    <div class="tips">
+                        <span>剩余领取：{$vol.max-$vol.publish}</span>
+                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>
+                    </div>
+                </div>
+                {/volist}
+
+                {volist empty="" name="couponListOfCamp" id="vol" }
+
+                <div class="coupon">
+                    <div class="orangebg">
+                        <div class="cNum">{$vol.price}<span>元</span></div>
+                        <div class="cFrom">{$vol.organization}</div>
+                        <div class="cName">{$vol.coupon}</div>
+                        <div class="cDate">{$vol.start} 至 {$vol.end}</div>
+                        <i></i>
+                    </div>
+                    <div class="tips">
+                        <span>剩余领取：{$vol.max-$vol.publish}</span>
+                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>
+                    </div>
+                </div>
+                {/volist}
+
+            </div>
+        </div>
+    </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
