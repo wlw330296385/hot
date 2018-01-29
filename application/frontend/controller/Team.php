@@ -434,4 +434,14 @@ class Team extends Base {
         $this->assign('applyInfo', $applyInfo);
         return view('Team/matchApplyInfo');
     }
+
+    // 添加会员为球队成员
+    public function addmemberofteam() {
+        return view('Team/addMemberOfTeam');
+    }
+
+    // 记录非会员到球队
+    public function recordmemberofteam() {
+        return view('Team/recordMemberOfTeam');
+    }
 }
