@@ -340,6 +340,11 @@ class Member extends Base{
                     }
                 }
             }
+            // 关键字null情况处理
+            if ($keyword == null) {
+                unset($map['keyword']);
+            }
+
             if (input('?param.page')) {
                 unset($map['page']);
             }
@@ -371,6 +376,10 @@ class Member extends Base{
                         $map['member|telephone'] = ['like', "%$keyword%"];
                     }
                 }
+            }
+            // 关键字null情况处理
+            if ($keyword == null) {
+                unset($map['keyword']);
             }
             if (input('?param.page')) {
                 unset($map['page']);
