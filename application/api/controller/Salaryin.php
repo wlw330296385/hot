@@ -14,19 +14,36 @@ class Salaryin extends Base {
 
 
 
+    // 获取平均工资
     public function getAverageSalaryApi(){
         try{
             $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];
-            $result = $this->SalaryInService->getReabteByMonth('8',2);
-            $avreageMonthSalary = $this->SalaryInService->getAverageSalaryByMonth(2);
-            $averageYearSalary = $this->SalaryInService->getAverageSalaryByYear(2); 
+            $startTime = time();
+            $endTime = time();
+            $result = $this->SalaryInService->getReabteByMonth($startTime,$endTime,$member_id);
+            $avreageMonthSalary = $this->SalaryInService->getAverageSalaryByMonth($member_id,$camp_id);
+            $averageYearSalary = $this->SalaryInService->getAverageSalaryByYear($member_id,$camp_id); 
             return json(['code'=>200,'msg'=>'ok','data'=>['avreageMonthSalary'=>$avreageMonthSalary,'averageYearSalary'=>$averageYearSalary]]);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
+    // 获取列表带page
+    public function getSalaryInListByPageApi(){
+        try{
+            $map = input('post.');
+            $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];
+            $map['member_id'] = $member_id;
+            $result = $this->SalaryInService->getSalaryInPagintor($map);
+            
+            return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
+    // 获取一个月的收入明细
     public function getSalaryInfoByMonthApi(){
         try{
             $start_end_str = input('start_end_str');

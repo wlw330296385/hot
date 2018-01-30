@@ -214,15 +214,30 @@ class Camp extends Base{
         $member_id = $this->memberInfo['id'];
         $power = $this->CampService->isPower($camp_id,$member_id);
         $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
+        // 班级总数
         $gradeCount = db('grade')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
-        $scheduleCount = db('schedule')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
+        // 课时总数
+        $scheduleList = db('schedule')->where(['camp_id'=>$camp_id])->where('delete_time', null)->select();
+        $totalSchedule = count($scheduleList);//已上课量
+        $totalScheduleStudent = 0;//上课人次;
+        foreach ($scheduleList as $key => $value) {
+            $totalScheduleStudent = $totalScheduleStudent + $value['students'];
+        }
+        // 课程总数
         $lessonCount = db('lesson')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
-        $restSchedule = db('lesson_member')->where(['camp_id'=>$camp_id])->where('delete_time', null)->select();
         
+        // 学生总数
+        $totalStudentList = db('lesson_member')->distinct(true)->field('student_id')->where(['camp_id'=>$camp_id])->where('delete_time', null)->select();
+        $totalStudent = count($totalStudentList);
+        //购买次数
+        $totalBill = db('bill')->where(['camp_id'=>$camp_id,'is_pay'=>1])->where('delete_time', null)->count();
         $this->assign('power',$power);
-        $this->assign('gradeCount',$gradeCount);
-        $this->assign('scheduleCount',$scheduleCount);
-        $this->assign('lessonCount',$lessonCount);
+        $this->assign('totalStudent',$totalStudent);//全部学生
+        $this->assign('totalBill',$totalBill);//购买次数
+        $this->assign('totalScheduleStudent',$totalScheduleStudent);//上课人次
+        $this->assign('gradeCount',$gradeCount);//全部班级
+        $this->assign('totalSchedule',$totalSchedule);//已上课量
+        $this->assign('lessonCount',$lessonCount);//全部课程
         $this->assign('campInfo',$campInfo); 
         return view('Camp/powerCamp');
     }
