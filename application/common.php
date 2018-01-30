@@ -188,19 +188,12 @@ function getMemberOpenid($memberid) {
     }
 }
 
-// 根据会员生日计算年龄
-function getMemberAgeByBirthday($member_id) {
+// 生日日期计算年龄
+function getMemberAgeByBirthday($birthdate) {
     $iage = 0;
-    $memberS = new \app\service\MemberService();
-    $member = $memberS->getMemberInfo(['id' => $member_id]);
-    if (!$member) {
-        return false;
-    }
-    // 取出会员生日字段信息
-    $birthday = $member['birthday'];
     // 检查生日日期是否是一个合法date格式
-    if (checkDatetimeIsValid($birthday)) {
-        $birthday_timestamp = strtotime($birthday);
+    if (checkDatetimeIsValid($birthdate)) {
+        $birthday_timestamp = strtotime($birthdate);
         //格式化出生时间年月日
         $birth_y = date('Y', $birthday_timestamp);
         $birth_m = date('m', $birthday_timestamp);
