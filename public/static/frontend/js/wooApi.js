@@ -175,9 +175,11 @@ var wooApi = {
             complete: function(msg) {
 
                 if(msg.responseJSON.code == 200){
-                    var html = `<span class="mui-badge">${msg.responseJSON.data}</span>`;
+                    window.unReadMessage = msg.responseJSON.data;
+                    var html = `<span class="mui-badge">${window.unReadMessage}</span>`;
                     $('#Message').html(html);
                 }else{
+                    window.unReadMessage = 0;
                     $('#Message').html('');
                 } 
             }

@@ -459,7 +459,7 @@ class Finance extends Backend {
                 ->view('member','balance,id mid','member.id = salary_out.member_id')
                 // ->where('salary_out.delete_time',null)
                 ->order('salary_out.create_time desc')
-                ->paginate(2);
+                ->paginate(10);
         // dump($list->toArray());die;
         $this->assign('list', $list);
         return view('finance/salaryOutList');
