@@ -241,7 +241,7 @@
                 <div class="mui-input-row">
                     <a href="#leader" class="mui-navigate-right">
                         <label>领队</label>
-                        <input type="text" value="{$gradeInfo.leader}" class="leaderCont pdr" placeholder="（选填）">
+                        <input type="text" name="leader" value="{$gradeInfo.leader}" class="leaderCont pdr" placeholder="（选填）">
                         <input type="hidden" name="leader_id" value="{$gradeInfo.leader_id}" class="leader_id">
                     </a>
                 </div>
@@ -249,7 +249,7 @@
                 <div class="mui-input-row">
                     <a href="#headMaster" class="mui-navigate-right">
                         <label>班主任</label>
-                        <input type="text" value="{$gradeInfo.teacher}" class="headMasterCont pdr" placeholder="（选填）">
+                        <input type="text" name="teacher" value="{$gradeInfo.teacher}" class="headMasterCont pdr" placeholder="（选填）">
                         <input type="hidden" name="teacher_id" value="{$gradeInfo.teacher_id}" class="teacher_id">
                     </a>
                 </div>
@@ -347,6 +347,9 @@
             <span class="course wd36">
                 <strong>选择班主任</strong>
             </span>
+            <span class="fr">
+                <button class="mui-btn" id="teacherDel">清除</button>
+            </span>
         </div>
         <div class="camp-lesson-list">
             <div class="mui-segmented-control">
@@ -393,6 +396,9 @@
         <div class="page-header">
             <span class="course wd36">
                 <strong>选择领队</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="leaderDel">清除</button>
             </span>
         </div>
         <div class="camp-lesson-list">
@@ -479,7 +485,7 @@
         <div class="mui-popover-arrow"></div>
 
         <div class="page-header">
-            <span class="course wd36">
+            <span class="course wd27">
                 <strong>学员名单</strong>
             </span>
             <span class="fr">
@@ -491,11 +497,9 @@
             <input type="search" class="searchStudent" placeholder="请输入关键字搜索">
             <span class="mui-icon mui-icon-search searchicon" id="searchStudent"></span>
         </div>
-        <div class="mui-scroll-wrapper pt">
+        <div class="mui-scroll-wrapper" style="margin-top:37px">
             <div class="mui-scroll">
-                <form id="newdiv" class="mui-input-group addStudentList">
-
-                </form>
+                <form id="newdiv" class="mui-input-group addStudentList"></form>
                 <ul class="mui-pager">
                     <li>
                         <button class="prev_page">上一页</button>
@@ -761,22 +765,6 @@
                 }).get().join(","));
                 mui('#assistantCoach').popover('toggle');
             })
-            // 班主任
-            $(".headMaster").on('tap', 'li', function () {
-                var headMaster = $(this).text();
-                $(".headMasterCont").val(headMaster);
-                var id = $(this).attr('data-id');
-                $(".teacher_id").val(id);
-                mui("#headMaster").popover("toggle");
-            })
-            // 领队
-            $(".leader").on('tap', 'li', function () {
-                var leader = $(this).text();
-                $(".leaderCont").val(leader);
-                var id = $(this).attr('data-id');
-                $(".leader_id").val(id);
-                mui("#leader").popover("toggle");
-            });
 
             // 复选框赋值
             $("#setAsCoach").on('tap', '', function () {
@@ -806,12 +794,12 @@
 
             // 选择添加学员点击事件
             $(".addStudentList").on('tap', '.student', function () {
-
+                var id = $(this).find("span").attr("data-id");
                 var lmid = $(this).find("span").attr("data-lmid");
                 var student = $(this).find("span").attr("data-student");
                 var student_id = $(this).find("span").attr("data-student_id");
                 var student_type = $(this).find("span").attr("data-type");
-                var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + student + '</font><input name="student" value="' + student_id + '" data-lmid="' + lmid + '" data-student="' + student + '" data-student_id="' + student_id + '" data-type="' + student_type + '" type="checkbox" checked="checked" class="stdList eachList" ></div>';
+                var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + student + '</font><input name="student" value="' + student_id + '" data-id="' + id + '" data-lmid="' + lmid + '" data-student="' + student + '" data-student_id="' + student_id + '" data-type="' + student_type + '" type="checkbox" checked="checked" class="stdList eachList" ></div>';
 
                 //遍历上课学员列表中是否存在此学员
                 var isExist = false;
@@ -919,6 +907,36 @@
                 }
             })
 
+
+           
+            // 班主任
+            $(".headMaster").on('click', 'li', function () {
+                var teacher = $(this).text();
+                $("input[name='teacher']").val(teacher);
+                var id = $(this).attr('data-id');
+                $(".teacher_id").val(id);
+                mui("#headMaster").popover("toggle");
+            })
+            //清除班主任
+            $("#teacherDel").on('tap', '', function () {
+                $("input[name='teacher']").val("");
+                $(".teacher_id").val("");
+                mui("#headMaster").popover("toggle");
+            })
+            // 领队
+            $(".leader").on('click', 'li', function () {
+                var leader = $(this).text();
+                $("input[name='leader']").val(leader);
+                var id = $(this).attr('data-id');
+                $(".leader_id").val(id);
+                mui("#leader").popover("toggle");
+            })
+            //清除领队
+            $("#leaderDel").on('tap', '', function () {
+                $("input[name='leader']").val("");
+                $(".leader_id").val("");
+                mui("#leader").popover("toggle");
+            })
 
             //搜索班主任粉丝
             $("#searchHM").on("tap", function () {
@@ -1039,14 +1057,15 @@
                 //然后遍历出对应所选
                 $("input.stdList[type=checkbox]:checked").each(function () {
                     var student_type = $(this).attr("data-type");
+                    var id = $(this).attr("data-id");
                     var lmid = $(this).attr("data-lmid");
                     var gmid = $(this).attr("data-gmid");
                     var student_id = $(this).attr("data-student_id");
                     var student = $(this).attr("data-student");
                     if (student_type == "正式生") {
-                        studentList.push({ student: student, student_id: student_id, lmid: lmid, gmid: gmid, type: student_type });
+                        studentList.push({ student: student, student_id: student_id, id: id, lmid: lmid, gmid: gmid, type: student_type });
                     } else {
-                        expstudentList.push({ student: student, student_id: student_id, lmid: lmid, gmid: gmid, type: student_type });
+                        expstudentList.push({ student: student, student_id: student_id, id: id, lmid: lmid, type: student_type });
                     };
                 });
                 console.log(studentList)
@@ -1202,7 +1221,7 @@
                         $("#expinactiveList").empty();
 
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            inactiveDiv = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].student + '</font><input name="student" value="' + data.data[i].student_id + '" data-gmid="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-type="' + data.data[i].type + '" type="checkbox" class="stdList eachList"></div>'
+                            inactiveDiv = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].student + '</font><input name="student" value="' + data.data[i].student_id + '" data-id="' + data.data[i].id + '" data-gmid="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-type="' + data.data[i].type + '" type="checkbox" class="stdList eachList"></div>'
                             var thisType = data.data[i].type;
                             if (thisType == "正式生") {
                                 $("#inactiveList").append(inactiveDiv);
@@ -1254,12 +1273,15 @@
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             tys = '';
                             if (data.data.data[i].type == "2") { tys = '<span class="tips">[ 体验生 ]</span>' }
-                            div = div + '<div class="mui-input-row student"><label>' + data.data.data[i].student + tys + '</label><span data-lmid="' + data.data.data[i].id + '" data-student_id="' + data.data.data[i].student_id + '" data-student="' + data.data.data[i].student + '" data-type="' + data.data.data[i].type + '"><b>' + data.data.data[i].lesson + '</b> +</span></div>'
+                            div = div + '<div class="mui-input-row student"><label>' + data.data.data[i].student + tys + '</label><span data-id="' + data.data.data[i].id + '" data-lmid="' + data.data.data[i].id + '" data-student_id="' + data.data.data[i].student_id + '" data-student="' + data.data.data[i].student + '" data-type="' + data.data.data[i].type + '"><b>' + data.data.data[i].lesson + '</b> +</span></div>'
                         }
                         $("#newdiv").empty();
                         $("#newdiv").append(div);
                         $("#addStudent .currPage").text(data.data.current_page);
                         $("#addStudent .totalPage").text(data.data.last_page);
+                        if (data.data.data == '') {
+                            $("#newdiv").append("<p class='nohave'>没有找到相关数据</p>");
+                        }
                     }
                 },
                 error: function (xhr, type, errorThrown) {
