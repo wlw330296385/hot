@@ -171,7 +171,14 @@ class Member extends Base{
         if($member_id){
             $memberInfo = db('member')->where(['id'=>$member_id])->find();
             $this->assign('memberInfo',$memberInfo);
+        }else{
+            $memberInfo = $this->memberInfo;
         }
+
+        //被冻结金额
+        $buffer = db('salary_out')->where(['member_id'=>$memberInfo['id']])->sum('buffer');
+        $buffer = number_format($buffer, 2);
+        $this->assign('buffer',$buffer);
         return view('Member/myWallet');
     }
 
@@ -182,7 +189,7 @@ class Member extends Base{
         $salaryinList = $SalaryInService->getSalaryInList(['member_id'=>$member_id]);
         $SalaryOutService = new \app\service\SalaryOutService($member_id);
         $salaryoutList = $SalaryOutService->getSalaryOutList(['member_id'=>$this->memberInfo['id']]);
-
+        // dump($salaryoutList);die;
         $this->assign('salaryoutList',$salaryoutList);
         $this->assign('salaryinList',$salaryinList);
         return view('Member/salaryDetail');

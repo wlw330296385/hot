@@ -14,8 +14,19 @@
 </nav>
 
 
+<script src="/static/frontend/js/wooApi.js"></script>
 <script type="text/javascript">
 	mui("body").on("tap","a",function(){
 	    window.top.location.href=this.href;
 	});
+    
+    if({$memberInfo.id}>0){
+        if(window.unReadMessage){
+            var html = `<span class="mui-badge">${window.unReadMessage}</span>`;
+            $('#Message').html(html);
+        }else{
+            wooApi.getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1});
+        }
+        
+    }
 </script>
