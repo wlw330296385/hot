@@ -12,6 +12,7 @@ use app\model\ScheduleGiftStudent;
 use app\model\ScheduleMember;
 use app\model\Student;
 use app\model\Coach;
+use app\model\Rebate;
 use app\service\MemberService;
 use app\service\SystemService;
 use app\service\WechatService;
@@ -474,6 +475,75 @@ class Patch extends Controller {
             dump($result);
         } catch (Exception $e) {
             dump($e->getMessage());
+        }
+    }
+
+    // 遍历salary_in 产生会员推荐人分成收入
+    public function salaryinrebate() {
+        try {
+            // 10月时间区间
+            $month10 = getStartAndEndUnixTimestamp(2017, 10);
+            // 11月时间区间
+            $month11 = getStartAndEndUnixTimestamp(2017, 11);
+            // 12月时间区间
+            $month12 = getStartAndEndUnixTimestamp(2017,12);
+            dump($month10);
+            dump($month11);
+            dump($month12);
+            $map['status'] = 1;
+            // 课时时间小于2018-1
+            $map['schedule_time'] = ['<', 1514736000];
+            $salaryins = DB::name('salary_in')->field("member_id, sum(salary)+sum(push_salary) as month_salary, FROM_UNIXTIME(`create_time`,'%Y%m') months")->where($map)->group('member_id, months')->where('delete_time', null)->select();
+            //dump($salaryins);
+            foreach ($salaryins as $salaryin) {
+                if ($salaryin['month_salary'] >0 ) {
+                    $res = $this->insertRebate($salaryin['member_id'], $salaryin['month_salary'], $salaryin['months']);
+                    if (!$res) { continue; }
+                }
+            }
+            DB::name('salary_in')->where($map)->update(['has_rebate' => 1]);
+        } catch (Exception $e) {
+            dump($e->getMessage());
+        }
+    }
+
+    // 会员推荐分成收入统计
+    public function rebatetomember() {
+        try {
+            $rebates = db('rebate')->field("member_id, sum(salary) as salary")->group("member_id")->whereNull('delete_time')->select();
+            dump($rebates);
+        } catch (Exception $e) {
+            dump($e->getMessage());
+        }
+    }
+
+    // 保存会员分成记录
+    private function insertRebate($member_id, $salary, $datemonth) {
+        $memberS = new MemberService();
+        $model = new Rebate();
+        $memberPiers = $memberS->getMemberPier($member_id);
+        if (!empty($memberPiers)) {
+            foreach ($memberPiers as $k => $memberPier) {
+                if ($memberPier['tier']==2) {
+                    $memberPiers[$k]['salary'] = $salary*$this->setting['rebate'];
+                } elseif ($memberPier['tier']==3){
+                    $memberPiers[$k]['salary'] = $salary*$this->setting['rebate2'];
+                }
+                $memberPiers[$k]['datemonth'] = $datemonth;
+            }
+            //dump($memberPiers);
+            $execute = $model->allowField(true)->saveAll($memberPiers);
+            if ($execute) {
+                $memberDb = db('member');
+                foreach ($memberPiers as $k => $member) {
+                    //$memberDb->where('id', $member['member_id'])->setInc('balance', $member['salary']);
+                }
+                file_put_contents(ROOT_PATH.'data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'success'=>$memberPiers], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND  );
+                return true;
+            } else {
+                file_put_contents(ROOT_PATH.'data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'error'=>$memberPiers], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND );
+                return false;
+            }
         }
     }
 }

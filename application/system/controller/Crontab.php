@@ -169,16 +169,25 @@ class Crontab extends Controller {
 
     // 结算上一个月收入 会员分成
     public function salaryinrebate(){
-        list($start, $end) = Time::lastMonth();
-        $map['status'] = 1;
-        $map['has_rebate'] = 0;
-        $map['create_time'] = ['between', [$start, $end]];
-        $salaryins = DB::name('salary_in')->field(['member_id', 'sum(salary)+sum(push_salary)'=>'month_salary'])->where($map)->where('delete_time', null)->select();
-        foreach ($salaryins as $salaryin) {
-            $res = $this->insertRebate($salaryin['member_id'], $salaryin['month_salary']);
-            if (!$res) { continue; }
+        try {
+            list($start, $end) = Time::lastMonth();
+            $map['status'] = 1;
+            $map['has_rebate'] = 0;
+            $map['create_time'] = ['between', [$start, $end]];
+            $salaryins = DB::name('salary_in')->field(['member_id', 'sum(salary)+sum(push_salary)'=>'month_salary'])->where($map)->group('member_id')->where('delete_time', null)->select();
+            $datemonth = date('Ym', $end);
+            foreach ($salaryins as $salaryin) {
+                //dump($salaryin);
+                if ($salaryin['month_salary'] >0 ){
+                    $res = $this->insertRebate($salaryin['member_id'], $salaryin['month_salary'], $datemonth);
+                    if (!$res) { continue; }
+                }
+            }
+            DB::name('salary_in')->where($map)->update(['has_rebate' => 1]);
+        }catch (Exception $e) {
+            // 记录日志：错误信息
+            trace($e->getMessage(), 'error');
         }
-        DB::name('salary_in')->where($map)->update(['has_rebate' => 1]);
     }
 
     // 获取教练会员
@@ -237,7 +246,7 @@ class Crontab extends Controller {
     }
 
     // 保存会员分成记录
-    private function insertRebate($member_id, $salary) {
+    private function insertRebate($member_id, $salary, $datemonth) {
         $memberS = new MemberService();
         $model = new Rebate();
         $memberPiers = $memberS->getMemberPier($member_id);
@@ -248,11 +257,11 @@ class Crontab extends Controller {
                 } elseif ($memberPier['tier']==3){
                     $memberPiers[$k]['salary'] = $salary*$this->setting['rebate2'];
                 }
+                $memberPiers[$k]['datemonth'] = $datemonth;
             }
             //dump($memberPiers);
             $execute = $model->allowField(true)->saveAll($memberPiers);
             if ($execute) {
-                //db('member')->where('id', $data['member_id'])->setInc('balance', $data['salary']);
                 $memberDb = db('member');
                 foreach ($memberPiers as $member) {
                     $memberDb->where('id', $member['member_id'])->setInc('balance', $member['salary']);
