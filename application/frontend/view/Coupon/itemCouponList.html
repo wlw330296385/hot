@@ -18,7 +18,7 @@
 		<div class="camp-lesson-list">
 			<div class="mui-segmented-control mb">
 				<a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('member/index')}"></a>
-				<a class="mui-control-item mui-active" href="#changeList">礼品券</a>
+				<a class="mui-control-item mui-active" href="#itemCouponList">礼品券</a>
 			</div>
 		</div>
 	</header>
@@ -27,31 +27,7 @@
 
 		<div class="tab-pullRefresh">
 			<div id="itemCouponList" class="mui-scroll-wrapper mui-control-content mui-active">
-				<div class="mui-scroll" style="padding-top:15px;">
-						{volist name="itemCouponList" id="vol"}
-						<div class="coupon">
-							<div class="orangebg">
-								<div class="cNum">{$vol.itemCoupon.price}<span>元</span></div>
-								<div class="cFrom">{$vol.itemCoupon.organization}</div>
-								<div class="cID">ID:{$vol.coupon_number}</div>
-								<div class="cName">{$vol.item_coupon}</div>
-								<div class="cDate">{$vol.itemCoupon.start} 至 {$vol.itemCoupon.end}</div>
-								<i></i>
-							</div>
-							<div class="tips">
-								<a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['itemCoupon']['id']])}">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>
-
-									{if strtotime($vol.itemCoupon.start) > time() || strtotime($vol.itemCoupon.end) < time()}
-									<button type="button" class="mui-btn"  disabled="true"  >已失效 </button>
-									{elseif $vol.status == 1}
-									<button type="button" class="mui-btn bggreen useCard" data-itemCouponID="{$vol.itemCoupon.id}"   data-itemCouponMemberID = "{$vol.id}"   >立即使用  </button>
-									{else /}
-									<button type="button" class="mui-btn"  disabled="true"  >已使用 </button>
-									{/if}
-							</div>
-						</div>
-						{/volist}
-				</div>
+				<div class="mui-scroll" style="padding-top:15px;"></div>
 			</div>
 		</div>
 
@@ -123,7 +99,7 @@
                 onItemCount = 1;//刷新并显示第一页
                 var page = onItemCount;
                 var gType = 1;//代表下拉刷新
-                toItemCouponList('itemCouponList', page, gType, 1);//具体取数据的方法
+                toItemCouponList('itemCouponList', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -133,7 +109,7 @@
                 onItemCount++;//翻下一页
                 var page = onItemCount;
                 var gType = 2;//代表上拉加载
-                toItemCouponList('itemCouponList', page, gType, 1);//具体取数据的方法
+                toItemCouponList('itemCouponList', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -141,15 +117,14 @@
     })
 
     //接口获取数据并追加到页面
-    var toItemCouponList = function (wList, page, gType, status) {
+    var toItemCouponList = function (wList, page, gType) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/lesson/getLessonListByPageApi','','',true)}" + '/?page=' + page;
-        var campID = "{$camp_id}";
+        var url = "{:url('api/item_coupon/getItemCouponMemberListByPageApi','','',true)}" + '/?page=' + page;
+        var memberID = "{$memberInfo.id}";
         mui.ajax({
             url: url,
             data: {
-                camp_id: campID,
-                status: status
+                member_id: memberID
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -159,44 +134,44 @@
             success: function (data) {
 
                 var newli = '';
+                var btn = '';
+                var currTimestamp = Date.parse(new Date());
+                var startDate = '';
+                var endDate = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('lesson/LessonInfoOfCamp')}" + '/lesson_id/' + data.data.data[i].id + '/camp_id/' + campID;
-                        newli += '<li class="mui-table-view-cell mui-media listli">';
-                        if (status == 1) {
-//                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="setprivate">设为私密课程</span></div>';
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="setprivate">';
-                            if (data.data.data[i].isprivate ===1 ) {
-                                newli += '撤销私密课程';
-                            } else {
-                                newli += '设为私密课程';
-                            }
-                            newli += '</span></div>';
+
+                        var urls = "{:url('frontend/Coupon/itemCouponInfo')}" + '/item_coupon_id/' + data.data.data[i].item_coupon.itemCoupon_id;
+
+                        startDate = data.data.data[i].item_coupon.start+' 00:00:00';
+                        endDate = data.data.data[i].item_coupon.end+' 23:59:59';
+                        startDate = new Date(Date.parse(startDate.replace(/-/g, "/")));
+                        endDate = new Date(Date.parse(endDate.replace(/-/g, "/")));
+                        startDate = startDate.getTime();
+                        endDate = endDate.getTime();
+
+                        if(data.data.data[i].price=='-1'){
+                            btn = '<button type="button" class="mui-btn" disabled="true"  >已使用 </button>';
+                        } else if(startDate>currTimestamp||endDate<currTimestamp) {
+                            btn = '<button type="button" class="mui-btn"  disabled="true"  >无效期 </button>';
                         } else {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                            btn = '<button type="button" class="mui-btn bggreen useCard" data-itemCouponID="'+data.data.data[i].item_coupon.itemcoupon_id+'"   data-itemCouponMemberID = "'+data.data.data[i].id+'"   >立即使用  </button>';
                         }
+                        newli += '<div class="coupon"><div class="orangebg"><div class="cNum">' + data.data.data[i].item_coupon.price + '<span>元</span></div><div class="cFrom">' + data.data.data[i].item_coupon.organization + '</div><div class="cID">ID:' + data.data.data[i].coupon_number + '</div><div class="cName">' + data.data.data[i].item_coupon.coupon + '</div><div class="cDate">' + data.data.data[i].item_coupon.start +'至'+ data.data.data[i].item_coupon.end + '</div><i></i></div><div class="tips"><a href="'+urls+'">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>'+btn+'</div></div>'
 
-//                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '"><div class="mui-media-body wd60">' + data.data.data[i].lesson + '<p class="mui-ellipsis">' + data.data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥' + data.data.data[i].cost + '</p><p class="address">' + data.data.data[i].area + '</p></div></a></div>';
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '"><div class="mui-media-body wd60">' + data.data.data[i].lesson;
-                        if (data.data.data[i].isprivate ===1) {
-                            newli += '<font style="color:red">&nbsp;&nbsp;[私密]</font>';
-                        }
-                        newli += '<p class="mui-ellipsis">' + data.data.data[i].gradecate_setion + data.data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥<strong>' + data.data.data[i].cost + '</strong></p><p class="address">' + data.data.data[i].area + '</p></div></a></div>';
-
-                        newli += '</li>';
                     }
                 }
                 if (gType == 1) {
                     //上拉刷新
-                    $("ul.lesson" + status).empty().append(newli);
+                    $("#itemCouponList .mui-scroll").empty().append(newli);
                     mui('#' + wList).pullRefresh().endPulldownToRefresh();
                     mui('#' + wList).pullRefresh().refresh(true);
                     if (newli == '') {
-                        $("ul.lesson" + status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        $("#itemCouponList .mui-scroll").append('<li class="nodata"><p>没有相关数据哦</p></li>');
                     }
                 } else {
                     //下拉加载 gType==2
-                    $("ul.lesson" + status).append(newli);
+                    $("#itemCouponList .mui-scroll").append(newli);
                 }
 
                 if (newli != '') {

@@ -22,7 +22,7 @@ class Match extends Model {
 
     // match_time （比赛时间）获取器 时间戳转换日期格式
     public function getMatchTimeAttr($value) {
-        return ($value>0) ? date('Y-m-d H:i') : 0;
+        return ($value>0) ? date('Y-m-d H:i', $value) : 0;
     }
     
     // type（活动类型）获取器
