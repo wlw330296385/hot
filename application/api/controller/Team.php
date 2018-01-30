@@ -4,6 +4,7 @@ namespace app\api\controller;
 
 
 use app\service\MatchService;
+use app\service\MemberService;
 use app\service\MessageService;
 use app\service\TeamService;
 use think\Exception;
@@ -300,15 +301,18 @@ class Team extends Base {
                 if ($applySaveResult['code'] == 200) {
                     // 获取球队信息
                     $teamInfo = $teamS->getTeam(['id' => $applyInfo['organization_id']]);
+
                     // 保存球队-会员信息，会员有真实姓名记录真实姓名否则记录会员名
                     $dataTeamMember = [
                         'team_id' => $applyInfo['organization_id'],
                         'team' => $applyInfo['organization'],
                         'member_id' => $applyInfo['member']['id'],
                         'member' => (!empty($applyInfo['member']['realname'])) ? $applyInfo['member']['realname'] : $applyInfo['member']['member'],
+                        'telphone' => $applyInfo['member']['telphone'],
                         'sex' => $applyInfo['member']['sex'],
                         'avatar' => $applyInfo['member']['avatar'],
-                        'age' => getMemberAgeByBirthday($applyInfo['member']['id']),
+                        'age' => getMemberAgeByBirthday($applyInfo['member']['birthday']),
+                        'birthday' => $applyInfo['member']['birthday'],
                         'yearsexp' => $applyInfo['member']['yearsexp'],
                         'height' => $applyInfo['member']['height'],
                         'weight' => $applyInfo['member']['weight'],
@@ -547,6 +551,65 @@ class Team extends Base {
             }
             return json($response);
         } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+    
+    // 球队添加成员（平台会员）
+    public function addmember() {
+        try {
+            // 输入变量
+            $post = input('post.');
+            // 必传参数
+            if (!isset($post['team_id'])) {
+                return json(['code' => 100, 'msg' => '请选择球队']);
+            }
+            if (!isset($post['member_id'])) {
+                return json(['code' => 100, 'msg' => '请选择会员']);
+            }
+            // service
+            $teamS = new TeamService();
+            $memberS = new MemberService();
+            // 获取球队信息
+            $teamInfo = $teamS->getTeam(['id' => $post['team_id']]);
+            if (!$teamInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404').'请选择其他球队']);
+            }
+            // 获取会员信息
+            $memberInfo = $memberS->getMemberInfo(['id' => $post['member_id']]);
+            if (!$memberInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404').'请选择其他会员']);
+            }
+            // 组合保存数据
+            $data = [
+                'team_id' => $teamInfo['id'],
+                'team' => $teamInfo['name'],
+                'member_id' => $memberInfo['id'],
+                'member' => $memberInfo['member'],
+                'telphone' => $memberInfo['telephone'],
+                'sex' => $memberInfo['sex'],
+                'avatar' => $memberInfo['avatar'],
+                'yearsexp' => $memberInfo['yearsexp'],
+                'birthday' => $memberInfo['birthday'],
+                'age' => $memberInfo['age'],
+                'height' => $memberInfo['height'],
+                'weight' => $memberInfo['weight'],
+                'shoe_size' => $memberInfo['shoe_code'],
+                'status' => -2
+            ];
+            // 查询会员有无在队信息
+            $teamMemberInfo = $teamS->getTeamMemberInfo(['team_id' => $post['team_id'], 'member_id' => $post['member_id']]);
+            if ($teamMemberInfo) {
+                if ($teamMemberInfo['status_num'] ==1) {
+                    return json(['code' => 100, 'msg' => '该会员已经在球队了，无需再次邀请']);
+                } else if ($teamMemberInfo['status_num'] ==-2) {
+                    return json(['code' => 100, 'msg' => '已发送邀请，无需再次邀请']);
+                } else {
+                    $data['id'] = $teamMemberInfo['id'];
+                }
+            }
+            //dump($data);
+        } catch(Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
