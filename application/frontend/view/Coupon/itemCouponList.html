@@ -74,6 +74,7 @@
     });
 
     $(function(){
+
     	$('.useCard').on('tap',function(){
     		var itemCouponID = $(this).attr("data-itemCouponID");
     		var itemCouponMemberID = $(this).attr("data-itemCouponMemberID");
@@ -90,9 +91,126 @@
 	    			
 	    		}
 	    		mui.toast(ajaxResult.msg);    			
-    		}	
+    		}
+    	})
 
-    		
-    	})	
+        //初始化全局变量
+        var onItemCount = 1;
+
+        mui('#itemCouponList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOn
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOn
+            }
+        });
+
+        //下拉刷新具体业务实现（上架）
+        function pulldownRefreshOn() {
+            setTimeout(function () {
+                onItemCount = 1;//刷新并显示第一页
+                var page = onItemCount;
+                var gType = 1;//代表下拉刷新
+                toItemCouponList('itemCouponList', page, gType, 1);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（上架）
+        function pullupRefreshOn() {
+            setTimeout(function () {
+                onItemCount++;//翻下一页
+                var page = onItemCount;
+                var gType = 2;//代表上拉加载
+                toItemCouponList('itemCouponList', page, gType, 1);//具体取数据的方法
+            }, 100);
+        }
+
+
     })
+
+    //接口获取数据并追加到页面
+    var toItemCouponList = function (wList, page, gType, status) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/lesson/getLessonListByPageApi','','',true)}" + '/?page=' + page;
+        var campID = "{$camp_id}";
+        mui.ajax({
+            url: url,
+            data: {
+                camp_id: campID,
+                status: status
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        var urls = "{:url('lesson/LessonInfoOfCamp')}" + '/lesson_id/' + data.data.data[i].id + '/camp_id/' + campID;
+                        newli += '<li class="mui-table-view-cell mui-media listli">';
+                        if (status == 1) {
+//                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="setprivate">设为私密课程</span></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="setprivate">';
+                            if (data.data.data[i].isprivate ===1 ) {
+                                newli += '撤销私密课程';
+                            } else {
+                                newli += '设为私密课程';
+                            }
+                            newli += '</span></div>';
+                        } else {
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                        }
+
+//                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '"><div class="mui-media-body wd60">' + data.data.data[i].lesson + '<p class="mui-ellipsis">' + data.data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥' + data.data.data[i].cost + '</p><p class="address">' + data.data.data[i].area + '</p></div></a></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '"><div class="mui-media-body wd60">' + data.data.data[i].lesson;
+                        if (data.data.data[i].isprivate ===1) {
+                            newli += '<font style="color:red">&nbsp;&nbsp;[私密]</font>';
+                        }
+                        newli += '<p class="mui-ellipsis">' + data.data.data[i].gradecate_setion + data.data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥<strong>' + data.data.data[i].cost + '</strong></p><p class="address">' + data.data.data[i].area + '</p></div></a></div>';
+
+                        newli += '</li>';
+                    }
+                }
+                if (gType == 1) {
+                    //上拉刷新
+                    $("ul.lesson" + status).empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("ul.lesson" + status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("ul.lesson" + status).append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
 </script>

@@ -146,8 +146,14 @@
                     <div class="box checkChecked" id="inactiveList">
                         {foreach name="studentList" item="vol"}
                         <div class="mui-input-row mui-checkbox checkboxCont"><label class="number">{$key+1}</label>
-                            <font>{$vol.student}</font><input name="student" class="stdList" data-id="{$vol.id}" data-student_id="{$vol.student_id}"
-                                value="{$vol.student}" data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox" checked="checked"></div>
+                        <font>{$vol.student}</font>
+                            <input name="student" class="stdList" data-gmid="{$vol.gmid}" data-student_id="{$vol.student_id}"
+                                   value="{$vol.student}" data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox" checked="checked">
+                        {if isset($vol['lmid'])}
+                        <input name="student" class="stdList" data-lmid="{$vol.lmid}" data-student_id="{$vol.student_id}"
+                               value="{$vol.student}" data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox" checked="checked">
+                        {/if}
+                        </div>
                         {/foreach}
                     </div>
                     <div class="mui-input-row bggray2">
@@ -232,7 +238,7 @@
                 <div class="mui-input-row">
                     <a href="#leader" class="mui-navigate-right">
                         <label>领队</label>
-                        <input type="text" value="{$scheduleInfo.leader}" class="leaderCont pdr" placeholder="（选填）">
+                        <input type="text" name="leader" value="{$scheduleInfo.leader}" class="leaderCont pdr" placeholder="（选填）">
                         <input type="hidden" name="leader_id" value="{$scheduleInfo.leader_id}" class="leader_id">
                     </a>
                 </div>
@@ -240,7 +246,7 @@
                 <div class="mui-input-row">
                     <a href="#headMaster" class="mui-navigate-right">
                         <label>班主任</label>
-                        <input type="text" value="{$scheduleInfo.teacher}" class="headMasterCont pdr" placeholder="（选填）">
+                        <input type="text" name="teacher" value="{$scheduleInfo.teacher}" class="headMasterCont pdr" placeholder="（选填）">
                         <input type="hidden" name="teacher_id" value="{$scheduleInfo.teacher_id}" class="teacher_id">
                     </a>
                 </div>
@@ -327,6 +333,7 @@
             <div class="mui-popover-arrow"></div>
             <div class="page-header">
                 <span class="course wd36"><strong>选择班主任</strong></span>
+                <span class="fr"><button class="mui-btn" id="teacherDel">清除</button></span>
             </div>
             <div class="camp-lesson-list">
                 <div class="mui-segmented-control">
@@ -366,6 +373,7 @@
             <div class="mui-popover-arrow"></div>
             <div class="page-header">
                 <span class="course wd36"><strong>选择领队</strong></span>
+                <span class="fr"><button class="mui-btn" id="leaderDel">清除</button></span>
             </div>
             <div class="camp-lesson-list">
                 <div class="mui-segmented-control">
@@ -725,22 +733,6 @@
                     mui('#assistantCoach').popover('toggle');
                 })
 
-                // 班主任
-                $(".headMaster").on('tap', 'li', function () {
-                    var headMaster = $(this).text();
-                    $(".headMasterCont").val(headMaster);
-                    var id = $(this).attr('data-id');
-                    $(".teacher_id").val(id);
-                    mui("#headMaster").popover("toggle");
-                })
-                // 领队
-                $(".leader").on('tap', 'li', function () {
-                    var leader = $(this).text();
-                    $(".leaderCont").val(leader);
-                    var id = $(this).attr('data-id');
-                    $(".leader_id").val(id);
-                    mui("#leader").popover("toggle");
-                })
 
                 //复选框赋值
                 $("#setAsCoach").on('tap', '', function () {
@@ -884,6 +876,35 @@
                     }
                 })
 
+
+                // 班主任
+                $(".headMaster").on('click', 'li', function () {
+                    var teacher = $(this).text();
+                    $("input[name='teacher']").val(teacher);
+                    var id = $(this).attr('data-id');
+                    $(".teacher_id").val(id);
+                    mui("#headMaster").popover("toggle");
+                })
+                //清除班主任
+                $("#teacherDel").on('tap', '', function () {
+                    $("input[name='teacher']").val("");
+                    $(".teacher_id").val("");
+                    mui("#headMaster").popover("toggle");
+                })
+                // 领队
+                $(".leader").on('click', 'li', function () {
+                    var leader = $(this).text();
+                    $("input[name='leader']").val(leader);
+                    var id = $(this).attr('data-id');
+                    $(".leader_id").val(id);
+                    mui("#leader").popover("toggle");
+                })
+                //清除领队
+                $("#leaderDel").on('tap', '', function () {
+                    $("input[name='leader']").val("");
+                    $(".leader_id").val("");
+                    mui("#leader").popover("toggle");
+                })
 
                 //搜索班主任粉丝
                 $("#searchHM").on("tap", function () {

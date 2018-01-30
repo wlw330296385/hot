@@ -786,6 +786,7 @@
                 mui('#weekSelect').popover('toggle');
             })
 
+
             // 班主任
             $(".headMaster").on('click', 'li', function () {
                 var teacher = $(this).text();
@@ -816,54 +817,56 @@
             })
 
             //搜索班主任粉丝
-            $("#searchHM").on("click", function () {
+            $("#searchHM").on("tap", function () {
                 var keyword = $(".keywordHM").val();
                 var pageHM = 1;
                 toFansList(keyword, "headMaster", pageHM);
             })
-
             //搜索领队粉丝
-            $("#searchLD").on("click", function () {
+            $("#searchLD").on("tap", function () {
                 var keyword = $(".keywordLD").val();
                 var pageLD = 1;
                 toFansList(keyword, "leader", pageLD);
             })
             //领队粉丝弹出框页码控制
-            $("#leader").on('click', '.next_page', function () {
+            $("#leader").on('tap', '.next_page', function () {
                 var getTotalPage = $("#leader .totalPage").text();
                 pageLD++;
                 if (pageLD > getTotalPage) {
                     mui.toast("已经最后一页了");
+                    pageLD=getTotalPage;
                 } else {
                     var keyword = $(".keywordLD").val();
                     toFansList(keyword, "leader", pageLD);
                 }
             })
-            $("#leader").on('click', '.prev_page', function () {
+            $("#leader").on('tap', '.prev_page', function () {
                 pageLD--;
                 if (pageLD < 1) {
                     mui.toast("已经是第一页了");
+                    pageLD=1;
                 } else {
                     var keyword = $(".keywordLD").val();
                     toFansList(keyword, "leader", pageLD);
                 }
             })
-
             //班主任粉丝弹出框页码控制
-            $("#headMaster").on('click', '.next_page', function () {
+            $("#headMaster").on('tap', '.next_page', function () {
                 var getTotalPage = $("#headMaster .totalPage").text();
                 pageHM++;
                 if (pageHM > getTotalPage) {
                     mui.toast("已经最后一页了");
+                    pageHM=getTotalPage;
                 } else {
                     var keyword = $(".keywordHM").val();
                     toFansList(keyword, "headMaster", pageHM);
                 }
             })
-            $("#headMaster").on('click', '.prev_page', function () {
+            $("#headMaster").on('tap', '.prev_page', function () {
                 pageHM--;
                 if (pageHM < 1) {
                     mui.toast("已经是第一页了");
+                    pageHM=1;
                 } else {
                     var keyword = $(".keywordHM").val();
                     toFansList(keyword, "headMaster", pageHM);

@@ -165,7 +165,6 @@ class ScheduleService
         }
         $res = false;
 
-
         $students = unserialize($schedule['student_str']);
         // 检查课时相关学员剩余课时
         $checkStudentRestscheduleResult = $this->checkstudentRestschedule($students, $schedule);
@@ -178,10 +177,6 @@ class ScheduleService
             return $decStudentRestscheduleResult;
         }
 
-        $update = db('schedule')->where('id', $schedule_id)->update(['status' => 1,'update_time' => time()]);
-        if (!$update) {
-            return ['code' => 100, 'msg' => '课时记录更新' . __lang('MSG_400')];
-        }
         $model = new ScheduleMember();
 
         // 记录学员
@@ -192,6 +187,10 @@ class ScheduleService
                 'schedule' => $schedule['grade'],
                 'camp_id' => $schedule['camp_id'],
                 'camp' => $schedule['camp'],
+                'lesson_id' => $schedule['lesson_id'],
+                'lesson' => $schedule['lesson'],
+                'grade_id' => $schedule['grade_id'],
+                'grade' => $schedule['grade'],
                 'user_id' => $student['student_id'],
                 'user' => $student['student'],
                 'type' => 1,
@@ -246,7 +245,13 @@ class ScheduleService
         }
         $savecoachResult = $model->saveAll($coachDatalist);
         if (!$savecoachResult) {
-            return ['code' => 100, 'msg' => '记录学员教练数据异常，请重试'];
+            return ['code' => 100, 'msg' => '记录教练数据异常，请重试'];
+        }
+
+        // 更新课时数据为已申状态
+        $update = db('schedule')->where('id', $schedule_id)->update(['status' => 1,'update_time' => time()]);
+        if (!$update) {
+            return ['code' => 100, 'msg' => '课时记录更新' . __lang('MSG_400')];
         }
 
         return ['code' => 200, 'msg' => '课时审核'.__lang('MSG_200')];
