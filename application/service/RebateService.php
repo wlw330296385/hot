@@ -1,47 +1,37 @@
 <?php
 namespace app\service;
 use app\model\Rebate;
-use app\common\validate\RebateVal;
-use app\model\SystemAward;
-// use think\Db;
+use think\Db;
+ 
 class RebateService {
 
     private $Rebate;
-    public function __construct($memberId)
+    public function __construct()
     {
         $this->Rebate = new Rebate;
     }
 
-    public function getRebate($map){
-        $result = $this->Rebate->with('lesson')->where($map)->find();
-
-        return $result;
-    }
-
-
-    // 获取提现记录列表
-    public function getRebateList($map,$p = 1,$paginate = 10,$order = 'id DESC'){
-        $res = $this->Rebate->where($map)->order('id DESC')->page($p,$paginate)->select();
-        if($res){
-            $result = $res->toArray();
-            return $result;
-        }else{
-            return $res;
+    // 会员推荐分成列表
+    public function getRebatePaginator($map=[], $order='id desc', $paginate=10) {
+        $model = new Rebate();
+        $query = $model->where($map)->order($order)->paginate($paginate);
+        if ($query) {
+            return $query->toArray();
+        } else {
+            return $query;
         }
-        
     }
 
-    
-    // 提交提现申请
-    public function saveRebate($data){
-        $data['paytime'] = '';
-        $data['is_pay'] = 0;
-        $data['status'] = 0;
-        $result = $this->Rebate->save($data);
-        if($result){
-            return ['code'=>200,'msg'=>'申请成功','data'=>$data];
-        }else{
-            return ['code'=>100,'msg'=>'申请失败','data'=>$data];
+    // 会员推荐分成层级收入统计
+    public function sumRebateByTier($map, $tier) {
+        $model = new Rebate();
+        $query = $model->where($map)->where(['tier' => $tier])->sum('salary');
+        if ($query) {
+            // 保留两位小数
+            $sum = sprintf("%.2f", $query);
+            return $sum;
+        } else {
+            return 0;
         }
     }
 }
