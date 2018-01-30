@@ -33,6 +33,7 @@
             font-size: 16px;
             font-weight: bold;
         }
+
         /* 球衣颜色 */
 
         i.tip {
@@ -194,7 +195,7 @@
                     <input type="text" name="avg_weight" class="data wd36" value="" placeholder="请输入平均体重" style="padding-right:0">
                 </div>
 
-                <div class="mui-input-row">
+                <!-- <div class="mui-input-row">
                     <div class="mui-navigate-right">
                         <label>球队特点</label>
                         <span class="location-choise max">
@@ -213,6 +214,13 @@
                             </select>
                         </span>
                     </div>
+                </div> -->
+
+                <div class="mui-input-row price-input-row h-auto">
+                    <a href="#charater" id="setCharaterBox" class="mui-navigate-right">
+                        <label>球队特点</label>
+                        <span class="charater" name="charater" style="width: 60%"></span>
+                    </a>
                 </div>
 
                 <div class="mui-input-row">
@@ -460,6 +468,67 @@
         </div>
     </div>
 
+    <!--球队特点-->
+    <div id="charater" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd36">
+                <strong>球队特点</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="charaterConfirm">确认</button>
+            </span>
+            <span class="fr">
+                <button class="addCharater">添加</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form id="charaterDiv" class="mui-input-group charaterList">
+                    <div class="mui-input-row mui-checkbox mui-left newadd">
+                        <label>球风良好</label>
+                        <input name="checkbox-charater" value="球风良好" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>诚信守时</label>
+                        <input name="checkbox-charater" value="诚信守时" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>尊重对手</label>
+                        <input name="checkbox-charater" value="尊重对手" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>年轻气盛</label>
+                        <input name="checkbox-charater" value="年轻气盛" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>老当益壮</label>
+                        <input name="checkbox-charater" value="老当益壮" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>球风硬朗</label>
+                        <input name="checkbox-charater" value="球风硬朗" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>拖拉迟到</label>
+                        <input name="checkbox-charater" value="拖拉迟到" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>有啦啦队</label>
+                        <input name="checkbox-charater" value="有啦啦队" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>氛围很好</label>
+                        <input name="checkbox-charater" value="氛围很好" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>小动作多</label>
+                        <input name="checkbox-charater" value="小动作多" type="checkbox">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -585,6 +654,7 @@
         };
 
         var colors = '';
+        var charaterList = ''
         $(function () {
 
             //获取训练营粉丝列表
@@ -725,6 +795,48 @@
             })
             //////////////////////////训练营///////////////////////////////////
 
+            // 选择球队特点
+            $("#charaterConfirm").on('tap', '', function () {
+                $("input[name=checkbox-charater]").empty();
+                var charaterCont = "";
+                $(".charaterList input[name='checkbox-charater']:checked").each(function () {
+                    var charater = $(this).val();
+                    var input = '<input type="hidden" class="checkCh" value="' + $(this).val() + '">';
+                    $(".charater").after(input);
+                    charaterCont += charater + ','
+                    $(".charater").text(charaterCont.substring(0, charaterCont.length - 1));
+                    charaterList = charaterCont.substring(0, charaterCont.length - 1)
+                    var newCharaterVal = $(".newCharater").val();
+                    $(".newCharaterVal").val(newCharaterVal)
+                });
+
+                console.log(charaterList)
+                mui("#charater").popover("toggle");
+            });
+
+            //球队特点列表复选框赋值
+            $("#setCharaterBox").on('tap', '', function () {
+                //每次打开先清空所有选择
+                $("input[name='checkbox-charater']").prop("checked", false);
+                //然后遍历出对应所选
+                $(".checkCh").each(function () {
+                    var checkCharacter = $(this).val();
+                    $("#charaterDiv").find("input[name='checkbox-charater']").filter(function () {
+                        return $(this).val() == checkCharacter
+                    }).prop("checked", true);
+                });
+            });
+
+            // 新加的球队特点
+            $(".addCharater").on('tap', '', function () {
+                $(".newadd").before('<div class="mui-input-row mui-checkbox mui-left newCharater"><input type="text" value="" placeholder="请输入添加的特点名称" class="mui-text-left newCharater" style="padding-left:58px" /><input name="checkbox-charater newCharaterVal" value="" type="checkbox"></div>');
+            })
+            
+            // 删除
+            // $(document).on('tap', ".cancel-dom", function () {
+            //     $(this).parent().remove();
+            // });
+            ///////////////////////////////
 
             //添加活动详情标题
             $(".titleClass").on('tap', '', function () {
@@ -784,7 +896,7 @@
                     $(this).parent().addClass("bgorange")
                     return false;
                 } else {
-                    $(document).on('tap',function () {
+                    $(document).on('tap', function () {
                         $(".desimg").parent().removeClass("bgorange")
                     });
                 }
@@ -832,6 +944,7 @@
             objData.colors = JSON.stringify(colors);
             var introduce = $('textarea.introduce').val();
             objData.introduce = introduce;
+            objData.charaterList = charaterList;
             var url = "{:url('api/team/createteam')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
