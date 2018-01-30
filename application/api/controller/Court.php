@@ -106,6 +106,34 @@ class Court extends Base{
         }
     }
 
+    // 分页获取lat,lng最近数据（带分页、有页码）
+    public function getCourtListOrderByDistanceApi(){
+        try{
+            $lat = input('param.lat',22.52369);;
+            $lng = input('param.lng',114.0261);;
+            $page = input('param.page',1);
+            $pe = $page*10;
+            $ps = ($page-1)*10;
+            // $result = Db::query("select *,round(6378.138)*2*asin (sqrt(pow(sin((:lat *pi()/180 - lat*pi()/180)/2), 2)+cos(:lat *pi()/180)*cos(lat*pi()/180)*pow(sin((:lng *pi()/180 - lng*pi()/180)/2),2))) as distance from court order by distance asc",
+            //     ['lat'=>$lat,'lng'=>$lng,
+            //     // \PDO::PARAM_INT
+            //     ]
+            // );
+            $result = Db::query('select *,round(6378.138)*2*asin (sqrt(pow(sin((? *pi()/180 - lat*pi()/180)/2), 2)+cos(? *pi()/180)*cos(lat*pi()/180)*pow(sin((? *pi()/180 - lng*pi()/180)/2),2))) as distance from court where status=1 order by distance asc limit ?,?',
+                [$lat,$lat,$lng,$ps,$pe]
+            );
+            // echo db('court')->getlastsql();die;
+            // dump($result);die;
+            if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
     //获取训练营下的场地列表（带分页）
     public function getCourtListOfCampApi(){
         $map = input('post.');
