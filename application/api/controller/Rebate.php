@@ -12,9 +12,13 @@ class Rebate extends Base
     public function getrebatelistpage() {
         try {
             $map = input('param.');
+            $page = input('param.page', 1);
             // 默认查询当前登录会员
             if (!isset($map['member_id'])) {
                 $map['member_id'] = $this->memberInfo['id'];
+            }
+            if (isset($map['page'])) {
+                unset($map['page']);;
             }
             $rebateS = new RebateService();
             // 推荐分成列表
