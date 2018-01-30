@@ -104,16 +104,16 @@
                 </div>
 
                 <div class="mui-input-row">
-                        <div class="mui-navigate-right">
-                            <label>是否约战</label>
-                            <span class="select-row">
-                                <select class="data" id="islive" name="islive">
-                                    <option value="0">不约战</option>
-                                    <option value="1" class="isyz">约战</option>
-                                </select>
-                            </span>
-                        </div>
+                    <div class="mui-navigate-right">
+                        <label>是否约战</label>
+                        <span class="select-row">
+                            <select class="data" id="islive" name="islive">
+                                <option value="0">不约战</option>
+                                <option value="1" class="isyz">约战</option>
+                            </select>
+                        </span>
                     </div>
+                </div>
 
                 <p class="pline"></p>
 
@@ -214,7 +214,9 @@
             </div>
             <div class="mui-scroll-wrapper" style="top:38px !important;">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view list teamList"></ul>
+                    <ul class="mui-table-view list teamList">
+                        <p class="nohave">请先搜索你要对战的对手！</p>
+                    </ul>
                     <ul class="mui-pager">
                         <li>
                             <a href="#" class="prev_page">上一页</a>
@@ -494,7 +496,7 @@
             var pageHi = 1;
             var pageLD = 1;
             var pageCR = 1;
-            toTeamList(wTeams, teamKeyword, 1);
+            // toTeamList(wTeams, teamKeyword, 1);
             toTeamListHistory(wTeamsHistory, teamHistoryKeyword, 1);
             toCourtList(wCourt, courtKeyword, 1);
             colorShow(); // 调用主场客场颜色显示
@@ -538,10 +540,10 @@
                 var islive = $(this).children("option:selected").val()
                 if (islive == 1) {
                     $(".isHref").attr("href", "#").addClass("awayTeamBtn");
-                    $(document).on("tap",'.awayTeamBtn', function(){
+                    $(document).on("tap", '.awayTeamBtn', function () {
                         mui.toast("已经选择约战类型则不能选择对手");
                     })
-                } else{
+                } else {
                     $(".isHref").attr("href", "#awayTeam").removeClass("awayTeamBtn");
                 }
             });
@@ -740,8 +742,8 @@
                 headers: { 'Content-Type': 'application/json' },
                 success: function (data) {
                     console.log(data)
+                    var newli = '';
                     if (data.code == 200) {
-                        var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             if (data.data.data[i].id != "{$team_id}") {
                                 newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '" data-logo="' + data.data.data[i].logo + '"><label class="name">' + data.data.data[i].name + '</label><span class="wd45">' + data.data.data[i].city + '&nbsp;' + data.data.data[i].area + '</span></li>'
@@ -749,7 +751,7 @@
                         }
                         $(wTeamList).empty();
                         if (newli == '') {
-                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="请填写你要添加的球队" /><button class="mui-btn addBtn">确认</button></div>'
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="请填写要添加的球队" /><button class="mui-btn addBtn">确认</button></div>'
                         }
                         $(wTeamList).append(newli);
                         $(currPage).text(data.data.current_page);
@@ -797,7 +799,7 @@
                         }
                         $(wTeamList).empty();
                         if (newli == '') {
-                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="请填写你要添加的球队" /><button class="mui-btn addBtn">确认</button></div>'
+                            newli = '<p class="nohave">没有查找到数据哦</p>'
                         }
                         $(wTeamList).append(newli);
                         $(currPage).text(data.data.current_page);
