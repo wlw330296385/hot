@@ -217,6 +217,8 @@ class Camp extends Base{
         $gradeCount = db('grade')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
         $scheduleCount = db('schedule')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
         $lessonCount = db('lesson')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
+        $restSchedule = db('lesson_member')->where(['camp_id'=>$camp_id])->where('delete_time', null)->select();
+        
         $this->assign('power',$power);
         $this->assign('gradeCount',$gradeCount);
         $this->assign('scheduleCount',$scheduleCount);
