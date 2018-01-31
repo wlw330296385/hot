@@ -1,7 +1,7 @@
 <?php
 
 namespace app\admin\service;
-
+use app\coommon\validate\BonusVal;
 use app\admin\model\Bonus;
 use app\admin\model\BonusMember;
 use think\Db;

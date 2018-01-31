@@ -78,6 +78,9 @@ class Coupon extends Backend{
             $datetime = explode('-', $data['datetime']);
             $data['start'] = strtotime($datetime[0]);
             $data['end'] = strtotime($datetime[1]);
+            $publishtime = explode('-', $data['publishtime']);
+            $data['publish_start'] = strtotime($publishtime[0]);
+            $data['publish_end'] = strtotime($publishtime[1]);
             $data['member_id'] = $this->admin['id'];
             $result = $this->ItemCouponService->createItemCoupon($data);
             if($result['code'] == 200){
