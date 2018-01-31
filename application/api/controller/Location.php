@@ -23,10 +23,10 @@ class Location extends Base{
             $s = file_get_contents("http://ip.taobao.com/service/getIpInfo.php?ip=".$ip);
             // $location = iconv("gbk", "utf-8//IGNORE",$s);
             // $ss = iconv("gb2312", "utf-8//IGNORE",$s);
-            
+            return json($s);
             // $ss = json_decode($s);
             // dump($ss); 
-            echo  $s;die;
+            // echo  $s;die;
             
            
             // preg_match('/{.+}/',$s,$r);
