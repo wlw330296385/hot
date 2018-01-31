@@ -1186,7 +1186,7 @@ var cityData3 = [{
 	text: '内蒙古',
 	children: [{
 		value: "150100",
-		text: "呼和浩特市",
+		text: "呼和浩特",
 		children: [{
 			value: "150102",
 			text: "新城区"
@@ -1220,7 +1220,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "150200",
-		text: "包头市",
+		text: "包头",
 		children: [{
 			value: "150202",
 			text: "东河区"
@@ -1254,7 +1254,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "150300",
-		text: "乌海市",
+		text: "乌海",
 		children: [{
 			value: "150302",
 			text: "海勃湾区"
@@ -1270,7 +1270,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "150400",
-		text: "赤峰市",
+		text: "赤峰",
 		children: [{
 			value: "150402",
 			text: "红山区"
@@ -1313,7 +1313,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "150500",
-		text: "通辽市",
+		text: "通辽",
 		children: [{
 			value: "150502",
 			text: "科尔沁区"
@@ -1344,7 +1344,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "150600",
-		text: "鄂尔多斯市",
+		text: "鄂尔多斯",
 		children: [{
 			value: "150602",
 			text: "东胜区"
@@ -1375,7 +1375,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "150700",
-		text: "呼伦贝尔市",
+		text: "呼伦贝尔",
 		children: [{
 			value: "150702",
 			text: "海拉尔区"
@@ -1421,7 +1421,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "150800",
-		text: "巴彦淖尔市",
+		text: "巴彦淖尔",
 		children: [{
 			value: "150802",
 			text: "临河区"
@@ -1449,7 +1449,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "150900",
-		text: "乌兰察布市",
+		text: "乌兰察布",
 		children: [{
 			value: "150902",
 			text: "集宁区"
@@ -7353,10 +7353,10 @@ var cityData3 = [{
 	}]
 }, {
 	value: '450000',
-	text: '广西壮族',
+	text: '广西',
 	children: [{
 		value: "450100",
-		text: "南宁市",
+		text: "南宁",
 		children: [{
 			value: "450102",
 			text: "兴宁区"
@@ -7399,7 +7399,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "450200",
-		text: "柳州市",
+		text: "柳州",
 		children: [{
 			value: "450202",
 			text: "城中区"
@@ -7436,7 +7436,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "450300",
-		text: "桂林市",
+		text: "桂林",
 		children: [{
 			value: "450302",
 			text: "秀峰区"
@@ -7494,7 +7494,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "450400",
-		text: "梧州市",
+		text: "梧州",
 		children: [{
 			value: "450403",
 			text: "万秀区"
@@ -7522,7 +7522,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "450500",
-		text: "北海市",
+		text: "北海",
 		children: [{
 			value: "450502",
 			text: "海城区"
@@ -7541,7 +7541,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "450600",
-		text: "防城港市",
+		text: "防城港",
 		children: [{
 			value: "450602",
 			text: "港口区"
@@ -7560,7 +7560,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "450700",
-		text: "钦州市",
+		text: "钦州",
 		children: [{
 			value: "450702",
 			text: "钦南区"
@@ -7579,7 +7579,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "450800",
-		text: "贵港市",
+		text: "贵港",
 		children: [{
 			value: "450802",
 			text: "港北区"
@@ -7601,7 +7601,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "450900",
-		text: "玉林市",
+		text: "玉林",
 		children: [{
 			value: "450902",
 			text: "玉州区"
@@ -7626,7 +7626,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "451000",
-		text: "百色市",
+		text: "百色",
 		children: [{
 			value: "451002",
 			text: "右江区"
@@ -7669,7 +7669,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "451100",
-		text: "贺州市",
+		text: "贺州",
 		children: [{
 				value: "451102",
 				text: "八步区"
@@ -7691,7 +7691,7 @@ var cityData3 = [{
 		]
 	}, {
 		value: "451200",
-		text: "河池市",
+		text: "河池",
 		children: [{
 			value: "451202",
 			text: "金城江区"
@@ -7731,7 +7731,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "451300",
-		text: "来宾市",
+		text: "来宾",
 		children: [{
 			value: "451302",
 			text: "兴宾区"
@@ -7756,7 +7756,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "451400",
-		text: "崇左市",
+		text: "崇左",
 		children: [{
 			value: "451402",
 			text: "江洲区"
@@ -7868,10 +7868,10 @@ var cityData3 = [{
 	}]
 }, {
 	value: '500000',
-	text: '重庆',
+	text: '重庆市',
 	children: [{
 		value: '500000',
-		text: '重庆',
+		text: '重庆市',
 		children: [{
 			value: "500101",
 			text: "万州区"
@@ -9539,7 +9539,7 @@ var cityData3 = [{
 	text: '西藏',
 	children: [{
 		value: "540100",
-		text: "拉萨市",
+		text: "拉萨",
 		children: [{
 			value: "540102",
 			text: "城关区"
@@ -9570,7 +9570,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "542100",
-		text: "昌都地区",
+		text: "昌都",
 		children: [{
 			value: "542121",
 			text: "昌都县"
@@ -9610,7 +9610,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "542200",
-		text: "山南地区",
+		text: "山南",
 		children: [{
 			value: "542221",
 			text: "乃东县"
@@ -9653,7 +9653,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "542300",
-		text: "日喀则地区",
+		text: "日喀则",
 		children: [{
 			value: "542301",
 			text: "日喀则市"
@@ -9714,7 +9714,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "542400",
-		text: "那曲地区",
+		text: "那曲",
 		children: [{
 			value: "542421",
 			text: "那曲县"
@@ -9751,7 +9751,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "542500",
-		text: "阿里地区",
+		text: "阿里",
 		children: [{
 			value: "542521",
 			text: "普兰县"
@@ -9779,7 +9779,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "542600",
-		text: "林芝地区",
+		text: "林芝",
 		children: [{
 			value: "542621",
 			text: "林芝县"
@@ -10752,7 +10752,7 @@ var cityData3 = [{
 	text: '宁夏',
 	children: [{
 		value: "640100",
-		text: "银川市",
+		text: "银川",
 		children: [{
 			value: "640104",
 			text: "兴庆区"
@@ -10777,7 +10777,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "640200",
-		text: "石嘴山市",
+		text: "石嘴山",
 		children: [{
 			value: "640202",
 			text: "大武口区"
@@ -10793,7 +10793,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "640300",
-		text: "吴忠市",
+		text: "吴忠",
 		children: [{
 			value: "640302",
 			text: "利通区"
@@ -10815,7 +10815,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "640400",
-		text: "固原市",
+		text: "固原",
 		children: [{
 			value: "640402",
 			text: "原州区"
@@ -10837,7 +10837,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "640500",
-		text: "中卫市",
+		text: "中卫",
 		children: [{
 			value: "640502",
 			text: "沙坡头区"
@@ -10857,7 +10857,7 @@ var cityData3 = [{
 	text: '新疆',
 	children: [{
 		value: "650100",
-		text: "乌鲁木齐市",
+		text: "乌鲁木齐",
 		children: [{
 			value: "650102",
 			text: "天山区"
@@ -10891,7 +10891,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "650200",
-		text: "克拉玛依市",
+		text: "克拉玛依",
 		children: [{
 			value: "650202",
 			text: "独山子区"
@@ -10910,7 +10910,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "652100",
-		text: "吐鲁番地区",
+		text: "吐鲁番",
 		children: [{
 			value: "652101",
 			text: "吐鲁番市"
@@ -10926,7 +10926,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "652200",
-		text: "哈密地区",
+		text: "哈密",
 		children: [{
 			value: "652201",
 			text: "哈密市"
@@ -10942,7 +10942,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "652300",
-		text: "昌吉回族自治州",
+		text: "昌吉",
 		children: [{
 			value: "652301",
 			text: "昌吉市"
@@ -10973,7 +10973,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "652700",
-		text: "博尔塔拉蒙古自治州",
+		text: "博尔塔拉",
 		children: [{
 			value: "652701",
 			text: "博乐市"
@@ -10989,7 +10989,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "652800",
-		text: "巴音郭楞蒙古自治州",
+		text: "巴音郭楞",
 		children: [{
 			value: "652801",
 			text: "库尔勒市"
@@ -11023,7 +11023,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "652900",
-		text: "阿克苏地区",
+		text: "阿克苏",
 		children: [{
 			value: "652901",
 			text: "阿克苏市"
@@ -11057,7 +11057,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "653000",
-		text: "克孜勒苏柯尔克孜自治州",
+		text: "克孜勒苏柯尔克孜",
 		children: [{
 			value: "653001",
 			text: "阿图什市"
@@ -11076,7 +11076,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "653100",
-		text: "喀什地区",
+		text: "喀什",
 		children: [{
 			value: "653101",
 			text: "喀什市"
@@ -11119,7 +11119,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "653200",
-		text: "和田地区",
+		text: "和田",
 		children: [{
 			value: "653201",
 			text: "和田市"
@@ -11150,7 +11150,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "654000",
-		text: "伊犁哈萨克自治州",
+		text: "伊犁哈萨克",
 		children: [{
 			value: "654002",
 			text: "伊宁市"
@@ -11187,7 +11187,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "654200",
-		text: "塔城地区",
+		text: "塔城",
 		children: [{
 			value: "654201",
 			text: "塔城市"
@@ -11215,7 +11215,7 @@ var cityData3 = [{
 		}]
 	}, {
 		value: "654300",
-		text: "阿勒泰地区",
+		text: "阿勒泰",
 		children: [{
 			value: "654301",
 			text: "阿勒泰市"
@@ -11501,7 +11501,7 @@ var cityData3 = [{
 	text: '香港',
 	children: [{
 		value: "810100",
-		text: "香港岛",
+		text: "香港",
 		children: [{
 			value: "810101",
 			text: "中西区"
@@ -11514,11 +11514,10 @@ var cityData3 = [{
 		}, {
 			value: "810104",
 			text: "南区"
-		}]
-	}, {
-		value: "810200",
-		text: "九龙",
-		children: [{
+		}, {
+            value: "810105",
+            text: "香港岛"
+        }, {
 			value: "810201",
 			text: "九龙城区"
 		}, {
@@ -11533,11 +11532,10 @@ var cityData3 = [{
 		}, {
 			value: "810205",
 			text: "观塘区"
-		}]
-	}, {
-		value: "810300",
-		text: "新界",
-		children: [{
+		}, {
+            value: "810206",
+            text: "九龙"
+        }, {
 			value: "810301",
 			text: "北区"
 		}, {
@@ -11564,17 +11562,30 @@ var cityData3 = [{
 		}, {
 			value: "810309",
 			text: "离岛区"
-		}]
+		}, {
+            value: "810310",
+            text: "新界"
+        }]
 	}]
 }, {
 	value: '820000',
 	text: '澳门',
 	children: [{
 		value: "820100",
-		text: "澳门半岛"
-	}, {
-		value: "820200",
-		text: "离岛"
+		text: "澳门",
+        children: [{
+			value: "810101",
+			text: "澳门半岛"
+		}, {
+			value: "810102",
+			text: "离岛"
+		},{
+            value: "810103",
+            text: "中西区"
+        }, {
+            value: "810104",
+            text: "湾仔"
+        }]
 	}]
 }, {
 	value: '990000',

@@ -45,6 +45,22 @@ function getLocationApi(locationApiUrl) {
                         area = data.data.area;
                         city = data.data.city;
                         province = data.data.region;
+                        if(province=="北京"||province=="上海"||province=="天津"||province=="重庆"){
+                            province=province+"市";
+                            city=city+"市";
+                        }else if(province=="新疆"||province=="西藏"||province=="内蒙古"||province=="宁夏"||province=="广西"){
+                            province=province;
+                            city=city;
+                            //city.data-3.js修改了地址库数据，将市或地区字眼去除（配合ip.taobao.com）
+                        }else if(province=="香港"){
+                            city="香港";
+                            //city.data-3.js修改了地址库数据（配合ip.taobao.com）
+                        }else if(province=="澳门"){
+                            city="澳门";
+                        }else{
+                            province=province+"省"
+                            city=city+"市"
+                        }
                         areas = getAreas(province,city);
                     }else{
                         //返回默认定位 Default Location
