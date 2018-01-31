@@ -546,4 +546,25 @@ class Patch extends Controller {
             }
         }
     }
+
+    // 补全schedule_member数据
+    public function schedulemember() {
+        try {
+            $model = new ScheduleMember();
+            $list = $model->select();
+            $list = $list->toArray();
+            $data = [];
+            foreach ($list as $k => $val) {
+                $scheduleInfo = db('schedule')->where('id', $val['schedule_id'])->find();
+                $data[$k]['lesson_id'] = $scheduleInfo['lesson_id'];
+                $data[$k]['lesson'] = $scheduleInfo['lesson'];
+                $data[$k]['grade_id'] = $scheduleInfo['grade_id'];
+                $data[$k]['grade'] = $scheduleInfo['grade'];
+                $data[$k]['id'] = $val['id'];
+            }
+            $model->saveAll($data);
+        } catch (Exception $e) {
+            dump($e->getMessage());
+        }
+    }
 }
