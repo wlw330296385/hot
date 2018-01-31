@@ -238,39 +238,21 @@ class MatchService {
         if ($query) {
             //return $query->toArray();
             $res = $query->toArray();
-            // 字段内容显示转换（参考model/match）
+            // match字段内容输出转换
+            $modelMatch = new Match();
             foreach ($res['data'] as $k => $val) {
-                $res['data'][$k]['type_num'] = $val['type'];
-                switch($val['type']) {
-                    case 1 :
-                        $res['data'][$k]['type'] = '友谊赛';
-                        break;
-                    case 2 :
-                        $res['data'][$k]['type'] = '联赛';
-                        break;
-
-                }
-
-                $res['data'][$k]['is_finished_num']  = $val['is_finished'];
-                switch($val['is_finished']) {
-                    case 1 :
-                        $res['data'][$k]['is_finished'] = '已完成';
-                        break;
-
-                    default:
-                        $res['data'][$k]['is_finished'] = '未完成';
-                }
-
-                $res['data'][$k]['status_num'] = $val['status'];
-                switch ($val['status']) {
-                    case 1 :
-                        $res['data'][$k]['status'] = '公开';
-                        break;
-                    case -1:
-                        $res['data'][$k]['status'] = '不公开';
-                }
                 $res['data'][$k]['create_time'] = date('Y-m-d H:i', $val['create_time']);
                 $res['data'][$k]['update_time'] = date('Y-m-d H:i', $val['update_time']);
+                $matchInfo =$modelMatch->where(['id' => $val['match_id']])->find();
+                if($matchInfo){
+                    $matchInfo = $matchInfo->toArray();
+                    $res['data'][$k]['type_num'] = $val['type'];
+                    $res['data'][$k]['type'] = $matchInfo['type'];
+                    $res['data'][$k]['is_finished_num']  = $val['is_finished'];
+                    $res['data'][$k]['is_finished']  = $matchInfo['is_finished'];
+                    $res['data'][$k]['status_num'] = $val['status'];
+                    $res['data'][$k]['status'] = $matchInfo['status'];
+                }
             }
             return $res;
         } else {
@@ -299,39 +281,21 @@ class MatchService {
 
 
         if ($res) {
-            // 字段内容显示转换（参考model/match）
+            // match字段内容输出转换
+            $modelMatch = new Match();
             foreach ($res as $k => $val) {
-                $res[$k]['type_num'] = $val['type'];
-                switch($val['type']) {
-                    case 1 :
-                        $res[$k]['type'] = '友谊赛';
-                        break;
-                    case 2 :
-                        $res[$k]['type'] = '联赛';
-                        break;
-
-                }
-
-                $res[$k]['is_finished_num']  = $val['is_finished'];
-                switch($val['is_finished']) {
-                    case 1 :
-                        $res[$k]['is_finished'] = '已完成';
-                        break;
-
-                    default:
-                        $res[$k]['is_finished'] = '未完成';
-                }
-
-                $res[$k]['status_num'] = $val['status'];
-                switch ($val['status']) {
-                    case 1 :
-                        $res[$k]['status'] = '公开';
-                        break;
-                    case -1:
-                        $res[$k]['status'] = '不公开';
-                }
                 $res[$k]['create_time'] = date('Y-m-d H:i', $val['create_time']);
                 $res[$k]['update_time'] = date('Y-m-d H:i', $val['update_time']);
+                $matchInfo =$modelMatch->where(['id' => $val['match_id']])->find();
+                if($matchInfo){
+                    $matchInfo = $matchInfo->toArray();
+                    $res[$k]['type_num'] = $val['type'];
+                    $res[$k]['type'] = $matchInfo['type'];
+                    $res[$k]['is_finished_num']  = $val['is_finished'];
+                    $res[$k]['is_finished']  = $matchInfo['is_finished'];
+                    $res[$k]['status_num'] = $val['status'];
+                    $res[$k]['status'] = $matchInfo['status'];
+                }
             }
             return $res;
         } else {
@@ -359,39 +323,21 @@ class MatchService {
 
 
         if ($res) {
-            // 字段内容显示转换（参考model/match）
+            // match字段内容输出转换
+            $modelMatch = new Match();
             foreach ($res as $k => $val) {
-                $res[$k]['type_num'] = $val['type'];
-                switch($val['type']) {
-                    case 1 :
-                        $res[$k]['type'] = '友谊赛';
-                        break;
-                    case 2 :
-                        $res[$k]['type'] = '联赛';
-                        break;
-
-                }
-
-                $res[$k]['is_finished_num']  = $val['is_finished'];
-                switch($val['is_finished']) {
-                    case 1 :
-                        $res[$k]['is_finished'] = '已完成';
-                        break;
-
-                    default:
-                        $res[$k]['is_finished'] = '未完成';
-                }
-
-                $res[$k]['status_num'] = $val['status'];
-                switch ($val['status']) {
-                    case 1 :
-                        $res[$k]['status'] = '公开';
-                        break;
-                    case -1:
-                        $res[$k]['status'] = '不公开';
-                }
                 $res[$k]['create_time'] = date('Y-m-d H:i', $val['create_time']);
                 $res[$k]['update_time'] = date('Y-m-d H:i', $val['update_time']);
+                $matchInfo =$modelMatch->where(['id' => $val['match_id']])->find();
+                if($matchInfo){
+                    $matchInfo = $matchInfo->toArray();
+                    $res[$k]['type_num'] = $val['type'];
+                    $res[$k]['type'] = $matchInfo['type'];
+                    $res[$k]['is_finished_num']  = $val['is_finished'];
+                    $res[$k]['is_finished']  = $matchInfo['is_finished'];
+                    $res[$k]['status_num'] = $val['status'];
+                    $res[$k]['status'] = $matchInfo['status'];
+                }
             }
             return $res;
         } else {

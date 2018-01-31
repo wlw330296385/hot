@@ -27,7 +27,7 @@ class Match extends Model {
     
     // type（活动类型）获取器
     public function getTypeAttr($value) {
-        $type = [ 1 => '友谊赛', 2 => '联赛' ];
+        $type = [ 1 => '练习赛', 2 => '友谊赛', 3=> '积分赛', 4=>'公开赛' ];
         return $type[$value];
     }
 
