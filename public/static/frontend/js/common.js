@@ -26,7 +26,7 @@ function getLocationApi(locationApiUrl) {
     if(window.localStorage){
         //判断是否有本地存储城市
         //重要提示：如有增减修改本地存储变量，必须更新updatetime的时间，这样客户端可重新获取最新的区域本地存储值
-        if(localStorage.currentCity==''||localStorage.currentCity==null||localStorage.currentCity=='undefined'||localStorage.updatetime!='201712181650'){
+        if(localStorage.currentCity==''||localStorage.currentCity==null||localStorage.currentCity=='undefined'||localStorage.updatetime!='201812181650'){
             var city = '';
             var province = '';
             var area = '';
@@ -39,7 +39,8 @@ function getLocationApi(locationApiUrl) {
                 timeout: 10000,//超时时间设置为10秒；
                 headers: {'Content-Type': 'application/json'},
                 async:false, //设置为false后会在success执行完才继续后面代码
-                success: function (data) {
+                success: function (msg) {
+                    var data = JSON.parse(msg);
                     if (data.code == 0) {
                         area = data.data.area;
                         city = data.data.city;
@@ -68,7 +69,7 @@ function getLocationApi(locationApiUrl) {
             localStorage.currentProvince = province;
             localStorage.currentArea = area;
             localStorage.currentAreas = areas;
-            localStorage.updatetime = "201712181650";
+            localStorage.updatetime = "201812181650";
         }
         var returnLocation = {"province":localStorage.currentProvince,"city":localStorage.currentCity,"area":localStorage.currentArea,"areas":localStorage.currentAreas};
         return returnLocation;
