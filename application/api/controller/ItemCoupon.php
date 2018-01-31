@@ -26,6 +26,21 @@ class ItemCoupon extends Base{
              return json(['code'=>100,'msg'=>$e->getMessage()]);
          }
      }
+     // 获取卡券列表 无page
+    public function getItemCouponListNoPageApi(){
+         try{
+            $map = input('post.');
+            $result = $this->ItemCouponService->getItemCouponListNoPage($map);  
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result->toArray()]);
+            }else{
+                return json(['code'=>100,'msg'=>'查询有误']);
+            }  
+            
+         }catch (Exception $e){
+             return json(['code'=>100,'msg'=>$e->getMessage()]);
+         }
+     }
     // 获取卡券列表带page
      public function getItemCouponListByPageApi(){
         try{

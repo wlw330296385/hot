@@ -120,17 +120,10 @@
 
         // 提交
         $('form').on('submit',function(){
-<<<<<<< HEAD
             if(balance<$('#salary').val()){
                 alert('金额不允许大于余额('+balance+')');
                 return false ;
             }
-=======
-             if(balance<$('#salary').val()){
-                 alert('金额不允许大于余额('+balance+')');
-                 return false ;
-             }
->>>>>>> db272459508477eb89a7ebf4c1d9da7a2c6106cd
             // console.log($('#salary').val());return false;
             var submiUrl = "";
             var data = wooApi.getInputData('input', 'data');
@@ -223,37 +216,7 @@
         });
     };
 
-    //月收入接口获取数据并追加到页面
-    var getBankcardList = function (member_id) {
-        var url = "{:url('api/bankcard/getBankcardListApi')}";
-        $.post({
-            url: url,
-            data: {
-                "member_id":member_id,
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            success: function (data) {
-                if (data.code == 200) {
-                    var newli = '';
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        newli = newli + '<option value='+data.data[i].id+'>['+data.data[i].bank_type+']'+data.data[i].bank+'('+data.data[i].bank_card+')</option>';
-                    }
-                    if (newli == '') {
-                        newli = "<option>没有账户</option>"
-                    }
-                    $("#bankcard").html(newli);
-                } else {
-                    newli = "<option>没有账户</option>"
-                    $("#bankcard").html(newli);
-                }
-            },
-            error: function (xhr, type, errerThrown) {
-               alert('网络异常,请稍候再试');
-            }
-        });
-    };
+
     
 </script>
 </html>
