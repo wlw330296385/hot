@@ -101,6 +101,7 @@
         //初始化全局变量
         var onCount = 1;
         var offCount = 1;
+        var gdCount = 1;
         var pendCount = 1;
         var keywordOn='';
         $('.keywordOn').val(keywordOn);
@@ -108,6 +109,8 @@
         $('.keywordOff').val(keywordOff);
         var keywordPend='';
         $('.keywordPend').val(keywordPend);
+        var keywordGraduate='';
+        $('.keywordGraduate').val(keywordGraduate);
 
         //搜索
 
@@ -199,20 +202,20 @@
         //下拉刷新具体业务实现（上架）
         function pulldownRefreshGraduate() {
             setTimeout(function () {
-                onCount = 1;//刷新并显示第一页
-                var page = onCount;
+                gdCount = 1;//刷新并显示第一页
+                var page = gdCount;
                 var gType = 1;//代表下拉刷新
-                toList('graduateStudentList', page, gType, 4, keywordOn);//具体取数据的方法
+                toList('graduateStudentList', page, gType, 4, keywordGraduate);//具体取数据的方法
             }, 100);
         }
 
         //上拉加载具体业务实现（上架）
         function pullupRefreshGraduate() {
             setTimeout(function () {
-                onCount++;//翻下一页
-                var page = onCount;
+                gdCount++;//翻下一页
+                var page = gdCount;
                 var gType = 2;//代表上拉加载
-                toList('graduateStudentList', page, gType, 4, keywordOn);//具体取数据的方法
+                toList('graduateStudentList', page, gType, 4, keywordGraduate);//具体取数据的方法
             }, 100);
         }
 
@@ -412,7 +415,7 @@
     //训练营训练营未分配班级学生
     var toPendList = function (wList, page, gType, status, keyword) {
         //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/lesson_member/getNoGradeMemberListByPageApi','','',true)}?page="+page;
+        var url  = "{:url('api/lesson_member/getNoGradeMemberListByPageApi','','',true)}?page="+page+"&keyword="+keyword;
         var campID = "{$camp_id}";
         mui.ajax({
             url: url,
