@@ -321,6 +321,9 @@ class Team extends Base {
                 if (!empty($matchRecordInfo['album'])) {
                     $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
                 }
+                if (empty($matchRecordInfo['away_team'])) {
+                    $matchRecordInfo['away_team_logo'] = '/static/frontend/images/basketball.png';
+                }
                 $matchInfo['record'] = $matchRecordInfo;
             }
         }
