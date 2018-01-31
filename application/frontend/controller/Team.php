@@ -339,7 +339,6 @@ class Team extends Base {
         } else {
             $teamrole = -1;
         }
-        dump($teamrole);
 
         // 当前球队成员总数
         $countTeamMember = $teamS->getTeamMemberCount([ 'team_id' => $matchInfo['team_id'] ]);
