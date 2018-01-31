@@ -97,14 +97,12 @@ class Schedule extends Base
 			}
 		}
 		$updateSchedule = 0;
-		// 是否已被审核通过
-		if($scheduleInfo['status'] == -1){
-			// 判断权限
-			$isPower = $this->ScheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
-			if($isPower>=2){
-				$updateSchedule = 1;
-			}
-		}
+
+        // 判断权限
+        $isPower = $this->ScheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
+        if($isPower>=2){
+            $updateSchedule = 1;
+        }
 
 
         //课时指定的训练项目
@@ -183,17 +181,16 @@ class Schedule extends Base
 	public function updateSchedule(){
 		$schedule_id = input('param.schedule_id');
 		$scheduleInfo = $this->ScheduleService->getScheduleInfo(['id'=>$schedule_id]);
-		// 是否已被审核通过
-		if($scheduleInfo['status'] != -1){
-			// 判断权限
-			$this->error('已审核的课时不允许修改');
-			
-		}else{
-			$isPower = $this->ScheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
-			if($isPower<2){
-				$this->error('你没有权限修改课时');
-			}
+
+		if(!$scheduleInfo){
+			$this->error('无此课时数据');
 		}
+
+        $isPower = $this->ScheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
+        if($isPower<2){
+            $this->error('你没有权限修改课时');
+        }
+
  		$studentList = [];
         if ($scheduleInfo['student_str']) {
             $studentList = unserialize($scheduleInfo['student_str']);

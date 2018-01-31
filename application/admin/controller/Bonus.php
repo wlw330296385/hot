@@ -75,10 +75,6 @@ class Bonus extends Backend{
 
         if(request()->isPost()){
             $data = input('post.');
-            $datetime = explode('-', $data['datetime']);
-            $data['start'] = strtotime($datetime[0]);
-            $data['end'] = strtotime($datetime[1]);
-            $data['member_id'] = $this->admin['id'];
             $result = $this->BonusService->createBonus($data);
             if($result['code'] == 200){
                 $this->success($result['msg']);

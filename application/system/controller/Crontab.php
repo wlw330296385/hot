@@ -2,6 +2,7 @@
 namespace app\system\controller;
 use app\model\Coach;
 use app\model\Rebate;
+use app\service\ScheduleService;
 use app\service\SystemService;
 use app\service\MemberService;
 use app\model\SalaryIn;
@@ -20,21 +21,32 @@ class Crontab extends Controller {
         $this->setting = $SystemS::getSite();
     }
 
-    // 结算前一天已申课时工资收入
+    // 结算可结算已申课时工资收入&扣减课时学员课时数
     public function schedulesalaryin() {
         try {
-            // 获取课时列表
+            // 获取可结算课时数据列表
             // 赠课记录，有赠课记录先抵扣
             // 91分 9进入运算 1平台收取
             // 结算主教+助教收入，剩余给营主
             // 上级会员收入提成(90%*5%,90%*3%)
-            list($start, $end) = Time::yesterday();
+            //list($start, $end) = Time::yesterday();
+            //$map['update_time'] = ['between', [$start, $end]];
             $map['status'] = 1;
-            $map['update_time'] = ['between', [$start, $end]];
             $map['is_settle'] = 0;
-            Db::name('schedule')->where($map)->where('delete_time', null)->chunk(50, function ($schedules) {
+            // 当前时间日期
+            $nowDate = date('Ymd', time());
+            $map['can_settle_date'] = $nowDate;
+            //$map['questions'] = 0;
+            Db::name('schedule')->where($map)->whereNull('delete_time')->chunk(50, function ($schedules) {
                 foreach ($schedules as $schedule) {
-                    //dump($schedule);
+                    // 扣减课时学员课时数 start
+                    // 课时相关学员剩余课时-1
+                    $scheduleS = new ScheduleService();
+                    $students = unserialize($schedule['student_str']);
+                    $decStudentRestscheduleResult = $scheduleS->decStudentRestschedule($students, $schedule);
+                    // 扣减课时学员课时数 end
+
+                    // 课时工资收入结算 start
                     // 课时正式学员人数
                     $numScheduleStudent = count(unserialize($schedule['student_str']));
                     $lesson = $lesson = Db::name('lesson')->where('id', $schedule['lesson_id'])->find();
@@ -110,7 +122,7 @@ class Crontab extends Controller {
                             ];
                         }
                         //dump($incomeAssistant);
-                        //$this->insertSalaryIn($incomeAssistant, 1);
+                        $this->insertSalaryIn($incomeAssistant, 1);
                     }
 
                     // 营主所得 课时收入*抽取比例-主教底薪-助教底薪-课时工资提成*教练人数。教练人数 = 助教人数+1（1代表主教人数）
@@ -146,7 +158,6 @@ class Crontab extends Controller {
                         'system_remarks' => $systemRemarks
                     ];
                     $this->insertSalaryIn($incomeCamp);
-                    Db::name('schedule')->where(['id' => $schedule['id']])->update(['update_time' => time(), 'is_settle' => 1, 'schedule_income' => $incomeSchedule]);
 
                     // 保存训练营财务支出信息
                     $dataCampFinance = [
@@ -159,6 +170,11 @@ class Crontab extends Controller {
                         'datetime' => $schedule['lesson_time']
                     ];
                     $this->insertcampfinance($dataCampFinance);
+
+                    // 更新课时数据
+                    Db::name('schedule')->where(['id' => $schedule['id']])->update(['is_settle' => 1, 'schedule_income' => $incomeSchedule, 'finish_settle_time' => time()]);
+                    db('schedule_member')->where(['schedule_id' => $schedule['id']])->update(['status' => 1, 'update_time' => time()]);
+                    // 课时工资收入结算 end
                 }
             });
         } catch (Exception $e) {

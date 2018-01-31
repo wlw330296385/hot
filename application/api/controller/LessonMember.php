@@ -195,8 +195,13 @@ class LessonMember extends Base{
     public function getNoGradeMemberListByPageApi(){
         try{
             $map = input('post.');
+            $keyword = input('param.keyword');
+
             // 已分配的学生IDs
             $IDs = db('grade_member')->where($map)->where('delete_time','null')->column('student_id');
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['lesson_member.student'] = ['LIKE','%'.$keyword.'%'];
+            }
             $map['student_id']=['not in',$IDs];
             $result = $this->LessonMemberService->getLessonMemberListWithStudentByPage($map);
             if($result){
