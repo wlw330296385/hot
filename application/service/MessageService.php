@@ -291,64 +291,12 @@ class MessageService
         ]);
     }
 
-    // 发送最新课时通知
-    public function sendschedule($data, $members) {
-        if (!is_array($members)) {
-            return ['code' => 100, 'msg' => __lang('MSG_402')];
-        }
-        $res = false;
-        $wechatS = new WechatService();
-        foreach ($members as $k => $val) {
-            $sendTemplateData = [
-                'touser' => $val['openid'],
-                'template_id' => '_ld4qtOLJA1vl-oh0FxCliMK1tbGD0nOTq7Z4OmeFCE',
-                'url' => $data['url'].'/openid/'.$val['openid'],
-                'data' => [
-                    'first' => ['value' => $data['content']],
-                    'keyword1' => ['value' => $data['title']],
-                    'keyword2' => ['value' => $data['lesson_time']],
-                    'remark' => ['value' => '点击进入查看详细，并进行评价']
-                ]
-            ];
-//            dump($sendTemplateData);
-            $sendTemplateResult = $wechatS->sendTemplate($sendTemplateData);
-            $log_sendTemplateData = [
-                'wxopenid' => $sendTemplateData['touser'],
-                'member_id' => $val['member_id'],
-                'url' => $sendTemplateData['url'],
-                'content' => serialize($sendTemplateData),
-                'create_time' => time()
-            ];
-            if ($sendTemplateResult) {
-                $log_sendTemplateData['status'] = 1;
-            } else {
-                $log_sendTemplateData['status'] = 0;
-            }
-            db('log_sendtemplatemsg')->insert($log_sendTemplateData);
-
-            db('message_member')->insert([
-                'title' => $data['title'],
-                'content' => $data['content'],
-                'url' => $sendTemplateData['url'],
-                'member_id' => $val['member_id'],
-                'create_time' => time(),
-                'status' => 1
-            ]);
-        }
-        $res = true;
-        if ($res) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
     /** 发送站内信息和模板消息给一个会员 2017-12-8
      * @param $member_id 接收信息的会员id
      * @param $data 消息内容
      * $data = ['title' 'content', 'url', 'keyword1', 'keyword2', 'keyword3', 'remark']
      * @param $template_id 公众号模板消息id 应用config config('wxTemplateID.')
-     * @return array
+     * @return
      */
     public function sendMessageToMember($member_id, $data=[], $template_id) {
         if (!$member_id) {
@@ -394,6 +342,69 @@ class MessageService
             'create_time' => time(),
             'status' => 1
         ]);
+        $res = true;
+        if ($res) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * 发送站内信息和模板消息给多个会员 2018-1-31
+     * @param $member_ids  接收信息的会员id集合
+     * @param $data  消息内容
+     * $data = ['title' 'content', 'url', 'keyword1', 'keyword2', 'keyword3', 'remark']
+     * @param $template_id  公众号模板消息id 应用config config('wxTemplateID.')
+     * @return
+     */
+    public function sendMessageToMembers($member_ids=[], $data=[], $template_id) {
+        if (!is_array($member_ids)) {
+            return ['code' => 100, 'msg' => __lang('MSG_402')];
+        }
+        $res = false;
+        $wechatS = new WechatService();
+        foreach ($member_ids as $k => $val) {
+            $memberopenid = getMemberOpenid($val['id']);
+            $sendTemplateData = [
+                'touser' => $memberopenid,
+                'template_id' => $template_id,
+                'url' => $data['url'].'/openid/'.$memberopenid,
+                'data' => [
+                    'first' => ['value' => $data['content']],
+                    'keyword1' => ['value' => $data['keyword1']],
+                    'keyword2' => ['value' => $data['keyword2']],
+                    'remark' => ['value' => $data['remark']]
+                ]
+            ];
+            if (isset($data['keyword3'])) {
+                $sendTemplateData['data']['keyword3'] = [ 'value' => $data['keyword3'] ];
+            }
+//            dump($sendTemplateData);
+            $sendTemplateResult = $wechatS->sendTemplate($sendTemplateData);
+            $log_sendTemplateData = [
+                'wxopenid' => $sendTemplateData['touser'],
+                'member_id' => $val['id'],
+                'url' => $sendTemplateData['url'],
+                'content' => serialize($sendTemplateData),
+                'create_time' => time()
+            ];
+            if ($sendTemplateResult) {
+                $log_sendTemplateData['status'] = 1;
+            } else {
+                $log_sendTemplateData['status'] = 0;
+            }
+            db('log_sendtemplatemsg')->insert($log_sendTemplateData);
+
+            db('message_member')->insert([
+                'title' => $data['title'],
+                'content' => $data['content'],
+                'url' => $sendTemplateData['url'],
+                'member_id' => $val['id'],
+                'create_time' => time(),
+                'status' => 1
+            ]);
+        }
         $res = true;
         if ($res) {
             return 1;

@@ -22,6 +22,9 @@ class ScheduleMember extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
+            if (!isset($map['status'])) {
+                $map['status'] = 1;
+            }
             $result = $this->ScheduleMemberService->getScheduleMemberListOfCampByPage($map);    
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
@@ -51,6 +54,9 @@ class ScheduleMember extends Base{
 
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
+            }
+            if (!isset($map['status'])) {
+                $map['status'] = 1;
             }
             $result = $this->ScheduleMemberService->getScheduleMemberListByPage($map);    
             if($result){

@@ -286,22 +286,19 @@ class Schedule extends Base
             if (!$schedule) {
                 return json(['code' => 100, 'msg' => '课时' . __lang('MSG_404')]);
             }
-            //dump($schedule);
-            if ($schedule['status'] != -1) {
+
+            /*if ($schedule['status'] != -1) {
                 return ['code' => 100, 'msg' => '该课时记录已审核，不能操作了'];
-            }
+            }*/
 
             if ($action == 'editstatus') {
                 // 审核课时
                 $res = $scheduleS->saveScheduleMember($scheduleid);
                 return json($res);
-//            if ($res) {
-//                $response = ['code' => 200, 'msg' => __lang('MSG_200')];
-//            } else {
-//                $response = ['code' => 100, 'msg' => __lang('MSG_400')];
-//            }
-//            return json($response);
             } else {
+                if ($schedule['status'] == 1) {
+                    return ['code' => 100, 'msg' => '该课时记录已审核，不能删除'];
+                }
                 $res = $scheduleS->delSchedule($scheduleid);
                 if ($res) {
                     $response = ['code' => 200, 'msg' => __lang('MSG_200')];
@@ -321,20 +318,36 @@ class Schedule extends Base
         try {
             $scheduleid = input('scheduleid');
             $scheduleS = new ScheduleService();
-            $members = $scheduleS->getScheduleStudentMemberList($scheduleid);
-//            dump($members);
-            $schedule = $scheduleS->getScheduleInfo(['id' => $scheduleid]);
-//        dump($schedule);
+            // 获取课时学员数据
+            $scheduleStudents = $scheduleS->getScheduleStudentMemberList($scheduleid);
 
+            // 获取课时数据
+            $schedule = $scheduleS->getScheduleInfo(['id' => $scheduleid]);
+
+            // 推送消息组合
+            // 推送消息接收会员member_ids集合
+            $member_ids = [];
+            if ($scheduleStudents) {
+                foreach ($scheduleStudents as $k => $student) {
+                    $member_ids[$k]['id'] = $student['student']['member_id'];
+                }
+            }
+            /*$templateData = [
+                'title' => $schedule['grade'] . '最新课时',
+                'content' => '您参加的' . $schedule['camp'] . '-' . $schedule['lesson'] . '-' . $schedule['grade'] . '班级 发布最新课时',
+                'lesson_time' => $schedule['lesson_time'],
+                'url' => url('frontend/schedule/scheduleinfo', ['schedule_id' => $schedule['id'], 'camp_id' => $schedule['camp_id']], '', true)
+            ];*/
             $templateData = [
                 'title' => $schedule['grade'] . '最新课时',
                 'content' => '您参加的' . $schedule['camp'] . '-' . $schedule['lesson'] . '-' . $schedule['grade'] . '班级 发布最新课时',
-                'lesson_time' => date('Y-m-d H:i', $schedule['lesson_time']),
-                'url' => url('frontend/schedule/scheduleinfo', ['schedule_id' => $schedule['id'], 'camp_id' => $schedule['camp_id']], '', true)
+                'url' => url('frontend/schedule/scheduleinfo', ['schedule_id' => $schedule['id'], 'camp_id' => $schedule['camp_id']], '', true),
+                'keyword1' => $schedule['grade'] . '最新课时',
+                'keyword2' => $schedule['lesson_time'],
+                'remark' => '点击进入查看详细，如有疑问可进行留言'
             ];
-            //dump($templateData);
             $messageS = new MessageService();
-            $res = $messageS->sendschedule($templateData, $members);
+            $res = $messageS->sendMessageToMembers($member_ids, $templateData, config('wxTemplateID.sendSchedule'));
             if ($res) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
