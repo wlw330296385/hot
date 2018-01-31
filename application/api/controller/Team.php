@@ -251,7 +251,7 @@ class Team extends Base {
                 $messageData = [
                     'title' => '加入球队申请',
                     'content' => '您好，会员'.$dataApply['member'].'申请加入您的'.$teamInfo['name'],
-                    'url' => url('frontend/message/index', '', '', true),
+                    'url' => url('frontend/team/teamapplyinfo', ['id' => $saveApply['data'], 'team_id' => $teamInfo['id']], '', true),
                     'keyword1' => (!empty($this->memberInfo['realname'])) ? $this->memberInfo['realname'] : $this->memberInfo['member'],
                     'keyword2' => date('Y年m月d日 H:i', time()),
                     'remark' => '点击登录平台查看更多信息，对加入申请作同意或拒绝回复'
@@ -297,6 +297,7 @@ class Team extends Base {
             $applySaveResult = $teamS->saveApply(['id' => $applyInfo['id'], 'status' => $reply]);
             //dump($applySave);
             $replystr = '已拒绝';
+            $url = url('frontend/message/index', '', '', true);
             if ($reply == 2) {
                 if ($applySaveResult['code'] == 200) {
                     // 获取球队信息
@@ -308,7 +309,7 @@ class Team extends Base {
                         'team' => $applyInfo['organization'],
                         'member_id' => $applyInfo['member']['id'],
                         'member' => (!empty($applyInfo['member']['realname'])) ? $applyInfo['member']['realname'] : $applyInfo['member']['member'],
-                        'telphone' => $applyInfo['member']['telphone'],
+                        'telephone' => $applyInfo['member']['telephone'],
                         'sex' => $applyInfo['member']['sex'],
                         'avatar' => $applyInfo['member']['avatar'],
                         'age' => getMemberAgeByBirthday($applyInfo['member']['birthday']),
@@ -357,12 +358,13 @@ class Team extends Base {
                     }
                 }
                 $replystr = '已通过';
-            }
+                $url = url('frontend/team/teammanage', ['team_id' => $teamInfo['id']], '', true);
+            } 
             // 发送消息模板给申请人
             $messageData = [
                 'title' => '加入球队申请结果通知',
-                'content' => '加入球队'. $applyInfo['organization'] .'申请结果通知：'.$replystr,
-                'url' => url('frontend/message/index', '', '', true),
+                'content' => '加入球队'. $applyInfo['organization'] .'申请结果通知',
+                'url' => $url,
                 'keyword1' => '加入球队，队名：'.$applyInfo['organization'],
                 'keyword2' => $replystr,
                 'remark' => '点击登录平台查看更多信息'
@@ -586,7 +588,7 @@ class Team extends Base {
                 'team' => $teamInfo['name'],
                 'member_id' => $memberInfo['id'],
                 'member' => $memberInfo['member'],
-                'telphone' => $memberInfo['telephone'],
+                'telephone' => $memberInfo['telephone'],
                 'sex' => $memberInfo['sex'],
                 'avatar' => $memberInfo['avatar'],
                 'yearsexp' => $memberInfo['yearsexp'],

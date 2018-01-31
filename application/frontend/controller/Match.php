@@ -50,8 +50,7 @@ class Match extends Base {
                     $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
                 }
                 if (empty($matchRecordInfo['away_team'])) {
-                    $matchRecordInfo['away_team'] = '待定';
-                    $matchRecordInfo['away_team_logo'] = '/static/frontend/images/basketball.png';
+                    $matchRecordInfo['away_team_logo'] = '/static/frontend/images/basketball.jpg';
                 }
                 $matchInfo['record'] = $matchRecordInfo;
             }

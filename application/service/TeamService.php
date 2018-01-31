@@ -388,7 +388,7 @@ class TeamService {
             // 插入一条加入球队申请数据
             $res = $model->allowField(true)->save($data);
             if ($res) {
-                return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->getLastInsID()];
             } else {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];

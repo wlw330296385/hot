@@ -51,9 +51,10 @@
                             {$teamInfo.name}
                             <p class="mui-ellipsis">{$teamInfo.city} {$teamInfo.area}</p>
                         </div>
-                        <div class="price-frame">
+                        <div class="price-frame" style="padding:0">
                             <p class="colororange">
-                                <strong>积分：0</strong>
+                                <!-- <strong>积分：0</strong> -->
+                                <button type="button" class="mui-btn mui-btn-danger follow">关注</button>
                             </p>
                             <p class="f12">队员：{$teamInfo.member_num}人 | 粉丝：{$teamInfo.fans_num}</p>
                         </div>
@@ -210,10 +211,10 @@
             <ul class="mui-table-view operation mt">
                 {eq name="isMemberInTeam" value="1"}
                 <a href="{:url('team/teammanage',['team_id'=>$teamInfo['id']])}">
-                    <li class="mui-col-xs-12 mui-col-sm-12 opli bgred">进入管理页</li>
+                    <li class="mui-col-xs-12 mui-col-sm-12 opli bgred">进入球队后台</li>
                 </a>
                 {else/}
-                <li class="mui-col-xs-4 mui-col-sm-4 opli bgred follow">关注球队</li>
+                <!-- <li class="mui-col-xs-4 mui-col-sm-4 opli bgred follow">关注球队</li> -->
                 <a href="#yqpopover">
                     <li class="mui-col-xs-4 mui-col-sm-4 opli bgblue">加入球队</li>
                 </a>
@@ -647,7 +648,7 @@
                             eventid = data.data[i].id
                             var url = "{:url('team/eventinfo')}" + '/team_id/' + data.data[i].team_id + '/event_id/' + data.data[i].id;
                             div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblue">' + Tmonth + '月</p><h1 class="day">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
-                            div += '<div class="mui-media-body mainInfoRight wd66"><h5 class="title">主题：' + data.data[i].event + '</h5>';
+                            div += '<div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[i].event + '</h5>';
                             div += '<div class="divFrame"><p>组织者：' + data.data[i].member + '</p><p>地点：' + data.data[i].location + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
                             if (data.data[i].is_finished_num == 1) {
                                 div += '<button class="mui-btn opbtn bggray">已结束</button>';
@@ -705,7 +706,7 @@
                             } else {
                                 div += '<p class="month bgblue">' + Tmonth + '月</p><h1 class="day">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
                             }
-                            div += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">主题：' + data.data[i].match + '</h5>';
+                            div += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[i].match + '</h5>';
                             div += '<div class="divFrame"><p>组织者：' + data.data[i].home_team + '</p><p>地点：' + data.data[i].court + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
                             if (data.data[i].is_finished_num == 1) {
                                 div += '<button class="mui-btn opbtn bggray">已结束</button>';
