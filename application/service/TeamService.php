@@ -57,7 +57,7 @@ class TeamService {
         // 保存数据，成功返回自增id，失败记录错误信息
         $res = $model->data($data)->allowField(true)->save();
         if ($res) {
-            return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->getLastInsID()];
         } else {
             trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
             return ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -137,10 +137,10 @@ class TeamService {
 
 
     // 保存team_member球队-会员关系信息
-    public function saveTeamMember($data, $teamMember_id=0) {
+    public function saveTeamMember($data) {
         $model = new TeamMember();
         // 有传入team_member表id 更新关系数据，否则新增关系数据
-        if ($teamMember_id) {
+        if (isset($data['id'])) {
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res || ($res === 0)) {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
@@ -152,7 +152,7 @@ class TeamService {
             // 新增球队成员
             $res = $model->allowField(true)->save($data);
             if ($res) {
-                return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->getLastInsID()];
             } else {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -413,7 +413,7 @@ class TeamService {
             // 球队活动数统计+1
             $teamModel = new Team();
             $teamModel->where('id', $data['team_id'])->setInc('event_num', 1);
-            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->getLastInsID()];
         } else {
             trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
             return ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -431,7 +431,7 @@ class TeamService {
                 return ['code' => 100, 'msg' => $validate->getError()];
             }
         }
-        // 保存数据，成功返回自增id，失败记录错误信息
+        // 保存数据，成功返回，失败记录错误信息
         $res = $model->allowField(true)->isUpdate(true)->save($data);
         if ($res || ($res === 0)) {
             return ['code' => 200, 'msg' => __lang('MSG_200')];
@@ -648,7 +648,7 @@ class TeamService {
             // 新增数据
             $res = $model->allowField(true)->save($data);
             if ($res) {
-                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->getLastInsID()];
             } else {
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }

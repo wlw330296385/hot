@@ -6,6 +6,7 @@ namespace app\api\controller;
 use app\service\MatchService;
 use app\service\MemberService;
 use app\service\MessageService;
+use app\service\StudentService;
 use app\service\TeamService;
 use think\Exception;
 
@@ -78,7 +79,10 @@ class Team extends Base {
             //$teamS->saveTeamMemberRole($data, $team_id);
             $result = $teamS->updateTeam($data, $team_id);
             if ($result['code'] == 200) {
+                // 更新team_member_role
                 $teamS->saveTeamMemberRole($data, $team_id);
+                // 更新team_member 球队名
+                db('team_member')->where('team_id', $team_id)->update(['team' => $data['name']]);
             }
             return json($result);
         }catch (Exception $e) {
@@ -233,7 +237,8 @@ class Team extends Base {
                 'organization_id' => $teamInfo['id'],
                 'type' => 1,
                 'apply_type' => 1,
-                'remarks' => $data['remarks']
+                'remarks' => $data['remarks'],
+                'status' => 1
             ];
             $hasApply = $teamS->getApplyInfo($mapApplyinfo);
             if ($hasApply) {
@@ -312,7 +317,7 @@ class Team extends Base {
                         'telephone' => $applyInfo['member']['telephone'],
                         'sex' => $applyInfo['member']['sex'],
                         'avatar' => $applyInfo['member']['avatar'],
-                        'age' => getMemberAgeByBirthday($applyInfo['member']['birthday']),
+                        'age' => getAgeByBirthday($applyInfo['member']['birthday']),
                         'birthday' => $applyInfo['member']['birthday'],
                         'yearsexp' => $applyInfo['member']['yearsexp'],
                         'height' => $applyInfo['member']['height'],
@@ -444,7 +449,7 @@ class Team extends Base {
                     return json(['code' => 100, 'msg' => '输入的球衣号码已有同队成员使用了，请输入其他号码']);
                 }
             }
-            $res = $teamS->saveTeamMember($data, $data['id']);
+            $res = $teamS->saveTeamMember($data);
             return json($res);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -483,7 +488,7 @@ class Team extends Base {
                  return json(['code' => 100, 'msg' => '该成员已离队']);
              }
              // 更新成员数据
-             $res = $teamS->saveTeamMember(['id' => $teammember['id'], 'status' => -1], $teammember['id']);
+             $res = $teamS->saveTeamMember(['id' => $teammember['id'], 'status' => -1]);
              if ($res['code'] == 200) {
                  // 更新成员的team_member_role表所有相关数据status=-1
                  db('team_member_role')->where(['team_id' => $team_id, 'member_id' => $member_id])->update(['status' => -1, 'update_time' => time()]);
@@ -572,45 +577,110 @@ class Team extends Base {
             // service
             $teamS = new TeamService();
             $memberS = new MemberService();
+            $studentS = new StudentService();
             // 获取球队信息
             $teamInfo = $teamS->getTeam(['id' => $post['team_id']]);
             if (!$teamInfo) {
-                return json(['code' => 100, 'msg' => __lang('MSG_404').'请选择其他球队']);
+                return json(['code' => 100, 'msg' => __lang('MSG_404').'，请选择其他球队']);
             }
             // 获取会员信息
             $memberInfo = $memberS->getMemberInfo(['id' => $post['member_id']]);
             if (!$memberInfo) {
-                return json(['code' => 100, 'msg' => __lang('MSG_404').'请选择其他会员']);
+                return json(['code' => 100, 'msg' => __lang('MSG_404').'，请选择其他会员']);
             }
-            // 组合保存数据
-            $data = [
-                'team_id' => $teamInfo['id'],
-                'team' => $teamInfo['name'],
-                'member_id' => $memberInfo['id'],
-                'member' => $memberInfo['member'],
-                'telephone' => $memberInfo['telephone'],
-                'sex' => $memberInfo['sex'],
-                'avatar' => $memberInfo['avatar'],
-                'yearsexp' => $memberInfo['yearsexp'],
-                'birthday' => $memberInfo['birthday'],
-                'age' => $memberInfo['age'],
-                'height' => $memberInfo['height'],
-                'weight' => $memberInfo['weight'],
-                'shoe_size' => $memberInfo['shoe_code'],
-                'status' => -2
-            ];
-            // 查询会员有无在队信息
-            $teamMemberInfo = $teamS->getTeamMemberInfo(['team_id' => $post['team_id'], 'member_id' => $post['member_id']]);
-            if ($teamMemberInfo) {
-                if ($teamMemberInfo['status_num'] ==1) {
-                    return json(['code' => 100, 'msg' => '该会员已经在球队了，无需再次邀请']);
-                } else if ($teamMemberInfo['status_num'] ==-2) {
-                    return json(['code' => 100, 'msg' => '已发送邀请，无需再次邀请']);
-                } else {
-                    $data['id'] = $teamMemberInfo['id'];
+
+            // 保存球队成员数据
+            // 训练营球队: 记录学员信息
+            if($teamInfo['type'] ==1 && $teamInfo['camp_id'] > 0) {
+                // 必须要student信息
+                if (!isset($post['student_id'])) {
+                    return json(['code' => 100, 'msg' => '请选择学员']);
                 }
+                // 获取学员数据
+                $studentInfo = $studentS->getStudentInfo(['id' => $post['student_id'], 'member_id' => $post['member_id']]);
+                if (!$studentInfo) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_404').'，请选择其他学员']);
+                }
+                // 学员是否在球队的训练营
+                $studentCamps = $studentS->getCamps(['camp_id' => $teamInfo['camp_id'], 'student_id' => $studentInfo['id']]);
+                if (!$studentCamps) {
+                    return json(['code'=> 100, 'msg' => '该学员不在球队所属训练营，请选择其他学员']);
+                }
+
+                // 组合保存数据
+                $data = [
+                    'team_id' => $teamInfo['id'],
+                    'team' => $teamInfo['name'],
+                    'member_id' => $memberInfo['id'],
+                    'member' => $memberInfo['member'],
+                    'telephone' => $memberInfo['telephone'],
+                    'student_id' => $studentInfo['id'],
+                    'student' => $studentInfo['student'],
+                    'sex' => $studentInfo['student_sex'],
+                    'avatar' => $memberInfo['avatar'],
+                    'yearsexp' => $studentInfo['yearsexp'],
+                    'birthday' => $studentInfo['student_birthday'],
+                    'age' => $studentInfo['age'],
+                    'height' => $studentInfo['student_height'],
+                    'weight' => $studentInfo['student_weight'],
+                    'shoe_size' => $studentInfo['student_shoe_code'],
+                    'status' => 1
+                ];
+                // 查询学员有无在队信息
+                $teamMemberInfo = $teamS->getTeamMemberInfo(['team_id' => $post['team_id'], 'member_id' => $post['member_id'], 'student_id' => $post['student_id']]);
+                if ($teamMemberInfo) {
+                    if ($teamMemberInfo['status_num'] ==1) {
+                        return json(['code' => 100, 'msg' => '该学员已经在球队了']);
+                    } else {
+                        $data['id'] = $teamMemberInfo['id'];
+                    }
+                }
+                // 执行保存球队成员数据
+                $resultSaveTeamMember = $teamS->saveTeamMember($data);
+                if ($resultSaveTeamMember['code'] == 200) {
+                    
+                }
+                // 返回结果
+                return json($resultSaveTeamMember);
+            } else {
+                // 非训练营球队：记录会员信息
+                // 组合保存数据
+                $data = [
+                    'team_id' => $teamInfo['id'],
+                    'team' => $teamInfo['name'],
+                    'member_id' => $memberInfo['id'],
+                    'member' => $memberInfo['member'],
+                    'telephone' => $memberInfo['telephone'],
+                    'sex' => $memberInfo['sex'],
+                    'avatar' => $memberInfo['avatar'],
+                    'yearsexp' => $memberInfo['yearsexp'],
+                    'birthday' => $memberInfo['birthday'],
+                    'age' => $memberInfo['age'],
+                    'height' => $memberInfo['height'],
+                    'weight' => $memberInfo['weight'],
+                    'shoe_size' => $memberInfo['shoe_code'],
+                    'status' => -2
+                ];
+                // 查询会员有无在队信息
+                $teamMemberInfo = $teamS->getTeamMemberInfo(['team_id' => $post['team_id'], 'member_id' => $post['member_id']]);
+                if ($teamMemberInfo) {
+                    if ($teamMemberInfo['status_num'] ==1) {
+                        return json(['code' => 100, 'msg' => '该会员已经在球队了，无需再次邀请']);
+                    } else if ($teamMemberInfo['status_num'] ==-2) {
+                        return json(['code' => 100, 'msg' => '已发送邀请，无需再次邀请']);
+                    } else {
+                        $data['id'] = $teamMemberInfo['id'];
+                    }
+                }
+                // 执行保存球队成员数据
+                $resultSaveTeamMember = $teamS->saveTeamMember($data);
+                // 保存成员数据成功 发送邀请通知
+                if($resultSaveTeamMember['code'] == 200) {
+
+                }
+                // 返回结果
+                return json($resultSaveTeamMember);
             }
-            //dump($data);
         } catch(Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }

@@ -15,7 +15,7 @@ class MemberService{
 		$result = $this->memberModel->where($map)->find();
 		if($result){
 			$res = $result->toArray();
-			$res['age'] = getMemberAgeByBirthday($res['birthday']);
+			$res['age'] = getAgeByBirthday($res['birthday']);
 			return $res;
 		}
 		return $result;
