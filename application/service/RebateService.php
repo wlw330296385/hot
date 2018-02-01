@@ -12,9 +12,9 @@ class RebateService {
     }
 
     // 会员推荐分成列表
-    public function getRebatePaginator($map=[], $order='id desc', $paginate=10) {
+    public function getRebatePaginator($map=[], $order='datemonth desc', $paginate=10) {
         $model = new Rebate();
-        $query = $model->where($map)->order($order)->paginate($paginate);
+        $query = $model->where($map)->group('sid,datemonth,tier')->field('*, sum(salary) as salary')->order($order)->paginate($paginate);
         if ($query) {
             return $query->toArray();
         } else {

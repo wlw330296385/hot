@@ -524,9 +524,9 @@ class Patch extends Controller {
         $memberPiers = $memberS->getMemberPier($member_id);
         if (!empty($memberPiers)) {
             foreach ($memberPiers as $k => $memberPier) {
-                if ($memberPier['tier']==2) {
+                if ($memberPier['tier']==1) {
                     $memberPiers[$k]['salary'] = $salary*$this->setting['rebate'];
-                } elseif ($memberPier['tier']==3){
+                } elseif ($memberPier['tier']==2){
                     $memberPiers[$k]['salary'] = $salary*$this->setting['rebate2'];
                 }
                 $memberPiers[$k]['datemonth'] = $datemonth;
