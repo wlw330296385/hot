@@ -325,7 +325,7 @@ class Team extends Base {
                         $dataTeamMember['id'] = $teamMemberInfo['id'];
                     }
                     $teamS->saveTeamMember($dataTeamMember);
-                    // 获取现在球队队员的平均年龄、身高、体重
+                    /* // 获取现在球队队员的平均年龄、身高、体重
                     $avgMap['team_id'] = $applyInfo['organization_id'];
                     $avgMap['age'] = ['gt', 0];
                     $avgMap['height'] = ['gt', 0];
@@ -339,7 +339,7 @@ class Team extends Base {
                             'avg_weight' => $avg[0]['avg_weight']
                         ])
                         ->inc('member_num', 1)
-                        ->update();
+                        ->update();*/
 
                     // 查询有无关注数据保存关注数据
                     $followDb = db('follow');
