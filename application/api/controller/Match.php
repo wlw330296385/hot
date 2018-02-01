@@ -825,71 +825,69 @@ class Match extends Base
             if ($match['is_finished_num'] == 1) {
                 return json(['code' => 100, 'msg' => '此比赛' . $match['is_finished'] . '，请选择其他比赛']);
             }
-            // 友谊赛获取match_record数据
-            if ($match['type_num'] == 1) {
-                $matchRecord = $matchS->getMatchRecord(['match_id' => $match['id']]);
-                if ($matchRecord) {
-                    $match['record'] = $matchRecord;
-                }
 
-                // 查询会员有无在比赛的相关球队
-                $inHomeTeam = 0;
-                $inAwayTeam = 0;
-                if ($match['record']['home_team_id']) {
-                    $whereMemberInHomeTeam = [
-                        'team_id' => $match['record']['home_team_id'],
-                        'member_id' => $this->memberInfo['id'],
-                        'status' => 1
-                    ];
-                    $inHomeTeam = $teamS->getTeamMemberInfo($whereMemberInHomeTeam);
-                }
-                if ($match['record']['away_team_id'] > 0) {
-                    $whereMemberInAwayTeam = [
-                        'team_id' => $match['record']['away_team_id'],
-                        'member_id' => $this->memberInfo['id'],
-                        'status' => 1
-                    ];
-                    $inAwayTeam = $teamS->getTeamMemberInfo($whereMemberInAwayTeam);
-                }
-                if (!$inHomeTeam && !$inAwayTeam) {
-                    return json(['code' => 100, 'msg' => '您不是此比赛的球队成员，请选择其他比赛或加入球队']);
-                }
-
-                // 检查是否已有match_record_member数据
-                $hasJoinMatch = $matchS->getMatchRecordMember([
-                    'match_id' => $match['id'],
-                    'member_id' => $this->memberInfo['id'],
-                    'status' => 1,
-                    'is_apply' => 1
-                ]);
-                if ($hasJoinMatch) {
-                    return json(['code' => 100, 'msg' => '您已报名参加此比赛，无需再次报名']);
-                }
-
-                // 组合保存报名比赛信息
-                $dataRecordMember = [
-                    'match_id' => $match['id'],
-                    'match' => $match['name'],
-                    'match_record_id' => $match['record']['id'],
-                    'member_id' => $this->memberInfo['id'],
-                    'member' => $this->memberInfo['member'],
-                    'avatar' => $this->memberInfo['avatar'],
-                    'contact_tel' => $this->memberInfo['telephone'],
-                    'status' => 1,
-                    'is_apply' => 1
-                ];
-                if ($inHomeTeam) {
-                    $dataRecordMember['team_id'] = $inHomeTeam['team_id'];
-                    $dataRecordMember['team'] = $inHomeTeam['team'];
-                } elseif ($inAwayTeam) {
-                    $dataRecordMember['team_id'] = $inAwayTeam['team_id'];
-                    $dataRecordMember['team'] = $inAwayTeam['team'];
-                }
-//                dump($dataRecordMember);
-                // 保存报名比赛信息数据
-                $result = $matchS->saveMatchRecordMember($dataRecordMember);
-                return json($result);
+            $matchRecord = $matchS->getMatchRecord(['match_id' => $match['id']]);
+            if ($matchRecord) {
+                $match['record'] = $matchRecord;
             }
+
+            // 查询会员有无在比赛的相关球队
+            $inHomeTeam = 0;
+            $inAwayTeam = 0;
+            if ($match['record']['home_team_id']) {
+                $whereMemberInHomeTeam = [
+                    'team_id' => $match['record']['home_team_id'],
+                    'member_id' => $this->memberInfo['id'],
+                    'status' => 1
+                ];
+                $inHomeTeam = $teamS->getTeamMemberInfo($whereMemberInHomeTeam);
+            }
+            if ($match['record']['away_team_id'] > 0) {
+                $whereMemberInAwayTeam = [
+                    'team_id' => $match['record']['away_team_id'],
+                    'member_id' => $this->memberInfo['id'],
+                    'status' => 1
+                ];
+                $inAwayTeam = $teamS->getTeamMemberInfo($whereMemberInAwayTeam);
+            }
+            if (!$inHomeTeam && !$inAwayTeam) {
+                return json(['code' => 100, 'msg' => '您不是此比赛的球队成员，请选择其他比赛或加入球队']);
+            }
+
+            // 检查是否已有match_record_member数据
+            $hasJoinMatchMap = [
+                'match_id' => $match['id'],
+                'member_id' => $this->memberInfo['id']
+            ];
+            $hasJoinMatch = $matchS->getMatchRecordMember($hasJoinMatchMap);
+            if ($hasJoinMatch) {
+                return json(['code' => 100, 'msg' => '您已报名参加此比赛，无需再次报名']);
+            }
+
+            // 组合保存报名比赛信息
+            $dataRecordMember = [
+                'match_id' => $match['id'],
+                'match' => $match['name'],
+                'match_record_id' => $match['record']['id'],
+                'member_id' => $this->memberInfo['id'],
+                'member' => $this->memberInfo['member'],
+                'avatar' => $this->memberInfo['avatar'],
+                'contact_tel' => $this->memberInfo['telephone'],
+                'status' => 1,
+                'is_apply' => 1
+            ];
+            if ($inHomeTeam) {
+                $dataRecordMember['team_id'] = $inHomeTeam['team_id'];
+                $dataRecordMember['team'] = $inHomeTeam['team'];
+            } elseif ($inAwayTeam) {
+                $dataRecordMember['team_id'] = $inAwayTeam['team_id'];
+                $dataRecordMember['team'] = $inAwayTeam['team'];
+            }
+//                dump($dataRecordMember);
+            // 保存报名比赛信息数据
+            $result = $matchS->saveMatchRecordMember($dataRecordMember);
+            return json($result);
+
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }

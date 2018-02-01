@@ -76,7 +76,8 @@ class TeamService {
             // 计算球队胜率
             if ($result['match_num'] > 0) {
                 $result['match_lose'] = $result['match_num']-$result['match_win'];
-                $result['win_rate'] = ($result['match_win']/$result['match_num'])*100 . '%';
+                $winrate = ($result['match_win']/$result['match_num'])*100;
+                $result['win_rate'] = intval($winrate). '%';
             } else {
                 $result['win_rate'] = 0;
             }
@@ -85,6 +86,8 @@ class TeamService {
                 $colors = json_decode($result['colors'], true);
                 $result['colors'] = $colors;
             }
+            // 球队特点 字符串转数组输出
+            $result['charater_arr'] = explode(',', $result['charater']);
             return $result;
         } else {
             return $res;

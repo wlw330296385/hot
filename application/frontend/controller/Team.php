@@ -78,6 +78,7 @@ class Team extends Base {
         // 去掉结尾最后一个逗号
         $roleslist['coach_ids'] = rtrim($roleslist['coach_ids'], ',');
         $roleslist['committee_ids'] = rtrim($roleslist['committee_ids'], ',');
+        // 教练、队委名单集合组合 end
 
         $this->assign('rolemembers', $rolemembers);
         $this->assign('roleslist', $roleslist);
@@ -322,7 +323,7 @@ class Team extends Base {
                     $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
                 }
                 if (empty($matchRecordInfo['away_team'])) {
-                    $matchRecordInfo['away_team_logo'] = '/static/frontend/images/basketball.jpg';
+                    $matchRecordInfo['away_team_logo'] = config('default_image.team_logo');
                 }
                 $matchInfo['record'] = $matchRecordInfo;
             }

@@ -23,7 +23,8 @@ class TeamVal extends Validate {
         'avg_age' => 'number',
         'avg_height' => 'number',
         'avg_weight' => 'number',
-        'cover' => 'require'
+        'cover' => 'require',
+        'descri' => 'max:100'
     ];
 
     // 提示信息
@@ -46,13 +47,14 @@ class TeamVal extends Validate {
         'avg_height.number' => '平均身高填写数字',
         'avg_weight.number' => '平均体重填写数字',
         'cover.require' => '请上传球队封面图',
+        'descri.max' => '简介不能超过100个字'
     ];
 
     // 验证场景
     protected $scene = [
         'add' => [
             'name' => 'require|length:2,16|chsDash|unique:team|token',
-            'member_id', 'type', 'camp_id','province', 'city', 'leader_id', 'avg_age', 'avg_height', 'avg_weight', 'logo', 'cover'],
-        'edit' => ['name', 'member_id', 'type', 'camp_id','province', 'city', 'leader_id', 'avg_age', 'avg_height', 'avg_weight', 'logo', 'cover']
+            'member_id', 'type', 'camp_id','province', 'city', 'leader_id', 'avg_age', 'avg_height', 'avg_weight', 'logo', 'cover', 'descri'],
+        'edit' => ['name', 'member_id', 'type', 'camp_id','province', 'city', 'leader_id', 'avg_age', 'avg_height', 'avg_weight', 'logo', 'cover', 'descri']
     ];
 }

@@ -1152,6 +1152,10 @@ class Team extends Base {
             if (!$comment_type || !$commented_id) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
+            // 检测会员登录
+            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+                return json(['code' => 100, 'msg' => '请先登录或注册会员才能评论']);
+            }
             $teamS = new TeamService();
             // 查询会员有无评论记录
             $map = [
