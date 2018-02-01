@@ -99,21 +99,21 @@ class ItemCoupon extends Base{
          }
      }
 
-     public function editItemCouponApi(){
-              try{
-                 $data = input('post.');
-                 $item_coupon_id = input('param.item_coupon_id');
-                 $data['member_id'] = $this->memberInfo['id'];
-                 $data['member'] = $this->memberInfo['member'];
-                 $result = db('item_coupon')->where(['id'=>$item_coupon_id])->update($data);
-                 if($result){
-                    return json(['code'=>200,'msg'=>'ok']);
-                 }
-                    return json(['code'=>100,'msg'=>'失败']);
-              }catch (Exception $e){
-                  return json(['code'=>100,'msg'=>$e->getMessage()]);
-              }
-          }
+    public function editItemCouponApi(){
+        try{
+           $data = input('post.');
+           $item_coupon_id = input('param.item_coupon_id');
+           $data['member_id'] = $this->memberInfo['id'];
+           $data['member'] = $this->memberInfo['member'];
+           $result = db('item_coupon')->where(['id'=>$item_coupon_id])->update($data);
+           if($result){
+                return json(['code'=>200,'msg'=>'ok']);
+            }
+            return json(['code'=>100,'msg'=>'失败']);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
     //生成一张卡券
     public function createItemCouponApi(){

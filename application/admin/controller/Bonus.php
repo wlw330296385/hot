@@ -56,18 +56,22 @@ class Bonus extends Backend{
 
         // dump($BonusList->toArray());die;
         $this->assign('BonusList',$BonusList);
-        return view('Bonus/BonusList');
+        return view('Bonus/bonusList');
     }
 
     public function updateBonus(){   	
-    	$Bonus_id = input('param.Bonus_id');
-        $BonusInfo = $this->BonusService->getBonusInfo(['id'=>$Bonus_id]);
-        $CampService = new \app\service\CampService;
-        $power = $CampService->isPower($BonusInfo['camp_id'],$this->memberInfo['id']);
-        if($power<2){
-            $this->error('请先加入一个训练营并成为管理员或者创建训练营');
+    	$Bonus_id = input('param.bonus_id');
+        $bonusInfo = $this->BonusService->getBonusInfo(['id'=>$Bonus_id]);
+        if(request()->isPost()){
+            $data = input('post.');
+            $result = $this->BonusService->updateBonus($data,['id'=>$Bonus_id]);
+            if($result['code'] == 200){
+                $this->success($result['msg']);
+            }else{
+                $this->success($result['msg']);
+            }
         }
-		$this->assign('BonusInfo',$BonusInfo);
+		$this->assign('bonusInfo',$bonusInfo);
     	return view('Bonus/updateBonus');
     }
 

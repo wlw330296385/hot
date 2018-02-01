@@ -70,6 +70,7 @@
                         <th class="text-center order_by" data-order = 'max'>发行量</th>
                         <th class="text-center order_by" data-order = 'publish'>已领取</th>
                         <th class="text-center order_by" data-order = 'used'>使用量</th>
+                        <th class="text-center order_by" data-order = 'status'>状态</th>
                         <th class="text-center">操作</th>
                     </tr>
                     </thead>
@@ -103,6 +104,14 @@
                         <td>
                         	{$vo.used}
                         </td>
+                         <td>
+
+                         	{if $vo.status == -1}
+                        	已下架
+                        	{else /}
+                        	已上架
+                        	{/if}
+                        </td>
                         <td class="text-center">
                         	<button type="button" class="btn btn-info">详细</button>
                             <div class="btn-group">
@@ -112,9 +121,7 @@
 			                    <span class="sr-only">Toggle Dropdown</span>
 			                  </button>
 			                  <ul class="dropdown-menu" role="menu">
-			                    <!-- <li><a class="pop-iframe" data-href="{:url('lesson/buyLesson',['member_id'=>$vo.id])}">帮购买课程</a></li> -->
-			                    <li><a class="pop-iframe" data-href="{:url('coupon/updateItemCoupon',['item_coupon_id'=>$vo.id])}">备注卡券</a></li>
-			                    <!-- <li><a class="pop-iframe" data-href="{:url('student/updateStudent',['member_id'=>$vo.id])}">帮创建学生</a></li> -->
+			                    <li><a class="pop-iframe" href="{:url('coupon/updateItemCoupon',['itemCoupon_id'=>$vo.id])}">编辑卡券</a></li>
 			                    <li class="divider"></li>
 			                    <li><a href="#">预留功能</a></li>
 			                  </ul>

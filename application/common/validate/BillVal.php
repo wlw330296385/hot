@@ -5,27 +5,39 @@ class billVal extends Validate{
 
 
 	protected $rule = [
-        'bonus'        =>  'require|unique:bonus|token',
-        'bonus_type'	=> 'require',
-        'title'         => 'require',
-        'description'         =>'require',
-        'coupon_type'           =>'require',
-        'coupon_id'           =>'require',
+        'bill_order'        =>  'require|unique:bill|token',
+        'goods_id'	=> 'require',
+        'goods'         => 'require',
+        'total'         =>'require',
+        'price'           =>'require',
+        'camp_id'           =>'require',
+        'camp'              =>'require',
+        'student_id'                  =>'require',
+        'student'                  =>'require',
+        'member_id'                 =>'require',
+        'score_pay'     =>'require'
     ];
     
     protected $message = [
-        'bonus.require'        =>  '礼包名称必须',
-        'bonus.unique'        =>  '礼包名称重复',
-        'bonus.token'        =>  '礼包名称重复',
-        'bonus_type.unique'        =>  '礼包条件必须',
-        'title'	=> '活动标语必须',
-        'description'      =>  '礼包描述必须',
-        'coupon_type'                  =>'礼包类型必须',
-        'coupon_id'                 =>'礼包必须',
+        'bill_order.require'        =>  '订单号生成失败',
+        'bill_order.unique'        =>  '订单号重复,请刷新页面',
+        'bill.token'        =>'重复提交订单,请刷新页面',
+        'goods_id'	=> '商品必须',
+        'goods'      =>  '商品必须',
+        'camp'                  =>'缺少训练营',
+        'total'                 =>'缺少购买总数',
+        'price'                 =>'缺少单价',
+        'camp_id'                  =>'没指定训练营',
+        'camp'           =>'训练营',
+        'student_id'              =>'请先添加学生，并且注意点【确认添加】按钮',
+        'student'                  =>'请先添加学生姓名，并且注意点【确认添加】按钮',
+        'member_id'                  =>'没指定会员号',
+        'member'                 =>'没指定会员名称',
+        'score_pay'     =>'score_pay.require'
     ];
     
     protected $scene = [
-        'add'   =>  [],
+        'add'   =>  ['bill_order','goods_id','goods','camp','total','price','camp_id','camp','student_id','student','member_id','member','score_pay'],
         'edit'  =>  [],
     ];    
 
