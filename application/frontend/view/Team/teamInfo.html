@@ -46,21 +46,21 @@
             <div class="img4x3" style="background-image:url('{$teamInfo.cover}')"></div>
 
             <ul class="mui-table-view mb" style="margin-top: -4px">
-                <li class="mui-table-view-cell mui-media listli de " style="padding:11px 15px;">
-                    <a href="javascript:;">
-                        <img class="mui-media-object mui-pull-left coachicon" src="{$teamInfo.logo}" style="width:45px !important;height:45px !important">
-                        <div class="mui-media-body wd36">
-                            {$teamInfo.name}
-                            <p class="mui-ellipsis">{$teamInfo.city} {$teamInfo.area}</p>
-                        </div>
-                        <div class="price-frame" style="padding:0">
-                            <p class="colororange">
-                                <!-- <strong>积分：0</strong> -->
-                                <button type="button" class="mui-btn mui-btn-danger follow">关注</button>
-                            </p>
-                            <p class="f12">队员：{$teamInfo.member_num}人 | 粉丝：{$teamInfo.fans_num}</p>
-                        </div>
-                    </a>
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                    <img class="mui-media-object mui-pull-left coachicon" src="{$teamInfo.logo}" style="width:45px !important;height:45px !important">
+                    <div class="mui-media-body wd36">
+                        {$teamInfo.name}
+                        <p class="mui-ellipsis">{$teamInfo.city} {$teamInfo.area}</p>
+                    </div>
+                    <div class="price-frame" style="padding:0">
+                        <p class="colororange">
+                            <!-- <strong>积分：0</strong> -->
+                            <button type="button" class="mui-btn mui-btn-danger follow">关注</button>
+                        </p>
+                        <p class="f12">队员：{$teamInfo.member_num}人 |
+                            <a href="{:url('team/fans',['team_id'=>$teamInfo['id']])}">粉丝：{$teamInfo.fans_num}</a>
+                        </p>
+                    </div>
                 </li>
             </ul>
 
@@ -885,13 +885,13 @@
                                 div += '<p class="month bgblue">' + Tmonth + '月</p><h1 class="day">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
                             }
                             div += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[i].match + '</h5><div class="divFrame">';
-                            if (data.data[i].home_score > data.data[i].away_score) {
-                                div += '<p>比分：' + data.data[i].home_score + '<b class="tipCorner bgorange">胜</b> ：' + data.data[i].away_score + '</p>';
-                            } else if (data.data[i].home_score < data.data[i].away_score) {
-                                div += '<p>比分：' + data.data[i].home_score + ' ：' + data.data[i].away_score + '<b class="tipCorner bgorange">胜</b></p>';
-                            } else if (data.data[i].home_score == 0 && data.data[i].away_score == 0) {
-                                div += '<p>比分：' + data.data[i].home_score + ' ：' + data.data[i].away_score + '</p>';
-                            }
+                            // if (data.data[i].home_score > data.data[i].away_score) {
+                            //     div += '<p>比分：' + data.data[i].home_score + '<b class="tipCorner bgorange">胜</b> ：' + data.data[i].away_score + '</p>';
+                            // } else if (data.data[i].home_score < data.data[i].away_score) {
+                            //     div += '<p>比分：' + data.data[i].home_score + ' ：' + data.data[i].away_score + '<b class="tipCorner bgorange">胜</b></p>';
+                            // } else if (data.data[i].home_score == 0 && data.data[i].away_score == 0) {
+                                div += '<p>发起人：' + data.data[i].home_team + '</p>';
+                            // }
                             div += '<p>地点：' + data.data[i].court + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
                             if (data.data[i].is_finished_num == 1) {
                                 div += '<button class="mui-btn opbtn bggray">已结束</button>';
