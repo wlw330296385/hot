@@ -61,13 +61,29 @@ class Coupon extends Backend{
 
     public function updateItemCoupon(){   	
     	$itemCoupon_id = input('param.itemCoupon_id');
-        $ItemCouponInfo = $this->ItemCouponService->getItemCouponInfo(['id'=>$itemCoupon_id]);
-        $CampService = new \app\service\CampService;
-        $power = $CampService->isPower($ItemCouponInfo['camp_id'],$this->memberInfo['id']);
-        if($power<2){
-            $this->error('请先加入一个训练营并成为管理员或者创建训练营');
+        $itemCouponInfo = $this->ItemCouponService->getItemCouponInfo(['id'=>$itemCoupon_id]);
+
+        if(request()->isPost()){
+            $data = input('post.');
+            $datetime = explode('-', $data['datetime']);
+            $data['start'] = strtotime($datetime[0]);
+            $data['end'] = strtotime($datetime[1]);
+            $publishtime = explode('-', $data['publishtime']);
+            $data['publish_start'] = strtotime($publishtime[0]);
+            $data['publish_end'] = strtotime($publishtime[1]);
+            $data['member_id'] = $this->admin['id'];
+            if($data['target_type']<>-1){
+                $data['target_id'] = 0;
+            }
+            $result = $this->ItemCouponService->updateItemCoupon($data,['id'=>$itemCoupon_id]);
+            if($result['code'] == 200){
+                $this->success($result['msg']);
+            }else{
+                $this->success($result['msg']);
+            }
         }
-		$this->assign('ItemCouponInfo',$ItemCouponInfo);
+
+		$this->assign('itemCouponInfo',$itemCouponInfo);
     	return view('Coupon/updateItemCoupon');
     }
 
@@ -82,6 +98,9 @@ class Coupon extends Backend{
             $data['publish_start'] = strtotime($publishtime[0]);
             $data['publish_end'] = strtotime($publishtime[1]);
             $data['member_id'] = $this->admin['id'];
+            if($data['target_type']<>-1){
+                $data['target_id'] = 0;
+            }
             $result = $this->ItemCouponService->createItemCoupon($data);
             if($result['code'] == 200){
                 $this->success($result['msg']);

@@ -87,16 +87,16 @@ class ItemCouponService {
 
 
     // 编辑卡券
-    public function updateItemCoupon($data,$id){
+    public function updateItemCoupon($data,$map){
         
         $validate = validate('ItemCouponVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
         
-        $result = $this->ItemCouponModel->save($data,['id'=>$id]);
+        $result = $this->ItemCouponModel->save($data,$map);
         if($result){
-            return ['msg' => '操作成功', 'code' => 200, 'data' => $id];
+            return ['msg' => '操作成功', 'code' => 200];
         }else{
             return ['msg'=>'操作失败', 'code' => 100];
         }

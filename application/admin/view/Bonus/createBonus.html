@@ -17,17 +17,17 @@
                             
                             
                             <div class="form-group">
-                                <label for="">活动标语</label>
+                                <label for="">礼包标语</label>
                                 <textarea name="title" class="form-control" placeholder="大概描述,展示用" name="title" required="required"></textarea>
                             </div>
                             <div class="form-group">
                                 <label>礼包条件</label>
                                     <select class="form-control select2 select2-hidden-accessible" name="bonus_type" style="width: 100%;" tabindex="-1" aria-hidden="true">
-                                        <option selected="selected" value="2">每个会员登陆都送</option>
+                                        <option selected="selected" value="1">每个会员登陆都送</option>
                                         <option value="2">新注册会员则送</option>
                                     </select>
                             </div>
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label>礼包类型</label>
                                     <select class="form-control select2 select2-hidden-accessible" name="coupon_type" style="width: 100%;" tabindex="-1" aria-hidden="true" required="required">
                                         <option selected="selected" value="1">礼品卡</option>
@@ -39,7 +39,7 @@
                                     </select>
                                     <input type="hidden" name="coupon" value="">
                             </div>
-                            
+                             -->
 
 
 
@@ -70,8 +70,8 @@
                         <div class="form-group">
                             <label>状态</label>
                                 <select class="form-control select2 select2-hidden-accessible" name="status" style="width: 100%;" tabindex="-1" aria-hidden="true" required="required">
-                                    <option value="2">开启</option>
-                                    <option selected="selected" value="1">关闭</option>
+                                    <option value="1">上架</option>
+                                    <option selected="selected" value="-1">下架</option>
                                 </select>
                         </div>
                     <div class="box-footer">
@@ -118,8 +118,8 @@
             success: function (data) {
                 if (data.code == 200) {
                     let list = data.data;
-                    var newli = '';
-                    for (var i in list) {
+                    let newli = '';
+                    for (let i in list) {
                         newli = `<option  value="${list[i].id}" data="${list[i].coupon}">${list[i].coupon}</option>`;
                     }
                     if (newli == '') {
