@@ -22,7 +22,7 @@ class Rebate extends Base
             }
             $rebateS = new RebateService();
             // 推荐分成列表
-            $result = $rebateS->getRebatePaginator($map);
+            $result = $rebateS->getRebateList($map, $page);
             // 推荐分成层级收入统计
             // 一级下线
             $tier1 = $rebateS->sumRebateByTier($map, 1);
