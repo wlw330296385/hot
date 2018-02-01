@@ -36,7 +36,7 @@ class MatchService {
             // 插入数据
             $res = $model->allowField(true)->save($data);
             if ($res) {
-                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->getLastInsID()];
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
             } else {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -136,7 +136,7 @@ class MatchService {
             // 插入数据
             $res = $model->allowField(true)->save($data);
             if ($res) {
-                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->getLastInsID()];
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
             } else {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -196,7 +196,7 @@ class MatchService {
             // 插入数据
             $res = $model->allowField(true)->save($data);
             if ($res) {
-                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->getLastInsID()];
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
             } else {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -450,7 +450,7 @@ class MatchService {
             // 插入数据
             $res = $model->allowField(true)->save($data);
             if ($res) {
-                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->getLastInsID()];
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
             } else {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -519,7 +519,7 @@ class MatchService {
             // 插入数据
             $res = $model->allowField(true)->save($data);
             if ($res) {
-                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->getLastInsID()];
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
             } else {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
