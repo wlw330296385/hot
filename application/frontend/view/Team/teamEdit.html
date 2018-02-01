@@ -67,8 +67,22 @@
             padding: 0 15px !important;
         }
 
+        .addInput {
+            margin-top: 15px;
+        }
+
+        .addBtn {
+            margin-top: 15px;
+            padding: 12px 11px;
+        }
+
         .newCharater {
             padding-left: 58px !important;
+        }
+
+        .cancel-dom {
+            font-size: 16px;
+            margin: 13px 10px;
         }
     </style>
 </head>
@@ -163,7 +177,9 @@
                     <a href="#colors" class="mui-navigate-right">
                         <label>球衣颜色</label>
                         <span class="colorCont wd60" name="color">
-                        {volist name="$teamInfo.colors" id="color"}<i class="color {$color.color_style}"></i><font>{$color.color}</font>,{/volist}
+                            {volist name="$teamInfo.colors" id="color"}
+                            <i class="color {$color.color_style}"></i>
+                            <font>{$color.color}</font>,{/volist}
                         </span>
                     </a>
                 </div>
@@ -229,33 +245,15 @@
                     <input type="text" name="avg_weight" class="data wd52" value="{$teamInfo.avg_weight}" placeholder="请输入平均体重" style="padding-right:0">
                 </div>
 
-                <!-- <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label>球队特点</label>
-                        <span class="location-choise max">
-                            <select id="teamCharater" class="data" name="charater">
-                                <option value="">--请选择--</option>
-                                <option value="球风良好">球风良好</option>
-                                <option value="诚信守时">诚信守时</option>
-                                <option value="尊重对手">尊重对手</option>
-                                <option value="年轻气盛">年轻气盛</option>
-                                <option value="老当益壮">老当益壮</option>
-                                <option value="球风硬朗">球风硬朗</option>
-                                <option value="拖拉迟到">拖拉迟到</option>
-                                <option value="有啦啦队">有啦啦队</option>
-                                <option value="氛围很好">氛围很好</option>
-                                <option value="小动作多">小动作多</option>
-                            </select>
-                        </span>
-                    </div>
-                </div> -->
-
                 <div class="mui-input-row price-input-row h-auto">
-                        <a href="#charater" id="setCharaterBox" class="mui-navigate-right">
-                            <label>球队特点</label>
-                            <span class="charater" name="charater" style="width: 60%">{$teamInfo.charater}</span>
-                        </a>
-                    </div>
+                    <a href="#charater" id="setCharaterBox" class="mui-navigate-right">
+                        <label>球队特点</label>
+                        <span class="charater" name="charater" style="width: 60%">{$teamInfo.charater}</span>
+                        <div class="hideCheckCh hide">{volist name="$teamInfo.charater_arr" id="vo"}
+                            <input type="hidden" value="{$vo}"> {/volist}</div>
+                    </a>
+
+                </div>
 
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
@@ -277,8 +275,13 @@
                     </a>
                 </div>
 
+                <div class="mui-input-row h-auto">
+                    <label>球队简介</label>
+                    <textarea rows="3" name="descri" class="data descri" value="{$teamInfo.descri}" placeholder="请填写球队简介">{$teamInfo.descri}</textarea>
+                </div>
+
                 <div class="page-header" style="background: #efeff4;">
-                    <span class="course">球队介绍</span>
+                    <span class="course">球队详细介绍</span>
                 </div>
                 <div class="mui-input-row h-auto" style="margin-bottom: 10px">
                     <textarea name="introduce" class="data introduce" style="display: none"></textarea>
@@ -368,7 +371,7 @@
             </span>
         </div>
         <div class="pop-search">
-            <input type="search" class="keywordLD" placeholder="请输入场地名称搜索">
+            <input type="search" class="keywordCR" placeholder="请输入场地名称搜索">
             <span class="mui-icon mui-icon-search searchicon" id="searchCR"></span>
         </div>
         <div class="mui-scroll-wrapper" style="top:88px !important;">
@@ -392,99 +395,99 @@
 
     <!--球衣颜色-->
     <div id="colors" class="mui-popover">
-            <div class="mui-popover-arrow"></div>
-            <div class="page-header">
-                <span class="course">
-                    <strong>球衣颜色</strong>
-                </span>
-                <span class="fr">
-                    <button class="mui-btn-blue" id="colorConfirm">确认</button>
-                </span>
-            </div>
-            <div class="mui-scroll-wrapper">
-                <div class="mui-scroll">
-                    <form class="mui-input-group colorList">
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <label>
-                                <i class="color black"></i>
-                                <font>黑色</font>
-                            </label>
-                            <input type="checkbox" value="black">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <label>
-                                <i class="color white"></i>
-                                <font>白色</font>
-                            </label>
-                            <input type="checkbox" value="white">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <label>
-                                <i class="color red"></i>
-                                <font>红色</font>
-                            </label>
-                            <input class="" type="checkbox" value="red">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <label>
-                                <i class="color blue"></i>
-                                <font>蓝色</font>
-                            </label>
-                            <input type="checkbox" value="blue">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <label>
-                                <i class="color yellow"></i>
-                                <font>黄色</font>
-                            </label>
-                            <input name="checkbox-popl" class="" type="checkbox" value="yellow">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <label>
-                                <i class="color green"></i>
-                                <font>绿色</font>
-                            </label>
-                            <input type="checkbox" value="green">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <label>
-                                <i class="color orange"></i>
-                                <font>橙色</font>
-                            </label>
-                            <input type="checkbox" value="orange">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <label>
-                                <i class="color purple"></i>
-                                <font>紫色</font>
-                            </label>
-                            <input type="checkbox" value="purple">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <label>
-                                <i class="color gray"></i>
-                                <font>灰色</font>
-                            </label>
-                            <input type="checkbox" value="gray">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <label>
-                                <i class="color pink"></i>
-                                <font>粉色</font>
-                            </label>
-                            <input type="checkbox" value="pink">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <label>
-                                <i class="color ching"></i>
-                                <font>青色</font>
-                            </label>
-                            <input type="checkbox" value="ching">
-                        </div>
-                    </form>
-                </div>
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course">
+                <strong>球衣颜色</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="colorConfirm">确认</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form class="mui-input-group colorList">
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color black"></i>
+                            <font>黑色</font>
+                        </label>
+                        <input type="checkbox" value="black">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color white"></i>
+                            <font>白色</font>
+                        </label>
+                        <input type="checkbox" value="white">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color red"></i>
+                            <font>红色</font>
+                        </label>
+                        <input class="" type="checkbox" value="red">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color blue"></i>
+                            <font>蓝色</font>
+                        </label>
+                        <input type="checkbox" value="blue">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color yellow"></i>
+                            <font>黄色</font>
+                        </label>
+                        <input name="checkbox-popl" class="" type="checkbox" value="yellow">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color green"></i>
+                            <font>绿色</font>
+                        </label>
+                        <input type="checkbox" value="green">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color orange"></i>
+                            <font>橙色</font>
+                        </label>
+                        <input type="checkbox" value="orange">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color purple"></i>
+                            <font>紫色</font>
+                        </label>
+                        <input type="checkbox" value="purple">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color gray"></i>
+                            <font>灰色</font>
+                        </label>
+                        <input type="checkbox" value="gray">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color pink"></i>
+                            <font>粉色</font>
+                        </label>
+                        <input type="checkbox" value="pink">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color ching"></i>
+                            <font>青色</font>
+                        </label>
+                        <input type="checkbox" value="ching">
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
 
     <!--领队-->
     <div id="leader" class="mui-popover">
@@ -555,65 +558,65 @@
 
     <!--球队特点-->
     <div id="charater" class="mui-popover">
-            <div class="mui-popover-arrow"></div>
-            <div class="page-header">
-                <span class="course wd36">
-                    <strong>球队特点</strong>
-                </span>
-                <span class="fr">
-                    <button class="mui-btn-blue" id="charaterConfirm">确认</button>
-                </span>
-                <span class="fr">
-                    <button class="addCharater">添加</button>
-                </span>
-            </div>
-            <div class="mui-scroll-wrapper">
-                <div class="mui-scroll">
-                    <form id="charaterDiv" class="mui-input-group charaterList">
-                        <div class="mui-input-row mui-checkbox mui-left newadd">
-                            <input type="text" value="球风良好" disabled class="mui-text-left newCharater" />
-                            <input name="checkbox-charater" type="checkbox">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <input type="text" value="诚信守时" disabled class="mui-text-left newCharater" />
-                            <input name="checkbox-charater" type="checkbox">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <input type="text" value="尊重对手" disabled class="mui-text-left newCharater" />
-                            <input name="checkbox-charater" type="checkbox">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <input type="text" value="年轻气盛" disabled class="mui-text-left newCharater" />
-                            <input name="checkbox-charater" type="checkbox">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <input type="text" value="老当益壮" disabled class="mui-text-left newCharater" />
-                            <input name="checkbox-charater" type="checkbox">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <input type="text" value="球风硬朗" disabled class="mui-text-left newCharater" />
-                            <input name="checkbox-charater" type="checkbox">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <input type="text" value="拖拉迟到" disabled class="mui-text-left newCharater" />
-                            <input name="checkbox-charater" type="checkbox">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <input type="text" value="有啦啦队" disabled class="mui-text-left newCharater" />
-                            <input name="checkbox-charater" type="checkbox">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <input type="text" value="氛围很好" disabled class="mui-text-left newCharater" />
-                            <input name="checkbox-charater" type="checkbox">
-                        </div>
-                        <div class="mui-input-row mui-checkbox mui-left">
-                            <input type="text" value="小动作多" disabled class="mui-text-left newCharater" />
-                            <input name="checkbox-charater" type="checkbox">
-                        </div>
-                    </form>
-                </div>
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd36">
+                <strong>球队特点</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="charaterConfirm">确认</button>
+            </span>
+            <span class="fr">
+                <button class="addCharater">添加</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form id="charaterDiv" class="mui-input-group charaterList">
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="球风良好" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="诚信守时" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="尊重对手" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="年轻气盛" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="老当益壮" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="球风硬朗" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="拖拉迟到" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="有啦啦队" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="氛围很好" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="小动作多" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
 
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -737,6 +740,7 @@
         };
 
         var coachMemberList = '';
+        var charaterList = ''
         $(function () {
 
             //获取训练营粉丝列表
@@ -766,6 +770,14 @@
             var committeeCont = $(".committee").text();
             $(".coach").text(coachCont.substring(0, coachCont.length - 1));
             $(".committee").text(committeeCont.substring(0, committeeCont.length - 1));
+
+             // 添加新对手
+             $(document).on("tap", ".addBtn", function () {
+                var court = $(".addInput").val();
+                $(".courtCont").text(court);
+                $("input[name=court_id]").val("-1");
+                mui("#court").popover("toggle");
+            })
 
             // 球衣颜色
             $("#colorConfirm").on('tap', '', function () {
@@ -984,11 +996,16 @@
             // 选择球队特点
             $("#charaterConfirm").on('tap', '', function () {
                 $("input[name=checkbox-charater]").empty();
+                $(".hideCheckCh").empty();
+                if ($(".newCharater").val() == '') {
+                    mui.toast("添加的特点内容不能为空");
+                    return false;
+                }
                 var charaterCont = "";
                 $(".charaterList input[name='checkbox-charater']:checked").each(function () {
                     var charater = $(this).siblings().val();
-                    var input = '<input type="hidden" class="checkCh" value="' + $(this).siblings().val() + '">';
-                    $(".charater").after(input);
+                    var input = '<input type="hidden" value="' + $(this).siblings().val() + '">';
+                    $(".hideCheckCh").append(input);
                     charaterCont += charater + ','
                     $(".charater").text(charaterCont.substring(0, charaterCont.length - 1));
                     charaterList = charaterCont.substring(0, charaterCont.length - 1)
@@ -1002,7 +1019,7 @@
                 //每次打开先清空所有选择
                 $("input[name='checkbox-charater']").prop("checked", false);
                 //然后遍历出对应所选
-                $(".checkCh").each(function () {
+                $(".hideCheckCh input").each(function () {
                     var checkCharacter = $(this).val();
                     $("#charaterDiv").find("input[name='checkbox-charater']").filter(function () {
                         return $(this).siblings().val() == checkCharacter
@@ -1010,9 +1027,28 @@
                 });
             });
 
+            var addVal = '';
+            // 遍历输出的value值
+            $(".hideCheckCh input").each(function () {
+                var chVal = $(this).val();
+                addVal = "Yes";
+                //判断输出的value值与弹框中的value是否有相同
+                $(".newCharater").each(function () {
+                    if (chVal == $(this).val()) {
+                        addVal = "No";
+                        return false;
+                    }
+                });
+                //上面遍历如果没有相同值就添加到弹框内容去
+                if (addVal == "Yes") {
+                    var insertDiv = '<div class="mui-input-row mui-checkbox mui-left"><input type="text" value="' + chVal + '" disabled="" class="mui-text-left newCharater"><input name="checkbox-charater" type="checkbox"></div>'
+                    $(".charaterList .mui-input-row").eq(0).before(insertDiv)
+                }
+            });
+
             // 新加的球队特点
             $(".addCharater").on('tap', '', function () {
-                $(".newadd").before('<div class="mui-input-row mui-checkbox mui-left"><input type="text" value="" placeholder="请输入添加的特点名称" class="mui-text-left newCharater"/><input name="checkbox-charater" type="checkbox"></div>');
+                $(".charaterList .mui-input-row").eq(0).before('<div class="mui-input-row mui-checkbox mui-left"><input type="text" value="" placeholder="请输入添加的特点名称" class="mui-text-left newCharater wd83"/><i class="cancel-dom mui-icon mui-icon-close fr"></i><input name="checkbox-charater" type="checkbox"></div>');
             })
 
             // 删除
@@ -1079,7 +1115,7 @@
                     $(this).parent().addClass("bgorange")
                     return false;
                 } else {
-                    $(document).on('tap',function () {
+                    $(document).on('tap', function () {
                         $(".desimg").parent().removeClass("bgorange")
                     });
                 }
@@ -1094,8 +1130,8 @@
                 $(".bgorange").next().insertBefore(".bgorange");
             });
 
-             // 图片删除按钮
-             var delbtn = '<i class="delbtn mui-icon mui-icon-close"></i>';
+            // 图片删除按钮
+            var delbtn = '<i class="delbtn mui-icon mui-icon-close"></i>';
             $(".operationDiv img").before(delbtn);
 
 
@@ -1130,9 +1166,11 @@
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
             objData.colors = JSON.stringify(colors);
-            var introduce = $('textarea.data').val();
-            console.log(introduce)
+            var introduce = $('textarea.introduce').val();
+            var descri = $('textarea.descri').val();
             objData.introduce = introduce;
+            objData.descri = descri;
+            objData.charater = charaterList;
             var url = "{:url('api/team/updateteam')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
@@ -1228,7 +1266,7 @@
                         }
                         $(wCourtList).empty();
                         if (newli == '') {
-                            newli = '<p class="nodata">没有查找到数据哦</p>'
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="请输入你要添加的场地" /><button class="mui-btn addBtn">确认</button></div>'
                         }
                         $(wCourtList).append(newli);
                         $(currPage).text(data.data.current_page);
