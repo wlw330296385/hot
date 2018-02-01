@@ -18,7 +18,7 @@ class TeamEvent extends Model {
 
     // event_type（活动类型）获取器
     public function getEventTypeAttr($value) {
-        $event_type = [ 1 => '队内训练', 2 => '团队建设', 3 => '联谊活动', 4 => '日常娱乐', 5 => '球队年会', 6 => '庆功宴' ];
+        $event_type = [ 1 => '队内训练', 2 => '团队建设', 3 => '日常活动' ];
         return $event_type[$value];
     }
 

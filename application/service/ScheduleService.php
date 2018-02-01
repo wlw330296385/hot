@@ -38,11 +38,11 @@ class ScheduleService
         }
     }
 
-    public function getScheduleListByPage($map = [],  $order = 'id desc', $paginate = 10)
+    public function getScheduleListByPage($map = [], $order = 'id desc', $paginate = 10)
     {
         $result = $this->scheduleModel->where($map)->order($order)->paginate($paginate)->each(
-            function($item, $key){
-                $item->student_strs = unserialize($item->student_str);    
+            function ($item, $key) {
+                $item->student_strs = unserialize($item->student_str);
             });
         if ($result) {
             $list = $result->toArray();
@@ -61,18 +61,18 @@ class ScheduleService
         if ($is_power < 2) {
             return ['code' => 100, 'msg' => __lang('MSG_403')];
         }
-        if($data['assistants']){
+        if ($data['assistants']) {
             $doms = explode(',', $data['assistants']);
             $seria = serialize($doms);
             $data['assistant'] = $seria;
-        }else{
+        } else {
             $data['assistant'] = '';
         }
-        if($data['assistant_ids']){
+        if ($data['assistant_ids']) {
             $doms = explode(',', $data['assistant_ids']);
             $seria = serialize($doms);
             $data['assistant_id'] = $seria;
-        }else{
+        } else {
             $data['assistant_id'] = '';
         }
         if (!isset($data['status'])) {
@@ -98,8 +98,8 @@ class ScheduleService
         // 保存数据 
         $result = $model->allowField(true)->save($data);
         if ($result) {
-            db('camp')->where(['id'=>$data['camp_id']])->setInc('total_schedule');
-            return ['msg'=>__lang('MSG_200'),'code'=>200,'data'=>$model->getLastInsID()];
+            db('camp')->where(['id' => $data['camp_id']])->setInc('total_schedule');
+            return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $model->getLastInsID()];
         } else {
             return ['msg' => $model->getError(), 'code' => 100];
         }
@@ -108,32 +108,26 @@ class ScheduleService
     // 修改课时
     public function updateSchedule($data, $id)
     {
-        $scheduleInfo = $this->getScheduleInfo(['id'=>$id]);
-        // 是否已被审核通过
-        if($scheduleInfo['status'] == 1){
-            // 判断权限
-            return ['code' => 100, 'msg' => '已审核通过的课时不允许编辑'];
-            
-        }else{
-            // 查询权限
-            $is_power = $this->isPower($data['camp_id'], $data['member_id']);
+        $scheduleInfo = $this->getScheduleInfo(['id' => $id]);
 
-            if ($is_power < 2) {
-                return ['code' => 100, 'msg' => __lang('MSG_403')];
-            }
+        // 查询权限
+        $is_power = $this->isPower($data['camp_id'], $data['member_id']);
+        if ($is_power < 2) {
+            return ['code' => 100, 'msg' => __lang('MSG_403')];
         }
-        if($data['assistants']){
+
+        if ($data['assistants']) {
             $doms = explode(',', $data['assistants']);
             $seria = serialize($doms);
             $data['assistant'] = $seria;
-        }else{
+        } else {
             $data['assistant'] = '';
         }
-        if($data['assistant_ids']){
+        if ($data['assistant_ids']) {
             $doms = explode(',', $data['assistant_ids']);
             $seria = serialize($doms);
             $data['assistant_id'] = $seria;
-        }else{
+        } else {
             $data['assistant_id'] = '';
         }
         $validate = validate('ScheduleVal');
@@ -150,13 +144,13 @@ class ScheduleService
         // 保存数据
         $result = $model->allowField(true)->save($data, ['id' => $id]);
         if ($result || ($result === 0)) {
-            return ['msg'=>__lang('MSG_200'),'code'=>200];
+            return ['msg' => __lang('MSG_200'), 'code' => 200];
         } else {
             return ['msg' => $model->getError(), 'code' => 100];
         }
     }
 
-    // 保存课时-会员关系表(学员、教练)
+    // 更新课时数据为已申状态
     public function saveScheduleMember($schedule_id)
     {
         $schedule = db('schedule')->where('id', $schedule_id)->find();
@@ -165,45 +159,56 @@ class ScheduleService
         }
         $res = false;
 
+        // 保存schedule_member数据
         $students = unserialize($schedule['student_str']);
         // 检查课时相关学员剩余课时
         $checkStudentRestscheduleResult = $this->checkstudentRestschedule($students, $schedule);
         if ($checkStudentRestscheduleResult['code'] == 100) {
             return $checkStudentRestscheduleResult;
         }
-        // 课时相关学员剩余课时-1
-        $decStudentRestscheduleResult = $this->decStudentRestschedule($students, $schedule);
-        if ($decStudentRestscheduleResult['code'] != 200) {
-            return $decStudentRestscheduleResult;
-        }
-
+        //dump($students);
         $model = new ScheduleMember();
 
         // 记录学员
         $studentDatalist = [];
         foreach ($students as $student) {
+            // 保存学员信息组合
             $datatmp = [
                 'schedule_id' => $schedule_id,
                 'schedule' => $schedule['grade'],
                 'camp_id' => $schedule['camp_id'],
                 'camp' => $schedule['camp'],
-                'lesson_id' => $schedule['lesson_id'],
-                'lesson' => $schedule['lesson'],
                 'grade_id' => $schedule['grade_id'],
                 'grade' => $schedule['grade'],
                 'user_id' => $student['student_id'],
                 'user' => $student['student'],
                 'type' => 1,
-                'status' => 1,
+                'status' => 0,
                 'schedule_time' => $schedule['lesson_time']
             ];
+
+            // schedule_member 课时信息区分保存：课时本班级学员已schedule lesson字段/拼课时学员根据schedule student_str结构中lmid获取lesson_member中lesson字段
+            if (isset($student['lmid'])) {
+                // 拼课时的学员lesson_member数据
+                $lessonmember = db('lesson_member')->where('id', $student['lmid'])->find();
+                $datatmp['lesson'] = $lessonmember['lesson'];
+                $datatmp['lesson_id'] = $lessonmember['lesson_id'];
+                $datatmp['is_transfer'] = 1;
+            } else {
+                // 课时本班级学员
+                $datatmp['lesson_id'] = $schedule['lesson_id'];
+                $datatmp['lesson'] = $schedule['lesson'];
+                $datatmp['is_transfer'] = 0;
+            }
+
             array_push($studentDatalist, $datatmp);
             unset($datatmp);
         }
-        $savestudentResult = $model->saveAll($studentDatalist);
-        if (!$savestudentResult) {
-            return ['code' => 100, 'msg' => '记录学员课时数据异常，请重试'];
-        }
+
+         $savestudentResult = $model->saveAll($studentDatalist);
+         if (!$savestudentResult) {
+             return ['code' => 100, 'msg' => '记录学员课时数据异常，请重试'];
+         }
 
         // 记录教练
         $coachDatalist = [];
@@ -213,16 +218,20 @@ class ScheduleService
                 'schedule' => $schedule['grade'],
                 'camp_id' => $schedule['camp_id'],
                 'camp' => $schedule['camp'],
+                'lesson_id' => $schedule['lesson_id'],
+                'lesson' => $schedule['lesson'],
+                'grade_id' => $schedule['grade_id'],
+                'grade' => $schedule['grade'],
                 'user_id' => $schedule['coach_id'],
                 'user' => $schedule['coach'],
                 'type' => 2,
-                'status' => 1,
+                'status' => 0,
                 'schedule_time' => $schedule['lesson_time']
             ];
             array_push($coachDatalist, $datatmp);
             unset($datatmp);
         }
-        $assistantIdArray = unserialize($schedule['assistant_id']) ;
+        $assistantIdArray = unserialize($schedule['assistant_id']);
         $assistantArray = unserialize($schedule['assistant']);
         if (!empty($assistantIdArray)) {
             foreach ($assistantIdArray as $key => $val) {
@@ -249,24 +258,26 @@ class ScheduleService
         }
 
         // 更新课时数据为已申状态
-        $update = db('schedule')->where('id', $schedule_id)->update(['status' => 1,'update_time' => time()]);
+        $canSettleDate = date('Ymd', strtotime('+2 day'));
+        $update = db('schedule')->where('id', $schedule_id)->update(['status' => 1,'can_settle_date' => $canSettleDate,'update_time' => time()]);
         if (!$update) {
             return ['code' => 100, 'msg' => '课时记录更新' . __lang('MSG_400')];
+        } else {
+            return ['code' => 200, 'msg' => '课时审核'.__lang('MSG_200')];
         }
-
-        return ['code' => 200, 'msg' => '课时审核'.__lang('MSG_200')];
     }
 
     // 检查课时相关学员剩余课时是否还有
-    protected function checkstudentRestschedule($students, $schedule) {
+    protected function checkstudentRestschedule($students, $schedule)
+    {
         $lessonDb = new LessonMember();
         foreach ($students as $student) {
-            $gradeMemberWhere['student_id'] = $student['student_id'];
-            $gradeMemberWhere['lesson_id'] = $schedule['lesson_id'];
-            $gradeMemberWhere['camp_id'] = $schedule['camp_id'];
-            $gradeMemberWhere['type'] = 1;
+            $lessonMemberWhere['student_id'] = $student['student_id'];
+            $lessonMemberWhere['lesson_id'] = $schedule['lesson_id'];
+            $lessonMemberWhere['camp_id'] = $schedule['camp_id'];
+            $lessonMemberWhere['type'] = 1;
             $studentWhere['id'] = $student['student_id'];
-            $restschedule = $lessonDb->where($gradeMemberWhere)->value('rest_schedule');
+            $restschedule = $lessonDb->where($lessonMemberWhere)->value('rest_schedule');
             // 某个学员无剩余课时 抛出提示
             if (!$restschedule || $restschedule == 0) {
                 return ['code' => 100, 'msg' => $student['student'] . '已无剩余课时，请修改课时信息'];
@@ -285,86 +296,100 @@ class ScheduleService
      * id 是grade_member表id
      * @return array
      */
-    function decStudentRestschedule($students, $schedule) {
+    function decStudentRestschedule($students, $schedule)
+    {
         $gradeMemberDb = db('grade_member');
-        $lessonDb = new LessonMember();
-        $studentDb = new Student();
-        $gradeModel = new Grade();
+        $modelLessonMember = new LessonMember();
+        $modelStudent = new Student();
+        $modelGrade = new Grade();
         foreach ($students as $student) {
-            $gradeMemberWhere['student_id'] = $student['student_id'];
-            $gradeMemberWhere['lesson_id'] = $schedule['lesson_id'];
-            $gradeMemberWhere['camp_id'] = $schedule['camp_id'];
-            $gradeMemberWhere['type'] = 1;
-            $studentWhere['id'] = $student['student_id'];
-            $restschedule = $lessonDb->where($gradeMemberWhere)->value('rest_schedule');
-            if ($restschedule == 1) {
-                // lesson_member剩余课时为0 毕业状态
-                $finishSchedule = $lessonDb->where($gradeMemberWhere)->update(['rest_schedule' => 0, 'status' => 4, 'update_time' => time(), 'system_remarks' => date('Ymd').'学员完成课时毕业']);
-                if (!$finishSchedule) {
-                    return ['code' => 100, 'msg' => $student['student'].'更新剩余课时'.__lang('MSG_400')];
-                }
-                // 学员档案完成课程数+1
-                $studentFinishedTotal = $studentDb->where($studentWhere)->setInc('finished_lesson', 1);
-                if (!$studentFinishedTotal) {
-                    return ['code' => 100, 'msg' => $student['student'].'更新完成课程'.__lang('MSG_400')];
-                }
-                // 学员从班级毕业（grade_member数据 status=4）
-                $gradeMemberDb->where($gradeMemberWhere)->whereNull('delete_time')->update(['status' => 4, 'update_time' => time(), 'system_remarks' => date('Ymd').'学员完成课时毕业']);
-                // 更新学员所在班级学员名单，剔除学员（查询班级其他在班学员名单，更新班级数据）
-                $reserveStudentList = $gradeMemberDb->where([ 'grade_id' => $schedule['grade_id'], 'status' => 1 ])->column('student');
-                $reserveStudentStr = '';
-                if ($reserveStudentList) {
-                    foreach ($reserveStudentList as $val) {
-                        $reserveStudentStr .= $val.',';
-                    }
-                    $reserveStudentStr = rtrim($reserveStudentStr, ',');
-                }
-                $gradeModel->where(['id' => $schedule['grade_id']])->update(['student_str' => $reserveStudentStr, 'students' => count($reserveStudentList)]);
+            // student结构中有lmid为拼课学员
+            if (isset($student['lmid'])) {
+                $lessonmember = $modelLessonMember->where('id', $student['lmid'])->find();
             } else {
-                $decRestSchedule = $lessonDb->where($gradeMemberWhere)->setDec('rest_schedule',1);
-                if (!$decRestSchedule) {
-                    return ['code' => 100, 'msg' => $student['student'].'更新剩余课时'.__lang('MSG_400')];
-                }
+                // 课时本班级学员
+                $lessonMemberWhere['student_id'] = $student['student_id'];
+                $lessonMemberWhere['lesson_id'] = $schedule['lesson_id'];
+                $lessonMemberWhere['camp_id'] = $schedule['camp_id'];
+                $lessonMemberWhere['type'] = 1;
+                $lessonmember = $modelLessonMember->where($lessonMemberWhere)->find();
             }
-            $incStudentFinishedSchedule = $studentDb->where($studentWhere)->setInc('finished_schedule', 1);
-            if (!$incStudentFinishedSchedule) {
-                return ['code' => 100, 'msg' => $student['student'].'更新完成课时'.__lang('MSG_400')];
+            if ($lessonmember) {
+                $lessonmember = $lessonmember->toArray();
+                if ($lessonmember['rest_schedule'] == 1) {
+                    // lesson_member剩余课时为0 毕业状态
+                    $finishSchedule = $modelLessonMember->where('id', $lessonmember['id'])->update(['rest_schedule' => 0, 'status' => 4, 'update_time' => time(), 'system_remarks' => date('Ymd') . '学员完成课时毕业']);
+                    if (!$finishSchedule) {
+                        // 记录错误log
+                    }
+                    // 学员档案完成课程数+1
+                    $studentFinishedTotal = $modelStudent->where('id',$lessonmember['student_id'])->setInc('finished_lesson', 1);
+                    if (!$studentFinishedTotal) {
+                        // 记录错误log
+                    }
+                    // 学员从班级毕业（grade_member数据 status=4）
+                    $grademember = $gradeMemberDb->where(['camp_id' => $schedule['camp_id'], 'lesson_id' => $lessonmember['lesson_id'], 'student_id' => $lessonmember['student_id']])->whereNull('delete_time')->find();
+                    if ($grademember) {
+                        $gradeMemberDb->where('id', $grademember['id'])->update(['status' => 4, 'update_time' => time(), 'system_remarks' => date('Ymd') . '学员完成课时毕业']);
+                        // 更新学员所在班级学员名单，剔除学员（查询班级其他在班学员名单，更新班级数据）
+                        $reserveStudentList = $gradeMemberDb->where(['grade_id' => $grademember['grade_id']])->column('student');
+                        $reserveStudentStr = '';
+                        if ($reserveStudentList) {
+                            foreach ($reserveStudentList as $val) {
+                                $reserveStudentStr .= $val . ',';
+                            }
+                            $reserveStudentStr = rtrim($reserveStudentStr, ',');
+                        }
+                        $modelGrade->where(['id' => $grademember['grade_id']])->update(['student_str' => $reserveStudentStr, 'students' => count($reserveStudentList)]);
+                    }
+                } else {
+                    $decRestSchedule = $modelLessonMember->where('id', $lessonmember['id'])->setDec('rest_schedule', 1);
+                    if (!$decRestSchedule) {
+                        // 记录错误log
+                    }
+                }
+                $incStudentFinishedSchedule = $modelStudent->where('id',$lessonmember['student_id'])->setInc('finished_schedule', 1);
+                if (!$incStudentFinishedSchedule) {
+                    // 记录错误log
+                }
             }
         }
-        return ['code' => 200, 'msg' => __lang('MSG_200')];
+        //return ['code' => 200, 'msg' => __lang('MSG_200')];
+        return true;
     }
 
     //查看一条课时信息
     public function getScheduleInfo($map)
     {
         $result = $this->scheduleModel->where($map)->find();
-        if($result){
+        if ($result) {
             $res = $result->toArray();
-            if($res['assistant']){
+            if ($res['assistant']) {
                 $pieces = unserialize($res['assistant']);
                 $res['assistants'] = implode(',', $pieces);
-            }else{
+            } else {
                 $res['assistants'] = '';
             }
 
-            if($res['assistant_id']){
+            if ($res['assistant_id']) {
                 $pieces = unserialize($res['assistant_id']);
                 $res['assistant_ids'] = implode(',', $pieces);
-            }else{
+            } else {
                 $res['assistant_ids'] = '';
             }
             /*if($res['student_str']){
                 $res['student_strs'] = unserialize($res['student_str']);
             }*/
             return $res;
-        }else{
+        } else {
             return $result;
         }
         // return $result ? $result->toArray() : false;
     }
 
     // 统计课时数量
-    public function countSchedules($map=[]) {
+    public function countSchedules($map = [])
+    {
         $model = new Schedule();
         $count = [];
 //        $map['camp_id'] = $camp_id;
@@ -379,7 +404,8 @@ class ScheduleService
 
 
     // 统计学生课时数量
-    public function countScheduleMembers($map=[]) {
+    public function countScheduleMembers($map = [])
+    {
         $ScheduleMember = new ScheduleMember();
         $count = [];
 //        $map['camp_id'] = $camp_id;
@@ -487,8 +513,8 @@ class ScheduleService
             $result = $ScheduleComment->allowField(true)->save($data);
             if ($result) {
                 // 更新训练营评分、教练评分
-                db('camp')->where(['id' => $data['camp_id']])->inc('star', $data['avg_star'])->inc('star_num',1)->update();
-                $this->updateCoachStar($data['schedule_id'],$data['avg_star']);
+                db('camp')->where(['id' => $data['camp_id']])->inc('star', $data['avg_star'])->inc('star_num', 1)->update();
+                $this->updateCoachStar($data['schedule_id'], $data['avg_star']);
                 return ['code' => 200, 'msg' => '评论成功'];
             } else {
                 return ['code' => 100, 'msg' => '评论失败'];
@@ -497,7 +523,8 @@ class ScheduleService
     }
 
     // 能否课时评分
-    public function canStarSchedule($schedule_id, $member_id) {
+    public function canStarSchedule($schedule_id, $member_id)
+    {
         $students = db('student')->where('member_id', $member_id)->column('id');
         $scheduleMember = db('schedule_member')->where(['schedule_id' => $schedule_id, 'type' => 1])->column('user_id');
         if (array_intersect($students, $scheduleMember)) {
@@ -508,7 +535,8 @@ class ScheduleService
     }
 
     // 课时评分更新课时相关教练评分
-    public function updateCoachStar($schedule_id, $star) {
+    public function updateCoachStar($schedule_id, $star)
+    {
         // 获取课时教练名单
         $coachs = $this->getScheduleCoachList($schedule_id);
         // 遍历更新教练评分
@@ -521,7 +549,8 @@ class ScheduleService
     }
 
     // 获取课时的教练名单（主教练+助教练）
-    public function getScheduleCoachList($schedule_id) {
+    public function getScheduleCoachList($schedule_id)
+    {
         // 查询课时数据
         $schedule = db('schedule')->where('id', $schedule_id)->find();
         $coachs = [];
@@ -530,7 +559,7 @@ class ScheduleService
             array_push($coachs, ['coach_id' => $schedule['coach_id'], 'coach' => $schedule['coach'], 'coach_type' => 1]);
         }
         // 获取助教练，反序列化处理
-        $assistantIdArray = unserialize($schedule['assistant_id']) ;
+        $assistantIdArray = unserialize($schedule['assistant_id']);
         $assistantArray = unserialize($schedule['assistant']);
         if (!empty($assistantIdArray)) {
             foreach ($assistantIdArray as $key => $val) {
@@ -543,26 +572,28 @@ class ScheduleService
     }
 
     // 删除课时
-    public function delSchedule($id) {
+    public function delSchedule($id)
+    {
         return Schedule::destroy($id);
     }
 
-    public function getScheduleStudentMemberList($schedule_id) {
+    public function getScheduleStudentMemberList($schedule_id)
+    {
         $schedulemember = ScheduleMember::where(['schedule_id' => $schedule_id, 'type' => 1])->select()->toArray();
 
-        $list = [];
         foreach ($schedulemember as $key => $val) {
-            $student = Student::where(['id' => $val['user_id']])->find()->toArray();
-            $list[$key] = [
-                'member_id' => $student['member_id'],
-                'openid' => getMemberOpenid($student['member_id'])
-            ];
+            $student = Student::where(['id' => $val['user_id']])->find();
+            if($student) {
+                $student = $student->toArray();
+                $schedulemember[$key]['student']= $student;
+            }
         }
-        return $list;
+        return $schedulemember;
     }
 
     // 购买赠送课时
-    public function buygift($request) {
+    public function buygift($request)
+    {
         $model = new ScheduleGiftbuy;
         $validate = validate('ScheduleGiftbuyVal');
         if (!$validate->check($request)) {
@@ -570,14 +601,15 @@ class ScheduleService
         }
         $result = $model->allowField(true)->save($request);
         if (!$result) {
-            return ['code' => 100, 'msg' => '购买赠送课时'.__lang('MSG_400')];
+            return ['code' => 100, 'msg' => '购买赠送课时' . __lang('MSG_400')];
         } else {
-            return ['code' => 200, 'msg' => '购买赠送课时'.__lang('MSG_200'), 'insid' => $model->id];
+            return ['code' => 200, 'msg' => '购买赠送课时' . __lang('MSG_200'), 'insid' => $model->id];
         }
     }
 
     // 购买赠送课时列表
-    public function buygiftpage($map=[], $page=1, $order='id desc', $limit=10) {
+    public function buygiftpage($map = [], $page = 1, $order = 'id desc', $limit = 10)
+    {
         $model = new ScheduleGiftbuy;
         $list = $model->with('lesson')->where($map)->order($order)->page($page, $limit)->select();
         if ($list) {
@@ -588,14 +620,16 @@ class ScheduleService
     }
 
     // 购买赠送课时详情
-    public function getbuygift($map) {
+    public function getbuygift($map)
+    {
         $model = new ScheduleGiftbuy;
         $result = $model->with('lesson')->where($map)->find()->toArray();
         return $result;
     }
 
     // 赠送课时给学员
-    public function recordgift($request) {
+    public function recordgift($request)
+    {
         //dump($request);
         $model = new ScheduleGiftrecord();
         $validate = validate('ScheduleGiftrecordVal');
@@ -611,12 +645,13 @@ class ScheduleService
     }
 
     // 批量更新学员剩余课时
-    public function saveStudentRestschedule($map, $gift_schedule){
+    public function saveStudentRestschedule($map, $gift_schedule)
+    {
         // 更新lesson_member课时数字段
         //$lessonMemberRestSchedule = Db::name('lesson_member')->where($map)->whereNull('delete_time')->setInc('rest_schedule', $gift_schedule);
         $lessonMemberRestSchedule = db('lesson_member')->where($map)->whereNull('delete_time')->inc('rest_schedule', $gift_schedule)->inc('total_schedule', $gift_schedule)->update();
         $studentTotalSchedule = db('student')->where(['id' => $map['student_id']])->whereNull('delete_time')->setInc('total_schedule', $gift_schedule);
-        if (!$lessonMemberRestSchedule || !$studentTotalSchedule ) {
+        if (!$lessonMemberRestSchedule || !$studentTotalSchedule) {
             return false;
         } else {
             return true;
@@ -624,20 +659,22 @@ class ScheduleService
     }
 
     // 保存赠课与学员关系
-    public function saveAllScheduleGiftStudent($data) {
+    public function saveAllScheduleGiftStudent($data)
+    {
         $model = new ScheduleGiftStudent();
         $res = $model->saveAll($data);
         if ($res) {
             return $res;
         } else {
-            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
             return $res;
         }
     }
 
 
     // 赠送课时列表
-    public function giftpage($map=[], $page=1, $order='id desc', $limit=10) {
+    public function giftpage($map = [], $page = 1, $order = 'id desc', $limit = 10)
+    {
         $model = new ScheduleGiftrecord();
         $list = $model->where($map)->order($order)->page($page, $limit)->select();
         if ($list) {
@@ -648,14 +685,16 @@ class ScheduleService
     }
 
     // 赠送课时详情
-    public function getGiftRecordInfo($map) {
+    public function getGiftRecordInfo($map)
+    {
         $model = new ScheduleGiftrecord();
         $result = $model->where($map)->find()->toArray();
         return $result;
     }
 
     // 课时结算的收入统计
-    public function scheduleIncome($map) {
+    public function scheduleIncome($map)
+    {
         $model = new Schedule();
         if (isset($map['create_time'])) {
             $map['lesson_time'] = $map['create_time'];

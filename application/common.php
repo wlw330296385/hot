@@ -189,7 +189,7 @@ function getMemberOpenid($memberid) {
 }
 
 // 生日日期计算年龄
-function getMemberAgeByBirthday($birthdate) {
+function getAgeByBirthday($birthdate) {
     $iage = 0;
     // 检查生日日期是否是一个合法date格式
     if (checkDatetimeIsValid($birthdate)) {

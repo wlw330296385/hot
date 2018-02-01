@@ -524,9 +524,9 @@ class Patch extends Controller {
         $memberPiers = $memberS->getMemberPier($member_id);
         if (!empty($memberPiers)) {
             foreach ($memberPiers as $k => $memberPier) {
-                if ($memberPier['tier']==2) {
+                if ($memberPier['tier']==1) {
                     $memberPiers[$k]['salary'] = $salary*$this->setting['rebate'];
-                } elseif ($memberPier['tier']==3){
+                } elseif ($memberPier['tier']==2){
                     $memberPiers[$k]['salary'] = $salary*$this->setting['rebate2'];
                 }
                 $memberPiers[$k]['datemonth'] = $datemonth;
@@ -544,6 +544,27 @@ class Patch extends Controller {
                 file_put_contents(ROOT_PATH.'data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'error'=>$memberPiers], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND );
                 return false;
             }
+        }
+    }
+
+    // 补全schedule_member数据
+    public function schedulemember() {
+        try {
+            $model = new ScheduleMember();
+            $list = $model->select();
+            $list = $list->toArray();
+            $data = [];
+            foreach ($list as $k => $val) {
+                $scheduleInfo = db('schedule')->where('id', $val['schedule_id'])->find();
+                $data[$k]['lesson_id'] = $scheduleInfo['lesson_id'];
+                $data[$k]['lesson'] = $scheduleInfo['lesson'];
+                $data[$k]['grade_id'] = $scheduleInfo['grade_id'];
+                $data[$k]['grade'] = $scheduleInfo['grade'];
+                $data[$k]['id'] = $val['id'];
+            }
+            $model->saveAll($data);
+        } catch (Exception $e) {
+            dump($e->getMessage());
         }
     }
 }

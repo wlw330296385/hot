@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
 </head>
 
 <body class="whitebg">
@@ -30,8 +31,11 @@
         <form action="" class="mui-input-group mt55">
 
             <div class="mui-input-row h-auto" id="logoframe">
-                <label>头像</label>
-                <img id="preview_1" class="upload-preview logostyle" src="{$teamMemberInfo.avatar}" alt="" style="margin-right:15px">
+                <a class="portraits filePicker mui-navigate-right pdr" onclick="add_id(1)">
+                    <label>头像</label>
+                    <img id="preview_1" class="logostyle mtnone bggray upload-preview" src="{$teamMemberInfo.avatar}" alt="">
+                    <input type="hidden" name="avatar" value='' class="data">
+                </a>
             </div>
 
             <div class="mui-input-row">
@@ -121,6 +125,12 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/libs/webuploader.min.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'teammember'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
     <script>
         //初始化
         mui.init({

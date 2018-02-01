@@ -60,6 +60,13 @@ return [
     //开发者模式,0:非|1:真
     'develop_mode'=> 0,
 
+    // 固定默认图片
+    'default_image' => [
+        'member_avatar' =>'/static/default/avatar.png', // 默认会员头像
+        'upload_default' => '/static/frontent/images/uploadDefault.jpg', // 上传默认图片
+        'team_logo' => '/static/frontend/images/basketball.jpg', //球队logo
+    ],
+
     // +----------------------------------------------------------------------
     // | 应用设置
     // +----------------------------------------------------------------------

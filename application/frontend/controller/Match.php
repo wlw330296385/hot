@@ -4,6 +4,7 @@ namespace app\frontend\controller;
 
 
 use app\service\MatchService;
+use app\service\TeamService;
 
 class Match extends Base {
     // 赛事列表（平台展示）
@@ -42,6 +43,7 @@ class Match extends Base {
     public function friendlyinfo() {
         $id = input('match_id');
         $matchS = new MatchService();
+        // 比赛详情
         $matchInfo = $matchS->getMatch(['id' => $id]);
         if ($matchInfo['type_num'] == 1) {
             $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
@@ -50,13 +52,18 @@ class Match extends Base {
                     $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
                 }
                 if (empty($matchRecordInfo['away_team'])) {
-                    $matchRecordInfo['away_team_logo'] = '/static/frontend/images/basketball.jpg';
+                    $matchRecordInfo['away_team_logo'] = config('default_image.team_logo');
                 }
                 $matchInfo['record'] = $matchRecordInfo;
             }
         }
-        //dump($matchInfo);
+
+        // 比赛发布球队信息
+        $teamS = new TeamService();
+        $teamInfo = $teamS->getTeam(['id' => $matchInfo['team_id']]);
+
         $this->assign('matchInfo', $matchInfo);
+        $this->assign('teamInfo', $teamInfo);
         return view('Match/friendlyinfo');
     }
 }

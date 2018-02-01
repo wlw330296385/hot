@@ -22,6 +22,7 @@ class StudentService{
         $res = $model->with('member')->where($map)->find();
         if($res){
             $result = $res->toArray();
+            $result['age'] = getAgeByBirthday($result['student_birthday']);
             return $result;
         }else{
             return $res;
@@ -197,6 +198,21 @@ class StudentService{
             ->view('grade_member', ['student_id', 'student', 'member', 'member_id', 'status' => 'grade_member_status'], 'grade_member.grade_id=grade.id')
             ->where($where)
             ->where('grade.delete_time', null)
+            ->select();
+        return $result;
+    }
+
+    // 学员所在训练营
+    public function getCamps($map=[]) {
+        $where['student.id'] = $map['student_id'];
+        $where['camp_member.camp_id'] = $map['camp_id'];
+        if (!isset($map['status'])) {
+            $where['camp_member.status'] = 1;
+        }
+        $result = Db::view('camp_member')
+            ->view('student', ['id' => 'student_id', 'member_id', 'student', 'student_sex', 'student_avatar'], 'student.member_id=camp_member.member_id')
+            ->where($where)
+            ->where('camp_member.delete_time', null)
             ->select();
         return $result;
     }

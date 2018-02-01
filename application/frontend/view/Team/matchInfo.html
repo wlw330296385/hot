@@ -13,7 +13,36 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .teamLogo {
+            width: 100%;
+            border-radius: 50%;
+        }
 
+        @media screen and (min-width: 320px) {
+            .teamLogo {
+                height: 5.4rem;
+            }
+        }
+
+        @media screen and (min-width: 375px) {
+            .teamLogo {
+                height: 6.6rem;
+            }
+        }
+
+        @media screen and (min-width: 414px) {
+            .teamLogo {
+                height: 7.4rem;
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            .teamLogo {
+                height: 14.8rem;
+            }
+        }
+    </style>
 </head>
 
 <body class=whitebg>
@@ -22,28 +51,31 @@
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
     </header>
 
-    <div class="mui-content" style="padding-top:0">
-        <div class="list mb44">
+    <div class="mui-content">
+        <div class="list coach mb44">
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli mui-text-center" style="padding:35px 15px 25px 15px;">
                     <div class="mui-row">
-                        <div class="mui-col-sm-4 mui-col-xs-4">
-                            <img src="{$matchInfo.record.home_team_logo}" style="width: 100%;height: 80px;">
+                        <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px">
+                            <img src="{$matchInfo.record.home_team_logo}" class="teamLogo">
                         </div>
-                        <div class="mui-col-sm-4 mui-col-xs-4">
+                        <div class="mui-col-sm-4 mui-col-xs-4" style="padding: 12% 0;">
                             <h3>VS</h3>
-                            <p style="padding-top:20px">友谊赛</p>
                         </div>
+                        <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px">
+                            <img src="{$matchInfo.record.away_team_logo}" class="teamLogo awayLogo">
+                        </div>
+                    </div>
+                    <div class="mui-row">
                         <div class="mui-col-sm-4 mui-col-xs-4">
-                            <img src="{$matchInfo.record.away_team_logo}" style="width: 100%;height: 80px;">
+                            <strong class="f16 colororange">{$matchInfo.record.home_team}</strong>
+                        </div>
+                        <div class="mui-col-sm-4 mui-col-xs-4"></div>
+                        <div class="mui-col-sm-4 mui-col-xs-4">
+                            <strong class="f16 colororange away_team">{$matchInfo.record.away_team}</strong>
                         </div>
                     </div>
-                    <div class="mui-row">
-                        <div class="mui-col-sm-4 mui-col-xs-4">{$matchInfo.record.home_team}</div>
-                        <div class="mui-col-sm-4 mui-col-xs-4"></div>
-                        <div class="mui-col-sm-4 mui-col-xs-4">{$matchInfo.record.away_team}</div>
-                    </div>
-                    <div class="mui-row">
+                    <div class="mui-row score">
                         <h2 class="mui-col-sm-4 mui-col-xs-4 colorred">{$matchInfo.record.home_score}</h2>
                         <div class="mui-col-sm-4 mui-col-xs-4"></div>
                         <h2 class="mui-col-sm-4 mui-col-xs-4 colorred">{$matchInfo.record.away_score}</h2>
@@ -57,25 +89,29 @@
                     <span class="away_team">{$matchInfo.record.away_team}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
-                    <label>地点</label>
-                    <span>{$matchInfo.court}</span>
+                    <label>时间</label>
+                    <span class="match_time">{$matchInfo.match_time}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>地区</label>
                     <span>{$matchInfo.province} {$matchInfo.city} {$matchInfo.area}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
-                    <label>时间</label>
-                    <span class="match_time">{$matchInfo.match_time}</span>
+                    <label>比赛地点</label>
+                    <span>{$matchInfo.court}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>比赛类型</label>
+                    <span class="match_time">{$matchInfo.type}</span>
                 </li>
             </ul>
 
             <ul class="mui-table-view detalis-list list mainInfo mb">
                 <div class="page-header">
-                    <span class="course">出勤率
-                        <b class="rate">0%</b>
+                    <span class="course">参赛人员 出勤率
+                        <b class="colororange rate">0%</b>
                     </span>
-                    <span class="more">
+                    <span class="more f14">
                         <a href="{:url('team/matchSignupList',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}" class="mui-navigate-right">
                             <b class="colororange signup_num">0</b>/{$countTeamMember}
                         </a>
@@ -117,49 +153,97 @@
 
             <div class="page-header whitebg border-b">
                 <span class="course wd52">评论</span>
-                <span class="more">评论
+                <span class="more f14">评论
                     <small class="comment_count">0</small>&nbsp;|&nbsp;
-                    <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>：
+                    <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>&nbsp;
                     <samll class="thumbup_count">0</samll>
                 </span>
             </div>
             <ul class="mui-table-view comment-list"></ul>
 
-            <!--底部操作-->
+            <!-- 队员身份加未完成 -->
             <ul class="mui-table-view operation mt status1" style="display:none">
-                <a href="#fbcomment">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12 opli bgblue">
-                        发表评论
-                    </li>
-                </a>
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="/frontend/">
+                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                    </a>
+                </li>
+                <!-- <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                            <a hef="">
+                                <span class=""></span>分享
+                            </a>
+                        </li> -->
+                <li class="mui-table-view-cell mui-media mui-col-xs-10 mui-col-sm-10 opli bgred signupBtn">
+                    参加
+                </li>
             </ul>
 
+            <!-- 队员身份加已完成 -->
             <ul class="mui-table-view operation mt status2" style="display:none">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12 opli bgred signupBtn">
-                    报名参加
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="/frontend/">
+                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                    </a>
                 </li>
-            </ul>
-
-            <ul class="mui-table-view operation mt status3" style="display:none">
+                <!-- <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a hef="">
+                        <span class=""></span>分享
+                    </a>
+                </li> -->
                 <a href="#fbcomment">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgblue">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-10 mui-col-sm-10 opli bgblue">
                         发表评论
                     </li>
                 </a>
+            </ul>
+
+            <!-- 队委以上身份加已完成 -->
+            <ul class="mui-table-view operation mt status3" style="display:none">
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="/frontend/">
+                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                    </a>
+                </li>
+                <!-- <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a hef="">
+                        <span class=""></span>分享
+                    </a>
+                </li> -->
                 <a href="{:url('team/matchEdit',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bggreen">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bggreen">
                         编辑/录入
+                    </li>
+                </a>
+                <a href="#fbcomment">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgblue">
+                        发表评论
                     </li>
                 </a>
             </ul>
 
+            <!-- 队委以上身份加未完成 -->
             <ul class="mui-table-view operation mt status4" style="display:none">
-                <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgred signupBtn">
-                    报名参加
+                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
+                    <a href="/frontend/">
+                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                    </a>
+                </li>
+                <!-- <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a hef="">
+                        <span class=""></span>分享
+                    </a>
+                </li> -->
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 opli bgred signupBtn">
+                    报名
                 </li>
                 <a href="{:url('team/matchEdit',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bggreen">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 opli bggreen">
                         编辑/录入
+                    </li>
+                </a>
+                <a href="#fbcomment">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 opli bgblue">
+                        发表评论
                     </li>
                 </a>
             </ul>
@@ -183,7 +267,6 @@
             </ul>
         </div>
     </div>
-
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
@@ -213,9 +296,16 @@
             isthumbsup(); //点赞状态
             toSignUpList(); // 报名/参赛人员
 
+            // 没有对手比分不显示
+            var homeTeam = "{$matchInfo.record.home_score}";
+            var awayTeam = "{$matchInfo.record.away_score}";
+            if (homeTeam == 0 && awayTeam == 0) {
+                $(".score").hide();
+            }
+
             // 如果对手为空
             if ($(".away_team").text() == '') {
-                $(".away_team").text("待定");
+                $(".away_team").text("暂无应战");
             }
 
             // 时间待定显示
@@ -237,6 +327,10 @@
             if (teamrole == 0 && is_finished == 1) {
                 $(".status1").show();
             } else if (teamrole == 0 && is_finished == -1) {
+                $(".status2").show();
+            }
+
+            if (teamrole == -1 && is_finished == 1) {
                 $(".status2").show();
             }
 
@@ -292,7 +386,7 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
-                            mui.alert('评价成功，感谢你的评价！', function () {
+                            mui.toast('评价成功，感谢你的评价！', function () {
                                 location.reload();
                             });
                             mui('#fbcomment').popover('toggle');
@@ -449,8 +543,8 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             $(".signup_num").text(data.data.length);
                             // 出勤率
-                            var rateNum = data.data.length / "{$countTeamMember}" * 100; 
-                            $(".rate").text(parseInt(rateNum)+ "%");
+                            var rateNum = data.data.length / "{$countTeamMember}" * 100;
+                            $(".rate").text(parseInt(rateNum) + "%");
                             inactiveDiv += '<img src="' + data.data[i].avatar + '" style="margin-right:3px">'
                         };
                         $(".imgShow").append(inactiveDiv);
