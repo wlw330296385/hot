@@ -59,7 +59,7 @@ class Bonus extends Base{
             if($isBonus){
                 return json(['code'=>100,'msg'=>'你已经领过该礼包']);
             }
-            $memebr = $this->memberInfo['member'];
+            $member = $this->memberInfo['member'];
             $data = ['bonus_id'=>$bonus_id,'member_id'=>$member_id,'member'=>$member,'bonus'=>$bonusInfo['bonus'],'status'=>1];
             $result = $this->BonusService->createBonusMember($data);
             return json($result);
