@@ -109,8 +109,16 @@ class BonusService {
     // 发放礼包
     public function createBonusMember($data){
         $result = $this->BonusMemberModel->save($data);
+                
         if($result){
-            return ['msg' => '操作成功', 'code' => 200, 'data' => $this->BonusMemberModel->id];
+            // 发放礼包中的卡券
+            $ItemCoupon = new \app\model\ItemCoupon;
+            $couponList = $ItemCoupon->where(['target_type'=>-1,'target_id'=>$data['bonus_id'],'status'=>1])->select();
+            foreach ($couponList as $key => $value) {
+                $item_coupon_ids[] = $value['id'];
+            }
+            $ItemCouponService = new \app\service\ItemCouponService;
+            $ItemCouponService->createItemCouponMemberList($data['member_id'],$data['member'],$item_coupon_ids);
         }else{
             return ['msg'=>'操作失败', 'code' => 100];
         }

@@ -55,8 +55,12 @@ class Bonus extends Base{
             if(!$bonusInfo){
                 return json(['code'=>100,'msg'=>'礼包无效']);
             }
+            $isBonus = $this->BonusService->getBonusMember(['bonus_id'=>$bonus_id,'member_id'=>$member_id,'status'=>1]);
+            if($isBonus){
+                return json(['code'=>100,'msg'=>'你已经领过该礼包']);
+            }
             $memebr = $this->memberInfo['member'];
-            $data = ['bonus_id'=>$bonus_id,'member_id'=>$member_id,'member'=>$member,'bonus'=>$bonusInfo['bonus']];
+            $data = ['bonus_id'=>$bonus_id,'member_id'=>$member_id,'member'=>$member,'bonus'=>$bonusInfo['bonus'],'status'=>1];
             $result = $this->BonusService->createBonusMember($data);
             return json($result);
         }catch(Exception $e){
