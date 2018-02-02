@@ -465,7 +465,8 @@ class CampMember extends Base
                 unset($map['keyword']);
             }
 
-            $map['type'] = input('param.type', 1);
+            $map['camp_member.type'] = input('param.type', 1);
+            $map['camp_member.status'] = input('param.status', 1);
             $list = Db::view('camp_member')
                 ->view('student', ['id' => 'student_id', 'student', 'student_sex', 'student_avatar'], 'student.member_id=camp_member.member_id')
                 ->order('camp_member.id desc')
@@ -505,7 +506,8 @@ class CampMember extends Base
             if ($keyword == null) {
                 unset($map['keyword']);
             }
-            $map['type'] = input('param.type', 1);
+            $map['camp_member.type'] = input('param.type', 1);
+            $map['camp_member.status'] = input('param.status', 1);
             $list = Db::view('camp_member')
                 ->view('student', ['id' => 'student_id', 'member_id', 'student', 'student_sex', 'student_avatar'], 'student.member_id=camp_member.member_id')
                 ->order('camp_member.id desc')
