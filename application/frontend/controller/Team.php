@@ -452,9 +452,10 @@ class Team extends Base {
     public function memberApplyInfo() {
         $applyId = input('id');
         $teamS = new TeamService();
-        $apply = $teamS->getApplyInfo(['id' => $applyId, 'organization_id' => $this->team_id]);
-
+        $apply = $teamS->getApplyInfo(['id' => $applyId]);
+        $team = $teamS->getTeam(['id' => $apply['organization_id']]);
         $this->assign('applyInfo', $apply);
+        $this->assign('teamInfo', $team);
         return view('Team/memberApplyInfo');
     }
     

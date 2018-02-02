@@ -14,7 +14,7 @@ class Team extends Model {
     // 球队类型获取器
     public function getTypeAttr($value) {
         $type = [
-            1 => '青少年训练营',
+            1 => '训练营',
             2 => '企事业单位',
             3 => '业余组织',
             4 => '大学生',

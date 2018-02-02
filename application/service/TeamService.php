@@ -144,6 +144,29 @@ class TeamService
         }
     }
 
+    // 自动更新球队字段值
+    public function autoUpdateTeam($team_id) {
+        // 获取现在球队队员的平均年龄、身高、体重
+        $avgMap['team_id'] = $team_id;
+        $avgMap['age'] = ['gt', 0];
+        $avgMap['height'] = ['gt', 0];
+        $avgMap['weight'] = ['gt', 0];
+        $avgMap['status'] = ['neq', -1];
+        $avg = db('team_member')->where($avgMap)->field('avg(age) avg_age, avg(height) avg_height, avg(weight) avg_weight')->select();
+
+        $memberNumMap['team_id'] = $team_id;
+        $memberNumMap['status'] = ['neq', -1];
+        $membernum = db('team_member')->where($memberNumMap)->count();
+        // 更新team统计字段:队员数，更新平均年龄、身高、体重
+        db('team')->where('id', $team_id)
+            ->data([
+                'avg_age' => $avg[0]['avg_age'],
+                'avg_height' => $avg[0]['avg_height'],
+                'avg_weight' => $avg[0]['avg_weight'],
+                'member_num' => $membernum
+            ])
+            ->update();
+    }
 
     // 保存team_member球队-会员关系信息
     public function saveTeamMember($data)
@@ -163,7 +186,7 @@ class TeamService
             $res = $model->allowField(true)->save($data);
             if ($res) {
                 // 球队成员数+1
-                db('team')->where('id', $data['team_id'])->setInc('member_num', 1);
+                //db('team')->where('id', $data['team_id'])->setInc('member_num', 1);
 
                 return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
             } else {

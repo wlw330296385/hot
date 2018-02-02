@@ -339,22 +339,8 @@ class Team extends Base
                         $dataTeamMember['id'] = $teamMemberInfo['id'];
                     }
                     $teamS->saveTeamMember($dataTeamMember);
-                    /* // 获取现在球队队员的平均年龄、身高、体重
-                    $avgMap['team_id'] = $applyInfo['organization_id'];
-                    $avgMap['age'] = ['gt', 0];
-                    $avgMap['height'] = ['gt', 0];
-                    $avgMap['weight'] = ['gt', 0];
-                    $avg = db('team_member')->where($avgMap)->field('avg(age) avg_age, avg(height) avg_height, avg(weight) avg_weight')->select();
-                    // 更新team统计字段:队员数+1，更新平均年龄、身高、体重
-                    db('team')->where('id', $applyInfo['organization_id'])
-                        ->data([
-                            'avg_age' => $avg[0]['avg_age'],
-                            'avg_height' => $avg[0]['avg_height'],
-                            'avg_weight' => $avg[0]['avg_weight']
-                        ])
-                        ->inc('member_num', 1)
-                        ->update();*/
-
+                    // 更新球队统计字段sss
+                    $teamS->autoUpdateTeam($applyInfo['organization_id']);
 
                     // 查询有无关注数据保存关注数据
                     $followDb = db('follow');
@@ -704,25 +690,178 @@ class Team extends Base
                 }
                 // 执行保存球队成员数据
                 $resultSaveTeamMember = $teamS->saveTeamMember($data);
-                // 保存成员数据成功 发送邀请通知
+                // 保存成员数据成功
                 if ($resultSaveTeamMember['code'] == 200) {
-                    // 发送消息模板给申请人
+                    // 插入邀请apply 数据
+                    $dataApply = [
+                        'type' => 2,
+                        'apply_type' => 2,
+                        'organization_type' => 2,
+                        'organization_id' => $teamInfo['id'],
+                        'organization' => $teamInfo['name'],
+                        'inviter' => $this->memberInfo['member'],
+                        'inviter_id' => $this->memberInfo['id'],
+                        'member' => $memberInfo['member'],
+                        'member_id' => $memberInfo['id'],
+                        'remarks' => '球队-'.$teamInfo['name'].'邀请您加入'
+                    ];
+                    // 检查有无邀请apply记录
+                    $hasApplyInfo = $teamS->getApplyInfo([
+                        'type' => 2,
+                        'apply_type' => 2,
+                        'organization_type' => 2,
+                        'organization_id' => $teamInfo['id'],
+                        'member_id' => $memberInfo['id'],
+                    ]);
+                    if ($hasApplyInfo) {
+                        $dataApply['id'] = $hasApplyInfo['id'];
+                    }
+                    $resultSaveApply = $teamS->saveApply($dataApply);
+                    if ($resultSaveApply['code'] == 100) {
+                        return json(['code' => 100, 'msg' => '发送邀请失败']);
+                    }
+                    $applyId = ($hasApplyInfo) ? $hasApplyInfo['id'] : $resultSaveApply['data'];
+                    // 发送邀请通知给会员
                     $messageData = [
                         'title' => '球队-'.$teamInfo['name'].'邀请您加入',
                         'content' => '球队-'.$teamInfo['name'].'邀请您加入',
-                        'url' => url('frontend/team/memberapplyinfo', '', '', true),
+                        'url' => url('frontend/team/memberapplyinfo', ['id' =>$applyId ], '', true),
                         'keyword1' => '球队邀请',
                         'keyword2' => $this->memberInfo['member'],
                         'keyword3' => date('Y年m月d日 H:i', time()),
                         'remark' => '点击登录平台查看更多信息'
                     ];
-                    //dump($messageData);
                     $messageS = new MessageService();
                     $messageS->sendMessageToMember($memberInfo['id'], $messageData, config('wxTemplateID.checkPend'));
+                    // 发送邀请通知给会员 end
                 }
                 // 返回结果
                 return json($resultSaveTeamMember);
             }
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 会员回复球队邀请
+    public function replyteaminvitation() {
+        try {
+            $apply_id = input('apply_id');
+            $reply = input('reply');
+            if (!$apply_id || !$reply) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请正确传参']);
+            }
+            if (!in_array($reply, [2, 3])) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请正确传参']);
+            }
+            // 查询apply数据
+            $teamS = new TeamService();
+            $applyInfo = $teamS->getApplyInfo(['id' => $apply_id, 'type' => 2, 'apply_type' => 2]);
+            if (!$applyInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404') . '，没有此记录']);
+            }
+            if ($applyInfo['status'] != 1) {
+                return json(['code' => 100, 'msg' => '此邀请记录已回复结果，无需重复操作']);
+            }
+
+            // 是否受邀会员
+            if ($this->memberInfo['id'] === 0) {
+                return json(['code' => 100, 'msg' => '请先登录会员']);
+            }
+            if ($this->memberInfo['id'] != $applyInfo['member_id']) {
+                return json(['code' => 100, 'msg' => '无法操作']);
+            }
+
+            // 更新apply数据，$reply=2同意，3拒绝
+            $resultSaveApply = $teamS->saveApply(['id' => $applyInfo['id'], 'status' => $reply]);
+            $replystr = '已拒绝';
+            $url = url('frontend/message/index', '', '', true);
+            if ($reply == 2) {
+                if ($resultSaveApply['code'] == 200) {
+                    // 更新team_member信息status=1
+                    $teammember = $teamS->getTeamMemberInfo(['team_id' => $applyInfo['organization_id'], 'member_id' => $applyInfo['member_id']]);
+                    if (!$teammember) {
+                        return json(['code' => 100, 'msg' => '没有队员信息']);
+                    }
+                    $updateTeamMember = $teamS->saveTeamMember(['id' => $teammember['id'], 'status' => 1]);
+                    if ($updateTeamMember['code'] == 100) {
+                        return json(['code' => 100, 'msg' => '更新球队队员信息失败']);
+                    }
+                    $url = url('frontend/team/teammanage', ['team_id' => $applyInfo['organization_id']], '', true);
+                }
+                $replystr = '已通过';
+                // 更新球队统计字段sss
+                $teamS->autoUpdateTeam($applyInfo['organization_id']);
+            }
+            // 发送结果通知给邀请人
+            $messageData = [
+                'title' => '邀请会员加入球队结果通知',
+                'content' => '邀请会员'. $applyInfo['member']['member'] .'加入球队' . $applyInfo['organization'] . '结果通知',
+                'url' => $url,
+                'keyword1' => '邀请会员加入球队',
+                'keyword2' => $replystr,
+                'remark' => '点击登录平台查看更多信息'
+            ];
+            //dump($messageData);
+            $messageS = new MessageService();
+            $messageS->sendMessageToMember($applyInfo['inviter_id'], $messageData, config('wxTemplateID.applyResult'));
+            return json($resultSaveApply);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 加入非平台会员进入球队
+    public function addnoregmember() {
+        try {
+            // 接收输入变量，判断空值
+            $request = input('post.');
+            if (!isset($request['name']) || !isset($request['telephone'])) {
+                return json(['code' => 100, 'msg' => '请填写完整信息']);
+            }
+            if (!isset($request['team_id'])) {
+                return json(['code' => 100, 'msg' => '请选择球队']);
+            }
+            if (empty($request['name'])) {
+                return json(['code' => 100, 'msg' => '请输入姓名']);
+            }
+            if (empty($request['telephone'])) {
+                return json(['code' => 100, 'msg' => '请输入手机号']);
+            }
+            // 查找手机号有无注册会员
+            $memberS = new MemberService();
+            $isMember = $memberS->getMemberInfo(['telephone' => $request['telephone']]);
+            if ($isMember) {
+                return json(['code' => 100, 'msg' => '填写的手机号已有会员信息']);
+            }
+
+            // 球队有无该成员信息
+            $teamS = new TeamService();
+            $teamInfo = $teamS->getTeam(['id' => $request['team_id']]);
+            if (!$teamInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404').'请选择其他球队']);
+            }
+            $member = $request['name'];
+            $mapTeamMember['member'] = ['like', "%$member%"];
+            $mapTeamMember['telephone'] = $request['telephone'];
+            $mapTeamMember['team_id'] = $teamInfo['id'];
+            $hasTeamMember = $teamS->getTeamMemberInfo($mapTeamMember);
+            if ($hasTeamMember) {
+                return json(['code' => 100, 'msg' => '已有球队成员信息']);
+            }
+
+            // 插入team_member数据
+            $data = [
+                'team_id' => $teamInfo['id'],
+                'team' => $teamInfo['name'],
+                'member_id' => -1,
+                'member' => $request['name'],
+                'telephone' => $request['telephone'],
+                'avatar' => config('default_image.member_avatar'),
+                'status' => 1
+            ];
+            $resSaveTeamMember = $teamS->saveTeamMember($data);
+            return json($resSaveTeamMember);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
