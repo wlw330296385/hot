@@ -17,7 +17,7 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
 </head>
 
-<body class="whitebg">
+<body>
 
 
 <header id="header" class="mui-bar mui-bar-nav for-tab">
@@ -34,18 +34,35 @@
 
 <div class="mui-content">
 
+    <div class="nav-list">
+        <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
+                <a href="#">
+                    <span>A类奖金（累计）</span>
+                    <div class="mui-media-body" id="otherCount1">0</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
+                <a href="#">
+                    <span>B类奖金（累计）</span>
+                    <div class="mui-media-body" id="otherCount2" >0</div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!--特别说明：上面这数据统计区域是一直存在的，只是下面前两个tab内容用了whitebg白底挡住了，要是不同tab有不同固定的统计区域块，需要在切换时做对应的显示隐藏处理-->
     <div class="tab-pullRefresh message-list">
-        <div id="salaryInList" class="mui-control-content mui-scroll-wrapper mui-active">
+        <div id="salaryInList" class="mui-control-content mui-scroll-wrapper whitebg mui-active">
             <div class="mui-scroll">
                 <ul class="mui-table-view list item-list salaryIn"></ul>
             </div>
         </div>
-        <div id="salaryOutList" class="mui-control-content mui-scroll-wrapper">
+        <div id="salaryOutList" class="mui-control-content mui-scroll-wrapper whitebg">
             <div class="mui-scroll">
                 <ul class="mui-table-view list item-list salaryOut"></ul>
             </div>
         </div>
-        <div id="otherInList" class="mui-control-content mui-scroll-wrapper">
+        <div id="otherInList" class="mui-control-content mui-scroll-wrapper" style="top:120px;">
             <div class="mui-scroll">
                 <ul class="mui-table-view list item-list otherIn"></ul>
             </div>
@@ -274,8 +291,8 @@
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var salary = '';
-                        if(data.data.data[i].salary>0){salary='-'+salary}
-                        newli += '<li class="mui-table-view-cell mui-collapse"><a class="mui-navigate-right" href="#"><div class="list-cont"><h4>' + data.data.data[i].create_time + '</h4></div><span class="date money">'+salary+'</span></a><div class="mui-collapse-content"><div class="list camp-list camp-lesson-list detalis-list coach"><ul class="mui-table-view mb"><li class="mui-table-view-cell listli">冻结金额<span>' + data.data.data[i].buffer + '</span></li><li class="mui-table-view-cell listli">出账平台<span>' + data.data.data[i].bank + '</span></li><li class="mui-table-view-cell listli">出账账号<span>' + data.data.data[i].bank_card + '</span></li><li class="mui-table-view-cell listli">手续费<span>' + data.data.data[i].fee + '</span></li><li class="mui-table-view-cell listli">交易单号<span>' + data.data.data[i].tid + '</span></li><li class="mui-table-view-cell listli">状态<span>' + data.data.data[i].status + '</span></li></ul></div></div></li>';
+                        if(data.data.data[i].salary>0){salary='-'+data.data.data[i].salary}
+                        newli += '<li class="mui-table-view-cell mui-collapse"><a class="mui-navigate-right" href="#"><div class="list-cont"><h4>提现</h4><p>' + data.data.data[i].create_time + '</p></div><span class="date money">'+salary+'</span></a><div class="mui-collapse-content"><div class="list camp-list camp-lesson-list detalis-list coach"><ul class="mui-table-view mb"><li class="mui-table-view-cell listli">冻结金额<span>' + data.data.data[i].buffer + '</span></li><li class="mui-table-view-cell listli">出账平台<span>' + data.data.data[i].bank + '</span></li><li class="mui-table-view-cell listli">出账账号<span>' + data.data.data[i].bank_card + '</span></li><li class="mui-table-view-cell listli">手续费<span>' + data.data.data[i].fee + '</span></li><li class="mui-table-view-cell listli">交易单号<span>' + data.data.data[i].tid + '</span></li><li class="mui-table-view-cell listli">状态<span>' + data.data.data[i].status + '</span></li></ul></div></div></li>';
                     }
                 }
                 if (gType == 1) {
@@ -325,8 +342,10 @@
 
                 var newli = '';
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        newli += '<li class="mui-table-view-cell mui-collapse"><a class="mui-navigate-right" href="#"><div class="list-cont"><h4>' + data.data.data[i].s_member + '</h4><p>'+data.data.data[i].datemonth+'</p></div><span class="date money">'+data.data.data[i].salary+'</span></a><div class="mui-collapse-content"></div></div></li>';
+                    $("#otherCount1").text(data.tier1);
+                    $("#otherCount2").text(data.tier2);
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        newli += '<li class="mui-table-view-cell mui-collapse"><a class="mui-navigate-right" href="#"><div class="list-cont"><h4>' + data.data[i].s_member + '</h4><p>'+data.data[i].datemonth+'</p></div><span class="date money">'+data.data[i].salary+'</span></a><div class="mui-collapse-content"></div></div></li>';
                     }
                 }
                 if (gType == 1) {
