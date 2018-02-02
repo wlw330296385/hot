@@ -29,6 +29,26 @@
                         </div>
                         {/if}
                         <div class="form-group">
+                            <label class="control-label">教练</label>
+                            <!--<input class="form-control" type="text" name="camp" >-->
+                            <select name="coach_member_id" class="form-control">
+                                <option value="">选择教练</option>
+                                {volist name="coachlist" id="vo"}
+                                <option value="{$vo['member_id']}" {if condition="$coach_member_id eq $vo['member_id']"}selected{/if}>{$vo.coach}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">课程</label>
+                            <!--<input class="form-control" type="text" name="camp" >-->
+                            <select name="lesson_id" class="form-control">
+                                <option value="">选择课程</option>
+                                {volist name="lessonlist" id="vo"}
+                                <option value="{$vo.id}" {if condition="$lesson_id eq $vo['id']"}selected{/if}>{$vo.lesson}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label class="control-label">课时月份</label>
                             <input class="form-control layui-input" type="text" name="schedule_date" id="month-selecter2" value="{$curschedule_date}">
                         </div>
@@ -51,41 +71,62 @@
                     <div class="col-md-12">
                         <div class="box no-border">
                             <div class="box-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h3><strong>余额：</strong>{$sumSalaryin}</h3>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h3><strong>上课节数：</strong>{$sumSchedule}</h3>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h3><strong>实际上课人次：</strong>{$sumScheduleStudent}</h3>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h3><strong>赠课人次：</strong>{$sumScheduleGift}</h3>
+                                    </div>
+                                </div>
+                                <hr>
                                 <table class="table table-striped table-bordered table-hover">
                                     <thead>
                                     <tr>
-                                        <th>ID</th>
+                                        <!--<th>ID</th>-->
                                         <th>收入金额</th>
+                                        <th>基本收入</th>
+                                        <th>提成收入</th>
                                         <th>收入类型</th>
                                         <th>所属训练营</th>
-                                        <th>会员</th>
-                                        <th>会员姓名</th>
-                                        <th>会员等级</th>
+                                        <th>会员/教练</th>
                                         <th>结算时间</th>
-                                        <th>信息</th>
+                                        <th>课时信息</th>
                                         <th>操作</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {volist name="list" id="vo"}
                                     <tr>
-                                        <td>{$vo.id}</td>
-                                        <td>{$vo.salary}{notempty name="vo.push_salary"}+{$vo.push_salary}{/notempty}</td>
+                                        <!--<td>{$vo.id}</td>-->
+                                        <td>{$vo.salary+$vo.push_salary}</td>
+                                        <td>{$vo.salary}</td>
+                                        <td>{$vo.push_salary}</td>
                                         <td>
                                             {switch name="vo.type"}
-                                            {case value="1"}教学{/case}
+                                            {case value="1"}教学（{$vo.member_type}）{/case}
                                             {default/}其他
                                             {/switch}
                                         </td>
                                         <td>{$vo.camp}</td>
-                                        <td>{$vo.member}</td>
                                         <td>{$vo.realname}</td>
-                                        <td>{$vo.level}</td>
-                                        <td>{$vo.create_time}</td>
+                                        <td>{notempty name="vo['schedule']['finish_settle_time']"}{$vo['schedule']['finish_settle_time']}{else/}{$vo.update_time}{/notempty}</td>
                                         <td>
                                             {eq name="vo.type" value="1"}
-                                            {$vo['member_type']}——课程：{$vo['lesson']['lesson']}（单价：{$vo['lesson']['cost']}）——班级：{$vo['schedule']['grade']}<br>课时{$vo['schedule']['lesson_time']}——正式学员人数{$vo['schedule']['num_student']}{notempty name="vo.system_remarks"}——{$vo.system_remarks}{/notempty}
-                                             {/eq}
+                                            课程：{$vo['lesson']['lesson']}（单价：{$vo['lesson']['cost']}）<br>
+                                            班级：{$vo['schedule']['grade']}<br>
+                                            上课时间：{$vo['schedule']['lesson_time']}<br>
+                                            正式学员人数：{$vo['schedule']['num_student']}<br>
+                                            学员名单：{volist name="vo['schedule']['studentlist']" id="student"}{$student.student},{/volist}<br>
+                                            课时工资（供参考）：{$vo.schedule.schedule_income}
+                                            {notempty name="vo.system_remarks"}系统备注：{$vo.system_remarks}{/notempty}
+                                            {/eq}
                                         </td>
                                         <td>
                                             <a href="{:url('schedule/detail', ['id' => $vo['schedule']['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"> 查看课时详情</i></a>
