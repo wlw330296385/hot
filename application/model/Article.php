@@ -12,5 +12,8 @@ class Article extends Model {
     //                         'type',
     //                         ];
 
-
+	public function getCategoryAttr($value){
+		$status = [0=>'其他',1=>'平台手册',2=>'其他',3=>'其他'];
+        return $status[$value];
+	}
 }

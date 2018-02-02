@@ -13,7 +13,7 @@ class Bonus extends Model {
     //                         'type',
     //                         ];
 
-	public function ItemCounpon(){
+	public function ItemCoupon(){
 		return $this->hasMany('app\model\ItemCoupon','target_id','id');
 	}
 

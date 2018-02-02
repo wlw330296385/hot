@@ -15,16 +15,18 @@ class Index extends Base{
 
         $bannerList = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1])->order('ord asc')->limit(3)->select();
   
-                
-        // dump($bannerList);die;
     	// 热门文章
         $ArticleService= new \app\service\ArticleService;
     	$ArticleList = $ArticleService->getArticleList([],1,'hot DESC',4);
-    	//推荐课程
-    	// $sortLessonList = $this->LessonService->getLessonList([],$page,'sort ASC',4);
+    	//平台礼包
+        $Bonus = new \app\admin\model\Bonus;
+    	$bonusList = $Bonus
+                    ->with('ItemCoupon')
+                    ->where(['status'=>1])
+                    ->select();
+        $this->assign('bonusList',json_encode($bonusList));
     	$this->assign('bannerList',$bannerList);
     	$this->assign('ArticleList',$ArticleList);
-    	// $this->assign('sortLessonList',$sortLessonList);
         return view('Index/index');
     }
 
