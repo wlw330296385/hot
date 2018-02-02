@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50553
 File Encoding         : 65001
 
-Date: 2018-01-17 16:59:18
+Date: 2018-02-02 15:48:31
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -34,7 +34,7 @@ CREATE TABLE `admin_menu` (
   `create_time` int(10) NOT NULL,
   `update_time` int(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=99 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=112 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin_menu
@@ -135,4 +135,17 @@ INSERT INTO `admin_menu` VALUES ('94', '4', 'admin', '操作提现申请', 'fa f
 INSERT INTO `admin_menu` VALUES ('95', '0', 'admin', '卡券管理', 'fa fa-cog', '0', '', '_self', '1', '4', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('96', '95', 'admin', '卡券列表', 'fa fa-cog', '0', 'admin/Coupon/itemCouponList', '_self', '1', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('97', '95', 'admin', '添加卡券', 'fa fa-cog', '0', 'admin/Coupon/createitemCoupon', '_self', '0', '0', '1', '0', '0');
-INSERT INTO `admin_menu` VALUES ('98', '1', 'admin', '首页api接口', 'fa fa-cog', '0', 'api/wx/getgroups', '_self', '1', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('98', '1', 'admin', '首页api接口', 'fa fa-cog', '0', 'api/wx/getgroups', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('99', '5', 'admin', '会员详情', 'fa fa-cog', '0', 'admin/member/memberInfo', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('100', '5', 'admin', '添加推荐人', 'fa fa-cog', '0', 'admin/member/addReferer', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('101', '0', 'admin', '文章管理', 'fa fa-cog', '0', 'admin/Article/articleList', '_self', '1', '90', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('102', '101', 'admin', '添加文章', 'fa fa-cog', '0', 'admin/Article/createArticle', '_self', '1', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('103', '101', 'admin', '文章详情', 'fa fa-cog', '0', 'admin/Article/articleInfo', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('104', '101', 'admin', '编辑文章', 'fa fa-cog', '0', 'admin/Article/updateArticle', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('105', '101', 'admin', '文章列表', 'fa fa-cog', '0', 'admin/Article/articleList', '_self', '1', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('106', '0', 'admin', '平台礼包', 'fa fa-cog', '0', '', '_self', '1', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('107', '106', 'admin', '礼包列表', 'fa fa-cog', '0', 'admin/Bonus/bonusList', '_self', '1', '89', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('108', '106', 'admin', '添加礼包', 'fa fa-cog', '0', 'admin/bonus/createBonus', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('109', '106', 'admin', '礼包详情', 'fa fa-cog', '0', 'admin/bonus/bonusInfo', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('110', '106', 'admin', '编辑礼包', 'fa fa-cog', '0', 'admin/bonus/updateBonus', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('111', '95', 'admin', '编辑卡券', 'fa fa-cog', '0', 'admin/Coupon/updateitemCoupon', '_self', '0', '0', '1', '0', '0');

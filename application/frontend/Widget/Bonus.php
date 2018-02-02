@@ -9,6 +9,7 @@ class bonus extends Controller{
     	$bonusInfo = $BonusService->getBonusInfo(['bonus.id'=>1]);
     	$couponList = [];
     	$item_coupon_ids = [];
+    	$isBonus = -1;
     	if($bonusInfo){
     		$res = $bonusInfo->toArray();
     		$ItemCoupon = new \app\model\ItemCoupon;
@@ -16,6 +17,7 @@ class bonus extends Controller{
     		foreach ($couponList as $key => $value) {
     			$item_coupon_ids[] = $value['id'];
     		}
+    		// $this->assign('isBonus',$isBonus);
     		$this->assign('item_coupon_ids',json_encode($item_coupon_ids));
 	    	$this->assign('couponList',$couponList);
 	        $this->assign('bonusInfo',$bonusInfo);

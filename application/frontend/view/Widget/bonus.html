@@ -3,10 +3,10 @@
 <link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
 <div id="giftpopover" class="mui-popover">
         <div id="gift-open"></div>
-        <span id="gift-close" class="mui-icon mui-icon-close"></span>
+        <span id="gift-close" class="mui-icon mui-icon-closeempty"></span>
         <div class="page-header">
-            <span class="f14">{$bonusInfo.bonus}</span>
-            <p>{$bonusInfo.title}</p>
+            <h4>{$bonusInfo.bonus}</h4>
+            <p>{$bonusInfo.title}感谢你那啥那啥那啥那啥那啥那啥那啥那啥那啥那啥那啥那啥</p>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll middle-coupon">
@@ -42,9 +42,7 @@
         },true)
         //打开获取大礼包
         if(!isBonus){
-            if ({$memberInfo.id} == 0 || {$memberInfo.id} == 6) {
                 mui("#giftpopover").popover('show', document.getElementById("tabbar"));
-            }
         }
         
         //关闭大礼包弹出层
@@ -65,8 +63,8 @@
                 if({$item_coupon_ids}.length >0){
                     // 领取礼包
                     $.post(
-                        "{:url('api/Item_coupon/createItemCouponMemberListApi')}"
-                        ,{'item_coupon_ids': item_coupon_ids}
+                        "{:url('api/bonus/grantBounusApi')}"
+                        ,{'bonus_id': {$bonusInfo.id}}
                         ,function(msg){
                             if(msg.code == 200){
                                 localStorage.setItem('isBonus',1);

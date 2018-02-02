@@ -39,53 +39,31 @@
 
             <div id="refreshContainer" class="mui-scroll-wrapper whitebg" style="margin-top:124px">
                 <div class="mui-scroll">
-                        <ul class="mui-table-view detalis-list list border-b teammember"></ul>
-                    <!-- 领队 -->
-                    <!-- <div class="page-header border-b">
+                    <ul class="mui-table-view detalis-list list border-b teammember"></ul>
+                    <!-- 队委 -->
+                    <!-- <div class="page-header border-b" style="background: #efeff4;">
                         <span class="course">领队</span>
                     </div>
                     <ul class="mui-table-view detalis-list list border-b teammember4"></ul> -->
 
-                    <!-- 队长 -->
-                    <!-- <div class="page-header border-b">
-                        <span class="course">队长</span>
-                    </div>
-                    <ul class="mui-table-view detalis-list list border-b teammember3"></ul> -->
-
-                    <!-- 教练 -->
-                    <!-- <div class="page-header border-b">
-                        <span class="course">教练</span>
-                    </div>
-                    <ul class="mui-table-view detalis-list list border-b teammember2"></ul> -->
-
-                    <!-- 队委 -->
-                    <!-- <div class="page-header border-b">
-                        <span class="course">队委</span>
-                    </div>
-                    <ul class="mui-table-view detalis-list list border-b teammember1"></ul> -->
-
                     <!-- 队员 -->
-                    <!-- <div class="page-header border-b">
+                    <!-- <div class="page-header border-b" style="background: #efeff4;">
                         <span class="course">队员</span>
                     </div>
                     <ul class="mui-table-view detalis-list list border-b teammember0"></ul> -->
                 </div>
             </div>
 
-            <ul class="mui-table-view operation">
+
+            <ul class="mui-table-view operation pdmember">
                 <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
                     <a href="/frontend/">
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
                     </a>
                 </li>
                 <a href="{:url('team/addMemberOfTeam',['team_id'=>$team_id])}">
-                    <li class="mui-col-xs-5 mui-col-sm-5 opli bgred">
-                        邀请会员
-                    </li>
-                </a>
-                <a href="{:url('team/recordMemberOfTeam')}">
-                    <li class="mui-col-xs-5 mui-col-sm-5 opli bgblue">
-                        记录非会员
+                    <li class="mui-col-xs-10 mui-col-sm-10 opli bgred">
+                        添加队员
                     </li>
                 </a>
             </ul>
@@ -101,6 +79,12 @@
         });
 
         $(function () {
+
+            // 判断只有队委以上身份可以添加会员
+            var teamrole = "{$teamrole}";
+            if (teamrole < 1) {
+                $(".pdmember").hide();
+            }
 
             //初始化全局变量
             var count = 1;
@@ -158,7 +142,7 @@
 
 
             //接口获取数据并追加到页面
-            var toList = function (page, gType) {
+            var toList = function (page, gType, role_text) {
                 //搜索关键字不能完全为空，否则查询为空
                 var url = "{:url('api/team/teammemberlist','','',true)}";
                 var team_id = "{$teamInfo.id}";
@@ -167,23 +151,39 @@
                     data: {
                         team_id: team_id,
                         page: page,
-                        status: 1
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
                     headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
+                    success: function (data, role_text) {
                         console.log(data)
                         var newli = '';
+                        var role_text = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
+                                role_text = data.data[i].role_text;
+                                console.log(role_text)
                                 var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + data.data[i].team_id + '/member_id/' + data.data[i].member_id;
-                                newli += '<li class="mui-table-view-cell mui-media listli coach"><a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font  ><p class="mui-ellipsis">年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div>'
+                                newli += '<li class="mui-table-view-cell mui-media listli coach"><a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
+                                if (data.data[i].status == "在队") {
+                                    newli += '<font class="tipCorner bgred">在队</font>';
+                                } else if (data.data[i].status == "离队") {
+                                    newli += '<font class="tipCorner bgred">离队</font>';
+                                } else if (data.data[i].status == "") {
+                                    newli += '<font class="tipCorner bgred">未关联</font>';
+                                }
+                                newli += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div>'
                             }
                         }
                         if (gType == 1) {
                             //上拉刷新
+                            // console.log(role_text)
+                            // if (role_text == '') {
+                            //     console.log("队员");
+                            // } else {
+                            //     console.log("队委")
+                            // }
                             $("ul.teammember").empty().append(newli);
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
@@ -192,6 +192,12 @@
                             }
                         } else {
                             //下拉加载 gType==2
+                            console.log(role_text)
+                            if (role_text == '') {
+                                console.log("队员");
+                            } else {
+                                console.log("队委")
+                            }
                             $("ul.teammember").append(newli);
                         }
                         if (newli != '') {
