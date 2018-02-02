@@ -110,6 +110,19 @@ class Team extends Base {
 
     // 队员列表
     public function teammember() {
+        // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
+        $teamS = new TeamService();
+        $teamMemberInfo = $teamS->getTeamMemberInfo([
+            'team_id' => $this->team_id,
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if ($teamMemberInfo) {
+            $teamrole = $teamS->checkMemberTeamRole($this->team_id, $this->memberInfo['id']);
+        } else {
+            $teamrole = -1;
+        }
+        $this->assign('teamrole', $teamrole);
         return view('Team/teamMember');
     }
 

@@ -118,7 +118,8 @@ class BonusService {
                 $item_coupon_ids[] = $value['id'];
             }
             $ItemCouponService = new \app\service\ItemCouponService;
-            $ItemCouponService->createItemCouponMemberList($data['member_id'],$data['member'],$item_coupon_ids);
+            $res = $ItemCouponService->createItemCouponMemberList($data['member_id'],$data['member'],$item_coupon_ids);
+            return $res;
         }else{
             return ['msg'=>'操作失败', 'code' => 100];
         }
