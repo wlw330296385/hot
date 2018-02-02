@@ -452,17 +452,16 @@ class CampMember extends Base
             // 关键字搜索学员名
             $keyword = input('param.keyword');
             if (isset($keyword)) {
-                // keyword == null 处理
-                if ($keyword == null) {
-                    unset($map['keyword']);
-                } elseif ($keyword != null) {
-                    if (!empty($keyword)) {
-                        if (!ctype_space($keyword)){
-                            // 关键字不为空 组合查询条件
-                            $map['student.student'] = ['like', "%$keyword%"];
-                        }
+                if (!empty($keyword)) {
+                    if (!ctype_space($keyword)){
+                        // 关键字不为空 组合查询条件
+                        $map['student.student'] = ['like', "%$keyword%"];
                     }
                 }
+                unset($map['keyword']);
+            }
+            // keyword == null 处理
+            if ($keyword == null) {
                 unset($map['keyword']);
             }
 
@@ -494,17 +493,16 @@ class CampMember extends Base
             // 关键字搜索学员名
             $keyword = input('param.keyword');
             if (isset($keyword)) {
-                // keyword == null 处理
-                if ($keyword == null) {
-                    unset($map['keyword']);
-                } elseif ($keyword != null) {
-                    if (!empty($keyword)) {
-                        if (!ctype_space($keyword)){
-                            // 关键字不为空 组合查询条件
-                            $map['student.student'] = ['like', "%$keyword%"];
-                        }
+                if (!empty($keyword)) {
+                    if (!ctype_space($keyword)){
+                        // 关键字不为空 组合查询条件
+                        $map['student.student'] = ['like', "%$keyword%"];
                     }
                 }
+                unset($map['keyword']);
+            }
+            // keyword == null 处理
+            if ($keyword == null) {
                 unset($map['keyword']);
             }
             $map['type'] = input('param.type', 1);
