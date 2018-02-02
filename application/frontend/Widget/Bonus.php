@@ -16,12 +16,11 @@ class bonus extends Controller{
     		foreach ($couponList as $key => $value) {
     			$item_coupon_ids[] = $value['id'];
     		}
-    	}else{
-    		$bonusInfo = [];
+    		$this->assign('item_coupon_ids',json_encode($item_coupon_ids));
+	    	$this->assign('couponList',$couponList);
+	        $this->assign('bonusInfo',$bonusInfo);
+			return $this->fetch('Widget:bonus');
     	}
-    	$this->assign('item_coupon_ids',json_encode($item_coupon_ids));
-    	$this->assign('couponList',$couponList);
-        $this->assign('bonusInfo',$bonusInfo);
-		return $this->fetch('Widget:bonus');
+    	
 	}
 }
