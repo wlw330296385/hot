@@ -24,13 +24,23 @@
         <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
     </header>
 
-    <div class="mui-content">
+    <div class="mui-content coach">
 
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 44px">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b memberList"></ul>
+                <ul class="mui-table-view detalis-list list border-b memberList">
+                    <p class="nodata">请搜索你要添加的会名称</p>
+                </ul>
             </div>
         </div>
+
+        <ul class="mui-table-view operation">
+            <a href="{:url('team/recordMemberOfTeam', ['team_id' => $team_id])}">
+                <li class="mui-table-view-cell mui-col-xs-12 mui-col-sm-12 opli bgblue">
+                    创建新会员
+                </li>
+            </a>
+        </ul>
 
     </div>
 
@@ -45,35 +55,10 @@
 
         $(function () {
 
-            $(document).on("tap", ".addMember", function () {
-                var team_id = "{$team_id}";
-                mui.ajax("{:url('api/team/addMember')}", {
-                    data: { 
-                        team_id: team_id
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast("已经发送请求，请耐心等待回复");
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            });
-
             //初始化全局变量
             var count = 1;
             var keyword = wooApi.GetQueryString('keyword');
+            // var keyword = ''
             $('.keyword').val(keyword);
 
             //搜索活动
@@ -98,7 +83,7 @@
                     down: {
                         //下拉刷新
                         height: 50,//可选.默认50.触发下拉刷新拖动距离
-                        auto: true,//可选,默认false.自动下拉刷新一次
+                        auto: false,//可选,默认false.自动下拉刷新一次
                         contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
                         contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
                         contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
@@ -130,61 +115,171 @@
                     var page = count;
                     var gType = 2;//代表上拉加载
                     toList(page, gType);//具体取数据的方法
+                    // if ($(".memberList").children().hasClass("listli") == true) {
+                    //     console.log(123)
+                    //     $(".memberList").children(".nodata").hide();
+                    // }
                 }, 100);
             }
-
 
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/member/getmemberlistpage','','',true)}" + '/?page=' + page;
-                mui.ajax({
-                    url: url,
-                    data: {
-                        keyword: keyword,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data)
-                        var newli = '';
-                        if (data.code == 200) {
-                            for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                newli += '<li class="mui-table-view-cell mui-media listli" id="logoframe">';
-                                newli += '<img class="mui-media-object mui-pull-left logostyle" src="' + data.data.data[i].avatar + '"><div class="mui-media-body wd60">' + data.data.data[i].member;
-                                newli += '<p>手机号：' + data.data.data[i].telephone + '</p></div><div class="price-frame"><button type="button" class="btn bgred addMember" style="margin-top:5px">邀请</button></div>'
-                                newli += '</li>';
+                var camp_id = "{$teamInfo.camp_id}";
+                var teamType = "{$teamInfo.type}";
+                if (teamType == 1 && camp_id > 0) {
+                    var url = "{:url('api/camp_member/campstudentpage','','',true)}" + '/?page=' + page;
+                    mui.ajax({
+                        url: url,
+                        data: {
+                            keyword: keyword,
+                            camp_id: camp_id
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            console.log(data)
+                            var newli = '';
+                            if (data.code == 200) {
+                                for (var i = 0; i <= data.data.data.length - 1; i++) {
+                                    newli += '<li class="mui-table-view-cell mui-media listli">';
+                                    newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '" style="width: 45px !important;height: 45px !important;margin-top: 4px;"><div class="mui-media-body wd60">' + data.data.data[i].student;
+                                    newli += '<p>学生ID：' + data.data.data[i].student_id + '</p></div><div class="price-frame"><button type="button" class="btn bgred" style="margin-top:5px" onclick="addStudent(' + data.data.data[i].student_id + ',' + data.data.data[i].member_id + ')">添加</button></div>'
+                                    newli += '</li>';
+                                }
                             }
-                        }
-                        if (gType == 1) {
-                            //上拉刷新
-                            $("ul.memberList").empty().append(newli);
-                            mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                            mui('#refreshContainer').pullRefresh().refresh(true);
-                            if (newli == '') {
-                                $("ul.memberList").html('<p class="nodata">没有相关数据哦</p>');
+                            if (gType == 1) {
+                                //上拉刷新
+                                $("ul.memberList").empty().append(newli);
+                                mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                                mui('#refreshContainer').pullRefresh().refresh(true);
+                                if (newli == '') {
+                                    $("ul.memberList").html('<p class="nodata">没有相关数据哦</p>');
+                                }
+                            } else {
+                                //下拉加载 gType==2
+                                $("ul.memberList").append(newli);
                             }
-                        } else {
-                            //下拉加载 gType==2
-                            $("ul.memberList").append(newli);
-                        }
-                        if (newli != '') {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-                        } else {
+                            if (newli != '') {
+                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                            } else {
+                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                            }
+                        },
+                        error: function (xhr, type, errerThrown) {
+                            mui.toast('网络异常,请稍候再试');
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                         }
-                    },
-                    error: function (xhr, type, errerThrown) {
-                        mui.toast('网络异常,请稍候再试');
-                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                    }
-                });
+                    });
+                } else {
+                    var url = "{:url('api/member/getmemberlistpage','','',true)}" + '/?page=' + page;
+                    mui.ajax({
+                        url: url,
+                        data: {
+                            keyword: keyword,
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            console.log(data)
+                            var newli = '';
+                            if (data.code == 200) {
+                                for (var i = 0; i <= data.data.data.length - 1; i++) {
+                                    newli += '<li class="mui-table-view-cell mui-media listli">';
+                                    newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '" style="width: 45px !important;height: 45px !important;margin-top: 4px;"><div class="mui-media-body wd60">' + data.data.data[i].member;
+                                    newli += '<p>' + data.data.data[i].province + '&nbsp;' + data.data.data[i].city + '&nbsp;' + data.data.data[i].area + '</p></div><div class="price-frame"><button type="button" class="btn bgred" style="margin-top:5px" onclick="addMember(' + data.data.data[i].id + ')">邀请</button></div>'
+                                    newli += '</li>';
+                                }
+                            }
+                            if (gType == 1) {
+                                //上拉刷新
+                                $("ul.memberList").empty().append(newli);
+                                mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                                mui('#refreshContainer').pullRefresh().refresh(true);
+                                if (newli == '') {
+                                    $("ul.memberList").html('<p class="nodata">没有相关数据哦</p>');
+                                }
+                            } else {
+                                //下拉加载 gType==2
+                                $("ul.memberList").append(newli);
+                            }
+                            if (newli != '') {
+                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                            } else {
+                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                            }
+                        },
+                        error: function (xhr, type, errerThrown) {
+                            mui.toast('网络异常,请稍候再试');
+                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                        }
+                    });
+                }
+
+
             };
-
-
         })
+
+        // 添加会员
+        function addMember(member_id) {
+            var team_id = "{$team_id}";
+            mui.ajax("{:url('api/team/addmember')}", {
+                data: {
+                    team_id: team_id,
+                    member_id: member_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast("已经发送请求，请耐心等待回复");
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+
+        // 添加学生
+        function addStudent(student_id, member_id) {
+            var team_id = "{$team_id}";
+            mui.ajax("{:url('api/team/addmember')}", {
+                data: {
+                    team_id: team_id,
+                    member_id: member_id,
+                    student_id: student_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast("添加成功");
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
     </script>
 </body>
 

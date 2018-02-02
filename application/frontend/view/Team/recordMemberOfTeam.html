@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>记录非会员信息</title>
+    <title>创建新会员</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -24,19 +24,29 @@
     <div class="mui-content pt">
 
         <div class="camp-list camp-lesson-list">
-            <input type="hidden" name="id" class="data" value="{$teamInfo.id}">
+            <input type="hidden" name="team_id" class="data" value="{$teamInfo.id}">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
 
             <form action="" class="mui-input-group mt55" id="logoframe">
 
                 <div class="mui-input-row price-input-row">
-                    <label>姓名</label>
+                    <label>球员名称</label>
                     <input type="text" name="name" class="data" value="" placeholder="请输入姓名">
                 </div>
 
                 <div class="mui-input-row price-input-row">
-                    <label>手机号</label>
-                    <input type="text" name="telephone" class="data" value="" placeholder="请输入手机号">
+                    <label>球员号码</label>
+                    <input type="text" name="number" class="data" value="" placeholder="请输入球员号码">
+                </div>
+
+                <div class="mui-input-row price-input-row">
+                    <label>球员位置</label>
+                    <input type="text" name="position" class="data" value="" placeholder="请输入球员位置">
+                </div>
+
+                <div class="mui-input-row price-input-row">
+                    <label>球员手机号</label>
+                    <input type="text" name="telephone" class="data" value="" placeholder="请输入球员手机号">
                 </div>
 
                 <div class="page-header" style="background: #efeff4;">
@@ -50,7 +60,7 @@
                     提交
                 </li>
             </ul>
-            
+
         </div>
     </div>
 
@@ -63,7 +73,7 @@
 
             var name = $("input[name=name]").val();
             if (name == '') {
-                mui.toast("请填写非会员的姓名");
+                mui.toast("请填写球员名称");
                 return false;
             }
             if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
@@ -75,7 +85,7 @@
             datas = wooApi.getInputData('select', 'data', data);
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            var url = "{:url('api/')}";
+            var url = "{:url('api/team/addnoregmember')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, function () {
