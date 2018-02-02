@@ -468,7 +468,7 @@ class CampMember extends Base
             $map['type'] = input('param.type', 1);
             $list = Db::view('camp_member')
                 ->view('student', ['id' => 'student_id', 'student', 'student_sex', 'student_avatar'], 'student.member_id=camp_member.member_id')
-                ->order('id desc')
+                ->order('camp_member.id desc')
                 ->where($map)->page($page, 10)->select();
 
             if (empty($list)) {
@@ -508,6 +508,7 @@ class CampMember extends Base
             $map['type'] = input('param.type', 1);
             $list = Db::view('camp_member')
                 ->view('student', ['id' => 'student_id', 'member_id', 'student', 'student_sex', 'student_avatar'], 'student.member_id=camp_member.member_id')
+                ->order('camp_member.id desc')
                 ->where($map)->paginate(10);
             //dump($list);
             if ($list->isEmpty()) {
