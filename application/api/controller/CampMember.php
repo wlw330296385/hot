@@ -452,24 +452,24 @@ class CampMember extends Base
             // 关键字搜索学员名
             $keyword = input('param.keyword');
             if (isset($keyword)) {
-                // keyword == null 处理
-                if ($keyword == null) {
-                    unset($map['keyword']);
-                } elseif ($keyword != null) {
-                    if (!empty($keyword)) {
-                        if (!ctype_space($keyword)){
-                            // 关键字不为空 组合查询条件
-                            $map['student.student'] = ['like', "%$keyword%"];
-                        }
+                if (!empty($keyword)) {
+                    if (!ctype_space($keyword)){
+                        // 关键字不为空 组合查询条件
+                        $map['student.student'] = ['like', "%$keyword%"];
                     }
                 }
                 unset($map['keyword']);
             }
+            // keyword == null 处理
+            if ($keyword == null) {
+                unset($map['keyword']);
+            }
 
-            $map['type'] = input('param.type', 1);
+            $map['camp_member.type'] = input('param.type', 1);
+            $map['camp_member.status'] = input('param.status', 1);
             $list = Db::view('camp_member')
                 ->view('student', ['id' => 'student_id', 'student', 'student_sex', 'student_avatar'], 'student.member_id=camp_member.member_id')
-                ->order('id desc')
+                ->order('camp_member.id desc')
                 ->where($map)->page($page, 10)->select();
 
             if (empty($list)) {
@@ -494,22 +494,23 @@ class CampMember extends Base
             // 关键字搜索学员名
             $keyword = input('param.keyword');
             if (isset($keyword)) {
-                // keyword == null 处理
-                if ($keyword == null) {
-                    unset($map['keyword']);
-                } elseif ($keyword != null) {
-                    if (!empty($keyword)) {
-                        if (!ctype_space($keyword)){
-                            // 关键字不为空 组合查询条件
-                            $map['student.student'] = ['like', "%$keyword%"];
-                        }
+                if (!empty($keyword)) {
+                    if (!ctype_space($keyword)){
+                        // 关键字不为空 组合查询条件
+                        $map['student.student'] = ['like', "%$keyword%"];
                     }
                 }
                 unset($map['keyword']);
             }
-            $map['type'] = input('param.type', 1);
+            // keyword == null 处理
+            if ($keyword == null) {
+                unset($map['keyword']);
+            }
+            $map['camp_member.type'] = input('param.type', 1);
+            $map['camp_member.status'] = input('param.status', 1);
             $list = Db::view('camp_member')
                 ->view('student', ['id' => 'student_id', 'member_id', 'student', 'student_sex', 'student_avatar'], 'student.member_id=camp_member.member_id')
+                ->order('camp_member.id desc')
                 ->where($map)->paginate(10);
             //dump($list);
             if ($list->isEmpty()) {
