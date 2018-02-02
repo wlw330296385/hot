@@ -124,6 +124,11 @@ class BonusService {
         }
     }
 
+    public function getBonusMember($map){
+        $result = $this->BonusMemberModel->where($map)->find();
+        return $result;
+    }
+
     // 发放好几个礼包
     public function createBonusMemberAll(){
 
