@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
     <!--顶部下滑菜单 menu-wrapper.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/menu.wrapper.css" />
     <!--选择器样式-->
@@ -317,84 +316,6 @@
 
     <!--底部导航-->
     {layout name="Layout/footer"}
-
-
-    <!-- 礼包卡券弹框 -->
-    <div id="giftpopover" class="mui-popover">
-        <div id="gift-open"></div>
-        <span id="gift-close" class="mui-icon mui-icon-close"></span>
-        <div class="page-header">
-            <span class="f14">亲爱的会员们，为了答谢您对篮球管家的大力支持，我们将为您送上以下新年大礼包，新的一年祝福。。。。</span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll middle-coupon">
-
-                <div class="coupon">
-                    <div class="orangebg">
-                        <div class="cNum">100<span>元</span></div>
-                        <div class="cName">篮球摄影现金券</div>
-                        <div class="cDate">2018-03-1 至 2018-03-31</div>
-                        <i></i>
-                    </div>
-                    <div class="tips">
-                        <span>剩余领取：1000</span>
-                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>
-                    </div>
-                </div>
-                <div class="coupon">
-                    <div class="orangebg">
-                        <div class="cNum">100<span>元</span></div>
-                        <div class="cName">篮球摄影现金券</div>
-                        <div class="cDate">2018-03-1 至 2018-03-31</div>
-                        <i></i>
-                    </div>
-                    <div class="tips">
-                        <span>剩余领取：1000</span>
-                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>
-                    </div>
-                </div>
-                <div class="coupon">
-                    <div class="orangebg">
-                        <div class="cNum">100<span>元</span></div>
-                        <div class="cName">篮球摄影现金券</div>
-                        <div class="cDate">2018-03-1 至 2018-03-31</div>
-                        <i></i>
-                    </div>
-                    <div class="tips">
-                        <span>剩余领取：1000</span>
-                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>
-                    </div>
-                </div>
-                <div class="coupon">
-                    <div class="orangebg">
-                        <div class="cNum">100<span>元</span></div>
-                        <div class="cName">篮球摄影现金券</div>
-                        <div class="cDate">2018-03-1 至 2018-03-31</div>
-                        <i></i>
-                    </div>
-                    <div class="tips">
-                        <span>剩余领取：1000</span>
-                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>
-                    </div>
-                </div>
-                <div class="coupon">
-                    <div class="orangebg">
-                        <div class="cNum">100<span>元</span></div>
-                        <div class="cName">篮球摄影现金券</div>
-                        <div class="cDate">2018-03-1 至 2018-03-31</div>
-                        <i></i>
-                    </div>
-                    <div class="tips">
-                        <span>剩余领取：1000</span>
-                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-        <div class="hbTips"><a href="{$fasturl}">非会员注册后即可领取礼包，立即注册<span class="mui-icon mui-icon-forward"></span></a></div>
-    </div>
-</body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <!--选择器-->
@@ -460,34 +381,7 @@
 
     $(function () {
 
-        //////////////////////////////////////////////////////////////////////////////////////// 大礼包相关
-        //阻止点击弹出层以外地方退出弹出层
-        window.addEventListener('tap', function(e) {
-            e.target.className == 'mui-backdrop mui-active' && e.stopPropagation();
-        },true)
-        //打开获取大礼包
-        if ($('input[name=mid]').val() == 1 || $('input[name=mid]').val() == 6) {
-            mui("#giftpopover").popover('show', document.getElementById("tabbar"));
-        }
-        //关闭大礼包弹出层
-        mui("body").on("tap", "#gift-close", function () {
-            mui("#giftpopover").popover('hide');
-        });
-        //打开红包
-        $("#gift-open").on("tap", "", function () {
-            if ($('input[name=mid]').val() == 0) {
-                mui.confirm('请注册成为篮球管家会员领取大礼包，感谢您的支持！', '提示', ['取消', '立即注册'], function (e) {
-                    if (e.index === 1) {
-                        window.location.href = "{$fasturl}";
-                    }else{
-                        $("#gift-open").hide();
-                    }
-                });
-            }else{
-                $(this).hide();
-            }
-        });
-        ////////////////////////////////////////////////////////////////////////////////////////
+        
 
         //未开发提示
         $(".goConfirm").click(function () {
@@ -662,6 +556,11 @@
         });
     };
 
-</script>
+</script>   
+{:widget('Bonus/bonus')} 
+</body>
+
+
+
 
 </html>

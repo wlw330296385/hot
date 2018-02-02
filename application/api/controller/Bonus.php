@@ -7,7 +7,7 @@ class Bonus extends Base{
  
     public function _initialize(){
         parent::_initialize();
-       $this->BonusService = new BonusService;
+        $this->BonusService = new BonusService;
     }
  
     // 获取礼包列表带分页
@@ -43,5 +43,24 @@ class Bonus extends Base{
         }
     }
 
-    public function 
+    // 领取一个礼包
+    public function grantBounusApi(){
+        try{
+            $bonus_id = input('param.bonus_id');
+            $member_id = $this->memberInfo['id'];
+            if(!$member_id){
+                return json(['code'=>100,'msg'=>'请先登录']);
+            }
+            $bonusInfo = $this->BonusService->getbonusInfo(['id'=>$bonus_id,'status'=>1]);
+            if(!$bonusInfo){
+                return json(['code'=>100,'msg'=>'礼包无效']);
+            }
+            $memebr = $this->memberInfo['member'];
+            $data = ['bonus_id'=>$bonus_id,'member_id'=>$member_id,'member'=>$member,'bonus'=>$bonusInfo['bonus']];
+            $result = $this->BonusService->createBonusMember($data);
+            return json($result);
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }

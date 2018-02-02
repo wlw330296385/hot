@@ -16,14 +16,14 @@ class BonusService {
 
     // 获取所有礼包
     public function getBonusList($map=[],$page = 1,$order='',$paginate = 10) {
-        // $result = $this->BonusModel->with('ItemCounpon')->where($map)->order($order)->page($page,$paginate)->select();
-        $result = Db::view('bonus','*')
-                ->view('item_coupon','coupon,coupon_des,image_url,price,status as coupon_status,id as coupon_id','item_coupon.target_id = bonus.id')
-                ->where(['item_coupon.target_type'=>-1])
-                ->order('bonus.id desc')
-                ->page($page,10)
-                ->select();
-
+        $result = $this->BonusModel->with('ItemCoupon')->where($map)->order($order)->page($page,$paginate)->select();
+        // $result = Db::view('bonus','*')
+        //         ->view('item_coupon','coupon,coupon_des,image_url,price,status as coupon_status,id as coupon_id','item_coupon.target_id = bonus.id')
+        //         ->where(['item_coupon.target_type'=>-1])
+        //         ->order('bonus.id desc')
+        //         ->page($page,10)
+        //         ->select();
+        $result = $this->BonusModel->where($map)->order($order)->page($page,$paginate)->select();
         return $result;
     }
 
@@ -52,13 +52,14 @@ class BonusService {
 
     // 获取一个礼包
     public function getBonusInfo($map) {
+        // $result = Db::view('bonus','*')
+        //         ->view('item_coupon','coupon,coupon_des,image_url,price,status as coupon_status,id as coupon_id','item_coupon.target_id = bonus.id','LEFT')
+        //         ->where($map)
+        //         ->where(['item_coupon.target_type'=>-1,'item_coupon.status'=>1])
+        //         ->order('bonus.id desc')
+        //         ->find();
         $result = $this->BonusModel->where($map)->find();
-        if ($result){
-            $res = $result->toArray();
-            return $res;
-        }else{
-            return $result;
-        }
+        return $result;
     }
 
     // 获取一个礼包-用户
@@ -105,8 +106,30 @@ class BonusService {
         }
     }
 
-    
+    // 发放礼包
+    public function createBonusMember($data){
+        $result = $this->BonusMemberModel->save($data);
+        if($result){
+            return ['msg' => '操作成功', 'code' => 200, 'data' => $this->BonusMemberModel->id];
+        }else{
+            return ['msg'=>'操作失败', 'code' => 100];
+        }
+    }
 
+    // 发放好几个礼包
+    public function createBonusMemberAll(){
+
+    }
+
+    //编辑被发放的礼包
+    public function updateBonusMember($data,$map){
+        $result = $this->BonusMemberModel->save($data,$map);
+        if($result){
+            return ['msg' => '操作成功', 'code' => 200];
+        }else{
+            return ['msg'=>'操作失败', 'code' => 100];
+        }
+    }
 
 }
 
