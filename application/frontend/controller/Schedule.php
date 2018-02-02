@@ -98,10 +98,13 @@ class Schedule extends Base
 		}
 		$updateSchedule = 0;
 
-        // 判断权限
-        $isPower = $this->ScheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
-        if($isPower>=2){
-            $updateSchedule = 1;
+		// 已结算课时不能编辑
+        if ($scheduleInfo['is_settle'] != 1) {
+            // 判断权限
+            $isPower = $this->ScheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
+            if($isPower>=2){
+                $updateSchedule = 1;
+            }
         }
 
 
@@ -185,6 +188,11 @@ class Schedule extends Base
 		if(!$scheduleInfo){
 			$this->error('无此课时数据');
 		}
+
+        // 已结算课时不能编辑
+        if ($scheduleInfo['is_settle'] == 1) {
+            $this->error('课时已结算，不能修改了');
+        }
 
         $isPower = $this->ScheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
         if($isPower<2){
