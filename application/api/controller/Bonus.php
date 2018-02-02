@@ -10,6 +10,7 @@ class Bonus extends Base{
        $this->BonusService = new BonusService;
     }
  
+    // 获取礼包列表带分页
     public function getBonusListApi(){
         try{
             $map = input('post.');
@@ -27,6 +28,7 @@ class Bonus extends Base{
         }
     }
  
+    // 获取礼包无分页page
     public function getBonusListNoPageApi(){
         try{
             $map = input('post.');
@@ -41,4 +43,5 @@ class Bonus extends Base{
         }
     }
 
+    public function 
 }
