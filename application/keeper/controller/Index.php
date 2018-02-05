@@ -1,10 +1,83 @@
 <?php
 namespace app\keeper\controller;
+use app\service\MemberService;
+use app\service\WechatService;
 
-class Index
+class Index extends Base
 {
-    public function index()
-    {
-        return '<style type="text/css">*{ padding: 0; margin: 0; } div{ padding: 4px 48px;} a{color:#2E5CD5;cursor: pointer;text-decoration: none} a:hover{text-decoration:underline; } body{ background: #fff; font-family: "Century Gothic","Microsoft yahei"; color: #333;font-size:18px;} h1{ font-size: 100px; font-weight: normal; margin-bottom: 12px; } p{ line-height: 1.6em; font-size: 42px }</style><div style="padding: 24px 48px;"> <h1>:)</h1><p> ThinkPHP V5<br/><span style="font-size:30px">十年磨一剑 - 为API开发设计的高性能框架</span></p><span style="font-size:22px;">[ V5.0 版本由 <a href="http://www.qiniu.com" target="qiniu">七牛云</a> 独家赞助发布 ]</span></div><script type="text/javascript" src="http://tajs.qq.com/stats?sId=9347272" charset="UTF-8"></script><script type="text/javascript" src="http://ad.topthink.com/Public/static/client.js"></script><thinkad id="ad_bd568ce7058a1091"></thinkad>';
+    // 管家版首页
+    public function index() {
+        $bannerList = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1])->order('ord asc')->limit(3)->select();
+
+        // 热门文章
+        $ArticleService= new \app\service\ArticleService;
+        $ArticleList = $ArticleService->getArticleList([],1,'hot DESC',4);
+
+        $this->assign('bannerList',$bannerList);
+        $this->assign('ArticleList',$ArticleList);
+        return view('Index/index');
+    }
+
+
+    // 微信授权回调
+    public function wxindex() {
+        $WechatS = new WechatService;
+        $memberS = new MemberService();
+        $userinfo = $WechatS->oauthUserinfo();
+        if ($userinfo) {
+            cache('userinfo_'.$userinfo['openid'], $userinfo);
+            $avatar = str_replace("http://", "https://", $userinfo['headimgurl']);
+            //$avatar = $memberS->downwxavatar($userinfo);
+
+            $dbMember = db('member');
+            $isMember = $dbMember->where(['openid' => $userinfo['openid']])->find();
+            if ($isMember) {
+                unset($isMember['password']);
+                cookie('mid', $isMember['id']);
+                cookie('openid', $isMember['openid']);
+                cookie('member', md5($isMember['id'].$isMember['member'].config('salekey')));
+                session('memberInfo', $isMember, 'think');
+                $this->redirect('keeper/Index/index');
+            } else {
+                $member = [
+                    'id' => 0,
+                    'openid' => $userinfo['openid'],
+                    'member' => $userinfo['nickname'],
+                    'nickname' => $userinfo['nickname'],
+                    'avatar' => $avatar,
+                    'hp' => 0,
+                    'level' => 0,
+                    'telephone' =>'',
+                    'email' =>'',
+                    'realname'  =>'',
+                    'province'  =>'',
+                    'city'  =>'',
+                    'area'  =>'',
+                    'location'  =>'',
+                    'sex'   =>0,
+                    'height'    =>0,
+                    'weight'    =>0,
+                    'charater'  =>'',
+                    'shoe_code' =>0,
+                    'birthday'  =>'0000-00-00',
+                    'create_time'=>0,
+                    'pid'   =>0,
+                    'hp'    =>0,
+                    'cert_id'   =>0,
+                    'score' =>0,
+                    'flow'  =>0,
+                    'balance'   =>0,
+                    'remarks'   =>0,
+                    'hot_id'=>00000000,
+                ];
+                cookie('mid', 0);
+                cookie('openid', $userinfo['openid']);
+                cookie('member', md5($member['id'].$member['member'].config('salekey')) );
+                session('memberInfo', $member, 'think');
+                $this->redirect('keeper/Index/index');
+            }
+        } else {
+            $this->redirect('keeper/index/index');
+        }
     }
 }

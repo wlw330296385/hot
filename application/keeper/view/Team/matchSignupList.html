@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>报名人员列表</title>
+    <title>参赛人员列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -11,24 +11,22 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-
 </head>
 
 <body class=whitebg>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-        <h1 class="mui-title">{$eventInfo.organization}</h1>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
+        <h1 class="mui-title">{$matchInfo.name}</h1>
     </header>
 
     <div class="mui-content">
 
-
         <div id="refreshContainer" class="mui-scroll-wrapper coach" style="margin-top: 44px">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b event">
-
-                </ul>
+                <ul class="mui-table-view detalis-list list border-b match"></ul>
             </div>
         </div>
 
@@ -36,9 +34,6 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <script src="/static/frontend/js/wooApi.js"></script>
-    <script src="/static/frontend/js/common.js"></script>
-    <script src="/static/frontend/js/city.data-3.js"></script>
     <script>
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
@@ -92,16 +87,18 @@
                 }, 100);
             }
         });
-        
+
         //接口获取数据并追加到页面
         var toList = function (page, gType) {
             //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/event_member/getEventMemberListByPageApi',['event_id'=>$eventInfo.id])}" + '/?page=' + page;
-            var event_id = "{$eventInfo.id}";
+            var url = "{:url('api/match/recordmemberpage')}" + '/?page=' + page;
+            var match_id = "{$matchInfo.id}";
             mui.ajax({
                 url: url,
                 data: {
-                    event_id: event_id
+                    match_id: match_id,
+                    status: 1,
+                    is_apply: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -113,20 +110,23 @@
                     console.log(data)
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell mui-media"><i class="f12 fr colorgray"><span class="colororange">' + data.data.data[i].total + '</span> 人报名</i><p class="pb4"><span class="colororange">' + data.data.data[i].student + '</span>：' + data.data.data[i].remarks + '</p><ul class="mui-row table"><li class="mui-col-xs-6 mui-col-sm-6"><p> Tel：' + data.data.data[i].contact + '</p></li><li class="mui-col-xs-6 mui-col-sm-6 mui-text-right"><p>' + data.data.data[i].create_time + '</p></li></ul></li>'
+                            newli += '<li class="mui-table-view-cell mui-media listli">'
+                            newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].avatar + '"><div class="mui-media-body">' + data.data.data[i].member + '';
+                            newli += '<p class="mui-ellipsis">' + data.data.data[i].contact_tel + '</p></div><div class="price-frame rightLocation" style="padding-right:0">' + data.data.data[i].create_time + '</div>'
+                            newli += '</li>';
                         }
                     }
                     if (gType == 1) {
                         //上拉刷新
-                        $("ul.event").empty().append(newli);
+                        $("ul.match").empty().append(newli);
                         mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                         mui('#refreshContainer').pullRefresh().refresh(true);
                         if (newli == '') {
-                            $("ul.event").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
+                            $("ul.match").html('<p class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i>没有相关数据哦</p>');
                         }
                     } else {
                         //下拉加载 gType==2
-                        $("ul.event").append(newli);
+                        $("ul.match").append(newli);
                     }
                     if (newli != '') {
                         mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);

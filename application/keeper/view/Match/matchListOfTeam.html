@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>训练营活动列表</title>
+    <title>球队比赛列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -18,10 +18,10 @@
     <header id="header" class="mui-bar mui-bar-nav for-tab">
         <div class="camp-lesson-list">
             <div class="mui-segmented-control mb">
-                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id' => $organization_id])}"></a>
+                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('team/teamManage')}"></a>
                 <a class="mui-control-item mui-active" href="#onlineEventList">上架</a>
                 <a class="mui-control-item" href="#offlineEventList">下架</a>
-                <a class="mui-control-item" href="{:url('event/createEvent',['organization_id' => $organization_id])}">添加</a>
+                <a class="mui-control-item" href="{:url('match/createMatch')}">添加</a>
             </div>
         </div>
     </header>
@@ -62,7 +62,6 @@
         //初始化全局变量
         var onCount = 1;
         var offCount = 1;
-        // var outCount = 1;
 
         mui('#onlineEventList').pullRefresh({
             down: {
@@ -146,57 +145,55 @@
 
     })
 
-    //接口获取数据并追加到页面
-    var toList = function (wList, page, gType, status, is_max) {
+    // 接口获取数据并追加到页面
+    var toList = function (wList, page, gType, status) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/event/getEventListByPageApi',['organization_id'=>$eventInfo['organization_id']])}" + '/?page=' + page;
-        var organizationID = "{$organization_id}";
+        var url = "{:url('api/team/teameventlist')}" + '/?page=' + page;
+        var team_id = ""
         mui.ajax({
             url: url,
             data: {
-                organization_id: organizationID,
+                team_id:team_id,
                 status: status,
-                is_max: is_max
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
             timeout: 10000,//超时时间设置为10秒；
             headers: { 'Content-Type': 'application/json' },
-            //processData:false,
             success: function (data) {
+                console.log(data)
                 var newli = '';
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
 
-                        var time = gettime();
-                        console.log(time)
-                        console.log(data.data.data[i].ends)
-                        var urls = "{:url('event/eventInfoOfCamp')}" + '/event_id/' + data.data.data[i].id + '/organization_id/' + organizationID;
+                        // 获取当前时间
+                        var d = new Date()
+                        var minutes = d.getMinutes()
+                        var hours = d.getHours()
+                        var day = d.getDate()
+                        var month = d.getMonth() + 1
+                        var year = d.getFullYear()
+                        var time = year + "-" + month + "-" + day + " " + hours + ":" + minutes;
 
+                        var urls = "{:url('team/eventInfo')}" + '/event_id/' + data.data[i].id + '/team_id/' + "";
                         newli += '<li class="mui-table-view-cell mui-media listli">'
                         if (status == 1) {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         } else if (status == 2) {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '" style="width:70px!important;height: 56px!important;"><div class="mui-media-body" style="width:55%">' + data.data.data[i].event + '';
-                        if (data.data.data[i].is_max == "已满人") {
-                            newli += '<font class="tipCorner bgred">满人</font>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '" style="width:70px!important;height: 56px!important;"><div class="mui-media-body" style="width:51%">' + data.data[i].event + '';
+                        if (data.data[i].is_max == "已满人") {
+                            newli += '<font style="color:red">&nbsp;&nbsp;[满人]</font>';
                         }
-                        if (data.data.data[i].ends < time) {
-                            newli += '<font class="tipCorner bggray">过期</font>';
+                        if (data.data[i].end_time < time) {
+                            newli += '<font style="color:#b1b0b0">&nbsp;&nbsp;[结束]</font>';
                         }
-                        newli += '<p class="mui-ellipsis">' + data.data.data[i].event_type + ' &nbsp;/&nbsp; ' + data.data.data[i].participator + ' 报名</p></div><div class="price-frame mui-text-center">'
-                        if (data.data.data[i].is_free == 2) {
-                            newli += '<p class="price">￥<strong>' + data.data.data[i].price + '</strong></p>';
-                        } else {
-                            newli += '<p class="price" style="color:#59b200;font-size:14px;">免费</p>';
-                        }
-                        newli += '<p class="address">' + data.data.data[i].area + '</p></div></a></div><input type="hidden" class="is_overdue" value="' + data.data.data[i].is_overdue + '">';
+                        newli += '<p class="mui-ellipsis">' + data.data[i].create_time + '</p></div><div class="price-frame rightLocation" style="padding-right:0">' + data.data[i].reg_number + '人参与</a></div>'
                         newli += '</li>';
-
                     }
                 }
+
 
                 if (gType == 1) {
                     //上拉刷新
@@ -225,6 +222,7 @@
         });
     };
 
+
     //拖拽后显示操作图标，点击操作图标删除元素；
     $('.OA_task_event').on('tap', '.mui-btn', function (event) {
         var elem = this;
@@ -235,8 +233,7 @@
         var action = elem.getAttribute('data-action');
         mui.confirm('确认该活动' + txt + '?', '提示', btnArray, function (e) {
             if (e.index == 0) {
-                //li.parentNode.removeChild(li);
-                var apiurl = "{:url('api/event/removeevent')}";
+                var apiurl = "{:url('api/team/removeevent')}";
                 mui.ajax(apiurl, {
                     data: {
                         eventid: eventid,
@@ -246,7 +243,6 @@
                     type: 'post',
                     headers: { 'Content-Type': 'application/json' },
                     success: function (data) {
-                        //console.log(data);
                         if (data.code == 200) {
                             li.parentNode.removeChild(li);
                             location.reload();
@@ -265,22 +261,6 @@
             }
         });
     });
-
-    //创建补0函数
-    function p(s) {
-        return s < 10 ? '0' + s : s;
-    }
-    //获取时间
-    function gettime() {
-        // 获取当前时间
-        var d = new Date()
-        var minutes = d.getMinutes()
-        var hours = d.getHours()
-        var day = d.getDate()
-        var month = d.getMonth() + 1
-        var year = d.getFullYear()
-        return year + '-' + p(month) + '-' + p(day) + " " + p(hours) + ":" + p(minutes);
-    }
 
 </script>
 

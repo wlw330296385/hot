@@ -11,18 +11,18 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-
 </head>
 
 <body class=whitebg>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-        <h1 class="mui-title">{$eventInfo.organization}</h1>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
+        <h1 class="mui-title">{$eventInfo.event}</h1>
     </header>
 
     <div class="mui-content">
-
 
         <div id="refreshContainer" class="mui-scroll-wrapper coach" style="margin-top: 44px">
             <div class="mui-scroll">
@@ -36,9 +36,6 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <script src="/static/frontend/js/wooApi.js"></script>
-    <script src="/static/frontend/js/common.js"></script>
-    <script src="/static/frontend/js/city.data-3.js"></script>
     <script>
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
@@ -92,11 +89,11 @@
                 }, 100);
             }
         });
-        
+
         //接口获取数据并追加到页面
         var toList = function (page, gType) {
             //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/event_member/getEventMemberListByPageApi',['event_id'=>$eventInfo.id])}" + '/?page=' + page;
+            var url = "{:url('api/team/teameventmemberlistpage',['event_id'=>$eventInfo.id])}" + '/?page=' + page;
             var event_id = "{$eventInfo.id}";
             mui.ajax({
                 url: url,
@@ -113,7 +110,10 @@
                     console.log(data)
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell mui-media"><i class="f12 fr colorgray"><span class="colororange">' + data.data.data[i].total + '</span> 人报名</i><p class="pb4"><span class="colororange">' + data.data.data[i].student + '</span>：' + data.data.data[i].remarks + '</p><ul class="mui-row table"><li class="mui-col-xs-6 mui-col-sm-6"><p> Tel：' + data.data.data[i].contact + '</p></li><li class="mui-col-xs-6 mui-col-sm-6 mui-text-right"><p>' + data.data.data[i].create_time + '</p></li></ul></li>'
+                            newli += '<li class="mui-table-view-cell mui-media listli">'
+                            newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd73">' + data.data.data[i].member + '';
+                            newli += '<p class="mui-ellipsis">' + data.data.data[i].contact_tel + '</p></div>'
+                            newli += '</li>';
                         }
                     }
                     if (gType == 1) {
