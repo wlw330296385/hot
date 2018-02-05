@@ -93,7 +93,12 @@
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg);
+                var btnArray = ['取消', '确定'];
+                mui.confirm(ajaxResult.msg + "，赶紧去邀请他吧", '', btnArray, function (e) {
+                    if (e.index == 1) {
+                        window.history.back();
+                    }
+                });
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                     if (data.code === 200) {
                         $('input[name=__token__]').val(data.data);
