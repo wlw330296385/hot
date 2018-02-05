@@ -36,8 +36,16 @@
 
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b article">
-                </ul>
+                <ul class="mui-table-view article">
+                    <li class="mui-table-view-cell mui-media">
+                        <a href="javascript:;">
+                            <img class="mui-media-object mui-pull-left" src="../images/shuijiao.jpg">
+                            <div class="mui-media-body">
+                                幸福
+                                <p class='mui-ellipsis'>能和心爱的人一起睡觉，是件幸福的事情；可是，打呼噜怎么办？</p>
+                            </div>
+                        </a>
+                    </li>
             </div>
         </div>
 
@@ -176,8 +184,16 @@
                                 mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                                 mui('#refreshContainer').pullRefresh().refresh(true);
                                 let urls = "{:url('article/articleInfo')}" + '/article_id/' + data.data[i].id;
-
-                                newli += `<li class="mui-table-view-cell mui-media listli"><div class="mui-slider-handle"><a href="${urls}"><img class="mui-media-object mui-pull-left " src="${data.data[i].covers}" style="width:70px!important;height: 56px!important;"><div class="mui-media-body wd52">${data.data[i].title}<p>${data.data[i].abstract}</p></div>`;
+                                newli += ` <li class="mui-table-view-cell mui-media">
+                                                <a href="${urls}">
+                                                    <img class="mui-media-object mui-pull-left" src="${data.data[i].covers}">
+                                                    <div class="mui-media-body">
+                                                        ${data.data[i].title}
+                                                        <p class='mui-ellipsis'>${data.data[i].abstract}</p>
+                                                    </div>
+                                                </a>
+                                            </li>`;
+                                
                                 if (newli == '') {
                                     $("ul.article").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
                                 }
