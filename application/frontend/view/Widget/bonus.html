@@ -6,7 +6,7 @@
         <span id="gift-close" class="mui-icon mui-icon-closeempty"></span>
         <div class="page-header">
             <h4>{$bonusInfo.bonus}</h4>
-            <p>{$bonusInfo.title}感谢你那啥那啥那啥那啥那啥那啥那啥那啥那啥那啥那啥那啥</p>
+            <p>{$bonusInfo.title}</p>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll middle-coupon">
@@ -42,7 +42,18 @@
         },true)
         //打开获取大礼包
         if(!isBonus){
-                mui("#giftpopover").popover('show', document.getElementById("tabbar"));
+            mui("#giftpopover").popover('show', document.getElementById("tabbar"));
+            $("#gift-open").animate({
+                width:'+=20px',
+                height:'+=20px',
+                left:'-=10px',
+                top:'-=10px',
+            },"fast",function(){$("#gift-open").animate({
+                width:'-=20px',
+                height:'-=20px',
+                left:'+=10px',
+                top:'+=10px',
+            },"fast")});
         }
         
         //关闭大礼包弹出层
@@ -51,7 +62,11 @@
         });
         //打开红包
         $("#gift-open").on("tap", "", function () {
-            $(this).hide();
+//            $(this).hide();
+            $(this).animate({
+                top:'-400px',
+                opacity:'0'
+            },"fast");
             if ({$memberInfo.id} == 0) {
                 mui.confirm('请注册成为篮球管家会员领取大礼包，感谢您的支持！', '提示', ['取消', '立即注册'], function (e) {
                     if (e.index === 1) {
