@@ -47,7 +47,9 @@
         <form action="" class="mui-input-group">
             <div class="mui-input-row picker btn" id="demo6" data-options='{"type":"month"}'>
                 <div class="mui-navigate-right">
-                    <label>{$teamInfo.name}</label>
+                    <label style="line-height:20px">
+                        <strong class="f16">{$teamInfo.name}</strong>
+                    </label>
                     <span id="result" class="ui-alert year">选择年份</span>
                 </div>
             </div>
@@ -59,6 +61,22 @@
                 </ul>
             </div>
         </div>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <a href="/frontend/">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <div class="goConfirm">分享</div>
+            </li>
+            <a href="{:url('team/teamInfo',['team_id'=>$teamInfo['id']])}">
+                <li class="mui-col-xs-8 mui-col-sm-8 opli bgred">
+                    球队主页
+                </li>
+            </a>
+        </ul>
 
     </div>
 
@@ -91,6 +109,11 @@
         })(mui);
 
         $(function () {
+
+            //未开发提示
+            $(".goConfirm").on("tap", function () {
+                mui.toast('暂未开放，敬请期待');
+            })
 
             //初始化全局变量
             var count = 1;
