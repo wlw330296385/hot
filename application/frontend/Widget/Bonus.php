@@ -4,12 +4,12 @@ use Think\Controller;
 use Think\Db;
 class bonus extends Controller{
 	public function bonus(){
+        $bonus_type = input('param.bonus_type',1);
 		//平台礼包
         $BonusService = new \app\admin\service\BonusService;
-    	$bonusInfo = $BonusService->getBonusInfo(['bonus.id'=>1]);
+    	$bonusInfo = $BonusService->getBonusInfo(['bonus_type'=>1,'status'=>1]);
     	$couponList = [];
     	$item_coupon_ids = [];
-    	$isBonus = -1;
     	if($bonusInfo){
     		$res = $bonusInfo->toArray();
     		$ItemCoupon = new \app\model\ItemCoupon;

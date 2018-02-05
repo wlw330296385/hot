@@ -15,7 +15,8 @@ class Index extends Controller{
             ['name'=>'包车','price'=>5200],
             ['name'=>'不包车','price'=>5000]
         ];
-        
+        $b = in_array('1,2,3,4', ['a'=>1]);
+        dump($b);
         echo json_encode($a);
     }
 
@@ -29,6 +30,16 @@ class Index extends Controller{
 
 
     }
+
+    public function eventMemberTotal(){
+        $list = db('bill')->where(['goods_type'=>2,'status'=>1,'is_pay'=>1])->select();
+        foreach ($list as $key => $value) {
+            db('event_member')->where(['member_id'=>$value['member_id'],'event_id'=>$value['goods_id']])->update(['total'=>$value['total']]);
+        }
+
+    }
+
+
     /** 
     * @desc 根据两点间的经纬度计算距离 
     * @param float $lat 纬度值 
