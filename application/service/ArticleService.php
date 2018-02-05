@@ -12,14 +12,14 @@ class ArticleService {
     }
 
 
-    // 获取所有银行卡
+    // 获取所有文章
     public function getArticleList($map=[],$page = 1,$order='',$paginate = 10) {
         $result = Article::where($map)->order($order)->page($page,$paginate)->select();
 
         return $result;
     }
 
-    // 分页获取银行卡
+    // 分页获取文章
     public function getArticleListByPage($map=[], $order='',$paginate=10){
         $result = Article::where($map)->order($order)->paginate($paginate);
         
@@ -36,7 +36,7 @@ class ArticleService {
         }
     }
 
-    // 获取一个银行卡
+    // 获取一个文章
     public function getArticleInfo($map) {
         $result = Article::where($map)->find();
         return $result;
@@ -45,7 +45,7 @@ class ArticleService {
 
 
 
-    // 编辑银行卡
+    // 编辑文章
     public function updateArticle($data,$map){
         
         $validate = validate('ArticleVal');
@@ -61,7 +61,7 @@ class ArticleService {
         }
     }
 
-    // 新增银行卡
+    // 新增文章
     public function createArticle($data){
         
         
