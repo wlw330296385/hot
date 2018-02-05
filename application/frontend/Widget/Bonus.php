@@ -8,6 +8,7 @@ class bonus extends Controller{
 		//平台礼包
         $BonusService = new \app\admin\service\BonusService;
     	$bonusInfo = $BonusService->getBonusInfo(['bonus_type'=>1,'status'=>1]);
+
     	$couponList = [];
     	$item_coupon_ids = [];
     	if($bonusInfo){
@@ -17,11 +18,13 @@ class bonus extends Controller{
     		foreach ($couponList as $key => $value) {
     			$item_coupon_ids[] = $value['id'];
     		}
+            dump($bonusInfo);die;
     		// $this->assign('isBonus',$isBonus);
     		$this->assign('item_coupon_ids',json_encode($item_coupon_ids));
 	    	$this->assign('couponList',$couponList);
 	        $this->assign('bonusInfo',$bonusInfo);
-			return $this->fetch('Widget:bonus');
+            // return $this->fetch('Widget:bonus');
+			return $this->fetch('Widget/Bonus');
     	}
     	
 	}
