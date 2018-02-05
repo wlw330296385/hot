@@ -52,12 +52,35 @@
                 <div class="mui-segmented-control mb">
                     <a class="mui-control-item mui-active" href="#onlineMemberList">在队</a>
                     <a class="mui-control-item" href="#offlineMemberList">离队</a>
-                    <a class="mui-control-item" href="#nolineMemberList">未通过</a>
+                    <a class="mui-control-item" href="#nolineMemberList">未审核</a>
                     <a class="mui-control-item" href="#nocontactMatchList">未关联</a>
                 </div>
             </div>
-
-
+            <div class="tab-pullRefresh">
+                <div id="onlineMemberList" class="mui-scroll-wrapper mui-control-content mui-active" style="top:170px">
+                    <div class="mui-scroll">
+                        <!-- <div class="page-header">
+                                <span class="course">理事</span>
+                            </div> -->
+                        <ul class="mui-table-view detalis-list list border-b match1 OA_task_match"></ul>
+                    </div>
+                </div>
+                <div id="offlineMemberList" class="mui-scroll-wrapper mui-control-content" style="top:170px">
+                    <div class="mui-scroll">
+                        <ul class="mui-table-view detalis-list list border-b match-1 OA_task_match"></ul>
+                    </div>
+                </div>
+                <div id="nolineMemberList" class="mui-scroll-wrapper mui-control-content" style="top:170px">
+                    <div class="mui-scroll">
+                        <ul class="mui-table-view detalis-list list border-b match0"></ul>
+                    </div>
+                </div>
+                <div id="nocontactMatchList" class="mui-scroll-wrapper mui-control-content" style="top:170px">
+                    <div class="mui-scroll">
+                        <ul class="mui-table-view detalis-list list border-b match-2"></ul>
+                    </div>
+                </div>
+            </div>
 
             <ul class="mui-table-view operation pdmember">
                 <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
@@ -74,48 +97,6 @@
 
         </div>
 
-        <div class="tab-pullRefresh">
-            <div id="onlineMemberList" class="mui-scroll-wrapper mui-control-content mui-active" style="top:170px">
-                <div class="mui-scroll">
-                    <div class="page-header">
-                        <span class="course">理事</span>
-                    </div>
-                    <ul class="mui-table-view detalis-list list border-b match1 OA_task_match"></ul>
-                    <div class="page-header">
-                        <span class="course">队员</span>
-                    </div>
-                    <ul class="mui-table-view detalis-list list border-b match1 OA_task_match"></ul>
-                </div>
-            </div>
-            <div id="offlineMemberList" class="mui-scroll-wrapper mui-control-content" style="top:170px">
-                <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list border-b match-1 OA_task_match"></ul>
-                </div>
-            </div>
-            <div id="nolineMemberList" class="mui-scroll-wrapper mui-control-content" style="top:170px">
-                <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list border-b match0"></ul>
-                </div>
-            </div>
-            <div id="nocontactMatchList" class="mui-scroll-wrapper mui-control-content" style="top:170px">
-                <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list border-b match-2"></ul>
-                </div>
-            </div>
-        </div>
-
-        <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="/frontend/">
-                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
-                </a>
-            </li>
-            <a href="{:url('team/createMatch', ['team_id' => $team_id])}">
-                <li class="mui-table-view-cell mui-col-xs-10 mui-col-sm-10 opli bgblue">
-                    添加比赛
-                </li>
-            </a>
-        </ul>
 
     </div>
 </body>
@@ -322,24 +303,26 @@
             success: function (data) {
                 console.log(data)
                 var newli = '';
+                var role_text = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        role_text = data.data[i].role_text;
                         var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + data.data[i].team_id + '/member_id/' + data.data[i].member_id;
+                        role_text = data.data[i].role_text
                         newli += '<li class="mui-table-view-cell mui-media listli coach"><a href="' + urls + '" class="mui-navigate-right">';
                         if (data.data[i].number == null) {
                             newli += '<div class="mbNumber">&nbsp;</div>';
                         } else {
                             newli += '<div class="mbNumber">' + data.data[i].number + '</div>';
                         }
-
                         newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd66">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
-                        newli += '<font class="tipCorner bgred">' + data.data[i].role_text + '</font>';
+                        // newli += '<font class="tipCorner bgred">' + data.data[i].role_text + '</font>';
                         newli += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div>'
                     }
+                    console.log(role_text)
                 }
 
                 if (gType == 1) {
+                    console.log(status)
                     //上拉刷新
                     $("ul.match" + status).empty().append(newli);
                     mui('#' + wList).pullRefresh().endPulldownToRefresh();
@@ -364,68 +347,6 @@
             }
         });
     };
-
-    //完成未完成
-    // var toIsFinishedList = function (wList, page, gType, is_finished) {
-    //     //搜索关键字不能完全为空，否则查询为空
-    //     var url = "{:url('api/match/matchlistpage')}?page=" + page;
-    //     var team_id = "{$team_id}"
-    //     mui.ajax({
-    //         url: url,
-    //         data: {
-    //             team_id: team_id,
-    //             is_finished: is_finished
-    //         },
-    //         dataType: 'json',//服务器返回json格式数据
-    //         type: 'post',//HTTP请求类型
-    //         timeout: 10000,//超时时间设置为10秒；
-    //         headers: { 'Content-Type': 'application/json' },
-    //         success: function (data) {
-    //             console.log(data)
-    //             var newli = '';
-    //             if (data.code == 200) {
-    //                 for (var i = 0; i <= data.data.data.length - 1; i++) {
-    //                     var urls = "{:url('team/matchinfo')}" + '/match_id/' + data.data.data[i].id + '/team_id/' + "{$team_id}";
-    //                     newli += '<li class="mui-table-view-cell mui-media listli coach">'
-    //                     newli += '<div class="mui-slider-handle"><a href="' + urls + '"><div class="mui-media-body wd83">' + data.data.data[i].name + '';
-    //                     if (data.data.data[i].status == "公开") {
-    //                         newli += '<font class="tipCorner bgorange">公开</font>';
-    //                     }
-    //                     if (data.data.data[i].match_time == 0) {
-    //                         newli += '<p class="mui-ellipsis">比赛时间待定</p>'
-    //                     } else {
-    //                         newli += '<p class="mui-ellipsis">' + data.data.data[i].match_time + '</p>'
-    //                     }
-    //                     newli += '</div><div class="price-frame rightLocation" style="padding-right:0">' + data.data.data[i].type + '</a></div>'
-    //                     newli += '</li>';
-    //                 }
-    //             }
-
-    //             if (gType == 1) {
-    //                 //上拉刷新
-    //                 $("ul.finished" + is_finished).empty().append(newli);
-    //                 mui('#' + wList).pullRefresh().endPulldownToRefresh();
-    //                 mui('#' + wList).pullRefresh().refresh(true);
-    //                 if (newli == '') {
-    //                     $("ul.finished" + is_finished).append('<li class="nodata"><p>没有相关数据哦</p></li>');
-    //                 }
-    //             } else {
-    //                 //下拉加载 gType==2
-    //                 $("ul.finished" + is_finished).append(newli);
-    //             }
-
-    //             if (newli != '') {
-    //                 mui('#' + wList).pullRefresh().endPullupToRefresh(false);
-    //             } else {
-    //                 mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-    //             }
-    //         },
-    //         error: function (xhr, type, errerThrown) {
-    //             mui.toast('网络异常,请稍候再试');
-    //             mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-    //         }
-    //     });
-    // };
 
     //拖拽后显示操作图标，点击操作图标删除元素；
     $('.OA_task_match').on('tap', '.mui-btn', function (match) {
