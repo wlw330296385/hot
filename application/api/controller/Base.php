@@ -12,9 +12,6 @@ class Base extends Controller{
 
     public function _initialize() {
         $this->memberInfo = session('memberInfo','','think');
-        if ($this->memberInfo['id'] === 0) {
-            return json(['code' => 100, 'msg' => '请先登录或注册会员']);
-        }
         // $this->gettoken();
     }
 
