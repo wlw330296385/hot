@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>球员资料编辑</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
+</head>
+
+<body class="whitebg">
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
+    </header>
+
+    <div class="mui-content pt">
+
+        <input type="hidden" name="id" value="{$teamMemberInfo.id}" class="data">
+        <input type="hidden" name="team_id" class="data" value="{$teamMemberInfo.team_id}">
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+
+        <form action="" class="mui-input-group mt55">
+
+            <div class="mui-input-row h-auto" id="logoframe">
+                <a class="portraits filePicker mui-navigate-right pdr" onclick="add_id(1)">
+                    <label>头像</label>
+                    <img id="preview_1" class="logostyle mtnone bggray upload-preview" src="{$teamMemberInfo.avatar}" alt="">
+                    <input type="hidden" name="avatar" value='' class="data">
+                </a>
+            </div>
+
+            <div class="mui-input-row">
+                <label>所属球队</label>
+                <span class="domData" name="team">{$teamMemberInfo.team}</span>
+            </div>
+
+            <div class="mui-input-row">
+                <label>球衣昵称</label>
+                <input type="text" name="member" value="{$teamMemberInfo.member}" class="data" placeholder="请输入你的昵称">
+            </div>
+
+            <div class="mui-input-row">
+                <label>性别</label>
+                <span class="editor">
+                    <select id="sex" class="data" name="sex">
+                        <option value="1">男</option>
+                        <option value="2">女</option>
+                    </select>
+                </span>
+            </div>
+
+            <!-- <div class="mui-input-row">
+                <label>出生年月</label>
+                <input type="text" name="" value="" class="data" placeholder="出生年月">
+            </div> -->
+
+            <div class="mui-input-row">
+                <label>球龄</label>
+                <input type="text" name="yearsexp" value="{$teamMemberInfo.yearsexp}" class="data" placeholder="请输入球龄">
+            </div>
+
+            <div class="mui-input-row price-input-row">
+                <label>年龄</label>
+                <input type="text" name="age" class="data" value="{$teamMemberInfo.age}" placeholder="请输入你的年龄">
+            </div>
+
+            <div class="mui-input-row price-input-row">
+                <label>身高</label>
+                <small class="unit">cm</small>
+                <input type="text" name="height" class="data wd52" value="{$teamMemberInfo.height}" placeholder="请输入你的身高" style="padding-right:0">
+            </div>
+
+            <div class="mui-input-row price-input-row">
+                <label>体重</label>
+                <small class="unit">kg</small>
+                <input type="text" name="weight" class="data wd52" value="{$teamMemberInfo.weight}" placeholder="请输入你的体重" style="padding-right:0">
+            </div>
+
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>场上位置</label>
+                    <span class="location-choise max">
+                        <select id="position" class="data" name="position">
+                            <option value="">--请选择--</option>
+                            <option value="0">暂无</option>
+                            <option value="1">控球后卫</option>
+                            <option value="2">得分后卫</option>
+                            <option value="3">小前锋</option>
+                            <option value="4">大前锋</option>
+                            <option value="5">中锋</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+
+            <div class="mui-input-row">
+                <label>球衣号码</label>
+                <input type="text" name="number" value="{$teamMemberInfo.number}" class="data" placeholder="请输入你的球衣号码">
+            </div>
+
+            <div class="mui-input-row">
+                <label class="wd49">球鞋码数（欧码）</label>
+                <input type="text" name="shoe_size" value="{$teamMemberInfo.shoe_size}" class="data wd49" placeholder="请输入你的球鞋码数">
+            </div>
+
+        </form>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-col-xs-12 opli bggreen" onclick="submitAction()">
+                提交
+            </li>
+        </ul>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/libs/webuploader.min.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'teammember'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        $(function () {
+            // 设置性别默认值
+            $('#sex option[value="{$teamMemberInfo.sex}"]').prop("selected", true);
+            // 设置司职位置默认值
+            $('#position option[value="{$teamMemberInfo.position_num}"]').prop("selected", true);
+        });
+
+        // 获取数据并进行提交
+        function submitAction() {
+
+            var yearsexp = $("input[name=yearsexp]").val();
+            var age = $("input[name=age]").val();
+            var height = $("input[name=height]").val();
+            var weight = $("input[name=weight]").val();
+            if (!(/^[0-9]*$/).test(age)) {
+                mui.toast("球龄请填写数字");
+                return false;
+            }
+            if (!(/^[0-9]*$/).test(age)) {
+                mui.toast("年龄请填写数字");
+                return false;
+            }
+            if (!(/^[0-9]*$/).test(height)) {
+                mui.toast("身高请填写数字");
+                return false;
+            }
+            if (!(/^[0-9]*$/).test(weight)) {
+                mui.toast("体重请填写数字");
+                return false;
+            }
+
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var url = "{:url('api/team/updateteammember')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, function () {
+                    var goUrl = "{:url('team/teamMemberInfo')}" + '/team_id/{$teamInfo.id}' + '/member_id/{$memberInfo.id}';
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg);
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
+        };
+    </script>
+</body>
+
+</html>

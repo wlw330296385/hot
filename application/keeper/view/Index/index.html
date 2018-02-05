@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>篮球管家</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--顶部下滑菜单 menu-wrapper.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/menu.wrapper.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <!--自定义多色图标icon.js-->
+    <script src="/static/frontend/iconfont/iconfont.js"></script>
+    <style type="text/css">
+        .coloricon {
+            width: 2.7em;
+            height: 2.7em;
+            vertical-align: -0.7em;
+            fill: currentColor;
+            overflow: hidden;
+        }
+
+        .goConfirm .mui-media-body {
+            height: 24px !important;
+            line-height: 24px !important;
+        }
+
+    </style>
+</head>
+
+<body class="mt44">
+
+<div class="mui-content">
+    <!--定位、搜索触发-->
+    <header id="header" class="mui-bar mui-bar-nav search1">
+        <div class="mui-pull-left mui-icon mui-icon-location" id="showCityPicker3">
+            <span class="address" id="cityResult3">篮球管家</span>
+        </div>
+        <div class="mui-pull-left">
+            <input type="search" id="search-input" placeholder="搜课程/活动/球场等">
+        </div>
+        <span class="mui-icon mui-icon-search searchicon" id="search-Btn"></span>
+    </header>
+
+    <div id="tabbar" class="mui-control-content mui-active">
+        <!--图片轮播-->
+        <div id="slider" class="mui-slider">
+            <div class="mui-slider-group mui-slider-loop">
+                <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+                <div class="mui-slider-item mui-slider-item-duplicate">
+                    <a href="#">
+                        <img src="{$bannerList[0]['url']}">
+                    </a>
+                </div>
+                <!-- 第一张 -->
+                {volist name="bannerList" id="vol"}
+                <div class="mui-slider-item">
+                    <a href="">
+                        <img src="{$vol.url}">
+                    </a>
+                </div>
+                {/volist}
+                <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+                <div class="mui-slider-item mui-slider-item-duplicate">
+                    <a href="#">
+                        <img src="{$bannerList[2]['url']}">
+                    </a>
+                </div>
+            </div>
+            <div class="mui-slider-indicator">
+                <div class="mui-indicator mui-active"></div>
+                <div class="mui-indicator"></div>
+                <div class="mui-indicator"></div>
+            </div>
+        </div>
+
+        <!--图文导航-->
+        <div class="nav-list">
+            <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ptb4">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <a href="{:url('lesson/lessonList')}">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-course"></use>
+                        </svg>
+                        <div class="mui-media-body">课程</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <a href="{:url('event/eventList')}">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-activity"></use>
+                        </svg>
+                        <div class="mui-media-body">活动</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <div class="goConfirm">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-game"></use>
+                        </svg>
+                        <div class="mui-media-body">比赛</div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <a href="{:url('court/courtList')}">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-court"></use>
+                        </svg>
+                        <div class="mui-media-body">球场</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <a href="{:url('match/friendlylist')}">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-VS"></use>
+                        </svg>
+                        <div class="mui-media-body">约战</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <a href="{:url('camp/campList')}">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-camp"></use>
+                        </svg>
+                        <div class="mui-media-body">训练营</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <a href="{:url('recruitment/recruitmentList')}">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-recruit"></use>
+                        </svg>
+                        <div class="mui-media-body">招募</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <a href="{:url('Team/teamlist')}">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-team"></use>
+                        </svg>
+                        <div class="mui-media-body">球队</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <a href="{:url('coach/coachList')}">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-coach"></use>
+                        </svg>
+                        <div class="mui-media-body">教练</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <div class="goConfirm">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-treasurechest"></use>
+                        </svg>
+                        <div class="mui-media-body">百宝箱</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 文章 -->
+        <!-- <div class="show-list">
+
+
+            <div class="mui-content" style="background-color:#fff">
+               <div class="page-header border-b">
+                    <span class="course">管家头条</span>
+                    <span class="more">
+                        <a href="{:url('frontend/article/articleList')}" class="mui-navigate-right">更多</a>
+                    </span>
+                </div>
+                <ul class="mui-table-view mui-grid-view">
+                    {volist name="ArticleList" id="vol"}
+                    <li class="mui-table-view-cell mui-media mui-col-xs-6">
+                        <a href="#">
+                            <img class="mui-media-object" src="{$vol.covers}">
+                            <div class="mui-media-body"  style="color: black">{$vol.title}</div>
+                            <div class="mui-media-body" style="color: #999">{$vol.abstract}</div>
+                        </a>
+                    </li>
+                    {/volist}
+                </ul>
+            </div>
+
+
+        </div> -->
+
+        <!--热门课程-->
+        <div class="show-list mt">
+            <div class="page-header border-b">
+                <span class="course">热门课程</span>
+                <span class="more">
+                        <a href="{:url('lesson/lessonList')}" class="mui-navigate-right">更多</a>
+                    </span>
+            </div>
+            <ul class="mui-table-view mui-grid-view show-list-cont" id="hot-lesson"></ul>
+        </div>
+
+        <div class="show-list hot-ads">
+            <img src="/static/frontend/images/ads1.jpg" />
+        </div>
+
+        <!--热门训练营-->
+        <div class="show-list mt mb44">
+            <div class="page-header border-b">
+                <span class="course">热门训练营</span>
+                <span class="more">
+                        <a href="{:url('camp/campList')}" class="mui-navigate-right">更多</a>
+                    </span>
+            </div>
+            <ul class="mui-table-view mui-grid-view show-list-cont border-b" id="hot-camp"></ul>
+        </div>
+        <input type="hidden" name="mid" value="{$mid}">
+
+    </div>
+
+</div>
+
+<div id="menu-wrapper" class="menu-wrapper hidden">
+    <div id="menu" class="menu search">
+        <!--搜索执行-->
+        <header id="header-search" class="mui-bar mui-bar-nav search1" style="position: relative !important;">
+            <div class="mui-pull-left mui-icon mui-icon-back" id="close-search"></div>
+            <div class="mui-pull-left searchType">搜课程</div>
+            <div class="mui-pull-left">
+                <input type="search" id="searchInput" class="mui-input-clear" placeholder="请输入搜索关键字">
+            </div>
+            <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
+        </header>
+        <div class="search">
+            <div id="segmentedControl" class="mui-segmented-control">
+                <span class="mui-control-item mui-active choise-segment" s-table="/frontend/lesson/lessonList/">课程</span>
+                <span class="mui-control-item choise-segment" s-table="/frontend/camp/campList/">训练营</span>
+                <span class="mui-control-item choise-segment" s-table="/frontend/court/courtList/">训练点</span>
+                <span class="mui-control-item choise-segment" s-table="/frontend/coach/coachList/">教练员</span>
+            </div>
+
+            <div class="hot-search">
+                <h4>热门搜索</h4>
+                <ul class="hot-search-frame">
+                    <li s-keyword="" s-table="">
+                        <span>幼儿课程</span>
+                    </li>
+                    <li s-keyword="" s-table="">
+                        <span>基础课程</span>
+                    </li>
+                    <li s-keyword="" s-table="">
+                        <span>强化课程</span>
+                    </li>
+                    <li s-keyword="" s-table="">
+                        <span>初中课程</span>
+                    </li>
+                    <li s-keyword="" s-table="">
+                        <span>室内球场</span>
+                    </li>
+                    <li s-keyword="" s-table="">
+                        <span>室外球场</span>
+                    </li>
+                    <li s-keyword="" s-table="">
+                        <span>特色课程</span>
+                    </li>
+                    <li s-keyword="" s-table="">
+                        <span>男教练</span>
+                    </li>
+                    <li s-keyword="" s-table="">
+                        <span>女教练</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="menu-backdrop" class="menu-backdrop"></div>
+
+<!--底部导航-->
+{layout name="Layout/footer"}
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!--选择器-->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/common.js?v={:time()}"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+    //弹出菜单
+    mui('.mui-scroll-wrapper').scroll();
+
+    (function ($, doc) {
+        $.init();
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+            ///级联示例
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
+            });
+            cityPicker3.setData(cityData3);
+            // 设置默认值
+            cityPicker3.pickers[0].setSelectedIndex(18);
+            var showCityPickerButton = doc.getElementById('showCityPicker3');
+            var cityResult3 = doc.getElementById('cityResult3');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.innerText = _getParam(items[1], 'text');
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                    var areas = getAreas(_getParam(items[0], 'text'), _getParam(items[1], 'text'));
+                    localStorage.currentArea = _getParam(items[2], 'text');
+                    localStorage.currentCity = _getParam(items[1], 'text');
+                    localStorage.currentProvince = _getParam(items[0], 'text');
+                    localStorage.currentAreas = areas;
+                    //获取热门课程
+                    toLessonList(localStorage.currentCity, localStorage.currentProvince);
+                    //获取热门训练营
+                    toCampList(localStorage.currentCity, localStorage.currentProvince);
+                });
+            }, false);
+        });
+
+
+
+    })(mui, document);
+
+
+
+    //轮播
+    var slider = mui("#slider");
+    slider.slider({
+        interval: 5000
+    });
+    mui("body").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
+
+    $(function () {
+
+
+
+        //未开发提示
+        $(".goConfirm").click(function () {
+            mui.toast('暂未开放，敬请期待');
+        })
+
+        // if(window.localStorage){ alert("浏览支持localStorage") }else{ alert("浏览暂不支持localStorage") }
+        //localStorage.clear();
+
+        //获取定位省市区
+        var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
+        var sCity = getLocationTB['city'];
+        var sProvince = getLocationTB['province'];
+        $(".address").text(sCity);
+
+        //获取热门课程
+        toLessonList(sCity, sProvince);
+        //获取热门训练营
+        toCampList(sCity, sProvince);
+
+        //提示框
+        if ($('input[name=mid]').val() == 0) {
+            mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                if (e.index === 1) {
+                    window.location.href = "{$fasturl}";
+                }
+            });
+        }
+
+        //搜索子页：类型选择
+        $(".mui-segmented-control").find(".choise-segment").click(function () {
+            $(".searchType span").text($(this).text());
+        })
+        //搜索子页：搜索提交
+        $("#searchBtn").click(function () {
+            var sKeyword = $("#searchInput").val();
+            if (sKeyword == 0) {
+                mui.toast('请输入您要搜索的内容');
+            } else {
+                var getType = $(".mui-segmented-control .mui-active").attr("s-table");
+                var searchUrl = getType + '?keyword=' + sKeyword;
+                window.top.location.href = searchUrl;
+            }
+        })
+
+    })
+
+    //拼接搜索地址
+    function getSearchUrl(tb, ty, kw) {
+        var searchUrl = '/frontend/' + tb + '/' + tb + 'List/?' + ty + '=' + kw;
+
+    }
+
+    //搜索子页面
+    var menuWrapper = document.getElementById("menu-wrapper");
+    var menu = document.getElementById("menu");
+    var menuWrapperClassList = menuWrapper.classList;
+    var backdrop = document.getElementById("menu-backdrop");
+    backdrop.addEventListener('tap', toggleMenu);
+    var closeSearch = document.getElementById("close-search");
+    closeSearch.addEventListener('tap', toggleMenu);
+    document.getElementById("search-input").addEventListener('tap', toggleMenu);
+    document.getElementById("search-Btn").addEventListener('tap', toggleMenu);
+
+    var busying = false;
+    function toggleMenu() {
+        if (busying) {
+            return;
+        }
+        busying = true;
+        if (menuWrapperClassList.contains('mui-active')) {
+            document.body.classList.remove('menu-open');
+            menuWrapper.className = 'menu-wrapper fade-out-up animated';
+            menu.className = 'menu bounce-out-up animated';
+            setTimeout(function () {
+                backdrop.style.opacity = 0;
+                menuWrapper.classList.add('hidden');
+            }, 500);
+        } else {
+            document.body.classList.add('menu-open');
+            menuWrapper.className = 'menu-wrapper fade-in-down animated mui-active';
+            menu.className = 'menu bounce-in-down animated';
+            backdrop.style.opacity = 1;
+        }
+        setTimeout(function () {
+            busying = false;
+        }, 500);
+    }
+
+    //获取热门课程并追加到页面
+    var toLessonList = function (sCity, sProvince) {
+        console.log(sCity)
+        var url = "{:url('api/lesson/getHotLessonListApi','','',true)}";
+        mui.ajax({
+            url: url,
+            data: {
+                province: sProvince,
+                city: sCity,
+                status: 1,
+                hot:1
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            //processData:false,
+            success: function (data) {
+                if (data.code == 200) {
+                    var newli = '';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('lesson/lessonInfo')}" + '/lesson_id/' + data.data[i].id;
+                        newli = newli + '<li class="mui-table-view-cell mui-media mui-col-xs-6"><a href="' + urls + '"><div class="img4x3" style="background-image:url(' + data.data[i].cover + ')"></div><div class="mui-media-body typename">' + data.data[i].lesson + '</div><div class="frame"><span class="typename-num">已报名：' + data.data[i].students + '</span><span class="typename-money">￥' + data.data[i].cost + '</span></div></a></li>'
+
+                    }
+                    if (newli == '') {
+                        newli = '<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>'
+                    }
+                    $("ul#hot-lesson").html(newli);
+
+                } else {
+                    newli = '<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>';
+                    $("ul#hot-lesson").html(newli);
+                    //mui.toast('数据获取失败,请稍候再试');
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+            }
+        });
+    };
+
+    //获取热门训练营并追加到页面
+    var toCampList = function (sCity, sProvince) {
+        var url = "{:url('api/camp/getHotCampList','','',true)}";
+        mui.ajax({
+            url: url,
+            data: {
+                province: sProvince,
+                city: sCity,
+                status: 1,
+                hot: 1
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            //processData:false,
+            success: function (data) {
+                if (data.code == 200) {
+                    var newli = '';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('camp/campInfo')}" + '/camp_id/' + data.data[i].id;
+                        newli = newli + '<li class="mui-table-view-cell mui-media mui-col-xs-6"><a href="' + urls + '"><div class="img4x3" style="background-image:url(' + data.data[i].banner + ')"></div><div class="mui-media-body typename">' + data.data[i].camp + '</div><div class="frame"></span><span class="typename-num">总课量：' + data.data[i].total_schedule + '</span><span class="typename-money">评分：' + data.data[i].star + '</div></a></li>'
+                        if (i >= 3) { break; }
+                    }
+                    if (newli == '') {
+                        newli = '<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>'
+                    }
+                    $("ul#hot-camp").html(newli);
+
+                } else {
+                    newli = '<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>';
+                    $("ul#hot-camp").html(newli);
+                    //mui.toast('数据获取失败,请稍候再试');
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+            }
+        });
+    };
+
+</script>
+</body>
+</html>

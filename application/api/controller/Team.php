@@ -851,15 +851,11 @@ class Team extends Base
             }
 
             // 插入team_member数据
-            $data = [
-                'team_id' => $teamInfo['id'],
-                'team' => $teamInfo['name'],
-                'member_id' => -1,
-                'member' => $request['name'],
-                'telephone' => $request['telephone'],
-                'avatar' => config('default_image.member_avatar'),
-                'status' => 1
-            ];
+            $request['team_id'] = $teamInfo['id'];
+            $request['team'] = $teamInfo['name'];
+            $request['member_id'] = -1;
+            $request['avatar'] = config('default_image.member_avatar');
+            $request['status'] = 1;
             $resSaveTeamMember = $teamS->saveTeamMember($data);
             return json($resSaveTeamMember);
         } catch (Exception $e) {
