@@ -207,6 +207,9 @@ class Team extends Base
     public function applyjointeam()
     {
         try {
+            if ($this->memberInfo['id'] === 0) {
+                return json(['code' => 100, 'msg' => '请先登录或注册会员']);
+            }
             // 检查球队信息是否有传入
             if (!input('?post.team_id')) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402') . '请选择球队']);
