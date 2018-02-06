@@ -27,4 +27,5 @@ class TeamMember extends Model {
     public function team() {
         return $this->hasOne('Team', 'id', 'team_id');
     }
+
 }

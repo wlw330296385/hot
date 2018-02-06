@@ -220,9 +220,11 @@ class TeamService
             $roleModel = new TeamMemberRole();
             foreach ($teammembers as $k => $teammember) {
                 $teammembers[$k]['role_text'] = '';
-                $memberRole = $roleModel->where(['member_id' => $teammember['member_id'], 'team_id' => $teammember['team_id'], 'status' => 1])->select()->toArray();
+                $teammembers[$k]['role_arr'] = [];
+                $memberRole = $roleModel->where(['member_id' => $teammember['member_id'], 'team_id' => $teammember['team_id'], 'status' => 1])->select();
                 foreach ($memberRole as $val) {
-                    $teammembers[$k]['role_text'] .= $val['type'] . ',';
+                    $teammembers[$k]['role_text'] .= $val['type_text'] . ',';
+                    array_push($teammembers[$k]['role_arr'], $val['type']);
                 }
             }
             return $teammembers;
@@ -245,7 +247,7 @@ class TeamService
             $result['role_text'] = '';
             $memberRole = $roleModel->where(['member_id' => $result['member_id'], 'team_id' => $result['team_id'], 'status' => 1])->select()->toArray();
             foreach ($memberRole as $val) {
-                $result['role_text'] .= $val['type'] . ',';
+                $result['role_text'] .= $val['type_text'] . ',';
             }
             return $result;
         } else {
