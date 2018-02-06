@@ -36,22 +36,21 @@
 
         <div class="register">
             <form action="" class="mui-input-group">
-                <input type="hidden" name="refereeid" value="{$refereeInfo.id}">
                 <input type="hidden" name="memberid" value="{$refereeInfo.member_id}">
                 <!-- 判断有没有身份证 -->
                 {if !empty($credit)}
                 <!-- 有上传身份证 -->
                 <div class="mui-input-row">
                     <label>真实姓名</label>
-                    <input type="text" name="referee_name" class="input referee_name" placeholder="请输入真实姓名" value="{$refereeInfo.referee}" {if $refereeInfo.status == 1 } disabled="disabled" {/if}>
+                    <input type="text" name="realname" class="input realname" placeholder="请输入真实姓名" value="{$refereeInfo.referee}" {if $refereeInfo.status == 1 } disabled="disabled" {/if}>
                 </div>
                 <div class="mui-input-row">
                     <label>身份证号码</label>
-                    <input type="text" name="idno" class="input wd54 idno" placeholder="请输入身份证号码" {if $credit.status == 1 } value="{$credit.cert_no}"   disabled="disabled" {/if}>
+                    <input type="text" class="input wd54" placeholder="请输入身份证号码" {if $credit.status == 1 } value="{$credit.cert_no}"   disabled="disabled" {/if}>
                         
                 </div>
                 <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right filePicker" {if $credit.status == 0 } onclick="add_id(1)" {/if}>
+                    <a class="mui-navigate-right " {if $credit.status == 0 } onclick="add_id(1)" {/if}>
                         <label>身份证正面</label>
                         <img id="preview_1" class="refereeicon icon01 upload-preview"  src="{$credit.photo_positive}"
                             alt="">
@@ -59,7 +58,7 @@
                     </a>
                 </div>
                 <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right filePicker"  {if $credit.status == 0 } onclick="add_id(2)" {/if}>
+                    <a class="mui-navigate-right "  {if $credit.status == 0 } onclick="add_id(2)" {/if}>
                         <label>身份证反面</label>
                         <img id="preview_2" class="refereeicon icon01 upload-preview" src="{$credit.photo_back}"
                              alt="">
@@ -70,7 +69,7 @@
                 <!-- 没上传身份证 -->
                 <div class="mui-input-row">
                     <label>真实姓名</label>
-                    <input type="text" name="referee_name" class="input referee_name" placeholder="请输入真实姓名" value="">
+                    <input type="text" name="realname" class="input realname" placeholder="请输入真实姓名" value="">
                 </div>
                 <div class="mui-input-row">
                     <label>身份证号码</label>
@@ -122,7 +121,7 @@
                 {if !empty($refereeCert)}
                 <!-- 有资质证明 -->
                 <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right filePicker"  {if $refereeCert.status == 0 } onclick="add_id(4)" {/if}>
+                    <a class="mui-navigate-right"  {if $refereeCert.status == 0 } onclick="add_id(4)" {/if}>
                         <label>资质证明</label>
                         <img id="preview_4" class="refereeicon icon01 upload-preview"  src="{$refereeCert.photo_positive}">
                         <input type="hidden" name="cert" value="{$refereeCert.photo_positive}">
@@ -138,6 +137,8 @@
                     </a>
                 </div>    
                 {/if}
+
+
                 <div class="mui-input-row">
                     <label>执裁单场费用</label>
                     <input type="text" name="appearance_fee" value="{$refereeInfo.appearance_fee}" class="input appearance_fee" placeholder="请输入执裁单场费用" value="">
@@ -235,7 +236,6 @@
         $(function () {
 
             $(".registerbtn2").on("click", function () {
-                var memberid = $('input[name=memberid]').val();
                 var realname = $('input[name=realname]').val();
                 var referee_year = $(".referee_year").val();
                 var experience = $(".experience").val();
@@ -275,9 +275,9 @@
                 //     return false;
                 // };
 
-                mui.ajax("{:url('api/referee/updateRefereeApi')}", {
+                mui.ajax("{:url('api/referee/updateRefereeApi',['referee_id'=>$refereeInfo['id']])}", {
                     data: {
-                        member_id: memberid,
+                        referee: realname,
                         realname: realname,
                         referee_year: referee_year,
                         experience: experience,
@@ -299,7 +299,8 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
-                            setTimeout(window.location.href = "{:url('referee/registersuccess')}", 3000);
+                            mui.alert(data.msg)
+                            // setTimeout(window.location.href = "{:url('referee/registersuccess')}", 3000);
                         } else {
                             mui.toast(data.msg);
                         }

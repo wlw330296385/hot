@@ -40,10 +40,10 @@ class RefereeService{
 	/**
 	 * 裁判更改资料
 	 */
-	public function updateReferee($request,$id)
+	public function updateReferee($request,$map)
     {
         $model = new Referee();
-        $result = $model->validate('RefereeVal')->save($request, ['id' => $id]);
+        $result = $model->validate('RefereeVal')->save($request, $map);
         if ($result === false) {
             return ['code' => 100, 'msg' => $model->getError()];
         } else {

@@ -11,7 +11,7 @@ class Referee extends Base{
 
 	}
 
-    // 搜索教练
+    // 搜索裁判
     public function searchRefereeListApi(){
         try{
             $map = input('post.');
@@ -52,7 +52,7 @@ class Referee extends Base{
         }
     }
 
-    // 获取教练分页(有页码)
+    // 获取裁判分页(有页码)
     public function getRefereeListByPageApi(){
         try{
             $map = input('post.');
@@ -92,7 +92,7 @@ class Referee extends Base{
         }
     }
 
-    //获取教练列表（没分页、没查询）
+    //获取裁判列表（没分页、没查询）
     public function getRefereeListApi(){
         try{
             $map = input('post.');
@@ -110,19 +110,11 @@ class Referee extends Base{
 
     public function createRefereeApi(){
         try{
-            $referee = input('post.realname');
-            $member_id = $this->memberInfo['id'];
-            // 教练数据
-            $refereedata = [
-                'referee'  => $referee,
-                'realname' => input('post.realname'),
-                'member_id' => $member_id,
-                'referee_year' => input('post.referee_year'),
-                'experience' => input('post.experience'),
-                'introduction' => input('post.introduction'),
-                'portraits' => input('post.portraits'),
-                'description' => input('post.description')
-            ];
+
+            // 裁判数据
+            $refereedata = input('post.');
+            $refereedata['member_id'] = $this->memberInfo['id'];
+            $refereedata['member'] = $this->memberInfo['member'];
             // 地区input 拆分成省 市 区 3个字段
             $locationStr = input('post.locationStr');
             if ($locationStr) {
@@ -142,7 +134,8 @@ class Referee extends Base{
                 // 资质证书
                 $certdata = [
                     'camp_id' => 0,
-                    'member_id' => $member_id,
+                    'member_id' => $this->memberInfo['id'],
+                    'member'    =>$this->memberInfo['member'],
                     'cert_no' => 0,
                     'cert_type' => 5,
                     'photo_positive' => input('post.cert')
@@ -158,7 +151,8 @@ class Referee extends Base{
                     // 实名数据
                     $realnamedata = [
                         'camp_id' => 0,
-                        'member_id' => $member_id,
+                        'member_id' => $this->memberInfo['id'],
+                        'member'    =>$this->memberInfo['member'],
                         'cert_no' => input('post.idno'),
                         'cert_type' => 1,
                         'photo_positive' => input('post.photo_positive'),
@@ -180,22 +174,16 @@ class Referee extends Base{
 
     public function updateRefereeApi(){
         try{
-            $referee_id = input('post.refereeid') ? input('post.refereeid') : input('param.referee_id');
+            $referee_id = input('param.referee_id');
             if(!$referee_id){
-                return ['code'=>100,'msg'=>'找不到教练信息'];
+                return ['code'=>100,'msg'=>'找不到裁判信息'];
             }
 
-            $member_id = input('post.member_id');
-            // 教练数据
-            $refereedata = [
-                'referee' => input('post.referee'),
-                'member_id' => $member_id,
-                'referee_year' => input('post.referee_year'),
-                'experience' => input('post.experience'),
-                'introduction' => input('post.introduction'),
-                'portraits' => input('post.portraits'),
-                'description' => input('post.description')
-            ];
+            // 裁判数据
+            $refereedata = input('post.');
+            $refereedata['member_id'] = $this->memberInfo['id'];
+            $refereedata['member'] = $this->memberInfo['member'];
+            // 地区input 拆分成省 市 区 3个字段
             // 地区input 拆分成省 市 区 3个字段
             $locationStr = input('post.locationStr');
             if ($locationStr) {
@@ -205,40 +193,53 @@ class Referee extends Base{
                 $refereedata['referee_area'] = $locationArr[2];
             }
             $refereeS = new RefereeService();
-            $referee = $refereeS->updateReferee($refereedata, $referee_id);
+            $result = $refereeS->updateReferee($refereedata,['id'=>$referee_id]);
 
-            // 实名数据
-            $realnamedata = [
-                'camp_id' => 0,
-                'member_id' => $member_id,
-                'cert_no' => input('post.idno'),
-                'cert_type' => 1,
-                'photo_positive' => input('post.photo_positive'),
-                'photo_back' => input('post.photo_back'),
-            ];
-            // 资质证书
-            $certdata = [
-                'camp_id' => 0,
-                'member_id' => $member_id,
-                'cert_no' => "",
-                'cert_type' => 3,
-                'photo_positive' => input('post.cert')
-            ];
+            if($result['code'] == 200 ){
+                $certS = new \app\service\CertService();
+                
+                
+                
+                // 资质证书
+                $certdata = [
+                    'camp_id' => 0,
+                    'member_id' => $this->memberInfo['id'],
+                    'cert_no' => 0,
+                    'cert_type' => 5,
+                    'photo_positive' => input('post.cert')
+                ];
+              
+                
+                $cert1 = $certS->saveCert($certdata);
+                if ($cert1['code'] == 100) {
+                    return json([ 'msg' => '裁判证件信息保存出错,请重试', 'code' => 100]);
+                }
 
-            $certS = new CertService();
-            $cert1 = $certS->saveCert($realnamedata);
-            $cert2 = $certS->saveCert($certdata);
-            if ($cert1['code'] == 100 || $cert2['code'] == 100) {
-                return json([ 'msg' => '证件信息保存出错,请重试', 'code' => 100]);
+                if(input('post.idno')){
+                    // 实名数据
+                    $realnamedata = [
+                        'camp_id' => 0,
+                        'member_id' => $this->memberInfo['id'],
+                        'cert_no' => input('post.idno'),
+                        'cert_type' => 1,
+                        'photo_positive' => input('post.photo_positive'),
+                        'photo_back' => input('post.photo_back'),
+                    ];
+                    $cert2 = $certS->saveCert($realnamedata);
+                    if ($cert2['code'] == 100) {
+                        return json([ 'msg' => '身份证证件信息保存出错,请重试', 'code' => 100]);
+                    }
+                }
+                
             }
-
-            return json($referee);
+            
+            return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
-    // 用户是否拥有教练身份
+    // 用户是否拥有裁判身份
     public function isReferee(){
         try{
             $member_id = input('param.member_id')? input('param.member_id'):$this->memberInfo['id'];
@@ -254,7 +255,7 @@ class Referee extends Base{
         }
     }
 
-    // 评论教练
+    // 评论裁判
     public function createRefereeCommentApi(){
         try{
             $data = input('post.');
@@ -268,15 +269,15 @@ class Referee extends Base{
         }
     }
 
-    // 获取教练所在班级列表（包括主教、助教）
+    // 获取裁判所在班级列表（包括主教、助教）
     public function getRefereeGradeList() {
         try {
             // 接收参数referee_id
             $referee_id = input('referee_id');
             if (!$referee_id) {
-                return json(['code' => 100, 'msg' => __lang('MSG_402').'需要教练信息']);
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'需要裁判信息']);
             }
-            // 查询教练所在班级
+            // 查询裁判所在班级
             $refereeS = new RefereeService();
             $res = $refereeS->ingradelistPage($referee_id);
             // 返回结果

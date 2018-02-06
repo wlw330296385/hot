@@ -277,7 +277,7 @@
                     if (e.index == 1) {
                         mui.ajax("{:url('api/referee/createRefereeApi')}", {
                             data: {
-                                member_id: memberid,
+                                referee:realname,
                                 realname: realname,
                                 referee_year: referee_year,
                                 experience: experience,
@@ -297,9 +297,9 @@
                             timeout: 10000,//超时时间设置为10秒；
                             headers: { 'Content-Type': 'application/json' },
                             success: function (data) {
-                                console.log(data);
                                 if (data.code == 200) {
-                                    window.location.href = "{:url('referee/registersuccess')}";
+                                    mui.alert(data.msg)
+                                    // window.location.href = "{:url('referee/registersuccess')}";
                                 } else {
                                     mui.toast(data.msg);
                                 }

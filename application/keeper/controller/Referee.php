@@ -10,7 +10,7 @@ class Referee extends Base{
 		$this->RefereeService = new RefereeService;
 	}
 
-    // 教练主页
+    // 裁判主页
     public function refereeManage(){
 
         return view('Referee/index');
@@ -31,7 +31,7 @@ class Referee extends Base{
         return view('Referee/refereeInfo');
     }
 
-    //教练员注册
+    //裁判员注册
     public function createReferee(){
         //判断是否已存在身份证
         $certList = db('cert')->where(['member_id'=>$this->memberInfo['id']])->select();
