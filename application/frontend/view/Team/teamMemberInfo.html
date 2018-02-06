@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .opBtn {
+            padding: 5px 16px;
+        }
+    </style>
 </head>
 
 <body class="whitebg">
@@ -25,47 +30,53 @@
 
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell mui-media listli" id="logoframe">
-                    <img class="mui-media-object mui-pull-left logostyle" src="{$teamMemberInfo.avatar}">
-                    <div class="mui-media-body" style="width:33%">
-                        {$teamMemberInfo.member}
+                    <img class="mui-media-object mui-pull-left logostyle" src="{$teamMemberInfo.avatar}" style="width:60px !important;height:60px !important;margin-top:5px">
+                    <div class="mui-media-body">
+                        <strong class="f16">{$teamMemberInfo.member}</strong>
                         <i class="icon iconfont icon-sex{$teamMemberInfo.sex}"></i>
-                        <p class="mui-ellipsis">{$teamInfo.city} {$teamInfo.area}</p>
+                        <p class="mui-ellipsis" style="line-height:20px">{$teamInfo.city} {$teamInfo.area}</p>
+                        <p class="mui-ellipsis" style="line-height:20px">粉丝数：
+                            <strong class="colororange">{$teamInfo.fans_num}</strong>
+                        </p>
                     </div>
-                    <div class="price-frame">
-                        <button class="mui-btn bgred follow">加关注</button>
+                    <div class="mui-text-right">
                         {eq name="editbtnDisplay" value="1"}
-                        <a href="{:url('team/teamMemberEdit',['team_id'=>$teamInfo['id'],'member_id'=>$teamMemberInfo['member_id']])}">
-                            <button class="mui-btn memberEdit">编辑</button>
-                        </a>
+                        <p>
+                            <a href="{:url('team/teamMemberEdit',['team_id'=>$teamInfo['id'],'member_id'=>$teamMemberInfo['member_id']])}">
+                                <button class="mui-btn opBtn memberEdit">编辑</button>
+                            </a>
+                        </p>
                         {/eq}
+                        <button class="mui-btn bgred opBtn follow" style="margin-top:4px">关注</button>
                     </div>
                 </li>
             </ul>
 
-            <div class="nav-list mb" id="personalData">
-                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ">
+
+            <div class="nav-list record mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>年龄</span>
-                            <div class="mui-media-body">{$teamMemberInfo.age}</div>
+                            <div class="mui-media-body colorred">{$teamMemberInfo.age}</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>球龄</span>
-                            <div class="mui-media-body">{$teamMemberInfo.yearsexp}</div>
+                            <div class="mui-media-body colorred">{$teamMemberInfo.yearsexp}</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>身高</span>
-                            <div class="mui-media-body">{$teamMemberInfo.height}cm</div>
+                            <div class="mui-media-body colorred">{$teamMemberInfo.height}cm</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>体重</span>
-                            <div class="mui-media-body">{$teamMemberInfo.weight}kg</div>
+                            <div class="mui-media-body colorred">{$teamMemberInfo.weight}kg</div>
                         </a>
                     </li>
                 </ul>
@@ -75,80 +86,67 @@
 
             <div class="whitebg border-b mui-text-center" style="padding: 10px 0;">
                 <h3 class="colorred">{$teamMemberInfo.team}</h3>
-                <p>现任
+                <p>职务
                     <span class="role">{$teamMemberInfo.role_text}</span>
                 </p>
-                <h3 class="colorred">{$teamMemberInfo.match_num}</h3>
-                <p>参与比赛次数</p>
+                <!-- <h3 class="colorred">{$teamMemberInfo.match_num}</h3> -->
+                <!-- <p>参与比赛次数</p> -->
                 <div class="poplShirt">
+                    <img src="/static/frontend/images/poplshirt.png" class="shirt" alt="">
                     <p class="position">{$teamMemberInfo.member}</p>
                     <p class="number">{$teamMemberInfo.number}</p>
                 </div>
             </div>
-            <!-- <div class="mui-row  whitebg border-b">
-            <div class="mui-col-sm-5 mui-col-xs-5 tmLeft">
-                <h3 class="colorred">{$teamMemberInfo.team}</h3>
-                <p>现任：</p>
-                <h3 class="colorred">{$teamMemberInfo.match_num}</h3>
-                <p>参与比赛次数</p>
-            </div>
-            <div class="mui-col-sm-7 mui-col-xs-7">
-                <div class="poplShirt">
-                    <h4>{$teamMemberInfo.position}</h4>
-                    <h3>{$teamMemberInfo.number}</h3>
-                </div>
-            </div>
-        </div> -->
-            <div class="page-header whitebg">
-                <span class="course">参与赛事总次数：{$teamMemberInfo.match_num}</span>
-                <!-- <span class="more pdr15">
+        </div>
+        <div class="page-header whitebg">
+            <span class="course">参与赛事总次数：{$teamMemberInfo.match_num}</span>
+            <!-- <span class="more pdr15">
                     <a href="" class="mui-navigate-right">更多个人数据</a>
                 </span> -->
-            </div>
-
-
-            <div class="page-header">
-                <span class="course">他效力的其他球队（
-                    <samll class="otherLength"></samll>）
-                </span>
-            </div>
-            <ul class="mui-table-view detalis-list list border-b teammember">
-                {volist name="memberOtherTeam" id="vol"}
-                <li class="mui-table-view-cell mui-media listli" id="logoframe">
-                    <a href="{:url('team/teamInfo',['team_id'=>$vol.team['id']])}" class="mui-navigate-right">
-                        <img class="mui-media-object mui-pull-left logostyle" src="{$vol.team.logo}">
-                        <div class="mui-media-body wd60">{$vol.team.name}
-                            <p class="mui-ellipsis">平均年龄:{$vol.team.avg_age} &nbsp;身高:{$vol.team.avg_height}cm</p>
-                        </div>
-                        <div class="price-frame rightLocation">{$vol.team.area}</div>
-                    </a>
-                </li>
-                {/volist}
-            </ul>
-
-            {neq name="delbtnDisplay" value="0"}
-            <!--移除队员-->
-            <div class="success-frame success-frame2">
-                <div class="choise">
-                    {switch name="delbtnDisplay"} {case value="2"}
-                    <button type="button" class="mui-btn mui-btn-danger f16 signOut">移除此队员</button>
-                    {/case} {case value="1"}
-                    <button type="button" class="mui-btn mui-btn-danger f16 signOut">申请退出球队</button>
-                    {/case} {/switch}
-                </div>
-            </div>
-            {/neq}
-
         </div>
 
-        <!--底部操作-->
-        <ul class="mui-table-view operation">
-            <a href="#Impress">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgblue myimpress" onclick="submitAction()">
-                    对他有印象，评价一下
-                </li>
-            </a>
+        <div class="page-header">
+            <span class="course">他效力的其他球队（
+                <samll class="otherLength"></samll>）
+            </span>
+        </div>
+        <ul class="mui-table-view detalis-list list border-b teammember">
+            {volist name="memberOtherTeam" id="vol"}
+            <li class="mui-table-view-cell mui-media listli" id="logoframe">
+                <a href="{:url('team/teamInfo',['team_id'=>$vol.team['id']])}" class="mui-navigate-right">
+                    <img class="mui-media-object mui-pull-left logostyle" src="{$vol.team.logo}">
+                    <div class="mui-media-body wd60">{$vol.team.name}
+                        <p class="mui-ellipsis">平均年龄:{$vol.team.avg_age} &nbsp;身高:{$vol.team.avg_height}cm</p>
+                    </div>
+                    <div class="price-frame rightLocation">{$vol.team.area}</div>
+                </a>
+            </li>
+            {/volist}
         </ul>
+
+        {neq name="delbtnDisplay" value="0"}
+        <!--移除队员-->
+        <div class="success-frame success-frame2">
+            <div class="choise">
+                {switch name="delbtnDisplay"} {case value="2"}
+                <button type="button" class="mui-btn mui-btn-danger f16 signOut">移除此队员</button>
+                {/case} {case value="1"}
+                <button type="button" class="mui-btn mui-btn-danger f16 signOut">申请退出球队</button>
+                {/case} {/switch}
+            </div>
+        </div>
+        {/neq}
+
+    </div>
+
+    <!--底部操作-->
+    <ul class="mui-table-view operation">
+        <a href="#Impress">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgblue myimpress" onclick="submitAction()">
+                对他有印象，评价一下
+            </li>
+        </a>
+    </ul>
 
     </div>
 
