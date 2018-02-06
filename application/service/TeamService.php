@@ -224,7 +224,7 @@ class TeamService
                 $memberRole = $roleModel->where(['member_id' => $teammember['member_id'], 'team_id' => $teammember['team_id'], 'status' => 1])->select();
                 foreach ($memberRole as $val) {
                     $teammembers[$k]['role_text'] .= $val['type_text'] . ',';
-                    array_push($teammembers[$k]['role_arr'], $val['type']);
+                    array_push($teammembers[$k]['role_arr'], $val['type_text']);
                 }
             }
             return $teammembers;
