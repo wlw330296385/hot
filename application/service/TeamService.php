@@ -94,6 +94,7 @@ class TeamService
             }
             // 球队特点 字符串转数组输出
             $result['charater_arr'] = explode(',', $result['charater']);
+            $result['fans_num'] = getfansnum($result['id'], 4);
             return $result;
         } else {
             return $res;
@@ -106,7 +107,11 @@ class TeamService
         $model = new Team();
         $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
         if ($res) {
-            return $res->toArray();
+            $result = $res->toArray();
+            foreach ($result as $k => $val) {
+                $result[$k]['fans_num'] = getfansnum($val['id'], 4);
+            }
+            return $result;
         } else {
             return $res;
         }
@@ -118,7 +123,11 @@ class TeamService
         $model = new Team();
         $res = $model->where($map)->order($order)->paginate($paginate);
         if ($res) {
-            return $res->toArray();
+            $result = $res->toArray();
+            foreach ($result['data'] as $k => $val) {
+                $result['data'][$k]['fans_num'] = getfansnum($val['id'], 4);
+            }
+            return $result;
         } else {
             return $res;
         }

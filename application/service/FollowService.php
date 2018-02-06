@@ -11,11 +11,6 @@ class FollowService {
             $data['status'] = 1;
             $result = $model->allowField(true)->save($data);
             if ($result) {
-                // 若是球队，球队粉丝数+1
-                if ($data['type'] == 4) {
-                    db('team')->where('id', $data['follow_id'])->setInc('fans_num', 1);
-                }
-                
                 $response = ['code' => 200, 'msg' => '关注成功', 'data' => $model->id];
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -27,18 +22,9 @@ class FollowService {
             if ($hadFollow['status']==1) {
                 $data['status'] = -1;
                 $msg = '取消关注成功';
-                // 若是球队，球队粉丝数-1
-                if ($data['type'] == 4) {
-                    db('team')->where('id', $data['follow_id'])->setDec('fans_num', 1);
-                }
             } else {
                 $data['status'] = 1;
                 $msg = '关注成功';
-                
-                // 若是球队，球队粉丝数+1
-                if ($data['type'] == 4) {
-                    db('team')->where('id', $data['follow_id'])->setInc('fans_num', 1);
-                }
             }
             $result = $model->allowField(true)->isUpdate()->save($data);
             if ($result) {
@@ -88,5 +74,14 @@ class FollowService {
         }
     }
 
-
+    // 实体获取粉丝数
+    public function getfansnum($follow_id, $type=1) {
+        $model = new Follow();
+        $count = $model->where([
+            'status' => 1,
+            'follow_id' => $follow_id,
+            'type' => $type
+        ])->count();
+        return ($count) ? $count : 0;
+    }
 }

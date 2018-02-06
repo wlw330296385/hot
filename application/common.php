@@ -352,3 +352,14 @@ function download($url, $path = 'images/')
     // 返回保存的文件名
     return $filename;
 }
+
+// 获取粉丝数
+function getfansnum($follow_id, $type=1) {
+    $model = new \app\model\Follow();
+    $count = $model->where([
+        'status' => 1,
+        'follow_id' => $follow_id,
+        'type' => $type
+    ])->count();
+    return ($count) ? $count : 0;
+}
