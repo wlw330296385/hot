@@ -25,6 +25,11 @@
         .page-header .more {
             padding-right: 0px;
         }
+        .fgline {
+            margin: 0px 5px;
+            font-size: 10px;
+            color: #cccccc;
+        }
     </style>
 </head>
 
@@ -36,30 +41,36 @@
 
         <div class="list camp-list detalis-list coach  mt55">
             <div class="img4x3" style="background-image:url('{$campInfo.banner}')"></div>
+
             <ul class="mui-table-view mb" style="margin-top: -4px">
                 <li class="mui-table-view-cell mui-media listli de " style="padding:11px 15px;">
-                    <a href="javascript:;">
-                        <img class="mui-media-object mui-pull-left" src="{$campInfo.logo}">
-                        <div class="mui-media-body wd60 newline">{$campInfo.camp}<p class="mui-ellipsis">{$campInfo.province} {$campInfo.city} {$campInfo.area}</p>
+
+                        <img class="mui-media-object mui-pull-left" src="{$campInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                        <h4>{$campInfo.camp}</h4>
+                        <div class="mui-media-body wd49" style="line-height:20px !important">
+                            <p class="mui-ellipsis">{$campInfo.province} {$campInfo.city} {$campInfo.area}</p>
+                            <p class="f12">
+                                学生：<strong class="colororange">{$campInfo.total_member}</strong> <i class="fgline">|</i>
+                                粉丝：<strong class="colororange">{$campInfo.fans_num}</strong>
+                            </p>
                         </div>
-                        <div class="camp-num mui-text-right">
-                            <ul>
-                                <li><button type="button" class="mui-btn mui-btn-danger follow">关注</button></li>
-                                <li>
-                                    <div class="icons mui-inline">
-                                        <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
-                                        <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
-                                        <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
-                                    </div>
-                                </li>
-                                <li class="fr">{$campInfo.total_member}人报名</li>
-                            </ul>
+                        <div class="price-frame" style="padding:0;">
+                            <button type="button" class="mui-btn mui-btn-danger follow">关注</button>
                         </div>
-                    </a>
+
                 </li>
             </ul>
 
             <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli detalisli">
+                            <div class="icons mui-inline">
+                                <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
+                                <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
+                                <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
+                            </div>
+                    <span class="starScore">
+                    </span>
+                </li>
                 <li class="mui-table-view-cell listli detalisli">训练营介绍
                     <span class="about">{$campInfo.camp_introduction}
                             <a href="javascript:void(0)">......全文展示</a>
@@ -207,6 +218,7 @@
             // 星星显示
             var star = Math.round("{$campInfo.star}" / "{$campInfo.star_num}");
             starShow(star);
+            $(".starScore").prepend('评分 '+star+'.0');
 
             //展示训练营介绍全文
             $(".about a").click(function () {
