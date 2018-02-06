@@ -2,6 +2,7 @@
 namespace app\system\controller;
 use app\model\Coach;
 use app\model\Rebate;
+use app\service\CoachService;
 use app\service\ScheduleService;
 use app\service\SystemService;
 use app\service\MemberService;
@@ -298,6 +299,47 @@ class Crontab extends Controller {
             $model->allowField(true)->saveAll($data);
         } else {
             $model->allowField(true)->save($data);
+        }
+    }
+
+
+    // 统计更新教练流量数字段
+    public function coachflowcounter() {
+        try {
+            // 遍历coach数据
+            $coachs = db('coach')->select();
+            // 教练service
+            $coachService = new CoachService();
+            //dump($coachs);
+            $dataSaveAll = [];
+            foreach ($coachs as $key => $coach) {
+                // 课程流量
+                $lessonFlow = $coachService->lessoncount($coach['id']);
+                // 班级流量
+                $gradeList = $coachService->ingradelist($coach['id']);
+                //dump($gradeList);
+                $gradeFlow = count($gradeList);
+                // 学员流量
+                $studentFlow = $coachService->teachstudents($coach['id']);
+                // 课时流量
+                $scheduleFlow = $coachService->schedulecount($coach['id']);
+                $dataSaveAll[$key]['id'] = $coach['id'];
+                $dataSaveAll[$key]['lesson_flow'] = $lessonFlow;
+                $dataSaveAll[$key]['grade_flow'] = $gradeFlow;
+                $dataSaveAll[$key]['student_flow'] = $studentFlow;
+                $dataSaveAll[$key]['schedule_flow'] = $scheduleFlow;
+
+                // 顺手整理introduction值为图文内容格式
+                $newIntroduction = '<div class="operationDiv"><p>'. $coach['introduction'] .'</p></div>';
+                //$dataSaveAll[$key]['introduction'] = $newIntroduction;
+            }
+            //dump($dataSaveAll);
+            // 批量更新
+            $modelCoach = new Coach();
+            $res = $modelCoach->saveAll($dataSaveAll);
+            return json($res);
+        } catch (Exception $e) {
+            dump($e->getMessage());
         }
     }
 }

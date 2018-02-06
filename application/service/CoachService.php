@@ -3,6 +3,8 @@ namespace app\service;
 use app\model\Coach;
 use app\common\validate\CoachVal;
 use app\model\Grade;
+use app\model\Lesson;
+use app\model\Schedule;
 use think\Db;
 class CoachService{
 	private $CoachModel;
@@ -173,33 +175,35 @@ class CoachService{
     }
 
     // 教练在训练营的课程列表
-    public function inlessonlist($coach_id, $camp_id) {
-        $model = new \app\model\Lesson();
-        $iscoachlist = $model->where(['camp_id' => $camp_id, 'coach_id' => $coach_id])->select();
-        if (!$iscoachlist) {
-            return $iscoachlist;
+    public function inlessonlist($coach_id, $camp_id=0) {
+        $model = new Lesson();
+        $map = [];
+        if ($camp_id) {
+            $map['camp_id'] = $camp_id;
         }
-        $isassistantlist = [];
-        $assistants = $model->where(['camp_id' => $camp_id])->select();
-        if (!$assistants) {
-            return $assistants;
+        $coach = $this->coachInfo(['id' => $coach_id]);
+        $lessonlist = $model->where($map)
+            ->where('coach_id = :coach_id or assistant like :coach', ['coach_id' => $coach_id, 'coach' => "%".$coach['coach']."%"])
+            ->select();
+        if ($lessonlist) {
+            return $lessonlist->toArray();
+        } else {
+            return $lessonlist;
         }
-        $assistants = $assistants->toArray();
+    }
 
-        foreach ($assistants as $assistant) {
-            if ($assistant) {
-                $assistantId = unserialize($assistant['assistant_id']);
-                if ($assistantId) {
-                    foreach ($assistantId as $val) {
-                        if ($val && $val == $coach_id) {
-                            array_push($isassistantlist, $assistant);
-                        }
-                    }
-                }
-            }
+    // 教练课程流量统计
+    public function lessoncount($coach_id, $camp_id=0) {
+        $model = new Lesson();
+        $map = [];
+        if ($camp_id) {
+            $map['camp_id'] = $camp_id;
         }
-        $result = array_merge($iscoachlist->toArray(), $isassistantlist);
-        return $result;
+        $coach = $this->coachInfo(['id' => $coach_id]);
+        $query = $model->where($map)
+            ->where('coach_id = :coach_id or assistant like :coach', ['coach_id' => $coach_id, 'coach' => "%".$coach['coach']."%"])
+            ->count();
+        return ($query) ? $query : 0;
     }
 
     // 教练执教学员统计
@@ -219,6 +223,20 @@ class CoachService{
         }
     }
 
+    // 教练课时流量
+    public function schedulecount($coach_id, $camp_id=0) {
+        $model = new Schedule();
+        $map = [];
+        if ($camp_id) {
+            $map['camp_id'] = $camp_id;
+        }
+        $map['status'] = 1;
+        $coach = $this->coachInfo(['id' => $coach_id]);
+        $query = $model->where($map)
+            ->where('coach_id = :coach_id or assistant like :coach', ['coach_id' => $coach_id, 'coach' => "%".$coach['coach']."%"])
+            ->count();
+        return ($query) ? $query : 0;
+    }
 
     // 创建教练评论
     public function createCoachComment($data){

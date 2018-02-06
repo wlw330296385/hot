@@ -8,9 +8,9 @@ class Coach extends Model {
 	protected $autoWriteTimestamp = true;
     protected $readonly = [
                             'create_time',
-                            'student_flow',
+                            //'student_flow',
                             'kps',
-                            'lesson_flow',
+                            //'lesson_flow',
                             'coach_rank',
                             'coach_level'
                             ];
