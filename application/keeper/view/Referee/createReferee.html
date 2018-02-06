@@ -47,8 +47,9 @@
                 {/notempty}
                 <div class="mui-input-row">
                     <label>真实姓名</label>
-                    <input type="text" name="referee_name" value="" class="input referee_name" placeholder="请输入真实姓名">
+                    <input type="text" name="realname" value="" class="input realname" placeholder="请输入真实姓名" value="{$memberInfo.realname}">
                 </div>
+                {if empty($refereeCert)}
                 <div class="mui-input-row">
                     <label>身份证号码</label>
                     <input type="text" name="idno" value="" class="input wd54 idno" placeholder="请输入身份证号码">
@@ -67,6 +68,7 @@
                         <input type="hidden" name="photo_back" value="">
                     </a>
                 </div>
+                {/if}
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right portraits filePicker" onclick="add_id(3)">
                         <label>个人形象照</label>
@@ -78,17 +80,17 @@
                     <label>裁判等级</label>
                     <span class="select-row mui-navigate-right">
                             <select name="level" id="level" >
-                                <option value=""></option>
-                                <option value="国际级裁判员">国际级裁判员</option>
-                                <option value="国家A级裁判员">国家A级裁判员</option>
-                                <option value="国家级裁判员">国家级裁判员</option>
-                                <option value="一级裁判员">一级裁判员</option>
-                                <option value="二级裁判员">二级裁判员</option>
-                                <option value="三级裁判员">三级裁判员</option>
-                                <option value="暂无考级">暂无考级</option>
+                                <option value="1">国际级裁判员</option>
+                                <option value="2">国家A级裁判员</option>
+                                <option value="3">国家级裁判员</option>
+                                <option value="4">一级裁判员</option>
+                                <option value="5">二级裁判员</option>
+                                <option value="6">三级裁判员</option>
+                                <option value="0">暂无考级</option>
                             </select>
                         </span>
                 </div>
+                {if empty($refereeCert)}
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right filePicker" onclick="add_id(4)">
                         <label>资质证明</label>
@@ -96,6 +98,7 @@
                         <input type="hidden" name="cert" value="">
                     </a>
                 </div>
+                {/if}
                 <div class="mui-input-row">
                     <label>执裁单场费用</label>
                     <input type="text" name="appearance_fee" value="" class="input appearance_fee" placeholder="请输入执裁单场费用" value="">
@@ -205,7 +208,7 @@
             });
         })(mui, document);
 
-        //完善教练信息
+        //完善裁判员信息
         $(function () {
 
             //获取用户协议内容，放置弹出框中
@@ -227,7 +230,7 @@
 
             $(".registerbtn2").on("click", function () {
                 var memberid = $('input[name=memberid]').val();
-                var referee_name = $('.referee_name').val();
+                var realname = $('input[name=realname]').val();
                 var referee_year = $(".referee_year").val();
                 var experience = $(".experience").val();
                 var introduction = $(".introduction").val();
@@ -241,41 +244,41 @@
                 var level = $('input[name=level]').val();
                 var appearance_fee = $('input[name=appearance_fee]').val();
 
-                if (!(/[\u4e00-\u9fa5a-zA-Z]{2,20}/).test(referee_name)) {
-                    mui.toast("请输入您的真实姓名");
-                    return false;
-                } else if (!(/^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/).test(idno)) {
-                    mui.toast("请输入正确身份证号码");
-                    return false;
-                } else if (portraits == "" || photo_positive == "" || photo_back == "" || cert == "") {
-                    mui.toast("请上传对应证件");
-                    return false;
-                } else if (locationStr == "") {
-                    mui.toast("请选择所属地区");
-                    return false;
-                } else if (!(/^\+?[1-9]\d*$/).test(referee_year)) {
-                    mui.toast("执裁经验年数必须为数字");
-                    return false;
-                } else if (!(/^\+?[1-9]\d*$/).test(appearance_fee)) {
-                    mui.toast("出场费必须为数字");
-                    return false;
-                } else if (level == "") {
-                    mui.toast("请选择裁判员等级");
-                    return false;
-                } else if (experience == "" || introduction == "" || description == '') {
-                    mui.toast("请完善信息");
-                    return false;
-                } else if (!$('input[name=iagree]').is(':checked')) {
-                    mui.toast("请阅读并同意篮球管家用户协议，谢谢");
-                    return false;
-                };
+                // if (!(/[\u4e00-\u9fa5a-zA-Z]{2,20}/).test(realname)) {
+                //     mui.toast("请输入您的真实姓名");
+                //     return false;
+                // } else if (!(/^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/).test(idno)) {
+                //     mui.toast("请输入正确身份证号码");
+                //     return false;
+                // } else if (portraits == "" || photo_positive == "" || photo_back == "" || cert == "") {
+                //     mui.toast("请上传对应证件");
+                //     return false;
+                // } else if (locationStr == "") {
+                //     mui.toast("请选择出场地区");
+                //     return false;
+                // } else if (!(/^\+?[1-9]\d*$/).test(referee_year)) {
+                //     mui.toast("执裁经验年数必须为数字");
+                //     return false;
+                // } else if (!(/^\+?[1-9]\d*$/).test(appearance_fee)) {
+                //     mui.toast("出场费必须为数字");
+                //     return false;
+                // } else if (level == "") {
+                //     mui.toast("请选择裁判员等级");
+                //     return false;
+                // } else if (experience == "" || introduction == "" || description == '') {
+                //     mui.toast("请完善信息");
+                //     return false;
+                // } else if (!$('input[name=iagree]').is(':checked')) {
+                //     mui.toast("请阅读并同意篮球管家用户协议，谢谢");
+                //     return false;
+                // };
 
                 mui.confirm('确认提交填写信息吗?', '', ['取消', '确认'], function (e) {
                     if (e.index == 1) {
                         mui.ajax("{:url('api/referee/createRefereeApi')}", {
                             data: {
                                 member_id: memberid,
-                                referee: referee_name,
+                                realname: realname,
                                 referee_year: referee_year,
                                 experience: experience,
                                 introduction: introduction,
