@@ -74,16 +74,16 @@
                     </span>
                 </li>
                 <li class="mui-table-view-cell listli detalisli listinitial">课量
-                    <span>执教过{$scheduleCount+$coachInfo.schedule_flow_init}课时</span>
+                    <span>执教过{$coachInfo.schedule_flow+$coachInfo.schedule_flow_init}课时</span>
                 </li>
                 <li class="mui-table-view-cell listli detalisli listinitial">学员
-                    <span>执教过{$studentCount+$coachInfo.student_flow_init}个学生</span>
+                    <span>执教过{$coachInfo.student_flow+$coachInfo.student_flow_init}个学生</span>
                 </li>
                 <li class="mui-table-view-cell listli detalisli listinitial">班级
-                    <span>执教{$gradeCount+$coachInfo.grade_flow_init}个班级</span>
+                    <span>执教{$coachInfo.grade_flow}个班级</span>
                 </li>
                 <li class="mui-table-view-cell listli detalisli listinitial">课程
-                    <span>负责{$gradeCount+$coachInfo.grade_flow_init}个课程</span>
+                    <span>负责{$coachInfo.lesson_flow}个课程</span>
                 </li>
             </ul>
 
@@ -265,6 +265,13 @@
 
             // 发表印象标签
             $(".impressBtn").on("tap", '', function () {
+
+                //判断是否登陆会员
+                if ("{$commentPower}" != 1) {
+                    mui.toast('您还不是该教练的学生，无法给印象哦');
+                    return false;
+                }
+
                 var commented = "{$coachInfo.coach}";
                 var commented_id = "{$coachInfo.id}";
 
