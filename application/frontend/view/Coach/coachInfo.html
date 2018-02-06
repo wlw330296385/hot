@@ -54,7 +54,7 @@
 
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli detalisli listinitial">教练宣言
-                    <span class="about">{$coachInfo.introduction}
+                    <span class="about">{$coachInfo.description}
                         <a href="#">全文展示</a>
                     </span>
                 </li>
@@ -86,6 +86,23 @@
                     <span>负责{$gradeCount+$coachInfo.grade_flow_init}个课程</span>
                 </li>
             </ul>
+
+            <!--教练印象-->
+            <div class="page-header border-b">
+                <span class="course">教练印象</span>
+                <span class="more pdr15">
+                    <a href="#Impress" class="mui-navigate-right myimpress">发表我的印象</a>
+                </span>
+            </div>
+            <div class="impress whitebg tagCommentList mb"></div>
+
+            <div class="page-header" style="background: #efeff4;">
+                <span class="course">教练简介</span>
+            </div>
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell listli introBox">{$coachInfo.introduction}</li>
+            </ul>
+
             <div class="page-header">
                 <span class="course">评论</span>
             </div>
@@ -137,6 +154,20 @@
                 </li>
             </ul>
 
+        </div>
+
+        <!-- 发表印象 -->
+        <div id="Impress" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+            <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+                <ul class="mui-table-view operation">
+                    <h5>
+                        <span>我的印象</span>
+                        <a href="#Impress" class="mui-icon mui-icon-closeempty"></a>
+                    </h5>
+                    <div class="impressSide whitebg tagAll"></div>
+                    <li class="mui-col-xs-12 opli impressBtn" id="impressSubmit">提交</li>
+                </ul>
+            </div>
         </div>
 
         <!-- 评价弹框 -->
@@ -211,6 +242,73 @@
             $(".about a").click(function () {
                 $(".about").css("display", "block");
                 $(this).hide();
+            });
+
+            //教练员介绍内容
+            var introduce = '{$coachInfo.introduction}';
+            if (introduce == '') {
+                $(".introBox").append("<p class='nodata' style='margin-left:0'>该教练员还没有详细的图文简介哦</p>")
+            }
+
+            // 印象评价
+            $(document).on("tap", '.impressSide .choiseTag', function () {
+                if ($(this).hasClass("bgorange")) {
+                    $(this).removeClass("bgorange");
+                } else {
+                    $(this).addClass("bgorange");
+                }
+            });
+
+            $(document).on("tap", '.myimpress', function () {
+                $(".impressSide .bgorange").removeClass("bgorange");
+            });
+
+            // 发表印象标签
+            $(".impressBtn").on("tap", '', function () {
+                var commented = "{$coachInfo.coach}";
+                var commented_id = "{$coachInfo.id}";
+
+                var tags = $(".tagAll .bgorange").map(function () {
+                    return $(this).attr("data-tag_name");
+                }).get().join(",");
+
+                var tag_ids = $(".tagAll .bgorange").map(function () {
+                    return $(this).attr("data-id");
+                }).get().join(",");
+
+                if (!$(".tagAll .choiseTag").hasClass("bgorange")) {
+                    mui.toast("你还没有选择印象标签哦");
+                    return false;
+                }
+
+                mui.ajax("{:url('api/tag/addtagcomment')}", {
+                    data: {
+                        comment_type: 3,
+                        commented: commented,
+                        commented_id: commented_id,
+                        tags: tags,
+                        tag_ids: tag_ids,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast("发表成功，感谢你的评价！");
+                            toTagCommentList();
+                            mui('#Impress').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                            mui('#Impress').popover('toggle');
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
             });
 
             //评价
@@ -323,7 +421,73 @@
             followStatus();
             //判断是否已经邀请，是就修改邀请内容
             exist();
+
+            toTagAllList(); //所有标签列表
+            toTagCommentList(); //已经评价的标签列表
         });
+
+        //获取所有标签列表
+        function toTagAllList() {
+            mui.ajax("{:url('api/tag/tagall')}", {
+                data: {
+                    comment_type: 3
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var div = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag_name + '" data-id="' + data.data[i].id + '">' + data.data[i].tag_name + '</span>'
+                        }
+                        $(".tagAll").empty();
+                        $(".tagAll").append(div);
+
+                        if (div == '') {
+                            $(".tagAll").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        };
+
+        //获取已评价标签列表
+        function toTagCommentList() {
+            mui.ajax("{:url('api/tag/commentlist')}", {
+                data: {
+                    comment_type: 3,
+                    commented_id: "{$coachInfo.id}",
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var div = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag + '" data-tag_id="' + data.data[i].id + '">' + data.data[i].tag + '(<samll>' + data.data[i].count + '</samll>)</span>'
+                        }
+                        $(".tagCommentList").empty();
+                        $(".tagCommentList").append(div);
+                    } else {
+                        $(".tagCommentList").append('<p class="mui-text-center">还没有印象标签哦</p>');
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        };
 
         // 判断当前的关注状态
         function followStatus() {
