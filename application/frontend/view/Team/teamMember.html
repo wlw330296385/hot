@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>球队比赛列表</title>
+    <title>队员列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -16,8 +16,10 @@
             width: 14%;
             font-size: 24px;
             line-height: 55px;
-            color: red;
             float: left;
+            font-weight: bold;
+            text-align: center;
+            margin-right: 12px;
         }
     </style>
 </head>
@@ -29,21 +31,21 @@
         <h1 class="mui-title">队员列表</h1>
     </header>
 
-
     <div class="mui-content">
 
         <div class="list detalis-list coach">
 
             <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell mui-media listli" id="logoframe" style="padding:11px 15px;">
-                    <img class="mui-media-object mui-pull-left logostyle" src="{$teamInfo.logo}">
-                    <div class="mui-media-body wd49">
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                    <img class="mui-media-object mui-pull-left" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                    <div class="mui-media-body wd45">
                         <strong class="f16">{$teamInfo.name}</strong>
-                        <p class="mui-ellipsis">{$teamInfo.city} {$teamInfo.area}</p>
+                        <p class="mui-ellipsis" style="line-height:20px;">{$teamInfo.city} {$teamInfo.area}</p>
+                        <p class="mui-ellipsis" style="line-height:20px;">粉丝数：<strong class="colororange">{$teamInfo.fans_num}</strong></p>
                     </div>
                     <div class="price-frame">
-                        <p class="f12" style="margin-top:20px">球队成员：
-                            <b class="colororange f16">{$teamInfo.member_num}</b>人</p>
+                        <p class="f12" style="margin-top:37px">球队成员：
+                            <b class="colororange f18">{$teamInfo.member_num}</b>人</p>
                     </div>
                 </li>
             </ul>
@@ -56,26 +58,31 @@
                     <a class="mui-control-item" href="#nocontactMatchList">未关联</a>
                 </div>
             </div>
+            
             <div class="tab-pullRefresh">
-                <div id="onlineMemberList" class="mui-scroll-wrapper mui-control-content mui-active" style="top:170px">
+                <div id="onlineMemberList" class="mui-scroll-wrapper mui-control-content mui-active" style="top:182px">
                     <div class="mui-scroll">
                         <!-- <div class="page-header">
-                                <span class="course">理事</span>
-                            </div> -->
-                        <ul class="mui-table-view detalis-list list border-b match1 OA_task_match"></ul>
+                            <span class="course">理事</span>
+                        </div>
+                        <ul class="mui-table-view detalis-list list border-b"></ul>
+                        <div class="page-header">
+                            <span class="course">队员</span>
+                        </div> -->
+                        <ul class="mui-table-view detalis-list list border-b match1"></ul>
                     </div>
                 </div>
-                <div id="offlineMemberList" class="mui-scroll-wrapper mui-control-content" style="top:170px">
+                <div id="offlineMemberList" class="mui-scroll-wrapper mui-control-content" style="top:182px">
                     <div class="mui-scroll">
                         <ul class="mui-table-view detalis-list list border-b match-1 OA_task_match"></ul>
                     </div>
                 </div>
-                <div id="nolineMemberList" class="mui-scroll-wrapper mui-control-content" style="top:170px">
+                <div id="nolineMemberList" class="mui-scroll-wrapper mui-control-content" style="top:182px">
                     <div class="mui-scroll">
                         <ul class="mui-table-view detalis-list list border-b match0"></ul>
                     </div>
                 </div>
-                <div id="nocontactMatchList" class="mui-scroll-wrapper mui-control-content" style="top:170px">
+                <div id="nocontactMatchList" class="mui-scroll-wrapper mui-control-content" style="top:182px">
                     <div class="mui-scroll">
                         <ul class="mui-table-view detalis-list list border-b match-2"></ul>
                     </div>
@@ -308,13 +315,31 @@
                     for (var i = 0; i <= data.data.length - 1; i++) {
                         var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + data.data[i].team_id + '/member_id/' + data.data[i].member_id;
                         role_text = data.data[i].role_text
+                        // <div class="page-header">
+                        //     <span class="course">理事</span>
+                        // </div>
+                        // <ul class="mui-table-view detalis-list list border-b"></ul>
+                        // <div class="page-header">
+                        //     <span class="course">队员</span>
+                        // </div>
+                        // <ul class="mui-table-view detalis-list list border-b"></ul>
+                        // newli += '<div class="page-header"><span class="course">理事</span></div>';
+                        // if(data.data[i].role_text != ''){
+
+                        // }
+                        // newli += '<ul class="mui-table-view detalis-list list border-b"></ul>';
+                        // newli += '';
+                        // newli += '';
+                        newli += '';
+
+
                         newli += '<li class="mui-table-view-cell mui-media listli coach"><a href="' + urls + '" class="mui-navigate-right">';
                         if (data.data[i].number == null) {
                             newli += '<div class="mbNumber">&nbsp;</div>';
                         } else {
-                            newli += '<div class="mbNumber">' + data.data[i].number + '</div>';
+                            newli += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
                         }
-                        newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd66">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
+                        newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd60">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
                         // newli += '<font class="tipCorner bgred">' + data.data[i].role_text + '</font>';
                         newli += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div>'
                     }
@@ -322,7 +347,6 @@
                 }
 
                 if (gType == 1) {
-                    console.log(status)
                     //上拉刷新
                     $("ul.match" + status).empty().append(newli);
                     mui('#' + wList).pullRefresh().endPulldownToRefresh();
