@@ -149,12 +149,12 @@ class Referee extends Base{
                 ];
               
                 
-                $cert2 = $certS->saveCert($certdata);
+                $cert1 = $certS->saveCert($certdata);
                 if ($cert1['code'] == 100) {
                     return json([ 'msg' => '裁判证件信息保存出错,请重试', 'code' => 100]);
                 }
 
-                if($input('post.idno')){
+                if(input('post.idno')){
                     // 实名数据
                     $realnamedata = [
                         'camp_id' => 0,
@@ -164,7 +164,7 @@ class Referee extends Base{
                         'photo_positive' => input('post.photo_positive'),
                         'photo_back' => input('post.photo_back'),
                     ];
-                    $cert1 = $certS->saveCert($realnamedata);
+                    $cert2 = $certS->saveCert($realnamedata);
                     if ($cert2['code'] == 100) {
                         return json([ 'msg' => '身份证证件信息保存出错,请重试', 'code' => 100]);
                     }

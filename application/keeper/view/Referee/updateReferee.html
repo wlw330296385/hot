@@ -38,31 +38,65 @@
             <form action="" class="mui-input-group">
                 <input type="hidden" name="refereeid" value="{$refereeInfo.id}">
                 <input type="hidden" name="memberid" value="{$refereeInfo.member_id}">
+                <!-- 判断有没有身份证 -->
+                {if !empty($credit)}
+                <!-- 有上传身份证 -->
                 <div class="mui-input-row">
                     <label>真实姓名</label>
-                    <input type="text" name="referee_name" class="input referee_name" placeholder="请输入真实姓名" value="{notempty name='refereeInfo.referee'}{$refereeInfo.referee}{/notempty}">
+                    <input type="text" name="referee_name" class="input referee_name" placeholder="请输入真实姓名" value="{$refereeInfo.referee}" {if $refereeInfo.status == 1 } disabled="disabled" {/if}>
                 </div>
                 <div class="mui-input-row">
                     <label>身份证号码</label>
-                    <input type="text" name="idno" class="input wd54 idno" placeholder="请输入身份证号码" {notempty name="identCert.cert_no" } value="{$identCert.cert_no}"
-                        {/notempty}>
+                    <input type="text" name="idno" class="input wd54 idno" placeholder="请输入身份证号码" {if $credit.status == 1 } value="{$credit.cert_no}"   disabled="disabled" {/if}>
+                        
                 </div>
                 <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right filePicker" onclick="add_id(1)">
+                    <a class="mui-navigate-right filePicker" {if $credit.status == 0 } onclick="add_id(1)" {/if}>
                         <label>身份证正面</label>
-                        <img id="preview_1" class="refereeicon icon01 upload-preview" {notempty name="identCert.photo_positive" } src="{$identCert.photo_positive}"
-                            {/notempty} alt="">
-                        <input type="hidden" name="photo_positive" value="{notempty name='identCert.photo_positive'}{$identCert.photo_positive}{/notempty}">
+                        <img id="preview_1" class="refereeicon icon01 upload-preview"  src="{$credit.photo_positive}"
+                            alt="">
+                        <input type="hidden" name="photo_positive" value="{$credit.photo_positive}">
                     </a>
                 </div>
                 <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right filePicker" onclick="add_id(2)">
+                    <a class="mui-navigate-right filePicker"  {if $credit.status == 0 } onclick="add_id(2)" {/if}>
                         <label>身份证反面</label>
-                        <img id="preview_2" class="refereeicon icon01 upload-preview" {notempty name="identCert.photo_back" } src="{$identCert.photo_back}"
-                            {/notempty} alt="">
-                        <input type="hidden" name="photo_back" value="{notempty name='identCert.photo_back'}{$identCert.photo_back}{/notempty}">
+                        <img id="preview_2" class="refereeicon icon01 upload-preview" src="{$credit.photo_back}"
+                             alt="">
+                        <input type="hidden" name="photo_back" value="{$credit.photo_back}">
                     </a>
                 </div>
+                {else /}
+                <!-- 没上传身份证 -->
+                <div class="mui-input-row">
+                    <label>真实姓名</label>
+                    <input type="text" name="referee_name" class="input referee_name" placeholder="请输入真实姓名" value="">
+                </div>
+                <div class="mui-input-row">
+                    <label>身份证号码</label>
+                    <input type="text" name="idno" class="input wd54 idno" placeholder="请输入身份证号码" >
+                        
+                </div>
+                <div class="mui-input-row h-auto">
+                    <a class="mui-navigate-right filePicker"onclick="add_id(1)">
+                        <label>身份证正面</label>
+                        <img id="preview_1" class="refereeicon icon01 upload-preview" src=""
+                             alt="">
+                        <input type="hidden" name="photo_positive" value="">
+                    </a>
+                </div>
+                <div class="mui-input-row h-auto">
+                    <a class="mui-navigate-right filePicker" onclick="add_id(2)" >
+                        <label>身份证反面</label>
+                        <img id="preview_2" class="refereeicon icon01 upload-preview" src="" alt="">
+                        <input type="hidden" name="photo_back" value="">
+                    </a>
+                </div>
+
+                {/if}
+
+
+
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right portraits filePicker" onclick="add_id(3)">
                         <label>个人形象照</label>
@@ -75,24 +109,35 @@
                     <label>裁判等级</label>
                     <span class="select-row mui-navigate-right">
                             <select name="level" id="level" >
-                                <option value=""></option>
-                                <option value="国际级裁判员">国际级裁判员</option>
-                                <option value="国家A级裁判员">国家A级裁判员</option>
-                                <option value="国家级裁判员">国家级裁判员</option>
-                                <option value="一级裁判员">一级裁判员</option>
-                                <option value="二级裁判员">二级裁判员</option>
-                                <option value="三级裁判员">三级裁判员</option>
+                                <option value="1">国际级裁判员</option>
+                                <option value="2">国家A级裁判员</option>
+                                <option value="3">国家级裁判员</option>
+                                <option value="4">一级裁判员</option>
+                                <option value="5">二级裁判员</option>
+                                <option value="6">三级裁判员</option>
+                                <option value="0" >未考级</option>
                             </select>
                         </span>
                 </div>
+                {if !empty($refereeCert)}
+                <!-- 有资质证明 -->
                 <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right filePicker" onclick="add_id(4)">
+                    <a class="mui-navigate-right filePicker"  {if $refereeCert.status == 0 } onclick="add_id(4)" {/if}>
                         <label>资质证明</label>
-                        <img id="preview_4" class="refereeicon icon01 upload-preview" {notempty name="refereeCert.photo_positive" } src="{$refereeCert.photo_positive}"
-                            {/notempty} alt="">
-                        <input type="hidden" name="cert" value="{notempty name='refereeCert.photo_positive'}{$refereeCert.photo_positive}{/notempty}">
+                        <img id="preview_4" class="refereeicon icon01 upload-preview"  src="{$refereeCert.photo_positive}">
+                        <input type="hidden" name="cert" value="{$refereeCert.photo_positive}">
                     </a>
                 </div>
+                {else /}
+                <!-- 无资质证明 -->
+                <div class="mui-input-row h-auto">
+                    <a class="mui-navigate-right filePicker"   onclick="add_id(4)" >
+                        <label>资质证明</label>
+                        <img id="preview_4" class="refereeicon icon01 upload-preview"  src="" alt="">
+                        <input type="hidden" name="cert" value="">
+                    </a>
+                </div>    
+                {/if}
                 <div class="mui-input-row">
                     <label>执裁单场费用</label>
                     <input type="text" name="appearance_fee" value="{$refereeInfo.appearance_fee}" class="input appearance_fee" placeholder="请输入执裁单场费用" value="">
