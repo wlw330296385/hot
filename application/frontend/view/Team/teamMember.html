@@ -64,15 +64,14 @@
             <div class="tab-pullRefresh">
                 <div id="onlineMemberList" class="mui-scroll-wrapper mui-control-content mui-active" style="top:182px">
                     <div class="mui-scroll">
-                        <!-- <div class="match1"></div> -->
-                        <!-- <div class="page-header">
+                        <div class="page-header">
                             <span class="course">理事</span>
-                        </div> -->
-                        <ul class="mui-table-view detalis-list list border-b match1"></ul>
-                        <!-- <div class="page-header">
+                        </div>
+                        <ul class="mui-table-view detalis-list list border-b matchAdmin"></ul>
+                        <div class="page-header">
                             <span class="course">队员</span>
-                        </div> -->
-                        <!-- <ul class="mui-table-view detalis-list list border-b match1"></ul> -->
+                        </div>
+                        <ul class="mui-table-view detalis-list list border-b matchCommon"></ul>
                     </div>
                 </div>
                 <div id="offlineMemberList" class="mui-scroll-wrapper mui-control-content" style="top:182px">
@@ -217,7 +216,7 @@
                 onCount = 1;//刷新并显示第一页
                 var page = onCount;
                 var gType = 1;//代表下拉刷新
-                toList('onlineMemberList', page, gType, 1);//具体取数据的方法
+                toListIn('onlineMemberList', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -227,7 +226,7 @@
                 onCount++;//翻下一页
                 var page = onCount;
                 var gType = 2;//代表上拉加载
-                toList('onlineMemberList', page, gType, 1);//具体取数据的方法
+                toListIn('onlineMemberList', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -295,67 +294,82 @@
     })
 
     // 在队
-    // var toListIn = function (wList, page, gType) {
-    //     //搜索关键字不能完全为空，否则查询为空
-    //     var url = "{:url('api/team/teammemberlist','','',true)}";
-    //     var team_id = "{$teamInfo.id}";
-    //     mui.ajax({
-    //         url: url,
-    //         data: {
-    //             team_id: team_id,
-    //             page: page,
-    //             status: 1
-    //         },
-    //         dataType: 'json',//服务器返回json格式数据
-    //         type: 'post',//HTTP请求类型
-    //         timeout: 10000,//超时时间设置为10秒；
-    //         headers: { 'Content-Type': 'application/json' },
-    //         success: function (data) {
-    //             console.log(data)
-    //             var newli = '';
-    //             if (data.code == 200) {
-    //                 for (var i = 0; i <= data.data.length - 1; i++) {
-    //                     var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + data.data[i].team_id + '/member_id/' + data.data[i].member_id;
-    //                     if (data.data[i].role_arr != 0) {
-    //                         newli += '<li class="mui-table-view-cell mui-media listli coach"><a href="' + urls + '" class="mui-navigate-right">';
-    //                         if (data.data[i].number == null) {
-    //                             newli += '<div class="mbNumber">&nbsp;</div>';
-    //                         } else {
-    //                             newli += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
-    //                         }
-    //                         newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd60">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
-    //                         newli += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div></li>'
-    //                     }
-    //                 }
-    //             }
+    var toListIn = function (wList, page, gType) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/team/teammemberlist','','',true)}";
+        var team_id = "{$teamInfo.id}";
+        mui.ajax({
+            url: url,
+            data: {
+                team_id: team_id,
+                page: page,
+                status: 1
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data)
+                var newli1 = '';
+                var newli0 = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + data.data[i].team_id + '/member_id/' + data.data[i].member_id;
+                        if (data.data[i].role_arr != 0) {
+                            newli1 += '<li class="mui-table-view-cell mui-media listli coach"><a href="' + urls + '" class="mui-navigate-right">';
+                            if (data.data[i].number == null) {
+                                newli1 += '<div class="mbNumber">&nbsp;</div>';
+                            } else {
+                                newli1 += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
+                            }
+                            newli1 += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd60">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
+                            newli1 += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div></li>'
+                        } else {
+                            newli0 += '<li class="mui-table-view-cell mui-media listli coach"><a href="' + urls + '" class="mui-navigate-right">';
+                            if (data.data[i].number == null) {
+                                newli0 += '<div class="mbNumber">&nbsp;</div>';
+                            } else {
+                                newli0 += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
+                            }
+                            newli0 += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd60">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
+                            newli0 += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div></li>'
+                        }
+                    }
+                }
 
-    //             if (gType == 1) {
-    //                 //上拉刷新
-    //                 $(".match1").empty().append(newli);
-    //                 mui('#' + wList).pullRefresh().endPulldownToRefresh();
-    //                 mui('#' + wList).pullRefresh().refresh(true);
-    //                 if (newli == '') {
-    //                     $(".match1").append('<li class="nodata"><p>没有相关数据哦</p></li>');
-    //                 }
-    //             } else {
-    //                 //下拉加载 gType==2
-    //                 $(".match1").append(newli);
-    //             }
+                if (gType == 1) {
+                    //上拉刷新
+                    $(".matchAdmin").empty().append(newli1);
+                    $(".matchCommon").empty().append(newli0);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli1 == '') {
+                        $(".matchAdmin").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                    if (newli0 == '') {
+                        $(".matchCommon").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $(".matchAdmin").append(newli1);
+                    $(".matchCommon").append(newli0);
+                }
 
-    //             if (newli != '') {
-    //                 mui('#' + wList).pullRefresh().endPullupToRefresh(false);
-    //             } else {
-    //                 mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-    //             }
-    //         },
-    //         error: function (xhr, type, errerThrown) {
-    //             mui.toast('网络异常,请稍候再试');
-    //             mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-    //         }
-    //     });
-    // };
+                if (newli1 != '' || newli0 != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
 
-    // 在队
+    // 其他
     var toList = function (wList, page, gType, status) {
         //搜索关键字不能完全为空，否则查询为空
         var url = "{:url('api/team/teammemberlist','','',true)}";
@@ -377,19 +391,17 @@
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
                         var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + data.data[i].team_id + '/member_id/' + data.data[i].member_id;
-                        if (data.data[i].role_arr != '') {
-                            newli += '<li class="mui-table-view-cell mui-media listli coach"><a href="' + urls + '" class="mui-navigate-right">';
-                            if (data.data[i].number == null) {
-                                newli += '<div class="mbNumber">&nbsp;</div>';
-                            } else {
-                                newli += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
-                            }
-                            newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd60">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
-                            for (var j = 0; j <= data.data[i].role_arr.length - 1; j++) {
-                                newli += '<font class="tipCorner bgred">' + data.data[i].role_arr[j] + '</font>';
-                            }
-                            newli += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div></li>'
+                        newli += '<li class="mui-table-view-cell mui-media listli coach"><a href="' + urls + '" class="mui-navigate-right">';
+                        if (data.data[i].number == null) {
+                            newli += '<div class="mbNumber">&nbsp;</div>';
+                        } else {
+                            newli += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
                         }
+                        newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd60">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
+                        for (var j = 0; j <= data.data[i].role_arr.length - 1; j++) {
+                            newli += '<font class="tipCorner bgred">' + data.data[i].role_arr[j] + '</font>';
+                        }
+                        newli += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div></li>'
                     }
                 }
 
