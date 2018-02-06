@@ -40,6 +40,7 @@ class Referee extends Base{
             if( isset($map['page']) ){
                 unset($map['page']);
             }
+            // dump($map);die;
             $refereeList = $this->RefereeService->getRefereeList($map,$page);
             if($refereeList){
                 return json(['code'=>200,'msg'=>'OK','data'=>$refereeList]);

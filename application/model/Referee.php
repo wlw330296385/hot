@@ -12,5 +12,7 @@ class Referee extends Model {
 
 
 
-    
+    public function member(){
+        return $this->hasOne('member','id','member_id',[],'left join');
+    }
 }

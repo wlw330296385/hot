@@ -26,11 +26,11 @@
     </header>
     <div class="mui-content">
 
-        <div class="list camp-list detalis-list coach mt55">
+        <div class="list camp-list detalis-list referee mt55">
             <ul class="mui-table-view mb" style="margin-top: -4px">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
                     <a href="javascript:;">
-                        <img class="mui-media-object mui-pull-left coachicon" src="{$refereeInfo.portraits}">
+                        <img class="mui-media-object mui-pull-left refereeicon" src="{$refereeInfo.portraits}">
                         <div class="mui-media-body">
                             {$refereeInfo.referee}
                             <i class="icon iconfont icon-sex{$refereeInfo.sex}"></i>
@@ -45,7 +45,7 @@
                                         <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
                                     </div>
                                 </li>
-                                <li class="fr">{$refereeInfo.area}</li>
+                                <li class="fr">{$refereeInfo.referee_area}</li>
                             </ul>
                         </div>
                     </a>
@@ -75,13 +75,13 @@
                     </span>
                 </li>
                 <li class="mui-table-view-cell listli detalisli listinitial">执裁场次
-                    <span>执裁过 20 场</span>
+                    <span>执裁过 {$refereeInfo.total_played} 场</span>
                 </li>
                 <li class="mui-table-view-cell listli detalisli listinitial">接单范围
-                    <span>广东省 深圳市 不限区</span>
+                    <span>{$refereeInfo.referee_province} {$refereeInfo.referee_city} {$refereeInfo.referee_area}</span>
                 </li>
                 <li class="mui-table-view-cell listli detalisli listinitial">出场费用
-                    <span>200元/场</span>
+                    <span>{$refereeInfo.appearance_fee}元/场</span>
                 </li>
             </ul>
 
@@ -102,7 +102,7 @@
                 {volist name='commentList' id="vol" empty="暂无评论"}
                 <li class="mui-table-view-cell mui-media listli">
                     <a href="javascript:;">
-                        <img class="mui-media-object mui-pull-left coachicon" src="{$vol.avatar}">
+                        <img class="mui-media-object mui-pull-left refereeicon" src="{$vol.avatar}">
                         <div class="mui-media-body">
                             {$vol.member}
                             <p class="mui-ellipsis">{$vol.comment}</p>
@@ -151,7 +151,7 @@
 
         <!-- 发表印象 -->
         <div id="Impress" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-            <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <div class="list camp-list camp-lesson-list detalis-list grade-list referee">
                 <ul class="mui-table-view operation">
                     <h5>
                         <span>我的印象</span>
@@ -165,7 +165,7 @@
 
         <!-- 评价弹框 -->
         <div id="comment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-            <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <div class="list camp-list camp-lesson-list detalis-list grade-list referee">
                 <ul class="mui-table-view operation">
                     <h5>
                         <span class="sstitle">评价此裁判员</span>
@@ -181,7 +181,7 @@
 
         <!-- 邀请弹框 -->
         <div id="invitation" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-            <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <div class="list camp-list camp-lesson-list detalis-list grade-list referee">
                 <ul class="mui-table-view operation">
                     <h5 class="border-b">
                         <span class="sstitle">邀请执裁</span>
@@ -301,57 +301,7 @@
 
 
             // 发表印象标签
-            $(".impressBtn").on("tap", '', function () {
-                var commented = "{$teamInfo.name}";
-                var commented_id = "{$teamInfo.id}";
-
-                var tags = $(".tagAll .bgorange").map(function () {
-                    return $(this).attr("data-tag_name");
-                }).get().join(",");
-
-                var tag_ids = $(".tagAll .bgorange").map(function () {
-                    return $(this).attr("data-id");
-                }).get().join(",");
-
-                if (!$(".tagAll .choiseTag").hasClass("bgorange")) {
-                    mui.toast("你还没有选择印象标签哦");
-                    return false;
-                }
-
-                mui.ajax("{:url('api/tag/addtagcomment')}", {
-                    data: {
-                        comment_type: 2,
-                        commented: commented,
-                        commented_id: commented_id,
-                        tags: tags,
-                        tag_ids: tag_ids,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast("发表成功，感谢你的评价！");
-                            toTagCommentList();
-                            mui('#Impress').popover('toggle');
-                        } else {
-                            mui.toast(data.msg);
-                            mui('#Impress').popover('toggle');
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            });
-
-
-            toTagAllList(); //所有标签列表
-            toTagCommentList(); //已经评价的标签列表
-            //判断当前的关注状态
+        
             followStatus();
         });
 
@@ -384,66 +334,6 @@
             });
         }
 
-        //获取所有标签列表
-        function toTagAllList() {
-            mui.ajax("{:url('api/tag/tagall')}", {
-                data: {},
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    var div = '';
-                    if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag_name + '" data-id="' + data.data[i].id + '">' + data.data[i].tag_name + '</span>'
-                        }
-                        $(".tagAll").empty();
-                        $(".tagAll").append(div);
-
-                        if (div == '') {
-                            $(".tagAll").append('<li class="nodata"><p>没有相关数据哦</p></li>');
-                        }
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        };
-
-        //获取已评价标签列表
-        function toTagCommentList() {
-            mui.ajax("{:url('api/tag/commentlist')}", {
-                data: {
-                    comment_type: 2,
-                    commented_id: "{$teamInfo.id}",
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    var div = '';
-                    if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag + '" data-tag_id="' + data.data[i].id + '">' + data.data[i].tag + '(<samll>' + data.data[i].count + '</samll>)</span>'
-                        }
-                        $(".tagCommentList").empty();
-                        $(".tagCommentList").append(div);
-                    } else {
-                        $(".tagCommentList").append('<p class="mui-text-center">还没有印象标签哦</p>');
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        };
 
     </script>
     <script>
@@ -464,7 +354,7 @@
         wx.ready(function () {
             // 分享到朋友圈
             wx.onMenuShareTimeline({
-                title: "{$refereeInfo.coach}",
+                title: "{$refereeInfo.referee}",
                 link: "{$shareurl}/pid/{$mid}",
                 imgUrl: "{:request()->root(true)}/{$refereeInfo.portraits}",
                 success: function () {
@@ -477,7 +367,7 @@
 
             // 分享给朋友
             wx.onMenuShareAppMessage({
-                title: '{$refereeInfo.coach}',
+                title: '{$refereeInfo.referee}',
                 desc: '{$refereeInfo.introduction}',
                 link: "{$shareurl}/pid/{$mid}",
                 imgUrl: "{:request()->root(true)}/{$refereeInfo.portraits}",
