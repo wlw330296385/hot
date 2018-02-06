@@ -23,7 +23,11 @@ class Referee extends Base{
 
 
     public function refereeInfo(){
-
+        $referee_id = input('param.referee_id');
+        $refereeInfo = $this->RefereeService->getRefereeInfo(['id'=>$referee_id]);
+        $commentList = db('referee_comment')->where(['referee_id'=>$referee_id])->select();
+        $this->assign('commentList',$commentList);
+        $this->assign('refereeInfo',$refereeInfo);
         return view('Referee/refereeInfo');
     }
 

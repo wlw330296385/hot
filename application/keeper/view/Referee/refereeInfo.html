@@ -26,11 +26,11 @@
     </header>
     <div class="mui-content">
 
-        <div class="list camp-list detalis-list coach mt55">
+                <div class="list camp-list detalis-list referee mt55">
             <ul class="mui-table-view mb" style="margin-top: -4px">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
                     <a href="javascript:;">
-                        <img class="mui-media-object mui-pull-left coachicon" src="{$refereeInfo.portraits}">
+                        <img class="mui-media-object mui-pull-left refereeicon" src="{$refereeInfo.portraits}">
                         <div class="mui-media-body">
                             {$refereeInfo.referee}
                             <i class="icon iconfont icon-sex{$refereeInfo.sex}"></i>
@@ -45,7 +45,7 @@
                                         <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
                                     </div>
                                 </li>
-                                <li class="fr">{$refereeInfo.area}</li>
+                                <li class="fr">{$refereeInfo.referee_area}</li>
                             </ul>
                         </div>
                     </a>
@@ -75,13 +75,13 @@
                     </span>
                 </li>
                 <li class="mui-table-view-cell listli detalisli listinitial">执裁场次
-                    <span>执裁过 20 场</span>
+                    <span>执裁过 {$refereeInfo.total_played} 场</span>
                 </li>
                 <li class="mui-table-view-cell listli detalisli listinitial">接单范围
-                    <span>广东省 深圳市 不限区</span>
+                    <span>{$refereeInfo.referee_province} {$refereeInfo.referee_city} {$refereeInfo.referee_area}</span>
                 </li>
                 <li class="mui-table-view-cell listli detalisli listinitial">出场费用
-                    <span>200元/场</span>
+                    <span>{$refereeInfo.appearance_fee}元/场</span>
                 </li>
             </ul>
 
@@ -102,7 +102,7 @@
                 {volist name='commentList' id="vol" empty="暂无评论"}
                 <li class="mui-table-view-cell mui-media listli">
                     <a href="javascript:;">
-                        <img class="mui-media-object mui-pull-left coachicon" src="{$vol.avatar}">
+                        <img class="mui-media-object mui-pull-left refereeicon" src="{$vol.avatar}">
                         <div class="mui-media-body">
                             {$vol.member}
                             <p class="mui-ellipsis">{$vol.comment}</p>
@@ -151,7 +151,7 @@
 
         <!-- 发表印象 -->
         <div id="Impress" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-            <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <div class="list camp-list camp-lesson-list detalis-list grade-list referee">
                 <ul class="mui-table-view operation">
                     <h5>
                         <span>我的印象</span>
@@ -165,7 +165,7 @@
 
         <!-- 评价弹框 -->
         <div id="comment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-            <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <div class="list camp-list camp-lesson-list detalis-list grade-list referee">
                 <ul class="mui-table-view operation">
                     <h5>
                         <span class="sstitle">评价此裁判员</span>
@@ -181,7 +181,7 @@
 
         <!-- 邀请弹框 -->
         <div id="invitation" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-            <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <div class="list camp-list camp-lesson-list detalis-list grade-list referee">
                 <ul class="mui-table-view operation">
                     <h5 class="border-b">
                         <span class="sstitle">邀请执裁</span>
@@ -237,6 +237,10 @@
                 }
             });
 
+            $(document).on("tap", '.myimpress', function () {
+                $(".impressSide .bgorange").removeClass("bgorange");
+            });
+
 
             //展示裁判员介绍全文
             $(".about a").click(function () {
@@ -269,7 +273,7 @@
             });
 
 
-            // 关注教练
+            // 关注裁判
             $(".follow").on("tap", '', function () {
                 var member_id = "{$refereeInfo.member_id}";
                 mui.ajax("{:url('api/follow/focus')}", {
@@ -302,8 +306,8 @@
 
             // 发表印象标签
             $(".impressBtn").on("tap", '', function () {
-                var commented = "{$teamInfo.name}";
-                var commented_id = "{$teamInfo.id}";
+                var commented = "{$refereeInfo.referee}";
+                var commented_id = "{$refereeInfo.id}";
 
                 var tags = $(".tagAll .bgorange").map(function () {
                     return $(this).attr("data-tag_name");
@@ -320,7 +324,7 @@
 
                 mui.ajax("{:url('api/tag/addtagcomment')}", {
                     data: {
-                        comment_type: 2,
+                        comment_type: 5,
                         commented: commented,
                         commented_id: commented_id,
                         tags: tags,
@@ -387,7 +391,7 @@
         //获取所有标签列表
         function toTagAllList() {
             mui.ajax("{:url('api/tag/tagall')}", {
-                data: {},
+                data: {comment_type:5},
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
@@ -418,8 +422,8 @@
         function toTagCommentList() {
             mui.ajax("{:url('api/tag/commentlist')}", {
                 data: {
-                    comment_type: 2,
-                    commented_id: "{$teamInfo.id}",
+                    comment_type: 5,
+                    commented_id: "{$refereeInfo.id}",
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -464,7 +468,7 @@
         wx.ready(function () {
             // 分享到朋友圈
             wx.onMenuShareTimeline({
-                title: "{$refereeInfo.coach}",
+                title: "{$refereeInfo.referee}",
                 link: "{$shareurl}/pid/{$mid}",
                 imgUrl: "{:request()->root(true)}/{$refereeInfo.portraits}",
                 success: function () {
@@ -477,7 +481,7 @@
 
             // 分享给朋友
             wx.onMenuShareAppMessage({
-                title: '{$refereeInfo.coach}',
+                title: '{$refereeInfo.referee}',
                 desc: '{$refereeInfo.introduction}',
                 link: "{$shareurl}/pid/{$mid}",
                 imgUrl: "{:request()->root(true)}/{$refereeInfo.portraits}",
