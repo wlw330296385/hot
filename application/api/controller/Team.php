@@ -882,6 +882,7 @@ class Team extends Base
             $request['team_id'] = $teamInfo['id'];
             $request['team'] = $teamInfo['name'];
             $request['member_id'] = -1;
+            $request['member'] = $request['name'];
             $request['avatar'] = config('default_image.member_avatar');
             $request['status'] = 1;
             $resSaveTeamMember = $teamS->saveTeamMember($request);

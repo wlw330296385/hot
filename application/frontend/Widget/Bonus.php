@@ -2,12 +2,13 @@
 namespace app\frontend\Widget;
 use Think\Controller;
 use Think\Db;
-class bonus extends Controller{
+class Bonus extends Controller{
 	public function bonus(){
         $bonus_type = input('param.bonus_type',1);
 		//平台礼包
         $BonusService = new \app\admin\service\BonusService;
     	$bonusInfo = $BonusService->getBonusInfo(['bonus_type'=>1,'status'=>1]);
+        echo 1;
     	$couponList = [];
     	$item_coupon_ids = [];
     	if($bonusInfo){
@@ -17,11 +18,11 @@ class bonus extends Controller{
     		foreach ($couponList as $key => $value) {
     			$item_coupon_ids[] = $value['id'];
     		}
-    		// $this->assign('isBonus',$isBonus);
     		$this->assign('item_coupon_ids',json_encode($item_coupon_ids));
 	    	$this->assign('couponList',$couponList);
 	        $this->assign('bonusInfo',$bonusInfo);
-			return $this->fetch('Widget:bonus');
+            // return $this->fetch('Widget:bonus');
+			return $this->fetch('Widget/Bonus');
     	}
     	
 	}

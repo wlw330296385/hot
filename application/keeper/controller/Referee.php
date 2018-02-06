@@ -1,17 +1,13 @@
 <?php 
-namespace app\frontend\controller;
-use app\frontend\controller\Base;
-use app\service\CoachService;
-use app\service\ScheduleService;
+namespace app\keeper\controller;
+use app\keeper\controller\Base;
+use app\service\RefereeService;
 use think\Db;
-class Coach extends Base{
-	protected $coachService;
-    protected $scheduleService;
+class Referee extends Base{
+	protected $RefereeService;
 	public function _initialize(){
 		parent::_initialize();
-		$this->coachService = new CoachService;
-        $this->scheduleService = new ScheduleService;
-
+		$this->RefereeService = new RefereeService;
 	}
 
     // 教练主页
@@ -32,12 +28,25 @@ class Coach extends Base{
     }
 
     //教练员注册
-    public function createCoach(){
-
+    public function createReferee(){
+        //判断是否已存在身份证
+        $certList = db('cert')->where(['id'=>$this->memberInfo['id']])->select();
+        $credit = [];
+        $refereeCert = [];
+        foreach ($certList as $key => $value) {
+            if($value['cert_type'] == 5){
+                $refereeCert = $value;
+            }elseif($value['cert_type'] == 1){
+                $credit = $value;
+            }
+        }
+        
+        $this->assign('credit',$credit);
+        $this->assign('refereeCert',$refereeCert);
         return view('Referee/createReferee');
     }
 
-    public function updateCoach(){
+    public function updateReferee(){
 
         return view('Referee/updateReferee');
     }
@@ -45,7 +54,7 @@ class Coach extends Base{
 
     //注册成功
     public function registerSuccess(){
-        return view('Coach/registerSuccess');
+        return view('Referee/registerSuccess');
     }
 
 }

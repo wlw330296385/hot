@@ -217,7 +217,38 @@
     };
 
 
-    
+    //鏈堟敹鍏ユ帴鍙ｈ幏鍙栨暟鎹苟杩藉姞鍒伴〉闈�
+    var getBankcardList = function (member_id) {
+        var url = "{:url('api/bankcard/getBankcardListApi')}";
+        $.post({
+            url: url,
+            data: {
+                "member_id":member_id,
+            },
+            dataType: 'json',//鏈嶅姟鍣ㄨ繑鍥瀓son鏍煎紡鏁版嵁
+            type: 'post',//HTTP璇锋眰绫诲瀷
+            timeout: 10000,//瓒呮椂鏃堕棿璁剧疆涓�10绉掞紱
+            success: function (data) {
+                if (data.code == 200) {
+                    var newli = '';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        newli = newli + '<option value='+data.data[i].id+'>['+data.data[i].bank_type+'('+data.data[i].realname+')]'+data.data[i].bank+'('+data.data[i].bank_card+')</option>';
+                    }
+                    if (newli == '') {
+                        newli = "<option>该用户无银行卡</option>"
+                    }
+                    $("#bankcard").html(newli);
+                } else {
+                    newli = "<option>该用户无银行卡</option>"
+                    $("#bankcard").html(newli);
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+               alert('网络错误,请清空缓存');
+            }
+        });
+    };
+
 </script>
 </html>
 

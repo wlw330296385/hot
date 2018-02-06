@@ -11,6 +11,17 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <style>
+        .hotimg {
+            width: 55px !important;
+            height: 55px !important;
+            float: initial !important;
+            display: block;
+        }
+    </style>
 </head>
 
 <body>
@@ -34,14 +45,25 @@
                     <input type="text" name="name" class="data" value="" placeholder="请输入姓名">
                 </div>
 
-                <div class="mui-input-row price-input-row">
+                <div class="mui-input-row" id="showUserPicker">
                     <label>球员号码</label>
-                    <input type="text" name="number" class="data" value="" placeholder="请输入球员号码">
+                    <span id='userResult' name="number" class="ui-alert mui-navigate-right pdr domData"></span>
                 </div>
 
-                <div class="mui-input-row price-input-row">
-                    <label>球员位置</label>
-                    <input type="text" name="position" class="data" value="" placeholder="请输入球员位置">
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>场上位置</label>
+                        <span class="location-choise max">
+                            <select id="position" class="data" name="position">
+                                <option value="0">暂无</option>
+                                <option value="1">控球后卫</option>
+                                <option value="2">得分后卫</option>
+                                <option value="3">小前锋</option>
+                                <option value="4">大前锋</option>
+                                <option value="5">中锋</option>
+                            </select>
+                        </span>
+                    </div>
                 </div>
 
                 <div class="mui-input-row price-input-row">
@@ -50,6 +72,7 @@
                 </div>
 
                 <div class="page-header" style="background: #efeff4;">
+                    <img src="/static/frontend/images/hot.png" class="hotimg" alt="">
                     <span class="f12">说明：请确保填写的手机号码准确无误，该手机号将作为会员注册时候认领数据的依据。</span>
                 </div>
 
@@ -67,7 +90,37 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
+    <!--选择器-->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/number.data.js"></script>
     <script>
+        mui.init();
+        // 选择器
+        (function ($, doc) {
+            $.init();
+            $.ready(function () {
+                var _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+
+                //球号选择
+                var userPicker = new $.PopPicker();
+                userPicker.setData(numberData);
+
+                var showUserPickerButton = doc.getElementById('showUserPicker');
+                var userResult = doc.getElementById('userResult');
+                showUserPickerButton.addEventListener('tap', function (event) {
+                    userPicker.show(function (items) {
+                        userResult.innerText = _getParam(items[0], 'text');
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                    });
+                }, false);
+
+            });
+        })(mui, document);
+
         // 获取数据并进行提交
         function submitAction() {
 
