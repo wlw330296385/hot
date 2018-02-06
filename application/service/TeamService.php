@@ -39,9 +39,9 @@ class TeamService
             $roleModel = new TeamMemberRole();
             foreach ($teammembers as $k => $teammember) {
                 $teammembers[$k]['role_text'] = '';
-                $memberRole = $roleModel->where(['member_id' => $teammember['member_id'], 'team_id' => $teammember['team_id'], 'status' => 1])->select()->toArray();
+                $memberRole = $roleModel->where(['member_id' => $teammember['member_id'], 'team_id' => $teammember['team_id'], 'status' => 1])->select();
                 foreach ($memberRole as $val) {
-                    $teammembers[$k]['role_text'] .= $val['type'] . ',';
+                    $teammembers[$k]['role_text'] .= $val['type_text'] . ',';
                 }
             }
             return $teammembers;
