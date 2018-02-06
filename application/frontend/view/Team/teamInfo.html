@@ -65,9 +65,9 @@
                     <div class="mui-media-body wd49" style="line-height:20px !important">
                         <p>{$teamInfo.city} {$teamInfo.area}</p>
                         <p class="f12">队员：
-                            <strong>{$teamInfo.member_num}</strong>人 |
+                            <strong class="colororange">{$teamInfo.member_num}</strong>人 |
                             <a href="{:url('team/fans',['team_id'=>$teamInfo['id']])}">粉丝：
-                                <strong>{$teamInfo.fans_num}</strong>
+                                <strong class="colororange">{$teamInfo.fans_num}</strong>
                             </a>
                         </p>
                     </div>
@@ -182,22 +182,34 @@
             </div>
 
             <!--最新赛事-->
-            <div class="page-header whitebg border-b">
+            <div class="page-header border-b">
                 <span class="course">最新赛事</span>
-                <span class="more pdr15">
-                    <a href="{:url('team/matchList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">历史赛事</a>
-                </span>
             </div>
             <ul class="mui-table-view detalis-list list mainInfo border-b newMatch"></ul>
 
-            <!--最新活动-->
-            <div class="page-header whitebg border-b">
-                <span class="course">最新活动</span>
+            <!--赛事纪录-->
+            <div class="page-header border-b">
+                <span class="course">赛事纪录</span>
                 <span class="more pdr15">
-                    <a href="{:url('team/eventList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">历史活动</a>
+                    <a href="{:url('team/matchList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
+            <ul class="mui-table-view detalis-list list mui-text-center mainInfo border-b recordMatch"></ul>
+
+            <!--最新活动-->
+            <div class="page-header border-b">
+                <span class="course">最新活动</span>
+            </div>
             <ul class="mui-table-view detalis-list list mainInfo border-b newEvent"></ul>
+
+            <!--活动纪录-->
+            <div class="page-header border-b">
+                <span class="course">活动纪录</span>
+                <span class="more pdr15">
+                    <a href="{:url('team/eventList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">更多</a>
+                </span>
+            </div>
+            <ul class="mui-table-view detalis-list list mainInfo border-b recordEvent"></ul>
 
             <!--球队相册-->
             <!-- <div class="page-header whitebg border-b">
@@ -223,14 +235,14 @@
                 </ul>
             </div> -->
 
-             <!--球队印象-->
-             <div class="page-header whitebg border-b">
-                    <span class="course">球队印象</span>
-                    <span class="more pdr15">
-                        <a href="#Impress" class="mui-navigate-right myimpress">发表我的印象</a>
-                    </span>
-                </div>
-                <div class="impress whitebg tagCommentList mb"></div>
+            <!--球队印象-->
+            <div class="page-header border-b">
+                <span class="course">球队印象</span>
+                <span class="more pdr15">
+                    <a href="#Impress" class="mui-navigate-right myimpress">发表我的印象</a>
+                </span>
+            </div>
+            <div class="impress whitebg tagCommentList mb"></div>
 
             <!-- 球队介绍 -->
             <div class="page-header border-b">
@@ -268,7 +280,7 @@
             <!--底部操作-->
             <ul class="mui-table-view operation mt">
                 {eq name="isMemberInTeam" value="1"}
-                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
                     <a href="/frontend/">
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
                     </a>
@@ -276,18 +288,21 @@
                 <!-- <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
                     <a href="#share">分享</a>
                 </li> -->
-                <a href="{:url('team/teammanage',['team_id'=>$teamInfo['id']])}">
-                    <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgred">
+                <li class="mui-table-view-cell mui-col-sm- mui-col-xs-3 opli">
+                    <a href="{:url('team/teammanage',['team_id'=>$teamInfo['id']])}">
                         球队管理
-                    </li>
-                </a>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bgred">
+                    <div class="goConfirm">发起约战</div>
+                </li>
                 <a href="#fbcomment">
-                    <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgblue">
+                    <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bgblue">
                         发表评论
                     </li>
                 </a>
                 {else/}
-                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
                     <a href="/frontend/">
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
                     </a>
@@ -298,12 +313,15 @@
                     </a>
                 </li> -->
                 <a href="#yqpopover">
-                    <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bggreen">
+                    <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bggreen">
                         申请加入
                     </li>
                 </a>
+                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bgred">
+                    <div class="goConfirm">发起约战</div>
+                </li>
                 <a href="#fbcomment">
-                    <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgblue">
+                    <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bgblue">
                         发表评论
                     </li>
                 </a>
@@ -392,6 +410,21 @@
         })(mui);
 
         $(function () {
+
+            // 判断是否登陆
+            if ("{$memberInfo.id}" <= 0) {
+                mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                    if (e.index === 1) {
+                        window.location.href = "{$fasturl}";
+                    }
+                });
+                return false;
+            }
+
+            //未开发提示
+            $(".goConfirm").on("tap", function () {
+                mui.toast('暂未开放，敬请期待');
+            })
 
             //球队详细介绍内容
             var introduce = '{$teamInfo.introduce}';
@@ -712,6 +745,9 @@
             toLastEventList() //获取最新活动列表
             toLastMatchList(); //获取最新比赛列表
             toCommentList(); //获取评论列表
+
+            toRecordEventList();
+            toRecordMatchList();
         });
 
         // 判断当前的关注状态
@@ -891,7 +927,7 @@
                     if (data.code == 200) {
                         $(".comment_count").text(data.data.length);
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
+                            newli = newli + '<li class="mui-table-view-cell listli"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }
                     } else {
                         $("ul.comment-list").html('<p class="nodata" style="margin-left:0">还没有评论哦，你来说几句吧！</p>');
@@ -926,29 +962,29 @@
                     console.log(data)
                     var div = '';
                     if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            // 将时间戳转成日期格式
-                            var Tmonth = gettimem(data.data[i].start_time_stamp * 1000);
-                            var Tday = gettimed(data.data[i].start_time_stamp * 1000);
-                            var Ttime = gettimeh(data.data[i].start_time_stamp * 1000);
-                            eventid = data.data[i].id
-                            var url = "{:url('team/eventinfo')}" + '/team_id/' + data.data[i].team_id + '/event_id/' + data.data[i].id;
-                            div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgreen">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
-                            div += '<div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[i].event + '</h5>';
-                            div += '<div class="divFrame"><p>发起人：' + data.data[i].member + '</p><p>活动地点：' + data.data[i].location + '</p><p>活动类型：' + data.data[i].event_type + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
-                            if (data.data[i].is_finished_num == 1) {
-                                div += '<button class="mui-btn opbtn bggray">已结束</button>';
-                            } else {
-                                div += '<button class="mui-btn opbtn bgred signupEventBtn">参加</button>';
-                            }
-                            div += ' </div></div></li>';
-                            // 人员头像版块
-                            div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl wd66 imgShowEvent">';
-                            for (var j = 0; j <= data.data[i].memberlist.length - 1; j++) {
-                                div += '<img src="' + data.data[i].memberlist[j].avatar + '" alt="">';
-                            }
-                            div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[i].reg_number + '</font>/<font class="reg_all">' + data.data[i].max + '</font> 已报名</span></li>';
+                        // for (var i = 0; i <= data.data[0]; i++) {
+                        // 将时间戳转成日期格式
+                        var Tmonth = gettimem(data.data[0].start_time_stamp * 1000);
+                        var Tday = gettimed(data.data[0].start_time_stamp * 1000);
+                        var Ttime = gettimeh(data.data[0].start_time_stamp * 1000);
+                        eventid = data.data[0].id
+                        var url = "{:url('team/eventinfo')}" + '/team_id/' + data.data[0].team_id + '/event_id/' + data.data[0].id;
+                        div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgreen">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
+                        div += '<div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[0].event + '</h5>';
+                        div += '<div class="divFrame"><p>发起人：' + data.data[0].member + '</p><p>活动地点：' + data.data[0].location + '</p><p>活动类型：' + data.data[0].event_type + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
+                        if (data.data[0].is_finished_num == 1) {
+                            div += '<button class="mui-btn opbtn bggray">已结束</button>';
+                        } else {
+                            div += '<button class="mui-btn opbtn bgred signupEventBtn">参加</button>';
                         }
+                        div += ' </div></div></li>';
+                        // 人员头像版块
+                        div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl wd66 imgShowEvent">';
+                        for (var j = 0; j <= data.data[0].memberlist.length - 1; j++) {
+                            div += '<img src="' + data.data[0].memberlist[j].avatar + '" alt="">';
+                        }
+                        div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[0].reg_number + '</font>/<font class="reg_all">' + data.data[0].max + '</font> 已报名</span></li>';
+                        // }
                         $(".newEvent").empty().append(div);
                     }
                     if (data.code == 100) {
@@ -958,6 +994,50 @@
                 error: function (xhr, type, errorThrown) {
                     //异常处理；
                     console.log(type);
+                }
+            });
+        };
+
+        //获取活动纪录列表
+        function toRecordEventList() {
+            var url = "{:url('api/team/teameventlist','','',true)}";
+            var team_id = "{$teamInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    team_id: team_id,
+                    status: 1,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('team/eventInfo')}" + '/event_id/' + data.data[i].id + '/team_id/' + "{$team_id}";
+                            newli += '<li class="mui-table-view-cell mui-media listli">'
+                            newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '" style="width:70px!important;height: 56px!important;"><div class="mui-media-body" style="width:51%">' + data.data[i].event + '';
+                            if (data.data[i].is_max == "已满人") {
+                                newli += '<font class="tipCorner bgred">满人</font>';
+                            }
+                            if (data.data[i].is_finished == "已结束") {
+                                newli += '<font class="tipCorner bggray">结束</font>';
+                            }
+                            newli += '<p class="mui-ellipsis">' + data.data[i].create_time + '</p></div><div class="price-frame rightLocation">' + data.data[i].reg_number + '人参与</div></a>'
+                            newli += '</li>';
+                        }
+                    }
+                    $("ul.recordEvent").empty().append(newli);
+                    if (newli == '') {
+                        $("ul.recordEvent").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                 }
             });
         };
@@ -979,35 +1059,35 @@
                     console.log(data)
                     var div = '';
                     if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            // 将时间戳转成日期格式
-                            var Tmonth = gettimem(data.data[i].match_time * 1000);
-                            var Tday = gettimed(data.data[i].match_time * 1000);
-                            var Ttime = gettimeh(data.data[i].match_time * 1000);
-                            matchid = data.data[i].id
-                            var url = "{:url('team/matchinfo')}" + '/team_id/' + data.data[i].team_id + '/match_id/' + data.data[i].id;
-                            div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center">';
-                            if (data.data[i].match_time == 0) {
-                                div += '<p class="month bgblack">0月</p><h1 class="day" style="font-size: 25px;padding: 15px 21px;">待定</h1><p class="hours">00:00</p>';
-                            } else {
-                                div += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorred">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
-                            }
-                            div += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[i].match + '</h5><div class="divFrame">';
-                            div += '<p>发起人：' + data.data[i].home_team + '</p>';
-                            div += '<p>比赛地点：' + data.data[i].court + '</p><p>比赛类型：' + data.data[i].type + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
-                            if (data.data[i].is_finished_num == 1) {
-                                div += '<button class="mui-btn opbtn bggray">已结束</button>';
-                            } else {
-                                div += '<button class="mui-btn opbtn bgred signupMatchBtn">参加</button>';
-                            }
-                            div += ' </div></div></li>';
-                            // 人员头像版块
-                            div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl wd66 imgShowEvent">';
-                            for (var j = 0; j <= data.data[i].memberlist.length - 1; j++) {
-                                div += '<img src="' + data.data[i].memberlist[j].avatar + '" alt="">';
-                            }
-                            div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[i].reg_number + '</font>/<font class="reg_all">' + data.data[i].max + '</font> 已报名</span></li>';
+                        // for (var i = 0; i <= data.data.length - 1; i++) {
+                        // 将时间戳转成日期格式
+                        var Tmonth = gettimem(data.data[0].match_time * 1000);
+                        var Tday = gettimed(data.data[0].match_time * 1000);
+                        var Ttime = gettimeh(data.data[0].match_time * 1000);
+                        matchid = data.data[0].id
+                        var url = "{:url('team/matchinfo')}" + '/team_id/' + data.data[0].team_id + '/match_id/' + data.data[0].id;
+                        div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center">';
+                        if (data.data[0].match_time == 0) {
+                            div += '<p class="month bgblack">0月</p><h1 class="day" style="font-size: 25px;padding: 15px 21px;">待定</h1><p class="hours">00:00</p>';
+                        } else {
+                            div += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorred">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
                         }
+                        div += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[0].match + '</h5><div class="divFrame">';
+                        div += '<p>发起人：' + data.data[0].home_team + '</p>';
+                        div += '<p>比赛地点：' + data.data[0].court + '</p><p>比赛类型：' + data.data[0].type + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
+                        if (data.data[0].is_finished_num == 1) {
+                            div += '<button class="mui-btn opbtn bggray">已结束</button>';
+                        } else {
+                            div += '<button class="mui-btn opbtn bgred signupMatchBtn">参加</button>';
+                        }
+                        div += ' </div></div></li>';
+                        // 人员头像版块
+                        div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl wd66 imgShowEvent">';
+                        for (var j = 0; j <= data.data[0].memberlist.length - 1; j++) {
+                            div += '<img src="' + data.data[0].memberlist[j].avatar + '" alt="">';
+                        }
+                        div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[0].reg_number + '</font>/<font class="reg_all">' + data.data[0].max + '</font> 已报名</span></li>';
+                        // }
                         $(".newMatch").empty().append(div);
                     }
                     if (data.code == 100) {
@@ -1017,6 +1097,57 @@
                 error: function (xhr, type, errorThrown) {
                     //异常处理；
                     console.log(type);
+                }
+            });
+        };
+
+        //获取赛事纪录列表
+        function toRecordMatchList() {
+            var url = "{:url('api/match/matchrecordlist','','',true)}";
+            var team_id = "{$teamInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    team_id: team_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.slice(0, 5).length - 1; i++) {
+                            // 将时间戳转成日期格式
+                            var matchTimeM = gettimeM(data.data[i].match_time * 1000);
+                            var matchTimeY = gettimeY(data.data[i].match_time * 1000);
+                            var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data[i].match_id + '/team_id/' + "{$team_id}";
+                            newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row" style="padding:0">'
+                            newli += '<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;"><p>' + (data.data.slice(0, i).length + 1) + '</p></li><li class="mui-col-xs-3 mui-col-sm-3"><p>' + matchTimeY + '</p><p>' + matchTimeM + '</p></li><li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">';
+                            if (data.data[i].home_score > data.data[i].away_score) {
+                                newli += '<p class="colororange">' + data.data[i].away_team + '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p class="colororange">' + data.data[i].home_score + ':' + data.data[i].away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
+                            } else {
+                                newli += '<p>' + data.data[i].away_team + '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p>' + data.data[i].home_score + ':' + data.data[i].away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
+                            }
+                            if (data.data[i].home_score > data.data[i].away_score) {
+                                newli += '<p class="colororange">胜</p>'
+                            } else if (data.data[i].home_score < data.data[i].away_score) {
+                                newli += '<p>负</p>'
+                            } else {
+                                newli += '<p>--</p>'
+                            }
+                            newli += '</li></ul></a></li>'
+                        }
+                    }
+                    $("ul.recordMatch").empty().append(newli);
+                    if (newli == '') {
+                        $("ul.recordMatch").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                 }
             });
         };
@@ -1040,6 +1171,18 @@
             var hours = _time.getHours();
             var minutes = _time.getMinutes();
             return p(hours) + ":" + p(minutes);
+        }
+        // 将时间戳转成日期格式
+        function gettimeM(M) {
+            var _time = new Date(M);
+            var month = _time.getMonth() + 1;
+            var day = _time.getDate();
+            return p(month) + "月" + p(day) + "日"
+        }
+        function gettimeY(Y) {
+            var _time = new Date(Y);
+            var year = _time.getFullYear();
+            return p(year) + "年";
         }
     </script>
     <script>

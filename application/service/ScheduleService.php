@@ -271,6 +271,7 @@ class ScheduleService
     protected function checkstudentRestschedule($students, $schedule)
     {
         $lessonDb = new LessonMember();
+        $modelSchedule = new Schedule();
         foreach ($students as $student) {
             $lessonMemberWhere['student_id'] = $student['student_id'];
             $lessonMemberWhere['lesson_id'] = $schedule['lesson_id'];
@@ -278,9 +279,18 @@ class ScheduleService
             $lessonMemberWhere['type'] = 1;
             $studentWhere['id'] = $student['student_id'];
             $restschedule = $lessonDb->where($lessonMemberWhere)->value('rest_schedule');
+            // 比较学员剩余课时与当前未结算课时数
+            $noSettleScheduleCount = $modelSchedule->where(['camp_id' => $schedule['camp_id'], 'lesson_id' => $schedule['lesson_id'], 'is_settle' => 0])->count();
+            if ($noSettleScheduleCount || $noSettleScheduleCount > 0) {
+                if ($noSettleScheduleCount > $restschedule) {
+                    return ['code' => 100, 'msg' => $student['student'] . '剩余课时不足，请修改课时信息'];
+                    break;
+                }
+            }
             // 某个学员无剩余课时 抛出提示
-            if (!$restschedule || $restschedule == 0) {
+            if (!$restschedule || $restschedule <= 0) {
                 return ['code' => 100, 'msg' => $student['student'] . '已无剩余课时，请修改课时信息'];
+                break;
             }
         }
         // 课时所有学员剩余课时数返回code=200
