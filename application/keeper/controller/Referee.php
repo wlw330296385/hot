@@ -51,7 +51,9 @@ class Referee extends Base{
     }
 
     public function updateReferee(){
-
+        $referee_id = input('param.referee_id');
+        $refereeInfo = $this->RefereeService->getRefereeInfo(['id'=>$referee_id]);
+        $this->assign('refereeInfo',$refereeInfo);
         return view('Referee/updateReferee');
     }
 

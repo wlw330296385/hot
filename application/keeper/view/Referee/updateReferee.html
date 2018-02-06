@@ -40,7 +40,7 @@
                 <input type="hidden" name="memberid" value="{$refereeInfo.member_id}">
                 <div class="mui-input-row">
                     <label>真实姓名</label>
-                    <input type="text" name="referee_name" class="input referee_name" placeholder="请输入真实姓名" value="{notempty name='refereeInfo.coach'}{$refereeInfo.coach}{/notempty}">
+                    <input type="text" name="referee_name" class="input referee_name" placeholder="请输入真实姓名" value="{notempty name='refereeInfo.referee'}{$refereeInfo.referee}{/notempty}">
                 </div>
                 <div class="mui-input-row">
                     <label>身份证号码</label>
@@ -50,7 +50,7 @@
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right filePicker" onclick="add_id(1)">
                         <label>身份证正面</label>
-                        <img id="preview_1" class="coachicon icon01 upload-preview" {notempty name="identCert.photo_positive" } src="{$identCert.photo_positive}"
+                        <img id="preview_1" class="refereeicon icon01 upload-preview" {notempty name="identCert.photo_positive" } src="{$identCert.photo_positive}"
                             {/notempty} alt="">
                         <input type="hidden" name="photo_positive" value="{notempty name='identCert.photo_positive'}{$identCert.photo_positive}{/notempty}">
                     </a>
@@ -58,7 +58,7 @@
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right filePicker" onclick="add_id(2)">
                         <label>身份证反面</label>
-                        <img id="preview_2" class="coachicon icon01 upload-preview" {notempty name="identCert.photo_back" } src="{$identCert.photo_back}"
+                        <img id="preview_2" class="refereeicon icon01 upload-preview" {notempty name="identCert.photo_back" } src="{$identCert.photo_back}"
                             {/notempty} alt="">
                         <input type="hidden" name="photo_back" value="{notempty name='identCert.photo_back'}{$identCert.photo_back}{/notempty}">
                     </a>
@@ -66,7 +66,7 @@
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right portraits filePicker" onclick="add_id(3)">
                         <label>个人形象照</label>
-                        <img id="preview_3" class="coachicon icon01 upload-preview" {notempty name="refereeInfo.portraits" }src='{$refereeInfo.portraits}'
+                        <img id="preview_3" class="refereeicon icon01 upload-preview" {notempty name="refereeInfo.portraits" }src='{$refereeInfo.portraits}'
                             {/notempty}>
                         <input type="hidden" name="portraits" value='{notempty name="refereeInfo.portraits"}{$refereeInfo.portraits}{/notempty}'>
                     </a>
@@ -88,9 +88,9 @@
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right filePicker" onclick="add_id(4)">
                         <label>资质证明</label>
-                        <img id="preview_4" class="coachicon icon01 upload-preview" {notempty name="coachCert.photo_positive" } src="{$coachCert.photo_positive}"
+                        <img id="preview_4" class="refereeicon icon01 upload-preview" {notempty name="refereeCert.photo_positive" } src="{$refereeCert.photo_positive}"
                             {/notempty} alt="">
-                        <input type="hidden" name="cert" value="{notempty name='coachCert.photo_positive'}{$coachCert.photo_positive}{/notempty}">
+                        <input type="hidden" name="cert" value="{notempty name='refereeCert.photo_positive'}{$refereeCert.photo_positive}{/notempty}">
                     </a>
                 </div>
                 <div class="mui-input-row">
@@ -99,7 +99,7 @@
                 </div>
                 <div class="mui-input-row">
                     <label>执裁经验</label>
-                    <input type="text" name="referee_year" class="input referee_year" placeholder="请输入执裁年数" value="{if condition='$refereeInfo.coach_year'}{$refereeInfo.coach_year}{/if}">
+                    <input type="text" name="referee_year" class="input referee_year" placeholder="请输入执裁年数" value="{if condition='$refereeInfo.referee_year'}{$refereeInfo.referee_year}{/if}">
                 </div>
                 <div class="mui-input-row h-auto">
                     <label>执裁经验描述</label>
@@ -116,11 +116,11 @@
                 <div class="mui-input-row" id='showCityPicker3'>
                     <a href="#" class="mui-navigate-right">
                         <label>所属地区</label>
-                        <span id="cityResult3" class="ui-alert location" style="color:#737373">{if condition="$refereeInfo['province'] || $refereeInfo['city'] || $refereeInfo['area']"}{$refereeInfo.province}
-                            {$refereeInfo.city} {$refereeInfo.area}{else/}选择{/if}
+                        <span id="cityResult3" class="ui-alert location" style="color:#737373">{if condition="$refereeInfo['referee_province'] || $refereeInfo['referee_city'] || $refereeInfo['referee_area']"}{$refereeInfo.referee_province}
+                            {$refereeInfo.referee_city} {$refereeInfo.referee_area}{else/}选择{/if}
                         </span>
                     </a>
-                    <input id="location-input" type="hidden" name="locationStr" value="{if condition='$refereeInfo.province'}{$refereeInfo.province}|{/if}{if condition='$refereeInfo.city'}{$refereeInfo.city}|{/if}{if condition='$refereeInfo.area'}{$refereeInfo.area}{/if}">
+                    <input id="location-input" type="hidden" name="locationStr" value="{if condition='$refereeInfo.referee_province'}{$refereeInfo.referee_province}|{/if}{if condition='$refereeInfo.referee_city'}{$refereeInfo.referee_city}|{/if}{if condition='$refereeInfo.referee_area'}{$refereeInfo.referee_area}{/if}">
                 </div>
             </form>
             <!--<span class="tip-box tip repassword_hint password_hint mobile_hint"></span>-->
@@ -190,9 +190,8 @@
         $(function () {
 
             $(".registerbtn2").on("click", function () {
-                var refereeid = $('input[name=refereeid]').val();
                 var memberid = $('input[name=memberid]').val();
-                var referee_name = $('.referee_name').val();
+                var realname = $('input[name=realname]').val();
                 var referee_year = $(".referee_year").val();
                 var experience = $(".experience").val();
                 var introduction = $(".introduction").val();
@@ -205,38 +204,36 @@
                 var cert = $('input[name=cert]').val();
                 var level = $('input[name=level]').val();
                 var appearance_fee = $('input[name=appearance_fee]').val();
-
-                if (!(/[\u4e00-\u9fa5a-zA-Z]{2,20}/).test(referee_name)) {
-                    mui.alert("请输入您的真实姓名");
-                    return false;
-                } else if (!(/^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/).test(idno)) {
-                    mui.alert("请输入正确身份证号码");
-                    return false;
-                } else if (portraits == "" || photo_positive == "" || photo_back == "" || cert == "") {
-                    mui.alert("请上传对应证件");
-                    return false;
-                } else if (locationStr == "") {
-                    mui.alert("请选择所属地区");
-                    return false;
-                } else if (!(/^\+?[1-9]\d*$/).test(referee_year)) {
-                    mui.alert("请输入正确的执裁经验年数");
-                    return false;
-                } else if (!(/^\+?[1-9]\d*$/).test(appearance_fee)) {
-                    mui.toast("出场费必须为数字");
-                    return false;
-                } else if (level == "") {
-                    mui.toast("请选择裁判员等级");
-                    return false;
-                } else if (experience == "" || introduction == "" || description == '') {
-                    mui.alert("请完善信息");
-                    return false;
-                };
+                // if (!(/[\u4e00-\u9fa5a-zA-Z]{2,20}/).test(referee_name)) {
+                //     mui.alert("请输入您的真实姓名");
+                //     return false;
+                // } else if (!(/^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/).test(idno)) {
+                //     mui.alert("请输入正确身份证号码");
+                //     return false;
+                // } else if (portraits == "" || photo_positive == "" || photo_back == "" || cert == "") {
+                //     mui.alert("请上传对应证件");
+                //     return false;
+                // } else if (locationStr == "") {
+                //     mui.alert("请选择所属地区");
+                //     return false;
+                // } else if (!(/^\+?[1-9]\d*$/).test(referee_year)) {
+                //     mui.alert("请输入正确的执裁经验年数");
+                //     return false;
+                // } else if (!(/^\+?[1-9]\d*$/).test(appearance_fee)) {
+                //     mui.toast("出场费必须为数字");
+                //     return false;
+                // } else if (level == "") {
+                //     mui.toast("请选择裁判员等级");
+                //     return false;
+                // } else if (experience == "" || introduction == "" || description == '') {
+                //     mui.alert("请完善信息");
+                //     return false;
+                // };
 
                 mui.ajax("{:url('api/referee/updateRefereeApi')}", {
                     data: {
-                        refereeid: refereeid,
                         member_id: memberid,
-                        referee: referee_name,
+                        realname: realname,
                         referee_year: referee_year,
                         experience: experience,
                         introduction: introduction,
