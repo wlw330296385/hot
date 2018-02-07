@@ -92,7 +92,7 @@ class Referee extends Base{
         }
     }
 
-    //获取裁判列表（没分页、没查询）
+    //获取裁判列表（有分页、没查询）
     public function getRefereeListApi(){
         try{
             $map = input('post.');
@@ -108,6 +108,8 @@ class Referee extends Base{
         }
     }
 
+
+    // 新建裁判
     public function createRefereeApi(){
         try{
 
@@ -240,14 +242,14 @@ class Referee extends Base{
     }
 
     // 用户是否拥有裁判身份
-    public function isReferee(){
+    public function isRefereeApi(){
         try{
             $member_id = input('param.member_id')? input('param.member_id'):$this->memberInfo['id'];
             $result = $this->RefereeService->getRefereeInfo(['member_id'=>$member_id,'status'=>1]);
             if($result){
                 return json(['code'=>200,'msg'=>'OK','data'=>$result]);    
             }else{
-                return json(['code'=>200,'msg'=>'OK','data'=>'']);    
+                return json(['code'=>100,'msg'=>'OK','data'=>0]);    
             }
                 
         }catch (Exception $e){

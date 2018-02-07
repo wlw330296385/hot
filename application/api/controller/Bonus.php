@@ -24,7 +24,7 @@ class Bonus extends Base{
             }  
             
         }catch (Exception $e){
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
  

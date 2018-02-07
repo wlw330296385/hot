@@ -33,6 +33,12 @@ class Article extends Base{
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['title'] = ['LIKE','%'.$keyword.'%'];
             }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
             $result = $this->ArticleService->getArticleListByPage($map);  
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
