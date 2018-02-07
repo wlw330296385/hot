@@ -46,12 +46,19 @@
 
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b coach">
+                <ul class="mui-table-view detalis-list list border-b referee">
                 </ul>
             </div>
         </div>
 
-
+        <!--底部操作-->
+        <ul class="mui-table-view operation mt">
+            <li class="mui-table-view-cell mui-col-sm-12 mui-col-xs-12 opli bgblue">
+                <a href="/keeper/referee/createReferee">
+                    注册裁判员
+                </a>
+            </li>
+        </ul>
 
     </div>
 </body>
@@ -162,7 +169,6 @@
             //搜索关键字不能完全为空，否则查询为空
             var url = "{:url('api/referee/searchRefereeListApi','','',true)}";
 
-
             mui.ajax({
                 url: url,
                 data: {
@@ -190,15 +196,15 @@
                     }
                     if (gType == 1) {
                         //上拉刷新
-                        $("ul.coach").empty().append(newli);
+                        $("ul.referee").empty().append(newli);
                         mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                         mui('#refreshContainer').pullRefresh().refresh(true);
                         if (newli == '') {
-                            $("ul.coach").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
+                            $("ul.referee").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
                         }
                     } else {
                         //下拉加载 gType==2
-                        $("ul.coach").append(newli);
+                        $("ul.referee").append(newli);
                     }
                     if (newli != '') {
                         mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);

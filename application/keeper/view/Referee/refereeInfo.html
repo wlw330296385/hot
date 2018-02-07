@@ -53,16 +53,9 @@
             </ul>
 
             <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell listli detalisli listinitial">自我介绍
-                    <span class="about">{$refereeInfo.introduction}
-                        <a href="#">全文展示</a>
-                    </span>
-                </li>
-            </ul>
-            <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli detalisli listinitial">裁判宣言
-                    <span class="description">{$refereeInfo.description}
-                        <a href="#">全文展示</a>
+                    <span class="description about">{$refereeInfo.description}
+                         <a href="javascript:void(0)">......全文展示</a>
                     </span>
                 </li>
             </ul>
@@ -94,6 +87,12 @@
             </div>
             <div class="impress whitebg tagCommentList mb"></div>
 
+            <div class="page-header" style="background: #efeff4;">
+                <span class="course">裁判员简介</span>
+            </div>
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell listli introBox">{$refereeInfo.introduction}</li>
+            </ul>
 
             <div class="page-header">
                 <span class="course">会员评价</span>
@@ -242,13 +241,14 @@
             });
 
 
-            //展示裁判员介绍全文
+            //判断训练营宣言长度是否超过30字符
+            var aboutlen = $(".about").text()
+            if(aboutlen.length<36){
+                $(".about a").hide();
+            }
+            //展示训练营介绍全文
             $(".about a").click(function () {
-                $(".about").css("display", "block");
-                $(this).hide();
-            });
-            $(".description a").click(function () {
-                $(".description").css("display", "block");
+                $(".about").css("height", "auto");
                 $(this).hide();
             });
 
