@@ -669,6 +669,34 @@
             });
 
 
+            //点赞功能
+            $(".thumbsup").on('tap', function () {
+                var commented_id = "{$teamInfo.id}";
+                mui.ajax("{:url('api/team/dianzan')}", {
+                    data: {
+                        commented_id: commented_id,
+                        comment_type: 1,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            $(".thumbup_count").text(data.thumbup_count);
+                            isthumbsup();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
             // 分享到朋友圈
             // $(".shareWechat").on("tap", function () {
             //     wx.config({
@@ -727,7 +755,7 @@
             //         });
             //     })
             // })
-
+            isthumbsup() //点赞状态
             followStatus(); //判断当前的关注状态
             teamMemberlist(); //自定义获取球员列表
             toTagAllList(); //所有标签列表
@@ -736,9 +764,41 @@
             toLastMatchList(); //获取最新比赛列表
             toCommentList(); //获取评论列表
 
-            toRecordEventList();
-            toRecordMatchList();
+            toRecordEventList(); //活动纪录
+            toRecordMatchList(); //赛事纪录
         });
+
+        // 点赞状态
+        function isthumbsup() {
+            var commented_id = "{$teamInfo.id}";
+            mui.ajax("{:url('api/team/isthumbup')}", {
+                data: {
+                    commented_id: commented_id,
+                    comment_type: 1,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        $(".thumbup_count").text(data.thumbsup_count);
+                        if (data.thumbsup == 1) {
+                            $(".thumbsup").css("color", "red");
+                        } else {
+                            $(".thumbsup").css("color", "#737373");
+                        }
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
 
         // 判断当前的关注状态
         function followStatus() {
@@ -788,17 +848,8 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-
-                            // 去除角色名称逗号
-                            // var cDoms = data.data[i].role_text;
-                            // cDoms = cDoms.substring(0, cDoms.length - 1);
-
                             newli += '<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli logostyle" id="logoframe"><img class="logostyle" src="' + data.data[i].avatar + '" alt="">'
-                            // if (data.data[i].role_text != '') {
-                            //     newli += '<div class="mui-media-body role">' + cDoms + '</div>'
-                            // } else {
                             newli += '<div class="mui-media-body role">' + data.data[i].member + '</div>'
-                            // }
                             newli += '</li>'
                         }
                         $(".teamMemberList").empty();
