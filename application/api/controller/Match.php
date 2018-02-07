@@ -627,8 +627,19 @@ class Match extends Base
             // 组合查询条件 end
 
             $matchS = new MatchService();
+            $teamS = new TeamService();
             $result = $matchS->matchListPaginator($map);
             if ($result) {
+                // 获取比赛发布球队信息
+                if (!empty($result['data'])) {
+                    foreach ($result['data'] as $k => $val) {
+                        $matchCreateTeam = $teamS->getTeam(['id' => $val['team_id']]);
+                        if ($matchCreateTeam) {
+                            $result['data'][$k]['team'] = $matchCreateTeam;
+                        }
+                    }
+                }
+
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_401')];
@@ -713,8 +724,19 @@ class Match extends Base
             // 组合查询条件 end
 
             $matchS = new MatchService();
+            $teamS = new TeamService();
             $result = $matchS->matchList($map, $page);
             if ($result) {
+                // 获取比赛发布球队信息
+                if (!empty($result)) {
+                    foreach ($result as $k => $val) {
+                        $matchCreateTeam = $teamS->getTeam(['id' => $val['team_id']]);
+                        if ($matchCreateTeam) {
+                            $result[$k]['team'] = $matchCreateTeam;
+                        }
+                    }
+                }
+
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_401')];
