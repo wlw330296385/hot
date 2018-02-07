@@ -23,6 +23,7 @@ class CampService {
                 if ($val['star'] > 0) {
                     $result[$k]['star'] = ceil($val['star']/$val['star_num']);   
                 }
+                $result[$k]['fans_num'] = getfansnum($val['id'], 2);
             }
             return $result;
         }else{
@@ -35,11 +36,15 @@ class CampService {
             if ($item['star'] > 0) {
                 $item['star'] = ceil($item['star']/$item['star_num']);
             }
+            //$item['fans_num'] = getfansnum($item['id'], 2);
             return $item;
         });
         
         if($res){
             $result = $res->toArray();
+            foreach ($result['data'] as $k => $val) {
+                $result['data'][$k]['fans_num'] = getfansnum($val['id'], 2);
+            }
             return $result;
         }else{
             return $res;
@@ -69,6 +74,7 @@ class CampService {
         }
         $result = $res->toArray();
         $result['status_num'] = $res->getData('status');
+        $result['fans_num'] = getfansnum($result['id'], 2);
         return $result;
     }
 
@@ -79,6 +85,7 @@ class CampService {
         }
         $result = $res->toArray(); 
         $result['status_num'] = $res->getData('status');
+        $result['fans_num'] = getfansnum($result['id'], 2);
         return $result;
     }
 

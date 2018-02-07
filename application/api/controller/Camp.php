@@ -119,7 +119,9 @@ class Camp extends Base{
                 'banner' => input('post.banner'),
                 'company' => input('post.company'),
                 'location' => input('post.location'),
-                'camp_introduction' => input('post.intro')
+                'camp_introduction' => input('post.intro'),
+                'camp_description' => input('post.camp_description')
+
             ];
 
             // 地区input 拆分成省 市 区 3个字段
