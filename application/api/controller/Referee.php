@@ -269,8 +269,8 @@ class Referee extends Base{
         }
     }
 
-    // 获取裁判所在班级列表（包括主教、助教）
-    public function getRefereeGradeList() {
+    // 获取裁判所在比赛列表（包括主裁判、助裁判）
+    public function getMatchOfRefereeList() {
         try {
             // 接收参数referee_id
             $referee_id = input('referee_id');
@@ -290,5 +290,37 @@ class Referee extends Base{
         } catch (Exception $e) {
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
+    }
+
+
+    // 邀请裁判员(apply模块的通用接口createApplyApi也可以实现这个功能,但是这么一说好像我不专门做这个功能一样,而且不做这个功能,球队也没有相关前端可以对接,无事可做,所以写上这个对目前来说是多余的功能);
+    public function inviteRefereeApi(){
+        try{
+            $inviter = $this->memberInfo['member'];
+            $inviter_id = $this->memberInfo['id'];
+            $member_id = input('param.referee_id');
+            $member = input('param.referee');
+            $organization = input('param.organization');
+            $type = input('param.type',6);
+            $data = [
+                'memebr'=>$member,
+                'member_id'=>$member_id,
+                'inviter'=>$inviter,
+                'inviter_id'=>$inviter_id,
+                'organization_type'=>4,//比赛
+                'organization'=>$organization,
+                'organization_id'=>input('param.organization_id'),
+                'type'=>$type,//6是主裁判7是副裁判
+                'apply_type'=>2,
+                'remarks'=>input('param.remarks');
+            ];
+            $ApplyService = new \app\service\ApplyService;
+            $result = $ApplyService->createApply($data);
+            return json($result);
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+        
+
     }
 }

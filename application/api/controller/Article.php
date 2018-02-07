@@ -29,6 +29,10 @@ class Article extends Base{
      public function getArticleListByPageApi(){
          try{
             $map = input('post.');
+            $keyword = input('param.keyword');
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['title'] = ['LIKE','%'.$keyword.'%'];
+            }
             $result = $this->ArticleService->getArticleListByPage($map);  
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
@@ -44,10 +48,10 @@ class Article extends Base{
     public function updateArticleApi(){
          try{
              $data = input('post.');
-            $bankcard_id = input('param.bankcard_id');
+            $article_id = input('param.article_id');
              $data['member_id'] = $this->memberInfo['id'];
              $data['member'] = $this->memberInfo['member'];
-            $result = $this->ArticleService->updateArticle($data,$bankcard_id);
+            $result = $this->ArticleService->updateArticle($data,['id'=>$article_id]);
              return json($result);
          }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
