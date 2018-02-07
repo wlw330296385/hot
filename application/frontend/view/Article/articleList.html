@@ -18,34 +18,21 @@
 
     <header id="header" class="mui-bar mui-bar-nav search2">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title"><input type="search" class="mui-input-clear keyword" placeholder="请输入文章名称"></h1>
+        <h1 class="mui-title"><input type="search" class="mui-input-clear keyword" placeholder="请输入标题关键字"></h1>
         <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
     </header>
 
     <div class="mui-content">
 
         <div class="location-frame">
-            <span class="location"></span>
-            <span class="location-choise max">
-                <select id="articleType" class="data" name="article_type">
-                    <option value="">全部</option>
-                    <option value="团队建设">平台手册</option>
-                </select>
-            </span>
+            <span class="fl organization">篮球管家</span>
+            <span class="fr category">平台操作手册</span>
         </div>
 
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
             <div class="mui-scroll">
                 <ul class="mui-table-view article">
-                    <li class="mui-table-view-cell mui-media">
-                        <a href="javascript:;">
-                            <img class="mui-media-object mui-pull-left" src="../images/shuijiao.jpg">
-                            <div class="mui-media-body">
-                                幸福
-                                <p class='mui-ellipsis'>能和心爱的人一起睡觉，是件幸福的事情；可是，打呼噜怎么办？</p>
-                            </div>
-                        </a>
-                    </li>
+                </ul>
             </div>
         </div>
 
@@ -67,54 +54,40 @@
 
             //初始化全局变量
             var count = 1;
-            var sArticleType = '';
-            var sArea = '';
             var keyword = wooApi.GetQueryString('keyword');
             $('.keyword').val(keyword);
-            var campID = wooApi.GetQueryString('camp_id');
-            var campName = wooApi.GetQueryString('camp_name');
 
-            //获取定位省市区
-            var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
-            var sCity = getLocationTB['city'];
-            var sProvince = getLocationTB['province'];
-            var allArea = getLocationTB['areas'];
-            $('.location').text(sCity);
-            if (campName != '' && campName != null) {
-                $('.location').text(campName);
-                $('.keyword').attr('placeholder', '请输入' + campName + '文章名称');
-                $("#areaSelect").parent().hide();
+            var organ_type = wooApi.GetQueryString('organ_type');
+            var organ_id = wooApi.GetQueryString('organ_id');
+            var organ_name = wooApi.GetQueryString('organ_name');
+            var category = wooApi.GetQueryString('category');
+            //判断如果没传参默认为篮球管家的平台操作手册
+            if(organ_type==""||organ_type==null){organ_type="1"}
+            if(organ_id==""||organ_id==null){organ_id="0"}
+            if(organ_name==""||organ_name==null){organ_name="篮球管家"}
+            if(category==""||category==null){category=1}
+
+            if(keyword==null){keyword=""}
+
+            $(".organization").text(organ_name);
+            if(category==1){
+                $(".category").text("平台操作手册");
+            }else{
+                $(".category").text("管家新闻");
             }
 
-            //生成区域选择下拉菜单
-            var arrArea = allArea.split(',');
-            var selectArea = '';
-            $.each(arrArea, function (i, areaName) {
-                selectArea += '<option value="' + areaName + '">' + areaName + '</option>';
-            });
-            $('#areaSelect').append(selectArea);
             //搜索文章
             $("#searchBtn").on("click", function () {
                 keyword = $(".keyword").val();
-                campID = '';
                 searchToList();
             })
-            //选择文章类型下拉
-            $("#articleType").on("change", function () {
-                sArticleType = $(this).find("option:checked").val();
-                searchToList();
-            });
-            //选择地区下拉
-            $("#areaSelect").on("change", function () {
-                sArea = $(this).val();
-                searchToList();
-            });
+
             //搜索、下拉刷选后触发
             function searchToList() {
                 count = 1;//显示第一页
                 var page = count;
                 var gType = 1;//代表下拉刷新
-                toList(page, gType, campID);//具体取数据的方法
+                toList(page, gType, organ_type, organ_id, category);//具体取数据的方法
             }
 
             mui.init({
@@ -147,7 +120,7 @@
                     count = 1;//刷新并显示第一页
                     var page = count;
                     var gType = 1;//代表下拉刷新
-                    toList(page, gType, campID);//具体取数据的方法
+                    toList(page, gType, organ_type, organ_id, category);//具体取数据的方法
                 }, 100);
             }
             //上拉加载具体业务实现
@@ -156,18 +129,23 @@
                     count++;//翻下一页
                     var page = count;
                     var gType = 2;//代表上拉加载
-                    toList(page, gType, campID);//具体取数据的方法
+                    toList(page, gType, organ_type, organ_id, category);//具体取数据的方法
                 }, 100);
             }
 
             //接口获取数据并追加到页面
-            var toList = function (page, gType, campID) {
+            var toList = function (page, gType, organ_type, organ_id, category) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/article/getArticleListApi','','',true)}";
+                var url = "{:url('api/article/getArticleListByPageApi','','',true)}";
                 mui.ajax({
                     url: url,
                     data: {
-                        status: 1,
+                        organization_type:organ_type,
+                        organization_id:organ_id,
+                        category:category,
+                        keyword:keyword,
+                        page:page,
+                        status: 1
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -175,39 +153,40 @@
                     headers: { 'Content-Type': 'application/json' },
                     //processData:false,
                     success: function (data) {
+                        console.log(data)
                         var newli = '';
                         if (data.code == 200) {
-                            for (var i = 0; i <= data.data.length; i++) {
-                            if (gType == 1) {
-                                //上拉刷新
-                                $("ul.article").empty().append(newli);
-                                mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                                mui('#refreshContainer').pullRefresh().refresh(true);
-                                let urls = "{:url('article/articleInfo')}" + '/article_id/' + data.data[i].id;
+                            for (var i = 0; i <= data.data.data.length-1; i++) {
+                                let urls = "{:url('article/articleInfo')}" + "/article_id/" + data.data.data[i].id;
                                 newli += ` <li class="mui-table-view-cell mui-media">
                                                 <a href="${urls}">
-                                                    <img class="mui-media-object mui-pull-left" src="${data.data[i].covers}">
+                                                    <img class="mui-media-object mui-pull-left" src="${data.data.data[i].covers}">
                                                     <div class="mui-media-body">
-                                                        ${data.data[i].title}
-                                                        <p class='mui-ellipsis'>${data.data[i].abstract}</p>
+                                                        ${data.data.data[i].title}
+                                                        <p class='mui-ellipsis'>${data.data.data[i].abstract}</p>
                                                     </div>
                                                 </a>
                                             </li>`;
-                                
-                                if (newli == '') {
-                                    $("ul.article").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
-                                }
-                            } else {
-                                //下拉加载 gType==2
-                                $("ul.article").append(newli);
-                            }
-                            if (newli != '') {
-                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-                            } else {
-                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                             }
                         }
-                    }    
+
+                        if (gType == 1) {
+                            //上拉刷新
+                            $("ul.article").empty().append(newli);
+                            mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                            mui('#refreshContainer').pullRefresh().refresh(true);
+                            if (newli == '') {
+                                $("ul.article").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
+                            }
+                        } else {
+                            //下拉加载 gType==2
+                            $("ul.article").append(newli);
+                        }
+                        if (newli != '') {
+                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                        } else {
+                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                        }
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
