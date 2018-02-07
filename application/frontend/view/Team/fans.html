@@ -30,14 +30,19 @@
 
     </div>
 
-    
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>
+
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
+
         $(function () {
             //初始化全局变量
             var count = 1;
-            followStatus();
+            // followStatus();
         })
         mui.init({
             swipeBack: true, //启用右滑关闭功能
@@ -103,11 +108,16 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            member_id = data.data.data[i].member_id
+                            var urls = "{:url('member/memberInfoother')}" + '/member_id/' + data.data.data[i].member_id;
                             newli += '<li class="mui-table-view-cell mui-media listli">'
-                            newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].member_avatar + '" style="width:44px !important;height:44px !important;"><div class="mui-media-body">' + data.data.data[i].member + '';
-                            newli += '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div><div class="price-frame"><button type="button" class="btn bgred"  onclick="followFans(' + data.data.data[i].member_id + ')" >关注</button></div>'
-                            newli += '</li>';
+                            newli += '<a href="' + urls + '" class="fl wd"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].member_avatar + '" style="width:44px !important;height:44px !important;"><div class="mui-media-body wd73">' + data.data.data[i].member + '';
+                            newli += '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div></a><div class="price-frame">';
+                            if (data.data.data[i].follow_status == 1) {
+                                newli += '<button type="button" class="btn bgred" onclick="followFans(' + data.data.data[i].member_id + ')" >取消关注</button>'
+                            } else {
+                                newli += '<button type="button" class="btn bgred" onclick="followFans(' + data.data.data[i].member_id + ')" >关注</button>'
+                            }
+                            newli += '</div></li>';
                         }
                     }
                     if (gType == 1) {
@@ -153,37 +163,9 @@
                     console.log(data);
                     if (data.code == 200) {
                         mui.toast(data.msg);
-                        followStatus(member_id);
+                        // location.reload();
                     } else {
                         mui.toast(data.msg);
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        }
-
-        // 判断当前的关注状态
-        function followStatus(member_id) {
-            mui.ajax("{:url('api/follow/getfollow')}", {
-                data: {
-                    type: 1,
-                    member_id: member_id
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data);
-                    if (data.code == 200) {
-                        if (data.data === 1) {
-                            $(".follow").text("取消关注");
-                        } else {
-                            $(".follow").text("关注");
-                        }
                     }
                 },
                 error: function (xhr, type, errorThrown) {
