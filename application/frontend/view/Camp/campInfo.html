@@ -71,8 +71,8 @@
                     <span class="starScore">
                     </span>
                 </li>
-                <li class="mui-table-view-cell listli detalisli">训练营介绍
-                    <span class="about">{$campInfo.camp_introduction}
+                <li class="mui-table-view-cell listli detalisli">训练营宣言
+                    <span class="about">{$campInfo.camp_description}
                             <a href="javascript:void(0)">......全文展示</a>
                         </span>
                 </li>
@@ -101,6 +101,14 @@
             <ul class="mui-table-view course-list lesson">
             </ul>
             <p class="dropdown moreLesson"><a href="{:url('lesson/lessonList')}?camp_id={$campInfo['id']}">更多课程...</a></p>
+
+
+            <div class="page-header" style="background: #efeff4;">
+                <span class="course">训练营介绍</span>
+            </div>
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell listli introBox">{$campInfo.camp_introduction}</li>
+            </ul>
 
             <div class="page-header">
                 <span class="course" style="font-size: 14px">评论</span>
@@ -215,16 +223,22 @@
 
         $(function () {
 
+            //判断训练营宣言长度是否超过30字符
+            var aboutlen = $(".about").text()
+            if(aboutlen.length<36){
+                $(".about a").hide();
+            }
+            //展示训练营介绍全文
+            $(".about a").click(function () {
+                $(".about").css("height", "auto");
+                $(this).hide();
+            });
+
             // 星星显示
             var star = Math.round("{$campInfo.star}" / "{$campInfo.star_num}");
             starShow(star);
             $(".starScore").prepend('评分 '+star+'.0');
 
-            //展示训练营介绍全文
-            $(".about a").click(function () {
-                $(".about").css("display", "block");
-                $(this).hide();
-            });
 
             //选择身份申请加入
             var type = '';

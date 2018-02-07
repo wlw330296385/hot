@@ -324,6 +324,9 @@
                                 newli1 += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
                             }
                             newli1 += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd60">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
+                            for (var j = 0; j <= data.data[i].role_arr.length - 1; j++) {
+                                newli1 += '<font class="tipCorner bgred">' + data.data[i].role_arr[j] + '</font>';
+                            }
                             newli1 += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div></li>'
                         } else {
                             newli0 += '<li class="mui-table-view-cell mui-media listli coach"><a href="' + urls + '" class="mui-navigate-right">';
@@ -333,6 +336,7 @@
                                 newli0 += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
                             }
                             newli0 += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd60">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
+
                             newli0 += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div></li>'
                         }
                     }
@@ -398,9 +402,6 @@
                             newli += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
                         }
                         newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd60">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
-                        for (var j = 0; j <= data.data[i].role_arr.length - 1; j++) {
-                            newli += '<font class="tipCorner bgred">' + data.data[i].role_arr[j] + '</font>';
-                        }
                         newli += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div></li>'
                     }
                 }
@@ -430,45 +431,6 @@
             }
         });
     };
-
-    //拖拽后显示操作图标，点击操作图标删除元素；
-    $('.OA_task_match').on('tap', '.mui-btn', function (match) {
-        var elem = this;
-        var li = elem.parentNode.parentNode;
-        var btnArray = ['确认', '取消'];
-        var txt = elem.innerHTML;
-        var matchid = elem.parentNode.getAttribute('data-id');
-        var action = elem.getAttribute('data-action');
-        mui.confirm('确认该活动' + txt + '?', '提示', btnArray, function (e) {
-            if (e.index == 0) {
-                var apiurl = "{:url('api/match/removematch')}";
-                mui.ajax(apiurl, {
-                    data: {
-                        match_id: matchid,
-                        action: action
-                    },
-                    dataType: 'json',
-                    type: 'post',
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        if (data.code == 200) {
-                            li.parentNode.removeChild(li);
-                            location.reload();
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errotThrown) {
-                        mui.toast('网络异常,请稍候再试');
-                    }
-                });
-            } else {
-                setTimeout(function () {
-                    mui.swipeoutClose(li);
-                }, 0);
-            }
-        });
-    });
 
 </script>
 

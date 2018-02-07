@@ -132,7 +132,7 @@ class Follow extends Base {
             $followS = new FollowService();
             $res = $followS->getfollowlist($map);
             if ($res) {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res->toArray()];
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_400')];
             }
@@ -207,7 +207,7 @@ class Follow extends Base {
             if ($res) {
                 // 并入当前会员有无关注实体粉丝的信息
                 foreach ($res['data'] as $k => $val) {
-                    $hasFollow = $followS->getfollow(['type' => 1,'follow_id' => $val['member_id'], 'status' => 1]);
+                    $hasFollow = $followS->getfollow(['type' => 1,'follow_id' => $val['member_id'], 'member_id' => $this->memberInfo['id'], 'status' => 1]);
                     $res['data'][$k]['follow_status'] = ($hasFollow) ? 1 : 0;
                 }
 
