@@ -39,8 +39,12 @@ class FollowService {
     // 关注列表
     public function getfollowlist($map, $order='id desc', $paginate=10) {
         $model = new Follow();
-        $list = $model->where($map)->order($order)->paginate($paginate);
-        return $list;
+        $query = $model->where($map)->order($order)->paginate($paginate);
+        if ($query) {
+            return $query->toArray();
+        } else {
+            return $query;
+        }
     }
 
     // 获取关注数据

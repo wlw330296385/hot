@@ -132,7 +132,7 @@ class Follow extends Base {
             $followS = new FollowService();
             $res = $followS->getfollowlist($map);
             if ($res) {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res->toArray()];
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_400')];
             }
