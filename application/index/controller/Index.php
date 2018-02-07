@@ -31,6 +31,13 @@ class Index extends Controller{
 
     }
 
+
+    public function follow(){
+        $campmember = db('camp_member')->field('member,member_id,camp as follow_name,camp_id as follow_id,create_time')->where('delete_time',null)->select();
+        $follow = new \app\model\Follow;
+        $follow->saveAll($campmember);
+    }
+
     public function eventMemberTotal(){
         $list = db('bill')->where(['goods_type'=>2,'status'=>1,'is_pay'=>1])->select();
         foreach ($list as $key => $value) {
