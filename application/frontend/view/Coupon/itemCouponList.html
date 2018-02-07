@@ -51,7 +51,8 @@
 
     $(function(){
 
-    	$('.useCard').on('tap',function(){
+    	$(document).on('tap','.useCard',function(){
+
     		var itemCouponID = $(this).attr("data-itemCouponID");
     		var itemCouponMemberID = $(this).attr("data-itemCouponMemberID");
     		var r = confirm('使用后不可在使用,确定使用吗?')
@@ -141,7 +142,7 @@
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
 
-                        var urls = "{:url('frontend/Coupon/itemCouponInfo')}" + '/item_coupon_id/' + data.data.data[i].item_coupon.itemCoupon_id;
+                        var urls = "{:url('frontend/Coupon/itemCouponInfo')}" + '/item_coupon_id/' + data.data.data[i].item_coupon.id;
 
                         startDate = data.data.data[i].item_coupon.start+' 00:00:00';
                         endDate = data.data.data[i].item_coupon.end+' 23:59:59';
@@ -155,7 +156,7 @@
                         } else if(startDate>currTimestamp||endDate<currTimestamp) {
                             btn = '<button type="button" class="mui-btn"  disabled="true"  >无效期 </button>';
                         } else {
-                            btn = '<button type="button" class="mui-btn bggreen useCard" data-itemCouponID="'+data.data.data[i].item_coupon.itemcoupon_id+'"   data-itemCouponMemberID = "'+data.data.data[i].id+'"   >立即使用  </button>';
+                            btn = '<button type="button" class="mui-btn bggreen useCard" data-itemCouponID="'+data.data.data[i].item_coupon.id+'"   data-itemCouponMemberID = "'+data.data.data[i].id+'"   >立即使用  </button>';
                         }
                         newli += '<div class="coupon"><div class="orangebg"><div class="cNum">' + data.data.data[i].item_coupon.price + '<span>元</span></div><div class="cFrom">' + data.data.data[i].item_coupon.organization + '</div><div class="cID">ID:' + data.data.data[i].coupon_number + '</div><div class="cName">' + data.data.data[i].item_coupon.coupon + '</div><div class="cDate">' + data.data.data[i].item_coupon.start +'至'+ data.data.data[i].item_coupon.end + '</div><i></i></div><div class="tips"><a href="'+urls+'">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>'+btn+'</div></div>'
 

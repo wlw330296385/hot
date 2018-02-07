@@ -51,14 +51,16 @@ class Bonus extends Base{
             if(!$member_id){
                 return json(['code'=>100,'msg'=>'请先登录']);
             }
+            // 找到礼包
             $bonusInfo = $this->BonusService->getbonusInfo(['id'=>$bonus_id,'status'=>1]);
             if(!$bonusInfo){
                 return json(['code'=>100,'msg'=>'礼包无效']);
             }
             $isBonus = $this->BonusService->getBonusMember(['bonus_id'=>$bonus_id,'member_id'=>$member_id,'status'=>1]);
             if($isBonus){
-                return json(['code'=>100,'msg'=>'你已经领过该礼包']);
+                return json(['code'=>101,'msg'=>'你已经领过该礼包']);
             }
+            // 领取礼包
             $member = $this->memberInfo['member'];
             $data = ['bonus_id'=>$bonus_id,'member_id'=>$member_id,'member'=>$member,'bonus'=>$bonusInfo['bonus'],'status'=>1];
             $result = $this->BonusService->createBonusMember($data);
