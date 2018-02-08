@@ -276,6 +276,11 @@ class Team extends Base {
         return view('Team/eventList');
     }
 
+     // 平台活动列表
+     public function eventListOfPlatform() {
+        return view('Team/eventListOfPlatform');
+    }
+
     // 活动详情
     public function eventinfo() {
         // 活动详情数据
@@ -319,6 +324,11 @@ class Team extends Base {
     // 赛事列表（平台展示）
     public function matchlist() {
         return view('Team/matchList');
+    }
+
+    // 平台赛事列表
+    public function matchListOfPlatform() {
+        return view('Team/matchListOfPlatform');
     }
 
     // 赛事详情

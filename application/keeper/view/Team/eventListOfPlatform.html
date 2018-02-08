@@ -35,11 +35,14 @@
     </style>
 </head>
 
-
 <body class=whitebg>
-    <header class="mui-bar mui-bar-nav subheader">
+
+    <header id="header" class="mui-bar mui-bar-nav search2">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title">活动列表</h1>
+        <h1 class="mui-title">
+            <input type="search" class="mui-input-clear keyword" placeholder="请输入活动名称">
+        </h1>
+        <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
     </header>
 
     <div class="mui-content">
@@ -47,9 +50,7 @@
         <form action="" class="mui-input-group">
             <div class="mui-input-row">
                 <div class="mui-navigate-right">
-                    <label style="line-height:20px">
-                        <strong class="f16">{$teamInfo.name}</strong>
-                    </label>
+                    <label style="line-height:20px" class="location"></label>
                     <div class="picker btn" id="demo6" data-options='{"type":"month"}'>
                         <span id="result" class="ui-alert year">选择年份</span>
                     </div>
@@ -72,26 +73,18 @@
             </div>
         </div>
 
-        <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="/keeper/">
-                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
-                </a>
-            </li>
-            <a href="{:url('team/teamInfo',['team_id'=>$teamInfo['id']])}">
-                <li class="mui-col-xs-10 mui-col-sm-10 opli bgred">
-                    球队主页
-                </li>
-            </a>
-        </ul>
+        <input type="hidden" name="eventID" class="eventID" />
 
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
     <!-- 选择器 -->
     <script src="/static/frontend/js/mui.picker.min.js"></script>
     <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
     <script>
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
@@ -119,26 +112,60 @@
 
             //初始化全局变量
             var count = 1;
+            var sEventType = '';
+            var sArea = '';
             var sYear = '';
+            var keyword = wooApi.GetQueryString('keyword');
+            $('.keyword').val(keyword);
+            var campID = wooApi.GetQueryString('camp_id');
+            var campName = wooApi.GetQueryString('camp_name');
 
+            //获取定位省市区
+            var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
+            var sCity = getLocationTB['city'];
+            var sProvince = getLocationTB['province'];
+            var allArea = getLocationTB['areas'];
+            $('.location').text(sCity);
+            if (campName != '' && campName != null) {
+                $('.location').text(campName);
+                $('.keyword').attr('placeholder', '请输入' + campName + '活动名称');
+                $("#areaSelect").parent().hide();
+            }
+
+            //生成区域选择下拉菜单
+            var arrArea = allArea.split(',');
+            var selectArea = '';
+            $.each(arrArea, function (i, areaName) {
+                selectArea += '<option value="' + areaName + '">' + areaName + '</option>';
+            });
+            $('#areaSelect').append(selectArea);
+            //搜索活动
+            $("#searchBtn").on("click", function () {
+                keyword = $(".keyword").val();
+                campID = '';
+                searchToList();
+            })
             //选择年份
             $(document).on('tap', '.mui-dtpicker-header .mui-btn', function () {
                 sYear = $(".year").text();
                 searchToList();
             });
-
             //选择活动类型下拉
             $("#eventType").on("change", function () {
                 sEventType = $(this).find("option:checked").val();
                 searchToList();
             });
-
+            //选择地区下拉
+            $("#areaSelect").on("change", function () {
+                sArea = $(this).val();
+                searchToList();
+            });
             //搜索、下拉刷选后触发
             function searchToList() {
                 count = 1;//显示第一页
                 var page = count;
                 var gType = 1;//代表下拉刷新
-                toList(page, gType);//具体取数据的方法
+                toList(page, gType, campID);//具体取数据的方法
             }
 
             mui.init({
@@ -171,7 +198,7 @@
                     count = 1;//刷新并显示第一页
                     var page = count;
                     var gType = 1;//代表下拉刷新
-                    toList(page, gType);//具体取数据的方法
+                    toList(page, gType, campID);//具体取数据的方法
                 }, 100);
             }
             //上拉加载具体业务实现
@@ -180,19 +207,16 @@
                     count++;//翻下一页
                     var page = count;
                     var gType = 2;//代表上拉加载
-                    toList(page, gType);//具体取数据的方法
+                    toList(page, gType, campID);//具体取数据的方法
                 }, 100);
             }
 
-            //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
                 var url = "{:url('api/team/teameventlistpage','','',true)}" + '/?page=' + page;
-                var team_id = "{$team_id}"
                 mui.ajax({
                     url: url,
                     data: {
-                        team_id: team_id,
                         status: 1,
                         // type:sEventType,
                         year: sYear,
@@ -246,7 +270,6 @@
                     }
                 });
             };
-
 
         })
     </script>

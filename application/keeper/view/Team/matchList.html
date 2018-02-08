@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>比赛列表</title>
+    <title>战绩列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -50,7 +50,7 @@
 <body class=whitebg>
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title">比赛列表</h1>
+        <h1 class="mui-title">战绩列表</h1>
     </header>
 
     <div class="mui-content">
@@ -60,36 +60,38 @@
             <form action="" class="mui-input-group">
                 <div class="mui-input-row picker btn" id="demo6" data-options='{"type":"month"}'>
                     <div class="mui-navigate-right">
-                        <label class="wd73">{$teamInfo.name}战绩</label>
+                        <label class="wd73" style="line-height:20px">
+                            <strong class="f16">{$teamInfo.name}战绩</strong>
+                        </label>
                         <span id="result" class="ui-alert year">选择年份</span>
                     </div>
                 </div>
             </form>
 
-            <div class="nav-list mb" id="personalData">
-                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ">
+            <div class="nav-list record mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>场次</span>
-                            <div class="mui-media-body">{$teamInfo.match_num}</div>
+                            <div class="mui-media-body colorred">{$teamInfo.match_num}</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>胜</span>
-                            <div class="mui-media-body">{$teamInfo.match_win}</div>
+                            <div class="mui-media-body colorred">{$teamInfo.match_win}</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>负</span>
-                            <div class="mui-media-body">{$teamInfo.match_lose}</div>
+                            <div class="mui-media-body colorred">{$teamInfo.match_lose}</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>胜率</span>
-                            <div class="mui-media-body">{$teamInfo.win_rate}</div>
+                            <div class="mui-media-body colorred">{$teamInfo.win_rate}</div>
                         </a>
                     </li>
                 </ul>
@@ -121,6 +123,20 @@
                     <ul class="mui-table-view mui-text-center match"></ul>
                 </div>
             </div>
+
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="/keeper/">
+                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                    </a>
+                </li>
+                <a href="{:url('team/teamInfo',['team_id'=>$teamInfo['id']])}">
+                    <li class="mui-col-xs-10 mui-col-sm-10 opli bgred">
+                        球队主页
+                    </li>
+                </a>
+            </ul>
+
         </div>
 
     </div>
@@ -243,14 +259,18 @@
                                 var matchTimeY = gettimeY(data.data.data[i].match_time * 1000);
                                 var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data.data[i].match_id + '/team_id/' + "{$team_id}";
                                 newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row" style="padding:0">'
-                                newli += '<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;"><p>1</p></li><li class="mui-col-xs-3 mui-col-sm-3"><p>' + matchTimeY + '</p><p>' + matchTimeM + '</p></li><li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;"><p class="colororange">' + data.data.data[i].away_team + '</p></li>'
-                                newli += '<li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p class="colororange">' + data.data.data[i].home_score + ':' + data.data.data[i].away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
+                                newli += '<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;"><p>' + (data.data.data.slice(0, i).length + 1) + '</p></li><li class="mui-col-xs-3 mui-col-sm-3"><p>' + matchTimeY + '</p><p>' + matchTimeM + '</p></li><li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">';
+                                if (data.data.data[i].home_score > data.data.data[i].away_score) {
+                                    newli += '<p class="colororange">' + data.data.data[i].away_team + '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p class="colororange">' + data.data.data[i].home_score + ':' + data.data.data[i].away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
+                                } else {
+                                    newli += '<p>' + data.data.data[i].away_team + '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p>' + data.data.data[i].home_score + ':' + data.data.data[i].away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
+                                }
                                 if (data.data.data[i].home_score > data.data.data[i].away_score) {
                                     newli += '<p class="colororange">胜</p>'
                                 } else if (data.data.data[i].home_score < data.data.data[i].away_score) {
-                                    newli += '<p class="colororange">负</p>'
+                                    newli += '<p>负</p>'
                                 } else {
-                                    newli += '<p class="colororange">平</p>'
+                                    newli += '<p>--</p>'
                                 }
                                 newli += '</li></ul></a></li>'
                             }
