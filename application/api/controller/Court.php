@@ -106,7 +106,7 @@ class Court extends Base{
         }
     }
 
-    // 分页获取lat,lng最近数据（带分页、有页码）
+    // 分页获取lat,lng最近数据（带分页）
     public function getCourtListOrderByDistanceApi(){
         try{
             $lat = input('param.lat',22.52369);;
