@@ -314,7 +314,7 @@ class Referee extends Base{
                 'organization_id'=>input('param.organization_id'),
                 'type'=>$type,//6是主裁判7是副裁判
                 'apply_type'=>2,
-                'remarks'=>input('param.remarks');
+                'remarks'=>input('param.remarks'),
             ];
             $ApplyService = new \app\service\ApplyService;
             $result = $ApplyService->createApply($data);
