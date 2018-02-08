@@ -26,19 +26,6 @@
             width: 100%;
         }
 
-        .frame {
-            width: 100%;
-            padding: 15px 2px;
-            font-size: 14px;
-            border: 1px dashed #ddd;
-            color: #b1b0b0;
-        }
-
-        .title {
-            font-size: 16px;
-            font-weight: bold;
-        }
-
         #eventDom .fl {
             text-align: left;
             float: left;
@@ -224,12 +211,9 @@
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">活动简介</span>
                 </div>
-                <div class="mui-input-row h-auto" style="margin-bottom: 10px">
+                <div class="mui-input-row h-auto">
                     <textarea name="event_des" class="data event_des" style="display: none"></textarea>
                     <div class="introBox"></div>
-                </div>
-
-                <div class="mui-input-row h-auto">
                     <div class="mui-row mui-text-center mui-row-operation">
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
                             <a class="frame up pd">上移</a>
@@ -245,11 +229,14 @@
                             <a class="frame imageClass">
                                 <div id="uploader-demo">
                                     <div id="fileList" class="uploader-list"></div>
-                                    <div id="filePickerTwo">选择图片</div>
+                                    <div class="filePickerTwo">选择图片</div>
                                 </div>
                             </a>
                         </div>
                     </div>
+                </div>
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="f12">温馨提示：点击添加均为插入一段文字或一张图片，不可换行，如需换行请再次点击添加。</span>
                 </div>
 
             </form>
@@ -374,6 +361,7 @@
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/tuwen.js?v=<?php echo time();?>"></script>
     <script>
         //初始化
         mui.init({
@@ -617,78 +605,7 @@
                 }
             })
 
-            //添加标题
-            $(".titleClass").on('tap', '', function () {
-                var title = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
-                $(".introBox").append(title);
-            });
 
-            //添加正文
-            $(".textClass").on('tap', '', function () {
-                var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" name="" class="mui-text-left text delClass textarea"></div>';
-                $(".introBox").append(text);
-            });
-
-            //删除操作
-            $(document).on('tap', '.delbtn', function () {
-                $(this).parent().remove();
-            });
-
-            // 焦点离开后把内容放在h5标签里
-            $(document).on('blur', '.operationDiv input', function () {
-                $(this).siblings(".delbtn").remove();
-                if ($(this).val() != '') {
-                    var inputValue = '<h5>' + $(this).val() + '</h5>';
-                    $(this).parent().html(inputValue).removeClass("bgorange")
-                } else {
-                    var inputValueNull = '<h5>标题</h5>';
-                    $(this).parent().html(inputValueNull)
-                }
-            });
-            // 点击时显示input框
-            $(document).on('tap', '.operationDiv h5', function () {
-                var YinputValue = '<i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="title" autofocus value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="标题">';
-                $(this).parent(".operationDiv").html(YinputValue).addClass("bgorange");
-            });
-
-            // 焦点离开后把内容放在p标签里
-            $(document).on('blur', '.operationDiv .textarea', function () {
-                $(this).siblings(".delbtn").remove();
-                if ($(this).text() != '') {
-                    var divValue = '<p>' + $(this).text() + '</p>';
-                    $(this).parent().html(divValue).removeClass("bgorange")
-                } else {
-                    var divValueNull = '<p>请输入正文</p>';
-                    $(this).parent().html(divValueNull)
-                }
-            });
-            // 点击时显示div框
-            $(document).on('tap', '.operationDiv p', function () {
-                var YdivValue = '<i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" value="' + $(this).text() + '"  class="mui-text-left text delClass textarea">' + $(this).text() + '</div>';
-                $(this).parent().html(YdivValue).addClass("bgorange");
-            });
-
-            // 图片的移动操作
-            $(document).on('tap', '.desimg', function () {
-                var bgg = $(this).parent().hasClass("bgorange");
-                if (bgg == false) {
-                    $(this).parent().addClass("bgorange")
-                    return false;
-                } else {
-                    $(document).on('tap', 'body', function () {
-                        $(".desimg").parent().removeClass("bgorange")
-                    });
-                }
-            });
-
-            // 上移动
-            $(document).on('tap', '.up', function () {
-                $(".bgorange").prev().insertAfter(".bgorange");
-            });
-            // 上移动
-            $(document).on('tap', '.down', function () {
-                $(".bgorange").next().insertBefore(".bgorange");
-            });
 
             toCampMemberList(); // 调用训练营身份列表
             toCampGradeList(); //调用训练营班级列表
@@ -712,9 +629,21 @@
                 return false;
             };
 
-            $('.delbtn').remove();
-            var totalHtml = $(".introBox").html();
-            $(".event_des").val(totalHtml);
+
+            //图文编辑状态转换浏览状态//////////////////////////////////////////
+            $(".introBox .operationDiv .delbtn").remove();
+            $(".introBox .operationDiv").removeClass("bgorange");
+            $(".operationDiv div.title").each(function (i) {
+                $(this).parent().empty().html('<h5>'+$(this).text()+'</h5>');
+            });
+            $(".operationDiv div.textarea").each(function (i) {
+                $(this).parent().empty().html('<p>'+$(this).text()+'</p>');
+            });
+
+            //获取最终含简单html标签的图文内容
+            var introHtml = $(".introBox").html();
+            /////////////////////////////////////////////////////////////////
+            $(".event_des").val(introHtml);
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);

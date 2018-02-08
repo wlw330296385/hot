@@ -41,7 +41,7 @@ uploaderOne.on('uploadError', function (file, reason) {
 var uploaderTwo = WebUploader.create({
     auto: true,
     server: uploadApiUrl,
-    pick: '#filePickerTwo',
+    pick: '.filePickerTwo',
     accept: {
         title: 'Images',
         extensions: 'gif,jpg,jpeg,bmp,png',
@@ -54,12 +54,18 @@ uploaderTwo.on('uploadProgress', function (file, percentage) {
 });
 // 上传成功
 uploaderTwo.on('uploadSuccess', function (file, responce) {
+    console.log(responce);
     if (eval('responce').status == 0) {
         mui.toast('上传失败,请重试', { 'duration': 'long' });
     } else {
         mui.toast('上传成功', { 'duration': 'long' });
         var $li = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img class="desimg" src="' + responce.path + '" style="padding-top:5px"></div>';
-        $(".introBox").append($li);
+        var getOptDiv = $(".uploadActive");
+        if(getOptDiv.find(".bgorange").length==0){
+            getOptDiv.append($li);
+        }else{
+            getOptDiv.find(".bgorange").removeClass("bgorange").after($li);
+        }
     }
 });
 // 上传失败

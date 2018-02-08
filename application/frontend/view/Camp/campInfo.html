@@ -43,7 +43,7 @@
             <div class="img4x3" style="background-image:url('{$campInfo.banner}')"></div>
 
             <ul class="mui-table-view mb" style="margin-top: -4px">
-                <li class="mui-table-view-cell mui-media listli de " style="padding:11px 15px;">
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
 
                         <img class="mui-media-object mui-pull-left" src="{$campInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
                         <h4>{$campInfo.camp}</h4>
@@ -71,9 +71,7 @@
                             </div>
                 </li>
                 <li class="mui-table-view-cell listli detalisli">训练营宣言
-                    <span class="about">{$campInfo.camp_description}
-                            <a href="javascript:void(0)">......全文展示</a>
-                        </span>
+                    <span class="about">{$campInfo.camp_description}<a href="javascript:void(0)">......全文展示</a></span>
                 </li>
             </ul>
 
@@ -223,8 +221,8 @@
         $(function () {
 
             //判断训练营宣言长度是否超过30字符
-            var aboutlen = $(".about").text()
-            if(aboutlen.length<36){
+            var aboutlen = $(".about").text();
+            if(aboutlen.length<42){
                 $(".about a").hide();
             }
             //展示训练营介绍全文
@@ -236,6 +234,7 @@
             // 星星显示
             var star = Math.round("{$campInfo.star}" / "{$campInfo.star_num}");
             starShow(star);
+            if(isNaN(star)){star=3}
             $(".starScore").prepend('评分 '+star+'.0');
 
 
