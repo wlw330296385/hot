@@ -1245,7 +1245,7 @@ class Team extends Base
     {
         try {
             // 传递参数作为查询条件
-            $map = input('post.');
+            $map = input('param.');
             $page = input('page', 1);
             // 如果有传入年份 查询条件 create_time在区间内
             if (input('?year')) {
@@ -1256,6 +1256,10 @@ class Team extends Base
                 }
                 unset($map['year']);
             }
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            
             $teamS = new TeamService();
             $result = $teamS->teamEventPaginator($map);
             if ($result) {
@@ -1274,8 +1278,8 @@ class Team extends Base
     {
         try {
             // 传递参数作为查询条件
-            $map = input('post.');
-            $page = input('page', 1);
+            $map = input('param.');
+            $page = input('param.page', 1);
             // 如果有传入年份 查询条件 create_time在区间内
             if (input('?year')) {
                 $year = input('year');
@@ -1284,6 +1288,9 @@ class Team extends Base
                     $map['create_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
                 }
                 unset($map['year']);
+            }
+            if (input('?param.page')) {
+                unset($map['page']);
             }
             $teamS = new TeamService();
             $result = $teamS->teamEventList($map, $page);
