@@ -12,7 +12,9 @@ class Base extends Controller{
 	public $memberInfo;
     public $o_id;
     public $o_type;
+    public $steward_type; // 管家版本
 	public function _initialize(){
+        $this->steward_type =2;
         $memberS = new MemberService();
 	    // 从模板消息url进入 带有openid字段 保存会员登录信息
 	    if ( input('?param.openid') ) {
@@ -75,10 +77,10 @@ class Base extends Controller{
 
 
 	protected function footMenu(){
-
-		define('CONTROLLER_NAME',Request::instance()->controller());
+		/*define('CONTROLLER_NAME',Request::instance()->controller());
 		define('MODULE_NAME',Request::instance()->module());
-		define('ACTION_NAME',Request::instance()->action());
+		define('ACTION_NAME',Request::instance()->action());*/
+		$request = Request::instance();
         $indexAction = 'index';
 		$footMenu =  [
 			[
@@ -92,7 +94,7 @@ class Base extends Controller{
 				'icon'=>'icon iconfont icon-nav-news',
 				'action'=>'index',
 				'controller'=>'Message'
-			],			
+			],
 			[
 				'name'=>'发现',
 				'icon'=>'icon iconfont icon-nav-Find',
@@ -112,6 +114,7 @@ class Base extends Controller{
 				'controller'=>'Member'
 			],
 		];
+		$this->assign('controller', $request->controller());
 		$this->assign('footMenu',$footMenu);
 	}
 
