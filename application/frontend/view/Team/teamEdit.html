@@ -84,13 +84,13 @@
             font-size: 16px;
             margin: 13px 10px;
         }
+
         .hotimg {
             width: 45px !important;
             height: 45px !important;
             float: initial !important;
             display: block;
         }
-
     </style>
 </head>
 
@@ -226,7 +226,7 @@
                 <div class="mui-input-row price-input-row h-auto">
                     <a href="#committee" id="setCommitteeBox" class="mui-navigate-right">
                         <label>队委</label>
-                        <span class="committee" name="" style="width: 60%">{volist name="roleslist.committee_names" id="vol"}{$vol.member},{/volist}</span>
+                        <span class="committee" name="committee" style="width: 60%">{volist name="roleslist.committee_names" id="vol"}{$vol.member},{/volist}</span>
                         <div id="hideCtList">
                             {volist name="roleslist.committee_names" id="vol"}
                             <input type="hidden" class="ctList" data-member_id="{$vol.member_id}" data-member="{$vol.member}"> {/volist}
@@ -879,6 +879,7 @@
             // 选择队委
             $("#committeeConfirm").on('tap', '', function () {
                 $(".committee").empty();
+                $("input[name=committee_id]").val("");
                 $("#hideCtList").empty();
                 var committeeMember = "";
                 var committeeMember_id = "";
