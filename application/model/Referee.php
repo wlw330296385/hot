@@ -11,6 +11,10 @@ class Referee extends Model {
                             ];
 
 
+    public function getStatusAttr($value){
+    	$a = [-1=>'被禁用',1=>'正常',0=>'未审核',2=>'不通过'];
+    	return $a[$value];
+    }
 
     public function member(){
         return $this->hasOne('member','id','member_id',[],'left join');

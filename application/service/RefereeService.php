@@ -56,12 +56,7 @@ class RefereeService{
     // 裁判列表 分页
     public function getRefereeListByPage( $map=[],$order='id desc',$paginate = 10) {
         $res = Referee::with('member')->where($map)->order($order)->paginate($paginate);
-        if($res){
-            $result = $res->toArray();
-            return $result;
-        }else{
-            return $res;
-        }
+        return $res;
     }
     
     public function updateRefereeStatus($request) {

@@ -1,0 +1,211 @@
+{extend name="layout/common" /}
+
+{block name="page-content"}
+<div class="row">
+    
+
+    <div class="col-sm-12 col-md-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">会员 详细资料</h3>
+            </div>
+            <form class="form-horizontal" method="post" action="">
+                <input type="hidden" id="referee-id" name="mid" value="{$refereeInfo.id}">
+                {:token()}
+                <div class="box-body">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">ID</div>
+                        <div class="col-sm-5">
+                            {$refereeInfo.id}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">用户名</div>
+                        <div class="col-sm-5">
+                            {$refereeInfo.referee}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                   
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">电话号码</div>
+                        <div class="col-sm-5">
+                            {$refereeInfo.member.telephone}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">身份证</div>
+                        {volist name="certList" id="vol"}
+                        <div class="col-sm-5">
+                            {eq name="vol.cert_type" value="1"}
+                            <img src="{$vol.photo_positive}" class="img-thumbnail" alt="">
+                            {/eq}
+                        </div>
+                        <div class="col-sm-5">
+                            <img src="{$vol.photo_back}" class="img-thumbnail" alt="">
+                        </div>
+                        {/volist}
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">性别</div>
+                        <div class="col-sm-5">
+                            {switch name="refereeInfo.member.sex"}
+                            {case value="1"}男{/case}
+                            {case value="2"}女{/case}
+                            {default/}未知
+                            {/switch}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">接单地区</div>
+                        <div class="col-sm-5">
+                            {$refereeInfo.referee_province}-{$refereeInfo.referee_area}-{$refereeInfo.referee_city}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    
+                    
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">注册时间</div>
+                        <div class="col-sm-5">
+                            {$refereeInfo.create_time}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">个人备注</div>
+                        <div class="col-sm-5">
+                            {$refereeInfo.remarks}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">状态</div>
+                        <div class="col-sm-5">
+                            {$refereeInfo.status}
+                            
+                        </div>
+                        <div class="col-sm-5">
+                            <a href="{:url('admin/referee/updateReferee',['status'=>1,'referee_id'=>$refereeInfo['id']])}" class="btn btn-warning" >通过</a>
+                            <a href="{:url('admin/referee/updateReferee',['status'=>2,'referee_id'=>$refereeInfo['id']])}" class="btn btn-danger" >拒绝</a></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <div class="box box-danger">
+            <div class="box-header with-border">
+                <h3 class="box-title">证件资料</h3>
+            </div>
+            <form class="form-horizontal refereeInfo-form" method="post" action="{:url('admin/referee/updateReferee')}">
+                <input type="hidden" id="refereeInfo-id" name="id" value="{$refereeInfo.id}">
+                {:token()}
+                <div class="box-body">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">资质证书</div>
+                        {volist name="certList" id="vol"}
+                        <div class="col-sm-5">
+                            {eq name="vol.cert_type" value="5"}
+                            <img src="{$vol.photo_positive}" class="img-thumbnail" alt="">
+                            <span>{if $vol.status==1}通过{else/}不通过{/if}</span>
+                            {/eq}
+
+                        </div>
+                        <div class="col-sm-5">
+                            <img src="{$vol.photo_back}" class="img-thumbnail" alt="">
+                        </div>
+                        {/volist}
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">形象照</div>
+                        <div class="col-sm-5">
+                            <img src="{$refereeInfo.portraits}" class="img-thumbnail" alt="">
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    
+                    
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">申请时间</div>
+                        <div class="col-sm-5">
+                            {$refereeInfo.create_time}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">个人备注</div>
+                        <div class="col-sm-5">
+                            {$refereeInfo.remarks}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">平台备注</div>
+                        <div class="col-sm-5">
+                            <textarea  class="form-control" name="system_remarks" rows="3">{$refereeInfo.system_remarks}</textarea>
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        
+                        <input type="submit" class="form-control btn btn-success" value="提交备注">
+                    </div>
+                </div>
+             
+            </form>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    "use strict";
+    
+    $(function(){
+        $('.pop-iframe').click(function() {
+            var iframeurl = $(this).attr('data-href');
+            // alert(iframeurl);return;
+            var title = $(this).text();
+            layui.use('layer', function() {
+                var layer = layui.layer;
+                    
+                    layer.open({
+                    skin:'layui-layer-lan',
+                    type: 2,
+                    title: title,
+                    shadeClose: true,
+                    shade: false,
+                    maxmin: true, //开启最大化最小化按钮
+                    area: ['900px', '650px'],
+                    content: iframeurl
+                });
+            });
+        });
+
+    })
+
+    function sendpost(refereeInfo, code, sremarks) {
+        var serverurl = "{:url('refereeInfo/audit')}";
+        $.post(serverurl, {
+            refereeInfo: refereeInfo,
+            code: code,
+            sys_remarks: sremarks
+        }, function(res) {
+            alert(res.msg);
+            if (res.status) {
+                location.href = res.goto;
+            } else {
+                location.reload();
+            }
+        }, 'json');
+    }
+</script>
+{/block}
