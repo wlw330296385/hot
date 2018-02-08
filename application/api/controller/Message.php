@@ -48,10 +48,12 @@ class Message extends Base{
     public function getMessageMemberListByPageApi(){
         try{
             $status = input('param.status');
+            // 管家类型
+            $steward_type = input('param.steward_type', 1);
             if($status){
-                $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id'],'status'=>$status]);
+                $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id'],'status'=>$status, 'steward_type' => $steward_type]);
             }else{
-                $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id']]);
+                $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id'], 'steward_type' => $steward_type]);
             }
             
             if($messageMemberList){

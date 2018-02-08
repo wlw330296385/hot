@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>训练营</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body class=whitebg>
+<header id="header" class="mui-bar mui-bar-nav subheader">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <h1 class="mui-title">我的训练营</h1>
+</header>
+<div class="mui-content">
+
+    <div class="list camp-list camp-lesson-list detalis-list coach mine">
+        <ul class="mui-table-view mb">
+            {notempty name="campList"}
+            {volist name='campList' id="vol"}
+            <li class="mui-table-view-cell listli listinitial">
+                {egt name="vol.type" value="2"}
+                <!--go camppower-->
+                {eq name="vol.type" value="4"}
+                {eq name="hasCamp.check_status" value="0"}
+                <!--有创建训练营但未审核-->
+                <a href="{:url('camp/campsetting',['camp_id'=>$vol['camp_id']])}" class="mui-navigate-right">{$vol.camp}[{$hasCamp.status}]</a>
+                {else/}<a href="{:url('camp/powerCamp',['camp_id'=>$vol['camp_id'],'type'=>$type])}" class="mui-navigate-right">{$vol.camp}</a>
+                {/eq}
+                <!--有创建训练营并审核-->
+                {else/}<a href="{:url('frontend/camp/powercamp', ['camp_id' => $vol['camp_id']])}" class="mui-navigate-right">{$vol.camp}</a>
+                {/eq}
+                <!--go clientofcamp-->
+                {else/}<a href="{:url('frontend/camp/clientofcamp', ['camp_id' => $vol['camp_id']])}" class="mui-navigate-right">{$vol.camp}</a>
+                {/egt}
+            </li>
+            {/volist}
+            {else/}
+            {switch name="$type"}
+            {case value="-1"}<p class="prompt whitebg">您没有关注任何训练营<a href="{:url('frontend/camp/camplist')}">前往关注训练营成为粉丝</a>{/case}
+            {case value="1"}{if condition="!$hasStudent"}<p class="prompt whitebg">您没有学生身份！<a href="{:url('frontend/lesson/lessonlist')}">前往报读篮球训练班</a></p>{/if}{/case}
+            {case value="2"}
+            {if condition="$hasCoach"}
+            {eq name="hasCoach.check_status" value="0"}
+            <p class="prompt whitebg">您教练身份未通过审核<a href="{:url('coach/updatecoach')}">完善教练信息</a></p>
+            {else/}<p class="prompt whitebg">您还未加入训练营担任教练<a href="{:url('frontend/camp/camplist')}">前往加入训练营担任教练</a></p>
+            {/eq}
+            {else/}<p class="prompt whitebg">您没有教练身份！<a href="{:url('coach/createCoach')}">申请成为教练</a></p>
+            {/if}
+            {/case}
+            {case value="3"}<p class="prompt whitebg">您没有在训练营担任管理员！<a href="{:url('camp/camplist')}">前往加入训练营担任管理员</a>{/case}
+            {case value="4"}{if condition="!$hasCamp"}<p class="prompt whitebg">您没有创建训练营！<a href="{:url('camp/createCamp')}">创建训练营</a></p>{/if}{/case}
+            {/switch}
+            {/notempty}
+        </ul>
+    </div>
+</div>
+
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+</script>
+</html>

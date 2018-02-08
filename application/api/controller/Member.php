@@ -83,7 +83,7 @@ class Member extends Base{
                 'openid' => '',
                 'member' => 'youke',
                 'nickname' => '游客',
-                'avatar' => '',
+                'avatar' => config('default_image.member_avatar'),
                 'hp' => 0,
                 'level' => 0,
                 'telephone' => '',

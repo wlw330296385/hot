@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>{$systemSetting.sitename}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--自定义多色图标icon.js-->
+    <script src="/static/frontend/iconfont/iconfont.js"></script>
+    <style type="text/css">
+        #coloriconMem,#coloriconSys{
+            display: none;
+        }
+        .coloricon {
+            width: 2em; height: 2em;
+            vertical-align: -0.7em;
+            fill: currentColor;
+            overflow: hidden;
+            margin-bottom: 1.2em;
+            margin-right: 0.5em;
+            float: left;
+        }
+        .listli .mui-navigate-right p{
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .mui-table-view-cell.mui-active{
+            background: #fff;
+            border-top:1px solid #c8c7cc;
+        }
+        .mui-table-view-cell.mui-collapse .mui-collapse-content{
+            background: #efeff4;
+            color:#777777;
+            padding:10px 20px 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="header" class="mui-bar mui-bar-nav for-tab">
+        <div class="message-list">
+            <div id="segmentedControl" class="mui-segmented-control">
+                <a class="mui-control-item mui-active" href="#memberMsg">个人消息</a>
+                <a class="mui-control-item" href="#systemMsg">系统通知</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="tab-pullRefresh">
+            <div id="memberMsg" class="mui-scroll-wrapper mui-control-content mui-active">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b memberMsg"></ul>
+                </div>
+            </div>
+            <div id="systemMsg" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b systemMsg"></ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!--用于临时替换图标（多色图标没法动态改变）-->
+    <svg id="coloriconMem" aria-hidden="true"><use xlink:href="#icon-msg-news2"></use></svg>
+    <svg id="coloriconSys" aria-hidden="true"><use xlink:href="#icon-msg-notice2"></use></svg>
+
+    <!--底部导航-->
+    {layout name="Layout/footer"}
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/common.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    mui("body").on("tap","a",function(){
+        window.top.location.href=this.href;
+    });
+
+
+    $(function () {
+
+        //打开消息改变其未读已读状态
+        $(".memberMsg").on("tap",'.mui-navigate-right', function () {
+            var msgID = $(this).attr("msg_id");
+            var msgStatus = $(this).attr("msg_status");
+            var msgTap = $(this);
+            if(msgStatus==1){
+                var apiurl = "{:url('api/message/setMessageMemberStatusApi')}";
+                mui.ajax(apiurl, {
+                    data: {
+                        message_id: msgID,
+                        status: 2
+                    },
+                    dataType: 'json',
+                    type: 'post',
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        //console.log(data);
+                        if (data.code == 200) {
+                            msgTap.find(".coloricon").html($("#coloriconMem").html());
+                            msgTap.attr("msg_status","2");
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errotThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                    }
+                });
+            }
+            wooApi.getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1});
+        });
+
+        $(".systemMsg").on("tap",'.mui-navigate-right', function () {
+            var msgID = $(this).attr("msg_id");
+            var msgStatus = $(this).attr("msg_status");
+            var msgTap = $(this);
+            if(msgStatus==1){
+                var apiurl = "{:url('api/message/setMessageStatus')}";
+                mui.ajax(apiurl, {
+                    data: {
+                        message_id: msgID,
+                        status: 2
+                    },
+                    dataType: 'json',
+                    type: 'post',
+                    headers: {'Content-Type': 'application/json'},
+                    success: function (data) {
+                        //console.log(data);
+                        if (data.code == 200) {
+                            msgTap.find(".coloricon").html($("#coloriconSys").html());
+                            msgTap.attr("msg_status","2");
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errotThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                    }
+                });
+            }
+        });
+
+        //初始化全局变量
+        var onCount = 1;
+        var offCount = 1;
+
+        mui('#memberMsg').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOn
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOn
+            }
+        });
+
+        //下拉刷新具体业务实现
+        function pulldownRefreshOn() {
+            setTimeout(function () {
+                onCount = 1;//刷新并显示第一页
+                var page = onCount;
+                var gType = 1;//代表下拉刷新
+                toMemberList('memberMsg', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现
+        function pullupRefreshOn() {
+            setTimeout(function () {
+                onCount++;//翻下一页
+                var page = onCount;
+                var gType = 2;//代表上拉加载
+                toMemberList('memberMsg', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+        mui('#systemMsg').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOff
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOff
+            }
+        });
+
+        //下拉刷新具体业务实现
+        function pulldownRefreshOff() {
+            setTimeout(function () {
+                offCount = 1;//刷新并显示第一页
+                var page = offCount;
+                var gType = 1;//代表下拉刷新
+                toSystemList('systemMsg', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现
+        function pullupRefreshOff() {
+            setTimeout(function () {
+                offCount++;//翻下一页
+                var page = offCount;
+                var gType = 2;//代表上拉加载
+                toSystemList('systemMsg', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+
+    })
+
+    //接口获取数据并追加到页面
+    var toMemberList = function (wList, page, gType) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/message/getMessageMemberListByPageApi','','',true)}" + '/?page=' + page;
+        mui.ajax({
+            url: url,
+            data: {
+                steward_type : 2
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        newli += '<li class="mui-table-view-cell mui-collapse listli"><a class="mui-navigate-right" msg_status="'+data.data.data[i].status+'" msg_id="'+data.data.data[i].id+'" href="#"><svg class="coloricon" aria-hidden="true"><use xlink:href="#icon-msg-news'+data.data.data[i].status+'"></use></svg><p>'+data.data.data[i].title+'</p><p>'+data.data.data[i].create_time+'</p></a><div class="mui-collapse-content"><a href="'+data.data.data[i].url+'"><p>'+data.data.data[i].content+'</p></a></div></li>';
+                    }
+                }
+                if (gType == 1) {
+                    //上拉刷新
+                    $("ul.memberMsg").empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("ul.memberMsg").append('<li class="nodata"><p>没有你的个人消息哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("ul.memberMsg").append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+    //接口获取数据并追加到页面
+    var toSystemList = function (wList, page, gType) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/message/getMessageListByPageApi','','',true)}" + '/?page=' + page;
+        mui.ajax({
+            url: url,
+            data: {},
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        newli += '<li class="mui-table-view-cell mui-collapse listli"><a class="mui-navigate-right" msg_status="'+data.data.data[i].isread+'" msg_id="'+data.data.data[i].id+'" href="#"><svg class="coloricon" aria-hidden="true"><use xlink:href="#icon-msg-notice'+data.data.data[i].isread+'"></use></svg><p>'+data.data.data[i].title+'</p><p>'+data.data.data[i].create_time+'</p></a><div class="mui-collapse-content"><a href="'+data.data.data[i].url+'"><p>'+data.data.data[i].content+'</p></a></div></li>';
+                    }
+                }
+                if (gType == 1) {
+                    //上拉刷新
+                    $("ul.systemMsg").empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("ul.systemMsg").append('<li class="nodata"><p>还没收到系统消息哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("ul.systemMsg").append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+
+</script>
+</html>

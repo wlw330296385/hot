@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>提现</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body class=whitebg>
+<header id="header" class="mui-bar mui-bar-nav subheader">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <h1 class="mui-title">添加银行卡|支付宝</h1>
+</header>
+<div class="mui-content">
+
+    <div class="list camp-list camp-lesson-list detalis-list coach">
+        <ul class="mui-table-view mb">
+            <li class="mui-table-view-cell listli listinitial" id="">
+               <label for="">平台类型</label> 
+                <select name="bank_type" class="select data">
+                    <option value="1">支付宝</option>
+                    <option value="2">银行</option>
+                </select>
+            </li>
+            <li class="mui-table-view-cell listli listinitial" id="bank" style="display: none">名称<input type="text" class="input data" placeholder="请输入银行名称" value="支付宝" name="bank"></li>
+            <li class="mui-table-view-cell listli listinitial">
+                账号<input type="text" class="input data" name="bank_card" placeholder="请输入银行账号">
+            </li>
+            <li class="mui-table-view-cell listli listinitial">
+                收款人姓名<input type="text" class="input data"  name="realname" placeholder="请输入收款人姓名">
+            </li>
+            <li class="mui-table-view-cell listli listinitial">
+                预留电话<input type="text" class="input data" name="telephone" placeholder="请输入预留电话">
+            </li>
+            <div class="tjbtn tjbtn-next">
+                <button type="button" class="btn">
+                    添加
+                </button>
+            </div>
+        </ul>
+    </div>
+</div>
+
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+    mui('body').on('tap', 'a', function () {
+        window.top.location.href = this.href;
+    });
+
+    $(function(){
+        $('select[name=bank_type]').on('change',function(i){
+            var bank_type = $(this).val();
+            if(bank_type == 2){
+                $('input[name=bank]').val('');
+                $('#bank').show();
+            }else{
+                $('input[name=bank]').val('支付宝');
+                $('#bank').hide();
+            }
+        });
+
+
+        $('button').on('click',function(){
+            var data1 = wooApi.getInputData();
+            var data2 = wooApi.getInputData('select','data',data1);
+            var objData = wooApi.arrTOobj(data2);
+            console.log(objData);
+            var result = wooApi.asyncF("{:url('api/Bankcard/createBankcardApi')}",objData);
+            if(result.code == 200){
+                mui.alert('提示',result.msg,function(){
+                    history.back()
+                })
+            }else{
+                mui.alert('提示',result.msg,function(){
+                    // history.back()
+                })
+            }
+        })
+    })
+
+
+
+
+</script>
+</html>
