@@ -1,4 +1,7 @@
 var numberData = [{
+    value: "0",
+    text: "0"
+}, {
     value: "1",
     text: "1"
 }, {

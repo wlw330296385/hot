@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>关注列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+</head>
+
+<body>
+
+    <header id="header" class="mui-bar mui-bar-nav for-tab">
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control mb">
+                <a href="{:url('camp/index')}" class="mui-control-item mui-icon mui-icon-left-nav"></a>
+                <a class="mui-control-item mui-active" href="#tabmyfollow">我的关注</a>
+                <a class="mui-control-item" href="#tabmyfans">我的粉丝</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="tab-pullRefresh">
+            <div id="tabmyfollow" class="mui-scroll-wrapper mui-control-content mui-active">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b myfollow OA_task_follow"></ul>
+                </div>
+            </div>
+            <div id="tabmyfans" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b myfans OA_task_follow"></ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/common.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    mui("body").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
+
+    $(function () {
+
+        //初始化全局变量
+        var onCount = 1;
+        var offCount = 1;
+
+        mui('#tabmyfollow').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOn
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOn
+            }
+        });
+
+        mui('#tabmyfans').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOff
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOff
+            }
+        });
+
+        //下拉刷新具体业务实现（我的关注）
+        function pulldownRefreshOn() {
+            setTimeout(function () {
+                onCount = 1;//刷新并显示第一页
+                var page = onCount;
+                var gType = 1;//代表下拉刷新
+                toMyFollow('tabmyfollow', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（我的关注）
+        function pullupRefreshOn() {
+            setTimeout(function () {
+                onCount++;//翻下一页
+                var page = onCount;
+                var gType = 2;//代表上拉加载
+                toMyFollow('tabmyfollow', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+        //下拉刷新具体业务实现（我的粉丝）
+        function pulldownRefreshOff() {
+            setTimeout(function () {
+                offCount = 1;//刷新并显示第一页
+                var page = offCount;
+                var gType = 1;//代表下拉刷新
+                toMyFans('tabmyfans', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（我的粉丝）
+        function pullupRefreshOff() {
+            setTimeout(function () {
+                offCount++;//翻下一页
+                var page = offCount;
+                var gType = 2;//代表上拉加载
+                toMyFans('tabmyfans', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+    })
+
+    //接口获取数据并追加到页面
+    var toMyFollow = function (wList, page, gType) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/follow/myfollow')}" + '/?page=' + page;
+        mui.ajax({
+            url: url,
+            data: {status:1},
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        // var urls = "{:url('event/eventInfoOfCamp')}" + '/event_id/' + data.data.data[i].id + '/organization_id/' + organizationID;
+                        newli += '<li class="mui-table-view-cell mui-media listli">'
+                        newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del" data-type="'+data.data.data[i].type+'"  data-follow_id="'+data.data.data[i].follow_id+'" >取消关注</span></div>';
+                        newli += '<div class="mui-slider-handle"><a ><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].follow_avatar + '"><div class="mui-media-body wd60">' + data.data.data[i].follow_name + '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div><div class="price-frame mui-text-center">';
+                        if (data.data.data[i].type == 1) {
+                            newli += "会员";
+                        } else if (data.data.data[i].type == 2) {
+                            newli += "训练营";
+                        } else if (data.data.data[i].type == 3) {
+                            newli += "班级";
+                        } else if (data.data.data[i].type == 4) {
+                            newli += "球队";
+                        }
+                        newli += '</a></div></li>';
+                    }
+                }
+                if (gType == 1) {
+                    //上拉刷新
+                    $("ul.myfollow").empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("ul.myfollow").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("ul.myfollow").append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+    //接口获取数据并追加到
+    var toMyFans = function (wList, page, gType) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/follow/myfans')}" + '/?page=' + page;
+        mui.ajax({
+            url: url,
+            data: {
+                type: 1,
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        // var urls = "{:url('event/eventInfoOfCamp')}" + '/event_id/' + data.data.data[i].id + '/organization_id/' + organizationID;
+                        newli += '<li class="mui-table-view-cell mui-media listli">'
+                        newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del">取消关注</span></div>';
+                        newli += '<div class="mui-slider-handle"><a href=""><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].member_avatar + '"><div class="mui-media-body wd60">' + data.data.data[i].member + '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div>';
+                        newli += '</li>';
+                    }
+                }
+                if (gType == 1) {
+                    //上拉刷新
+                    $("ul.myfans").empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("ul.myfans").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("ul.myfans").append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+
+    //拖拽后显示操作图标，点击操作图标删除元素；
+    $('.OA_task_follow').on('tap', '.mui-btn', function (event) {
+        var elem = this;
+        var li = elem.parentNode.parentNode;
+        var btnArray = ['确认', '取消'];
+        var eventid = elem.parentNode.getAttribute('data-id');
+        var action = elem.getAttribute('data-action');
+        var type = $(this).attr('data-type');
+        var team_id = camp_id = grade_id = $(this).attr('data-follow_id');
+        mui.confirm('确认取消关注吗？', '提示', btnArray, function (e) {
+            if (e.index == 0) {
+                
+                mui.ajax("{:url('api/follow/focus')}", {
+                    data: {
+                        type: 2,
+                        camp_id: camp_id,
+                        grade_id:grade_id,
+                        team_id:team_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            } else {
+                setTimeout(function () {
+                    mui.swipeoutClose(li);
+                }, 0);
+            }
+        });
+    });
+
+</script>
+
+</html>

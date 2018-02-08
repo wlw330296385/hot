@@ -45,12 +45,36 @@
     <div class="mui-content">
 
         <form action="" class="mui-input-group">
-            <div class="mui-input-row picker btn" id="demo6" data-options='{"type":"month"}'>
+
+            <!-- <div class="location-frame">
+                <span class="location-choise max">
+                    <select id="eventType" class="data" name="event_type">
+                        <option value="">活动类型</option>
+                        <option value="团队建设">团队建设</option>
+                        <option value="校园活动">校园活动</option>
+                        <option value="亲子教育">亲子教育</option>
+                        <option value="社交娱乐">社交娱乐</option>
+                        <option value="学习交流">学习交流</option>
+                    </select>
+                </span>
+            </div> -->
+
+            <div class="mui-input-row">
                 <div class="mui-navigate-right">
                     <label style="line-height:20px">
                         <strong class="f16">{$teamInfo.name}</strong>
                     </label>
-                    <span id="result" class="ui-alert year">选择年份</span>
+                    <div class="picker btn" id="demo6" data-options='{"type":"month"}'>
+                        <span id="result" class="ui-alert year">选择年份</span>
+                    </div>
+                    <span>
+                        <select id="eventType" class="data" name="event_type">
+                            <option value="">全部类型</option>
+                            <option value="1">对内训练</option>
+                            <option value="2">团队建设</option>
+                            <option value="3">日常活动</option>
+                        </select>
+                    </span>
                 </div>
             </div>
         </form>
@@ -117,11 +141,18 @@
 
             //初始化全局变量
             var count = 1;
+            var sEventType = '';
             var sYear = '';
 
             //选择年份
             $(document).on('tap', '.mui-dtpicker-header .mui-btn', function () {
                 sYear = $(".year").text();
+                searchToList();
+            });
+
+            //选择活动类型下拉
+            $("#eventType").on("change", function () {
+                sEventType = $(this).find("option:checked").val();
                 searchToList();
             });
 
@@ -186,6 +217,7 @@
                     data: {
                         team_id: team_id,
                         status: 1,
+                        // type:sEventType,
                         year: sYear,
                     },
                     dataType: 'json',//服务器返回json格式数据

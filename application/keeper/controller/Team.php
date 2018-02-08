@@ -25,14 +25,6 @@ class Team extends Base {
         $this->assign('teamInfo', $teamInfo);
     }
 
-    // 我的球队列表（会员所在球队列表）
-    public function index() {
-        $teamS = new TeamService();
-        $myTeamList = $teamS->myTeamWithRole($this->memberInfo['id']);
-        $this->assign('myTeamList', $myTeamList);
-        return view('Team/index');
-    }
-
     // 球队列表(平台展示)
     public function teamlist() {
         return view('Team/teamList');

@@ -1,6 +1,6 @@
 <?php
 // 比赛 赛事
-namespace app\frontend\controller;
+namespace app\keeper\controller;
 
 
 use app\service\MatchService;

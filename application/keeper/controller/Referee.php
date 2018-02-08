@@ -13,7 +13,7 @@ class Referee extends Base{
     // 裁判主页
     public function refereeManage(){
 
-        return view('Referee/index');
+        return view('Referee/refereeManage');
     }
 
 

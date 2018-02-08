@@ -10,6 +10,8 @@ use app\service\WechatService;
 class Base extends Controller{
 	public $systemSetting;
 	public $memberInfo;
+    public $o_id;
+    public $o_type;
 	public function _initialize(){
         $memberS = new MemberService();
 	    // 从模板消息url进入 带有openid字段 保存会员登录信息
@@ -73,46 +75,41 @@ class Base extends Controller{
 
 
 	protected function footMenu(){
+
 		define('CONTROLLER_NAME',Request::instance()->controller());
 		define('MODULE_NAME',Request::instance()->module());
 		define('ACTION_NAME',Request::instance()->action());
         $indexAction = 'index';
-
 		$footMenu =  [
 			[
 				'name'=>'首页',
 				'icon'=>'icon iconfont icon-nav-Home',
 				'action'=>$indexAction,
-				'controller'=>'Index',
-                'module' => 'keeper'
+				'controller'=>'Index'
 			],
 			[
 				'name'=>'消息',
 				'icon'=>'icon iconfont icon-nav-news',
 				'action'=>'index',
-				'controller'=>'Message',
-                'module' => 'frontend'
+				'controller'=>'Message'
 			],			
 			[
 				'name'=>'发现',
 				'icon'=>'icon iconfont icon-nav-Find',
 				'action'=>'index',
-				'controller'=>'Find',
-                'module' => 'frontend'
+				'controller'=>'Find'
 			],
 			[
 				'name'=>'我的',
 				'icon'=>'icon iconfont icon-nav-Camp',
-				'action'=>'index',
-				'controller'=>'Team',
-                'module' => 'keeper'
+				'action'=>'myteam',
+				'controller'=>'Team'
 			],
 			[
 				'name'=>'个人',
 				'icon'=>'icon iconfont icon-nav-mine',
 				'action'=>'index',
-				'controller'=>'Member',
-                'module' => 'frontend'
+				'controller'=>'Member'
 			],
 		];
 		$this->assign('footMenu',$footMenu);
@@ -141,7 +138,7 @@ class Base extends Controller{
 		}*/
 		if ($this->is_weixin()) {
             $wechatS = new WechatService();
-            $callback = url('frontend/login/wxlogin', '', '', true);
+            $callback = url('keeper/login/wxlogin', '', '', true);
             $this->redirect( $wechatS->oauthredirect($callback) );
         } else {
 		    //echo 'other';
@@ -150,7 +147,7 @@ class Base extends Controller{
                 'id' => 0,
                 'member' => '游客',
                 'nickname' => '游客',
-                'avatar' => '/static/default/avatar.png',
+                'avatar' => config('default_image.member_avatar'),
                 'hp' => 0,
                 'level' => 0,
                 'telephone' =>'',
@@ -260,7 +257,7 @@ class Base extends Controller{
                 'id' => 0,
                 'member' => '游客',
                 'nickname' => '游客',
-                'avatar' => '/static/default/avatar.png',
+                'avatar' => config('default_image.member_avatar'),
                 'hp' => 0,
                 'level' => 0,
                 'telephone' =>'',
