@@ -143,8 +143,7 @@
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>比赛地点</label>
-                    <span>
-                        <font class="getlocation"></font>{$matchInfo.court}</span>
+                    <span><font class="getlocation colororange"></font>公里&nbsp;&nbsp;{$matchInfo.court}</span>
                 </li>
                 <li class="mui-table-view-cell listli border-b">
                     <label>比赛时间</label>
@@ -356,16 +355,42 @@
                 panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
                 zoomToAccuracy: true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
             });
-            geolocation.getCurrentPosition(function (status, result) {
-                console.log(result);
-                console.log(result.position.lng)
-                console.log(result.position.lat)
-                lnggit = result.position.lng
-                latgit = result.position.lat
-                console.log(lnggit)
-                console.log(latgit)
-            });
 
+            geolocation.getCurrentPosition(function (status, result) {
+                console.log("getCurrentPosition");
+                console.log(result);
+                var lat1 = result.position.lat;
+                var lng1 = result.position.lng;
+                var lat2 = "{$matchInfo.court_lat}";
+                var lng2 = "{$matchInfo.court_lng}";
+                console.log(lat1)
+                console.log(lng1)
+                mui.ajax("{:url('api/Location/getDistanceApi')}", {
+                    data: {
+                        lat1: lat1,
+                        lng1: lng1,
+                        lat2: lat2,
+                        lng2: lng2
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            console.log(data.data);
+                            $(".getlocation").text(parseInt((data.data)/1000));
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
         });
         //初始化
         mui.init({
@@ -386,15 +411,12 @@
         var count = 1;
 
         $(function () {
-
             pulldownRefresh(); //页面打开时获取一次最新评论信息
             isthumbsup(); //点赞状态
             toTeam();
             teamMemberlist(); // 获取球队员列表
             toTagCommentList() //已经发表的标签
             toTagAllList(); //获取所有标签列表
-            getLocation();
-
 
             // 约战类型给对手默认logo
             var awayLogo = "{$matchInfo.record.away_team_logo}"
@@ -792,41 +814,6 @@
                 }
             });
         };
-
-        // 获取距离数
-        function getLocation() {
-            var lat1 = latgit;
-            var lng1 = lnggit;
-            var lat2 = "{$matchInfo.court_lat}";
-            var lng2 = "{$matchInfo.court_lng}";
-            console.log(lat1)
-            console.log(lng1)
-            mui.ajax("{:url('api/Location/getDistanceApi')}", {
-                data: {
-                    lat1: lat1,
-                    lng1: lng1,
-                    lat2: lat2,
-                    lng2: lng2
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data);
-                    if (data.code == 200) {
-                        $(".getlocation").text();
-                        console.log(data.msg)
-                    } else {
-                        mui.toast(data.msg);
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        }
     </script>
 
 </body>

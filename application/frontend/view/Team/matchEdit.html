@@ -227,8 +227,9 @@
                 <a href="#court" class="mui-navigate-right">
                     <label>比赛地点</label>
                     <span class="courtCont domData wd58" name="court">{eq name="directentry" value="1" }{else/}{$matchInfo.court}{/eq}</span>
-                    <input type="hidden" name="court_id" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.court_id}" {/eq}
-                        class="data">
+                    <input type="hidden" name="court_id" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.court_id}" {/eq} class="data">
+                    <input type="hidden" name="court_lng" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.court_lng}" {/eq} class="data">
+                    <input type="hidden" name="court_lat" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.court_lat}" {/eq} class="data">
                 </a>
             </div>
 
@@ -1091,12 +1092,18 @@
                 $(".courtCont").text(court);
                 var id = $(this).attr('data-id');
                 $("input[name=court_id]").val(id);
+                var lng = $(this).attr("data-lng");
+                var lat = $(this).attr("data-lat");
+                $("input[name=court_lng]").val(lng);
+                $("input[name=court_lat]").val(lat);
                 mui("#court").popover("toggle");
             })
             //清除常驻球场
             $("#CourtDel").on('tap', '', function () {
                 $(".contCont").text('');
                 $("input[name=court_id]").val("");
+                $("input[name=court_lng]").val("");
+                $("input[name=court_lat]").val("");
                 mui("#court").popover("toggle");
             })
             //搜索常驻球场
@@ -1513,7 +1520,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli" data-id="' + data.data.data[i].id + '">' + data.data.data[i].court + '</li>'
+                            newli = newli + '<li class="mui-table-view-cell listli"  data-lng="' + data.data.data[i].lng + '"  data-lat="' + data.data.data[i].lat + '"  data-id="' + data.data.data[i].id + '">' + data.data.data[i].court + '</li>'
                         }
                         $(wCourtList).empty();
                         if (newli == '') {
