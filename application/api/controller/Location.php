@@ -69,7 +69,7 @@ class Location extends Base{
             $stepOne = pow(sin($calcLatitude / 2), 2) + cos($lat1) * cos($lat2) * pow(sin($calcLongitude / 2), 2);   
             $stepTwo = 2 * asin(min(1, sqrt($stepOne)));   
             $calculatedDistance = $earthRadius * $stepTwo;   
-            return json(['code'=>200,msg=>'成功','data'=>round($calculatedDistance)]); 
+            return json(['code'=>200,'msg'=>'成功','data'=>round($calculatedDistance)]); 
         }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }

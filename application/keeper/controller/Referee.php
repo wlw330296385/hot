@@ -12,12 +12,43 @@ class Referee extends Base{
 
     // 裁判主页
     public function refereeManage(){
+        $refereeInfo = $this->RefereeService->getRefereeInfo(['member_id'=>$this->memberInfo['id']]);
+        // 接单次数
+        $total_order = 0;
+        // 受邀次数
+        $total_invited = 0;
+        $Apply = new \app\model\Apply;
+        // $applyMap = function($query) use($refereeInfo){
+        //     $query->where(['member_id'=>$refereeInfo['member_id']])
+        // }
+        $applyList = $Apply
+                    ->where('type',['=',6],['=',7],'or')
+                    ->where(['member_id'=>$refereeInfo['member_id']])
+                    ->where(['organization_type'=>4])
+                    ->select();
 
+        foreach ($applyList as $key => $value) {
+            if($value['apply_type'] == 2){
+                $total_invited++;
+            }
+            if($value['apply_type'] == 1 && $value['status'] == 2){
+                $total_order++;
+            }
+        }
+        // 执裁场次
+        $totalMatch = db('match_referee')->where(['referee_id'=>$refereeInfo['id']])->count();
+        
+        $this->assign('refereeInfo',$refereeInfo)
+        $this->assign('totalMatch',$totalMatch);
+        $this->assign('total_order',$total_order);
+        $this->assign('total_invited',$total_invited);
         return view('Referee/refereeManage');
     }
 
 
     public function refereeList(){
+
+
         return view('Referee/refereeList');
     }
 
