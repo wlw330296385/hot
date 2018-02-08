@@ -1,6 +1,6 @@
 <?php 
 namespace app\keeper\controller;
-use app\frontend\controller\Base;
+use app\keekper\controller\Base;
 use app\service\ItemCouponService;
 class Coupon extends Base{
 	protected $ItemCouponService;

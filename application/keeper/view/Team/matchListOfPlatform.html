@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>活动列表</title>
+    <title>比赛列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -35,11 +35,14 @@
     </style>
 </head>
 
-
 <body class=whitebg>
-    <header class="mui-bar mui-bar-nav subheader">
+
+    <header id="header" class="mui-bar mui-bar-nav search2">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title">活动列表</h1>
+        <h1 class="mui-title">
+            <input type="search" class="mui-input-clear keyword" placeholder="请输入球队名称">
+        </h1>
+        <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
     </header>
 
     <div class="mui-content">
@@ -47,51 +50,60 @@
         <form action="" class="mui-input-group">
             <div class="mui-input-row">
                 <div class="mui-navigate-right">
-                    <label style="line-height:20px">
-                        <strong class="f16">{$teamInfo.name}</strong>
-                    </label>
+                    <label style="line-height:20px" class="location"></label>
                     <div class="picker btn" id="demo6" data-options='{"type":"month"}'>
                         <span id="result" class="ui-alert year">选择年份</span>
                     </div>
                     <span>
-                        <select id="eventType" class="data" name="event_type">
+                        <select id="matchType" class="data" name="match_type">
                             <option value="">全部类型</option>
-                            <option value="1">对内训练</option>
-                            <option value="2">团队建设</option>
-                            <option value="3">日常活动</option>
+                            <option value="1">练习赛</option>
+                            <option value="2">友谊赛</option>
+                            <option value="3">积分赛</option>
+                            <option value="4">公开赛</option>
                         </select>
                     </span>
                 </div>
             </div>
         </form>
 
-        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
-            <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b event">
+        <ul class="mui-table-view mui-text-center">
+            <li class="mui-table-view-cell border-b">
+                <ul class="mui-row" style="padding:0">
+                    <li class="mui-col-xs-1 mui-col-sm-1">
+                        <p>序号</p>
+                    </li>
+                    <li class="mui-col-xs-3 mui-col-sm-3">
+                        <p>日期</p>
+                    </li>
+                    <li class="mui-col-xs-4 mui-col-sm-4">
+                        <p>对手</p>
+                    </li>
+                    <li class="mui-col-xs-3 mui-col-sm-3">
+                        <p>比分</p>
+                    </li>
+                    <li class="mui-col-xs-1 mui-col-sm-1">
+                        <p>胜负</p>
+                    </li>
                 </ul>
+            </li>
+        </ul>
+        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top:131px">
+            <div class="mui-scroll">
+                <ul class="mui-table-view mui-text-center match"></ul>
             </div>
         </div>
-
-        <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="/keeper/">
-                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
-                </a>
-            </li>
-            <a href="{:url('team/teamInfo',['team_id'=>$teamInfo['id']])}">
-                <li class="mui-col-xs-10 mui-col-sm-10 opli bgred">
-                    球队主页
-                </li>
-            </a>
-        </ul>
 
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
     <!-- 选择器 -->
     <script src="/static/frontend/js/mui.picker.min.js"></script>
     <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
     <script>
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
@@ -119,26 +131,60 @@
 
             //初始化全局变量
             var count = 1;
+            var sMatchType = '';
+            var sArea = '';
             var sYear = '';
+            var keyword = wooApi.GetQueryString('keyword');
+            $('.keyword').val(keyword);
+            var campID = wooApi.GetQueryString('camp_id');
+            var campName = wooApi.GetQueryString('camp_name');
 
+            //获取定位省市区
+            var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
+            var sCity = getLocationTB['city'];
+            var sProvince = getLocationTB['province'];
+            var allArea = getLocationTB['areas'];
+            $('.location').text(sCity);
+            if (campName != '' && campName != null) {
+                $('.location').text(campName);
+                $('.keyword').attr('placeholder', '请输入' + campName + '活动名称');
+                $("#areaSelect").parent().hide();
+            }
+
+            //生成区域选择下拉菜单
+            var arrArea = allArea.split(',');
+            var selectArea = '';
+            $.each(arrArea, function (i, areaName) {
+                selectArea += '<option value="' + areaName + '">' + areaName + '</option>';
+            });
+            $('#areaSelect').append(selectArea);
+            //搜索赛事
+            $("#searchBtn").on("click", function () {
+                keyword = $(".keyword").val();
+                campID = '';
+                searchToList();
+            })
             //选择年份
             $(document).on('tap', '.mui-dtpicker-header .mui-btn', function () {
                 sYear = $(".year").text();
                 searchToList();
             });
-
-            //选择活动类型下拉
-            $("#eventType").on("change", function () {
-                sEventType = $(this).find("option:checked").val();
+            //选择比赛类型下拉
+            $("#matchType").on("change", function () {
+                sMatchType = $(this).find("option:checked").val();
                 searchToList();
             });
-
+            //选择地区下拉
+            $("#areaSelect").on("change", function () {
+                sArea = $(this).val();
+                searchToList();
+            });
             //搜索、下拉刷选后触发
             function searchToList() {
                 count = 1;//显示第一页
                 var page = count;
                 var gType = 1;//代表下拉刷新
-                toList(page, gType);//具体取数据的方法
+                toList(page, gType, campID);//具体取数据的方法
             }
 
             mui.init({
@@ -171,7 +217,7 @@
                     count = 1;//刷新并显示第一页
                     var page = count;
                     var gType = 1;//代表下拉刷新
-                    toList(page, gType);//具体取数据的方法
+                    toList(page, gType, campID);//具体取数据的方法
                 }, 100);
             }
             //上拉加载具体业务实现
@@ -180,21 +226,18 @@
                     count++;//翻下一页
                     var page = count;
                     var gType = 2;//代表上拉加载
-                    toList(page, gType);//具体取数据的方法
+                    toList(page, gType, campID);//具体取数据的方法
                 }, 100);
             }
 
-            //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/team/teameventlistpage','','',true)}" + '/?page=' + page;
-                var team_id = "{$team_id}"
+                var url = "{:url('api/match/matchrecordlistpage','','',true)}" + '/?page=' + page;
                 mui.ajax({
                     url: url,
                     data: {
-                        team_id: team_id,
-                        status: 1,
-                        // type:sEventType,
+                        // type:sMatchType,
+                        status:1,
                         year: sYear,
                     },
                     dataType: 'json',//服务器返回json格式数据
@@ -206,32 +249,38 @@
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
-
-                                var urls = "{:url('team/eventInfo')}" + '/event_id/' + data.data.data[i].id + '/team_id/' + "{$team_id}";
-                                newli += '<li class="mui-table-view-cell mui-media listli">'
-                                newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '" style="width:70px!important;height: 56px!important;"><div class="mui-media-body" style="width:51%">' + data.data.data[i].event + '';
-                                if (data.data.data[i].is_max == "已满人") {
-                                    newli += '<font class="tipCorner bgred">满人</font>';
+                                // 将时间戳转成日期格式
+                                var matchTimeM = gettimeM(data.data.data[i].match_time * 1000);
+                                var matchTimeY = gettimeY(data.data.data[i].match_time * 1000);
+                                var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data.data[i].match_id + '/team_id/' + data.data.data[i].team_id;
+                                newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row" style="padding:0">'
+                                newli += '<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;"><p>' + (data.data.data.slice(0, i).length + 1) + '</p></li><li class="mui-col-xs-3 mui-col-sm-3"><p>' + matchTimeY + '</p><p>' + matchTimeM + '</p></li><li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">';
+                                if (data.data.data[i].home_score > data.data.data[i].away_score) {
+                                    newli += '<p class="colororange">' + data.data.data[i].away_team + '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p class="colororange">' + data.data.data[i].home_score + ':' + data.data.data[i].away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
+                                } else {
+                                    newli += '<p>' + data.data.data[i].away_team + '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p>' + data.data.data[i].home_score + ':' + data.data.data[i].away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
                                 }
-                                if (data.data.data[i].is_finished == "已结束") {
-                                    newli += '<font class="tipCorner bggray">结束</font>';
+                                if (data.data.data[i].home_score > data.data.data[i].away_score) {
+                                    newli += '<p class="colororange">胜</p>'
+                                } else if (data.data.data[i].home_score < data.data.data[i].away_score) {
+                                    newli += '<p>负</p>'
+                                } else {
+                                    newli += '<p>--</p>'
                                 }
-                                newli += '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div><div class="price-frame rightLocation">' + data.data.data[i].reg_number + '人参与</div></a>'
-                                newli += '</li>';
-
+                                newli += '</li></ul></a></li>'
                             }
                         }
                         if (gType == 1) {
                             //上拉刷新
-                            $("ul.event").empty().append(newli);
+                            $(".match").empty().append(newli);
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.event").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
+                                $("ul.match").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
                             }
                         } else {
                             //下拉加载 gType==2
-                            $("ul.event").append(newli);
+                            $(".match").append(newli);
                         }
                         if (newli != '') {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
@@ -247,8 +296,24 @@
                 });
             };
 
-
         })
+
+        //创建补0函数
+        function p(s) {
+            return s < 10 ? '0' + s : s;
+        }
+        // 将时间戳转成日期格式
+        function gettimeM(M) {
+            var _time = new Date(M);
+            var month = _time.getMonth() + 1;
+            var day = _time.getDate();
+            return p(month) + "月" + p(day) + "日"
+        }
+        function gettimeY(Y) {
+            var _time = new Date(Y);
+            var year = _time.getFullYear();
+            return p(year) + "年";
+        }
     </script>
 </body>
 

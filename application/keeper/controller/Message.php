@@ -1,6 +1,6 @@
 <?php 
 namespace app\keeper\controller;
-use app\frontend\controller\Base;
+use app\keeper\controller\Base;
 use app\service\MessageService;
 class Message extends Base{
 	protected $MessageService;
