@@ -86,10 +86,11 @@ class Base extends Controller{
             $this->o_id = $o_id;
             $this->o_type = $o_type;
         }
-        
-		define('CONTROLLER_NAME',Request::instance()->controller());
-		define('MODULE_NAME',Request::instance()->module());
-		define('ACTION_NAME',Request::instance()->action());
+
+        /*define('CONTROLLER_NAME',Request::instance()->controller());
+        define('MODULE_NAME',Request::instance()->module());
+        define('ACTION_NAME',Request::instance()->action());*/
+        $request = Request::instance();
         if($this->o_id<>0 && $this->o_type<>0){
             $indexAction = 'indexOfCamp';
         }else{
@@ -129,6 +130,7 @@ class Base extends Controller{
 		];
         $this->assign('o_id',$this->o_id);
         $this->assign('o_type',$this->o_type);
+        $this->assign('controller', $request->controller());
 		$this->assign('footMenu',$footMenu);
 	}
 
