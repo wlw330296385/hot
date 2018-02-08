@@ -1322,7 +1322,7 @@ class Team extends Base
             if (!$role) {
                 return json(['code' => 100, 'msg' => __lang('MSG_403') . '，你在球队只是普通成员不能操作']);
             }
-            // 根据活动当前状态(1上架,2下架)+不允许操作条件
+            // 根据活动当前状态(1上架,-1下架)+不允许操作条件
             // 根据action参数 editstatus执行上下架/del删除操作
             // 更新数据 返回结果
             switch ($event['status_num']) {
@@ -1388,7 +1388,7 @@ class Team extends Base
             if (!$checkteammember) {
                 return json(['code' => 100, 'msg' => '您不是此活动的球队成员，请选择其他球队活动']);
             }
-            if ($event['status_num'] === 2) {
+            if ($event['status_num'] === -1) {
                 return json(['code' => 100, 'msg' => '此活动已' . $event['status'] . '，请选择其他球队活动']);
             }
             if ($event['is_finished_num'] === 1) {
