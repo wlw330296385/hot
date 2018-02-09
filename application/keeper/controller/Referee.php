@@ -14,9 +14,9 @@ class Referee extends Base{
     public function refereeManage(){
         $refereeInfo = $this->RefereeService->getRefereeInfo(['member_id'=>$this->memberInfo['id']]);
         // 接单次数
-        $total_order = 0;
+        $totalOrder = 0;
         // 受邀次数
-        $total_invited = 0;
+        $totalInvited = 0;
         $Apply = new \app\model\Apply;
         // $applyMap = function($query) use($refereeInfo){
         //     $query->where(['member_id'=>$refereeInfo['member_id']])
@@ -29,10 +29,10 @@ class Referee extends Base{
 
         foreach ($applyList as $key => $value) {
             if($value['apply_type'] == 2){
-                $total_invited++;
+                $totalInvited++;
             }
             if($value['apply_type'] == 1 && $value['status'] == 2){
-                $total_order++;
+                $totalOrder++;
             }
         }
         // 执裁场次
@@ -40,8 +40,8 @@ class Referee extends Base{
         
         $this->assign('refereeInfo',$refereeInfo)
         $this->assign('totalMatch',$totalMatch);
-        $this->assign('total_order',$total_order);
-        $this->assign('total_invited',$total_invited);
+        $this->assign('totalOrder',$totalOrder);
+        $this->assign('totalInvited',$totalInvited);
         return view('Referee/refereeManage');
     }
 
