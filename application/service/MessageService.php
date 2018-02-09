@@ -340,14 +340,11 @@ class MessageService
             'url' => $data['url'],
             'member_id' => $member_id,
             'create_time' => time(),
-            'status' => 1
+            'status' => 1,
+            'steward_type' => isset($data['steward_type']) ? $data['steward_type'] : 1
         ]);
         $res = true;
-        if ($res) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return $res;
     }
 
     /**
@@ -402,14 +399,11 @@ class MessageService
                 'url' => $sendTemplateData['url'],
                 'member_id' => $val['id'],
                 'create_time' => time(),
-                'status' => 1
+                'status' => 1,
+                'steward_type' => isset($data['steward_type']) ? $data['steward_type'] : 1
             ]);
         }
         $res = true;
-        if ($res) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return $res;
     }
 }

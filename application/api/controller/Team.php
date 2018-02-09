@@ -268,10 +268,11 @@ class Team extends Base
                 $messageData = [
                     'title' => '加入球队申请',
                     'content' => '您好，会员' . $dataApply['member'] . '申请加入您的' . $teamInfo['name'],
-                    'url' => url('frontend/team/teamapplyinfo', ['id' => $saveApply['data'], 'team_id' => $teamInfo['id']], '', true),
+                    'url' => url('keeper/team/teamapplyinfo', ['id' => $saveApply['data'], 'team_id' => $teamInfo['id']], '', true),
                     'keyword1' => (!empty($this->memberInfo['realname'])) ? $this->memberInfo['realname'] : $this->memberInfo['member'],
                     'keyword2' => date('Y年m月d日 H:i', time()),
-                    'remark' => '点击登录平台查看更多信息，对加入申请作同意或拒绝回复'
+                    'remark' => '点击登录平台查看更多信息，对加入申请作同意或拒绝回复',
+                    'steward_type' => 2
                 ];
                 //dump($messageData);
                 $messageS = new MessageService();
@@ -319,7 +320,7 @@ class Team extends Base
             $applySaveResult = $teamS->saveApply(['id' => $applyInfo['id'], 'status' => $reply]);
             //dump($applySave);
             $replystr = '已拒绝';
-            $url = url('frontend/message/index', '', '', true);
+            $url = url('keeper/message/index', '', '', true);
             if ($reply == 2) {
                 if ($applySaveResult['code'] == 200) {
                     // 获取球队信息
@@ -365,7 +366,7 @@ class Team extends Base
                             'status' => 1, 'create_time' => time()
                         ]);
                     }
-                    $url = url('frontend/team/teammanage', ['team_id' => $teamInfo['id']], '', true);
+                    $url = url('keeper/team/teammanage', ['team_id' => $teamInfo['id']], '', true);
                 }
                 $replystr = '已通过';
             }
@@ -376,7 +377,8 @@ class Team extends Base
                 'url' => $url,
                 'keyword1' => '加入球队，队名：' . $applyInfo['organization'],
                 'keyword2' => $replystr,
-                'remark' => '点击登录平台查看更多信息'
+                'remark' => '点击登录平台查看更多信息',
+                'steward_type' => 2
             ];
             //dump($messageData);
             $messageS = new MessageService();
@@ -450,9 +452,9 @@ class Team extends Base
                 $data['number'] = null;
             } else {
                 $numberIsUsedMap = [
+                    'id' => ['<>', $data['id']],
                     'team_id' => $data['team_id'],
                     'number' => $data['number'],
-                    'member' => ['<>', $data['member']],
                     'status' => 1
                 ];
                 $numberIsUsed = $teamS->getTeamMemberInfo($numberIsUsedMap);
@@ -517,10 +519,11 @@ class Team extends Base
                 $messageData = [
                     'title' => '您已退出"' . $teammember['team'] . '"球队',
                     'content' => '您已退出"' . $teammember['team'] . '"球队',
-                    'url' => url('frontend/message/index', '', '', true),
+                    'url' => url('keeper/message/index', '', '', true),
                     'keyword1' => $teammember['member'],
                     'keyword2' => date('Y年m月d日 H:i'),
-                    'remark' => '点击进入查看详细信息'
+                    'remark' => '点击进入查看详细信息',
+                    'steward_type' => 2
                 ];
                 $messageS->sendMessageToMember($member_id, $messageData, config('wxTemplateID.memberQuit'));
                 // 更新球队统计字段
@@ -569,11 +572,12 @@ class Team extends Base
             $messageData = [
                 'title' => '您好，有球队成员申请离队',
                 'content' => '您好，球队成员' . $teammember['member'] . '申请离开"' . $teammember['team'] . '"球队',
-                'url' => url('frontend/message/index', '', '', true),
+                'url' => url('keeper/message/index', '', '', true),
                 'keyword1' => '球队成员申请离队',
                 'keyword2' => $teammember['member'],
                 'keyword3' => date('Y年m月d日 H:i'),
-                'remark' => '请及时处理'
+                'remark' => '请及时处理',
+                'steward_type' => 2
             ];
             $res = $messageS->sendMessageToMember($teamInfo['leader_id'], $messageData, config('wxTemplateID.checkPend'));
             if ($res) {
@@ -755,11 +759,12 @@ class Team extends Base
                     $messageData = [
                         'title' => '球队-'.$teamInfo['name'].'邀请您加入',
                         'content' => '球队-'.$teamInfo['name'].'邀请您加入',
-                        'url' => url('frontend/team/memberapplyinfo', ['id' =>$applyId ], '', true),
+                        'url' => url('keeper/team/memberapplyinfo', ['id' =>$applyId ], '', true),
                         'keyword1' => '球队邀请',
                         'keyword2' => $this->memberInfo['member'],
                         'keyword3' => date('Y年m月d日 H:i', time()),
-                        'remark' => '点击登录平台查看更多信息'
+                        'remark' => '点击登录平台查看更多信息',
+                        'steward_type' => 2
                     ];
                     $messageS = new MessageService();
                     $messageS->sendMessageToMember($memberInfo['id'], $messageData, config('wxTemplateID.checkPend'));
@@ -809,7 +814,7 @@ class Team extends Base
             // 更新apply数据，$reply=2同意，3拒绝
             $resultSaveApply = $teamS->saveApply(['id' => $applyInfo['id'], 'status' => $reply]);
             $replystr = '已拒绝';
-            $url = url('frontend/message/index', '', '', true);
+            $url = url('keeper/message/index', '', '', true);
             if ($reply == 2) {
                 if ($resultSaveApply['code'] == 200) {
                     // 更新team_member信息status=1
@@ -821,7 +826,7 @@ class Team extends Base
                     if ($updateTeamMember['code'] == 100) {
                         return json(['code' => 100, 'msg' => '更新球队队员信息失败']);
                     }
-                    $url = url('frontend/team/teammanage', ['team_id' => $applyInfo['organization_id']], '', true);
+                    $url = url('keeper/team/teammanage', ['team_id' => $applyInfo['organization_id']], '', true);
                 }
                 $replystr = '已通过';
                 // 更新球队统计字段
@@ -834,7 +839,8 @@ class Team extends Base
                 'url' => $url,
                 'keyword1' => '邀请会员加入球队',
                 'keyword2' => $replystr,
-                'remark' => '点击登录平台查看更多信息'
+                'remark' => '点击登录平台查看更多信息',
+                'steward_type' => 2
             ];
             //dump($messageData);
             $messageS = new MessageService();
@@ -1256,9 +1262,32 @@ class Team extends Base
                 }
                 unset($map['year']);
             }
+            // 活动类型为空 查询所有类型数据
+            if (input('?event_type')) {
+                $event_type = input('event_type');
+                if (empty($event_type)) {
+                    unset($map['event_type']);
+                }
+            }
+            // 关键字搜索
+            if (input('?keyword')) {
+                $keyword = input('keyword');
+                if ($keyword == null) {
+                    unset($map['keyword']);
+                } else {
+                    if (!empty($keyword)) {
+                        if (!ctype_space($keyword)){
+                            $map['event'] = ['like', "%$keyword%"];
+                        }
+                    }
+                }
+
+                unset($map['keyword']);
+            }
             if (input('?param.page')) {
                 unset($map['page']);
             }
+            // 查询条件组合 end
             
             $teamS = new TeamService();
             $result = $teamS->teamEventPaginator($map);
@@ -1289,9 +1318,33 @@ class Team extends Base
                 }
                 unset($map['year']);
             }
+            // 活动类型为空 查询所有类型数据
+            if (input('?event_type')) {
+                $event_type = input('event_type');
+                if (empty($event_type)) {
+                    unset($map['event_type']);
+                }
+            }
+            // 关键字搜索
+            if (input('?keyword')) {
+                $keyword = input('keyword');
+                if ($keyword == null) {
+                    unset($map['keyword']);
+                } else {
+                    if (!empty($keyword)) {
+                        if (!ctype_space($keyword)){
+                            $map['event'] = ['like', "%$keyword%"];
+                        }
+                    }
+                }
+
+                unset($map['keyword']);
+            }
             if (input('?param.page')) {
                 unset($map['page']);
             }
+            // 查询条件组合 end
+
             $teamS = new TeamService();
             $result = $teamS->teamEventList($map, $page);
             if ($result) {
