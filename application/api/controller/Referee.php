@@ -323,6 +323,25 @@ class Referee extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
         
+    }
 
+    // 接单|受邀列表
+    public function applyList(){
+        try{
+            $member_id = input('param.member_id',$this->memberInfo['id']);
+            $ApplyService = new \app\service\ApplyService;
+            $map = function($query)use ($member_id){
+                $query->where(['member_id'=>$member_id,'organization_type'=>4])
+                ->where('type',['=',6],['=',7],'or');
+            };
+            $result = $ApplyService->getApplyList($map);
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'获取失败']);
+            }
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
     }
 }

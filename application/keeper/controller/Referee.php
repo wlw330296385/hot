@@ -38,7 +38,7 @@ class Referee extends Base{
         // 执裁场次
         $totalMatch = db('match_referee')->where(['referee_id'=>$refereeInfo['id']])->count();
         
-        $this->assign('refereeInfo',$refereeInfo)
+        $this->assign('refereeInfo',$refereeInfo);
         $this->assign('totalMatch',$totalMatch);
         $this->assign('totalOrder',$totalOrder);
         $this->assign('totalInvited',$totalInvited);

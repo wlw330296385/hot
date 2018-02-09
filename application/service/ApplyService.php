@@ -12,17 +12,12 @@ class ApplyService{
 
 	public function getApplyList($map,$page = 1,$paginate = 10){
 		$result = Apply::where($map)->page($page,$paginate)->select();
-		 if($result){
-            return $result->toArray();
-        }
         return $result;
     }
 
     public function getApplyListByPage($map,$paginate = 10){
         $result = Apply::where($map)->paginate($paginate);
-        if($result){
-            return $result->toArray();
-        }
+        
         return $result;
     }
 
