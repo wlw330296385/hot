@@ -43,6 +43,129 @@
             }
         }
     </style>
+    <style type="text/css">
+        .mui-preview-image.mui-fullscreen {
+            position: fixed;
+            z-index: 20;
+            background-color: #000;
+        }
+
+        .mui-preview-header,
+        .mui-preview-footer {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            z-index: 10;
+        }
+
+        .mui-preview-header {
+            height: 44px;
+            top: 0;
+        }
+
+        .mui-preview-footer {
+            height: 50px;
+            bottom: 0px;
+        }
+
+        .mui-preview-header .mui-preview-indicator {
+            display: block;
+            line-height: 50px;
+            color: #fff;
+            text-align: center;
+            margin: 15px auto 4;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            font-size: 16px;
+        }
+
+        .mui-preview-image {
+            display: none;
+            -webkit-animation-duration: 0.5s;
+            animation-duration: 0.5s;
+            -webkit-animation-fill-mode: both;
+            animation-fill-mode: both;
+        }
+
+        .mui-preview-image.mui-preview-in {
+            -webkit-animation-name: fadeIn;
+            animation-name: fadeIn;
+        }
+
+        .mui-preview-image.mui-preview-out {
+            background: none;
+            -webkit-animation-name: fadeOut;
+            animation-name: fadeOut;
+        }
+
+        .mui-preview-image.mui-preview-out .mui-preview-header,
+        .mui-preview-image.mui-preview-out .mui-preview-footer {
+            display: none;
+        }
+
+        .mui-zoom-scroller {
+            position: absolute;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .mui-preview-image img.mui-transitioning {
+            -webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        @-webkit-keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @-webkit-keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
 
 <body class=whitebg>
@@ -52,7 +175,7 @@
     </header>
 
     <div class="mui-content">
-        <div class="list coach mb44">
+        <div class="list coach">
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli mui-text-center" style="padding:35px 15px 25px 15px;">
                     <div class="mui-row">
@@ -85,23 +208,28 @@
 
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
-                    <label><span class="icon iconfont icon-activity-Quantity colororange"></span>对手</label>
+                    <label>
+                        <span class="icon iconfont icon-activity-Quantity colororange"></span>对手</label>
                     <span class="away_team">{$matchInfo.record.away_team}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
-                    <label><span class="icon iconfont icon-activity-EndTime colororange"></span>时间</label>
+                    <label>
+                        <span class="icon iconfont icon-activity-EndTime colororange"></span>时间</label>
                     <span class="match_time">{$matchInfo.match_time}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
-                    <label><span class="icon iconfont icon-activity-Location colororange"></span>地区</label>
+                    <label>
+                        <span class="icon iconfont icon-activity-Location colororange"></span>地区</label>
                     <span>{$matchInfo.province} {$matchInfo.city} {$matchInfo.area}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
-                    <label><span class="icon iconfont icon-activity-EventLocati colororange"></span>比赛地点</label>
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>比赛地点</label>
                     <span>{$matchInfo.court}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
-                    <label><span class="icon iconfont icon-activity-Quantity colororange"></span>比赛类型</label>
+                    <label>
+                        <span class="icon iconfont icon-activity-Quantity colororange"></span>比赛类型</label>
                     <span class="match_time">{$matchInfo.type}</span>
                 </li>
             </ul>
@@ -124,128 +252,120 @@
                 <span class="course">比赛花絮</span>
             </div>
 
-            <!--图片轮播-->
-            <div id="slider" class="mui-slider" style="height:200px">
-                {notempty name="matchInfo.record.album"}
-                <div class="mui-slider-group mui-slider-loop">
-                    <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
-                    <div class="mui-slider-item mui-slider-item-duplicate">
-                        <img src="{$matchInfo.record.album[0]}">
-                    </div>
-                    <!-- 第一张 -->
+            {notempty name="matchInfo.record.album"}
+            <div class="mui-content-padded">
+                <div class="mui-row" style="min-height: 97px;max-height:288px;display: inline-block;">
                     {volist name="matchInfo.record.album" id="vol"}
+                    <div class="mui-col-xs-4 mui-col-sm-4" style="padding:0 2px">
+                        <img src="{$vol}" data-preview-src="" data-preview-group="1" style="width: 100%;height: 6rem;"> </div>
+                    {/volist}
+                </div>
+            </div>
+            {else/}
+            <p class="nohave">还没有上传花絮图哦</p>
+            {/notempty}
+
+            <!--图片轮播-->
+            <!-- <div id="slider" class="mui-slider" style="height:200px">
+                {notempty name="matchInfo.record.album"}
+                <div class="mui-slider-group mui-slider-loop"> -->
+            <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+            <!-- <div class="mui-slider-item mui-slider-item-duplicate">
+                        <img src="{$matchInfo.record.album[0]}">
+                    </div> -->
+            <!-- 第一张 -->
+            <!-- {volist name="matchInfo.record.album" id="vol"}
                     <div class="mui-slider-item">
                         <img src="{$vol}">
                     </div>
-                    {/volist}
-                    <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
-                    <div class="mui-slider-item mui-slider-item-duplicate">
+                    {/volist} -->
+            <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+            <!-- <div class="mui-slider-item mui-slider-item-duplicate">
                         <img src="{$matchInfo.record|array_pop}">
                     </div>
                 </div>
                 {else/}
                 <p class="mui-text-center" style="padding-top:45px;">还没有上传花絮图哦</p>
-                {/notempty}
-            </div>
-
-            <div class="page-header whitebg border-b">
-                <span class="course wd52">评论</span>
-                <span class="more f14">评论
-                    <small class="comment_count">0</small>&nbsp;|&nbsp;
-                    <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>&nbsp;
-                    <samll class="thumbup_count">0</samll>
-                </span>
-            </div>
-            <ul class="mui-table-view comment-list"></ul>
-
-            <!-- 队员身份加未完成 -->
-            <ul class="mui-table-view operation mt status1" style="display:none">
-                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                    <a href="/frontend/">
-                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
-                    </a>
-                </li>
-                <!-- <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                            <a hef="">
-                                <span class=""></span>分享
-                            </a>
-                        </li> -->
-                <li class="mui-table-view-cell mui-media mui-col-xs-10 mui-col-sm-10 opli bgred signupBtn">
-                    参加
-                </li>
-            </ul>
-
-            <!-- 队员身份加已完成 -->
-            <ul class="mui-table-view operation mt status2" style="display:none">
-                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                    <a href="/frontend/">
-                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
-                    </a>
-                </li>
-                <!-- <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                    <a hef="">
-                        <span class=""></span>分享
-                    </a>
-                </li> -->
-                <a href="#fbcomment">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-10 mui-col-sm-10 opli bgblue">
-                        发表评论
-                    </li>
-                </a>
-            </ul>
-
-            <!-- 队委以上身份加已完成 -->
-            <ul class="mui-table-view operation mt status3" style="display:none">
-                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                    <a href="/frontend/">
-                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
-                    </a>
-                </li>
-                <!-- <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                    <a hef="">
-                        <span class=""></span>分享
-                    </a>
-                </li> -->
-                <a href="{:url('team/matchEdit',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bggreen">
-                        编辑/录入
-                    </li>
-                </a>
-                <a href="#fbcomment">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgblue">
-                        发表评论
-                    </li>
-                </a>
-            </ul>
-
-            <!-- 队委以上身份加未完成 -->
-            <ul class="mui-table-view operation mt status4" style="display:none">
-                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                    <a href="/frontend/">
-                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
-                    </a>
-                </li>
-                <!-- <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                    <a hef="">
-                        <span class=""></span>分享
-                    </a>
-                </li> -->
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 opli bgred signupBtn">
-                    报名
-                </li>
-                <a href="{:url('team/matchEdit',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 opli bggreen">
-                        编辑/录入
-                    </li>
-                </a>
-                <a href="#fbcomment">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 opli bgblue">
-                        发表评论
-                    </li>
-                </a>
-            </ul>
-
+                {/notempty} -->
         </div>
+
+        <div class="page-header whitebg border-b">
+            <span class="course wd52">评论</span>
+            <span class="more f14">评论
+                <small class="comment_count">0</small>&nbsp;|&nbsp;
+                <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>&nbsp;
+                <samll class="thumbup_count">0</samll>
+            </span>
+        </div>
+        <ul class="mui-table-view comment-list"></ul>
+
+        <!-- 队员身份加未完成 -->
+        <ul class="mui-table-view operation mt status1" style="display:none">
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <a href="/frontend/">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-10 mui-col-sm-10 opli bgred signupBtn">
+                参加
+            </li>
+        </ul>
+
+        <!-- 队员身份加已完成 -->
+        <ul class="mui-table-view operation mt status2" style="display:none">
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <a href="/frontend/">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <a href="#fbcomment">
+                <li class="mui-table-view-cell mui-media mui-col-xs-10 mui-col-sm-10 opli bgblue">
+                    发表评论
+                </li>
+            </a>
+        </ul>
+        <!-- 队委以上身份加已完成 -->
+        <ul class="mui-table-view operation mt status3" style="display:none">
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <a href="/frontend/">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <a href="{:url('team/matchEdit',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}">
+                <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bggreen">
+                    编辑/录入
+                </li>
+            </a>
+            <a href="#fbcomment">
+                <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgblue">
+                    发表评论
+                </li>
+            </a>
+        </ul>
+
+        <!-- 队委以上身份加未完成 -->
+        <ul class="mui-table-view operation mt status4" style="display:none">
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <a href="/frontend/">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 opli bgred signupBtn">
+                报名
+            </li>
+            <a href="{:url('team/matchEdit',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}">
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 opli bggreen">
+                    编辑/录入
+                </li>
+            </a>
+            <a href="#fbcomment">
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 opli bgblue">
+                    发表评论
+                </li>
+            </a>
+        </ul>
+
+    </div>
 
     </div>
 
@@ -268,7 +388,10 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="/static/frontend/js/mui.zoom.js"></script>
+    <script src="/static/frontend/js/mui.previewimage.js"></script>
     <script>
+        mui.previewImage();
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能

@@ -91,6 +91,7 @@
         });
 
         $(function () {
+
             $(".fbBtn").on("tap", '', function () {
                 var url = "{:url('api/team/myteamlist','','',true)}";
                 mui.ajax({
@@ -226,10 +227,13 @@
                 }, 100);
             }
 
+
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
+                // getMatchListOrderByDistanceApi
                 var url = "{:url('api/match/matchlistpage')}?page=" + page;
+                // var url = "{:url('api/match/getMatchListOrderByDistanceApi')}";
                 mui.ajax({
                     url: url,
                     data: {
@@ -240,7 +244,9 @@
                         choice_time: choice_time,
                         type: 1,
                         islive: 1,
-                        status: 1
+                        status: 1,
+                        // court_lng:22.34,
+                        // court_lat:113.64
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -255,7 +261,6 @@
                                 newli += '<li class="mui-table-view-cell mui-media listli">';
                                 newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].team.logo + '"><div class="mui-media-body wd60"><strong class="colororange">' + data.data.data[i].team.name + '</strong>&nbsp;发起约赛';
                                 if (data.data.data[i].apply_status_num == 2) {
-                                    
                                     newli += '<font class="tipCorner bgorange">完成约战</font>';
                                 }
                                 if (data.data.data[i].match_time == 0) {
@@ -296,9 +301,6 @@
             };
 
         })
-
-
-
     </script>
 </body>
 
