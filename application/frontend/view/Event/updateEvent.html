@@ -135,18 +135,22 @@
                 <div class="mui-input-row h-auto">
                     <a href="#eventDom" class="mui-navigate-right">
                         <label>活动套餐</label>
-                        <span class="eventDom wd60 hdDoms" style="line-height: 37px;">{volist name="$eventInfo.doms" id="vol"} {$vol.name}({$vol.price}),{/volist}</span>
+                        <span class="eventDom wd60 hdDoms" style="line-height: 37px;">
+                            {volist name="$eventInfo.doms" id="vol"}
+                            <button type="button" class="selectDom">{$vol.name}<div>{$vol.price}</div></button>
+                            {/volist}
+                        </span>
                     </a>
                 </div>
 
-                <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
+                <div class="mui-input-row picker btnStart" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>开始时间</label>
                         <span id="resultStart" class="ui-alert domData" name="starts">{$eventInfo.starts}</span>
                     </div>
                 </div>
 
-                <div class="mui-input-row picker btnEnd" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
+                <div class="mui-input-row picker btnEnd" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>结束时间</label>
                         <span id="resultEnd" class="ui-alert domData" name="ends">{$eventInfo.ends}</span>
@@ -204,7 +208,7 @@
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">活动简介</span>
                 </div>
-                <div class="mui-input-row h-auto">
+                <div class="mui-input-row tuwenEditor">
                     <textarea name="event_des" class="data event_des" style="display: none"></textarea>
                     <div class="introBox">{$eventInfo.event_des}</div>
                     <div class="mui-row mui-text-center mui-row-operation">
@@ -482,11 +486,11 @@
             eventDomArr.push({ name: eDom, price: eDomPrice });
         });
         $(function () {
-
-            var cDoms = $(".hdDoms").text();
-            console.log(cDoms)
-            cDoms = cDoms.substring(0, cDoms.length - 1);
-            $(".hdDoms").text(cDoms);
+//
+//            var cDoms = $(".hdDoms").text();
+//            console.log(cDoms)
+//            cDoms = cDoms.substring(0, cDoms.length - 1);
+//            $(".hdDoms").text(cDoms);
 
             //获取训练营粉丝列表
             var StudentKeyword = '';
@@ -497,9 +501,6 @@
             toCampGradeList(); //调用训练营班级列表
             isFree();  //判断是否收费显示data
 
-            // 插入删除按钮
-            var delbtn = '<i class="delbtn mui-icon mui-icon-close"></i>';
-            $(".operationDiv img").before(delbtn);
 
             //判断只有大热俱乐部可以收费
             var organization_id = $("input[name=organization_id]").val();
@@ -561,18 +562,13 @@
                         isTrue = false;
                         return false;
                     } else {
-                        if (ePrice == 2) {
-                            eDoms += eDom + "（" + eDomPrice + "），";
-                        } else {
-                            eDoms += eDom + "，";
-                        }
+                        eDoms += '<button type="button" class="selectDom">'+eDom+'<div>'+eDomPrice+'</div></button>'
                         eventDomArr.push({ name: eDom, price: eDomPrice });
 
                     }
                 });
                 if (isTrue) {
-                    eDoms = eDoms.substring(0, eDoms.length - 1);
-                    $(".eventDom").text(eDoms);
+                    $(".eventDom").html(eDoms);
                     console.log(eventDomArr)
                     mui('#eventDom').popover('toggle');
                 } else {
@@ -681,23 +677,13 @@
         // 获取数据并进行提交(编辑活动)
         function submitAction() {
 
-
-
             if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
                 mui.alert("请输入正确的手机格式");
                 return;
             };
 
-
-            //图文编辑状态转换浏览状态//////////////////////////////////////////
-            $(".introBox .operationDiv .delbtn").remove();
-            $(".introBox .operationDiv").removeClass("bgorange");
-            $(".operationDiv div.title").each(function (i) {
-                $(this).parent().empty().html('<h5>'+$(this).text()+'</h5>');
-            });
-            $(".operationDiv div.textarea").each(function (i) {
-                $(this).parent().empty().html('<p>'+$(this).text()+'</p>');
-            });
+            //图文编辑状态转换浏览状态
+            tuwenToView()
 
             //获取最终含简单html标签的图文内容
             var introHtml = $(".introBox").html();
@@ -732,6 +718,8 @@
                     window.top.location.href = goUrl;
                 })
             } else {
+                //图文转换成可编辑状态
+                tuwenToEdit()
                 mui.alert(ajaxResult.msg, '活动修改失败', '确定', function () {
 
                 });

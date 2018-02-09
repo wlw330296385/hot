@@ -7,14 +7,8 @@
 
 $(function () {
 
-    ////////////////////////////// 编辑页面专用：图文转换成可编辑状态
-
-    $(".operationDiv h5").each(function (i) {
-        $(this).parent().empty().html('<div contenteditable="true" placeholder="请输入标题" class="title">'+$(this).text()+'</div>');
-    });
-    $(".operationDiv p").each(function (i) {
-        $(this).parent().empty().html('<div contenteditable="true" placeholder="请输入正文" class="textarea">'+$(this).text()+'</div>');
-    });
+    //图文转换成可编辑状态
+    tuwenToEdit()
 
     /////////////////////////////// 图文操作功能开始
 
@@ -29,7 +23,7 @@ $(function () {
     $(document).on('tap', '.filePickerTwo', function () {
         //用于标记哪个大区域（intrBox）插入图片
         $(".introBox").removeClass("uploadActive");
-        var toIntroBox = $(this).parentsUntil('.mui-input-row').parent().find(".introBox");
+        var toIntroBox = $(this).parentsUntil('.tuwenEditor').parent().find(".introBox");
         toIntroBox.addClass("uploadActive");
         /////////////////////////////////
         if (toIntroBox.find('.desimg').length >= 10) {
@@ -41,7 +35,7 @@ $(function () {
     $(".titleClass").on('tap', '', function () {
         $(".introBox .operationDiv .delbtn").remove();
         var title = '<div class="operationDiv bgorange"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入标题" class="title"></div></div>';
-        var getOptDiv = $(this).parentsUntil('.mui-input-row').parent().find(".introBox");
+        var getOptDiv = $(this).parentsUntil('.tuwenEditor').parent().find(".introBox");
         if(getOptDiv.find(".bgorange").length==0){
             getOptDiv.append(title);
         }else{
@@ -54,7 +48,7 @@ $(function () {
     $(".textClass").on('tap', '', function () {
         $(".introBox .operationDiv .delbtn").remove();
         var text = '<div class="operationDiv bgorange"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" class="textarea"></div></div>';
-        var getOptDiv = $(this).parentsUntil('.mui-input-row').parent().find(".introBox");
+        var getOptDiv = $(this).parentsUntil('.tuwenEditor').parent().find(".introBox");
         if(getOptDiv.find(".bgorange").length==0){
             getOptDiv.append(text);
         }else{
@@ -97,14 +91,30 @@ $(function () {
     ////////////////////////////////////////////////////////////// 图文详情结束
 
 
-    //此段代码用于提交时转化
-    //图文编辑状态转换浏览状态
-    // $(".introBox .operationDiv .delbtn").remove();
-    // $(".introBox .operationDiv").removeClass("bgorange");
-    // $(".operationDiv div.title").each(function (i) {
-    //     $(this).parent().empty().html('<h5>'+$(this).text()+'</h5>');
-    // });
-    // $(".operationDiv div.textarea").each(function (i) {
-    //     $(this).parent().empty().html('<p>'+$(this).text()+'</p>');
-    // });
 })
+
+function tuwenToEdit(){
+
+    //图文转换成可编辑状态
+    $(".operationDiv h5").each(function (i) {
+        $(this).parent().empty().html('<div contenteditable="true" placeholder="请输入标题" class="title">'+$(this).text()+'</div>');
+    });
+    $(".operationDiv p").each(function (i) {
+        $(this).parent().empty().html('<div contenteditable="true" placeholder="请输入正文" class="textarea">'+$(this).text()+'</div>');
+    });
+
+}
+
+function tuwenToView(){
+
+    //图文编辑状态转换浏览状态
+    $(".introBox .operationDiv .delbtn").remove();
+    $(".introBox .operationDiv").removeClass("bgorange");
+    $(".operationDiv div.title").each(function (i) {
+        $(this).parent().empty().html('<h5>'+$(this).text()+'</h5>');
+    });
+    $(".operationDiv div.textarea").each(function (i) {
+        $(this).parent().empty().html('<p>'+$(this).text()+'</p>');
+    });
+
+}
