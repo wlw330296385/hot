@@ -108,4 +108,15 @@ class Referee extends Base{
         return view('Referee/registerSuccess');
     }
 
+
+    // 申请列表
+    public function applyList(){
+        $type = input('param.type',1);
+        if($type == 1){
+
+            return view('Referee/applyList1');
+        }else{
+            return view('Referee/applyList2');
+        }
+    }
 }

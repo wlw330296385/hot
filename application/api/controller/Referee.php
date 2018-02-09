@@ -329,12 +329,13 @@ class Referee extends Base{
     public function applyListByPageApi(){
         try{
             $member_id = input('param.member_id',$this->memberInfo['id']);
+            $apply_type = input('param.apply_type',1);
             $ApplyService = new \app\service\ApplyService;
-            $map = function($query)use ($member_id){
-                $query->where(['member_id'=>$member_id,'organization_type'=>4])
-                ->where('type',['=',6],['=',7],'or');
+            $map = function($query)use ($member_id,$apply_type){
+                $query->where(['apply.member_id'=>$member_id,'apply.organization_type'=>4,'apply.apply_type'=>$apply_type])
+                ->where('apply.type',['=',6],['=',7],'or');
             };
-            $result = $ApplyService->getApplyListByPage($map);
+            $result = $ApplyService->getApplyListWithMtachByPage($map);
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
             }else{

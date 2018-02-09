@@ -1419,7 +1419,7 @@ class Match extends Base
             //     ]
             // );
             $orderby = input('param.orderby','distance asc');
-            $result = Db::query('select *,round(6378.138)*2*asin (sqrt(pow(sin((? *pi()/180 - lat*pi()/180)/2), 2)+cos(? *pi()/180)*cos(lat*pi()/180)*pow(sin((? *pi()/180 - lng*pi()/180)/2),2))) as distance from match where status=1 order by ? limit ?,?',
+            $result = Db::query('select *,round(6378.138)*2*asin (sqrt(pow(sin((? *pi()/180 - court_lat*pi()/180)/2), 2)+cos(? *pi()/180)*cos(court_lat*pi()/180)*pow(sin((? *pi()/180 - court_lng*pi()/180)/2),2))) as distance from match where status=1 order by ? limit ?,?',
             [$lat,$lat,$lng,$orderby,$ps,$pe]
             );
             

@@ -20,6 +20,11 @@ class Apply extends Model {
         return $list[$value];
     }
 
+
+    public function match() {
+        return $this->hasOne('match','id','organization_id',[],'LETF');
+    }
+
     public function member() {
         return $this->belongsTo('Member');
     }

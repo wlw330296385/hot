@@ -21,6 +21,11 @@ class ApplyService{
         return $result;
     }
 
+    public function getApplyListWithMtachByPage($map,$paginate = 10){
+        $result = Apply::with('match')->where($map)->paginate($paginate);
+        
+        return $result;
+    }
 
     // 统计用户数量
     public function countMembers($map){
