@@ -497,19 +497,13 @@
                         isTrue = false;
                         return false;
                     } else {
-                        if (ePrice == 2) {
-                            eDoms += eDom + "（" + eDomPrice + "），";
-                        } else {
-                            eDoms += eDom + "，";
-                        }
+                        eDoms += '<button type="button" class="selectDom">'+eDom+'<div>'+eDomPrice+'</div></button>'
                         eventDomArr.push({ name: eDom, price: eDomPrice });
 
                     }
                 });
                 if (isTrue) {
-                    eDoms = eDoms.substring(0, eDoms.length - 1);
-                    $(".eventDom").text(eDoms);
-
+                    $(".eventDom").html(eDoms);
                     mui('#eventDom').popover('toggle');
                 } else {
                     mui.alert('请填写完整，并保证名称长度不超过10个字，价格为纯数字，谢谢！', '温馨提示', '确定', function () {

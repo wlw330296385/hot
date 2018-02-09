@@ -135,18 +135,22 @@
                 <div class="mui-input-row h-auto">
                     <a href="#eventDom" class="mui-navigate-right">
                         <label>活动套餐</label>
-                        <span class="eventDom wd60 hdDoms" style="line-height: 37px;">{volist name="$eventInfo.doms" id="vol"} {$vol.name}({$vol.price}),{/volist}</span>
+                        <span class="eventDom wd60 hdDoms" style="line-height: 37px;">
+                            {volist name="$eventInfo.doms" id="vol"}
+                            <button type="button" class="selectDom">{$vol.name}<div>{$vol.price}</div></button>
+                            {/volist}
+                        </span>
                     </a>
                 </div>
 
-                <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
+                <div class="mui-input-row picker btnStart" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>开始时间</label>
                         <span id="resultStart" class="ui-alert domData" name="starts">{$eventInfo.starts}</span>
                     </div>
                 </div>
 
-                <div class="mui-input-row picker btnEnd" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
+                <div class="mui-input-row picker btnEnd" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>结束时间</label>
                         <span id="resultEnd" class="ui-alert domData" name="ends">{$eventInfo.ends}</span>
@@ -482,11 +486,11 @@
             eventDomArr.push({ name: eDom, price: eDomPrice });
         });
         $(function () {
-
-            var cDoms = $(".hdDoms").text();
-            console.log(cDoms)
-            cDoms = cDoms.substring(0, cDoms.length - 1);
-            $(".hdDoms").text(cDoms);
+//
+//            var cDoms = $(".hdDoms").text();
+//            console.log(cDoms)
+//            cDoms = cDoms.substring(0, cDoms.length - 1);
+//            $(".hdDoms").text(cDoms);
 
             //获取训练营粉丝列表
             var StudentKeyword = '';
@@ -497,9 +501,6 @@
             toCampGradeList(); //调用训练营班级列表
             isFree();  //判断是否收费显示data
 
-            // 插入删除按钮
-            var delbtn = '<i class="delbtn mui-icon mui-icon-close"></i>';
-            $(".operationDiv img").before(delbtn);
 
             //判断只有大热俱乐部可以收费
             var organization_id = $("input[name=organization_id]").val();
@@ -561,18 +562,13 @@
                         isTrue = false;
                         return false;
                     } else {
-                        if (ePrice == 2) {
-                            eDoms += eDom + "（" + eDomPrice + "），";
-                        } else {
-                            eDoms += eDom + "，";
-                        }
+                        eDoms += '<button type="button" class="selectDom">'+eDom+'<div>'+eDomPrice+'</div></button>'
                         eventDomArr.push({ name: eDom, price: eDomPrice });
 
                     }
                 });
                 if (isTrue) {
-                    eDoms = eDoms.substring(0, eDoms.length - 1);
-                    $(".eventDom").text(eDoms);
+                    $(".eventDom").html(eDoms);
                     console.log(eventDomArr)
                     mui('#eventDom').popover('toggle');
                 } else {
