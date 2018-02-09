@@ -300,10 +300,13 @@
             <ul class="mui-table-view operation mt">
 
                 <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                    <a href="/keeper/">
+                    <a href="/frontend/">
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
                     </a>
                 </li>
+                <!-- <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="#share">分享</a>
+                </li> -->
                 {eq name="isMemberInTeam" value="1"}
                 <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli">
                     <a href="{:url('team/teammanage',['team_id'=>$teamInfo['id']])}">
@@ -713,64 +716,6 @@
                 });
             });
 
-            // 分享到朋友圈
-            // $(".shareWechat").on("tap", function () {
-            //     wx.config({
-            //         //debug: true,
-            //         appId: "{$jsapi['appId']}",
-            //         timestamp: "{$jsapi['timestamp']}",
-            //         nonceStr: "{$jsapi['nonceStr']}",
-            //         signature: "{$jsapi['signature']}",
-            //         jsApiList: [
-            //             // 所有要调用的 API 都要加到这个列表中
-            //             'checkJsApi',
-            //             'onMenuShareTimeline',
-            //             'onMenuShareAppMessage',
-            //             'onMenuShareQQ'
-            //         ]
-            //     });
-
-            //     wx.ready(function () {
-            //         wx.onMenuShareTimeline({
-            //             title: "{$teamInfo.name}",
-            //             link: "{$shareurl}/pid/{$mid}",
-            //             imgUrl: "{:request()->root(true)}{$teamInfo.logo}",
-            //             success: function () { },
-            //             cancel: function () { }
-            //         });
-            //     });
-            // });
-
-            // // 分享给给朋友
-            // $(document).on("tap", ".shareFriend", function () {
-            //     wx.ready(function () {
-            //         wx.config({
-            //             //debug: true,
-            //             appId: "{$jsapi['appId']}",
-            //             timestamp: "{$jsapi['timestamp']}",
-            //             nonceStr: "{$jsapi['nonceStr']}",
-            //             signature: "{$jsapi['signature']}",
-            //             jsApiList: [
-            //                 // 所有要调用的 API 都要加到这个列表中
-            //                 'checkJsApi',
-            //                 'onMenuShareTimeline',
-            //                 'onMenuShareAppMessage',
-            //                 'onMenuShareQQ'
-            //             ]
-            //         });
-
-            //         wx.onMenuShareAppMessage({
-            //             title: '{$teamInfo.name}',
-            //             desc: '{$teamInfo.descri}',
-            //             link: "{$shareurl}/pid/{$mid}",
-            //             imgUrl: "{:request()->root(true)}{$teamInfo.logo}",
-            //             type: "",
-            //             dataUrl: '',
-            //             success: function () { },
-            //             cancel: function () { }
-            //         });
-            //     })
-            // })
             isthumbsup() //点赞状态
             followStatus(); //判断当前的关注状态
             teamMemberlist(); //自定义获取球员列表
@@ -1270,8 +1215,8 @@
             });
             // 分享给朋友
             wx.onMenuShareAppMessage({
-                title: '{$teamInfo.name}',
-                desc: '{$teamInfo.descri}',
+                title: "{$teamInfo.name}",
+                desc: "{$teamInfo.descri}",
                 link: "{$shareurl}/pid/{$mid}",
                 imgUrl: "{:request()->root(true)}{$teamInfo.logo}",
                 type: "",

@@ -32,14 +32,20 @@
             <span class="location"></span>
             <span class="location-choise">
                  <select id="areaSelect">
-                    <option value="">全部区域</option>
+                    <option value="">接单范围</option>
+                    <option value="不限">不限</option>
                 </select>
             </span>
             <span class="location-choise">
-                 <select id="sexSelect">
-                    <option value="">性别</option>
-                    <option value="1">男</option>
-                    <option value="2">女</option>
+                <select name="level" id="levelSelect" >
+                    <option value="">裁判等级</option>
+                    <option value="1">国际级裁判员</option>
+                    <option value="2">国家A级裁判员</option>
+                    <option value="3">国家级裁判员</option>
+                    <option value="4">一级裁判员</option>
+                    <option value="5">二级裁判员</option>
+                    <option value="6">三级裁判员</option>
+                    <option value="0" >未考级</option>
                 </select>
             </span>
         </div>
@@ -78,7 +84,7 @@
 
         //初始化全局变量
         var count = 1;
-        var sSex = '';
+        var sLevel = '';
         var sArea = '';
         var keyword = wooApi.GetQueryString('keyword');
         $('.keyword').val(keyword);
@@ -103,9 +109,9 @@
             keyword = $(".keyword").val();
             searchToList();
         })
-        //选择性别下拉
-        $("#sexSelect").on("change", function () {
-            sSex = $(this).val();
+        //选择裁判等级下拉
+        $("#levelSelect").on("change", function () {
+            sLevel = $(this).val();
             //alert(sSex);
             searchToList();
         });
@@ -177,7 +183,7 @@
                     referee_province: sProvince,
                     referee_city: sCity,
                     referee_area: sArea,
-                    sex: sSex,
+                    referee_area: sLevel,
                     keyword: keyword
                 },
                 dataType: 'json',//服务器返回json格式数据

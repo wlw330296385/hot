@@ -65,6 +65,7 @@
         }
     </style>
 </head>
+
 <body class=whitebg>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
@@ -133,33 +134,31 @@
 
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
-                    <label>对手</label>
+                    <label>
+                        <span class="icon iconfont icon-activity-Quantity colororange"></span>对手</label>
                     <span>暂无应战</span>
                 </li>
                 <li class="mui-table-view-cell listli">
-                    <label>地区</label>
+                    <label>
+                        <span class="icon iconfont icon-activity-EndTime colororange"></span>比赛时间</label>
+                    <span class="match_time">{$matchInfo.match_time}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Location colororange"></span>地区</label>
                     <span>{$matchInfo.province} {$matchInfo.city} {$matchInfo.area}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
-                    <label>比赛地点</label>
-                    <span>{$matchInfo.court}</span>
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>比赛地点</label>
+                    <span>
+                        <font class="getlocation colororange"></font>公里&nbsp;&nbsp;{$matchInfo.court}</span>
                 </li>
-                <li class="mui-table-view-cell listli border-b">
-                    <label>比赛时间</label>
-                    <span class="match_time">{$matchInfo.match_time}</span>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Quantity colororange"></span>比赛类型</label>
+                    <span class="match_time">{$matchInfo.type}</span>
                 </li>
-                <!-- <li class="mui-table-view-cell listli border-b">
-                    <label>平均身高</label>
-                    <span class="match_time">{matchInfo.avg_height}</span>
-                </li>
-                <li class="mui-table-view-cell listli border-b">
-                    <label>平均年龄</label>
-                    <span class="match_time">{matchInfo.avg_age}</span>
-                </li>
-                <li class="mui-table-view-cell listli border-b">
-                    <label>平均体重</label>
-                    <span class="match_time">{matchInfo.avg_weight}</span>
-                </li> -->
                 <!-- <li class="mui-table-view-cell listli">
                     <label>场地费用</label>
                     <span class="match_time"></span>
@@ -330,7 +329,67 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <!--获取地址-->
+    <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
     <script>
+        var lnggit = '';
+        var latgit = '';
+
+        var map = new AMap.Map('container', {
+            resizeEnable: true,
+            zoom: 15,
+        });
+        AMap.plugin('AMap.Geolocation', function () {
+            geolocation = new AMap.Geolocation({
+                enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+                maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+                convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+                showButton: true,        //显示定位按钮，默认：true
+                buttonPosition: 'RB',    //定位按钮停靠位置，默认：'LB'，左下角
+                buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+                showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+                panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
+                zoomToAccuracy: true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+            });
+
+            geolocation.getCurrentPosition(function (status, result) {
+                console.log("getCurrentPosition");
+                console.log(result);
+                var lat1 = result.position.lat;
+                var lng1 = result.position.lng;
+                var lat2 = "{$matchInfo.court_lat}";
+                var lng2 = "{$matchInfo.court_lng}";
+                console.log(lat1)
+                console.log(lng1)
+                mui.ajax("{:url('api/Location/getDistanceApi')}", {
+                    data: {
+                        lat1: lat1,
+                        lng1: lng1,
+                        lat2: lat2,
+                        lng2: lng2
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            console.log(data.data);
+                            $(".getlocation").text(parseInt((data.data) / 1000));
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+        });
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
@@ -350,7 +409,6 @@
         var count = 1;
 
         $(function () {
-
             pulldownRefresh(); //页面打开时获取一次最新评论信息
             isthumbsup(); //点赞状态
             toTeam();
