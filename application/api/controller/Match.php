@@ -7,7 +7,7 @@ use app\service\MatchService;
 use app\service\MessageService;
 use app\service\TeamService;
 use think\Exception;
-
+use think\Db;
 class Match extends Base
 {
     // 创建比赛
@@ -1413,15 +1413,61 @@ class Match extends Base
             $page = input('param.page',1);
             $pe = $page*10;
             $ps = ($page-1)*10;
-            // $result = Db::query("select *,round(6378.138)*2*asin (sqrt(pow(sin((:lat *pi()/180 - lat*pi()/180)/2), 2)+cos(:lat *pi()/180)*cos(lat*pi()/180)*pow(sin((:lng *pi()/180 - lng*pi()/180)/2),2))) as distance from court order by distance asc",
-            //     ['lat'=>$lat,'lng'=>$lng,
-            //     // \PDO::PARAM_INT
-            //     ]
-            // );
+            // 地区和排序
+            $province = input('param.province');
+            $city = input('param.city');
+            $area = input('param.area');
             $orderby = input('param.orderby','distance asc');
-            $result = Db::query('select *,round(6378.138)*2*asin (sqrt(pow(sin((? *pi()/180 - court_lat*pi()/180)/2), 2)+cos(? *pi()/180)*cos(court_lat*pi()/180)*pow(sin((? *pi()/180 - court_lng*pi()/180)/2),2))) as distance from match where status=1 order by ? limit ?,?',
-            [$lat,$lat,$lng,$orderby,$ps,$pe]
-            );
+           
+            // 传入比赛未来时间选择 1：7天/2：15天/3：30天
+            if (input('?choice_time')) {
+                $choiceTime = input('choice_time');
+                // 生成未来时间戳
+                if (!empty($choiceTime)) {
+                    switch ($choiceTime) {
+                        case 1: {
+                            $endTime = strtotime("+7 days");
+                            break;
+                        }
+                        case 2: {
+                            $endTime = strtotime("+15 days");
+                            break;
+                        }
+                        default: {
+                            $endTime = strtotime("+30 days");
+                            break;
+                        }
+                    }
+                }
+            }
+
+            
+            // // return json($result);
+            // 是否存在时间选择
+            if(isset($endTime)){
+                $starTime = time();
+                if(empty($area)||!$area || $area == ' '|| $area ==''){
+                    $result = Db::query('select *,round(6378.138)*2*asin (sqrt(pow(sin((? *pi()/180 - court_lat*pi()/180)/2), 2)+cos(? *pi()/180)*cos(court_lat*pi()/180)*pow(sin((? *pi()/180 - court_lng*pi()/180)/2),2))) as distance from `match` where status=1 and province=? and city =? and match_time between ? and ? order by ? limit ?,?;',
+                    [$lat,$lat,$lng,$province,$city,$starTime,$endTime,$orderby,$ps,$pe]
+                    );
+                }else{
+                    $result = Db::query('select *,round(6378.138)*2*asin (sqrt(pow(sin((? *pi()/180 - court_lat*pi()/180)/2), 2)+cos(? *pi()/180)*cos(court_lat*pi()/180)*pow(sin((? *pi()/180 - court_lng*pi()/180)/2),2))) as distance from `match` where status=1 and province=? and city =? and area=?  and match_time between  ? and ?  order by ? limit ?,?',
+                    [$lat,$lat,$lng,$province,$city,$area,$starTime,$endTime,$orderby,$ps,$pe]
+                    );
+                }
+            }else{
+                if(empty($area)||!$area || $area == ' '|| $area ==''){
+                    $result = Db::query('select *,round(6378.138)*2*asin (sqrt(pow(sin((? *pi()/180 - court_lat*pi()/180)/2), 2)+cos(? *pi()/180)*cos(court_lat*pi()/180)*pow(sin((? *pi()/180 - court_lng*pi()/180)/2),2))) as distance from `match` where status=1 and province=? and city =?  order by ? limit ?,?;',
+                    [$lat,$lat,$lng,$province,$city,$orderby,$ps,$pe]
+                    );
+                }else{
+                    $result = Db::query('select *,round(6378.138)*2*asin (sqrt(pow(sin((? *pi()/180 - court_lat*pi()/180)/2), 2)+cos(? *pi()/180)*cos(court_lat*pi()/180)*pow(sin((? *pi()/180 - court_lng*pi()/180)/2),2))) as distance from `match` where status=1 and province=? and city =? and area=? order by ? limit ?,?',
+                    [$lat,$lat,$lng,$province,$city,$area,$orderby,$ps,$pe]
+                    );
+                }
+            }
+            
+            
             
             
             
@@ -1430,9 +1476,109 @@ class Match extends Base
             }else{
                 return json(['code'=>100,'msg'=>'ok']);
             }
-        }catch (Exception $e){
+            
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+
+
+    // 分页获取lat,lng最近数据（带分页,带页码）
+    public function getMatchListOrderByDistanceByPageApi(){
+        try{
+            $lat = input('param.lat',22.52369);
+            $lng = input('param.lng',114.0261);
+            $page = input('param.page',1);
+            $orderby = input('param.orderby','distance asc');
+            // 传递参数作为查询条件
+            $map = input('post.');
+            // 如果有传入年份 查询条件 create_time在区间内
+            if (input('?year')) {
+                $year = input('year');
+                if (is_numeric($year)) {
+                    $tInterval = getStartAndEndUnixTimestamp($year);
+                    $map['create_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
+                }
+                unset($map['year']);
+            }
+            // 传入比赛未来时间选择 1：7天/2：15天/3：30天
+            if (input('?choice_time')) {
+                $choiceTime = input('choice_time');
+                // 生成未来时间戳
+                if (!empty($choiceTime)) {
+                    switch ($choiceTime) {
+                        case 1: {
+                            $dateTimeStamp = strtotime("+7 days");
+                            break;
+                        }
+                        case 2: {
+                            $dateTimeStamp = strtotime("+15 days");
+                            break;
+                        }
+                        case 3: {
+                            $dateTimeStamp = strtotime("+30 days");
+                            break;
+                        }
+                    }
+                    //dump($dateTimeStamp);
+                    // match_time区间 查询条件组合:当前时间至所选未来时间
+                    $endDate = getStartAndEndUnixTimestamp(date('Y', $dateTimeStamp), date('m', $dateTimeStamp), date('d', $dateTimeStamp));
+                    //dump($endDate);
+                    $map['match_time'] = ['between', [time(), $endDate['end']]];
+                }
+                unset($map['choice_time']);
+            }
+
+            // 关键字搜索：发布比赛的球队名(team)
+            $keyword = input('keyword');
+            if (input('?param.keyword')) {
+                unset($map['keyword']);
+                // 关键字内容
+                if ($keyword != null) {
+                    if (!empty($keyword) || !ctype_space($keyword)) {
+                        $map['team'] = ['like', "%$keyword%"];
+                    }
+                }
+            }
+
+            // 关键字null情况处理
+            if ($keyword == null) {
+                unset($map['keyword']);
+            }
+
+            // 默认地区为空
+            if (input('?param.area')) {
+                if (empty($map['area'])) {
+                    unset($map['area']);
+                }
+            }
+
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            if (input('?param.lat')) {
+                unset($map['lat']);
+            }
+            if (input('?param.lng')) {
+                unset($map['lng']);
+            }
+            if (input('?param.orderby')) {
+                unset($map['orderby']);
+            }
+            $result = db('match')->field("*,round(6378.138)*2*asin (sqrt(pow(sin(($lat *pi()/180 - court_lat*pi()/180)/2), 2)+cos($lat *pi()/180)*cos(court_lat*pi()/180)*pow(sin(($lng *pi()/180 - court_lng*pi()/180)/2),2))) as distance")->where($map)->order($orderby)->paginate();
+            
+            
+
+            if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
+        }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
 }
 

@@ -167,18 +167,12 @@
         //接口获取数据并追加到页面
         var toList = function (page, gType) {
             //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/referee/searchRefereeListApi','','',true)}";
+            var url = "{:url('api/referee/applyListByPageApi','','',true)}";
 
             mui.ajax({
                 url: url,
                 data: {
-                    status: 1,
-                    page: page,
-                    referee_province: sProvince,
-                    referee_city: sCity,
-                    referee_area: sArea,
-                    sex: sSex,
-                    keyword: keyword
+                    apply_type: 2,
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -188,10 +182,22 @@
                 success: function (data) {
                     var newli = '';
                     if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            var urls = "{:url('referee/refereeInfo')}" + '/referee_id/' + data.data[i].id;
-                            var star = data.data[i].star;
-                            newli += '<li class="mui-table-view-cell mui-media listli list-wide"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body">' + data.data[i].referee + '<i class="icon iconfont icon-sex' + data.data[i].sex + '"></i><p class="mui-ellipsis">级别:' + data.data[i].referee_level + '&nbsp;&nbsp;执裁场次:<span class="colororange">' + data.data[i].total_played + '</span></p></div><div class="price-frame"><div class="icons mui-inline">' + data.data[i].appearance_fee + '</div><p class="address">出场费</p></div></a></li>'
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            var urls = "{:url('referee/refereeInfo')}" + '/referee_id/1';
+
+                            newli += `<li class="mui-table-view-cell mui-media listli list-wide">
+                                            <a href="${url}">
+                                                <img class="mui-media-object mui-pull-left coachicon" src="${data.data.data[i].match.logo}">
+                                                <div class="mui-media-body">${data.data.data[i].match.name}<i class="icon iconfont icon-sex1"></i>
+                                                    <p class="mui-ellipsis">地区:${data.data.data[i].match.province}&nbsp;${data.data.data[i].match.city}&nbsp${data.data.data[i].match.area};
+                                                        <span class="colororange">比赛时间:${data.data.data[i].match.match_time}</span>
+                                                    </p></div><div class="price-frame">
+                                                    <div class="icons mui-inline">场地</div>
+                                                    <p class="address">${data.data.data[i].match.court}</p>
+                                                </div>
+                                            </a>
+                                            <p>${data.data.data[i].status}</p>
+                                        </li>`;
                         }
                     }
                     if (gType == 1) {
