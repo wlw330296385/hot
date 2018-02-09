@@ -156,31 +156,29 @@ class Patch extends Controller {
             $coachMember = $this->getCoachMember($schedule['coach_id']);
             //dump($coachMember);
             // 课时主教练工资
-            if ($schedule['coach_salary'] > 0) {
-                $incomeCoach = [
-                    'salary' => $schedule['coach_salary'],
-                    'push_salary' => $pushSalary,
-                    'member_id' => $coachMember['member']['id'],
-                    'member' => $coachMember['member']['member'],
-                    'realname' => $coachMember['coach'],
-                    'member_type' => 4,
-                    'pid' => $coachMember['member']['pid'],
-                    'level' => $coachMember['member']['level'],
-                    'schedule_id' => $schedule['id'],
-                    'lesson_id' => $schedule['lesson_id'],
-                    'lesson' => $schedule['lesson'],
-                    'grade_id' => $schedule['grade_id'],
-                    'grade' => $schedule['grade'],
-                    'camp_id' => $schedule['camp_id'],
-                    'camp' => $schedule['camp'],
-                    'schedule_time' => $schedule['lesson_time'],
-                    'status' => 1,
-                    'type' => 1,
-                    'create_time' => $schedule['lesson_time'],
-                ];
-                dump('课时主教练工资'.$schedule['coach_salary'].'+'.$pushSalary);
-                $this->insertSalaryIn($incomeCoach);
-            }
+            $incomeCoach = [
+                'salary' => $schedule['coach_salary'],
+                'push_salary' => $pushSalary,
+                'member_id' => $coachMember['member']['id'],
+                'member' => $coachMember['member']['member'],
+                'realname' => $coachMember['coach'],
+                'member_type' => 4,
+                'pid' => $coachMember['member']['pid'],
+                'level' => $coachMember['member']['level'],
+                'schedule_id' => $schedule['id'],
+                'lesson_id' => $schedule['lesson_id'],
+                'lesson' => $schedule['lesson'],
+                'grade_id' => $schedule['grade_id'],
+                'grade' => $schedule['grade'],
+                'camp_id' => $schedule['camp_id'],
+                'camp' => $schedule['camp'],
+                'schedule_time' => $schedule['lesson_time'],
+                'status' => 1,
+                'type' => 1,
+                'create_time' => $schedule['lesson_time'],
+            ];
+            dump('课时主教练工资'.$schedule['coach_salary'].'+'.$pushSalary);
+            $this->insertSalaryIn($incomeCoach);
 
             // 课时助教工资
             $incomeAssistant = [];
