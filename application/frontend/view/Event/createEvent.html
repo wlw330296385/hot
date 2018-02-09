@@ -211,7 +211,7 @@
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">活动简介</span>
                 </div>
-                <div class="mui-input-row h-auto">
+                <div class="mui-input-row tuwenEditor">
                     <textarea name="event_des" class="data event_des" style="display: none"></textarea>
                     <div class="introBox"></div>
                     <div class="mui-row mui-text-center mui-row-operation">
@@ -629,16 +629,8 @@
                 return false;
             };
 
-
-            //图文编辑状态转换浏览状态//////////////////////////////////////////
-            $(".introBox .operationDiv .delbtn").remove();
-            $(".introBox .operationDiv").removeClass("bgorange");
-            $(".operationDiv div.title").each(function (i) {
-                $(this).parent().empty().html('<h5>'+$(this).text()+'</h5>');
-            });
-            $(".operationDiv div.textarea").each(function (i) {
-                $(this).parent().empty().html('<p>'+$(this).text()+'</p>');
-            });
+            //图文编辑状态转换浏览状态
+            tuwenToView()
 
             //获取最终含简单html标签的图文内容
             var introHtml = $(".introBox").html();
@@ -672,6 +664,8 @@
                     window.top.location.href = goUrl;
                 })
             } else {
+                //图文转换成可编辑状态
+                tuwenToEdit()
                 mui.alert(ajaxResult.msg, '创建失败');
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                     if (data.code === 200) {

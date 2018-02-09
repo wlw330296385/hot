@@ -134,7 +134,7 @@
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">自我介绍</span>
                 </div>
-                <div class="mui-input-row h-auto">
+                <div class="mui-input-row tuwenEditor">
                     <textarea name="introduction" class="data introduction" style="display: none">{$coachInfo.introduction}</textarea>
                     <div class="introBox">{$coachInfo.introduction}</div>
                     <div class="mui-row mui-text-center mui-row-operation">
@@ -234,14 +234,7 @@
             $(".registerbtn2").on("click", function () {
 
                 //图文编辑状态转换浏览状态
-                $(".introBox .operationDiv .delbtn").remove();
-                $(".introBox .operationDiv").removeClass("bgorange");
-                $(".operationDiv div.title").each(function (i) {
-                    $(this).parent().empty().html('<h5>'+$(this).text()+'</h5>');
-                });
-                $(".operationDiv div.textarea").each(function (i) {
-                    $(this).parent().empty().html('<p>'+$(this).text()+'</p>');
-                });
+                tuwenToView()
 
                 //获取最终含简单html标签的图文内容
                 var introHtml = $(".introBox").html();
@@ -307,6 +300,8 @@
                         if (data.code == 200) {
                             setTimeout(window.location.href = "{:url('/frontend/member/index')}", 3000);
                         } else {
+                            //图文转换成可编辑状态
+                            tuwenToEdit()
                             mui.toast(data.msg);
                         }
                     },

@@ -141,7 +141,7 @@
                     <span class="course">招募简介</span>
                 </div>
 
-                <div class="mui-input-row h-auto">
+                <div class="mui-input-row tuwenEditor">
                     <textarea name="recruitment_des" class="data recruitment_des" style="display: none"></textarea>
                     <div class="introBox recruitment_des_box">{$recruitmentInfo.recruitment_des}</div>
                     <div class="mui-row mui-text-center mui-row-operation">
@@ -162,7 +162,7 @@
                     <span class="course">招募要求</span>
                 </div>
 
-                <div class="mui-input-row h-auto">
+                <div class="mui-input-row tuwenEditor">
                     <textarea name="requirement" class="data requirement" style="display: none"></textarea>
                     <div class="introBox requirement_box">{$recruitmentInfo.requirement}</div>
                     <div class="mui-row mui-text-center mui-row-operation">
@@ -364,15 +364,8 @@
                 return false;
             };
 
-            //图文编辑状态转换浏览状态//////////////////////////////////////////
-            $(".introBox .operationDiv .delbtn").remove();
-            $(".introBox .operationDiv").removeClass("bgorange");
-            $(".operationDiv div.title").each(function (i) {
-                $(this).parent().empty().html('<h5>'+$(this).text()+'</h5>');
-            });
-            $(".operationDiv div.textarea").each(function (i) {
-                $(this).parent().empty().html('<p>'+$(this).text()+'</p>');
-            });
+            //图文编辑状态转换浏览状态
+            tuwenToView()
 
             //获取最终含简单html标签的图文内容
             var totalHtmlDes = $(".recruitment_des_box").html();
@@ -397,6 +390,8 @@
                     window.top.location.href = goUrl;
                 })
             } else {
+                //图文转换成可编辑状态
+                tuwenToEdit()
                 mui.alert(ajaxResult.msg, '招募修改失败', '确定', function () {
                     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                         if (data.code === 200) {
