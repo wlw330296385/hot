@@ -326,7 +326,7 @@ class Referee extends Base{
     }
 
     // 接单|受邀列表
-    public function applyList(){
+    public function applyListByPageApi(){
         try{
             $member_id = input('param.member_id',$this->memberInfo['id']);
             $ApplyService = new \app\service\ApplyService;
@@ -334,7 +334,7 @@ class Referee extends Base{
                 $query->where(['member_id'=>$member_id,'organization_type'=>4])
                 ->where('type',['=',6],['=',7],'or');
             };
-            $result = $ApplyService->getApplyList($map);
+            $result = $ApplyService->getApplyListByPage($map);
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
             }else{
