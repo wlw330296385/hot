@@ -119,4 +119,15 @@ class Referee extends Base{
             return view('Referee/applyList2');
         }
     }
+
+
+    public function myMatchList(){
+        $referee_id = input('param.referee_id');
+
+        
+
+        $this->assign('referee_id',$referee_id);
+
+        return view('Referee/myMatchList');
+    }
 }

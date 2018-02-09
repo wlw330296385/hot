@@ -300,13 +300,13 @@ class Referee extends Base{
         try{
             $inviter = $this->memberInfo['member'];
             $inviter_id = $this->memberInfo['id'];
-            $member_id = input('param.referee_id');
-            $member = input('param.referee');
+            $referee_id = input('param.referee_id');
+            $referee = input('param.referee');
             $organization = input('param.organization');
             $type = input('param.type',6);
             $data = [
-                'memebr'=>$member,
-                'member_id'=>$member_id,
+                'memebr'=>$referee,
+                'member_id'=>$referee_id,
                 'inviter'=>$inviter,
                 'inviter_id'=>$inviter_id,
                 'organization_type'=>4,//比赛
@@ -336,6 +336,23 @@ class Referee extends Base{
                 ->where('apply.type',['=',6],['=',7],'or');
             };
             $result = $ApplyService->getApplyListWithMtachByPage($map);
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'获取失败']);
+            }
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+
+    public function getMatchListByPageApi(){
+        try{
+            $referee_id = input('param.referee_id');
+            $MatchReferee = new \app\model\MatchReferee;
+            $result = $MatchReferee->with('match')->where(['referee_id'=>$referee_id])->paginate(10);
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
             }else{

@@ -161,12 +161,12 @@
         //接口获取数据并追加到页面
         var toList = function (page, gType) {
             //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/referee/applyListByPageApi','','',true)}";
+            var url = "{:url('api/referee/getMatchListByPageApi','','',true)}";
 
             mui.ajax({
                 url: url,
                 data: {
-                    apply_type: 1,
+                    referee_id:{$referee_id}
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -190,7 +190,7 @@
                                                     <p class="address">${data.data.data[i].match.court}</p>
                                                 </div>
                                             </a>
-                                            <p>${data.data.data[i].status}</p>
+                                            <p>出场费:￥${data.data.data[i].appearance_fee}</p>
                                         </li>`;
                         }
                     }
