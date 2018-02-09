@@ -50,6 +50,19 @@ class TeamService
         }
     }
 
+    // 我的球队列表（与会员有关联的球队）所有数据
+    public function myTeamAll($member_id) {
+        $model = new TeamMember();
+        $map['member_id'] = $member_id;
+        $map['status'] = 1;
+        $res = $model->with('team')->where($map)->select();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
     // 创建球队
     public function createTeam($data)
     {
