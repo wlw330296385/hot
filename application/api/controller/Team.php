@@ -915,7 +915,10 @@ class Team extends Base
         try {
             // 接收请求参数作查询条件
             $map = input('param.');
-            // 必传参数:球队team_id 组合复合查询 查询作为主队或客队
+            // serivce
+            $matchS = new MatchService();
+            $teamS = new TeamService();
+            // 参数:球队team_id 组合复合查询 查询作为主队或客队
             if (input('?param.team_id')) {
                 $team_id = input('param.team_id');
                 $map['match_record.home_team_id|match_record.away_team_id|match_record.team_id'] = $team_id;
@@ -924,15 +927,29 @@ class Team extends Base
 //            else {
 //                return json(['code' => 100, 'msg' => __lang('MSG_402') . '请选择球队']);
 //            }
+            // 参数：会员member_id 查询会员所在球队
+            if (input('?param.member_id')) {
+                // 获取会员所在球队集合
+                $member_id = input('param.member_id');
+                if ($member_id > 0) {
+                    $memberInTeam = $teamS->myTeamAll($member_id);
+                    if ($memberInTeam) {
+                        $teamIds = [];
+                        foreach ($memberInTeam as $team) {
+                            array_push($teamIds, $team['team_id']);
+                        }
+                        $map['match_record.home_team_id|match_record.away_team_id|match_record.team_id'] = ['in', $teamIds];
+                    }
+                }
+                unset($map['member_id']);
+            }
+
             // 默认查询上架比赛(status=1)
             $map['status'] = input('param.staus', 1);
             // 默认查询未完成比赛(is_finished=-1)
             $map['is_finished'] = input('param.is_finished', -1);
             // 查询条件组合end
 
-            // serivce
-            $matchS = new MatchService();
-            $teamS = new TeamService();
             $lastMatch = $matchS->matchRecordListAll($map);
             // 如果没有未完成的活动记录，清理查询条件is_finished=-1，再次执行查询
             if (!$lastMatch) {
@@ -1024,7 +1041,7 @@ class Team extends Base
         }
     }
 
-    // 获取球队最新活动记录
+    // 获取球队最新活动记录（最新一条未发生的活动记录，若无未发生就列出最新一条活动）
     public function lastevent()
     {
         try {
@@ -1034,8 +1051,23 @@ class Team extends Base
 //                return json(['code' => 100, 'msg' => __lang('MSG_402') . ',请选择球队']);
 //            }
             $teamS = new TeamService();
-            // 最新一条未发生的活动记录，若无未发生就列出最新一条活动
             $map = input('param.');
+            // 参数：会员member_id 查询会员所在球队
+            if (input('?param.member_id')) {
+                // 获取会员所在球队集合
+                $member_id = input('param.member_id');
+                if ($member_id > 0) {
+                    $memberInTeam = $teamS->myTeamAll($member_id);
+                    if ($memberInTeam) {
+                        $teamIds = [];
+                        foreach ($memberInTeam as $team) {
+                            array_push($teamIds, $team['team_id']);
+                        }
+                        $map['team_id'] = ['in', $teamIds];
+                    }
+                }
+                unset($map['member_id']);
+            }
             // 默认查询上架活动(status=1)
             $map['status'] = input('param.staus', 1);
             // 默认查询未完成活动(is_finished=-1)
@@ -1106,6 +1138,10 @@ class Team extends Base
     public function createteamevent()
     {
         try {
+            // 检测会员登录
+            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+                return json(['code' => 100, 'msg' => '请先登录或注册会员']);
+            }
             // 接收传参
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
@@ -1137,38 +1173,50 @@ class Team extends Base
     public function updateteamevent()
     {
         try {
+            // 检测会员登录
+            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+                return json(['code' => 100, 'msg' => '请先登录或注册会员']);
+            }
             // 接收传参
-            $data = input('post.');
+            $request = input('post.');
+            $teamS = new TeamService();
+            $event_id = $request['id'];
+            $team_id = $request['team_id'];
+            // 获取球队活动数据
+            $event = $teamS->getTeamEventInfo(['id' => $event_id]);
+            if (!$event) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+            }
             // 活动人员状态修改值
             $memberStatus = 1;
             // 时间格式转化时间戳
             if (input('?start_time')) {
-                $data['start_time'] = strtotime(input('start_time'));
+                $request['start_time'] = strtotime(input('start_time'));
             }
             if (input('?end_time')) {
-                $data['end_time'] = strtotime(input('end_time'));
+                $request['end_time'] = strtotime(input('end_time'));
             }
             // 活动完成标识
-            if (isset($data['is_finished'])) {
-                if ($data['is_finished'] == 1) {
+            if (isset($request['is_finished'])) {
+                if ($request['is_finished'] == 1) {
                     $memberStatus = 3;
                 }
             }
-            $teamS = new TeamService();
-            $event_id = $data['id'];
             // 保存球队活动-会员 保留显示的数据
-            if (input('?memberData') && !empty($data['memberData'])) {
-                $memberArr = json_decode($data['memberData'], true);
-                $data['reg_number'] = count($memberArr);
+            if (input('?memberData') && !empty($request['memberData'])) {
+                $memberArr = json_decode($request['memberData'], true);
+                $request['reg_number'] = count($memberArr);
                 foreach ($memberArr as $k => $member) {
                     // 查询有无team_event_member原数据，有则更新原数据否则插入新数据
-                    $hasTeamEventMember = $teamS->getMemberTeamEvent(['event_id' => $data['id'], 'member_id' => $member['member_id']]);
+                    $hasTeamEventMember = $teamS->getMemberTeamEvent(['event_id' => $event_id, 'member_id' => $member['member_id'], 'member' => $member['member']]);
                     if ($hasTeamEventMember) {
                         $memberArr[$k]['id'] = $hasTeamEventMember['id'];
                     } else {
+                        // 获取球队成员数据
+                        $teamMemberInfo = $teamS->getTeamMemberInfo(['team_id' => $team_id, 'member_id' => $member['member_id'], 'member' => $member['member']]);
                         $memberArr[$k]['event_id'] = $event_id;
-                        $memberArr[$k]['event'] = $data['event'];
-                        $memberArr[$k]['avatar'] = db('member')->where('id', $member['member_id'])->value('avatar');
+                        $memberArr[$k]['event'] = $request['event'];
+                        $memberArr[$k]['avatar'] = ($teamMemberInfo) ? $teamMemberInfo['avatar'] : config('default_image.member_avatar');
                     }
                     $memberArr[$k]['status'] = $memberStatus;
                 }
@@ -1178,12 +1226,12 @@ class Team extends Base
                 }*/
             }
             // 保存球队活动-会员 被剔除的数据
-            if (input('?memberDataDel') && $data['memberDataDel'] != "[]") {
-                $memberArr = json_decode($data['memberDataDel'], true);
+            if (input('?memberDataDel') && $request['memberDataDel'] != "[]") {
+                $memberArr = json_decode($request['memberDataDel'], true);
 
                 foreach ($memberArr as $k => $member) {
                     // 查询有无team_event_member原数据，有则更新原数据否则插入新数据
-                    $hasTeamEventMember = $teamS->getMemberTeamEvent(['event_id' => $event_id, 'member_id' => $member['member_id']]);
+                    $hasTeamEventMember = $teamS->getMemberTeamEvent(['event_id' => $event_id, 'member_id' => $member['member_id'], 'member' => $member['member']]);
                     if ($hasTeamEventMember) {
                         $memberArr[$k]['id'] = $hasTeamEventMember['id'];
                     }
@@ -1195,7 +1243,7 @@ class Team extends Base
                 }*/
             }
             // 修改球队活动主表数据
-            $resUpdateTeamEvent = $teamS->updateTeamEvent($data);
+            $resUpdateTeamEvent = $teamS->updateTeamEvent($request);
             return json($resUpdateTeamEvent);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -1231,10 +1279,12 @@ class Team extends Base
                 if (input('?memberData')) {
                     $memberArr = json_decode($data['memberData'], true);
                     foreach ($memberArr as $k => $member) {
+                        // 获取球队成员数据
+                        $teamMemberInfo = $teamS->getTeamMemberInfo(['team_id' => $data['team_id'], 'member_id' => $member['member_id'], 'member' => $member['member']]);
                         $memberArr[$k]['event_id'] = $resCreateTeamEvent['data'];
                         $memberArr[$k]['event'] = $data['event'];
                         $memberArr[$k]['event'] = $data['event'];
-                        $memberArr[$k]['avatar'] = db('member')->where('id', $member['member_id'])->value('avatar');
+                        $memberArr[$k]['avatar'] = ($teamMemberInfo) ? $teamMemberInfo['avatar'] : config('default_image.member_avatar');
                         $memberArr[$k]['status'] = $memberStatus;
                     }
                     $teamS->saveAllTeamEventMember($memberArr);
@@ -1444,8 +1494,8 @@ class Team extends Base
                 return json(['code' => 100, 'msg' => __lang('MSG_404') . '，请选择其他球队活动']);
             }
             // 会员是否发布活动的球队成员
-            $checkteammember = $teamS->getTeamMemberInfo(['team_id' => $event['team_id'], 'member_id' => $this->memberInfo['id']]);
-            if (!$checkteammember) {
+            $teammemberinfo = $teamS->getTeamMemberInfo(['team_id' => $event['team_id'], 'member_id' => $this->memberInfo['id']]);
+            if (!$teammemberinfo) {
                 return json(['code' => 100, 'msg' => '您不是此活动的球队成员，请选择其他球队活动']);
             }
             if ($event['status_num'] === -1) {
@@ -1467,10 +1517,12 @@ class Team extends Base
             $data = [
                 'event_id' => $event['id'],
                 'event' => $event['event'],
-                'member_id' => $this->memberInfo['id'],
-                'member' => $this->memberInfo['member'],
-                'avatar' => $this->memberInfo['avatar'],
-                'contact_tel' => $this->memberInfo['telephone'],
+                'member_id' => $teammemberinfo['member_id'],
+                'member' => $teammemberinfo['member'],
+                'avatar' => $teammemberinfo['avatar'],
+                'contact_tel' => $teammemberinfo['telephone'],
+                'student_id' => !empty($teammemberinfo['student_id']) ? teammemberinfo['student_id'] : 0,
+                'student' => !empty($teammemberinfo['student']) ? $teammemberinfo['student'] : '',
                 'is_pay' => 1,
                 'is_sign' => 1,
                 'status' => 1,
