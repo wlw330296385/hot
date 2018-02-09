@@ -72,30 +72,29 @@ class Crontab extends Controller {
                     $coachMember = $this->getCoachMember($schedule['coach_id']);
 
                     // 主教练薪资
-                    if ($schedule['coach_salary'] > 0) {
-                        $incomeCoach = [
-                            'salary' => $schedule['coach_salary'],
-                            'push_salary' => $pushSalary,
-                            'member_id' => $coachMember['member']['id'],
-                            'member' => $coachMember['member']['member'],
-                            'realname' => $coachMember['coach'],
-                            'member_type' => 4,
-                            'pid' => $coachMember['member']['pid'],
-                            'level' => $coachMember['member']['level'],
-                            'schedule_id' => $schedule['id'],
-                            'lesson_id' => $schedule['lesson_id'],
-                            'lesson' => $schedule['lesson'],
-                            'grade_id' => $schedule['grade_id'],
-                            'grade' => $schedule['grade'],
-                            'camp_id' => $schedule['camp_id'],
-                            'camp' => $schedule['camp'],
-                            'schedule_time' => $schedule['lesson_time'],
-                            'status' => 1,
-                            'type' => 1,
-                        ];
+                    $incomeCoach = [
+                        'salary' => $schedule['coach_salary'],
+                        'push_salary' => $pushSalary,
+                        'member_id' => $coachMember['member']['id'],
+                        'member' => $coachMember['member']['member'],
+                        'realname' => $coachMember['coach'],
+                        'member_type' => 4,
+                        'pid' => $coachMember['member']['pid'],
+                        'level' => $coachMember['member']['level'],
+                        'schedule_id' => $schedule['id'],
+                        'lesson_id' => $schedule['lesson_id'],
+                        'lesson' => $schedule['lesson'],
+                        'grade_id' => $schedule['grade_id'],
+                        'grade' => $schedule['grade'],
+                        'camp_id' => $schedule['camp_id'],
+                        'camp' => $schedule['camp'],
+                        'schedule_time' => $schedule['lesson_time'],
+                        'status' => 1,
+                        'type' => 1,
+                    ];
 //                        dump($incomeCoach);
-                        $this->insertSalaryIn($incomeCoach);
-                    }
+                    $this->insertSalaryIn($incomeCoach);
+                    
                     // 助教薪资
                     $incomeAssistant = [];
                     if (!empty($schedule['assistant_id']) && $schedule['assistant_salary']) {
