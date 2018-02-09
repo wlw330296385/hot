@@ -91,6 +91,7 @@
         });
 
         $(function () {
+
             $(".fbBtn").on("tap", '', function () {
                 var url = "{:url('api/team/myteamlist','','',true)}";
                 mui.ajax({
@@ -226,6 +227,7 @@
                 }, 100);
             }
 
+
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
@@ -251,11 +253,14 @@
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
+                                console.log(data.data.data[i].court_lng) 
+                                console.log(data.data.data[i].court_lat) 
+                                getLng = data.data.data[i].court_lng;
+                                getLat = data.data.data[i].court_lng;
                                 var urls = "{:url('match/friendlyinfo')}" + '/match_id/' + data.data.data[i].id;
                                 newli += '<li class="mui-table-view-cell mui-media listli">';
                                 newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].team.logo + '"><div class="mui-media-body wd60"><strong class="colororange">' + data.data.data[i].team.name + '</strong>&nbsp;发起约赛';
                                 if (data.data.data[i].apply_status_num == 2) {
-                                    
                                     newli += '<font class="tipCorner bgorange">完成约战</font>';
                                 }
                                 if (data.data.data[i].match_time == 0) {
@@ -297,7 +302,37 @@
 
         })
 
-
+        // 获取距离数
+        function getLocation() {
+            var lat1 = "";
+            var lng1 = "";
+            var lat2 = "";
+            var lng2 = "";
+            mui.ajax("{:url('api/Location/getDistanceApi')}", {
+                data: {
+                    lat1: lat1,
+                    lng1: lng1,
+                    lat2: lat2,
+                    lng2: lng2,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        console.log(data.msg)
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
 
     </script>
 </body>

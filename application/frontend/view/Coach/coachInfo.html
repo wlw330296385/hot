@@ -13,6 +13,13 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--等级星星样式-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css" />
+    <style>
+        .fgline {
+            margin: 0px 5px;
+            font-size: 10px;
+            color: #cccccc;
+        }
+    </style>
 </head>
 
 
@@ -20,43 +27,42 @@
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">
-            <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 4px 12px;">关注</button>
-        </h1>
     </header>
     <div class="mui-content">
 
         <div class="list camp-list detalis-list coach mt55">
+
+
             <ul class="mui-table-view mb" style="margin-top: -4px">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                    <a href="javascript:;">
-                        <img class="mui-media-object mui-pull-left coachicon" src="{$coachInfo.portraits}">
-                        <div class="mui-media-body">
-                            {$coachInfo.coach}
-                            <i class="icon iconfont icon-sex{$coachInfo.sex}"></i>
-                            <p class="mui-ellipsis">教龄:{$coachInfo.coach_year} 等级:{$coachInfo.coach_rank}</p>
-                        </div>
-                        <div class="camp-num mui-text-right">
-                            <ul>
-                                <li>
-                                    <div class="icons mui-inline">
-                                        <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
-                                        <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
-                                        <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
-                                    </div>
-                                </li>
-                                <li class="fr">{$coachInfo.area}</li>
-                            </ul>
-                        </div>
-                    </a>
+
+                    <img class="mui-media-object mui-pull-left" src="{$coachInfo.portraits}" style="width:60px !important;height:60px !important;margin-top:5px">
+                    <h4>{$coachInfo.coach}</h4>
+                    <div class="mui-media-body wd49" style="line-height:20px !important">
+                        <p class="mui-ellipsis">{$coachInfo.province} {$coachInfo.city} {$coachInfo.area}</p>
+                        <p class="f12">
+                            教龄：<strong class="colororange">{$coachInfo.coach_year}</strong> <i class="fgline">|</i>
+                            等级：<strong class="colororange">{$coachInfo.coach_rank}</strong>
+                        </p>
+                    </div>
+                    <div class="price-frame" style="padding:0;">
+                        <button type="button" class="mui-btn mui-btn-danger follow">关注</button>
+                    </div>
+
                 </li>
             </ul>
 
             <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli detalisli">
+                    <label class="starScore"></label>
+                    <div class="icons mui-inline">
+                        <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
+                        <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
+                        <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
+                    </div>
+                </li>
                 <li class="mui-table-view-cell listli detalisli listinitial">教练宣言
-                    <span class="about">{$coachInfo.description}
-                        <a href="#">全文展示</a>
-                    </span>
+                    <span class="about">{$coachInfo.description}<a href="javascript:void(0)">......全文展示</a></span>
                 </li>
             </ul>
 
@@ -234,13 +240,10 @@
         });
         $(function () {
 
-            // 星星显示
-            var star = Math.round("{$coachInfo.star}" / "{$coachInfo.star_num}");
-            starShow(star);
 
             //判断训练营宣言长度是否超过30字符
-            var aboutlen = $(".about").text()
-            if(aboutlen.length<36){
+            var aboutlen = $(".about").text();
+            if(aboutlen.length<42){
                 $(".about a").hide();
             }
             //展示训练营介绍全文
@@ -248,6 +251,12 @@
                 $(".about").css("height", "auto");
                 $(this).hide();
             });
+
+            // 星星显示
+            var star = Math.round("{$coachInfo.star}" / "{$coachInfo.star_num}");
+            starShow(star);
+            if(isNaN(star)){star=3}
+            $(".starScore").prepend('评分 '+star+'.0');
 
             //教练员介绍内容
             var introduce = '{$coachInfo.introduction}';
