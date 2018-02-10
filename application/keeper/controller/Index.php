@@ -40,13 +40,13 @@ class Index extends Base{
             }
             $this->assign('item_coupon_ids',json_encode($item_coupon_ids));
             $this->assign('couponList',$couponList);
-            $this->assign('bonusInfo',$bonusInfo);
             // return $this->fetch('Widget:bonus');
             // return $this->fetch('Widget/Bonus');
         }
         //平台礼包结束
     	$this->assign('bannerList',$bannerList);
         $this->assign('ArticleList',$ArticleList);
+        $this->assign('bonusInfo',$bonusInfo);
         return view('Index/index');
     }
 
