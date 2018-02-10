@@ -45,18 +45,17 @@ class Match extends Base {
         $matchS = new MatchService();
         // 比赛详情
         $matchInfo = $matchS->getMatch(['id' => $id]);
-        if ($matchInfo['type_num'] == 1) {
-            $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
-            if ($matchRecordInfo) {
-                if (!empty($matchRecordInfo['album'])) {
-                    $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
-                }
-                if (empty($matchRecordInfo['away_team'])) {
-                    $matchRecordInfo['away_team_logo'] = config('default_image.team_logo');
-                }
-                $matchInfo['record'] = $matchRecordInfo;
+        $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
+        if ($matchRecordInfo) {
+            if (!empty($matchRecordInfo['album'])) {
+                $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
             }
+            if (empty($matchRecordInfo['away_team'])) {
+                $matchRecordInfo['away_team_logo'] = config('default_image.team_logo');
+            }
+            $matchInfo['record'] = $matchRecordInfo;
         }
+
 
         // 比赛发布球队信息
         $teamS = new TeamService();
