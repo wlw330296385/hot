@@ -9,6 +9,11 @@ class Index extends Base{
 	public function _initialize(){
 		parent::_initialize();
 		$this->LessonService = new LessonService;
+		Cookie::set('steward_type', 1);
+        $module = request()->module();
+        $homeurl = url($module.'/index/index');
+        Cookie::set('module', $module);
+        Cookie::set('homeurl', $homeurl);
 	}
 
     public function index() {

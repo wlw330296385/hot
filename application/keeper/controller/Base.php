@@ -30,36 +30,42 @@ class Base extends Frontend {
 	protected function footMenu(){
 		$request = Request::instance();
         $indexAction = 'index';
+        $module = (Cookie::has('module')) ? Cookie::get('module') : $request->module();
 		$footMenu =  [
 			[
 				'name'=>'首页',
 				'icon'=>'icon iconfont icon-nav-Home',
 				'action'=>$indexAction,
-				'controller'=>'Index'
+				'controller'=>'Index',
+                'module' => $module
 			],
 			[
 				'name'=>'消息',
 				'icon'=>'icon iconfont icon-nav-news',
 				'action'=>'index',
-				'controller'=>'Message'
+				'controller'=>'Message',
+                'module' => $module
 			],
 			[
 				'name'=>'发现',
 				'icon'=>'icon iconfont icon-nav-Find',
 				'action'=>'index',
-				'controller'=>'Find'
+				'controller'=>'Find',
+                'module' => $module
 			],
 			[
 				'name'=>'我的',
 				'icon'=>'icon iconfont icon-nav-Camp',
 				'action'=>'myteam',
-				'controller'=>'Team'
+				'controller'=>'Team',
+                'module' => $module
 			],
 			[
 				'name'=>'个人',
 				'icon'=>'icon iconfont icon-nav-mine',
 				'action'=>'index',
-				'controller'=>'Member'
+				'controller'=>'Member',
+                'module' => $module
 			],
 		];
 		$this->assign('controller', $request->controller());

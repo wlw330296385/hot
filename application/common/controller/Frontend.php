@@ -56,14 +56,21 @@ class Frontend extends Controller
         $shareurl = request()->url(true);
         $jsapi = $wechatS->jsapi($shareurl);
 
+        // 历史访问记录
+        $this->visithistory();
+
+        if (Cookie::has('homeurl')) {
+            $this->assign('homeurl', Cookie::get('homeurl'));
+        } else {
+            $this->assign('homeurl', url(request()->module().'.index/index') );
+        }
+
         $this->assign('shareurl', $shareurl);
         $this->assign('jsapi', $jsapi);
         $this->assign('fasturl', $fasturl);
         $this->assign('mid', cookie('mid'));
         $this->assign('systemSetting', $this->systemSetting);
         $this->assign('pmember', $pmember);
-
-        $this->visithistory();
     }
 
     // 历史访问记录

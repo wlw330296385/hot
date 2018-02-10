@@ -3,10 +3,17 @@ namespace app\keeper\controller;
 use app\keeper\controller\Base;
 use app\service\MemberService;
 use app\service\WechatService;
+use think\Cookie;
+
 class Index extends Base{
 	protected $LessonService;
 	public function _initialize(){
 		parent::_initialize();
+        Cookie::set('steward_type', 2);
+        $module = request()->module();
+        $homeurl = url($module.'/index/index');
+        Cookie::set('module', $module);
+        Cookie::set('homeurl', $homeurl);
 	}
 
     public function index() {

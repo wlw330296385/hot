@@ -45,36 +45,42 @@ class Base extends \app\common\controller\Frontend {
         }else{
             $indexAction = 'index';
         }
+        $module = (Cookie::has('module')) ? Cookie::get('module') : $request->module();
 		$footMenu =  [
 			[
 				'name'=>'首页',
 				'icon'=>'icon iconfont icon-nav-Home',
 				'action'=>$indexAction,
-				'controller'=>'Index'
+				'controller'=>'Index',
+                'module' => $module
 			],
 			[
 				'name'=>'消息',
 				'icon'=>'icon iconfont icon-nav-news',
 				'action'=>'index',
-				'controller'=>'Message'
+				'controller'=>'Message',
+                'module' => $module
 			],			
 			[
 				'name'=>'发现',
 				'icon'=>'icon iconfont icon-nav-Find',
 				'action'=>'index',
-				'controller'=>'Find'
+				'controller'=>'Find',
+                'module' => $module
 			],
 			[
 				'name'=>'我的',
 				'icon'=>'icon iconfont icon-nav-Camp',
 				'action'=>'index',
-				'controller'=>'Camp'
+				'controller'=>'Camp',
+                'module' => $module
 			],
 			[
 				'name'=>'个人',
 				'icon'=>'icon iconfont icon-nav-mine',
 				'action'=>'index',
-				'controller'=>'Member'
+				'controller'=>'Member',
+                'module' => $module
 			],
 		];
         $this->assign('o_id',$this->o_id);
