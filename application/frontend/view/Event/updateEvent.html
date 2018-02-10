@@ -558,7 +558,7 @@
                 $("#eventDom .mui-checkbox").each(function () {
                     eDom = $(this).find("input[name='event-dom']").val();
                     eDomPrice = $(this).find("input[name='event-dom_price']").val();
-                    if (eDom == "" || eDom.length > 10 || ePrice == 2 && (eDomPrice == "" || !(/^\+?[0-9]\d*$/).test(eDomPrice))) { //////加上判断是否收费
+                    if (eDom == "" || eDom.length > 10 || ePrice == 2 && (eDomPrice == "" || eDomPrice == 0 || !(/^[1-9]\+?[0-9]\d*$/).test(eDomPrice))) { //////加上判断是否收费
                         isTrue = false;
                         return false;
                     } else {
@@ -572,7 +572,7 @@
                     console.log(eventDomArr)
                     mui('#eventDom').popover('toggle');
                 } else {
-                    mui.alert('请填写完整，并保证名称长度不超过10个字，价格为纯数字，谢谢！', '温馨提示', '确定', function () {
+                    mui.alert('请填写完整，并保证名称长度不超过10个字，价格首位不为0的纯数字，谢谢！', '温馨提示', '确定', function () {
                         eDoms = '';
                     })
                 }
@@ -699,11 +699,11 @@
             var event_des = $('textarea.data').val();
             objData.dom = JSON.stringify(eventDomArr);
             objData.event_des = event_des;
-            if (eventDomArr.length == 0 || eventDomArr == undefined) {
-                eventDomArr = [{ name: '默认', price: 0 }];
+            if (eventDomArr.length == 0 || eventDomArr == undefined || eventDomArr == []) {
+                eventDomArr = [{ name: '默认', price: '' }];
             }
             objData.price = eventDomArr[0].price;
-            if (objData.is_free == 2 && objData.price == 0) {
+            if (objData.is_free == 2 && objData.price == '') {
                 mui.alert("请添加收费活动套餐的价格");
                 return false;
             }
