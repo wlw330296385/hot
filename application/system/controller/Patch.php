@@ -93,12 +93,6 @@ class Patch extends Controller {
 
     // 重新结算训练营课时工资收入
     public function countschedulesalaryin() {
-        // 10月时间区间
-        $month10 = getStartAndEndUnixTimestamp(2017, 10);
-        // 11月时间区间
-        $month11 = getStartAndEndUnixTimestamp(2017, 11);
-        // 12月时间区间
-        $month12 = getStartAndEndUnixTimestamp(2017,12);
         // 重置所有会员余额
         db('member')->whereNull('delete_time')->update(['balance' => 0]);
         $campFinanceModel = new CampFinance();
@@ -107,23 +101,28 @@ class Patch extends Controller {
         $where['is_settle'] = 1;
         //$where['is_settle'] = 0;
         //$where['update_time'] = ['<', 1516723200];
-        $schedules = db('schedule')->where($where)->whereNull('delete_time')->order('id asc')->select();
-        //dump($schedules);
-        foreach ($schedules as $k => $schedule) {
-            //dump('课时记录'.$schedule);
-            dump('课时记录 grade:'.$schedule['grade'].'camp_id:'.$schedule['camp_id'].'lesson_time:'.date('Y-m-d H:i', $schedule['lesson_time']));
-            // 获取课时的课程信息
-            $lesson = db('lesson')->where('id', $schedule['lesson_id'])->whereNull('delete_time')->find();
-            // 获取课时的班级信息
-            $grade = db('grade')->where('id', $schedule['grade_id'])->whereNull('delete_time')->find();
+        $schedules = DB::name('schedule')->where($where)->whereNull('delete_time')->chunk(50, function($schedules) {
+            // 10月时间区间
+            $month10 = getStartAndEndUnixTimestamp(2017, 10);
+            // 11月时间区间
+            $month11 = getStartAndEndUnixTimestamp(2017, 11);
+            // 12月时间区间
+            $month12 = getStartAndEndUnixTimestamp(2017,12);
+            foreach ($schedules as $k => $schedule) {
+                //dump('课时记录'.$schedule);
+                dump('课时记录 grade:'.$schedule['grade'].'camp_id:'.$schedule['camp_id'].'lesson_time:'.date('Y-m-d H:i', $schedule['lesson_time']));
+                // 获取课时的课程信息
+                $lesson = db('lesson')->where('id', $schedule['lesson_id'])->whereNull('delete_time')->find();
+                // 获取课时的班级信息
+                $grade = db('grade')->where('id', $schedule['grade_id'])->whereNull('delete_time')->find();
 
-            // 课时上课的正式学员人数
-            $numScheduleStudent = count(unserialize($schedule['student_str']));
+                // 课时上课的正式学员人数
+                $numScheduleStudent = count(unserialize($schedule['student_str']));
 
-            // 抵扣赠送课时数
-            $numGiftSchedule=0;
-            $systemRemarks = '';
-            //if ($lesson['unbalanced_giftschedule'] > 0) {
+                // 抵扣赠送课时数
+                $numGiftSchedule=0;
+                $systemRemarks = '';
+                //if ($lesson['unbalanced_giftschedule'] > 0) {
                 // 查询在课时月份有无增记录
                 $scheduleMonth = getStartAndEndUnixTimestamp(date('Y', $schedule['lesson_time']), date('m', $schedule['lesson_time']));
                 $schedulegiftrecord = db('schedule_giftrecord')->whereNull('delete_time')
@@ -141,156 +140,123 @@ class Patch extends Controller {
                         $numGiftSchedule = 0;
                     }
                 }
-            //}
+                //}
 
-            // 课时工资收入
-            $incomeSchedule = ($lesson['cost'] * ($numScheduleStudent-$numGiftSchedule));
-            dump('课时工资收入'.$incomeSchedule);
-            // 课时工资提成
-            //$pushSalary = $schedule['salary_base']*$numScheduleStudent;
-            $pushSalary = $schedule['salary_base']*$numScheduleStudent;
-            dump('学生人数提成'.$pushSalary);
+                // 课时工资收入
+                $incomeSchedule = ($lesson['cost'] * ($numScheduleStudent-$numGiftSchedule));
+                dump('课时工资收入'.$incomeSchedule);
+                // 课时工资提成
+                //$pushSalary = $schedule['salary_base']*$numScheduleStudent;
+                $pushSalary = $schedule['salary_base']*$numScheduleStudent;
+                dump('学生人数提成'.$pushSalary);
 
 
-            // 获取课时主教练信息
-            $coachMember = $this->getCoachMember($schedule['coach_id']);
-            //dump($coachMember);
-            // 课时主教练工资
-            $incomeCoach = [
-                'salary' => $schedule['coach_salary'],
-                'push_salary' => $pushSalary,
-                'member_id' => $coachMember['member']['id'],
-                'member' => $coachMember['member']['member'],
-                'realname' => $coachMember['coach'],
-                'member_type' => 4,
-                'pid' => $coachMember['member']['pid'],
-                'level' => $coachMember['member']['level'],
-                'schedule_id' => $schedule['id'],
-                'lesson_id' => $schedule['lesson_id'],
-                'lesson' => $schedule['lesson'],
-                'grade_id' => $schedule['grade_id'],
-                'grade' => $schedule['grade'],
-                'camp_id' => $schedule['camp_id'],
-                'camp' => $schedule['camp'],
-                'schedule_time' => $schedule['lesson_time'],
-                'status' => 1,
-                'type' => 1,
-                'create_time' => $schedule['lesson_time'],
-            ];
-            dump('课时主教练工资'.$schedule['coach_salary'].'+'.$pushSalary);
-            $this->insertSalaryIn($incomeCoach);
+                // 获取课时主教练信息
+                $coachMember = $this->getCoachMember($schedule['coach_id']);
+                //dump($coachMember);
+                // 课时主教练工资
+                $incomeCoach = [
+                    'salary' => $schedule['coach_salary'],
+                    'push_salary' => $pushSalary,
+                    'member_id' => $coachMember['member']['id'],
+                    'member' => $coachMember['member']['member'],
+                    'realname' => $coachMember['coach'],
+                    'member_type' => 4,
+                    'pid' => $coachMember['member']['pid'],
+                    'level' => $coachMember['member']['level'],
+                    'schedule_id' => $schedule['id'],
+                    'lesson_id' => $schedule['lesson_id'],
+                    'lesson' => $schedule['lesson'],
+                    'grade_id' => $schedule['grade_id'],
+                    'grade' => $schedule['grade'],
+                    'camp_id' => $schedule['camp_id'],
+                    'camp' => $schedule['camp'],
+                    'schedule_time' => $schedule['lesson_time'],
+                    'status' => 1,
+                    'type' => 1,
+                    'create_time' => $schedule['lesson_time'],
+                ];
+                dump('课时主教练工资'.$schedule['coach_salary'].'+'.$pushSalary);
+                $this->insertSalaryIn($incomeCoach);
 
-            // 课时助教工资
-            $incomeAssistant = [];
-            if (!empty($schedule['assistant_id']) && $schedule['assistant_salary'] ) {
-                $assistantMember = $this->getAssistantMember($schedule['assistant_id']);
-                foreach ($assistantMember as $k2 => $val) {
-                    $incomeAssistant[$k2] = [
-                        'salary' => $schedule['assistant_salary'],
-                        'push_salary' => $pushSalary,
-                        'member_id' => $val['member']['id'],
-                        'member' => $val['member']['member'],
-                        'realname' => $val['coach'],
-                        'member_type' => 3,
-                        'pid' => $val['member']['pid'],
-                        'level' => $val['member']['level'],
-                        'schedule_id' => $schedule['id'],
-                        'lesson_id' => $schedule['lesson_id'],
-                        'lesson' => $schedule['lesson'],
-                        'grade_id' => $schedule['grade_id'],
-                        'grade' => $schedule['grade'],
-                        'camp_id' => $schedule['camp_id'],
-                        'camp' => $schedule['camp'],
-                        'schedule_time' => $schedule['lesson_time'],
-                        'status' => 1,
-                        'type' => 1,
-                        'create_time' => $schedule['lesson_time'],
-                    ];
+
+                // 课时助教工资
+                $incomeAssistant = [];
+                if (!empty($schedule['assistant_id']) && $schedule['assistant_salary'] ) {
+                    $assistantMember = $this->getAssistantMember($schedule['assistant_id']);
+                    foreach ($assistantMember as $k2 => $val) {
+                        $incomeAssistant[$k2] = [
+                            'salary' => $schedule['assistant_salary'],
+                            'push_salary' => $pushSalary,
+                            'member_id' => $val['member']['id'],
+                            'member' => $val['member']['member'],
+                            'realname' => $val['coach'],
+                            'member_type' => 3,
+                            'pid' => $val['member']['pid'],
+                            'level' => $val['member']['level'],
+                            'schedule_id' => $schedule['id'],
+                            'lesson_id' => $schedule['lesson_id'],
+                            'lesson' => $schedule['lesson'],
+                            'grade_id' => $schedule['grade_id'],
+                            'grade' => $schedule['grade'],
+                            'camp_id' => $schedule['camp_id'],
+                            'camp' => $schedule['camp'],
+                            'schedule_time' => $schedule['lesson_time'],
+                            'status' => 1,
+                            'type' => 1,
+                            'create_time' => $schedule['lesson_time'],
+                        ];
+                    }
+                    dump('课时助教工资'.$schedule['assistant_salary'].'+'.$pushSalary);
+                    $this->insertSalaryIn($incomeAssistant, 1);
                 }
-                dump('课时助教工资'.$schedule['assistant_salary'].'+'.$pushSalary);
-                $this->insertSalaryIn($incomeAssistant, 1);
-            }
 
-            // 10月、11月、12月 训练收入特别比例
-            // camp_id 15钟声 13安凯训练营
-            // 收入比例：默认平台抽取10%；
-            $incomeRebate = 1-$this->setting['sysrebate'];
-            // 大热训练营分成收入比例
-            $incomeRebateCampId9 =0;
-            if ($schedule['lesson_time'] > $month10['start'] && $schedule['lesson_time'] < $month10['end']) {
-                if ($schedule['camp_id'] == 15) {
-                    $incomeRebate = 0.7;
-                } else if ($schedule['camp_id'] == 13) {
-                    $incomeRebate = 0.7;
-                }
-                $incomeRebateCampId9 = 0.2;
-            }
-            if ($schedule['lesson_time'] > $month11['start'] && $schedule['lesson_time'] > $month11['end']) {
-                if ($schedule['camp_id'] == 15) {
-                    $incomeRebate = 0.8;
-                    $incomeRebateCampId9 = 0.1;
-                } else if ($schedule['camp_id'] == 13) {
-                    $incomeRebate = 0.7;
+                // 10月、11月、12月 训练收入特别比例
+                // camp_id 15钟声 13安凯训练营
+                // 收入比例：默认平台抽取10%；
+                $incomeRebate = 1-$this->setting['sysrebate'];
+                // 大热训练营分成收入比例
+                $incomeRebateCampId9 =0;
+                if ($schedule['lesson_time'] > $month10['start'] && $schedule['lesson_time'] < $month10['end']) {
+                    if ($schedule['camp_id'] == 15) {
+                        $incomeRebate = 0.7;
+                    } else if ($schedule['camp_id'] == 13) {
+                        $incomeRebate = 0.7;
+                    }
                     $incomeRebateCampId9 = 0.2;
                 }
-            }
-            if ($schedule['lesson_time'] > $month12['start'] && $schedule['lesson_time'] > $month12['end']) {
-                if ($schedule['camp_id'] == 15) {
-                    $incomeRebate = 0.8;
-                    $incomeRebateCampId9 = 0.1;
-                } else if ($schedule['camp_id'] == 13) {
-                    $incomeRebate = 0.7;
-                    $incomeRebateCampId9 = 0.2;
+                if ($schedule['lesson_time'] > $month11['start'] && $schedule['lesson_time'] > $month11['end']) {
+                    if ($schedule['camp_id'] == 15) {
+                        $incomeRebate = 0.8;
+                        $incomeRebateCampId9 = 0.1;
+                    } else if ($schedule['camp_id'] == 13) {
+                        $incomeRebate = 0.7;
+                        $incomeRebateCampId9 = 0.2;
+                    }
                 }
-            }
+                if ($schedule['lesson_time'] > $month12['start'] && $schedule['lesson_time'] > $month12['end']) {
+                    if ($schedule['camp_id'] == 15) {
+                        $incomeRebate = 0.8;
+                        $incomeRebateCampId9 = 0.1;
+                    } else if ($schedule['camp_id'] == 13) {
+                        $incomeRebate = 0.7;
+                        $incomeRebateCampId9 = 0.2;
+                    }
+                }
 
-            // 训练营营主所得 课时收入*收入比例-主教底薪-助教底薪-学员人数提成*教练人数。教练人数 = 助教人数+1（1代表主教人数）
-            $incomeCampSalary = $incomeSchedule*$incomeRebate-$schedule['coach_salary']-$schedule['assistant_salary']-($pushSalary*(count($incomeAssistant)+1));
-            dump('训练营营主所得'.$incomeCampSalary);
-            $campMember = $this->getCampMember($schedule['camp_id']);
-            $incomeCamp = [
-                'salary' => $incomeCampSalary,
-                'push_salary' => 0,
-                'member_id' => $campMember['member_id'],
-                'member' => $campMember['member'],
-                'realname' => $campMember['realname'],
-                'member_type' => 5,
-                'pid' => $campMember['pid'],
-                'level' => $campMember['level'],
-                'schedule_id' => $schedule['id'],
-                'lesson_id' => $schedule['lesson_id'],
-                'lesson' => $schedule['lesson'],
-                'grade_id' => $schedule['grade_id'],
-                'grade' => $schedule['grade'],
-                'camp_id' => $schedule['camp_id'],
-                'camp' => $schedule['camp'],
-                'schedule_time' => $schedule['lesson_time'],
-                'status' => 1,
-                'type' => 1,
-                'system_remarks' => $systemRemarks,
-                'create_time' => $schedule['lesson_time'],
-            ];
-            $this->insertSalaryIn($incomeCamp);
-            Db::name('schedule')->where(['id' => $schedule['id']])->update([
-                'update_time' => time(),
-                'schedule_income' => $incomeSchedule,
-                //'is_settle' => 1
-            ]);
-
-            // 大热训练营收入金额
-            if ( $incomeRebateCampId9 > 0) {
-                $incomeCampId9 = $incomeSchedule*$incomeRebateCampId9;
-                //dump($incomeCampId9);
-                $campMember9 = $this->getCampMember(9);
-                $incomeCampCampId9 = [
-                    'salary' => $incomeCampId9,
+                // 训练营营主所得 课时收入*收入比例-主教底薪-助教底薪-学员人数提成*教练人数。教练人数 = 助教人数+1（1代表主教人数）
+                $incomeCampSalary = $incomeSchedule*$incomeRebate-$schedule['coach_salary']-$schedule['assistant_salary']-($pushSalary*(count($incomeAssistant)+1));
+                dump('训练营营主所得'.$incomeCampSalary);
+                $campMember = $this->getCampMember($schedule['camp_id']);
+                $incomeCamp = [
+                    'salary' => $incomeCampSalary,
                     'push_salary' => 0,
-                    'member_id' => $campMember9['member_id'],
-                    'member' => $campMember9['member'],
-                    'realname' => $campMember9['realname'],
+                    'member_id' => $campMember['member_id'],
+                    'member' => $campMember['member'],
+                    'realname' => $campMember['realname'],
                     'member_type' => 5,
-                    'pid' => $campMember9['pid'],
-                    'level' => $campMember9['level'],
+                    'pid' => $campMember['pid'],
+                    'level' => $campMember['level'],
                     'schedule_id' => $schedule['id'],
                     'lesson_id' => $schedule['lesson_id'],
                     'lesson' => $schedule['lesson'],
@@ -304,22 +270,58 @@ class Patch extends Controller {
                     'system_remarks' => $systemRemarks,
                     'create_time' => $schedule['lesson_time'],
                 ];
-                $this->insertSalaryIn($incomeCampCampId9);
-            }
+                $this->insertSalaryIn($incomeCamp);
+                Db::name('schedule')->where(['id' => $schedule['id']])->update([
+                    //'update_time' => time(),
+                    'schedule_income' => $incomeSchedule,
+                    //'is_settle' => 1
+                ]);
 
-            // 保存训练营财务支出信息
-            $dataCampFinance = [
-                'camp_id' => $schedule['camp_id'],
-                'camp' => $schedule['camp'],
-                'finance_type' => 2,
-                'schedule_salary' => $incomeSchedule,
-                'schedule_id' => $schedule['id'],
-                'date' => date('Ymd', $schedule['lesson_time']),
-                'datetime' => $schedule['lesson_time']
+                // 大热训练营收入金额
+                if ( $incomeRebateCampId9 > 0) {
+                    $incomeCampId9 = $incomeSchedule*$incomeRebateCampId9;
+                    //dump($incomeCampId9);
+                    $campMember9 = $this->getCampMember(9);
+                    $incomeCampCampId9 = [
+                        'salary' => $incomeCampId9,
+                        'push_salary' => 0,
+                        'member_id' => $campMember9['member_id'],
+                        'member' => $campMember9['member'],
+                        'realname' => $campMember9['realname'],
+                        'member_type' => 5,
+                        'pid' => $campMember9['pid'],
+                        'level' => $campMember9['level'],
+                        'schedule_id' => $schedule['id'],
+                        'lesson_id' => $schedule['lesson_id'],
+                        'lesson' => $schedule['lesson'],
+                        'grade_id' => $schedule['grade_id'],
+                        'grade' => $schedule['grade'],
+                        'camp_id' => $schedule['camp_id'],
+                        'camp' => $schedule['camp'],
+                        'schedule_time' => $schedule['lesson_time'],
+                        'status' => 1,
+                        'type' => 1,
+                        'system_remarks' => $systemRemarks,
+                        'create_time' => $schedule['lesson_time'],
+                    ];
+                    $this->insertSalaryIn($incomeCampCampId9);
+                }
+
+                // 保存训练营财务支出信息
+                $dataCampFinance = [
+                    'camp_id' => $schedule['camp_id'],
+                    'camp' => $schedule['camp'],
+                    'finance_type' => 2,
+                    'schedule_salary' => $incomeSchedule,
+                    'schedule_id' => $schedule['id'],
+                    'date' => date('Ymd', $schedule['lesson_time']),
+                    'datetime' => $schedule['lesson_time']
                 ];
-            $this->insertcampfinance($dataCampFinance);
-            dump('==========');
-        }
+                $this->insertcampfinance($dataCampFinance);
+                dump('==========');
+            }
+        });
+
     }
 
     // 统计训练营课程营业额
