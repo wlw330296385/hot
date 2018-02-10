@@ -396,6 +396,9 @@ class Match extends Base
                     if ($resultSaveMatch['code'] == 100) {
                         return json(['code' => 100, 'msg' => '更新比赛信息失败']);
                     }
+                    // 更新球队胜场数、比赛场数
+                    $matchS->countTeamNumByRecord(['id' => $recordData['id']]);
+                    exit(0);
                     // 比赛完成的操作
                     if ($isFinished == 1) {
                         // (比赛未完成执行的操作)
@@ -427,11 +430,9 @@ class Match extends Base
                             // 发送比赛完成信息给对手球队
                             // 发送比赛完成信息给对手球队 end
                         }
-
-                        // 更新球队胜场数、比赛场数
-                        $matchS->countTeamNumByRecord(['id' => $recordData['id']]);
                     }
                     // 比赛完成的操作 end
+                    
                     // 返回响应结果
                     return json($resultSaveMatchRecord);
                 }
@@ -450,6 +451,7 @@ class Match extends Base
                 } else {
                     $post['name'] = $post['record']['home_team'] . ' vs （待定）';
                 }
+                $post['match_time'] = $matchTimeStamp;
                 // 组合match保存数据 end
 
                 // 保存match数据
@@ -516,11 +518,10 @@ class Match extends Base
                     }
                     // 保存参赛球队成员 end
 
+                    // 更新球队胜场数、比赛场数
+                    $matchS->countTeamNumByRecord(['id' => $resultSaveMatchRecord['data']]);
                     // 比赛完成的操作
                     if ($isFinished == 1) {
-                        // 更新球队胜场数、比赛场数
-                        $matchS->countTeamNumByRecord(['id' => $resultSaveMatchRecord['data']]);
-
                         // 保存球队历史比赛对手信息
                         // 查询有无原数据
                         $mapHistoryTeam = [
