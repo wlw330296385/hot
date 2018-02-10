@@ -338,19 +338,19 @@ class Team extends Base {
         $teamS = new TeamService();
         // 比赛详情
         $matchInfo = $matchS->getMatch(['id' => $match_id]);
-        if ($matchInfo['type_num'] == 1) {
-            // 友谊赛 输出比赛战绩数据
-            $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
-            if ($matchRecordInfo) {
-                if (!empty($matchRecordInfo['album'])) {
-                    $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
-                }
-                if (empty($matchRecordInfo['away_team'])) {
-                    $matchRecordInfo['away_team_logo'] = config('default_image.team_logo');
-                }
-                $matchInfo['record'] = $matchRecordInfo;
+
+        // 友谊赛 输出比赛战绩数据
+        $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
+        if ($matchRecordInfo) {
+            if (!empty($matchRecordInfo['album'])) {
+                $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
             }
+            if (empty($matchRecordInfo['away_team'])) {
+                $matchRecordInfo['away_team_logo'] = config('default_image.team_logo');
+            }
+            $matchInfo['record'] = $matchRecordInfo;
         }
+
 
         // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
         $teamMemberInfo = $teamS->getTeamMemberInfo([
@@ -398,15 +398,15 @@ class Team extends Base {
             $memberlist = [];
         } else {
             $matchInfo = $matchS->getMatch(['id' => $match_id]);
-            if ($matchInfo['type_num'] == 1) {
-                $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
-                if ($matchRecordInfo) {
-                    if (!empty($matchRecordInfo['album'])) {
-                        $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
-                    }
-                    $matchInfo['record'] = $matchRecordInfo;
+
+            $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
+            if ($matchRecordInfo) {
+                if (!empty($matchRecordInfo['album'])) {
+                    $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
                 }
+                $matchInfo['record'] = $matchRecordInfo;
             }
+
 
             $memberlist = [];
         }
