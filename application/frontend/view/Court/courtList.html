@@ -55,157 +55,196 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/js/common.js"></script>
     <script src="/static/frontend/js/city.data-3.js"></script>
+    <!--获取地址-->
+    <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
     <script>
 
         mui("#refreshContainer").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
 
-        $(function () {
 
-            //初始化全局变量
-            var count = 1;
-            var ioSelect = '';
-            var sArea = '';
-            var keyword = wooApi.GetQueryString('keyword');
-            $('.keyword').val(keyword);
+        var current_lng = '';
+        var current_lat = '';
 
-
-            //获取定位省市区
-            var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
-            var sCity = getLocationTB['city'];
-            var sProvince = getLocationTB['province'];
-            var allArea = getLocationTB['areas'];
-
-            $('.location').text(sCity);
-
-            //生成区域选择下拉菜单
-            var arrArea = allArea.split(',');
-            var selectArea = '';
-            $.each(arrArea, function (i, areaName) {
-                selectArea += '<option value="' + areaName + '">' + areaName + '</option>';
+        var map = new AMap.Map('container', {
+            resizeEnable: true,
+            zoom: 15,
+        });
+        AMap.plugin('AMap.Geolocation', function () {
+            geolocation = new AMap.Geolocation({
+                enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+                maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+                convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+                showButton: true,        //显示定位按钮，默认：true
+                buttonPosition: 'RB',    //定位按钮停靠位置，默认：'LB'，左下角
+                buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+                showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+                panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
+                zoomToAccuracy: true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
             });
-            $('#areaSelect').append(selectArea);
-            //搜索教练
-            $("#searchBtn").on("click", function () {
-                keyword = $(".keyword").val();
-                searchToList();
-            })
-            //选择性别下拉
-            $("#inoutSelect").on("change", function () {
-                ioSelect = $(this).val();
-                searchToList();
-            });
-            //选择地区下拉
-            $("#areaSelect").on("change", function () {
-                sArea = $(this).val();
-                searchToList();
-            });
-            //搜索、下拉刷选后触发
-            function searchToList() {
-                count = 1;//显示第一页
-                var page = count;
-                var gType = 1;//代表下拉刷新
-                toList(page, gType);//具体取数据的方法
-            }
 
-            mui.init({
-                swipeBack: true, //启用右滑关闭功能
-                pullRefresh: {
-                    //下拉刷新上拉加载教练列表
-                    container: "#refreshContainer",
-                    down: {
-                        //下拉刷新
-                        height: 50,
-                        auto: true,
-                        contentdown: "下拉可以刷新",
-                        contentover: "释放立即刷新",
-                        contentrefresh: "正在刷新...",
-                        callback: pulldownRefresh
-                    },
-                    up: {
-                        //上拉加载
-                        height: 150,
-                        //auto:true,
-                        contentrefresh: '正在加载...',
-                        contentnomore: '没有更多数据了',
-                        callback: pullupRefresh
-                    }
-                }
-            });
-            //下拉刷新具体业务实现
-            function pulldownRefresh() {
-                setTimeout(function () {
-                    count = 1;//刷新并显示第一页
+            geolocation.getCurrentPosition(function (status, result) {
+                console.log("getCurrentPosition");
+                console.log(result);
+                current_lat = result.position.lat;
+                current_lng = result.position.lng;
+
+
+
+                //初始化全局变量
+                var count = 1;
+                var ioSelect = '';
+                var sArea = '';
+                var keyword = wooApi.GetQueryString('keyword');
+                $('.keyword').val(keyword);
+
+
+                //获取定位省市区
+                var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
+                var sCity = getLocationTB['city'];
+                var sProvince = getLocationTB['province'];
+                var allArea = getLocationTB['areas'];
+
+                $('.location').text(sCity);
+
+                //生成区域选择下拉菜单
+                var arrArea = allArea.split(',');
+                var selectArea = '';
+                $.each(arrArea, function (i, areaName) {
+                    selectArea += '<option value="' + areaName + '">' + areaName + '</option>';
+                });
+                $('#areaSelect').append(selectArea);
+                //搜索教练
+                $("#searchBtn").on("click", function () {
+                    keyword = $(".keyword").val();
+                    searchToList();
+                })
+                //选择性别下拉
+                $("#inoutSelect").on("change", function () {
+                    ioSelect = $(this).val();
+                    searchToList();
+                });
+                //选择地区下拉
+                $("#areaSelect").on("change", function () {
+                    sArea = $(this).val();
+                    searchToList();
+                });
+                //搜索、下拉刷选后触发
+                function searchToList() {
+                    count = 1;//显示第一页
                     var page = count;
                     var gType = 1;//代表下拉刷新
                     toList(page, gType);//具体取数据的方法
-                }, 100);
-            }
-            //上拉加载具体业务实现
-            function pullupRefresh() {
-                setTimeout(function () {
-                    count++;//翻下一页
-                    var page = count;
-                    var gType = 2;//代表上拉加载
-                    toList(page, gType);//具体取数据的方法
-                }, 100);
-            }
-            //接口获取数据并追加到页面
-            var toList = function (page, gType) {
-                //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/court/getCourtListOrderByDistanceApi','','',true)}";
-                mui.ajax({
-                    url: url,
-                    data: {
-                        page: page,
-                        province: sProvince,
-                        city: sCity,
-                        area: sArea,
-                        status: 1,
-                        outdoors: ioSelect,
-                        keyword: keyword
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    //processData:false,
-                    success: function (data) {
-                        var newli = '';
-                        if (data.code == 200) {
-                            for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('court/courtInfo')}" + '/court_id/' + data.data[i].id;
-                                newli = newli + '<li class="mui-table-view-cell mui-media listli list-wide"><a href="' + urls + '"><img class="mui-media-object mui-pull-left " src="' + data.data[i].covers[0] + '"><div class="mui-media-body newline wd60">' + data.data[i].court + '<p class="mui-ellipsis">' + data.data[i].location + '</p></div><div class="price-frame singup-num">' + data.data[i].area + '</div></a></li>'
-                            }
+                }
+
+                mui.init({
+                    swipeBack: true, //启用右滑关闭功能
+                    pullRefresh: {
+                        //下拉刷新上拉加载教练列表
+                        container: "#refreshContainer",
+                        down: {
+                            //下拉刷新
+                            height: 50,
+                            auto: true,
+                            contentdown: "下拉可以刷新",
+                            contentover: "释放立即刷新",
+                            contentrefresh: "正在刷新...",
+                            callback: pulldownRefresh
+                        },
+                        up: {
+                            //上拉加载
+                            height: 150,
+                            //auto:true,
+                            contentrefresh: '正在加载...',
+                            contentnomore: '没有更多数据了',
+                            callback: pullupRefresh
                         }
-                        if (gType == 1) {
-                            //上拉刷新
-                            $("ul.court").empty().append(newli);
-                            mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                            mui('#refreshContainer').pullRefresh().refresh(true);
-                            if (newli == '') {
-                                $("ul.court").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
-                            }
-                        } else {
-                            //下拉加载 gType==2
-                            $("ul.court").append(newli);
-                        }
-                        if (newli != '') {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-                        } else {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                        }
-                    },
-                    error: function (xhr, type, errerThrown) {
-                        mui.toast('网络异常,请稍候再试');
-                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                     }
                 });
-            };
+                //下拉刷新具体业务实现
+                function pulldownRefresh() {
+                    setTimeout(function () {
+                        count = 1;//刷新并显示第一页
+                        var page = count;
+                        var gType = 1;//代表下拉刷新
+                        toList(page, gType);//具体取数据的方法
+                    }, 100);
+                }
+                //上拉加载具体业务实现
+                function pullupRefresh() {
+                    setTimeout(function () {
+                        count++;//翻下一页
+                        var page = count;
+                        var gType = 2;//代表上拉加载
+                        toList(page, gType);//具体取数据的方法
+                    }, 100);
+                }
+                //接口获取数据并追加到页面
+                var toList = function (page, gType) {
+                    //搜索关键字不能完全为空，否则查询为空
+                    var url = "{:url('api/court/getCourtListOrderByDistanceApi','','',true)}";
+                    mui.ajax({
+                        url: url,
+                        data: {
+                            page: page,
+                            province: sProvince,
+                            city: sCity,
+                            area: sArea,
+                            status: 1,
+                            outdoors: ioSelect,
+                            keyword: keyword,
+                            lng: current_lng,
+                            lat: current_lat
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        //processData:false,
+                        success: function (data) {
+                            var newli = '';
+                            if (data.code == 200) {
+                                for (var i = 0; i <= data.data.length - 1; i++) {
+                                    var urls = "{:url('court/courtInfo')}" + '/court_id/' + data.data[i].id;
+                                    if(data.data[i].court_lat==""||data.data[i].court_lng==""){
+                                        distance ='<font class="f10">未定位</font>';
+                                    }else{
+                                        distance = data.data[i].distance.toFixed(1)+'km';
+                                    }
+                                    newli = newli + '<li class="mui-table-view-cell mui-media listli list-wide"><a href="' + urls + '"><img class="mui-media-object mui-pull-left " src="' + data.data[i].covers[0] + '"><div class="mui-media-body newline wd60">' + data.data[i].court + '<p class="mui-ellipsis">' + data.data[i].location + '</p></div><div class="price-frame"><p>' + data.data[i].area + '</p><p class="colororange f12">' + distance + '</p></div></a></li>'
+                                }
+                            }
+                            if (gType == 1) {
+                                //上拉刷新
+                                $("ul.court").empty().append(newli);
+                                mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                                mui('#refreshContainer').pullRefresh().refresh(true);
+                                if (newli == '') {
+                                    $("ul.court").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
+                                }
+                            } else {
+                                //下拉加载 gType==2
+                                $("ul.court").append(newli);
+                            }
+                            if (newli != '') {
+                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                            } else {
+                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                            }
+                        },
+                        error: function (xhr, type, errerThrown) {
+                            mui.toast('网络异常,请稍候再试');
+                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                        }
+                    });
+                };
 
+            });
+        });
 
-        })
     </script>
 </body>
 
