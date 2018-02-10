@@ -311,6 +311,9 @@ class Match extends Base
                 }
                 $recordData['match'] = $matchName;
                 $dataMatch['name'] = $matchName;
+                if ($isFinished ==1 ){
+                    $dataMatch['is_live'] = -1;
+                }
                 // 保存比赛球队成员
                 // 保留显示的成员名单（status=1 报名is_apply=1 、出席is_attend=1）
                 if (isset($post['HomeMemberData']) && $post['HomeMemberData'] != "[]") {
