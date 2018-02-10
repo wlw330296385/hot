@@ -1442,6 +1442,7 @@ class Match extends Base
             if ($data['area']) {
                 $map['`match`.area'] = $data['area'];
             }
+            $map['`match`.islive'] = input('islive', -1);
             // 如果有传入年份 查询条件 create_time在区间内
             if (input('?year')) {
                 $year = input('year');
