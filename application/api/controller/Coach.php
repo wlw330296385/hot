@@ -23,6 +23,7 @@ class Coach extends Base{
             $city = input('param.city');
             $area = input('param.area');
             $sex = input('param.sex');
+            $orderby = input('param.orderby','id desc');
             $map['province']=$province;
             $map['city']=$city;
             $map['area']=$area;
@@ -43,7 +44,13 @@ class Coach extends Base{
             if( isset($map['page']) ){
                 unset($map['page']);
             }
-            $coachList = $this->CoachService->getCoachList($map,$page);
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+            if( isset($map['orderby']) ){
+                unset($map['orderby']);
+            }
+            $coachList = $this->CoachService->getCoachList($map,$page,$orderby);
             if($coachList){
                 return json(['code'=>200,'msg'=>'OK','data'=>$coachList]);
             }else{

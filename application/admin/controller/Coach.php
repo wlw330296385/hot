@@ -166,6 +166,10 @@ class Coach extends Backend {
                 'update_time' => time()
             ];*/
             $data = input('post.');
+            // 初始值相加
+            if($data['']){
+                
+            }
             $data['update_time'] = time();
             unset($data['__token__']);
             //dump($data);
