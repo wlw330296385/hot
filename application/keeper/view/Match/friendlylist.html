@@ -23,6 +23,13 @@
                 width: 56%;
             }
         }
+        .mui-ellipsis{
+            line-height:20px !important;
+        }
+        .price-frame{
+            padding-right: 15px;
+            padding-top: 12px;
+        }
     </style>
 </head>
 
@@ -68,7 +75,7 @@
                 </a>
             </li>
             <a href="#fbyuezhan">
-                <li class="mui-col-xs-10 mui-col-sm-10 opli bgblue fbBtn">
+                <li class="mui-col-xs-10 mui-col-sm-10 opli bgred fbBtn">
                     发布约战
                 </li>
             </a>
@@ -104,8 +111,8 @@
             window.top.location.href = this.href;
         });
 
-        var court_lng = '';
-        var court_lat = '';
+        var current_lng = '';
+        var current_lat = '';
 
         var map = new AMap.Map('container', {
             resizeEnable: true,
@@ -129,8 +136,8 @@
             geolocation.getCurrentPosition(function (status, result) {
                 console.log("getCurrentPosition");
                 console.log(result);
-                court_lat = result.position.lat;
-                court_lng = result.position.lng;
+                current_lat = result.position.lat;
+                current_lng = result.position.lng;
                 //初始化全局变量
                 var count = 1;
                 var choice_time = '';
@@ -248,8 +255,8 @@
                             // islive: 1,
                             // status: 1,
                             page: page,
-                            lng: court_lng,
-                            lat: court_lat
+                            lng: current_lng,
+                            lat: current_lat
                         },
                         dataType: 'json',//服务器返回json格式数据
                         type: 'post',//HTTP请求类型
@@ -259,21 +266,36 @@
                             console.log(data)
                             var newli = '';
                             if (data.code == 200) {
+                                var urls='';
+                                var distance='';
+                                var win_rate='';
+                                var match_time='';
+                                var isfinished='';
                                 for (var i = 0; i <= data.data.length - 1; i++) {
-                                    var urls = "{:url('match/friendlyinfo')}" + '/match_id/' + data.data[i].id;
-                                    newli += '<li class="mui-table-view-cell mui-media listli">';
-                                    newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].logo + '"><div class="mui-media-body"><strong class="colororange">' + data.data[i].team + '</strong>&nbsp;发起约赛';
+                                    urls = "{:url('match/friendlyinfo')}" + '/match_id/' + data.data[i].id;
                                     if (data.data[i].apply_status_num == 2) {
-                                        newli += '<font class="tipCorner bgorange">完成约战</font>';
+                                        isfinished = '<font class="tipCorner bggreen">完成约战</font>';
+                                    }
+                                    if(data.data[i].sl==""||data.data[i].sl==null){
+                                        win_rate = "0";
+                                    }else{
+                                        win_rate = data.data[i].sl;
                                     }
                                     if (data.data[i].match_time == 0) {
-                                        newli += '<p class="mui-ellipsis" style="line-height:20px">胜率：<font class="colororange">' + data.data[i].win_rate + '</font>&nbsp;&nbsp;平均身高：<font class="colororange">' + data.data[i].avg_height + '</font></p>';
-                                        newli += '<p class="mui-ellipsis" style="line-height:20px">比赛时间待定</p>'
+                                        match_time = '比赛时间待定';
                                     } else {
-                                        newli += '<p class="mui-ellipsis" style="line-height:20px">胜率：<font class="colororange">' + data.data[i].sl + '</font>&nbsp;&nbsp;平均身高：<font class="colororange">' + data.data[i].avg_height + '</font></p>';
-                                        newli += '<p class="mui-ellipsis" style="line-height:20px">' + data.data[i].match_time + '</p>'
+                                        match_time = data.data[i].match_time;
                                     }
-                                    newli += '</div><div class="price-frame mui-text-center" style="padding-right: 15px;padding-top: 12px;"><p>' + data.data[i].area + '</p><p class="colororange">' + parseInt(data.data[i].distance) + 'km</p></div></a>'
+                                    if(data.data[i].court_lat==""||data.data[i].court_lng==""){
+                                        distance ='<font class="f10">未定位</font>';
+                                    }else{
+                                        distance = parseInt(data.data[i].distance)+'km';
+                                    }
+                                    newli += '<li class="mui-table-view-cell mui-media listli">';
+                                    newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].logo + '"><div class="mui-media-body"><strong>' + data.data[i].team + '</strong>&nbsp;<font class="tipCorner bgred">约</font>'+isfinished;
+                                    newli += '<p class="mui-ellipsis">胜率：<font class="colororange">' + win_rate + '</font>&nbsp;&nbsp;平均身高：<font class="colororange">' + data.data[i].avg_height + '</font></p>';
+                                    newli += '<p class="mui-ellipsis">' + match_time + '</p>'
+                                    newli += '</div><div class="price-frame mui-text-center"><p>' + data.data[i].area + '</p><p class="colororange">' + distance + '</p></div></a>'
                                     newli += '</li>';
                                 }
                             }
