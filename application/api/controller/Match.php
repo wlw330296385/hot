@@ -316,20 +316,21 @@ class Match extends Base
                 if (isset($post['HomeMemberData']) && $post['HomeMemberData'] != "[]") {
                     $homeMember = json_decode($post['HomeMemberData'], true);
                     $dataUpdateTeamMember = [];
-                    foreach ($homeMember as $k => $val) {
+                    foreach ($homeMember as $k => $member) {
                         // 查询有无match_record_member原数据，有则更新原数据否则插入新数据
-                        $hasMatchRecordMember = $matchS->getMatchRecordMember(['match_id' => $match['id'], 'match_record_id' => $recordData['id'], 'member_id' => $val['member_id']]);
+                        $hasMatchRecordMember = $matchS->getMatchRecordMember(['match_id' => $match['id'], 'match_record_id' => $recordData['id'], 'member_id' => $member['member_id'], 'member' => $member['member']]);
                         if ($hasMatchRecordMember) {
                             $homeMember[$k]['id'] = $hasMatchRecordMember['id'];
                         }
+                        // 获取球队成员数据
+                        $teamMember = $teamS->getTeamMemberInfo(['team_id' => $recordData['home_team_id'], 'member_id' => $member['member_id'], 'member' => $member['member']]);
                         $homeMember[$k]['match_id'] = $match['id'];
                         $homeMember[$k]['match'] = $matchName;
                         $homeMember[$k]['team_id'] = $recordData['home_team_id'];
                         $homeMember[$k]['team'] = $recordData['home_team'];
                         $homeMember[$k]['match_record_id'] = $recordData['id'];
-                        $member = db('member')->where('id', $val['member_id'])->find();
-                        $homeMember[$k]['avatar'] = $member['avatar'];
-                        $homeMember[$k]['contact_tel'] = $member['telephone'];
+                        $homeMember[$k]['avatar'] = ($teamMember) ? $teamMember['avatar'] : config('default_image.member_avatar');
+                        $homeMember[$k]['contact_tel'] = $teamMember['telephone'];
                         $homeMember[$k]['status'] = 1;
                         $homeMember[$k]['is_checkin'] = 1;
                         // 若比赛完成 比赛参赛球队成员 match_record_member is_attend=1
@@ -338,7 +339,6 @@ class Match extends Base
 
                             // 批量更新team_member 比赛数match_num
                             if ($hasMatchRecordMember['is_checkin'] != 1) {
-                                $teamMember = $teamS->getTeamMemberInfo(['team_id' => $recordData['home_team_id'], 'member_id' => $val['member_id']]);
                                 //dump($teamMember);
                                 if ($teamMember) {
                                     $dataUpdateTeamMember[$k]['id'] = $teamMember['id'];
@@ -360,7 +360,7 @@ class Match extends Base
                     $dataUpdateTeamMemberDec = [];
                     foreach ($memberArr as $k => $member) {
                         // 查询有无match_record_member原数据，有则更新原数据否则插入新数据
-                        $hasMatchRecordMember2 = $matchS->getMatchRecordMember(['match_id' => $match['id'], 'match_record_id' => $recordData['id'], 'member_id' => $member['member_id']]);
+                        $hasMatchRecordMember2 = $matchS->getMatchRecordMember(['match_id' => $match['id'], 'match_record_id' => $recordData['id'], 'member_id' => $member['member_id'], 'member' => $member['member']]);
                         if ($hasMatchRecordMember2) {
                             $memberArr[$k]['id'] = $hasMatchRecordMember2['id'];
                         }
@@ -369,7 +369,7 @@ class Match extends Base
                         $memberArr[$k]['is_checkin'] = -1;
 
                         // 批量更新team_member 比赛数match_num
-                        $teamMember = $teamS->getTeamMemberInfo(['team_id' => $recordData['home_team_id'], 'member_id' => $member['member_id']]);
+                        $teamMember = $teamS->getTeamMemberInfo(['team_id' => $recordData['home_team_id'], 'member_id' => $member['member_id'], 'member' => $member['member']]);
                         //dump($teamMember);
                         if ($teamMember) {
                             $dataUpdateTeamMemberDec[$k]['id'] = $teamMember['id'];
@@ -484,21 +484,21 @@ class Match extends Base
                     if (isset($post['HomeMemberData']) && $post['HomeMemberData'] != "[]") {
                         $homeMember = json_decode($post['HomeMemberData'], true);
                         $dataUpdateTeamMember = [];
-                        foreach ($homeMember as $k => $val) {
+                        foreach ($homeMember as $k => $member) {
                             $homeMember[$k]['match_id'] = $resultSaveMatch['data'];
                             $homeMember[$k]['match'] = $post['name'];
                             $homeMember[$k]['team_id'] = $recordData['team_id'];
                             $homeMember[$k]['team'] = $recordData['home_team'];
                             $homeMember[$k]['match_record_id'] = $resultSaveMatchRecord['data'];
-                            $member = db('member')->where('id', $val['member_id'])->find();
-                            $homeMember[$k]['avatar'] = $member['avatar'];
-                            $homeMember[$k]['contact_tel'] = $member['telephone'];
+                            // 获取球队成员数据
+                            $teamMember = $teamS->getTeamMemberInfo(['team_id' => $recordData['home_team_id'], 'member_id' => $member['member_id'], 'member' => $member['member']]);
+                            $homeMember[$k]['avatar'] = ($teamMember) ? $teamMember['avatar'] : config('default_image.member_avatar');
+                            $homeMember[$k]['contact_tel'] = $teamMember['telephone'];
                             $homeMember[$k]['status'] = 1;
                             $homeMember[$k]['is_attend'] = 1;
                             $homeMember[$k]['is_checkin'] = 1;
 
                             // 批量更新team_member 比赛数match_num
-                            $teamMember = $teamS->getTeamMemberInfo(['team_id' => $recordData['home_team_id'], 'member_id' => $val['member_id']]);
                             //dump($teamMember);
                             if ($teamMember) {
                                 $dataUpdateTeamMember[$k]['id'] = $teamMember['id'];
@@ -864,7 +864,7 @@ class Match extends Base
                 ];
                 $inHomeTeam = $teamS->getTeamMemberInfo($whereMemberInHomeTeam);
             }
-            if ($match['record']['away_team_id'] > 0) {
+            if ($match['record']['away_team_id']) {
                 $whereMemberInAwayTeam = [
                     'team_id' => $match['record']['away_team_id'],
                     'member_id' => $this->memberInfo['id'],
@@ -891,19 +891,31 @@ class Match extends Base
                 'match_id' => $match['id'],
                 'match' => $match['name'],
                 'match_record_id' => $match['record']['id'],
-                'member_id' => $this->memberInfo['id'],
-                'member' => $this->memberInfo['member'],
-                'avatar' => $this->memberInfo['avatar'],
-                'contact_tel' => $this->memberInfo['telephone'],
                 'status' => 1,
                 'is_apply' => 1
             ];
             if ($inHomeTeam) {
                 $dataRecordMember['team_id'] = $inHomeTeam['team_id'];
                 $dataRecordMember['team'] = $inHomeTeam['team'];
+                $dataRecordMember['member_id'] = $inHomeTeam['member_id'];
+                $dataRecordMember['member'] = $inHomeTeam['member'];
+                $dataRecordMember['avatar'] = $inHomeTeam['avatar'];
+                $dataRecordMember['contact_tel'] = $inHomeTeam['telephone'];
+                if ($inHomeTeam['student_id']) {
+                    $dataRecordMember['student_id'] = $inHomeTeam['student_id'];
+                    $dataRecordMember['student'] = $inHomeTeam['student'];
+                }
             } elseif ($inAwayTeam) {
                 $dataRecordMember['team_id'] = $inAwayTeam['team_id'];
                 $dataRecordMember['team'] = $inAwayTeam['team'];
+                $dataRecordMember['member_id'] = $inAwayTeam['member_id'];
+                $dataRecordMember['member'] = $inAwayTeam['member'];
+                $dataRecordMember['avatar'] = $inAwayTeam['avatar'];
+                $dataRecordMember['contact_tel'] = $inAwayTeam['telephone'];
+                if ($inAwayTeam['student_id']) {
+                    $dataRecordMember['student_id'] = $inAwayTeam['student_id'];
+                    $dataRecordMember['student'] = $inAwayTeam['student'];
+                }
             }
 //                dump($dataRecordMember);
             // 保存报名比赛信息数据
