@@ -21,8 +21,22 @@ class Weixin extends Backend {
              */
             $menuData = [
                 'button' => [
-                    // 第一栏
+                    // 两栏简单版
                     [
+                        'type' => 'view',
+                        'name' => '培训管家/学员',
+                        'url' => $WechatS->oauthRedirect(url('frontend/index/wxindex', '', '', true))
+                    ],
+                    [
+                        'type' => 'view',
+                        'name' => '球队管家/球员',
+                        'url' => $WechatS->oauthRedirect(url('keeper/index/wxindex', '', '', true))
+                    ]
+                    // 两栏简单版 end
+
+                    // 两栏完整版
+                    // 第一栏
+                    /*[
                         'name' => '篮球管家',
                         'sub_button' => [
                             [
@@ -36,7 +50,7 @@ class Weixin extends Backend {
                                 'url' => $WechatS->oauthRedirect(url('keeper/index/wxindex', '', '', true))
                             ]
                         ]
-                    ],
+                    ],*/
                     // 第一栏 end
                     // 第二栏
                     /*[
@@ -60,6 +74,7 @@ class Weixin extends Backend {
                         ]
                     ]*/
                     // 第二栏 end
+                    // 两栏完整版 end
                 ]
             ];
             //dump($menuData);
