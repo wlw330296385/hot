@@ -47,8 +47,6 @@ class Coach extends Backend {
             }
         }
 
-        $breadcrumb = [ 'ptitle' => '教练管理' , 'title' => '教练详细' ];
-        $this->assign( 'breadcrumb', $breadcrumb );
         $this->assign('coach', $coach);
         return view();
     }
@@ -166,10 +164,7 @@ class Coach extends Backend {
                 'update_time' => time()
             ];*/
             $data = input('post.');
-            // 初始值相加
-            if($data['']){
-                
-            }
+
             $data['update_time'] = time();
             unset($data['__token__']);
             //dump($data);
