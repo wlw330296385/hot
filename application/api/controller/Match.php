@@ -398,7 +398,7 @@ class Match extends Base
                     }
                     // 更新球队胜场数、比赛场数
                     $matchS->countTeamNumByRecord(['id' => $recordData['id']]);
-                    exit(0);
+                    
                     // 比赛完成的操作
                     if ($isFinished == 1) {
                         // (比赛未完成执行的操作)
