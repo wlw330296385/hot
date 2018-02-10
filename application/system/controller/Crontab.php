@@ -325,8 +325,8 @@ class Crontab extends Controller {
                 $dataSaveAll[$key]['id'] = $coach['id'];
                 $dataSaveAll[$key]['lesson_flow'] = $lessonFlow;
                 $dataSaveAll[$key]['grade_flow'] = $gradeFlow;
-                $dataSaveAll[$key]['student_flow'] = $studentFlow;
-                $dataSaveAll[$key]['schedule_flow'] = $scheduleFlow;
+                $dataSaveAll[$key]['student_flow'] = $studentFlow+$coach['student_flow_init'];
+                $dataSaveAll[$key]['schedule_flow'] = $scheduleFlow+$coach['schedule_flow_init'];
 
                 // 顺手整理introduction值为图文内容格式
                 $newIntroduction = '<div class="operationDiv"><p>'. $coach['introduction'] .'</p></div>';
