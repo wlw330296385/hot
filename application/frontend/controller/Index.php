@@ -4,6 +4,8 @@ use app\frontend\controller\Base;
 use app\service\LessonService;
 use app\service\MemberService;
 use app\service\WechatService;
+use think\Cookie;
+
 class Index extends Base{
 	protected $LessonService;
 	public function _initialize(){
