@@ -611,7 +611,8 @@
             e.target.className == 'mui-backdrop mui-active' && e.stopPropagation();
         },true)
         //打开获取大礼包
-        if(!isBonus){
+        // 如果本地没有存储与大礼包id相同的值,则弹出大礼包;
+        if(isBonus<>{$bonusInfo['id']}){
             mui("#giftpopover").popover('show', document.getElementById("tabbar"));
             $("#gift-open").animate({
                 width:'+=20px',
@@ -658,7 +659,7 @@
                         ,{'bonus_id': {$bonusInfo.id}}
                         ,function(msg){
                             if(msg.code == 200){
-                                localStorage.setItem('isBonus',1);
+                                localStorage.setItem('isBonus',{$bonusInfo.id});
                                 mui.confirm('领取成功,查看获得的卡券?', '恭喜!', ['不,谢谢', '立即查看'], function (e) {
                                     if (e.index === 1) {
                                         
