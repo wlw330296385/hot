@@ -254,7 +254,7 @@ class Team extends Base
             ];
             $hasApply = $teamS->getApplyInfo($mapApplyinfo);
             if ($hasApply) {
-                if ($hasApply['status'] == 1) {
+                if ($hasApply['status_num'] == 1) {
                     return json(['code' => 100, 'msg' => '你已经提交了加入申请，请等待球队处理回复']);
                 } else {
                     $dataApply['id'] = $hasApply['id'];
@@ -307,7 +307,7 @@ class Team extends Base
             if (!$applyInfo) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404') . '，没有此申请记录']);
             }
-            if ($applyInfo['status'] != 1) {
+            if ($applyInfo['status_num'] != 1) {
                 return json(['code' => 100, 'msg' => '此申请记录已回复结果，无需重复操作']);
             }
             // 查询team_member_role 判断当前会员有无操作权限

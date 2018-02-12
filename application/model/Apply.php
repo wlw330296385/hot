@@ -22,7 +22,7 @@ class Apply extends Model {
 
 
     public function match() {
-        return $this->hasOne('match','id','organization_id',[],'LETF');
+        return $this->hasOne('match','id','organization_id',[],'LEFT');
     }
 
     public function member() {
