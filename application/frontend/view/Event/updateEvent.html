@@ -483,7 +483,13 @@
         $("#eventDom .mui-checkbox").each(function () {
             var eDom = $(this).find("input[name='event-dom']").val();
             var eDomPrice = $(this).find("input[name='event-dom_price']").val();
-            eventDomArr.push({ name: eDom, price: eDomPrice });
+            var ePrice = $("#eventPrice").val();
+            //eventDomArr.push({ name: eDom, price: eDomPrice });
+            if(ePrice == 2){
+                eventDomArr.push({ name: eDom, price: eDomPrice });
+            }else{
+                eventDomArr.push({ name: eDom, price: '' });
+            }
         });
         $(function () {
 //
@@ -562,8 +568,13 @@
                         isTrue = false;
                         return false;
                     } else {
-                        eDoms += '<button type="button" class="selectDom">'+eDom+'<div>'+eDomPrice+'</div></button>'
-                        eventDomArr.push({ name: eDom, price: eDomPrice });
+                        if(ePrice == 2){
+                            eDoms += '<button type="button" class="selectDom">'+eDom+'<div>'+eDomPrice+'</div></button>'
+                            eventDomArr.push({ name: eDom, price: eDomPrice });
+                        }else{
+                            eDoms += '<button type="button" class="selectDom">'+eDom+'</button>'
+                            eventDomArr.push({ name: eDom, price: '' });
+                        }
 
                     }
                 });
@@ -597,17 +608,15 @@
 
             // 选择是否收费显示隐藏活动单价和费用结算人
             $("#eventPrice").change(function () {
+                $(".eventDom").text("");
+                eventDomArr = [{ name: '默认', price: '' }];
                 if ($(this).children('option:selected').text() == '免费') {
                     $("input[name='event-dom_price']").hide();
-                    $(".eventDom").text("");
-                    eventDomArr = [{ name: '默认', price: 0 }];
                     $(".price-input-row").hide();
                     $(".finance").removeClass("domData");
                     $("input[name='finance_id']").removeClass("data");
                 } else {
                     $("input[name='event-dom_price']").show();
-                    $(".eventDom").text("");
-                    eventDomArr = [{ name: '默认', price: 0 }];
                     $(".price-input-row").show();
                     $(".finance").addClass("domData").val('');
                     $("input[name='finance_id']").addClass("data").val('');

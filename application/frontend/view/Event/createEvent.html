@@ -452,7 +452,7 @@
         })(mui, document);
 
         //初始化全局变量
-        var eventDomArr = [{ name: '默认', price: 0 }];
+        var eventDomArr = [{ name: '默认', price: '' }];
         var all = '';
         $(function () {
             //获取训练营粉丝列表
@@ -497,8 +497,13 @@
                         isTrue = false;
                         return false;
                     } else {
-                        eDoms += '<button type="button" class="selectDom">'+eDom+'<div>'+eDomPrice+'</div></button>'
-                        eventDomArr.push({ name: eDom, price: eDomPrice });
+                        if(ePrice == 2){
+                            eDoms += '<button type="button" class="selectDom">'+eDom+'<div>'+eDomPrice+'</div></button>'
+                            eventDomArr.push({ name: eDom, price: eDomPrice });
+                        }else{
+                            eDoms += '<button type="button" class="selectDom">'+eDom+'</button>'
+                            eventDomArr.push({ name: eDom, price: '' });
+                        }
 
                     }
                 });
@@ -531,25 +536,15 @@
             $("input[name='event-dom_price']").hide();
             // 选择是否收费显示隐藏活动单价和费用结算人
             $("#eventPrice").change(function () {
+                $(".eventDom").text("");
+                eventDomArr = [{ name: '默认', price: '' }];
                 if ($(this).children('option:selected').text() == '免费') {
-                    //                    $("input[name='event-dom_price']").val("0");
                     $("input[name='event-dom_price']").hide();
-                    $(".eventDom").text("");
-                    eventDomArr = [{ name: '默认', price: 0 }];
-                    //                    $("#eventDom form").empty();
-                    //                    $("#eventDom form").prepend('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i></div>');
-                    //                    $("input[name='price']").hide();
                     $(".price-input-row").hide();
                     $(".finance").removeClass("domData");
                     $("input[name='finance_id']").removeClass("data");
                 } else {
                     $("input[name='event-dom_price']").show();
-                    //                    $("input[name='event-dom_price']").val("");
-                    $(".eventDom").text("");
-                    eventDomArr = [{ name: '默认', price: 0 }];
-                    //                    $("#eventDom form").empty();
-                    //                    $("#eventDom form").prepend('<div class="mui-input-row mui-checkbox mui-left"><input type="text" name="event-dom" class="wd49 fl" value="" placeholder="请填写种类名称"><i class="cancel-dom mui-icon mui-icon-close"></i><input type="text" name="event-dom_price" class="wd36 fr" value="" placeholder="对应价格"></div>');
-                    //                    $("input[name='price']").addClass("data").val('');
                     $(".price-input-row").show();
                     $(".finance").addClass("domData").val('');
                     $("input[name='finance_id']").addClass("data").val('');
