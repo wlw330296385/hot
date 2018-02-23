@@ -311,4 +311,53 @@ class Follow extends Base {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+
+
+
+
+    //关注训练营
+    public function followCampApi(){
+    	try {
+    		$member_id = $this->memberInfo['id'];
+    		$follow_id = input('param.camp_id');
+    		$FollowModel = new \app\model\Follow;
+    		$follow = $FollowModel->where(['member_id'=>$member_id,'follow_id'=>$follow_id,'type'=>2])->find();
+    		if($follow){
+    			$result = $FollowModel->save(['status'=>1],['id'=>$follow['id']]);
+
+    		}else{
+    			$followCampInfo = db('camp')->where(['id'=>$follow_id])->find();
+    			if (!$followCampInfo) {
+                    return json(['code' => 100, 'msg' => '没有训练营信息']);
+                }
+                $followData = [
+                    'type' => 2,
+                    'follow_id' => $followCampInfo['id'],
+                    'follow_name' => $followCampInfo['camp'],
+                    'follow_avatar' => $followCampInfo['logo'],
+                    'member_id' => $this->memberInfo['id'],
+                    'member' => $this->memberInfo['member'],
+                    'member_avatar' => $this->memberInfo['avatar'],
+                ];
+               $result = $FollowModel->save($followData);
+    		}
+
+    		 
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201')];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+    	} catch (Exception $e) {
+    		return json(['code' => 100, 'msg' => $e->getMessage()]);
+    	}
+    }
+
+
+
+
+
+
+
 }
