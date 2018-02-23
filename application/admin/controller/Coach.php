@@ -46,8 +46,15 @@ class Coach extends Backend {
                     $coach['cert']['coachcert'] = $value;
             }
         }
+        $coachService = new CoachService();
+        $trueScheduleFlow = $coachService->schedulecount($id);
+        $trueStudentFlow = $coachService->teachstudents($id);
 
+        $breadcrumb = [ 'ptitle' => '教练管理' , 'title' => '教练详细' ];
+        $this->assign( 'breadcrumb', $breadcrumb );
         $this->assign('coach', $coach);
+        $this->assign('trueScheduleFlow', $trueScheduleFlow);
+        $this->assign('trueStudentFlow', $trueStudentFlow);
         return view();
     }
 
@@ -164,7 +171,6 @@ class Coach extends Backend {
                 'update_time' => time()
             ];*/
             $data = input('post.');
-
             $data['update_time'] = time();
             unset($data['__token__']);
             //dump($data);

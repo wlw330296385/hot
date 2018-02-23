@@ -436,7 +436,10 @@ class TeamService
         $model = new Apply();
         $res = $model->with('member')->where($map)->find();
         if ($res) {
-            return $res->toArray();
+            $result = $res->toArray();
+            $getData = $res->getData();
+            $result['status_num'] = $getData['status'];
+            return $result;
         } else {
             return $res;
         }

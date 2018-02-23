@@ -152,7 +152,7 @@
                     <label>
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>比赛地点</label>
                     <span>
-                        <font class="getlocation colororange"></font>公里&nbsp;&nbsp;{$matchInfo.court}</span>
+                        <font class="getlocation colororange"></font>&nbsp;&nbsp;{$matchInfo.court}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
@@ -378,7 +378,8 @@
                         console.log(data);
                         if (data.code == 200) {
                             console.log(data.data);
-                            $(".getlocation").text(parseInt((data.data) / 1000));
+                            var getDistance = (data.data) / 1000;
+                            $(".getlocation").text(getDistance.toFixed(1)+'km');
                         } else {
                             mui.toast(data.msg);
                         }
