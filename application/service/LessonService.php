@@ -277,7 +277,7 @@ class LessonService {
         // 检查学员有无lesson_member数据
         $LessonMember = new \app\model\LessonMember;
         //$lesson_member = $LessonMember->where(['lesson_id'=>$data['lesson_id'],'student_id'=>$data['student_id'],'status'=>1,'type'=>2])->find();
-        $lesson_member = $LessonMember->where(['lesson_id'=>$data['lesson_id'],'student_id'=>$data['student_id']])->find()->getData();
+        $lesson_member = $LessonMember->where(['lesson_id'=>$data['lesson_id'],'student_id'=>$data['student_id']])->find();
         if (!$lesson_member) {
             $res = $LessonMember->allowField(true)->save($data);
             if(!$res){

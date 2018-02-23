@@ -5,7 +5,7 @@ class CourtVal extends Validate{
 
 
 	protected $rule = [
-        'court'  =>  'require|max:60',
+        'court'  =>  'require|max:60|token',
         'member_id'	=> 'require',
         'province' =>  'require',
         'city' =>  'require',
