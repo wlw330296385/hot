@@ -26,17 +26,6 @@
             color: #CCC !important;
         }
 
-        .mui-row .mui-text-left {
-            color: #333;
-        }
-
-        .location-choise {
-            padding-right: 6px !important
-        }
-
-        .location-choise:after {
-            display: none !important
-        }
     </style>
 </head>
 
@@ -54,7 +43,6 @@
     </header>
 
     <div class="mui-content">
-        <div class="list camp-list camp-lesson-list detalis-list coach">
             <div class="nav-list">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
@@ -78,32 +66,30 @@
                 </ul>
             </div>
 
-            <div class="mui-row location-frame" style="padding:0;border-bottom:3px solid #efeff4">
-                <div class="mui-col-sm-5 mui-col-xs-5 mui-search">
-                    <input type="search" class="mui-sreach keyword" placeholder="请输入班级名称">
-                </div>
-                <div class="mui-col-sm-2 mui-col-xs-2 mui-text-center">
-                    <span id="searchBtn" class="colororange" style="line-height:34px;">搜索</span>
-                </div>
-                <div class="mui-col-sm-2 mui-col-xs-2" style="line-height:27px">
-                    <span class="location-choise" style="margin-left:0">
+            <ul class="mui-table-view mui-grid-view form-row">
+                <li class="mui-table-view-cell mui-col-xs-3 select-arrow">
                         <select class="searchType">
                             <option value="班级">搜班级</option>
                             <option value="学生">搜学生</option>
+                            <option value="年月">搜年月</option>
                         </select>
-                    </span>
-                </div>
-                <div class="mui-col-sm-3 mui-col-xs-3 mui-text-center" style="line-height:34px">
-                    <span id="demo3" data-options='{"type":"month"}' class="btn">
-                        <span id="result" class="ui-alert">2018年01月</span>
-                    </span>
-                    <input id="year" type="hidden" name="year" value="">
-                    <input id="month" type="hidden" name="month" value="">
-                </div>
-            </div>
+                </li>
+                <li class="mui-table-view-cell mui-col-xs-9">
+                    <div class="mui-input-row input-icon">
+                        <input type="search" class="mui-sreach keyword" placeholder="请输入班级名称">
+                        <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
+                    </div>
+                    <div class="mui-input-row date-btn" data-options='{"type":"month"}' style="display: none;">
+                        <span id="result" class="ui-alert">请选择年月</span>
+                        <input id="year" type="hidden" name="year" value="">
+                        <input id="month" type="hidden" name="month" value="">
+                    </div>
+                </li>
+            </ul>
 
-            <div class="tab-pullRefresh">
-                <div id="campScheduleList" class="mui-scroll-wrapper mui-control-content mui-active" style="top:156px;">
+
+            <div class="tab-pullRefresh coach">
+                <div id="campScheduleList" class="mui-scroll-wrapper mui-control-content mui-active" style="top:162px;">
                     <div class="mui-scroll">
                         <ul class="mui-table-view mui-text-center detalis-list list scheduleAll"></ul>
                     </div>
@@ -120,7 +106,6 @@
                 </div>
 
             </div>
-        </div>
     </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
@@ -139,6 +124,15 @@
         window.top.location.href = this.href;
     });
 
+    //初始化全局变量
+    var allCount = 1;
+    var onCount = 1;
+    var offCount = 1;
+    var wcAPI = "all";
+    var keyword = '';
+    var beginDate = '';
+    var endDate = '';
+
     (function ($, doc) {
         $.ready(function () {
             var _getParam = function (obj, param) {
@@ -146,7 +140,7 @@
             };
             //开始时间
             var result = $('#result')[0];
-            var btns = $('.btn');
+            var btns = $('.date-btn');
             btns.each(function (i, btn) {
                 btn.addEventListener('tap', function () {
                     var optionsJson = this.getAttribute('data-options') || '{}';
@@ -157,6 +151,14 @@
                         result.innerText = rs.y.text + '年' + rs.m.text + '月';
                         document.getElementById('month').value = rs.m.text;
                         document.getElementById('year').value = rs.y.text;
+
+                        //"xxxx/xx/0"（0号）的话，得到xx月最后一天日期
+                        var getLastDate = new Date(rs.y.text,rs.m.text,0);
+                        console.log(getLastDate.getDate())
+                        beginDate = rs.y.text+'-'+rs.m.text+'-01 00:00:00';
+                        endDate =  rs.y.text+'-'+rs.m.text+'-'+getLastDate.getDate()+' 23:59:59';
+                        wcAPI = 'date';
+                        toList('campScheduleList', 1, 1);
                         picker.dispose();
                     });
                 }, false);
@@ -164,31 +166,25 @@
         });
     })(mui, document);
 
-    var keyword = '';
-    // var sYear = '';
-    // var sMonth = '';
     $(function () {
 
-        //选择年份
-        // $(document).on('tap', '.mui-dtpicker-header .mui-btn', function () {
-        //     sYear = $("input[name=year]").val();
-        //     sMonth = $("input[name=month]").val();
-        //     toList();
-        // });
 
         //选择搜索对应显示内容
         $(".searchType").change('', function () {
             var chValue = $(this).children("option:selected").val();
             if (chValue == "班级") {
                 $(".mui-sreach").attr('placeholder', '请输入班级名称');
-            } else {
+                $(".input-icon").show();
+                $(".date-btn").hide();
+            } else if (chValue == "学生") {
                 $(".mui-sreach").attr('placeholder', '请输入学生名称');
+                $(".input-icon").show();
+                $(".date-btn").hide();
+            } else {
+                $(".input-icon").hide();
+                $(".date-btn").show();
             }
         });
-
-        //初始化全局变量
-        var onCount = 1;
-        var offCount = 1;
 
         mui('#onlineScheduleList').pullRefresh({
             down: {
@@ -294,8 +290,8 @@
         //下拉刷新具体业务实现（全部）
         function pulldownRefreshAll() {
             setTimeout(function () {
-                offCount = 1;//刷新并显示第一页
-                var page = offCount;
+                allCount = 1;//刷新并显示第一页
+                var page = allCount;
                 var gType = 1;//代表下拉刷新
                 toList('campScheduleList', page, gType);//具体取数据的方法
             }, 100);
@@ -304,8 +300,8 @@
         //上拉加载具体业务实现（全部）
         function pullupRefreshAll() {
             setTimeout(function () {
-                offCount++;//翻下一页
-                var page = offCount;
+                allCount++;//翻下一页
+                var page = allCount;
                 var gType = 2;//代表上拉加载
                 toList('campScheduleList', page, gType);//具体取数据的方法
             }, 100);
@@ -316,29 +312,31 @@
     mui("body").on("tap", ".campScheduleList", function () {
         $(".nav-list-frame").show();
         $(".location-frame").show();
+        $(".form-row").show();
     });
 
-    mui("body").on("tap", ".onlineScheduleList", function () {
+    mui("body").on("tap", ".onlineScheduleList,.offlineScheduleList", function () {
         $(".nav-list-frame").hide();
         $(".location-frame").hide();
-    });
-
-    mui("body").on("tap", ".offlineScheduleList", function () {
-        $(".nav-list-frame").hide();
-        $(".location-frame").hide();
+        $(".form-row").hide();
     });
 
     //接口获取数据并追加到页面
     var toList = function (wList, page, gType, status) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/schedule/getScheduleListByPageApi','','',true)}" + '/?page=' + page;
+        var url='';
+        if(wcAPI=='date'){
+            url = "{:url('api/schedule/getScheduleListBetweenTimeByPageApi','','',true)}" + "/?page=" + page + "&begin=" + beginDate + "&end=" + endDate;  /////排序乱
+        }else if(wcAPI=='search'){
+            url = "{:url('api/schedule/getScheduleListByPageApi','','',true)}" + "/?page=" + page + "&keyword=" + keyword;
+        }else {
+            url = "{:url('api/schedule/getScheduleListByPageApi','','',true)}" + "/?page=" + page;
+        }
         var campID = "{$camp_id}";
         mui.ajax({
             url: url,
             data: {
-                // keyword:keyword,
-                // year: sYear,/
-                // month: sMonth,
+//                keyword:keyword,
                 camp_id: campID,
                 status: status
             },
@@ -351,7 +349,6 @@
                 console.log(data)
                 var newli = '';
                 if (data.code == 200) {
-                    var newDate = new Date();
                     var sheng = 0;
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "/frontend/schedule/scheduleinfo" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + campID;

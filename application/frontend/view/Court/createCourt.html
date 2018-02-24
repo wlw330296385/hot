@@ -136,6 +136,7 @@
         <div class="mui-content pt">
             <div class="register">
                 <form action="" class="mui-input-group">
+                    <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
                     <!-- map -->
                     <div class="mui-input-row h-auto" id="mapFrame">
                         <div id="map">
@@ -465,7 +466,11 @@
                                 window.location.href = "{:url('camp/courtlistofcamp',['camp_id'=>$campInfo['id']])}";
                             });
                         } else {
-                            mui.toast(data.msg)
+                            mui.toast(data.msg);
+                            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                                if (data.code === 200) {
+                                }
+                            }, 'json');
                         }
                     },
                     error: function (xhr, type, errorThrown) {
