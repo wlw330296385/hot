@@ -72,6 +72,7 @@
                             <option value="班级">搜班级</option>
                             <option value="学生">搜学生</option>
                             <option value="年月">搜年月</option>
+                            <option value="全部">返回全部</option>
                         </select>
                 </li>
                 <li class="mui-table-view-cell mui-col-xs-9">
@@ -172,17 +173,23 @@
         //选择搜索对应显示内容
         $(".searchType").change('', function () {
             var chValue = $(this).children("option:selected").val();
-            if (chValue == "班级") {
+            if (chValue == "年月") {
+                $(".input-icon").hide();
+                $(".date-btn").show();
+            } else if (chValue == "全部") {
                 $(".mui-sreach").attr('placeholder', '请输入班级名称');
                 $(".input-icon").show();
                 $(".date-btn").hide();
-            } else if (chValue == "学生") {
-                $(".mui-sreach").attr('placeholder', '请输入学生名称');
+                $(this).find('option[value="班级"]').prop("selected", true);
+                $("#result").text("请选择年月");
+                $("#year").val("");
+                $("#month").val("");
+                wcAPI = 'all';
+                toList('campScheduleList', 1, 1);
+            } else {
+                $(".mui-sreach").attr('placeholder', '请输入'+chValue+'名称');
                 $(".input-icon").show();
                 $(".date-btn").hide();
-            } else {
-                $(".input-icon").hide();
-                $(".date-btn").show();
             }
         });
 
@@ -367,15 +374,19 @@
                 // 根据状态获取课时列表
                 if (gType == 1) {
                     //上拉刷新
+                    var tabSchedule;
                     if (status == undefined || status == "") {
-                        $(".scheduleAll").empty().append(newli);
+                        tabSchedule = $(".scheduleAll");
                     } else {
-                        $(".schedule" + status).empty().append(newli);
+                        tabSchedule = $(".schedule" + status);
                     }
                     mui('#' + wList).pullRefresh().endPulldownToRefresh();
                     mui('#' + wList).pullRefresh().refresh(true);
                     if (newli == '') {
-                        $(".schedule" + status).append('<p class="nodata">没有相关数据哦</p>');
+                        tabSchedule.empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                        tabSchedule.empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                    }else{
+                        tabSchedule.empty().append(newli);
                     }
 
                 } else {
