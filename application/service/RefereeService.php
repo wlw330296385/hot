@@ -16,7 +16,9 @@ class RefereeService{
 	public function refereeInfo($map){
         $res = Referee::with('member')->where($map)->find();
         if($res){
+            $getData = $res->getData();
             $result = $res->toArray();
+            $result['status_num'] = $getData['status'];
             return $result;
         }else{
             return $res;
@@ -26,13 +28,21 @@ class RefereeService{
 	/**
 	 * 申请成为裁判
 	 */
-	public function createReferee($request){
-        $model = new Referee();
-        $result = $model->validate('RefereeVal')->save($request);
-        if ($result === false) {
-            return ['code' => 100, 'msg' => $model->getError()];
-        }else{
-            return ['code'=>200,'msg'=>__lang('MSG_200'),'data'=> $model->getLastInsID() ];
+	public function createReferee($data){
+	    // 验证数据
+        $validate = validate('RefereeVal');
+        if (!$validate->scene('add')->check($data)) {
+            return ['code' => 100, 'msg' => $validate->getError()];
+        }
+
+        // 插入数据
+        $data['status'] = isset($data['status']) ? $data['status'] : 0;
+        $res = $this->RefereeModel->allowField(true)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $this->RefereeModel->id];
+        } else {
+            trace('error:' . $this->RefereeModel->getError() . ', \n sql:' . $this->RefereeModel->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
 

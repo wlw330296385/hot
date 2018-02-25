@@ -43,36 +43,36 @@
 
         <div class="register">
             <form action="" class="mui-input-group">
-                <input type="hidden" name="memberid" value="{$mid}"> {notempty name="memberInfo.nickname"}
+                <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+                {notempty name="memberInfo.nickname"}
                 <div class="mui-input-row">
                     <label>微信昵称</label>
-                    <span>
-                        {$memberInfo['nickname']}</span>
+                    <span>{$memberInfo['nickname']}</span>
                 </div>
                 {/notempty}
 
                 <div class="mui-input-row">
                     <label>真实姓名</label>
-                    <input type="text" name="realname" value="" class="input realname" placeholder="请输入真实姓名" value="{$memberInfo.realname}">
+                    <input type="text" name="referee" class="input data" placeholder="请输入真实姓名" value="{$memberInfo.realname}">
                 </div>
 
                 {if empty($refereeCert)}
                 <div class="mui-input-row">
                     <label>身份证号码</label>
-                    <input type="text" name="idno" value="" class="input wd54 idno" placeholder="请输入身份证号码">
+                    <input type="text" name="idno" value="" class="input wd54 idno data" placeholder="请输入身份证号码">
                 </div>
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right filePicker" onclick="add_id(1)">
                         <label>身份证正面</label>
                         <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
-                        <input type="hidden" name="photo_positive" value="">
+                        <input class="data" type="hidden" name="photo_positive" value="">
                     </a>
                 </div>
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right filePicker" onclick="add_id(2)">
                         <label>身份证反面</label>
                         <img id="preview_2" class="coachicon icon01 upload-preview" alt="">
-                        <input type="hidden" name="photo_back" value="">
+                        <input class="data" type="hidden" name="photo_back" value="">
                     </a>
                 </div>
                 {/if}
@@ -81,14 +81,15 @@
                     <a class="mui-navigate-right portraits filePicker" onclick="add_id(3)">
                         <label>个人形象照</label>
                         <img id="preview_3" class="coachicon icon01 upload-preview">
-                        <input type="hidden" name="portraits" value=''>
+                        <input class="data" type="hidden" name="portraits" value=''>
                     </a>
                 </div>
 
                 <div class="mui-input-row">
                     <label>裁判等级</label>
                     <span class="select-row mui-navigate-right">
-                        <select name="level" id="level" class="pdr15">
+                        <select name="level" id="level" class="pdr15 data">
+                            <option value="">--请选择--</option>
                             <option value="1">国际级裁判员</option>
                             <option value="2">国家A级裁判员</option>
                             <option value="3">国家级裁判员</option>
@@ -105,42 +106,43 @@
                     <a class="mui-navigate-right filePicker" onclick="add_id(4)">
                         <label>资质证明</label>
                         <img id="preview_4" class="coachicon icon01 upload-preview" alt="">
-                        <input type="hidden" name="cert" value="">
+                        <input  class="data" type="hidden" name="cert" value="">
                     </a>
                 </div>
                 {/if}
 
                 <div class="mui-input-row">
                     <label>执裁经验</label>
-                    <input type="text" name="referee_year" value="" class="input referee_year" placeholder="请输入执裁年数">
+                    <input type="text" name="referee_year" value="" class="input referee_year data" placeholder="请输入执裁年数">
                 </div>
 
                 <div class="mui-input-row h-auto">
                     <label>执裁经验描述</label>
-                    <textarea rows="4" class="experience" placeholder="填写执裁经验"></textarea>
+                    <textarea class="data" rows="4" class="experience" placeholder="填写执裁经验"></textarea>
                 </div>
 
                 <div class="mui-input-row">
                     <label>执裁单场费用</label>
-                    <input type="text" name="appearance_fee" value="" class="input appearance_fee" placeholder="请输入执裁单场费用">
+                    <input type="text" name="appearance_fee" value="" class="input appearance_fee data" placeholder="请输入执裁单场费用">
                 </div>
 
                 <div class="mui-input-row" id='showCityPicker3'>
                     <a href="#" class="mui-navigate-right">
                         <label>接单地区范围</label>
-                        <span id="cityResult3" class="ui-alert location" style="color:#737373">
-                        </span>
+                        <span id="cityResult3" class="ui-alert"></span>
+                        <input type="hidden" name="province" value="" class="data" id="province">
+                        <input type="hidden" name="city" value="" class="data" id="city">
+                        <input type="hidden" name="area" value="" class="data" id="area">
                     </a>
-                    <input id="location-input" type="hidden" name="locationStr" value="">
                 </div>
 
                 <div class="mui-input-row h-auto">
                     <label>个人宣言</label>
-                    <textarea rows="4" class="description" placeholder="个人宣言"></textarea>
+                    <textarea rows="4" class="description data" placeholder="个人宣言"></textarea>
                 </div>
 
                 <div class="page-header" style="background: #efeff4;">
-                    <span class="course">自我介绍</span>
+                    <span class="course data">自我介绍</span>
                 </div>
 
                 <div class="mui-input-row tuwenEditor">
@@ -179,7 +181,7 @@
                 <a href="#userAgreement">已阅读并同意篮球管家用户协议（点击查看）</a>
             </div>
             <div class="tjbtn mb44">
-                <button type="button" class="mui-btn btn registerbtn2">注册</button>
+                <button type="button" class="mui-btn btn registerbtn2" onclick="submitAction();">注册</button>
             </div>
             <!--<p class="pass"><a href="{:url('index/index')}">[跳过，稍后完善]</a></p>-->
         </div>
@@ -202,6 +204,8 @@
     <script src="/static/frontend/js/mui.picker.min.js"></script>
     <script src="/static/frontend/js/mui.poppicker.js"></script>
     <script src="/static/frontend/js/city.data-3s.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script>
         var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
     </script>
@@ -247,9 +251,14 @@
                 showCityPickerButton.addEventListener('tap', function (event) {
                     cityPicker3.show(function (items) {
                         cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
-                        locationvalue.value = _getParam(items[0], 'text') + "|" + _getParam(items[1], 'text') + "|" + _getParam(items[2], 'text');
                         //返回 false 可以阻止选择框的关闭
                         //return false;
+                        getProvince = _getParam(items[0], 'text');
+                        getCity = _getParam(items[1], 'text');
+                        getArea = _getParam(items[2], 'text');
+                        document.getElementById('province').value = getProvince;
+                        document.getElementById('city').value = getCity;
+                        document.getElementById('area').value = getArea;
                     });
                 }, false);
 
@@ -275,101 +284,42 @@
                 }
             });
 
-            $(".registerbtn2").on("click", function () {
+        });
 
-                //图文编辑状态转换浏览状态
-                tuwenToView()
+        function submitAction() {
+            //图文编辑状态转换浏览状态
+            tuwenToView();
+            //获取最终含简单html标签的图文内容
+            var introHtml = $(".introBox").html();
+            $(".introduction").val(introHtml);
 
-                //获取最终含简单html标签的图文内容
-                var introHtml = $(".introBox").html();
-                /////////////////////////////////////////////////////////////////
-
-                var memberid = $('input[name=memberid]').val();
-                var realname = $('input[name=realname]').val();
-                var referee_year = $(".referee_year").val();
-                var experience = $(".experience").val();
-                var description = $(".description").val();
-                var locationStr = $('input[name=locationStr]').val();
-                var idno = $(".idno").val();
-                var portraits = $("input[name=portraits]").val();
-                var photo_positive = $('input[name=photo_positive]').val();
-                var photo_back = $('input[name=photo_back]').val();
-                var cert = $('input[name=cert]').val();
-                var level = $('input[name=level]').val();
-                var appearance_fee = $('input[name=appearance_fee]').val();
-
-                // if (!(/[\u4e00-\u9fa5a-zA-Z]{2,20}/).test(realname)) {
-                //     mui.toast("请输入您的真实姓名");
-                //     return false;
-                // } else if (!(/^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/).test(idno)) {
-                //     mui.toast("请输入正确身份证号码");
-                //     return false;
-                // } else if (portraits == "" || photo_positive == "" || photo_back == "" || cert == "") {
-                //     mui.toast("请上传对应证件");
-                //     return false;
-                // } else if (locationStr == "") {
-                //     mui.toast("请选择出场地区");
-                //     return false;
-                // } else if (!(/^\+?[1-9]\d*$/).test(referee_year)) {
-                //     mui.toast("执裁经验年数必须为数字");
-                //     return false;
-                // } else if (!(/^\+?[1-9]\d*$/).test(appearance_fee)) {
-                //     mui.toast("出场费必须为数字");
-                //     return false;
-                // } else if (level == "") {
-                //     mui.toast("请选择裁判员等级");
-                //     return false;
-                // } else if (experience == "" || introHtml == "" || description == '') {
-                //     mui.toast("请完善信息");
-                //     return false;
-                // } else if (!$('input[name=iagree]').is(':checked')) {
-                //     mui.toast("请阅读并同意篮球管家用户协议，谢谢");
-                //     return false;
-                // };
-
-                mui.confirm('确认提交填写信息吗?', '', ['取消', '确认'], function (e) {
-                    if (e.index == 1) {
-                        mui.ajax("{:url('api/referee/createRefereeApi')}", {
-                            data: {
-                                referee: realname,
-                                realname: realname,
-                                referee_year: referee_year,
-                                experience: experience,
-                                introduction: introHtml,
-                                description: description,
-                                portraits: portraits,
-                                locationStr: locationStr,
-                                photo_positive: photo_positive,
-                                photo_back: photo_back,
-                                cert: cert,
-                                level: level,
-                                appearance_fee: appearance_fee,
-                                idno: idno
-                            },
-                            dataType: 'json',//服务器返回json格式数据
-                            type: 'post',//HTTP请求类型
-                            timeout: 10000,//超时时间设置为10秒；
-                            headers: { 'Content-Type': 'application/json' },
-                            success: function (data) {
-                                if (data.code == 200) {
-                                    mui.alert(data.msg)
-                                    window.location.href = "{:url('referee/registersuccess')}";
-                                } else {
-                                    //图文转换成可编辑状态
-                                    tuwenToEdit()
-                                    mui.toast(data.msg);
-                                }
-                            },
-                            error: function (xhr, type, errorThrown) {
-                                console.log(type);
-                            }
-                        });
-                    }
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var introduction = $('textarea.introduction').val();
+            var description = $('textarea.description').val();
+            objData.introduction = introduction;
+            objData.description = description;
+            //console.log(objData);
+            var url = "{:url('api/referee/createreferee')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '注册成功', '确定', function () {
+                    //var goUrl = "{:url('team/teammanage')}" + '/team_id/' + ajaxResult.insid;
+                    //window.top.location.href = goUrl;
                 })
-
-            })
-
-        })
+            } else {
+                mui.alert(ajaxResult.msg, '注册失败');
+                tuwenToEdit(); //图文转换成可编辑状态
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
+        }
     </script>
 </body>
 
