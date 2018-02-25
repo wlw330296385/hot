@@ -201,13 +201,13 @@
 
             <!--最新赛事-->
             <div class="page-header border-b">
-                <span class="course">最新赛事</span>
+                <span class="course">最新赛事<span class="noDataTip"></span></span>
             </div>
             <ul class="mui-table-view detalis-list list mainInfo border-b newMatch"></ul>
 
             <!--赛事纪录-->
             <div class="page-header border-b">
-                <span class="course">赛事纪录</span>
+                <span class="course">赛事纪录<span class="noDataTip"></span></span>
                 <span class="more pdr15">
                     <a href="{:url('team/matchList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">更多</a>
                 </span>
@@ -216,13 +216,13 @@
 
             <!--最新活动-->
             <div class="page-header border-b">
-                <span class="course">最新活动</span>
+                <span class="course">最新活动<span class="noDataTip"></span></span>
             </div>
             <ul class="mui-table-view detalis-list list mainInfo border-b newEvent"></ul>
 
             <!--活动纪录-->
             <div class="page-header border-b">
-                <span class="course">活动纪录</span>
+                <span class="course">活动纪录<span class="noDataTip"></span></span>
                 <span class="more pdr15">
                     <a href="{:url('team/eventList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">更多</a>
                 </span>
@@ -255,28 +255,29 @@
 
             <!--球队印象-->
             <div class="page-header border-b">
-                <span class="course">球队印象</span>
+                <span class="course">球队印象<span class="noDataTip"></span></span>
                 <span class="more pdr15">
                     <a href="#Impress" class="mui-navigate-right myimpress">发表我的印象</a>
                 </span>
             </div>
-            <div class="impress whitebg tagCommentList mb"></div>
+            <!-- <div class="impress whitebg tagCommentList mb"></div> -->
+            <div class="impress whitebg tagCommentList border-b"></div>
 
             <!-- 球队介绍 -->
             <div class="page-header border-b">
-                <span class="course">球队介绍</span>
+                <span class="course">球队介绍<span class="noDataTip"></span></span>
             </div>
             <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell listli introBox">{$teamInfo.introduce}</li>
+                <li class="mui-table-view-cell listli introBox" style="padding:0 !important">{$teamInfo.introduce}</li>
             </ul>
 
             <!-- 球队评论 -->
             <div class="page-header whitebg border-b">
                 <span class="course wd52">评论</span>
                 <span class="more f14">评论
-                    <small class="comment_count">0</small>&nbsp;|&nbsp;
+                    <span class="comment_count">0</span>&nbsp;|&nbsp;
                     <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>&nbsp;
-                    <samll class="thumbup_count">0</samll>
+                    <span class="thumbup_count">0</span>
                 </span>
             </div>
             <ul class="mui-table-view comment-list"></ul>
@@ -436,7 +437,8 @@
             //球队详细介绍内容
             var introduce = '{$teamInfo.introduce}';
             if (introduce == '') {
-                $(".introBox").append("<p class='nohave' style='margin-left:0'>该球队还没有详细的图文简介哦</p>")
+                $(".introBox").append("<p class='nohave' style='margin-left:0'>该球队还没有图文简介哦</p>")
+                // $(".introBox").parents().prev().find(".noDataTip").append("（暂无数据）");
             }
 
             // 印象评价
@@ -722,7 +724,6 @@
             toLastEventList() //获取最新活动列表
             toLastMatchList(); //获取最新比赛列表
             toCommentList(); //获取评论列表
-
             toRecordEventList(); //活动纪录
             toRecordMatchList(); //赛事纪录
         });
@@ -881,7 +882,9 @@
                         $(".tagCommentList").empty();
                         $(".tagCommentList").append(div);
                     } else {
-                        $(".tagCommentList").append('<p class="mui-text-center">还没有印象标签哦</p>');
+                        // $(".tagCommentList").append('<p class="mui-text-center">还没有印象标签哦</p>');
+                        $(".tagCommentList").prev().find(".noDataTip").append("（暂无数据）");
+                        $(".tagCommentList").removeClass("impress");
                     }
                 },
                 error: function (xhr, type, errorThrown) {
@@ -990,7 +993,8 @@
                         $(".newEvent").empty().append(div);
                     }
                     if (data.code == 100) {
-                        $(".newEvent").empty().append('<p class="nohave">还没有活动数据，赶紧去创建活动吧</p>');
+                        // $(".newEvent").empty().append('<p class="nohave">还没有活动数据，赶紧去创建活动吧</p>');
+                        $(".newEvent").prev().find(".noDataTip").append("（暂无数据）");
                     }
                 },
                 error: function (xhr, type, errorThrown) {
@@ -1034,7 +1038,8 @@
                     }
                     $("ul.recordEvent").empty().append(newli);
                     if (newli == '') {
-                        $("ul.recordEvent").html('<p class="nohave">没有相关数据哦</p>');
+                        // $("ul.recordEvent").html('<p class="nohave">没有相关数据哦</p>');
+                        $(".recordEvent").prev().find(".noDataTip").append("（暂无数据）");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -1093,7 +1098,8 @@
                         $(".newMatch").empty().append(div);
                     }
                     if (data.code == 100) {
-                        $(".newMatch").empty().append('<p class="nohave">还没有比赛数据，赶紧去创建比赛吧</p>');
+                        // $(".noDataTip").empty().append('<p class="nohave">还没有比赛数据，赶紧去创建比赛吧</p>');
+                        $(".newMatch").prev().find(".noDataTip").append("（暂无数据）");
                     }
                 },
                 error: function (xhr, type, errorThrown) {
@@ -1144,7 +1150,8 @@
                     }
                     $("ul.recordMatch").empty().append(newli);
                     if (newli == '') {
-                        $("ul.recordMatch").html('<p class="nohave">没有相关数据哦</p>');
+                        // $("ul.recordMatch").html('<p class="nohave">没有相关数据哦</p>');
+                        $(".recordMatch").prev().find(".noDataTip").append("（暂无数据）");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
