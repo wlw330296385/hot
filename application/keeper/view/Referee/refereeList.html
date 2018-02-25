@@ -20,24 +20,27 @@
 </head>
 
 <body class=whitebg>
+
     <header id="header" class="mui-bar mui-bar-nav search2">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title"><input type="search" class="mui-input-clear keyword" placeholder="请输入裁判员姓名"></h1>
+        <h1 class="mui-title">
+            <input type="search" class="mui-input-clear keyword" placeholder="请输入裁判员姓名">
+        </h1>
         <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
     </header>
 
-
     <div class="mui-content">
+
         <div class="location-frame">
             <span class="location"></span>
             <span class="location-choise">
-                 <select id="areaSelect">
+                <select id="areaSelect">
                     <option value="">接单范围</option>
                     <option value="不限">不限</option>
                 </select>
             </span>
             <span class="location-choise">
-                <select name="level" id="levelSelect" >
+                <select name="level" id="levelSelect">
                     <option value="">裁判等级</option>
                     <option value="1">国际级裁判员</option>
                     <option value="2">国家A级裁判员</option>
@@ -45,7 +48,7 @@
                     <option value="4">一级裁判员</option>
                     <option value="5">二级裁判员</option>
                     <option value="6">三级裁判员</option>
-                    <option value="0" >未考级</option>
+                    <option value="0">未考级</option>
                 </select>
             </span>
         </div>
@@ -58,7 +61,7 @@
         </div>
 
         <!--底部操作-->
-        <ul class="mui-table-view operation mt">
+        <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-sm-12 mui-col-xs-12 opli bgblue">
                 <a href="/keeper/referee/createReferee">
                     注册裁判员
@@ -75,10 +78,10 @@
 <script src="/static/frontend/js/starshow.js"></script>
 <script src="/static/frontend/js/city.data-3.js"></script>
 <script>
-    mui("#refreshContainer").on("tap", "a", function () {
+
+    mui(".mui-content").on("tap", "a", function () {
         window.top.location.href = this.href;
     });
-
 
     $(function () {
 
@@ -174,7 +177,6 @@
         var toList = function (page, gType) {
             //搜索关键字不能完全为空，否则查询为空
             var url = "{:url('api/referee/searchRefereeListApi','','',true)}";
-
             mui.ajax({
                 url: url,
                 data: {
@@ -197,7 +199,7 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             var urls = "{:url('referee/refereeInfo')}" + '/referee_id/' + data.data[i].id;
                             var star = data.data[i].star;
-                            newli += '<li class="mui-table-view-cell mui-media listli list-wide"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body">' + data.data[i].referee + '<i class="icon iconfont icon-sex' + data.data[i].sex + '"></i><p class="mui-ellipsis">级别:' + data.data[i].referee_level + '&nbsp;&nbsp;执裁场次:<span class="colororange">' + data.data[i].total_played + '</span></p></div><div class="price-frame"><div class="icons mui-inline">' + data.data[i].appearance_fee + '</div><p class="address">出场费</p></div></a></li>'
+                            newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body wd52">' + data.data[i].referee + '<i class="icon iconfont icon-sex' + data.data[i].sex + '"></i><p class="mui-ellipsis">级别：' + data.data[i].referee_level + '&nbsp;&nbsp;执裁场次：<strong class="colororange">' + data.data[i].total_played + '</strong></p></div><div class="price-frame"><p class="colororange">' + data.data[i].appearance_fee + '</p><p class="address">出场费</p></div></a></li>'
                         }
                     }
                     if (gType == 1) {
@@ -225,7 +227,6 @@
                 }
             });
         };
-
 
     })
 
