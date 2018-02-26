@@ -1,20 +1,64 @@
 {extend name="layout/common"/}
-
+{block name="css"}
+<style>
+    .img-md {float:none;}
+</style>
+{/block}
 {block name="page-content"}
+
 <div class="panel panel-default panel-intro">
     <div class="panel-heading">
         <div class="panel-lead">
-            <em>控制台</em>
+            <em>会员管理</em>
         </div>
-        <ul class="nav nav-tabs">
-            <li class="active"><a href="" data-toggle="tab">控制台</a></li>
-            <li><a href="" data-toggle="tab">微信统计</a></li>
-        </ul>
     </div>
     <div class="panel-body">
-        Panel content
+        <div class="box no-border">
+            <!-- 主体 -->
+            <div class="box-body">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th class="text-center" >ID</th>
+                        <th class="text-center">用户名</th>
+                        <th class="text-center" >裁判员姓名</th>
+                        <th class="text-center">联系电话</th>
+                        <th class="text-center">执裁单场费用</th>
+                        <th class="text-center" >所在地区</th>
+                        <th class="text-center" >系统备注</th>
+                        <th class="text-center">注册时间</th>
+                        <th class="text-center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {volist name="refereeList" id="vo"}
+
+                    <tr>
+                        <td class="text-center">{$vo.id}</td>
+                        <td class="text-center">{$vo.member.member}</td>
+                        <td class="text-center">{$vo.referee}</td>
+                        <td class="text-center">{$vo.member.telephone}</td>
+                        <td class="text-center">{$vo.appearance_fee}</td>
+                        <td class="text-center">{$vo.province}-{$vo.city}-{$vo.area}</td>
+                        <td class="text-center">{$vo.system_remarks}</td>
+                        <td class="text-center">{$vo.create_time}</td>
+                        <td class="text-center">
+                            <a href="{:url('admin/referee/refereeInfo',['id'=>$vo['id']])}" class="btn btn-info" >详细</a>
+                        </td>
+
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+            </div>
+            {$refereeList->render()}
+        </div>
     </div>
 </div>
 
+{/block}
+
+
+{block name='js'}
 
 {/block}

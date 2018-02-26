@@ -1,6 +1,7 @@
 <?php 
 namespace app\api\controller;
 use app\api\controller\Base;
+use app\service\CertService;
 use app\service\RefereeService;
 use think\Exception;
 
@@ -15,15 +16,15 @@ class Referee extends Base{
     // 搜索裁判
     public function searchRefereeListApi(){
         try{
-            $map = input('post.');
+            $map = input('param.');
             $keyword = input('param.keyword');
             $referee_province = input('param.referee_province');
             $referee_city = input('param.referee_city');
             $referee_area = input('param.referee_area');
             $page = input('param.page')?input('param.page'):1;
-            $map['referee_province']=$referee_province;
-            $map['referee_city']=$referee_city;
-            $map['referee_area']=$referee_area;
+            $map['province']=$referee_province;
+            $map['city']=$referee_city;
+            $map['area']=$referee_area;
             foreach ($map as $key => $value) {
                 if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
@@ -56,15 +57,15 @@ class Referee extends Base{
     // 获取裁判分页(有页码)
     public function getRefereeListByPageApi(){
         try{
-            $map = input('post.');
+            $map = input('param.');
             $keyword = input('param.keyword');
             $referee_province = input('param.referee_province');
             $referee_city = input('param.referee_city');
             $referee_area = input('param.referee_area');
             $sex = input('param.sex');
-            $map['referee_province']=$referee_province;
-            $map['referee_city']=$referee_city;
-            $map['referee_area']=$referee_area;
+            $map['province']=$referee_province;
+            $map['city']=$referee_city;
+            $map['area']=$referee_area;
             foreach ($map as $key => $value) {
                 if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
@@ -96,7 +97,7 @@ class Referee extends Base{
     //获取裁判列表（有分页、没查询）
     public function getRefereeListApi(){
         try{
-            $map = input('post.');
+            $map = input('param.');
             $page = input('param.page')?input('param.page'):1;
             $result = $this->RefereeService->getRefereeList($map,$page);
              if($result){
@@ -110,11 +111,11 @@ class Referee extends Base{
     }
 
 
-    // 新建裁判
-    public function createreferee(){
+    // 注册裁判员信息
+    public function createReferee(){
         try{
             // 检查会员是否有裁判员数据
-            $hasReferee = $this->RefereeService->refereeInfo(['member_id' => $this->memberInfo['id']]);
+            $hasReferee = $this->RefereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
             if ($hasReferee) {
                 return json(['code' => 100, 'msg' => '您已注册裁判员，无需重复注册']);
             }
@@ -122,11 +123,39 @@ class Referee extends Base{
             $request = $this->request->post();
             $request['member_id'] = $this->memberInfo['id'];
             $request['member'] = $this->memberInfo['member'];
+
+            // 保存证件数据
+            $certS = new CertService();
+            if (!empty($request['cert'])) {
+                $certdata = [
+                    'camp_id' => 0,
+                    'member_id' => $this->memberInfo['id'],
+                    'cert_no' => 0,
+                    'cert_type' => 5,
+                    'photo_positive' => $request['cert']
+                ];
+                $cert = $certS->saveCert($certdata);
+                if ($cert['code'] == 100) {
+                    return json([ 'msg' => '裁判证件信息保存出错,请重试', 'code' => 100]);
+                }
+            }
+            if ( !empty($request['idno']) || !empty($request['photo_positive']) || !empty($request['photo_back']) ) {
+                $certdata1 = [
+                    'camp_id' => 0,
+                    'member_id' => $this->memberInfo['id'],
+                    'cert_no' => $request['idno'],
+                    'cert_type' => 1,
+                    'photo_positive' => $request['photo_positive'],
+                    'photo_back' => $request['photo_back']
+                ];
+                $cert1 = $certS->saveCert($certdata1);
+                if ($cert1['code'] == 100) {
+                    return json([ 'msg' => '身份证信息保存出错,请重试', 'code' => 100]);
+                }
+            }
+
             // 保存裁判员数据
             $result = $this->RefereeService->createReferee($request);
-            
-            // 保存证件数据
-
             // 返回结果
             return json($result);
         }catch (Exception $e){
@@ -134,67 +163,77 @@ class Referee extends Base{
         }
     }
 
-    public function updateRefereeApi(){
+    // 修改裁判员信息
+    public function updateReferee(){
         try{
-            $referee_id = input('param.referee_id');
-            if(!$referee_id){
-                return ['code'=>100,'msg'=>'找不到裁判信息'];
+            // 接收数据
+            $request = $this->request->post();
+            // 获取裁判员数据
+            $id = $request['id'];
+            $refereeInfo = $this->RefereeService->getRefereeInfo(['id' => $id]);
+            if (!$refereeInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+            }
+            if ($refereeInfo['member_id'] != $this->memberInfo['id']) {
+                return json(['code' => 100, 'msg' => '无权修改信息']);
             }
 
-            // 裁判数据
-            $refereedata = input('post.');
-            $refereedata['member_id'] = $this->memberInfo['id'];
-            $refereedata['member'] = $this->memberInfo['member'];
-            // 地区input 拆分成省 市 区 3个字段
-            // 地区input 拆分成省 市 区 3个字段
-            $locationStr = input('post.locationStr');
-            if ($locationStr) {
-                $locationArr = explode('|', $locationStr);
-                $refereedata['referee_province'] = $locationArr[0];
-                $refereedata['referee_city'] = $locationArr[1];
-                $refereedata['referee_area'] = $locationArr[2];
-            }
-            $refereeS = new RefereeService();
-            $result = $refereeS->updateReferee($refereedata,['id'=>$referee_id]);
-
-            if($result['code'] == 200 ){
-                $certS = new \app\service\CertService();
-                
-                
-                
-                // 资质证书
-                $certdata = [
-                    'camp_id' => 0,
-                    'member_id' => $this->memberInfo['id'],
-                    'cert_no' => 0,
-                    'cert_type' => 5,
-                    'photo_positive' => input('post.cert')
-                ];
-              
-                
-                $cert1 = $certS->saveCert($certdata);
-                if ($cert1['code'] == 100) {
-                    return json([ 'msg' => '裁判证件信息保存出错,请重试', 'code' => 100]);
-                }
-
-                if(input('post.idno')){
-                    // 实名数据
-                    $realnamedata = [
-                        'camp_id' => 0,
-                        'member_id' => $this->memberInfo['id'],
-                        'cert_no' => input('post.idno'),
-                        'cert_type' => 1,
-                        'photo_positive' => input('post.photo_positive'),
-                        'photo_back' => input('post.photo_back'),
-                    ];
-                    $cert2 = $certS->saveCert($realnamedata);
-                    if ($cert2['code'] == 100) {
-                        return json([ 'msg' => '身份证证件信息保存出错,请重试', 'code' => 100]);
+            // 修改了证件信息
+            $idcard = $license = [];
+            $certList = db('cert')->where(['member_id'=>$this->memberInfo['id']])->select();
+            if ($certList) {
+                foreach ($certList as $cert) {
+                    // 资质证书
+                    if ($cert['cert_type'] == 5) {
+                        $license = $cert;
+                    }
+                    // 身份证
+                    if ($cert['cert_type'] ==1) {
+                        $idcard = $cert;
                     }
                 }
-                
             }
-            
+            $certS = new CertService();
+            $certdata = [
+                'camp_id' => 0,
+                'member_id' => $this->memberInfo['id'],
+                'cert_no' => 0,
+                'cert_type' => 5,
+                'photo_positive' => $request['cert'],
+            ];
+            if ( $license && ($request['cert'] != $license['photo_positive']) ) {
+                $certdata['id'] = $license['id'];
+                $certdata['status'] = 0;
+                $request['status'] = 0;
+            }
+            $cert = $certS->saveCert($certdata);
+            if ($cert['code'] == 100) {
+                return json([ 'msg' => '裁判证件信息保存出错,请重试', 'code' => 100]);
+            }
+
+            $certdata1 = [
+                'camp_id' => 0,
+                'member_id' => $this->memberInfo['id'],
+                'cert_no' => $request['idno'],
+                'cert_type' => 1,
+                'photo_positive' => $request['photo_positive'],
+                'photo_back' => $request['photo_back']
+            ];
+            if ( $idcard &&
+                ($request['idno'] != $idcard['cert_no'] || $request['photo_positive'] != $idcard['photo_positive'] || $request['photo_back'] != $idcard['photo_back'] )
+            ) {
+                $certdata1['id'] = $idcard['id'];
+            }
+
+            $cert1 = $certS->saveCert($certdata1);
+            if ($cert1['code'] == 100) {
+                return json([ 'msg' => '身份证信息保存出错,请重试', 'code' => 100]);
+            }
+
+            // 修改裁判员数据
+            $request['member_id'] = $this->memberInfo['id'];
+            $result = $this->RefereeService->updateReferee($request);
+            // 返回结果
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -205,7 +244,7 @@ class Referee extends Base{
     public function isRefereeApi(){
         try{
             $member_id = input('param.member_id')? input('param.member_id'):$this->memberInfo['id'];
-            $result = $this->RefereeService->getRefereeInfo(['member_id'=>$member_id,'status'=>1]);
+            $result = $this->RefereeService->getRefereeInfo(['member_id'=>$member_id]);
             if($result){
                 return json(['code'=>200,'msg'=>'OK','data'=>$result]);    
             }else{

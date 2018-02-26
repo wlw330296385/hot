@@ -7,49 +7,21 @@
     <div class="col-sm-12 col-md-6">
         <div class="box box-info">
             <div class="box-header with-border">
-                <h3 class="box-title">会员 详细资料</h3>
+                <h3 class="box-title">裁判员 详细资料</h3>
             </div>
-            <form class="form-horizontal" method="post" action="">
-                <input type="hidden" id="referee-id" name="mid" value="{$refereeInfo.id}">
+            <form class="form-horizontal referee-form" method="post" action="">
+                <input type="hidden" id="referee-id" name="referee_id" value="{$refereeInfo.id}">
+                <input type="hidden" name="member_id" value="{$refereeInfo.member_id}">
                 {:token()}
                 <div class="box-body">
                     <div class="form-group">
-                        <div class="col-sm-2 control-label">ID</div>
-                        <div class="col-sm-5">
-                            {$refereeInfo.id}
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">用户名</div>
+                        <div class="col-sm-2 control-label">裁判员姓名</div>
                         <div class="col-sm-5">
                             {$refereeInfo.referee}
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
-                   
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">电话号码</div>
-                        <div class="col-sm-5">
-                            {$refereeInfo.member.telephone}
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">身份证</div>
-                        {volist name="certList" id="vol"}
-                        <div class="col-sm-5">
-                            {eq name="vol.cert_type" value="1"}
-                            <img src="{$vol.photo_positive}" class="img-thumbnail" alt="">
-                            {/eq}
-                        </div>
-                        <div class="col-sm-5">
-                            <img src="{$vol.photo_back}" class="img-thumbnail" alt="">
-                        </div>
-                        {/volist}
-                    </div>
-                    
+
                     <div class="form-group">
                         <div class="col-sm-2 control-label">性别</div>
                         <div class="col-sm-5">
@@ -61,16 +33,51 @@
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
-                    
                     <div class="form-group">
-                        <div class="col-sm-2 control-label">接单地区</div>
+                        <div class="col-sm-2 control-label">电话号码</div>
                         <div class="col-sm-5">
-                            {$refereeInfo.referee_province}-{$refereeInfo.referee_area}-{$refereeInfo.referee_city}
+                            {$refereeInfo.member.telephone}
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
-                    
-                    
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">接单地区</div>
+                        <div class="col-sm-5">
+                            {$refereeInfo.province}-{$refereeInfo.city}-{$refereeInfo.area}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">裁判等级</div>
+                        <div class="col-sm-5">
+                            {$refereeInfo.level_text}
+                            <input type="hidden" name="" value="{$refereeInfo.level}">
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">执裁经验</div>
+                        <div class="col-sm-5">
+                            {$refereeInfo.referee_year}（年）
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">执裁单场费用</div>
+                        <div class="col-sm-5">
+                            {$refereeInfo.appearance_fee}（元）
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">个人形象照</div>
+                        <div class="col-sm-5">
+                            {notempty name="refereeInfo.portraits"}
+                            <img src="{$refereeInfo.portraits}" class="img-thumbnail" alt="">
+                            {/notempty}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
                     <div class="form-group">
                         <div class="col-sm-2 control-label">注册时间</div>
                         <div class="col-sm-5">
@@ -79,9 +86,9 @@
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-2 control-label">个人备注</div>
+                        <div class="col-sm-2 control-label">系统备注</div>
                         <div class="col-sm-5">
-                            {$refereeInfo.remarks}
+                            <textarea  class="form-control" name="system_remarks" rows="3">{$refereeInfo.system_remarks}</textarea>
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
@@ -89,11 +96,21 @@
                         <div class="col-sm-2 control-label">状态</div>
                         <div class="col-sm-5">
                             {$refereeInfo.status}
-                            
                         </div>
                         <div class="col-sm-5">
-                            <a href="{:url('admin/referee/updateReferee',['status'=>1,'referee_id'=>$refereeInfo['id']])}" class="btn btn-warning" >通过</a>
-                            <a href="{:url('admin/referee/updateReferee',['status'=>2,'referee_id'=>$refereeInfo['id']])}" class="btn btn-danger" >拒绝</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <div class="form-group">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-10">
+                            {eq name="refereeInfo.status_num" value="0"}
+                            <button type="button" class="btn btn-success" onclick="check(1);">审核通过</button>
+                            <button type="button" class="btn btn-warnin" onclick="check(2);">审核不通过</button>
+                            {/eq}
+                            <!--<button type="sumit" class="btn btn-info" onclick="check(0);">修改信息</button>-->
+                        </div>
                     </div>
                 </div>
             </form>
@@ -106,56 +123,32 @@
             </div>
             <form class="form-horizontal refereeInfo-form" method="post" action="{:url('admin/referee/updateReferee')}">
                 <input type="hidden" id="refereeInfo-id" name="id" value="{$refereeInfo.id}">
-                {:token()}
                 <div class="box-body">
                     <div class="form-group">
                         <div class="col-sm-2 control-label">资质证书</div>
-                        {volist name="certList" id="vol"}
                         <div class="col-sm-5">
-                            {eq name="vol.cert_type" value="5"}
-                            <img src="{$vol.photo_positive}" class="img-thumbnail" alt="">
-                            <span>{if $vol.status==1}通过{else/}不通过{/if}</span>
-                            {/eq}
+                            {if condition="$license"}
+                            <img src="{$license.photo_positive}" class="img-thumbnail" alt="">
+                            {/if}
 
                         </div>
-                        <div class="col-sm-5">
-                            <img src="{$vol.photo_back}" class="img-thumbnail" alt="">
-                        </div>
-                        {/volist}
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">形象照</div>
-                        <div class="col-sm-5">
-                            <img src="{$refereeInfo.portraits}" class="img-thumbnail" alt="">
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    
-                    
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">申请时间</div>
-                        <div class="col-sm-5">
-                            {$refereeInfo.create_time}
-                        </div>
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-2 control-label">个人备注</div>
+                        <div class="col-sm-2 control-label">身份证</div>
+                        {if condition="$idcard"}
                         <div class="col-sm-5">
-                            {$refereeInfo.remarks}
+                            {notempty name="$idcard.photo_positive"}
+                            <img src="{$idcard.photo_positive}" class="img-thumbnail" alt="">
+                            {/notempty}
+                            <p>身份证：{$idcard.cert_no}</p>
                         </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">平台备注</div>
                         <div class="col-sm-5">
-                            <textarea  class="form-control" name="system_remarks" rows="3">{$refereeInfo.system_remarks}</textarea>
+                            {notempty name="$idcard.photo_back"}
+                            <img src="{$idcard.photo_back}" class="img-thumbnail" alt="">
+                            {/notempty}
                         </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        
-                        <input type="submit" class="form-control btn btn-success" value="提交备注">
+                        {/if}
                     </div>
                 </div>
              
@@ -168,40 +161,49 @@
 {block name="js"}
 <script>
     "use strict";
-    
-    $(function(){
-        $('.pop-iframe').click(function() {
-            var iframeurl = $(this).attr('data-href');
-            // alert(iframeurl);return;
-            var title = $(this).text();
-            layui.use('layer', function() {
-                var layer = layui.layer;
-                    
-                    layer.open({
-                    skin:'layui-layer-lan',
-                    type: 2,
-                    title: title,
-                    shadeClose: true,
-                    shade: false,
-                    maxmin: true, //开启最大化最小化按钮
-                    area: ['900px', '650px'],
-                    content: iframeurl
-                });
-            });
-        });
+    function check(status) {
+        var dataid = $('#referee-id').val();
+        var system_remarks = $("textarea[name='system_remarks']").val();
+        var member_id = $("input[name=member_id]").val();
+        switch ( status ) {
+            case 1:  {
+                var msg = '确定审核通过?';
+                if ( confirm(msg) === true ) {
+                    sendpost(dataid, status, '', member_id);
+                }
+                break;
+            }
+            case 2: {
+                var msg = '确定审核不通过?';
+                if ( confirm(msg) === true ) {
+                    if (system_remarks == "") {
+                        alert('请在系统备注填写不通过原因');
+                        return;
+                    }
+                    sendpost(dataid, status, system_remarks, member_id);
+                }
+                break;
+            }
+            default: {
+                $('.referee-form').submit();
+                break;
+            }
 
-    })
+        }
+    }
 
-    function sendpost(refereeInfo, code, sremarks) {
-        var serverurl = "{:url('refereeInfo/audit')}";
+    function sendpost(dataid, status, system_remarks, member_id) {
+        var serverurl = "{:url('referee/updateRefereeStatus')}";
         $.post(serverurl, {
-            refereeInfo: refereeInfo,
-            code: code,
-            sys_remarks: sremarks
+            id: dataid,
+            status: status,
+            system_remarks: system_remarks,
+            member_id: member_id
         }, function(res) {
+            console.log(res);
             alert(res.msg);
             if (res.status) {
-                location.href = res.goto;
+                location.href = "{:url('referee/index')}";
             } else {
                 location.reload();
             }

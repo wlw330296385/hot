@@ -71,7 +71,7 @@ class CertService {
             $res = $model->save($request);
         }
 
-        if ($res) {
+        if ($res || ($res === 0)) {
             $response = ['code' => 200, 'msg' => __lang('MSG_200')];
         } else {
             $response = ['code' => 100, 'msg' => __lang('MSG_400')];

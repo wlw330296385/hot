@@ -56,7 +56,7 @@
                     <input type="text" name="referee" class="input data" placeholder="请输入真实姓名" value="{$memberInfo.realname}">
                 </div>
 
-                {if empty($refereeCert)}
+                {if empty($idcard)}
                 <div class="mui-input-row">
                     <label>身份证号码</label>
                     <input type="text" name="idno" value="" class="input wd54 idno data" placeholder="请输入身份证号码">
@@ -90,23 +90,22 @@
                     <span class="select-row mui-navigate-right">
                         <select name="level" id="level" class="pdr15 data">
                             <option value="">--请选择--</option>
-                            <option value="1">国际级裁判员</option>
+                            <option value="1">国家级裁判员</option>
                             <option value="2">国家A级裁判员</option>
-                            <option value="3">国家级裁判员</option>
-                            <option value="4">一级裁判员</option>
-                            <option value="5">二级裁判员</option>
-                            <option value="6">三级裁判员</option>
+                            <option value="3">一级裁判员</option>
+                            <option value="4">二级裁判员</option>
+                            <option value="5">三级裁判员</option>
                             <option value="0">暂无考级</option>
                         </select>
                     </span>
                 </div>
 
-                {if empty($refereeCert)}
+                {if empty($lisence)}
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right filePicker" onclick="add_id(4)">
                         <label>资质证明</label>
                         <img id="preview_4" class="coachicon icon01 upload-preview" alt="">
-                        <input  class="data" type="hidden" name="cert" value="">
+                        <input class="data" type="hidden" name="cert" value="">
                     </a>
                 </div>
                 {/if}
@@ -118,7 +117,7 @@
 
                 <div class="mui-input-row h-auto">
                     <label>执裁经验描述</label>
-                    <textarea class="data" rows="4" class="experience" placeholder="填写执裁经验"></textarea>
+                    <textarea class="data experience" rows="4" name="experience" placeholder="填写执裁经验"></textarea>
                 </div>
 
                 <div class="mui-input-row">
@@ -298,10 +297,12 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
+            var experience = $('textarea.experience').val();
             var introduction = $('textarea.introduction').val();
             var description = $('textarea.description').val();
             objData.introduction = introduction;
             objData.description = description;
+            objData.experience = experience;
             //console.log(objData);
             var url = "{:url('api/referee/createreferee')}";
             var ajaxResult = wooApi.asyncF(url, objData);
