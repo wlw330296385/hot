@@ -32,6 +32,11 @@ class Index extends Controller{
     }
 
 
+    public function income(){
+        $billList = db('bill')->where('delete_time',null)->select();
+        dump($billList);
+    }
+
     public function follow(){
         $campmember = db('camp_member')->field('member,member_id,camp as follow_name,camp_id as follow_id,create_time')->where('delete_time',null)->select();
         $follow = new \app\model\Follow;

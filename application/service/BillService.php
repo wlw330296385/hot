@@ -205,18 +205,18 @@ class BillService {
         $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
         $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
         //结束课程操作
-            // 记录训练营课程营业额
-            $daytime = $data['pay_time'];
-            $dataCampFinance = [
-                'camp_id' => $data['camp_id'],
-                'camp' => $data['camp'],
-                'finance_type' => 1,
-                'lesson_turnover' => $data['balance_pay'],
-                'bill_id' => $data['id'],
-                'date' => date('Ymd', $daytime),
-                'datetime' => $daytime
-            ];
-            CampFinance::create($dataCampFinance);
+        // 记录训练营课程营业额
+        $daytime = $data['pay_time'];
+        $dataCampFinance = [
+            'camp_id' => $data['camp_id'],
+            'camp' => $data['camp'],
+            'finance_type' => 1,
+            'lesson_turnover' => $data['balance_pay'],
+            'bill_id' => $data['id'],
+            'date' => date('Ymd', $daytime),
+            'datetime' => $daytime
+        ];
+        CampFinance::create($dataCampFinance);
         }elseif ($data['goods_type'] == '活动') {
             // camp_member操作
             $CampMember = new CampMember;

@@ -225,7 +225,7 @@ class Patch extends Controller {
                     }
                     $incomeRebateCampId9 = 0.2;
                 }
-                if ($schedule['lesson_time'] > $month11['start'] && $schedule['lesson_time'] > $month11['end']) {
+                if ($schedule['lesson_time'] > $month11['start'] && $schedule['lesson_time'] < $month11['end']) {
                     if ($schedule['camp_id'] == 15) {
                         $incomeRebate = 0.8;
                         $incomeRebateCampId9 = 0.1;
@@ -234,7 +234,7 @@ class Patch extends Controller {
                         $incomeRebateCampId9 = 0.2;
                     }
                 }
-                if ($schedule['lesson_time'] > $month12['start'] && $schedule['lesson_time'] > $month12['end']) {
+                if ($schedule['lesson_time'] > $month12['start'] && $schedule['lesson_time'] < $month12['end']) {
                     if ($schedule['camp_id'] == 15) {
                         $incomeRebate = 0.8;
                         $incomeRebateCampId9 = 0.1;

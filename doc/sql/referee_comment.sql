@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50553
 File Encoding         : 65001
 
-Date: 2018-02-06 14:42:22
+Date: 2018-02-25 15:12:02
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -37,8 +37,10 @@ CREATE TABLE `referee_comment` (
   `create_time` int(10) NOT NULL,
   `update_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of referee_comment
 -- ----------------------------
+INSERT INTO `referee_comment` VALUES ('1', '0', '游客', '/static/default/avatar.png', '21', '准', '123123 ', '0.0', '0.0', '0.0', '0.0', '0.0', '1', '0', '1517900295', '0000-00-00 00:00:00');
+INSERT INTO `referee_comment` VALUES ('2', '8', 'woo123', 'https://wx.qlogo.cn/mmopen/vi_32/7hqMZOicFZ04xvw7WR5WgVg5SzczBuzkrmXeWQnCfTvIc0bvAMy1dfFFHOMCqUIQFDslM2x6Iq8n0zv9eG3gtLw/0', '21', 'legend', '123', '0.0', '0.0', '0.0', '0.0', '0.0', '1', '0', '1517911106', '0000-00-00 00:00:00');
