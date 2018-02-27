@@ -13,103 +13,119 @@ class Referee extends Base{
 
 	}
 
-    // 搜索裁判
-    public function searchRefereeListApi(){
-        try{
-            $map = input('param.');
-            $keyword = input('param.keyword');
-            $referee_province = input('param.referee_province');
-            $referee_city = input('param.referee_city');
-            $referee_area = input('param.referee_area');
-            $page = input('param.page')?input('param.page'):1;
-            $map['province']=$referee_province;
-            $map['city']=$referee_city;
-            $map['area']=$referee_area;
-            foreach ($map as $key => $value) {
-                if($value == ''|| empty($value) || $value==' '){
-                    unset($map[$key]);
+    // 裁判员列表（分页）
+    public function refereeListPage() {
+	    try {
+	        $map = input('param.');
+            // 关键字搜索
+            $keyword = input('keyword');
+            if (input('?param.keyword')) {
+                unset($map['keyword']);
+                // 关键字内容
+                if ($keyword != null) {
+                    if (!empty($keyword) || !ctype_space($keyword)) {
+                        $map['referee'] = ['like', "%$keyword%"];
+                    }
                 }
             }
-            if(!empty($sex)&&$sex!=''){
-                $map['sex'] = $sex;
-            }
-            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
-                $map['referee'] = ['LIKE','%'.$keyword.'%'];
-            } 
-            if( isset($map['keyword']) ){
+            // 关键字null情况处理
+            if ($keyword == null) {
                 unset($map['keyword']);
             }
-            if( isset($map['page']) ){
-                unset($map['page']);
-            }
-            // dump($map);die;
-            $refereeList = $this->RefereeService->getRefereeList($map,$page);
-            if($refereeList){
-                return json(['code'=>200,'msg'=>'OK','data'=>$refereeList]);
-            }else{
-                return json(['code'=>100,'msg'=>'OK','data'=>'']);
-            }
-        }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }
-    }
-
-    // 获取裁判分页(有页码)
-    public function getRefereeListByPageApi(){
-        try{
-            $map = input('param.');
-            $keyword = input('param.keyword');
-            $referee_province = input('param.referee_province');
-            $referee_city = input('param.referee_city');
-            $referee_area = input('param.referee_area');
-            $sex = input('param.sex');
-            $map['province']=$referee_province;
-            $map['city']=$referee_city;
-            $map['area']=$referee_area;
-            foreach ($map as $key => $value) {
-                if($value == ''|| empty($value) || $value==' '){
-                    unset($map[$key]);
+            // 默认区为空
+            if (input('?param.area')) {
+                if (empty($map['area'])) {
+                    unset($map['area']);
                 }
             }
-            if(!empty($sex)&&$sex!=''){
-                $map['sex'] = $sex;
+            // 默认等级为空
+            if (input('?param.level')) {
+                if (empty($map['level'])) {
+                    unset($map['level']);
+                }
             }
-            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
-                $map['referee'] = ['LIKE','%'.$keyword.'%'];
-            } 
-            if( isset($map['keyword']) ){
-                unset($map['keyword']);
-            }
-            if( isset($map['page']) ){
+            if (input('?param.page')) {
                 unset($map['page']);
             }
-            $refereeList = $this->RefereeService->getRefereeListByPage($map);
-            if($refereeList){
-                return json(['code'=>200,'msg'=>'OK','data'=>$refereeList]);
-            }else{
-                return json(['code'=>100,'msg'=>'OK','data'=>'']);
+            // 组合查询条件 end
+
+	        $res = $this->RefereeService->getRefereePaginator($map);
+	        if ($res) {
+	            $response = ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $res];
+            } else {
+	            $response = ['code' => 100, 'msg' => __lang('MSG_100')];
             }
-        }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
+            return json($response);
+        } catch (Exception $e) {
+	        return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
-
-    //获取裁判列表（有分页、没查询）
-    public function getRefereeListApi(){
-        try{
+    
+    // 裁判员列表
+    public function refereeList() {
+        try {
             $map = input('param.');
-            $page = input('param.page')?input('param.page'):1;
-            $result = $this->RefereeService->getRefereeList($map,$page);
-             if($result){
-               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
-            }else{
-                return json(['code'=>100,'msg'=>'ok']);
+            $page = input('param.page', 1);
+            // 关键字搜索
+            $keyword = input('keyword');
+            if (input('?param.keyword')) {
+                unset($map['keyword']);
+                // 关键字内容
+                if ($keyword != null) {
+                    if (!empty($keyword) || !ctype_space($keyword)) {
+                        $map['referee'] = ['like', "%$keyword%"];
+                    }
+                }
             }
-        }catch (Exception $e){
-            return json(['code'=>100,'msg'=>$e->getMessage()]);
+            // 关键字null情况处理
+            if ($keyword == null) {
+                unset($map['keyword']);
+            }
+            // 默认区为空
+            if (input('?param.area')) {
+                if (empty($map['area'])) {
+                    unset($map['area']);
+                }
+            }
+            // 默认等级为空
+            if (input('?param.level')) {
+                if (empty($map['level'])) {
+                    unset($map['level']);
+                }
+            }
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            // 组合查询条件 end
+
+            $res = $this->RefereeService->getRefereeList($map, $page);
+            if ($res) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $res];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_100')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
 
+    // 裁判员列表（所有数据无分页）
+    public function refereeListAll() {
+        try {
+            $map = input('param.');
+
+            $res = $this->RefereeService->getRefereeAll($map);
+            if ($res) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $res];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_100')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 
     // 注册裁判员信息
     public function createReferee(){
@@ -240,15 +256,15 @@ class Referee extends Base{
         }
     }
 
-    // 用户是否拥有裁判身份
-    public function isRefereeApi(){
+    // 获取会员的裁判员数据
+    public function getMemberReferee(){
         try{
             $member_id = input('param.member_id')? input('param.member_id'):$this->memberInfo['id'];
             $result = $this->RefereeService->getRefereeInfo(['member_id'=>$member_id]);
             if($result){
-                return json(['code'=>200,'msg'=>'OK','data'=>$result]);    
+                return json(['code'=>200,'msg'=>__lang('MSG_201'),'data'=>$result]);
             }else{
-                return json(['code'=>100,'msg'=>'OK','data'=>0]);    
+                return json(['code'=>100,'msg'=>__lang('MSG_000')]);
             }
                 
         }catch (Exception $e){

@@ -10,6 +10,19 @@ class RefereeService{
 		$this->RefereeModel = new Referee();
 	}
 
+    // 裁判等级文字获取器
+    private function getLevelTextAttr($value) {
+        $level = [
+            1 => '国家级裁判员',
+            2 => '国家A级裁判员',
+            3 => '一级裁判员',
+            4 => '二级裁判员',
+            5 => '三级裁判员',
+            0 => '暂无等级'
+        ];
+        return $level[$value];
+    }
+
 	/**
 	 * 查询裁判信息&&关联member表
 	 */
@@ -81,7 +94,7 @@ class RefereeService{
 
 
     // 裁判列表 分页
-    public function getRefereeListByPage( $map=[],$order='id desc',$paginate = 10) {
+    public function getRefereePaginator( $map=[],$order='id desc',$paginate = 10) {
         $res = $this->RefereeModel->with('member')
             ->where($map)
             ->order($order)
@@ -90,15 +103,28 @@ class RefereeService{
         return $res;
     }
 
-    // 裁判列表 分页
-    public function getRefereeList($map=[], $page=1, $order='id desc', $paginate = 10 ) {
-        $result = $this->RefereeModel->where($map)->order($order)->page($page,$paginate)->select();
-
+    // 裁判列表
+    public function getRefereeList($map=[], $page=1, $order='id desc', $limit = 10 ) {
+        $result = $this->RefereeModel->where($map)->order($order)->page($page,$limit)->select();
+        if ($result) {
+            foreach ($result as $k => $val) {
+                $result[$k]['level_text'] = $this->getLevelTextAttr($val['level']);
+            }
+        }
         return $result;
 
     }
 
-
+    // 裁判列表（无分页）
+    public function getRefereeAll($map=[], $order='id desc') {
+        $result = $this->RefereeModel->where($map)->order($order)->select();
+        if ($result) {
+            foreach ($result as $k => $val) {
+                $result[$k]['level_text'] = $this->getLevelTextAttr($val['level']);
+            }
+        }
+        return $result;
+    }
 
 
 
