@@ -22,11 +22,11 @@
             height: 20px;
             padding: 10px 0;
         }
+
         .mui-input-row a {
             display: table;
             width: 100%;
         }
-
     </style>
 </head>
 
@@ -40,64 +40,57 @@
     <div class="mui-content pt">
 
         <div class="register">
-            <form action="" class="mui-input-group">
+            <form action="" class="mui-input-group mb44">
                 <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
                 <input type="hidden" class="data" name="id" value="{$refereeInfo.id}">
-                {if !empty($idcard)}
+
+                <div class="mui-input-row">
+                    <label>真实姓名</label>
+                    <input type="text" name="referee" class="input realname data" placeholder="请输入真实姓名" value="{$refereeInfo.referee}">
+                </div>
+
+                <!-- {if !empty($idcard)} -->
                 <!-- 有上传身份证 -->
                 <div class="mui-input-row">
-                    <label>真实姓名</label>
-                    <input type="text" name="referee" class="input realname data" placeholder="请输入真实姓名" value="{$refereeInfo.referee}" {if $refereeInfo.status_num == 1 } disabled="disabled" {/if}>
-                </div>
-                <div class="mui-input-row">
                     <label>身份证号码</label>
-                    <input type="text" class="input wd54 data" name="idno" placeholder="请输入身份证号码"  value="{$idcard.cert_no}" {if $idcard.status == 1 }disabled="disabled"{/if}>
-                        
+                    <input type="text" class="input wd54 data" name="idno" placeholder="请输入身份证号码" value="{$idcard.cert_no}" >
                 </div>
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right filePicker" onclick="add_id(1)">
                         <label>身份证正面</label>
-                        <img id="preview_1" class="refereeicon icon01 upload-preview"  src="{$idcard.photo_positive}"
-                            alt="">
-                        <input type="hidden" class="data" name="photo_positive" value="{$idcard.photo_positive}">
+                        <img id="preview_1" class="refereeicon icon01 upload-preview" src="{$idcard.photo_positive}" alt="">
+                        <input type="hidden" class="data" name="photo_positive" value="{$idcard.photo_positive}" >
                     </a>
                 </div>
                 <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right filePicker"  onclick="add_id(2)">
+                    <a class="mui-navigate-right filePicker" onclick="add_id(2)">
                         <label>身份证反面</label>
-                        <img id="preview_2" class="refereeicon icon01 upload-preview" src="{$idcard.photo_back}"
-                             alt="">
-                        <input type="hidden" class="data" name="photo_back" value="{$idcard.photo_back}">
+                        <img id="preview_2" class="refereeicon icon01 upload-preview" src="{$idcard.photo_back}" alt="">
+                        <input type="hidden" class="data" name="photo_back" value="{$idcard.photo_back}" >
                     </a>
                 </div>
-                {else /}
+
+                <!-- {else /} -->
                 <!-- 没上传身份证 -->
-                <div class="mui-input-row">
-                    <label>真实姓名</label>
-                    <input type="text" name="referee" class="input realname data" placeholder="请输入真实姓名" value="">
-                </div>
-                <div class="mui-input-row">
+                <!-- <div class="mui-input-row">
                     <label>身份证号码</label>
-                    <input type="text" name="idno" class="input wd54 idno data" placeholder="请输入身份证号码" >
-                        
+                    <input type="text" name="idno" class="input wd54 idno data" placeholder="请输入身份证号码">
                 </div>
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right filePicker" onclick="add_id(1)">
                         <label>身份证正面</label>
-                        <img id="preview_1" class="refereeicon icon01 upload-preview" src=""
-                             alt="">
+                        <img id="preview_1" class="refereeicon icon01 upload-preview" src="" alt="">
                         <input type="hidden" name="photo_positive" class="data" value="">
                     </a>
                 </div>
                 <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right filePicker" onclick="add_id(2)" >
+                    <a class="mui-navigate-right filePicker" onclick="add_id(2)">
                         <label>身份证反面</label>
                         <img id="preview_2" class="refereeicon icon01 upload-preview" src="" alt="">
                         <input type="hidden" name="photo_back" class="data" value="">
                     </a>
-                </div>
-
-                {/if}
+                </div> -->
+                <!-- {/if} -->
 
 
                 <div class="mui-input-row h-auto">
@@ -108,6 +101,7 @@
                         <input type="hidden" class="data" name="portraits" value='{$refereeInfo.portraits}'>
                     </a>
                 </div>
+
                 <div class="mui-input-row">
                     <label>裁判等级</label>
                     <span class="select-row mui-navigate-right">
@@ -122,42 +116,42 @@
                         </select>
                     </span>
                 </div>
-                {if !empty($license)}
+                <!-- {if !empty($license)} -->
                 <!-- 有资质证明 -->
                 <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right filePicker"  onclick="add_id(4)">
+                    <a class="mui-navigate-right filePicker" onclick="add_id(4)">
                         <label>资质证明</label>
-                        <img id="preview_4" class="refereeicon icon01 upload-preview"  src="{$license.photo_positive}">
+                        <img id="preview_4" class="refereeicon icon01 upload-preview" src="{$license.photo_positive}">
                         <input type="hidden" class="data" name="cert" value="{$license.photo_positive}">
                     </a>
                 </div>
-                {else /}
+                <!-- {else /} -->
                 <!-- 无资质证明 -->
-                <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right filePicker"   onclick="add_id(4)" >
+                <!-- <div class="mui-input-row h-auto">
+                    <a class="mui-navigate-right filePicker" onclick="add_id(4)">
                         <label>资质证明</label>
-                        <img id="preview_4" class="refereeicon icon01 upload-preview"  src="" alt="">
+                        <img id="preview_4" class="refereeicon icon01 upload-preview" src="" alt="">
                         <input type="hidden" class="data" name="cert" value="">
                     </a>
-                </div>    
-                {/if}
-
+                </div>
+                {/if} -->
 
                 <div class="mui-input-row">
                     <label>执裁经验</label>
                     <input type="text" name="referee_year" class="input referee_year data" placeholder="请输入执裁年数" value="{$refereeInfo.referee_year}">
                 </div>
                 <div class="mui-input-row h-auto">
-                    <label>执裁经验描述</label>
-                    <textarea rows="5" class="data experience" name="experience" placeholder="填写执裁经验">{$refereeInfo.experience}</textarea>
+                    <label class="wd36">执裁经验描述</label>
+                    <textarea rows="4" class="data experience wd60" name="experience" placeholder="填写执裁经验">{$refereeInfo.experience}</textarea>
                 </div>
                 <div class="mui-input-row">
-                    <label>执裁单场费用</label>
-                    <input type="text" name="appearance_fee" value="{$refereeInfo.appearance_fee}" class="input appearance_fee data"  placeholder="请输入执裁单场费用" value="">
+                    <label class="wd36">执裁单场费用</label>
+                    <input type="text" name="appearance_fee" value="{$refereeInfo.appearance_fee}" class="input appearance_fee data wd60" placeholder="请输入执裁单场费用"
+                        value="">
                 </div>
                 <div class="mui-input-row" id='showCityPicker3'>
                     <a href="#" class="mui-navigate-right">
-                        <label>接单地区范围</label>
+                        <label class="wd36">接单地区范围</label>
                         <span id="cityResult3" class="ui-alert domData" name="address">{$refereeInfo.province} {$refereeInfo.city} {$refereeInfo.area}</span>
                         <input type="hidden" name="province" value="{$refereeInfo.province}" class="data" id="province">
                         <input type="hidden" name="city" value="{$refereeInfo.city}" class="data" id="city">
@@ -166,7 +160,7 @@
                 </div>
                 <div class="mui-input-row h-auto">
                     <label>个人宣言</label>
-                    <textarea rows="5" class="description" placeholder="个人宣言">{$refereeInfo.description}</textarea>
+                    <textarea rows="4" class="description" placeholder="个人宣言">{$refereeInfo.description}</textarea>
                 </div>
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">自我介绍</span>
@@ -196,15 +190,16 @@
                     </div>
                 </div>
                 <div class="page-header" style="background: #efeff4;">
+                    <img src="/static/frontend/images/hot.png" class="hotimg" alt="">
                     <span class="f12">温馨提示：点击添加均为插入一段文字或一张图片，不可换行，如需换行请再次点击添加。</span>
                 </div>
             </form>
-            <!--<span class="tip-box tip repassword_hint password_hint mobile_hint"></span>-->
 
-            <div class="tjbtn mb44">
-                <button type="button" class="mui-btn btn registerbtn2" onclick="submitAction();">提交</button>
-            </div>
-            <!--<p class="pass"><a href="{:url('index/index')}">[跳过，稍后完善]</a></p>-->
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgblue registerbtn2" onclick="submitAction()">
+                        提交
+                </li>
+            </ul>
         </div>
 
     </div>
@@ -265,7 +260,42 @@
             });
         })(mui, document);
 
+        $(function () {
+            // 设置裁判员等级
+            $('#level option[value="{$refereeInfo.level}"]').prop("selected", true);
+        })
+
         function submitAction() {
+
+            var hasIdCard = "{$hasidcard}";
+            var referee_year = $("input[name=referee_year]").val();
+            var appearance_fee = $("input[name=appearance_fee]").val();
+            var idno = $(".idno").val();
+            var photo_positive = $('input[name=photo_positive]').val();
+            var photo_back = $('input[name=photo_back]').val();
+            var cert = $('input[name=cert]').val();
+            if (!(/^[0-9]*$/).test(referee_year)) {
+                mui.toast("执裁经验请填写数字");
+                return false;
+            }
+            if (!(/^[0-9]*$/).test(appearance_fee)) {
+                mui.toast("执裁单场费用请填写数字");
+                return false;
+            }
+            if (!$('input[name=iagree]').is(':checked')) {
+                mui.toast("请阅读并同意篮球管家用户协议，谢谢");
+                return false;
+            };
+            if (hasIdCard == 0) {
+                if (!(/^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/).test(idno)) {
+                    mui.toast("请输入正确身份证号码");
+                    return false;
+                } else if (photo_positive == "" || photo_back == "" || cert == "") {
+                    mui.toast("请上传相关证件");
+                    return false;
+                }
+            };
+
             //图文编辑状态转换浏览状态
             tuwenToView();
             //获取最终含简单html标签的图文内容
@@ -288,8 +318,8 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
-                    //var goUrl = "{:url('team/teammanage')}" + '/team_id/' + ajaxResult.insid;
-                    //window.top.location.href = goUrl;
+                    var goUrl = "{:url('referee/refereemanage')}";
+                    window.top.location.href = goUrl;
                 })
             } else {
                 mui.alert(ajaxResult.msg, '修改失败');

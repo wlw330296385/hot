@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>裁判员首页</title>
+    <title>裁判员详情</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -26,12 +26,12 @@
     </header>
     <div class="mui-content">
 
-                <div class="list camp-list detalis-list referee mt55">
+        <div class="list camp-list detalis-list referee mt55">
             <ul class="mui-table-view mb" style="margin-top: -4px">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
                     <a href="javascript:;">
                         <img class="mui-media-object mui-pull-left refereeicon" src="{$refereeInfo.portraits}">
-                        <div class="mui-media-body">
+                        <div class="mui-media-body wd49">
                             {$refereeInfo.referee}
                             <i class="icon iconfont icon-sex{$refereeInfo.member.sex}"></i>
                             <p class="mui-ellipsis">执裁经验:{$refereeInfo.referee_year}年 | 等级:{$refereeInfo.level}</p>
@@ -45,7 +45,7 @@
                                         <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
                                     </div>
                                 </li>
-                                <li class="fr">{$refereeInfo.referee_area}</li>
+                                <li class="fr">{$refereeInfo.area}</li>
                             </ul>
                         </div>
                     </a>
@@ -55,7 +55,7 @@
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli detalisli listinitial">裁判宣言
                     <span class="description about">{$refereeInfo.description}
-                         <a href="javascript:void(0)">......全文展示</a>
+                        <a href="javascript:void(0)">......全文展示</a>
                     </span>
                 </li>
             </ul>
@@ -67,11 +67,14 @@
                         <img class="rzicon" src="/static/frontend/images/icon05.jpg">身份认证
                     </span>
                 </li>
+                <li class="mui-table-view-cell listli detalisli listinitial">裁判等级
+                    <span class="level">{$refereeInfo.level}</span>
+                </li>
                 <li class="mui-table-view-cell listli detalisli listinitial">执裁场次
                     <span>执裁过 {$refereeInfo.total_played} 场</span>
                 </li>
                 <li class="mui-table-view-cell listli detalisli listinitial">接单范围
-                    <span>{$refereeInfo.referee_province} {$refereeInfo.referee_city} {$refereeInfo.referee_area}</span>
+                    <span>{$refereeInfo.province} {$refereeInfo.city} {$refereeInfo.area}</span>
                 </li>
                 <li class="mui-table-view-cell listli detalisli listinitial">出场费用
                     <span>{$refereeInfo.appearance_fee}元/场</span>
@@ -79,14 +82,15 @@
             </ul>
 
             <!--裁判印象-->
-            <div class="page-header whitebg border-b">
+            <div class="page-header">
                 <span class="course">裁判印象</span>
                 <span class="more pdr15">
-                        <a href="#Impress" class="mui-navigate-right myimpress">发表我的印象</a>
-                    </span>
+                    <a href="#Impress" class="mui-navigate-right myimpress">发表我的印象</a>
+                </span>
             </div>
             <div class="impress whitebg tagCommentList mb"></div>
 
+            <!-- 裁判员简介-->
             <div class="page-header" style="background: #efeff4;">
                 <span class="course">裁判员简介</span>
             </div>
@@ -94,28 +98,23 @@
                 <li class="mui-table-view-cell listli introBox">{$refereeInfo.introduction}</li>
             </ul>
 
+            <!-- 会员评价 -->
             <div class="page-header">
-                <span class="course">会员评价</span>
+                <span class="course wd52">会员评价</span>
+                <span class="more f14">评论
+                    <span class="comment_count">0</span>
+                </span>
             </div>
-            <ul class="mui-table-view list min-height mui-text-center">
-                {volist name='commentList' id="vol" empty="暂无评论"}
-                <li class="mui-table-view-cell mui-media listli">
-                    <a href="javascript:;">
-                        <img class="mui-media-object mui-pull-left refereeicon" src="{$vol.avatar}">
-                        <div class="mui-media-body">
-                            {$vol.member}
-                            <p class="mui-ellipsis">{$vol.comment}</p>
-                        </div>
-                        <div class="price-frame">
-                            <p>{$vol.create_time|date='Y-m-d',###}</p>
-                        </div>
-                    </a>
+            <ul class="mui-table-view coach comment-list ">
+                {volist name='commentList' id="vol" empty="
+                <li class='nodata'>还没有评论哦</li>"}
+                <li class="mui-table-view-cell listli border-b">
+                    <div class="mui-pull-right">{$vol.create_time|date='Y-m-d',###}</div>
+                    <img class="mui-pull-left coachicon " src="{$vol.avatar}">{$vol.member}
+                    <p>{$vol.comment}</p>
                 </li>
                 {/volist}
             </ul>
-            <p class="dropdown">
-                <a href="#">查看更多评论...</a>
-            </p>
 
             <!--推荐人信息-->
             {notempty name="pmember"}
@@ -131,9 +130,10 @@
             </div>
             {/notempty}
 
+            <!-- 底部操作 -->
             <ul class="mui-table-view operation mt">
                 <li class="mui-table-view-cell mui-media mui-col-xs-2 opli">
-                    <a href="/frontend/">
+                    <a href="/keeper/">
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
                     </a>
                 </li>
@@ -189,14 +189,24 @@
                     <form action="" class="mui-input-group">
                         <div class="mui-input-row">
                             <div class="mui-navigate-right">
-                                <label class="wd49" style="padding: 14px 15px">对他的印象</label>
-                                <span>
-                                    此处列出所属球队（可能是多个队伍）的约赛记录
+                                <label style="padding: 14px 15px">所属球队</label>
+                                <span class="wd60">
+                                    约赛列表
                                 </span>
                             </div>
                         </div>
+                        <!-- <div class="mui-input-row">
+                            <div class="mui-navigate-right">
+                                <label style="padding: 14px 15px">裁判类型</label>
+                                <span class="select-row mui-navigate-right ">
+                                    <select name="type" id="type" class="data">
+                                        <option value="6">主裁判员</option>
+                                        <option value="7">副裁判员</option>
+                                    </select>
+                                </span>
+                            </div>
+                        </div> -->
                     </form>
-
                     <li class="listli">
                         <textarea rows="4" name="remarks" class="remarks"></textarea>
                     </li>
@@ -220,12 +230,28 @@
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
+
         $(function () {
 
             // 星星显示
             var star = Math.round("{$refereeInfo.star}" / "{$refereeInfo.star_num}");
             starShow(star);
 
+            // 裁判等级文字数字转换
+            var level = "{$refereeInfo.level}"
+            if (level == 1) {
+                $(".level").text("国家级裁判员");
+            } else if (level == 2) {
+                $(".level").text("国家A级裁判员");
+            } else if (level == 3) {
+                $(".level").text("一级裁判员");
+            } else if (level == 4) {
+                $(".level").text("二级裁判员");
+            } else if (level == 5) {
+                $(".level").text("三级裁判员");
+            } else if (level == 0) {
+                $(".level").text("暂无考级");
+            }
 
             // 印象评价
             $(document).on("tap", '.impressSide .choiseTag', function () {
@@ -240,10 +266,9 @@
                 $(".impressSide .bgorange").removeClass("bgorange");
             });
 
-
             //判断训练营宣言长度是否超过30字符
             var aboutlen = $(".about").text()
-            if(aboutlen.length<36){
+            if (aboutlen.length < 36) {
                 $(".about a").hide();
             }
             //展示训练营介绍全文
@@ -254,7 +279,6 @@
 
             //评价
             $("#commentSubmit").on('click', function () {
-
                 var comment = $('textarea.data').val();
                 if (comment == "" || comment == null) {
                     mui.toast("您没填写评论内容哦");
@@ -271,7 +295,6 @@
                     $(".moreComment").show();
                 }
             });
-
 
             // 关注裁判
             $(".follow").on("tap", '', function () {
@@ -301,8 +324,6 @@
                     }
                 });
             });
-
-
 
             // 发表印象标签
             $(".impressBtn").on("tap", '', function () {
@@ -353,11 +374,87 @@
             });
 
 
+
+            //邀请执裁
+            // $("#invitationSubmit").on('click', function () {
+
+            //     var remarks = $(".remarks").val();
+            //     var organization = $("option:selected").text();
+            //     var organization_id = $("option:selected").val();
+            //     if (remarks == '') {
+            //         mui.toast("你还没有写邀请理由哦！");
+            //         return false;
+            //     };
+            //     //没有邀请记录，可以邀请
+            //     mui.ajax("{:url('api/apply/createApplyApi')}", {
+            //         data: {
+            //             '__token__': "{$Request.token}",
+            //             "organization_type": 1,
+            //             "organization": organization,
+            //             "organization_id": organization_id,
+            //             "type": 2,
+            //             "remarks": remarks,
+            //             "apply_type": 2,
+            //             "apply_id": yid
+            //         },
+            //         dataType: 'json',//服务器返回json格式数据
+            //         type: 'post',//HTTP请求类型
+            //         timeout: 10000,//超时时间设置为10秒；
+            //         headers: { 'Content-Type': 'application/json' },
+            //         success: function (data) {
+            //             //服务器返回响应，根据响应结果，分析是否登录成功；
+            //             console.log(data);
+            //             if (data.code == 200) {
+            //                 mui.toast("邀请成功，待审核");
+            //                 mui('#invitation').popover('toggle');
+            //             } else {
+            //                 mui.toast(data.msg);
+            //                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+            //                     if (data.code === 200) {
+            //                         $('input[name=__token__]').val(data.data);
+            //                     }
+            //                 }, 'json');
+            //             }
+            //         },
+            //         error: function (xhr, type, errorThrown) {
+            //             //异常处理；
+            //             console.log(type);
+            //         }
+            //     });
+            // })
+
             toTagAllList(); //所有标签列表
             toTagCommentList(); //已经评价的标签列表
-            //判断当前的关注状态
-            followStatus();
+            followStatus() //判断当前的关注状态;
+            // friendList();
         });
+
+        // 所属球队约战列表
+        // function friendList() {
+        //     var member_id = "{$refereeInfo.member_id}";
+        //     mui.ajax("{:url('api/match/getMatchListOrderByDistanceApi')}", {
+        //         data: {
+        //             islive: 1,
+        //         },
+        //         dataType: 'json',//服务器返回json格式数据
+        //         type: 'post',//HTTP请求类型
+        //         timeout: 10000,//超时时间设置为10秒；
+        //         headers: { 'Content-Type': 'application/json' },
+        //         success: function (data) {
+        //             //服务器返回响应，根据响应结果，分析是否登录成功；
+        //             console.log(data);
+        //             if (data.code == 200) {
+        //                 mui.toast(data.msg);
+        //             } else {
+        //                 mui.toast(data.msg);
+        //             }
+        //         },
+        //         error: function (xhr, type, errorThrown) {
+        //             //异常处理；
+        //             console.log(type);
+        //         }
+        //     });
+        // };
 
         // 判断当前的关注状态
         function followStatus() {
@@ -391,7 +488,9 @@
         //获取所有标签列表
         function toTagAllList() {
             mui.ajax("{:url('api/tag/tagall')}", {
-                data: {comment_type:5},
+                data: {
+                    comment_type: 5
+                },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
@@ -407,7 +506,7 @@
                         $(".tagAll").append(div);
 
                         if (div == '') {
-                            $(".tagAll").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                            $(".tagAll").append('<li class="nohave"><p>没有相关数据哦</p></li>');
                         }
                     }
                 },
