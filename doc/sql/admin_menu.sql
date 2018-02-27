@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50553
 File Encoding         : 65001
 
-Date: 2018-02-02 15:48:31
+Date: 2018-02-27 18:56:02
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -34,7 +34,7 @@ CREATE TABLE `admin_menu` (
   `create_time` int(10) NOT NULL,
   `update_time` int(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=112 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=122 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin_menu
@@ -104,7 +104,6 @@ INSERT INTO `admin_menu` VALUES ('63', '3', 'admin', '教案审核', 'fa fa-cog'
 INSERT INTO `admin_menu` VALUES ('64', '4', 'admin', '订单详情', 'fa fa-cog', '0', 'admin/finance/bill', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('65', '4', 'admin', '收入记录列表', 'fa fa-cog', '0', 'admin/finance/salaryinlist', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('66', '4', 'admin', '收入详情记录', 'fa fa-cog', '0', 'admin/finance/salaryin', '_self', '0', '0', '1', '0', '0');
-INSERT INTO `admin_menu` VALUES ('67', '4', 'admin', '提现记录列表', 'fa fa-cog', '0', 'admin/finance/salaryoutlist', '_self', '1', '99', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('68', '4', 'admin', '提现详情', 'fa fa-cog', '0', 'admin/finance/salaryout', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('69', '4', 'admin', '订单对账', 'fa fa-cog', '0', 'admin/finance/reconciliation', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('70', '4', 'admin', '缴费统计', 'fa fa-cog', '0', 'admin/finance/tuitionstatis', '_self', '0', '0', '1', '0', '0');
@@ -132,20 +131,30 @@ INSERT INTO `admin_menu` VALUES ('91', '4', 'admin', '提现列表', 'fa fa-cog'
 INSERT INTO `admin_menu` VALUES ('92', '4', 'admin', '提现详情', 'fa fa-cog', '0', 'admin/finance/salaryOutInfo', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('93', '4', 'admin', '手动新增提现', 'fa fa-cog', '0', 'admin/finance/createSalaryOut', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('94', '4', 'admin', '操作提现申请', 'fa fa-cog', '0', 'admin/finance/updateSalaryOut', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('118', '0', 'admin', '新财务管理', 'fa fa-cog', '0', '', '_self', '1', '13', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('95', '0', 'admin', '卡券管理', 'fa fa-cog', '0', '', '_self', '1', '4', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('96', '95', 'admin', '卡券列表', 'fa fa-cog', '0', 'admin/Coupon/itemCouponList', '_self', '1', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('97', '95', 'admin', '添加卡券', 'fa fa-cog', '0', 'admin/Coupon/createitemCoupon', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('98', '1', 'admin', '首页api接口', 'fa fa-cog', '0', 'api/wx/getgroups', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('99', '5', 'admin', '会员详情', 'fa fa-cog', '0', 'admin/member/memberInfo', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('100', '5', 'admin', '添加推荐人', 'fa fa-cog', '0', 'admin/member/addReferer', '_self', '0', '0', '1', '0', '0');
-INSERT INTO `admin_menu` VALUES ('101', '0', 'admin', '文章管理', 'fa fa-cog', '0', 'admin/Article/articleList', '_self', '1', '90', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('101', '0', 'admin', '文章管理', 'fa fa-cog', '0', 'admin/Article/articleList', '_self', '1', '8', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('102', '101', 'admin', '添加文章', 'fa fa-cog', '0', 'admin/Article/createArticle', '_self', '1', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('103', '101', 'admin', '文章详情', 'fa fa-cog', '0', 'admin/Article/articleInfo', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('104', '101', 'admin', '编辑文章', 'fa fa-cog', '0', 'admin/Article/updateArticle', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('105', '101', 'admin', '文章列表', 'fa fa-cog', '0', 'admin/Article/articleList', '_self', '1', '0', '1', '0', '0');
-INSERT INTO `admin_menu` VALUES ('106', '0', 'admin', '平台礼包', 'fa fa-cog', '0', '', '_self', '1', '0', '1', '0', '0');
-INSERT INTO `admin_menu` VALUES ('107', '106', 'admin', '礼包列表', 'fa fa-cog', '0', 'admin/Bonus/bonusList', '_self', '1', '89', '1', '0', '0');
-INSERT INTO `admin_menu` VALUES ('108', '106', 'admin', '添加礼包', 'fa fa-cog', '0', 'admin/bonus/createBonus', '_self', '0', '0', '1', '0', '0');
-INSERT INTO `admin_menu` VALUES ('109', '106', 'admin', '礼包详情', 'fa fa-cog', '0', 'admin/bonus/bonusInfo', '_self', '0', '0', '1', '0', '0');
-INSERT INTO `admin_menu` VALUES ('110', '106', 'admin', '编辑礼包', 'fa fa-cog', '0', 'admin/bonus/updateBonus', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('106', '0', 'admin', '平台礼包', 'fa fa-cog', '0', '', '_self', '1', '12', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('107', '106', 'admin', '礼包列表', 'fa fa-cog', '0', 'admin/Bonus/bonusList', '_self', '1', '9', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('108', '106', 'admin', '添加礼包', 'fa fa-cog', '0', 'admin/Bonus/createBonus', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('109', '106', 'admin', '礼包详情', 'fa fa-cog', '0', 'admin/Bonus/bonusInfo', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('110', '106', 'admin', '编辑礼包', 'fa fa-cog', '0', 'admin/Bonus/updateBonus', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('111', '95', 'admin', '编辑卡券', 'fa fa-cog', '0', 'admin/Coupon/updateitemCoupon', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('112', '0', 'admin', '球队管理', 'fa fa-cog', '0', 'admin/Team/index', '_self', '1', '10', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('113', '0', 'admin', '裁判员管理', 'fa fa-cog', '0', 'admin/Keeper/Referee', '_self', '1', '11', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('114', '113', 'admin', '裁判员列表', 'fa fa-cog', '0', 'admin/Referee/RefereeList', '_self', '1', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('115', '113', 'admin', '裁判员详情', 'fa fa-cog', '0', 'admin/Referee/RefereeInfo', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('116', '113', 'admin', '编辑裁判员', 'fa fa-cog', '0', 'admin/Referee/UpdateReferee', '_self', '0', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('117', '3', 'admin', '编辑场地', 'fa fa-cog', '0', 'admin/court/edit', '_self', '0', '36', '1', '6', '6');
+INSERT INTO `admin_menu` VALUES ('119', '118', 'admin', '教练工资收入', 'fa fa-cog', '0', 'admin/Salaryin/coach', '_self', '1', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('120', '118', 'admin', '训练营收入', 'fa fa-cog', '0', 'admin/Income/camp', '_self', '1', '1', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('121', '118', 'admin', 'demo', 'fa fa-cog', '0', 'admin/salaryin/demo', '_self', '1', '1', '1', '0', '0');

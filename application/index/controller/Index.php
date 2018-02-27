@@ -55,6 +55,16 @@ class Index extends Controller{
         
     }
 
+    public function schedule(){
+        $list = db('schedule')->select();
+        foreach ($list as $key => $value) {
+            $lesson = db('lesson')->where(['id'=>$value['lesson_id']])->find();
+            if($lesson){
+                db('schedule')->where(['id'=>$value['id']])->update(['cost'=>$lesson['cost']]);
+            }
+        }
+    }
+
     public function follow(){
         $campmember = db('camp_member')->field('member,member_id,camp as follow_name,camp_id as follow_id,create_time')->where('delete_time',null)->select();
         $follow = new \app\model\Follow;
