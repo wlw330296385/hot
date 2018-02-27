@@ -570,38 +570,28 @@
 
 <!-- 平台礼包 -->
 
-{if $bonusInfo}
 <link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
 <div id="giftpopover" class="mui-popover">
         <div id="gift-open"></div>
         <span id="gift-close" class="mui-icon mui-icon-closeempty"></span>
-        <div class="page-header">
-            <h4>{$bonusInfo.bonus}</h4>
-            <p>{$bonusInfo.title}</p>
+        <div class="page-header" style="margin-top:40px;margin-left:25px;">
+            <img src="/static/frontend/images/logo_hor.png" width="40%" />
         </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll middle-coupon">
-                {volist name= 'couponList' id='vol'}
-                <div class="coupon">
-                    <div class="orangebg">
-                        <div class="cNum">{$vol.price}<span>元</span></div>
-                        <div class="cName">{$vol.coupon}</div>
-                        <div class="cDate">{$vol.start} 至 {$vol.end}</div>
-                        <i></i>
-                    </div>
-                    <div class="tips">
-                        <span>剩余领取：{$vol.max-$vol.publish}</span>
-                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>
-                    </div>
-                </div>
-                {/volist}
+        <div class="mui-scroll-wrapper"  style="top:105px;">
+            <div class="mui-scroll" style="padding: 10px 35px 15px;">
+                <p style="color:#666; padding-left:5px; padding-bottom:10px;">欢迎来到篮球管家服务平台，
+                    <br />为了给您提供更好更实用的功能体验，
+                    <br />请选择您的身份：</p>
+                <p><a href="{:url('frontend/index/wxindex', '', '', true)}"><button class="mui-btn mui-btn-block bgred" style="margin:0px;"><h4 style="margin-bottom: 10px;">培训管家</h4><span>学员/教练/训练营</span></button></a></p>
+                <p><a href="{:url('keeper/index/wxindex', '', '', true)}"><button class="mui-btn mui-btn-block  bgblue" style="margin:0px;"><h4 style="margin-bottom: 10px;">球队管家</h4><span>球员/球队/裁判</span></button></a></p>
             </div>
         </div>
-        <div class="hbTips"><a href="{$fasturl}">非会员注册后即可领取礼包，立即注册<span class="mui-icon mui-icon-forward"></span></a></div>
-    </div>
+        <div class="hbTips">BASKETBALL GUANJIA</div>
+</div>
 
 <script type="text/javascript">
-    var item_coupon_ids = JSON.stringify({$item_coupon_ids});
+
+
     var isBonus;
 
     isBonus = localStorage.getItem('isBonus');
@@ -611,9 +601,17 @@
         window.addEventListener('tap', function(e) {
             e.target.className == 'mui-backdrop mui-active' && e.stopPropagation();
         },true)
+
+        //获取当天日期，用于判断当天的本地存储
+        var getCurrDay = new Date();
+        var currDay = getCurrDay.getDate();
+        console.log(currDay);
+
         //打开获取大礼包
         // 如果本地没有存储与大礼包id相同的值,则弹出大礼包;
-        if(isBonus!={$bonusInfo['id']}){
+        if(isBonus!=currDay&&currDay!='19'&&currDay!='21'&&currDay!='22'){
+            $("#gift-open").css('background','#C02125 url("/static/frontend/images/'+currDay+'.jpg") no-repeat center center');
+            $("#gift-open").css('background-size','100%');
             mui("#giftpopover").popover('show', document.getElementById("tabbar"));
             $("#gift-open").animate({
                 width:'+=20px',
@@ -645,40 +643,10 @@
                 top:'-400px',
                 opacity:'0'
             },"fast");
-            if ({$memberInfo.id} == 0) {
-                mui.confirm('请注册成为篮球管家会员领取大礼包，感谢您的支持！', '提示', ['取消', '立即注册'], function (e) {
-                    if (e.index === 1) {
-                        window.location.href = "{$fasturl}";
-                    }
-
-                });
-            }else{
-                if({$item_coupon_ids}.length >0){
-                    // 领取礼包
-                    $.post(
-                        "{:url('api/bonus/grantBounusApi')}"
-                        ,{'bonus_id': {$bonusInfo.id}}
-                        ,function(msg){
-                            if(msg.code == 200){
-                                localStorage.setItem('isBonus',{$bonusInfo.id});
-                                mui.confirm('领取成功,查看获得的卡券?', '恭喜!', ['不,谢谢', '立即查看'], function (e) {
-                                    if (e.index === 1) {
-                                        
-                                        window.location.href = "{:url('frontend/coupon/itemcouponlist')}";
-                                    }
-                                });
-                            }else{
-                                mui.toast(msg.msg);
-                            }
-                        }
-                    );
-                }
-            }
+            localStorage.setItem('isBonus',currDay);
         });
     })
 </script>
-
-{/if}
 
 
 <!-- 平台礼包结束 -->
