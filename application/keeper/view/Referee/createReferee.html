@@ -19,13 +19,6 @@
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <style>
-        .regspan {
-            font-size: 12px;
-            text-align: center;
-            height: 20px;
-            padding: 10px 0;
-        }
-
         .mui-input-row a {
             display: table;
             width: 100%;
@@ -43,8 +36,7 @@
 
         <div class="register">
             <form action="" class="mui-input-group">
-                <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-                {notempty name="memberInfo.nickname"}
+                <input type="hidden" name="__token__" class="data" value="{$Request.token}" /> {notempty name="memberInfo.nickname"}
                 <div class="mui-input-row">
                     <label>微信昵称</label>
                     <span>{$memberInfo['nickname']}</span>
@@ -116,18 +108,18 @@
                 </div>
 
                 <div class="mui-input-row h-auto">
-                    <label>执裁经验描述</label>
-                    <textarea class="data experience" rows="4" name="experience" placeholder="填写执裁经验"></textarea>
+                    <label class="wd36">执裁经验描述</label>
+                    <textarea class="data experience wd60" rows="3" name="experience" placeholder="填写执裁经验"></textarea>
                 </div>
 
                 <div class="mui-input-row">
-                    <label>执裁单场费用</label>
-                    <input type="text" name="appearance_fee" value="" class="input appearance_fee data" placeholder="请输入执裁单场费用">
+                    <label class="wd36">执裁单场费用</label>
+                    <input type="text" name="appearance_fee" value="" class="input appearance_fee data wd60" placeholder="请输入执裁单场费用">
                 </div>
 
                 <div class="mui-input-row" id='showCityPicker3'>
                     <a href="#" class="mui-navigate-right">
-                        <label>接单地区范围</label>
+                        <label class="wd36">接单地区范围</label>
                         <span id="cityResult3" class="ui-alert"></span>
                         <input type="hidden" name="province" value="" class="data" id="province">
                         <input type="hidden" name="city" value="" class="data" id="city">
@@ -170,22 +162,26 @@
                 </div>
 
                 <div class="page-header" style="background: #efeff4;">
+                    <img src="/static/frontend/images/hot.png" class="hotimg" alt="">
                     <span class="f12">温馨提示：点击添加均为插入一段文字或一张图片，不可换行，如需换行请再次点击添加。</span>
                 </div>
 
             </form>
 
-            <div class="tip-box">
+            <div class="tip-box mb44">
                 <input name="iagree" type="checkbox" />&nbsp;
                 <a href="#userAgreement">已阅读并同意篮球管家用户协议（点击查看）</a>
             </div>
-            <div class="tjbtn mb44">
-                <button type="button" class="mui-btn btn registerbtn2" onclick="submitAction();">注册</button>
-            </div>
-            <!--<p class="pass"><a href="{:url('index/index')}">[跳过，稍后完善]</a></p>-->
+
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgblue registerbtn2" onclick="submitAction()">
+                    注册
+                </li>
+            </ul>
         </div>
     </div>
 
+    <!-- 篮球管家服务协议 -->
     <div id="userAgreement" class="mui-popover mui-popover-action mui-popover-bottom whitebg">
         <div class="page-header">
             <span class="course">
@@ -266,7 +262,6 @@
 
         //完善裁判员信息
         $(function () {
-
             //获取用户协议内容，放置弹出框中
             mui.ajax("{:url('frontend/member/userAgreement')}", {
                 data: {},
@@ -286,6 +281,36 @@
         });
 
         function submitAction() {
+
+            var hasIdCard = "{$hasidcard}";
+            var referee_year = $("input[name=referee_year]").val();
+            var appearance_fee = $("input[name=appearance_fee]").val();
+            var idno = $(".idno").val();
+            var photo_positive = $('input[name=photo_positive]').val();
+            var photo_back = $('input[name=photo_back]').val();
+            var cert = $('input[name=cert]').val();
+            if (!(/^[0-9]*$/).test(referee_year)) {
+                mui.toast("执裁经验请填写数字");
+                return false;
+            }
+            if (!(/^[0-9]*$/).test(appearance_fee)) {
+                mui.toast("执裁单场费用请填写数字");
+                return false;
+            }
+            if (!$('input[name=iagree]').is(':checked')) {
+                mui.toast("请阅读并同意篮球管家用户协议，谢谢");
+                return false;
+            };
+            if (hasIdCard == 0) {
+                if (!(/^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/).test(idno)) {
+                    mui.toast("请输入正确身份证号码");
+                    return false;
+                } else if (photo_positive == "" || photo_back == "" || cert == "") {
+                    mui.toast("请上传相关证件");
+                    return false;
+                }
+            };
+
             //图文编辑状态转换浏览状态
             tuwenToView();
             //获取最终含简单html标签的图文内容
@@ -308,8 +333,8 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '注册成功', '确定', function () {
-                    //var goUrl = "{:url('team/teammanage')}" + '/team_id/' + ajaxResult.insid;
-                    //window.top.location.href = goUrl;
+                    var goUrl = "{:url('referee/registerSuccess')}";
+                    window.top.location.href = goUrl;
                 })
             } else {
                 mui.alert(ajaxResult.msg, '注册失败');

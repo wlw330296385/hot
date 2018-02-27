@@ -49,6 +49,14 @@
                     <span class="more">更多</span>
                 </a>
             </div>
+
+            <!--裁判员-->
+            <div class="page-header mb referee" style="background-color: #FFF;">
+                <a href="{:url('referee/refereeManage')}" class="mui-navigate-right">
+                    <span class="course wd83">裁判员管理</span>
+                </a>
+            </div>
+
             <div class="myteam">
                 {volist name="myTeamList" id="vol"}
                 <div class="mb">
@@ -84,7 +92,7 @@
                 {/volist}
             </div>
 
-            
+
             <div class="hints mui-text-center hide whitebg">
                 <p>你还没加入任何球队哦</p>
                 <p>赶紧来查找或创建你的球队吧！</p>
@@ -120,15 +128,34 @@
     });
 
     $(function () {
-        myteam();
-    });
 
-    function myteam() {
         var html = $.trim($(".myteam").html())
         if (html == '') {
             $(".hints").show();
         }
-    }
+
+        // 裁判管理入口判断
+        mui.ajax("{:url('api/referee/getMemberReferee')}", {
+            data: {},
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data);
+                if (data.code == 200) {
+                    $(".referee").show();
+                } else {
+                    $(".referee").hide();
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                console.log(type);
+            }
+        });
+    });
+
 
 </script>
 

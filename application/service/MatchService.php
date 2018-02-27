@@ -346,24 +346,26 @@ class MatchService {
     }
 
     // 根据比赛战绩统计更新球队的比赛场数与胜场数
-    public function countTeamNumByRecord($map) {
+    public function countTeamMatchNumByRecord($homeTeamId=0, $awayTeamId=0) {
         $modelRecord = new MatchRecord();
         $dbTeam = db('team');
-        // 获取比赛战绩数据
-        $query = $modelRecord->where($map)->find();
-        if ($query) {
-            $res = $query->toArray();
-            $match = db('match')->where('id', $res['match_id'])->find();
-            if ($match['is_finished'] == 1) {
-                // 统计比赛胜方球队的胜场数
-                // 统计比赛球队的比赛数
-                $homeTeamWinNum = $modelRecord->where(['win_team_id' => $res['home_team_id']])->count();
-                $homeTeamMatchNum = $modelRecord->where('home_team_id|away_team_id', $res['home_team_id'])->count();
-                $awayTeamWinNum = $modelRecord->where(['win_team_id' => $res['away_team_id']])->count();
-                $awayTeamMatchNum = $modelRecord->where('home_team_id|away_team_id', $res['away_team_id'])->count();
-                $dbTeam->where('id', $res['home_team_id'])->update(['match_num' => $homeTeamMatchNum, 'match_win' => $homeTeamWinNum]);
-                $dbTeam->where('id', $res['away_team_id'])->update(['match_num' => $awayTeamMatchNum, 'match_win' => $awayTeamWinNum]);
-            }
+        // 主队存在数据记录
+        //$modelRelation = $modelRecord::hasWhere('match', ['is_finished' => 1]);
+        $homeTeam = $dbTeam->where(['id' => $homeTeamId])->whereNull('delete_time')->find();
+        if ($homeTeam) {
+            // 主队比赛场数、胜场数
+            $homeTeamMatchNum = $modelRecord::hasWhere('match', ['is_finished' => 1])->where('home_team_id|away_team_id', $homeTeamId)->count();
+            $homeTeamWinNum = $modelRecord::hasWhere('match', ['is_finished' => 1])->where(['win_team_id' => $homeTeamId])->count();
+            $dbTeam->where('id', $homeTeam['id'])->update(['match_num' => $homeTeamMatchNum, 'match_win' => $homeTeamWinNum]);
+        }
+
+        // 客队存在数据记录
+        $awayTeam = $dbTeam->where(['id' => $awayTeamId])->whereNull('delete_time')->find();
+        if ($awayTeam) {
+            // 客队比赛场数、胜场数
+            $awayTeamMatchNum = $modelRecord::hasWhere('match', ['is_finished' => 1])->where('home_team_id|away_team_id', $awayTeamId)->count();
+            $awayTeamWinNum = $modelRecord::hasWhere('match', ['is_finished' => 1])->where(['win_team_id' => $awayTeamId])->count();
+            $dbTeam->where('id', $awayTeam['id'])->update(['match_num' => $awayTeamMatchNum, 'match_win' => $awayTeamWinNum]);
         }
     }
 

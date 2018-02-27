@@ -9,14 +9,15 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css" />
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <!--等级星星样式-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css" />
+    <style>
+        /* 底部按钮点击去除背景颜色 */
+
+        .operation .opli a.mui-active {
+            background-color: inherit
+        }
+    </style>
 </head>
 
 <body class=whitebg>
@@ -42,12 +43,11 @@
             <span class="location-choise">
                 <select name="level" id="levelSelect">
                     <option value="">裁判等级</option>
-                    <option value="1">国际级裁判员</option>
+                    <option value="1">国家级裁判员</option>
                     <option value="2">国家A级裁判员</option>
-                    <option value="3">国家级裁判员</option>
-                    <option value="4">一级裁判员</option>
-                    <option value="5">二级裁判员</option>
-                    <option value="6">三级裁判员</option>
+                    <option value="3">一级裁判员</option>
+                    <option value="4">二级裁判员</option>
+                    <option value="5">三级裁判员</option>
                     <option value="0">未考级</option>
                 </select>
             </span>
@@ -107,7 +107,8 @@
             selectArea += '<option value="' + areaName + '">' + areaName + '</option>';
         });
         $('#areaSelect').append(selectArea);
-        //搜索教练
+
+        //搜索裁判
         $("#searchBtn").on("click", function () {
             keyword = $(".keyword").val();
             searchToList();
@@ -176,16 +177,16 @@
         //接口获取数据并追加到页面
         var toList = function (page, gType) {
             //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/referee/searchRefereeListApi','','',true)}";
+            var url = "{:url('api/referee/refereelist','','',true)}";
             mui.ajax({
                 url: url,
                 data: {
                     status: 1,
                     page: page,
-                    referee_province: sProvince,
-                    referee_city: sCity,
-                    referee_area: sArea,
-                    referee_area: sLevel,
+                    province: sProvince,
+                    city: sCity,
+                    area: sArea,
+                    level: sLevel,
                     keyword: keyword
                 },
                 dataType: 'json',//服务器返回json格式数据
@@ -194,12 +195,13 @@
                 headers: { 'Content-Type': 'application/json' },
                 //processData:false,
                 success: function (data) {
+                    console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             var urls = "{:url('referee/refereeInfo')}" + '/referee_id/' + data.data[i].id;
                             var star = data.data[i].star;
-                            newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body wd52">' + data.data[i].referee + '<i class="icon iconfont icon-sex' + data.data[i].sex + '"></i><p class="mui-ellipsis">级别：' + data.data[i].referee_level + '&nbsp;&nbsp;执裁场次：<strong class="colororange">' + data.data[i].total_played + '</strong></p></div><div class="price-frame"><p class="colororange">' + data.data[i].appearance_fee + '</p><p class="address">出场费</p></div></a></li>'
+                            newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body wd60">' + data.data[i].referee + '<i class="icon iconfont icon-sex' + data.data[i].sex + '"></i><p class="mui-ellipsis">等级：' + data.data[i].level_text + '&nbsp;&nbsp;执裁场次：<strong class="colororange">' + data.data[i].total_played + '</strong></p></div><div class="price-frame mui-text-center"><p class="colororange f16">' + data.data[i].appearance_fee + '</p><p class="address">出场费</p></div></a></li>'
                         }
                     }
                     if (gType == 1) {

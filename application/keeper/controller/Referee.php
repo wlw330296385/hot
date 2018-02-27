@@ -81,7 +81,8 @@ class Referee extends Base{
         }
         return view('Referee/createReferee', [
             'idcard' => $idcard,
-            'license' => $license
+            'license' => $license,
+            'hasidcard' => empty($idcard) ? 0 : 1
         ]);
     }
 
@@ -110,7 +111,8 @@ class Referee extends Base{
         return view('Referee/updateReferee', [
             'refereeInfo' => $refereeInfo,
             'idcard' => $idcard,
-            'license' => $license
+            'license' => $license,
+            'hasidcard' => empty($idcard) ? 0 : 1
         ]);
     }
 
