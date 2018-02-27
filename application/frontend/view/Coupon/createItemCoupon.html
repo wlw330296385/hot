@@ -20,20 +20,22 @@
             left: auto;
             right: 6px;
         }
-        
+
         .mui-input-row a {
             display: table;
             width: 100%;
         }
-        
+
         #eventDom .fl {
             text-align: left;
         }
-        .cancel-dom{
+
+        .cancel-dom {
             font-size: 16px;
             float: right;
-            margin:13px 10px;
+            margin: 13px 10px;
         }
+
         .target-input-row span {
             width: 60%;
             white-space: nowrap;
@@ -46,7 +48,9 @@
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
         <h1 class="mui-title">{$organizationInfo.camp}</h1>
         <input type="hidden" name="organization" value="{$organizationInfo.camp}" class="data">
         <input type="hidden" name="organization_id" value="{$organization_id}" class="data">
@@ -59,7 +63,7 @@
 
             <form action="" class="mui-input-group mt55">
 
-            
+
                 <div class="mui-input-row">
                     <label>礼品券名称</label>
                     <input type="text" name="coupon" class="data" value="" placeholder="请输入物品券名称,3-5个字">
@@ -70,9 +74,9 @@
                         <label>发行对象</label>
                         <span class="select-row ">
                             <select id="eventObject" class="data" name="target_type">
-                                <option value="3" >产生订单则赠送</option>
-                                <option value="2" >活动</option>
-                                <option value="1" >课程</option>
+                                <option value="3">产生订单则赠送</option>
+                                <option value="2">活动</option>
+                                <option value="1">课程</option>
                             </select>
                         </span>
                     </div>
@@ -137,13 +141,13 @@
                 </div>
                 <div class="mui-input-row">
                     <label>备注</label>
-                    <input type="text" name="remarks"  class="data" value="" placeholder="选填">
+                    <input type="text" name="remarks" class="data" value="" placeholder="选填">
                 </div>
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
                         <label>发布状态</label>
                         <span class="select-row freeStatus">
-                            <select  class="data" name="status">
+                            <select class="data" name="status">
                                 <option value="-1">暂不发布</option>
                                 <option value="1">立即发布</option>
                             </select>
@@ -188,6 +192,7 @@
                     </div>
                 </div>
                 <div class="page-header" style="background: #efeff4;">
+                    <img src="/static/frontend/images/hot.png" class="hotimg" alt="">
                     <span class="f12">温馨提示：点击添加均为插入一段文字或一张图片，不可换行，如需换行请再次点击添加。</span>
                 </div>
 
@@ -206,7 +211,9 @@
     <div id="target1" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
-            <span class="course"><strong>具体课程</strong></span>
+            <span class="course">
+                <strong>具体课程</strong>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -223,7 +230,9 @@
     <div id="target2" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
-            <span class="course"><strong>具体活动</strong></span>
+            <span class="course">
+                <strong>具体活动</strong>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -237,7 +246,7 @@
         </div>
     </div>
 
-   
+
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -290,7 +299,7 @@
                         var optionsJson = this.getAttribute('data-options') || '{}';
                         var options = JSON.parse(optionsJson);
                         var wTime = this.getElementsByTagName("span")[0];
-//                        var id = this.getAttribute('id');
+                        //                        var id = this.getAttribute('id');
                         var picker = new $.DtPicker(options);
 
                         picker.show(function (rs) {
@@ -327,14 +336,14 @@
             });
             // 选择活动对象显示隐藏具体对象
             $("#eventObject").change(function () {
-                if ($(this).val() == '1'||$(this).val() == '2') {
-                    $(".target-input-row a").attr("href","#target"+$(this).val());
+                if ($(this).val() == '1' || $(this).val() == '2') {
+                    $(".target-input-row a").attr("href", "#target" + $(this).val());
                     $(".target-input-row").show();
-                    $(".targetCont").addClass("domData").text('全部'+$(this).find('option:selected').text());
+                    $(".targetCont").addClass("domData").text('全部' + $(this).find('option:selected').text());
                     $(".target_id").addClass("data").val('0');;
-                }else{
+                } else {
                     $(".target-input-row").hide();
-                    $(".target-input-row a").attr("href","#");
+                    $(".target-input-row a").attr("href", "#");
                     $(".targetCont").removeClass("domData").text('');
                     $(".target_id").removeClass("data").val("");
                 }
@@ -407,7 +416,7 @@
                 }, 'json');
             }
         };
-      
+
     </script>
 </body>
 

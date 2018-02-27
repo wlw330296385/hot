@@ -135,6 +135,12 @@
                 opacity: 0;
             }
         }
+
+        /* 底部按钮点击去除背景颜色 */
+
+        .operation .opli a.mui-active {
+            background-color: inherit
+        }
     </style>
 </head>
 
@@ -205,7 +211,7 @@
 
             {notempty name="eventInfo.album"}
             <div class="mui-content-padded">
-                <div class="mui-row" style="min-height: 97px;max-height:288px;display: inline-block;">
+                <div class="mui-row" style="min-height: 97px;max-height:299px;overflow-y:hidden;">
                     {volist name="eventInfo.album" id="vol"}
                     <div class="mui-col-xs-4 mui-col-sm-4" style="padding:0 2px">
                         <img src="{$vol}" data-preview-src="" data-preview-group="1" style="width: 100%;height: 6rem;"> </div>
@@ -243,66 +249,57 @@
         <div class="page-header whitebg border-b">
             <span class="course wd52">评论</span>
             <span class="more">评论
-                <small class="comment_count">0</small>&nbsp;|&nbsp;
+                <span class="comment_count">0</span>&nbsp;|&nbsp;
                 <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>：
-                <samll class="thumbup_count">0</samll>
+                <span class="thumbup_count">0</span>
             </span>
         </div>
 
-        <ul class="mui-table-view comment-list"></ul>
+        <ul class="mui-table-view comment-list mt55"></ul>
 
         <!--底部操作-->
-        <ul class="mui-table-view operation mt status1" style="display:none">
-            <a href="#fbcomment">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12 opli bgblue">
-                    发表评论
-                </li>
-            </a>
-        </ul>
+        <ul class="mui-table-view operation mt">
 
-        <ul class="mui-table-view operation mt status2" style="display:none">
             <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
                 <a href="/keeper/">
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-10 mui-col-sm-10 opli bgred signupBtn">
+
+            <!-- 非队员已结束 -->
+            <li class="mui-table-view-cell mui-media mui-col-xs-10 mui-col-sm-10 opli bgblue status1 hide">
+                <a href="#fbcomment">
+                    发表评论
+                </a>
+            </li>
+
+            <!-- 队员未完成 -->
+            <li class="mui-table-view-cell mui-media mui-col-xs-10 mui-col-sm-10 opli bgred signupBtn status2 hide">
                 报名参加
             </li>
-        </ul>
 
-        <ul class="mui-table-view operation mt status3" style="display:none">
-            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="/keeper/">
-                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
-                </a>
-            </li>
-            <a href="#fbcomment">
-                <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgblue">
+            <!-- 领队以上身份已结束 -->
+            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgblue status3 hide">
+                <a href="#fbcomment">
                     发表评论
-                </li>
-            </a>
-            <a href="{:url('team/eventEdit',['team_id'=>$teamInfo['id'],'event_id'=>$eventInfo['id']])}">
-                <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bggreen">
-                    编辑/录入
-                </li>
-            </a>
-        </ul>
-
-        <ul class="mui-table-view operation mt status4" style="display:none">
-            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="/keeper/">
-                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgred signupBtn">
+            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bggreen status3 hide">
+                <a href="{:url('team/eventEdit',['team_id'=>$teamInfo['id'],'event_id'=>$eventInfo['id']])}">
+                    编辑/录入
+                </a>
+            </li>
+
+            <!-- 领队以上身份未完成 -->
+            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgred signupBtn status4 hide">
                 报名参加
             </li>
-            <a href="{:url('team/eventEdit',['team_id'=>$teamInfo['id'],'event_id'=>$eventInfo['id']])}">
-                <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bggreen">
+            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bggreen status4 hide">
+                <a href="{:url('team/eventEdit',['team_id'=>$teamInfo['id'],'event_id'=>$eventInfo['id']])}">
                     编辑/录入
-                </li>
-            </a>
+                </a>
+            </li>
+
         </ul>
 
     </div>
@@ -372,9 +369,9 @@
                 $(".status4").show();
             }
 
-            if (teamrole == 0 && is_finished == "已结束") {
+            if (teamrole < 0 && is_finished == "已结束") {
                 $(".status1").show();
-            } else if (teamrole == 0 && is_finished == "未开始") {
+            } else if (teamrole < 0 && is_finished == "未开始") {
                 $(".status2").show();
             }
 

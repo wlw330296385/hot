@@ -32,7 +32,8 @@
             height: 24px !important;
             line-height: 24px !important;
         }
-        .mui-backdrop{
+
+        .mui-backdrop {
             background: rgba(0, 0, 0, 0.69)
         }
 
@@ -65,6 +66,7 @@
                 height: 80% !important;
             }
         }
+
         @media screen and (min-width: 768px) {
             #giftpopover {
                 height: 85% !important;
@@ -255,7 +257,12 @@
                     <a href="" class="mui-navigate-right">更多</a>
                 </span>
             </div>
-            <ul class="mui-table-view detalis-list list mainInfo border-b newEvent"></ul>
+            <ul class="mui-table-view detalis-list list mainInfo border-b newdd">
+                <li class="nodata">
+                    <i class="icon iconfont icon-logo-Big"></i>
+                    <p>没有相关数据哦</p>
+                </li>
+            </ul>
 
             <div class="show-list hot-ads">
                 <img src="/static/frontend/images/ads1.jpg" />
@@ -587,7 +594,7 @@
                         $(".newEvent").empty().append(div);
                     }
                     if (data.code == 100) {
-                        $(".newEvent").empty().append('<p class="nodata">还没有活动数据，赶紧去创建活动吧</p>');
+                        $(".newEvent").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有活动数据，赶紧去创建活动吧</p></li>');
                     }
                 },
                 error: function (xhr, type, errorThrown) {
@@ -643,7 +650,7 @@
                         $(".newMatch").empty().append(div);
                     }
                     if (data.code == 100) {
-                        $(".newMatch").empty().append('<p class="nodata">还没有比赛数据，赶紧去创建比赛吧</p>');
+                        $(".newMatch").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有比赛数据，赶紧去创建比赛吧</p></li>');
                     }
                 },
                 error: function (xhr, type, errorThrown) {
@@ -693,7 +700,7 @@
                     }
                     $("ul.recordMatch").empty().append(newli);
                     if (newli == '') {
-                        $("ul.recordMatch").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
+                        $("ul.recordMatch").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -736,7 +743,7 @@
                     }
                     $("ul.recordEvent").empty().append(newli);
                     if (newli == '') {
-                        $("ul.recordEvent").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
+                        $("ul.recordEvent").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -797,100 +804,108 @@
                 {volist name= 'couponList' id='vol'}
                 <div class="coupon">
                     <div class="orangebg">
-                        <div class="cNum">{$vol.price}<span>元</span></div>
+                        <div class="cNum">{$vol.price}
+                            <span>元</span>
+                        </div>
                         <div class="cName">{$vol.coupon}</div>
                         <div class="cDate">{$vol.start} 至 {$vol.end}</div>
                         <i></i>
                     </div>
                     <div class="tips">
                         <span>剩余领取：{$vol.max-$vol.publish}</span>
-                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>
+                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情
+                            <span class="mui-icon mui-icon-forward"></span>
+                        </a>
                     </div>
                 </div>
                 {/volist}
             </div>
         </div>
-        <div class="hbTips"><a href="{$fasturl}">非会员注册后即可领取礼包，立即注册<span class="mui-icon mui-icon-forward"></span></a></div>
+        <div class="hbTips">
+            <a href="{$fasturl}">非会员注册后即可领取礼包，立即注册
+                <span class="mui-icon mui-icon-forward"></span>
+            </a>
+        </div>
     </div>
 
     <script type="text/javascript">
-        var item_coupon_ids = JSON.stringify({$item_coupon_ids});
+        var item_coupon_ids = JSON.stringify({ $item_coupon_ids });
         var isBonus;
 
         isBonus = localStorage.getItem('isBonus');
 
-        $(function(){
+        $(function () {
             //阻止点击弹出层以外地方退出弹出层
-            window.addEventListener('tap', function(e) {
+            window.addEventListener('tap', function (e) {
                 e.target.className == 'mui-backdrop mui-active' && e.stopPropagation();
-            },true)
+            }, true)
             //打开获取大礼包
-            if(!isBonus){
+            if (!isBonus) {
                 mui("#giftpopover").popover('show', document.getElementById("tabbar"));
                 $("#gift-open").animate({
-                    width:'+=20px',
-                    height:'+=20px',
-                    left:'-=10px',
-                    top:'-=10px',
-                },"fast",function(){$("#gift-open").animate({
-                    width:'-=20px',
-                    height:'-=20px',
-                    left:'+=10px',
-                    top:'+=10px',
-                },"fast")});
+                    width: '+=20px',
+                    height: '+=20px',
+                    left: '-=10px',
+                    top: '-=10px',
+                }, "fast", function () {
+                    $("#gift-open").animate({
+                        width: '-=20px',
+                        height: '-=20px',
+                        left: '+=10px',
+                        top: '+=10px',
+                    }, "fast")
+                });
             }
 
             //关闭大礼包弹出层
             mui("body").on("tap", "#gift-close", function () {
                 $("#giftpopover").animate({
-                    width:'-=40px',
-                    height:'-=40px',
-                    left:'+=20px',
-                    top:'+=20px',
-                },"fast");
+                    width: '-=40px',
+                    height: '-=40px',
+                    left: '+=20px',
+                    top: '+=20px',
+                }, "fast");
                 mui("#giftpopover").popover('hide');
             });
             //打开红包
             $("#gift-open").on("tap", "", function () {
-//            $(this).hide();
+                //            $(this).hide();
                 $(this).animate({
-                    top:'-400px',
-                    opacity:'0'
-                },"fast");
-                if ({$memberInfo.id} == 0) {
+                    top: '-400px',
+                    opacity: '0'
+                }, "fast");
+                if ({ $memberInfo.id } == 0) {
                     mui.confirm('请注册成为篮球管家会员领取大礼包，感谢您的支持！', '提示', ['取消', '立即注册'], function (e) {
                         if (e.index === 1) {
                             window.location.href = "{$fasturl}";
                         }
 
                     });
-                }else{
-                    if({$item_coupon_ids}.length >0){
+                } else {
+                    if ({ $item_coupon_ids }.length > 0) {
                         // 领取礼包
                         $.post(
                             "{:url('api/bonus/grantBounusApi')}"
-                            ,{'bonus_id': {$bonusInfo.id}}
-                    ,function(msg){
-                            if(msg.code == 200){
-                                localStorage.setItem('isBonus',1);
-                                mui.confirm('领取成功,查看获得的卡券?', '恭喜!', ['不,谢谢', '立即查看'], function (e) {
-                                    if (e.index === 1) {
+                            , { 'bonus_id': { $bonusInfo.id } }
+                            , function (msg) {
+                                if (msg.code == 200) {
+                                    localStorage.setItem('isBonus', 1);
+                                    mui.confirm('领取成功,查看获得的卡券?', '恭喜!', ['不,谢谢', '立即查看'], function (e) {
+                                        if (e.index === 1) {
 
-                                        window.location.href = "{:url('frontend/coupon/itemcouponlist')}";
-                                    }
-                                });
-                            }else{
-                                mui.toast(msg.msg);
+                                            window.location.href = "{:url('frontend/coupon/itemcouponlist')}";
+                                        }
+                                    });
+                                } else {
+                                    mui.toast(msg.msg);
+                                }
                             }
-                        }
-                    );
+                        );
                     }
                 }
             });
         })
-    </script>
-
-    {/if}
+    </script> {/if}
 </body>
 
 </html>

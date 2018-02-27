@@ -13,10 +13,13 @@ class RefereeService{
 	/**
 	 * 查询裁判信息&&关联member表
 	 */
-	public function refereeInfo($map){
+	public function getRefereeInfo($map){
         $res = Referee::with('member')->where($map)->find();
         if($res){
+            $getData = $res->getData();
             $result = $res->toArray();
+            $result['level_text'] = $res->level_text;
+            $result['status_num'] = $getData['status'];
             return $result;
         }else{
             return $res;
@@ -26,13 +29,21 @@ class RefereeService{
 	/**
 	 * 申请成为裁判
 	 */
-	public function createReferee($request){
-        $model = new Referee();
-        $result = $model->validate('RefereeVal')->save($request);
-        if ($result === false) {
-            return ['code' => 100, 'msg' => $model->getError()];
-        }else{
-            return ['code'=>200,'msg'=>__lang('MSG_200'),'data'=> $model->getLastInsID() ];
+	public function createReferee($data){
+	    // 验证数据
+        $validate = validate('RefereeVal');
+        if (!$validate->scene('add')->check($data)) {
+            return ['code' => 100, 'msg' => $validate->getError()];
+        }
+
+        // 插入数据
+        $data['status'] = isset($data['status']) ? $data['status'] : 0;
+        $res = $this->RefereeModel->allowField(true)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $this->RefereeModel->id];
+        } else {
+            trace('error:' . $this->RefereeModel->getError() . ', \n sql:' . $this->RefereeModel->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
 
@@ -40,170 +51,55 @@ class RefereeService{
 	/**
 	 * 裁判更改资料
 	 */
-	public function updateReferee($request,$map)
+	public function updateReferee($data)
     {
-        $model = new Referee();
-        $result = $model->validate('RefereeVal')->save($request, $map);
-        if ($result === false) {
-            return ['code' => 100, 'msg' => $model->getError()];
-        } else {
+        // 验证数据
+        $validate = validate('RefereeVal');
+        if (!$validate->scene('edit')->check($data)) {
+            return ['code' => 100, 'msg' => $validate->getError()];
+        }
+
+        // 修改数据
+        $res = $this->RefereeModel->allowField(true)->isUpdate(true)->save($data);
+        if ($res || ($res===0)) {
             return ['code' => 200, 'msg' => __lang('MSG_200')];
+        } else {
+            trace('error:' . $this->RefereeModel->getError() . ', \n sql:' . $this->RefereeModel->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
-	
 
-
-    // 裁判列表 分页
-    public function getRefereeListByPage( $map=[],$order='id desc',$paginate = 10) {
-        $res = Referee::with('member')->where($map)->order($order)->paginate($paginate);
-        return $res;
-    }
-    
-    public function updateRefereeStatus($request) {
-	    $result = Referee::update($request);
-	    if (!$result) {
-	        return [ 'msg' => __lang('MSG_400'), 'code' => 100 ];
-        }else{
-            return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $result];
-        }
-    }
 
     public function SoftDeleteCamp($id) {
         $result = Referee::destroy($id);
         if (!$result) {
-	        return [ 'msg' => __lang('MSG_400'), 'code' => 100 ];
+            return [ 'msg' => __lang('MSG_400'), 'code' => 100 ];
         } else {
             return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $result];
         }
     }
 
 
+    // 裁判列表 分页
+    public function getRefereeListByPage( $map=[],$order='id desc',$paginate = 10) {
+        $res = $this->RefereeModel->with('member')
+            ->where($map)
+            ->order($order)
+            ->paginate($paginate);
+
+        return $res;
+    }
 
     // 裁判列表 分页
     public function getRefereeList($map=[], $page=1, $order='id desc', $paginate = 10 ) {
         $result = $this->RefereeModel->where($map)->order($order)->page($page,$paginate)->select();
-        
+
         return $result;
-        
-    }
 
-
-    // 裁判列表 分页
-    public function getRefereeListOfCamp($map=[],$page = 1, $paginate = 10, $order='') {
-        $result = Db::view('camp_member','member_id,type')
-                ->view('referee','*','camp_member.member_id=referee.member_id')
-                ->where($map)
-                ->order($order)
-                ->page($page,$paginate)
-                ->select();
-        return $result;
     }
 
 
 
-     // 裁判列表 分页
-    public function getRefereeListOfCampByPage($map=[], $order='', $paginate = 10) {
-        $result = Db::view('camp_member','member_id,type')
-                ->view('referee','*','camp_member.member_id=referee.member_id')
-                ->where($map)
-                ->order($order)
-                ->paginate($paginate);
-        return $result;
-    }
-
-    public function getRefereeInfo($map){
-        $res = $this->RefereeModel->with('member')->where($map)->find();
-        if($res){
-            $result = $res->toArray();
-            return $result;
-        }else{
-            return $res;
-        }
-    }
-
-    // 裁判在训练营的班级列表
-    public function ingradelist($referee_id, $camp_id=0) {
-        $model = new Grade();
-        $map = [];
-        if ($camp_id) {
-            $map['camp_id'] = $camp_id;
-        }
-        $referee = $this->refereeInfo(['id' => $referee_id]);
-        $res = $model->where($map)
-            ->where('referee_id = :referee_id or assistant like :referee', ['referee_id' => $referee_id, 'referee' => "%".$referee['referee']."%"])
-            ->select();
-        if ($res) {
-            return $res->toArray();
-        } else {
-            return $res;
-        }
-    }
-
-    // 裁判在训练营的班级列表(有分页)
-    public function ingradelistPage($referee_id, $camp_id=0, $order='id desc', $paginate=10) {
-        $model = new Grade();
-        $map = [];
-        if ($camp_id) {
-            $map['camp_id'] = $camp_id;
-        }
-        $referee = $this->refereeInfo(['id' => $referee_id]);
-        $res = $model->where($map)
-            ->where('referee_id = :referee_id or assistant like :referee', ['referee_id' => $referee_id, 'referee' => "%".$referee['referee']."%"])
-            ->order($order)
-            ->paginate($paginate);
-        if ($res) {
-            return $res->toArray();
-        } else {
-            return $res;
-        }
-    }
-
-    // 裁判在训练营的课程列表
-    public function inlessonlist($referee_id, $camp_id) {
-        $model = new \app\model\Lesson();
-        $isrefereelist = $model->where(['camp_id' => $camp_id, 'referee_id' => $referee_id])->select();
-        if (!$isrefereelist) {
-            return $isrefereelist;
-        }
-        $isassistantlist = [];
-        $assistants = $model->where(['camp_id' => $camp_id])->select();
-        if (!$assistants) {
-            return $assistants;
-        }
-        $assistants = $assistants->toArray();
-
-        foreach ($assistants as $assistant) {
-            if ($assistant) {
-                $assistantId = unserialize($assistant['assistant_id']);
-                if ($assistantId) {
-                    foreach ($assistantId as $val) {
-                        if ($val && $val == $referee_id) {
-                            array_push($isassistantlist, $assistant);
-                        }
-                    }
-                }
-            }
-        }
-        $result = array_merge($isrefereelist->toArray(), $isassistantlist);
-        return $result;
-    }
-
-    // 裁判执教学员统计
-    public function teachstudents($referee_id) {
-        $grades = $this->ingradelist($referee_id);
-        if ($grades) {
-            //return $grades;
-            $gradeIds = [];
-            foreach ($grades as $grade) {
-                array_push($gradeIds, $grade['id']);
-            }
-            //dump($gradeIds);
-            $students = db('grade_member')->distinct(true)->field('member_id')->where(['grade_id'=>['in',$gradeIds],'type'=>1,'status'=>1])->where('delete_time', null)->count();
-            return $students;
-        } else {
-            return 0;
-        }
-    }
 
 
     // 创建裁判评论

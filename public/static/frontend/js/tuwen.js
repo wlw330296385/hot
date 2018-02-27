@@ -15,7 +15,8 @@ $(function () {
     $(document).bind("click",function(e){
         //点击introBoxh和mui-row-operation a之外则触发
         if($(e.target).closest(".introBox").length == 0 && $(e.target).closest(".mui-row-operation a").length == 0){
-            $(".introBox .operationDiv").removeClass("bgorange")
+            $(".introBox .operationDiv").removeClass("bgorange");
+            $(".introBox .operationDiv .delbtn").remove();
         }
     })
 
@@ -32,7 +33,7 @@ $(function () {
     });
 
     //添加活动详情标题
-    $(".titleClass").on('tap', '', function () {
+    $(document).on('tap', '.titleClass', function () {
         $(".introBox .operationDiv .delbtn").remove();
         var title = '<div class="operationDiv bgorange"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入标题" class="title"></div></div>';
         var getOptDiv = $(this).parentsUntil('.tuwenEditor').parent().find(".introBox");
@@ -41,11 +42,11 @@ $(function () {
         }else{
             getOptDiv.find(".bgorange").removeClass("bgorange").after(title);
         }
-
+        $(".bgorange>div").focus();
     });
 
     //添加活动详情正文
-    $(".textClass").on('tap', '', function () {
+    $(document).on('tap', '.textClass', function () {
         $(".introBox .operationDiv .delbtn").remove();
         var text = '<div class="operationDiv bgorange"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" class="textarea"></div></div>';
         var getOptDiv = $(this).parentsUntil('.tuwenEditor').parent().find(".introBox");
@@ -54,11 +55,13 @@ $(function () {
         }else{
             getOptDiv.find(".bgorange").removeClass("bgorange").after(text);
         }
+        $(".bgorange>div").focus();
     });
 
     //删除操作
-    $(document).on('tap', '.delbtn', function () {
+    $(document).on('tap', '.bgorange .delbtn', function () {
         $(this).parent().remove();
+        return false;
     });
 
     // 点击时把加上背景色去除和显示图标隐藏
@@ -69,10 +72,10 @@ $(function () {
         $(this).parent().addClass("bgorange");
     });
     // 焦点离开后把背景色去除和删除图标隐藏
-    $(document).on('blur', '.operationDiv div.title ,.operationDiv div.textarea, .operationDiv .desimg', function () {
-        $(this).siblings(".delbtn").remove();
-        // $(this).parent().removeClass("bgorange");
-    });
+    // $(document).on('blur', '.operationDiv div.title ,.operationDiv div.textarea, .operationDiv .desimg', function () {
+    //     $(this).siblings(".delbtn").remove();
+    //     // $(this).parent().removeClass("bgorange");
+    // });
 
     // 上移动
     $(document).on('tap', '.up', function () {

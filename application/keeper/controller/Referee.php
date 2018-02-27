@@ -64,42 +64,54 @@ class Referee extends Base{
 
     //裁判员注册
     public function createReferee(){
-        //判断是否已存在身份证
+        // 获取会员证件数据
+        $idcard = $license = [];
         $certList = db('cert')->where(['member_id'=>$this->memberInfo['id']])->select();
-        $credit = [];
-        $refereeCert = [];
-        foreach ($certList as $key => $value) {
-            if($value['cert_type'] == 5){
-                $refereeCert = $value;
-            }elseif($value['cert_type'] == 1){
-                $credit = $value;
+        if ($certList) {
+            foreach ($certList as $cert) {
+                // 资质证书
+                if ($cert['cert_type'] == 5) {
+                    $license = $cert;
+                }
+                // 身份证
+                if ($cert['cert_type'] ==1) {
+                    $idcard = $cert;
+                }
             }
         }
-        
-        $this->assign('credit',$credit);
-        $this->assign('refereeCert',$refereeCert);
-        return view('Referee/createReferee');
+        return view('Referee/createReferee', [
+            'idcard' => $idcard,
+            'license' => $license
+        ]);
     }
 
     public function updateReferee(){
         $referee_id = input('param.referee_id');
         $refereeInfo = $this->RefereeService->getRefereeInfo(['id'=>$referee_id]);
-        //判断是否已存在身份证
+        if (!$refereeInfo) {
+            $this->error(__lang('MSG_404'));
+        }
+        // 获取会员证件数据
+        $idcard = $license = [];
         $certList = db('cert')->where(['member_id'=>$this->memberInfo['id']])->select();
-        $credit = [];
-        $refereeCert = [];
-        foreach ($certList as $key => $value) {
-            if($value['cert_type'] == 5){
-                $refereeCert = $value;
-            }elseif($value['cert_type'] == 1){
-                $credit = $value;
+        if ($certList) {
+            foreach ($certList as $cert) {
+                // 资质证书
+                if ($cert['cert_type'] == 5) {
+                    $license = $cert;
+                }
+                // 身份证
+                if ($cert['cert_type'] ==1) {
+                    $idcard = $cert;
+                }
             }
         }
-        // dump($credit);die;
-        $this->assign('credit',$credit);
-        $this->assign('refereeCert',$refereeCert);
-        $this->assign('refereeInfo',$refereeInfo);
-        return view('Referee/updateReferee');
+        
+        return view('Referee/updateReferee', [
+            'refereeInfo' => $refereeInfo,
+            'idcard' => $idcard,
+            'license' => $license
+        ]);
     }
 
 
