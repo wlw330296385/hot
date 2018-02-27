@@ -62,7 +62,7 @@ class Lesson extends Base{
         // dump($couponListOfSystem);die;
         // 训练营卡券
         $couponListOfCamp = $ItemCoupon->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])->where($map)->select();
-        echo $ItemCoupon->getlastsql();die;
+        // echo $ItemCoupon->getlastsql();die;
         if($couponListOfCamp){
             $couponListOfCamp = $couponListOfCamp->toArray();
         }else{

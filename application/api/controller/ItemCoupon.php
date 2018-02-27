@@ -92,8 +92,8 @@ class ItemCoupon extends Base{
            if(isset($data['publish_ends'])){
                $data['publish_end'] = strtotime($data['publish_ends'])+86399;
            }
-            $result = $this->ItemCouponService->updateItemCoupon($data,$item_coupon_id);
-             return json($result);
+            $result = $this->ItemCouponService->updateItemCoupon($data,['id'=>$item_coupon_id]);
+            return json($result);
          }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
          }
