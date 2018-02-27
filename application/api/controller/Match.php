@@ -258,8 +258,10 @@ class Match extends Base
             $matchTimeStamp = strtotime($post['match_time']);
             // 比赛完成状态match is_finished标识
             $isFinished = 0;
-            // 提取输入比分变量
+            // 提取球队、比分变量
+            $homeTeamId = $post['record']['home_team_id'];
             $homeScore = $post['record']['home_score'];
+            $awayTeamId = $post['record']['away_team_id'];
             $awayScore = $post['record']['away_score'];
             // 提交is_finished=1 即比赛完成（match记录完成状态is_finished）
             if (isset($post['is_finished'])) {
@@ -397,7 +399,7 @@ class Match extends Base
                         return json(['code' => 100, 'msg' => '更新比赛信息失败']);
                     }
                     // 更新球队胜场数、比赛场数
-                    $matchS->countTeamNumByRecord(['id' => $recordData['id']]);
+                    $matchS->countTeamMatchNumByRecord($homeTeamId, $awayTeamId);
                     
                     // 比赛完成的操作
                     if ($isFinished == 1) {
@@ -519,7 +521,7 @@ class Match extends Base
                     // 保存参赛球队成员 end
 
                     // 更新球队胜场数、比赛场数
-                    $matchS->countTeamNumByRecord(['id' => $resultSaveMatchRecord['data']]);
+                    $matchS->countTeamMatchNumByRecord($homeTeamId, $awayTeamId);
                     // 比赛完成的操作
                     if ($isFinished == 1) {
                         // 保存球队历史比赛对手信息

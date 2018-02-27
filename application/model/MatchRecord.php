@@ -12,6 +12,6 @@ class MatchRecord extends Model {
     protected $deleteTime = 'delete_time';
     
     public function match() {
-        return $this->belongsTo('match');
+        return $this->belongsTo('match', 'match_id', 'id', [], 'left');
     }
 }
