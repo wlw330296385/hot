@@ -34,7 +34,25 @@ class Index extends Controller{
 
     public function income(){
         $billList = db('bill')->where('delete_time',null)->select();
-        dump($billList);
+        // $income = new \app\model\Income;
+        $output = new \app\model\Output;
+        foreach ($billList as $key => $value) {
+            if ($value['is_pay'] == 1 && $value['status']==-2) {
+
+                unset($value['id']);
+                $value['output'] = $value['refundamount'];
+                $value['type'] = 2;
+                $data[] = $value;
+                
+            }
+        }
+        // dump($data);
+        $output->saveAll($data);
+    }
+
+
+    public function output(){
+        
     }
 
     public function follow(){
