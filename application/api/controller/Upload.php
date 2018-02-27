@@ -36,11 +36,12 @@ class Upload {
                 // 压缩图片
                 $image->thumb($imageWidth/2, $imageHeight/2, Image::THUMB_CENTER)->save($saveDir . DS .$saveThumb);
                 $return['path'] = '/'. $dirName . DS . $saveThumb;
+                $return['url'] = '/'. $dirName . DS . $saveThumb;
             } else {
                 $return['error'] = 1;
                 $return['success'] = 0;
                 $return['status'] = 0;
-                $return['message'] = '上传出错:' . $file->getError();
+                $return['msg'] = '上传出错:' . $file->getError();
             }
         }
         return json($return);
