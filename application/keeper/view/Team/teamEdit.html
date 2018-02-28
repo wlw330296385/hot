@@ -182,12 +182,12 @@
                     </a>
                 </div>
 
-                <div class="mui-input-row price-input-row">
-                    <a href="#captain" class="mui-navigate-right">
-                        <label>队长</label>
-                        <span class="captain" name="captain">{$teamInfo.captain}</span>
-                        <input type="hidden" name="captain_id" value="{$teamInfo.captain_id}" class="data">
-                        <input type="hidden" name="captain" value="{$teamInfo.captain}" class="data">
+                <div class="mui-input-row">
+                    <a href="#manager" class="mui-navigate-right">
+                        <label>经理</label>
+                        <span class="manager data" name="manager">{$teamInfo.manager}</span>
+                        <input type="hidden" name="manager_id" value="{$teamInfo.manager_id}" class="manager_id data">
+                        <input type="hidden" name="manager" value="{$teamInfo.manager}" class="manager_id data">
                     </a>
                 </div>
 
@@ -200,18 +200,37 @@
                             <input type="hidden" class="coList" data-member_id="{$vol.member_id}" data-member="{$vol.member}"> {/volist}
                         </div>
                         <input type="hidden" name="coach_id" value="{$roleslist.coach_ids}" class="data">
+                        <input type="hidden" name="coach_member" value="{volist name="roleslist.coach_names" id="vol"}{$vol.member},{/volist}" class="data">
+                    </a>
+                </div>
+
+                <div class="mui-input-row price-input-row">
+                    <a href="#captain" class="mui-navigate-right">
+                        <label>队长</label>
+                        <span class="captain" name="captain">{$teamInfo.captain}</span>
+                        <input type="hidden" name="captain_id" value="{$teamInfo.captain_id}" class="data">
+                        <input type="hidden" name="captain" value="{$teamInfo.captain}" class="data">
+                    </a>
+                </div>
+                <div class="mui-input-row price-input-row">
+                    <a href="#viceCaptain" class="mui-navigate-right">
+                        <label>副队长</label>
+                        <span class="viceCaptain" name="vice_captain">{$teamInfo.vice_captain}</span>
+                        <input type="hidden" name="vice_captain_id" value="{$teamInfo.vice_captain_id}" class="data">
+                        <input type="hidden" name="vice_captain" value="{$teamInfo.vice_captain}" class="data">
                     </a>
                 </div>
 
                 <div class="mui-input-row price-input-row h-auto">
                     <a href="#committee" id="setCommitteeBox" class="mui-navigate-right">
-                        <label>队委</label>
+                        <label>后勤</label>
                         <span class="committee" name="committee" style="width: 60%">{volist name="roleslist.committee_names" id="vol"}{$vol.member},{/volist}</span>
                         <div id="hideCtList">
                             {volist name="roleslist.committee_names" id="vol"}
                             <input type="hidden" class="ctList" data-member_id="{$vol.member_id}" data-member="{$vol.member}"> {/volist}
                         </div>
                         <input type="hidden" name="committee_id" value="{$roleslist.committee_ids}" class="data">
+                        <input type="hidden" name="committee_member" value="{volist name="roleslist.committee_names" id="vol"}{$vol.member},{/volist}" class="data">
                     </a>
                 </div>
 
@@ -492,6 +511,24 @@
         </div>
     </div>
 
+    <!--经理-->
+    <div id="manager" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course">
+                <strong>经理</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="managerDel">清除</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list teamMemberList managerList"></ul>
+            </div>
+        </div>
+    </div>
+
     <!--队长-->
     <div id="captain" class="mui-popover">
         <div class="mui-popover-arrow"></div>
@@ -506,6 +543,24 @@
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <ul class="mui-table-view list teamMemberList captainList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!--副队长-->
+    <div id="viceCaptain" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course">
+                <strong>副队长</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="viceCaptainDel">清除</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list teamMemberList viceCaptainList"></ul>
             </div>
         </div>
     </div>
@@ -534,7 +589,7 @@
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
             <span class="course">
-                <strong>队委</strong>
+                <strong>后勤</strong>
             </span>
             <span class="fr">
                 <button class="mui-btn-blue" id="committeeConfirm">确认</button>
@@ -820,7 +875,23 @@
                 $("input[name=leader]").val("");
                 $("input[name=leader_id]").val("");
                 mui("#leader").popover("toggle");
-            })
+            });
+            // 选择领队
+            $(".managerList").on('tap', 'li', function () {
+                var manager = $(this).text();
+                $(".manager").text(manager);
+                var manager_id = $(this).attr('data-memberid');
+                $("input[name=manager_id]").val(manager_id);
+                $("input[name=manager]").val($(this).attr('data-member'));
+                mui("#manager").popover("toggle");
+            });
+            //清除领队
+            $("#managerDel").on('tap', '', function () {
+                $(".manager").text('');
+                $("input[name=manager]").val("");
+                $("input[name=manager_id]").val("");
+                mui("#manager").popover("toggle");
+            });
             // 选择队长
             $(".captainList").on('tap', 'li', function () {
                 var captain = $(this).text();
@@ -836,11 +907,28 @@
                 $("input[name=captain]").val("");
                 $("input[name=captain_id]").val("");
                 mui("#captain").popover("toggle");
-            })
+            });
+            // 选择副队长
+            $(".viceCaptainList").on('tap', 'li', function () {
+                var viceCaptain = $(this).text();
+                $(".viceCaptain").text(viceCaptain);
+                var viceCaptain_id = $(this).attr('data-memberid');
+                $("input[name=vice_captain_id]").val(viceCaptain_id);
+                $("input[name=vice_captain]").val($(this).attr('data-member'));
+                mui("#viceCaptain").popover("toggle");
+            });
+            //清除队长
+            $("#viceCaptainDel").on('tap', '', function () {
+                $(".viceCaptain").text('');
+                $("input[name=vice_captain]").val("");
+                $("input[name=vice_captain_id]").val("");
+                mui("#viceCaptain").popover("toggle");
+            });
             // 选择教练
             $("#coachConfirm").on('tap', '', function () {
                 $(".coach").empty();
                 $("input[name=coach_id]").val("");
+                $('input[name=coach_member]').val('');
                 $("#hideCoList").empty();
                 var coachMember = "";
                 var coachMember_id = "";
@@ -858,6 +946,7 @@
                     coachMemberList.push({ member: member, member_id: member_id });
                 });
                 $("#hideCoList").html(coList);
+                $('input[name=coach_member]').val(coachMember.substring(0, coachMember.length - 1));
                 console.log(coachMemberList)
                 mui("#coach").popover("toggle");
             });
@@ -879,6 +968,7 @@
             $("#committeeConfirm").on('tap', '', function () {
                 $(".committee").empty();
                 $("input[name=committee_id]").val("");
+                $('input[name=committee_member]').val('');
                 $("#hideCtList").empty();
                 var committeeMember = "";
                 var committeeMember_id = "";
@@ -896,6 +986,7 @@
                     committeeMemberList.push({ member: member, member_id: member_id });
                 });
                 $("#hideCtList").html(ctList);
+                $('input[name=committee_member]').val(committeeMember.substring(0, committeeMember.length - 1));
                 console.log(committeeMemberList)
                 mui("#committee").popover("toggle");
             });

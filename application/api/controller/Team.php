@@ -40,6 +40,7 @@ class Team extends Base
                     'team' => $data['name'],
                     'member_id' => $this->memberInfo['id'],
                     'member' => $this->memberInfo['member'],
+                    'telephone' => $this->memberInfo['telephone'],
                     'sex' => $this->memberInfo['sex'],
                     'avatar' => $this->memberInfo['avatar'],
                     'yearsexp' => $this->memberInfo['yearsexp'],
@@ -75,18 +76,28 @@ class Team extends Base
     public function updateteam()
     {
         try {
+            // 检测会员登录
+            if ($this->memberInfo['id'] === 0) {
+                return json(['code' => 100, 'msg' => '请先登录或注册会员']);
+            }
             $data = input('post.');
             $team_id = input('post.id');
-            $data['member_id'] = $this->memberInfo['id'];
             $teamS = new TeamService();
             //$teamS->saveTeamMemberRole($data, $team_id);
+            // 更新team_member_role
+            $resSaveRole = $teamS->saveTeamMemberRole($data, $team_id);
+
+            // 更新team_member_role 失败返回
+            if ($resSaveRole['code'] == 100) {
+                return json($resSaveRole);
+            }
+
             $result = $teamS->updateTeam($data, $team_id);
             if ($result['code'] == 200) {
-                // 更新team_member_role
-                $teamS->saveTeamMemberRole($data, $team_id);
                 // 更新team_member 球队名
                 db('team_member')->where('team_id', $team_id)->update(['team' => $data['name']]);
             }
+
             return json($result);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -208,7 +219,7 @@ class Team extends Base
     {
         try {
             // 检测会员登录
-            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+            if ($this->memberInfo['id'] === 0) {
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             // 检查球队信息是否有传入
@@ -289,7 +300,7 @@ class Team extends Base
     {
         try {
             // 检测会员登录
-            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+            if ($this->memberInfo['id'] === 0) {
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             // 接收参数 判断正确有无传参
@@ -442,7 +453,7 @@ class Team extends Base
     {
         try {
             // 检测会员登录
-            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+            if ($this->memberInfo['id'] === 0) {
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             $data = input('post.');
@@ -476,7 +487,7 @@ class Team extends Base
     {
         try {
             // 检测会员登录
-            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+            if ($this->memberInfo['id'] === 0) {
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             // 判断必传参数
@@ -541,7 +552,7 @@ class Team extends Base
     {
         try {
             // 检测会员登录
-            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+            if ($this->memberInfo['id'] === 0) {
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             // 判断必传参数
@@ -596,7 +607,7 @@ class Team extends Base
     {
         try {
             // 检测会员登录
-            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+            if ($this->memberInfo['id'] === 0) {
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             // 输入变量
@@ -782,7 +793,7 @@ class Team extends Base
     public function replyteaminvitation() {
         try {
             // 检测会员登录
-            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+            if ($this->memberInfo['id'] === 0) {
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             $apply_id = input('apply_id');
@@ -855,7 +866,7 @@ class Team extends Base
     public function addnoregmember() {
         try {
             // 检测会员登录
-            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+            if ($this->memberInfo['id'] === 0) {
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             // 接收输入变量，判断空值
@@ -1139,7 +1150,7 @@ class Team extends Base
     {
         try {
             // 检测会员登录
-            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+            if ( $this->memberInfo['id'] === 0) {
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             // 接收传参
@@ -1174,7 +1185,7 @@ class Team extends Base
     {
         try {
             // 检测会员登录
-            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+            if ($this->memberInfo['id'] === 0) {
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             // 接收传参
@@ -1413,7 +1424,7 @@ class Team extends Base
     {
         try {
             // 检测会员登录
-            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+            if ($this->memberInfo['id'] === 0) {
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             // 接收参数
@@ -1479,7 +1490,7 @@ class Team extends Base
     {
         try {
             // 检测会员登录
-            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+            if ( $this->memberInfo['id'] === 0) {
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             // 接收参数
@@ -1660,7 +1671,7 @@ class Team extends Base
     {
         try {
             // 检测会员登录
-            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+            if ( $this->memberInfo['id'] === 0) {
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             // 将接收参数作提交数据
@@ -1710,7 +1721,7 @@ class Team extends Base
     {
         try {
             // 检测会员登录
-            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+            if ( $this->memberInfo['id'] === 0) {
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             // 将接收参数作提交数据

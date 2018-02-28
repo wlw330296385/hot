@@ -288,17 +288,34 @@ class TeamService
     // 保存team_member_role 会员-球队角色关联信息
     public function saveTeamMemberRole($data, $team_id)
     {
+        // 提交数据验证
+        // "领队"不能为空
+        if (empty($data['leader_id'])) {
+            return ['code' => 100, 'msg' => '必须填写领队'];
+        }
+        // "队长"、"副队长"不能同一人
+        if ( !empty($data['captain_id']) && !empty($data['vice_captain_id']) ) {
+            if ( $data['captain_id'] == $data['vice_captain_id'] && $data['captain'] == $data['vice_captain'] ) {
+                return ['code' => 100, 'msg' => '队长，副队长不允许同一人'];
+            }
+        }
+        // 提交数据验证 end
+
         $model = new TeamMemberRole();
+        // 获取team数据
+        $teamInfo = $this->getTeam(['id' => $team_id]);
         // 修改数组定义
         $saveAlldata = [];
-        // 查询当前领队数据（领队一个）
-        $roleLeader = $model->where(['team_id' => $team_id, 'type' => 4])->find();
+
+        // 查询当前"领队"数据（领队一个）
+        $roleLeader = $model->where(['team_id' => $team_id, 'member_id' => $data['leader_id'], 'member' => $data['leader'], 'type' => 5])->find();
         if (!$roleLeader) {
             // 直接插入新数据
             array_push($saveAlldata, [
-                'type' => 4,
+                'type' => 5,
                 'team_id' => $team_id,
                 'member_id' => $data['leader_id'],
+                'member' => $data['leader'],
                 'status' => 1
             ]);
         } else {
@@ -307,47 +324,136 @@ class TeamService
             if ($roleLeader['member_id'] != $data['leader_id']) {
                 array_push($saveAlldata, [
                     'id' => $roleLeader['id'],
-                    'member_id' => $data['leader_id']
+                    'member_id' => $data['leader_id'],
+                    'member' => $data['leader']
                 ]);
             }
         }
-        // 查询当前队长数据（队长一个）
-        $roleCaptain = $model->where(['team_id' => $team_id, 'type' => 3])->find();
-        if (!$roleCaptain) {
-            // 直接插入新数据
-            array_push($saveAlldata, [
-                'type' => 3,
-                'team_id' => $team_id,
-                'member_id' => $data['leader_id'],
-                'status' => 1
-            ]);
+
+        // 提交"经理"为空
+        if (empty($data['manager_id'])) {
+            // 如原有"经理"数据 则删除数据关系|无数据 不操作
+            if ( $teamInfo['manager_id'] && !empty($teamInfo['manager']) ) {
+                $roleManager = $model->where(['team_id' => $team_id, 'member_id' => $teamInfo['manager_id'], 'member' => $teamInfo['manager'], 'type' => 5])->find();
+                if ($roleManager) {
+                    $roleManager = $roleManager->toArray();
+                    if ($roleManager['member_id'] != $data['manager_id']) {
+                        array_push($saveAlldata, [
+                            'id' => $roleLeader['id'],
+                            'status' => -1
+                        ]);
+                    }
+                }
+            }
         } else {
-            $roleCaptain = $roleCaptain->toArray();
-            // 队长有改变 组合修改数组
-            if ($roleCaptain['member_id'] != $data['captain_id']) {
+            // 查询当前"经理"数据
+            $roleManager = $model->where(['team_id' => $team_id, 'member_id' => $data['manager_id'], 'member' => $data['manager'],'type' => 5])->find();
+            if (!$roleManager) {
+                // 直接插入新数据
                 array_push($saveAlldata, [
-                    'id' => $roleCaptain['id'],
-                    'member_id' => $data['captain_id']
+                    'type' => 5,
+                    'team_id' => $team_id,
+                    'member_id' => $data['manager_id'],
+                    'member' => $data['manager'],
+                    'status' => 1
                 ]);
+            } else {
+                $roleManager = $roleManager->toArray();
+                // "经理"有改变 组合修改数组
+                if ($roleManager['member_id'] != $data['manager_id']) {
+                    array_push($saveAlldata, [
+                        'id' => $roleLeader['id'],
+                        'member_id' => $data['manager_id'],
+                        'member' => $data['manager']
+                    ]);
+                }
             }
         }
+
+
+        // 查询当前"队长"数据（队长一个）
+        if (!empty($data['captain'])) {
+            $roleCaptain = $model->where(['team_id' => $team_id, 'type' => 3, 'member_id' => $data['captain_id'], 'member' => $data['captain']])->find();
+            if (!$roleCaptain) {
+                // 直接插入新数据
+                array_push($saveAlldata, [
+                    'type' => 3,
+                    'team_id' => $team_id,
+                    'member_id' => $data['captain_id'],
+                    'member' => $data['captain'],
+                    'status' => 1
+                ]);
+            } else {
+                $roleCaptain = $roleCaptain->toArray();
+                // 队长有改变 组合修改数组
+                if ($roleCaptain['member_id'] != $data['captain_id']) {
+                    array_push($saveAlldata, [
+                        'id' => $roleCaptain['id'],
+                        'member_id' => $data['captain_id'],
+                        'member' => $data['captain']
+                    ]);
+                }
+            }
+        } else {
+            // 清理球队-"队长"数据关系
+            $model->where([
+                'team_id' => $team_id,
+                'type' => 3
+            ])->update(['status' => -1]);
+        }
+
+
+        // 查询当前"副队长"数据（队长一个）
+        if (!empty($data['vice_captain'])) {
+            $roleViceCaptain = $model->where(['team_id' => $team_id, 'type' => 2, 'member_id' => $data['vice_captain_id'], 'member' => $data['vice_captain']])->find();
+            if (!$roleViceCaptain) {
+                // 直接插入新数据
+                array_push($saveAlldata, [
+                    'type' => 2,
+                    'team_id' => $team_id,
+                    'member_id' => $data['vice_captain_id'],
+                    'member' => $data['vice_captain'],
+                    'status' => 1
+                ]);
+            } else {
+                $roleViceCaptain = $roleViceCaptain->toArray();
+                // 队长有改变 组合修改数组
+                if ($roleViceCaptain['member_id'] != $data['vice_captain_id']) {
+                    array_push($saveAlldata, [
+                        'id' => $roleViceCaptain['id'],
+                        'member_id' => $data['vice_captain_id'],
+                        'member' => $data['vice_captain']
+                    ]);
+                }
+            }
+        } else {
+            // 清理球队-"副队长"数据关系
+            $model->where([
+                'team_id' => $team_id,
+                'type' => 2
+            ])->update(['status' => -1]);
+        }
+
+
         // 处理提交的coach_id
-        if (isset($data['coach_id'])) {
+        if (!empty($data['coach_id'])) {
             // 查询当前教练数据member_id集合（教练可多个）
-            $roleCoachs = $model->where(['team_id' => $team_id, 'type' => 2, 'status' => 1])->column('member_id');
+            $roleCoachs = $model->where(['team_id' => $team_id, 'type' => 4, 'status' => 1])->column('member_id');
             // 拆分遍历提交的coach_id是否在当前球队教练数据member_id集合中
             $coach_ids = explode(',', $data['coach_id']);
-            foreach ($coach_ids as $val) {
+            $coach_members = explode(',', $data['coach_member']);
+            foreach ($coach_ids as $k => $val) {
                 // 不在集合中
                 if (!in_array($val, $roleCoachs)) {
                     // 有无team_member_role教练数据
-                    $hasCoach = $model->where(['team_id' => $team_id, 'type' => 2, 'member_id' => $val])->find();
+                    $hasCoach = $model->where(['team_id' => $team_id, 'type' => 4, 'member_id' => $val, 'member' => $coach_members[$k]])->find();
                     if (!$hasCoach) {
                         // 插入新的team_member_role教练数据
                         array_push($saveAlldata, [
                             'team_id' => $team_id,
                             'member_id' => $val,
-                            'type' => 2,
+                            'member' => $coach_members[$k],
+                            'type' => 4,
                             'status' => 1
                         ]);
                     } else {
@@ -362,24 +468,37 @@ class TeamService
                 }
             }
             // 将不在提交的coach_id中 其他的球队教练更新status=-1
-            $model->where(['team_id' => $team_id, 'type' => 2, 'member_id' => ['not in', $coach_ids]])->update(['status' => -1]);
+            $model->where([
+                'team_id' => $team_id,
+                'type' => 2,
+                'member_id' => ['not in', $coach_ids],
+            ])->update(['status' => -1]);
+        } else {
+            // 清理球队所有后勤-教练关系
+            $model->where([
+                'team_id' => $team_id,
+                'type' => 2
+            ])->update(['status' => -1]);
         }
-        // 拆分提交的committee_id
-        if (isset($data['committee_id'])) {
+
+        // 处理提交的committee_id
+        if (!empty($data['committee_id'])) {
             // 查询当前队委数据member_id集合（可多个）
             $roleCommittees = $model->where(['team_id' => $team_id, 'type' => 1, 'status' => 1])->column('member_id');
             // 拆分遍历提交的committee_id是否在当前球队队委数据member_id集合中
             $committee_ids = explode(',', $data['committee_id']);
-            foreach ($committee_ids as $val) {
+            $committee_members = explode(',', $data['committee_member']);
+            foreach ($committee_ids as $k1 => $val) {
                 // 不在集合中
                 if (!in_array($val, $roleCommittees)) {
                     // 有无team_member_role队委数据
-                    $hascommittee = $model->where(['team_id' => $team_id, 'type' => 1, 'member_id' => $val])->find();
+                    $hascommittee = $model->where(['team_id' => $team_id, 'type' => 1, 'member_id' => $val, 'member' => $committee_members[$k1]])->find();
                     if (!$hascommittee) {
                         // 插入新的team_member_role队委数据
                         array_push($saveAlldata, [
                             'team_id' => $team_id,
                             'member_id' => $val,
+                            'member' => $committee_members[$k1],
                             'type' => 1,
                             'status' => 1
                         ]);
@@ -395,23 +514,39 @@ class TeamService
                 }
             }
             // 将不在提交的committee_id中 其他的球队队委更新status=-1
-            $model->where(['team_id' => $team_id, 'type' => 1, 'member_id' => ['not in', $committee_ids]])->update(['status' => -1]);
-        }
-        $res = $model->saveAll($saveAlldata);
-        if ($res || ($res === 0)) {
-            return ['code' => 200, 'msg' => __lang('MSG_200')];
+            $model->where([
+                'team_id' => $team_id,
+                'type' => 1,
+                'member_id' => ['not in', $committee_ids],
+            ])->update(['status' => -1]);
         } else {
-            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
-            return ['code' => 100, 'msg' => __lang('MSG_400')];
+            // 清理球队所有后勤-会员关系
+            $model->where([
+                'team_id' => $team_id,
+                'type' => 1,
+            ])->update(['status' => -1]);
+        }
+
+        if (!empty($saveAlldata)) {
+            $res = $model->saveAll($saveAlldata);
+            if ($res) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
         }
     }
 
     // 获取球队有角色身份的会员列表
     public function getTeamRoleMembers($team_id, $order = 'type desc')
     {
-        $list = Db::view('team_member_role', '*, status as role_status')
-            ->view('team_member', '*', 'team_member.member_id=team_member_role.member_id', 'left')
-            ->where(['team_member.team_id' => $team_id, 'team_member_role.status' => 1, 'team_member.status' => 1])
+        $list = Db::view('team_member')
+            ->view('team_member_role',
+                'type, status as role_status',
+                'team_member_role.member_id=team_member.member_id and team_member_role.team_id=team_member.team_id',
+                'left')
+            ->where(['team_member.team_id' => $team_id, 'team_member.status' => 1, 'team_member_role.status' => 1])
             ->where('team_member.delete_time', null)
             ->where('team_member_role.delete_time', null)
             ->order($order)

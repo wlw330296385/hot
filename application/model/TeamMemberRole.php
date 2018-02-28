@@ -13,25 +13,16 @@ class TeamMemberRole extends Model {
 
     protected $resultSetType = 'array';
 
-    // type(球队角色)获取器
-    /*public function getTypeAttr($value) {
-        $type = [
-            1 => '队委',
-            2 => '教练',
-            3 => '队长',
-            4 => '领队',
-            0 => '无'
-        ];
-        return $type[$value];
-    }*/
 
     // type(球队角色)中文获取器
+    // 球队角色:1后勤|2副队长|3队长|4教练|5领队(经理)
     public function getTypeTextAttr($value, $data) {
         $type = [
-            1 => '队委',
-            2 => '教练',
+            1 => '后勤',
+            2 => '副队长',
             3 => '队长',
-            4 => '领队',
+            4 => '教练',
+            5 => '领队',
             0 => '无'
         ];
         return $type[$data['type']];
