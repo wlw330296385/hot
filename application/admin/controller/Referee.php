@@ -104,7 +104,7 @@ class Referee extends Backend{
                 'url' => ($status==1) ? url('keeper/referee/refereemanage', '', '', true) : url('keeper/message/index', '', '', true),
                 'steward_type' => 2
             ];
-            $messageS->sendMessageToMember($refereeInfo['member_id'], $messageData, config('wx.applyResult'));
+            $messageS->sendMessageToMember($refereeInfo['member_id'], $messageData, config('wxTemplateID.applyResult'));
 
             $this->record('审核裁判员id: '. $id .'审核操作:'. $checkStr .'，成功');
 		    $response = ['code' => 200, 'status'=>1, 'msg' => __lang('MSG_200')];

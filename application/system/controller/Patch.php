@@ -225,7 +225,7 @@ class Patch extends Controller {
                     }
                     $incomeRebateCampId9 = 0.2;
                 }
-                if ($schedule['lesson_time'] > $month11['start'] && $schedule['lesson_time'] < $month11['end']) {
+                if ($schedule['lesson_time'] > $month11['start'] && $schedule['lesson_time'] > $month11['end']) {
                     if ($schedule['camp_id'] == 15) {
                         $incomeRebate = 0.8;
                         $incomeRebateCampId9 = 0.1;
@@ -234,7 +234,7 @@ class Patch extends Controller {
                         $incomeRebateCampId9 = 0.2;
                     }
                 }
-                if ($schedule['lesson_time'] > $month12['start'] && $schedule['lesson_time'] < $month12['end']) {
+                if ($schedule['lesson_time'] > $month12['start'] && $schedule['lesson_time'] > $month12['end']) {
                     if ($schedule['camp_id'] == 15) {
                         $incomeRebate = 0.8;
                         $incomeRebateCampId9 = 0.1;
@@ -563,6 +563,32 @@ class Patch extends Controller {
                 $data[$k]['id'] = $val['id'];
             }
             $model->saveAll($data);
+        } catch (Exception $e) {
+            dump($e->getMessage());
+        }
+    }
+
+    // 补全team_member_role member字段 2018-02-28
+    public function teamRoleMember() {
+        try {
+            db('team_member_role')->chunk(50, function($roles) {
+                foreach ($roles as $role) {
+                    //dump($role);
+                    $teamMember = db('team_member')->where(['team_id' => $role['team_id'], 'member_id' => $role['member_id']])->find();
+                    //dump($teamMember);
+                    db('team_member_role')->where('id', $role['id'])->update([
+                        'member' => $teamMember['member']
+                    ]);
+                    
+                    if ($role['type'] == 5 && $role['member_id'] === 0) {
+                        $team = db('team')->where('id', $role['team_id'])->find();
+                        db('team_member_role')->where('id', $role['id'])->update([
+                            'member' => $team['leader'],
+                            'member_id' => $team['leader_id']
+                        ]);
+                    }
+                }
+            });
         } catch (Exception $e) {
             dump($e->getMessage());
         }

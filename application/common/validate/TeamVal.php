@@ -11,7 +11,7 @@ class TeamVal extends Validate {
 //        'name' => 'require|length:2,16|chsDash|unique:team|token',
         'name' => 'require|length:2,16|chsDash|token',
         // 会员id大于0表示已注册或登录会员
-        'member_id' => 'require|gt:0',
+        'member_id' => 'gt:0',
         'type' => 'require',
         // type（球队类型）值为1（即青少年训练营）时camp_id必填
         'camp_id' => 'requireIf:type,1',
@@ -35,7 +35,6 @@ class TeamVal extends Validate {
         'name.chsDash' => '球队名称只能填写汉字、英文、数字和下划线_及破折号-',
         'name.unique' => '填写的球队名称已存在，请填写其他名称',
         'name.token' => '请不要重复点击提交',
-        'member_id.require' => '请先注册会员或重新登录平台',
         'member_id.gt' => '请先注册会员或重新登录平台',
         'type.require' => '请选择球队类型',
         'camp_id.requireIf' => '请选择所属训练营',

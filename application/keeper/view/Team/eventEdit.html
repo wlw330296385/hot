@@ -318,29 +318,41 @@
                     layer: 3
                 });
 
-                // 设置默认值
-                cityPicker3.pickers[0].setSelectedIndex(18);
-                cityPicker3.pickers[1].setSelectedIndex(2);
-                cityPicker3.pickers[2].setSelectedIndex(2);
+                // 获取省市区默认值
+                // 获取省索引值
+                function searchProvince(province) {
+                    for (var i = 0; i <= cityData3.length; i++) {
+                        if (cityData3[i].text == province) {
+                            return i;
+                        }
+                    }
+                }
+                //  获取市索引值
+                function searchCity(city) {
+                    for (var i = 0; i < cityData3.length; i++) {
+                        for (var j = 0; j < cityData3[i].children.length; j++) {
+                            if (cityData3[i].children[j].text == city) {
+                                return j;
+                            }
+                        }
+                    }
+                }
+                //  获取区索引值
+                function searchArea(area) {
+                    for (var i = 0; i < cityData3.length; i++) {
+                        for (var j = 0; j < cityData3[i].children.length; j++) {
+                            for (var k = 0; k < cityData3[i].children[j].children.length; k++) {
+                                if (cityData3[i].children[j].children[k].text == area) {
+                                    return k;
+                                }
+                            }
+                        }
+                    }
+                }
+                cityPicker3.pickers[0].setSelectedIndex(searchProvince("{$eventInfo.province}"));
+                cityPicker3.pickers[1].setSelectedIndex(searchCity("{$eventInfo.city}"));
+                cityPicker3.pickers[2].setSelectedIndex(searchArea("{$eventInfo.area}"));
 
-                // cityPicker3.pickers[0].setSelectedIndex(searchProvince(cityData3, "{eventInfo.province}"));
-                // cityPicker3.pickers[1].setSelectedIndex(searchCity(cityData3[i].children[j], "{eventInfo.city}"));
-                // cityPicker3.pickers[2].setSelectedIndex(2);
-                // var i = '';
-                // var j = '';
-                // var k = '';
-                // for (i = 0; i < cityData3.length; i++) {
-                //     console.log(cityData3[i].text + '第一级')
-                //     console.log(searchCity(cityData3, "{eventInfo.city}"))
-                //     for (j = 0; j < cityData3[i].children.length; j++) {
-                //         console.log(cityData3[i].children[j].text + '第二级')
-                //         for (k = 0; k < cityData3[i].children[j].children.length; k++) {
-                //             console.log(cityData3[i].children[j].children[k].text + '第三级')
-                //         }
-                //     }
-
-                // }
-                console.log(cityData3)
                 cityPicker3.setData(cityData3);
                 var showCityPickerButton = doc.getElementById('showCityPicker3');
                 var cityResult3 = doc.getElementById('cityResult3');
@@ -395,36 +407,6 @@
             });
         })(mui, document);
 
-        var i = '';
-        var j = '';
-        var k = '';
-        var children = '';
-        // 获取省索引值
-        // function searchProvince(cityData3, province) {
-        //     for (i = 0; i <= cityData3.length; i++) {
-        //         if (cityData3[i].text == province) {
-        //             return i;
-        //         }
-        //     }
-        //     // while (i -= 1) {
-        //     //     if (cityData3[i].text == province) {
-        //     //         return i;
-        //     //     }
-        //     // }
-        //     return false;
-        // }
-
-        // function searchCity(cityData3, city) {
-        //     for (i = 0; i <= cityData3.length; i++) {
-        //         for (j = 0; j <= cityData3[i].children.length; j++) {
-        //             console.log(cityData3[i].children[j].text)
-        //             if (cityData3[i].children[j].text == city) {
-        //                 return j;
-        //             }
-        //         }
-        //     }
-        //     return false;
-        // }
 
         // 全局取 directentry 的值判断是否有 event_id
         var directentry = $("input[name=directentry]").val();
@@ -465,7 +447,6 @@
             toTeamMemberList() //获取成员列表
             toSignUpList(); //获取已经报名的活动人员列表
             delbtnFunction(); // 插入删除按钮
-
             // 设置活动类型默认值
             $('#eventType option[{eq name="directentry" value="1" } value=""{else/} value="{$eventInfo.event_type_num}"{/eq}]').prop("selected", true);
             // 设置活动类型默认值
