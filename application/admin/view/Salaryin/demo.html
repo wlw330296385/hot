@@ -2,7 +2,14 @@
 {block name="css"}
 
     <link rel="stylesheet" href="/static/plugins/datatables/dataTables.bootstrap.css">
-
+    <style>
+        .box-body { padding:10px 15px; }
+        div.dataTables_info, div.dataTables_paginate { margin: 10px 10px 0px; }
+        .hotTableHeader{ padding:10px; }
+        .hotTableHeader .form-group{ margin-right: 20px;}
+        .hotTableHeader .totalRight { float: right; font-size: 16px; margin-top: 10px; }
+        .hotTableHeader .totalRight span { margin-left: 20px; }
+    </style>
 {/block}
 {block name="page-content"}
 
@@ -14,23 +21,45 @@
             <!--</div>-->
             <!-- /.box-header -->
             <div class="box-body">
-                <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <label>选择教练员：
-                                <select name="example1_length" aria-controls="example1" class="form-control input-sm">
-                                <option value="1">安凯翔</option>
-                                <option value="2">林泽铭</option>
-                                <option value="3">董硕同</option>
-                            </select></label>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="dataTables_filter">
-                                <strong><small>总收益：</small><span class="text-yellow">1800</span></strong>
-                                <strong><small>赠课总人次：</small><span class="text-yellow">23</span></strong>
-                                <strong><small>学员实际总人次：</small><span class="text-yellow">250</span></strong>
-                                <strong><small>总课时：</small><span class="text-yellow">60</span></strong>
+                <div class="dataTables_wrapper form-inline dt-bootstrap">
+                    <div class="row hotTableHeader">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <div class="input-group" data-toggle="modal" data-target="#campModal">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-angle-down"></i>
+                                    </div>
+                                    <input type="text" name="camp" class="form-control pull-right wAuto" value="全部训练营">
+                                </div>
+                                <!-- /.input group -->
                             </div>
+                            <div class="form-group">
+                                <label>当前教练：</label>
+                                <div class="input-group" data-toggle="modal" data-target="#coachModal">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-angle-down"></i>
+                                    </div>
+                                    <input type="text" name="coach" class="form-control pull-right wAuto" value="安凯翔">
+                                </div>
+                                <!-- /.input group -->
+                            </div>
+                            <div class="form-group">
+                                <label> 统计时间：</label>
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <input type="text" class="form-control pull-right" id="reservationtime">
+                                </div>
+                                <!-- /.input group -->
+                            </div>
+
+                            <p class="totalRight">
+                                <span><small>总收益：</small><strong class="text-yellow">1800</strong></span>
+                                <span><small>赠课总人次：</small><strong class="text-yellow">23</strong></span>
+                                <span><small>学员实际总人次：</small><strong class="text-yellow">250</strong></span>
+                                <span><small>总课时：</small><strong class="text-yellow">60</strong></span>
+                            </p>
                         </div>
                     </div>
                     <div class="row">
@@ -39,96 +68,45 @@
                                    aria-describedby="example1_info">
                                 <thead>
                                 <tr role="row">
-                                    <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1"
-                                        colspan="1" aria-sort="ascending"
-                                        aria-label="Rendering engine: activate to sort column descending">训练营
-                                    </th>
-                                    <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
-                                        aria-label="Browser: activate to sort column ascending">课程
-                                    </th>
-                                    <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
-                                        aria-label="Platform(s): activate to sort column ascending">课次
-                                    </th>
-                                    <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
-                                        aria-label="Engine version: activate to sort column ascending">人次
-                                    </th>
-                                    <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
-                                        aria-label="CSS grade: activate to sort column ascending" style="width: 66px;">
-                                        赠课
-                                    </th>
-                                    <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
-                                        aria-label="CSS grade: activate to sort column ascending" style="width: 66px;">
-                                        总和
-                                    </th>
-                                    <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
-                                        aria-label="CSS grade: activate to sort column ascending" style="width: 66px;">
-                                        详情
-                                    </th>
+                                    <th class="sorting_asc">训练营</th>
+                                    <th>课程</th>
+                                    <th>课次</th>
+                                    <th>人次</th>
+                                    <th>赠课</th>
+                                    <th>总和</th>
+                                    <th>详情</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr role="row" class="odd">
                                     <td class="sorting_1">大热篮球俱乐部</td>
-                                    <td>大热常规班</td>
+                                    <td>大热常规班3</td>
                                     <td>3</td>
                                     <td>17</td>
                                     <td>4</td>
                                     <td>4</td>
-                                    <td>详情</td>
+                                    <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
                                 </tr>
                                 <tr role="row" class="odd">
                                     <td class="sorting_1">大热篮球俱乐部</td>
-                                    <td>大热常规班</td>
-                                    <td>3</td>
+                                    <td>大热常规班1</td>
+                                    <td>1</td>
                                     <td>17</td>
                                     <td>4</td>
                                     <td>4</td>
-                                    <td>详情</td>
+                                    <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
                                 </tr>
                                 <tr role="row" class="odd">
                                     <td class="sorting_1">大热篮球俱乐部</td>
-                                    <td>大热常规班</td>
-                                    <td>3</td>
+                                    <td>大热常规班2</td>
+                                    <td>2</td>
                                     <td>17</td>
                                     <td>4</td>
                                     <td>4</td>
-                                    <td>详情</td>
+                                    <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
                                 </tr>
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-5">
-                            <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">10 / 234
-                            </div>
-                        </div>
-                        <div class="col-sm-7">
-                            <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
-                                <ul class="pagination">
-                                    <li class="paginate_button previous disabled" id="example1_previous"><a href="#"
-                                                                                                            aria-controls="example1"
-                                                                                                            data-dt-idx="0"
-                                                                                                            tabindex="0">上一页</a>
-                                    </li>
-                                    <li class="paginate_button active"><a href="#" aria-controls="example1"
-                                                                          data-dt-idx="1" tabindex="0">1</a></li>
-                                    <li class="paginate_button "><a href="#" aria-controls="example1" data-dt-idx="2"
-                                                                    tabindex="0">2</a></li>
-                                    <li class="paginate_button "><a href="#" aria-controls="example1" data-dt-idx="3"
-                                                                    tabindex="0">3</a></li>
-                                    <li class="paginate_button "><a href="#" aria-controls="example1" data-dt-idx="4"
-                                                                    tabindex="0">4</a></li>
-                                    <li class="paginate_button "><a href="#" aria-controls="example1" data-dt-idx="5"
-                                                                    tabindex="0">5</a></li>
-                                    <li class="paginate_button "><a href="#" aria-controls="example1" data-dt-idx="6"
-                                                                    tabindex="0">6</a></li>
-                                    <li class="paginate_button next" id="example1_next"><a href="#"
-                                                                                           aria-controls="example1"
-                                                                                           data-dt-idx="7" tabindex="0">下一页</a>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -141,17 +119,72 @@
 </div>
 
 
+
+<!-- Modal : Camp -->
+<div class="modal fade" id="campModal" tabindex="-1" role="dialog" aria-labelledby="campModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="campModalLabel">请选择训练营</h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal : Coach -->
+<div class="modal fade" id="coachModal" tabindex="-1" role="dialog" aria-labelledby="coachModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="coachModalLabel">请选择教练员</h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {/block}
 
 
 {block name='js'}
 
+<script src="/static/backend/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/static/backend/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<!-- Bootstrap WYSIHTML5 -->
+<script src="/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<!-- date-range-picker -->
+<script src="/static/plugins/moment/moment.js"></script>
+<script src="/static/plugins/daterangepicker/daterangepicker.js"></script>
 <script>
 
     $(function () {
-        $('#example1').DataTable()
+        $('#example1').DataTable({
+            'paging'      : true,
+            'lengthChange': false,
+            'searching'   : false,
+            'ordering'    : true,
+            'info'        : true,
+            'autoWidth'   : true
+        });
+
+
+        //Date range picker with time picker
+        $('#reservationtime').daterangepicker();
     })
+
 </script>
 
 {/block}
