@@ -78,7 +78,6 @@ class ItemCouponService {
         }
         
         $result = $this->ItemCouponModel->save($data);
-        echo $this->ItemCouponModel->getlastsql();
         if($result){
             return ['msg' => '操作成功', 'code' => 200, 'data' => $this->ItemCouponModel->id];
         }else{
