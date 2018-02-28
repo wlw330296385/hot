@@ -40,7 +40,7 @@ class Backend extends Base {
             $this->assign('_location',[0=>['title'=>'开发者模式'],1=>['title'=>'不验证权限']]);
         }
 
-        dump($_location);die;
+//        dump($_location);die;
         // 获取侧边栏菜单
         $sidebar_menu = MenuModel::getSidebarMenu();
         // dump($sidebar_menu);die;
