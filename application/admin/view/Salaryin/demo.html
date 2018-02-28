@@ -1,4 +1,9 @@
 {extend name="layout/common"/}
+{block name="css"}
+
+    <link rel="stylesheet" href="/static/plugins/datatables/dataTables.bootstrap.css">
+
+{/block}
 {block name="page-content"}
 
 <div class="row">
@@ -20,10 +25,12 @@
                             </select></label>
                         </div>
                         <div class="col-sm-6">
-                            <strong><small>总收益：</small><span class="text-yellow">1800</span></strong>
-                            <strong><small>赠课总人次：</small><span class="text-yellow">23</span></strong>
-                            <strong><small>学员实际总人次：</small><span class="text-yellow">250</span></strong>
-                            <strong><small>总课时：</small><span class="text-yellow">60</span></strong>
+                            <div class="dataTables_filter">
+                                <strong><small>总收益：</small><span class="text-yellow">1800</span></strong>
+                                <strong><small>赠课总人次：</small><span class="text-yellow">23</span></strong>
+                                <strong><small>学员实际总人次：</small><span class="text-yellow">250</span></strong>
+                                <strong><small>总课时：</small><span class="text-yellow">60</span></strong>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -93,8 +100,7 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-5">
-                            <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">Showing 1
-                                to 10 of 57 entries
+                            <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">10 / 234
                             </div>
                         </div>
                         <div class="col-sm-7">
@@ -103,7 +109,7 @@
                                     <li class="paginate_button previous disabled" id="example1_previous"><a href="#"
                                                                                                             aria-controls="example1"
                                                                                                             data-dt-idx="0"
-                                                                                                            tabindex="0">Previous</a>
+                                                                                                            tabindex="0">上一页</a>
                                     </li>
                                     <li class="paginate_button active"><a href="#" aria-controls="example1"
                                                                           data-dt-idx="1" tabindex="0">1</a></li>
@@ -119,7 +125,7 @@
                                                                     tabindex="0">6</a></li>
                                     <li class="paginate_button next" id="example1_next"><a href="#"
                                                                                            aria-controls="example1"
-                                                                                           data-dt-idx="7" tabindex="0">Next</a>
+                                                                                           data-dt-idx="7" tabindex="0">下一页</a>
                                     </li>
                                 </ul>
                             </div>
@@ -140,9 +146,12 @@
 
 {block name='js'}
 
+<script src="/static/backend/plugins/datatables/dataTables.bootstrap.min.js"></script>
 <script>
+
     $(function () {
-        $("section.content-header h1").html('<i class="fa fa-fw fa-th-large"></i> 教练员收益统计<small>Salary In</small>');
-    });
+        $('#example1').DataTable()
+    })
 </script>
+
 {/block}
