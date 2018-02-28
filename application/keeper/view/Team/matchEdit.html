@@ -755,11 +755,41 @@
                     layer: 3
                 });
 
-                // 设置默认值
-                cityPicker3.pickers[0].setSelectedIndex(18);
-                cityPicker3.pickers[1].setSelectedIndex(2);
-                cityPicker3.pickers[2].setSelectedIndex(2);
-
+                // 获取省市区默认值
+                // 获取省索引值
+                function searchProvince(province) {
+                    for (var i = 0; i <= cityData3.length; i++) {
+                        if (cityData3[i].text == province) {
+                            return i;
+                        }
+                    }
+                }
+                //  获取市索引值
+                function searchCity(city) {
+                    for (var i = 0; i < cityData3.length; i++) {
+                        for (var j = 0; j < cityData3[i].children.length; j++) {
+                            if (cityData3[i].children[j].text == city) {
+                                return j;
+                            }
+                        }
+                    }
+                }
+                //  获取区索引值
+                function searchArea(area) {
+                    for (var i = 0; i < cityData3.length; i++) {
+                        for (var j = 0; j < cityData3[i].children.length; j++) {
+                            for (var k = 0; k < cityData3[i].children[j].children.length; k++) {
+                                if (cityData3[i].children[j].children[k].text == area) {
+                                    return k;
+                                }
+                            }
+                        }
+                    }
+                }
+                cityPicker3.pickers[0].setSelectedIndex(searchProvince("{$matchInfo.province}"));
+                cityPicker3.pickers[1].setSelectedIndex(searchCity("{$matchInfo.city}"));
+                // cityPicker3.pickers[2].setSelectedIndex(searchArea("{$matchInfo.area}"));
+                
                 cityPicker3.setData(cityData3);
                 var showCityPickerButton = doc.getElementById('showCityPicker3');
                 var cityResult3 = doc.getElementById('cityResult3');
@@ -990,8 +1020,8 @@
             //清除主场颜色
             $("#homeDel").on('tap', '', function () {
                 $(".home_color_text").text('');
-                $("input[name='record[home_team_color]']").val("").removeClass("data");
-                $("input[name='record[home_team_colorstyle]']").val("").removeClass("data");
+                $("input[name='record[home_team_color]']").val("");
+                $("input[name='record[home_team_colorstyle]']").val("");
                 mui("#homeColor").popover("toggle");
             });
 
@@ -1011,8 +1041,8 @@
             //清除客场颜色
             $("#awayDel").on('tap', '', function () {
                 $(".away_color_text").text('');
-                $("input[name='record[away_team_color]']").val("").removeClass("data");
-                $("input[name='record[away_team_colorstyle]']").val("").removeClass("data");
+                $("input[name='record[away_team_color]']").val("");
+                $("input[name='record[away_team_colorstyle]']").val("");
                 mui("#awayColor").popover("toggle");
             });
 
@@ -1196,6 +1226,10 @@
             // 场地费用与付费方式判断
             var court_cost_bear = $("#courtCostBear").children("option:selected").val()
             var court_cost = $("input[name=court_cost]").val();
+            if (!(/^[0-9]*$/).test(court_cost)) {
+                mui.toast("场地费用请填写数字");
+                return false;
+            }
             if ((court_cost > 0 && court_cost_bear == 0) || (court_cost == 0 && court_cost_bear != 0) || (court_cost == '' && court_cost_bear != 0)) {
                 mui.toast("填写场地费用与付费方式不对应");
                 return false;

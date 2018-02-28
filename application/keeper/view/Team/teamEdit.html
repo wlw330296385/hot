@@ -166,7 +166,7 @@
                         <span class="colorCont wd60" name="color">
                             {volist name="$teamInfo.colors" id="color"}
                             <i class="color {$color.color_style}"></i>
-                            <font>{$color.color}</font>,{/volist}
+                            <font data-eng="{$color.color_style}">{$color.color}</font>,{/volist}
                         </span>
                     </a>
                 </div>
@@ -414,14 +414,14 @@
                     <div class="mui-input-row mui-checkbox mui-left">
                         <label>
                             <i class="color black"></i>
-                            <font>黑色</font>
+                            <font data-eng="black">黑色</font>
                         </label>
                         <input type="checkbox" value="black">
                     </div>
                     <div class="mui-input-row mui-checkbox mui-left">
                         <label>
                             <i class="color white"></i>
-                            <font>白色</font>
+                            <font data-eng="white">白色</font>
                         </label>
                         <input type="checkbox" value="white">
                     </div>
@@ -714,10 +714,40 @@
                     layer: 3
                 });
 
-                // 设置默认值
-                cityPicker3.pickers[0].setSelectedIndex(18);
-                cityPicker3.pickers[1].setSelectedIndex(2);
-                cityPicker3.pickers[2].setSelectedIndex(2);
+                // 获取省市区默认值
+                // 获取省索引值
+                function searchProvince(province) {
+                    for (var i = 0; i <= cityData3.length; i++) {
+                        if (cityData3[i].text == province) {
+                            return i;
+                        }
+                    }
+                }
+                //  获取市索引值
+                function searchCity(city) {
+                    for (var i = 0; i < cityData3.length; i++) {
+                        for (var j = 0; j < cityData3[i].children.length; j++) {
+                            if (cityData3[i].children[j].text == city) {
+                                return j;
+                            }
+                        }
+                    }
+                }
+                //  获取区索引值
+                function searchArea(area) {
+                    for (var i = 0; i < cityData3.length; i++) {
+                        for (var j = 0; j < cityData3[i].children.length; j++) {
+                            for (var k = 0; k < cityData3[i].children[j].children.length; k++) {
+                                if (cityData3[i].children[j].children[k].text == area) {
+                                    return k;
+                                }
+                            }
+                        }
+                    }
+                }
+                cityPicker3.pickers[0].setSelectedIndex(searchProvince("{$teamInfo.province}"));
+                cityPicker3.pickers[1].setSelectedIndex(searchCity("{$teamInfo.city}"));
+                cityPicker3.pickers[2].setSelectedIndex(searchArea("{$teamInfo.area}"));
 
                 cityPicker3.setData(cityData3);
                 var showCityPickerButton = doc.getElementById('showCityPicker3');
@@ -832,17 +862,11 @@
             $("#colorConfirm").on('tap', '', function () {
                 $(".colorCont").empty();
                 var colorFrame_text = "";
-                colors = [];
                 $(".colorList input[type=checkbox]:checked").each(function () {
-                    var color = $(this).siblings().find("font").text();
-                    var color_style = $(this).val();
                     var color_text = $.trim($(this).siblings().html());
                     colorFrame_text += color_text + ','
                     $(".colorCont").html(colorFrame_text.substring(0, colorFrame_text.length - 1));
-                    // 数组
-                    colors.push({ color: color, color_style: color_style });
                 });
-                console.log(colors)
                 mui("#colors").popover("toggle");
             });
 
@@ -1177,6 +1201,15 @@
                 return false;
             }
 
+            // 球衣颜色提交数组
+            colors = [];
+            $(".colorCont font").each(function () {
+                var color = $(this).text();
+                var color_style = $(this).attr("data-eng");
+                colors.push({ color: color, color_style: color_style });
+            });
+            console.log(colors)
+
             //图文编辑状态转换浏览状态
             tuwenToView()
 
@@ -1377,7 +1410,7 @@
             });
         };
 
-        //自定义获取球员列表(教练)
+        //自定义获取球员列表(后勤)
         var TeamMemberOfCommitteeList = function () {
             var url = "{:url('api/team/teammemberlist','','',true)}";
             var team_id = "{$teamInfo.id}";
