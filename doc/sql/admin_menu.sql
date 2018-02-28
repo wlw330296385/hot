@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50553
 File Encoding         : 65001
 
-Date: 2018-02-27 18:56:02
+Date: 2018-02-28 18:09:09
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -34,7 +34,7 @@ CREATE TABLE `admin_menu` (
   `create_time` int(10) NOT NULL,
   `update_time` int(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=122 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=123 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin_menu
@@ -158,3 +158,4 @@ INSERT INTO `admin_menu` VALUES ('117', '3', 'admin', '编辑场地', 'fa fa-cog
 INSERT INTO `admin_menu` VALUES ('119', '118', 'admin', '教练工资收入', 'fa fa-cog', '0', 'admin/Salaryin/coach', '_self', '1', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('120', '118', 'admin', '训练营收入', 'fa fa-cog', '0', 'admin/Income/camp', '_self', '1', '1', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('121', '118', 'admin', 'demo', 'fa fa-cog', '0', 'admin/salaryin/demo', '_self', '1', '1', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('122', '118', 'admin', '训练营资金账单', 'fa fa-cog', '0', 'admin/ouput/index', '_self', '1', '1', '1', '0', '0');

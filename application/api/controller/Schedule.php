@@ -369,6 +369,15 @@ class Schedule extends Base
             if ($camppower < 2) {
                 return json(['code' => 100, 'msg' => __lang('MSG_403') . '不能操作']);
             }
+            $lessonInfo =  db('lesson')->where(['id'=>$request['lesson_id']])->find();
+            if(!$lessonInfo){
+                return json(['code' => 100, 'msg' =>'找不到课程信息']);
+            }
+            $totalCost = $request['quantity'] * $lessonInfo['cost'];
+            $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+            if($campInfo['balance_true']<$totalCost){
+                return json(['code' => 100, 'msg' =>'训练营余额不足']);
+            }
             $request['member_id'] = $this->memberInfo['id'];
             $request['member'] = $this->memberInfo['member'];
             $scheduleS = new ScheduleService();
@@ -379,6 +388,8 @@ class Schedule extends Base
                 if (!$updateLesson) {
                     return json(['code' => 100, 'msg' => '更新课程赠送课时' . __lang('MSG_400')]);
                 }
+                // 扣除训练营的余额
+                db('camp')->where(['id'=>$camp_id])->dec('balance_true',$totalCost)->updaet();
             }
             return json($res);
         } catch (Exception $e) {

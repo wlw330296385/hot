@@ -143,15 +143,15 @@ class Crontabwoo extends Controller {
                     ];
                     
                     $this->insertOutput($dataOutput,1);
-              
+                    // 结算增加到camp表的balance_true;
+                    $balance_true = ($totalScheduleStudent*$schedule['cost'])-$outputSchedule-$outputSalary;
+                    db('camp')->where(['id'=>$schedule['camp_id']])->inc('balance_true',$balance_true)->update();
                     // 更新课时数据
                     Db::name('schedule')->where(['id' => $schedule['id']])->update(['is_settle' => 1, 'schedule_income' => $outputSalary, 'finish_settle_time' => time()]);
                     db('schedule_member')->where(['schedule_id' => $schedule['id']])->update(['status' => 1, 'update_time' => time()]);
-                    // 课时工资收入结算 end
+// 课时工资收入结算 end --------------------------------------
                 }
-               
             });
-echo  db('schedule')->getlastsql();
         } catch (Exception $e) {
             // 记录日志：错误信息
             trace($e->getMessage(), 'error');

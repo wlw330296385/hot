@@ -36,6 +36,7 @@ class Index extends Controller{
         $billList = db('bill')->where('delete_time',null)->select();
         // $income = new \app\model\Income;
         $output = new \app\model\Output;
+        $data = [];
         foreach ($billList as $key => $value) {
             if ($value['is_pay'] == 1 && $value['status']==-2) {
 
@@ -51,8 +52,20 @@ class Index extends Controller{
     }
 
 
-    public function output(){
-        
+    public function gift(){
+        $giftList = db('schedule_giftrecord')->field('schedule_giftrecord.*,lesson.cost')->join('lesson','lesson.id=schedule_giftrecord.lesson_id')->where('schedule_giftrecord.delete_time',null)->select();      
+        dump($giftList);
+        $data = [];
+        foreach ($giftList as $key => $value) {
+            $value['system_remarks'] = $value['id'];
+            unset($value['id']);
+            $value['output'] = $value['student_num']*$value['gift_schedule']*$value['cost'];
+            $value['type'] = 1;
+
+            $data[] = $value;
+        }
+        $output = new \app\model\Output;
+        $output->saveAll($data);
     }
 
     public function schedule(){

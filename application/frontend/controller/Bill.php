@@ -112,7 +112,7 @@ class Bill extends Base{
         $WechatService = new WechatService();
         $jsApi = $WechatService->jsapi($shareurl);
         //微信支付参数
-        if($billInfo['status']=='1' || $billInfo['is_pay']=='已付款'){
+        if($billInfo['status']==0 && $billInfo['is_pay']=='未付款'){
             $amount = ($billInfo['total']*$billInfo['price'])?($billInfo['total']*$billInfo['price']):1;
             // $amount = 0.01;
             $WechatJsPayService = new \app\service\WechatJsPayService;
