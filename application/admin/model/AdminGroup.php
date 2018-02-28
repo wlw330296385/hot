@@ -114,16 +114,25 @@ class AdminGroup extends Model {
     {
         $menu_auth = cache('group_id_menu_auth_'.session('admin.group_id'));
         if (!$menu_auth) {
-            $menu_auth = self::where('id', session('admin.group_id'))->value('menu_auth');
-            $menu_auth = json_decode($menu_auth, true);
-            $menu_auth = MenuModel::where('id', 'in', $menu_auth)->column('id,url_value');
+            $group_id = session('admin.group_id');
+            if($group_id == 1){
+                $menu_auth = MenuModel::where(['status'=>1])->column('id,url_value');
+            }else{
+                $menu_auth = self::where('id', session('admin.group_id'))->value('menu_auth');
+                // dump($menu_auth);
+                $menu_auth = json_decode($menu_auth, true);
+                // dump($menu_auth);
+                $menu_auth = MenuModel::where('id', 'in', $menu_auth)->column('id,url_value');
+                // dump($menu_auth);
+            }
+            
                
         }
         // 非开发模式，缓存数据
-            if (config('develop_mode') == 0) { 
-                cache('group_id_menu_auth_'.session('admin.group_id'), $menu_auth);
-            }
-
+        if (config('develop_mode') == 0) { 
+            cache('group_id_menu_auth_'.session('admin.group_id'), $menu_auth);
+        }
+        // dump($menu_auth);die;
         return $menu_auth;
     }
 
