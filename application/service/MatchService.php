@@ -217,13 +217,6 @@ class MatchService {
 
     // 比赛球队战绩列表Pagigator
     public function matchRecordListPaginator($map, $order='match_record.id desc', $paginate=10) {
-        /*$model = new MatchRecord();
-        $res = $model->with('match')->where($map)->order($order)->paginate($paginate);
-        if ($res) {
-            return $res->toArray();
-        } else {
-            return $res;
-        }*/
         $matchField = ['type', 'start_time', 'end_time', 'reg_start_time', 'reg_end_time', 'province', 'city', 'area',
             'court_id', 'court', 'court_lng', 'court_lat', 'status', 'logo', 'cover',
             'finished_time', 'is_finished' ,'islive'];
@@ -262,13 +255,6 @@ class MatchService {
 
     // 比赛球队战绩列表
     public function matchRecordList($map, $page=1, $order='match_record.id desc', $limit=10) {
-       /* $model = new MatchRecord();
-        $res = $model->with('match')->where($map)->order($order)->page($page)->limit($limit)->select();
-        if ($res) {
-            return $res->toArray();
-        } else {
-            return $res;
-        }*/
         $matchField = ['type', 'start_time', 'end_time', 'reg_start_time', 'reg_end_time', 'province', 'city', 'area',
             'court_id', 'court', 'court_lng', 'court_lat', 'status', 'logo', 'cover',
             'finished_time', 'is_finished' ,'islive'];
@@ -305,13 +291,6 @@ class MatchService {
 
     // 比赛球队战绩列表（所有数据）
     public function matchRecordListAll($map, $order='match_record.id desc') {
-        /*$model = new MatchRecord();
-        $res = $model->with('match')->where($map)->order($order)->select();
-        if ($res) {
-            return $res->toArray();
-        } else {
-            return $res;
-        }*/
         $matchField = ['type', 'start_time', 'end_time', 'reg_start_time', 'reg_end_time', 'province', 'city', 'area',
             'court_id', 'court', 'court_lng', 'court_lat', 'status', 'logo', 'cover',
             'finished_time', 'is_finished' ,'islive'];
@@ -345,27 +324,25 @@ class MatchService {
         }
     }
 
-    // 根据比赛战绩统计更新球队的比赛场数与胜场数
-    public function countTeamMatchNumByRecord($homeTeamId=0, $awayTeamId=0) {
-        $modelRecord = new MatchRecord();
-        $dbTeam = db('team');
-        // 主队存在数据记录
-        //$modelRelation = $modelRecord::hasWhere('match', ['is_finished' => 1]);
-        $homeTeam = $dbTeam->where(['id' => $homeTeamId])->whereNull('delete_time')->find();
-        if ($homeTeam) {
-            // 主队比赛场数、胜场数
-            $homeTeamMatchNum = $modelRecord::hasWhere('match', ['is_finished' => 1])->where('home_team_id|away_team_id', $homeTeamId)->count();
-            $homeTeamWinNum = $modelRecord::hasWhere('match', ['is_finished' => 1])->where(['win_team_id' => $homeTeamId])->count();
-            $dbTeam->where('id', $homeTeam['id'])->update(['match_num' => $homeTeamMatchNum, 'match_win' => $homeTeamWinNum]);
-        }
 
-        // 客队存在数据记录
-        $awayTeam = $dbTeam->where(['id' => $awayTeamId])->whereNull('delete_time')->find();
-        if ($awayTeam) {
-            // 客队比赛场数、胜场数
-            $awayTeamMatchNum = $modelRecord::hasWhere('match', ['is_finished' => 1])->where('home_team_id|away_team_id', $awayTeamId)->count();
-            $awayTeamWinNum = $modelRecord::hasWhere('match', ['is_finished' => 1])->where(['win_team_id' => $awayTeamId])->count();
-            $dbTeam->where('id', $awayTeam['id'])->update(['match_num' => $awayTeamMatchNum, 'match_win' => $awayTeamWinNum]);
+    // 更新球队的比赛场数与胜场数
+    public function countTeamMatchNum($teamId) {
+        $dbTeam = db('team');
+        $teamInfo = $dbTeam->where('id', $teamId)->whereNull('delete_time')->find();
+        if ($teamInfo) {
+            $teamMatchNum =  Db::view('match_record', '*')
+                ->view('match', '*', 'match.id=match_record.match_id', 'left')
+                ->where('match.is_finished', 1)
+                ->where('match_record.home_team_id|away_team_id', $teamInfo['id'])
+                ->order('match_record.id desc')
+                ->count();
+            $teamWinNum =  Db::view('match_record', '*')
+                ->view('match', '*', 'match.id=match_record.match_id', 'left')
+                ->where('match.is_finished', 1)
+                ->where(['match_record.win_team_id' => $teamInfo['id']])
+                ->order('match_record.id desc')
+                ->count();
+            $dbTeam->where('id', $teamInfo['id'])->update(['match_num' => $teamMatchNum, 'match_win' => $teamWinNum]);
         }
     }
 

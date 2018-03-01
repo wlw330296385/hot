@@ -399,7 +399,8 @@ class Match extends Base
                         return json(['code' => 100, 'msg' => '更新比赛信息失败']);
                     }
                     // 更新球队胜场数、比赛场数
-                    $matchS->countTeamMatchNumByRecord($homeTeamId, $awayTeamId);
+                    $matchS->countTeamMatchNum($homeTeamId);
+                    $matchS->countTeamMatchNum($awayTeamId);
                     
                     // 比赛完成的操作
                     if ($isFinished == 1) {
@@ -521,7 +522,10 @@ class Match extends Base
                     // 保存参赛球队成员 end
 
                     // 更新球队胜场数、比赛场数
-                    $matchS->countTeamMatchNumByRecord($homeTeamId, $awayTeamId);
+                    // 更新球队胜场数、比赛场数
+                    $matchS->countTeamMatchNum($homeTeamId);
+                    $matchS->countTeamMatchNum($awayTeamId);
+                    
                     // 比赛完成的操作
                     if ($isFinished == 1) {
                         // 保存球队历史比赛对手信息
