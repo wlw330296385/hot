@@ -161,13 +161,17 @@
                 </div>
 
                 <div class="mui-input-row price-input-row h-auto">
-                    <a href="#colors" class="mui-navigate-right">
+                    <a href="#colors" id="setColorsBox" class="mui-navigate-right">
                         <label>球衣颜色</label>
                         <span class="colorCont wd60" name="color">
                             {volist name="$teamInfo.colors" id="color"}
                             <i class="color {$color.color_style}"></i>
                             <font data-eng="{$color.color_style}">{$color.color}</font>,{/volist}
                         </span>
+                        <div id="hideCoList">
+                            {volist name="$teamInfo.colors" id="vol"}
+                            <input type="hidden" class="coList" data-eng="{$color.color_style}" data-color="{$color.color}"> {/volist}
+                        </div>
                     </a>
                 </div>
 
@@ -410,7 +414,7 @@
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <form class="mui-input-group colorList">
+                <form class="mui-input-group colorList" id="refereeDiv">
                     <div class="mui-input-row mui-checkbox mui-left">
                         <label>
                             <i class="color black"></i>
@@ -428,63 +432,63 @@
                     <div class="mui-input-row mui-checkbox mui-left">
                         <label>
                             <i class="color red"></i>
-                            <font>红色</font>
+                            <font data-eng="red">红色</font>
                         </label>
                         <input class="" type="checkbox" value="red">
                     </div>
                     <div class="mui-input-row mui-checkbox mui-left">
                         <label>
                             <i class="color blue"></i>
-                            <font>蓝色</font>
+                            <font data-eng="blue">蓝色</font>
                         </label>
                         <input type="checkbox" value="blue">
                     </div>
                     <div class="mui-input-row mui-checkbox mui-left">
                         <label>
                             <i class="color yellow"></i>
-                            <font>黄色</font>
+                            <font data-eng="yellow">黄色</font>
                         </label>
                         <input name="checkbox-popl" class="" type="checkbox" value="yellow">
                     </div>
                     <div class="mui-input-row mui-checkbox mui-left">
                         <label>
                             <i class="color green"></i>
-                            <font>绿色</font>
+                            <font data-eng="green">绿色</font>
                         </label>
                         <input type="checkbox" value="green">
                     </div>
                     <div class="mui-input-row mui-checkbox mui-left">
                         <label>
                             <i class="color orange"></i>
-                            <font>橙色</font>
+                            <font data-eng="orange">橙色</font>
                         </label>
                         <input type="checkbox" value="orange">
                     </div>
                     <div class="mui-input-row mui-checkbox mui-left">
                         <label>
                             <i class="color purple"></i>
-                            <font>紫色</font>
+                            <font data-eng="purple">紫色</font>
                         </label>
                         <input type="checkbox" value="purple">
                     </div>
                     <div class="mui-input-row mui-checkbox mui-left">
                         <label>
                             <i class="color gray"></i>
-                            <font>灰色</font>
+                            <font data-eng="gray">灰色</font>
                         </label>
                         <input type="checkbox" value="gray">
                     </div>
                     <div class="mui-input-row mui-checkbox mui-left">
                         <label>
                             <i class="color pink"></i>
-                            <font>粉色</font>
+                            <font data-eng="pink">粉色</font>
                         </label>
                         <input type="checkbox" value="pink">
                     </div>
                     <div class="mui-input-row mui-checkbox mui-left">
                         <label>
                             <i class="color ching"></i>
-                            <font>青色</font>
+                            <font data-eng="ching">青色</font>
                         </label>
                         <input type="checkbox" value="ching">
                     </div>
@@ -869,7 +873,18 @@
                 });
                 mui("#colors").popover("toggle");
             });
-
+            //球衣列表复选框赋值
+            $("#setColorsBox").on('tap', '', function () {
+                //每次打开先清空所有选择
+                $("input[name='checkbox-referee']").prop("checked", false);
+                //然后遍历出对应所选
+                $(".coList").each(function () {
+                    var eng = $(this).attr("data-eng");
+                    $("#refereeDiv").find("input[name='checkbox']").filter(function () {
+                        return $(this).attr("data-eng") == eng
+                    }).prop("checked", true);
+                });
+            });
 
             // 选择球队类型判断是否显示所属训练营
             $("#teamType").change(function () {
@@ -916,6 +931,7 @@
                 $("input[name=manager_id]").val("");
                 mui("#manager").popover("toggle");
             });
+            
             // 选择队长
             $(".captainList").on('tap', 'li', function () {
                 var captain = $(this).text();

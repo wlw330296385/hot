@@ -55,6 +55,22 @@
             margin-top: 15px;
             padding: 12px 11px;
         }
+
+        #refereeDom .fl {
+            text-align: left;
+            float: left;
+        }
+
+        .cancel-dom {
+            font-size: 16px;
+            float: left;
+            margin: 13px 10px;
+        }
+
+        input[name=event-dom_price] {
+            border-left: 1px dotted #DDD;
+            text-align: center !important;
+        }
     </style>
 </head>
 
@@ -180,13 +196,23 @@
                     <div class="mui-navigate-right">
                         <label>裁判类型</label>
                         <span class="select-row">
-                            <select class="data" name="referee_type">
+                            <select class="data" id="refereeSlecct" name="referee_type">
                                 <option value="0">免裁判</option>
                                 <option value="1">系统随机安排</option>
                                 <option value="2">自行安排</option>
                             </select>
                         </span>
                     </div>
+                </div>
+                <div class="mui-input-row h-auto refereeList hide">
+                    <a href="#refereeDom" class="mui-navigate-right">
+                        <label>裁判列表</label>
+                        <span class="coach" name="coach" style="width: 60%"></span>
+                        <div id="hideCoList">
+                            <input type="hidden" class="coList" data-member_id="" data-member="">
+                        </div>
+                        <input type="hidden" name="coach_id" value="" class="data">
+                    </a>
                 </div>
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
@@ -358,6 +384,7 @@
                 <button class="mui-btn" id="homeDel">清除</button>
             </span>
         </div>
+        
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <ul class="mui-table-view list homeColorList colorLineHeight">
@@ -432,6 +459,23 @@
         </div>
     </div>
 
+    <!--裁判列表-->
+    <div id="refereeDom" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course">
+                <strong>裁判列表</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="refereeConfirm">确认</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form id="refereeDiv" class="mui-input-group coachList"></form>
+            </div>
+        </div>
+    </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -556,11 +600,22 @@
             toTeamListHistory(wTeamsHistory, teamHistoryKeyword, 1);
             toCourtList(wCourt, courtKeyword, 1);
             colorShow(); // 调用主场客场颜色显示
+            refereeList();
 
             // 点击直接编辑录入
             $(".direct").on("tap", '', function () {
                 location.href = "{:url('team/matchEdit',['team_id' => $team_id])}";
             });
+
+            // 裁判列表是否显示
+            $("#refereeSlecct").change(function () {
+                var refereeNum = $(this).children("option:selected").val()
+                if (refereeNum == 2) {
+                    $(".refereeList").show();
+                } else {
+                    $(".refereeList").hide();
+                }
+            })
 
             // 主场球服
             $(".homeColorList").on('tap', 'li', function () {
@@ -759,6 +814,10 @@
             // 场地费用与付费方式判断
             var court_cost_bear = $("#courtCostBear").children("option:selected").val()
             var court_cost = $("input[name=court_cost]").val();
+            if (!(/^[0-9]*$/).test(court_cost)) {
+                mui.toast("场地费用请填写数字");
+                return false;
+            }
             if ((court_cost > 0 && court_cost_bear == 0) || (court_cost == 0 && court_cost_bear != 0) || (court_cost == '' && court_cost_bear != 0)) {
                 mui.toast("填写场地费用与付费方式不对应");
                 return false;
@@ -918,6 +977,42 @@
                         $(wCourtList).append(newli);
                         $(currPage).text(data.data.current_page);
                         $(totalPage).text(data.data.last_page);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //自定义获取裁判列表
+        var refereeList = function () {
+            var url = "{:url('api/referee/refereelist','','',true)}";
+            var team_id = "{$teamInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    status: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-referee" class="referee" type="checkbox" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"></div>'
+                        }
+                        $("#refereeDiv").empty();
+                        if (newli == '') {
+                            newli = '<p class="nohave">没有查找到数据哦</p>'
+                        }
+                        $("#refereeDiv").append(newli);
+
                     } else {
                         mui.toast('数据获取失败,请稍候再试');
                     }
