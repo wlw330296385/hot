@@ -376,14 +376,31 @@ class Team extends Base {
 
     // 创建比赛
     public function creatematch() {
-        return view('Team/createMatch');
+        $teamS = new TeamService();
+        // 传入客队id 页面输出信息
+        $awayTeam = [];
+        $awayTeamId = input('away_id');
+        if ($awayTeamId) {
+            $awayTeam = $teamS->getTeam(['id' => $awayTeamId]);
+        }
+        return view('Team/createMatch', [
+            'awayTeam' => $awayTeam
+        ]);
     }
 
     // 编辑比赛
     public function matchedit() {
         $match_id = input('match_id', 0);
         $matchS = new MatchService();
-
+        $teamS = new TeamService();
+        
+        // 传入客队id 页面输出信息
+        $awayTeam = [];
+        $awayTeamId = input('away_id');
+        if ($awayTeamId) {
+            $awayTeam = $teamS->getTeam(['id' => $awayTeamId]);
+        }
+        
         // $directentry 1为新增并录入比赛
         $directentry = 0;
         // 如果有match_id参数即修改活动，没有就新增比赛并录入比赛成绩（事后录比赛）
@@ -410,12 +427,12 @@ class Team extends Base {
 
             $memberlist = [];
         }
-       
         
         $this->assign('match_id', $match_id);
         $this->assign('matchInfo', $matchInfo);
         $this->assign('directentry', $directentry);
         $this->assign('memberList', $memberlist);
+        $this->assign('awayTeam', $awayTeam);
         return view('Team/matchEdit');
     }
 
