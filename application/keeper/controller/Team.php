@@ -58,7 +58,7 @@ class Team extends Base {
             'committee_names' => []
         ];
         foreach ($rolemembers as $rolemember) {
-            if ($rolemember['type'] == 2) {
+            if ($rolemember['type'] == 4) {
                 $roleslist['coach_ids'] .= $rolemember['member_id'].',';
                 array_push($roleslist['coach_names'], [
                     'id' => $rolemember['id'],
