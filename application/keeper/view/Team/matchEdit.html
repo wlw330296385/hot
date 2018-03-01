@@ -238,7 +238,8 @@
 
             <div class="mui-input-row">
                 <label>场地费用</label>
-                <input type="text" name="court_cost" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.court_cost}" {/eq} class="data" placeholder="请输入场地费用">
+                <input type="text" name="court_cost" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.court_cost}" {/eq}
+                    class="data" placeholder="请输入场地费用">
             </div>
 
             <div class="mui-input-row">
@@ -786,10 +787,11 @@
                         }
                     }
                 }
-                cityPicker3.pickers[0].setSelectedIndex(searchProvince("{$matchInfo.province}"));
-                cityPicker3.pickers[1].setSelectedIndex(searchCity("{$matchInfo.city}"));
-                // cityPicker3.pickers[2].setSelectedIndex(searchArea("{$matchInfo.area}"));
-                
+
+                cityPicker3.pickers[0].setSelectedIndex({eq name="directentry" value="1" }18{else/}searchProvince("{$matchInfo.province}"){/eq});
+                cityPicker3.pickers[1].setSelectedIndex({eq name="directentry" value="1" }2{else/}searchCity("{$matchInfo.city}"){/eq});
+                // cityPicker3.pickers[2].setSelectedIndex({eq name="directentry" value="1" }18{else/}searchArea("{$matchInfo.area}"){/eq});
+
                 cityPicker3.setData(cityData3);
                 var showCityPickerButton = doc.getElementById('showCityPicker3');
                 var cityResult3 = doc.getElementById('cityResult3');
@@ -856,7 +858,8 @@
         // memberList = [];
         var totalNum = '';//序号总和的变量
         // 全局取 directentry 的值判断是否有 event_id
-        var directentry = $("input[name=directentry]").val();
+        var directentry = '';
+        directentry = $("input[name=directentry]").val();
 
         $(function () {
 
