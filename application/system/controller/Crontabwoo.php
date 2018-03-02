@@ -37,6 +37,7 @@ class Crontabwoo extends Controller {
             $nowDate = date('Ymd', time());
             $map['can_settle_date'] = $nowDate;
             $map['questions'] = 0;
+            $map['rebate_type'] = 2;
             db('schedule')->where($map)->whereNull('delete_time')->whereNull('finish_settle_time')->chunk(50, function ($schedules) {
 
                 foreach ($schedules as $schedule) {
@@ -128,7 +129,8 @@ class Crontabwoo extends Controller {
                             'type'      =>4,
                             'system_remarks'=>$schedule['id'],
                             'status'    =>1,
-                            'remarks'   =>'平台提成支出'
+                            'remarks'   =>'平台提成支出',
+                            'create_time'=>$schedule['create_time'],
                         ],[
                             'output'    => $outputSalary,
                             'camp_id'   => $schedule['camp_id'],
@@ -138,7 +140,8 @@ class Crontabwoo extends Controller {
                             'type'      =>3,
                             'system_remarks'=>$schedule['id'],
                             'status'    =>1,
-                            'remarks'   =>'课时教练总薪资支出'
+                            'remarks'   =>'课时教练总薪资支出',
+                            'create_time'=>$schedule['create_time'],
                         ]
                     ];
                     

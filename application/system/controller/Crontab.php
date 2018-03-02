@@ -8,6 +8,7 @@ use app\service\SystemService;
 use app\service\MemberService;
 use app\model\SalaryIn;
 use app\model\CampFinance;
+use app\model\Income;
 use think\Controller;
 use think\Db;
 use think\Exception;
@@ -37,6 +38,7 @@ class Crontab extends Controller {
             // 当前时间日期
             $nowDate = date('Ymd', time());
             $map['can_settle_date'] = $nowDate;
+            $map['rebate_type'] = 1;
             //$map['questions'] = 0;
             Db::name('schedule')->where($map)->whereNull('delete_time')->chunk(50, function ($schedules) {
                 foreach ($schedules as $schedule) {
@@ -92,7 +94,6 @@ class Crontab extends Controller {
                         'status' => 1,
                         'type' => 1,
                     ];
-//                        dump($incomeCoach);
                     $this->insertSalaryIn($incomeCoach);
                     
                     // 助教薪资
@@ -125,7 +126,7 @@ class Crontab extends Controller {
                         $this->insertSalaryIn($incomeAssistant, 1);
                     }
 
-                    // 营主所得 课时收入*抽取比例-主教底薪-助教底薪-课时工资提成*教练人数。教练人数 = 助教人数+1（1代表主教人数）
+                    // 剩余为训练营所得 课时收入*抽取比例-主教底薪-助教底薪-课时工资提成*教练人数。教练人数 = 助教人数+1（1代表主教人数）
                     // 抽取比例：训练营有特定抽取比例以(1-特定抽取比例)计算|否则以(1-平台抽取比例)计算
                     $campScheduleRebate = db('camp')->where('id', $schedule['camp_id'])->value('schedule_rebate');
                     if (!empty($campScheduleRebate)) {
@@ -135,29 +136,21 @@ class Crontab extends Controller {
                     }
 
                     $incomeCampSalary = $incomeSchedule * $scheduleRebate - $schedule['coach_salary'] - $schedule['assistant_salary'] - ($pushSalary * (count($incomeAssistant) + 1));
-                    $campMember = $this->getCampMember($schedule['camp_id']);
                     $incomeCamp = [
-                        'salary' => $incomeCampSalary,
-                        'push_salary' => 0,
-                        'member_id' => $campMember['member_id'],
-                        'member' => $campMember['member'],
-                        'realname' => $campMember['realname'],
-                        'member_type' => 5,
-                        'pid' => $campMember['pid'],
-                        'level' => $campMember['level'],
+                        'income' => $incomeCampSalary,
+                        'schedule_id'=>$schedule['id'],
                         'schedule_id' => $schedule['id'],
                         'lesson_id' => $schedule['lesson_id'],
                         'lesson' => $schedule['lesson'],
-                        'grade_id' => $schedule['grade_id'],
-                        'grade' => $schedule['grade'],
                         'camp_id' => $schedule['camp_id'],
                         'camp' => $schedule['camp'],
                         'schedule_time' => $schedule['lesson_time'],
                         'status' => 1,
-                        'type' => 1,
+                        'type' => 3,
+                        'system_rebate'=>(1-$scheduleRebate),
                         'system_remarks' => $systemRemarks
                     ];
-                    $this->insertSalaryIn($incomeCamp);
+                    $this->insertIncome($incomeCamp);
 
                     // 保存训练营财务支出信息
                     $dataCampFinance = [
@@ -257,6 +250,30 @@ class Crontab extends Controller {
             return true;
         } else {
             file_put_contents(ROOT_PATH.'data/salaryin/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'error'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND  );
+            return false;
+        }
+    }
+     // 保存课时收入记录
+    private function insertIncome($data, $saveAll=0) {
+        $model = new \app\model\Income();
+        if ($saveAll == 1) {
+            $execute = $model->allowField(true)->saveAll($data);
+        } else {
+            $execute = $model->allowField(true)->save($data);
+        }
+        if ($execute) {
+            $campDb = db('camp');
+            if ($saveAll ==1) {
+                foreach ($data as $val) {
+                    $campDb->where('id', $val['camp_id'])->inc('balance_true', $val['income'])->update();
+                }
+            } else {
+                $campDb->where('id', $data['camp_id'])->inc('balance_true', $data['income'])->update();
+            }
+            file_put_contents(ROOT_PATH.'data/income/'.date('Y-m-d',time()).'.txt', json_encode(['time'=>date('Y-m-d H:i:s',time()), 'success'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND );
+            return true;
+        } else {
+            file_put_contents(ROOT_PATH.'data/income/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'error'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND  );
             return false;
         }
     }
