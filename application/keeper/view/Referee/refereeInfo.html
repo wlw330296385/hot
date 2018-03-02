@@ -13,6 +13,15 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--等级星星样式-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css" />
+    <style>
+        .choiseFont .mui-input-row {
+            height: 37px !important
+        }
+
+        .choiseFont .bgorange {
+            color: #fff !important
+        }
+    </style>
 </head>
 
 
@@ -180,6 +189,50 @@
 
         <!-- 邀请弹框 -->
         <div id="invitation" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+            <ul class="mui-table-view operation" style="margin:0 !important">
+                <h5>
+                    <span class="type">请选择球队和比赛</span>
+                    <a href="#invitation" class="mui-icon mui-icon-closeempty"></a>
+                </h5>
+                <div class="mui-card" style="margin:0 !important;border-radious:0 !important">
+                    <ul class="mui-table-view mui-text-left" style="margin:0 !important">
+                        <li class="mui-table-view-cell mui-collapse">
+                            <a class="mui-navigate-right" href="#">
+                                <strong>所属球队</strong>
+                            </a>
+                            <div class="mui-collapse-content">
+                                <form class="mui-input-group choiseFont">
+                                    <div class="mui-input-row choiseTeam">
+                                        <a href="{:url('team/createTeam')}">
+                                            <label style="width:100% !important">
+                                                创建球队
+                                            </label>
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell mui-collapse">
+                            <a class="mui-navigate-right" href="#">
+                                <strong>所属球队比赛</strong>
+                            </a>
+                            <div class="mui-collapse-content">
+                                <form class="mui-input-group choiseFont">
+                                    <div class="mui-input-row choiseMatch">
+                                        <label class="createMatch" style="width:100% !important">
+                                            创建比赛
+                                        </label>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </ul>
+        </div>
+
+        <!-- 邀请弹框 -->
+        <!-- <div id="invitation" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
             <div class="list camp-list camp-lesson-list detalis-list grade-list referee">
                 <ul class="mui-table-view operation">
                     <h5 class="border-b">
@@ -195,7 +248,7 @@
                                 </span>
                             </div>
                         </div>
-                        <!-- <div class="mui-input-row">
+                        <div class="mui-input-row">
                             <div class="mui-navigate-right">
                                 <label style="padding: 14px 15px">裁判类型</label>
                                 <span class="select-row mui-navigate-right ">
@@ -205,7 +258,7 @@
                                     </select>
                                 </span>
                             </div>
-                        </div> -->
+                        </div>
                     </form>
                     <li class="listli">
                         <textarea rows="4" name="remarks" class="remarks"></textarea>
@@ -213,7 +266,7 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="invitationSubmit">提交</li>
                 </ul>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -422,7 +475,7 @@
             //         }
             //     });
             // })
-
+            toTeam()
             toTagAllList(); //所有标签列表
             toTagCommentList(); //已经评价的标签列表
             followStatus() //判断当前的关注状态;
@@ -547,6 +600,86 @@
                 }
             });
         };
+
+        var teamId = '';
+        //获取在队的球队列表
+        function toTeam() {
+            var url = "{:url('api/team/myteamlist','','',true)}";
+            mui.ajax({
+                url: url,
+                data: {},
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            // newli = newli + '<option value="' + data.data[i].team.id + '" data-logo="' + data.data[i].team.logo + '">' + data.data[i].team.name + '</option>'
+                            newli = newli + '<div class="mui-input-row"><label class="choiseDiv" style="width:100% !important" data-team_id="' + data.data[i].team.id + '">' + data.data[i].team.name + '</label></div>'
+                        }
+                        $(newli).insertAfter(".choiseTeam");
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        $(document).on("tap", ".choiseDiv", function () {
+            $(".choiseDiv").removeClass("bgorange");
+            $(this).addClass("bgorange");
+            teamId = $(this).attr("data-team_id");
+            toMatch();
+        });
+
+        $(".createMatch").on("tap", function () {
+            if (teamId == '') {
+                mui.toast("请先选择球队");
+            } else {
+                var urls = "{:url('team/createMatch')}" + "/team_id/" + teamId
+                window.location.href = urls
+            }
+        })
+
+        function toMatch() {
+            //获取在队的球队比赛列表
+            var url = "{:url('api/match/matchrecordlistall','','',true)}";
+            mui.ajax({
+                url: url,
+                data: {
+                    status: 1,
+                    team_id: teamId,
+                    away_team: "",
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var url = "{:url('team/createMatch')}" + "/team_id/" + teamId + "/referee_id/{$refereeInfo['id']}"
+                            // newli = newli + '<option value="' + data.data[i].id + '" >' + data.data[i].match + '</option>'
+                            newli = newli + '<div class="mui-input-row"><label style="width:100% !important" data-match_id="' + data.data[i].id + '"><a href="' + url + '">' + data.data[i].match + '</a></label></div>'
+                        }
+                        $(".choiseMatch").nextAll().remove();
+                        $(newli).insertAfter(".choiseMatch");
+                    } else {
+                        $(".choiseMatch").nextAll().remove();
+                        $("<div class='colorgray' style='padding: 11px 15px;'>该球队还没有比赛记录</div>").insertAfter(".choiseMatch");
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        }
 
     </script>
     <script>

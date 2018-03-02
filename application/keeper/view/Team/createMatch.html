@@ -215,9 +215,7 @@
                     <a href="#refereeDom" class="mui-navigate-right">
                         <label>裁判名单</label>
                         <span class="referee" name="referee" style="width: 60%"></span>
-                        <div id="hideReList">
-                            <input type="hidden" class="reList" data-referee_id="" data-referee="">
-                        </div>
+                        
                         <input type="hidden" name="referee_id" value="" class="data">
                     </a>
                 </div>
@@ -626,6 +624,7 @@
             $(".ching").css("background", "#00eaff");
         };
 
+        var refereeArr= []
         $(function () {
 
             //获取训练营粉丝列表
@@ -970,6 +969,7 @@
             var objData = wooApi.arrTOobj(arrData);
             var remarks = $('textarea.data').val();
             objData.remarks = remarks;
+            objData.refereeArr = JSON.stringify(refereeArr);
             var url = "{:url('api/match/creatematch')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {

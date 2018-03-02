@@ -4,6 +4,7 @@ namespace app\keeper\controller;
 
 
 use app\service\MatchService;
+use app\service\RefereeService;
 use app\service\TeamService;
 
 class Team extends Base {
@@ -383,8 +384,18 @@ class Team extends Base {
         if ($awayTeamId) {
             $awayTeam = $teamS->getTeam(['id' => $awayTeamId]);
         }
+
+        // 传入裁判id 页面输出信息
+        $refereeInfo = [];
+        $refereeId = input('referee_id');
+        $refereeS = new RefereeService();
+        if ($refereeId) {
+            $refereeInfo = $refereeS->getRefereeInfo(['id' => $refereeId]);
+        }
+        
         return view('Team/createMatch', [
-            'awayTeam' => $awayTeam
+            'awayTeam' => $awayTeam,
+            'refereeInfo' => $refereeInfo
         ]);
     }
 
@@ -393,12 +404,21 @@ class Team extends Base {
         $match_id = input('match_id', 0);
         $matchS = new MatchService();
         $teamS = new TeamService();
-        
+        $refereeS = new RefereeService();
+
         // 传入客队id 页面输出信息
         $awayTeam = [];
         $awayTeamId = input('away_id');
         if ($awayTeamId) {
             $awayTeam = $teamS->getTeam(['id' => $awayTeamId]);
+        }
+
+        // 传入裁判id 页面输出信息
+        $refereeInfo = [];
+        $refereeId = input('referee_id');
+        $refereeS = new RefereeService();
+        if ($refereeId) {
+            $refereeInfo = $refereeS->getRefereeInfo(['id' => $refereeId]);
         }
         
         // $directentry 1为新增并录入比赛
@@ -437,6 +457,7 @@ class Team extends Base {
         $this->assign('memberList', $memberlist);
         $this->assign('awayTeam', $awayTeam);
         $this->assign('refereeList', $refereeList);
+        $this->assign('refereeInfo', $refereeInfo);
         return view('Team/matchEdit');
     }
 
@@ -477,8 +498,11 @@ class Team extends Base {
         // 获取申请的球队信息
         $applyTeam = $teamS->getTeam(['id' => $applyInfo['team_id']]);
         $applyInfo['team'] = $applyTeam;
+        // 获取match_apply关联的比赛数据
+        $matchInfo = $matchS->getMatch(['id' => $applyInfo['match_id']]);
 
         $this->assign('applyInfo', $applyInfo);
+        $this->assign('matchInfo', $matchInfo);
         return view('Team/matchApplyInfo');
     }
 

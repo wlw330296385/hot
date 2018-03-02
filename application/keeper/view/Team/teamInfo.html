@@ -67,6 +67,14 @@
         .operation .opli a.mui-active {
             background-color: inherit
         }
+
+        .choiseFont .mui-input-row {
+            height: 37px !important
+        }
+
+        .choiseFont .bgorange {
+            color: #fff !important
+        }
     </style>
 </head>
 
@@ -392,31 +400,45 @@
 
     <!-- 发起约战信息填写 -->
     <div id="matchPK" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-        <ul class="mui-table-view operation">
+        <ul class="mui-table-view operation" style="margin:0 !important">
             <h5>
-                <span class="type">基本信息</span>
+                <span class="type">请选择球队和比赛</span>
                 <a href="#matchPK" class="mui-icon mui-icon-closeempty"></a>
             </h5>
-            <form action="" class="mui-input-group">
-                <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label class="mui-text-left">所属球队</label>
-                        <span class="select-row wd60">
-                            <select class="data selectTeam" name="team"></select>
-                        </span>
-                    </div>
-                </div>
-                <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label class="mui-text-left">选择比赛</label>
-                        <span class="select-row wd60">
-                            <select class="data selectMatch" name="match"></select>
-                        </span>
-                    </div>
-                </div>
-            </form>
-            <li class="mui-col-xs-6 mui-col-sm-6 opli matchPKBtn">创建比赛</li>
-            <li class="mui-col-xs-6 mui-col-sm-6 opli matchPKBtn">进入比赛</li>
+            <div class="mui-card" style="margin:0 !important;border-radious:0 !important">
+                <ul class="mui-table-view mui-text-left" style="margin:0 !important">
+                    <li class="mui-table-view-cell mui-collapse">
+                        <a class="mui-navigate-right" href="#">
+                            <strong>所属球队</strong>
+                        </a>
+                        <div class="mui-collapse-content">
+                            <form class="mui-input-group choiseFont">
+                                <div class="mui-input-row choiseTeam">
+                                    <a href="{:url('team/createTeam')}">
+                                        <label style="width:100% !important">
+                                            创建球队
+                                        </label>
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </li>
+                    <li class="mui-table-view-cell mui-collapse">
+                        <a class="mui-navigate-right" href="#">
+                            <strong>所属球队比赛</strong>
+                        </a>
+                        <div class="mui-collapse-content">
+                            <form class="mui-input-group choiseFont">
+                                <div class="mui-input-row choiseMatch">
+                                    <label class="createMatch" style="width:100% !important">
+                                        创建比赛
+                                    </label>
+                                </div>
+                            </form>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </ul>
     </div>
 
@@ -451,8 +473,6 @@
                 indicators: true //是否显示滚动条
             });
         })(mui);
-
-
         $(function () {
 
             // 判断是否登陆
@@ -465,16 +485,10 @@
                 return false;
             }
 
-            //未开发提示
-            $(".goConfirm").on("tap", function () {
-                mui.toast('暂未开放，敬请期待');
-            })
-
             //球队详细介绍内容
             var introduce = '{$teamInfo.introduce}';
             if (introduce == '') {
                 $(".introBox").append("<p class='nohave' style='margin-left:0'>该球队还没有图文简介哦</p>")
-                // $(".introBox").parents().prev().find(".noDataTip").append("（暂无数据）");
             }
 
             // 印象评价
@@ -752,10 +766,6 @@
                 });
             });
 
-            $(document).change(".selectTeam",function(){
-                var teamId = $(this).children("option:selected").val()
-                console.log(teamId)
-            })
             isthumbsup() //点赞状态
             followStatus(); //判断当前的关注状态
             teamMemberlist(); //自定义获取球员列表
@@ -767,7 +777,6 @@
             toRecordEventList(); //活动纪录
             toRecordMatchList(); //赛事纪录
             toTeam(); //获取所在的球队列表
-            toMatch(); //获取所在的球队比赛列表
         });
 
         // 点赞状态
@@ -1202,7 +1211,7 @@
                 }
             });
         };
-
+        var teamId = '';
         //获取在队的球队列表
         function toTeam() {
             var url = "{:url('api/team/myteamlist','','',true)}";
@@ -1218,11 +1227,10 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<option value="' + data.data[i].team.id + '" data-logo="' + data.data[i].team.logo + '">' + data.data[i].team.name + '</option>'
+                            // newli = newli + '<option value="' + data.data[i].team.id + '" data-logo="' + data.data[i].team.logo + '">' + data.data[i].team.name + '</option>'
+                            newli = newli + '<div class="mui-input-row"><label class="choiseDiv" style="width:100% !important" data-team_id="' + data.data[i].team.id + '">' + data.data[i].team.name + '</label></div>'
                         }
-                        $(".selectTeam").empty().append(newli);
-                    } else {
-                        $(".selectTeam").empty().append("<a href='{:url('team/createteam')}'>没有效力的球队,赶紧去创建吧</a>");
+                        $(newli).insertAfter(".choiseTeam");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -1231,15 +1239,31 @@
             });
         };
 
-        //获取在队的球队比赛列表
+        $(document).on("tap", ".choiseDiv", function () {
+            $(".choiseDiv").removeClass("bgorange");
+            $(this).addClass("bgorange");
+            teamId = $(this).attr("data-team_id");
+            toMatch();
+        });
+
+        $(".createMatch").on("tap", function () {
+            if (teamId == '') {
+                mui.toast("请先选择球队");
+            } else {
+                var urls = "{:url('team/createMatch')}" + "/team_id/" + teamId
+                window.location.href = urls
+            }
+        })
+
         function toMatch() {
-            var url = "{:url('api/match/getMatchListOrderByDistanceApi','','',true)}";
+            //获取在队的球队比赛列表
+            var url = "{:url('api/match/matchrecordlistall','','',true)}";
             mui.ajax({
                 url: url,
                 data: {
                     status: 1,
-                    team_id: 2,
-                    area: ""
+                    team_id: teamId,
+                    away_team: "",
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -1250,18 +1274,22 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<option value="' + data.data[i].id + '" >' + data.data[i].name + '</option>'
+                            var url = "{:url('team/createMatch')}" + "/team_id/" + teamId + "/away_id/{$teamInfo.id}"
+                            // newli = newli + '<option value="' + data.data[i].id + '" >' + data.data[i].match + '</option>'
+                            newli = newli + '<div class="mui-input-row"><label style="width:100% !important" data-match_id="' + data.data[i].id + '"><a href="' + url + '">' + data.data[i].match + '</a></label></div>'
                         }
-                        $(".selectMatch").empty().append(newli);
+                        $(".choiseMatch").nextAll().remove();
+                        $(newli).insertAfter(".choiseMatch");
                     } else {
-                        $(".selectMatch").empty().append("<a href='{:url('team/createteam')}'>没有效力的球队,赶紧去创建吧</a>");
+                        $(".choiseMatch").nextAll().remove();
+                        $("<div class='colorgray' style='padding: 11px 15px;'>该球队还没有比赛记录</div>").insertAfter(".choiseMatch");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
                 }
             });
-        };
+        }
 
         //创建补0函数
         function p(s) {

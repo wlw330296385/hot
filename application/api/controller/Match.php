@@ -5,6 +5,7 @@ namespace app\api\controller;
 use app\model\MatchRecord;
 use app\service\MatchService;
 use app\service\MessageService;
+use app\service\RefereeService;
 use app\service\TeamService;
 use think\Exception;
 use think\Db;
@@ -22,7 +23,8 @@ class Match extends Base
             $data['match_time'] = strtotime($data['match_time']);
             $matchS = new MatchService();
             $teamS = new TeamService();
-            // 友谊赛类型 记录比赛战绩数据
+            $messageS = new MessageService();
+            //记录比赛战绩数据
             $dataMatchRecord = [];
             $dataMatchRecord = $data['record'];
             $dataMatchRecord['team_id'] = $data['team_id'];
@@ -48,7 +50,7 @@ class Match extends Base
                 if ($data['away_team_id'] == $data['team_id']) {
                     return json(['code' => 100, 'msg' => '请选择其他球队']);
                 }
-                //$awayTeam = $teamS->getTeam(['id' => $data['opponent_id']]);
+
                 $dataAwayteam = [
                     'away_team_id' => $data['away_team_id'],
                     'away_team' => $data['away_team'],
@@ -58,22 +60,90 @@ class Match extends Base
                 ];
                 $dataMatchRecord = array_merge($dataMatchRecord, $dataAwayteam);
                 $data['name'] = $homeTeam['name'] . ' vs ' . $data['away_team'];
+
             } else {
                 $data['name'] = $homeTeam['name'] . ' vs （待定）';
             }
+
+            // 裁判业务操作
+            /*$refereeType = input('post.referee_type', 0);
+            if ($refereeType) {
+                $this->setMatchRefereeType($refereeType, $data);
+            }*/
+
+
+
             $res = $matchS->saveMatch($data);
             // 比赛记录创建成功后操作
             if ($res['code'] == 200) {
-                // 友谊赛类型 记录比赛战绩数据
-                if ($data['type'] == 1) {
-                    $dataMatchRecord['match_id'] = $res['data'];
-                    $dataMatchRecord['match'] = $data['name'];
-                    $matchS->saveMatchRecord($dataMatchRecord);
+                // 发送比赛邀请给对手球队
+                $awayTeam = $teamS->getTeam(['id' => $data['away_team_id']]);
+                if ($awayTeam) {
+                    // 保存约战申请
+                    $applyData = [
+                        'match_id' => $res['data'],
+                        'match' => $data['name'],
+                        'team_id' => $data['team_id'],
+                        'team' => $data['team'],
+                        'telphone' => $this->memberInfo['telephone'],
+                        'contact' => empty($this->memberInfo['realname']) ? $this->memberInfo['member'] : $this->memberInfo['realname'],
+                        'member_id' => $this->memberInfo['id'],
+                        'member' => $this->memberInfo['member'],
+                        'member_avatar' => $this->memberInfo['avatar'],
+                        'revice_team_id' => $awayTeam['id'],
+                        'revice_team' => $awayTeam['name'],
+                        'status' => 1
+                    ];
+                    $resApply = $matchS->saveMatchApply($applyData);
+                    // 组合推送消息内容
+                    $dataMessage = [
+                        'title' => '您好，'.$data['team'] .'球队向您所在 '. $awayTeam['name'] .'球队发起约战',
+                        'content' => '您好，'.$data['team'] .'球队向您所在 '. $awayTeam['name'] .'球队发起约战',
+                        'url' => url('keeper/team/matchapplyinfo', ['apply_id' => $resApply['data'], 'team_id' => $awayTeam['id']], '', true),
+                        'keyword1' => '球队发起约战',
+                        'keyword2' => $this->memberInfo['member'],
+                        'keyword3' => date('Y-m-d h:i', time()),
+                        'remark' => '请登录平台进入球队管理-》约战申请回复处理',
+                        // 比赛发布球队id
+                        'team_id' => $data['team_id'],
+                        'steward_type' => 2
+                    ];
+                    // 推送消息给发布比赛的球队领队
+                    $messageS->sendMessageToMember($awayTeam['leader_id'], $dataMessage, config('wxTemplateID.checkPend'));
+                    // 保存球队公告
+                    $teamS->saveTeamMessage($dataMessage);
                 }
+                
+                // 记录比赛战绩数据
+                $dataMatchRecord['match_id'] = $res['data'];
+                $dataMatchRecord['match'] = $data['name'];
+                $matchS->saveMatchRecord($dataMatchRecord);
+
             }
             return json($res);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 根据提交的比赛信息所选裁判类型执行的业务
+    protected function setMatchRefereeType($refereeType=0, $matchData=[]) {
+        $refereeS = new RefereeService();
+
+        if ($refereeType == 1) {
+            // 选择随机安排 根据比赛信息 发送比赛裁判邀请给裁判人群
+            // 获取符合条件裁判人群
+            $map = [];
+            if ($matchData['city']) {
+                $map['city'] = $matchData['city'];
+            }
+            $map['status'] = 1;
+            $map['accept_rand_match'] = 1;
+            $refereeList = $refereeS->getRefereeAll($map);
+            // dump($refereeList);
+            foreach ($refereeList as $referee) {
+                
+            }
         }
     }
 
@@ -250,10 +320,10 @@ class Match extends Base
         try {
             // 接收输入变量 其中post[record]为match_record保存数据
             $post = input('post.');
-            //dump($post);die;
             // service
             $matchS = new MatchService();
             $teamS = new TeamService();
+            $messageS = new MessageService();
             // post[match_time] 比赛时间转为时间戳格式
             $matchTimeStamp = strtotime($post['match_time']);
             // 比赛完成状态match is_finished标识
@@ -278,12 +348,14 @@ class Match extends Base
             // 以有无post[id]区分插入/更新数据
             if (input('?id')) {
                 // 更新数据操作
-                // 获取比赛信息 友谊赛(match type=1)进行操作|否则抛出无比赛信息
+                // 获取当前比赛数据、比赛战绩数据
                 $match_id = $post['id'];
                 $match = $matchS->getMatch(['id' => $match_id]);
+                $matchRecord = $matchS->getMatchRecord(['match_id' => $match['id']]);
                 if (!$match) {
                     return json(['code' => 100, 'msg' => __lang('MSG_404') . '请选择其他比赛']);
                 }
+
                 // 组合match_record保存数据
                 $recordData = $post['record'];
                 $recordData['match_time'] = $matchTimeStamp;
@@ -435,7 +507,48 @@ class Match extends Base
                         }
                     }
                     // 比赛完成的操作 end
-                    
+
+                    // 原match_record表away_team字段为空并post提交away_team不为空 代表对away_team发送约战邀请
+                    if ( empty($matchRecord['away_team']) && !empty($recordData['away_team']) ) {
+                        // 发送比赛邀请给对手球队
+                        $awayTeam = $teamS->getTeam(['id' => $awayTeamId]);
+                        if ($awayTeam) {
+                            // 保存约战申请
+                            $applyData = [
+                                'match_id' => $match['id'],
+                                'match' => $matchName,
+                                'team_id' => $post['team_id'],
+                                'team' => $recordData['home_team'],
+                                'telphone' => $this->memberInfo['telephone'],
+                                'contact' => empty($this->memberInfo['realname']) ? $this->memberInfo['member'] : $this->memberInfo['realname'],
+                                'member_id' => $this->memberInfo['id'],
+                                'member' => $this->memberInfo['member'],
+                                'member_avatar' => $this->memberInfo['avatar'],
+                                'revice_team_id' => $awayTeam['id'],
+                                'revice_team' => $awayTeam['name'],
+                                'status' => 1
+                            ];
+                            $resApply = $matchS->saveMatchApply($applyData);
+                            // 组合推送消息内容
+                            $dataMessage = [
+                                'title' => '您好，'. $recordData['home_team'] .'球队向您所在 '. $awayTeam['name'] .'球队发起约战',
+                                'content' => '您好，'. $recordData['home_team'] .'球队向您所在 '. $awayTeam['name'] .'球队发起约战',
+                                'url' => url('keeper/team/matchapplyinfo', ['apply_id' => $resApply['data'], 'team_id' => $awayTeam['id']], '', true),
+                                'keyword1' => '球队发起约战',
+                                'keyword2' => $this->memberInfo['member'],
+                                'keyword3' => date('Y-m-d h:i', time()),
+                                'remark' => '请登录平台进入球队管理-》约战申请回复处理',
+                                // 比赛发布球队id
+                                'team_id' => $post['team_id'],
+                                'steward_type' => 2
+                            ];
+                            // 推送消息给发布比赛的球队领队
+                            $messageS->sendMessageToMember($awayTeam['leader_id'], $dataMessage, config('wxTemplateID.checkPend'));
+                            // 保存球队公告
+                            $teamS->saveTeamMessage($dataMessage);
+                        }
+                    }
+
                     // 返回响应结果
                     return json($resultSaveMatchRecord);
                 }
@@ -1256,6 +1369,8 @@ class Match extends Base
             $request['member_id'] = $this->memberInfo['id'];
             $request['member'] = $this->memberInfo['member'];
             $request['member_avatar'] = $this->memberInfo['avatar'];
+            $request['revice_team_id'] = $matchInfo['team_id'];
+            $request['revice_team'] = $matchInfo['team'];
 
             // 保存球队参加比赛申请
             $resultJoinMatchApply = $matchS->saveMatchApply($request);
@@ -1268,7 +1383,7 @@ class Match extends Base
                 $dataMessage = [
                     'title' => '您好，您发布的比赛有球队报名迎战',
                     'content' => '您所在球队' . $teamInfo['name'] . '发布的比赛' . $request['team'] . '报名迎战',
-                    'url' => url('frontend/team/matchapplylist', ['team_id' => $teamInfo['id']], '', true),
+                    'url' => url('keeper/team/matchapplylist', ['team_id' => $teamInfo['id']], '', true),
                     'keyword1' => '约战应战申请',
                     'keyword2' => $this->memberInfo['member'],
                     'keyword3' => date('Y-m-d h:i', time()),
@@ -1356,10 +1471,10 @@ class Match extends Base
             if ($applySaveResult['code'] == 200) {
                 // 组合推送消息内容
                 $dataMessage = [
-                    'title' => '约战应战申请结果通知',
-                    'content' => $matchInfo['team'] . '发布的约战应战申请结果通知：' . $replystr,
-                    'url' => url('frontend/message/index', '', '', true),
-                    'keyword1' => $matchInfo['team'] . '发布的约战应战申请结果',
+                    'title' => '约战申请结果通知',
+                    'content' => '球队'. $matchInfo['team'] . '发布的约战申请结果通知：' . $replystr,
+                    'url' => url('keeper/message/index', '', '', true),
+                    'keyword1' => '球队'. $matchInfo['team'] . '发布的约战申请结果',
                     'keyword2' => $replystr,
                     'remark' => '点击登录平台查看更多信息',
                     'team_id' => $applyInfo['team_id'],
