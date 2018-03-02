@@ -403,6 +403,8 @@ class Team extends Base {
         
         // $directentry 1为新增并录入比赛
         $directentry = 0;
+        $memberlist = [];
+        $refereeList= [];
         // 如果有match_id参数即修改活动，没有就新增比赛并录入比赛成绩（事后录比赛）
         if ($match_id === 0) {
             $matchInfo = [
@@ -412,7 +414,7 @@ class Team extends Base {
                 'match_time' => 0
             ];
             $directentry = 1;
-            $memberlist = [];
+
         } else {
             $matchInfo = $matchS->getMatch(['id' => $match_id]);
 
@@ -423,9 +425,10 @@ class Team extends Base {
                 }
                 $matchInfo['record'] = $matchRecordInfo;
             }
-
-
-            $memberlist = [];
+            // 裁判列表
+            if (!empty($matchInfo['referee_str'])) {
+                $refereeList = json_decode($matchInfo['referee_str'], true);
+            }
         }
         
         $this->assign('match_id', $match_id);
@@ -433,6 +436,7 @@ class Team extends Base {
         $this->assign('directentry', $directentry);
         $this->assign('memberList', $memberlist);
         $this->assign('awayTeam', $awayTeam);
+        $this->assign('refereeList', $refereeList);
         return view('Team/matchEdit');
     }
 
