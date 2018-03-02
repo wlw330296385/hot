@@ -5,6 +5,7 @@ use app\model\Match;
 use app\model\MatchApply;
 use app\model\MatchRecord;
 use app\model\MatchRecordMember;
+use app\model\MatchRefereeApply;
 use app\model\MatchTeam;
 use app\model\MatchHistoryTeam;
 use think\Db;
@@ -539,6 +540,30 @@ class MatchService {
             return $query->toArray();
         } else {
             return $query;
+        }
+    }
+
+    // 保存比赛裁判邀请记录
+    public function saveMatchRefereeApply($data) {
+        $model = new MatchRefereeApply();
+        if (isset($data['id'])) {
+            // 更新数据
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        } else {
+            // 插入数据
+            $res = $model->allowField(true)->save($data);
+            if ($res) {
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+            } else {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
         }
     }
 
