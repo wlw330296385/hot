@@ -477,8 +477,11 @@ class Team extends Base {
         // 获取申请的球队信息
         $applyTeam = $teamS->getTeam(['id' => $applyInfo['team_id']]);
         $applyInfo['team'] = $applyTeam;
+        // 获取match_apply关联的比赛数据
+        $matchInfo = $matchS->getMatch(['id' => $applyInfo['match_id']]);
 
         $this->assign('applyInfo', $applyInfo);
+        $this->assign('matchInfo', $matchInfo);
         return view('Team/matchApplyInfo');
     }
 
