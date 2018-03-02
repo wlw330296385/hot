@@ -95,7 +95,17 @@ class Crontab extends Controller {
                         'type' => 1,
                     ];
                     $this->insertSalaryIn($incomeCoach);
-                    
+                    $MemberFinanceData = [
+                                'member_id' => $coachMember['member']['id'],
+                                'member' => $coachMember['member']['member'],
+                                's_balance'=>$coachMember['member']['balance'],
+                                'e_balance'=>$coachMember['member']['balance']+$schedule['coach_salary']+$pushSalary,
+                                'money' =>$schedule['coach_salary']+$pushSalary,
+                                'type'=>1,
+                                'system_remarks'=>'课时主教练总薪资收入',
+                                'f_id'=>$schedule['id'],
+                            ];
+                    $this->insertMemberFinance($MemberFinanceData);
                     // 助教薪资
                     $incomeAssistant = [];
                     if (!empty($schedule['assistant_id']) && $schedule['assistant_salary']) {
@@ -121,9 +131,20 @@ class Crontab extends Controller {
                                 'status' => 1,
                                 'type' => 1,
                             ];
+                            $MemberFinanceData[$k] = [
+                                'member_id' => $val['member']['id'],
+                                'member' => $val['member']['member'],
+                                's_balance'=>$val['member']['balance'],
+                                'e_balance'=>$val['member']['balance']+$schedule['assistant_salary']+$pushSalary,
+                                'money' =>$schedule['assistant_salary']+$pushSalary,
+                                'type'=>1,
+                                'system_remarks'=>'课时助理教练总薪资收入',
+                                'f_id'=>$schedule['id'],
+                            ];
                         }
                         //dump($incomeAssistant);
                         $this->insertSalaryIn($incomeAssistant, 1);
+                        $this->insertMemberFinance($MemberFinanceData,1);
                     }
 
                     // 剩余为训练营所得 课时收入*抽取比例-主教底薪-助教底薪-课时工资提成*教练人数。教练人数 = 助教人数+1（1代表主教人数）
@@ -275,6 +296,16 @@ class Crontab extends Controller {
         } else {
             file_put_contents(ROOT_PATH.'data/income/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'error'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND  );
             return false;
+        }
+    }
+
+    // 保存收入总记录
+    private function insertMemberFinance($data, $saveAll=0) {
+        $model = new \app\model\MemberFinance();
+        if ($saveAll == 1) {
+            $execute = $model->allowField(true)->saveAll($data);
+        } else {
+            $execute = $model->allowField(true)->save($data);
         }
     }
 

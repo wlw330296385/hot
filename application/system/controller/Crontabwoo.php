@@ -52,6 +52,7 @@ class Crontabwoo extends Controller {
                     // 课时正式学员人数
                     $totalScheduleStudent = count(unserialize($schedule['student_str']));
                     $totalCoachSalary = 0;
+                    $MemberFinanceData[];
                     // 主教练课时人头工资提成
                     $pushSalary = $schedule['salary_base'] * $totalScheduleStudent;
                     $coachMember = $this->getCoachMember($schedule['coach_id']);
@@ -78,13 +79,25 @@ class Crontabwoo extends Controller {
                             'status' => 1,
                             'type' => 1,
                         ];
+                        $MemberFinanceData = [
+                                'member_id' => $coachMember['member']['id'],
+                                'member' => $coachMember['member']['member'],
+                                's_balance'=>$coachMember['member']['balance'],
+                                'e_balance'=>$coachMember['member']['balance']+$schedule['coach_salary']+$pushSalary,
+                                'money' =>$schedule['coach_salary']+$pushSalary,
+                                'type'=>1,
+                                'system_remarks'=>'课时主教练总薪资收入',
+                                'f_id'=>$schedule['id'],
+                            ];
                         $this->insertSalaryIn($incomeCoach);
                         $totalCoachSalary = $schedule['coach_salary'] + $pushSalary;
+                        $this->insertMemberFinance($MemberFinanceData);
                     }
                     
                     
                     // 助教薪资
                     if (!empty($schedule['assistant_id']) && $schedule['assistant_salary']) {
+                        $MemberFinanceData = [];
                         $assistantMember = $this->getAssistantMember($schedule['assistant_id']);
                         foreach ($assistantMember as $k => $val) {
                             $totalCoachSalary += $schedule['assistant_salary']; 
@@ -110,8 +123,19 @@ class Crontabwoo extends Controller {
                                 'status' => 1,
                                 'type' => 1,
                             ];
+                            $MemberFinanceData[$k] = [
+                                'member_id' => $val['member']['id'],
+                                'member' => $val['member']['member'],
+                                's_balance'=>$val['member']['balance'],
+                                'e_balance'=>$val['member']['balance']+$schedule['assistant_salary']+$pushSalary,
+                                'money' =>$schedule['assistant_salary']+$pushSalary,
+                                'type'=>1,
+                                'system_remarks'=>'课时助理教练总薪资收入',
+                                'f_id'=>$schedule['id'],
+                            ];
                         }
                         $this->insertSalaryIn($incomeAssistant, 1);
+                        $this->insertMemberFinance($MemberFinanceData,1);
                     }
                     // 训练营的支出 = (教练薪资+人头提成)+平台分成 两条数据;
                     $outputSchedule = ($totalScheduleStudent*$schedule['cost']*$schedule['schedule_rebate']);//平台支出
@@ -241,6 +265,17 @@ class Crontabwoo extends Controller {
         } else {
             file_put_contents(ROOT_PATH.'data/salaryin/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'error'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND  );
             return false;
+        }
+    }
+
+
+    // 保存收入总记录
+    private function insertMemberFinance($data, $saveAll=0) {
+        $model = new \app\model\MemberFinance();
+        if ($saveAll == 1) {
+            $execute = $model->allowField(true)->saveAll($data);
+        } else {
+            $execute = $model->allowField(true)->save($data);
         }
     }
 

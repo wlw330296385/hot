@@ -110,18 +110,19 @@ class BillService {
     **/
     private function finishBill($data){
         $MessageService = new \app\service\MessageService;
+        // 训练营的余额和历史会员增加
+        $campInfo = db('camp')->where(['id'=>$data['camp_id']])->find();
+        $system_rebate = $campInfo['system_rebate'];
+        $campBlance = $data['balance_pay'];
+        $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
+
+        if($ress){
+            db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$system_rebate),'balance_pay'=>$data['balance_pay'],'system_rebate'=>$system_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time()]);
+        }
         //开始课程操作,包括(模板消息发送,camp\camp_mamber和lesson的数据更新)
         if($data['goods_type'] == '课程'){
             //购买人数+1;
             db('lesson')->where(['id'=>$data['goods_id']])->setInc('students');
-            // 训练营的余额和历史会员增加
-            $setting = db('setting')->find();
-            $campBlance = ($data['balance_pay']*(1-$setting['sysrebate']));
-            $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
-
-            if($ress){
-                db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$setting['sysrebate']),'system_rebate'=>$setting['sysrebate'],'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time()]);
-            }
             //学生表的总课程和总课量+n;   
             db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
             // 发送个人消息           
@@ -238,18 +239,19 @@ class BillService {
     **/
     private function finishBillNoNotic($data){
         $MessageService = new \app\service\MessageService;
+        // 训练营的余额和历史会员增加
+        $campInfo = db('camp')->where(['id'=>$data['camp_id']])->find();
+        $system_rebate = $campInfo['system_rebate'];
+        $campBlance = $data['balance_pay'];
+        $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
+
+        if($ress){
+            db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$system_rebate),'balance_pay'=>$data['balance_pay'],'system_rebate'=>$system_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time()]);
+        }
         //开始课程操作,包括(模板消息发送,camp\camp_mamber和lesson的数据更新)
         if($data['goods_type'] == '课程'){
             //购买人数+1;
             db('lesson')->where(['id'=>$data['goods_id']])->setInc('students');
-            // 训练营的余额和历史会员增加
-            $setting = db('setting')->find();
-            $campBlance = ($data['balance_pay']*(1-$setting['sysrebate']));
-            $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
-
-            if($ress){
-                db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'income'=>$data['balance_pay']*(1-$setting['sysrebate']),'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time()]);
-            }
             //学生表的总课程和总课量+n;   
             db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
             
@@ -309,7 +311,7 @@ class BillService {
         //结束增加学生数据
         // 发送模板消息
         $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
-        //结束课程操作
+            //结束课程操作
             // 记录训练营课程营业额
             $daytime = $data['pay_time'];
             $dataCampFinance = [
