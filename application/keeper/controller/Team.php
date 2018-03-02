@@ -58,7 +58,7 @@ class Team extends Base {
             'committee_names' => []
         ];
         foreach ($rolemembers as $rolemember) {
-            if ($rolemember['type'] == 2) {
+            if ($rolemember['type'] == 4) {
                 $roleslist['coach_ids'] .= $rolemember['member_id'].',';
                 array_push($roleslist['coach_names'], [
                     'id' => $rolemember['id'],
@@ -376,16 +376,35 @@ class Team extends Base {
 
     // 创建比赛
     public function creatematch() {
-        return view('Team/createMatch');
+        $teamS = new TeamService();
+        // 传入客队id 页面输出信息
+        $awayTeam = [];
+        $awayTeamId = input('away_id');
+        if ($awayTeamId) {
+            $awayTeam = $teamS->getTeam(['id' => $awayTeamId]);
+        }
+        return view('Team/createMatch', [
+            'awayTeam' => $awayTeam
+        ]);
     }
 
     // 编辑比赛
     public function matchedit() {
         $match_id = input('match_id', 0);
         $matchS = new MatchService();
-
+        $teamS = new TeamService();
+        
+        // 传入客队id 页面输出信息
+        $awayTeam = [];
+        $awayTeamId = input('away_id');
+        if ($awayTeamId) {
+            $awayTeam = $teamS->getTeam(['id' => $awayTeamId]);
+        }
+        
         // $directentry 1为新增并录入比赛
         $directentry = 0;
+        $memberlist = [];
+        $refereeList= [];
         // 如果有match_id参数即修改活动，没有就新增比赛并录入比赛成绩（事后录比赛）
         if ($match_id === 0) {
             $matchInfo = [
@@ -395,7 +414,7 @@ class Team extends Base {
                 'match_time' => 0
             ];
             $directentry = 1;
-            $memberlist = [];
+
         } else {
             $matchInfo = $matchS->getMatch(['id' => $match_id]);
 
@@ -406,16 +425,18 @@ class Team extends Base {
                 }
                 $matchInfo['record'] = $matchRecordInfo;
             }
-
-
-            $memberlist = [];
+            // 裁判列表
+            if (!empty($matchInfo['referee_str'])) {
+                $refereeList = json_decode($matchInfo['referee_str'], true);
+            }
         }
-       
         
         $this->assign('match_id', $match_id);
         $this->assign('matchInfo', $matchInfo);
         $this->assign('directentry', $directentry);
         $this->assign('memberList', $memberlist);
+        $this->assign('awayTeam', $awayTeam);
+        $this->assign('refereeList', $refereeList);
         return view('Team/matchEdit');
     }
 

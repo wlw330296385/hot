@@ -61,6 +61,12 @@
                 width: 78% !important;
             }
         }
+
+        /* 底部按钮点击去除背景颜色 */
+
+        .operation .opli a.mui-active {
+            background-color: inherit
+        }
     </style>
 </head>
 
@@ -201,13 +207,17 @@
 
             <!--最新赛事-->
             <div class="page-header border-b">
-                <span class="course">最新赛事<span class="noDataTip"></span></span>
+                <span class="course">最新赛事
+                    <span class="noDataTip"></span>
+                </span>
             </div>
             <ul class="mui-table-view detalis-list list mainInfo border-b newMatch"></ul>
 
             <!--赛事纪录-->
             <div class="page-header border-b">
-                <span class="course">赛事纪录<span class="noDataTip"></span></span>
+                <span class="course">赛事纪录
+                    <span class="noDataTip"></span>
+                </span>
                 <span class="more pdr15">
                     <a href="{:url('team/matchList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">更多</a>
                 </span>
@@ -216,13 +226,17 @@
 
             <!--最新活动-->
             <div class="page-header border-b">
-                <span class="course">最新活动<span class="noDataTip"></span></span>
+                <span class="course">最新活动
+                    <span class="noDataTip"></span>
+                </span>
             </div>
             <ul class="mui-table-view detalis-list list mainInfo border-b newEvent"></ul>
 
             <!--活动纪录-->
             <div class="page-header border-b">
-                <span class="course">活动纪录<span class="noDataTip"></span></span>
+                <span class="course">活动纪录
+                    <span class="noDataTip"></span>
+                </span>
                 <span class="more pdr15">
                     <a href="{:url('team/eventList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">更多</a>
                 </span>
@@ -255,7 +269,9 @@
 
             <!--球队印象-->
             <div class="page-header border-b">
-                <span class="course">球队印象<span class="noDataTip"></span></span>
+                <span class="course">球队印象
+                    <span class="noDataTip"></span>
+                </span>
                 <span class="more pdr15">
                     <a href="#Impress" class="mui-navigate-right myimpress">发表我的印象</a>
                 </span>
@@ -265,7 +281,9 @@
 
             <!-- 球队介绍 -->
             <div class="page-header border-b">
-                <span class="course">球队介绍<span class="noDataTip"></span></span>
+                <span class="course">球队介绍
+                    <span class="noDataTip"></span>
+                </span>
             </div>
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli introBox" style="padding:0 !important">{$teamInfo.introduce}</li>
@@ -297,10 +315,9 @@
             </div>
             {/notempty}
 
-            
+
             <!--底部操作-->
             <ul class="mui-table-view operation mt">
-
                 <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
                     <a href="/keeper/">
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
@@ -312,29 +329,17 @@
                         球队管理
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bgred">
-                    <div class="goConfirm">发起约战</div>
-                </li>
-                <a href="#fbcomment">
-                    <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bgblue">
-                        发表评论
-                    </li>
-                </a>
                 {else/}
-                <a href="#yqpopover">
-                    <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bggreen">
-                        申请加入
-                    </li>
-                </a>
-                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bgred">
-                    <div class="goConfirm">发起约战</div>
+                <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bggreen">
+                    <a href="#yqpopover">申请加入 </a>
                 </li>
-                <a href="#fbcomment">
-                    <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bgblue">
-                        发表评论
-                    </li>
-                </a>
                 {/eq}
+                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bgred">
+                    <a href="#matchPK" class="">发起约战</a>
+                </li>
+                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bgblue">
+                    <a href="#fbcomment">发表评论 </a>
+                </li>
             </ul>
 
         </div>
@@ -385,6 +390,36 @@
         </div>
     </div>
 
+    <!-- 发起约战信息填写 -->
+    <div id="matchPK" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <ul class="mui-table-view operation">
+            <h5>
+                <span class="type">基本信息</span>
+                <a href="#matchPK" class="mui-icon mui-icon-closeempty"></a>
+            </h5>
+            <form action="" class="mui-input-group">
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label class="mui-text-left">所属球队</label>
+                        <span class="select-row wd60">
+                            <select class="data selectTeam" name="team"></select>
+                        </span>
+                    </div>
+                </div>
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label class="mui-text-left">选择比赛</label>
+                        <span class="select-row wd60">
+                            <select class="data selectMatch" name="match"></select>
+                        </span>
+                    </div>
+                </div>
+            </form>
+            <li class="mui-col-xs-6 mui-col-sm-6 opli matchPKBtn">创建比赛</li>
+            <li class="mui-col-xs-6 mui-col-sm-6 opli matchPKBtn">进入比赛</li>
+        </ul>
+    </div>
+
     <!-- 分享 -->
     <div id="share" class="mui-popover mui-popover-action mui-popover-bottom" style="height:150px !important">
         <ul class="mui-table-view">
@@ -416,6 +451,7 @@
                 indicators: true //是否显示滚动条
             });
         })(mui);
+
 
         $(function () {
 
@@ -716,6 +752,10 @@
                 });
             });
 
+            $(document).change(".selectTeam",function(){
+                var teamId = $(this).children("option:selected").val()
+                console.log(teamId)
+            })
             isthumbsup() //点赞状态
             followStatus(); //判断当前的关注状态
             teamMemberlist(); //自定义获取球员列表
@@ -726,6 +766,8 @@
             toCommentList(); //获取评论列表
             toRecordEventList(); //活动纪录
             toRecordMatchList(); //赛事纪录
+            toTeam(); //获取所在的球队列表
+            toMatch(); //获取所在的球队比赛列表
         });
 
         // 点赞状态
@@ -1157,6 +1199,66 @@
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
                     mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
+
+        //获取在队的球队列表
+        function toTeam() {
+            var url = "{:url('api/team/myteamlist','','',true)}";
+            mui.ajax({
+                url: url,
+                data: {},
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli = newli + '<option value="' + data.data[i].team.id + '" data-logo="' + data.data[i].team.logo + '">' + data.data[i].team.name + '</option>'
+                        }
+                        $(".selectTeam").empty().append(newli);
+                    } else {
+                        $(".selectTeam").empty().append("<a href='{:url('team/createteam')}'>没有效力的球队,赶紧去创建吧</a>");
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //获取在队的球队比赛列表
+        function toMatch() {
+            var url = "{:url('api/match/getMatchListOrderByDistanceApi','','',true)}";
+            mui.ajax({
+                url: url,
+                data: {
+                    status: 1,
+                    team_id: 2,
+                    area: ""
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli = newli + '<option value="' + data.data[i].id + '" >' + data.data[i].name + '</option>'
+                        }
+                        $(".selectMatch").empty().append(newli);
+                    } else {
+                        $(".selectMatch").empty().append("<a href='{:url('team/createteam')}'>没有效力的球队,赶紧去创建吧</a>");
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
                 }
             });
         };

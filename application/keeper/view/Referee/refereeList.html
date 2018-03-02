@@ -61,7 +61,7 @@
         </div>
 
         <!--底部操作-->
-        <ul class="mui-table-view operation">
+        <ul class="mui-table-view operation registerBtn">
             <li class="mui-table-view-cell mui-col-sm-12 mui-col-xs-12 opli bgblue">
                 <a href="/keeper/referee/createReferee">
                     注册裁判员
@@ -229,6 +229,27 @@
                 }
             });
         };
+
+        // 注册裁判员入口判断
+        mui.ajax("{:url('api/referee/getMemberReferee')}", {
+            data: {},
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data);
+                if (data.code == 200) {
+                    $(".registerBtn").hide();
+                } else {
+                    $(".registerBtn").show();
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                console.log(type);
+            }
+        });
 
     })
 

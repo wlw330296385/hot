@@ -152,10 +152,19 @@
                     {eq name="directentry" value="1"}
                     <span class="away_team_Cont domData" name="record[away_team]"></span>
                     <input type="hidden" name="record[away_team_id]" value="" class="data">
-                    <input type="hidden" name="record[away_team_logo]" value="" class="data"> {else/}
+                    <input type="hidden" name="record[away_team_logo]" value="" class="data">
+                    {else/}
+                    {empty name="awayTeam"}
                     <span class="away_team_Cont domData" name="record[away_team]">{$matchInfo.record.away_team}</span>
                     <input type="hidden" name="record[away_team_id]" value="{$matchInfo.record.away_team_id}" class="data">
-                    <input type="hidden" name="record[away_team_logo]" class="data" value="{$matchInfo.record.away_team_logo}" /> {/eq}
+                    <input type="hidden" name="record[away_team_logo]" class="data" value="{$matchInfo.record.away_team_logo}" />
+                    {else/}
+                    <!-- url传入客队id -->
+                    <span class="away_team_Cont domData" name="record[away_team]">{$awayTeam.name}</span>
+                    <input type="hidden" name="record[away_team_id]" value="{$awayTeam.id}" class="data">
+                    <input type="hidden" name="record[away_team_logo]" value="{$awayTeam.logo}" class="data">
+                    {/empty}
+                    {/eq}
                 </a>
 
             </div>
