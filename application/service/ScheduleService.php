@@ -281,7 +281,9 @@ class ScheduleService
                 $lessonMemberWhere['type'] = 1;
                 $lessonMember = $modelLessonMember->where($lessonMemberWhere)->find();
             }
-            if ($lessonMember) {
+            if (!$lessonMember) {
+                return ['code' => 100, 'msg' => $student['student'] . '无剩余课时，请修改课时信息'];
+            } else {
                 $lessonMember = $lessonMember->toArray();
                 $restschedule = $lessonMember['rest_schedule'];
                 //dump($restschedule);
