@@ -229,17 +229,17 @@
                         </span>
                     </div>
                 </div>
-                <!-- 
+
                 <div class="mui-input-row">
                     <label>比赛宣言</label>
-                    <input type="text" name="" value="" class="data" placeholder="请填写比赛宣言">
-                </div> -->
+                    <textarea rows="2" name="description" class="description data" placeholder="请填写比赛宣言"></textarea>
+                </div>
 
                 <p class="pline"></p>
 
                 <div class="mui-input-row h-auto">
                     <label>温馨提示</label>
-                    <textarea name="remarks" class="data" placeholder="请填写提示"></textarea>
+                    <textarea name="remarks" class="data remarks" placeholder="请填写提示"></textarea>
                 </div>
 
                 <div class="mui-input-row">
@@ -463,24 +463,7 @@
     </div>
 
     <!--裁判列表-->
-    <!-- <div id="refereeDom" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course">
-                <strong>裁判列表</strong>
-            </span>
-            <span class="fr">
-                <button class="mui-btn-blue" id="refereeConfirm">确认</button>
-            </span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <form id="refereeDiv" class="mui-input-group refereeList"></form>
-            </div>
-        </div>
-    </div> -->
-    <!--常驻场地-->
-    <div id="refereeDom" class="mui-popover" style="margin: 0">
+    <div id="refereeDom" class="mui-popover tipClass" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
             <span class="course wd45">
@@ -638,14 +621,13 @@
             var pageHM = 1;
             var pageRE = 1;
             var pageHi = 1;
-            var pageRE = 1;
             var pageLD = 1;
             var pageCR = 1;
             // toTeamList(wTeams, teamKeyword, 1);
             toTeamListHistory(wTeamsHistory, teamHistoryKeyword, 1);
             toCourtList(wCourt, courtKeyword, 1);
             colorShow(); // 调用主场客场颜色显示
-            toRefereeList(wReferee, refereeKeyword, 1);
+            toRefereeList(wReferee, "refereeDom", 1);
 
             // 点击直接编辑录入
             $(".direct").on("tap", '', function () {
@@ -673,7 +655,7 @@
             $("#searchRE").on("tap", function () {
                 var keyword = $(".keywordRE").val();
                 var pageRE = 1;
-                toRefereeList(keyword, "referee", pageRE);
+                toRefereeList(keyword, "refereeDom", pageRE);
             })
             //裁判弹出框页码控制
             $("#refereeDom").on('tap', '.next_page', function () {
@@ -683,7 +665,7 @@
                     mui.toast("已经最后一页了");
                 } else {
                     var keyword = $(".keywordLD").val();
-                    toRefereeList(keyword, "referee", pageRE);
+                    toRefereeList(keyword, "refereeDom", pageRE);
                 }
             })
             $("#refereeDom").on('tap', '.prev_page', function () {
@@ -692,7 +674,7 @@
                     mui.toast("已经是第一页了");
                 } else {
                     var keyword = $(".keywordRE").val();
-                    toRefereeList(keyword, "referee", pageRE);
+                    toRefereeList(keyword, "refereeDom", pageRE);
                 }
             })
             // 选择裁判
@@ -701,45 +683,27 @@
                 $(".referee").empty();
                 $("input[name=referee_id]").val("");
                 $('input[name=referee]').val('');
-                $("#hideCoList").empty();
                 var refereeMember = "";
                 var refereeMember_id = "";
-                refereeArr = [];
                 referee_str = [];
-
                 $(".refereeList").find("input[name=checkbox-referee]:checked").each(function () {
                     var refereeName = $(".refereeList").find("input[name=checkbox-referee]:checked")
-                    if (refereeName.length > 3) {
-                        mui.toast("只能选三个裁判")
-                        return false;
-                    } else {
+                    if (refereeName.length <= 3) {
                         var referee = $(this).attr("data-referee");
                         var referee_id = $(this).attr("data-referee_id");
-                        var referee_cost = +$(this).attr("data-referee_cost");
+                        var referee_cost = $(this).attr("data-referee_cost");
                         refereeMember += referee + ','
                         refereeMember_id += referee_id + ','
                         $(".referee").text(refereeMember.substring(0, refereeMember.length - 1));
                         $("input[name=referee_id]").val(refereeMember_id.substring(0, refereeMember_id.length - 1));
-                        $("input[name=referee_cost]").val(referee_cost);
-                        refereeArr.push({ referee: referee, referee_id: referee_id });
-                        referee_str.push({ referee: referee, referee_cost: referee_cost })
-                        mui("#refereeDom").popover("toggle");
+                        referee_str.push({ referee: referee, referee_id: referee_id,referee_cost: referee_cost });
+                    } else {
+                        mui.toast("只能选三个裁判");
+                        return false;
                     }
                 })
-                console.log(refereeArr)
-            });
-
-            //裁判列表复选框赋值
-            $("#setCoachBox").on('tap', '', function () {
-                //每次打开先清空所有选择
-                $("input[name='checkbox-coach']").prop("checked", false);
-                //然后遍历出对应所选
-                $(".coList").each(function () {
-                    var member_id = $(this).attr("data-member_id");
-                    $("#coachDiv").find("input[name='checkbox-coach']").filter(function () {
-                        return $(this).attr("data-member_id") == member_id
-                    }).prop("checked", true);
-                });
+                mui("#refereeDom").popover("toggle");
+                console.log(referee_str)
             });
             // //////////////////////////////////////////////////////////
 
@@ -954,10 +918,11 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            var remarks = $('textarea.data').val();
+            var remarks = $('textarea.remarks').val();
             objData.remarks = remarks;
-            objData.refereeArr = JSON.stringify(refereeArr);
-            objData.refereeArr = JSON.stringify(referee_str);
+            var description = $('textarea.description').val();
+            objData.description = description;
+            objData.referee_str = JSON.stringify(referee_str);
             var url = "{:url('api/match/creatematch')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
@@ -1098,11 +1063,10 @@
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             newli = newli + '<li class="mui-table-view-cell listli detalisli" data-lng="' + data.data.data[i].lng + '"  data-lat="' + data.data.data[i].lat + '"  data-id="' + data.data.data[i].id + '"><font class="court">' + data.data.data[i].court + '</font></li>'
                         }
-                        $(wCourtList).empty();
                         if (newli == '') {
                             newli = '<p class="nohave">没有查找到数据哦</p>'
                         }
-                        $(wCourtList).append(newli);
+                        $(wCourtList).empty().append(newli);
                         $(currPage).text(data.data.current_page);
                         $(totalPage).text(data.data.last_page);
                     } else {
@@ -1117,12 +1081,12 @@
 
         //自定义获取裁判列表
         function toRefereeList(keyword, wReferee, page) {
-            var url = "{:url('api/referee/refereelist','','',true)}/?page=" + page;
+            var url = "{:url('api/referee/refereelistpage','','',true)}/?page=" + page;
             var wRefereeList = "ul.refereeList";
             var currPage = ".currPage";
             var totalPage = ".totalPage";
             if (keyword != '' && wReferee != '') {
-                wRefereeList = "#" + wReferee + "ul.refereeList";
+                wRefereeList = "#" + wReferee + " ul.refereeList";
                 currPage = "#" + wReferee + " .currPage";
                 totalPage = "#" + wReferee + " .totalPage";
             }
@@ -1141,14 +1105,13 @@
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<li class="mui-input-row mui-checkbox mui-left" ><label class="wd52">' + data.data[i].referee + '</label><span class="wd45">出场费：' + data.data[i].appearance_fee + '</span><input name="checkbox-referee" class="referee" type="checkbox" data-referee="' + data.data[i].referee + '" data-referee_id="' + data.data[i].id + '" data-referee_cost="' + data.data[i].appearance_fee + '"></li>'
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli += '<li class="mui-input-row mui-checkbox mui-left" ><label class="wd52">' + data.data.data[i].referee + '</label><span class="wd45">出场费：' + data.data.data[i].appearance_fee + '</span><input name="checkbox-referee" class="" type="checkbox" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].id + '" data-referee_cost="' + data.data.data[i].appearance_fee + '"></li>'
                         }
-                        $(wRefereeList).empty();
                         if (newli == '') {
                             newli = '<p class="nohave">没有查找到数据哦</p>'
                         }
-                        $(wRefereeList).append(newli);
+                        $(wRefereeList).empty().append(newli);
                         $(currPage).text(data.data.current_page);
                         $(totalPage).text(data.data.last_page);
                     } else {
@@ -1160,41 +1123,6 @@
                 }
             });
         };
-        // var refereeList = function () {
-        //     var url = "{:url('api/referee/refereelist','','',true)}";
-        //     var team_id = "{$teamInfo.id}";
-        //     mui.ajax({
-        //         url: url,
-        //         data: {
-        //             status: 1
-        //         },
-        //         dataType: 'json',//服务器返回json格式数据
-        //         type: 'post',//HTTP请求类型
-        //         timeout: 10000,//超时时间设置为10秒；
-        //         headers: { 'Content-Type': 'application/json' },
-        //         success: function (data) {
-        //             console.log(data)
-        //             if (data.code == 200) {
-        //                 var newli = '';
-        //                 for (var i = 0; i <= data.data.length - 1; i++) {
-        //                     newli += '<li class="mui-input-row mui-checkbox mui-left" ><label class="wd52">' + data.data[i].referee + '</label><span class="wd45">出场费：' + data.data[i].appearance_fee + '</span><input name="checkbox-referee" class="referee" type="checkbox" value="' + data.data[i].referee + '" data-referee_id="' + data.data[i].id + '"></li>'
-        //                     // newli += '<div class="mui-input-row mui-checkbox mui-left refereeChoise"><label class="wd52">' + data.data[i].referee + '</label><span class="wd45">出场费：' + data.data[i].appearance_fee + '</span><input name="checkbox-referee" class="referee" type="checkbox" value="' + data.data[i].referee + '" data-referee_id="' + data.data[i].id + '"></div>'
-        //                 }
-        //                 $("#refereeDiv").empty();
-        //                 if (newli == '') {
-        //                     newli = '<p class="nohave">没有查找到数据哦</p>'
-        //                 }
-        //                 $("#refereeDiv").append(newli);
-
-        //             } else {
-        //                 mui.toast('数据获取失败,请稍候再试');
-        //             }
-        //         },
-        //         error: function (xhr, type, errerThrown) {
-        //             mui.toast('网络异常,请稍候再试');
-        //         }
-        //     });
-        // };
 
     </script>
 </body>
