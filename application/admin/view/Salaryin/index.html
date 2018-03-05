@@ -1,0 +1,26 @@
+{extend name="layout/common"/}
+{block name="css"}
+
+{/block}
+{block name="page-content"}
+<p><strong>课时</strong></p>
+<p>总收益:{$s_push_salary+$s_salary}</p>
+<p>上课总课次:{$c_id}</p>
+<p>上课总人次{$s_students}</p>
+{volist name="salaryinList" id="vol"}
+
+    <p>训练营:{$vol.camp}&nbsp;&nbsp;&nbsp;&nbsp;课程: {$vol.lesson}&nbsp;&nbsp;&nbsp;&nbsp;人次:{$vol.s_students}&nbsp;&nbsp;&nbsp;&nbsp;收入:{$vol.s_salary+$vol.s_push_salary}</p>
+
+{/volist}
+
+
+
+
+<p><strong>返利</strong></p>
+<p>总收益:{$s_rebate}</p>
+{volist name="rebateList" id="vol"}
+
+    <p>推荐人:{$vol.s_member} &nbsp;&nbsp;&nbsp;&nbsp;层级:{$vol.tier}&nbsp;&nbsp;&nbsp;&nbsp;被推荐人收入: {$vol.salary*($vol.tier/0.05)}&nbsp;&nbsp;&nbsp;&nbsp;返利金额:{$vol.salary}&nbsp;&nbsp;&nbsp;&nbsp;返利积分:{$vol.score}</p>
+
+{/volist}
+{/block}
