@@ -946,7 +946,7 @@ class Team extends Base
             $request['member_id'] = -1;
             $request['member'] = $request['name'];
             $request['avatar'] = config('default_image.member_avatar');
-            $request['number'] = null;
+            $request['number'] = !empty($request['number']) ? $request['number'] : null;
             $request['status'] = 1;
             $resSaveTeamMember = $teamS->saveTeamMember($request);
             return json($resSaveTeamMember);
