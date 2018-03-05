@@ -363,8 +363,8 @@ class CampMember extends Base
             $campS = new CampService();
             // 操作权限
             $power = $campS->isPower($campmember['camp_id'], $this->memberInfo['id']);
-            if ($power < 3) {
-                return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+            if ($power != 4) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403').'，只有营主才能操作']);
             }
 
             // 删教练 检查是否在营有班级
