@@ -42,7 +42,7 @@ class Base extends Controller {
             ];
             return $res;
         } else {
-            return ;
+            return false;
         }
     }
 

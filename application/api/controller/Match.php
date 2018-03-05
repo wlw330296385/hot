@@ -5,6 +5,7 @@ namespace app\api\controller;
 use app\model\MatchRecord;
 use app\service\MatchService;
 use app\service\MessageService;
+use app\service\RefereeService;
 use app\service\TeamService;
 use think\Exception;
 use think\Db;
@@ -23,7 +24,7 @@ class Match extends Base
             $matchS = new MatchService();
             $teamS = new TeamService();
             $messageS = new MessageService();
-            // 友谊赛类型 记录比赛战绩数据
+            //记录比赛战绩数据
             $dataMatchRecord = [];
             $dataMatchRecord = $data['record'];
             $dataMatchRecord['team_id'] = $data['team_id'];
@@ -63,6 +64,15 @@ class Match extends Base
             } else {
                 $data['name'] = $homeTeam['name'] . ' vs （待定）';
             }
+
+            // 裁判业务操作
+            /*$refereeType = input('post.referee_type', 0);
+            if ($refereeType) {
+                $this->setMatchRefereeType($refereeType, $data);
+            }*/
+
+
+
             $res = $matchS->saveMatch($data);
             // 比赛记录创建成功后操作
             if ($res['code'] == 200) {
@@ -113,6 +123,27 @@ class Match extends Base
             return json($res);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 根据提交的比赛信息所选裁判类型执行的业务
+    protected function setMatchRefereeType($refereeType=0, $matchData=[]) {
+        $refereeS = new RefereeService();
+
+        if ($refereeType == 1) {
+            // 选择随机安排 根据比赛信息 发送比赛裁判邀请给裁判人群
+            // 获取符合条件裁判人群
+            $map = [];
+            if ($matchData['city']) {
+                $map['city'] = $matchData['city'];
+            }
+            $map['status'] = 1;
+            $map['accept_rand_match'] = 1;
+            $refereeList = $refereeS->getRefereeAll($map);
+            // dump($refereeList);
+            foreach ($refereeList as $referee) {
+                
+            }
         }
     }
 
