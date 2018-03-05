@@ -59,7 +59,9 @@ class Team extends Base
                 // 领队身份
                 $teamMemberRoleData = [
                     'leader_id' => $this->memberInfo['id'],
-                    'captain_id' => $this->memberInfo['id']
+                    'leader' => $this->memberInfo['member'],
+                    'captain_id' => $this->memberInfo['id'],
+                    'captain' => $this->memberInfo['member']
                 ];
                 $saveTeamMemberRoleRes1 = $teamS->saveTeamMemberRole($teamMemberRoleData, $team_id);
                 if ($saveTeamMemberRoleRes1['code'] != 200) {
