@@ -110,6 +110,10 @@ class Team extends Base
         try {
             $map = input('post.');
             $page = input('page', 1);
+            // 根据访问模块查询球队type：frontend（培训）type=1|keeper（球队）type!=1
+            if ( cookie('module') ) {
+                $map['type'] = (cookie('module')=='frontend') ? ['eq', 1] : ['neq', 1];
+            }
             $teamS = new TeamService();
             $result = $teamS->getTeamListPaginator($map);
             if ($result) {
@@ -129,6 +133,12 @@ class Team extends Base
         try {
             $map = input('param.');
             $page = input('page', 1);
+
+            // 根据访问模块查询球队type：frontend（培训）type=1|keeper（球队）type!=1
+            if ( cookie('module') ) {
+                $map['type'] = (cookie('module')=='frontend') ? ['eq', 1] : ['neq', 1];
+            }
+
             unset($map['page']);
             $teamS = new TeamService();
             $result = $teamS->getTeamList($map, $page);
@@ -159,12 +169,25 @@ class Team extends Base
                 unset($map['type']);
             }
             // 关键字搜索
-            if (!empty($map['keyword'])) {
-                $keyword = $map['keyword'];
+            $keyword = input('keyword');
+            if ( !empty($keyword) ) {
                 $map['name'] = ['like', "%$keyword%"];
+                unset($map['keyword']);
             }
-            unset($map['keyword']);
-            unset($map['page']);
+            // 排除值为null
+            if ( $keyword == null ) {
+                unset($map['keyword']);   
+            }
+            
+            // 根据访问模块查询球队type：frontend（培训）type=1|keeper（球队）type!=1
+            if ( cookie('module') ) {
+                $map['type'] = (cookie('module')=='frontend') ? ['eq', 1] : ['neq', 1];
+            }
+            // 组合查询条件end
+
+            if( input('?page') ) {
+                unset($map['page']);
+            }
             $teamS = new TeamService();
             $result = $teamS->getTeamList($map, $page);
             if ($result) {
@@ -194,13 +217,25 @@ class Team extends Base
                 unset($map['type']);
             }
             // 关键字搜索
-            if (!empty($map['keyword'])) {
-                $keyword = $map['keyword'];
+            $keyword = input('keyword');
+            if ( !empty($keyword) ) {
                 $map['name'] = ['like', "%$keyword%"];
-
+                unset($map['keyword']);
             }
-            unset($map['keyword']);
-            unset($map['page']);
+            // 排除值为null
+            if ( $keyword == null ) {
+                unset($map['keyword']);
+            }
+
+            // 根据访问模块查询球队type：frontend（培训）type=1|keeper（球队）type!=1
+            if ( cookie('module') ) {
+                $map['type'] = (cookie('module')=='frontend') ? ['eq', 1] : ['neq', 1];
+            }
+            // 组合查询条件end
+
+            if( input('?page') ) {
+                unset($map['page']);
+            }
             $teamS = new TeamService();
             $result = $teamS->getTeamListPaginator($map);
             if ($result) {
