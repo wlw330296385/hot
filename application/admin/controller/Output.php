@@ -53,7 +53,9 @@ class Output extends Backend{
 
 
     public function demo(){
-        
+        $member_id = input('member_id',19);
+        $salaryinList = db('salary_in')->where(['member_id'=>$member_id])->select();
+        dump($salaryinList);
         return view();
     }
     
