@@ -28,7 +28,6 @@
             width: 100%;
         }
     </style>
-    <script src="../../../../public/static/frontend/js/tuwen.js"></script>
 </head>
 
 <body>
@@ -43,28 +42,27 @@
         <div class="register">
             <form action="" class="mui-input-group">
                 <input type="hidden" name="coachid" value="{$coachInfo.id}">
-                <input type="hidden" name="memberid" value="{$coachInfo.member_id}">
-                {if $coachInfo.status=1}
+                <input type="hidden" name="memberid" value="{$coachInfo.member_id}"> {if $coachInfo.status=1}
                 <div class="mui-input-row">
                     <label>真实姓名</label>
                     <input type="text" name="coach_name" class="input coach_name" readonly="readonly" placeholder="请输入真实姓名" value="{notempty name='coachInfo.coach'}{$coachInfo.coach}{/notempty}">
                 </div>
                 <div class="mui-input-row">
                     <label>身份证号码</label>
-                    <input type="text" name="idno" class="input wd54 idno" readonly="readonly" placeholder="请输入身份证号码" {notempty name="identCert.cert_no" } value="{$identCert.cert_no}"
-                        {/notempty}>
+                    <input type="text" name="idno" class="input wd54 idno" readonly="readonly" placeholder="请输入身份证号码" {notempty name="identCert.cert_no"
+                        } value="{$identCert.cert_no}" {/notempty}>
                 </div>
                 <div class="mui-input-row h-auto">
-                        <label>身份证正面</label>
-                        <img id="preview_1" class="coachicon icon01 upload-preview" {notempty name="identCert.photo_positive" } src="{$identCert.photo_positive}"
-                            {/notempty} alt="">
-                        <input type="hidden" name="photo_positive" value="{notempty name='identCert.photo_positive'}{$identCert.photo_positive}{/notempty}">
+                    <label>身份证正面</label>
+                    <img id="preview_1" class="coachicon icon01 upload-preview" {notempty name="identCert.photo_positive" } src="{$identCert.photo_positive}"
+                        {/notempty} alt="">
+                    <input type="hidden" name="photo_positive" value="{notempty name='identCert.photo_positive'}{$identCert.photo_positive}{/notempty}">
                 </div>
                 <div class="mui-input-row h-auto">
-                        <label>身份证反面</label>
-                        <img id="preview_2" class="coachicon icon01 upload-preview" {notempty name="identCert.photo_back" } src="{$identCert.photo_back}"
-                            {/notempty} alt="">
-                        <input type="hidden" name="photo_back" value="{notempty name='identCert.photo_back'}{$identCert.photo_back}{/notempty}">
+                    <label>身份证反面</label>
+                    <img id="preview_2" class="coachicon icon01 upload-preview" {notempty name="identCert.photo_back" } src="{$identCert.photo_back}"
+                        {/notempty} alt="">
+                    <input type="hidden" name="photo_back" value="{notempty name='identCert.photo_back'}{$identCert.photo_back}{/notempty}">
                 </div>
                 {else/}
                 <div class="mui-input-row">
@@ -74,13 +72,13 @@
                 <div class="mui-input-row">
                     <label>身份证号码</label>
                     <input type="text" name="idno" class="input wd54 idno" placeholder="请输入身份证号码" {notempty name="identCert.cert_no" } value="{$identCert.cert_no}"
-                           {/notempty}>
+                        {/notempty}>
                 </div>
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right filePicker" onclick="add_id(1)">
                         <label>身份证正面</label>
                         <img id="preview_1" class="coachicon icon01 upload-preview" {notempty name="identCert.photo_positive" } src="{$identCert.photo_positive}"
-                             {/notempty} alt="">
+                            {/notempty} alt="">
                         <input type="hidden" name="photo_positive" value="{notempty name='identCert.photo_positive'}{$identCert.photo_positive}{/notempty}">
                     </a>
                 </div>
@@ -88,7 +86,7 @@
                     <a class="mui-navigate-right filePicker" onclick="add_id(2)">
                         <label>身份证反面</label>
                         <img id="preview_2" class="coachicon icon01 upload-preview" {notempty name="identCert.photo_back" } src="{$identCert.photo_back}"
-                             {/notempty} alt="">
+                            {/notempty} alt="">
                         <input type="hidden" name="photo_back" value="{notempty name='identCert.photo_back'}{$identCert.photo_back}{/notempty}">
                     </a>
                 </div>
@@ -129,6 +127,18 @@
                 <div class="mui-input-row h-auto">
                     <label>教练宣言</label>
                     <textarea rows="5" class="description" placeholder="个人宣言">{$coachInfo.description}</textarea>
+                </div>
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>是否公开到平台</label>
+                        <span class="select-row">
+                            <select id="openCoach" class="data" name="is_open">
+                                <option value="1">公开</option>
+                                <option value="-1">不公开</option>
+                            </select>
+                        </span>
+                    </div>
                 </div>
 
                 <div class="page-header" style="background: #efeff4;">
@@ -230,7 +240,8 @@
         //完善教练信息
         $(function () {
 
-
+            // 设置教练信息类型默认值
+            $('#openCoach option[value="{$coachInfo.is_open}"]').prop("selected", true);
             $(".registerbtn2").on("click", function () {
 
                 //图文编辑状态转换浏览状态
@@ -238,7 +249,6 @@
 
                 //获取最终含简单html标签的图文内容
                 var introHtml = $(".introBox").html();
-
 
                 var coachid = $('input[name=coachid]').val();
                 var memberid = $('input[name=memberid]').val();
@@ -252,8 +262,7 @@
                 var photo_positive = $('input[name=photo_positive]').val();
                 var photo_back = $('input[name=photo_back]').val();
                 var cert = $('input[name=cert]').val();
-
-
+                var is_open = $("#openCoach option:selected").val();
 
                 if (!(/[\u4e00-\u9fa5a-zA-Z]{2,20}/).test(coach_name)) {
                     mui.alert("请输入您的真实姓名");
@@ -289,7 +298,8 @@
                         photo_positive: photo_positive,
                         photo_back: photo_back,
                         cert: cert,
-                        idno: idno
+                        idno: idno,
+                        is_open: is_open
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
