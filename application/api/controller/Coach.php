@@ -130,7 +130,8 @@ class Coach extends Base{
                 'experience' => input('post.experience'),
                 'introduction' => input('post.introduction'),
                 'portraits' => input('post.portraits'),
-                'description' => input('post.description')
+                'description' => input('post.description'),
+                'is_open' => input('post.is_open', 1)
             ];
             // 地区input 拆分成省 市 区 3个字段
             $locationStr = input('post.locationStr');
@@ -189,7 +190,8 @@ class Coach extends Base{
                 'experience' => input('post.experience'),
                 'introduction' => input('post.introduction'),
                 'portraits' => input('post.portraits'),
-                'description' => input('post.description')
+                'description' => input('post.description'),
+                'is_open' => input('post.is_open', 1)
             ];
             // 地区input 拆分成省 市 区 3个字段
             $locationStr = input('post.locationStr');
