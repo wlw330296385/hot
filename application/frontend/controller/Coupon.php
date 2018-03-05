@@ -108,4 +108,14 @@ class Coupon extends Base{
         $this->assign('camp_id',$camp_id);
         return view('Coupon/searchItemCouponList');
     }
+
+    // 新加领取卡券名单列表
+    public function couponOfSignUpList(){
+        $item_coupon_id = input('param.item_coupon_id');
+        $itemCouponInfo = $this->ItemCouponService->getItemCouponInfo(['id'=>$item_coupon_id]);
+        $this->assign('itemCouponInfo',$itemCouponInfo);
+        $this->assign('item_coupon_id',$item_coupon_id);
+        
+        return view('Coupon/couponOfSignUpList');
+    }
 }

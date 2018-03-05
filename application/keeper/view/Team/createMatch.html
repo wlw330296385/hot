@@ -118,13 +118,11 @@
                         {empty name="awayTeam"}
                         <span class="away_team_Cont domData" name="away_team"></span>
                         <input type="hidden" name="away_team_id" value="" class="data">
-                        <input type="hidden" name="away_team_logo" value="" class="data">
-                        {else/}
+                        <input type="hidden" name="away_team_logo" value="" class="data"> {else/}
                         <!-- url传入客队id -->
                         <span class="away_team_Cont domData" name="away_team">{$awayTeam.name}</span>
                         <input type="hidden" name="away_team_id" value="{$awayTeam.id}" class="data">
-                        <input type="hidden" name="away_team_logo" value="{$awayTeam.logo}" class="data">
-                        {/empty}
+                        <input type="hidden" name="away_team_logo" value="{$awayTeam.logo}" class="data"> {/empty}
                     </a>
                 </div>
 
@@ -215,8 +213,8 @@
                     <a href="#refereeDom" class="mui-navigate-right">
                         <label>裁判名单</label>
                         <span class="referee" name="referee" style="width: 60%"></span>
-                        
                         <input type="hidden" name="referee_id" value="" class="data">
+                        <input type="hidden" name="referee_cost" value="" class="data">
                     </a>
                 </div>
                 <div class="mui-input-row">
@@ -492,7 +490,7 @@
                 <button class="mui-btn-blue" id="refereeConfirm">确认</button>
             </span>
             <span class="fr">
-                <button class="mui-btn" id="CourtDel">清除</button>
+                <button class="mui-btn" id="RefereeDel">清除</button>
             </span>
         </div>
         <div class="pop-search">
@@ -624,7 +622,8 @@
             $(".ching").css("background", "#00eaff");
         };
 
-        var refereeArr= []
+        var refereeArr = [];
+        var referee_str = [];
         $(function () {
 
             //获取训练营粉丝列表
@@ -646,7 +645,7 @@
             toTeamListHistory(wTeamsHistory, teamHistoryKeyword, 1);
             toCourtList(wCourt, courtKeyword, 1);
             colorShow(); // 调用主场客场颜色显示
-            toRrefereeList(wReferee, refereeKeyword, 1);
+            toRefereeList(wReferee, refereeKeyword, 1);
 
             // 点击直接编辑录入
             $(".direct").on("tap", '', function () {
@@ -666,34 +665,34 @@
 
             //清除裁判
             $("#RefereeDel").on('tap', '', function () {
-                $(".refereeCont").text('');
+                $(".referee").text('');
                 $("input[name=referee_id]").val("");
                 mui("#refereeDom").popover("toggle");
             })
             //搜索裁判
-            $("#searchCR").on("tap", function () {
+            $("#searchRE").on("tap", function () {
                 var keyword = $(".keywordRE").val();
                 var pageRE = 1;
-                torRefereeList(keyword, "referee", pageCR);
+                toRefereeList(keyword, "referee", pageRE);
             })
             //裁判弹出框页码控制
             $("#refereeDom").on('tap', '.next_page', function () {
                 var getTotalPage = $("#referee .totalPage").text();
-                pageCR++;
-                if (pageCR > getTotalPage) {
+                pageRE++;
+                if (pageRE > getTotalPage) {
                     mui.toast("已经最后一页了");
                 } else {
                     var keyword = $(".keywordLD").val();
-                    toCourtList(keyword, "referee", pageCR);
+                    toRefereeList(keyword, "referee", pageRE);
                 }
             })
             $("#refereeDom").on('tap', '.prev_page', function () {
-                pageCR--;
-                if (pageCR < 1) {
+                pageRE--;
+                if (pageRE < 1) {
                     mui.toast("已经是第一页了");
                 } else {
                     var keyword = $(".keywordRE").val();
-                    toCourtList(keyword, "referee", pageCR);
+                    toRefereeList(keyword, "referee", pageRE);
                 }
             })
             // 选择裁判
@@ -705,8 +704,8 @@
                 $("#hideCoList").empty();
                 var refereeMember = "";
                 var refereeMember_id = "";
-                // var coList = "";
                 refereeArr = [];
+                referee_str = [];
 
                 $(".refereeList").find("input[name=checkbox-referee]:checked").each(function () {
                     var refereeName = $(".refereeList").find("input[name=checkbox-referee]:checked")
@@ -716,20 +715,18 @@
                     } else {
                         var referee = $(this).attr("data-referee");
                         var referee_id = $(this).attr("data-referee_id");
+                        var referee_cost = +$(this).attr("data-referee_cost");
                         refereeMember += referee + ','
                         refereeMember_id += referee_id + ','
                         $(".referee").text(refereeMember.substring(0, refereeMember.length - 1));
                         $("input[name=referee_id]").val(refereeMember_id.substring(0, refereeMember_id.length - 1));
-                        // coList += '<input type="hidden" class="coList" data-referee="' + referee + '" data-referee_id="' + referee_id + '">';
+                        $("input[name=referee_cost]").val(referee_cost);
                         refereeArr.push({ referee: referee, referee_id: referee_id });
+                        referee_str.push({ referee: referee, referee_cost: referee_cost })
                         mui("#refereeDom").popover("toggle");
                     }
                 })
-
-                // $("#hideReList").html(coList);
-                // $('input[name=referee_member]').val(refereeMember.substring(0, refereeMember.length - 1));
                 console.log(refereeArr)
-
             });
 
             //裁判列表复选框赋值
@@ -952,16 +949,6 @@
                 return false;
             }
 
-            // 裁判员提交数组
-            // refereeArr = [];
-            // $(".hideReList").each(function () {
-            //     var referee = $(this).attr("data-referee");
-            //     var referee_id = $(this).attr("data-referee_id");
-            //     refereeArr.push({ referee: referee, referee_id: referee_id });
-            // });
-            // console.log(refereeArr)
-
-
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
@@ -970,6 +957,7 @@
             var remarks = $('textarea.data').val();
             objData.remarks = remarks;
             objData.refereeArr = JSON.stringify(refereeArr);
+            objData.refereeArr = JSON.stringify(referee_str);
             var url = "{:url('api/match/creatematch')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
@@ -1128,13 +1116,13 @@
         };
 
         //自定义获取裁判列表
-        function toRrefereeList(keyword, wReferee, page) {
+        function toRefereeList(keyword, wReferee, page) {
             var url = "{:url('api/referee/refereelist','','',true)}/?page=" + page;
-            var wRefereeList = ".refereeList";
+            var wRefereeList = "ul.refereeList";
             var currPage = ".currPage";
             var totalPage = ".totalPage";
             if (keyword != '' && wReferee != '') {
-                wRefereeList = "#" + wReferee + " .refereeList";
+                wRefereeList = "#" + wReferee + "ul.refereeList";
                 currPage = "#" + wReferee + " .currPage";
                 totalPage = "#" + wReferee + " .totalPage";
             }
@@ -1154,7 +1142,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<li class="mui-input-row mui-checkbox mui-left" ><label class="wd52">' + data.data[i].referee + '</label><span class="wd45">出场费：' + data.data[i].appearance_fee + '</span><input name="checkbox-referee" class="referee" type="checkbox" data-referee="' + data.data[i].referee + '" data-referee_id="' + data.data[i].id + '"></li>'
+                            newli += '<li class="mui-input-row mui-checkbox mui-left" ><label class="wd52">' + data.data[i].referee + '</label><span class="wd45">出场费：' + data.data[i].appearance_fee + '</span><input name="checkbox-referee" class="referee" type="checkbox" data-referee="' + data.data[i].referee + '" data-referee_id="' + data.data[i].id + '" data-referee_cost="' + data.data[i].appearance_fee + '"></li>'
                         }
                         $(wRefereeList).empty();
                         if (newli == '') {

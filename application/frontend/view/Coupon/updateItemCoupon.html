@@ -168,6 +168,13 @@
                     </a>
                 </div>
 
+                <div class="mui-input-row">
+                    <a href="{:url('coupon/couponOfSignUpList',['item_coupon_id'=>$itemCouponInfo['id']])}" class="mui-navigate-right">
+                        <label>领取名单</label>
+                        <span class="colororange">已有{$itemCouponInfo.publish}人领取，点击查看</span>
+                    </a>
+                </div>
+
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">卡券简介</span>
                 </div>
@@ -255,6 +262,10 @@
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
+        });
+
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
         });
 
         //弹出框滚动必须写在mui专用的初始化
