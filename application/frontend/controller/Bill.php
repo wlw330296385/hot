@@ -32,9 +32,8 @@ class Bill extends Base{
         $studentInfo = [];
         // 课程信息
         if($billInfo['goods_type'] == '课程'){
-            // $LessonService = new \app\service\LessonService;
-            // $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
-            $lessonInfo = db('lesson')->where(['id'=>$billInfo['goods_id']])->find();
+            $LessonService = new \app\service\LessonService;
+            $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
             // 学生信息
             $StudentService = new \app\service\StudentService;
             $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);

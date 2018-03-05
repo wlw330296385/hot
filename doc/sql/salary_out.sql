@@ -1,37 +1,28 @@
--- phpMyAdmin SQL Dump
--- version 4.7.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: 2018-01-29 17:52:31
--- 服务器版本： 10.1.23-MariaDB-9+deb9u1
--- PHP Version: 7.0.19-1
+/*
+Navicat MySQL Data Transfer
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
-SET time_zone = "+00:00";
+Source Server         : mysql
+Source Server Version : 50553
+Source Host           : localhost:3306
+Source Database       : hot
 
+Target Server Type    : MYSQL
+Target Server Version : 50553
+File Encoding         : 65001
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+Date: 2018-03-05 12:05:53
+*/
 
---
--- Database: `hot`
---
+SET FOREIGN_KEY_CHECKS=0;
 
--- --------------------------------------------------------
-
---
--- 表的结构 `salary_out`
---
-
+-- ----------------------------
+-- Table structure for `salary_out`
+-- ----------------------------
+DROP TABLE IF EXISTS `salary_out`;
 CREATE TABLE `salary_out` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `salary` decimal(8,2) NOT NULL COMMENT '佣金',
-  `tid` varchar(200) NOT NULL COMMENT '交易单号',
+  `tid` varchar(100) NOT NULL COMMENT '交易单号',
   `member_id` int(10) NOT NULL,
   `member` varchar(60) NOT NULL,
   `realname` varchar(60) NOT NULL COMMENT '真实姓名',
@@ -41,51 +32,36 @@ CREATE TABLE `salary_out` (
   `bank_card` varchar(64) NOT NULL COMMENT '银行卡号',
   `bank` varchar(30) NOT NULL COMMENT '账号类型,如农业银行|支付宝',
   `fee` decimal(6,2) NOT NULL COMMENT '手续费',
-  `pay_time` int(10) NOT NULL COMMENT '支付时间',
+  `pay_time` int(10) NOT NULL,
   `bank_type` tinyint(4) NOT NULL COMMENT '1:银行卡|2:支付宝',
   `is_pay` tinyint(4) NOT NULL DEFAULT '0',
-  `buffer` decimal(8,2) NOT NULL DEFAULT '0.00' COMMENT '冻结资金',
+  `buffer` decimal(12,2) NOT NULL DEFAULT '0.00' COMMENT '冻结资金',
   `callback_str` text NOT NULL COMMENT '支付回调',
   `system_remarks` text NOT NULL,
   `create_time` int(10) NOT NULL,
   `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '0:申请中|1:已支付|2:取消|-1:对冲',
   `update_time` int(11) NOT NULL,
-  `delete_time` int(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='佣金提现申请';
+  `delete_time` int(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COMMENT='佣金提现申请';
 
---
--- 转存表中的数据 `salary_out`
---
-
-INSERT INTO `salary_out` (`id`, `salary`, `tid`, `member_id`, `member`, `realname`, `telephone`, `ident`, `openid`, `bank_card`, `bank`, `fee`, `pay_time`, `bank_type`, `is_pay`, `buffer`, `callback_str`, `system_remarks`, `create_time`, `status`, `update_time`, `delete_time`) VALUES
-(1, '1.00', '20171226162014000', 19, '钟声', '钟声', 15999557852, 0, 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', 1509724800, 1, 1, '0.00', '', '[系统出账]id:2,admin:yalu;', 1509724800, 1, 0, 1515306527),
-(2, '50.00', '2.0171227114617E+21', 8, 'woo123', '吴丽文', 18507717466, 0, 'o83291CzkRqonKdTVSJLGhYoU98Q', '18507717466', '支付宝', '0.00', 0, 1, 0, '0.00', '', '', 1514346379, 0, 0, NULL),
-(3, '50.00', '20171227120030136890306367', 8, 'woo123', '吴丽文', 18507717466, 0, 'o83291CzkRqonKdTVSJLGhYoU98Q', '12480864311268909', '农业银行', '0.00', 0, 2, 0, '0.00', '', '', 1514347235, 0, 0, NULL),
-(4, '21209.00', '20180101222552851333422241', 19, '钟声', '钟声', 15999557852, 0, 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', 0, 1, 0, '0.00', '', '', 1514816778, 0, 0, 1515306527),
-(5, '4850.00', '20180107143242256933422241', 19, '钟声', '钟声', 15999557852, 0, 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', 0, 1, 0, '0.00', '', '[系统拒绝提现申请]id:2,admin:yalu;', 1515306773, 2, 0, NULL),
-(6, '7230.00', '20180107143256404433422241', 19, '钟声', '钟声', 15999557852, 0, 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', 0, 1, 0, '0.00', '', '[系统拒绝提现申请]id:2,admin:yalu;', 1515306782, 2, 0, NULL),
-(7, '8520.00', '20180107143306951833422241', 19, '钟声', '钟声', 15999557852, 0, 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', 0, 1, 0, '0.00', '', '[系统拒绝提现申请]id:2,admin:yalu;', 1515306790, 2, 0, NULL);
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `salary_out`
---
-ALTER TABLE `salary_out`
-  ADD PRIMARY KEY (`id`);
-
---
--- 在导出的表使用AUTO_INCREMENT
---
-
---
--- 使用表AUTO_INCREMENT `salary_out`
---
-ALTER TABLE `salary_out`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- ----------------------------
+-- Records of salary_out
+-- ----------------------------
+INSERT INTO `salary_out` VALUES ('1', '90000.00', '2017122614562527572', '27', 'coachj', '黄万瑞', '13760379341', '0', 'o83291L2DtT9rOnVagr0B9Y07YYs', '6212264000037559362', '中国工商银行', '0.00', '0', '1', '0', '0.00', '', '[系统拒绝提现申请]id:2,admin:yalu;', '1512308430', '2', '0', null);
+INSERT INTO `salary_out` VALUES ('2', '999999.99', '10', '27', 'coachj', '黄万瑞', '13760379341', '0', 'o83291L2DtT9rOnVagr0B9Y07YYs', '6212264000037559362', '中国工商银行', '0.00', '1514274866', '1', '1', '0.00', '', '[系统出账]id:2,admin:yalu;', '1514452782', '1', '0', null);
+INSERT INTO `salary_out` VALUES ('3', '50.00', '12124541515645615315613515', '8', 'woo123', '344', '18507717466', '0', 'o83291CzkRqonKdTVSJLGhYoU98Q', '123', '支付宝', '0.00', '0', '1', '0', '50.10', '', '', '1512909362', '0', '0', null);
+INSERT INTO `salary_out` VALUES ('4', '50.00', '2551245415341515674841564874', '8', 'woo123', '344', '18507717466', '0', 'o83291CzkRqonKdTVSJLGhYoU98Q', '123', '支付宝', '0.00', '0', '1', '0', '50.20', '', '', '1514311203', '0', '0', null);
+INSERT INTO `salary_out` VALUES ('5', '1000.00', '2018012915502375472', '19', '钟声', '钟声', '15999557852', '0', 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', '0', '1', '0', '0.00', '', '[系统拒绝提现申请]id:2,admin:yalu;', '1512990667', '2', '1517213480', null);
+INSERT INTO `salary_out` VALUES ('6', '2000.00', '2018012915515613882', '19', '钟声', '钟声', '15999557852', '0', 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', '1517217727', '1', '1', '0.00', '', '[系统出账]id:2,admin:yalu;', '1512550468', '1', '1517217727', null);
+INSERT INTO `salary_out` VALUES ('7', '1500.00', '2018012916203950862', '19', '钟声', '钟声', '15999557852', '0', 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', '0', '1', '0', '0.00', '', '[系统拒绝提现申请]id:2,admin:yalu;', '1514311077', '2', '1517217643', null);
+INSERT INTO `salary_out` VALUES ('8', '3000.00', '2018012917534598302', '19', '钟声', '钟声', '15999557852', '0', 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', '0', '1', '0', '0.00', '', '[系统拒绝提现申请]id:2,admin:yalu;', '1514066722', '2', '1517281688', null);
+INSERT INTO `salary_out` VALUES ('9', '2000.00', '2018012917563024782', '19', '钟声', '钟声', '15999557852', '0', 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', '0', '1', '0', '0.00', '', '[系统拒绝提现申请]id:2,admin:yalu;', '1512747116', '2', '1517219803', null);
+INSERT INTO `salary_out` VALUES ('10', '1000.00', '2018012917565479842', '19', '钟声', '钟声', '15999557852', '0', 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', '1517219821', '1', '1', '0.00', '', '[系统出账]id:2,admin:yalu;', '1512066155', '1', '1517219821', null);
+INSERT INTO `salary_out` VALUES ('11', '3000.00', '2018012917571837912', '19', '钟声', '钟声', '15999557852', '0', 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', '1517219958', '1', '1', '0.00', '', '[系统出账]id:2,admin:yalu;', '1512620165', '1', '1517219958', null);
+INSERT INTO `salary_out` VALUES ('12', '100.00', '201801301108168522', '19', '钟声', '钟声', '15999557852', '0', 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', '0', '1', '1', '100.00', '', '2018-01月', '1512249103', '0', '1517281696', null);
+INSERT INTO `salary_out` VALUES ('13', '200.00', '201801301108252862', '19', '钟声', '钟声', '15999557852', '0', 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', '0', '1', '1', '200.00', '', '2018-01月', '1513915756', '0', '1517281705', null);
+INSERT INTO `salary_out` VALUES ('14', '300.00', '2018013011084664902', '19', '钟声', '钟声', '15999557852', '0', 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', '0', '1', '1', '300.00', '', '2018-01月', '1512994213', '0', '1517281726', null);
+INSERT INTO `salary_out` VALUES ('15', '400.00', '2018013011085238452', '19', '钟声', '钟声', '15999557852', '0', 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', '0', '1', '1', '400.00', '', '2018-01月', '1513754535', '0', '1517281732', null);
+INSERT INTO `salary_out` VALUES ('16', '500.00', '201801301109224162', '19', '钟声', '钟声', '15999557852', '0', 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', '0', '1', '1', '500.00', '', '2018-01月', '1512544776', '0', '1517281762', null);
+INSERT INTO `salary_out` VALUES ('17', '600.00', '201801301109281772', '19', '钟声', '钟声', '15999557852', '0', 'o83291FErHA03raoSlWaWQTtl1Jo', '6212264000045738313', '中国工商银行', '0.00', '0', '1', '1', '600.00', '', '2018-01月', '1514583014', '0', '1517281768', null);

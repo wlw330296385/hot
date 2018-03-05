@@ -42,8 +42,10 @@ class Output extends Backend{
             
 
         }
-        
 
+        
+        
+        dump($list1);
         $this->assign('list1',$list1);
         return view('Output/index');
     }
@@ -51,7 +53,9 @@ class Output extends Backend{
 
 
     public function demo(){
-        
+        $member_id = input('member_id',19);
+        $salaryinList = db('salary_in')->where(['member_id'=>$member_id])->select();
+        dump($salaryinList);
         return view();
     }
     
