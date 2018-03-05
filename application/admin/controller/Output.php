@@ -42,8 +42,10 @@ class Output extends Backend{
             
 
         }
-        
 
+        
+        
+        dump($list1);
         $this->assign('list1',$list1);
         return view('Output/index');
     }
