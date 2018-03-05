@@ -243,7 +243,12 @@ class TeamService
             foreach ($teammembers as $k => $teammember) {
                 $teammembers[$k]['role_text'] = '';
                 $teammembers[$k]['role_arr'] = [];
-                $memberRole = $roleModel->where(['member_id' => $teammember['member_id'], 'team_id' => $teammember['team_id'], 'status' => 1])->select();
+                $memberRole = $roleModel->where([
+                    'member_id' => $teammember['member_id'],
+                    'member' => $teammember['member'],
+                    'team_id' => $teammember['team_id'],
+                    'status' => 1
+                ])->order('type desc')->select();
                 foreach ($memberRole as $val) {
                     $teammembers[$k]['role_text'] .= $val['type_text'] . ',';
                     array_push($teammembers[$k]['role_arr'], $val['type_text']);
@@ -470,14 +475,14 @@ class TeamService
             // 将不在提交的coach_id中 其他的球队教练更新status=-1
             $model->where([
                 'team_id' => $team_id,
-                'type' => 2,
+                'type' => 4,
                 'member_id' => ['not in', $coach_ids],
             ])->update(['status' => -1]);
         } else {
-            // 清理球队所有后勤-教练关系
+            // 清理球队所有教练关系
             $model->where([
                 'team_id' => $team_id,
-                'type' => 2
+                'type' => 4
             ])->update(['status' => -1]);
         }
 
@@ -544,9 +549,13 @@ class TeamService
         $list = Db::view('team_member')
             ->view('team_member_role',
                 'type, status as role_status',
-                'team_member_role.member_id=team_member.member_id and team_member_role.team_id=team_member.team_id',
+                'team_member_role.member_id=team_member.member_id and team_member_role.team_id=team_member.team_id and team_member_role.member=team_member.member',
                 'left')
-            ->where(['team_member.team_id' => $team_id, 'team_member.status' => 1, 'team_member_role.status' => 1])
+            ->where([
+                'team_member.team_id' => $team_id,
+                'team_member.status' => 1,
+                'team_member_role.status' => 1
+            ])
             ->where('team_member.delete_time', null)
             ->where('team_member_role.delete_time', null)
             ->order($order)

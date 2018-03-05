@@ -60,46 +60,50 @@ class CampMember extends Base
             if (!$type || $type > 3 || $type < -1) {
                 return json(['code' => 100, 'msg' => '不存在这个身份']);
             }
-            //是否已存在身份
-            $isType = db('camp_member')->where(['member_id' => $this->memberInfo['id'], 'camp_id' => $camp_id])->find();
-            // 存在身份
-            if ($isType) {
-                // 升级身份
-                if ($type > $isType['type']) {  
-                    
-                    $data['id'] = $isType['id'];
-                    if ($type == 2) {// 必须要有教练资格
-                        $coachS = new CoachService();
-                        $coach = $coachS->coachInfo(['member_id' => $this->memberInfo['id']]);
-                        if (!$coach && $coach['status_num'] != 1) {
-                            return json(['code' => 101, 'msg' => '请先注册教练资格', 'goto' => url('frontend/coach/createcoach')]);
-                        }
-                    }
-                    $status = 0;
+
+            // 申请加入教练必须有已审核的教练员资格
+            if ($type == 2) {
+                $coachS = new CoachService();
+                $coachInfo = $coachS->coachInfo(['member_id' => $this->memberInfo['id']]);
+                if (!$coachInfo && $coachInfo['status_num'] != 1) {
+                    return json(['code' => 101, 'msg' => '请先注册教练资格', 'goto' => url('frontend/coach/createcoach')]);
+                }
+            }
+
+            // 查询会员与训练营有无camp_member数据
+            $db = db('camp_member');
+            $campMemberInfo = $db->where(['camp_id' => $camp_id, 'member_id' => $this->memberInfo['id']])->whereNull('delete_time')->find();
+            $status = 0;
+            if ($campMemberInfo) {
+                $campMemberId = $campMemberInfo['id'];
+                if ($type != $campMemberInfo['type']) {
+                    // 改变角色等级
                     $data = [
+                        'id' => $campMemberId,
                         'camp_id' => $campInfo['id'],
                         'camp' => $campInfo['camp'],
                         'member_id' => $this->memberInfo['id'],
                         'member' => $this->memberInfo['member'],
                         'remarks' => $remarks,
                         'type' => $type,
-                        'status' => $status
+                        'status' => $status,
+                        'update_time' => time()
                     ];
-                    // 改写身份
-                    $model = new \app\model\CampMember();
-                    $result = $model->save($data,['id'=>$isType['id']]);
-                //降低身份?
-                }else {
-                    if ($isType['status'] == 1) {
+                    $result = $db->update($data);
+                } else {
+                    if ($campMemberInfo['status'] == 1) {
                         return json(['code' => 100, 'msg' => '你已经是训练营的一员']);
-                    }else{
-                        return json(['code' => 100, 'msg' => '重复申请']);
-                    } 
+                    } elseif ($campMemberInfo['status'] == -1) {
+                        $result = $db->update([
+                            'id' => $campMemberId,
+                            'status' => $status
+                        ]);
+                    } else {
+                        return json(['code' => 100, 'msg' => '您已提交加入申请，请等待训练营审核']);
+                    }
                 }
-                $id = $isType['id'];
-            // 不存在身份
-            }else{
-                $status = 0;
+            } else {
+
                 $data = [
                     'camp_id' => $campInfo['id'],
                     'camp' => $campInfo['camp'],
@@ -107,15 +111,14 @@ class CampMember extends Base
                     'member' => $this->memberInfo['member'],
                     'remarks' => $remarks,
                     'type' => $type,
-                    'status' => $status
+                    'status' => $status,
+                    'create_time' => time(),
+                    'update_time' => time()
                 ];
-                // 插入身份
-                $model = new \app\model\CampMember();
-                $result = $model->save($data);
-                $id = $model->id;
+                $result = $db->insert($data);
+                $campMemberId = $db->getLastInsID();
             }
 
-             
             // 操作成功
             if ($result) {
                 // 插入follow数据
@@ -133,10 +136,11 @@ class CampMember extends Base
                         'create_time' => time(), 'update_time' => time()
                     ]);
                 }
-                return json(['code' => 200, 'msg' => '申请成功', 'insid' => $id]);
+                return json(['code' => 200, 'msg' => '申请成功', 'insid' => $campMemberId]);
             } else {
                 return json(['code' => 100, 'msg' => '申请失败']);
             }
+
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
@@ -359,8 +363,8 @@ class CampMember extends Base
             $campS = new CampService();
             // 操作权限
             $power = $campS->isPower($campmember['camp_id'], $this->memberInfo['id']);
-            if ($power < 3) {
-                return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+            if ($power != 4) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403').'，只有营主才能操作']);
             }
 
             // 删教练 检查是否在营有班级

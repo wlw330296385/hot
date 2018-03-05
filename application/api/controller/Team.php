@@ -59,7 +59,9 @@ class Team extends Base
                 // 领队身份
                 $teamMemberRoleData = [
                     'leader_id' => $this->memberInfo['id'],
-                    'captain_id' => $this->memberInfo['id']
+                    'leader' => $this->memberInfo['member'],
+                    'captain_id' => $this->memberInfo['id'],
+                    'captain' => $this->memberInfo['member']
                 ];
                 $saveTeamMemberRoleRes1 = $teamS->saveTeamMemberRole($teamMemberRoleData, $team_id);
                 if ($saveTeamMemberRoleRes1['code'] != 200) {
@@ -946,7 +948,7 @@ class Team extends Base
             $request['member_id'] = -1;
             $request['member'] = $request['name'];
             $request['avatar'] = config('default_image.member_avatar');
-            $request['number'] = null;
+            $request['number'] = !empty($request['number']) ? $request['number'] : null;
             $request['status'] = 1;
             $resSaveTeamMember = $teamS->saveTeamMember($request);
             return json($resSaveTeamMember);
