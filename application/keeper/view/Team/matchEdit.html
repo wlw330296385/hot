@@ -273,12 +273,14 @@
                 </div>
             </div>
             <div class="mui-input-row refereeRow hide">
-                <a href="#refereeDom" class="mui-navigate-right">
+                <a href="#refereeDom" id="setReferee" class="mui-navigate-right">
                     <label>裁判名单</label>
                     <span class="referee" name="referee" style="width: 60%">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
-                    <div class="hideList">{volist name="$refereeList" id="vol"}<input type="hidden" class="reList" data-referee_id="{$vol.referee_id}" data-referee="{$vol.referee}"> {/volist}</div>
-                    <input type="hidden" name="referee_id" value="" class="data">
-                    <input type="hidden" name="referee_cost" value="" class="data">
+                    <div class="hideList">{volist name="$refereeList" id="vol"}
+                        <input type="hidden" class="reList" data-referee_id="{$vol.referee_id}" data-referee="{$vol.referee}" data-referee_cost="{$vol.referee_cost}"> {/volist}</div>
+                    <div class="hideNewList"></div>
+                    <input type="hidden" name="referee_id" value="{volist name="$refereeList" id="vol"}{$vol.referee_id},{/volist}" class="data">
+                    <input type="hidden" name="referee_cost" value="{$matchInfo.referee_cost}" class="data">
                 </a>
             </div>
             <div class="mui-input-row">
@@ -296,7 +298,8 @@
 
             <div class="mui-input-row">
                 <label>比赛宣言</label>
-                <textarea rows="2" name="description" class="description data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.description}"{/eq} placeholder="请填写比赛宣言">{eq name="directentry" value="1" }{else/}{$matchInfo.description}{/eq}</textarea>
+                <textarea rows="2" name="description" class="description data" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.description}"
+                    {/eq} placeholder="请填写比赛宣言">{eq name="directentry" value="1" }{else/}{$matchInfo.description}{/eq}</textarea>
             </div>
 
             <div class="mui-input-row">
@@ -939,7 +942,7 @@
             $('#isFinished option[{eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.is_finished_num}"{/eq}]').prop("selected", true);
             // 设置是否完成比赛默认值
             $('#courtCostBear option[{eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.court_cost_bear}"{/eq}]').prop("selected", true);
-             // 设置是否完成比赛默认值
+            // 设置是否完成比赛默认值
             $('#refereeSlecct option[{eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.referee_type}"{/eq}]').prop("selected", true);
 
             $("#islive").change(function () {
@@ -954,14 +957,13 @@
                 }
             });
 
-            // 
             if (directentry == 0) {
                 var match_time = "{$matchInfo.match_time}";
                 var refereeType = "{$matchInfo.referee_type}";
                 if (match_time == 0) {
                     $(".match_time").text("待定");
                 }
-                if(refereeType == 2){
+                if (refereeType == 2) {
                     $(".refereeRow").show();
                 }
             }
@@ -975,8 +977,8 @@
             }
 
 
-            // //////////////////////////////////////////////////////////
-            // 裁判列表是否显示
+            ////////////////////////////////////////////////////////////
+            //裁判列表是否显示
             $("#refereeSlecct").change(function () {
                 var refereeNum = $(this).children("option:selected").val()
                 if (refereeNum == 2) {
@@ -989,7 +991,8 @@
             //清除裁判
             $("#RefereeDel").on('tap', '', function () {
                 $(".referee").text('');
-                $("input[name=referee_id]").val("");
+                $('input[name=referee_id]').val('');
+                $('input[name=referee_cost]').val('');
                 mui("#refereeDom").popover("toggle");
             })
             //搜索裁判
@@ -1020,36 +1023,56 @@
             })
             // 选择裁判
             $("#refereeConfirm").on('tap', '', function () {
-
                 $(".referee").empty();
-                $("input[name=referee_id]").val("");
+                $('input[name=referee_id]').val('');
                 $('input[name=referee]').val('');
+                $('input[name=referee_cost]').val('');
+                $(".hideNewList").empty();
                 var refereeMember = "";
                 var refereeMember_id = "";
-                refereeArr = [];
-                referee_str = [];
+                var refereeSum = 0;
+                var newList = "";
+                $(".refereeList").find("input[name=checkbox-referee]").each(function () {
+                    if ($("input[name=checkbox-referee]:checked").length == 0) {
+                        mui("#refereeDom").popover("hide");
+                    }
+                });
                 $(".refereeList").find("input[name=checkbox-referee]:checked").each(function () {
                     var refereeName = $(".refereeList").find("input[name=checkbox-referee]:checked")
                     if (refereeName.length <= 3) {
                         var referee = $(this).attr("data-referee");
                         var referee_id = $(this).attr("data-referee_id");
                         var referee_cost = $(this).attr("data-referee_cost");
+                        refereeSum += parseInt(referee_cost);
                         refereeMember += referee + ','
                         refereeMember_id += referee_id + ','
                         $(".referee").text(refereeMember.substring(0, refereeMember.length - 1));
                         $("input[name=referee_id]").val(refereeMember_id.substring(0, refereeMember_id.length - 1));
-                        refereeArr.push({ referee: referee, referee_id: referee_id });
-                        referee_str.push({ referee: referee, referee_cost: referee_cost });
+                        $("input[name=referee_cost]").val(refereeSum);
+                        newList += '<input type="hidden" class="newList" data-referee="' + referee + '" data-referee_id="' + referee_id + '">';
+                        mui("#refereeDom").popover("hide");
                     } else {
                         mui.toast("只能选三个裁判");
                         return false;
                     }
                 })
-                mui("#refereeDom").popover("toggle");
-                console.log(refereeArr)
-                console.log(referee_str)
+                $(".hideNewList").html(newList);
             });
-            // //////////////////////////////////////////////////////////
+
+            //裁判列表复选框赋值
+            $("#setReferee").on('tap', '', function () {
+                //每次打开先清空所有选择
+                $("input[name='checkbox-referee']").prop("checked", false);
+                //然后遍历出对应所选
+                var str = $("input[name='referee_id']").val();
+                var s = str.split(',');
+                for (var i = 0; i < s.length; i++) {
+                    $("input[name='checkbox-referee']").filter(function (index) {
+                        return $(this).attr("data-referee_id") == s[i]
+                    }).prop("checked", true);
+                }
+            });
+            ////////////////////////////////////////////////////////////
 
             //////////////////////选择对手////////////////////////////////////
             // 选择对手
@@ -1435,6 +1458,15 @@
             // });
             // console.log(AwayMemberList)
 
+            // 提交裁判员数组
+            referee_str = [];
+            $(".refereeList").find("input[name=checkbox-referee]:checked").each(function () {
+                var referee = $(this).attr("data-referee");
+                var referee_id = $(this).attr("data-referee_id");
+                var referee_cost = $(this).attr("data-referee_cost");
+                referee_str.push({ referee: referee,referee_id: referee_id, referee_cost: referee_cost });
+            })
+
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
@@ -1444,6 +1476,11 @@
             objData.HomeMemberDataDel = JSON.stringify(HomeMemberListDel); //在已选列表中删除了的人员
             // objData.AwayMemberData = JSON.stringify(AwayMemberList);
             objData.album = JSON.stringify(album);
+            var remarks = $('textarea.remarks').val();
+            objData.remarks = remarks;
+            var description = $('textarea.description').val();
+            objData.description = description;
+            objData.referee_str = JSON.stringify(referee_str);
 
             var url = "{:url('api/match/storefriendlymatchrecord')}";
             var ajaxResult = wooApi.asyncF(url, objData);
@@ -1723,8 +1760,8 @@
             });
         };
 
- //自定义获取裁判列表
- function toRefereeList(keyword, wReferee, page) {
+        //自定义获取裁判列表
+        function toRefereeList(keyword, wReferee, page) {
             var url = "{:url('api/referee/refereelistpage','','',true)}/?page=" + page;
             var wRefereeList = "ul.refereeList";
             var currPage = ".currPage";
