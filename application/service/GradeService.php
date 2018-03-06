@@ -206,5 +206,14 @@ class GradeService{
         return $result;
     }
 
-
+    // 批量更新班级-学生grade_member数据
+    public function saveAllGradeMember($data=[]) {
+        $model = new GradeMember();
+        $result = $model->isUpdate(true)->saveAll($data);
+        if ($result) {
+            return ['code' => 200, 'msg' => __lang('MSG_200')];
+        } else {
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
 }
