@@ -3,6 +3,7 @@ namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CampService;
 use app\service\CertService;
+use think\Exception;
 
 class Camp extends Base{
     protected $CampService;
@@ -311,5 +312,46 @@ class Camp extends Base{
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    }
+
+    // 训练营注销申请
+    public function campcancellapply() {
+        try {
+            // 检测会员登录
+            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+                return json(['code' => 100, 'msg' => '请先登录或注册会员']);
+            }
+            $post = input('post.');
+            // 验证请求参数
+            $camp_id = input('post.camp_id');
+            if (!$camp_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            if ( isset($post['reason']) || empty($post['reason']) ) {
+                return json(['code' => 100, 'msg' => '请填写理由']);
+            }
+            $campS = new CampService();
+            // 获取训练营数据
+            $campInfo = $campS->getCampInfo(['id' => $camp_id]);
+            if (!$campInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+            }
+            // 只有营主能操作
+            if ($campInfo['member_id'] != $this->memberInfo['id']) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+            }
+
+            // 允许提交规则
+
+            // 组合插入数据
+            $post['camp'] = $campInfo['camp'];
+            $post['member_id'] = $this->memberInfo['id'];
+            $post['member'] = $this->memberInfo['member'];
+            $post['status'] = 0;
+            $result = $campS->saveCampCancell($post);
+            return json($result);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
     }
 }
