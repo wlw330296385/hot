@@ -340,7 +340,13 @@ class Camp extends Base{
             if ($campInfo['member_id'] != $this->memberInfo['id']) {
                 return json(['code' => 100, 'msg' => __lang('MSG_403')]);
             }
-
+            // 查询有无申请注销记录
+            $cancellInfo = $campS->getCampCancellByCampId($camp_id);
+            // 有未处理申请 返回信息
+            if ($cancellInfo && $cancellInfo['status'] == 0) {
+                return json(['code' => 100, 'msg' => '您已提交过注销申请，无需再次提交']);
+            }
+            
             // 允许提交规则
 
             // 组合插入数据

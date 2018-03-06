@@ -266,7 +266,7 @@ class CampService {
         return $list;
     }
 
-    // 保存训练营注册申请数据
+    // 保存训练营注销申请数据
     public function saveCampCancell($data) {
         $model = new CampCancell();
         $res = $model->allowField(true)->save($data);
@@ -275,5 +275,16 @@ class CampService {
         } else {
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
+    }
+
+    // 获取训练营注销申请数据
+    public function getCampCancellByCampId($camp_id) {
+        $model = new CampCancell();
+        $res = $model->where(['camp_id' => $camp_id])->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
     }
 }

@@ -152,6 +152,11 @@ class Camp extends Backend {
         $result = $Camp->SoftDeleteCamp($id);
         $Auth = new AuthService();
         if ( $result ) {
+            db('camp_member')->where(['camp_id' => $id])->update([
+                'status' => -1,
+                'delete_time' => time(),
+                'system_remarks' => date('Ymd H:i', time()) . '控制台注销训练营'
+            ]);
             $Auth->record('训练营id:'. $id .' 软删除 成功');
             $this->success(__lang('MSG_200'), 'camp/index');
         } else {
