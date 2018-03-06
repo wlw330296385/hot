@@ -288,7 +288,7 @@ class CampMember extends Base
     }
 
 
-    //自定义获取训练营身份列表分页（无分页）
+    //自定义获取训练营身份列表分页（一页全部）
     public function getCampMemberListNoPageApi()
     {
         try {
@@ -684,5 +684,33 @@ class CampMember extends Base
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+
+
+
+
+
+
+    // 搜索训练营的教练(一页全部)
+    public function getCoachOfCampListAllApi(){
+        try{
+            $camp_id = input('param.camp_id');
+            $keyword = input('param.keyword');
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map = ['camp_id'=>$camp_id,'type'=>2,'member'=>['like',"%$keyword%"]];
+            }else{
+                $map = ['camp_id'=>$camp_id,'type'=>2];
+            }
+            $result = db('camp_member')->where($map)->select();
+            if($result){
+                return json(['code' => 200, 'msg' =>'查询成功', 'data' => $result]);
+            }else{
+                return json(['code' => 100, 'msg' =>'查询成功,无数据']);
+            }
+            
+        }catch (Exception $e){
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
 }
 
