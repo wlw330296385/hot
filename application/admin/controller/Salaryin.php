@@ -10,10 +10,9 @@ class Salaryin extends Backend{
 
     public function coach(){
         $member_id = input('param.member_id',19);
-        
-
-        $monthStart = 20171201;
-        $monthEnd = 20171231;
+            
+        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
+        $monthEnd = input('param.monthend',date('Ymd'));
         $camp_id = $this->cur_camp['camp_id'];
         $map['camp_id'] = $camp_id;
         $salaryinList = db('salary_in')->field("*,sum(salary) as s_salary,sum(push_salary) as s_push_salary,from_unixtime(create_time,'%Y%m%d') as days")->where(['member_id'=>$member_id])->group('days')->order('days')->select();
@@ -53,8 +52,8 @@ class Salaryin extends Backend{
     // 收益统计
     public function index(){
         $member_id = input('member_id',19);
-        $monthStart = 20171201;
-        $monthEnd = 20171231;
+        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
+        $monthEnd = input('param.monthend',date('Ymd'));
         $salaryinList = db('salary_in')->field('*,sum(salary) as s_salary,sum(push_salary) as s_push_salary,sum(students) as s_students,count(id) as c_id')->where(['member_id'=>$member_id])->group('lesson_id')->select();
         $c_id = 0;
         $s_salary = 0;
