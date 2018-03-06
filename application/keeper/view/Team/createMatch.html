@@ -213,6 +213,7 @@
                     <a href="#refereeDom" class="mui-navigate-right">
                         <label>裁判名单</label>
                         <span class="referee" name="referee" style="width: 60%"></span>
+                        <div class="hideList"></div>
                         <input type="hidden" name="referee_id" value="" class="data">
                         <input type="hidden" name="referee_cost" value="" class="data">
                     </a>
@@ -648,7 +649,10 @@
             //清除裁判
             $("#RefereeDel").on('tap', '', function () {
                 $(".referee").text('');
-                $("input[name=referee_id]").val("");
+                $("input[name=referee_id]").val('');
+                $('input[name=referee_cost]').val('');
+                $('input[name=checkbox-referee]').prop("checked", false);
+                $(".hideList").empty();
                 mui("#refereeDom").popover("toggle");
             })
             //搜索裁判
@@ -679,31 +683,38 @@
             })
             // 选择裁判
             $("#refereeConfirm").on('tap', '', function () {
-
                 $(".referee").empty();
                 $("input[name=referee_id]").val("");
                 $('input[name=referee]').val('');
+                $(".hideList").empty();
                 var refereeMember = "";
                 var refereeMember_id = "";
-                referee_str = [];
+                var refereeSum = "";
+                var hideList = "";
+                $(".refereeList").find("input[name=checkbox-referee]").each(function () {
+                    if ($("input[name=checkbox-referee]:checked").length == 0) {
+                        mui("#refereeDom").popover("hide");
+                    }
+                });
                 $(".refereeList").find("input[name=checkbox-referee]:checked").each(function () {
                     var refereeName = $(".refereeList").find("input[name=checkbox-referee]:checked")
                     if (refereeName.length <= 3) {
                         var referee = $(this).attr("data-referee");
                         var referee_id = $(this).attr("data-referee_id");
                         var referee_cost = $(this).attr("data-referee_cost");
+                        refereeSum += parseInt(referee_cost);
                         refereeMember += referee + ','
                         refereeMember_id += referee_id + ','
                         $(".referee").text(refereeMember.substring(0, refereeMember.length - 1));
                         $("input[name=referee_id]").val(refereeMember_id.substring(0, refereeMember_id.length - 1));
-                        referee_str.push({ referee: referee, referee_id: referee_id,referee_cost: referee_cost });
+                        hideList += '<input type="hidden" class="hideList" data-referee="' + referee + '" data-referee_id="' + referee_id + '" data-referee_cost="' + referee_cost + '">';
+                        mui("#refereeDom").popover("hide");
                     } else {
                         mui.toast("只能选三个裁判");
                         return false;
                     }
-                })
-                mui("#refereeDom").popover("toggle");
-                console.log(referee_str)
+                });
+                $(".hideList").html(hideList);
             });
             // //////////////////////////////////////////////////////////
 
@@ -912,6 +923,15 @@
                 mui.toast("填写场地费用与付费方式不对应");
                 return false;
             }
+
+            // 提交裁判员数组
+            referee_str = [];
+            $(".hideList input").each(function () {
+                var referee = $(this).attr("data-referee");
+                var referee_id = $(this).attr("data-referee_id");
+                var referee_cost = $(this).attr("data-referee_cost");
+                referee_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost });
+            })
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
