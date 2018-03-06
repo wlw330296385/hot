@@ -327,7 +327,7 @@ class Camp extends Base{
             if (!$camp_id) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
-            if ( isset($post['reason']) || empty($post['reason']) ) {
+            if ( !isset($post['reason']) || empty($post['reason']) ) {
                 return json(['code' => 100, 'msg' => '请填写理由']);
             }
             $campS = new CampService();
