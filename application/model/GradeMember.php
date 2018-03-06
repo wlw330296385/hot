@@ -8,7 +8,7 @@ class GradeMember extends Model {
 	protected $autoWriteTimestamp = true;
     protected $readonly = [
                             'create_time',
-                            'status',
+//                            'status',
                             'type',
                             ];
 
