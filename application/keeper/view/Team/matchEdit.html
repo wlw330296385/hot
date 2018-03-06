@@ -276,9 +276,6 @@
                 <a href="#refereeDom" id="setReferee" class="mui-navigate-right">
                     <label>裁判名单</label>
                     <span class="referee" name="referee" style="width: 60%">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
-                    <div class="hideList">{volist name="$refereeList" id="vol"}
-                        <input type="hidden" class="reList" data-referee_id="{$vol.referee_id}" data-referee="{$vol.referee}" data-referee_cost="{$vol.referee_cost}"> {/volist}</div>
-                    <div class="hideNewList"></div>
                     <input type="hidden" name="referee_id" value="{volist name="$refereeList" id="vol"}{$vol.referee_id},{/volist}" class="data">
                     <input type="hidden" name="referee_cost" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.referee_cost}"{/eq} class="data">
                 </a>
@@ -978,6 +975,10 @@
 
 
             ////////////////////////////////////////////////////////////
+            // 去逗号
+            var referee = $(".referee").text()
+            $(".referee").text(referee.substring(0, referee.length - 1));
+
             //裁判列表是否显示
             $("#refereeSlecct").change(function () {
                 var refereeNum = $(this).children("option:selected").val()
@@ -985,6 +986,9 @@
                     $(".refereeRow").show();
                 } else {
                     $(".refereeRow").hide();
+                    $(".referee").text('');
+                    $('input[name=referee_id]').val('');
+                    $('input[name=referee_cost]').val('');
                 }
             });
 
@@ -1025,13 +1029,10 @@
             $("#refereeConfirm").on('tap', '', function () {
                 $(".referee").empty();
                 $('input[name=referee_id]').val('');
-                $('input[name=referee]').val('');
                 $('input[name=referee_cost]').val('');
-                $(".hideNewList").empty();
                 var refereeMember = "";
                 var refereeMember_id = "";
                 var refereeSum = 0;
-                var newList = "";
                 $(".refereeList").find("input[name=checkbox-referee]").each(function () {
                     if ($("input[name=checkbox-referee]:checked").length == 0) {
                         mui("#refereeDom").popover("hide");
@@ -1049,14 +1050,12 @@
                         $(".referee").text(refereeMember.substring(0, refereeMember.length - 1));
                         $("input[name=referee_id]").val(refereeMember_id.substring(0, refereeMember_id.length - 1));
                         $("input[name=referee_cost]").val(refereeSum);
-                        newList += '<input type="hidden" class="newList" data-referee="' + referee + '" data-referee_id="' + referee_id + '">';
                         mui("#refereeDom").popover("hide");
                     } else {
                         mui.toast("只能选三个裁判");
                         return false;
                     }
                 })
-                $(".hideNewList").html(newList);
             });
 
             //裁判列表复选框赋值

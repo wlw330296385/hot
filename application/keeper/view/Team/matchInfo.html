@@ -252,7 +252,7 @@
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判名单</label>
-                    <span class="wd60 refereeNmae">{$matchInfo.referee_str}</span>
+                    <span class="wd60 refereeNmae">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                         <label>
@@ -396,6 +396,10 @@
             pulldownRefresh(); //页面打开时获取一次最新评论信息
             isthumbsup(); //点赞状态
             toSignUpList(); // 报名/参赛人员
+
+            // 去逗号
+            var refereeNmae = $(".refereeNmae").text()
+            $(".refereeNmae").text(refereeNmae.substring(0, refereeNmae.length - 1));
 
             // 没有对手比分不显示
             var homeTeam = "{$matchInfo.record.home_score}";

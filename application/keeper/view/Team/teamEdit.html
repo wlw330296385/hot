@@ -996,12 +996,13 @@
                 //每次打开先清空所有选择
                 $("input[name='checkbox-coach']").prop("checked", false);
                 //然后遍历出对应所选
-                $(".coList").each(function () {
-                    var member_id = $(this).attr("data-member_id");
-                    $("#coachDiv").find("input[name='checkbox-coach']").filter(function () {
-                        return $(this).attr("data-member_id") == member_id
+                var str = $("input[name='coach_id']").val();
+                var s = str.split(',');
+                for (var i = 0; i < s.length; i++) {
+                    $("input[name='checkbox-coach']").filter(function (index) {
+                        return $(this).attr("data-member_id") == s[i]
                     }).prop("checked", true);
-                });
+                }
             });
 
             // 选择队委
