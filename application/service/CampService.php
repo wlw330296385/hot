@@ -2,6 +2,7 @@
 namespace app\service;
 use app\model\Camp;
 use app\common\validate\CampVal;
+use app\model\CampCancell;
 use think\Db;
 use app\common\validate\CampCommentVal;
 use app\model\CampMember;
@@ -263,5 +264,27 @@ class CampService {
             ->order('camp_member.id desc')
             ->select();
         return $list;
+    }
+
+    // 保存训练营注销申请数据
+    public function saveCampCancell($data) {
+        $model = new CampCancell();
+        $res = $model->allowField(true)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+        } else {
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
+    // 获取训练营注销申请数据
+    public function getCampCancellByCampId($camp_id) {
+        $model = new CampCancell();
+        $res = $model->where(['camp_id' => $camp_id])->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
     }
 }

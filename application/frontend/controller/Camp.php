@@ -571,6 +571,10 @@ class Camp extends Base{
 
     // 注销训练营申请
     public function cancell() {
-        return view('Camp/cancell');
+        $camp_id = input('camp_id');
+        $campCancellInfo = $this->CampService->getCampCancellByCampId($camp_id);
+        return view('Camp/cancell', [
+            'campCancellInfo' => $campCancellInfo
+        ]);
     }
 }
