@@ -4,18 +4,8 @@
 </style>
 {/block}
 {block name="page-content"}
-	
 
-{volist name='list1' id='vol'}
-  <!-- <?php dump($vol);?> -->
-  <p>{$key} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;课时的收入:{$vol.s_salary} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;返利收入:{$vol.s_push_salary}</p>
-{/volist}
 
-	
-{volist name='list2' id='vol'}
-  <!-- <?php dump($vol);?> -->
-  <p>{$key} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;支出:{$vol.s_salary}</p>
-{/volist}
 
 
 <!----------------------------------- 教练员资金账单 ： 开始-------------------------------------------->
@@ -66,8 +56,8 @@
                 <button type="button" class="btn btn-default" id="goSearch">确认查询</button>
               </div>
               <h3 class="totalRight">
-                <span><small>本月收入：</small><strong class="text-yellow">1800</strong></span>
-                <span><small>本月支出：</small><strong class="text-yellow">250</strong></span>
+                <span><small>本月收入：</small><strong class="text-yellow monthIn">1800</strong></span>
+                <span><small>本月支出：</small><strong class="text-yellow monthOut">250</strong></span>
               </h3>
             </div>
           </div>
@@ -104,19 +94,19 @@
                     </ul>
                   </td>
                   <td>
-                    <ul class="w100">
+                    <ul class="dataCol-1 cOut">
                       {volist name='list2' id='vol'}
                       <li>{$vol.s_salary}</li>
                       {/volist}
                     </ul>
                   </td>
                   <td>
-                    <ul class="dataCol-2">
+                    <ul class="dataCol-2 sIn">
                       {volist name='list1' id='vol'}
                       <li>{$vol.s_salary}</li>
                       {/volist}
                     </ul>
-                    <ul class="dataCol-2">
+                    <ul class="dataCol-2 rIn">
                       {volist name='list1' id='vol'}
                       <li>{$vol.s_push_salary}</li>
                       {/volist}
@@ -125,7 +115,8 @@
                   <td>
                     <ul class="dataCol-1">
                       {volist name='list1' id='vol'}
-                      <li>2888</li>
+                      <!-- <?php dump($vol);?> -->
+                      <li>{$key} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;课时的收入:{$vol.s_salary} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;返利收入:{$vol.s_push_salary}</li>
                       {/volist}
                     </ul>
                   </td>
@@ -227,6 +218,136 @@
 </div>
 
 
+
+
+<div class="panel panel-default panel-intro">
+  <div class="panel-heading">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#sysCount" data-toggle="tab">课时收益</a></li>
+      <li><a href="#wxCount" data-toggle="tab">返利收益</a></li>
+    </ul>
+  </div>
+  <div class="panel-body">
+
+    <div class="box-body">
+      <div class="dataTables_wrapper form-inline dt-bootstrap">
+        <div class="row hotTbHeader">
+          <div class="form-group">
+            <div class="input-group" data-toggle="modal" data-target="#campModal">
+              <input type="text" name="camp" class="form-control pull-right wAuto" value="全部训练营">
+              <input type="hidden" name="camp_id" value="">
+              <div class="input-group-addon">
+                <i class="fa fa-angle-down"></i>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <!-- /.input group -->
+            <label>当前教练：</label>
+            <div class="input-group" data-toggle="modal" data-target="#coachModal">
+              <input type="text" name="coach" class="form-control pull-right wAuto" value="">
+              <input type="hidden" name="member_id" value="">
+              <div class="input-group-addon">
+                <i class="fa fa-angle-down"></i>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <!-- /.input group -->
+            <label>统计时间：</label>
+            <div class="input-group">
+              <input type="text" name="dateYM" class="form-control pull-right" id="dateYM">
+              <div class="input-group-addon">
+                <i class="fa fa-calendar"></i>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <!-- /.input group -->
+            <button type="button" class="btn btn-default" id="goSearch">确认查询</button>
+          </div>
+          <h3 class="totalRight"><small>本月总收益：</small><strong class="text-yellow">1800</strong></h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content">
+      <!-- 系统统计 -->
+      <div class="tab-pane fade active in" id="sysCount">
+        <div class="col-md-12 col-sm-12">
+          <div class="box no-border">
+            <!-- Info boxes -->
+            <div class="row">
+
+              <table id="example1" class="table table-bordered table-striped dataTable" role="grid"
+                     aria-describedby="example1_info">
+                <thead>
+                <tr role="row">
+                  <th class="sorting_asc">训练营</th>
+                  <th>课程</th>
+                  <th>课次</th>
+                  <th>人次</th>
+                  <th>赠课</th>
+                  <th>总和</th>
+                  <th>详情</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr role="row" class="odd">
+                  <td class="sorting_1">大热篮球俱乐部</td>
+                  <td>大热常规班3</td>
+                  <td>3</td>
+                  <td>17</td>
+                  <td>4</td>
+                  <td>4</td>
+                  <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+                </tr>
+                <tr role="row" class="odd">
+                  <td class="sorting_1">大热篮球俱乐部</td>
+                  <td>大热常规班1</td>
+                  <td>1</td>
+                  <td>17</td>
+                  <td>4</td>
+                  <td>4</td>
+                  <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+                </tr>
+                <tr role="row" class="odd">
+                  <td class="sorting_1">大热篮球俱乐部</td>
+                  <td>大热常规班2</td>
+                  <td>2</td>
+                  <td>17</td>
+                  <td>4</td>
+                  <td>4</td>
+                  <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+                </tr>
+                </tbody>
+              </table>
+
+
+            </div>
+            <!-- /.row -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 微信统计 -->
+      <div class="tab-pane fade" id="wxCount">
+        <div class="col-md-12 col-sm-12">
+          <div class="box no-border">
+            <!-- Info boxes -->
+            <div class="row">
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 {/block}
 
 
@@ -239,6 +360,21 @@
 
     $(function () {
 
+        //根据数据表统计总额
+        var monthOut = 0;
+        $(".cOut li").each(function () {
+            monthOut = monthOut + parseInt($(this).text());
+        });
+        var scheduleIn = 0;
+        $(".sIn li").each(function () {
+            scheduleIn = scheduleIn + parseInt($(this).text());
+        });
+        var rebateIn = 0;
+        $(".rIn li").each(function () {
+            rebateIn = rebateIn + parseInt($(this).text());
+        });
+        $(".monthIn").text(scheduleIn+rebateIn);
+        $(".monthOut").text(monthOut);
 
         //隔行变色
         $(".hotTable tbody td ul").find("li:even").addClass("even");
@@ -278,6 +414,7 @@
             var camp = $(this).attr("data-camp");
             $("input[name=camp_id]").val(camp_id);
             $("input[name=camp]").val(camp);
+            toCoachList('',camp_id);
             $('#campModal').modal('hide');
         })
 
@@ -305,7 +442,7 @@
             endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
             console.log(beginDate)
             console.log(endDate)
-            location.href="demo/camp_id/"+camp_id+"/member_id/"+member_id+"/monthstart/"+beginDate+"/monthend/"+endDate;
+            location.href="coach/camp_id/"+camp_id+"/member_id/"+member_id+"/monthstart/"+beginDate+"/monthend/"+endDate;
         })
 
         //接口获取数据并追加到页面

@@ -8,6 +8,10 @@ class Salaryin extends Backend{
 		parent::_initialize();
 	}
 
+    public function demo(){
+        return view();
+    }
+
     public function coach(){
         $member_id = input('param.member_id',19);
         
