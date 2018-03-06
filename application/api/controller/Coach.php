@@ -61,6 +61,57 @@ class Coach extends Base{
         }
     }
 
+
+    // 搜索全部教练(一页全部)
+    public function searchCoachListAllApi(){
+        try{
+            $map = input('post.');
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $page = input('param.page')?input('param.page'):1;
+            $city = input('param.city');
+            $area = input('param.area');
+            $sex = input('param.sex');
+            $orderby = input('param.orderby','id desc');
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value==' '){
+                    unset($map[$key]);
+                }
+            }
+            if(!empty($sex)&&$sex!=''){
+                $map['sex'] = $sex;
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['coach'] = ['LIKE','%'.$keyword.'%'];
+            } 
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+            if( isset($map['orderby']) ){
+                unset($map['orderby']);
+            }
+            $coachList = db('coach')->where($map)->order($orderby)->select();
+            if($coachList){
+                return json(['code'=>200,'msg'=>'OK','data'=>$coachList]);
+            }else{
+                return json(['code'=>100,'msg'=>'OK','data'=>'']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+
     // 获取教练分页(有页码)
     public function getCoachListByPageApi(){
         try{
