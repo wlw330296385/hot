@@ -568,4 +568,9 @@ class Camp extends Base{
         return view('Camp/fansList');
     }
 
+
+    // 注销训练营申请
+    public function cancell() {
+        return view('Camp/cancell');
+    }
 }

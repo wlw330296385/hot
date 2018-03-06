@@ -179,20 +179,16 @@ class Grade extends Base{
                 }             
             }
             $GradeService = new GradeService;
-            $result = $GradeService->updateGrade($data,$data['grade_id']);
-            if($result['code']==200){
-                if( !empty($data['studentData']) && $data['studentData'] != '[]' ){
-                    $studentData = json_decode($data['studentData'],true);
-                    $StudentService = new \app\service\StudentService;
-                    $res = $StudentService->saveAllStudent($studentData);
-                    return json($res);
-                }else{
-                    return json($result);
+
+            if ( !empty($data['studentData']) && $data['studentData'] != '[]' ) {
+                $studentData = json_decode($data['studentData'], true);
+                $resSaveGradeMember = $GradeService->saveAllGradeMember($studentData);
+                if ($resSaveGradeMember['code'] == 100) {
+                    return json($resSaveGradeMember);
                 }
-                
             }
+            $result = $GradeService->updateGrade($data, $data['grade_id']);
             return json($result);
-            
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
