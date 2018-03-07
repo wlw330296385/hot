@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50553
 File Encoding         : 65001
 
-Date: 2018-03-05 10:06:20
+Date: 2018-03-07 10:58:02
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -34,7 +34,7 @@ CREATE TABLE `admin_menu` (
   `create_time` int(10) NOT NULL,
   `update_time` int(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=123 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=125 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin_menu
@@ -155,7 +155,9 @@ INSERT INTO `admin_menu` VALUES ('114', '113', 'admin', '裁判员列表', 'fa f
 INSERT INTO `admin_menu` VALUES ('115', '113', 'admin', '裁判员详情', 'fa fa-cog', '0', 'admin/Referee/RefereeInfo', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('116', '113', 'admin', '编辑裁判员', 'fa fa-cog', '0', 'admin/Referee/UpdateReferee', '_self', '0', '0', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('117', '3', 'admin', '编辑场地', 'fa fa-cog', '0', 'admin/court/edit', '_self', '0', '36', '1', '6', '6');
-INSERT INTO `admin_menu` VALUES ('119', '118', 'admin', '教练工资收入', 'fa fa-cog', '0', 'admin/Salaryin/coach', '_self', '1', '0', '1', '0', '0');
-INSERT INTO `admin_menu` VALUES ('120', '118', 'admin', '训练营收入', 'fa fa-cog', '0', 'admin/Income/camp', '_self', '1', '1', '1', '0', '0');
-INSERT INTO `admin_menu` VALUES ('121', '118', 'admin', 'demo', 'fa fa-cog', '0', 'admin/salaryin/demo', '_self', '1', '1', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('119', '118', 'admin', '教练资金账目', 'fa fa-cog', '0', 'admin/Statistics_Coach/coachBill', '_self', '1', '0', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('120', '118', 'admin', '课时结算训练营课时列表', 'fa fa-cog', '0', 'admin/Statistics_Camp/campSchedule', '_self', '1', '1', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('121', '118', 'admin', 'demo', 'fa fa-cog', '0', 'admin/Statistics_Coach/demo', '_self', '1', '1', '1', '0', '0');
 INSERT INTO `admin_menu` VALUES ('122', '118', 'admin', '训练营资金账单', 'fa fa-cog', '0', 'admin/output/index', '_self', '1', '1', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('123', '118', 'admin', '教练收益总计', 'fa fa-cog', '0', 'admin/Statistics_Coach/coachIncome', '_self', '1', '1', '1', '0', '0');
+INSERT INTO `admin_menu` VALUES ('124', '118', 'admin', '课时收益详情', 'fa fa-cog', '0', 'admin/Statistics_Coach/scheduleinfo', '_self', '0', '1', '1', '0', '0');
