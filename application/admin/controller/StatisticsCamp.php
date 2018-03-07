@@ -2,14 +2,14 @@
 namespace app\admin\controller;
 use app\admin\controller\base\Backend;
 // 按课时结算的训练营财务页面
-class Income extends Backend{
-	protected $BonusService;
+class StatisticsCamp extends Backend{
+
 	public function _initialize(){
 		parent::_initialize();
 	}
 
     // 课时列表
-    public function salaryinList() {
+    public function campSchedule() {
         // 教练列表
         $coachlist = db('coach')->where(['status' => 1])->whereNull('delete_time')->select();
         // 课程列表
@@ -82,5 +82,7 @@ class Income extends Backend{
         $this->assign('sumScheduleGift', $sumScheduleGift);
         return $this->fetch();
     }
+
+    
     
 }
