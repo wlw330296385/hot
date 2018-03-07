@@ -80,7 +80,7 @@ class StatisticsCamp extends Backend{
         $this->assign('sumSchedule', $sumSchedule);
         $this->assign('sumScheduleStudent', $sumScheduleStudent);
         $this->assign('sumScheduleGift', $sumScheduleGift);
-        return $this->fetch();
+        return $this->fetch('StatisticsCamp/campSchedule');
     }
 
     
