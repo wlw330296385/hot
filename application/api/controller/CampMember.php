@@ -696,11 +696,11 @@ class CampMember extends Base
             $camp_id = input('param.camp_id');
             $keyword = input('param.keyword');
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
-                $map = ['camp_id'=>$camp_id,'type'=>2,'member'=>['like',"%$keyword%"]];
+                $map = ['camp_member.camp_id'=>$camp_id,'camp_member.type'=>2,'camp_member.member'=>['like',"%$keyword%"]];
             }else{
-                $map = ['camp_id'=>$camp_id,'type'=>2];
+                $map = ['camp_member.camp_id'=>$camp_id,'camp_member.type'=>2];
             }
-            $result = db('camp_member')->where($map)->select();
+            $result = db('camp_member')->where($map)->join('coach','camp_member.member_id = coach.member_id')->order('camp_member.id desc')->select();
             if($result){
                 return json(['code' => 200, 'msg' =>'查询成功', 'data' => $result]);
             }else{

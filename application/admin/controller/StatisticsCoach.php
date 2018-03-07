@@ -11,8 +11,8 @@ class StatisticsCoach extends Backend{
     public function demo(){
         return view();
     }
-
-    public function coach(){
+    // 资金账目
+    public function coachBill(){
         $member_id = input('param.member_id',19);
             
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
@@ -54,7 +54,7 @@ class StatisticsCoach extends Backend{
 
 
     // 收益统计
-    public function index(){
+    public function coachIncome(){
         $member_id = input('member_id',19);
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
@@ -86,8 +86,8 @@ class StatisticsCoach extends Backend{
     }
 
 
-
-    public function scheduleInfo(){
+    // 课时统计
+    public function coachSchedule(){
         $map = input('param.');
         $map = ['lesson_id'=>13,'coach_id'=>7];
         $scheduleList = db('schedule')->where($map)->select();
