@@ -84,5 +84,12 @@ class StatisticsCamp extends Backend{
     }
 
     
-    
+    public function campBill(){
+
+        $camp_id = input('param.camp_id',9);
+            
+
+
+        return view('StatisticsCamp/campBill');
+    }
 }
