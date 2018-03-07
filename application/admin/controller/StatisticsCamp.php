@@ -3,7 +3,7 @@ namespace app\admin\controller;
 use app\admin\controller\base\Backend;
 // 按课时结算的训练营财务页面
 class StatisticsCamp extends Backend{
-	protected $BonusService;
+
 	public function _initialize(){
 		parent::_initialize();
 	}

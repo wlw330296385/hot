@@ -3,7 +3,7 @@ namespace app\admin\controller;
 use app\admin\controller\base\Backend;
 
 class StatisticsCoach extends Backend{
-	protected $BonusService;
+
 	public function _initialize(){
 		parent::_initialize();
 	}
