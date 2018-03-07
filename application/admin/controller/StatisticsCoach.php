@@ -17,7 +17,7 @@ class StatisticsCoach extends Backend{
             
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
-        $camp_id = $this->cur_camp['camp_id'];
+        $camp_id = input('param.camp_id',$this->cur_camp['camp_id']);
         $map['camp_id'] = $camp_id;
         $salaryinList = db('salary_in')->field("*,sum(salary) as s_salary,sum(push_salary) as s_push_salary,from_unixtime(create_time,'%Y%m%d') as days")->where(['member_id'=>$member_id])->group('days')->order('days')->select();
         // dump($salaryinList);die;
