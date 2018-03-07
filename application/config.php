@@ -40,6 +40,7 @@ return [
         'applyResult' => 'fIaJMxa6cpenLyViHq10WiFkz2Wd_ANs3H1SV0PXDMk', //申请结果通知
         'statusChange' => '_MXeO37KI0lygDDJ82GEFciIQYW0GXzTcLl0Y8HgWPY', //业务状态变更通知
         'scheduleExpend'=>'squ4uaAVXJ52Dhfjtlol08cpo49FonbFwN-wUFObAV4',
+        'refereeTask' => '9XyZ3Mb70gR8HmE0N6y_9TESECJYyi3r4kA_c45d_EU', // 裁判任务通知
     ],
 
     // 七牛云
