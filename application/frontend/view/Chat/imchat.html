@@ -1,10 +1,240 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <title> 聊天窗口</title>
+    <meta charset="utf-8">
+    <title>聊天窗口</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        footer {
+            position: fixed;
+            width: 100%;
+            height: 50px;
+            min-height: 50px;
+            left: 0px;
+            bottom: 0px;
+            overflow: hidden;
+            padding: 0 70px 0 10px;
+            background-color: #fafafa;
+        }
+
+        .footer-right {
+            position: absolute;
+            /* width: 50px;
+            height: 50px; */
+            right: 0px;
+            bottom: 0px;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 100%;
+            padding: 8px 5px;
+            display: inline-block;
+        }
+
+        .footer-center {
+            height: 100%;
+            padding: 5px 0px;
+        }
+
+        .footer-center [class*=input] {
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
+        }
+
+        .footer-center .input-text {
+            background-color: initial;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            padding: 10px !important;
+            font-size: 14px !important;
+            line-height: 18px !important;
+            font-family: verdana !important;
+            overflow: hidden;
+        }
+
+        .chatBox-content-demo {
+            width: 100%;
+            overflow-y: scroll;
+        }
+
+        .clearfloat:after {
+            display: block;
+            clear: both;
+            content: "";
+            visibility: hidden;
+            height: 0
+        }
+
+        .clearfloat {
+            zoom: 1;
+            margin: 10px 10px;
+        }
+
+        /* 左边对话 */
+
+        .clearfloat:after {
+            display: block;
+            clear: both;
+            content: "";
+            visibility: hidden;
+            height: 0
+        }
+
+        .clearfloat .left {
+            text-align: left;
+            float: left;
+        }
+
+        .clearfloat .left .chat-message {
+            background: #D9D9D9;
+            min-height: 35px;
+        }
+
+        .clearfloat .left .chat-message:before {
+            position: absolute;
+            content: "";
+            top: 8px;
+            left: -6px;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 10px solid #D9D9D9;
+        }
+
+        .clearfloat .left .chat-avatars {
+            margin-right: 10px;
+            float: left;
+        }
+
+        /* 左边对话end */
+
+        .clearfloat .right {
+            float: right;
+            text-align: right;
+        }
+
+        .clearfloat .chat-message {
+            max-width: 252px;
+            text-align: left;
+            padding: 7px 12px;
+            border-radius: 6px;
+            font-size: 14px !important;
+            word-wrap: break-word;
+            display: inline-block;
+            position: relative;
+        }
+
+
+        .clearfloat .right .chat-message {
+            background: #dd524d;
+            color: #fff;
+            text-align: left;
+            min-height: 35px;
+        }
+
+        .clearfloat .right .chat-message:before {
+            position: absolute;
+            content: "";
+            top: 8px;
+            right: -6px;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 10px solid #dd524d;
+        }
+
+        .clearfloat .chat-avatars {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            background: #eee;
+            vertical-align: top;
+            overflow: hidden;
+        }
+
+        .clearfloat .chat-avatars>img {
+            width: 35px;
+            height: 35px;
+        }
+
+        .clearfloat .left .chat-avatars {
+            margin-right: 10px;
+        }
+
+        .clearfloat .right .chat-avatars {
+            margin-left: 10px;
+        }
+    </style>
 </head>
+
 <body>
 
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">聊天窗口</h1>
+    </header>
+
+    <div class="mui-content mt55">
+        <div class="chatBox-content-demo">
+            <div class="clearfloat">
+                <div class="left">
+                    <div class="chat-message">这是左边的对话</div>
+                    <div class="chat-avatars">
+                        <img src="/static/default/avatar.png" alt="头像">
+                    </div>
+                </div>
+            </div>
+            <div class="clearfloat">
+                <div class="right">
+                    <div class="chat-message">这是右边的对话</div>
+                    <div class="chat-avatars">
+                        <img src="/static/default/avatar.png" alt="头像">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-center">
+            <textarea type="text" class='input-text'></textarea>
+        </div>
+        <label class="footer-right">
+            <button id="chat-fasong" class="mui-btn mui-btn-danger">发送</button>
+        </label>
+    </footer>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+        // <small class=\"chat-date\">2017-12-02 14:26:58</small> 
+        //发送信息
+        $("#chat-fasong").click(function () {
+            var textContent = $(".input-text").val().replace(/[\n\r]/g, '<br>')
+            if (textContent != "") {
+                $(".chatBox-content-demo").append("<div class=\"clearfloat\">" +
+                    "<div class=\"right\"> <div class=\"chat-message\"> " + textContent + " </div> " +
+                    "<div class=\"chat-avatars\"><img src=\"{$memberInfo.avatar}\" alt=\"头像\" /></div> </div> </div>");
+                //发送后清空输入框
+                $(".input-text").val("");
+                //聊天框默认最底部
+                // $(document).ready(function () {
+                //     $(".chatBox-content-demo").scrollTop($(".chatBox-content-demo")[0].scrollHeight);
+                // });
+            }else{
+                mui.toast("不能发送空白信息");
+            }
+        });
+    </script>
 </body>
+
 </html>
