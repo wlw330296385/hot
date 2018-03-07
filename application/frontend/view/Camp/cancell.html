@@ -1,10 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>申请注销训练营</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .systemReply {
+            background-color: #efeff4 !important;
+        }
+
+        .systemReply:after {
+            height: 0 !important;
+        }
+
+        .systemReply label {
+            padding: 13px 15px !important;
+        }
+    </style>
 </head>
+
 <body>
 
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    </header>
+
+    <div class="mui-content">
+
+        <form action="" class="mui-input-group">
+            <div class="mui-input-row">
+                <label>训练营名称</label>
+                <span>{$campInfo.camp}</span>
+            </div>
+            <div class="mui-input-row">
+                <label>申请人</label>
+                <span>{$campInfo.realname}</span>
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>注销原因</label>
+                <textarea rows="4" class="reason" placeholder="请填写你的注销原因"></textarea>
+            </div>
+
+            <!-- 系统回复内容 -->
+            <div class="mui-input-row h-auto systemReply hide">
+                <label class="colorred">系统回复：</label>
+                <textarea rows="4" class="colorred mui-text-left">你的申请已被同意</textarea>
+            </div>
+
+        </form>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-col-xs-12 opli bgblue replyBtn">提交申请</li>
+        </ul>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        $(function () {
+            $(".replyBtn").on("tap", function () {
+                var camp_id = "{$campInfo.id}";
+                var reason = $(".reason").val();
+                mui.ajax("{:url('api/camp/campcancellapply')}", {
+                    data: {
+                        camp_id: camp_id,
+                        reason: reason
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data)
+                        if (data.code == 200) {
+                            mui.toast("申请提交成功，请耐心等待");
+                            setTimeout(location.href = "{:url('camp/powercamp',['camp_id'=>$campInfo['id']])}",3000);
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                        mui.toast('网络异常');
+                    }
+                });
+            });
+        })
+    </script>
+
 </body>
+
 </html>

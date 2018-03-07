@@ -342,11 +342,12 @@ class Team extends Base
             }
             // 接收参数 判断正确有无传参
             $apply_id = input('apply_id');
+            $status = input('status');
             $reply = input('reply');
-            if (!$apply_id || !$reply) {
+            if (!$apply_id || !$status) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请正确传参']);
             }
-            if (!in_array($reply, [2, 3])) {
+            if (!in_array($status, [2, 3])) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请正确传参']);
             }
             // 查询apply数据
@@ -364,8 +365,8 @@ class Team extends Base
                 return json(['code' => 100, 'msg' => __lang('MSG_403') . '，您无法进行此操作']);
             }
             //dump($applyInfo);
-            // 更新apply数据，$reply=2同意，3拒绝
-            $applySaveResult = $teamS->saveApply(['id' => $applyInfo['id'], 'status' => $reply]);
+            // 更新apply数据，$status=2同意，3拒绝
+            $applySaveResult = $teamS->saveApply(['id' => $applyInfo['id'], 'status' => $status, 'reply' => $reply]);
             //dump($applySave);
             $replystr = '已拒绝';
             $url = url('keeper/message/index', '', '', true);
@@ -834,11 +835,12 @@ class Team extends Base
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             $apply_id = input('apply_id');
+            $status = input('status');
             $reply = input('reply');
-            if (!$apply_id || !$reply) {
+            if (!$apply_id || !$status) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请正确传参']);
             }
-            if (!in_array($reply, [2, 3])) {
+            if (!in_array($status, [2, 3])) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请正确传参']);
             }
             // 查询apply数据
@@ -860,7 +862,7 @@ class Team extends Base
             }
 
             // 更新apply数据，$reply=2同意，3拒绝
-            $resultSaveApply = $teamS->saveApply(['id' => $applyInfo['id'], 'status' => $reply]);
+            $resultSaveApply = $teamS->saveApply(['id' => $applyInfo['id'], 'status' => $status, 'reply' => $reply]);
             $replystr = '已拒绝';
             $url = url('keeper/message/index', '', '', true);
             if ($reply == 2) {

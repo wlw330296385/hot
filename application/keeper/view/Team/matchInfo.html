@@ -246,9 +246,25 @@
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
+                        <span class="icon iconfont icon-activity-opponent colororange"></span>裁判类型</label>
+                    <span class="refereeType">{$matchInfo.referee_type}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判名单</label>
+                    <span class="wd60 refereeNmae">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                        <label>
+                            <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判付费方式</label>
+                        <span class="wd60 refereeCostBear">{$matchInfo.referee_cost_bear}</span>
+                    </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
                         <span class="icon iconfont icon-activity-category colororange"></span>比赛类型</label>
                     <span class="match_time">{$matchInfo.type}</span>
                 </li>
+                
             </ul>
 
             <div class="mui-table-view detalis-list list mainInfo mb">
@@ -381,6 +397,10 @@
             isthumbsup(); //点赞状态
             toSignUpList(); // 报名/参赛人员
 
+            // 去逗号
+            var refereeNmae = $(".refereeNmae").text()
+            $(".refereeNmae").text(refereeNmae.substring(0, refereeNmae.length - 1));
+
             // 没有对手比分不显示
             var homeTeam = "{$matchInfo.record.home_score}";
             var awayTeam = "{$matchInfo.record.away_score}";
@@ -421,16 +441,37 @@
                 $(".status1").show();
             }
 
-            // 付费方式文字转换中文
+            // 场地付费方式文字转换中文
             var court_cost_bear = "{$matchInfo.court_cost_bear}";
-            if (court_cost_bear = 0) {
+            if (court_cost_bear == 0) {
                 $(".courtCostBear").text("免费");
-            } else if (court_cost_bear = 1) {
+            } else if (court_cost_bear == 1) {
                 $(".courtCostBear").text("费用AA");
-            } else if (court_cost_bear = 2) {
+            } else if (court_cost_bear == 2) {
                 $(".courtCostBear").text("主队负责");
-            } else if (court_cost_bear = 3) {
+            } else if (court_cost_bear == 3) {
                 $(".courtCostBear").text("客队负责");
+            }
+
+            // 裁判列表文字转换中文
+            var referee_type = "{$matchInfo.referee_type}";
+            if (referee_type == 0) {
+                $(".refereeType").text("免裁判");
+                $(".refereeNmae").hide();
+            } else if (referee_type == 1) {
+                $(".refereeType").text("系统随机安排");
+            } else if (referee_type == 2) {
+                $(".refereeType").text("自行安排");
+            }
+
+            // 付费方式文字转换中文
+            var referee_cost_bear = "{$matchInfo.referee_cost_bear}";
+            if (referee_cost_bear == 1) {
+                $(".refereeCostBear").text("费用AA");
+            } else if (referee_cost_bear == 2) {
+                $(".refereeCostBear").text("主队负责");
+            } else if (referee_cost_bear == 3) {
+                $(".refereeCostBear").text("客队负责");
             }
 
             //报名功能

@@ -25,7 +25,13 @@
         <div class="examineBox">
             <input id="applyid" type="hidden" value="{$applyInfo.id}">
             <div class="examine">
-                <strong>申请的内容：</strong>{$applyInfo.remarks}</div>
+                <strong>申请的内容：</strong>
+                <textarea>{$applyInfo.remarks}</textarea>
+            </div>
+            <div class="examine">
+                <strong>回复的内容：</strong>
+                <textarea class="replyCont" value=""></textarea>
+            </div>
             <div class="mui-button-row">
                 <button class="mui-btn" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
                 <button class="mui-btn" type="button" onclick="check_status(3)">拒绝</button>
@@ -86,10 +92,16 @@
         // 审核操作
         function check_status(value) {
             var apply_id = document.getElementById('applyid').value;
+            var replyCont = $(".replyCont").val();
+            if (value == 3 && replyCont == '') {
+                mui.toast("请填写拒绝理由");
+                return false;
+            }
             mui.ajax("{:url('api/team/applyreply')}", {
                 data: {
                     apply_id: apply_id,
-                    reply: value
+                    status: value,
+                    reply:replyCont
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型

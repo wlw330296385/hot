@@ -20,7 +20,7 @@
     </header>
 
     <div class="mui-content pt">
-        <input id="apply_id" type="hidden" value="{$applyInfo.id}">
+
         <form action="" class="mui-input-group mb">
             <div class="page-header" style="background: #efeff4;">
                 <span class="course">约战信息</span>
@@ -37,14 +37,22 @@
                 <label>备注信息</label>
                 <span class="">{$applyInfo.remarks}</span>
             </div>
-            <div class="examineBox">
-                <div class="mui-button-row">
-                    <button class="mui-btn" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
-                    <button class="mui-btn" type="button" onclick="check_status(3)">拒绝</button>
-                </div>
-            </div>
         </form>
-
+        <div class="examineBox">
+            <input id="apply_id" type="hidden" value="{$applyInfo.id}">
+            <div class="examine">
+                <strong>申请的内容：</strong>
+                <textarea>{$applyInfo.remarks}</textarea>
+            </div>
+            <div class="examine">
+                <strong>回复的内容：</strong>
+                <textarea class="replyCont" value=""></textarea>
+            </div>
+            <div class="mui-button-row">
+                <button class="mui-btn" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
+                <button class="mui-btn" type="button" onclick="check_status(3)">拒绝</button>
+            </div>
+        </div>
         <p class="pline"></p>
 
         <div class="list">
@@ -356,10 +364,16 @@
         // 审核操作
         function check_status(value) {
             var apply_id = document.getElementById('apply_id').value;
+            var replyCont = $(".replyCont").val();
+            if (value == 3 && replyCont == '') {
+                mui.toast("请填写拒绝理由");
+                return false;
+            }
             mui.ajax("{:url('api/match/replymatchapply')}", {
                 data: {
                     apply_id: apply_id,
-                    reply: value
+                    status: value,
+                    reply: replyCont
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型

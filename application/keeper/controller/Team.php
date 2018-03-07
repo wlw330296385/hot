@@ -340,7 +340,7 @@ class Team extends Base {
         // 比赛详情
         $matchInfo = $matchS->getMatch(['id' => $match_id]);
 
-        // 友谊赛 输出比赛战绩数据
+        // 输出比赛战绩数据
         $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
         if ($matchRecordInfo) {
             if (!empty($matchRecordInfo['album'])) {
@@ -350,6 +350,12 @@ class Team extends Base {
                 $matchRecordInfo['away_team_logo'] = config('default_image.team_logo');
             }
             $matchInfo['record'] = $matchRecordInfo;
+        }
+        
+        // 裁判列表
+        $refereeList= [];
+        if (!empty($matchInfo['referee_str'])) {
+            $refereeList = json_decode($matchInfo['referee_str'], true);
         }
 
 
@@ -372,6 +378,7 @@ class Team extends Base {
         $this->assign('teamrole', $teamrole);
         $this->assign('countTeamMember', $countTeamMember);
         $this->assign('matchInfo', $matchInfo);
+        $this->assign('refereeList', $refereeList);
         return view('Team/matchInfo');
     }
 
@@ -431,7 +438,8 @@ class Team extends Base {
                 'id' => 0,
                 'is_finished_num' => 0,
                 'is_finished' => '未完成',
-                'match_time' => 0
+                'match_time' => 0,
+                'referee_type' => ''
             ];
             $directentry = 1;
 

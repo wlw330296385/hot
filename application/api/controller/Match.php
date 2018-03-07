@@ -1413,11 +1413,12 @@ class Match extends Base
             $teamS = new TeamService();
             $messageS = new MessageService();
             // 判断正确有无传参
-            if (!isset($request['apply_id']) || !isset($request['reply'])) {
+            if (!isset($request['apply_id']) || !isset($request['status'])) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请正确传参']);
             }
             $reply = $request['reply'];
-            if (!in_array($reply, [2, 3])) {
+            $status = $request['status'];
+            if (!in_array($status, [2, 3])) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请正确传参']);
             }
             // 查询match_apply数据
@@ -1434,7 +1435,7 @@ class Match extends Base
             // 回复结果字样
             $replystr = '已拒绝';
             // 更新match_apply数据组合
-            $dataSaveApply = ['id' => $applyInfo['id'], 'status' => $reply];
+            $dataSaveApply = ['id' => $applyInfo['id'], 'status' => $status, 'reply' => $reply];
             if ($reply == 2) {
                 // 同意操作
                 // 更新比赛战绩对手球队信息
