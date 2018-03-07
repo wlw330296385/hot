@@ -13,15 +13,15 @@ class StatisticsCoach extends Backend{
     }
     // 资金账目
     public function coachBill(){
-        $member_id = input('param.member_id',19);   
+        $member_id = input('param.member_id');   
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
-        $camp_id = input('param.camp_id',$this->cur_camp['camp_id']);
+        // $camp_id = input('param.camp_id',$this->cur_camp['camp_id']);
         $salaryin = [];
         $list1 = [];
         $list2 = [];
-        if($camp_id && $member_id){
-            $map['camp_id'] = $camp_id;
+        if($member_id){
+            // $map['camp_id'] = $camp_id;
             $map['member_id'] = $member_id;
             $salaryinList = db('salary_in')->field("*,sum(salary) as s_salary,sum(push_salary) as s_push_salary,from_unixtime(create_time,'%Y%m%d') as days")->where($map)->group('days')->order('days')->select();
             // dump($salaryinList);die;
