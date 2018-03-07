@@ -9,7 +9,7 @@ class StatisticsCoach extends Backend{
 	}
 
     public function demo(){
-        return view();
+        return view('StatisticsCoach/demo');
     }
     // 资金账目
     public function coachBill(){

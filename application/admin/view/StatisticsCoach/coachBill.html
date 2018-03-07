@@ -23,7 +23,7 @@
             <div class="col-sm-12">
               <div class="form-group">
                 <div class="input-group" data-toggle="modal" data-target="#campModal">
-                  <input type="text" name="camp" class="form-control pull-right wAuto" value="全部训练营">
+                  <input type="text" name="camp" class="form-control pull-right wAuto" value="通过训练营刷选教练员">
                   <input type="hidden" name="camp_id" value="">
                   <div class="input-group-addon">
                     <i class="fa fa-angle-down"></i>
@@ -233,6 +233,24 @@
 
     $(function () {
 
+        //=========================== 初始化数据 ==============================//
+
+        //获取上个月，并赋予统计时间栏
+        var getLastMonth = '';
+        var currDate = new Date();
+        var currYear = currDate.getFullYear();
+        var currMonth = currDate.getMonth();
+        if(currMonth==0){
+            getLastMonth = parseInt(currYear)-1+'-12';
+        }else{
+            currMonth = currMonth<10 ? "0"+currMonth:currMonth;
+            getLastMonth = currYear+'-'+ currMonth ;
+        }
+        $("input[name=dateYM]").val(getLastMonth);
+
+        //隔行变色
+        $(".hotTable tbody td ul").find("li:even").addClass("even");
+
         //根据数据表统计总额
         var monthOut = 0;
         $(".cOut li").each(function () {
@@ -249,10 +267,11 @@
         $(".monthIn").text(scheduleIn+rebateIn);
         $(".monthOut").text(monthOut);
 
-        //隔行变色
-        $(".hotTable tbody td ul").find("li:even").addClass("even");
 
-        //选择年月日的	   startView: 2,   minView: 2, format: 'yyyymmdd',
+        //=========================== 初始化数据 ==============================//
+
+
+        //选择年月
         $('#dateYM').datepicker({
             language: 'zh-CN',
             autoclose: true,
@@ -265,7 +284,7 @@
         $("#backToAllCamp").on("click", function () {
             $('input[name="camp"]').val('全部训练营');
             $('input[name="camp_id"]').val('');
-            $("#coachModalLabel").text("请选择平台教练员");
+            $("#coachModalLabel").text("请选择教练员");
             $("#coachList tbody").empty().html('<tr role="row" class="nodata"><td colspan="4">请搜索教练员</td></tr>');
             $('#campModal').modal('hide');
         })
@@ -289,9 +308,14 @@
             }else{
                 //判断是否有campid选择不同api
                 if(camp_id==""){
-                    toCampCoachList(keyword,camp_id);
+                    toCoachList(keyword);
                 }else{
                     //当前训练营的教练员列表查询
+                    $("#coachList tbody tr").removeClass("text-yellow");
+                    $("#coachList tbody tr td:first-child:contains('"+keyword+"')").parent().addClass("text-yellow");
+                    $("#coachList .text-yellow").each(function (i) {
+                        $("#coachList tbody tr:first-child").before($(this));
+                    });
                 }
             }
         })
@@ -303,7 +327,7 @@
             $("input[name=camp]").val(camp);
             $("input[name=member_id]").val('');
             $("input[name=coach]").val('');
-            $("#coachModalLabel").text("请选择"+camp+"的教练员");
+            $("#coachModalLabel").text("请选择"+camp+"教练员");
             toCampCoachList(camp_id);
             $('#campModal').modal('hide');
         })
@@ -332,7 +356,7 @@
             endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
             console.log(beginDate)
             console.log(endDate)
-            location.href="coach/camp_id/"+camp_id+"/member_id/"+member_id+"/monthstart/"+beginDate+"/monthend/"+endDate;
+            location.href="coachBill/camp_id/"+camp_id+"/member_id/"+member_id+"/monthstart/"+beginDate+"/monthend/"+endDate;
         })
 
         //接口获取数据并追加到页面
@@ -417,8 +441,7 @@
             var url = "{:url('api/camp_member/getCoachOfCampListAllApi','','',true)}"+"?camp_id="+camp_id;
             $.ajax({
                 url: url,
-                data: {
-                },
+                data: {},
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
