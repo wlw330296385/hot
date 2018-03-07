@@ -49,7 +49,7 @@ class StatisticsCoach extends Backend{
         // dump($list1);die;
         $this->assign('list2',$list2);
         $this->assign('list1',$list1);
-        return view('Salaryin/coach');
+        return view('StatisticsCoach/coachBill');
     }
 
 
@@ -82,7 +82,7 @@ class StatisticsCoach extends Backend{
         $this->assign('salaryinList',$salaryinList);
         $this->assign('rebateList',$rebateList);
         $this->assign('s_rebate',$s_rebate);
-        return view();
+        return view('StatisticsCoach/coachIncome');
     }
 
 
@@ -98,7 +98,7 @@ class StatisticsCoach extends Backend{
         }
         // dump($scheduleList);
         $this->assign('scheduleList',$scheduleList);
-        return view();
+        return view('StatisticsCoach/coachSchedule');
     }
 
     
