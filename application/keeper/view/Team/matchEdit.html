@@ -272,6 +272,10 @@
                     </span>
                 </div>
             </div>
+            <div class="mui-input-row refereeCount hide">
+                    <label>随机安排人数</label>
+                    <input type="text" name="referee_count" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.referee_count}"{/eq} class="data refereeCount" placeholder="请填写随机安排的人数">
+                </div>
             <div class="mui-input-row refereeRow hide">
                 <a href="#refereeDom" id="setReferee" class="mui-navigate-right">
                     <label>裁判名单</label>
@@ -963,6 +967,9 @@
                 if (refereeType == 2) {
                     $(".refereeRow").show();
                 }
+                if (refereeType == 1) {
+                    $(".refereeCount").show();
+                }
             }
 
             // 球服没有内容则隐藏i标签
@@ -989,6 +996,12 @@
                     $(".referee").text('');
                     $('input[name=referee_id]').val('');
                     $('input[name=referee_cost]').val('');
+                }
+                if (refereeNum == 1) {
+                    $(".refereeCount").show();
+                } else if (refereeNum == 0 || refereeNum == 2) {
+                    $(".refereeCount").hide();
+                    $("input[name=referee_count]").val('');
                 }
             });
 
@@ -1456,6 +1469,18 @@
             //     AwayMemberList.push({ member: member, member_id: member_id });
             // });
             // console.log(AwayMemberList)
+
+            var refereeNum = $("#refereeSlecct").children("option:selected").val();
+            var refereeRow = $(".referee").text();
+            var refereeCount = $("input[name=referee_count]").val();
+            if (refereeNum == 2 && refereeRow == '') {
+                mui.toast("请选择裁判");
+                return false;
+            }
+            if (!(/^[0-3]*$/).test(refereeCount)) {
+                mui.toast("裁判人数请填写数字且不能大于3人");
+                return false;
+            }
 
             // 提交裁判员数组
             referee_str = [];

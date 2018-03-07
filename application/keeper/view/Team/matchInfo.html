@@ -249,22 +249,27 @@
                         <span class="icon iconfont icon-activity-opponent colororange"></span>裁判类型</label>
                     <span class="refereeType">{$matchInfo.referee_type}</span>
                 </li>
-                <li class="mui-table-view-cell listli">
+                <li class="mui-table-view-cell listli refereeCount">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>随机安排人数</label>
+                    <span class="wd60">{$matchInfo.referee_count}/人</span>
+                </li>
+                <li class="mui-table-view-cell listli refereeName">
                     <label>
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判名单</label>
-                    <span class="wd60 refereeNmae">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
+                    <span class="wd60">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
-                        <label>
-                            <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判付费方式</label>
-                        <span class="wd60 refereeCostBear">{$matchInfo.referee_cost_bear}</span>
-                    </li>
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判付费方式</label>
+                    <span class="wd60 refereeCostBear">{$matchInfo.referee_cost_bear}</span>
+                </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-category colororange"></span>比赛类型</label>
                     <span class="match_time">{$matchInfo.type}</span>
                 </li>
-                
+
             </ul>
 
             <div class="mui-table-view detalis-list list mainInfo mb">
@@ -457,11 +462,15 @@
             var referee_type = "{$matchInfo.referee_type}";
             if (referee_type == 0) {
                 $(".refereeType").text("免裁判");
-                $(".refereeNmae").hide();
+                $(".refereeName").hide();
+                $(".refereeCount").hide();
             } else if (referee_type == 1) {
                 $(".refereeType").text("系统随机安排");
+                $(".refereeName").hide();
+                $(".refereeCount").show();
             } else if (referee_type == 2) {
                 $(".refereeType").text("自行安排");
+                $(".refereeCount").hide();
             }
 
             // 付费方式文字转换中文

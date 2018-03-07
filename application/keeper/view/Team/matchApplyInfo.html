@@ -21,6 +21,23 @@
 
     <div class="mui-content pt">
 
+        <div class="list">
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                    <a href="{:url('team/teamInfo',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">
+                        <img class="mui-media-object mui-pull-left coachicon" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                        <h4>{$teamInfo.name}</h4>
+                        <div class="mui-media-body wd49" style="line-height:20px !important">
+                            <p>{$teamInfo.city} {$teamInfo.area}</p>
+                            <p class="f12">队员：
+                                <strong>{$teamInfo.member_num}</strong>人 | 粉丝：
+                                <strong>{$teamInfo.fans_num}</strong>
+                            </p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
         <form action="" class="mui-input-group mb">
             <div class="page-header" style="background: #efeff4;">
                 <span class="course">约战信息</span>
@@ -33,10 +50,6 @@
                 <label>手机</label>
                 <span class="">{$applyInfo.telphone}</span>
             </div>
-            <div class="mui-input-row">
-                <label>备注信息</label>
-                <span class="">{$applyInfo.remarks}</span>
-            </div>
         </form>
         <div class="examineBox">
             <input id="apply_id" type="hidden" value="{$applyInfo.id}">
@@ -46,334 +59,31 @@
             </div>
             <div class="examine">
                 <strong>回复的内容：</strong>
-                <textarea class="replyCont" value=""></textarea>
+                <textarea class="reply" value=""></textarea>
             </div>
             <div class="mui-button-row">
                 <button class="mui-btn" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
                 <button class="mui-btn" type="button" onclick="check_status(3)">拒绝</button>
             </div>
         </div>
-        <p class="pline"></p>
-
-        <div class="list">
-
-            <ul class="mui-table-view mb" style="margin-top: -4px">
-                <li class="mui-table-view-cell mui-media listli de " style="padding:11px 15px;">
-                    <a href="javascript:;">
-                        <img class="mui-media-object mui-pull-left coachicon" src="{$applyInfo.team.logo}" style="width:45px !important;height:45px !important">
-                        <div class="mui-media-body wd36">
-                            {$applyInfo.team.name}
-                            <p class="mui-ellipsis">{$applyInfo.team.city} {$applyInfo.team.area}</p>
-                        </div>
-                        <div class="price-frame" style="line-height:46px;width:45%">
-                            <p style="font-size:12px">队员：{$applyInfo.team.member_num}人 | 粉丝：{$applyInfo.team.fans_num}</p>
-                        </div>
-                    </a>
-                </li>
-            </ul>
-
-            <div class="page-header">
-                <span class="course">
-                    <b>球队成员</b>
-                </span>
-                <span class="more pdr15">
-                    <a href="{:url('team/teamMember',['team_id'=>$applyInfo.team['id']])}" class="mui-navigate-right">查看全部</a>
-                </span>
-            </div>
-
-            <div class="nav-list mb">
-                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame overflow-x teamMemberList ptb4"></ul>
-            </div>
-
-            <div class="nav-list mb">
-                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                        <a href="#">
-                            <span>平均年龄</span>
-                            <div class="mui-media-body">{$applyInfo.team.avg_age}</div>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                        <a href="#">
-                            <span>平均身高</span>
-                            <div class="mui-media-body">{$applyInfo.team.avg_height}</div>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                        <a href="#">
-                            <span>平均体重</span>
-                            <div class="mui-media-body">{$applyInfo.team.avg_weight}</div>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <!--球队战绩-->
-            <div class="page-header">
-                <span class="course">球队战绩</span>
-                <span class="more pdr15">
-                    <a href="{:url('team/matchList',['team_id'=>$applyInfo.team['id']])}" class="mui-navigate-right">查看更多</a>
-                </span>
-            </div>
-            <div class="nav-list record mb">
-                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="#">
-                            <span>场次</span>
-                            <div class="mui-media-body colorred">{$applyInfo.team.match_num}</div>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="#">
-                            <span>胜</span>
-                            <div class="mui-media-body colorred">{$applyInfo.team.match_win}</div>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="#">
-                            <span>负</span>
-                            <div class="mui-media-body colorred">{$applyInfo.team.match_lose}</div>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="#">
-                            <span>胜率</span>
-                            <div class="mui-media-body colorred">{$applyInfo.team.win_rate}</div>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <!--球队印象-->
-            <div class="page-header whitebg border-b">
-                <span class="course">球队印象</span>
-                <!-- <span class="more pdr15">
-                    <a href="#Impress" class="mui-navigate-right myimpress">发表我的印象</a>
-                </span> -->
-            </div>
-            <div class="impress whitebg tagCommentList"></div>
-
-        </div>
-
     </div>
 
-    <!-- 加入球队弹框 -->
-    <div id="yqpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
-            <ul class="mui-table-view operation">
-                <h5>
-                    <span class="type">申请加入</span>
-                    <a href="#yqpopover" class="mui-icon mui-icon-closeempty"></a>
-                </h5>
-                <li class="listli">
-                    <textarea rows="4" class="remarks" placeholder="请填写你加入球队的理由"></textarea>
-                </li>
-                <li class="mui-col-xs-12 opli joinBtn">提交申请</li>
-            </ul>
-        </div>
-    </div>
-    <!-- 发表印象 -->
-    <div id="Impress" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
-            <ul class="mui-table-view operation">
-                <h5>
-                    <span>我的印象</span>
-                    <a href="#Impress" class="mui-icon mui-icon-closeempty"></a>
-                </h5>
-                <div class="impressSide whitebg tagAll"></div>
-                <li class="mui-col-xs-12 opli commentBtn" id="impressSubmit">提交</li>
-            </ul>
-        </div>
-    </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>
         mui.init({
             swipeBack: false
         });
-        (function ($) {
-            $('.mui-scroll-wrapper').scroll({
-                indicators: true //是否显示滚动条
-            });
-        })(mui);
-
-        $(function () {
-
-            // 印象评价
-            $(document).on("tap", '.choiseTag', function () {
-                if ($(this).hasClass("bgorange")) {
-                    $(this).removeClass("bgorange");
-                } else {
-                    $(this).addClass("bgorange");
-                }
-            });
-
-            $(document).on("tap", '.myimpress', function () {
-                $(".impressSide .bgorange").removeClass("bgorange");
-            });
-
-            // 关注球队
-            $(".follow").on("tap", '', function () {
-                var team_id = "{$applyInfo.team.id}";
-                mui.ajax("{:url('api/follow/focus')}", {
-                    data: {
-                        type: 4,
-                        team_id: team_id
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast(data.msg);
-                            followStatus();
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            });
-
-            // 申请加入球队
-            $(".joinBtn").on("tap", '', function () {
-                var team_id = "{$applyInfo.team.id}";
-                var remarks = $(".remarks").val();
-
-                if (remarks == '') {
-                    mui.toast("请填写申请理由");
-                    return false;
-                }
-
-                mui.ajax("{:url('api/team/applyjointeam')}", {
-                    data: {
-                        team_id: team_id,
-                        remarks: remarks
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast("操作成功，待球队审核...");
-                            mui('#yqpopover').popover('toggle');
-                        } else {
-                            mui.toast(data.msg);
-                            mui('#yqpopover').popover('toggle');
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            });
-
-            // 发表印象标签
-            $(".commentBtn").on("tap", '', function () {
-                var commented = "{$applyInfo.team.name}";
-                var commented_id = "{$applyInfo.team.id}";
-
-                var tags = $(".tagAll .bgorange").map(function () {
-                    return $(this).attr("data-tag_name");
-                }).get().join(",");
-
-                var tag_ids = $(".tagAll .bgorange").map(function () {
-                    return $(this).attr("data-id");
-                }).get().join(",");
-
-                if (!$(".tagAll .choiseTag").hasClass("bgorange")) {
-                    mui.toast("你还没有选择印象标签哦");
-                    return false;
-                }
-
-                mui.ajax("{:url('api/tag/addtagcomment')}", {
-                    data: {
-                        comment_type: 2,
-                        commented: commented,
-                        commented_id: commented_id,
-                        tags: tags,
-                        tag_ids: tag_ids,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast("发表成功，感谢你的评价！");
-                            toTagCommentList();
-                            mui('#Impress').popover('toggle');
-                        } else {
-                            mui.toast(data.msg);
-                            mui('#Impress').popover('toggle');
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            });
-
-            //报名功能
-            $(document).on('tap', '.signupBtn', function () {
-                //判断是否登陆会员
-                var event_id = eventid;
-                mui.ajax("{:url('api/team/jointeamevent')}", {
-                    data: {
-                        event_id: eventid,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.alert('报名成功', '确定');
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            });
-
-
-            followStatus(); //判断当前的关注状态
-            teamMemberlist(); //自定义获取球员列表
-            toTagAllList(); //所有标签列表
-            toTagCommentList(); //已经评价的标签列表
-            toLastEventList() //获取最新活动列表
-        });
 
         // 审核操作
         function check_status(value) {
             var apply_id = document.getElementById('apply_id').value;
-            var replyCont = $(".replyCont").val();
-            if (value == 3 && replyCont == '') {
-                mui.toast("请填写拒绝理由");
-                return false;
-            }
+            var reply = $(".reply").val();
             mui.ajax("{:url('api/match/replymatchapply')}", {
                 data: {
                     apply_id: apply_id,
                     status: value,
-                    reply: replyCont
+                    reply: reply
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -382,7 +92,7 @@
                 success: function (res) {
                     if (res.code == 200) {
                         mui.alert(res.msg, function () {
-                            window.location.href = "{:url('frontend/team/matchApplyList')}/team_id/{$team_id}";
+                            setTimeout(window.location.href = "{:url('frontend/team/matchApplyList')}/team_id/{$team_id}", 3000);
                         })
                     } else {
                         mui.toast(res.msg);
@@ -396,217 +106,6 @@
             });
         }
 
-        // 判断当前的关注状态
-        function followStatus() {
-            var team_id = "{$applyInfo.team.id}"
-            mui.ajax("{:url('api/follow/getfollow')}", {
-                data: {
-                    type: 4,
-                    team_id: team_id
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data);
-                    if (data.code == 200) {
-                        if (data.data === 1) {
-                            $(".follow").text("取消关注");
-                        } else {
-                            $(".follow").text("关注球队");
-                        }
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        }
-
-        //自定义获取球员列表
-        function teamMemberlist() {
-            var url = "{:url('api/team/teammemberlist','','',true)}";
-            var team_id = "{$applyInfo.team.id}";
-            mui.ajax({
-                url: url,
-                data: {
-                    team_id: team_id,
-                    status: 1
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    if (data.code == 200) {
-                        var newli = '';
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-
-                            // 去除角色名称逗号
-                            var cDoms = data.data[i].role_text;
-                            cDoms = cDoms.substring(0, cDoms.length - 1);
-
-                            newli += '<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli logostyle" id="logoframe"><img class="logostyle" src="' + data.data[i].avatar + '" alt="">'
-                            if (data.data[i].role_text != '') {
-                                newli += '<div class="mui-media-body role">' + cDoms + '</div>'
-                            } else {
-                                newli += '<div class="mui-media-body role">队员</div>'
-                            }
-                            newli += '</li>'
-                        }
-                        $(".teamMemberList").empty();
-                        if (newli == '') {
-                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
-                        }
-                        $(".teamMemberList").append(newli);
-
-
-                    } else {
-                        mui.toast('数据获取失败,请稍候再试');
-                    }
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                }
-            });
-        };
-
-        //获取所有标签列表
-        function toTagAllList() {
-            mui.ajax("{:url('api/tag/tagall')}", {
-                data: {},
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    var div = '';
-                    if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag_name + '" data-id="' + data.data[i].id + '">' + data.data[i].tag_name + '</span>'
-                        }
-                        $(".tagAll").empty();
-                        $(".tagAll").append(div);
-
-                        if (div == '') {
-                            $(".tagAll").append('<li class="nodata"><p>没有相关数据哦</p></li>');
-                        }
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        };
-
-        //获取已评价标签列表
-        function toTagCommentList() {
-            mui.ajax("{:url('api/tag/commentlist')}", {
-                data: {
-                    comment_type: 2,
-                    commented_id: "{$applyInfo.team.id}",
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    var div = '';
-                    if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag + '" data-tag_id="' + data.data[i].id + '">' + data.data[i].tag + '(<samll>' + data.data[i].count + '</samll>)</span>'
-                        }
-                        $(".tagCommentList").empty();
-                        $(".tagCommentList").append(div);
-                    } else {
-                        $(".tagCommentList").append('<p class="mui-text-center">还没有印象标签哦</p>');
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        };
-
-        var eventid = ''
-        //获取最新活动列表
-        function toLastEventList() {
-            var team_id = "{$applyInfo.team.id}";
-            mui.ajax("{:url('api/team/lastevent')}", {
-                data: {
-                    team_id: team_id,
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    var div = '';
-                    if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            // 将时间戳转成日期格式
-                            var Tmonth = gettimem(data.data[i].start_time_stamp * 1000);
-                            var Tday = gettimed(data.data[i].start_time_stamp * 1000);
-                            var Ttime = gettimeh(data.data[i].start_time_stamp * 1000);
-                            eventid = data.data[i].id
-                            var url = "{:url('team/eventinfo')}" + '/team_id/' + data.data[i].team_id + '/event_id/' + data.data[i].id;
-                            div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblue">' + Tmonth + '月</p><h1 class="day">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
-                            div += '<div class="mui-media-body mainInfoRight wd66"><h5 class="title">主题：' + data.data[i].event + '</h5>';
-                            div += '<div class="divFrame"><p>组织者：' + data.data[i].member + '</p><p>地点：' + data.data[i].location + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
-                            if (data.data[i].is_finished_num == 1) {
-                                div += '<button class="mui-btn opbtn bggray">已结束</button>';
-                            } else {
-                                div += '<button class="mui-btn opbtn bgred signupBtn">参加</button>';
-                            }
-                            div += ' </div></div></li>';
-                            // 人员头像版块
-                            div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl wd66 imgShowEvent">';
-                            for (var j = 0; j <= data.data[i].memberlist.length - 1; j++) {
-                                div += '<img src="' + data.data[i].memberlist[j].avatar + '" alt="">';
-                            }
-                            div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[i].reg_number + '</font>/<font class="reg_all">' + data.data[i].max + '</font> 已报名</span></li>';
-                        }
-                        $(".newEvent").empty().append(div);
-                    }
-                    if (data.code == 100) {
-                        $(".newEvent").empty().append('<p class="nodata">还没有活动数据，赶紧去创建活动吧</p>');
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        };
-
-        //创建补0函数
-        function p(s) {
-            return s < 10 ? '0' + s : s;
-        }
-        function gettimem(m) {
-            var _time = new Date(m);
-            var month = _time.getMonth() + 1;
-            return p(month);
-        }
-        function gettimed(d) {
-            var _time = new Date(d);
-            var day = _time.getDate();
-            return p(day);
-        }
-        function gettimeh(h) {
-            var _time = new Date(h);
-            var hours = _time.getHours();
-            var minutes = _time.getMinutes();
-            return p(hours) + ":" + p(minutes);
-        }
     </script>
 </body>
 
