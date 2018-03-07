@@ -22,7 +22,7 @@
     <div class="mui-content">
 
         <!-- 审核内容-->
-        <div class="examineBox">
+        <div class="examineBox mb">
             <input id="applyid" type="hidden" value="{$applyInfo.id}">
             <div class="examine">
                 <strong>申请的内容：</strong>
@@ -30,7 +30,7 @@
             </div>
             <div class="examine">
                 <strong>回复的内容：</strong>
-                <textarea class="replyCont" value=""></textarea>
+                <textarea class="reply" value=""></textarea>
             </div>
             <div class="mui-button-row">
                 <button class="mui-btn" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
@@ -80,7 +80,6 @@
         });
 
         $(function () {
-
             var sex = "{$applyInfo.member.sex}";
             if (sex == 1) {
                 $(".sex").text("男");
@@ -92,16 +91,12 @@
         // 审核操作
         function check_status(value) {
             var apply_id = document.getElementById('applyid').value;
-            var replyCont = $(".replyCont").val();
-            if (value == 3 && replyCont == '') {
-                mui.toast("请填写拒绝理由");
-                return false;
-            }
+            var reply = $(".reply").val();
             mui.ajax("{:url('api/team/applyreply')}", {
                 data: {
                     apply_id: apply_id,
                     status: value,
-                    reply:replyCont
+                    reply: reply
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型

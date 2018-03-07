@@ -209,6 +209,10 @@
                         </span>
                     </div>
                 </div>
+                <div class="mui-input-row refereeCount hide">
+                    <label>随机安排人数</label>
+                    <input type="text" name="referee_count" value="" class="data refereeCount" placeholder="请填写随机安排的人数">
+                </div>
                 <div class="mui-input-row refereeRow hide">
                     <a href="#refereeDom" class="mui-navigate-right">
                         <label>裁判名单</label>
@@ -646,6 +650,13 @@
                     $("input[name=referee_id]").val('');
                     $('input[name=referee_cost]').val('');
                 }
+
+                if (refereeNum == 1) {
+                    $(".refereeCount").show();
+                } else if (refereeNum == 0 || refereeNum == 2) {
+                    $(".refereeCount").hide();
+                    $("input[name=referee_count]").val('');
+                }
             });
 
             //清除裁判
@@ -923,6 +934,18 @@
             }
             if ((court_cost > 0 && court_cost_bear == 0) || (court_cost == 0 && court_cost_bear != 0) || (court_cost == '' && court_cost_bear != 0)) {
                 mui.toast("填写场地费用与付费方式不对应");
+                return false;
+            }
+
+            var refereeNum = $("#refereeSlecct").children("option:selected").val();
+            var refereeRow = $(".referee").text();
+            var refereeCount = $("input[name=referee_count]").val();
+            if (refereeNum == 2 && refereeRow == '') {
+                mui.toast("请选择裁判");
+                return false;
+            }
+            if (!(/^[0-3]*$/).test(refereeCount)) {
+                mui.toast("裁判人数请填写数字且不能大于3人");
                 return false;
             }
 

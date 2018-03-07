@@ -58,6 +58,7 @@
 
         <ul class="mui-table-view operation">
             <li class="mui-col-xs-12 opli bgblue replyBtn">提交申请</li>
+            <li class="mui-col-xs-12 opli bgblue undoBtn">撤销申请</li>
         </ul>
 
     </div>
@@ -71,33 +72,72 @@
         });
 
         $(function () {
+            // 提交申请
             $(".replyBtn").on("tap", function () {
-                var camp_id = "{$campInfo.id}";
-                var reason = $(".reason").val();
-                mui.ajax("{:url('api/camp/campcancellapply')}", {
-                    data: {
-                        camp_id: camp_id,
-                        reason: reason
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data)
-                        if (data.code == 200) {
-                            mui.toast("申请提交成功，请耐心等待");
-                            setTimeout(location.href = "{:url('camp/powercamp',['camp_id'=>$campInfo['id']])}",3000);
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                        mui.toast('网络异常');
+                var btnArray = ['取消', '确认'];
+                mui.confirm('是否确认注销训练营？', '', btnArray, function (e) {
+                    var camp_id = "{$campInfo.id}";
+                    var reason = $(".reason").val();
+                    if (e.index == 1) {
+                        mui.ajax("{:url('api/camp/campcancellapply')}", {
+                            data: {
+                                camp_id: camp_id,
+                                reason: reason
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (data) {
+                                console.log(data)
+                                if (data.code == 200) {
+                                    mui.confirm("申请提交成功，请耐心等待");
+                                    setTimeout(location.href = "{:url('camp/powercamp',['camp_id'=>$campInfo['id']])}", 3000);
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                //异常处理；
+                                console.log(type);
+                                mui.toast('网络异常');
+                            }
+                        });
                     }
-                });
+                })
+            });
+
+            // 撤销申请
+            $(".undoBtn").on("tap", function () {
+                var btnArray = ['取消', '确认'];
+                mui.confirm('是否确认撤销注销训练营？', '', btnArray, function (e) {
+                    var camp_id = "{$campInfo.id}";
+                    if (e.index == 1) {
+                        mui.ajax("{:url('api/camp/campcancellapply')}", {
+                            data: {
+                                camp_id: camp_id,
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (data) {
+                                console.log(data)
+                                if (data.code == 200) {
+                                    mui.confirm("撤销申请成功，请耐心等待");
+                                    setTimeout(location.href = "{:url('camp/powercamp',['camp_id'=>$campInfo['id']])}", 3000);
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                //异常处理；
+                                console.log(type);
+                                mui.toast('网络异常');
+                            }
+                        });
+                    }
+                })
             });
         })
     </script>
