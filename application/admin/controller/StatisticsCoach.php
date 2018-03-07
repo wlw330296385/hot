@@ -13,39 +13,43 @@ class StatisticsCoach extends Backend{
     }
     // 资金账目
     public function coachBill(){
-        $member_id = input('param.member_id',19);
-            
+        $member_id = input('param.member_id',19);   
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $camp_id = input('param.camp_id',$this->cur_camp['camp_id']);
-        $map['camp_id'] = $camp_id;
-        $salaryinList = db('salary_in')->field("*,sum(salary) as s_salary,sum(push_salary) as s_push_salary,from_unixtime(create_time,'%Y%m%d') as days")->where(['member_id'=>$member_id])->group('days')->order('days')->select();
-        // dump($salaryinList);die;
         $salaryin = [];
         $list1 = [];
         $list2 = [];
-        for ($i=$monthStart; $i <= $monthEnd; $i++) { 
-            $list1[$i] = ['s_salary'=>0,'s_push_salary'=>0];
-            $list2[$i] = ['s_salary'=>0];
-        }
+        if($camp_id && $member_id){
+            $map['camp_id'] = $camp_id;
+            $map['member_id'] = $member_id;
+            $salaryinList = db('salary_in')->field("*,sum(salary) as s_salary,sum(push_salary) as s_push_salary,from_unixtime(create_time,'%Y%m%d') as days")->where($map)->group('days')->order('days')->select();
+            // dump($salaryinList);die;
+            
+            for ($i=$monthStart; $i <= $monthEnd; $i++) { 
+                $list1[$i] = ['s_salary'=>0,'s_push_salary'=>0];
+                $list2[$i] = ['s_salary'=>0];
+            }
 
-        foreach ($list1 as $key => &$value) {
-            foreach ($salaryinList as $k => $val) {
-                if($key == $val['days']){
-                    $value = $val;
+            foreach ($list1 as $key => &$value) {
+                foreach ($salaryinList as $k => $val) {
+                    if($key == $val['days']){
+                        $value = $val;
+                    }
+                }
+            }
+
+            $salaryoutList = db('salary_out')->field("*,sum(salary) as s_salary,from_unixtime(create_time,'%Y%m%d') as days")->where(['member_id'=>$member_id])->group('days')->order('days')->select();
+
+            foreach ($list2 as $key => &$value) {
+                foreach ($salaryoutList as $k => $val) {
+                    if($key == $val['days']){
+                        $value = $val;
+                    }
                 }
             }
         }
-
-        $salaryoutList = db('salary_out')->field("*,sum(salary) as s_salary,from_unixtime(create_time,'%Y%m%d') as days")->where(['member_id'=>$member_id])->group('days')->order('days')->select();
-
-        foreach ($list2 as $key => &$value) {
-            foreach ($salaryoutList as $k => $val) {
-                if($key == $val['days']){
-                    $value = $val;
-                }
-            }
-        }
+        
         // dump($list1);die;
         $this->assign('list2',$list2);
         $this->assign('list1',$list1);
