@@ -199,8 +199,27 @@ class StatisticsCamp extends Backend{
 
     // 营业额统计
     public function campTurnover(){
+        $camp_id = input('param.camp_id',9);
+        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
+        $monthEnd = input('param.monthend',date('Ymd'));
+        $month_start = strtotime($monthStart);
+        $month_end = strtotime($monthEnd);
+        // 单独提取订单记录
+        $lessonBill = db('bill')->field("count(id) as c_id,sum(balance_pay) as total_pay,goods,goods_id,id")
+        ->where(['camp_id'=>$camp_id,'goods_type'=>1,'is_pay'=>1])
+        ->where(['create_time'=>['between',[$month_start,$month_end]]])
+        ->where('delete_time',null)
+        ->group('goods_id')->select();
 
+        $eventBill = db('bill')->field("count('id') as c_id,sum('balance_pay') as total_pay,goods,goods_id,id")
+        ->where(['camp_id'=>$camp_id,'goods_type'=>1,'is_pay'=>1])
+        ->where(['create_time'=>['between',[$month_start,$month_end]]])
+        ->where('delete_time',null)
+        ->group('goods_id')->select();
         
+
+        $this->assign('lessonBill',$lessonBill);
+        $this->assign('eventBill',$eventBill);
         return view('StatisticsCamp/campTurnover');
     }
 
@@ -249,7 +268,7 @@ class StatisticsCamp extends Backend{
         //其他支出
         $orther_output = db('output')->where(['camp_id'=>$camp_id,'type'=>-2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
         
-        
+
 
         $this->assign('income2',$income2?$income2:0);
         $this->assign('income3',$income3?$income3:0);
