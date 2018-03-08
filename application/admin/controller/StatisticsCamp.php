@@ -162,6 +162,7 @@ class StatisticsCamp extends Backend{
         return view('StatisticsCamp/campBill');
     }
 
+    //收益统计
     public function campIncome(){
         $camp_id = input('param.camp_id',9);
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
@@ -243,11 +244,24 @@ class StatisticsCamp extends Backend{
         return view('StatisticsCamp/campGift');
     }
 
-    // 附加支出表
+    // 附加支出
     public function campOutput(){
+        $camp_id = input('param.camp_id');
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+        if(isPost()){
+            $data = input('post.');
+            $data['type'] = -2;
+            $data['create_time'] = time();
+            $data['system_remarks'] = "admin_id:$this->admin['id']";
+            $result = db('output')->insert($data);
+            if($result){
+                $this->success('操作成功');
+            }else{
+                $this->success('操作失败');
+            }
+        }
 
-        
-        return view('StatisticsCamp/campOutput');
+        return $this->fetch('StatisticsCamp/campOutput');
     }
 
     // 每月报表
@@ -284,8 +298,19 @@ class StatisticsCamp extends Backend{
 
     // 课程课时统计
     public function lessonSchedule(){
+        $lesson_id = input('param.lesson_id',13);
+        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
+        $monthEnd = input('param.monthend',date('Ymd'));
+        $month_start = strtotime($monthStart);
+        $month_end = strtotime($monthEnd);
 
-        
+        $schedulList = db('schedule')
+        ->where(['lesson_id'=>$lesson_id,'is_settle'=>1])
+        ->where(['create_time'=>['between',[$month_start,$month_end]]])
+        ->select();
+
+        $this->assign('schedulList',$schedulList);
+
         return view('StatisticsCamp/lessonSchedule');
     }
 
