@@ -6,9 +6,15 @@ use app\service\RefereeService;
 use think\Db;
 class Referee extends Base{
 	protected $refereeService;
+	protected $refereeId;
+	protected $refereeInfo;
 	public function _initialize(){
 		parent::_initialize();
 		$this->refereeService = new RefereeService;
+		$refereeId = input('referee_id', 0);
+		$refereeInfo = $this->refereeService->getRefereeInfo(['id' => $refereeId]);
+		$this->assign('refereeId', $refereeId);
+		$this->assign('refereeeInfo', $refereeInfo);
 	}
 
     // 裁判主页
@@ -127,12 +133,8 @@ class Referee extends Base{
     // 比赛申请/邀请列表
     public function applyList(){
         $type = input('param.type',1);
-        if($type == 1){
-
-            return view('Referee/applyList1');
-        }else{
-            return view('Referee/applyList2');
-        }
+        $view = 'Referee/applyList';
+        return view($view.$type);
     }
 
     // 比赛邀请详情
@@ -169,12 +171,6 @@ class Referee extends Base{
 
     // 执裁比赛列表
     public function myMatchList(){
-        $referee_id = input('param.referee_id');
-
-        
-
-        $this->assign('referee_id',$referee_id);
-
         return view('Referee/myMatchList');
     }
 }

@@ -428,9 +428,12 @@ class Team extends Base
                 $replystr = '已通过';
             }
             // 发送消息模板给申请人
+            if (!empty($reply)) {
+                $reply .= '回复说明：'.$reply;
+            }
             $messageData = [
                 'title' => '加入球队申请结果通知',
-                'content' => '加入球队' . $applyInfo['organization'] . '申请结果通知',
+                'content' => '加入球队' . $applyInfo['organization'] . '申请。对方回复：' . $reply,
                 'url' => $url,
                 'keyword1' => '加入球队，队名：' . $applyInfo['organization'],
                 'keyword2' => $replystr,
@@ -891,9 +894,12 @@ class Team extends Base
                 $teamS->autoUpdateTeam($applyInfo['organization_id']);
             }
             // 发送结果通知给邀请人
+            if (!empty($reply)) {
+                $reply .= '回复说明：'.$reply;
+            }
             $messageData = [
-                'title' => '邀请会员加入球队结果通知',
-                'content' => '邀请会员'. $applyInfo['member']['member'] .'加入球队' . $applyInfo['organization'] . '结果通知',
+                'title' => '邀请会员加入球队结果',
+                'content' => '邀请会员'. $applyInfo['member']['member'] .'加入球队' . $applyInfo['organization'] . '。对方回复：' . $replystr,
                 'url' => $url,
                 'keyword1' => '邀请会员加入球队',
                 'keyword2' => $replystr,
