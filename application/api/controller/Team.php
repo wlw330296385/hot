@@ -378,7 +378,7 @@ class Team extends Base
             //dump($applySave);
             $replystr = '已拒绝';
             $url = url('keeper/message/index', '', '', true);
-            if ($reply == 2) {
+            if ($status == 2) {
                 if ($applySaveResult['code'] == 200) {
                     // 获取球队信息
                     $teamInfo = $teamS->getTeam(['id' => $applyInfo['organization_id']]);
@@ -873,7 +873,7 @@ class Team extends Base
             $resultSaveApply = $teamS->saveApply(['id' => $applyInfo['id'], 'status' => $status, 'reply' => $reply]);
             $replystr = '已拒绝';
             $url = url('keeper/message/index', '', '', true);
-            if ($reply == 2) {
+            if ($status == 2) {
                 if ($resultSaveApply['code'] == 200) {
                     // 更新team_member信息status=1
                     $teammember = $teamS->getTeamMemberInfo(['team_id' => $applyInfo['organization_id'], 'member_id' => $applyInfo['member_id']]);
