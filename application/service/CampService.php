@@ -266,15 +266,42 @@ class CampService {
         return $list;
     }
 
-    // 保存训练营注销申请数据
-    public function saveCampCancell($data) {
+    /** 保存训练营注销申请数据
+     * @param $data 保存的数据
+     * @param $where 更新数据条件
+     * @return array
+     */
+    public function saveCampCancell($data=[], $where=[]) {
         $model = new CampCancell();
+        // 带更新条件更新数据
+        if (!empty($where)) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data, $where);
+            if ($res || ($res===0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        //显式更新数据
+        if (isset($data['id'])) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res || ($res===0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 插入数据
         $res = $model->allowField(true)->save($data);
         if ($res) {
             return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
         } else {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
+
     }
 
     // 获取训练营注销申请数据
@@ -285,6 +312,7 @@ class CampService {
             return $res;
         }
         $result = $res->toArray();
+        $result['status_text'] = $res->status_text;
         return $result;
     }
 }

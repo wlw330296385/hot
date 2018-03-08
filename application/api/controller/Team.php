@@ -849,7 +849,7 @@ class Team extends Base
             if (!$applyInfo) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404') . '，没有此记录']);
             }
-            if ($applyInfo['status'] != 1) {
+            if ($applyInfo['status_num'] != 1) {
                 return json(['code' => 100, 'msg' => '此邀请记录已回复结果，无需重复操作']);
             }
 

@@ -366,7 +366,7 @@ class Camp extends Base{
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
             if ( !isset($post['reason']) || empty($post['reason']) ) {
-                return json(['code' => 100, 'msg' => '请填写理由']);
+                return json(['code' => 100, 'msg' => '请填写注销原因']);
             }
             $campS = new CampService();
             // 获取训练营数据
@@ -381,8 +381,13 @@ class Camp extends Base{
             // 查询有无申请注销记录
             $cancellInfo = $campS->getCampCancellByCampId($camp_id);
             // 有未处理申请 返回信息
-            if ($cancellInfo && $cancellInfo['status'] == 0) {
-                return json(['code' => 100, 'msg' => '您已提交过注销申请，无需再次提交']);
+            if ($cancellInfo) {
+                if ($cancellInfo['status'] == 0) {
+                    return json(['code' => 100, 'msg' => '您已提交过注销申请，无需再次提交']);
+                } elseif ($cancellInfo['status'] != 1) {
+                    $post['id'] = $cancellInfo['id'];
+                }
+
             }
             
             // 允许提交规则
@@ -393,6 +398,46 @@ class Camp extends Base{
             $post['member'] = $this->memberInfo['member'];
             $post['status'] = 0;
             $result = $campS->saveCampCancell($post);
+            return json($result);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 撤回训练营注销申请
+    public function withdrawcancellapply() {
+        try {
+            $post = input('post.');
+            // 验证请求参数
+            $camp_id = input('post.camp_id');
+            if (!$camp_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            $campS = new CampService();
+            // 获取训练营数据
+            $campInfo = $campS->getCampInfo(['id' => $camp_id]);
+            if (!$campInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+            }
+            // 只有营主能操作
+            if ($campInfo['member_id'] != $this->memberInfo['id']) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+            }
+            // 查询有无申请注销记录
+            $cancellInfo = $campS->getCampCancellByCampId($camp_id);
+            if (!$cancellInfo) {
+                return json(['code' => 100, 'msg' => '无训练营注销申请记录']);
+            }
+            if ($cancellInfo['status'] == 1) {
+                return json(['code' => 100, 'msg' => '系统已受理训练营注销申请，无法操作']);
+            }
+
+            // 更新数据
+            $result = $campS->saveCampCancell([
+                'id' => $cancellInfo['id'],
+                'status' => -1,
+                'delete_time' => time()
+            ]);
             return json($result);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
