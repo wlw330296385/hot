@@ -152,7 +152,7 @@ class Referee extends Base{
             $map['match_id'] = $matchId;
             $map['referee_id'] = $refereeInfo['id'];
         }
-        $applyInfo = $this->refereeService->getMatchRerfereeApply($map);
+        $applyInfo = $this->refereeService->getMatchRefereeApply($map);
         // 查询关联的比赛数据
         $matchS = new MatchService();
         $matchInfo = $matchS->getMatch(['id' => $applyInfo['match_id']]);
