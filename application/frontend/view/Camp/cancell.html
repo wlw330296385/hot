@@ -64,9 +64,10 @@
         </form>
 
         <ul class="mui-table-view operation">
-            <li class="mui-col-xs-12 opli bgblue replyBtn">提交申请</li>
             {if $campCancellInfo}
-            <li class="mui-col-xs-12 opli bgblue undoBtn">撤销申请</li>
+            <li class="mui-col-xs-12 mui-col-sm-12 opli bgblue undoBtn">撤销申请</li>
+            {else/}
+            <li class="mui-col-xs-12 mui-col-sm-12 opli bgblue replyBtn">提交申请</li>
             {/if}
         </ul>
 
@@ -100,8 +101,8 @@
                             success: function (data) {
                                 console.log(data)
                                 if (data.code == 200) {
-                                    mui.confirm("申请提交成功，请耐心等待");
-                                    setTimeout(location.href = "{:url('camp/powercamp',['camp_id'=>$campInfo['id']])}", 3000);
+                                    mui.toast("申请提交成功，请耐心等待");
+                                    window.setTimeout("location.reload()", 3000);
                                 } else {
                                     mui.toast(data.msg);
                                 }
@@ -133,8 +134,8 @@
                             success: function (data) {
                                 console.log(data)
                                 if (data.code == 200) {
-                                    mui.confirm("撤销申请成功，请耐心等待");
-                                    setTimeout(location.href = "{:url('camp/powercamp',['camp_id'=>$campInfo['id']])}", 3000);
+                                    mui.toast("撤销申请成功，请耐心等待");
+                                    window.setTimeout("window.location='{:url('camp/powercamp',['camp_id'=>$campInfo['id']])}'", 3000);
                                 } else {
                                     mui.toast(data.msg);
                                 }

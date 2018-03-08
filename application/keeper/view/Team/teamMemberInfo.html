@@ -290,7 +290,7 @@
                 {switch name="delbtnDisplay"} {case value="2"}
                 <button type="button" class="mui-btn mui-btn-danger f16 signOut">移除此队员</button>
                 {/case} {case value="1"}
-                <button type="button" class="mui-btn mui-btn-danger f16 signOut">申请退出球队</button>
+                <button type="button" class="mui-btn mui-btn-danger f16 applyOut">申请退出球队</button>
                 {/case} {/switch}
             </div>
         </div>
@@ -443,9 +443,48 @@
                             headers: { 'Content-Type': 'application/json' },
                             success: function (data) {
                                 console.log(data)
-                                mui.alert('队员移除成功', function () {
-                                    window.location.href = "{:url('team/teamMember',['team_id'=>$teamInfo['id']])}"
-                                })
+                                if (data.code == 200) {
+                                    mui.toast("移除队员成功");
+                                    window.setTimeout("history.go(-1)", 2000);
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                console.log(data);
+                                mui.toast("网络异常,请稍候再试");
+                            }
+                        });
+                    } else {
+                        return;
+                    }
+                })
+            });
+
+            // 球队成员申请离队操作
+            $(".applyOut").on("tap", '', function () {
+                var btnArray = ['取消', '确认'];
+                var team_id = "{$teamMemberInfo.team_id}";
+                var member_id = "{$teamMemberInfo.member_id}";
+                mui.confirm('是否确认申请离队？', '', btnArray, function (e) {
+                    if (e.index == 1) {
+                        mui.ajax("{:url('api/team/applyleaveteam')}", {
+                            data: {
+                                team_id: team_id,
+                                member_id: member_id
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (data) {
+                                console.log(data)
+                                if (data.code == 200) {
+                                    mui.toast("你已成功离队");
+                                    window.setTimeout("history.go(-1)", 2000);
+                                } else {
+                                    mui.toast(data.msg)
+                                }
                             },
                             error: function (xhr, type, errorThrown) {
                                 console.log(data);

@@ -5,6 +5,7 @@ use app\model\Match;
 use app\model\MatchApply;
 use app\model\MatchRecord;
 use app\model\MatchRecordMember;
+use app\model\MatchReferee;
 use app\model\MatchRefereeApply;
 use app\model\MatchTeam;
 use app\model\MatchHistoryTeam;
@@ -543,28 +544,53 @@ class MatchService {
         }
     }
 
-    // 保存比赛裁判邀请记录
-    public function saveMatchRefereeApply($data) {
-        $model = new MatchRefereeApply();
+    // 保存比赛裁判关系记录
+    public function saveMatchReferee($data=[], $condition=[]) {
+        $model = new MatchReferee();
+        // 带更新条件更新数据
+        if (!empty($condition)) {
+            $res = $model->allowField(true)->save($data, $condition);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 显式更新数据
         if (isset($data['id'])) {
-            // 更新数据
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res || ($res === 0)) {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
-                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
-                return ['code' => 100, 'msg' => __lang('MSG_400')];
-            }
-        } else {
-            // 插入数据
-            $res = $model->allowField(true)->save($data);
-            if ($res) {
-                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
-            } else {
-                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
         }
+        // 插入数据
+        $res = $model->allowField(true)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
+        } else {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
+    // 获取比赛-裁判关系列表（分页）
+    public function getMatchRefereePaginator($map=[], $order='id desc', $size=10) {
+        $model = new MatchReferee();
+        $res = $model->with('match')->where($map)->order($order)->paginate($size);
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        foreach ($result['data'] as $k => $val) {
+            if (!empty($val['match']['referee_str'])) {
+                $result['data'][$k]['match']['referee_str'] = json_decode($val['match']['referee_str'], true);
+            }
+        }
+        return $result;
     }
 
 }

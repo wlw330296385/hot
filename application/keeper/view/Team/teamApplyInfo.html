@@ -11,6 +11,15 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .operationFrame {
+            padding: 30px !important;
+        }
+
+        .operationFrame button {
+            padding: 8px 14px
+        }
+    </style>
 </head>
 
 <body class=whitebg>
@@ -19,26 +28,26 @@
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
     </header>
 
-    <div class="mui-content">
+    <div class="mui-content list ">
 
-        <!-- 审核内容-->
-        <div class="examineBox mb">
-            <input id="applyid" type="hidden" value="{$applyInfo.id}">
-            <div class="examine">
-                <strong>申请的内容：</strong>
-                <textarea>{$applyInfo.remarks}</textarea>
-            </div>
-            <div class="examine">
-                <strong>回复的内容：</strong>
-                <textarea class="reply" value=""></textarea>
-            </div>
-            <div class="mui-button-row">
-                <button class="mui-btn" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
-                <button class="mui-btn" type="button" onclick="check_status(3)">拒绝</button>
-            </div>
-        </div>
 
         <form action="" class="mui-input-group mb">
+            <input id="applyid" type="hidden" value="{$applyInfo.id}">
+            <div class="mui-input-row h-auto">
+                <label>申请的内容：</label>
+                <textarea disabled>{$applyInfo.remarks}</textarea>
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>回复的内容：</label>
+                <textarea class="reply" value="" placeholder="请填写同意或者拒绝理由"></textarea>
+            </div>
+            <div class="mui-button-row h-auto operationFrame">
+                <button class="mui-btn mui-btn-danger" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
+                <button class="mui-btn" type="button" onclick="check_status(3)">拒绝</button>
+            </div>
+
+            <p class="pline"></p>
+
             <div class="mui-input-row h-auto">
                 <label>头像</label>
                 <img src="{$applyInfo.member.avatar}" alt="头像" style="margin-right: 18px">

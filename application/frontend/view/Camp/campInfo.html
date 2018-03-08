@@ -21,14 +21,20 @@
         .mui-popover {
             height: 260px;
         }
-        
+
         .page-header .more {
             padding-right: 0px;
         }
+
         .fgline {
             margin: 0px 5px;
             font-size: 10px;
             color: #cccccc;
+        }
+         /* 底部按钮点击去除背景颜色 */
+
+         .operation .opli a.mui-active {
+            background-color: inherit
         }
     </style>
 </head>
@@ -45,18 +51,21 @@
             <ul class="mui-table-view mb" style="margin-top: -4px">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
 
-                        <img class="mui-media-object mui-pull-left" src="{$campInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
-                        <h4>{$campInfo.camp}</h4>
-                        <div class="mui-media-body wd49" style="line-height:20px !important">
-                            <p class="mui-ellipsis">{$campInfo.province} {$campInfo.city} {$campInfo.area}</p>
-                            <p class="f12">
-                                学生：<strong class="colororange">{$campInfo.total_member}</strong> <i class="fgline">|</i>
-                                粉丝：<strong class="colororange">{$campInfo.fans_num}</strong>
-                            </p>
-                        </div>
-                        <div class="price-frame" style="padding:0;">
-                            <button type="button" class="mui-btn mui-btn-danger follow">关注</button>
-                        </div>
+                    <img class="mui-media-object mui-pull-left" src="{$campInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                    <h4>{$campInfo.camp}</h4>
+                    <div class="mui-media-body wd49" style="line-height:20px !important">
+                        <p class="mui-ellipsis">{$campInfo.province} {$campInfo.city} {$campInfo.area}</p>
+                        <p class="f12">
+                            学生：
+                            <strong class="colororange">{$campInfo.total_member}</strong>
+                            <i class="fgline">|</i>
+                            粉丝：
+                            <strong class="colororange">{$campInfo.fans_num}</strong>
+                        </p>
+                    </div>
+                    <div class="price-frame" style="padding:0;">
+                        <button type="button" class="mui-btn mui-btn-danger follow">关注</button>
+                    </div>
 
                 </li>
             </ul>
@@ -64,14 +73,16 @@
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli detalisli">
                     <label class="starScore"></label>
-                            <div class="icons mui-inline">
-                                <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
-                                <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
-                                <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
-                            </div>
+                    <div class="icons mui-inline">
+                        <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
+                        <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
+                        <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
+                    </div>
                 </li>
                 <li class="mui-table-view-cell listli detalisli">训练营宣言
-                    <span class="about">{$campInfo.camp_description}<a href="javascript:void(0)">......全文展示</a></span>
+                    <span class="about">{$campInfo.camp_description}
+                        <a href="javascript:void(0)">......全文展示</a>
+                    </span>
                 </li>
             </ul>
 
@@ -82,22 +93,30 @@
                         <span id="coachlist"></span>
                     </a>
                 </li>
-                <li class="mui-table-view-cell listli detalisli">课量<span>已上 {$campInfo.total_schedule} 课时</span></li>
-                <li class="mui-table-view-cell listli detalisli">班级<span>全部 {$campInfo.total_grade} 个班级</span></li>
+                <li class="mui-table-view-cell listli detalisli">课量
+                    <span>已上 {$campInfo.total_schedule} 课时</span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">班级
+                    <span>全部 {$campInfo.total_grade} 个班级</span>
+                </li>
                 <li class="mui-table-view-cell listli detalisli">
                     <a class="mui-navigate-right">
-                        训练点<span>全部 {$campInfo.camp_base} 个训练点</span>
+                        训练点
+                        <span>全部 {$campInfo.camp_base} 个训练点</span>
                     </a>
                 </li>
             </ul>
 
             <div class="page-header">
                 <span class="course">热门课程</span>
-                <span class="more">全部 <span class="colororange">{$lessonCount}</span> 个课程</span>
+                <span class="more">全部
+                    <span class="colororange">{$lessonCount}</span> 个课程</span>
             </div>
             <ul class="mui-table-view course-list lesson">
             </ul>
-            <p class="dropdown moreLesson"><a href="{:url('lesson/lessonList')}?camp_id={$campInfo['id']}">更多课程...</a></p>
+            <p class="dropdown moreLesson">
+                <a href="{:url('lesson/lessonList')}?camp_id={$campInfo['id']}">更多课程...</a>
+            </p>
 
 
             <div class="page-header" style="background: #efeff4;">
@@ -109,11 +128,14 @@
 
             <div class="page-header">
                 <span class="course" style="font-size: 14px">评论</span>
-                <span class="more">全部 <span class="commentCount colororange">0</span> 个评论</span>
+                <span class="more">全部
+                    <span class="commentCount colororange">0</span> 个评论</span>
             </div>
             <ul class="mui-table-view comment-list">
             </ul>
-            <p class="dropdown"><a href="#" class="moreComment">查看更多评论...</a></p>
+            <p class="dropdown">
+                <a href="#" class="moreComment">查看更多评论...</a>
+            </p>
 
             <!--推荐人信息-->
             {notempty name="pmember"}
@@ -131,24 +153,28 @@
 
         </div>
 
-         <ul class="mui-table-view operation mt">
-                <li class="mui-table-view-cell mui-media mui-col-xs-2 opli">
-                    <a href="/frontend/">
-                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 opli">
-                    <a href="tel:{$campInfo.camp_telephone}">
-                        <span class="mui-icon mui-icon-phone"></span> 咨询
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 opli">
-                    <a href="#pjpopover"><span class="mui-icon mui-icon-compose"></span> 评价</a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen">
-                    <a href="#join">申请加入</a>
-                </li>
-            </ul>
+        <ul class="mui-table-view operation mt">
+            <li class="mui-table-view-cell mui-col-xs-2 opli">
+                <a href="/frontend/">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-col-xs-2 opli">
+                <a href="tel:{$campInfo.camp_telephone}">
+                    <span class="mui-icon mui-icon-phone"></span> 咨询
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-col-xs-2 opli">
+                <a href="#pjpopover">
+                    <span class="mui-icon mui-icon-compose"></span> 评价</a>
+            </li>
+            <li class="mui-table-view-cell mui-col-xs-3 opli bgred">
+                <a href="{:url('frontend/chat/imchat')}">立即沟通</a>
+            </li>
+            <li class="mui-table-view-cell mui-col-xs-3 opli bggreen">
+                <a href="#join">申请加入</a>
+            </li>
+        </ul>
 
     </div>
 
@@ -156,15 +182,23 @@
     <div id="join" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
-            <span class="course"><strong>请选择身份</strong></span>
+            <span class="course">
+                <strong>请选择身份</strong>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <div class="camp-list camp-lesson-list detalis-list list">
                     <ul class="mui-table-view ">
-                        <li class="mui-table-view-cell listli detalisli choiseType">教练<input type="text" name="" value="2" style="display: none"></li>
-                        <li class="mui-table-view-cell listli detalisli choiseType">管理员<input type="text" name="" value="3" style="display: none"></li>
-                        <li class="mui-table-view-cell listli detalisli choiseType">其他<input type="text" name="" value="-1" style="display: none"></li>
+                        <li class="mui-table-view-cell listli detalisli choiseType">教练
+                            <input type="text" name="" value="2" style="display: none">
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli choiseType">管理员
+                            <input type="text" name="" value="3" style="display: none">
+                        </li>
+                        <li class="mui-table-view-cell listli detalisli choiseType">其他
+                            <input type="text" name="" value="-1" style="display: none">
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -174,7 +208,8 @@
     <div id="yqpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
             <ul class="mui-table-view operation">
-                <h5><span class="type"></span>
+                <h5>
+                    <span class="type"></span>
                     <a href="#yqpopover" class="mui-icon mui-icon-closeempty"></a>
                 </h5>
                 <li class="mui-table-view-cell listli">
@@ -188,7 +223,8 @@
     <div id="pjpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
             <ul class="mui-table-view operation">
-                <h5><span>评价我的训练营</span>
+                <h5>
+                    <span>评价我的训练营</span>
                     <a href="#pjpopover" class="mui-icon mui-icon-closeempty"></a>
                 </h5>
                 <li class="mui-table-view-cell listli">
@@ -222,7 +258,7 @@
 
             //判断训练营宣言长度是否超过30字符
             var aboutlen = $(".about").text();
-            if(aboutlen.length<42){
+            if (aboutlen.length < 42) {
                 $(".about a").hide();
             }
             //展示训练营介绍全文
@@ -234,8 +270,8 @@
             // 星星显示
             var star = Math.round("{$campInfo.star}" / "{$campInfo.star_num}");
             starShow(star);
-            if(isNaN(star)){star=3}
-            $(".starScore").prepend('评分 '+star+'.0');
+            if (isNaN(star)) { star = 3 }
+            $(".starScore").prepend('评分 ' + star + '.0');
 
 
             //选择身份申请加入
@@ -259,13 +295,13 @@
                 pullupRefresh();
             })
 
-            $(".inputComment").keyup(function(){
+            $(".inputComment").keyup(function () {
                 var len = $(this).val().length;
                 var num = 200 - len;
-                if(len > 200){
-                    $(this).val($(this).val().substring(0,200));
-                }else{
-                    $("#commentCount").text("还可以输入"+num+"个字");
+                if (len > 200) {
+                    $(this).val($(this).val().substring(0, 200));
+                } else {
+                    $("#commentCount").text("还可以输入" + num + "个字");
                 }
 
             });
@@ -293,7 +329,7 @@
                                 mui.toast("您没填写评论内容哦");
                                 return false;
                             }
-                            if (comment.length>200) {
+                            if (comment.length > 200) {
                                 mui.toast("很抱歉，您的评论内容不能超过200个字哦！");
                                 return false;
                             }
@@ -304,7 +340,7 @@
                                 mui.toast(result.msg);
                                 mui('#pjpopover').popover('toggle');
                                 pulldownRefresh();
-                                $(".moreComment").show();d
+                                $(".moreComment").show(); d
                             }
                         } else {
                             mui.toast("本训练营会员才能评论，欢迎加入！");
@@ -586,30 +622,30 @@
         wx.ready(function () {
             // 分享到朋友圈
             wx.onMenuShareTimeline({
-                title: "{$campInfo.camp}", 
-                link: "{$shareurl}/pid/{$mid}", 
-                imgUrl: "{:request()->root(true)}/{$campInfo.logo}", 
+                title: "{$campInfo.camp}",
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}/{$campInfo.logo}",
                 success: function () {
-                    
+
                 },
                 cancel: function () {
-                    
+
                 }
             });
 
             // 分享给朋友
             wx.onMenuShareAppMessage({
-                title: '{$campInfo.camp}', 
-                desc: '{$campInfo.camp_description}', 
-                link: "{$shareurl}/pid/{$mid}", 
-                imgUrl: "{:request()->root(true)}/{$campInfo.logo}", 
-                type: "", 
-                dataUrl: '', 
+                title: '{$campInfo.camp}',
+                desc: '{$campInfo.camp_description}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}/{$campInfo.logo}",
+                type: "",
+                dataUrl: '',
                 success: function () {
-                   
+
                 },
                 cancel: function () {
-                   
+
                 }
             });
 
