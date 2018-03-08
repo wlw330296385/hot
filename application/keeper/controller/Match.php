@@ -65,4 +65,6 @@ class Match extends Base {
         $this->assign('teamInfo', $teamInfo);
         return view('Match/friendlyinfo');
     }
+
+
 }

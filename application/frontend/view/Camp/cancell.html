@@ -45,20 +45,29 @@
             </div>
             <div class="mui-input-row h-auto">
                 <label>注销原因</label>
-                <textarea rows="4" class="reason" placeholder="请填写你的注销原因"></textarea>
+                <textarea rows="4" class="reason" placeholder="请填写你的注销原因">{notempty name="$campCancellInfo"}{$campCancellInfo.reason}{/notempty}</textarea>
+            </div>
+
+            {notempty name="$campCancellInfo"}
+            <div class="mui-input-row">
+                <label>申请状态</label>
+                <span>{$campCancellInfo.status_text}</span>
             </div>
 
             <!-- 系统回复内容 -->
-            <div class="mui-input-row h-auto systemReply hide">
+            <div class="mui-input-row h-auto systemReply">
                 <label class="colorred">系统回复：</label>
-                <textarea rows="4" class="colorred mui-text-left">你的申请已被同意</textarea>
+                <textarea rows="4" class="colorred mui-text-left">{$campCancellInfo['system_reply']}</textarea>
             </div>
+            {/notempty}
 
         </form>
 
         <ul class="mui-table-view operation">
             <li class="mui-col-xs-12 opli bgblue replyBtn">提交申请</li>
+            {if $campCancellInfo}
             <li class="mui-col-xs-12 opli bgblue undoBtn">撤销申请</li>
+            {/if}
         </ul>
 
     </div>
@@ -113,7 +122,7 @@
                 mui.confirm('是否确认撤销注销训练营？', '', btnArray, function (e) {
                     var camp_id = "{$campInfo.id}";
                     if (e.index == 1) {
-                        mui.ajax("{:url('api/camp/campcancellapply')}", {
+                        mui.ajax("{:url('api/camp/withdrawcancellapply')}", {
                             data: {
                                 camp_id: camp_id,
                             },

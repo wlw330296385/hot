@@ -21,6 +21,7 @@ class Match extends Base
             $data['member'] = $this->memberInfo['member'];
             $data['member_avatar'] = $this->memberInfo['avatar'];
             $data['match_time'] = strtotime($data['match_time']);
+            $data['referee_count'] = input('referee_count', 3, 'intval');
             $matchS = new MatchService();
             $teamS = new TeamService();
             $messageS = new MessageService();
@@ -65,17 +66,11 @@ class Match extends Base
                 $data['name'] = $homeTeam['name'] . ' vs （待定）';
             }
 
-            // 裁判业务操作
-            /*$refereeType = input('post.referee_type', 0);
-            if ($refereeType) {
-                $this->setMatchRefereeType($refereeType, $data);
-            }*/
-
-
 
             $res = $matchS->saveMatch($data);
             // 比赛记录创建成功后操作
             if ($res['code'] == 200) {
+                $matchId = $res['data'];
                 // 发送比赛邀请给对手球队
                 $awayTeam = $teamS->getTeam(['id' => $data['away_team_id']]);
                 if ($awayTeam) {
@@ -83,8 +78,8 @@ class Match extends Base
                     $applyData = [
                         'match_id' => $res['data'],
                         'match' => $data['name'],
-                        'team_id' => $data['team_id'],
-                        'team' => $data['team'],
+                        //'team_id' => $data['team_id'],
+                        //'team' => $data['team'],
                         'telphone' => $this->memberInfo['telephone'],
                         'contact' => empty($this->memberInfo['realname']) ? $this->memberInfo['member'] : $this->memberInfo['realname'],
                         'member_id' => $this->memberInfo['id'],
@@ -117,8 +112,14 @@ class Match extends Base
                 // 记录比赛战绩数据
                 $dataMatchRecord['match_id'] = $res['data'];
                 $dataMatchRecord['match'] = $data['name'];
-                $matchS->saveMatchRecord($dataMatchRecord);
+                $resMatchRecord = $matchS->saveMatchRecord($dataMatchRecord);
+                $matchRecordId = $resMatchRecord['data'];
 
+                // 裁判业务操作
+                $refereeType = input('post.referee_type', 0);
+                if ($refereeType) {
+                    $this->setMatchRefereeType($refereeType, $data, $matchId, $matchRecordId);
+                }
             }
             return json($res);
         } catch (Exception $e) {
@@ -127,9 +128,14 @@ class Match extends Base
     }
 
     // 根据提交的比赛信息所选裁判类型执行的业务
-    protected function setMatchRefereeType($refereeType=0, $matchData=[]) {
+    protected function setMatchRefereeType($refereeType=0, $matchData=[], $matchId=0, $matchRecordId=0) {
         $refereeS = new RefereeService();
-
+        $messageS = new MessageService();
+        // 组合接收信息member_id集合
+        $memberIds = [];
+        // 消息模板链接
+        $linkurl = url('keeper/message/index', '', '', true);
+        $daidingStr = '待定';
         if ($refereeType == 1) {
             // 选择随机安排 根据比赛信息 发送比赛裁判邀请给裁判人群
             // 获取符合条件裁判人群
@@ -140,11 +146,59 @@ class Match extends Base
             $map['status'] = 1;
             $map['accept_rand_match'] = 1;
             $refereeList = $refereeS->getRefereeAll($map);
-            // dump($refereeList);
-            foreach ($refereeList as $referee) {
-                
+
+            if ($refereeList) {
+                foreach ($refereeList as $k => $referee) {
+                    $memberIds[$k]['id'] = $referee['member_id'];
+                }
             }
+            $linkurl = url('keeper/team/matchInfo', ['match_id' => $matchId], '', true);
+        } elseif ($refereeType == 2) {
+            // 自行安排安排
+            $applyData = [];
+            // 根据提交的裁判名单发送比赛裁判信息
+            $refereeStr = $matchData['referee_str'];
+            $refereeList = json_decode($refereeStr, true);
+            if ($refereeList) {
+                foreach ($refereeList as $k => $referee) {
+                    $refereeInfo = $refereeS->getRefereeInfo(['id' => $referee['referee_id']]);
+                    $memberIds[$k]['id'] = $refereeInfo['member_id'];
+
+                    // 组合邀请裁判数据
+                    $applyData[$k] = [
+                        'apply_type' => 2,
+                        'match_id' => $matchId,
+                        'match' => $matchData['name'],
+                        'match_record_id' => $matchRecordId,
+                        'referee_id' => $refereeInfo['id'],
+                        'referee' => $refereeInfo['referee'],
+                        'member_id' => $this->memberInfo['id'],
+                        'member' => $this->memberInfo['member'],
+                        'member_avatar' => $this->memberInfo['avatar'],
+                        'overtime' => strtotime('+6 hours'), //6小时后过期
+                        'is_attend' => 1,
+                        'status' => 1
+                    ];
+                }
+            }
+            // 保存比赛邀请裁判数据
+            $refereeS->saveAllMatchRerfereeApply($applyData);
+            $linkurl = url('keeper/referee/matchapply', ['match_id' => $matchId], '', true);
         }
+
+        // 信息内容
+        $daidingStr = '待定';
+        $messageData = [
+            'title' => '您有一条邀请执裁比赛信息',
+            'content' => '您好，有比赛邀请您执裁',
+            'url' => $linkurl,
+            'keyword1' => empty($matchData['match_time']) ? $daidingStr : date('Y年m月d日 H:i', $matchData['match_time']),
+            'keyword2' => empty($matchData['court']) ? $daidingStr : $matchData['court'],
+            'keyword3' => $matchData['name'],
+            'remark' => '点击进入，应邀比赛执裁',
+            'steward_type' => 2
+        ];
+        $messageS->sendMessageToMembers($memberIds, $messageData, config('wxTemplateID.refereeTask'));
     }
 
     // 编辑比赛信息

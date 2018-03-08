@@ -1,18 +1,19 @@
 <?php 
 namespace app\keeper\controller;
 use app\keeper\controller\Base;
+use app\service\MatchService;
 use app\service\RefereeService;
 use think\Db;
 class Referee extends Base{
-	protected $RefereeService;
+	protected $refereeService;
 	public function _initialize(){
 		parent::_initialize();
-		$this->RefereeService = new RefereeService;
+		$this->refereeService = new RefereeService;
 	}
 
     // 裁判主页
     public function refereeManage(){
-        $refereeInfo = $this->RefereeService->getRefereeInfo(['member_id'=>$this->memberInfo['id']]);
+        $refereeInfo = $this->refereeService->getRefereeInfo(['member_id'=>$this->memberInfo['id']]);
         // 接单次数
         $totalOrder = 0;
         // 受邀次数
@@ -52,10 +53,10 @@ class Referee extends Base{
         return view('Referee/refereeList');
     }
 
-
+    //
     public function refereeInfo(){
         $referee_id = input('param.referee_id');
-        $refereeInfo = $this->RefereeService->getRefereeInfo(['id'=>$referee_id]);
+        $refereeInfo = $this->refereeService->getRefereeInfo(['id'=>$referee_id]);
         $commentList = db('referee_comment')->where(['referee_id'=>$referee_id])->select();
         $this->assign('commentList',$commentList);
         $this->assign('refereeInfo',$refereeInfo);
@@ -86,9 +87,10 @@ class Referee extends Base{
         ]);
     }
 
+    // 修改裁判员信息
     public function updateReferee(){
         $referee_id = input('param.referee_id');
-        $refereeInfo = $this->RefereeService->getRefereeInfo(['id'=>$referee_id]);
+        $refereeInfo = $this->refereeService->getRefereeInfo(['id'=>$referee_id]);
         if (!$refereeInfo) {
             $this->error(__lang('MSG_404'));
         }
@@ -122,8 +124,7 @@ class Referee extends Base{
         return view('Referee/registerSuccess');
     }
 
-
-    // 申请列表
+    // 比赛申请/邀请列表
     public function applyList(){
         $type = input('param.type',1);
         if($type == 1){
@@ -134,7 +135,39 @@ class Referee extends Base{
         }
     }
 
+    // 比赛邀请详情
+    public function matchapply() {
+        $id = input('apply_id', 0);
+        $matchId = input('match_id', 0);
+        $refereeInfo = $this->refereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
 
+        // 查询比赛邀请数据
+        $map =[];
+        if ($id) {
+            $map['id'] = $id;
+        }
+        if ($matchId) {
+            $map['match_id'] = $matchId;
+            $map['referee_id'] = $refereeInfo['id'];
+        }
+        $applyInfo = $this->refereeService->getMatchRerfereeApply($map);
+        // 查询关联的比赛数据
+        $matchS = new MatchService();
+        $matchInfo = $matchS->getMatch(['id' => $applyInfo['match_id']]);
+        if ($matchInfo) {
+            $applyInfo['match'] = $matchInfo;
+        }
+        $matchRecordInfo = $matchS->getMatchRecord(['id' => $applyInfo['match_record_id']]);
+        if ($matchRecordInfo) {
+            $applyInfo['match_record'] = $matchRecordInfo;
+        }
+
+        return view('Referee/matchApply', [
+            'applyInfo' => $applyInfo
+        ]);
+    }
+
+    // 执裁比赛列表
     public function myMatchList(){
         $referee_id = input('param.referee_id');
 
