@@ -8,7 +8,7 @@ class StatisticsCamp extends Backend{
 		parent::_initialize();
 	}
 
-    // 课时统计
+    // 课时列表
     public function campSchedule() {
         // 教练列表
         $coachlist = db('coach')->where(['status' => 1])->whereNull('delete_time')->select();
@@ -205,13 +205,15 @@ class StatisticsCamp extends Backend{
         $month_start = strtotime($monthStart);
         $month_end = strtotime($monthEnd);
         // 单独提取订单记录
-        $lessonBill = db('bill')->field("count(id) as c_id,sum(balance_pay) as total_pay,goods,goods_id,id")
+        $lessonBill = db('bill')
+        ->field("count(id) as c_id,sum(balance_pay) as total_pay,goods,goods_id,id")
         ->where(['camp_id'=>$camp_id,'goods_type'=>1,'is_pay'=>1])
         ->where(['create_time'=>['between',[$month_start,$month_end]]])
         ->where('delete_time',null)
         ->group('goods_id')->select();
 
-        $eventBill = db('bill')->field("count('id') as c_id,sum('balance_pay') as total_pay,goods,goods_id,id")
+        $eventBill = db('bill')
+        ->field("count('id') as c_id,sum('balance_pay') as total_pay,goods,goods_id,id")
         ->where(['camp_id'=>$camp_id,'goods_type'=>1,'is_pay'=>1])
         ->where(['create_time'=>['between',[$month_start,$month_end]]])
         ->where('delete_time',null)
@@ -287,5 +289,80 @@ class StatisticsCamp extends Backend{
         return view('StatisticsCamp/lessonSchedule');
     }
 
+    //课时统计
+    public function campScheduleStatistics(){
+        $camp_id = input('param.camp_id',9);
+        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
+        $monthEnd = input('param.monthend',date('Ymd'));
+        $month_start = strtotime($monthStart);
+        $month_end = strtotime($monthEnd);
+        //总购买课时
+        $totalBuy = db('bill')
+        ->where(['camp_id'=>$camp_id,'goods_type'=>1,'is_pay'=>1])
+        ->where(['create_time'=>['between',[$month_start,$month_end]]])
+        ->where('delete_time',null)
+        ->sum('total');
+        // 总赠送课时
+        $totalGift = db('schedule_gift_student')
+        ->where(['camp_id'=>$camp_id,'status'=>1])
+        ->where(['create_time'=>['between',[$month_start,$month_end]]])
+        ->where('delete_time',null)
+        ->sum('gift_schedule');
+        //总已上课时
+        $totalSchedule = db('schedule_member')
+        ->where(['camp_id'=>$camp_id,'status'=>1,'type'=>1])
+        ->where(['create_time'=>['between',[$month_start,$month_end]]])
+        ->where('delete_time',null)
+        ->sum('id');
+        //总退费课时
+        $refundScheduleList = db('bill')
+        ->field('(refundamount/price) as totalRefund,sum(refundamount/price) as s_totalRefund')
+        ->where(['camp_id'=>$camp_id,'goods_type'=>1,'is_pay'=>1,'status'=>-2])
+        ->where(['create_time'=>['between',[$month_start,$month_end]]])
+        ->where('delete_time',null)
+        ->group('goods_id')
+        ->select();
+        $totalRefundScheduleList = 0;
+        foreach ($refundScheduleList as $key => $value) {
+            $totalRefundScheduleList += ceil($value['s_totalRefund']);
+        }
+
+        // 课时列表
+        $buyList = db('bill')
+        ->field("sum(total) as s_total,goods,price")
+        ->where(['camp_id'=>$camp_id,'goods_type'=>1,'is_pay'=>1])
+        ->where(['create_time'=>['between',[$month_start,$month_end]]])
+        ->where('delete_time',null)
+        ->group('goods_id')
+        ->select();
+
+        //赠送列表
+        $giftList = db('schedule_gift_student')
+        ->field("sum(gift_schedule) as s_gift_schedule,lesson,lesson_id")
+        ->where(['camp_id'=>$camp_id,'status'=>1])
+        ->where(['create_time'=>['between',[$month_start,$month_end]]])
+        ->where('delete_time',null)
+        ->group('lesson_id')
+        ->select();
+        //已上课时列表
+        $totalSchedule = db('schedule')
+        ->field("sum(students) as s_students,lesson_id,lesson")
+        ->where(['camp_id'=>$camp_id,'is_settle'=>1])
+        ->where(['create_time'=>['between',[$month_start,$month_end]]])
+        ->where('delete_time',null)
+        ->group('lesson_id')
+        ->select();
+
+
+        $this->assign('giftList',$giftList);
+        $this->assign('buyList',$buyList);
+        $this->assign('totalSchedule',$totalSchedule);
+        $this->assign('refundScheduleList',$refundScheduleList);
+        $this->assign('totalBuy',$totalBuy?$totalBuy:0);
+        $this->assign('totalGift',$totalGift?$totalGift:0);
+        $this->assign('totalSchedule',$totalSchedule?$totalSchedule:0);
+        $this->assign('totalRefundScheduleList',$totalRefundScheduleList?$totalRefundScheduleList:0);
+        return view('StatisticsCamp/campScheduleStatistics');
+    }
 
 }

@@ -1,0 +1,50 @@
+{extend name="layout/common"/}
+{block name="css"}
+<style>
+</style>
+{/block}
+{block name="page-content"}
+
+<p>==================月=================</p>
+&nbsp;&nbsp;&nbsp;&nbsp;总购买课时:{$totalBuy}
+&nbsp;&nbsp;&nbsp;&nbsp;总赠送课时:{$totalGift}
+&nbsp;&nbsp;&nbsp;&nbsp;总已上课时:{$totalSchedule}
+&nbsp;&nbsp;&nbsp;&nbsp;总退费课时:{$totalRefundScheduleList}
+&nbsp;&nbsp;&nbsp;&nbsp;总剩余课时(全部时间?): {$totalBuy-$totalSchedule-$totalRefundScheduleList+$totalGift}
+
+<p>=================买课=========================</p>
+{volist name="buyList" id="vol"}
+
+<p>课程:{$vol.goods} &nbsp;&nbsp;&nbsp;&nbsp; 单价:{$vol.price} &nbsp;&nbsp;&nbsp;&nbsp;本月缴费课时:{$vol.s_total} </p>
+
+{/volist}
+
+
+<p>===================赠课=======================</p>
+{volist name="giftList" id="vol"}
+
+<p>课程:{$vol.lesson} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本月赠送课时:{$vol.s_gift_schedule} </p>
+
+{/volist}
+
+
+<p>===================已上=======================</p>
+{volist name="totalSchedule" id="vol"}
+
+<p>课程:{$vol.lesson} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;已上课时:{$vol.s_students} </p>
+
+{/volist}
+
+
+<p>===================退费=======================</p>
+{volist name="refundScheduleList" id="vol"}
+
+<p>课程:{$vol.lesson} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;退费课时:{$vol.s_totalRefund} </p>
+
+{/volist}
+
+{/block}
+
+
+{block name='js'}
+{/block}
