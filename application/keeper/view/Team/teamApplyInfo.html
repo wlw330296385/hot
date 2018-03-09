@@ -99,6 +99,8 @@
 
         // 审核操作
         function check_status(value) {
+            var member = "{$memberInfo.member}";
+            var teams = "{$teamInfo.name}";
             var apply_id = document.getElementById('applyid').value;
             var reply = $(".reply").val();
             mui.ajax("{:url('api/team/applyreply')}", {
@@ -113,8 +115,26 @@
                 headers: { 'Content-Type': 'application/json' },
                 success: function (res) {
                     if (res.code == 200) {
-                        mui.toast(res.msg);
-                        window.location.href = "{:url('team/teamApplyList')}/team_id/{$teamInfo.id}";
+                        var btnArray = ['返回首页', '前往球队主页'];
+                        var urlToTeam = "{:url('team/teamInfo')}/team_id/{$teamInfo.id}";
+                        var urlToIndex = "{:url('/keeper')}";
+                        if (value == 2) {
+                            mui.confirm('欢迎“' + team + '”成为“' + team + '”球队的一员', '', btnArray, function (e) {
+                                if (e.index == 1) {
+                                    window.location.href = urlToTeam;
+                                } else {
+                                    window.location.href = urlToIndex;
+                                }
+                            });
+                        } else {
+                            mui.confirm('你拒绝了“' + member + '”的申请', '', btnArray, function (e) {
+                                if (e.index == 1) {
+                                    window.location.href = urlToTeam;
+                                } else {
+                                    window.location.href = urlToIndex;
+                                }
+                            });
+                        }
                     } else {
                         mui.toast(res.msg);
                     }
