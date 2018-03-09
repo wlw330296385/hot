@@ -49,7 +49,7 @@
         </div>
 
         <form action="" class="mui-input-group mb">
-            <input id="applyid" type="hidden" value="{$applyInfo.id}">
+            <input id="apply_id" type="hidden" value="{$applyInfo.id}">
             <div class="mui-input-row h-auto">
                 <label>邀请的内容：</label>
                 <textarea disabled>{$applyInfo.remarks}</textarea>
@@ -79,6 +79,8 @@
 
         // 审核操作
         function check_status(value) {
+
+            var team = "{$teamInfo.name}"
             var apply_id = document.getElementById('apply_id').value;
             var reply = $(".reply").val();
             mui.ajax("{:url('api/team/replyteaminvitation')}", {
@@ -94,8 +96,27 @@
                 success: function (res) {
                     console.log(res)
                     if (res.code == 200) {
-                        mui.toast(res.msg);
-                        setTimeout(window.location.href = "{:url('frontend/team/teaminfo')}/team_id/{$teamInfo.id}", 3000);
+                        var btnArray = ['返回首页', '前往球队主页'];
+                        var urlToTeam = "{:url('team/teamInfo')}/team_id/{$teamInfo.id}";
+                        var urlToIndex = "{:url('/keeper')}";
+                        if (value == 2) {
+                            mui.confirm('欢迎你成为“' + team + '”球队的一员', '', btnArray, function (e) {
+                                if (e.index == 1) {
+                                    window.location.href = urlToTeam;
+                                } else {
+                                    window.location.href = urlToIndex;
+                                }
+                            });
+                        } else {
+                            mui.confirm('你拒绝了“' + team + '”球队的邀请', '', btnArray, function (e) {
+                                if (e.index == 1) {
+                                    window.location.href = urlToTeam;
+                                } else {
+                                    window.location.href = urlToIndex;
+                                }
+                            });
+                        }
+
                     } else {
                         mui.toast(res.msg);
                     }

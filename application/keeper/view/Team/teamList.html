@@ -46,6 +46,18 @@
                     <option value="">全部区域</option>
                 </select>
             </span>
+            <span class="location-choise">
+                <select id="teamType" class="data" name="type">
+                    <option value="">全部类型</option>
+                    <option value="1">训练营</option>
+                    <option value="2">企事业单位</option>
+                    <option value="3">业余组织</option>
+                    <option value="4">大学生</option>
+                    <option value="5">高中生</option>
+                    <option value="6">初中生</option>
+                    <option value="7">小学生</option>
+                </select>
+            </span>
         </div>
 
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
@@ -104,11 +116,17 @@
             });
             $('#areaSelect').append(selectArea);
 
-            //搜索活动
+            //搜索球队
             $("#searchBtn").on("click", function () {
                 keyword = $(".keyword").val();
                 searchToList();
             })
+
+            //选择球队类型下拉
+            $("#teamType").on("change", function () {
+                sTeamType = $(this).find("option:checked").val();
+                searchToList();
+            });
 
             //选择地区下拉
             $("#areaSelect").on("change", function () {
@@ -178,6 +196,7 @@
                         city: sCity,
                         area: sArea,
                         keyword: keyword,
+                        type:sTeamType,
                         status: 1
                     },
                     dataType: 'json',//服务器返回json格式数据

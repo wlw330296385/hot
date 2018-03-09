@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>创建新会员</title>
+    <title>创建队员</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -41,22 +41,25 @@
             <form action="" class="mui-input-group mt55" id="logoframe">
 
                 <div class="mui-input-row price-input-row">
-                    <label><i class="icon iconfont icon-activity-name colororange"></i>球员名称</label>
-                    <input type="text" name="name" class="data" value="" placeholder="请输入姓名">
+                    <label class="wd45">
+                        <i class="icon iconfont icon-activity-name colororange"></i>队员名称</label>
+                    <input type="text" name="name" class="data wd52" value="" placeholder="请输入姓名">
                 </div>
 
                 <div class="mui-input-row" id="showUserPicker">
-                    <label><i class="icon iconfont icon-cativity-number colororange"></i>球员号码</label>
-                    <span id='userResult' name="number" class="ui-alert mui-navigate-right pdr domData"></span>
+                    <label class="wd45">
+                        <i class="icon iconfont icon-cativity-number colororange"></i>队员号码</label>
+                    <span id='userResult' name="number" class="ui-alert mui-navigate-right pdr domData wd52"></span>
                 </div>
 
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
-                        <label><i class="icon iconfont icon-activity-position colororange"></i>场上位置</label>
-                        <span class="location-choise max">
+                        <label class="wd45">
+                            <i class="icon iconfont icon-activity-position colororange"></i>场上位置</label>
+                        <span class="location-choise max wd36">
                             <select id="position" class="data" name="position">
                                 <option value="0">暂无</option>
-                                <option value="1">控球后卫</option>
+                                <option value="1">组织后卫</option>
                                 <option value="2">得分后卫</option>
                                 <option value="3">小前锋</option>
                                 <option value="4">大前锋</option>
@@ -67,8 +70,24 @@
                 </div>
 
                 <div class="mui-input-row price-input-row">
-                    <label><i class="icon iconfont icon-activity-playerphone colororange"></i>球员手机号</label>
-                    <input type="text" name="telephone" class="data" value="" placeholder="请输入球员手机号">
+                    <label class="wd45">
+                        <i class="icon iconfont icon-activity-playerphone colororange"></i>队员手机号</label>
+                    <input type="text" name="telephone" class="data wd52" value="" placeholder="请输入球员手机号">
+                </div>
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label class="wd45">
+                            <i class="icon iconfont icon-activity-position colororange"></i>球队职务</label>
+                        <span class="location-choise max wd36">
+                            <select id="role" class="data" name="role">
+                                <option value="4">教练</option>
+                                <option value="3">队长</option>
+                                <option value="2">副队长</option>
+                                <option value="1">后勤</option>
+                            </select>
+                        </span>
+                    </div>
                 </div>
 
                 <div class="page-header" style="background: #efeff4;">
@@ -82,7 +101,7 @@
                     提交
                 </li>
             </ul>
-            
+
         </div>
     </div>
 
@@ -145,10 +164,14 @@
                     window.top.location.href = goUrl;
                 })
             } else {
+                console.log(ajaxResult)
+                member_id = ajaxResult.data.id
+                console.log(member_id)
                 var btnArray = ['取消', '确定'];
-                mui.confirm(ajaxResult.msg + "，赶紧去邀请他吧", '', btnArray, function (e) {
+                var addInfo = '<p style="vertical-align: middle;display: inline-flex;"><img src="' + ajaxResult.data.avatar + '" style="width:35px !important;height:35px !important; border-radius:50% !important;"><span style="margin:8px 0 0 10px;">' + ajaxResult.data.member + '</span></p>'
+                mui.confirm("该手机已注册，是否发出邀请信息？", addInfo, btnArray, function (e) {
                     if (e.index == 1) {
-                        window.history.back();
+                        addMember();
                     }
                 });
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
@@ -158,6 +181,34 @@
                 }, 'json');
             }
         };
+
+        var member_id = "";
+        function addMember() {
+            var team_id = "{$team_id}";
+            mui.ajax("{:url('api/team/addmember')}", {
+                data: {
+                    team_id: team_id,
+                    member_id: member_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast("已经发送请求，请耐心等待回复");
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
     </script>
 </body>
 

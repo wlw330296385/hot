@@ -13,7 +13,7 @@ class TeamMember extends Model {
 
     // position（司职位置）字段获取器
     public function getPositionAttr($value) {
-        $position = [0 => '暂无', 1 => '控球后卫', 2 => '得分后卫', 3 => '小前锋', 4 => '大前锋', 5=> '中锋'];
+        $position = [0 => '暂无', 1 => '组织后卫', 2 => '得分后卫', 3 => '小前锋', 4 => '大前锋', 5=> '中锋'];
         return $position[$value];
     }
 
