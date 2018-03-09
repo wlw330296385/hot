@@ -8,7 +8,7 @@ class StatisticsCamp extends Backend{
 		parent::_initialize();
         $camp_id = input('param.camp_id',9);
         $this->campInfo = db('camp')->where(['id'=>$camp_id])->find();
-        $this->campInfo['rebate_type'] = 2;
+        // $this->campInfo['rebate_type'] = 2;
 	}
 
     // 课时列表
