@@ -1,29 +1,10 @@
 {extend name="layout/common"/}
 {block name="css"}
 
+<link rel="stylesheet" href="/static/plugins/datatables/dataTables.bootstrap.css">
+
 {/block}
 {block name="page-content"}
-<p><strong>课时</strong></p>
-<p>总收益:{$s_push_salary+$s_salary}</p>
-<p>上课总课次:{$c_id}</p>
-<p>上课总人次{$s_students}</p>
-{volist name="salaryinList" id="vol"}
-
-    <p>训练营:{$vol.camp}&nbsp;&nbsp;&nbsp;&nbsp;课程: {$vol.lesson}&nbsp;&nbsp;&nbsp;&nbsp;人次:{$vol.s_students}&nbsp;&nbsp;&nbsp;&nbsp;收入:{$vol.s_salary+$vol.s_push_salary}</p>
-
-{/volist}
-
-
-
-
-<p><strong>返利</strong></p>
-<p>总收益:{$s_rebate}</p>
-{volist name="rebateList" id="vol"}
-
-    <p>推荐人:{$vol.s_member} &nbsp;&nbsp;&nbsp;&nbsp;层级:{$vol.tier}&nbsp;&nbsp;&nbsp;&nbsp;被推荐人收入: {$vol.salary*($vol.tier/0.05)}&nbsp;&nbsp;&nbsp;&nbsp;返利金额:{$vol.salary}&nbsp;&nbsp;&nbsp;&nbsp;返利积分:{$vol.score}</p>
-
-{/volist}
-
 
 
 <div class="row">
@@ -61,7 +42,7 @@
                                 <button type="button" class="btn btn-default" id="goSearch">确认查询</button>
                             </div>
                             <h3 class="totalRight">
-                                <span><small>本月总收益：</small><strong class="text-yellow monthIn">1800</strong></span>
+                                <span><small>本月总收益：</small><strong class="text-yellow monthIn">{$s_push_salary+$s_salary+$s_rebate}</strong></span>
                             </h3>
                         </div>
                     </div>
@@ -76,22 +57,27 @@
 
 <div class="panel panel-default panel-intro">
     <div class="panel-heading">
+        <h3 class="totalRight pull-right">
+            <span><small>课时收益：</small><strong class="text-yellow">{$s_push_salary+$s_salary}</strong></span>
+            <span><small>总课次：</small><strong class="text-yellow">{$c_id}</strong></span>
+            <span><small>总人次：</small><strong class="text-yellow">{$s_students}</strong></span>
+            <span><small>返利收益：</small><strong class="text-yellow">{$s_rebate}</strong></span>
+        </h3>
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#sysCount" data-toggle="tab">课时收益</a></li>
-            <li><a href="#wxCount" data-toggle="tab">返利收益</a></li>
+            <li class="active"><a href="#scheduleCount" data-toggle="tab">课时收益</a></li>
+            <li><a href="#rebateCount" data-toggle="tab">返利收益</a></li>
         </ul>
     </div>
     <div class="panel-body">
 
         <div class="tab-content">
             <!-- 系统统计 -->
-            <div class="tab-pane fade active in" id="sysCount">
+            <div class="tab-pane fade active in" id="scheduleCount">
                 <div class="col-md-12 col-sm-12">
-                    <div class="box no-border">
                         <!-- Info boxes -->
-                        <div class="row">
+                        <div class="row pab10">
 
-                            <table id="example1" class="table table-bordered table-striped dataTable" role="grid"
+                            <table id="scheduleList" class="table table-bordered table-striped dataTable" role="grid"
                                    aria-describedby="example1_info">
                                 <thead>
                                 <tr role="row">
@@ -99,59 +85,64 @@
                                     <th>课程</th>
                                     <th>课次</th>
                                     <th>人次</th>
-                                    <th>赠课</th>
                                     <th>总和</th>
                                     <th>详情</th>
                                 </tr>
                                 </thead>
                                 <tbody>
+                                {volist name="salaryinList" id="vol"}
                                 <tr role="row" class="odd">
-                                    <td class="sorting_1">大热篮球俱乐部</td>
-                                    <td>大热常规班3</td>
-                                    <td>3</td>
-                                    <td>17</td>
-                                    <td>4</td>
-                                    <td>4</td>
+                                    <td class="sorting_1">{$vol.camp}</td>
+                                    <td>{$vol.lesson}</td>
+                                    <td>{$vol.c_id}</td>
+                                    <td>{$vol.s_students}</td>
+                                    <td>{$vol.s_salary+$vol.s_push_salary}</td>
                                     <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
                                 </tr>
-                                <tr role="row" class="odd">
-                                    <td class="sorting_1">大热篮球俱乐部</td>
-                                    <td>大热常规班1</td>
-                                    <td>1</td>
-                                    <td>17</td>
-                                    <td>4</td>
-                                    <td>4</td>
-                                    <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
-                                </tr>
-                                <tr role="row" class="odd">
-                                    <td class="sorting_1">大热篮球俱乐部</td>
-                                    <td>大热常规班2</td>
-                                    <td>2</td>
-                                    <td>17</td>
-                                    <td>4</td>
-                                    <td>4</td>
-                                    <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
-                                </tr>
+                                {/volist}
                                 </tbody>
                             </table>
 
 
                         </div>
                         <!-- /.row -->
-                    </div>
                 </div>
             </div>
 
             <!-- 微信统计 -->
-            <div class="tab-pane fade" id="wxCount">
+            <div class="tab-pane fade" id="rebateCount">
                 <div class="col-md-12 col-sm-12">
-                    <div class="box no-border">
                         <!-- Info boxes -->
-                        <div class="row">
+                        <div class="row pab10">
 
+                            <table id="rebateList" class="table table-bordered table-striped dataTable" role="grid"
+                                   aria-describedby="example1_info">
+                                <thead>
+                                <tr role="row">
+                                    <th class="sorting_asc">被推荐人</th>
+                                    <th>层级</th>
+                                    <th>被推荐人收入</th>
+                                    <th>返利金额</th>
+                                    <th>返利积分</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {volist name="rebateList" id="vol"}
+                                <tr role="row" class="odd">
+                                    <td class="sorting_1">{$vol.s_member}</td>
+                                    <td>{$vol.tier}</td>
+                                    <td>{$vol.salary*($vol.tier/0.05)}</td>
+                                    <td>{$vol.salary}</td>
+                                    <td>{$vol.score}</td>
+                                    <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+                                </tr>
+                                {/volist}
+                                </tbody>
+                            </table>
 
                         </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -235,11 +226,13 @@
 
 {block name='js'}
 
+<script src="/static/backend/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/backend/plugins/datatables/dataTables.bootstrap.min.js"></script>
 <script src="/static/plugins/datepicker/bootstrap-datepicker.js"></script>
 <script>
 
-    var currCampName = localStorage.getItem('currCampName');
-    var currCampID = localStorage.getItem('currCampID');
+    var currCampName = localStorage.getItem('currCampName_forCoach');
+    var currCampID = localStorage.getItem('currCampID_forCoach');
     var currCoachName = localStorage.getItem('currCoachName');
     var currMemberID = localStorage.getItem('currMemberID');
     var currDateYM = localStorage.getItem('currDateYM');
@@ -249,7 +242,7 @@
         //=========================== 初始化数据 ==============================//
 
         //判断是否有年月的本地存储，没则获取当前月的上一个月
-        if(currDateYM=='') {
+        if(currDateYM==''||currDateYM==null) {
             var currDate = new Date();
             var currYear = currDate.getFullYear();
             var currMonth = currDate.getMonth();
@@ -277,28 +270,18 @@
             $("#onCampTips").show();
         }
 
-        //隔行变色
-        $(".hotTable tbody td ul").find("li:even").addClass("even");
-
-        //根据数据表统计总额
-        var monthOut = 0;
-        $(".cOut li").each(function () {
-            monthOut = monthOut + parseInt($(this).text());
-        });
-        var scheduleIn = 0;
-        $(".sIn li").each(function () {
-            scheduleIn = scheduleIn + parseInt($(this).text());
-        });
-        var rebateIn = 0;
-        $(".rIn li").each(function () {
-            rebateIn = rebateIn + parseInt($(this).text());
-        });
-        $(".monthIn").text(scheduleIn+rebateIn);
-        $(".monthOut").text(monthOut);
 
 
         //=========================== 初始化数据 ==============================//
 
+        $('#scheduleList,#rebateList').DataTable({
+            'paging'      : true,
+            'lengthChange': false,
+            'searching'   : false,
+            'ordering'    : true,
+            'info'        : true,
+            'autoWidth'   : true
+        });
 
         //选择年月
         $('#dateYM').datepicker({
@@ -318,8 +301,8 @@
             $("#coachModalLabel").text("请选择教练员");
             $("#coachList tbody").empty().html('<tr role="row" class="nodata"><td colspan="4">请搜索教练员</td></tr>');
             //清空本地缓存
-            localStorage.removeItem('currCampID');
-            localStorage.removeItem('currCampName');
+            localStorage.removeItem('currCampID_forCoach');
+            localStorage.removeItem('currCampName_forCoach');
         })
 
         //搜索训练营
@@ -391,8 +374,8 @@
             }
             //设置本地存储
             localStorage.setItem('currDateYM',getYM);
-            localStorage.setItem('currCampName',camp);
-            localStorage.setItem('currCampID',camp_id);
+            localStorage.setItem('currCampName_forCoach',camp);
+            localStorage.setItem('currCampID_forCoach',camp_id);
             localStorage.setItem('currCoachName',coach);
             localStorage.setItem('currMemberID',member_id);
             //拆分日期
@@ -402,7 +385,7 @@
             beginDate = arrYM[0]+arrYM[1]+'01';
             endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
 
-            window.location.href="{:url('/admin/Statistics_Coach/coachBill/')}"+"member_id/"+member_id+"/monthstart/"+beginDate+"/monthend/"+endDate;;
+            window.location.href="{:url('/admin/Statistics_Coach/coachincome/')}"+"member_id/"+member_id+"/monthstart/"+beginDate+"/monthend/"+endDate;;
         })
 
 
