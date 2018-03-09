@@ -120,9 +120,8 @@
             <!-- 系统统计 -->
             <div class="tab-pane fade active in" id="sysCount">
                 <div class="col-md-12 col-sm-12">
-                    <div class="box no-border">
                         <!-- Info boxes -->
-                        <div class="row">
+                        <div class="row pab10">
 
                             <table id="example1" class="table table-bordered table-striped dataTable" role="grid"
                                    aria-describedby="example1_info">
@@ -171,20 +170,17 @@
 
                         </div>
                         <!-- /.row -->
-                    </div>
                 </div>
             </div>
 
             <!-- 微信统计 -->
             <div class="tab-pane fade" id="wxCount">
                 <div class="col-md-12 col-sm-12">
-                    <div class="box no-border">
                         <!-- Info boxes -->
                         <div class="row">
 
 
                         </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -612,17 +608,20 @@
 
         //根据数据表统计总额
         var monthOut = 0;
-        $(".cOut li").each(function () {
+        $(".cOut li").not(".colCount").each(function () {
             monthOut = monthOut + parseInt($(this).text());
         });
         var scheduleIn = 0;
-        $(".sIn li").each(function () {
+        $(".sIn li").not(".colCount").each(function () {
             scheduleIn = scheduleIn + parseInt($(this).text());
         });
         var rebateIn = 0;
-        $(".rIn li").each(function () {
+        $(".rIn li").not(".colCount").each(function () {
             rebateIn = rebateIn + parseInt($(this).text());
         });
+        $(".cOut li.colCount").text(monthOut);
+        $(".sIn li.colCount").text(monthOut);
+        $(".rIn li.colCount").text(monthOut);
         $(".monthIn").text(scheduleIn+rebateIn);
         $(".monthOut").text(monthOut);
 

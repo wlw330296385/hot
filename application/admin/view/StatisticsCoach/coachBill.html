@@ -49,8 +49,8 @@
                 <button type="button" class="btn btn-default" id="goSearch">确认查询</button>
               </div>
               <h3 class="totalRight">
-                <span><small>本月收入：</small><strong class="text-yellow monthIn">1800</strong></span>
-                <span><small>本月支出：</small><strong class="text-yellow monthOut">250</strong></span>
+                <span><small>本月收入：</small><strong class="text-yellow monthIn"></strong></span>
+                <span><small>本月支出：</small><strong class="text-yellow monthOut"></strong></span>
               </h3>
             </div>
           </div>
@@ -61,7 +61,7 @@
                 <tr role="row">
                   <th>结算日期</th>
                   <th>支出</th>
-                  <th>
+                  <th class="mixTitle">
                     <ul class="dataCol-1">
                       <li>收入</li>
                       <li>
@@ -84,37 +84,49 @@
                       {volist name='list1' id='vol'}
                       <li>{$key}</li>
                       {/volist}
+                      <li>小计</li>
                     </ul>
                   </td>
                   <td>
-                    <ul class="dataCol-1 cOut">
+                    <ul class="dataCol-1 colCount">
                       {volist name='list2' id='vol'}
                       <li>{$vol.s_salary}</li>
                       {/volist}
+                      <li class="colTotal" id="mOut"></li>
                     </ul>
                   </td>
                   <td>
-                    <ul class="dataCol-2 sIn">
+                    <ul class="dataCol-2 colCount">
                       {volist name='list1' id='vol'}
                       <li>{$vol.s_salary}</li>
                       {/volist}
+                      <li class="colTotal" id="sIn"></li>
                     </ul>
-                    <ul class="dataCol-2 rIn">
+                    <ul class="dataCol-2 colCount">
                       {volist name='list1' id='vol'}
                       <li>{$vol.s_push_salary}</li>
                       {/volist}
+                      <li class="colTotal" id="rIn"></li>
                     </ul>
                   </td>
                   <td>
                     <ul class="dataCol-1">
                       {volist name='list1' id='vol'}
-                      <!-- <?php dump($vol);?> -->
-                      <li>{$key} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;课时的收入:{$vol.s_salary} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;返利收入:{$vol.s_push_salary}</li>
+                      <li>-</li>
                       {/volist}
+                      <li>-</li>
                     </ul>
                   </td>
                 </tr>
                 </tbody>
+                <tfoot>
+                <tr role="row">
+                  <th>合计</th>
+                  <th>本月支出：<span class="monthOut"></span></th>
+                  <th>本月收入：<span class="monthIn"></span></th>
+                  <th>本月所剩余额：</th>
+                </tr>
+                </tfoot>
               </table>
             </div>
           </div>
@@ -204,11 +216,13 @@
 <script src="/static/plugins/datepicker/bootstrap-datepicker.js"></script>
 <script>
 
-    var currCampName = localStorage.getItem('currCampName');
-    var currCampID = localStorage.getItem('currCampID');
     var currCoachName = localStorage.getItem('currCoachName');
     var currMemberID = localStorage.getItem('currMemberID');
     var currDateYM = localStorage.getItem('currDateYM');
+    //教练员统计专用，避免与其他统计模块混肴:如在教练模块查看A训练营陈教练，
+    //后跳转到训练营统计模块查看B训练营，然后又返回之前的页面就会出现默认选中B训练营和陈教练（而陈教练并不是B训练营的）
+    var currCampName = localStorage.getItem('currCampName_forCoach');
+    var currCampID = localStorage.getItem('currCampID_forCoach');
 
     $(function () {
 
@@ -244,23 +258,21 @@
         }
 
         //隔行变色
-        $(".hotTable tbody td ul").find("li:even").addClass("even");
+        $(".hotTable tbody td ul").find("li:odd").addClass("even");
 
-        //根据数据表统计总额
-        var monthOut = 0;
-        $(".cOut li").each(function () {
-            monthOut = monthOut + parseInt($(this).text());
+        //遍历需要统计的数据列，并赋值到对应位置
+        $(".colCount").each(function () {
+            var liNum = 0;
+            $(this).find("li").not(".colTotal").each(function () {
+                liNum = liNum + parseInt($(this).text());
+            });
+            $(this).find("li.colTotal").text(liNum);
         });
-        var scheduleIn = 0;
-        $(".sIn li").each(function () {
-            scheduleIn = scheduleIn + parseInt($(this).text());
-        });
-        var rebateIn = 0;
-        $(".rIn li").each(function () {
-            rebateIn = rebateIn + parseInt($(this).text());
-        });
-        $(".monthIn").text(scheduleIn+rebateIn);
-        $(".monthOut").text(monthOut);
+
+        var mOut = $("#mOut").text();
+        var mIn = parseInt($("#sIn").text())+parseInt($("#rIn").text());
+        $(".monthIn").text(mIn);
+        $(".monthOut").text(mOut);
 
 
         //=========================== 初始化数据 ==============================//
@@ -284,8 +296,8 @@
             $("#coachModalLabel").text("请选择教练员");
             $("#coachList tbody").empty().html('<tr role="row" class="nodata"><td colspan="4">请搜索教练员</td></tr>');
             //清空本地缓存
-            localStorage.removeItem('currCampID');
-            localStorage.removeItem('currCampName');
+            localStorage.removeItem('currCampID_forCoach');
+            localStorage.removeItem('currCampName_forCoach');
         })
 
         //搜索训练营
@@ -357,8 +369,8 @@
             }
             //设置本地存储
             localStorage.setItem('currDateYM',getYM);
-            localStorage.setItem('currCampName',camp);
-            localStorage.setItem('currCampID',camp_id);
+            localStorage.setItem('currCampName_forCoach',camp);
+            localStorage.setItem('currCampID_forCoach',camp_id);
             localStorage.setItem('currCoachName',coach);
             localStorage.setItem('currMemberID',member_id);
             //拆分日期
