@@ -1016,14 +1016,40 @@ class Team extends Base
             }
 
             // 插入team_member数据
-            $request['team_id'] = $teamInfo['id'];
-            $request['team'] = $teamInfo['name'];
-            $request['member_id'] = -1;
-            $request['member'] = $request['name'];
-            $request['avatar'] = config('default_image.member_avatar');
-            $request['number'] = !empty($request['number']) ? $request['number'] : null;
-            $request['status'] = 1;
-            $resSaveTeamMember = $teamS->saveTeamMember($request);
+            $dataTeamMember = [];
+            $dataTeamMember['team_id'] = $teamInfo['id'];
+            $dataTeamMember['team'] = $teamInfo['name'];
+            $dataTeamMember['member_id'] = -1;
+            $dataTeamMember['member'] = $request['name'];
+            $dataTeamMember['avatar'] = config('default_image.member_avatar');
+            $dataTeamMember['number'] = !empty($request['number']) ? $request['number'] : null;
+            $dataTeamMember['status'] = 1;
+            $resSaveTeamMember = $teamS->saveTeamMember($dataTeamMember);
+
+            // 处理球队职务
+            if ($request['role']) {
+                switch ($request['role']) {
+                    case 1 : {
+                        // 后勤
+
+                    }
+                    case 2 : {
+                        // 副队长
+                        if ( empty($teamInfo['vice_captain']) ) {
+
+                        } else {
+                            // 已有副队长
+                        }
+                    }
+                    case 3 : {
+                        // 队长
+                    }
+                    case 4 : {
+                        // 教练
+                    }
+                }
+            }
+
             return json($resSaveTeamMember);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
