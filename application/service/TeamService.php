@@ -231,6 +231,35 @@ class TeamService
         }
     }
 
+    // 移除球队-成员关联（team_member)
+    public function delTeamMember($teamMember=[]) {
+        $where = [
+            'team_id' => $teamMember['team_id'],
+            'member_id' => $teamMember['member_id'],
+            'member' => $teamMember['member']
+        ];
+        $data = [
+            'status' => -1,
+            'delete_time' => time() 
+        ];
+        // 清理team_mebmer_role
+        $modelRole = new TeamMemberRole();
+        $delTeamRole = $modelRole->save($data, $where);
+        if (false === $delTeamRole) {
+            trace('error:' . $modelRole->getError() . ', \n sql:' . $modelRole->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+        // team_member数据更新
+        $model = new TeamMember();
+        $delTeamMember = $model->save($data, $where);
+        if ($delTeamMember || ($delTeamMember === 0)) {
+            return ['code' => 200, 'msg' => __lang('MSG_200')];
+        } else {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
     // 获取球队成员列表
     public function getTeamMemberList($map = [], $page = 1, $order = 'id asc', $limit = 10)
     {
@@ -542,6 +571,7 @@ class TeamService
             }
         }
     }
+
 
     // 获取球队有角色身份的会员列表
     public function getTeamRoleMembers($team_id, $order = 'type desc')

@@ -184,7 +184,7 @@ class Team extends Base
             // 根据访问模块查询球队type：frontend（培训）type!=3
             if (!input('?param.type')) {
                 if ( cookie('module') =='frontend' ) {
-                    $map['type'] = ['neq', 3];
+                    $map['type'] = ['not in', [2,3]];
                 } elseif (cookie('module') =='keeper') {
                     $map['type'] = 3;
                 }
@@ -236,7 +236,7 @@ class Team extends Base
             // 默认访问模块查询球队type：frontend（培训）type!=3
             if (!input('?param.type')) {
                 if ( cookie('module') =='frontend' ) {
-                    $map['type'] = ['neq', 3];
+                    $map['type'] = ['not in', [2,3]];
                 } elseif (cookie('module') =='keeper') {
                     $map['type'] = 3;
                 }
@@ -429,11 +429,11 @@ class Team extends Base
             }
             // 发送消息模板给申请人
             if (!empty($reply)) {
-                $reply .= '回复说明：'.$reply;
+                $reply = '对方回复：'.$reply;
             }
             $messageData = [
                 'title' => '加入球队申请结果通知',
-                'content' => '加入球队' . $applyInfo['organization'] . '申请。对方回复：' . $reply,
+                'content' => '加入球队' . $applyInfo['organization'] . '申请。' . $reply,
                 'url' => $url,
                 'keyword1' => '加入球队，队名：' . $applyInfo['organization'],
                 'keyword2' => $replystr,
@@ -622,37 +622,32 @@ class Team extends Base
             if (!$teammember) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404')]);
             }
-            // 成员已离队提示
-            if ($teammember['status_num'] != 1) {
-                return json(['code' => 100, 'msg' => '您已离队']);
+            // 获取球队信息
+            $teamInfo = $teamS->getTeam(['id' => $team_id]);
+            // 领队不能自己操作直接离队
+            if ($member_id == $teamInfo['leader_id']) {
+                return json(['code' => 100, 'msg' => '你是领队，不能离队喔']);
             }
             // 更新球队成员信息 设为离队（status=-1）
-            $res = $teamS->saveTeamMember([
-                'id' => $teammember['id'],
-                'status' => -1,
-                'delete_time' => time()
-            ]);
+            $res = $teamS->delTeamMember($teammember);
+            if ($res['code'] == 100) {
+                return json($res);
+            }
 
             // 发送消息通知给球队领队
-            $teamInfo = $teamS->getTeam(['id' => $team_id]);
             $messageS = new MessageService();
             $messageData = [
-                'title' => '您好，有球队成员申请离队',
-                'content' => '您好，球队成员' . $teammember['member'] . '申请离开"' . $teammember['team'] . '"球队',
+                'title' => '您好，有球队成员离队',
+                'content' => '您好，球队成员' . $teammember['member'] . '离开' . $teammember['team'] . '球队',
                 'url' => url('keeper/message/index', '', '', true),
-                'keyword1' => '球队成员申请离队',
+                'keyword1' => '球队成员离队',
                 'keyword2' => $teammember['member'],
                 'keyword3' => date('Y年m月d日 H:i'),
-                'remark' => '请及时处理',
+                'remark' => '登录平台查看信息',
                 'steward_type' => 2
             ];
             $messageS->sendMessageToMember($teamInfo['leader_id'], $messageData, config('wxTemplateID.checkPend'));
-            if ($res) {
-                $response = ['code' => 200, 'msg' => __lang('MSG_200') . '，请等待球队领队审核'];
-            } else {
-                $response = ['code' => 100, 'msg' => __lang('MSG_400') . '，请重试'];
-            }
-            return json($response);
+            return json($res);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
@@ -928,7 +923,7 @@ class Team extends Base
 
             // 是否受邀会员
             if ($this->memberInfo['id'] === 0) {
-                return json(['code' => 100, 'msg' => '请先登录会员']);
+                return json(['code' => 100, 'msg' => '请先登录或注册平台会员']);
             }
             if ($this->memberInfo['id'] != $applyInfo['member_id']) {
                 return json(['code' => 100, 'msg' => '无法操作']);
@@ -936,7 +931,7 @@ class Team extends Base
 
             // 更新apply数据，$reply=2同意，3拒绝
             $resultSaveApply = $teamS->saveApply(['id' => $applyInfo['id'], 'status' => $status, 'reply' => $reply]);
-            $replystr = '已拒绝';
+            $replystr = '拒绝加入';
             $url = url('keeper/message/index', '', '', true);
             if ($status == 2) {
                 if ($resultSaveApply['code'] == 200) {
@@ -949,22 +944,22 @@ class Team extends Base
                     if ($updateTeamMember['code'] == 100) {
                         return json(['code' => 100, 'msg' => '更新球队队员信息失败']);
                     }
-                    $url = url('keeper/team/teammanage', ['team_id' => $applyInfo['organization_id']], '', true);
+                    $url = url('keeper/team/teaminfo', ['team_id' => $applyInfo['organization_id']], '', true);
                 }
-                $replystr = '已通过';
+                $replystr = '已加入';
                 // 更新球队统计字段
                 $teamS->autoUpdateTeam($applyInfo['organization_id']);
             }
             // 发送结果通知给邀请人
             if (!empty($reply)) {
-                $reply .= '回复说明：'.$reply;
+                $reply = '对方回复：'.$reply;
             }
             $messageData = [
-                'title' => '邀请会员加入球队结果',
-                'content' => '邀请会员'. $applyInfo['member']['member'] .'加入球队' . $applyInfo['organization'] . '。对方回复：' . $replystr,
+                'title' => '会员'.$replystr.'球队',
+                'content' => '会员'. $applyInfo['member']['member'] . $replystr . '球队' . $applyInfo['organization'] . '。' . $reply,
                 'url' => $url,
-                'keyword1' => '邀请会员加入球队',
-                'keyword2' => $replystr,
+                'keyword1' => '会员'. $applyInfo['member']['member'] . $replystr . '球队' . $applyInfo['organization'],
+                'keyword2' => '会员'.$replystr.'球队',
                 'remark' => '点击登录平台查看更多信息',
                 'steward_type' => 2
             ];
@@ -1021,14 +1016,40 @@ class Team extends Base
             }
 
             // 插入team_member数据
-            $request['team_id'] = $teamInfo['id'];
-            $request['team'] = $teamInfo['name'];
-            $request['member_id'] = -1;
-            $request['member'] = $request['name'];
-            $request['avatar'] = config('default_image.member_avatar');
-            $request['number'] = !empty($request['number']) ? $request['number'] : null;
-            $request['status'] = 1;
-            $resSaveTeamMember = $teamS->saveTeamMember($request);
+            $dataTeamMember = [];
+            $dataTeamMember['team_id'] = $teamInfo['id'];
+            $dataTeamMember['team'] = $teamInfo['name'];
+            $dataTeamMember['member_id'] = -1;
+            $dataTeamMember['member'] = $request['name'];
+            $dataTeamMember['avatar'] = config('default_image.member_avatar');
+            $dataTeamMember['number'] = !empty($request['number']) ? $request['number'] : null;
+            $dataTeamMember['status'] = 1;
+            $resSaveTeamMember = $teamS->saveTeamMember($dataTeamMember);
+
+            // 处理球队职务
+            if ($request['role']) {
+                switch ($request['role']) {
+                    case 1 : {
+                        // 后勤
+
+                    }
+                    case 2 : {
+                        // 副队长
+                        if ( empty($teamInfo['vice_captain']) ) {
+
+                        } else {
+                            // 已有副队长
+                        }
+                    }
+                    case 3 : {
+                        // 队长
+                    }
+                    case 4 : {
+                        // 教练
+                    }
+                }
+            }
+
             return json($resSaveTeamMember);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>会员列表</title>
+    <title>添加队员</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -29,7 +29,10 @@
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 44px">
             <div class="mui-scroll">
                 <ul class="mui-table-view detalis-list list border-b memberList">
-                    <p class="nodata">请搜索你要添加的会名称</p>
+                    <li class="nodata">
+                        <i class="icon iconfont icon-logo-Big"></i>
+                        <p>请搜索你要添加的会员名称，如非会员，点击底部按钮创建队员，注册登录后可收到入队邀请信息</p>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -37,7 +40,7 @@
         <ul class="mui-table-view operation">
             <a href="{:url('team/recordMemberOfTeam', ['team_id' => $team_id])}">
                 <li class="mui-table-view-cell mui-col-xs-12 mui-col-sm-12 opli bgblue">
-                    创建新会员
+                    创建队员
                 </li>
             </a>
         </ul>
@@ -115,10 +118,6 @@
                     var page = count;
                     var gType = 2;//代表上拉加载
                     toList(page, gType);//具体取数据的方法
-                    // if ($(".memberList").children().hasClass("listli") == true) {
-                    //     console.log(123)
-                    //     $(".memberList").children(".nodata").hide();
-                    // }
                 }, 100);
             }
 
@@ -146,7 +145,7 @@
                                 for (var i = 0; i <= data.data.data.length - 1; i++) {
                                     newli += '<li class="mui-table-view-cell mui-media listli">';
                                     newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '" style="width: 45px !important;height: 45px !important;margin-top: 4px;"><div class="mui-media-body wd60">' + data.data.data[i].student;
-                                    newli += '<p>学生ID：' + data.data.data[i].student_id + '</p></div><div class="price-frame"><button type="button" class="btn bgred" style="margin-top:5px" onclick="addStudent(' + data.data.data[i].student_id + ',' + data.data.data[i].member_id + ')">添加</button></div>'
+                                    newli += '<p>学生ID：' + data.data.data[i].student_id + '</p></div><div class="price-frame"><button type="button" class="btn bgred" style="margin-top:5px" onclick="checkStudent(' + data.data.data[i].student_id + ',' + data.data.data[i].member_id + ')">添加</button></div>'
                                     newli += '</li>';
                                 }
                             }
@@ -156,7 +155,7 @@
                                 mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                                 mui('#refreshContainer').pullRefresh().refresh(true);
                                 if (newli == '') {
-                                    $("ul.memberList").html('<p class="nodata">没有相关数据哦</p>');
+                                    $("ul.memberList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                                 }
                             } else {
                                 //下拉加载 gType==2
@@ -191,7 +190,7 @@
                                 for (var i = 0; i <= data.data.data.length - 1; i++) {
                                     newli += '<li class="mui-table-view-cell mui-media listli">';
                                     newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '" style="width: 45px !important;height: 45px !important;margin-top: 4px;"><div class="mui-media-body wd60">' + data.data.data[i].member;
-                                    newli += '<p>' + data.data.data[i].province + '&nbsp;' + data.data.data[i].city + '&nbsp;' + data.data.data[i].area + '</p></div><div class="price-frame"><button type="button" class="btn bgred" style="margin-top:5px" onclick="addMember(' + data.data.data[i].id + ')">邀请</button></div>'
+                                    newli += '<p>' + data.data.data[i].province + '&nbsp;' + data.data.data[i].city + '&nbsp;' + data.data.data[i].area + '</p></div><div class="price-frame"><button type="button" class="btn bgred" style="margin-top:5px" onclick="checkMember(' + data.data.data[i].id + ')">邀请</button></div>'
                                     newli += '</li>';
                                 }
                             }
@@ -201,7 +200,7 @@
                                 mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                                 mui('#refreshContainer').pullRefresh().refresh(true);
                                 if (newli == '') {
-                                    $("ul.memberList").html('<p class="nodata">没有相关数据哦</p>');
+                                    $("ul.memberList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                                 }
                             } else {
                                 //下拉加载 gType==2
@@ -224,7 +223,38 @@
             };
         })
 
-        // 添加会员
+        // 检查队员
+        function checkMember(member_id) {
+            var team_id = "{$team_id}";
+            mui.ajax("{:url('api/team/checkteammember')}", {
+                data: {
+                    team_id: team_id,
+                    member_id: member_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        var btnArray = ['取消', '确认'];
+                        mui.confirm('已发送邀请，是否再次邀请？', '', btnArray, function (e) {
+                            if (e.index == 1) {
+                                addMember(member_id);
+                            }
+                        });
+                    } else {
+                        addMember(member_id);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+        // 添加队员
         function addMember(member_id) {
             var team_id = "{$team_id}";
             mui.ajax("{:url('api/team/addmember')}", {
@@ -237,7 +267,6 @@
                 timeout: 10000,//超时时间设置为10秒；
                 headers: { 'Content-Type': 'application/json' },
                 success: function (data) {
-                    //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data);
                     if (data.code == 200) {
                         mui.toast("已经发送请求，请耐心等待回复");
@@ -252,6 +281,37 @@
             });
         }
 
+        // /////////////////////////////////////////////////////////////////////////////////
+
+        // 检查学生
+        function checkStudent(student_id, member_id) {
+            console.log(member_id)
+            console.log(student_id)
+            var team_id = "{$team_id}";
+            mui.ajax("{:url('api/team/checkteammember')}", {
+                data: {
+                    team_id: team_id,
+                    member_id: member_id,
+                    student_id: student_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast("已经添加成功，无需重复添加");
+                    } else {
+                        addStudent(student_id, member_id);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
         // 添加学生
         function addStudent(student_id, member_id) {
             var team_id = "{$team_id}";
@@ -266,7 +326,6 @@
                 timeout: 10000,//超时时间设置为10秒；
                 headers: { 'Content-Type': 'application/json' },
                 success: function (data) {
-                    //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data);
                     if (data.code == 200) {
                         mui.toast("添加成功");
