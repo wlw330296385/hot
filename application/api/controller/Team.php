@@ -568,7 +568,7 @@ class Team extends Base
                 return json(['code' => 100, 'msg' => '该成员已离队']);
             }
             // 更新成员数据
-            $res = $teamS->saveTeamMember(['id' => $teammember['id'], 'status' => -1]);
+            $res = $teamS->saveTeamMember(['id' => $teammember['id'], 'status' => -1, 'delete_time' => time()]);
             if ($res['code'] == 200) {
                 // 更新成员的team_member_role表所有相关数据status=-1
                 db('team_member_role')->where(['team_id' => $team_id, 'member_id' => $member_id])->update(['status' => -1, 'update_time' => time()]);
@@ -627,7 +627,11 @@ class Team extends Base
                 return json(['code' => 100, 'msg' => '您已离队']);
             }
             // 更新球队成员信息 设为离队（status=-1）
-
+            $res = $teamS->saveTeamMember([
+                'id' => $teammember['id'],
+                'status' => -1,
+                'delete_time' => time()
+            ]);
 
             // 发送消息通知给球队领队
             $teamInfo = $teamS->getTeam(['id' => $team_id]);
@@ -642,11 +646,76 @@ class Team extends Base
                 'remark' => '请及时处理',
                 'steward_type' => 2
             ];
-            $res = $messageS->sendMessageToMember($teamInfo['leader_id'], $messageData, config('wxTemplateID.checkPend'));
+            $messageS->sendMessageToMember($teamInfo['leader_id'], $messageData, config('wxTemplateID.checkPend'));
             if ($res) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_200') . '，请等待球队领队审核'];
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_400') . '，请重试'];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 检查成员是否有球队-成员数据
+    public function checkteammember() {
+        try {
+            // 输入变量
+            $post = input('post.');
+            // 必传参数
+            if (!isset($post['team_id'])) {
+                return json(['code' => 100, 'msg' => '请选择球队']);
+            }
+            if (!isset($post['member_id'])) {
+                return json(['code' => 100, 'msg' => '请选择会员']);
+            }
+            // service
+            $teamS = new TeamService();
+            $memberS = new MemberService();
+            $studentS = new StudentService();
+            // 获取球队信息
+            $teamInfo = $teamS->getTeam(['id' => $post['team_id']]);
+            if (!$teamInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404') . '，请选择其他球队']);
+            }
+            // 获取会员信息
+            $memberInfo = $memberS->getMemberInfo(['id' => $post['member_id']]);
+            if (!$memberInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404') . '，请选择其他会员']);
+            }
+            //
+            $teamMemberInfo = [];
+            // 训练营球队: 记录学员信息
+            if ($teamInfo['type'] == 1 && $teamInfo['camp_id'] > 0) {
+                // 必须要student信息
+                if (!isset($post['student_id'])) {
+                    return json(['code' => 100, 'msg' => '请选择学员']);
+                }
+                // 获取学员数据
+                $studentInfo = $studentS->getStudentInfo(['id' => $post['student_id'], 'member_id' => $post['member_id']]);
+                if (!$studentInfo) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_404') . '，请选择其他学员']);
+                }
+                // 学员是否在球队的训练营
+                $studentCamps = $studentS->getCamps(['camp_id' => $teamInfo['camp_id'], 'student_id' => $studentInfo['id']]);
+                if (!$studentCamps) {
+                    return json(['code' => 100, 'msg' => '该学员不在球队所属训练营，请选择其他学员']);
+                }
+
+                // 查询学员有无在队信息
+                $teamMemberInfo = $teamS->getTeamMemberInfo(['team_id' => $post['team_id'], 'member_id' => $post['member_id'], 'student_id' => $post['student_id']]);
+                
+            } else {
+                // 非训练营球队：查询会员有无在队信息
+                $teamMemberInfo = $teamS->getTeamMemberInfo(['team_id' => $post['team_id'], 'member_id' => $post['member_id']]);
+
+            }
+            // 返回结果
+            if ($teamMemberInfo) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $teamMemberInfo];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
             }
             return json($response);
         } catch (Exception $e) {
@@ -727,11 +796,7 @@ class Team extends Base
                 // 查询学员有无在队信息
                 $teamMemberInfo = $teamS->getTeamMemberInfo(['team_id' => $post['team_id'], 'member_id' => $post['member_id'], 'student_id' => $post['student_id']]);
                 if ($teamMemberInfo) {
-                    if ($teamMemberInfo['status_num'] == 1) {
-                        return json(['code' => 100, 'msg' => '该学员已经在球队了']);
-                    } else {
-                        $data['id'] = $teamMemberInfo['id'];
-                    }
+                    $data['id'] = $teamMemberInfo['id'];
                 }
                 // 执行保存球队成员数据
                 $resultSaveTeamMember = $teamS->saveTeamMember($data);
@@ -777,11 +842,7 @@ class Team extends Base
                 // 查询会员有无在队信息
                 $teamMemberInfo = $teamS->getTeamMemberInfo(['team_id' => $post['team_id'], 'member_id' => $post['member_id']]);
                 if ($teamMemberInfo) {
-                    if ($teamMemberInfo['status_num'] == 1) {
-                        return json(['code' => 100, 'msg' => '该会员已经在球队了，无需再次邀请']);
-                    } else {
-                        $data['id'] = $teamMemberInfo['id'];
-                    }
+                    $data['id'] = $teamMemberInfo['id'];
                 }
                 // 执行保存球队成员数据
                 $resultSaveTeamMember = $teamS->saveTeamMember($data);
