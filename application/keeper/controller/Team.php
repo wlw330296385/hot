@@ -128,7 +128,7 @@ class Team extends Base {
     }
 
     // 展示球队在队队员列表
-    public function teammebmerlist() {
+    public function teammemberlist() {
         // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
         $teamS = new TeamService();
         $teamMemberInfo = $teamS->getTeamMemberInfo([
