@@ -550,7 +550,7 @@ class Team extends Base
             $teamS = new TeamService();
             // 判断是否领队，领队成员才能操作
             $teamrole = $teamS->checkMemberTeamRole($team_id, $this->memberInfo['id']);
-            if ($teamrole != 4) {
+            if ($teamrole != 5) {
                 return json(['code' => 100, 'msg' => __lang('MSG_403') . '，只有领队成员才能操作']);
             }
             // 领队不能移除自己
@@ -626,6 +626,9 @@ class Team extends Base
             if ($teammember['status_num'] != 1) {
                 return json(['code' => 100, 'msg' => '您已离队']);
             }
+            // 更新球队成员信息 设为离队（status=-1）
+
+
             // 发送消息通知给球队领队
             $teamInfo = $teamS->getTeam(['id' => $team_id]);
             $messageS = new MessageService();
@@ -776,8 +779,6 @@ class Team extends Base
                 if ($teamMemberInfo) {
                     if ($teamMemberInfo['status_num'] == 1) {
                         return json(['code' => 100, 'msg' => '该会员已经在球队了，无需再次邀请']);
-                    } else if ($teamMemberInfo['status_num'] == -2) {
-                        return json(['code' => 100, 'msg' => '已发送邀请，无需再次邀请']);
                     } else {
                         $data['id'] = $teamMemberInfo['id'];
                     }
@@ -940,7 +941,7 @@ class Team extends Base
             $memberS = new MemberService();
             $isMember = $memberS->getMemberInfo(['telephone' => $request['telephone']]);
             if ($isMember) {
-                return json(['code' => 100, 'msg' => '填写的手机号已有会员信息']);
+                return json(['code' => 100, 'msg' => '该手机已注册，是否发出邀请信息', 'data' => $isMember]);
             }
 
             // 球队有无该成员信息
