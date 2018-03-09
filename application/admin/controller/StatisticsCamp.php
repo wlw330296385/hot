@@ -3,9 +3,12 @@ namespace app\admin\controller;
 use app\admin\controller\base\Backend;
 // 按课时结算的训练营财务页面
 class StatisticsCamp extends Backend{
-
+    private $campInfo;
 	public function _initialize(){
 		parent::_initialize();
+        $camp_id = input('param.camp_id',9);
+        $this->campInfo = db('camp')->where(['id'=>$camp_id])->find();
+        $this->campInfo['rebate_type'] = 2;
 	}
 
     // 课时列表
@@ -22,7 +25,7 @@ class StatisticsCamp extends Backend{
         // 搜索筛选
         $map = [];
         // 选择训练营
-        $camp_id = input('camp_id');
+        $camp_id = $this->campInfo['id'];
         if ($camp_id) {
             $map['camp_id']=$camp_id;
         }
@@ -86,85 +89,169 @@ class StatisticsCamp extends Backend{
     // 资金账目
     public function campBill(){
 
-        $camp_id = input('param.camp_id',9);
+        $camp_id = $this->campInfo['id'];
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
         $month_end = strtotime($monthEnd);
-        $income = [];
-        $list3 = [];//课时收入
-        $list2 = [];//活动收入 
-        $list_1 = [];//提现  
-        $list1 = [];//赠课
-        $list4 = [];//教练工资和平台支出;
         // 活动订单收入 
         $income2 = db('income')->field("sum('income') as s_income,from_unixtime(create_time,'%Y%m%d') as days,sum('schedule_income') as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
-        //课时收入
-        $income3 = db('income')->field("sum('income') as s_income,from_unixtime(create_time,'%Y%m%d') as days,sum('schedule_income') as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>3])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
-        // 提现支出
-        $output = db('output')->field("sum('output') as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>-1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
-        //赠课支出
-        $output_gift = db('output')->field("sum('output') as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
-        //课时薪资
-        $schedule =  db('schedule')->field("sum((coach_salary+assistant_salary+salary_base)*students) as s_s_salary,from_unixtime(finish_settle_time,'%Y%m%d') as days,sum(cost*students*schedule_rebate) as s_s_rebate,is_settle,camp_id")->where(['camp_id'=>$camp_id,'is_settle'=>1])->where(['finish_settle_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
-        // echo db('schedule')->getlastsql();die;
-        // dump($schedule);die;
-        for ($i=$monthStart; $i <= $monthEnd; $i++) { 
-            $list3[$i]  = ['s_income'=>0,'s_schedule_income'=>0];
-            $list2[$i]  = ['s_income'=>0];
-            $list_1[$i] = ['s_output'=>0];
-            $list1[$i]  = ['s_output'=>0];
-            $list4[$i]  = ['s_s_rebate'=>0,'s_s_salary'=>0];
-        }
-        foreach ($list3 as $key => &$value) {
-            foreach ($income3 as $k => $val) {
-                if($key == $val['days']){
-                    $value = $val;
-                }
-            }
-        }  
-        foreach ($list2 as $key => &$value) {
-            foreach ($income2 as $k => $val) {
-                if($key == $val['days']){
-                    $value = $val;
-                }
-            }
-        }  
+        
+        if($this->campInfo['rebate_type'] == 1){
+            $income = [];
+            $list3 = [];//课时收入
+            $list2 = [];//活动收入 
+            $list_1 = [];//提现  
+            $list1 = [];//赠课
+            $list4 = [];//教练工资和平台支出;
+            
+            //课时收入
+            $income3 = db('income')->field("sum('income') as s_income,from_unixtime(create_time,'%Y%m%d') as days,sum('schedule_income') as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>3])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            //课时薪资
+            $schedule =  db('schedule')->field("sum((coach_salary+assistant_salary+salary_base)*students) as s_s_salary,from_unixtime(finish_settle_time,'%Y%m%d') as days,sum(cost*students*schedule_rebate) as s_s_rebate,is_settle,camp_id")->where(['camp_id'=>$camp_id,'is_settle'=>1])->where(['finish_settle_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
 
-        foreach ($list_1 as $key => &$value) {
-            foreach ($output as $k => $val) {
-                if($key == $val['days']){
-                    $value = $val;
-                }
-            }
-        }
+            // 提现支出
+            $output = db('output')->field("sum('output') as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>-1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            //赠课支出
+            $output_gift = db('output')->field("sum('output') as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
 
-        foreach ($list1 as $key => &$value) {
-            foreach ($output_gift as $k => $val) {
-                if($key == $val['days']){
-                    $value = $val;
+            for ($i=$monthStart; $i <= $monthEnd; $i++) { 
+                $list3[$i]  = ['s_income'=>0,'s_schedule_income'=>0];
+                $list2[$i]  = ['s_income'=>0];
+                $list_1[$i] = ['s_output'=>0];
+                $list1[$i]  = ['s_output'=>0];
+                $list4[$i]  = ['s_s_rebate'=>0,'s_s_salary'=>0];
+            }
+            foreach ($list3 as $key => &$value) {
+                foreach ($income3 as $k => $val) {
+                    if($key == $val['days']){
+                        $value = $val;
+                    }
+                }
+            }  
+            foreach ($list2 as $key => &$value) {
+                foreach ($income2 as $k => $val) {
+                    if($key == $val['days']){
+                        $value = $val;
+                    }
+                }
+            }  
+
+            foreach ($list_1 as $key => &$value) {
+                foreach ($output as $k => $val) {
+                    if($key == $val['days']){
+                        $value = $val;
+                    }
                 }
             }
-        }
-        foreach ($list4 as $key => &$value) {
-            foreach ($schedule as $k => $val) {
-                if($key == $val['days']){
-                    $value = $val;
+
+            foreach ($list1 as $key => &$value) {
+                foreach ($output_gift as $k => $val) {
+                    if($key == $val['days']){
+                        $value = $val;
+                    }
                 }
             }
+            foreach ($list4 as $key => &$value) {
+                foreach ($schedule as $k => $val) {
+                    if($key == $val['days']){
+                        $value = $val;
+                    }
+                }
+            }
+            $this->assign('list4',$list4);//课时收入
+            $this->assign('list3',$list3);//课时收入
+            $this->assign('list2',$list2);//活动收入
+            $this->assign('list_1',$list_1);//提现   
+            $this->assign('list1',$list1);//赠课
+            return view('StatisticsCamp/campBill');
+
+        }else{
+            // 课程订单收入
+            $income1 = db('income')->field("sum('income') as s_income,from_unixtime(create_time,'%Y%m%d') as days,sum('schedule_income') as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            // 赠课支出
+            $output1 = db('output')->field("sum('output') as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            // 课时退费
+            $output2 = db('output')->field("sum('output') as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            // 提现
+            $output_1 = db('output')->field("sum('output') as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>-1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            // 课时教练支出
+            $output3 = db('output')->field("sum('output') as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>3])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            //平台分成
+            $output4 = db('output')->field("sum('output') as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>4])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+
+            $list1 = []; $list2 = []; $list3 = []; $list4 = []; $list_1 = []; $list_income1 = []; $list_income2 = [];
+            for ($i=$monthStart; $i <= $monthEnd; $i++) { 
+                $list1[$i]  = $list2[$i] = $list3[$i] = $list4[$i] = $list_1[$i] = ['s_output'=>0.00];
+                $list_income1[$i] = $list_income2[$i] = ['s_income'=>0.00];
+            }
+            foreach ($list1 as $key => &$value) {
+                foreach ($output1 as $k => $val) {
+                    if($key == $val['days']){
+                        $value = $val;
+                    }
+                }
+            } 
+            foreach ($list2 as $key => &$value) {
+                foreach ($output2 as $k => $val) {
+                    if($key == $val['days']){
+                        $value = $val;
+                    }
+                }
+            } 
+            foreach ($list3 as $key => &$value) {
+                foreach ($output3 as $k => $val) {
+                    if($key == $val['days']){
+                        $value = $val;
+                    }
+                }
+            } 
+            foreach ($list4 as $key => &$value) {
+                foreach ($output4 as $k => $val) {
+                    if($key == $val['days']){
+                        $value = $val;
+                    }
+                }
+            }  
+            foreach ($list_1 as $key => &$value) {
+                foreach ($output_1 as $k => $val) {
+                    if($key == $val['days']){
+                        $value = $val;
+                    }
+                }
+            } 
+            foreach ($list_income1 as $key => &$value) {
+                foreach ($income1 as $k => $val) {
+                    if($key == $val['days']){
+                        $value = $val;
+                    }
+                }
+            } 
+            foreach ($list_income2 as $key => &$value) {
+                foreach ($income2 as $k => $val) {
+                    if($key == $val['days']){
+                        $value = $val;
+                    }
+                }
+            } 
+
+            $this->assign('list1',$list1);
+            $this->assign('list2',$list2);
+            $this->assign('list3',$list3);
+            $this->assign('list4',$list4);
+            $this->assign('list_1',$list_1);
+            $this->assign('list_income1',$list_income1);
+            $this->assign('list_income2',$list_income2);
+            return view('StatisticsCamp/orgzBill');
         }
-        // dump($list4);die;
-        $this->assign('list4',$list4);//课时收入
-        $this->assign('list3',$list3);//课时收入
-        $this->assign('list2',$list2);//活动收入
-        $this->assign('list_1',$list_1);//提现   
-        $this->assign('list1',$list1);//赠课
-        return view('StatisticsCamp/campBill');
+        
+
+        
     }
 
     //收益统计
     public function campIncome(){
-        $camp_id = input('param.camp_id',9);
+        $camp_id = $this->campInfo['id'];
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
@@ -172,23 +259,38 @@ class StatisticsCamp extends Backend{
         $income = [];
         $list2 = [];//活动收入
         $list3 = [];//课时收入
-        $income2 = db('income')->field("sum('income') as s_income,count('goods_id') as c_member,goods_id,goods,camp")
+        $income2 = db('income')->field("sum('income') as s_income,count('id') as c_id,sum(total) as s_total,goods_id,goods,camp,price,f_id")
         ->where(['camp_id'=>$camp_id,'type'=>2])
         // ->where(['create_time'=>['between',[$month_start,$month_end]]])
         ->where('delete_time',null)
         ->group('goods_id')->select();
         $list2 = $income2;
-        $income3 = db('income')->field("sum('income') as s_income,count('schedule_id') as c_schedule,sum(students) as s_students,lesson,camp")
-        ->where(['camp_id'=>$camp_id,'type'=>3])
-        ->where(['create_time'=>['between',[$month_start,$month_end]]])
-        ->where('delete_time',null)
-        ->group('schedule_id')->select();
-        $list3 = $income3;
+        if($this->campInfo['rebate_type'] == 1){
+            $income3 = db('income')->field("sum('income') as s_income,count('id') as c_id,sum(students) as s_students,lesson,camp")
+            ->where(['camp_id'=>$camp_id,'type'=>3])
+            ->where(['create_time'=>['between',[$month_start,$month_end]]])
+            ->where('delete_time',null)
+            ->group('schedule_id')->select();  
+            $list3 = $income3;
 
 
-        $this->assign('list2',$list2);
-        $this->assign('list3',$list3);
-        return view('StatisticsCamp/campIncome');
+            $this->assign('list2',$list2);
+            $this->assign('list3',$list3);
+            return view('StatisticsCamp/campIncome'); 
+        }else{
+            $income1 = db('income')->field("sum('income') as s_income,count('id') as c_id,sum(total) as s_total,goods,goods_id,camp,price,f_id")
+            ->where(['camp_id'=>$camp_id,'type'=>1])
+            ->where(['create_time'=>['between',[$month_start,$month_end]]])
+            ->where('delete_time',null)
+            ->group('goods_id')->select();
+            $list1 = $income1;
+            $this->assign('list2',$list2);
+            $this->assign('list1',$list1);
+            return view('StatisticsCamp/orgzIncome');
+        }
+        
+
+        
     }
 
     // 图表统计
@@ -200,7 +302,7 @@ class StatisticsCamp extends Backend{
 
     // 营业额统计
     public function campTurnover(){
-        $camp_id = input('param.camp_id',9);
+        $camp_id = $this->campInfo['id'];
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
@@ -228,7 +330,7 @@ class StatisticsCamp extends Backend{
 
     // 赠课统计
     public function campGift(){
-        $camp_id = input('param.camp_id',9);
+        $camp_id = $this->campInfo['id'];
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
@@ -246,7 +348,7 @@ class StatisticsCamp extends Backend{
 
     // 附加支出
     public function campOutput(){
-        $camp_id = input('param.camp_id');
+        $camp_id = $this->campInfo['id'];
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
         if(isPost()){
             $data = input('post.');
@@ -266,37 +368,68 @@ class StatisticsCamp extends Backend{
 
     // 每月报表
     public function campStatistics(){
-        $camp_id = input('param.camp_id',9);
+        $camp_id = $this->campInfo['id'];
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
         $month_end = strtotime($monthEnd);
-        // 活动订单收入 
-        $income2 = db('income')->where(['camp_id'=>$camp_id,'type'=>2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('income');
-        //课时收入
-        $income3 = db('income')->where(['camp_id'=>$camp_id,'type'=>3])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('income');
-        // 提现支出
-        $output = db('output')->where(['camp_id'=>$camp_id,'type'=>-1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
-        //赠课支出
-        $output_gift = db('output')->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
-        //课时薪资
-        $schedule =  db('schedule')->field("sum((coach_salary+assistant_salary+salary_base)*students) as s_s_salary,sum(cost*students*schedule_rebate) as s_s_rebate,is_settle,camp_id")->where(['camp_id'=>$camp_id,'is_settle'=>1])->where(['finish_settle_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->find();
-        //其他支出
-        $orther_output = db('output')->where(['camp_id'=>$camp_id,'type'=>-2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
+        if($this->campInfo['rebate_type'] == 1){
+            //活动订单收入 
+            $income2 = db('income')->where(['camp_id'=>$camp_id,'type'=>2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('income');
+            //课时收入
+            $income3 = db('income')->where(['camp_id'=>$camp_id,'type'=>3])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('income');
+            //提现支出
+            $output = db('output')->where(['camp_id'=>$camp_id,'type'=>-1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
+            //赠课支出
+            $output_gift = db('output')->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
+            //课时薪资
+            $schedule =  db('schedule')->field("sum((coach_salary+assistant_salary+salary_base)*students) as s_s_salary,sum(cost*students*schedule_rebate) as s_s_rebate,is_settle,camp_id")->where(['camp_id'=>$camp_id,'is_settle'=>1])->where(['finish_settle_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->find();
+            //其他支出
+            $orther_output = db('output')->where(['camp_id'=>$camp_id,'type'=>-2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');  
+            $this->assign('income2',$income2?$income2:0);
+            $this->assign('income3',$income3?$income3:0);
+            $this->assign('output',$output?$output:0);
+            $this->assign('output_gift',$output_gift?$output_gift:0);
+            $this->assign('schedule',$schedule);
+            $this->assign('orther_output',$orther_output?$orther_output:0);
+            return view('StatisticsCamp/campStatistics');          
+        }else{
+            //课程订单收入
+            $income3 = db('income')->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('income');
+            //活动订单收入 
+            $income2 = db('income')->where(['camp_id'=>$camp_id,'type'=>2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('income');
+            //提现支出
+            $output = db('output')->where(['camp_id'=>$camp_id,'type'=>-1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
+            //赠课支出
+            $output_gift = db('output')->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
+            // 教练工资支出
+            $schedule = db('output')->where(['camp_id'=>$camp_id,'type'=>3])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
+            //退费支出
+            $output2 = db('output')->where(['camp_id'=>$camp_id,'type'=>-2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
+            // 平台分成
+            $output4 =  db('output')->where(['camp_id'=>$camp_id,'type'=>4])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
+            //其他支出
+            $orther_output = db('output')->where(['camp_id'=>$camp_id,'type'=>-2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
+            $this->assign('income2',$income2?$income2:0);
+            $this->assign('income3',$income3?$income3:0);
+            $this->assign('output',$output?$output:0);
+            $this->assign('output_gift',$output_gift?$output_gift:0);
+            $this->assign('schedule',$schedule?$schedule:0);
+            $this->assign('output4',$output4?$output4:0);
+            $this->assign('output2',$output2?$output2:0);
+            $this->assign('orther_output',$orther_output?$orther_output:0);
+
+            return view('StatisticsCamp/orgzStatistics');       
+        }
+
         
 
 
-        $this->assign('income2',$income2?$income2:0);
-        $this->assign('income3',$income3?$income3:0);
-        $this->assign('output',$output?$output:0);
-        $this->assign('output_gift',$output_gift?$output_gift:0);
-        $this->assign('schedule',$schedule);
-        $this->assign('orther_output',$orther_output?$orther_output:0);
-        return view('StatisticsCamp/campStatistics');
+        
     }
 
 
-    // 课程课时统计
+    // 课时详情
     public function lessonSchedule(){
         $lesson_id = input('param.lesson_id',13);
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
@@ -316,7 +449,7 @@ class StatisticsCamp extends Backend{
 
     //课时统计
     public function campScheduleStatistics(){
-        $camp_id = input('param.camp_id',9);
+        $camp_id = $this->campInfo['id'];
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
