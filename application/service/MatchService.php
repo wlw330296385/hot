@@ -597,10 +597,13 @@ class MatchService {
     public function getMatchRefereeApplyPaginator($map=[], $order='id desc', $size=10) {
         $model = new MatchRefereeApply();
         $res = $model->where($map)->order($order)->paginate($size);
-        if ($res) {
+        if (!$res) {
             return $res;
         }
         $result = $res->toArray();
+        foreach ($result['data'] as $k => $val) {
+            $result['data'][$k]['match'] = $this->getMatch(['id' => $val['match_id']]);
+        }
         return $result;
     }
 
@@ -608,10 +611,13 @@ class MatchService {
     public function getMatchRefereeApplyList($map=[], $page=1, $order='id desc', $size=10) {
         $model = new MatchRefereeApply();
         $res = $model->where($map)->order($order)->page($page)->limit($size)->select();
-        if ($res) {
+        if (!$res) {
             return $res;
         }
         $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            $result[$k]['match'] = $this->getMatch(['id' => $val['match_id']]);
+        }
         return $result;
     }
 

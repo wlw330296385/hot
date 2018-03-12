@@ -40,6 +40,7 @@ class Team extends Base
                     'team' => $data['name'],
                     'member_id' => $this->memberInfo['id'],
                     'member' => $this->memberInfo['member'],
+                    'name' => empty($this->memberInfo['realname']) ? $this->memberInfo['member'] : $this->memberInfo['realname'],
                     'telephone' => $this->memberInfo['telephone'],
                     'sex' => $this->memberInfo['sex'],
                     'avatar' => $this->memberInfo['avatar'],
@@ -310,21 +311,23 @@ class Team extends Base
             ];
             $hasApply = $teamS->getApplyInfo($mapApplyinfo);
             if ($hasApply) {
-                if ($hasApply['status_num'] == 1) {
-                    return json(['code' => 100, 'msg' => '你已经提交了加入申请，请等待球队处理回复']);
-                } else {
+//                if ($hasApply['status_num'] == 1) {
+//                    return json(['code' => 100, 'msg' => '你已经提交了加入申请，请等待球队处理回复']);
+//                } else {
                     $dataApply['id'] = $hasApply['id'];
-                }
+                //}
             }
             $saveApply = $teamS->saveApply($dataApply);
+            $remark = empty($data['remarks']) ? "" : '申请说明：'.$data['remarks'];
             //dump($saveApply);
             if ($saveApply['code'] == 200) {
+                $applyId = ($hasApply) ? $hasApply['id'] : $saveApply['data'];
                 // 插入message数据
                 // 发送加入申请消息给领队
                 $messageData = [
-                    'title' => '加入球队申请',
-                    'content' => '您好，会员' . $dataApply['member'] . '申请加入您的' . $teamInfo['name'],
-                    'url' => url('keeper/team/teamapplyinfo', ['id' => $saveApply['data'], 'team_id' => $teamInfo['id']], '', true),
+                    'title' => '您好，会员' . $dataApply['member'] . '申请加入您的' . $teamInfo['name'] .'球队',
+                    'content' => '您好，会员' . $dataApply['member'] . '申请加入您的' . $teamInfo['name'].'球队。'.$remark,
+                    'url' => url('keeper/team/teamapplyinfo', ['id' => $applyId, 'team_id' => $teamInfo['id']], '', true),
                     'keyword1' => (!empty($this->memberInfo['realname'])) ? $this->memberInfo['realname'] : $this->memberInfo['member'],
                     'keyword2' => date('Y年m月d日 H:i', time()),
                     'remark' => '点击登录平台查看更多信息，对加入申请作同意或拒绝回复',
@@ -376,12 +379,13 @@ class Team extends Base
             // 更新apply数据，$status=2同意，3拒绝
             $applySaveResult = $teamS->saveApply(['id' => $applyInfo['id'], 'status' => $status, 'reply' => $reply]);
             //dump($applySave);
-            $replystr = '已拒绝';
-            $url = url('keeper/message/index', '', '', true);
+            $replystr = '已被拒绝';
+            // 获取球队信息
+            $teamInfo = $teamS->getTeam(['id' => $applyInfo['organization_id']]);
+            $url = url('keeper/team/teaminfo', ['team_id' => $teamInfo['id']], '', true);
             if ($status == 2) {
                 if ($applySaveResult['code'] == 200) {
-                    // 获取球队信息
-                    $teamInfo = $teamS->getTeam(['id' => $applyInfo['organization_id']]);
+
 
                     // 保存球队-会员信息，会员有真实姓名记录真实姓名否则记录会员名
                     $dataTeamMember = [
@@ -389,6 +393,7 @@ class Team extends Base
                         'team' => $applyInfo['organization'],
                         'member_id' => $applyInfo['member']['id'],
                         'member' => (!empty($applyInfo['member']['realname'])) ? $applyInfo['member']['realname'] : $applyInfo['member']['member'],
+                        'name' => (!empty($applyInfo['member']['realname'])) ? $applyInfo['member']['realname'] : $applyInfo['member']['member'],
                         'telephone' => $applyInfo['member']['telephone'],
                         'sex' => $applyInfo['member']['sex'],
                         'avatar' => $applyInfo['member']['avatar'],
@@ -423,7 +428,6 @@ class Team extends Base
                             'status' => 1, 'create_time' => time()
                         ]);
                     }
-                    $url = url('keeper/team/teammanage', ['team_id' => $teamInfo['id']], '', true);
                 }
                 $replystr = '已通过';
             }
@@ -432,10 +436,10 @@ class Team extends Base
                 $reply = '对方回复：'.$reply;
             }
             $messageData = [
-                'title' => '加入球队申请结果通知',
-                'content' => '加入球队' . $applyInfo['organization'] . '申请。' . $reply,
+                'title' => '您好，申请加入球队'. $applyInfo['organization'] . $replystr,
+                'content' => '您好，申请加入球队'. $applyInfo['organization'] . $replystr . $reply,
                 'url' => $url,
-                'keyword1' => '加入球队，队名：' . $applyInfo['organization'],
+                'keyword1' => '申请加入球队：' . $applyInfo['organization'],
                 'keyword2' => $replystr,
                 'remark' => '点击登录平台查看更多信息',
                 'steward_type' => 2
@@ -550,8 +554,8 @@ class Team extends Base
             $teamS = new TeamService();
             // 判断是否领队，领队成员才能操作
             $teamrole = $teamS->checkMemberTeamRole($team_id, $this->memberInfo['id']);
-            if ($teamrole != 5) {
-                return json(['code' => 100, 'msg' => __lang('MSG_403') . '，只有领队成员才能操作']);
+            if ($teamrole < 5) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403') . '，只有领队或经理成员才能操作']);
             }
             // 领队不能移除自己
             $teamInfo = $teamS->getTeam(['id' => $team_id]);
@@ -639,7 +643,7 @@ class Team extends Base
             $messageData = [
                 'title' => '您好，有球队成员离队',
                 'content' => '您好，球队成员' . $teammember['member'] . '离开' . $teammember['team'] . '球队',
-                'url' => url('keeper/message/index', '', '', true),
+                'url' => url('keeper/team/teaminfo', ['team_id' => $teamInfo['id']], '', true),
                 'keyword1' => '球队成员离队',
                 'keyword2' => $teammember['member'],
                 'keyword3' => date('Y年m月d日 H:i'),
@@ -772,6 +776,7 @@ class Team extends Base
                 $data = [
                     'team_id' => $teamInfo['id'],
                     'team' => $teamInfo['name'],
+                    'name' => $studentInfo['student'], // name是学生名
                     'member_id' => $memberInfo['id'],
                     'member' => $memberInfo['member'],
                     'telephone' => $memberInfo['telephone'],
@@ -820,6 +825,7 @@ class Team extends Base
                 $data = [
                     'team_id' => $teamInfo['id'],
                     'team' => $teamInfo['name'],
+                    'name' => empty($memberInfo['realname']) ? $memberInfo['member'] : $memberInfo['realname'], // name是会员真实名或会员账号
                     'member_id' => $memberInfo['id'],
                     'member' => $memberInfo['member'],
                     'telephone' => $memberInfo['telephone'],
@@ -854,10 +860,11 @@ class Team extends Base
                         'inviter_id' => $this->memberInfo['id'],
                         'member' => $memberInfo['member'],
                         'member_id' => $memberInfo['id'],
-                        'remarks' => '球队-'.$teamInfo['name'].'邀请您加入'
+                        'remarks' => '球队-'.$teamInfo['name'].'邀请您加入',
+                        'status' => 1
                     ];
                     // 检查有无邀请apply记录
-                    $hasApplyInfo = $teamS->getApplyInfo([
+                    /*$hasApplyInfo = $teamS->getApplyInfo([
                         'type' => 2,
                         'apply_type' => 2,
                         'organization_type' => 2,
@@ -866,12 +873,13 @@ class Team extends Base
                     ]);
                     if ($hasApplyInfo) {
                         $dataApply['id'] = $hasApplyInfo['id'];
-                    }
+                    }*/
                     $resultSaveApply = $teamS->saveApply($dataApply);
                     if ($resultSaveApply['code'] == 100) {
                         return json(['code' => 100, 'msg' => '发送邀请失败']);
                     }
-                    $applyId = ($hasApplyInfo) ? $hasApplyInfo['id'] : $resultSaveApply['data'];
+                    //$applyId = ($hasApplyInfo) ? $hasApplyInfo['id'] : $resultSaveApply['data'];
+                    $applyId = $resultSaveApply['data'];
                     // 发送邀请通知给会员
                     $messageData = [
                         'title' => '球队-'.$teamInfo['name'].'邀请您加入',
@@ -955,11 +963,11 @@ class Team extends Base
                 $reply = '对方回复：'.$reply;
             }
             $messageData = [
-                'title' => '会员'.$replystr.'球队',
+                'title' => '会员'. $applyInfo['member']['member'] . $replystr.'球队' . $applyInfo['organization'],
                 'content' => '会员'. $applyInfo['member']['member'] . $replystr . '球队' . $applyInfo['organization'] . '。' . $reply,
                 'url' => $url,
                 'keyword1' => '会员'. $applyInfo['member']['member'] . $replystr . '球队' . $applyInfo['organization'],
-                'keyword2' => '会员'.$replystr.'球队',
+                'keyword2' => $replystr,
                 'remark' => '点击登录平台查看更多信息',
                 'steward_type' => 2
             ];
@@ -1020,7 +1028,8 @@ class Team extends Base
             $dataTeamMember['team_id'] = $teamInfo['id'];
             $dataTeamMember['team'] = $teamInfo['name'];
             $dataTeamMember['member_id'] = -1;
-            $dataTeamMember['member'] = $request['name'];
+            $dataTeamMember['member'] = '';
+            $dataTeamMember['name'] = $request['name'];
             $dataTeamMember['avatar'] = config('default_image.member_avatar');
             $dataTeamMember['number'] = !empty($request['number']) ? $request['number'] : null;
             $dataTeamMember['status'] = 1;
