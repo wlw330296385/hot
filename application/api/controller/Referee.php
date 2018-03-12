@@ -394,6 +394,7 @@ class Referee extends Base{
             if (!in_array($status, [2, 3])) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请正确传参']);
             }
+            $matchS = new MatchService();
             // 查询邀请数据
             $applyInfo = $this->refereeService->getMatchRefereeApply(['id' => $applyId]);
             if (!$applyInfo) {
@@ -412,7 +413,7 @@ class Referee extends Base{
                 return json(['code' => 100, 'msg' => '您无权操作此信息']);
             }
             // 更新邀请数据
-            $resSaveApply = $this->refereeService->saveMatchRefereeApply([
+            $resSaveApply = $matchS->saveMatchRerfereeApply([
                 'id' => $applyInfo['id'],
                 'status' => $status,
                 'reply' => $reply
@@ -422,7 +423,6 @@ class Referee extends Base{
             }
 
             // 保存比赛-裁判关系
-            $matchS = new MatchService();
             $dataMatchReferee = [
                 'match_id' => $applyInfo['match_id'],
                 'match' => $applyInfo['match'],
