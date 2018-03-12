@@ -130,6 +130,7 @@ class Match extends Base
     // 根据提交的比赛信息所选裁判类型执行的业务
     protected function setMatchRefereeType($refereeType=0, $matchData=[], $matchId=0, $matchRecordId=0) {
         $refereeS = new RefereeService();
+        $matchS = new MatchService();
         $messageS = new MessageService();
         // 组合接收信息member_id集合
         $memberIds = [];
@@ -182,7 +183,7 @@ class Match extends Base
                 }
             }
             // 保存比赛邀请裁判数据
-            $refereeS->saveAllMatchRerfereeApply($applyData);
+            $matchS->saveAllMatchRerfereeApply($applyData);
             $linkurl = url('keeper/referee/matchapply', ['match_id' => $matchId], '', true);
         }
 
