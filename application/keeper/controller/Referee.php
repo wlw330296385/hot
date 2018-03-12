@@ -124,7 +124,6 @@ class Referee extends Base{
         ]);
     }
 
-
     //注册成功
     public function registerSuccess(){
         return view('Referee/registerSuccess');
