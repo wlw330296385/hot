@@ -1028,36 +1028,85 @@ class Team extends Base
             $dataTeamMember['team_id'] = $teamInfo['id'];
             $dataTeamMember['team'] = $teamInfo['name'];
             $dataTeamMember['member_id'] = -1;
-            $dataTeamMember['member'] = '';
+            $dataTeamMember['member'] = $request['name'];
             $dataTeamMember['name'] = $request['name'];
             $dataTeamMember['avatar'] = config('default_image.member_avatar');
             $dataTeamMember['number'] = !empty($request['number']) ? $request['number'] : null;
             $dataTeamMember['status'] = 1;
             $resSaveTeamMember = $teamS->saveTeamMember($dataTeamMember);
 
-            // 处理球队职务
-            if ($request['role']) {
-                switch ($request['role']) {
-                    case 1 : {
-                        // 后勤
-
-                    }
-                    case 2 : {
-                        // 副队长
-                        if ( empty($teamInfo['vice_captain']) ) {
-
-                        } else {
-                            // 已有副队长
+            if ($resSaveTeamMember['code'] == 200) {
+                // 处理球队职务
+                if ($request['role']) {
+                    switch ($request['role']) {
+                        case 1 : {
+                            // 后勤 保存team_role数据 type=1
+                            $teamS->addTeamMemberRole([
+                                'team_id' => $teamInfo['id'],
+                                'member_id' => -1,
+                                'name' => $request['name'],
+                                'type' => 1,
+                                'status' => 1
+                            ]);
+                            break;
                         }
-                    }
-                    case 3 : {
-                        // 队长
-                    }
-                    case 4 : {
-                        // 教练
+                        case 2 : {
+                            // 副队长 保存team_role数据 type=2
+                            if ( empty($teamInfo['vice_captain']) ) {
+                                $teamS->addTeamMemberRole([
+                                    'team_id' => $teamInfo['id'],
+                                    'member_id' => -1,
+                                    'name' => $request['name'],
+                                    'type' => 2,
+                                    'status' => 1
+                                ]);
+                                // 更新team表字段
+                                $teamS->updateTeam([
+                                    'vice_captain' => $request['name'],
+                                    'vice_captain_id' => -1
+                                ], $teamInfo['id']);
+                            } else {
+                                // 已有副队长
+                                $resSaveTeamMember['msg'] = $resSaveTeamMember['msg'] . '<br>球队已设置副队长，若要更换请前往球队编辑';
+                            }
+                            break;
+                        }
+                        case 3 : {
+                            // 队长 保存team_role数据 type=3
+                            if ( empty($teamInfo['captain']) ) {
+                                $teamS->addTeamMemberRole([
+                                    'team_id' => $teamInfo['id'],
+                                    'member_id' => -1,
+                                    'name' => $request['name'],
+                                    'type' => 3,
+                                    'status' => 1
+                                ]);
+                                // 更新team表字段
+                                $teamS->updateTeam([
+                                    'captain' => $request['name'],
+                                    'captain_id' => -1
+                                ], $teamInfo['id']);
+                            } else {
+                                // 已有队长
+                                $resSaveTeamMember['msg'] = $resSaveTeamMember['msg'] . '<br>球队已设置队长，若要更换请前往球队编辑';
+                            }
+                            break;
+                        }
+                        case 4 : {
+                            // 教练 保存team_role数据 type=4
+                            $teamS->addTeamMemberRole([
+                                'team_id' => $teamInfo['id'],
+                                'member_id' => -1,
+                                'name' => $request['name'],
+                                'type' => 4,
+                                'status' => 1
+                            ]);
+                            break;
+                        }
                     }
                 }
             }
+
 
             return json($resSaveTeamMember);
         } catch (Exception $e) {
