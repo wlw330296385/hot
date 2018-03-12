@@ -342,11 +342,11 @@ class TeamService
         $saveAlldata = [];
 
         // 查询当前"领队"数据（领队一个）
-        $roleLeader = $model->where(['team_id' => $team_id, 'member_id' => $data['leader_id'], 'member' => $data['leader'], 'type' => 5])->find();
+        $roleLeader = $model->where(['team_id' => $team_id, 'member_id' => $data['leader_id'], 'member' => $data['leader'], 'type' => 6])->find();
         if (!$roleLeader) {
             // 直接插入新数据
             array_push($saveAlldata, [
-                'type' => 5,
+                'type' => 6,
                 'team_id' => $team_id,
                 'member_id' => $data['leader_id'],
                 'member' => $data['leader'],
@@ -368,7 +368,7 @@ class TeamService
         if (empty($data['manager_id'])) {
             // 如原有"经理"数据 则删除数据关系|无数据 不操作
             if ( $teamInfo['manager_id'] && !empty($teamInfo['manager']) ) {
-                $roleManager = $model->where(['team_id' => $team_id, 'member_id' => $teamInfo['manager_id'], 'member' => $teamInfo['manager'], 'type' => 5])->find();
+                $roleManager = $model->where(['team_id' => $team_id, 'member_id' => $teamInfo['manager_id'], 'name' => $teamInfo['manager'], 'type' => 5])->find();
                 if ($roleManager) {
                     $roleManager = $roleManager->toArray();
                     if ($roleManager['member_id'] != $data['manager_id']) {
@@ -381,7 +381,7 @@ class TeamService
             }
         } else {
             // 查询当前"经理"数据
-            $roleManager = $model->where(['team_id' => $team_id, 'member_id' => $data['manager_id'], 'member' => $data['manager'],'type' => 5])->find();
+            $roleManager = $model->where(['team_id' => $team_id, 'member_id' => $data['manager_id'], 'name' => $data['manager'],'type' => 5])->find();
             if (!$roleManager) {
                 // 直接插入新数据
                 array_push($saveAlldata, [
@@ -407,7 +407,7 @@ class TeamService
 
         // 查询当前"队长"数据（队长一个）
         if (!empty($data['captain'])) {
-            $roleCaptain = $model->where(['team_id' => $team_id, 'type' => 3, 'member_id' => $data['captain_id'], 'member' => $data['captain']])->find();
+            $roleCaptain = $model->where(['team_id' => $team_id, 'type' => 3, 'member_id' => $data['captain_id'], 'name' => $data['captain']])->find();
             if (!$roleCaptain) {
                 // 直接插入新数据
                 array_push($saveAlldata, [
@@ -439,7 +439,7 @@ class TeamService
 
         // 查询当前"副队长"数据（队长一个）
         if (!empty($data['vice_captain'])) {
-            $roleViceCaptain = $model->where(['team_id' => $team_id, 'type' => 2, 'member_id' => $data['vice_captain_id'], 'member' => $data['vice_captain']])->find();
+            $roleViceCaptain = $model->where(['team_id' => $team_id, 'type' => 2, 'member_id' => $data['vice_captain_id'], 'name' => $data['vice_captain']])->find();
             if (!$roleViceCaptain) {
                 // 直接插入新数据
                 array_push($saveAlldata, [
@@ -480,7 +480,7 @@ class TeamService
                 // 不在集合中
                 if (!in_array($val, $roleCoachs)) {
                     // 有无team_member_role教练数据
-                    $hasCoach = $model->where(['team_id' => $team_id, 'type' => 4, 'member_id' => $val, 'member' => $coach_members[$k]])->find();
+                    $hasCoach = $model->where(['team_id' => $team_id, 'type' => 4, 'member_id' => $val, 'name' => $coach_members[$k]])->find();
                     if (!$hasCoach) {
                         // 插入新的team_member_role教练数据
                         array_push($saveAlldata, [
@@ -526,7 +526,7 @@ class TeamService
                 // 不在集合中
                 if (!in_array($val, $roleCommittees)) {
                     // 有无team_member_role队委数据
-                    $hascommittee = $model->where(['team_id' => $team_id, 'type' => 1, 'member_id' => $val, 'member' => $committee_members[$k1]])->find();
+                    $hascommittee = $model->where(['team_id' => $team_id, 'type' => 1, 'member_id' => $val, 'name' => $committee_members[$k1]])->find();
                     if (!$hascommittee) {
                         // 插入新的team_member_role队委数据
                         array_push($saveAlldata, [

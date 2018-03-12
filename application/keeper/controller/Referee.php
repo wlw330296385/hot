@@ -152,14 +152,14 @@ class Referee extends Base{
             $map['match_id'] = $matchId;
             $map['referee_id'] = $refereeInfo['id'];
         }
-        $applyInfo = $this->refereeService->getMatchRefereeApply($map);
+        $matchService = new MatchService();
+        $applyInfo = $matchService->getMatchRerfereeApply($map);
         // 查询关联的比赛数据
-        $matchS = new MatchService();
-        $matchInfo = $matchS->getMatch(['id' => $applyInfo['match_id']]);
+        $matchInfo = $matchService->getMatch(['id' => $applyInfo['match_id']]);
         if ($matchInfo) {
             $applyInfo['match'] = $matchInfo;
         }
-        $matchRecordInfo = $matchS->getMatchRecord(['id' => $applyInfo['match_record_id']]);
+        $matchRecordInfo = $matchService->getMatchRecord(['id' => $applyInfo['match_record_id']]);
         if ($matchRecordInfo) {
             $applyInfo['match_record'] = $matchRecordInfo;
         }
