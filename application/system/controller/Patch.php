@@ -568,9 +568,11 @@ class Patch extends Controller {
         }
     }
 
-    // 补全team_member_role member字段 2018-02-28
-    public function teamRoleMember() {
+    // 整理team_member_role数据表
+    public function teamMemberRole() {
         try {
+            /**
+             * 补全team_member_role member字段 2018-02-28
             db('team_member_role')->chunk(50, function($roles) {
                 foreach ($roles as $role) {
                     //dump($role);
@@ -588,6 +590,51 @@ class Patch extends Controller {
                         ]);
                     }
                 }
+            });
+             */
+            // 手动清空team_member_role数据
+            // 生成领队type=6，队长type=3 数据
+            db('team')->chunk(50, function($teams) {
+               foreach ($teams as $team) {
+                   if ($team['leader']) {
+                       db('team_member_role')->insert([
+                           'team_id' => $team['id'],
+                           'member_id' => $team['leader_id'],
+                           'member' => $team['leader'],
+                           'name' => $team['leader'],
+                           'type' => 6,
+                           'status' => 1,
+                           'create_time' => time(),
+                           'update_time' => time()
+                       ]);
+                   }
+                   if ($team['captain']) {
+                       db('team_member_role')->insert([
+                           'team_id' => $team['id'],
+                           'member_id' => $team['captain_id'],
+                           'member' => $team['captain'],
+                           'name' => $team['captain'],
+                           'type' => 3,
+                           'status' => 1,
+                           'create_time' => time(),
+                           'update_time' => time()
+                       ]);
+                   }
+               }
+            });
+
+            // 补充team_member name字段
+            db('team_member')->chunk(50, function($members) {
+               foreach ($members as $member) {
+                   db('team_member')->where('id', $member['id'])->update([
+                       'name' => $member['member']
+                   ]);
+                   if ($member['member_id'] == -1) {
+                       db('team_member')->where('id', $member['id'])->update([
+                           'member' => null
+                       ]);
+                   }
+               }
             });
         } catch (Exception $e) {
             dump($e->getMessage());
