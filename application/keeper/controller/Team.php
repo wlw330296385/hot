@@ -148,11 +148,18 @@ class Team extends Base {
     // 队员档案
     public function teammemberinfo() {
         // 接收参数
+        $id = input('id', 0); //team_member表id
         $team_id = input('team_id', 0);
         $member_id = input('member_id', 0);
         $teamS = new TeamService();
         // 获取队员在当前球队的数据信息
-        $map = ['team_id' => $team_id, 'member_id' => $member_id];
+        $map=[];
+        if (!$id) {
+            $map = ['team_id' => $team_id, 'member_id' => $member_id];
+        } else {
+            $map['id'] = $id;
+        }
+        
         $teamMemberInfo = $teamS->getTeamMemberInfo($map);
         if (!$teamMemberInfo) {
             $this->error('无此队员信息');
