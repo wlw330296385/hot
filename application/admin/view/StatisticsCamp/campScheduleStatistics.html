@@ -9,13 +9,13 @@
 &nbsp;&nbsp;&nbsp;&nbsp;总购买课时:{$totalBuy}
 &nbsp;&nbsp;&nbsp;&nbsp;总赠送课时:{$totalGift}
 &nbsp;&nbsp;&nbsp;&nbsp;总已上课时:{$totalSchedule}
-&nbsp;&nbsp;&nbsp;&nbsp;总退费课时:{$totalRefundScheduleList}
-&nbsp;&nbsp;&nbsp;&nbsp;总剩余课时(全部时间?): {$totalBuy-$totalSchedule-$totalRefundScheduleList+$totalGift}
+&nbsp;&nbsp;&nbsp;&nbsp;总退费课时:{$totalRefundSchedule}
+&nbsp;&nbsp;&nbsp;&nbsp;总剩余课时(全部时间?): {$totalBuy-$totalSchedule-$totalRefundSchedule+$totalGift}
 
 <p>=================买课=========================</p>
 {volist name="buyList" id="vol"}
 
-<p>课程:{$vol.goods} &nbsp;&nbsp;&nbsp;&nbsp; 单价:{$vol.price} &nbsp;&nbsp;&nbsp;&nbsp;本月缴费课时:{$vol.s_total} </p>
+<p>课程:{$key} &nbsp;&nbsp;&nbsp;&nbsp; 单价:{$vol.price} &nbsp;&nbsp;&nbsp;&nbsp;本月缴费课时:{$vol.s_total} </p>
 
 {/volist}
 
@@ -23,15 +23,15 @@
 <p>===================赠课=======================</p>
 {volist name="giftList" id="vol"}
 
-<p>课程:{$vol.lesson} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本月赠送课时:{$vol.s_gift_schedule} </p>
+<p>课程:{$key} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本月赠送课时:{$vol.s_gift_schedule} </p>
 
 {/volist}
 
 
 <p>===================已上=======================</p>
-{volist name="totalSchedule" id="vol"}
+{volist name="totalScheduleList" id="vol"}
 
-<p>课程:{$vol.lesson} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;已上课时:{$vol.s_students} </p>
+<p>课程:{$key} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;已上课时:{$vol.s_students} </p>
 
 {/volist}
 
@@ -39,7 +39,7 @@
 <p>===================退费=======================</p>
 {volist name="refundScheduleList" id="vol"}
 
-<p>课程:{$vol.lesson} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;退费课时:{$vol.s_totalRefund} </p>
+<p>课程:{$key} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;退费课时:{$vol.s_totalRefund} </p>
 
 {/volist}
 
@@ -85,8 +85,8 @@
                                 <span><small>总购买课时：</small><strong class="text-yellow">{$totalBuy}</strong></span>
                                 <span><small>总赠送课时：</small><strong class="text-yellow monthOut">{$totalGift}</strong></span>
                                 <span><small>总已上课时：</small><strong class="text-yellow monthXF">{$totalSchedule}</strong></span>
-                                <span><small>总退费课时：</small><strong class="text-yellow monthTX">{$totalRefundScheduleList}</strong></span>
-                                <span><small>总剩余课时（应该是未上的课时）：</small><strong class="text-yellow monthTX">{$totalBuy-$totalSchedule-$totalRefundScheduleList+$totalGift}</strong></span>
+                                <span><small>总退费课时：</small><strong class="text-yellow monthTX">{$totalRefundSchedule}</strong></span>
+                                <span><small>总剩余课时（应该是未上的课时）：</small><strong class="text-yellow monthTX">{$totalBuy-$totalSchedule-$totalRefundSchedule+$totalGift}</strong></span>
                             </h3>
                         </div>
                     </div>
