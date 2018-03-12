@@ -153,10 +153,9 @@ class Team extends Base {
         $member_id = input('member_id', 0);
         $teamS = new TeamService();
         // 获取队员在当前球队的数据信息
-        $map=[];
-        if (!$id) {
-            $map = ['team_id' => $team_id, 'member_id' => $member_id];
-        } else {
+
+        $map = ['team_id' => $team_id, 'member_id' => $member_id];
+        if ($id) {
             $map['id'] = $id;
         }
         
@@ -166,7 +165,11 @@ class Team extends Base {
         }
 
         // 该队员的其他球队列表
-        $memberOtherTeamMap = [ 'member_id' => $member_id, 'team_id' => ['neq', $team_id]];
+        $memberOtherTeamMap = [
+            'member_id' => $member_id,
+            'team_id' => ['neq', $team_id],
+            'member' => ['like', "%". $teamMemberInfo['member'] ."%"]
+        ];
         $memberOtherTeam = $teamS->getTeamMemberList($memberOtherTeamMap);
 
         // 领队可移除除自己外的球队成员，成员自己申请退队 按钮显示
@@ -202,11 +205,15 @@ class Team extends Base {
     // 队员编辑
     public function teammemberedit() {
         // 接收参数
+        $id = input('id', 0); //team_member表id
         $team_id = input('team_id', 0);
         $member_id = input('member_id', 0);
         $teamS = new TeamService();
         // 获取队员在当前球队的数据信息
         $map = ['team_id' => $team_id, 'member_id' => $member_id];
+        if ($id) {
+            $map['id'] = $id;
+        }
         $teamMemberInfo = $teamS->getTeamMemberInfo($map);
         // 可访问页面人员判断：队员自己、球队队委及以上角色成员
         $teamrole = $teamS->checkMemberTeamRole($this->team_id, $this->memberInfo['id']);

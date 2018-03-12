@@ -14,7 +14,7 @@ class Referee extends Base{
 		$refereeId = input('referee_id', 0);
 		$refereeInfo = $this->refereeService->getRefereeInfo(['id' => $refereeId]);
 		$this->assign('refereeId', $refereeId);
-		$this->assign('refereeeInfo', $refereeInfo);
+		$this->assign('refereeInfo', $refereeInfo);
 	}
 
     // 裁判主页
