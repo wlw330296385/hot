@@ -335,7 +335,8 @@ class Referee extends Base{
                 unset($map['page']);
             }
             // 查询申请|受邀比赛列表（分页）
-            $result = $this->refereeService->getMatchRefereeApplyPaginator($map);
+            $matchService = new MatchService();
+            $result = $matchService->getMatchRefereeApplyPaginator($map);
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             } else {
@@ -366,7 +367,9 @@ class Referee extends Base{
                 unset($map['page']);
             }
             // 查询申请|受邀比赛列表
-            $result = $this->refereeService->getMatchRefereeApplyList($map, $page);
+            $matchService = new MatchService();
+            $matchService = new MatchService();
+            $result = $matchService->getMatchRefereeApplyList($map, $page);
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             } else {

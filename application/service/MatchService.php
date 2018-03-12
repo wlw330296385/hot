@@ -593,4 +593,73 @@ class MatchService {
         return $result;
     }
 
+    // 获取比赛申请|邀请裁判列表（分页也么）
+    public function getMatchRefereeApplyPaginator($map=[], $order='id desc', $size=10) {
+        $model = new MatchRefereeApply();
+        $res = $model->where($map)->order($order)->paginate($size);
+        if ($res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    // 获取比赛申请|邀请裁判列表
+    public function getMatchRefereeApplyList($map=[], $page=1, $order='id desc', $size=10) {
+        $model = new MatchRefereeApply();
+        $res = $model->where($map)->order($order)->page($page)->limit($size)->select();
+        if ($res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    // 保存比赛邀请裁判数据
+    public function saveMatchRerfereeApply($data) {
+        $model = new MatchRefereeApply();
+        if (isset($data['id'])) {
+            // 更新数据
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        } else {
+            // 插入数据
+            $res = $model->allowField(true)->save($data);
+            if ($res) {
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+    }
+
+    // 批量保存比赛邀请裁判数据
+    public function saveAllMatchRerfereeApply($data) {
+        $model = new MatchRefereeApply();
+        $res = $model->saveAll($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200')];
+        } else {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
+    // 获取比赛邀请裁判数据
+    public function getMatchRerfereeApply($map=[]) {
+        $model = new MatchRefereeApply();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
 }
