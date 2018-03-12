@@ -158,7 +158,7 @@ class Referee extends Base{
         $matchInfo = $matchService->getMatch(['id' => $applyInfo['match_id']]);
         $matchRecordInfo = $matchService->getMatchRecord(['id' => $applyInfo['match_record_id']]);
         if ($matchRecordInfo) {
-            $matchInfo['match_record'] = $matchRecordInfo;
+            $matchInfo['record'] = $matchRecordInfo;
         }
 
         return view('Referee/matchApply', [
