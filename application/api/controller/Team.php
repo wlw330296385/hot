@@ -182,7 +182,7 @@ class Team extends Base
             }
             
             // 根据访问模块查询球队type：frontend（培训）type!=3
-            if (!input('?param.type')) {
+            if ( !input('?param.type') || empty($map['type']) ) {
                 if ( cookie('module') =='frontend' ) {
                     $map['type'] = ['not in', [2,3]];
                 } elseif (cookie('module') =='keeper') {
@@ -234,7 +234,7 @@ class Team extends Base
             }
 
             // 默认访问模块查询球队type：frontend（培训）type!=3
-            if (!input('?param.type')) {
+            if ( !input('?param.type') || empty($map['type']) ) {
                 if ( cookie('module') =='frontend' ) {
                     $map['type'] = ['not in', [2,3]];
                 } elseif (cookie('module') =='keeper') {
