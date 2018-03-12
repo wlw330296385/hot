@@ -5,19 +5,6 @@
 {/block}
 {block name="page-content"}
 
-<p>==================课程=================</p>
-{volist name="lessonBill" id="vol"}
-	<p>课程:{$vol.goods} &nbsp;&nbsp;&nbsp;&nbsp; 交费次数:{$vol.c_id} &nbsp;&nbsp;&nbsp;&nbsp; 交费金额: {$vol.total_pay}</p>
-{/volist}
-
-<p>==================活动=================</p>
-{volist name="eventBill" id="vol"}
-	<p>活动:{$vol.goods} &nbsp;&nbsp;&nbsp;&nbsp; 交费次数:{$vol.c_id} &nbsp;&nbsp;&nbsp;&nbsp; 交费金额: {$vol.total_pay}</p>
-{/volist}
-
-
-
-
 <div class="row">
 	<div class="col-xs-12">
 		<div class="box">
@@ -49,8 +36,8 @@
 								<button type="button" class="btn btn-default" id="goSearch">确认查询</button>
 							</div>
 							<h3 class="totalRight">
-								<span><small>本月课程营业额：</small><strong class="text-yellow monthIn">各总数没有</strong></span>
-								<span><small>本月活动营业额：</small><strong class="text-yellow monthIn">各总数没有</strong></span>
+								<span><small>本月课程营业额：</small><strong class="text-yellow monthLesson">各总数没有</strong></span>
+								<span><small>本月活动营业额：</small><strong class="text-yellow monthEvent">各总数没有</strong></span>
 							</h3>
 						</div>
 					</div>
@@ -82,12 +69,20 @@
 					{volist name="lessonBill" id="vol"}
 					<tr role="row" class="odd">
 						<td class="sorting_1">{$vol.goods}</td>
-						<td>{$vol.c_id}</td>
-						<td>{$vol.total_pay}</td>
-						<td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+						<td class="sID">{$vol.c_id}</td>
+						<td class="sPay">{$vol.total_pay}</td>
+						<td><a href="#" class="btn btn-xs btn-default"><i class="fa fa-inbox"></i> 详情</a></td>
 					</tr>
 					{/volist}
 					</tbody>
+					<tfoot>
+					<tr role="row" class="odd">
+						<td>合计</td>
+						<td class="sIDTotal"></td>
+						<td class="sPayTotal"></td>
+						<td>-</td>
+					</tr>
+					</tfoot>
 				</table>
 			</div>
 		</div>
@@ -110,21 +105,43 @@
 					</tr>
 					</thead>
 					<tbody>
-
 					{volist name="eventBill" id="vol"}
 					<tr role="row" class="odd">
 						<td class="sorting_1">{$vol.goods}</td>
-						<td>{$vol.c_id}</td>
-						<td>{$vol.total_pay}</td>
-						<td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+						<td class="eID">{$vol.c_id}</td>
+						<td class="ePay">{$vol.total_pay}</td>
+						<td><a href="#" class="btn btn-xs btn-default"><i class="fa fa-inbox"></i> 详情</a></td>
 					</tr>
 					{/volist}
 					</tbody>
+					<tfoot>
+					<tr role="row" class="odd">
+						<td>合计</td>
+						<td class="eIDTotal"></td>
+						<td class="ePayTotal"></td>
+						<td>-</td>
+					</tr>
+					</tfoot>
 				</table>
 			</div>
 		</div>
 	</div>
 </div>
+
+
+
+<br /><br /><br /><br />
+<p>==================课程=================</p>
+{volist name="lessonBill" id="vol"}
+<p>课程:{$vol.goods} &nbsp;&nbsp;&nbsp;&nbsp; 交费次数:{$vol.c_id} &nbsp;&nbsp;&nbsp;&nbsp; 交费金额: {$vol.total_pay}</p>
+{/volist}
+
+<p>==================活动=================</p>
+{volist name="eventBill" id="vol"}
+<p>活动:{$vol.goods} &nbsp;&nbsp;&nbsp;&nbsp; 交费次数:{$vol.c_id} &nbsp;&nbsp;&nbsp;&nbsp; 交费金额: {$vol.total_pay}</p>
+{/volist}
+
+
 
 
 
@@ -178,8 +195,8 @@
 <script src="/static/plugins/datepicker/bootstrap-datepicker.js"></script>
 <script>
 
-    var currCampName = localStorage.getItem('currCampName_forCoach');
-    var currCampID = localStorage.getItem('currCampID_forCoach');
+    var currCampName = localStorage.getItem('currCampName');
+    var currCampID = localStorage.getItem('currCampID');
     var currDateYM = localStorage.getItem('currDateYM');
 
     $(function () {
@@ -213,8 +230,36 @@
         //=========================== 初始化数据 ==============================//
 
 
-        toCampList('');
+
+        //遍历需要统计的数据列，并赋值到对应位置
+		var sSum=0;
+        $(".sID").each(function () {
+            sSum = sSum + parseInt($(this).text());
+        });
+        var spSum=0;
+        $(".sPay").each(function () {
+            spSum = spSum + parseInt($(this).text());
+        });
+        var eSum=0;
+        $(".eID").each(function () {
+            eSum = eSum + parseInt($(this).text());
+        });
+        var epSum=0;
+        $(".ePay").each(function () {
+            epSum = epSum + parseInt($(this).text());
+        });
+
+        $(".eIDTotal").text(eSum);
+        $(".ePayTotal").text(epSum);
+        $(".sIDTotal").text(sSum);
+        $(".sPayTotal").text(spSum);
+
+        $(".monthLesson").text(spSum);
+        $(".monthEvent").text(epSum);
+
+
         //平台后续换成分页版（地区代理商无需分页）
+        toCampList('');
 
         $('#lessonList,#eventList').DataTable({
             'paging'      : false,
@@ -273,7 +318,7 @@
             beginDate = arrYM[0]+arrYM[1]+'01';
             endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
 
-            window.location.href="{:url('/admin/Statistics_Camp/campBill/')}"+"camp_id/"+camp_id+"/monthstart/"+beginDate+"/monthend/"+endDate;;
+            window.location.href="{:url('/admin/Statistics_Camp/campTurnover/')}"+"camp_id/"+camp_id+"/monthstart/"+beginDate+"/monthend/"+endDate;;
         })
 
 
