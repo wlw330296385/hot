@@ -102,8 +102,8 @@
 
         // 审核操作
         function check_status(value) {
-            var member = "{$memberInfo.member}";
-            var teams = "{$teamInfo.name}";
+            var member = "{$applyInfo.member.member}";
+            var team = "{$teamInfo.name}";
             var apply_id = document.getElementById('applyid').value;
             var reply = $(".reply").val();
             mui.ajax("{:url('api/team/applyreply')}", {
@@ -118,11 +118,11 @@
                 headers: { 'Content-Type': 'application/json' },
                 success: function (res) {
                     if (res.code == 200) {
-                        var btnArray = ['返回首页', '前往球队主页'];
+                        var btnArray = ['返回首页', '球队主页'];
                         var urlToTeam = "{:url('team/teamInfo')}/team_id/{$teamInfo.id}";
                         var urlToIndex = "{:url('/keeper')}";
                         if (value == 2) {
-                            mui.confirm('欢迎“' + team + '”成为“' + team + '”球队的一员', '', btnArray, function (e) {
+                            mui.confirm('欢迎“' + member + '”成为“' + team + '”球队的一员', '', btnArray, function (e) {
                                 if (e.index == 1) {
                                     window.location.href = urlToTeam;
                                 } else {

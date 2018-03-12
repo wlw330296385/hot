@@ -52,7 +52,7 @@
 
             <!--裁判员-->
             <div class="page-header mb referee" style="background-color: #FFF;">
-                <a href="{:url('referee/refereeManage')}" class="mui-navigate-right">
+                <a href="" id="urls" class="mui-navigate-right">
                     <span class="course wd83">裁判员管理</span>
                 </a>
             </div>
@@ -127,8 +127,8 @@
         swipeBack: true //启用右滑关闭功能
     });
 
-    $(function () {
 
+    $(function () {
         var html = $.trim($(".myteam").html())
         if (html == '') {
             $(".hints").show();
@@ -145,6 +145,8 @@
                 console.log(data);
                 if (data.code == 200) {
                     $(".referee").show();
+                    var urls = "{:url('referee/refereeManage')}" + '/referee_id/' + data.data.id;
+                    $("#urls").attr("href", urls);
                 } else {
                     $(".referee").hide();
                 }
@@ -154,8 +156,9 @@
                 console.log(type);
             }
         });
-    });
 
+        
+    });
 
 </script>
 
