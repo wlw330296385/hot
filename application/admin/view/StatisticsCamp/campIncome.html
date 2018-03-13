@@ -4,14 +4,6 @@
 {/block}
 {block name="page-content"}
 
-{volist name="list3" id="vol"}
-<p>训练营:{$vol.camp} &nbsp;&nbsp;&nbsp;&nbsp; 课程名称:{$vol.goods} &nbsp;&nbsp;&nbsp;人次:{$vol.s_students}&nbsp;&nbsp;&nbsp;课次:{$vol.c_id}  &nbsp;&nbsp;&nbsp;收入:{$vol.s_income}</p>
-{/volist}
-{volist name="list2" id="vol"}
-<p>训练营:{$vol.camp} &nbsp;&nbsp;&nbsp;&nbsp; 活动名称:{$vol.goods} &nbsp;&nbsp;&nbsp;人次:{$vol.s_total} &nbsp;&nbsp;&nbsp;收入:{$vol.s_income}</p>
-{/volist}
-<p>==============================================================</p>
-
 
 <div class="row">
 	<div class="col-xs-12">
@@ -44,7 +36,7 @@
 								<button type="button" class="btn btn-default" id="goSearch">确认查询</button>
 							</div>
 							<h3 class="totalRight">
-								<span><small>本月总收益：</small><strong class="text-yellow monthIn">各总数没有</strong></span>
+								<span><small>本月总收益：</small><strong class="text-yellow monthIn"></strong></span>
 							</h3>
 						</div>
 					</div>
@@ -60,10 +52,11 @@
 <div class="panel panel-default panel-intro">
 	<div class="panel-heading">
 		<h3 class="totalRight pull-right">
-			<span><small>课时收益：</small><strong class="text-yellow">各总数没有</strong></span>
-			<span><small>总课次：</small><strong class="text-yellow"></strong></span>
-			<span><small>总人次：</small><strong class="text-yellow"></strong></span>
-			<span><small>活动收益：</small><strong class="text-yellow"></strong></span>
+			<span><small>课时收益：</small><strong class="text-yellow sKeciTotal"></strong></span>
+			<span><small>购买课量：</small><strong class="text-yellow sRenciTotal"></strong></span>
+			<span><small>购课人次：</small><strong class="text-yellow sXuefeiTotal"></strong></span>
+			<span><small>活动收益：</small><strong class="text-yellow eShouruTotal"></strong></span>
+			<span><small>报名人次：</small><strong class="text-yellow eRenciTotal"></strong></span>
 		</h3>
 		<ul class="nav nav-tabs">
 			<li class="active"><a href="#scheduleCount" data-toggle="tab">课时收益</a></li>
@@ -85,9 +78,9 @@
 							<tr role="row">
 								<th class="sorting_asc">训练营</th>
 								<th>课程</th>
-								<th>课次</th>
+								<th>课量</th>
 								<th>人次</th>
-								<th>总和</th>
+								<th>学费</th>
 								<th>详情</th>
 							</tr>
 							</thead>
@@ -96,13 +89,23 @@
 							<tr role="row" class="odd">
 								<td class="sorting_1">{$vol.camp}</td>
 								<td>{$vol.goods}</td>
-								<td>{$vol.c_id}</td>
-								<td>{$vol.s_total}</td>
-								<td>{$vol.s_income}</td>
+								<td class="sKeci">{$vol.c_id}</td>
+								<td class="sRenci">{$vol.s_students}</td>
+								<td class="sXuefei">{$vol.s_income}</td>
 								<td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
 							</tr>
 							{/volist}
 							</tbody>
+							<tfoot>
+							<tr role="row">
+								<td>合计</td>
+								<td></td>
+								<td class="sKeciTotal"></td>
+								<td class="sRenciTotal"></td>
+								<td class="sXuefeiTotal"></td>
+								<td>-</td>
+							</tr>
+							</tfoot>
 						</table>
 
 					</div>
@@ -135,13 +138,23 @@
 							<tr role="row" class="odd">
 								<td class="sorting_1">{$vol.camp}</td>
 								<td>{$vol.goods}</td>
-								<td>{$vol.c_id}</td>
-								<td>单价或人次少了</td>
-								<td>{$vol.s_income}</td>
+								<td>{$vol.price}</td>
+								<td class="eRenci">{$vol.s_total}</td>
+								<td class="eShouru">{$vol.s_income}</td>
 								<td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
 							</tr>
 							{/volist}
 							</tbody>
+							<tfoot>
+							<tr role="row">
+								<td>合计</td>
+								<td></td>
+								<td></td>
+								<td class="eRenciTotal"></td>
+								<td class="eShouruTotal"></td>
+								<td>-</td>
+							</tr>
+							</tfoot>
 						</table>
 
 					</div>
@@ -154,6 +167,15 @@
 
 
 
+<br /><br /><br /><br />
+
+{volist name="list3" id="vol"}
+<p>训练营:{$vol.camp} &nbsp;&nbsp;&nbsp;&nbsp; 课程名称:{$vol.goods} &nbsp;&nbsp;&nbsp;人次:{$vol.s_students}&nbsp;&nbsp;&nbsp;课次:{$vol.c_id}  &nbsp;&nbsp;&nbsp;收入:{$vol.s_income}</p>
+{/volist}
+{volist name="list2" id="vol"}
+<p>训练营:{$vol.camp} &nbsp;&nbsp;&nbsp;&nbsp; 活动名称:{$vol.goods} &nbsp;&nbsp;&nbsp;人次:{$vol.s_total} &nbsp;&nbsp;&nbsp;收入:{$vol.s_income}</p>
+{/volist}
+<p>==============================================================</p>
 
 
 
@@ -209,8 +231,8 @@
 <script src="/static/plugins/datepicker/bootstrap-datepicker.js"></script>
 <script>
 
-    var currCampName = localStorage.getItem('currCampName_forCoach');
-    var currCampID = localStorage.getItem('currCampID_forCoach');
+    var currCampName = localStorage.getItem('currCampName');
+    var currCampID = localStorage.getItem('currCampID');
     var currDateYM = localStorage.getItem('currDateYM');
 
     $(function () {
@@ -233,7 +255,7 @@
 
         //判断是否有指定训练营和教练员的本地存储
         $("input[name=dateYM]").val(currDateYM);
-        if(currCampID!=''){
+        if(currCampID!=''&&currCampID!=null){
             $("input[name=camp_id]").val(currCampID);
             $("input[name=camp]").val(currCampName);
             $(".campKeyword").val(currCampName);
@@ -244,8 +266,42 @@
         //=========================== 初始化数据 ==============================//
 
 
-        toCampList('');
+
+        //遍历需要统计的数据列，并赋值到对应位置
+        var sKeci=0;
+        $(".sKeci").each(function () {
+            sKeci = sKeci + parseInt($(this).text());
+        });
+        var sRenci=0;
+        $(".sRenci").each(function () {
+            sRenci = sRenci + parseInt($(this).text());
+        });
+        var sXuefei=0;
+        $(".sXuefei").each(function () {
+            sXuefei = sXuefei + parseInt($(this).text());
+        });
+        var eRenci=0;
+        $(".eRenci").each(function () {
+            eRenci = eRenci + parseInt($(this).text());
+        });
+        var eShouru=0;
+        $(".eShouru").each(function () {
+            eShouru = eShouru + parseInt($(this).text());
+        });
+
+        $(".sKeciTotal").text(sKeci);
+        $(".sRenciTotal").text(sRenci);
+        $(".sXuefeiTotal").text(sXuefei);
+        $(".eRenciTotal").text(eRenci);
+        $(".eShouruTotal").text(eShouru);
+        var mIn = parseInt(sXuefei)+parseInt(eShouru);
+        $(".monthIn").text(mIn);
+
+
+
+
         //平台后续换成分页版（地区代理商无需分页）
+        toCampList('');
 
         $('#scheduleList,#eventList').DataTable({
             'paging'      : true,
@@ -304,7 +360,7 @@
             beginDate = arrYM[0]+arrYM[1]+'01';
             endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
 
-            window.location.href="{:url('/admin/Statistics_Camp/campBill/')}"+"camp_id/"+camp_id+"/monthstart/"+beginDate+"/monthend/"+endDate;;
+            window.location.href="{:url('/admin/Statistics_Camp/campIncome/')}"+"camp_id/"+camp_id+"/monthstart/"+beginDate+"/monthend/"+endDate;;
         })
 
 

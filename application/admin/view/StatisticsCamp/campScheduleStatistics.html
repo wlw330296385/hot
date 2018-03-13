@@ -5,47 +5,10 @@
 {/block}
 {block name="page-content"}
 
-<p>==================月=================</p>
-&nbsp;&nbsp;&nbsp;&nbsp;总购买课时:{$totalBuy}
-&nbsp;&nbsp;&nbsp;&nbsp;总赠送课时:{$totalGift}
-&nbsp;&nbsp;&nbsp;&nbsp;总已上课时:{$totalSchedule}
-&nbsp;&nbsp;&nbsp;&nbsp;总退费课时:{$totalRefundSchedule}
-&nbsp;&nbsp;&nbsp;&nbsp;总剩余课时(全部时间?): {$totalBuy-$totalSchedule-$totalRefundSchedule+$totalGift}
-
-<p>=================买课=========================</p>
-{volist name="buyList" id="vol"}
-
-<p>课程:{$key} &nbsp;&nbsp;&nbsp;&nbsp; 单价:{$vol.price} &nbsp;&nbsp;&nbsp;&nbsp;本月缴费课时:{$vol.s_total} </p>
-
-{/volist}
-
-
-<p>===================赠课=======================</p>
-{volist name="giftList" id="vol"}
-
-<p>课程:{$key} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本月赠送课时:{$vol.s_gift_schedule} </p>
-
-{/volist}
-
-
-<p>===================已上=======================</p>
-{volist name="totalScheduleList" id="vol"}
-
-<p>课程:{$key} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;已上课时:{$vol.s_students} </p>
-
-{/volist}
-
-
-<p>===================退费=======================</p>
-{volist name="refundScheduleList" id="vol"}
-
-<p>课程:{$key} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;退费课时:{$vol.s_totalRefund} </p>
-
-{/volist}
 
 
 
-<!----------------------------------- 训练营（课时结算版）资金账单 ： 开始-------------------------------------------->
+<!----------------------------------- 训练营（课时结算版）课时统计 ： 开始-------------------------------------------->
 
 <div class="row">
     <div class="col-xs-12">
@@ -92,7 +55,7 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
-                            <table id="example3" class="table table-bordered table-striped dataTable hotTable">
+                            <table id="monthLesson" class="table table-bordered table-striped dataTable hotTable">
                                 <thead>
                                 <tr role="row">
                                     <th>课程</th>
@@ -167,7 +130,49 @@
     <!-- /.col -->
 </div>
 
-<!----------------------------------- 训练营（课时结算版）资金账单 ： 结束-------------------------------------------->
+<!----------------------------------- 训练营（课时结算版）课时统计 ： 结束-------------------------------------------->
+
+
+
+
+<br /><br /><br /><br />
+<p>==================月=================</p>
+&nbsp;&nbsp;&nbsp;&nbsp;总购买课时:{$totalBuy}
+&nbsp;&nbsp;&nbsp;&nbsp;总赠送课时:{$totalGift}
+&nbsp;&nbsp;&nbsp;&nbsp;总已上课时:{$totalSchedule}
+&nbsp;&nbsp;&nbsp;&nbsp;总退费课时:{$totalRefundSchedule}
+&nbsp;&nbsp;&nbsp;&nbsp;总剩余课时(全部时间?): {$totalBuy-$totalSchedule-$totalRefundSchedule+$totalGift}
+
+<p>=================买课=========================</p>
+{volist name="buyList" id="vol"}
+
+<p>课程:{$key} &nbsp;&nbsp;&nbsp;&nbsp; 单价:{$vol.price} &nbsp;&nbsp;&nbsp;&nbsp;本月缴费课时:{$vol.s_total} </p>
+
+{/volist}
+
+
+<p>===================赠课=======================</p>
+{volist name="giftList" id="vol"}
+
+<p>课程:{$key} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本月赠送课时:{$vol.s_gift_schedule} </p>
+
+{/volist}
+
+
+<p>===================已上=======================</p>
+{volist name="totalScheduleList" id="vol"}
+
+<p>课程:{$key} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;已上课时:{$vol.s_students} </p>
+
+{/volist}
+
+
+<p>===================退费=======================</p>
+{volist name="refundScheduleList" id="vol"}
+
+<p>课程:{$key} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;退费课时:{$vol.s_totalRefund} </p>
+
+{/volist}
 
 
 
@@ -228,7 +233,7 @@
         //=========================== 初始化数据 ==============================//
 
         //判断是否有年月的本地存储，没则获取当前月的上一个月
-        if(currDateYM=='') {
+        if(currDateYM==''&&currDateYM!=null) {
             var currDate = new Date();
             var currYear = currDate.getFullYear();
             var currMonth = currDate.getMonth();
@@ -243,7 +248,7 @@
 
         //判断是否有指定训练营和教练员的本地存储
         $("input[name=dateYM]").val(currDateYM);
-        if(currCampID!=''){
+        if(currCampID!=''&&currCampID!=null){
             $("input[name=camp_id]").val(currCampID);
             $("input[name=camp]").val(currCampName);
             $(".campKeyword").val(currCampName);
@@ -318,7 +323,7 @@
             beginDate = arrYM[0]+arrYM[1]+'01';
             endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
 
-            window.location.href="{:url('/admin/Statistics_Camp/campBill/')}"+"camp_id/"+camp_id+"/monthstart/"+beginDate+"/monthend/"+endDate;;
+            window.location.href="{:url('/admin/Statistics_Camp/campScheduleStatistics/')}"+"camp_id/"+camp_id+"/monthstart/"+beginDate+"/monthend/"+endDate;;
         })
 
 
