@@ -440,19 +440,21 @@ class StatisticsCamp extends Backend{
         $camp_id = input('param.camp_id');
         $keyword = input('param.keyword');
         $member_id = input('param.member_id');
-        $map = ['lesson_id'=>$lesson_id];
+        $map['salary_in.lesson_id'] = $lesson_id;
         if($camp_id){
-            $map['camp_id'] = $camp_id;
+            $map['salary_in.camp_id'] = $camp_id;
         }
         if($keyword){
-            $map['lesson'] = ['like'=>"%$keyword%"];
+            $map['salary_in.lesson'] = ['like'=>"%$keyword%"];
         }
         if($member_id){
-            $map['member_id'] = $member_id;
+            $map['salary_in.member_id'] = $member_id;
         }
         $scheduleList = db('salary_in')
+        ->field('salary_in.*,schedule.student_str,schedule.coach,schedule.assistant,schedule.cost,schedule.coach_salary,schedule.assistant_salary,schedule.salary_base,schedule.schedule_rebate,schedule.schedule_income,schedule.lesson_time,schedule.students')
         ->where($map)
-        ->where(['create_time'=>['between',[$month_start,$month_end]]])
+        ->join('schedule','schedule.id = salary_in.schedule_id')
+        ->where(['salary_in.create_time'=>['between',[$month_start,$month_end]]])
         ->select();
         // dump($scheduleList);die;
         $this->assign('scheduleList',$scheduleList);
