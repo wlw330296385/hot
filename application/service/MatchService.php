@@ -671,7 +671,7 @@ class MatchService {
     // 获取比赛邀请裁判数据
     public function getMatchRerfereeApply($map=[]) {
         $model = new MatchRefereeApply();
-        $res = $model->where($map)->find();
+        $res = $model->with('match')->where($map)->find();
         if (!$res) {
             return $res;
         }

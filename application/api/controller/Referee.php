@@ -3,6 +3,7 @@ namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CertService;
 use app\service\MatchService;
+use app\service\MessageService;
 use app\service\RefereeService;
 use think\Exception;
 
@@ -422,13 +423,17 @@ class Referee extends Base{
             if ($resSaveApply['code'] == 100) {
                 return json($resSaveApply);
             }
-
+            $replyStr = '';
+            if (!empty($reply)) {
+                $replyStr = '对方回复：'.$reply;
+            }
+            $messageService = new MessageService();
             if ($status == 2) {
                 //同意
                 // 保存比赛-裁判关系
                 $dataMatchReferee = [
                     'match_id' => $applyInfo['match_id'],
-                    'match' => $applyInfo['match'],
+                    'match' => $applyInfo['match']['name'],
                     'match_record_id' => $applyInfo['match_record_id'],
                     'referee_id' => $refereeInfo['id'],
                     'referee' => $refereeInfo['referee'],
@@ -447,11 +452,35 @@ class Referee extends Base{
                     $dataMatchReferee['id'] = $matchReferee['id'];
                 }
                 $matchS->saveMatchReferee($dataMatchReferee);
-            } else if ($status==3) {
+
+                // 发送通知给邀请人
+                $wxTemplateID = config('wxTemplateID.receviceInvitaion');
+                $messageData = [
+                    'title' => '裁判'. $applyInfo['referee'] . '接受比赛' . $applyInfo['match']['name'] . '执裁邀请',
+                    'content' => '裁判'. $applyInfo['referee'] . '接受比赛' . $applyInfo['match']['name'] . '执裁邀请' . $replyStr,
+                    'keyword1' => $applyInfo['referee'],
+                    'keyword2' => date('Y年m月d日 H:i', time()),
+                    'remark' => '点击查看更多',
+                    'steward_type' => 2,
+                    'url' => url('keeper/team/matchInfo', ['match_id' => $applyInfo['match_id'], 'team_id' => $applyInfo['match']['team_id']], '', true)
+                ];
+            } else {
                 // 拒绝
+                // 发送通知给邀请人
+                $wxTemplateID = config('wxTemplateID.refuseInvitaion');
+                $messageData = [
+                    'title' => '裁判'. $applyInfo['referee'] . '拒绝比赛' . $applyInfo['match']['name'] . '执裁邀请',
+                    'content' => '裁判'. $applyInfo['referee'] . '拒绝比赛' . $applyInfo['match']['name'] . '执裁邀请' . $replyStr,
+                    'keyword1' => $applyInfo['referee'],
+                    'keyword2' => empty($reply) ? '拒绝邀请' : $reply,
+                    'keyword3' => date('Y年m月d日 H:i', time()),
+                    'remark' => '点击查看更多',
+                    'steward_type' => 2,
+                    'url' => url('keeper/team/matchInfo', ['match_id' => $applyInfo['match_id'], 'team_id' => $applyInfo['match']['team_id']], '', true)
+                ];
             }
             // 发送通知给邀请人
-
+            $messageService->sendMessageToMember($applyInfo['member_id'], $messageData, $wxTemplateID);
 
             return json($resSaveApply);
         } catch(Exception $e){
