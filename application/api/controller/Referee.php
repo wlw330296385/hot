@@ -414,16 +414,17 @@ class Referee extends Base{
                 return json(['code' => 100, 'msg' => '您无权操作此信息']);
             }
             // 更新邀请数据
-            $resSaveApply = $matchS->saveMatchRerfereeApply([
+            /*$resSaveApply = $matchS->saveMatchRerfereeApply([
                 'id' => $applyInfo['id'],
                 'status' => $status,
                 'reply' => $reply
             ]);
             if ($resSaveApply['code'] == 100) {
                 return json($resSaveApply);
-            }
+            }*/
 
-            if ($status == 2) { //同意
+            if ($status == 2) {
+                //同意
                 // 保存比赛-裁判关系
                 $dataMatchReferee = [
                     'match_id' => $applyInfo['match_id'],
@@ -446,11 +447,13 @@ class Referee extends Base{
                     $dataMatchReferee['id'] = $matchReferee['id'];
                 }
                 $matchS->saveMatchReferee($dataMatchReferee);
+            } else if ($status==3) {
+                // 拒绝
             }
             // 发送通知给邀请人
 
 
-            return json($resSaveApply);
+            //return json($resSaveApply);
         } catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -460,6 +463,10 @@ class Referee extends Base{
     public function getmatchrefereepage(){
         try{
             $map = input('param.');
+
+            if (input('page')) {
+                unset($map['page']);
+            }
             $matchS = new MatchService();
             $result = $matchS->getMatchRefereePaginator($map);
             if($result){
