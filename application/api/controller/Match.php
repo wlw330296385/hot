@@ -27,7 +27,6 @@ class Match extends Base
             $messageS = new MessageService();
             //记录比赛战绩数据
             $dataMatchRecord = [];
-            $dataMatchRecord = $data['record'];
             $dataMatchRecord['team_id'] = $data['team_id'];
             $dataMatchRecord['match_time'] = $data['match_time'];
             // 主队信息保存数据组合

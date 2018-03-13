@@ -507,4 +507,25 @@ class Referee extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+    // 裁判执裁比赛列表（分页）
+    public function getmatchrefereelist(){
+        try{
+            $map = input('param.');
+            $page = input('page', 1);
+
+            if (input('page')) {
+                unset($map['page']);
+            }
+            $matchS = new MatchService();
+            $result = $matchS->getMatchRefereeList($map, $page);
+            if($result){
+                return json(['code'=>200,'msg'=> __lang('MSG_201'),'data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=> __lang('MSG_000')]);
+            }
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }
