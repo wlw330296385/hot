@@ -140,6 +140,7 @@ class Referee extends Base{
             $request = $this->request->post();
             $request['member_id'] = $this->memberInfo['id'];
             $request['member'] = $this->memberInfo['member'];
+            $request['status'] = 0;
 
             // 保存证件数据
             $certS = new CertService();
@@ -396,7 +397,7 @@ class Referee extends Base{
             }
             $matchS = new MatchService();
             // 查询邀请数据
-            $applyInfo = $this->refereeService->getMatchRefereeApply(['id' => $applyId]);
+            $applyInfo = $matchS->getMatchRerfereeApply(['id' => $applyId]);
             if (!$applyInfo) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404')]);
             }
@@ -422,20 +423,35 @@ class Referee extends Base{
                 return json($resSaveApply);
             }
 
-            // 保存比赛-裁判关系
-            $dataMatchReferee = [
-                'match_id' => $applyInfo['match_id'],
-                'match' => $applyInfo['match'],
-                'match_record_id' => $applyInfo['match_record_id'],
-                'referee_id' => $refereeInfo['id'],
-                'referee' => $refereeInfo['referee'],
-                'member_id' => $refereeInfo['member_id'],
-                'member' => $refereeInfo['member']['member'],
-                'referee_type' => 1,
-                'appearance_fee' => $refereeInfo['appearance_fee']
-            ];
-            $matchS->saveMatchReferee($dataMatchReferee);
+            if ($status == 2) {
+                //同意
+                // 保存比赛-裁判关系
+                $dataMatchReferee = [
+                    'match_id' => $applyInfo['match_id'],
+                    'match' => $applyInfo['match'],
+                    'match_record_id' => $applyInfo['match_record_id'],
+                    'referee_id' => $refereeInfo['id'],
+                    'referee' => $refereeInfo['referee'],
+                    'member_id' => $refereeInfo['member_id'],
+                    'member' => $refereeInfo['member']['member'],
+                    'referee_type' => 1,
+                    'appearance_fee' => $refereeInfo['appearance_fee']
+                ];
+                // 查询有无原数据 有则更新数据
+                $matchReferee = $matchS->getMatchReferee([
+                    'match_id' => $applyInfo['match_id'],
+                    'match_record_id' => $applyInfo['match_record_id'],
+                    'referee_id' => $refereeInfo['id']
+                ]);
+                if ($matchReferee) {
+                    $dataMatchReferee['id'] = $matchReferee['id'];
+                }
+                $matchS->saveMatchReferee($dataMatchReferee);
+            } else if ($status==3) {
+                // 拒绝
+            }
             // 发送通知给邀请人
+
 
             return json($resSaveApply);
         } catch(Exception $e){
@@ -447,6 +463,10 @@ class Referee extends Base{
     public function getmatchrefereepage(){
         try{
             $map = input('param.');
+
+            if (input('page')) {
+                unset($map['page']);
+            }
             $matchS = new MatchService();
             $result = $matchS->getMatchRefereePaginator($map);
             if($result){

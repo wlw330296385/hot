@@ -577,6 +577,17 @@ class MatchService {
         }
     }
 
+    // 获取比赛-裁判关系详细
+    public function getMatchReferee($map) {
+        $model = new MatchReferee();
+        $res = $model->with('match')->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
     // 获取比赛-裁判关系列表（分页）
     public function getMatchRefereePaginator($map=[], $order='id desc', $size=10) {
         $model = new MatchReferee();

@@ -51,10 +51,9 @@ class RefereeService{
         }
 
         // 插入数据
-        $data['status'] = isset($data['status']) ? $data['status'] : 0;
         $res = $this->RefereeModel->allowField(true)->save($data);
         if ($res) {
-            return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $this->RefereeModel->id];
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $this->RefereeModel->id];
         } else {
             trace('error:' . $this->RefereeModel->getError() . ', \n sql:' . $this->RefereeModel->getLastSql(), 'error');
             return ['code' => 100, 'msg' => __lang('MSG_400')];

@@ -167,7 +167,7 @@ class Referee extends Base{
     }
 
     // 执裁比赛列表
-    public function myMatchList(){
-        return view('Referee/myMatchList');
+    public function judgingList(){
+        return view('Referee/judgingList');
     }
 }
