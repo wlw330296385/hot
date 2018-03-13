@@ -31,7 +31,7 @@ return [
         'memberQuit' => 'b2DC63QQokA8WwfoaUb-FgUuyMOaiPBdzxH7Gm0-1hs',//成员退出
         'successRefund' => 'MHLQONFLdMBSEGQS2AW06V3sFV5zEXQYq_iqbPJpAgQ',//申请退款成功
         'successCheck' => 'xohb4WrWcaDosmQWQL27-l-zNgnMc03hpPORPjVjS88',//审核通过
-        'errorCheck' => '   z03wxEVbhiEnXChfnBKEYhpYpCvIMLEPq0912RGgrQg',//未通过认证
+        //'errorCheck' => '   z03wxEVbhiEnXChfnBKEYhpYpCvIMLEPq0912RGgrQg',//未通过教练认证通知
         'sendSchedule' => '_ld4qtOLJA1vl-oh0FxCliMK1tbGD0nOTq7Z4OmeFCE', //发送课时通知
         'checkPend' => 'eq30-P4InOr-gndRqTdK8xAgpsMWdh3BWO1AArdxoeI', // 待审批事项通知
         'eventJoin' =>'rgF4hfyPKVxeP9HSOSbmzf7iqITPB_Bo5UgGyc9j36s',//付费活动报名成功
@@ -39,8 +39,10 @@ return [
         'lessonBook'=>'G1EeDZ-4CS7MUTND_sEPKAzbZElqRygKzbftYfvGYF8',//预约体验成功,
         'applyResult' => 'fIaJMxa6cpenLyViHq10WiFkz2Wd_ANs3H1SV0PXDMk', //申请结果通知
         'statusChange' => '_MXeO37KI0lygDDJ82GEFciIQYW0GXzTcLl0Y8HgWPY', //业务状态变更通知
-        'scheduleExpend'=>'squ4uaAVXJ52Dhfjtlol08cpo49FonbFwN-wUFObAV4',
+        'scheduleExpend'=>'squ4uaAVXJ52Dhfjtlol08cpo49FonbFwN-wUFObAV4', //课时消耗通知
         'refereeTask' => '9XyZ3Mb70gR8HmE0N6y_9TESECJYyi3r4kA_c45d_EU', // 裁判任务通知
+        'receviceInvitaion' => '68DeWPCsdhaPuLJfPCPwPhrjhxo3m2ZUqa7b9j8XIfg', // 邀请已接受通知
+        'refuseInvitaion' => 'oajS06HPl02rKIH-Xsvqm5_ogdPQv9cxl-Gs782Ifrg', // 拒绝邀请提醒
     ],
 
     // 七牛云

@@ -103,9 +103,16 @@ class Team extends Base {
 
     // 我的球队列表（会员所在球队列表）
     public function myteam() {
+        // 会员所在球队列表
         $teamS = new TeamService();
         $myTeamList = $teamS->myTeamWithRole($this->memberInfo['id']);
+
+        // 获取会员的裁判员信息
+        $refereeS = new RefereeService();
+        $refereeInfo = $refereeS->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
+
         $this->assign('myTeamList', $myTeamList);
+        $this->assign('refereeInfo', $refereeInfo);
         return view('Team/myteam');
     }
 
@@ -429,7 +436,7 @@ class Team extends Base {
 
         // 传入裁判id 页面输出信息
         $refereeInfo = [];
-        $refereeId = input('referee_id');
+        $refereeId = input('referee_id', 0);
         $refereeS = new RefereeService();
         if ($refereeId) {
             $refereeInfo = $refereeS->getRefereeInfo(['id' => $refereeId]);

@@ -597,8 +597,34 @@ class MatchService {
         }
         $result = $res->toArray();
         foreach ($result['data'] as $k => $val) {
+            // 裁判信息转格式
             if (!empty($val['match']['referee_str'])) {
                 $result['data'][$k]['match']['referee_str'] = json_decode($val['match']['referee_str'], true);
+            }
+            // 比赛时间戳
+            if ($val['match']['match_time']) {
+                $result['data'][$k]['match']['match_timestamp'] = strtotime($val['match']['match_time']);
+            }
+        }
+        return $result;
+    }
+
+    // 获取比赛-裁判关系列表
+    public function getMatchRefereeList($map=[], $page=1, $order='id desc', $size=10) {
+        $model = new MatchReferee();
+        $res = $model->with('match')->where($map)->order($order)->page($page)->limit($size)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            // 裁判信息转格式
+            if (!empty($val['match']['referee_str'])) {
+                $result[$k]['match']['referee_str'] = json_decode($val['match']['referee_str'], true);
+            }
+            // 比赛时间戳
+            if ($val['match']['match_time']) {
+                $result[$k]['match']['match_timestamp'] = strtotime($val['match']['match_time']);
             }
         }
         return $result;
@@ -671,7 +697,7 @@ class MatchService {
     // 获取比赛邀请裁判数据
     public function getMatchRerfereeApply($map=[]) {
         $model = new MatchRefereeApply();
-        $res = $model->where($map)->find();
+        $res = $model->with('match')->where($map)->find();
         if (!$res) {
             return $res;
         }
