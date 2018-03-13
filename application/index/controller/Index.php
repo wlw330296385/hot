@@ -33,39 +33,82 @@ class Index extends Controller{
 
 
     public function income(){
-        $billList = db('bill')->where('delete_time',null)->select();
+        $billList = db('bill')->where('delete_time',null)->where(['is_pay'=>1,'status'=>1,'camp_id'=>9])->select();
         // $income = new \app\model\Income;
-        $output = new \app\model\Output;
+        // $output = new \app\model\Output;
         $data = [];
-        foreach ($billList as $key => $value) {
-            if ($value['is_pay'] == 1 && $value['status']==-2) {
-
-                unset($value['id']);
-                $value['output'] = $value['refundamount'];
-                $value['type'] = 2;
-                $data[] = $value;
-                
-            }
+        foreach ($billList as $key => &$value) {
+            $campInfo = db('camp')->where(['id'=>$value['camp_id']])->find();
+            $data['type'] = $value['goods_type'];
+            $data['s_balance'] = $campInfo['balance'];
+            $data['e_balance'] = $campInfo['balance'] + $value['balance_pay'];
+            $data['lesson_id'] = $value['goods_id'];
+            $data['lesson'] = $value['goods'];
+            $data['goods_id'] = $value['goods_id'];
+            $data['goods'] = $value['goods'];
+            $data['camp_id'] = $value['camp_id'];
+            $data['camp'] = $value['camp'];
+            $data['total'] = $value['total'];
+            $data['member_id'] = $value['member_id'];
+            $data['member'] = $value['member'];
+            $data['price'] = $value['price'];
+            $data['f_id'] = $value['id'];
+            $data['student_id'] = $value['student_id'];
+            $data['student'] = $value['student'];
+            $data['balance_pay'] = $value['balance_pay'];
+            $data['income'] = $value['balance_pay'];
+            $data['create_time'] = $value['create_time'];
+            db('income')->insert($data);
+            db('camp')->where(['id'=>$value['camp_id']])->inc('balance',$value['balance_pay'])->update();
+            
         }
-        // dump($data);
-        $output->saveAll($data);
+    }
+
+
+    public function output(){
+        $billList = db('bill')->where('delete_time',null)->where(['is_pay'=>1,'status'=>-2,'camp_id'=>9])->select();
+        dump($billList);
+        $data = [];
+        foreach ($billList as $key => &$value) {
+            $campInfo = db('camp')->where(['id'=>$value['camp_id']])->find();
+            $data['type'] = 2;
+            $data['s_balance'] = $campInfo['balance'];
+            $data['e_balance'] = $campInfo['balance'] + $value['balance_pay'];
+            $data['member_id'] = $value['member_id'];
+            $data['member'] = $value['member'];
+            $data['camp_id'] = $value['camp_id'];
+            $data['camp'] = $value['camp'];
+            $data['f_id'] = $value['id'];
+            $data['output'] = $value['refundamount'];
+            $data['create_time'] = $value['create_time'];
+            db('output')->insert($data);
+            db('camp')->where(['id'=>$value['camp_id']])->dec('balance',$value['refundamount'])->update();
+        }
     }
 
 
     public function gift(){
         $giftList = db('schedule_giftrecord')->field('schedule_giftrecord.*,lesson.cost')->join('lesson','lesson.id=schedule_giftrecord.lesson_id')->where('schedule_giftrecord.delete_time',null)->select();      
         dump($giftList);
+
         $data = [];
         foreach ($giftList as $key => $value) {
-            $value['system_remarks'] = $value['id'];
-            unset($value['id']);
-            $value['output'] = $value['student_num']*$value['gift_schedule']*$value['cost'];
-            $value['type'] = 1;
-
-            $data[] = $value;
+            $campInfo = db('camp')->where(['id'=>$value['camp_id']])->find();
+            $data['type'] = 1;
+            $data['member_id'] = $value['member_id'];
+            $data['member'] = $value['member'];
+            $data['camp_id'] = $value['camp_id'];
+            $data['camp'] = $value['camp'];
+            $data['f_id'] = $value['id'];
+            $data['output'] = $value['student_num']*$value['gift_schedule']*$value['cost'];
+            $data['create_time'] = $value['create_time'];
+            $data['s_balance'] = $campInfo['balance'];
+            $data['e_balance'] = $campInfo['balance'] - $data['output'];
+            db('output')->insert($data);
+            db('camp')->where(['id'=>$value['camp_id']])->dec('balance',$data['output'])->update();
         }
-        $output = new \app\model\Output;
-        $output->saveAll($data);
+        
+
     }
 
     public function schedule(){
@@ -183,15 +226,7 @@ class Index extends Controller{
     
 
     public function index(){
-        $timestr = strtotime('2017-11-16');
-        // 生成微信参数
-        $shareurl = request()->url(true);
-        $WechatService = new WechatService();
-        $jsApi = $WechatService->jsapi($shareurl);
-        // echo $timestr-time();
-        $this->assign('timestr',time());
-        $this->assign('jsApi',$jsApi);
-        return view('Index/index');
+        echo 'index';
     }
 
     public function adminAuth(){

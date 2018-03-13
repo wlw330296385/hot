@@ -177,9 +177,11 @@ class Crontab extends Controller {
                     $dataCampFinance = [
                         'camp_id' => $schedule['camp_id'],
                         'camp' => $schedule['camp'],
-                        'finance_type' => 2,
-                        'schedule_salary' => $incomeSchedule,
-                        'schedule_id' => $schedule['id'],
+                        'money'=>$incomeSchedule
+                        'type' => 3,
+                        'e_balance' => $campInfo['balance']+$incomeSchedule,
+                        's_balance'=>$campInfo['balance'],
+                        'f_id' => $schedule['id'],
                         'date' => date('Ymd', $schedule['lesson_time']),
                         'datetime' => $schedule['lesson_time']
                     ];

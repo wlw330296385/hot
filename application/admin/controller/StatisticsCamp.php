@@ -437,9 +437,21 @@ class StatisticsCamp extends Backend{
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
         $month_end = strtotime($monthEnd);
-
-        $scheduleList = db('schedule')
-        ->where(['lesson_id'=>$lesson_id,'is_settle'=>1])
+        $camp_id = input('param.camp_id');
+        $keyword = input('param.keyword');
+        $member_id = input('param.member_id');
+        $map = ['lesson_id'=>$lesson_id];
+        if($camp_id){
+            $map['camp_id'] = $camp_id;
+        }
+        if($keyword){
+            $map['lesson'] = ['like'=>"%$keyword%"];
+        }
+        if($member_id){
+            $map['member_id'] = $member_id;
+        }
+        $scheduleList = db('salary_in')
+        ->where($map)
         ->where(['create_time'=>['between',[$month_start,$month_end]]])
         ->select();
         // dump($scheduleList);die;
