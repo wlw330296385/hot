@@ -1,7 +1,6 @@
 {extend name="layout/common"/}
 {block name="css"}
-<style>
-</style>
+<link rel="stylesheet" href="/static/plugins/datatables/dataTables.bootstrap.css">
 {/block}
 {block name="page-content"}
 
@@ -36,8 +35,8 @@
 								<button type="button" class="btn btn-default" id="goSearch">确认查询</button>
 							</div>
 							<h3 class="totalRight">
-								<span><small>本月课程营业额：</small><strong class="text-yellow monthLesson">各总数没有</strong></span>
-								<span><small>本月活动营业额：</small><strong class="text-yellow monthEvent">各总数没有</strong></span>
+								<span><small>本月课程营业额：</small><strong class="text-yellow monthLesson"></strong></span>
+								<span><small>本月活动营业额：</small><strong class="text-yellow monthEvent"></strong></span>
 							</h3>
 						</div>
 					</div>
@@ -52,7 +51,7 @@
 	<div class="col-md-6">
 		<div class="box">
 			<div class="box-header with-border">
-				<h3 class="box-title">课程营业额</h3>
+				<h4> 课程营业额</h4>
 			</div>
 			<div class="box-body">
 				<table id="lessonList" class="table table-bordered table-striped dataTable" role="grid"
@@ -91,7 +90,7 @@
 	<div class="col-md-6">
 		<div class="box">
 			<div class="box-header with-border">
-				<h3 class="box-title">活动营业额</h3>
+				<h4> 活动营业额</h4>
 			</div>
 			<div class="box-body">
 				<table id="eventList" class="table table-bordered table-striped dataTable" role="grid"
@@ -219,7 +218,7 @@
 
         //判断是否有指定训练营和教练员的本地存储
         $("input[name=dateYM]").val(currDateYM);
-        if(currCampID!=''){
+        if(currCampID!=''&&currCampID!=null){
             $("input[name=camp_id]").val(currCampID);
             $("input[name=camp]").val(currCampName);
             $(".campKeyword").val(currCampName);
@@ -249,13 +248,13 @@
             epSum = epSum + parseInt($(this).text());
         });
 
-        $(".eIDTotal").text(eSum);
-        $(".ePayTotal").text(epSum);
-        $(".sIDTotal").text(sSum);
-        $(".sPayTotal").text(spSum);
+        $(".eIDTotal").text('￥'+eSum);
+        $(".ePayTotal").text('￥'+epSum);
+        $(".sIDTotal").text('￥'+sSum);
+        $(".sPayTotal").text('￥'+spSum);
 
-        $(".monthLesson").text(spSum);
-        $(".monthEvent").text(epSum);
+        $(".monthLesson").text('￥'+spSum);
+        $(".monthEvent").text('￥'+epSum);
 
 
         //平台后续换成分页版（地区代理商无需分页）
