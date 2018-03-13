@@ -22,7 +22,8 @@ class TeamMemberRole extends Model {
             2 => '副队长',
             3 => '队长',
             4 => '教练',
-            5 => '领队',
+            5 => '经理',
+            6 => '领队',
             0 => '无'
         ];
         return $type[$data['type']];

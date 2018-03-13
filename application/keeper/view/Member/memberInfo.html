@@ -10,11 +10,17 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--选择器样式-->
-    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
-    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
     <style>
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+
         .mui-views,
         .mui-view,
         .mui-pages,
@@ -29,26 +35,32 @@
             height: 100%;
             background-color: #efeff4;
         }
+
         .mui-pages {
             top: 46px;
             height: auto;
         }
+
         .mui-scroll-wrapper,
         .mui-scroll {
             background-color: #efeff4;
         }
+
         .mui-page.mui-transitioning {
             -webkit-transition: -webkit-transform 300ms ease;
             transition: transform 300ms ease;
         }
+
         .mui-page-left {
             -webkit-transform: translate3d(0, 0, 0);
             transform: translate3d(0, 0, 0);
         }
+
         .mui-ios .mui-page-left {
             -webkit-transform: translate3d(-20%, 0, 0);
             transform: translate3d(-20%, 0, 0);
         }
+
         .mui-navbar {
             position: fixed;
             right: 0;
@@ -57,90 +69,83 @@
             height: 44px;
             background-color: #f7f7f8;
         }
+
         .mui-navbar .mui-bar {
             position: absolute;
             background: transparent;
             text-align: center;
         }
+
         .mui-android .mui-navbar-inner.mui-navbar-left {
             opacity: 0;
         }
+
         .mui-ios .mui-navbar-left .mui-left,
         .mui-ios .mui-navbar-left .mui-center,
         .mui-ios .mui-navbar-left .mui-right {
             opacity: 0;
         }
+
         .mui-navbar .mui-btn-nav {
             -webkit-transition: none;
             transition: none;
             -webkit-transition-duration: .0s;
             transition-duration: .0s;
         }
-        .mui-navbar .mui-bar .mui-title {
-         margin-left: 0 !important;
-     }
-     .mui-page-shadow {
-        position: absolute;
-        right: 100%;
-        top: 0;
-        width: 16px;
-        height: 100%;
-        z-index: -1;
-        content: '';
-    }
-    .mui-page-shadow {
-        background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
-        background: linear-gradient(to right, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
-    }
-    .mui-navbar-inner.mui-transitioning,
-    .mui-navbar-inner .mui-transitioning {
-        -webkit-transition: opacity 300ms ease, -webkit-transform 300ms ease;
-        transition: opacity 300ms ease, transform 300ms ease;
-    }
-    .mui-page {
-        display: none;
-    }
-    .mui-pages .mui-page {
-        display: block;
-    }
-    .mui-table-view span.mui-pull-right {
-        color: #999;
-    }
-    .mui-table-view-divider {
-        background-color: #efeff4;
-        font-size: 14px;
-    }
-    .mui-table-view-divider:before,
-    .mui-table-view-divider:after {
-        height: 0;
-    }
-    .mui-fullscreen {
-        position: fixed;
-        z-index: 20;
-        background-color: #000;
-    }
-    .tipspan{
-        font-size: 14px;
-        text-align: center;
-        display: block;
-        padding: 10px;
-        height: 41px;
-    }
-    .success{
-        padding: 20px 0;
-        width: 60%;
-        margin: 0 auto;
-    }
-    .success img{
-        width: 40px;
-        height: 40px;
-    }
-    .success span{
-        float: right;
-        line-height: 40px;
-    }
 
-</style>
+        .mui-navbar .mui-bar .mui-title {
+            margin-left: 0 !important;
+        }
+
+        .mui-page-shadow {
+            position: absolute;
+            right: 100%;
+            top: 0;
+            width: 16px;
+            height: 100%;
+            z-index: -1;
+            content: '';
+        }
+
+        .mui-page-shadow {
+            background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
+            background: linear-gradient(to right, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
+        }
+
+        .mui-navbar-inner.mui-transitioning,
+        .mui-navbar-inner .mui-transitioning {
+            -webkit-transition: opacity 300ms ease, -webkit-transform 300ms ease;
+            transition: opacity 300ms ease, transform 300ms ease;
+        }
+
+        .mui-page {
+            display: none;
+        }
+
+        .mui-pages .mui-page {
+            display: block;
+        }
+
+        .mui-table-view span.mui-pull-right {
+            color: #999;
+        }
+
+        .mui-table-view-divider {
+            background-color: #efeff4;
+            font-size: 14px;
+        }
+
+        .mui-table-view-divider:before,
+        .mui-table-view-divider:after {
+            height: 0;
+        }
+
+        .mui-fullscreen {
+            position: fixed;
+            z-index: 20;
+            background-color: #000;
+        }
+    </style>
 </head>
 
 <body class="mui-fullscreen">
@@ -172,40 +177,55 @@
                 <div class="mui-scroll">
                     <div class="list camp-list camp-lesson-list detalis-list coach">
                         <div class="page-header">
-                            <span class="course"><b>个人信息</b></span>
-                            <span class="more" style="font-size:14px;padding-right: 15px;"><a href="#editor" class="editroBtn mui-navigate-right">编辑</a></span>
+                            <span class="course">
+                                <b>个人信息</b>
+                            </span>
+                            <span class="more" style="font-size:14px;padding-right: 15px;">
+                                <a href="#editor" class="editroBtn mui-navigate-right">编辑</a>
+                            </span>
                         </div>
                         <form action="" class="mui-input-group archives1 mb">
                             <div class="mui-input-row h-auto">
-                                <label>头像</label><img src="{$memberInfo['avatar']}" alt="头像" style="margin-right: 18px">
+                                <label>头像</label>
+                                <img src="{$memberInfo['avatar']}" alt="头像" style="margin-right: 18px">
                             </div>
                             <div class="mui-input-row">
-                                <label>会员ID</label><span>{$memberInfo['hot_id']}</span>
+                                <label>会员ID</label>
+                                <span>{$memberInfo['hot_id']}</span>
                             </div>
                             <div class="mui-input-row">
-                                <label>姓名</label><span class="name">{$memberInfo['member']}</span>
+                                <label>姓名</label>
+                                <span class="name">{$memberInfo['member']}</span>
                             </div>
                             <div class="mui-input-row">
-                                <label>性别</label><span class="sex">{$memberInfo['sex']|format_sex}</span>
+                                <label>性别</label>
+                                <span class="sex">{$memberInfo['sex']|format_sex}</span>
                             </div>
                             <div class="mui-input-row">
-                                <label>身高</label><span class="height">{$memberInfo['height']}cm</span>
+                                <label>身高</label>
+                                <span class="height">{$memberInfo['height']}cm</span>
                             </div>
                             <div class="mui-input-row">
-                                <label>体重</label><span class="weight">{$memberInfo['weight']}kg</span>
+                                <label>体重</label>
+                                <span class="weight">{$memberInfo['weight']}kg</span>
                             </div>
                             <div class="mui-input-row">
-                                <label>出生日期</label><span class="birthday">{$memberInfo['birthday']}</span>
+                                <label>出生日期</label>
+                                <span class="birthday">{$memberInfo['birthday']}</span>
                             </div>
                             <div class="mui-input-row">
-                                <label>所属地区</label><span>{$memberInfo['province']}{$memberInfo['city']}{$memberInfo['area']}</span>
+                                <label>所属地区</label>
+                                <span>{$memberInfo['province']} {$memberInfo['city']} {$memberInfo['area']}</span>
                             </div>
                             <div class="mui-input-row">
-                                <label>注册时间</label><span class="">{$memberInfo['create_time']}</span>
+                                <label>注册时间</label>
+                                <span class="">{$memberInfo['create_time']}</span>
                             </div>
                         </form>
                         <div class="page-header">
-                            <span class="course"><b>其他</b></span>
+                            <span class="course">
+                                <b>其他</b>
+                            </span>
                         </div>
                         <ul class="mui-table-view  public-list border-b">
                             <li class="mui-table-view-cell listli listinitial">
@@ -233,7 +253,8 @@
                     <form action="" class="mui-input-group archives2 mb">
 
                         <div class="mui-input-row h-auto">
-                            <label>头像</label><img src="{$memberInfo['avatar']}" alt="头像" style="margin-right: 18px">
+                            <label>头像</label>
+                            <img src="{$memberInfo['avatar']}" alt="头像" style="margin-right: 18px">
                         </div>
                         <div class="mui-input-row">
                             <label>会员ID</label>
@@ -247,8 +268,8 @@
                             <label>性别</label>
                             <span class="editor">
                                 <select class="sex">
-                                    <option value="1" {eq name="$memberInfo.sex" value="1"}selected{/eq}>男</option>
-                                    <option value="2" {eq name="$memberInfo.sex" value="2"}selected{/eq}>女</option>
+                                    <option value="1" {eq name="$memberInfo.sex" value="1" }selected{/eq}>男</option>
+                                    <option value="2" {eq name="$memberInfo.sex" value="2" }selected{/eq}>女</option>
                                 </select>
                             </span>
                         </div>
@@ -294,6 +315,12 @@
     <script src="/static/frontend/js/city.data-3.js"></script>
     <script src="/static/frontend/js/height.data.js"></script>
     <script src="/static/frontend/js/weight.data.js"></script>
+    <script src="/static/frontend/libs/webuploader.min.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'team'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
     <script>
         mui.init();
         //初始化单页view
@@ -304,10 +331,10 @@
         //初始化单页的区域滚动
         mui('.mui-scroll-wrapper').scroll();
         var view = viewApi.view;
-        (function($) {
+        (function ($) {
             //处理view的后退与webview后退
             var oldBack = $.back;
-            $.back = function() {
+            $.back = function () {
                 if (viewApi.canBack()) { //如果view可以后退，则执行view的后退
                     viewApi.back();
                 } else { //执行webview后退
@@ -327,81 +354,118 @@
                     return obj[param] || '';
                 };
 
-            //身高选择
-            var userPickerh = new $.PopPicker();
-            userPickerh.setData(heightData);
 
-            var showUserPickerButton = doc.getElementById('showUserPickerHeight');
-            var userResulth = doc.getElementById('userResulth');
-            showUserPickerButton.addEventListener('tap', function(event) {
-                userPickerh.show(function(items) {
-                    userResulth.innerText = _getParam(items[0], 'text');
-                            //返回 false 可以阻止选择框的关闭
-                            //return false;
-                        });
-            }, false);
-             //体重选择
-             var userPickerw = new $.PopPicker();
-             userPickerw.setData(weightData);
+                //身高选择
+                var userPickerh = new $.PopPicker();
+                userPickerh.setData(heightData);
 
-             var showUserPickerButton = doc.getElementById('showUserPickerWeight');
-             var userResultw = doc.getElementById('userResultw');
-             showUserPickerButton.addEventListener('tap', function(event) {
-                userPickerw.show(function(items) {
-                    userResultw.innerText = _getParam(items[0], 'text');
-                            //返回 false 可以阻止选择框的关闭
-                            //return false;
-                        });
-            }, false);
-            ///级联示例
-            var cityPicker3 = new $.PopPicker({
-                layer: 3
-            });
-            cityPicker3.setData(cityData3);
-            var showCityPickerButton = doc.getElementById('showCityPicker3');
-            var cityResult3 = doc.getElementById('cityResult3');
-            showCityPickerButton.addEventListener('tap', function (event) {
-                cityPicker3.show(function (items) {
-                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
-                    //返回 false 可以阻止选择框的关闭
-                    //return false;
-                    getProvince = _getParam(items[0], 'text');
-                    getCity = _getParam(items[1], 'text');
-                    getArea = _getParam(items[2], 'text');
-                });
-            }, false);
-
-            //时间
-            var result = $('#result')[0];
-            var btns = $('.btn1');
-            btns.each(function (i, btn) {
-                btn.addEventListener('tap', function () {
-                    var optionsJson = this.getAttribute('data-options') || '{}';
-                    var options = JSON.parse(optionsJson);
-                    var id = this.getAttribute('id');
-                    var picker = new $.DtPicker(options);
-
-                    picker.show(function (rs) {
-                        result.innerText = rs.text;
-                        picker.dispose();
+                var showUserPickerButton = doc.getElementById('showUserPickerHeight');
+                var userResulth = doc.getElementById('userResulth');
+                showUserPickerButton.addEventListener('tap', function (event) {
+                    userPickerh.show(function (items) {
+                        userResulth.innerText = _getParam(items[0], 'text');
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
                     });
                 }, false);
-            });
+                //体重选择
+                var userPickerw = new $.PopPicker();
+                userPickerw.setData(weightData);
 
-        });
+                var showUserPickerButton = doc.getElementById('showUserPickerWeight');
+                var userResultw = doc.getElementById('userResultw');
+                showUserPickerButton.addEventListener('tap', function (event) {
+                    userPickerw.show(function (items) {
+                        userResultw.innerText = _getParam(items[0], 'text');
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                    });
+                }, false);
+                ///级联示例
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
+                });
+
+                // 获取省市区默认值
+                // 获取省索引值
+                function searchProvince(province) {
+                    for (var i = 0; i <= cityData3.length; i++) {
+                        if (cityData3[i].text == province) {
+                            return i;
+                        }
+                    }
+                }
+                //  获取市索引值
+                function searchCity(city) {
+                    for (var i = 0; i < cityData3.length; i++) {
+                        for (var j = 0; j < cityData3[i].children.length; j++) {
+                            if (cityData3[i].children[j].text == city) {
+                                return j;
+                            }
+                        }
+                    }
+                }
+                //  获取区索引值
+                function searchArea(area) {
+                    for (var i = 0; i < cityData3.length; i++) {
+                        for (var j = 0; j < cityData3[i].children.length; j++) {
+                            for (var k = 0; k < cityData3[i].children[j].children.length; k++) {
+                                if (cityData3[i].children[j].children[k].text == area) {
+                                    return k;
+                                }
+                            }
+                        }
+                    }
+                }
+                cityPicker3.pickers[0].setSelectedIndex(searchProvince("{$memberInfo.province}"));
+                cityPicker3.pickers[1].setSelectedIndex(searchCity("{$memberInfo.city}"));
+                cityPicker3.pickers[2].setSelectedIndex(searchArea("{$memberInfo.area}"));
+
+                cityPicker3.setData(cityData3);
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                        getProvince = _getParam(items[0], 'text');
+                        getCity = _getParam(items[1], 'text');
+                        getArea = _getParam(items[2], 'text');
+                    });
+                }, false);
+
+                //时间
+                var result = $('#result')[0];
+                var btns = $('.btn1');
+                btns.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+
+                        picker.show(function (rs) {
+                            result.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+
+            });
         })(mui, document);
 
         //个人信息编辑
-        $(".successBtn").click(function(){
+        $(".successBtn").click(function () {
             var btnArray = ['取消', '确认'];
-            mui.confirm('是否确认修改？','', btnArray, function(e) {
+            mui.confirm('是否确认修改？', '', btnArray, function (e) {
                 if (e.index == 1) {
-                    var member =$("#editor .member").val();
-                    var sex =$("#editor .sex option:selected").val();
-                    var height =$("#editor .height").text();
-                    var weight =$("#editor .weight").text();
-                    var birthday =$("#editor .birthday").text();
-                    if(member!=''&&sex!=''&& height!=''&& weight!=''&& birthday!=''){
+                    var member = $("#editor .member").val();
+                    var sex = $("#editor .sex option:selected").val();
+                    var height = $("#editor .height").text();
+                    var weight = $("#editor .weight").text();
+                    var birthday = $("#editor .birthday").text();
+                    if (member != '' && sex != '' && height != '' && weight != '' && birthday != '') {
                         mui.ajax("{:url('api/member/updateMemberApi')}", {
                             data: {
                                 'member': member,
@@ -416,19 +480,19 @@
                             dataType: 'json',//服务器返回json格式数据
                             type: 'post',//HTTP请求类型
                             timeout: 10000,//超时时间设置为10秒；
-                            headers: {'Content-Type': 'application/json'},
+                            headers: { 'Content-Type': 'application/json' },
                             success: function (data) {
                                 console.log(data)
                                 mui.toast(data.msg)
-                                  setTimeout(viewApi.back(),2500);
-                                  location.reload();
+                                setTimeout(location.reload(viewApi.back()), 2500);
+                                ;
                             },
                             error: function (xhr, type, errorThrown) {
                                 console.log(data);
                                 mui.toast("网络异常,请稍候再试");
                             }
-                        }); 
-                    }else{
+                        });
+                    } else {
                         mui.toast("请完善信息")
                     }
                 } else {
@@ -437,7 +501,6 @@
             })
 
         })
-
     </script>
 
 </body>

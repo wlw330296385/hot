@@ -103,9 +103,16 @@ class Team extends Base {
 
     // 我的球队列表（会员所在球队列表）
     public function myteam() {
+        // 会员所在球队列表
         $teamS = new TeamService();
         $myTeamList = $teamS->myTeamWithRole($this->memberInfo['id']);
+
+        // 获取会员的裁判员信息
+        $refereeS = new RefereeService();
+        $refereeInfo = $refereeS->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
+
         $this->assign('myTeamList', $myTeamList);
+        $this->assign('refereeInfo', $refereeInfo);
         return view('Team/myteam');
     }
 
@@ -154,7 +161,8 @@ class Team extends Base {
         $teamS = new TeamService();
         // 获取队员在当前球队的数据信息
 
-        $map = ['team_id' => $team_id, 'member_id' => $member_id];
+        //$map = ['team_id' => $team_id, 'member_id' => $member_id];
+        $map['team_id'] = $team_id;
         if ($id) {
             $map['id'] = $id;
         }
@@ -168,7 +176,8 @@ class Team extends Base {
         $memberOtherTeamMap = [
             'member_id' => $member_id,
             'team_id' => ['neq', $team_id],
-            'member' => ['like', "%". $teamMemberInfo['member'] ."%"]
+            //'member' => ['like', "%". $teamMemberInfo['member'] ."%"]
+            'name' => ['like', "%". $teamMemberInfo['name'] ."%"]
         ];
         $memberOtherTeam = $teamS->getTeamMemberList($memberOtherTeamMap);
 
@@ -210,7 +219,8 @@ class Team extends Base {
         $member_id = input('member_id', 0);
         $teamS = new TeamService();
         // 获取队员在当前球队的数据信息
-        $map = ['team_id' => $team_id, 'member_id' => $member_id];
+        //$map = ['team_id' => $team_id, 'member_id' => $member_id];
+        $map['team_id'] = $team_id;
         if ($id) {
             $map['id'] = $id;
         }
@@ -426,7 +436,7 @@ class Team extends Base {
 
         // 传入裁判id 页面输出信息
         $refereeInfo = [];
-        $refereeId = input('referee_id');
+        $refereeId = input('referee_id', 0);
         $refereeS = new RefereeService();
         if ($refereeId) {
             $refereeInfo = $refereeS->getRefereeInfo(['id' => $refereeId]);

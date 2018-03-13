@@ -124,7 +124,6 @@ class Referee extends Base{
         ]);
     }
 
-
     //注册成功
     public function registerSuccess(){
         return view('Referee/registerSuccess');
@@ -158,7 +157,7 @@ class Referee extends Base{
         $matchInfo = $matchService->getMatch(['id' => $applyInfo['match_id']]);
         $matchRecordInfo = $matchService->getMatchRecord(['id' => $applyInfo['match_record_id']]);
         if ($matchRecordInfo) {
-            $matchInfo['match_record'] = $matchRecordInfo;
+            $matchInfo['record'] = $matchRecordInfo;
         }
 
         return view('Referee/matchApply', [
@@ -168,7 +167,7 @@ class Referee extends Base{
     }
 
     // 执裁比赛列表
-    public function myMatchList(){
-        return view('Referee/myMatchList');
+    public function judgingList(){
+        return view('Referee/judgingList');
     }
 }

@@ -326,10 +326,9 @@
                 console.log(data)
                 var newli1 = '';
                 var newli0 = '';
-                // var teamType = "{$teamInfo.type}";
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + data.data[i].team_id + '/member_id/' + data.data[i].member_id + '/id/' + data.data[i].id;
+                        var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + data.data[i].team_id + '/id/' + data.data[i].id;
                         if (data.data[i].role_arr != 0) {
                             newli1 += '<li class="mui-table-view-cell mui-media listli coach"><a href="' + urls + '" class="mui-navigate-right">';
                             if (data.data[i].number == null) {
@@ -338,11 +337,7 @@
                                 newli1 += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
                             }
                             newli1 += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;">';
-                            // if (teamType == 1) {
-                            //     newli1 += '<div class="mui-media-body wd60">' + data.data[i].student;
-                            // } else {
-                                newli1 += '<div class="mui-media-body wd60">' + data.data[i].member;
-                            // }
+                            newli1 += '<div class="mui-media-body wd60">' + data.data[i].name;
                             newli1 += '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
                             for (var j = 0; j <= data.data[i].role_arr.length - 1; j++) {
                                 newli1 += '<font class="tipCorner bgred">' + data.data[i].role_arr[j] + '</font>';
@@ -356,11 +351,7 @@
                                 newli0 += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
                             }
                             newli0 += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;">';
-                            // if (teamType == 1) {
-                            //     newli0 += '<div class="mui-media-body wd60">' + data.data[i].student;
-                            // } else {
-                                newli0 += '<div class="mui-media-body wd60">' + data.data[i].member;
-                            // }
+                            newli0 += '<div class="mui-media-body wd60">' + data.data[i].name;
                             newli0 += '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
 
                             newli0 += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div></li>'
@@ -420,14 +411,14 @@
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + data.data[i].team_id + '/member_id/' + data.data[i].member_id;
+                        var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + data.data[i].team_id + '/id/' + data.data[i].id;
                         newli += '<li class="mui-table-view-cell mui-media listli coach"><a href="' + urls + '" class="mui-navigate-right">';
                         if (data.data[i].number == null) {
                             newli += '<div class="mbNumber">&nbsp;</div>';
                         } else {
                             newli += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
                         }
-                        newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd60">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
+                        newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd60">' + data.data[i].name + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
                         newli += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div></li>'
                     }
                 }
