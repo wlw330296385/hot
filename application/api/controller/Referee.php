@@ -414,14 +414,14 @@ class Referee extends Base{
                 return json(['code' => 100, 'msg' => '您无权操作此信息']);
             }
             // 更新邀请数据
-            /*$resSaveApply = $matchS->saveMatchRerfereeApply([
+            $resSaveApply = $matchS->saveMatchRerfereeApply([
                 'id' => $applyInfo['id'],
                 'status' => $status,
                 'reply' => $reply
             ]);
             if ($resSaveApply['code'] == 100) {
                 return json($resSaveApply);
-            }*/
+            }
 
             if ($status == 2) {
                 //同意
@@ -453,7 +453,7 @@ class Referee extends Base{
             // 发送通知给邀请人
 
 
-            //return json($resSaveApply);
+            return json($resSaveApply);
         } catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
