@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>受邀比赛详情</title>
+    <title>受邀比赛详情{$applyInfo.status}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -39,9 +39,13 @@
                 <label class="wd45">回复的内容：</label>
                 <textarea class="reply wd52" value="{$applyInfo.reply}" placeholder="请填写同意或者拒绝理由">{$applyInfo.reply}</textarea>
             </div>
+
             <div class="mui-button-row h-auto operationFrame">
-                <button class="mui-btn mui-btn-danger" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
-                <button class="mui-btn" type="button" onclick="check_status(3)">拒绝</button>
+                {eq name="$applyInfo.status" value="2"}
+                <p>你已经同意执裁比赛，点击拒绝按钮可以改变状态</p>{/eq} {eq name="$applyInfo.status" value="3"}
+                <p>你已经拒绝执裁比赛，点击同意按钮可以改变状态</p>{/eq}
+                <button class="mui-btn mui-btn-danger agree" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
+                <button class="mui-btn refuse" type="button" onclick="check_status(3)">拒绝</button>
             </div>
         </form>
 
@@ -90,7 +94,7 @@
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>比赛地点</label>
-                    <span>{$matchInfo.court}</span>
+                    <span class="court">{$matchInfo.court}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
@@ -119,8 +123,32 @@
 
             // 时间待定显示
             var match_time = "{$matchInfo.match_time}";
+            var court = "{$matchInfo.court}";
             if (match_time == 0) {
                 $(".match_time").text("待定");
+            }
+            if (court == '') {
+                $(".court").text("待定");
+            }
+
+            // 判断回复的状态
+            var status = "{$applyInfo.status}";
+            if (status == 2) {
+                $(".refuse").on("tap", "", function () {
+                    mui.confirm('你已经同意了执裁比赛，是否要更改为拒绝执裁比赛?', '', ['取消', '确定'], function (e) {
+                        if (e.index == 1) {
+                            check_status(3)
+                        }
+                    });
+                })
+            } else if (status == 3) {
+                $(".agree").on("tap", "", function () {
+                    mui.confirm('你已经拒绝了执裁比赛，是否要更改为同意执裁比赛?', '', ['取消', '确定'], function (e) {
+                        if (e.index == 1) {
+                            check_status(2)
+                        }
+                    });
+                })
             }
         })
 

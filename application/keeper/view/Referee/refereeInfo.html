@@ -43,7 +43,7 @@
                         <div class="mui-media-body wd49">
                             {$refereeInfo.referee}
                             <i class="icon iconfont icon-sex{$refereeInfo.member.sex}"></i>
-                            <p class="mui-ellipsis">执裁经验:{$refereeInfo.referee_year}年 | 等级:{$refereeInfo.level}</p>
+                            <p class="mui-ellipsis">执裁经验:{$refereeInfo.referee_year}年 | 等级:<font class="level">{$refereeInfo.level}</font></p>
                         </div>
                         <div class="camp-num mui-text-right">
                             <ul>
@@ -104,7 +104,7 @@
                 <span class="course">裁判员简介</span>
             </div>
             <ul class="mui-table-view">
-                <li class="mui-table-view-cell listli introBox">{$refereeInfo.introduction}</li>
+                <li class="mui-table-view-cell listli introBox" style="padding:0 !important">{$refereeInfo.introduction}</li>
             </ul>
 
             <!-- 会员评价 -->
@@ -176,7 +176,7 @@
             <div class="list camp-list camp-lesson-list detalis-list grade-list referee">
                 <ul class="mui-table-view operation">
                     <h5>
-                        <span class="sstitle">评价此裁判员</span>
+                        <span class="sstitle">评论裁判员</span>
                         <a href="#comment" class="mui-icon mui-icon-closeempty"></a>
                     </h5>
                     <li class="listli">
@@ -231,42 +231,6 @@
             </ul>
         </div>
 
-        <!-- 邀请弹框 -->
-        <!-- <div id="invitation" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-            <div class="list camp-list camp-lesson-list detalis-list grade-list referee">
-                <ul class="mui-table-view operation">
-                    <h5 class="border-b">
-                        <span class="sstitle">邀请执裁</span>
-                        <a href="#invitation" class="mui-icon mui-icon-closeempty"></a>
-                    </h5>
-                    <form action="" class="mui-input-group">
-                        <div class="mui-input-row">
-                            <div class="mui-navigate-right">
-                                <label style="padding: 14px 15px">所属球队</label>
-                                <span class="wd60">
-                                    约赛列表
-                                </span>
-                            </div>
-                        </div>
-                        <div class="mui-input-row">
-                            <div class="mui-navigate-right">
-                                <label style="padding: 14px 15px">裁判类型</label>
-                                <span class="select-row mui-navigate-right ">
-                                    <select name="type" id="type" class="data">
-                                        <option value="6">主裁判员</option>
-                                        <option value="7">副裁判员</option>
-                                    </select>
-                                </span>
-                            </div>
-                        </div>
-                    </form>
-                    <li class="listli">
-                        <textarea rows="4" name="remarks" class="remarks"></textarea>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="invitationSubmit">提交</li>
-                </ul>
-            </div>
-        </div> -->
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -286,9 +250,10 @@
 
         $(function () {
 
-            // 星星显示
-            var star = Math.round("{$refereeInfo.star}" / "{$refereeInfo.star_num}");
-            starShow(star);
+            var introduction = "{$refereeInfo.introduction}";
+            if (introduction == '') {
+                $(".introBox").append("<p class='nohave'>还没有简介哦</p>")
+            }
 
             // 裁判等级文字数字转换
             var level = "{$refereeInfo.level}"
@@ -330,7 +295,7 @@
                 $(this).hide();
             });
 
-            //评价
+            //发表评论
             $("#commentSubmit").on('click', function () {
                 var comment = $('textarea.data').val();
                 if (comment == "" || comment == null) {
@@ -345,7 +310,7 @@
                 if (result) {
                     mui.toast(result.msg);
                     mui('#comment').popover('toggle');
-                    $(".moreComment").show();
+                    window.location.reload();
                 }
             });
 
@@ -426,88 +391,11 @@
                 });
             });
 
-
-
-            //邀请执裁
-            // $("#invitationSubmit").on('click', function () {
-
-            //     var remarks = $(".remarks").val();
-            //     var organization = $("option:selected").text();
-            //     var organization_id = $("option:selected").val();
-            //     if (remarks == '') {
-            //         mui.toast("你还没有写邀请理由哦！");
-            //         return false;
-            //     };
-            //     //没有邀请记录，可以邀请
-            //     mui.ajax("{:url('api/apply/createApplyApi')}", {
-            //         data: {
-            //             '__token__': "{$Request.token}",
-            //             "organization_type": 1,
-            //             "organization": organization,
-            //             "organization_id": organization_id,
-            //             "type": 2,
-            //             "remarks": remarks,
-            //             "apply_type": 2,
-            //             "apply_id": yid
-            //         },
-            //         dataType: 'json',//服务器返回json格式数据
-            //         type: 'post',//HTTP请求类型
-            //         timeout: 10000,//超时时间设置为10秒；
-            //         headers: { 'Content-Type': 'application/json' },
-            //         success: function (data) {
-            //             //服务器返回响应，根据响应结果，分析是否登录成功；
-            //             console.log(data);
-            //             if (data.code == 200) {
-            //                 mui.toast("邀请成功，待审核");
-            //                 mui('#invitation').popover('toggle');
-            //             } else {
-            //                 mui.toast(data.msg);
-            //                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-            //                     if (data.code === 200) {
-            //                         $('input[name=__token__]').val(data.data);
-            //                     }
-            //                 }, 'json');
-            //             }
-            //         },
-            //         error: function (xhr, type, errorThrown) {
-            //             //异常处理；
-            //             console.log(type);
-            //         }
-            //     });
-            // })
             toTeam()
             toTagAllList(); //所有标签列表
             toTagCommentList(); //已经评价的标签列表
             followStatus() //判断当前的关注状态;
-            // friendList();
         });
-
-        // 所属球队约战列表
-        // function friendList() {
-        //     var member_id = "{$refereeInfo.member_id}";
-        //     mui.ajax("{:url('api/match/getMatchListOrderByDistanceApi')}", {
-        //         data: {
-        //             islive: 1,
-        //         },
-        //         dataType: 'json',//服务器返回json格式数据
-        //         type: 'post',//HTTP请求类型
-        //         timeout: 10000,//超时时间设置为10秒；
-        //         headers: { 'Content-Type': 'application/json' },
-        //         success: function (data) {
-        //             //服务器返回响应，根据响应结果，分析是否登录成功；
-        //             console.log(data);
-        //             if (data.code == 200) {
-        //                 mui.toast(data.msg);
-        //             } else {
-        //                 mui.toast(data.msg);
-        //             }
-        //         },
-        //         error: function (xhr, type, errorThrown) {
-        //             //异常处理；
-        //             console.log(type);
-        //         }
-        //     });
-        // };
 
         // 判断当前的关注状态
         function followStatus() {

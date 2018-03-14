@@ -588,6 +588,13 @@ class MatchService {
         return $result;
     }
 
+    // 获取比赛-裁判关系记录数
+    public function getMatchRefereeCount($map) {
+        $model = new MatchReferee();
+        $res = $model->where($map)->count();
+        return $res ? $res : 0;
+    }
+
     // 获取比赛-裁判关系列表（分页）
     public function getMatchRefereePaginator($map=[], $order='id desc', $size=10) {
         $model = new MatchReferee();
@@ -640,6 +647,7 @@ class MatchService {
         $result = $res->toArray();
         foreach ($result['data'] as $k => $val) {
             $result['data'][$k]['match'] = $this->getMatch(['id' => $val['match_id']]);
+            $result['data'][$k]['record'] = $this->getMatchRecord(['id' => $val['match_record_id'], 'match_id' => $val['match_id']]);
         }
         return $result;
     }
@@ -654,13 +662,24 @@ class MatchService {
         $result = $res->toArray();
         foreach ($result as $k => $val) {
             $result[$k]['match'] = $this->getMatch(['id' => $val['match_id']]);
+            $result[$k]['record'] = $this->getMatchRecord(['id' => $val['match_record_id'], 'match_id' => $val['match_id']]);
         }
         return $result;
     }
 
     // 保存比赛邀请裁判数据
-    public function saveMatchRerfereeApply($data) {
+    public function saveMatchRerfereeApply($data=[], $condition=[]) {
         $model = new MatchRefereeApply();
+        if (!empty($condition)) {
+            // 带更新条件更新数据
+            $res = $model->allowField(true)->save($data, $condition);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
         if (isset($data['id'])) {
             // 更新数据
             $res = $model->allowField(true)->isUpdate(true)->save($data);
@@ -670,15 +689,14 @@ class MatchService {
                 trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
+        }
+        // 插入数据
+        $res = $model->allowField(true)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
         } else {
-            // 插入数据
-            $res = $model->allowField(true)->save($data);
-            if ($res) {
-                return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
-            } else {
-                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
-                return ['code' => 100, 'msg' => __lang('MSG_400')];
-            }
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
 
@@ -702,6 +720,7 @@ class MatchService {
             return $res;
         }
         $result = $res->toArray();
+        $result['record'] = $this->getMatchRecord(['id' => $result['match_record_id'], 'match_id' => $result['match_id']]);
         return $result;
     }
 

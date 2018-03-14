@@ -105,7 +105,17 @@
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 var urls = "{:url('referee/matchApply')}" + '/apply_id/' + data.data[i].id;
-                                newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].member_avatar + '"><div class="mui-media-body wd"  style="line-height:20px !important;">' + data.data[i].match.name + '<p class="mui-ellipsis ">比赛地点：' + data.data[i].match.court + '</p><p class="address colororange">比赛时间：' + data.data[i].match.match_time + '</p></div></a></li>';
+                                newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].member_avatar + '"><div class="mui-media-body wd"  style="line-height:20px !important;">' + data.data[i].match.name;
+                                if (data.data[i].match.court == '') {
+                                    newli += '<p class="mui-ellipsis">比赛地点：待定</p>';
+                                } else {
+                                    newli += '<p class="mui-ellipsis">比赛地点：' + data.data[i].match.court + '</p>';
+                                }
+                                if (data.data[i].match.match_time == 0) {
+                                    newli += '<p class="address colororange">比赛时间：待定</p></div></a></li>';
+                                } else {
+                                    newli += '<p class="address colororange">比赛时间：' + data.data[i].match.match_time + '</p></div></a></li>';
+                                }
                             }
                         }
                         if (gType == 1) {

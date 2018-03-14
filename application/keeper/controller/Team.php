@@ -379,6 +379,7 @@ class Team extends Base {
         $match_id = input('match_id', 0);
         $matchS = new MatchService();
         $teamS = new TeamService();
+        $refereeS = new RefereeService();
         // 比赛详情
         $matchInfo = $matchS->getMatch(['id' => $match_id]);
 
@@ -417,10 +418,14 @@ class Team extends Base {
         $countTeamMember = $teamS->getTeamMemberCount([ 'team_id' => $matchInfo['team_id'] ]);
 
 
+        // 获取会员的已审核裁判员信息
+        $memberRefereeInfo = $refereeS->getRefereeInfo(['member_id' => $this->memberInfo['id'], 'status' => 1]);
+
         $this->assign('teamrole', $teamrole);
         $this->assign('countTeamMember', $countTeamMember);
         $this->assign('matchInfo', $matchInfo);
         $this->assign('refereeList', $refereeList);
+        $this->assign('memberRefereeInfo', $memberRefereeInfo);
         return view('Team/matchInfo');
     }
 
@@ -576,5 +581,28 @@ class Team extends Base {
         $this->assign('teamInfo', $team);
         return view('Team/memberApplyInfo');
     }
-    
+
+    // 裁判申请执裁比赛列表
+    public function matchrefereeapplylist() {
+        return view('team/matchRefereeApplyList');
+    }
+
+    // 裁判申请执裁比赛详情
+    public function matchrefereeapply() {
+        $id = input('apply_id', 0);
+        $matchService = new MatchService();
+        // 获取裁判申请执裁比赛数据
+        $applyInfo = $matchService->getMatchRerfereeApply(['id' => $id]);
+        // 查询关联的比赛数据
+        $matchInfo = $matchService->getMatch(['id' => $applyInfo['match_id']]);
+        $matchRecordInfo = $matchService->getMatchRecord(['id' => $applyInfo['match_record_id']]);
+        if ($matchRecordInfo) {
+            $matchInfo['record'] = $matchRecordInfo;
+        }
+
+        return view('team/matchRefereeApply', [
+            'applyInfo' => $applyInfo,
+            'matchInfo' => $matchInfo
+        ]);
+    }
 }
