@@ -612,6 +612,8 @@ class MatchService {
             if ($val['match']['match_time']) {
                 $result['data'][$k]['match']['match_timestamp'] = strtotime($val['match']['match_time']);
             }
+            // 比赛战绩数据
+            $result['data'][$k]['record'] = $this->getMatchRecord(['id' => $val['match_record_id'], 'match_id' => $val['match_id']]);
         }
         return $result;
     }
@@ -633,11 +635,13 @@ class MatchService {
             if ($val['match']['match_time']) {
                 $result[$k]['match']['match_timestamp'] = strtotime($val['match']['match_time']);
             }
+            // 比赛战绩数据
+            $result[$k]['record'] = $this->getMatchRecord(['id' => $val['match_record_id'], 'match_id' => $val['match_id']]);
         }
         return $result;
     }
 
-    // 获取比赛申请|邀请裁判列表（分页也么）
+    // 获取比赛申请|邀请裁判列表（分页）
     public function getMatchRefereeApplyPaginator($map=[], $order='id desc', $size=10) {
         $model = new MatchRefereeApply();
         $res = $model->where($map)->order($order)->paginate($size);
@@ -646,7 +650,9 @@ class MatchService {
         }
         $result = $res->toArray();
         foreach ($result['data'] as $k => $val) {
+            // 比赛信息
             $result['data'][$k]['match'] = $this->getMatch(['id' => $val['match_id']]);
+            // 比赛战绩信息
             $result['data'][$k]['record'] = $this->getMatchRecord(['id' => $val['match_record_id'], 'match_id' => $val['match_id']]);
         }
         return $result;
@@ -661,13 +667,15 @@ class MatchService {
         }
         $result = $res->toArray();
         foreach ($result as $k => $val) {
+            // 比赛信息
             $result[$k]['match'] = $this->getMatch(['id' => $val['match_id']]);
+            // 比赛战绩信息
             $result[$k]['record'] = $this->getMatchRecord(['id' => $val['match_record_id'], 'match_id' => $val['match_id']]);
         }
         return $result;
     }
 
-    // 保存比赛邀请裁判数据
+    // 保存比赛申请|邀请裁判数据
     public function saveMatchRerfereeApply($data=[], $condition=[]) {
         $model = new MatchRefereeApply();
         if (!empty($condition)) {
@@ -700,7 +708,7 @@ class MatchService {
         }
     }
 
-    // 批量保存比赛邀请裁判数据
+    // 批量保存比赛申请|邀请裁判数据
     public function saveAllMatchRerfereeApply($data) {
         $model = new MatchRefereeApply();
         $res = $model->saveAll($data);
@@ -712,7 +720,7 @@ class MatchService {
         }
     }
 
-    // 获取比赛邀请裁判数据
+    // 获取比赛申请|邀请裁判数据
     public function getMatchRerfereeApply($map=[]) {
         $model = new MatchRefereeApply();
         $res = $model->with('match')->where($map)->find();
@@ -720,8 +728,18 @@ class MatchService {
             return $res;
         }
         $result = $res->toArray();
+        // 比赛信息
+        $result['match'] = $this->getMatch(['id' => $result['match_id']]);
+        // 比赛战绩信息
         $result['record'] = $this->getMatchRecord(['id' => $result['match_record_id'], 'match_id' => $result['match_id']]);
         return $result;
+    }
+
+    // 获取比赛申请|邀请裁判记录数
+    public function getMatchRerfereeApplyCount($map=[]) {
+        $model = new MatchRefereeApply();
+        $res = $model->where($map)->count();
+        return $res ? $res : 0;
     }
 
 }

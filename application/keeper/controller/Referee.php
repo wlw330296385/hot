@@ -19,31 +19,30 @@ class Referee extends Base{
 
     // 裁判主页
     public function refereeManage(){
-        $refereeInfo = $this->refereeService->getRefereeInfo(['member_id'=>$this->memberInfo['id']]);
-        // 接单次数
-        $totalOrder = 0;
-        // 受邀次数
-        $totalInvited = 0;
-        $Apply = new \app\model\Apply;
-        // $applyMap = function($query) use($refereeInfo){
-        //     $query->where(['member_id'=>$refereeInfo['member_id']])
-        // }
-        $applyList = $Apply
-                    ->where('type',['=',6],['=',7],'or')
-                    ->where(['member_id'=>$refereeInfo['member_id']])
-                    ->where(['organization_type'=>4])
-                    ->select();
-
-        foreach ($applyList as $key => $value) {
-            if($value['apply_type'] == 2){
-                $totalInvited++;
-            }
-            if($value['apply_type'] == 1 && $value['status'] == 2){
-                $totalOrder++;
-            }
+        $refereeId = input('referee_id', 0);
+        // 获取裁判员信息
+        if ($refereeId) {
+            $refereeInfo = $this->refereeService->getRefereeInfo(['id' => $refereeId]);
+        } else {
+            $refereeInfo = $this->refereeService->getRefereeInfo(['member_id'=>$this->memberInfo['id']]);
         }
+        $matchService = new MatchService();
+        // 接单次数
+        $totalOrder = $matchService->getMatchRerfereeApplyCount([
+            'apply_type' => 1,
+            'referee_id' => $refereeInfo['id']
+        ]);
+        // 受邀次数
+        $totalInvited = $matchService->getMatchRerfereeApplyCount([
+            'apply_type' => 1,
+            'referee_id' => $refereeInfo['id']
+        ]);
+
         // 执裁场次
-        $totalMatch = db('match_referee')->where(['referee_id'=>$refereeInfo['id']])->count();
+        $totalMatch = $matchService->getMatchRefereeCount([
+            'referee_id' => $refereeInfo['id'],
+            'is_attend' => 2
+        ]);
         
         $this->assign('refereeInfo',$refereeInfo);
         $this->assign('totalMatch',$totalMatch);
