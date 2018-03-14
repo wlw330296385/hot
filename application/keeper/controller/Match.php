@@ -5,6 +5,7 @@ namespace app\keeper\controller;
 
 use app\service\MatchService;
 use app\service\TeamService;
+use app\service\RefereeService;
 
 class Match extends Base {
     // 赛事列表（平台展示）
@@ -43,6 +44,7 @@ class Match extends Base {
     public function friendlyinfo() {
         $id = input('match_id');
         $matchS = new MatchService();
+        $refereeS = new RefereeService();
         // 比赛详情
         $matchInfo = $matchS->getMatch(['id' => $id]);
         $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
@@ -61,10 +63,14 @@ class Match extends Base {
         $teamS = new TeamService();
         $teamInfo = $teamS->getTeam(['id' => $matchInfo['team_id']]);
 
+        // 获取会员的已审核裁判员信息
+        $memberRefereeInfo = $refereeS->getRefereeInfo(['member_id' => $this->memberInfo['id'], 'status' => 1]);
+
         $this->assign('matchInfo', $matchInfo);
         $this->assign('teamInfo', $teamInfo);
+        $this->assign('memberRefereeInfo', $memberRefereeInfo);
         return view('Match/friendlyinfo');
     }
 
-
+    //
 }
