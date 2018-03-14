@@ -178,6 +178,9 @@
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        {if condition="$memberRefereeInfo"}
+        <button class="apply-referee">申请执裁比赛</button>
+        {/if}
     </header>
 
     <div class="mui-content">
@@ -577,7 +580,31 @@
                     }
                 });
             });
-        })
+
+            $('.apply-referee').on('tap', function() {
+                var match_id = "{$matchInfo.id}";
+                var match_record_id = "{$matchInfo.record.id}";
+                var referee_id = "{$memberRefereeInfo.id}";
+                mui.ajax("{:url('api/referee/applymatchreferee')}", {
+                    data : {
+                        match_id : match_id,
+                        match_record_id : match_record_id,
+                        referee_id : referee_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                    },
+                    error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                    }
+                });
+            });
+        });
 
         // 点赞状态
         function isthumbsup() {

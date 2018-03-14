@@ -136,6 +136,7 @@ class Match extends Base
         // 消息模板链接
         $linkurl = url('keeper/message/index', '', '', true);
         $daidingStr = '待定';
+        $title = $content = '';
         if ($refereeType == 1) {
             // 选择随机安排 根据比赛信息 发送比赛裁判邀请给裁判人群
             // 获取符合条件裁判人群
@@ -174,11 +175,11 @@ class Match extends Base
                         'match_record_id' => $matchRecordId,
                         'referee_id' => $refereeInfo['id'],
                         'referee' => $refereeInfo['referee'],
+                        'referee_avatar' => $refereeInfo['portraits'],
                         'member_id' => $this->memberInfo['id'],
                         'member' => $this->memberInfo['member'],
                         'member_avatar' => $this->memberInfo['avatar'],
                         'overtime' => strtotime('+6 hours'), //6小时后过期
-                        'is_attend' => 1,
                         'status' => 1
                     ];
                 }
