@@ -149,9 +149,6 @@ class Lesson extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
-            if( isset($map['page']) ){
-                unset($map['page']);
-            }
             $result = $this->LessonService->getLessonListNoPage($map);
             if($result){
                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
