@@ -53,20 +53,20 @@
                 <!-- 有上传身份证 -->
                 <div class="mui-input-row">
                     <label>身份证号码</label>
-                    <input type="text" class="input wd54 data" name="idno" placeholder="请输入身份证号码" value="{$idcard.cert_no}" >
+                    <input type="text" class="input wd54 data" name="idno" placeholder="请输入身份证号码" value="{$idcard.cert_no}">
                 </div>
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right filePicker" onclick="add_id(1)">
                         <label>身份证正面</label>
                         <img id="preview_1" class="refereeicon icon01 upload-preview" src="{$idcard.photo_positive}" alt="">
-                        <input type="hidden" class="data" name="photo_positive" value="{$idcard.photo_positive}" >
+                        <input type="hidden" class="data" name="photo_positive" value="{$idcard.photo_positive}">
                     </a>
                 </div>
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right filePicker" onclick="add_id(2)">
                         <label>身份证反面</label>
                         <img id="preview_2" class="refereeicon icon01 upload-preview" src="{$idcard.photo_back}" alt="">
-                        <input type="hidden" class="data" name="photo_back" value="{$idcard.photo_back}" >
+                        <input type="hidden" class="data" name="photo_back" value="{$idcard.photo_back}">
                     </a>
                 </div>
 
@@ -158,6 +158,16 @@
                         <input type="hidden" name="area" value="{$refereeInfo.area}" class="data" id="area">
                     </a>
                 </div>
+                <div class="mui-input-row">
+                    <label>接受系统安排比赛</label>
+                    <span class="select-row mui-navigate-right">
+                        <select name="accept_rand_match" id="accept" class="pdr15 data">
+                            <option value="">--请选择--</option>
+                            <option value="1">接受</option>
+                            <option value="0">不接受</option>
+                        </select>
+                    </span>
+                </div>
                 <div class="mui-input-row h-auto">
                     <label>个人宣言</label>
                     <textarea rows="4" class="description" placeholder="个人宣言">{$refereeInfo.description}</textarea>
@@ -197,7 +207,7 @@
 
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgblue registerbtn2" onclick="submitAction()">
-                        提交
+                    提交
                 </li>
             </ul>
         </div>
@@ -263,6 +273,8 @@
         $(function () {
             // 设置裁判员等级
             $('#level option[value="{$refereeInfo.level}"]').prop("selected", true);
+            // 设置是否接受系统安排比赛
+            $('#accept option[value="{$refereeInfo.accept_rand_match}"]').prop("selected", true);
         })
 
         function submitAction() {
