@@ -254,15 +254,10 @@
             <div class="page-header border-b">
                 <span class="course">最近订单</span>
                 <span class="more pdr15">
-                    <a href="" class="mui-navigate-right">更多</a>
+                    <a href="{:url('referee/refereeManage')}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
-            <ul class="mui-table-view detalis-list list mainInfo border-b newReferee">
-                <li class="nodata">
-                    <i class="icon iconfont icon-logo-Big"></i>
-                    <p>没有相关数据哦</p>
-                </li>
-            </ul>
+            <ul class="mui-table-view detalis-list list mainInfo border-b newReferee"></ul>
 
             <div class="show-list hot-ads">
                 <img src="/static/frontend/images/ads1.jpg" />
@@ -688,8 +683,7 @@
             });
         };
 
-        //获取最近一条订单
-        var refereeid = "";
+        //获取最近订单
         function toLastRefereeList() {
             mui.ajax("{:url('api/referee/getMemberReferee')}", {
                 data: {},
@@ -700,10 +694,11 @@
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
-                        refereeid = data.data.id;
-                        mui.ajax("{:url('api/referee/getmatchrefereelist')}", {
+                        var referee_id = data.data.id;
+                        mui.ajax("{:url('api/referee/matchapplylist')}", {
                             data: {
-                                referee_id: refereeid
+                                page: 1,
+                                referee_id: referee_id
                             },
                             dataType: 'json',//服务器返回json格式数据
                             type: 'post',//HTTP请求类型
@@ -711,37 +706,33 @@
                             headers: { 'Content-Type': 'application/json' },
                             success: function (data) {
                                 console.log(data)
-                                var div = '';
+                                var newli = '';
                                 if (data.code == 200) {
-                                    // 将时间戳转成日期格式
-                                    var Tmonth = gettimem(data.data[0].match.match_timestamp * 1000);
-                                    var Tday = gettimed(data.data[0].match.match_timestamp * 1000);
-                                    var Ttime = gettimeh(data.data[0].match.match_timestamp * 1000);
-                                    var url = "{:url('team/matchinfo')}" + '/team_id/' + data.data[0].match.team_id + '/match_id/' + data.data[0].match_id;
-                                    div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center">';
-                                    if (data.data[0].match.match_time == 0) {
-                                        div += '<p class="month bgblack">0月</p><h1 class="day" style="font-size: 25px;padding: 15px 21px;">待定</h1><p class="hours">00:00</p>';
-                                    } else {
-                                        div += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorred">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
+                                    for (var i = 0; i <= data.data.slice(0, 4).length - 1; i++) {
+                                        var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data[i].match_id + '/team_id/' + + data.data[i].match.team_id;
+                                        newli += '<li class="mui-table-view-cell mui-media listli">'
+                                        newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].member_avatar + '" style="width:45px !important;height:45px !important;border-radius:50% !important;"><div class="mui-media-body wd">' + data.data[i].match.name + '';
+                                        newli += '<p class="mui-ellipsis" style="line-height:20px;">' + data.data[i].match.match_time + '</p>';
+                                        if (data.data[i].status == 1) {
+                                            newli += '<p class="mui-ellipsis" style="line-height:20px;"><font class="tipCorner bggray" style="margin:0 5px 0 0 !important;">未回复</font>' + data.data[i].match.court + '</p></div>'
+                                        }
+                                        if (data.data[i].status == 2) {
+                                            newli += '<p class="mui-ellipsis" style="line-height:20px;"><font class="tipCorner bgred" style="margin:0 5px 0 0 !important;">已同意</font>' + data.data[i].match.court + '</p></div>'
+                                        }
+                                        if (data.data[i].status == 3) {
+                                            newli += '<p class="mui-ellipsis" style="line-height:20px;"><font class="tipCorner bgorange" style="margin:0 5px 0 0 !important;">已拒绝</font>' + data.data[i].match.court + '</p></div>'
+                                        }
+                                        newli += '</a></li>';
                                     }
-                                    div += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[0].match.name + '</h5><div class="divFrame">';
-                                    div += '<p>发起人：' + data.data[0].match.member + '</p>';
-                                    div += '<p>比赛地点：' + data.data[0].match.court + '</p><p>比赛类型：' + data.data[0].match.type + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
-                                    if (data.data[0].match.is_finished_num == 1) {
-                                        div += '<button class="mui-btn opbtn bggray">已结束</button>';
-                                    } else {
-                                        div += '<button class="mui-btn opbtn bggreen signupRefereeBtn">接单</button>';
-                                    }
-                                    div += ' </div></div></li>';
-                                    $(".newReferee").empty().append(div);
                                 }
-                                if (data.code == 100) {
-                                    $(".newReferee").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有比赛数据，赶紧去创建比赛吧</p></li>');
+                                $("ul.newReferee").empty().append(newli);
+                                if (newli == '') {
+                                    $(".newReferee").prev().find(".noDataTip").append("（暂无数据）");
                                 }
                             },
-                            error: function (xhr, type, errorThrown) {
-                                //异常处理；
-                                console.log(type);
+                            error: function (xhr, type, errerThrown) {
+                                mui.toast('网络异常,请稍候再试');
+                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                             }
                         });
                     } else {

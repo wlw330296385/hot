@@ -204,7 +204,7 @@
                             <select class="data" id="refereeSlecct" name="referee_type">
                                 <option value="0">免裁判</option>
                                 <option value="1">系统随机安排</option>
-                                <option value="2">自行安排</option>
+                                <option value="2" {notempty name="$refereeInfo" }selected{/notempty}>自行安排</option>
                             </select>
                         </span>
                     </div>
@@ -213,28 +213,36 @@
                     <label>随机安排人数</label>
                     <input type="text" name="referee_count" value="" class="data refereeCount" placeholder="请填写随机安排的人数">
                 </div>
+                {empty name="refereeInfo"}
                 <div class="mui-input-row refereeRow hide">
                     <a href="#refereeDom" class="mui-navigate-right">
                         <label>裁判名单</label>
-                        {empty name="refereeInfo"}
                         <span class="referee" name="referee" style="width: 60%"></span>
                         <div class="hideList"></div>
                         <input type="hidden" name="referee_id" value="" class="data">
                         <input type="hidden" name="referee_cost" value="" class="data">
-                        <!-- url传入裁判id -->
-                        {else/}
-                        <span class="referee" name="referee" style="width: 60%">{$refereeInfo.referee}</span>
-                        <div class="hideList"></div>
-                        <input type="hidden" name="referee_id" value="{$refereeInfo.id}" class="data">
-                        <input type="hidden" name="referee_cost" value="{$refereeInfo.appearance_fee}" class="data">
-                        {/empty}
                     </a>
                 </div>
+                {else/}
+                <div class="mui-input-row refereeRow">
+                    <a href="#refereeDom" class="mui-navigate-right">
+                        <label>裁判名单</label>
+                        <!-- url传入裁判id -->
+                        <span class="referee" name="referee" style="width: 60%">{$refereeInfo.referee}</span>
+                        <div class="hideList">
+                            <input type="hidden" class="hideList" data-referee="{$refereeInfo.referee}" data-referee_id="{$refereeInfo.id}" data-referee_cost="{$refereeInfo.appearance_fee}">
+                        </div>
+                        <input type="hidden" name="referee_id" value="{$refereeInfo.id}" class="data">
+                        <input type="hidden" name="referee_cost" value="{$refereeInfo.appearance_fee}" class="data">
+                    </a>
+                </div>
+                {/empty}
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
                         <label class="wd45">裁判付费方式</label>
                         <span class="select-row">
                             <select class="data" name="referee_cost_bear">
+                                <option value="">请选择</option>
                                 <option value="1">费用AA</option>
                                 <option value="2">主队负责</option>
                                 <option value="3">客队负责</option>
