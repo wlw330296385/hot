@@ -394,9 +394,9 @@ class Referee extends Base{
     // 获取比赛-裁判申请|邀请详情
     public function getmatchrefereeapply() {
         try {
-            $applyId = input('apply_id');
+            $map = input('param.');
             $matchS = new MatchService();
-            $applyInfo = $matchS->getMatchRerfereeApply(['id' => $applyId]);
+            $applyInfo = $matchS->getMatchRerfereeApply($map);
             if($applyInfo){
                 return json(['code'=>200,'msg'=>__lang('MSG_201'),'data'=>$applyInfo]);
             }else{
