@@ -153,6 +153,8 @@ class Match extends Base
                 }
             }
             $linkurl = url('keeper/team/matchInfo', ['match_id' => $matchId], '', true);
+            $title = '您好，您有一条新的系统指派比赛执裁订单，请注意查收';
+            $content = '您好，您有一条新的系统指派比赛执裁订单，请注意查收';
         } elseif ($refereeType == 2) {
             // 自行安排安排
             $applyData = [];
@@ -184,18 +186,20 @@ class Match extends Base
             // 保存比赛邀请裁判数据
             $matchS->saveAllMatchRerfereeApply($applyData);
             $linkurl = url('keeper/referee/matchapply', ['match_id' => $matchId], '', true);
+            $title = '您有一条执裁比赛邀请信息';
+            $content = '您好，有比赛邀请您执裁';
         }
 
         // 信息内容
         $daidingStr = '待定';
         $messageData = [
-            'title' => '您有一条邀请执裁比赛信息',
-            'content' => '您好，有比赛邀请您执裁',
+            'title' => $title,
+            'content' => $content,
             'url' => $linkurl,
             'keyword1' => empty($matchData['match_time']) ? $daidingStr : date('Y年m月d日 H:i', $matchData['match_time']),
             'keyword2' => empty($matchData['court']) ? $daidingStr : $matchData['court'],
             'keyword3' => $matchData['name'],
-            'remark' => '点击进入，应邀比赛执裁',
+            'remark' => '点击进入，查看比赛信息',
             'steward_type' => 2
         ];
         $messageS->sendMessageToMembers($memberIds, $messageData, config('wxTemplateID.refereeTask'));
