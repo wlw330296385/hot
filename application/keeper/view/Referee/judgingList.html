@@ -86,11 +86,12 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/referee/getmatchrefereepage','','',true)}"+ '/?page=' + page;
+                var url = "{:url('api/referee/getmatchrefereelist','','',true)}";
                 var referee_id = "{$refereeInfo.id}";
                 mui.ajax({
                     url: url,
                     data: {
+                        page:page,
                         referee_id: referee_id
                     },
                     dataType: 'json',//服务器返回json格式数据
@@ -101,9 +102,9 @@
                         console.log(data)
                         var newli = '';
                         if (data.code == 200) {
-                            for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data.data[i].match_id;
-                                newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].member_avatar + '"><div class="mui-media-body wd"  style="line-height:20px !important;">' + data.data.data[i].match.name + '<p class="mui-ellipsis ">比赛地点：' + data.data.data[i].match.court + '</p><p class="address colororange">比赛时间：' + data.data.data[i].match.match_time + '</p></div></a></li>';
+                            for (var i = 0; i <= data.data.length - 1; i++) {
+                                var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data[i].match_id;
+                                newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].member_avatar + '"><div class="mui-media-body wd"  style="line-height:20px !important;">' + data.data[i].match.name + '<p class="mui-ellipsis ">比赛地点：' + data.data[i].match.court + '</p><p class="address colororange">比赛时间：' + data.data[i].match.match_time + '</p></div></a></li>';
                             }
                         }
                         if (gType == 1) {

@@ -617,7 +617,6 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            // newli = newli + '<option value="' + data.data[i].team.id + '" data-logo="' + data.data[i].team.logo + '">' + data.data[i].team.name + '</option>'
                             newli = newli + '<div class="mui-input-row"><label class="choiseDiv" style="width:100% !important" data-team_id="' + data.data[i].team.id + '">' + data.data[i].team.name + '</label></div>'
                         }
                         $(newli).insertAfter(".choiseTeam");
@@ -640,7 +639,7 @@
             if (teamId == '') {
                 mui.toast("请先选择球队");
             } else {
-                var urls = "{:url('team/createMatch')}" + "/team_id/" + teamId
+                var urls = "{:url('team/createMatch')}" + "/team_id/" + teamId + "/referee_id/{$refereeInfo['id']}";
                 window.location.href = urls
             }
         })
@@ -653,7 +652,6 @@
                 data: {
                     status: 1,
                     team_id: teamId,
-                    away_team: "",
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -664,8 +662,7 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            var url = "{:url('team/createMatch')}" + "/team_id/" + teamId + "/referee_id/{$refereeInfo['id']}"
-                            // newli = newli + '<option value="' + data.data[i].id + '" >' + data.data[i].match + '</option>'
+                            var url = "{:url('team/createMatch')}" + "/team_id/" + teamId + "/referee_id/{$refereeInfo['id']}";
                             newli = newli + '<div class="mui-input-row"><label style="width:100% !important" data-match_id="' + data.data[i].id + '"><a href="' + url + '">' + data.data[i].match + '</a></label></div>'
                         }
                         $(".choiseMatch").nextAll().remove();
