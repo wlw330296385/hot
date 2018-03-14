@@ -31,7 +31,7 @@ class Index extends Controller{
 
     }
 
-
+    // 1
     public function income(){
         $billList = db('bill')->where('delete_time',null)->where(['is_pay'=>1,'status'=>1,'camp_id'=>9])->select();
         // $income = new \app\model\Income;
@@ -64,7 +64,7 @@ class Index extends Controller{
         }
     }
 
-
+    // 2
     public function output(){
         $billList = db('bill')->where('delete_time',null)->where(['is_pay'=>1,'status'=>-2,'camp_id'=>9])->select();
         dump($billList);
@@ -86,7 +86,7 @@ class Index extends Controller{
         }
     }
 
-
+    // 3
     public function gift(){
         $giftList = db('schedule_giftrecord')->field('schedule_giftrecord.*,lesson.cost')->join('lesson','lesson.id=schedule_giftrecord.lesson_id')->where('schedule_giftrecord.delete_time',null)->select();      
         dump($giftList);
@@ -110,8 +110,8 @@ class Index extends Controller{
         
 
     }
-
-    public function schedule(){
+    //4一次
+    public function schedulecost(){
         $list = db('schedule')->select();
         foreach ($list as $key => $value) {
             $lesson = db('lesson')->where(['id'=>$value['lesson_id']])->find();
