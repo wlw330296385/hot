@@ -43,7 +43,9 @@
                         <div class="mui-media-body wd49">
                             {$refereeInfo.referee}
                             <i class="icon iconfont icon-sex{$refereeInfo.member.sex}"></i>
-                            <p class="mui-ellipsis">执裁经验:{$refereeInfo.referee_year}年 | 等级:<font class="level">{$refereeInfo.level}</font></p>
+                            <p class="mui-ellipsis">执裁经验:{$refereeInfo.referee_year}年 | 等级:
+                                <font class="level">{$refereeInfo.level}</font>
+                            </p>
                         </div>
                         <div class="camp-num mui-text-right">
                             <ul>
@@ -111,12 +113,15 @@
             <div class="page-header">
                 <span class="course wd52">会员评价</span>
                 <span class="more f14">评论
-                    <span class="comment_count">0</span>
+                    <span class="comment_count">{:count($commentList)}</span>
                 </span>
             </div>
             <ul class="mui-table-view coach comment-list ">
                 {volist name='commentList' id="vol" empty="
-                <li class='nodata'>还没有评论哦</li>"}
+                <li class='nodata'>
+                    <i class='icon iconfont icon-logo-Big'></i>
+                    <p>还没有评论哦，你来说几句吧！</p>
+                </li>"}
                 <li class="mui-table-view-cell listli">
                     <div class="mui-pull-right">{$vol.create_time|date='Y-m-d',###}</div>
                     <img class="mui-pull-left coachicon " src="{$vol.avatar}">{$vol.member}
@@ -155,7 +160,6 @@
             </ul>
 
         </div>
-
 
         <!-- 发表印象 -->
         <div id="Impress" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">

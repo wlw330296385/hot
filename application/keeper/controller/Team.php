@@ -591,6 +591,7 @@ class Team extends Base {
     public function matchrefereeapply() {
         $id = input('apply_id', 0);
         $matchService = new MatchService();
+        $refereeService = new RefereeService();
         // 获取裁判申请执裁比赛数据
         $applyInfo = $matchService->getMatchRerfereeApply(['id' => $id]);
         // 查询关联的比赛数据
@@ -599,10 +600,12 @@ class Team extends Base {
         if ($matchRecordInfo) {
             $matchInfo['record'] = $matchRecordInfo;
         }
+        $refereeInfo = $refereeService->getRefereeInfo(['id' =>$applyInfo['referee_id']]);
 
         return view('team/matchRefereeApply', [
             'applyInfo' => $applyInfo,
-            'matchInfo' => $matchInfo
+            'matchInfo' => $matchInfo,
+            'refereeInfo' => $refereeInfo
         ]);
     }
 }
