@@ -36,8 +36,8 @@
 								<button type="button" class="btn btn-default" id="goSearch">确认查询</button>
 							</div>
 							<h3 class="totalRight">
-								<span><small>本月收入：</small><strong class="text-yellow monthLesson"></strong></span>
-								<span><small>本月支出：</small><strong class="text-yellow monthEvent"></strong></span>
+								<span><small>本月收入：</small><strong class="text-yellow monthLesson">￥{$income3+$income2}</strong></span>
+								<span><small>本月支出：</small><strong class="text-yellow monthEvent">￥{$schedule.s_s_salary+$output_gift+$schedule.s_s_rebate+$orther_output}</strong></span>
 							</h3>
 						</div>
 					</div>
@@ -59,20 +59,24 @@
 					   aria-describedby="example1_info">
 					<thead>
 					<tr role="row">
-						<th class="sorting_asc">课程名称</th>
-						<th>交费人数</th>
-						<th>交费金额</th>
-						<th>详情</th>
+						<th>类型</th>
+						<th>金额</th>
 					</tr>
 					</thead>
 					<tbody>
+					<tr role="row" class="odd">
+						<td>课时费：</td>
+						<td>{$income3}</td>
+					</tr>
+					<tr role="row" class="odd">
+						<td>活动费：</td>
+						<td>{$income2}</td>
+					</tr>
 					</tbody>
 					<tfoot>
-					<tr role="row" class="odd">
-						<td>合计</td>
-						<td class="sIDTotal"></td>
-						<td class="sPayTotal"></td>
-						<td>-</td>
+					<tr role="row">
+						<th>合计</th>
+						<th class="inTotal">￥{$income3+$income2}</th>
 					</tr>
 					</tfoot>
 				</table>
@@ -90,20 +94,32 @@
 					   aria-describedby="example1_info">
 					<thead>
 					<tr role="row">
-						<th class="sorting_asc">活动名称</th>
-						<th>交费人数</th>
-						<th>交费金额</th>
-						<th>详情</th>
+						<th>类型</th>
+						<th>金额</th>
 					</tr>
 					</thead>
 					<tbody>
+					<tr role="row">
+						<td>教练工资</td>
+						<td>{$schedule.s_s_salary}</td>
+					</tr>
+					<tr role="row">
+						<td>赠课支出</td>
+						<td>{$output_gift}</td>
+					</tr>
+					<tr role="row">
+						<td>平台分成</td>
+						<td>{$schedule.s_s_rebate}</td>
+					</tr>
+					<tr role="row">
+						<td>其他</td>
+						<td>{$orther_output}</td>
+					</tr>
 					</tbody>
 					<tfoot>
-					<tr role="row" class="odd">
-						<td>合计</td>
-						<td class="eIDTotal"></td>
-						<td class="ePayTotal"></td>
-						<td>-</td>
+					<tr role="row">
+						<th>合计</th>
+						<th class="eIDTotal">￥{$schedule.s_s_salary+$output_gift+$schedule.s_s_rebate+$orther_output}</th>
 					</tr>
 					</tfoot>
 				</table>
@@ -223,32 +239,6 @@
         //=========================== 初始化数据 ==============================//
 
 
-
-        //遍历需要统计的数据列，并赋值到对应位置
-        var sSum=0;
-        $(".sID").each(function () {
-            sSum = sSum + parseInt($(this).text());
-        });
-        var spSum=0;
-        $(".sPay").each(function () {
-            spSum = spSum + parseInt($(this).text());
-        });
-        var eSum=0;
-        $(".eID").each(function () {
-            eSum = eSum + parseInt($(this).text());
-        });
-        var epSum=0;
-        $(".ePay").each(function () {
-            epSum = epSum + parseInt($(this).text());
-        });
-
-        $(".eIDTotal").text('￥'+eSum);
-        $(".ePayTotal").text('￥'+epSum);
-        $(".sIDTotal").text('￥'+sSum);
-        $(".sPayTotal").text('￥'+spSum);
-
-        $(".monthLesson").text('￥'+spSum);
-        $(".monthEvent").text('￥'+epSum);
 
 
         //平台后续换成分页版（地区代理商无需分页）
