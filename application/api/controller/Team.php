@@ -569,9 +569,8 @@ class Team extends Base
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             // 判断必传参数
-            $team_id = input('post.team_id');
-            $member_id = input('post.member_id');
-            if (!$team_id || !$member_id) {
+            $team_id = input('post.team_id', 0);
+            if (!$team_id) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
             // 组合传入参数作查询条件
@@ -638,8 +637,7 @@ class Team extends Base
             }
             // 判断必传参数
             $team_id = input('post.team_id');
-            $member_id = input('post.member_id');
-            if (!$team_id || !$member_id) {
+            if (!$team_id) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
             // 组合传入参数作查询条件
