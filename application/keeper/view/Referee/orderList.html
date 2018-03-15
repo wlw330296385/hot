@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>接单列表</title>
+    <title>裁判订单列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -17,7 +17,7 @@
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">接单列表</h1>
+        <h1 class="mui-title">裁判订单列表</h1>
     </header>
 
     <div class="mui-content">
@@ -92,7 +92,7 @@
                     url: url,
                     data: {
                         page: page,
-                        apply_type: 1,
+                        apply_type: 2,
                         referee_id: referee_id
                     },
                     dataType: 'json',//服务器返回json格式数据
@@ -104,7 +104,7 @@
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data.data[i].match_id;
+                                var urls = "{:url('referee/matchApply')}" + '/apply_id/' + data.data[i].id;
                                 newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].record.home_team_logo + '"><div class="mui-media-body wd"  style="line-height:20px !important;">' + data.data[i].match.name;
                                 if (data.data[i].match.match_time == 0) {
                                     newli += '<p class="address">比赛时间待定</p>';
