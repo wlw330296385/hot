@@ -91,6 +91,7 @@ class Crontabwoo extends Controller {
                         'camp_id' => $schedule['camp_id'],
                         'camp' => $schedule['camp'],
                         'schedule_time' => $schedule['lesson_time'],
+                        'students'=>$schedule['students'],
                         'status' => 1,
                         'type' => 1,
                     ];
@@ -128,6 +129,7 @@ class Crontabwoo extends Controller {
                                 'camp_id' => $schedule['camp_id'],
                                 'camp' => $schedule['camp'],
                                 'schedule_time' => $schedule['lesson_time'],
+                                'students'=>$schedule['students'],
                                 'status' => 1,
                                 'type' => 1,
                             ];

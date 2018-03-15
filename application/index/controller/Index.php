@@ -63,24 +63,19 @@ class Index extends Controller{
 
     }
 
-    //0
+ 
     public function scheduletime(){
         $list1 = db('income')->field('income.id,income.f_id,schedule.students,schedule.lesson_time as schedule_time,schedule.schedule_income')->join('schedule','income.f_id = schedule.id')->where(['income.type'=>3])->select();
-        dump($list1);
         $income = new \app\model\Income;
         $income->saveAll($list1);
     }
-    // 1
+    // 1 退费订单
     public function income(){
-        $billList = db('bill')->where('delete_time',null)->where(['is_pay'=>1,'status'=>1,'camp_id'=>9])->select();
-        // $income = new \app\model\Income;
-        // $output = new \app\model\Output;
+        $billList = db('bill')->where('delete_time',null)->where(['is_pay'=>1,'status'=>1])->select();
         $data = [];
         foreach ($billList as $key => &$value) {
             $campInfo = db('camp')->where(['id'=>$value['camp_id']])->find();
             $data['type'] = $value['goods_type'];
-            $data['s_balance'] = $campInfo['balance'];
-            $data['e_balance'] = $campInfo['balance'] + $value['balance_pay'];
             $data['lesson_id'] = $value['goods_id'];
             $data['lesson'] = $value['goods'];
             $data['goods_id'] = $value['goods_id'];
@@ -97,22 +92,41 @@ class Index extends Controller{
             $data['balance_pay'] = $value['balance_pay'];
             $data['income'] = $value['balance_pay'];
             $data['create_time'] = $value['create_time'];
-            db('income')->insert($data);
-            db('camp')->where(['id'=>$value['camp_id']])->inc('balance',$value['balance_pay'])->update();
             
+
+            $data2['type'] = 1;
+            $data2['camp_id'] = $value['camp_id'];
+            $data2['camp'] = $value['camp'];
+            $data2['total'] = $value['total'];
+            $data2['f_id'] = $value['id'];
+            $data2['money'] = $value['balance_pay'];
+            $data2['create_time'] = $value['create_time'];
+            if($value['camp_id'] == 9){
+                $data['s_balance'] = $campInfo['balance'];
+                $data['e_balance'] = $campInfo['balance'] + $value['balance_pay'];
+                $data2['s_balance'] = $campInfo['balance'];
+                $data2['e_balance'] = $campInfo['balance'] + $value['balance_pay'];
+                db('camp')->where(['id'=>$value['camp_id']])->inc('balance',$value['balance_pay'])->update();
+            }else{
+                $data['s_balance'] = $campInfo['balance'];
+                $data['e_balance'] = $campInfo['balance'];
+                $data2['s_balance'] = $campInfo['balance'];
+                $data2['e_balance'] = $campInfo['balance'];
+            }
+            db('income')->insert($data);
+            db('camp_finance')->insert($data2);
         }
     }
 
-    // 2
+    // 2 退费订单
     public function output(){
-        $billList = db('bill')->where('delete_time',null)->where(['is_pay'=>1,'status'=>-2,'camp_id'=>9])->select();
-        dump($billList);
+        $billList = db('bill')->where('delete_time',null)->where(['is_pay'=>1,'status'=>-2,])->select();
         $data = [];
         foreach ($billList as $key => &$value) {
             $campInfo = db('camp')->where(['id'=>$value['camp_id']])->find();
             $data['type'] = 2;
             $data['s_balance'] = $campInfo['balance'];
-            $data['e_balance'] = $campInfo['balance'] + $value['balance_pay'];
+            $data['e_balance'] = $campInfo['balance'];
             $data['member_id'] = $value['member_id'];
             $data['member'] = $value['member'];
             $data['camp_id'] = $value['camp_id'];
@@ -120,16 +134,34 @@ class Index extends Controller{
             $data['f_id'] = $value['id'];
             $data['output'] = $value['refundamount'];
             $data['create_time'] = $value['create_time'];
+            
+            $data2['type'] = -3;
+            $data['camp_id'] = $value['camp_id'];
+            $data['camp'] = $value['camp'];
+            $data['f_id'] = $value['id'];
+            $data['output'] = $value['refundamount'];
+            $data['create_time'] = $value['create_time'];    
+            $data2['money'] = $value['balance_pay'];
+            if($value['camp_id'] == 9){
+                $data['s_balance'] = $campInfo['balance'];
+                $data['e_balance'] = $campInfo['balance'] + $value['balance_pay'];
+                $data2['s_balance'] = $campInfo['balance'];
+                $data2['e_balance'] = $campInfo['balance'] + $value['balance_pay'];
+                db('camp')->where(['id'=>$value['camp_id']])->dec('balance',$value['refundamount'])->update();
+            }else{
+                $data['s_balance'] = $campInfo['balance'];
+                $data['e_balance'] = $campInfo['balance']; 
+                $data2['s_balance'] = $campInfo['balance'];
+                $data2['e_balance'] = $campInfo['balance'];
+            }
             db('output')->insert($data);
-            db('camp')->where(['id'=>$value['camp_id']])->dec('balance',$value['refundamount'])->update();
+            db('camp_finance')->insert($data2);
         }
     }
 
     // 3
     public function gift(){
         $giftList = db('schedule_giftrecord')->field('schedule_giftrecord.*,lesson.cost')->join('lesson','lesson.id=schedule_giftrecord.lesson_id')->where('schedule_giftrecord.delete_time',null)->select();      
-        dump($giftList);
-
         $data = [];
         foreach ($giftList as $key => $value) {
             $campInfo = db('camp')->where(['id'=>$value['camp_id']])->find();
@@ -149,7 +181,7 @@ class Index extends Controller{
         
 
     }
-    //4一次
+
     public function schedulecost(){
         $list = db('schedule')->select();
         foreach ($list as $key => $value) {
