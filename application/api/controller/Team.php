@@ -988,63 +988,74 @@ class Team extends Base
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
             // 接收输入变量，判断空值
-            $request = input('post.');
-            if (!isset($request['name']) || !isset($request['telephone'])) {
+            $data = input('post.');
+            if (!isset($data['name']) || !isset($data['telephone'])) {
                 return json(['code' => 100, 'msg' => '请填写完整信息']);
             }
-            if (!isset($request['team_id'])) {
+            if (!isset($data['team_id'])) {
                 return json(['code' => 100, 'msg' => '请选择球队']);
             }
-            if (empty($request['name'])) {
+            if (empty($data['name'])) {
                 return json(['code' => 100, 'msg' => '请输入姓名']);
             }
-            if (empty($request['telephone'])) {
+            if (empty($data['telephone'])) {
                 return json(['code' => 100, 'msg' => '请输入手机号']);
             }
+
             // 查找手机号有无注册会员
             $memberS = new MemberService();
-            $isMember = $memberS->getMemberInfo(['telephone' => $request['telephone']]);
+            $isMember = $memberS->getMemberInfo(['telephone' => $data['telephone']]);
             if ($isMember) {
-                return json(['code' => 100, 'msg' => '该手机已注册，是否发出邀请信息', 'data' => $isMember]);
+                return json(['code' => 100, 'msg' => '此手机号已注册会员，是否发出邀请信息', 'data' => $isMember]);
             }
 
             // 球队有无该成员信息
             $teamS = new TeamService();
-            $teamInfo = $teamS->getTeam(['id' => $request['team_id']]);
+            // 查询球队信息
+            $teamInfo = $teamS->getTeam(['id' => $data['team_id']]);
             if (!$teamInfo) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404').'请选择其他球队']);
             }
-            $member = $request['name'];
-            $mapTeamMember['member'] = ['like', "%$member%"];
-            $mapTeamMember['telephone'] = $request['telephone'];
-            $mapTeamMember['team_id'] = $teamInfo['id'];
-            $hasTeamMember = $teamS->getTeamMemberInfo($mapTeamMember);
-            if ($hasTeamMember) {
-                return json(['code' => 100, 'msg' => '已有球队成员信息']);
+            // 队员号码同球队内唯一
+            $numberQnique = $teamS->getTeamMemberInfo([
+                'team_id' => $teamInfo['id'],
+                'number' => $data['number'],
+                'status' => 1
+            ]);
+            if ($numberQnique) {
+                return json(['code' => 100, 'msg' => '此球衣号码队内有队员使用了，请选择其他号码']);
+            }
+            // 手机号码通球队内唯一
+            $telephoneQnique = $teamS->getTeamMemberInfo([
+                'team_id' => $teamInfo['id'],
+                'telephone' => $data['telephone'],
+                'status' => 1
+            ]);
+            if ($telephoneQnique) {
+                return json(['code' => 100, 'msg' => '此手机号已注册，请填写其他手机号']);
             }
 
-            // 插入team_member数据
-            $dataTeamMember = [];
-            $dataTeamMember['team_id'] = $teamInfo['id'];
-            $dataTeamMember['team'] = $teamInfo['name'];
-            $dataTeamMember['member_id'] = -1;
-            $dataTeamMember['member'] = $request['name'];
-            $dataTeamMember['name'] = $request['name'];
-            $dataTeamMember['avatar'] = config('default_image.member_avatar');
-            $dataTeamMember['number'] = !empty($request['number']) ? $request['number'] : null;
-            $dataTeamMember['status'] = 1;
-            $resSaveTeamMember = $teamS->saveTeamMember($dataTeamMember);
+
+            // 组合保存team_member数据
+            $member = $data['name'];
+            $data['team'] = $teamInfo['name'];
+            $data['member_id'] = -1;
+            $data['member'] = $member;
+            $data['avatar'] = config('default_image.member_avatar');
+            $data['status'] = 1;
+            $resSaveTeamMember = $teamS->saveTeamMember($data);
 
             if ($resSaveTeamMember['code'] == 200) {
                 // 处理球队职务
-                if ($request['role']) {
-                    switch ($request['role']) {
+                if ($data['role']) {
+                    switch ($data['role']) {
                         case 1 : {
                             // 后勤 保存team_role数据 type=1
                             $teamS->addTeamMemberRole([
                                 'team_id' => $teamInfo['id'],
                                 'member_id' => -1,
-                                'name' => $request['name'],
+                                'member' => $member,
+                                'name' => $member,
                                 'type' => 1,
                                 'status' => 1
                             ]);
@@ -1056,13 +1067,14 @@ class Team extends Base
                                 $teamS->addTeamMemberRole([
                                     'team_id' => $teamInfo['id'],
                                     'member_id' => -1,
-                                    'name' => $request['name'],
+                                    'member' => $member,
+                                    'name' => $member,
                                     'type' => 2,
                                     'status' => 1
                                 ]);
                                 // 更新team表字段
                                 $teamS->updateTeam([
-                                    'vice_captain' => $request['name'],
+                                    'vice_captain' => $member,
                                     'vice_captain_id' => -1
                                 ], $teamInfo['id']);
                             } else {
@@ -1077,13 +1089,14 @@ class Team extends Base
                                 $teamS->addTeamMemberRole([
                                     'team_id' => $teamInfo['id'],
                                     'member_id' => -1,
-                                    'name' => $request['name'],
+                                    'member' => $member,
+                                    'name' => $member,
                                     'type' => 3,
                                     'status' => 1
                                 ]);
                                 // 更新team表字段
                                 $teamS->updateTeam([
-                                    'captain' => $request['name'],
+                                    'captain' => $member,
                                     'captain_id' => -1
                                 ], $teamInfo['id']);
                             } else {
@@ -1097,16 +1110,38 @@ class Team extends Base
                             $teamS->addTeamMemberRole([
                                 'team_id' => $teamInfo['id'],
                                 'member_id' => -1,
-                                'name' => $request['name'],
+                                'member' => $member,
+                                'name' => $member,
                                 'type' => 4,
                                 'status' => 1
                             ]);
                             break;
                         }
+                        case 5: {
+                            // 经理 保存team_role数据 type=5
+                            if ( empty($teamInfo['manager']) ) {
+                                $teamS->addTeamMemberRole([
+                                    'team_id' => $teamInfo['id'],
+                                    'member_id' => -1,
+                                    'member' => $member,
+                                    'name' => $member,
+                                    'type' => 5,
+                                    'status' => 1
+                                ]);
+                                // 更新team表字段
+                                $teamS->updateTeam([
+                                    'manager' => $member,
+                                    'manager_id' => -1
+                                ], $teamInfo['id']);
+                            } else {
+                                // 已有队长
+                                $resSaveTeamMember['msg'] = $resSaveTeamMember['msg'] . '<br>球队已设置队长，若要更换请前往球队编辑';
+                            }
+                            break;
+                        }
                     }
                 }
             }
-
 
             return json($resSaveTeamMember);
         } catch (Exception $e) {
