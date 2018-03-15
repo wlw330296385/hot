@@ -406,7 +406,7 @@ class Team extends Base
             $url = url('keeper/team/teaminfo', ['team_id' => $teamInfo['id']], '', true);
             if ($status == 2) {
                 if ($applySaveResult['code'] == 200) {
-                    // 查询会员在球队有无原数据记录 有就更新数据/否则插入新数据
+                    // 更新team_member
                     $dataTeamMember = [];
                     $teamMemberInfo = $teamS->getTeamMemberInfo(['team_id' => $applyInfo['organization_id'], 'member_id' => $applyInfo['member']['id']]);
                     if ($teamMemberInfo && $teamMemberInfo['status_num'] != 1) {
@@ -419,16 +419,16 @@ class Team extends Base
 
                     // 查询有无关注数据保存关注数据
                     $followDb = db('follow');
-                    $follow = $followDb->where(['type' => 4, 'follow_id' => $dataTeamMember['team_id'], 'member_id' => $dataTeamMember['member_id']])->find();
+                    $follow = $followDb->where(['type' => 4, 'follow_id' => $teamMemberInfo['team_id'], 'member_id' => $teamMemberInfo['member_id']])->find();
                     if ($follow) {
                         if ($follow['status'] != 1) {
                             $followDb->where('id', $follow['id'])->update(['status' => 1, 'update_time' => time()]);
                         }
                     } else {
                         $followDb->insert([
-                            'type' => 4, 'follow_id' => $dataTeamMember['team_id'], 'follow_name' => $dataTeamMember['team'],
+                            'type' => 4, 'follow_id' => $teamMemberInfo['team_id'], 'follow_name' => $teamMemberInfo['team'],
                             'follow_avatar' => ($teamInfo['logo']) ? $teamInfo['logo'] : '',
-                            'member_id' => $dataTeamMember['member_id'], 'member' => $dataTeamMember['member'], 'member_avatar' => $dataTeamMember['avatar'],
+                            'member_id' => $teamMemberInfo['member_id'], 'member' => $teamMemberInfo['member'], 'member_avatar' => $teamMemberInfo['avatar'],
                             'status' => 1, 'create_time' => time()
                         ]);
                     }
@@ -669,7 +669,7 @@ class Team extends Base
             // 发送消息通知给球队领队
             $messageS = new MessageService();
             $messageData = [
-                'title' => '您好，有球队成员离队',
+                'title' => '您好，球队成员' . $teammember['member'] . '离开' . $teammember['team'] . '球队',
                 'content' => '您好，球队成员' . $teammember['member'] . '离开' . $teammember['team'] . '球队',
                 'url' => url('keeper/team/teaminfo', ['team_id' => $teamInfo['id']], '', true),
                 'keyword1' => '球队成员离队',
