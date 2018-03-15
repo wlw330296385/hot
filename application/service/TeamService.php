@@ -191,10 +191,20 @@ class TeamService
     }
 
     // 保存team_member球队-会员关系信息
-    public function saveTeamMember($data)
+    public function saveTeamMember($data=[], $condition=[])
     {
         $model = new TeamMember();
-        // 有传入team_member表id 更新关系数据，否则新增关系数据
+        // 带更新条件更新数据
+        if (!empty($condition)) {
+            $res = $model->allowField(true)->save($data, $condition);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 有传入team_member表id 更新数据
         if (isset($data['id'])) {
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res || ($res === 0)) {
@@ -203,18 +213,17 @@ class TeamService
                 trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
-        } else {
-            // 新增球队成员
-            $res = $model->allowField(true)->save($data);
-            if ($res) {
-                // 球队成员数+1
-                //db('team')->where('id', $data['team_id'])->setInc('member_num', 1);
+        }
+        // 新增数据
+        $res = $model->allowField(true)->save($data);
+        if ($res) {
+            // 球队成员数+1
+            //db('team')->where('id', $data['team_id'])->setInc('member_num', 1);
 
-                return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
-            } else {
-                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
-                return ['code' => 100, 'msg' => __lang('MSG_400')];
-            }
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
+        } else {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
 
@@ -240,7 +249,7 @@ class TeamService
         ];
         $data = [
             'status' => -1,
-            'delete_time' => time() 
+            //'delete_time' => time()
         ];
         // 清理team_mebmer_role
         $modelRole = new TeamMemberRole();
@@ -302,7 +311,12 @@ class TeamService
             // 获取成员在球队的角色身份
             $roleModel = new TeamMemberRole();
             $result['role_text'] = '';
-            $memberRole = $roleModel->where(['member_id' => $result['member_id'], 'team_id' => $result['team_id'], 'status' => 1])->select();
+            $memberRole = $roleModel->where([
+                'member_id' => $result['member_id'],
+                'name' => $result['name'],
+                'team_id' => $result['team_id'],
+                'status' => 1
+            ])->select();
             foreach ($memberRole as $val) {
                 $result['role_text'] .= $val['type_text'] . ',';
             }

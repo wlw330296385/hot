@@ -281,12 +281,10 @@ class Team extends Base
             }
             //dump($teamInfo);
             // 会员有没在队信息
-            $teamMemberMap = [
+            $teamMember = $teamS->getTeamMemberInfo([
                 'team_id' => $teamInfo['id'],
                 'member_id' => $this->memberInfo['id'],
-                'status' => 1
-            ];
-            $teamMember = $teamS->getTeamMemberInfo($teamMemberMap);
+            ]);
             if ($teamMember && $teamMember['status_num'] == 1) {
                 return json(['code' => 100, 'msg' => '你已经是球队的成员了，无需再次加入']);
             }
@@ -320,7 +318,30 @@ class Team extends Base
             $saveApply = $teamS->saveApply($dataApply);
             $remark = empty($data['remarks']) ? "" : '申请说明：'.$data['remarks'];
             //dump($saveApply);
+
             if ($saveApply['code'] == 200) {
+                // 保存球员未审核(status=0)数据 会员有真实姓名记录真实姓名否则记录会员名
+                $teamMemberData = [
+                    'team_id' => $teamInfo['id'],
+                    'team' => $teamInfo['name'],
+                    'member_id' => $this->memberInfo['id'],
+                    'member' => $this->memberInfo['member'],
+                    'name' => (!empty($this->memberInfo['realname'])) ? $this->memberInfo['realname'] : $this->memberInfo['member'],
+                    'telephone' => $this->memberInfo['telephone'],
+                    'sex' => $this->memberInfo['sex'],
+                    'avatar' => $this->memberInfo['avatar'],
+                    'age' => getAgeByBirthday($this->memberInfo['birthday']),
+                    'birthday' => $this->memberInfo['birthday'],
+                    'yearsexp' => $this->memberInfo['yearsexp'],
+                    'height' => $this->memberInfo['height'],
+                    'weight' => $this->memberInfo['weight'],
+                    'status' => 0
+                ];
+                if ($teamMember) {
+                    $teamMemberData['id'] = $teamMember['id'];
+                }
+                $teamS->saveTeamMember($teamMemberData);
+
                 $applyId = ($hasApply) ? $hasApply['id'] : $saveApply['data'];
                 // 插入message数据
                 // 发送加入申请消息给领队
@@ -385,30 +406,13 @@ class Team extends Base
             $url = url('keeper/team/teaminfo', ['team_id' => $teamInfo['id']], '', true);
             if ($status == 2) {
                 if ($applySaveResult['code'] == 200) {
-
-
-                    // 保存球队-会员信息，会员有真实姓名记录真实姓名否则记录会员名
-                    $dataTeamMember = [
-                        'team_id' => $applyInfo['organization_id'],
-                        'team' => $applyInfo['organization'],
-                        'member_id' => $applyInfo['member']['id'],
-                        'member' => (!empty($applyInfo['member']['realname'])) ? $applyInfo['member']['realname'] : $applyInfo['member']['member'],
-                        'name' => (!empty($applyInfo['member']['realname'])) ? $applyInfo['member']['realname'] : $applyInfo['member']['member'],
-                        'telephone' => $applyInfo['member']['telephone'],
-                        'sex' => $applyInfo['member']['sex'],
-                        'avatar' => $applyInfo['member']['avatar'],
-                        'age' => getAgeByBirthday($applyInfo['member']['birthday']),
-                        'birthday' => $applyInfo['member']['birthday'],
-                        'yearsexp' => $applyInfo['member']['yearsexp'],
-                        'height' => $applyInfo['member']['height'],
-                        'weight' => $applyInfo['member']['weight'],
-                        'status' => 1
-                    ];
                     // 查询会员在球队有无原数据记录 有就更新数据/否则插入新数据
+                    $dataTeamMember = [];
                     $teamMemberInfo = $teamS->getTeamMemberInfo(['team_id' => $applyInfo['organization_id'], 'member_id' => $applyInfo['member']['id']]);
                     if ($teamMemberInfo && $teamMemberInfo['status_num'] != 1) {
                         $dataTeamMember['id'] = $teamMemberInfo['id'];
                     }
+                    $dataTeamMember['status'] = 1;
                     $teamS->saveTeamMember($dataTeamMember);
                     // 更新球队统计字段
                     $teamS->autoUpdateTeam($applyInfo['organization_id']);
@@ -511,6 +515,11 @@ class Team extends Base
             }
             $data = input('post.');
             $teamS = new TeamService();
+            // 获取球员信息
+            $teamMemberInfo = $teamS->getTeamMemberInfo(['id' => $data['id']]);
+            if (!$teamMemberInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404').'无此球员信息']);
+            }
             // 球衣号码可提交空值，有填入值时检查同队有重复号码的队员 提示号码不能重复
             if (empty($data['number'])) {
                 $data['number'] = null;
@@ -526,9 +535,25 @@ class Team extends Base
                     return json(['code' => 100, 'msg' => '输入的球衣号码已有同队成员使用了，请输入其他号码']);
                 }
             }
+            // 更新球员信息
             $res = $teamS->saveTeamMember($data);
-            // 更新球队统计字段
-            $teamS->autoUpdateTeam($data['team_id']);
+            if ($res['code'] == 200) {
+                // 改变了name字段 更新team_member_role
+                if ($data['name'] != $teamMemberInfo['name']) {
+                    db('team_member_role')->where([
+                        'team_id' => $teamMemberInfo['id'],
+                        'member_id' => $teamMemberInfo['member_id'],
+                        'member' => $teamMemberInfo['member'],
+                        'name' => $teamMemberInfo['name']
+                    ])->update([
+                        'name' => $data['name'],
+                        'update_time' => time()
+                    ]);
+                }
+                // 更新球队统计字段
+                $teamS->autoUpdateTeam($data['team_id']);
+            }
+
             return json($res);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -572,7 +597,10 @@ class Team extends Base
                 return json(['code' => 100, 'msg' => '该成员已离队']);
             }
             // 更新成员数据
-            $res = $teamS->saveTeamMember(['id' => $teammember['id'], 'status' => -1, 'delete_time' => time()]);
+            $res = $teamS->saveTeamMember([
+                'id' => $teammember['id'],
+                'status' => -1
+            ]);
             if ($res['code'] == 200) {
                 // 更新成员的team_member_role表所有相关数据status=-1
                 db('team_member_role')->where(['team_id' => $team_id, 'member_id' => $member_id])->update(['status' => -1, 'update_time' => time()]);
@@ -864,7 +892,7 @@ class Team extends Base
                         'status' => 1
                     ];
                     // 检查有无邀请apply记录
-                    /*$hasApplyInfo = $teamS->getApplyInfo([
+                    $hasApplyInfo = $teamS->getApplyInfo([
                         'type' => 2,
                         'apply_type' => 2,
                         'organization_type' => 2,
@@ -873,7 +901,7 @@ class Team extends Base
                     ]);
                     if ($hasApplyInfo) {
                         $dataApply['id'] = $hasApplyInfo['id'];
-                    }*/
+                    }
                     $resultSaveApply = $teamS->saveApply($dataApply);
                     if ($resultSaveApply['code'] == 100) {
                         return json(['code' => 100, 'msg' => '发送邀请失败']);
@@ -1016,14 +1044,17 @@ class Team extends Base
             if (!$teamInfo) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404').'请选择其他球队']);
             }
-            // 队员号码同球队内唯一
-            $numberQnique = $teamS->getTeamMemberInfo([
-                'team_id' => $teamInfo['id'],
-                'number' => $data['number'],
-                'status' => 1
-            ]);
-            if ($numberQnique) {
-                return json(['code' => 100, 'msg' => '此球衣号码队内有队员使用了，请选择其他号码']);
+            // 队员号码非空
+            if (!empty($data['number'])) {
+                // 队员号码同球队内唯一
+                $numberQnique = $teamS->getTeamMemberInfo([
+                    'team_id' => $teamInfo['id'],
+                    'number' => $data['number'],
+                    'status' => 1
+                ]);
+                if ($numberQnique) {
+                    return json(['code' => 100, 'msg' => '此球衣号码队内有队员使用了，请选择其他号码']);
+                }
             }
             // 手机号码通球队内唯一
             $telephoneQnique = $teamS->getTeamMemberInfo([
