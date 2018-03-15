@@ -57,16 +57,13 @@
 										<ul class="dataCol-1">
 											<li>支出</li>
 											<li>
-												<ul class="dataCol-4">
+												<ul class="dataCol-3">
 													<li>平台分成</li>
 												</ul>
-												<ul class="dataCol-4">
-													<li>教练工资</li>
-												</ul>
-												<ul class="dataCol-4">
+												<ul class="dataCol-3">
 													<li>购买赠课</li>
 												</ul>
-												<ul class="dataCol-4">
+												<ul class="dataCol-3">
 													<li>课程退费</li>
 												</ul>
 											</li>
@@ -77,7 +74,7 @@
 											<li>收入</li>
 											<li>
 												<ul class="dataCol-2">
-													<li>课时</li>
+													<li>学费</li>
 												</ul>
 												<ul class="dataCol-2">
 													<li>活动</li>
@@ -85,7 +82,19 @@
 											</li>
 										</ul>
 									</th>
-									<th>课时消费</th>
+									<th class="mixTitle">
+										<ul class="dataCol-1">
+											<li>课时结算</li>
+											<li>
+												<ul class="dataCol-2">
+													<li>课时总价</li>
+												</ul>
+												<ul class="dataCol-2">
+													<li>教练工资</li>
+												</ul>
+											</li>
+										</ul>
+									</th>
 									<th>提现</th>
 									<th>余额</th>
 								</tr>
@@ -101,25 +110,19 @@
 										</ul>
 									</td>
 									<td>
-										<ul class="dataCol-4 colCount">
+										<ul class="dataCol-3 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
 											{volist name='list4' id='vol'}
 											<li>{$vol.s_output}</li>
 											{/volist}
 											<li class="colTotal" id="hotOut"><</li>
 										</ul>
-										<ul class="dataCol-4 colCount">
-											{volist name='list3' id='vol'}
-											<li>{$vol.s_output}</li>
-											{/volist}
-											<li class="colTotal" id="coachOut"><</li>
-										</ul>
-										<ul class="dataCol-4 colCount">
+										<ul class="dataCol-3 colCount" linkTo="/admin/Statistics_Camp/campGift/">
 											{volist name='list1' id='vol'}
 											<li>{$vol.s_output}</li>
 											{/volist}
 											<li class="colTotal" id="giftOut"><</li>
 										</ul>
-										<ul class="dataCol-4 colCount">
+										<ul class="dataCol-3 colCount" linkTo="">
 											{volist name='list2' id='vol'}
 											<li>{$vol.s_output}</li>
 											{/volist}
@@ -127,13 +130,13 @@
 										</ul>
 									</td>
 									<td>
-										<ul class="dataCol-2 colCount">
+										<ul class="dataCol-2 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
 											{volist name='list_income1' id='vol'}
 											<li>{$vol.s_income}</li>
 											{/volist}
 											<li class="colTotal" id="scheduleIn"></li>
 										</ul>
-										<ul class="dataCol-2 colCount">
+										<ul class="dataCol-2 colCount" linkTo="">
 											{volist name='list_income2' id='vol'}
 											<li>{$vol.s_income}</li>
 											{/volist}
@@ -141,11 +144,17 @@
 										</ul>
 									</td>
 									<td>
-										<ul class="dataCol-1 colCount">
+										<ul class="dataCol-2 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
 											{volist name='list3' id='vol'}
 											<li>没有</li>
 											{/volist}
 											<li class="colTotal" id="scheduleXF"></li>
+										</ul>
+										<ul class="dataCol-2 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
+											{volist name='list3' id='vol'}
+											<li>{$vol.s_output}</li>
+											{/volist}
+											<li class="colTotal" id="coachOut"><</li>
 										</ul>
 									</td>
 									<td>
@@ -230,10 +239,6 @@
 	</div>
 </div>
 
-{/block}
-
-
-
 
 <h1>学费收入========================================</h1>
 {volist name="list_income1" id="vol"}
@@ -269,6 +274,10 @@
 {volist name="list_1" id="vol"}
 <p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;支出:{$vol.s_output}</p>
 {/volist}
+{/block}
+
+
+
 
 
 
@@ -321,7 +330,7 @@
             $(this).find("li.colTotal").text(liNum);
         });
 
-        var mOut = parseInt($("#hotOut").text())+parseInt($("#coachOut").text())+parseInt($("#giftOut").text())+parseInt($("#refundOut").text());
+        var mOut = parseInt($("#hotOut").text())+parseInt($("#giftOut").text())+parseInt($("#refundOut").text());
         var mIn = parseInt($("#scheduleIn").text())+parseInt($("#eventIn").text());
         $(".monthIn").text(mIn);
         $(".monthOut").text(mOut);
@@ -385,8 +394,16 @@
             window.location.href="{:url('/admin/Statistics_Camp/campBill/')}"+"camp_id/"+camp_id+"/monthstart/"+beginDate+"/monthend/"+endDate;;
         })
 
+        //点击链接到详情页面
+        $(".colCount li:not('.colTotal')").on("click", function () {
+            var getLink = $(this).parent().attr("linkTo");
+            var campID = $("input[name=camp_id]").val();
+            var getLiIndex = $(this).index();
+            var getDate = $(".dateList li").eq(getLiIndex).text();
+            window.open(getLink+"/camp_id/"+campID+"/monthstart/"+getDate+"/monthend/"+getDate);
+        })
 
-    })
+    });
 
 
     //接口获取数据并追加到页面

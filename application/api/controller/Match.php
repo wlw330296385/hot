@@ -173,6 +173,8 @@ class Match extends Base
                         'match_id' => $matchId,
                         'match' => $matchData['name'],
                         'match_record_id' => $matchRecordId,
+                        'team_id' => $matchData['team_id'],
+                        'team' => $matchData['team'],
                         'referee_id' => $refereeInfo['id'],
                         'referee' => $refereeInfo['referee'],
                         'referee_avatar' => $refereeInfo['portraits'],
