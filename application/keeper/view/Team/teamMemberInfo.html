@@ -39,7 +39,7 @@
                         <i class="icon iconfont icon-sex{$teamMemberInfo.sex}"></i>
                         <p class="mui-ellipsis" style="line-height:20px">{$teamInfo.city} {$teamInfo.area}</p>
                         <p class="mui-ellipsis" style="line-height:20px">粉丝数：
-                            <strong class="colororange">{$teamInfo.fans_num}</strong>
+                            <strong class="colororange">0</strong>
                         </p>
                     </div>
                     <div class="mui-text-right">
@@ -302,7 +302,7 @@
     <!--底部操作-->
     <ul class="mui-table-view operation">
         <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-            <a href="/keeper/">
+            <a href="{:url('team/teamInfo',['team_id'=>$team_id])}">
                 <span class="mui-icon icon iconfont icon-nav-Home"></span>
             </a>
         </li>
@@ -363,6 +363,11 @@
             $(".fbcomment").on("tap", function () {
                 mui.toast("暂未开放，敬请期待")
             })
+
+            var follow = "{$teamMemberInfo.member_id}";
+            if (follow == -1) {
+                $(".follow").hide();
+            }
 
             //球员介绍内容
             var introduction = '{$teamMemberInfo.introduction}';

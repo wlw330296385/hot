@@ -254,7 +254,7 @@
             <div class="page-header border-b">
                 <span class="course">最近订单</span>
                 <span class="more pdr15">
-                    <a href="{:url('referee/refereeManage')}" class="mui-navigate-right">更多</a>
+                    <a href="{:url('referee/orderList')}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
             <ul class="mui-table-view detalis-list list mainInfo border-b newReferee"></ul>
@@ -712,17 +712,33 @@
                                         var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data[i].match_id + '/team_id/' + + data.data[i].match.team_id;
                                         newli += '<li class="mui-table-view-cell mui-media listli">'
                                         newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].member_avatar + '" style="width:45px !important;height:45px !important;border-radius:50% !important;"><div class="mui-media-body wd">' + data.data[i].match.name + '';
-                                        newli += '<p class="mui-ellipsis" style="line-height:20px;">' + data.data[i].match.match_time + '</p>';
-                                        if (data.data[i].status == 1) {
-                                            newli += '<p class="mui-ellipsis" style="line-height:20px;"><font class="tipCorner bggray" style="margin:0 5px 0 0 !important;">未回复</font>' + data.data[i].match.court + '</p></div>'
+                                        if (data.data[i].match.match_time == 0) {
+                                            newli += '<p class="address" style="line-height:20px !important">比赛时间待定</p>';
+                                        } else {
+                                            newli += '<p class="address" style="line-height:20px !important">' + data.data[i].match.match_time + '</p>';
                                         }
-                                        if (data.data[i].status == 2) {
-                                            newli += '<p class="mui-ellipsis" style="line-height:20px;"><font class="tipCorner bgred" style="margin:0 5px 0 0 !important;">已同意</font>' + data.data[i].match.court + '</p></div>'
+                                        if (data.data[i].match.court == '') {
+                                            newli += '<p class="mui-ellipsis" style="line-height:20px !important">';
+                                            if (data.data[i].status == 1) {
+                                                newli += '<font class="tipCorner bggray" style="margin:0 5px 0 0 !important;">未回复</font>';
+                                            } else if (data.data[i].status == 2) {
+                                                newli += '<font class="tipCorner bgred" style="margin:0 5px 0 0 !important;">已同意</font>';
+                                            } else if (data.data[i].status == 3) {
+                                                newli += '<font class="tipCorner bgorange" style="margin:0 5px 0 0 !important;">已拒绝</font>';
+                                            }
+                                            newli += '比赛场地待定</p>';
+                                        } else {
+                                            newli += '<p class="mui-ellipsis" style="line-height:20px !important">'
+                                            if (data.data[i].status == 1) {
+                                                newli += '<font class="tipCorner bggray" style="margin:0 5px 0 0 !important;">未回复</font>';
+                                            } else if (data.data[i].status == 2) {
+                                                newli += '<font class="tipCorner bgred" style="margin:0 5px 0 0 !important;">已同意</font>';
+                                            } else if (data.data[i].status == 3) {
+                                                newli += '<font class="tipCorner bgorange" style="margin:0 5px 0 0 !important;">已拒绝</font>';
+                                            }
+                                            newli += data.data[i].match.court + '</p>';
                                         }
-                                        if (data.data[i].status == 3) {
-                                            newli += '<p class="mui-ellipsis" style="line-height:20px;"><font class="tipCorner bgorange" style="margin:0 5px 0 0 !important;">已拒绝</font>' + data.data[i].match.court + '</p></div>'
-                                        }
-                                        newli += '</a></li>';
+                                        newli += '</div></a></li>';
                                     }
                                 }
                                 $("ul.newReferee").empty().append(newli);
