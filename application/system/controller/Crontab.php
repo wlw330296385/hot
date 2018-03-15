@@ -38,6 +38,7 @@ class Crontab extends Controller {
             // 当前时间日期
             $nowDate = date('Ymd', time());
             $map['can_settle_date'] = $nowDate;
+            // $map['can_settle_date'] = 20180314;
             $map['rebate_type'] = 1;
             //$map['questions'] = 0;
             Db::name('schedule')->where($map)->whereNull('delete_time')->chunk(50, function ($schedules) {
@@ -172,12 +173,12 @@ class Crontab extends Controller {
                         'system_remarks' => $systemRemarks
                     ];
                     $this->insertIncome($incomeCamp);
-
+                    $campInfo = db('camp')->where(['id'=>$schedule['camp_id']])->find();
                     // 保存训练营财务支出信息
                     $dataCampFinance = [
                         'camp_id' => $schedule['camp_id'],
                         'camp' => $schedule['camp'],
-                        'money'=>$incomeSchedule
+                        'money'=>$incomeSchedule,
                         'type' => 3,
                         'e_balance' => $campInfo['balance']+$incomeSchedule,
                         's_balance'=>$campInfo['balance'],

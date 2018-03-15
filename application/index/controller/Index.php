@@ -40,6 +40,7 @@ class Index extends Controller{
         }
     }
 
+    //0
     public function scheduletime(){
         $list1 = db('income')->field('income.id,income.f_id,schedule.students,schedule.lesson_time as schedule_time,schedule.schedule_income')->join('schedule','income.f_id = schedule.id')->where(['income.type'=>3])->select();
         dump($list1);

@@ -168,7 +168,7 @@ class Crontabwoo extends Controller {
                         'schedule_time' => $schedule['lesson_time'],
                         'students'=>$schedule['students'],
                         'f_id'=> $schedule['id'],
-                        'schedule_salary'=>$incomeSchedule,
+                        'schedule_income'=>$incomeSchedule,
                         'e_balance' => $campInfo['balance']+$incomeSchedule,
                         's_balance'=>$campInfo['balance'],
                         'status' => 1,
