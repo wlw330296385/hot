@@ -388,13 +388,13 @@ class StatisticsCamp extends Backend{
             //课时薪资
             $schedule =  db('schedule')->field("sum((coach_salary+assistant_salary+salary_base)*students) as s_s_salary,sum(cost*students*schedule_rebate) as s_s_rebate,is_settle,camp_id")->where(['camp_id'=>$camp_id,'is_settle'=>1])->where(['finish_settle_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->find();
             //其他支出
-            $orther_output = db('output')->where(['camp_id'=>$camp_id,'type'=>-2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');  
+            $other_output = db('output')->where(['camp_id'=>$camp_id,'type'=>-2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');  
             $this->assign('income2',$income2?$income2:0);
             $this->assign('income3',$income3?$income3:0);
             $this->assign('output',$output?$output:0);
             $this->assign('output_gift',$output_gift?$output_gift:0);
             $this->assign('schedule',$schedule);
-            $this->assign('orther_output',$orther_output?$orther_output:0);
+            $this->assign('other_output',$other_output?$other_output:0);
             return view('StatisticsCamp/campStatistics');          
         }else{
             //课程订单收入
@@ -412,7 +412,7 @@ class StatisticsCamp extends Backend{
             // 平台分成
             $output4 =  db('output')->where(['camp_id'=>$camp_id,'type'=>4])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
             //其他支出
-            $orther_output = db('output')->where(['camp_id'=>$camp_id,'type'=>-2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
+            $other_output = db('output')->where(['camp_id'=>$camp_id,'type'=>-2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
             $this->assign('income2',$income2?$income2:0);
             $this->assign('income3',$income3?$income3:0);
             $this->assign('output',$output?$output:0);
@@ -420,7 +420,7 @@ class StatisticsCamp extends Backend{
             $this->assign('schedule',$schedule?$schedule:0);
             $this->assign('output4',$output4?$output4:0);
             $this->assign('output2',$output2?$output2:0);
-            $this->assign('orther_output',$orther_output?$orther_output:0);
+            $this->assign('other_output',$other_output?$other_output:0);
 
             return view('StatisticsCamp/orgzStatistics');       
         }
