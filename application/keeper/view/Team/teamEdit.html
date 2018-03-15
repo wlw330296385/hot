@@ -168,7 +168,7 @@
                             <i class="color {$color.color_style}"></i>
                             <font data-eng="{$color.color_style}">{$color.color}</font>,{/volist}
                         </span>
-                        <div id="hideCoList">
+                        <div id="hideqList">
                             {volist name="$teamInfo.colors" id="vol"}
                             <input type="hidden" class="coList" data-eng="{$color.color_style}" data-color="{$color.color}"> {/volist}
                         </div>
@@ -201,10 +201,10 @@
                         <span class="coach" name="coach" style="width: 60%">{volist name="roleslist.coach_names" id="vol"}{$vol.member},{/volist}</span>
                         <div id="hideCoList">
                             {volist name="roleslist.coach_names" id="vol"}
-                            <input type="hidden" class="coList" data-member_id="{$vol.member_id}" data-member="{$vol.member}"> {/volist}
+                            <input type="hidden" class="coList" data-member_id="{$vol.member_id}" data-member="{$vol.member}" data-name="{$vol.name}" data-id="{$vol.id}"> {/volist}
                         </div>
-                        <input type="hidden" name="coach_id" value="{$roleslist.coach_ids}" class="data">
-                        <input type="hidden" name="coach_member" value="{volist name="roleslist.coach_names" id="vol"}{$vol.member},{/volist}" class="data">
+                        <!-- <input type="hidden" name="coach_id" value="{$roleslist.coach_ids}" class="data"> -->
+                        <!-- <input type="hidden" name="coach_member" value="{volist name="roleslist.coach_names" id="vol"}{$vol.member},{/volist}" class="data"> -->
                     </a>
                 </div>
 
@@ -231,10 +231,10 @@
                         <span class="committee" name="committee" style="width: 60%">{volist name="roleslist.committee_names" id="vol"}{$vol.member},{/volist}</span>
                         <div id="hideCtList">
                             {volist name="roleslist.committee_names" id="vol"}
-                            <input type="hidden" class="ctList" data-member_id="{$vol.member_id}" data-member="{$vol.member}"> {/volist}
+                            <input type="hidden" class="ctList" data-member_id="{$vol.member_id}" data-member="{$vol.member}" data-name="{$vol.name}" data-id="{$vol.id}"> {/volist}
                         </div>
-                        <input type="hidden" name="committee_id" value="{$roleslist.committee_ids}" class="data">
-                        <input type="hidden" name="committee_member" value="{volist name="roleslist.committee_names" id="vol"}{$vol.member},{/volist}" class="data">
+                        <!-- <input type="hidden" name="committee_id" value="{$roleslist.committee_ids}" class="data"> -->
+                        <!-- <input type="hidden" name="committee_member" value="{volist name="roleslist.committee_names" id="vol"}{$vol.member},{/volist}" class="data"> -->
                     </a>
                 </div>
 
@@ -967,27 +967,25 @@
             // 选择教练
             $("#coachConfirm").on('tap', '', function () {
                 $(".coach").empty();
-                $("input[name=coach_id]").val("");
-                $('input[name=coach_member]').val('');
+                // $("input[name=coach_id]").val("");
+                // $('input[name=coach_member]').val('');
                 $("#hideCoList").empty();
                 var coachMember = "";
-                var coachMember_id = "";
+                // var coachMember_id = "";
                 var coList = "";
-                coachMemberList = [];
                 $(".coachList input[type=checkbox]:checked").each(function () {
                     var member = $(this).attr("data-member");
                     var member_id = $(this).attr("data-member_id");
+                    var name = $(this).attr("data-name");
+                    var id = $(this).attr("data-id");
                     coachMember += member + ','
-                    coachMember_id += member_id + ','
+                    // coachMember_id += member_id + ','
                     $(".coach").text(coachMember.substring(0, coachMember.length - 1));
-                    $("input[name=coach_id]").val(coachMember_id.substring(0, coachMember_id.length - 1));
-                    coList += '<input type="hidden" class="coList" data-member="' + member + '" data-member_id="' + member_id + '">';
-                    // 数组
-                    coachMemberList.push({ member: member, member_id: member_id });
+                    // $("input[name=coach_id]").val(coachMember_id.substring(0, coachMember_id.length - 1));
+                    coList += '<input type="hidden" class="coList" data-member="' + member + '" data-member_id="' + member_id + '" data-name="' + name + '" data-id="' + id + '">';
                 });
                 $("#hideCoList").html(coList);
-                $('input[name=coach_member]').val(coachMember.substring(0, coachMember.length - 1));
-                console.log(coachMemberList)
+                // $('input[name=coach_member]').val(coachMember.substring(0, coachMember.length - 1));
                 mui("#coach").popover("toggle");
             });
 
@@ -1008,27 +1006,25 @@
             // 选择队委
             $("#committeeConfirm").on('tap', '', function () {
                 $(".committee").empty();
-                $("input[name=committee_id]").val("");
-                $('input[name=committee_member]').val('');
+                // $("input[name=committee_id]").val("");
+                // $('input[name=committee_member]').val('');
                 $("#hideCtList").empty();
                 var committeeMember = "";
-                var committeeMember_id = "";
+                // var committeeMember_id = "";
                 var ctList = "";
-                committeeMemberList = [];
                 $(".committeeList input[type=checkbox]:checked").each(function () {
                     var member = $(this).attr("data-member");
                     var member_id = $(this).attr("data-member_id");
+                    var name = $(this).attr("data-name");
+                    var id = $(this).attr("data-id");
                     committeeMember += member + ','
-                    committeeMember_id += member_id + ','
+                    // committeeMember_id += member_id + ','
                     $(".committee").text(committeeMember.substring(0, committeeMember.length - 1));
-                    $("input[name=committee_id]").val(committeeMember_id.substring(0, committeeMember_id.length - 1));
-                    ctList += '<input type="hidden" class="ctList" data-member="' + member + '" data-member_id="' + member_id + '">';
-                    // 数组
-                    committeeMemberList.push({ member: member, member_id: member_id });
+                    // $("input[name=committee_id]").val(committeeMember_id.substring(0, committeeMember_id.length - 1));
+                    ctList += '<input type="hidden" class="ctList" data-member="' + member + '" data-member_id="' + member_id + '" data-name="' + name + '" data-id="' + id + '">';
                 });
                 $("#hideCtList").html(ctList);
-                $('input[name=committee_member]').val(committeeMember.substring(0, committeeMember.length - 1));
-                console.log(committeeMemberList)
+                // $('input[name=committee_member]').val(committeeMember.substring(0, committeeMember.length - 1));
                 mui("#committee").popover("toggle");
             });
 
@@ -1227,6 +1223,28 @@
             });
             console.log(colors)
 
+            // 教练数组提交
+            coachMemberList = [];
+            $("#hideCoList input").each(function () {
+                var member = $(this).attr("data-member");
+                var member_id = $(this).attr("data-member_id");
+                var name = $(this).attr("data-name");
+                var id = $(this).attr("data-id");
+                coachMemberList.push({ member: member, member_id: member_id,name: name, id: id });
+            });
+            console.log(coachMemberList)
+
+            // 队委数组提交
+            committeeMemberList = [];
+            $("#hideCtList input").each(function () {
+                var member = $(this).attr("data-member");
+                var member_id = $(this).attr("data-member_id");
+                var name = $(this).attr("data-name");
+                var id = $(this).attr("data-id");
+                committeeMemberList.push({ member: member, member_id: member_id,name: name, id: id });
+            });
+            console.log(committeeMemberList)
+
             //图文编辑状态转换浏览状态
             tuwenToView()
 
@@ -1240,6 +1258,8 @@
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
             objData.colors = JSON.stringify(colors);
+            objData.coachMemberList = JSON.stringify(coachMemberList);
+            objData.committeeMemberList = JSON.stringify(committeeMemberList);
             var introduce = $('textarea.introduce').val();
             var descri = $('textarea.descri').val();
             objData.introduce = introduce;
@@ -1411,7 +1431,7 @@
                     if (data.code == 200) {
                         var teamOfCoachli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            teamOfCoachli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-coach" class="coach" type="checkbox" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"></div>'
+                            teamOfCoachli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-coach" class="coach" type="checkbox" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-id="' + data.data[i].id + '" data-name="' + data.data[i].name + '"></div>'
                         }
                         $("#coachDiv").empty();
                         if (teamOfCoachli == '') {
@@ -1448,7 +1468,7 @@
                     if (data.code == 200) {
                         var teamOfCommitteehli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            teamOfCommitteehli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-committee" class="committee" type="checkbox" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"></div>'
+                            teamOfCommitteehli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-committee" class="committee" type="checkbox" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-name="' + data.data[i].name + '" data-id="' + data.data[i].id + '"></div>'
                         }
                         $("#committeeDiv").empty();
                         if (teamOfCommitteehli == '') {
