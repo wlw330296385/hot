@@ -1,0 +1,112 @@
+{extend name="layout/common"/}
+
+{block name="css"}
+<style>
+    .btn-banner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+</style>
+<link rel="stylesheet" href="/static/backend/plugins/webuploader/webuploader.css">
+{/block}
+
+{block name="page-content"}
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">添加banner</h3>
+            </div>
+            <form class="form-horizontal" method="post" action="{:url('banner/edit')}">
+                {:token()}
+                <input type="hidden" name="id" value="{$bannerInfo.id}">
+                <div class="box-body">
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-2 control-label" for="">图片</label>
+                        <div class="col-sm-9 col-md-10">
+                            <a class="btn-banner" href="#" title="点击替换图片">
+                                <div class="row">
+                                    <div id="filePicker1">选择上传</div>
+                                </div>
+                                <img class="img-thumbnail" id="uploader-preview1" src="{$bannerInfo.url}">
+                                <input id="uploader-input1" type="hidden" name="url" value="{$bannerInfo.url}">
+                            </a>
+                            <span style="color: red">tips:封面图的比例必须为16:9,否则会产生变形问题</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="">banner标题</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="banner" class="form-control" value="{$bannerInfo.banner}" placeholder="可以不填">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="">排序</label>
+                        <div class="col-sm-8">
+                            <input type="number" name="ord" class="form-control" value="{$bannerInfo.ord}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="">管家类型</label>
+                        <div class="col-sm-8">
+                            <select name="steward_type" id="" class="form-control">
+                                <option value="">请选择</option>
+                                <option value="1">培训管家</option>
+                                <option value="2">球队管家</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="">banner类型</label>
+                        <div class="col-sm-8">
+                            <select name="organization_type" id="" class="form-control">
+                                <option value="0">平台banner</option>
+                                <option value="1">训练营（独立版）</option>
+                                <option value="2">球队管家</option>
+                                <option value="3">校园（独立版）</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="">状态</label>
+                        <div class="col-sm-8">
+                            <select name="status" id="" class="form-control">
+                                <option value="1">正常上架</option>
+                                <option value="-1">下架</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-success">提 交</button>
+                            <button type="button" class="btn btn-default">取 消</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{/block}
+
+{block name="js"}
+<script src="/static/backend/plugins/webuploader/webuploader.min.js"></script>
+<script>
+    var serverUrl = "{:url('Upload/systemBanner')}";
+    $(function() {
+        // 设置select选中值
+        var curStewardType = "{$bannerInfo.steward_type}";
+        var curStatus = "{$bannerInfo.status}";
+        var curOrgType = "{$bannerInfo.organization_type}";
+        $('select[name=steward_type]').find("option[value="+ curStewardType +"]").attr("selected", true);
+        $('select[name=organization_type]').find("option[value="+ curOrgType +"]").attr("selected", true);
+        $('select[name=status]').find("option[value="+ curStatus +"]").attr("selected", true);
+    });
+</script>
+<script src="/static/backend/adminlte/js/upload/banner.js"></script>
+{/block}

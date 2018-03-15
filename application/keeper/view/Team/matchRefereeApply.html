@@ -52,17 +52,15 @@
 
             <div class="mui-button-row h-auto operationFrame">
                 {eq name="$applyInfo.status" value="2"}
-                <p>你已经同意执裁比赛，点击拒绝按钮可以改变状态</p>{/eq} {eq name="$applyInfo.status" value="3"}
-                <p>你已经拒绝执裁比赛，点击同意按钮可以改变状态</p>{/eq}
+                <p>你已经同意裁判的申请，点击拒绝按钮可以改变状态</p>{/eq} {eq name="$applyInfo.status" value="3"}
+                <p>你已经拒绝裁判的申请，点击同意按钮可以改变状态</p>{/eq}
                 <button class="mui-btn mui-btn-danger agree" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
                 <button class="mui-btn refuse" type="button" onclick="check_status(3)">拒绝</button>
             </div>
         </form>
 
-
-
-        <div class="list camp-list detalis-list referee mt55 ">
-            <ul class="mui-table-view mb" style="margin-top: -4px">
+        <div class="list camp-list detalis-list referee">
+            <ul class="mui-table-view mb" >
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
                     <a href="javascript:;">
                         <img class="mui-media-object mui-pull-left refereeicon" src="{$refereeInfo.portraits}">
@@ -145,7 +143,7 @@
         });
 
         $(function () {
-
+            toTagCommentList();
             var introduction = "{$refereeInfo.introduction}";
             if (introduction == '') {
                 $(".introBox").append("<p class='nohave'>还没有简介哦</p>")
@@ -236,6 +234,37 @@
                 }
             });
         }
+
+        //获取已评价标签列表
+        function toTagCommentList() {
+            mui.ajax("{:url('api/tag/commentlist')}", {
+                data: {
+                    comment_type: 5,
+                    commented_id: "{$refereeInfo.id}",
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var div = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag + '" data-tag_id="' + data.data[i].id + '">' + data.data[i].tag + '(<samll>' + data.data[i].count + '</samll>)</span>'
+                        }
+                        $(".tagCommentList").empty();
+                        $(".tagCommentList").append(div);
+                    } else {
+                        $(".tagCommentList").append('<p class="mui-text-center">还没有印象标签哦</p>');
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        };
 
     </script>
 

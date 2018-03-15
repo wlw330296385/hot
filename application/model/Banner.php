@@ -12,5 +12,4 @@ class Banner extends Model {
     //                         'type',
     //                         ];
 
-
 }
