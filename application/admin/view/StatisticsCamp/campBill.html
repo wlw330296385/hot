@@ -98,19 +98,19 @@
 										</ul>
 									</td>
 									<td>
-										<ul class="dataCol-3 colCount">
+										<ul class="dataCol-3 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
 											{volist name='list4' id='vol'}
 											<li>{$vol.s_s_rebate}</li>
 											{/volist}
 											<li class="colTotal" id="hotOut"><</li>
 										</ul>
-										<ul class="dataCol-3 colCount">
+										<ul class="dataCol-3 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
 											{volist name='list4' id='vol'}
 											<li>{$vol.s_s_salary}</li>
 											{/volist}
 											<li class="colTotal" id="coachOut"><</li>
 										</ul>
-										<ul class="dataCol-3 colCount">
+										<ul class="dataCol-3 colCount" linkTo="/admin/Statistics_Camp/campGift/">
 											{volist name='list1' id='vol'}
 											<li>{$vol.s_output}</li>
 											{/volist}
@@ -118,13 +118,13 @@
 										</ul>
 									</td>
 									<td>
-										<ul class="dataCol-2 colCount">
+										<ul class="dataCol-2 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
 											{volist name='list3' id='vol'}
 											<li>{$vol.s_income}</li>
 											{/volist}
 											<li class="colTotal" id="scheduleIn"></li>
 										</ul>
-										<ul class="dataCol-2 colCount">
+										<ul class="dataCol-2 colCount" linkTo="">
 											{volist name='list2' id='vol'}
 											<li>{$vol.s_income}</li>
 											{/volist}
@@ -132,7 +132,7 @@
 										</ul>
 									</td>
 									<td>
-										<ul class="dataCol-1 colCount">
+										<ul class="dataCol-1 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
 											{volist name='list3' id='vol'}
 											<li>{$vol.s_schedule_income}</li>
 											{/volist}
@@ -140,7 +140,7 @@
 										</ul>
 									</td>
 									<td>
-										<ul class="dataCol-1 colCount">
+										<ul class="dataCol-1 colCount" linkTo="">
 											{volist name='list_1' id='vol'}
 											<li>{$vol.s_output}</li>
 											{/volist}
@@ -337,10 +337,22 @@
             endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
 
             window.location.href="{:url('/admin/Statistics_Camp/campBill/')}"+"camp_id/"+camp_id+"/monthstart/"+beginDate+"/monthend/"+endDate;;
+        });
+
+        //点击链接到详情页面
+        $(".colCount li:not('.colTotal')").on("click", function () {
+            var getLink = $(this).parent().attr("linkTo");
+            var campID = $("input[name=camp_id]").val();
+            var getLiIndex = $(this).index();
+            var getDate = $(".dateList li").eq(getLiIndex).text();
+            //设置本地存储
+            localStorage.setItem('currDateYM',getYM);
+            localStorage.setItem('currCampName',camp);
+            localStorage.setItem('currCampID',camp_id);
+            window.open(getLink+"/camp_id/"+campID+"/monthstart/"+getDate+"/monthend/"+getDate);
         })
 
-
-    })
+    });
 
 
     //接口获取数据并追加到页面
