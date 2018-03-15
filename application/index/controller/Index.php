@@ -40,6 +40,26 @@ class Index extends Controller{
         }
     }
 
+    public function salaryinStudents(){
+        $list = db('salary_in')->field('salary_in.id,salary_in.schedule_id,schedule.students')->join('schedule','schedule.id=salary_in.schedule_id')->select();
+        dump($list);
+    }
+
+    public function scheduleSassistantsalary(){
+        // UPDATE `schedule` SET s_coach_salary = coach_salary+students*salary_base;
+        $list1 = db('schedule')->select();
+        foreach ($list1 as $key => $value) {
+            if($value['assistant_id']){
+                $assistant_num = count(unserialize($value['assistant_id']));
+                $s_assistant_salary =  ($assistant_num * $value['assistant_salary']) + ($value['students']*$value['salary_base']);
+                dump($s_assistant_salary);
+                db('schedule')->where(['id'=>$value['id']])->update(['s_assistant_salary'=>$s_assistant_salary]);
+            }
+            
+        }
+
+    }
+
     //0
     public function scheduletime(){
         $list1 = db('income')->field('income.id,income.f_id,schedule.students,schedule.lesson_time as schedule_time,schedule.schedule_income')->join('schedule','income.f_id = schedule.id')->where(['income.type'=>3])->select();

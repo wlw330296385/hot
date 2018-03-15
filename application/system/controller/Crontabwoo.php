@@ -279,11 +279,14 @@ class Crontabwoo extends Controller {
                     
                     echo 2;
                     // 助教薪资
+                    $totalAssistantSalary = 0;
                     if (!empty($schedule['assistant_id']) && $schedule['assistant_salary']) {
-                        echo 2.2;
+                        
                         $MemberFinanceData = [];
                         $assistantMember = $this->getAssistantMember($schedule['assistant_id']);
                         foreach ($assistantMember as $k => $val) {
+                            $totalAssistantSalary += $schedule['assistant_salary']; 
+                            $totalAssistantSalary += $pushSalary;
                             $totalCoachSalary += $schedule['assistant_salary']; 
                             $totalCoachSalary += $pushSalary;
                             $incomeAssistant[$k] = [
@@ -360,7 +363,7 @@ class Crontabwoo extends Controller {
                     
                     db('camp')->where(['id'=>$schedule['camp_id']])->dec('balance',$totalCoachSalary)->update();
                     // 更新课时数据
-                    Db::name('schedule')->where(['id' => $schedule['id']])->update(['is_settle' => 1, 'schedule_income' => $schedule['cost']*$schedule['students']-$totalCoachSalary, 'finish_settle_time' => $schedule['create_time']]);
+                    Db::name('schedule')->where(['id' => $schedule['id']])->update(['is_settle' => 1, 'schedule_income' => $schedule['cost']*$schedule['students']-$totalCoachSalary, 'finish_settle_time' => $schedule['create_time'],'s_coach_salary'=>($schedule['coach_salary'] + $pushSalary),'s_assistant_salary'=>$totalAssistantSalary]);
                     db('schedule_member')->where(['schedule_id' => $schedule['id']])->update(['status' => 1, 'update_time' => $schedule['create_time']]);
 // 课时工资收入结算 end --------------------------------------
                 }
