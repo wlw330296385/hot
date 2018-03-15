@@ -1073,6 +1073,7 @@ class Team extends Base
             $data['member_id'] = -1;
             $data['member'] = $member;
             $data['avatar'] = config('default_image.member_avatar');
+            $data['number'] = !empty($data['number']) ? $data['number'] : null;
             $data['status'] = 1;
             $resSaveTeamMember = $teamS->saveTeamMember($data);
 
