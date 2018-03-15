@@ -438,6 +438,8 @@ class Referee extends Base{
                 'match_id' => $matchInfo['id'],
                 'match' => $matchInfo['name'],
                 'match_record_id' => $matchInfo['record']['id'],
+                'team_id' => $matchInfo['team_id'],
+                'team' => $matchInfo['team'],
                 'referee_id' => $refereeInfo['id'],
                 'referee' => $refereeInfo['referee'],
                 'referee_avatar' => $refereeInfo['portraits'],
@@ -551,6 +553,9 @@ class Referee extends Base{
                     'appearance_fee' => $refereeInfo['appearance_fee'],
                 ];
                 $matchS->saveMatchReferee($dataMatchReferee);
+
+                // 更新比赛referee_str字段：将裁判员信息插入
+                $matchS->setMatchRefereeStr($matchInfo, $refereeInfo);
 
                 // 发送通知给邀请人
                 $wxTemplateID = config('wxTemplateID.refereeTask');

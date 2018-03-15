@@ -577,6 +577,35 @@ class MatchService {
         }
     }
 
+    /** 裁判员信息插入到比赛referee_str字段
+     * @param $matchRefereeStr 比赛信息
+     * @param $referee 裁判员信息数组
+     */
+    public function setMatchRefereeStr($match=[], $referee) {
+        // 转格式后referee_str
+        $matchRefereeStr = json_decode($match['referee_str'], true);
+        if (empty($matchRefereeStr)) {
+            // 插入一个新的裁判信息
+            $refereeArr = [
+                'referee' => $referee['referee'],
+                'referee_id' => $referee['id'],
+                'referee_cost' => $referee['appearance_fee']
+            ];
+            $refereeStr = json_encode($refereeArr, JSON_UNESCAPED_UNICODE); //json不转码中文
+            $refereeStr = '[' . $refereeStr .']';
+            $referee_cost = $match['referee_cost'] + $referee['appearance_fee'];
+        }
+
+
+        // 更新比赛信息
+        $model = new Match();
+        $res = $model->isUpdate(true)->save([
+            'id' => $match['id'],
+            'referee_str' => $refereeStr,
+            'referee_cost' => $referee_cost
+        ]);
+    }
+
     // 获取比赛-裁判关系详细
     public function getMatchReferee($map) {
         $model = new MatchReferee();
