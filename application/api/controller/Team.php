@@ -573,6 +573,7 @@ class Team extends Base
             if (!$team_id) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
+            $member_id = input('post.member_id');
             // 组合传入参数作查询条件
             $map = input('post.');
             $teamS = new TeamService();
@@ -640,6 +641,7 @@ class Team extends Base
             if (!$team_id) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
+            $member_id = input('post.member_id');
             // 组合传入参数作查询条件
             $map = input('post.');
             $teamS = new TeamService();
