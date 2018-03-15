@@ -43,6 +43,9 @@ class Index extends Controller{
     public function salaryinStudents(){
         $list = db('salary_in')->field('salary_in.id,salary_in.schedule_id,schedule.students')->join('schedule','schedule.id=salary_in.schedule_id')->select();
         dump($list);
+        foreach ($list as $key => $value) {
+            db('salary_in')->where(['id'=>$value['id']])->update(['students'=>$value['students']]);
+        }
     }
 
     public function scheduleSassistantsalary(){
