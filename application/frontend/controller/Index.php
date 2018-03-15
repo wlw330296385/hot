@@ -1,6 +1,7 @@
 <?php 
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
+use app\service\BannerService;
 use app\service\LessonService;
 use app\service\MemberService;
 use app\service\WechatService;
@@ -20,7 +21,15 @@ class Index extends Base{
 
     public function index() {
 
-        $bannerList = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1])->order('ord asc')->limit(3)->select();
+        //$bannerList = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1,'steward_type' => 1])->order('ord asc')->limit(3)->select();
+        // 培训管家banner
+        $bannerService = new BannerService();
+        $bannerList = $bannerService->bannerList([
+            'organization_id'=>0,
+            'organization_type'=>0,
+            'status'=>1,
+            'steward_type' => cookie('steward_type')
+        ], 'ord desc', 3);
   
     	// 热门文章
         $ArticleService= new \app\service\ArticleService;
