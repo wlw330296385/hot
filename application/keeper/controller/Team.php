@@ -64,7 +64,8 @@ class Team extends Base {
                 array_push($roleslist['coach_names'], [
                     'id' => $rolemember['id'],
                     'member_id' => $rolemember['member_id'],
-                    'member' => $rolemember['member']
+                    'member' => $rolemember['member'],
+                    'name' => $rolemember['name']
                 ]);
             }
             if ($rolemember['type'] == 1 ) {
@@ -72,7 +73,8 @@ class Team extends Base {
                 array_push($roleslist['committee_names'], [
                     'id' => $rolemember['id'],
                     'member_id' => $rolemember['member_id'],
-                    'member' => $rolemember['member']
+                    'member' => $rolemember['member'],
+                    'name' => $rolemember['name']
                 ]);
             }
         }
