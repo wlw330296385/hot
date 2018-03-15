@@ -179,7 +179,6 @@ class Match extends Base
                         'member_id' => $this->memberInfo['id'],
                         'member' => $this->memberInfo['member'],
                         'member_avatar' => $this->memberInfo['avatar'],
-                        'overtime' => strtotime('+6 hours'), //6小时后过期
                         'status' => 1
                     ];
                 }

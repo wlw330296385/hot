@@ -412,13 +412,24 @@ class Referee extends Base{
             // 获取裁判员信息
             $refereeInfo = $refereeService->getRefereeInfo(['id' => $post['referee_id']]);
             if (!$refereeInfo) {
-                return json(['code' => 100, 'msg' => __lang('MSG_404').'，请选择其他比赛']);
+                return json(['code' => 100, 'msg' => '请先注册成为正式裁判员']);
             }
 
             // 检查比赛已确认裁判人数，最多3个裁判
             $matchRefereeCount = $matchService->getMatchRefereeCount([ 'match_id' => $matchInfo['id'], 'referee_id' => $matchInfo['record']['id'], 'status' => 1 ]);
             if ($matchRefereeCount == 3) {
                 return json(['code' => 100, 'msg' => '此比赛裁判数已满，请选择其他比赛']);
+            }
+
+            // 查询裁判执裁比赛(match_referee) 有无裁判-比赛数据，有数据就不需操作了
+            $matchRefereeInfo = $matchService->getMatchReferee([
+                'match_id' => $matchInfo['id'],
+                'match_record_id' => $matchInfo['record']['id'],
+                'referee_id' => $refereeInfo['id'],
+                'status' => 1
+            ]);
+            if ($matchRefereeInfo) {
+                return json(['code' => 100, 'msg' => '您已是此比赛的裁判员，无需再次操作']);
             }
 
             // 保存裁判申请执裁比赛数据
@@ -433,7 +444,6 @@ class Referee extends Base{
                 'member_id' => $this->memberInfo['id'],
                 'member' => $this->memberInfo['member'],
                 'member_avatar' => $this->memberInfo['avatar'],
-                'overtime' => strtotime('+6 hours'), //6小时后过期
                 'status' => 1
             ];
             // 查询有无申请记录 有则更新数据
@@ -469,7 +479,113 @@ class Referee extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
-    
+
+    // 回复裁判申请比赛
+    public function replymatchapply() {
+        try {
+            // 接收参数 判断正确有无传参
+            $applyId = input('apply_id');
+            $status = input('status');
+            $reply = input('reply');
+            if (!$applyId || !$status) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请正确传参']);
+            }
+            if (!in_array($status, [2, 3])) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请正确传参']);
+            }
+            // 验证会员登录
+            if ($this->memberInfo['id'] ===0 ) {
+                return json(['code' => 100, 'msg' => '请先登录或注册会员']);
+            }
+            $matchS = new MatchService();
+            // 查询申请数据
+            $applyInfo = $matchS->getMatchRerfereeApply(['id' => $applyId]);
+            if (!$applyInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+            }
+            // 获取比赛信息
+            $matchInfo = $matchS->getMatch(['id' => $applyInfo['match_id']]);
+            if (!$matchInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404').'比赛信息不存在']);
+            }
+            // 获取申请数据裁判信息
+            $refereeInfo = $this->refereeService->getRefereeInfo(['id' => $applyInfo['referee_id']]);
+
+            // 更新邀请数据
+            $resSaveApply = $matchS->saveMatchRerfereeApply([
+                'id' => $applyInfo['id'],
+                'status' => $status,
+                'reply' => $reply
+            ]);
+            if ($resSaveApply['code'] == 100) {
+                return json($resSaveApply);
+            }
+            $replyStr = '';
+            if (!empty($reply)) {
+                $replyStr = '对方回复：'.$reply;
+            }
+            $messageService = new MessageService();
+            // 组合保存比赛-裁判关系数组
+            $dataMatchReferee = [];
+            // 查询有无原数据 有则更新数据
+            $matchReferee = $matchS->getMatchReferee([
+                'match_id' => $applyInfo['match_id'],
+                'match_record_id' => $applyInfo['match_record_id'],
+                'referee_id' => $refereeInfo['id']
+            ]);
+            if ($matchReferee) {
+                $dataMatchReferee['id'] = $matchReferee['id'];
+            }
+            if ($status == 2) {
+                //同意
+                // 保存比赛-裁判关系
+                $dataMatchReferee = [
+                    'match_id' => $applyInfo['match_id'],
+                    'match' => $applyInfo['match']['name'],
+                    'match_record_id' => $applyInfo['match_record_id'],
+                    'referee_id' => $refereeInfo['id'],
+                    'referee' => $refereeInfo['referee'],
+                    'member_id' => $refereeInfo['member_id'],
+                    'member' => $refereeInfo['member']['member'],
+                    'referee_type' => 1,
+                    'appearance_fee' => $refereeInfo['appearance_fee'],
+                ];
+                $matchS->saveMatchReferee($dataMatchReferee);
+
+                // 发送通知给邀请人
+                $wxTemplateID = config('wxTemplateID.refereeTask');
+                $messageData = [
+                    'title' => '您好，您的"'. $applyInfo['match']['name'] .'" 执裁比赛申请已被同意。',
+                    'content' => '您好，您的"'. $applyInfo['match']['name'] .'" 执裁比赛申请已被同意。'.$replyStr,
+                    'keyword1' => $matchInfo['match_time'],
+                    'keyword2' => $matchInfo['court'],
+                    'remark' => '点击查看更多',
+                    'steward_type' => 2,
+                    'url' => url('keeper/team/matchInfo', ['match_id' => $applyInfo['match_id']], '', true)
+                ];
+            } else {
+                // 拒绝
+                // 发送通知给邀请人
+                $wxTemplateID = config('wxTemplateID.applyResult');
+                $messageData = [
+                    'title' => '您好，您的"'. $applyInfo['match']['name'] .'" 执裁比赛申请已被拒绝。',
+                    'content' => '您好，您的"'. $applyInfo['match']['name'] .'" 执裁比赛申请已被拒绝。'.$replyStr,
+                    'keyword1' => '执裁比赛申请',
+                    'keyword2' => '被拒绝',
+                    'remark' => '点击查看更多',
+                    'steward_type' => 2,
+                    'url' => url('keeper/team/matchInfo', ['match_id' => $applyInfo['match_id']], '', true)
+                ];
+            }
+            // 发送通知给邀请人
+            $messageService->sendMessageToMember($applyInfo['member_id'], $messageData, $wxTemplateID);
+
+            return json($resSaveApply);
+        } catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
     // 裁判回复比赛邀请
     public function replymatchinvit() {
         try {
@@ -493,9 +609,10 @@ class Referee extends Base{
             if (!$applyInfo) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404')]);
             }
-            // 检测会员登录
-            if ($this->memberInfo['id'] === 0) {
-                return json(['code' => 100, 'msg' => '请先登录或注册会员']);
+            // 获取比赛信息
+            $matchInfo = $matchS->getMatch(['id' => $applyInfo['match_id']]);
+            if (!$matchInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404').'比赛信息不存在']);
             }
             // 获取会员裁判数据
             $refereeInfo = $this->refereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
@@ -528,10 +645,11 @@ class Referee extends Base{
                     'match_record_id' => $applyInfo['match_record_id'],
                     'referee_id' => $refereeInfo['id'],
                     'referee' => $refereeInfo['referee'],
+                    'referee_avatar' => $refereeInfo['portraits'],
                     'member_id' => $refereeInfo['member_id'],
                     'member' => $refereeInfo['member']['member'],
                     'referee_type' => 1,
-                    'appearance_fee' => $refereeInfo['appearance_fee']
+                    'appearance_fee' => $refereeInfo['appearance_fee'],
                 ];
                 // 查询有无原数据 有则更新数据
                 $matchReferee = $matchS->getMatchReferee([

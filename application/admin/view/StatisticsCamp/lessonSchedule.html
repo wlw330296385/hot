@@ -20,7 +20,7 @@
 							<div class="form-group">
 								<label>训练营：</label>
 								<div class="input-group" data-toggle="modal" data-target="#campModal">
-									<input type="text" name="camp" class="form-control pull-right wAuto" placeholder="选择训练营" value="">
+									<input type="text" name="camp" class="form-control pull-right" placeholder="选择训练营" value="">
 									<input type="hidden" name="camp_id" value="">
 									<div class="input-group-addon">
 										<i class="fa fa-angle-down"></i>
@@ -31,7 +31,7 @@
 								<!-- /.input group -->
 								<label>课程：</label>
 								<div class="input-group" data-toggle="modal" data-target="#lessonModal">
-									<input type="text" name="lesson" class="form-control pull-right wAuto" placeholder="选择课程" value="">
+									<input type="text" name="lesson" class="form-control pull-right" placeholder="选择课程" value="">
 									<input type="hidden" name="lesson_id" value="">
 									<div class="input-group-addon">
 										<i class="fa fa-angle-down"></i>
@@ -42,7 +42,7 @@
 								<!-- /.input group -->
 								<label>教练：</label>
 								<div class="input-group" data-toggle="modal" data-target="#coachModal">
-									<input type="text" name="coach" class="form-control pull-right wAuto" placeholder="选择教练员" value="">
+									<input type="text" name="coach" class="form-control pull-right" placeholder="选择教练员" value="">
 									<input type="hidden" name="member_id" value="">
 									<div class="input-group-addon">
 										<i class="fa fa-angle-down"></i>
@@ -155,43 +155,6 @@
 
 
 
-<br /><br /><br /><br />
-
-{volist name="scheduleList" id="vol"}
-<p>上课时间: {$vol.lesson_time|date="Y-m-d",###} &nbsp;&nbsp;&nbsp;&nbsp;
-	班级:{$vol.grade} &nbsp;&nbsp;&nbsp;&nbsp;
-	正式学员人数:{$vol.students} &nbsp;&nbsp;&nbsp;&nbsp;
-	学员名单:{$vol.grade} &nbsp;&nbsp;&nbsp;&nbsp;
-	<br>
-	<strong>
-		计算规则:总课时费{$vol.cost*$vol.students}-[主教练底薪{$vol.coach_salary}+助教底薪{$vol.assistant_salary}*助教人数
-		<?php
-			$total_assistant = 0;
-			if($vol['assistant']){
-				$total_assistant = count(unserialize($vol['assistant']));
-			}
-			echo $total_assistant;
-		?>
-		+ 教练人数(1+{$total_assistant})*人头基数{$vol.salary_base}*学生总数{$vol.students}+平台分成{$vol.cost*$vol.students*$vol.schedule_rebate}]&nbsp;&nbsp;&nbsp;&nbsp;</strong>
-	<br>
-	金额:{$vol.schedule_income}
-
-	<?php
-		$list = unserialize($vol['student_str']);
-		if(!empty($list)){
-		 	foreach($list as $k => $v){
-	echo $v['student'].',';
-	}
-	}
-	?>
-</p>
-{/volist}
-
-
-
-
-
-
 
 <!-- Modal : Camp -->
 <div class="modal fade" id="campModal" tabindex="-1" role="dialog" aria-labelledby="campModalLabel">
@@ -225,7 +188,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default pull-left" id="backToAllCamp">选择全部训练营</button>
+				<button type="button" class="btn btn-default pull-left" id="clearCamp">清除所选训练营</button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 			</div>
 		</div>
@@ -265,6 +228,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
+				<button type="button" class="btn btn-default pull-left" id="clearLesson">清除所选课程</button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 			</div>
 		</div>
@@ -303,6 +267,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
+				<button type="button" class="btn btn-default pull-left" id="clearCoach">清除所选教练</button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 			</div>
 		</div>
@@ -375,7 +340,7 @@
             $(".campKeyword").val(currCampName);
             $(".campName").text(currCampName);
             toCampCoachList(currCampID);
-            toCampLessonList(1,currCampID);
+            toCampLessonList(currCampID);
             $("#onCampTips").show();
         }
 
@@ -394,16 +359,6 @@
             todayBtn: true
         });
 
-        //搜索训练营
-        $("#backToAllCamp").on("click", function () {
-            $('input[name="camp"]').val('');
-            $('input[name="camp_id"]').val('');
-            $("#coachModalLabel").text("请选择教练员");
-            $("#coachList tbody").empty().html('<tr role="row" class="nodata"><td colspan="4">请搜索教练员</td></tr>');
-            $("#lessonModalLabel").text("请选择课程");
-            $("#lessonList tbody").empty().html('<tr role="row" class="nodata"><td colspan="4">请搜索课程</td></tr>');
-            $('#campModal').modal('hide');
-        });
 
         //搜索训练营
         $("#searchCampBtn").on("click", function () {
@@ -445,7 +400,7 @@
             }else{
                 //判断是否有campid选择不同api
                 if(camp_id==""){
-                    toLessonList(1,keyword);
+                    toLessonList(keyword);
                 }else{
                     //当前训练营的教练员列表查询
                     $("#lessonList tbody tr").removeClass("text-yellow");
@@ -470,7 +425,7 @@
             $("input[name=lesson_id]").val('');
             $("input[name=lesson]").val('');
             $("#lessonModalLabel").text("请选择"+camp+"课程");
-            toCampLessonList(1,camp_id);
+            toCampLessonList(camp_id);
             $('#campModal').modal('hide');
         });
 
@@ -522,7 +477,67 @@
         })
 
 
+
+        //清除查询表单值
+        $("#clearCamp").on("click", function () {
+            clearCampInput();
+            $('#campModal').modal('hide');
+        });
+        $("#clearLesson").on("click", function () {
+            clearLessonInput();
+            $('#lessonModal').modal('hide');
+        });
+        $("#clearCoach").on("click", function () {
+            clearCoachInput();
+            $('#coachModal').modal('hide');
+        });
+        $('input[name="camp"]').on("blur", function () {
+            var getVal = $(this).val();
+            if(getVal==""){
+                clearCampInput();
+            }
+        });
+        $('input[name="coach"]').on("blur", function () {
+            var getVal = $(this).val();
+            if(getVal==""){
+                clearCoachInput();
+            }
+        });
+        $('input[name="lesson"]').on("blur", function () {
+            var getVal = $(this).val();
+            if(getVal==""){
+                clearLessonInput();
+            }
+        });
+
     })
+
+    //清除查询表单函数
+    var clearCampInput = function () {
+        $('input[name="camp"]').val('');
+        $('input[name="camp_id"]').val('');
+        localStorage.removeItem('currCampName_Schedule');
+        localStorage.removeItem('currCampID_Schedule');
+        $("#coachModalLabel").text("请选择教练员");
+        $("#coachList tbody").empty().html('<tr role="row" class="nodata"><td colspan="4">请搜索教练员</td></tr>');
+        $("#lessonModalLabel").text("请选择课程");
+        $("#lessonList tbody").empty().html('<tr role="row" class="nodata"><td colspan="5">请搜索课程</td></tr>');
+    };
+    var clearCoachInput = function () {
+        $("input[name=member_id]").val('');
+        $("input[name=coach]").val('');
+        localStorage.removeItem('currCoachName');
+        localStorage.removeItem('currMemberID');
+    };
+    var clearLessonInput = function () {
+        $("input[name=lesson_id]").val('');
+        $("input[name=lesson]").val('');
+        localStorage.removeItem('currLessonName');
+        localStorage.removeItem('currLessonID');
+    };
+
+
+
 
     //接口获取数据并追加到页面
     var toCampList = function (keyword) {
@@ -636,13 +651,12 @@
 
 
     //接口获取数据并追加到页面：平台教练员
-    var toLessonList = function (page,keyword) {
+    var toLessonList = function (keyword) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/lesson/searchLessonApi','','',true)}";
+        var url = "{:url('api/lesson/getLessonListNoPageApi','','',true)}";
         $.ajax({
             url: url,
             data: {
-                page: page,
                 keyword: keyword
             },
             dataType: 'json',//服务器返回json格式数据
@@ -653,9 +667,9 @@
             success: function (data) {
                 var newli = '';
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('lesson/lessonInfo')}" + '/lesson_id/' + data.data.data[i].id;
-                        newli += '<tr role="row" class="odd"><td>' + data.data.data[i].lesson + '</td><td>' + data.data.data[i].status + '</td><td>' + data.data.data[i].camp + '</td><td><a href="' + urls + '">查看</a></td><td><span class="btn btn-xs btn-info" data-lesson="' + data.data.data[i].lesson + '" data-lesson_id="' + data.data.data[i].id + '">确定</span></td></tr>';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('lesson/lessonInfo')}" + '/lesson_id/' + data.data[i].id;
+                        newli += '<tr role="row" class="odd"><td>' + data.data[i].lesson + '</td><td>' + data.data[i].status + '</td><td>' + data.data[i].camp + '</td><td><a href="' + urls + '">查看</a></td><td><span class="btn btn-xs btn-info" data-lesson="' + data.data[i].lesson + '" data-lesson_id="' + data.data[i].id + '">确定</span></td></tr>';
                     }
                 }
                 if (newli == '') {
@@ -673,9 +687,9 @@
     };
 
     //接口获取数据并追加到页面：训练营教练员
-    var toCampLessonList = function (page,camp_id) {
+    var toCampLessonList = function (camp_id) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/lesson/getLessonListByPageApi','','',true)}" + '/?page=' + page;
+        var url = "{:url('api/lesson/getLessonListNoPageApi','','',true)}";
         $.ajax({
             url: url,
             data: {
@@ -690,9 +704,9 @@
                 var newli = '';
                 if (data.code == 200) {
                     console.log("sds")
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('lesson/lessonInfo')}" + '/lesson_id/' + data.data.data[i].id;
-                        newli += '<tr role="row" class="odd"><td>' + data.data.data[i].lesson + '</td><td>' + data.data.data[i].status + '</td><td>' + data.data.data[i].camp + '</td><td><a href="' + urls + '">查看</a></td><td><span class="btn btn-xs btn-info" data-coach="' + data.data.data[i].lesson + '" data-lesson_id="' + data.data.data[i].id + '">确定</span></td></tr>';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('lesson/lessonInfo')}" + '/lesson_id/' + data.data[i].id;
+                        newli += '<tr role="row" class="odd"><td>' + data.data[i].lesson + '</td><td>' + data.data[i].status + '</td><td>' + data.data[i].camp + '</td><td><a href="' + urls + '">查看</a></td><td><span class="btn btn-xs btn-info" data-lesson="' + data.data[i].lesson + '" data-lesson_id="' + data.data[i].id + '">确定</span></td></tr>';
                     }
                 }
                 if (newli == '') {

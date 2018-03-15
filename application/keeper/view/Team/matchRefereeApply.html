@@ -1,10 +1,244 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>裁判申请执裁比赛详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--等级星星样式-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css" />
+    <style>
+        .operationFrame {
+            padding: 30px !important;
+        }
+
+        .operationFrame button {
+            padding: 8px 14px
+        }
+
+        .mui-popup-button {
+            font-size: 15px !important;
+        }
+
+        .choiseFont .mui-input-row {
+            height: 37px !important
+        }
+
+        .choiseFont .bgorange {
+            color: #fff !important
+        }
+    </style>
 </head>
-<body>
+
+<body class=whitebg>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+
+    <div class="mui-content list ">
+
+        <form action="" class="mui-input-group mb">
+            <div class="mui-input-row h-auto">
+                <label class="wd45">回复的内容：</label>
+                <textarea class="reply wd52" value="{$applyInfo.reply}" placeholder="请填写同意或者拒绝理由">{$applyInfo.reply}</textarea>
+            </div>
+
+            <div class="mui-button-row h-auto operationFrame">
+                {eq name="$applyInfo.status" value="2"}
+                <p>你已经同意执裁比赛，点击拒绝按钮可以改变状态</p>{/eq} {eq name="$applyInfo.status" value="3"}
+                <p>你已经拒绝执裁比赛，点击同意按钮可以改变状态</p>{/eq}
+                <button class="mui-btn mui-btn-danger agree" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
+                <button class="mui-btn refuse" type="button" onclick="check_status(3)">拒绝</button>
+            </div>
+        </form>
+
+
+
+        <div class="list camp-list detalis-list referee mt55 ">
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                    <a href="javascript:;">
+                        <img class="mui-media-object mui-pull-left refereeicon" src="{$refereeInfo.portraits}">
+                        <div class="mui-media-body wd49">
+                            {$refereeInfo.referee}
+                            <i class="icon iconfont icon-sex{$refereeInfo.member.sex}"></i>
+                            <p class="mui-ellipsis">执裁经验:{$refereeInfo.referee_year}年 | 等级:
+                                <font class="level">{$refereeInfo.level}</font>
+                            </p>
+                        </div>
+                        <div class="camp-num mui-text-right">
+                            <ul>
+                                <li>
+                                    <div class="icons mui-inline">
+                                        <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
+                                        <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
+                                        <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
+                                    </div>
+                                </li>
+                                <li class="fr">{$refereeInfo.area}</li>
+                            </ul>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli detalisli listinitial">裁判宣言
+                    <span class="description about">{$refereeInfo.description}
+                        <a href="javascript:void(0)">......全文展示</a>
+                    </span>
+                </li>
+            </ul>
+
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli detalisli">个人认证
+                    <span>
+                        <img class="rzicon" src="/static/frontend/images/icon05.jpg">证书认证&nbsp;&nbsp;&nbsp;
+                        <img class="rzicon" src="/static/frontend/images/icon05.jpg">身份认证
+                    </span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli listinitial">裁判等级
+                    <span class="level">{$refereeInfo.level}</span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli listinitial">执裁场次
+                    <span>执裁过 {$refereeInfo.total_played} 场</span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli listinitial">接单范围
+                    <span>{$refereeInfo.province} {$refereeInfo.city} {$refereeInfo.area}</span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli listinitial">出场费用
+                    <span>{$refereeInfo.appearance_fee}元/场</span>
+                </li>
+            </ul>
+
+            <!--裁判印象-->
+            <div class="page-header">
+                <span class="course">裁判印象</span>
+            </div>
+            <div class="impress whitebg tagCommentList mb"></div>
+
+            <!-- 裁判员简介-->
+            <div class="page-header" style="background: #efeff4;">
+                <span class="course">裁判员简介</span>
+            </div>
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell listli introBox" style="padding:0 !important">{$refereeInfo.introduction}</li>
+            </ul>
+
+        </div>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        $(function () {
+
+            var introduction = "{$refereeInfo.introduction}";
+            if (introduction == '') {
+                $(".introBox").append("<p class='nohave'>还没有简介哦</p>")
+            }
+
+            // 裁判等级文字数字转换
+            var level = "{$refereeInfo.level}"
+            if (level == 1) {
+                $(".level").text("国家级裁判员");
+            } else if (level == 2) {
+                $(".level").text("国家A级裁判员");
+            } else if (level == 3) {
+                $(".level").text("一级裁判员");
+            } else if (level == 4) {
+                $(".level").text("二级裁判员");
+            } else if (level == 5) {
+                $(".level").text("三级裁判员");
+            } else if (level == 0) {
+                $(".level").text("暂无考级");
+            }
+
+            //判断训练营宣言长度是否超过30字符
+            var aboutlen = $(".about").text()
+            if (aboutlen.length < 36) {
+                $(".about a").hide();
+            }
+            //展示训练营介绍全文
+            $(".about a").click(function () {
+                $(".about").css("height", "auto");
+                $(this).hide();
+            });
+
+            // 判断回复的状态
+            var status = "{$applyInfo.status}";
+            if (status == 2) {
+                $(".refuse").on("tap", "", function () {
+                    mui.confirm('你已经同意了执裁比赛，是否要更改为拒绝执裁比赛?', '', ['取消', '确定'], function (e) {
+                        if (e.index == 1) {
+                            check_status(3)
+                        }
+                    });
+                })
+            } else if (status == 3) {
+                $(".agree").on("tap", "", function () {
+                    mui.confirm('你已经拒绝了执裁比赛，是否要更改为同意执裁比赛?', '', ['取消', '确定'], function (e) {
+                        if (e.index == 1) {
+                            check_status(2)
+                        }
+                    });
+                })
+            }
+        })
+
+        // 审核操作
+        function check_status(value) {
+            var member = "{$memberInfo.member}";
+            var apply_id = "{$applyInfo.id}"
+            var reply = $(".reply").val();
+            mui.ajax("{:url('api/referee/replymatchinvit')}", {
+                data: {
+                    apply_id: apply_id,
+                    status: value,
+                    reply: reply
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (res) {
+                    console.log(res)
+                    if (res.code == 200) {
+                        var name = "{$matchInfo.name}"
+                        if (value == 2) {
+                            mui.toast('你已经同意执裁' + name + '比赛');
+                            window.setTimeout("history.back(-1)", 2000);
+                        } else {
+                            mui.toast('你已经拒绝执裁' + name + '比赛');
+                            window.setTimeout("history.back(-1)", 2000);
+                        }
+                    } else {
+                        mui.toast(res.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                    mui.toast('网络异常');
+                }
+            });
+        }
+
+    </script>
 
 </body>
+
 </html>

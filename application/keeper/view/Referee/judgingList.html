@@ -91,7 +91,7 @@
                 mui.ajax({
                     url: url,
                     data: {
-                        page:page,
+                        page: page,
                         referee_id: referee_id
                     },
                     dataType: 'json',//服务器返回json格式数据
@@ -105,16 +105,23 @@
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data[i].match_id;
                                 newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].member_avatar + '"><div class="mui-media-body wd"  style="line-height:20px !important;">' + data.data[i].match.name;
-                                if (data.data[i].match.court == '') {
-                                    newli += '<p class="mui-ellipsis">比赛地点：待定</p>';
-                                } else {
-                                    newli += '<p class="mui-ellipsis">比赛地点：' + data.data[i].match.court + '</p>';
-                                }
                                 if (data.data[i].match.match_time == 0) {
-                                    newli += '<p class="address colororange">比赛时间：待定</p></div></a></li>';
+                                    newli += '<p class="address">比赛时间待定</p>';
                                 } else {
-                                    newli += '<p class="address colororange">比赛时间：' + data.data[i].match.match_time + '</p></div></a></li>';
+                                    newli += '<p class="address">' + data.data[i].match.match_time + '</p>';
                                 }
+                                if (data.data[i].match.court == '') {
+                                    newli += '<p class="mui-ellipsis">比赛场地待定</p>';
+                                } else {
+                                    newli += '<p class="mui-ellipsis">'
+                                    if (data.data[i].match.is_finished == "未完成") {
+                                        newli += '<font class="tipCorner bggray" style="margin:0 5px 0 0 !important;">未完成</font>';
+                                    } else if (data.data[i].status == "已完成") {
+                                        newli += '<font class="tipCorner bgred" style="margin:0 5px 0 0 !important;">已完成</font>';
+                                    }
+                                    newli += data.data[i].match.court + '</p>';
+                                }
+                                newli += '</div></a></li>'
                             }
                         }
                         if (gType == 1) {
