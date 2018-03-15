@@ -10,27 +10,42 @@ class Index extends Controller{
         db('log_wxpay')->count('*');
         echo db('log_wxpay')->getlastsql();
     }
-    public function spu(){
-        $a = [
-            ['name'=>'包车','price'=>5200],
-            ['name'=>'不包车','price'=>5000]
-        ];
-        $b = in_array('1,2,3,4', ['a'=>1]);
-        dump($b);
-        echo json_encode($a);
-    }
+    
 
-    public function insql(){
-        $service = new \app\service\ItemCouponService;
-        $ids = [];
-        for ($i=0; $i < 30;$i++) { 
-            $ids[] = $i;    
+    public function test(){
+        $list = [];
+        for ($i=1; $i <= 16; $i++) { 
+            $list[]  = $i;
+            $list[]  = $i;
+            $list[]  = $i;
+            $list[]  = $i;
         }
-        $service->createItemCouponMemberList(8,'woo',$ids);
 
+        $times = 1;
+        foreach ($list as $key => &$value) {
+            $value = $value*10;
+            if($times == 4){
+                $times = 5;
+            }
+            $value.=$times;
+            $times++;
+            if($times>5){
+                $times = 1;
+            }
+        }
 
+        dump($list);
+        foreach ($list as $key => $value) {
+           db('test')->insert(['name'=>$value]);
+        }
     }
 
+    public function scheduletime(){
+        $list1 = db('income')->field('income.id,income.f_id,schedule.students,schedule.lesson_time as schedule_time,schedule.schedule_income')->join('schedule','income.f_id = schedule.id')->where(['income.type'=>3])->select();
+        dump($list1);
+        $income = new \app\model\Income;
+        $income->saveAll($list1);
+    }
     // 1
     public function income(){
         $billList = db('bill')->where('delete_time',null)->where(['is_pay'=>1,'status'=>1,'camp_id'=>9])->select();
@@ -135,31 +150,50 @@ class Index extends Controller{
 
     }
 
+    public function spu(){
+        $a = [
+            ['name'=>'包车','price'=>5200],
+            ['name'=>'不包车','price'=>5000]
+        ];
+        $b = in_array('1,2,3,4', ['a'=>1]);
+        dump($b);
+        echo json_encode($a);
+    }
 
+    public function insql(){
+        $service = new \app\service\ItemCouponService;
+        $ids = [];
+        for ($i=0; $i < 30;$i++) { 
+            $ids[] = $i;    
+        }
+        $service->createItemCouponMemberList(8,'woo',$ids);
+
+
+    }
     /** 
     * @desc 根据两点间的经纬度计算距离 
     * @param float $lat 纬度值 
     * @param float $lng 经度值 
     */
-    public function test(){
-        $earthRadius = 6367000;//地球半径(米);
-        $a = [113.9108100000,22.5235500000];//lng,lat;阳光文体中心坐标
-        $b = [113.9128589630,22.5232210498];//lng,lat阳光小学坐标
-        $lat1 = ($a[0] * pi())/180;//纬度换算;
-        $lng1 = ($a[1] * pi())/180;//经度换算;
+    // public function test(){
+    //     $earthRadius = 6367000;//地球半径(米);
+    //     $a = [113.9108100000,22.5235500000];//lng,lat;阳光文体中心坐标
+    //     $b = [113.9128589630,22.5232210498];//lng,lat阳光小学坐标
+    //     $lat1 = ($a[0] * pi())/180;//纬度换算;
+    //     $lng1 = ($a[1] * pi())/180;//经度换算;
 
-        $lat2 = ($b[0] * pi())/180;//纬度换算;
-        $lng2 = ($b[1] * pi())/180;//经度换算;
-        $calcLongitude = $lng2 - $lng1; 
-        $calcLatitude = $lat2 - $lat1; 
-        $stepOne = pow(sin($calcLatitude / 2), 2) + cos($lat1) * cos($lat2) * pow(sin($calcLongitude / 2), 2); 
-        $stepTwo = 2 * asin(min(1, sqrt($stepOne))); 
-        $calculatedDistance = $earthRadius * $stepTwo; 
-        // echo floor($calculatedDistance);
-        echo round($calculatedDistance); 
+    //     $lat2 = ($b[0] * pi())/180;//纬度换算;
+    //     $lng2 = ($b[1] * pi())/180;//经度换算;
+    //     $calcLongitude = $lng2 - $lng1; 
+    //     $calcLatitude = $lat2 - $lat1; 
+    //     $stepOne = pow(sin($calcLatitude / 2), 2) + cos($lat1) * cos($lat2) * pow(sin($calcLongitude / 2), 2); 
+    //     $stepTwo = 2 * asin(min(1, sqrt($stepOne))); 
+    //     $calculatedDistance = $earthRadius * $stepTwo; 
+    //     // echo floor($calculatedDistance);
+    //     echo round($calculatedDistance); 
 
-        return view('Index/test');
-    }
+    //     return view('Index/test');
+    // }
 
     public function totalSchedule(){
         $giftRecord = db('schedule_giftrecord')->select();

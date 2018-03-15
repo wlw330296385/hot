@@ -42,7 +42,11 @@ class Base extends Controller {
             ];
             return $res;
         } else {
-            return false;
+            $res = [
+                'camp_id' => 15,
+                'camp' =>'钟声训练营', 
+            ];
+            return $res;
         }
     }
 
