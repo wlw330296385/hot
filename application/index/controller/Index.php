@@ -101,7 +101,7 @@ class Index extends Controller{
             $data2['f_id'] = $value['id'];
             $data2['money'] = $value['balance_pay'];
             $data2['create_time'] = $value['create_time'];
-            if($value['camp_id'] == 9){
+            if($campInfo['rebate_type'] == 2){
                 $data['s_balance'] = $campInfo['balance'];
                 $data['e_balance'] = $campInfo['balance'] + $value['balance_pay'];
                 $data2['s_balance'] = $campInfo['balance'];
@@ -120,7 +120,7 @@ class Index extends Controller{
 
     // 2 退费订单
     public function output(){
-        $billList = db('bill')->where('delete_time',null)->where(['is_pay'=>1,'status'=>-2,])->select();
+        $billList = db('bill')->where('delete_time',null)->where(['is_pay'=>1,'status'=>-2])->select();
         $data = [];
         foreach ($billList as $key => &$value) {
             $campInfo = db('camp')->where(['id'=>$value['camp_id']])->find();
@@ -142,7 +142,7 @@ class Index extends Controller{
             $data['output'] = $value['refundamount'];
             $data['create_time'] = $value['create_time'];    
             $data2['money'] = $value['balance_pay'];
-            if($value['camp_id'] == 9){
+            if($campInfo['rebate_type'] == 2){
                 $data['s_balance'] = $campInfo['balance'];
                 $data['e_balance'] = $campInfo['balance'] + $value['balance_pay'];
                 $data2['s_balance'] = $campInfo['balance'];

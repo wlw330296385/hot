@@ -95,7 +95,7 @@ class Crontabwoo extends Controller {
                         'status' => 1,
                         'type' => 1,
                     ];
-                    $this->insertSalaryIn($incomeCoach);
+                    $this->insertSalaryIn($incomeCoach,1);
                     $MemberFinanceData1 = [
                                 'member_id' => $coachMember['member']['id'],
                                 'member' => $coachMember['member']['member'],
@@ -105,8 +105,9 @@ class Crontabwoo extends Controller {
                                 'type'=>1,
                                 'system_remarks'=>'课时主教练总薪资收入',
                                 'f_id'=>$schedule['id'],
+                                'remarks'=>$schedule['lesson_time'],
                             ];
-                    $this->insertMemberFinance($MemberFinanceData1);
+                    $this->insertMemberFinance($MemberFinanceData1,1);
                     // 助教薪资
                     $incomeAssistant = [];
                     if (!empty($schedule['assistant_id']) && $schedule['assistant_salary']) {
@@ -142,11 +143,12 @@ class Crontabwoo extends Controller {
                                 'type'=>1,
                                 'system_remarks'=>'课时助理教练总薪资收入',
                                 'f_id'=>$schedule['id'],
+                                'remarks'=>$schedule['lesson_time'],
                             ];
                         }
-                        $this->insertSalaryIn($incomeAssistant, 1);
+                        $this->insertSalaryIn($incomeAssistant, 1,1);
 
-                        $this->insertMemberFinance($MemberFinanceData2,1);
+                        $this->insertMemberFinance($MemberFinanceData2,1,1);
                     }
 
                     // 剩余为训练营所得 课时收入*抽取比例-主教底薪-助教底薪-课时工资提成*教练人数。教练人数 = 助教人数+1（1代表主教人数）
@@ -178,7 +180,7 @@ class Crontabwoo extends Controller {
                         'system_rebate'=>(1-$scheduleRebate),
                         'system_remarks' => '',
                     ];
-                    $this->insertIncome($incomeCamp);
+                    $this->insertIncome($incomeCamp,1,1);
 
                     // 保存训练营财务收入支出信息
                     $dataCampFinance = [
@@ -191,12 +193,13 @@ class Crontabwoo extends Controller {
                         'f_id' => $schedule['id'],
                         'date' => date('Ymd', $schedule['lesson_time']),
                         'datetime' => $schedule['lesson_time']
+
                     ];
-                    $this->insertcampfinance($dataCampFinance);
+                    $this->insertcampfinance($dataCampFinance,1);
                     // 结算增加到camp表的balancc;
                     db('camp')->where(['id'=>$schedule['camp_id']])->inc('balance',$incomeCampSalary)->update();
                     // 更新课时数据
-                    Db::name('schedule')->where(['id' => $schedule['id']])->update(['is_settle' => 1, 'schedule_income' => $incomeSchedule, 'finish_settle_time' => $schedule['create_time']]);
+                    Db::name('schedule')->where(['id' => $schedule['id']])->update(['is_settle' => 1, 'schedule_income' => $incomeSchedule, 'finish_settle_time' => time()]);
                     db('schedule_member')->where(['schedule_id' => $schedule['id']])->update(['status' => 1, 'update_time' => $schedule['create_time']]);
                     // 课时工资收入结算 end
                 }
@@ -273,10 +276,11 @@ class Crontabwoo extends Controller {
                                 'type'=>1,
                                 'system_remarks'=>'课时主教练总薪资收入',
                                 'f_id'=>$schedule['id'],
+                                'remarks'=>$schedule['lesson_time'],
                             ];
-                        $this->insertSalaryIn($incomeCoach);
+                        $this->insertSalaryIn($incomeCoach,2);
                         $totalCoachSalary = $schedule['coach_salary'] + $pushSalary;
-                        $this->insertMemberFinance($MemberFinanceData);
+                        $this->insertMemberFinance($MemberFinanceData,2);
                     }
                     
                     echo 2;
@@ -324,10 +328,11 @@ class Crontabwoo extends Controller {
                                 'type'=>1,
                                 'system_remarks'=>'课时助理教练总薪资收入',
                                 'f_id'=>$schedule['id'],
+                                'remarks'=>$schedule['lesson_time'],
                             ];
                         }
-                        $this->insertSalaryIn($incomeAssistant, 1);
-                        $this->insertMemberFinance($MemberFinanceData,1);
+                        $this->insertSalaryIn($incomeAssistant, 1,2);
+                        $this->insertMemberFinance($MemberFinanceData,1,2);
                     }
                     // 训练营的支出 = (教练薪资+人头提成)
                     $campInfo = db('camp')->where(['id'=>$schedule['camp_id']])->find();
@@ -346,9 +351,9 @@ class Crontabwoo extends Controller {
                         'remarks'   =>'课时教练总薪资支出',
                         'create_time'=>$schedule['create_time'],
                         'f_id'=>$schedule['id'],
+                        'system_remarks'=>$schedule['lesson_time'],
                     ];
-                    echo 6;
-                    $this->insertOutput($dataOutput);
+                    $this->insertOutput($dataOutput,2);
                     // 保存训练营财务收入支出信息
                     $dataCampFinance = [
                         'camp_id' => $schedule['camp_id'],
@@ -361,7 +366,7 @@ class Crontabwoo extends Controller {
                         'date' => date('Ymd', $schedule['lesson_time']),
                         'datetime' => $schedule['lesson_time']
                     ];
-                    $this->insertcampfinance($dataCampFinance);
+                    $this->insertcampfinance($dataCampFinance,2);
                     
                     db('camp')->where(['id'=>$schedule['camp_id']])->dec('balance',$totalCoachSalary)->update();
                     // 更新课时数据
@@ -401,7 +406,7 @@ class Crontabwoo extends Controller {
         }
     }
      // 保存课时收入记录
-    private function insertIncome($data, $saveAll=0) {
+    private function insertIncome($data, $saveAll=0,,$is_balance = 1) {
         $model = new \app\model\Income();
         if ($saveAll == 1) {
             $execute = $model->allowField(true)->saveAll($data);
@@ -409,16 +414,21 @@ class Crontabwoo extends Controller {
             $execute = $model->allowField(true)->save($data);
         }
         if ($execute) {
-            $campDb = db('camp');
-            if ($saveAll ==1) {
-                foreach ($data as $val) {
-                    $campDb->where('id', $val['camp_id'])->inc('balance_true', $val['income'])->update();
+            if($is_balance == 1){
+                $campDb = db('camp');
+                if ($saveAll ==1) {
+                    foreach ($data as $val) {
+                        $campDb->where('id', $val['camp_id'])->inc('balance_true', $val['income'])->update();
+                    }
+                } else {
+                    $campDb->where('id', $data['camp_id'])->inc('balance_true', $data['income'])->update();
                 }
-            } else {
-                $campDb->where('id', $data['camp_id'])->inc('balance_true', $data['income'])->update();
+                file_put_contents(ROOT_PATH.'data/income/'.date('Y-m-d',time()).'.txt', json_encode(['time'=>date('Y-m-d H:i:s',time()), 'success'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND );
+                return true;
+            }elseif ($is_balance == 2) {
+                // 训练营的余额不会变动
             }
-            file_put_contents(ROOT_PATH.'data/income/'.date('Y-m-d',time()).'.txt', json_encode(['time'=>date('Y-m-d H:i:s',time()), 'success'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND );
-            return true;
+            
         } else {
             file_put_contents(ROOT_PATH.'data/income/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'error'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND  );
             return false;
@@ -461,7 +471,7 @@ class Crontabwoo extends Controller {
     }
 
     // 保存收入记录
-    private function insertSalaryIn($data, $saveAll=0) {
+    private function insertSalaryIn($data, $saveAll=0,$is_balance = 1) {
         $model = new \app\model\SalaryIn();
         if ($saveAll == 1) {
             $execute = $model->allowField(true)->saveAll($data);
@@ -469,16 +479,21 @@ class Crontabwoo extends Controller {
             $execute = $model->allowField(true)->save($data);
         }
         if ($execute) {
-            $memberDb = db('member');
-            if ($saveAll ==1) {
-                foreach ($data as $val) {
-                    $memberDb->where('id', $val['member_id'])->setInc('balance', $val['salary']+$val['push_salary']);
+            if($is_balance == 1){
+                $memberDb = db('member');
+                if ($saveAll ==1) {
+                    foreach ($data as $val) {
+                        $memberDb->where('id', $val['member_id'])->setInc('balance', $val['salary']+$val['push_salary']);
+                    }
+                } else {
+                    $memberDb->where('id', $data['member_id'])->setInc('balance', $data['salary']+$data['push_salary']);
                 }
-            } else {
-                $memberDb->where('id', $data['member_id'])->setInc('balance', $data['salary']+$data['push_salary']);
+                file_put_contents(ROOT_PATH.'data/salaryin/'.date('Y-m-d',time()).'.txt', json_encode(['time'=>date('Y-m-d H:i:s',time()), 'success'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND );
+                return true;
+            }elseif ($is_balance == 2) {
+                //个人余额不变
             }
-            file_put_contents(ROOT_PATH.'data/salaryin/'.date('Y-m-d',time()).'.txt', json_encode(['time'=>date('Y-m-d H:i:s',time()), 'success'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND );
-            return true;
+            
         } else {
             file_put_contents(ROOT_PATH.'data/salaryin/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'error'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND  );
             return false;
@@ -487,7 +502,7 @@ class Crontabwoo extends Controller {
 
 
     // 保存收入总记录
-    private function insertMemberFinance($data, $saveAll=0) {
+    private function insertMemberFinance($data, $saveAll=0,$is_balance = 1) {
         $model = new \app\model\MemberFinance();
         if ($saveAll == 1) {
             $execute = $model->allowField(true)->saveAll($data);
@@ -527,7 +542,7 @@ class Crontabwoo extends Controller {
     }
 
     // 保存训练营财务记录
-    private function insertcampfinance($data, $saveAll=0) {
+    private function insertcampfinance($data, $saveAll=0,$is_balance = 1) {
         $model = new CampFinance();
         if ($saveAll == 1) {
             $model->allowField(true)->saveAll($data);
@@ -537,7 +552,7 @@ class Crontabwoo extends Controller {
     }
 
     // 保存训练营财务记录
-    private function insertOutput($data, $saveAll=0) {
+    private function insertOutput($data, $saveAll=0,,$is_balance = 1) {
         $model = new Output();
         if ($saveAll == 1) {
             $model->allowField(true)->saveAll($data);
