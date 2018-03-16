@@ -131,7 +131,7 @@
                         <label>是否约战</label>
                         <span class="select-row">
                             <select class="data" id="islive" name="islive">
-                                <option value="0">不约战</option>
+                                <option value="-1">不约战</option>
                                 <option value="1" class="isyz">约战</option>
                             </select>
                         </span>
@@ -221,6 +221,7 @@
                         <div class="hideList"></div>
                         <input type="hidden" name="referee_id" value="" class="data">
                         <input type="hidden" name="referee_cost" value="" class="data">
+                        <input type="hidden" name="referee_count" value="" class="data">
                     </a>
                 </div>
                 {else/}
@@ -234,6 +235,7 @@
                         </div>
                         <input type="hidden" name="referee_id" value="{$refereeInfo.id}" class="data">
                         <input type="hidden" name="referee_cost" value="{$refereeInfo.appearance_fee}" class="data">
+                        <input type="hidden" name="referee_count" value="{$refereeInfo.referee_count}" class="data">
                     </a>
                 </div>
                 {/empty}
@@ -281,7 +283,7 @@
                     <div class="mui-switch isRelease">
                         <div class="mui-switch-handle"></div>
                     </div>
-                    <input type="hidden" name="send_message" value="0" class="data">
+                    <input type="hidden" name="send_message" value="-1" class="data">
                 </div>
 
 
@@ -672,7 +674,7 @@
                     $(".refereeCount").show();
                 } else if (refereeNum == 0 || refereeNum == 2) {
                     $(".refereeCount").hide();
-                    $("input[name=referee_count]").val('');
+                    $(".refereeCount").val('');
                 }
             });
 
@@ -719,7 +721,7 @@
                 $(".hideList").empty();
                 var refereeMember = "";
                 var refereeMember_id = "";
-                var refereeSum = "";
+                var refereeSum = 0;
                 var hideList = "";
                 $(".refereeList").find("input[name=checkbox-referee]").each(function () {
                     if ($("input[name=checkbox-referee]:checked").length == 0) {
@@ -737,6 +739,9 @@
                         refereeMember_id += referee_id + ','
                         $(".referee").text(refereeMember.substring(0, refereeMember.length - 1));
                         $("input[name=referee_id]").val(refereeMember_id.substring(0, refereeMember_id.length - 1));
+                        $("input[name=referee_cost]").val(refereeSum);
+                        $("input[name=referee_count]").val(refereeName.length);
+                        console.log(refereeName.length)
                         hideList += '<input type="hidden" class="hideList" data-referee="' + referee + '" data-referee_id="' + referee_id + '" data-referee_cost="' + referee_cost + '">';
                         mui("#refereeDom").popover("hide");
                     } else {
@@ -745,6 +750,7 @@
                     }
                 });
                 $(".hideList").html(hideList);
+                
             });
             // //////////////////////////////////////////////////////////
 
@@ -930,10 +936,10 @@
             // 是否发布通知
             $(".isRelease").on("tap", '', function () {
                 var send_m = $("input[name=send_message]");
-                if (send_m.val() == "0") {
+                if (send_m.val() == "-1") {
                     send_m.val("1");
                 } else {
-                    send_m.val("0");
+                    send_m.val("-1");
                 }
             });
 
