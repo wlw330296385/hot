@@ -797,7 +797,12 @@ class Referee extends Base{
                 ->page($page)
                 ->limit($size)
                 ->select();
-            dump($list);
+            if ($list) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $list];
+            } else { 
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
+            }
+            return json($response);
         } catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
