@@ -100,19 +100,19 @@
 									<td>
 										<ul class="dataCol-3 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
 											{volist name='list4' id='vol'}
-											<li>{$vol.s_s_rebate}</li>
+											<li><span>{$vol.s_s_rebate}</span></li>
 											{/volist}
 											<li class="colTotal" id="hotOut"><</li>
 										</ul>
 										<ul class="dataCol-3 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
 											{volist name='list4' id='vol'}
-											<li>{$vol.s_s_salary}</li>
+											<li><span>{$vol.s_s_salary}</span></li>
 											{/volist}
 											<li class="colTotal" id="coachOut"><</li>
 										</ul>
 										<ul class="dataCol-3 colCount" linkTo="/admin/Statistics_Camp/campGift/">
 											{volist name='list1' id='vol'}
-											<li>{$vol.s_output}</li>
+											<li><span>{$vol.s_output}</span></li>
 											{/volist}
 											<li class="colTotal" id="giftOut"><</li>
 										</ul>
@@ -120,13 +120,13 @@
 									<td>
 										<ul class="dataCol-2 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
 											{volist name='list3' id='vol'}
-											<li>{$vol.s_income}</li>
+											<li><span>{$vol.s_income}</span></li>
 											{/volist}
 											<li class="colTotal" id="scheduleIn"></li>
 										</ul>
 										<ul class="dataCol-2 colCount" linkTo="">
 											{volist name='list2' id='vol'}
-											<li>{$vol.s_income}</li>
+											<li><span>{$vol.s_income}</span></li>
 											{/volist}
 											<li class="colTotal" id="eventIn"></li>
 										</ul>
@@ -134,7 +134,7 @@
 									<td>
 										<ul class="dataCol-1 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
 											{volist name='list3' id='vol'}
-											<li>{$vol.s_schedule_income}</li>
+											<li><span>{$vol.s_schedule_income}</span></li>
 											{/volist}
 											<li class="colTotal" id="scheduleXF"></li>
 										</ul>
@@ -142,7 +142,7 @@
 									<td>
 										<ul class="dataCol-1 colCount" linkTo="">
 											{volist name='list_1' id='vol'}
-											<li>{$vol.s_output}</li>
+											<li><span>{$vol.s_output}</span></li>
 											{/volist}
 											<li class="colTotal" id="withdraw"></li>
 										</ul>
@@ -340,16 +340,11 @@
         });
 
         //点击链接到详情页面
-        $(".colCount li:not('.colTotal')").on("click", function () {
-            var getLink = $(this).parent().attr("linkTo");
-            var campID = $("input[name=camp_id]").val();
-            var getLiIndex = $(this).index();
+        $(".colCount li span").on("click", function () {
+            var getLink = $(this).parent().parent().attr("linkTo");
+            var getLiIndex = $(this).parent().index();
             var getDate = $(".dateList li").eq(getLiIndex).text();
-            //设置本地存储
-            localStorage.setItem('currDateYM',getYM);
-            localStorage.setItem('currCampName',camp);
-            localStorage.setItem('currCampID',camp_id);
-            window.open(getLink+"/camp_id/"+campID+"/monthstart/"+getDate+"/monthend/"+getDate);
+            window.open(getLink+"/camp_id/"+currCampID+"/monthstart/"+getDate+"/monthend/"+getDate);
         })
 
     });
