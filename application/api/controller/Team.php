@@ -86,10 +86,9 @@ class Team extends Base
             $data = input('post.');
             $team_id = input('post.id');
             $teamS = new TeamService();
-            //$teamS->saveTeamMemberRole($data, $team_id);
-            // 更新team_member_role
-            $resSaveRole = $teamS->saveTeamMemberRole($data, $team_id);
 
+            // 更新team_member_role
+            $resSaveRole = $teamS->setTeamMemberRole($data, $team_id);
             // 更新team_member_role 失败返回
             if ($resSaveRole['code'] == 100) {
                 return json($resSaveRole);
@@ -100,7 +99,6 @@ class Team extends Base
                 // 更新team_member 球队名
                 db('team_member')->where('team_id', $team_id)->update(['team' => $data['name']]);
             }
-
             return json($result);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -541,10 +539,9 @@ class Team extends Base
                 // 改变了name字段 更新team_member_role
                 if ($data['name'] != $teamMemberInfo['name']) {
                     db('team_member_role')->where([
-                        'team_id' => $teamMemberInfo['id'],
+                        'team_id' => $teamMemberInfo['team_id'],
                         'member_id' => $teamMemberInfo['member_id'],
-                        'member' => $teamMemberInfo['member'],
-                        'name' => $teamMemberInfo['name']
+                        'member' => $teamMemberInfo['member']
                     ])->update([
                         'name' => $data['name'],
                         'update_time' => time()
