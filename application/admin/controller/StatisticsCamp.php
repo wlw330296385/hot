@@ -565,4 +565,16 @@ class StatisticsCamp extends Backend{
         return view('StatisticsCamp/campScheduleStatistics');
     }
 
+    // 训练营订单列表
+    public function campBillList(){
+        return $this->fetch('StatisticsCamp/campBillList');
+    }
+    // 训练营提现列表
+    public function campWithdraw(){
+        return $this->fetch('StatisticsCamp/campWithdraw');
+    }
+    // 训练营工资列表
+    public function campCoachSallary(){
+        return $this->fetch('StatisticsCamp/campCoachSallary');
+    }
 }
