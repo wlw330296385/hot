@@ -567,14 +567,22 @@ class StatisticsCamp extends Backend{
 
     // 训练营订单列表
     public function campBillList(){
+        //查询条件：camp_id，goods_type，monthstart，monthend
         return $this->fetch('StatisticsCamp/campBillList');
     }
     // 训练营提现列表
     public function campWithdraw(){
+        //查询条件：camp_id，monthstart，monthend
         return $this->fetch('StatisticsCamp/campWithdraw');
     }
-    // 训练营工资列表
+    // 训练营工资列表月表（列出对应训练营所有的教练员当月的工资）
+    public function campCoachSallaryMth(){
+        //查询条件：camp_id，monthstart，monthend
+        return $this->fetch('StatisticsCamp/campCoachSallaryMth');
+    }
+    // 训练营工资列表（列出对应训练营下指定教练员当月的工资）
     public function campCoachSallary(){
+        //查询条件：camp_id，member_id，monthstart，monthend
         return $this->fetch('StatisticsCamp/campCoachSallary');
     }
 }

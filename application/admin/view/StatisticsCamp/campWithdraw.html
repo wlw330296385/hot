@@ -37,6 +37,9 @@
 								<!-- /.input group -->
 								<button type="button" class="btn btn-default" id="goSearch">确认查询</button>
 							</div>
+							<h3 class="totalRight">
+								<span><small>提现总额：</small><strong class="text-yellow monthIn"></strong></span>
+							</h3>
 						</div>
 					</div>
 					<div class="row">
@@ -65,7 +68,7 @@
 									<tbody>
 									<tr>
 										<td>29</td>
-										<td>1600.00</td>
+										<td class="wIn">1600.00</td>
 										<td>0.00</td>
 										<td>钟声</td>
 										<td>33985.00</td>
@@ -162,7 +165,6 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default pull-left" id="clearCamp">清除所选训练营</button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 			</div>
 		</div>
@@ -219,6 +221,12 @@
             localStorage.setItem('currDateYM',currDateYM);
         }
 
+        //遍历需要统计的数据列，并赋值到对应位置
+        var wInCount = 0;
+        $(".wIn").each(function () {
+            wInCount = wInCount + parseInt($(this).text());
+        });
+        $(".monthIn").text(wInCount);
 
         //隔行变色
         $(".hotTable tbody td ul").find("li:even").addClass("even");
@@ -230,7 +238,6 @@
             $("input[name=camp]").val(currCampName);
             $(".campKeyword").val(currCampName);
             $(".campName").text(currCampName);
-            $("#onCampTips").show();
         }
 
         //=========================== 初始化数据 ==============================//
@@ -260,8 +267,6 @@
         });
 
 
-
-
         $("#campList tbody").on("click",".btn", function () {
             var camp_id = $(this).attr("data-id");
             var camp = $(this).attr("data-camp");
@@ -275,7 +280,7 @@
             var camp = $("input[name=camp]").val();
             var camp_id = $("input[name=camp_id]").val();
             var getYM = $("input[name=dateYM]").val();
-            if(member_id==""&&lesson_id==""&&camp_id==""){
+            if(camp_id==""){
                 alert("请选择训练营");
                 return false;
             }
@@ -286,20 +291,14 @@
             //拆分日期
             var arrYM = getYM.split('-');
             var getLastDate = new Date(arrYM[0],arrYM[1],0);
-            console.log(getLastDate.getDate())
-            beginDate = arrYM[0]+arrYM[1]+'01';
-            endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
+            var beginDate = arrYM[0]+arrYM[1]+'01';
+            var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
 
-            window.location.href="{:url('/admin/Statistics_Camp/campBillList/')}"+"camp_id/"+camp_id+"/lesson_id/"+lesson_id+"/member_id/"+member_id+"/monthstart/"+beginDate+"/monthend/"+endDate;;
+            window.location.href="{:url('/admin/Statistics_Camp/campWithdraw/')}"+"camp_id/"+camp_id+"/monthstart/"+beginDate+"/monthend/"+endDate;
         })
 
 
 
-        //清除查询表单值
-        $("#clearCamp").on("click", function () {
-            clearCampInput();
-            $('#campModal').modal('hide');
-        });
         $('input[name="camp"]').on("blur", function () {
             var getVal = $(this).val();
             if(getVal==""){
@@ -315,10 +314,6 @@
         $('input[name="camp_id"]').val('');
         localStorage.removeItem('currCampName');
         localStorage.removeItem('currCampID');
-        $("#coachModalLabel").text("请选择教练员");
-        $("#coachList tbody").empty().html('<tr role="row" class="nodata"><td colspan="4">请搜索教练员</td></tr>');
-        $("#lessonModalLabel").text("请选择课程");
-        $("#lessonList tbody").empty().html('<tr role="row" class="nodata"><td colspan="5">请搜索课程</td></tr>');
     };
 
 
