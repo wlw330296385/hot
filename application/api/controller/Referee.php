@@ -6,6 +6,7 @@ use app\service\MatchService;
 use app\service\MessageService;
 use app\service\RefereeService;
 use think\Exception;
+use think\Db;
 
 class Referee extends Base{
 	protected $refereeService;
@@ -714,7 +715,7 @@ class Referee extends Base{
         try{
             $map = input('param.');
 
-            // 无传入referee_id 根据当前会员查询裁判员信息
+           /* 无传入referee_id 根据当前会员查询裁判员信息
             $refereeId = input('param.referee_id');
             if (!$refereeId) {
                 $refereeInfo = $this->refereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
@@ -724,7 +725,7 @@ class Referee extends Base{
             }
             if ($refereeInfo) {
                 $map['referee_id'] = $refereeInfo['id'];
-            }
+            }*/
 
             if (input('page')) {
                 unset($map['page']);
@@ -748,7 +749,7 @@ class Referee extends Base{
             $map = input('param.');
             $page = input('page', 1);
 
-            // 无传入referee_id 根据当前会员查询裁判员信息
+            /*无传入referee_id 根据当前会员查询裁判员信息
             $refereeId = input('param.referee_id');
             if (!$refereeId) {
                 $refereeInfo = $this->refereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
@@ -758,7 +759,7 @@ class Referee extends Base{
             }
             if ($refereeInfo) {
                 $map['referee_id'] = $refereeInfo['id'];
-            }
+            }*/
 
             if (input('page')) {
                 unset($map['page']);
@@ -772,6 +773,32 @@ class Referee extends Base{
                 return json(['code'=>100,'msg'=> __lang('MSG_000')]);
             }
         }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 裁判-比赛订单
+    public function refereeorders() {
+        // 裁判-比赛申请|邀请+比赛裁判关联，未完成的比赛先列出
+        try {
+            $map = input('param.');
+            $page = input('page', 1);
+            $size = input('size', 10);
+
+            if (input('page')) {
+                unset($map['page']);
+            }
+
+            $list = Db::view('match_referee_apply')
+                ->view('match', ['*', 'status' => 'match_status'], 'match.id=match_referee_apply.match_id', 'left')
+                ->whereNull('match_referee_apply.delete_time')
+                ->whereNull('match.delete_time')
+                ->order(['match.is_finished' => 'asc'])
+                ->page($page)
+                ->limit($size)
+                ->select();
+            dump($list);
+        } catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
