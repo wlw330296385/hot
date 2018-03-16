@@ -295,17 +295,22 @@ class Referee extends Base{
         try{
             $map = input('param.');
 
-            // 无传入referee_id 根据当前会员查询裁判员信息
-            $refereeId = input('param.referee_id');
-            if (!$refereeId) {
-                $refereeInfo = $this->refereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
-            } else {
-                // 查询裁判员数据
-                $refereeInfo = $this->refereeService->getRefereeInfo(['id' => $refereeId]);
+            // 获取受邀列表 自动补上查询裁判条件
+            if (input('?apply_type') && input('apply_type') == 2) {
+                // 无传入referee_id 根据当前会员查询裁判员信息
+                $refereeId = input('param.referee_id');
+                if (!$refereeId) {
+                    $refereeInfo = $this->refereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
+                } else {
+                    // 查询裁判员数据
+                    $refereeInfo = $this->refereeService->getRefereeInfo(['id' => $refereeId]);
+                }
+                if ($refereeInfo) {
+                    $map['referee_id'] = $refereeInfo['id'];
+                }
             }
-            if ($refereeInfo) {
-                $map['referee_id'] = $refereeInfo['id'];
-            }
+
+
 
             if ( isset($map['page']) ) {
                 unset($map['page']);
@@ -331,16 +336,19 @@ class Referee extends Base{
             $map = input('param.');
             $page= input('param.page', 1);
 
-            /// 无传入referee_id 根据当前会员查询裁判员信息
-            $refereeId = input('param.referee_id');
-            if (!$refereeId) {
-                $refereeInfo = $this->refereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
-            } else {
-                // 查询裁判员数据
-                $refereeInfo = $this->refereeService->getRefereeInfo(['id' => $refereeId]);
-            }
-            if ($refereeInfo) {
-                $map['referee_id'] = $refereeInfo['id'];
+            // 获取受邀列表 自动补上查询裁判条件
+            if (input('?apply_type') && input('apply_type') == 2) {
+                // 无传入referee_id 根据当前会员查询裁判员信息
+                $refereeId = input('param.referee_id');
+                if (!$refereeId) {
+                    $refereeInfo = $this->refereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
+                } else {
+                    // 查询裁判员数据
+                    $refereeInfo = $this->refereeService->getRefereeInfo(['id' => $refereeId]);
+                }
+                if ($refereeInfo) {
+                    $map['referee_id'] = $refereeInfo['id'];
+                }
             }
 
             if ( isset($map['page']) ) {
