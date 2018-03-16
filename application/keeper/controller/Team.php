@@ -60,7 +60,7 @@ class Team extends Base {
         ];
         foreach ($rolemembers as $rolemember) {
             if ($rolemember['type'] == 4) {
-                $roleslist['coach_ids'] .= $rolemember['member_id'].',';
+                $roleslist['coach_ids'] .= $rolemember['id'].',';
                 array_push($roleslist['coach_names'], [
                     'id' => $rolemember['id'],
                     'member_id' => $rolemember['member_id'],
@@ -69,7 +69,7 @@ class Team extends Base {
                 ]);
             }
             if ($rolemember['type'] == 1 ) {
-                $roleslist['committee_ids'] .= $rolemember['member_id'].',';
+                $roleslist['committee_ids'] .= $rolemember['id'].',';
                 array_push($roleslist['committee_names'], [
                     'id' => $rolemember['id'],
                     'member_id' => $rolemember['member_id'],
