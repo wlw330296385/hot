@@ -17,7 +17,7 @@ class StatisticsCoach extends Backend{
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
-        $month_end = strtotime($monthEnd);
+        $month_end = strtotime($monthEnd)+86399;
         $salaryin = [];
         $list1 = [];
         $list2 = [];

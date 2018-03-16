@@ -95,9 +95,9 @@ class StatisticsCamp extends Backend{
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
-        $month_end = strtotime($monthEnd);
+        $month_end = strtotime($monthEnd)+86399;
         // 活动订单收入 
-        $income2 = db('income')->field("sum(income) as s_income,from_unixtime(create_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+        $income2 = db('income')->field("sum(income) as s_income,from_unixtime(schedule_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>2])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
         
         if($this->campInfo['rebate_type'] == 1){
 
@@ -109,12 +109,14 @@ class StatisticsCamp extends Backend{
             $list4 = [];//教练工资和平台支出;
             
             //课时收入
-            $income3 = db('income')->field("sum(income) as s_income,from_unixtime(create_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>3])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            $income3 = db('income')->field("sum(income) as s_income,from_unixtime(schedule_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>3])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             // echo db('income')->getlastsql();
             // dump($income3);die;  
             //课时薪资和平台支出
-            $schedule =  db('schedule')->field("sum(s_coach_salary+s_assistant_salary) as s_s_salary,from_unixtime(finish_settle_time,'%Y%m%d') as days,sum(cost*students*schedule_rebate) as s_s_rebate,is_settle,camp_id")->where(['camp_id'=>$camp_id,'is_settle'=>1])->where(['finish_settle_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            $schedule =  db('schedule')->field("sum(s_coach_salary+s_assistant_salary) as s_s_salary,from_unixtime(lesson_time,'%Y%m%d') as days,sum(cost*students*schedule_rebate) as s_s_rebate,is_settle,camp_id")->where(['camp_id'=>$camp_id,'is_settle'=>1])->where(['lesson_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             // echo db('schedule')->getlastsql();
+            // dump($schedule);die;
+            
             // 提现支出
             $output = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>-1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             //赠课支出
@@ -173,7 +175,7 @@ class StatisticsCamp extends Backend{
 
         }else{
             // 课程订单收入
-            $income1 = db('income')->field("sum(income) as s_income,from_unixtime(create_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            $income1 = db('income')->field("sum(income) as s_income,from_unixtime(schedule_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>1])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             // 赠课支出
             $output1 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             // 课时退费
@@ -181,7 +183,7 @@ class StatisticsCamp extends Backend{
             // 提现
             $output_1 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>-1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             // 课时教练支出
-            $output3 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>3])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            $output3 = db('output')->field("sum(output) as s_output,from_unixtime(schedule_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>3])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             //平台分成
             $output4 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>4])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
 
@@ -260,7 +262,7 @@ class StatisticsCamp extends Backend{
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
-        $month_end = strtotime($monthEnd);
+        $month_end = strtotime($monthEnd)+86399;
         $income = [];
         $list2 = [];//活动收入
         $list3 = [];//课时收入
@@ -273,9 +275,9 @@ class StatisticsCamp extends Backend{
         if($this->campInfo['rebate_type'] == 1){
             $income3 = db('income')->field("sum(income) as s_income,sum(schedule_income) as s_schedule_income,count('id') as c_id,sum(students) as s_students,lesson,goods,camp")
             ->where(['camp_id'=>$camp_id,'type'=>3])
-            ->where(['create_time'=>['between',[$month_start,$month_end]]])
+            ->where(['schedule_time'=>['between',[$month_start,$month_end]]])
             ->where('delete_time',null)
-            ->group('schedule_id')->select();  
+            ->group('lesson_id')->select();  
             $list3 = $income3;
             $this->assign('list2',$list2);
             $this->assign('list3',$list3);
@@ -283,9 +285,9 @@ class StatisticsCamp extends Backend{
         }else{
             $income1 = db('income')->field("sum(income) as s_income,count('id') as c_id,sum(total) as s_total,goods,goods_id,camp,price,f_id")
             ->where(['camp_id'=>$camp_id,'type'=>1])
-            ->where(['create_time'=>['between',[$month_start,$month_end]]])
+            ->where(['schedule_time'=>['between',[$month_start,$month_end]]])
             ->where('delete_time',null)
-            ->group('goods_id')->select();
+            ->group('lesson_id')->select();
             $list1 = $income1;
             $this->assign('list2',$list2);
             $this->assign('list1',$list1);
@@ -309,7 +311,7 @@ class StatisticsCamp extends Backend{
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
-        $month_end = strtotime($monthEnd);
+        $month_end = strtotime($monthEnd)+86399;
         // 单独提取订单记录
         $lessonBill = db('bill')
         ->field("count(id) as c_id,sum(balance_pay) as total_pay,goods,goods_id,id")
@@ -320,7 +322,7 @@ class StatisticsCamp extends Backend{
 
         $eventBill = db('bill')
         ->field("count('id') as c_id,sum(balance_pay) as total_pay,goods,goods_id,id")
-        ->where(['camp_id'=>$camp_id,'goods_type'=>1,'is_pay'=>1])
+        ->where(['camp_id'=>$camp_id,'goods_type'=>2,'is_pay'=>1])
         ->where(['create_time'=>['between',[$month_start,$month_end]]])
         ->where('delete_time',null)
         ->group('goods_id')->select();
@@ -337,7 +339,7 @@ class StatisticsCamp extends Backend{
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
-        $month_end = strtotime($monthEnd);
+        $month_end = strtotime($monthEnd)+86399;
         $list = db('schedule_gift_student')
         ->field("*,from_unixtime(create_time,'%Y%m%d') as days")
         ->where(['camp_id'=>$camp_id])
@@ -375,18 +377,18 @@ class StatisticsCamp extends Backend{
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
-        $month_end = strtotime($monthEnd);
+        $month_end = strtotime($monthEnd)+86399;
         if($this->campInfo['rebate_type'] == 1){
             //总活动订单收入 
-            $income2 = db('income')->where(['camp_id'=>$camp_id,'type'=>2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('income');
+            $income2 = db('income')->where(['camp_id'=>$camp_id,'type'=>2])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('income');
             //总课时收入
-            $income3 = db('income')->where(['camp_id'=>$camp_id,'type'=>3])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('income');
+            $income3 = db('income')->where(['camp_id'=>$camp_id,'type'=>3])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('income');
             //总提现支出
             $output = db('output')->where(['camp_id'=>$camp_id,'type'=>-1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
             //总赠课支出
             $output_gift = db('output')->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
             //课时薪资
-            $schedule =  db('schedule')->field("sum((coach_salary+assistant_salary+salary_base)*students) as s_s_salary,sum(cost*students*schedule_rebate) as s_s_rebate,is_settle,camp_id")->where(['camp_id'=>$camp_id,'is_settle'=>1])->where(['finish_settle_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->find();
+            $schedule =  db('schedule')->field("sum((coach_salary+assistant_salary+salary_base)*students) as s_s_salary,sum(cost*students*schedule_rebate) as s_s_rebate,is_settle,camp_id")->where(['camp_id'=>$camp_id,'is_settle'=>1])->where(['lesson_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->find();
             //其他支出
             $other_output = db('output')->where(['camp_id'=>$camp_id,'type'=>-2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');  
             $this->assign('income2',$income2?$income2:0);
@@ -406,7 +408,7 @@ class StatisticsCamp extends Backend{
             //赠课支出
             $output_gift = db('output')->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
             // 教练工资支出
-            $schedule = db('output')->where(['camp_id'=>$camp_id,'type'=>3])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
+            $schedule = db('output')->where(['camp_id'=>$camp_id,'type'=>3])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
             //退费支出
             $output2 = db('output')->where(['camp_id'=>$camp_id,'type'=>-2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->sum('output');
             // 平台分成
@@ -438,7 +440,7 @@ class StatisticsCamp extends Backend{
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
-        $month_end = strtotime($monthEnd);
+        $month_end = strtotime($monthEnd)+86399;
         $camp_id = input('param.camp_id');
         $keyword = input('param.keyword');
         $member_id = input('param.member_id');
@@ -456,7 +458,7 @@ class StatisticsCamp extends Backend{
         ->field('salary_in.*,schedule.student_str,schedule.coach,schedule.assistant,schedule.cost,schedule.coach_salary,schedule.assistant_salary,schedule.salary_base,schedule.schedule_rebate,schedule.schedule_income,schedule.lesson_time,schedule.students')
         ->where($map)
         ->join('schedule','schedule.id = salary_in.schedule_id')
-        ->where(['salary_in.create_time'=>['between',[$month_start,$month_end]]])
+        ->where(['salary_in.schedule_time'=>['between',[$month_start,$month_end]]])
         ->select();
         // dump($scheduleList);die;
         $this->assign('scheduleList',$scheduleList);
@@ -470,7 +472,7 @@ class StatisticsCamp extends Backend{
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
-        $month_end = strtotime($monthEnd);
+        $month_end = strtotime($monthEnd)+86399;
         //总购买课时
         $totalBuy = db('bill')
         ->where(['camp_id'=>$camp_id,'goods_type'=>1,'is_pay'=>1])
@@ -486,7 +488,7 @@ class StatisticsCamp extends Backend{
         //总已上课时
         $totalSchedule = db('schedule_member')
         ->where(['camp_id'=>$camp_id,'status'=>1,'type'=>1])
-        ->where(['create_time'=>['between',[$month_start,$month_end]]])
+        ->where(['schedule_time'=>['between',[$month_start,$month_end]]])
         ->where('delete_time',null)
         ->count('id');
 
@@ -502,13 +504,11 @@ class StatisticsCamp extends Backend{
             ->where('delete_time',null)
             ->group('goods_id')
             ->find();
+            // dump($bill_2);die;
             if($bill_2){
-                $refundScheduleList[$val['lesson']] = $bill_2;
+                $totalRefundSchedule = $bill_2['s_totalRefund'];
             }else{
-                $refundScheduleList[$val['lesson']] = ['s_totalRefund'=>0];
-            }
-            foreach ($refundScheduleList[$val['lesson']] as $key => $value) {
-                $totalRefundSchedule += ceil($value['s_totalRefund']);
+                $$totalRefundSchedule = 0;
             }
             // 课时列表
             $bill1 = db('bill')
@@ -541,7 +541,7 @@ class StatisticsCamp extends Backend{
             $schedule1 = db('schedule')
             ->field("sum(students) as s_students,lesson_id,lesson")
             ->where(['camp_id'=>$camp_id,'is_settle'=>1,'lesson_id'=>$val['id']])
-            ->where(['create_time'=>['between',[$month_start,$month_end]]])
+            ->where(['lesson_time'=>['between',[$month_start,$month_end]]])
             ->where('delete_time',null)
             ->group('lesson_id')
             ->find();

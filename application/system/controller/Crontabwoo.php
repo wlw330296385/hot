@@ -73,6 +73,7 @@ class Crontabwoo extends Controller {
                     $pushSalary = $schedule['salary_base'] * $numScheduleStudent;
                     $coachMember = $this->getCoachMember($schedule['coach_id']);
                     $totalCoachSalary = 0;
+
                     // 主教练薪资
                     $incomeCoach = [
                         'salary' => $schedule['coach_salary'],
@@ -112,11 +113,14 @@ class Crontabwoo extends Controller {
                     echo 12;
                     $this->insertMemberFinance($MemberFinanceData1,0,1);
                     // 助教薪资
+                    $totalAssistantSalary = 0;
                     $incomeAssistant = [];
                     if (!empty($schedule['assistant_id']) && $schedule['assistant_salary']) {
                         $assistantMember = $this->getAssistantMember($schedule['assistant_id']);
                         $totalCoachSalary += $schedule['assistant_salary'];
                         $totalCoachSalary += $pushSalary;
+                        $totalAssistantSalary += $schedule['assistant_salary']; 
+                        $totalAssistantSalary += $pushSalary;
                         foreach ($assistantMember as $k => $val) {
                             $incomeAssistant[$k] = [
                                 'salary' => $schedule['assistant_salary'],
@@ -161,7 +165,7 @@ class Crontabwoo extends Controller {
                     // 剩余为训练营所得 课时收入*抽取比例-主教底薪-助教底薪-课时工资提成*教练人数。教练人数 = 助教人数+1（1代表主教人数）
                     // 抽取比例：训练营有特定抽取比例以(1-特定抽取比例)计算|否则以(1-平台抽取比例)计算
                     $campScheduleRebate = $schedule['schedule_rebate'];
-                    $incomeCampSalary = ($incomeSchedule * $campScheduleRebate) - $schedule['coach_salary'] - $schedule['assistant_salary'] - ($pushSalary * (count($incomeAssistant) + 1));
+                    $incomeCampSalary = ($incomeSchedule * (1-$campScheduleRebate)) - $schedule['coach_salary'] - $schedule['assistant_salary'] - ($pushSalary * (count($incomeAssistant) + 1));
                     $incomeCamp = [
                         'income' => $incomeCampSalary,
                         'schedule_id'=>$schedule['id'],
@@ -198,6 +202,8 @@ class Crontabwoo extends Controller {
                         'system_remarks'=>'营业额结算',
                         'status'    =>1,
                         'remarks'   =>'课时教练总薪资支出',
+                        'schedule_time'=>$schedule['lesson_time'],
+                        'rebate_type' => $campInfo['rebate_type'],
                         'create_time'=>$schedule['create_time'],
                         'f_id'=>$schedule['id'],
                         'system_remarks'=>$schedule['lesson_time'],
@@ -212,6 +218,8 @@ class Crontabwoo extends Controller {
                         's_balance' =>$campInfo['balance'],
                         'e_balance' =>$campInfo['balance']-$totalCoachSalary,
                         'system_remarks'=>'课时结算',
+                        'schedule_time'=>$schedule['lesson_time'],
+                         'rebate_type' => $campInfo['rebate_type'],
                         'status'    =>1,
                         'remarks'   =>'平台分成',
                         'create_time'=>$schedule['create_time'],
@@ -237,7 +245,7 @@ class Crontabwoo extends Controller {
                     // 结算增加到camp表的balancc;
                     db('camp')->where(['id'=>$schedule['camp_id']])->inc('balance',$incomeCampSalary)->update();
                     // 更新课时数据
-                    Db::name('schedule')->where(['id' => $schedule['id']])->update(['is_settle' => 1, 'schedule_income' => $incomeSchedule, 'finish_settle_time' => time()]);
+                    Db::name('schedule')->where(['id' => $schedule['id']])->update(['is_settle' => 1, 'schedule_income' => $incomeSchedule, 'finish_settle_time' => time(),'s_coach_salary'=>($schedule['coach_salary']+$pushSalary),'s_assistant_salary'=>$totalAssistantSalary]);
                     db('schedule_member')->where(['schedule_id' => $schedule['id']])->update(['status' => 1, 'update_time' => $schedule['create_time']]);
                     // 课时工资收入结算 end
                 }
@@ -388,6 +396,8 @@ class Crontabwoo extends Controller {
                         's_balance' =>$campInfo['balance'],
                         'e_balance' =>$campInfo['balance']-$totalCoachSalary,
                         'system_remarks'=>'营业额结算',
+                        'schedule_time'=>$schedule['lesson_time'],
+                        'rebate_type' => $campInfo['rebate_type'],
                         'status'    =>1,
                         'remarks'   =>'课时教练总薪资支出',
                         'create_time'=>$schedule['create_time'],
