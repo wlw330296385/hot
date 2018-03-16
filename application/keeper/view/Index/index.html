@@ -251,13 +251,13 @@
             <ul class="mui-table-view detalis-list list mainInfo border-b newEvent"></ul>
 
             <!--最近订单-->
-            <div class="page-header border-b">
+            <div class="page-header border-b refereeOrder">
                 <span class="course">最近订单</span>
                 <span class="more pdr15">
                     <a href="{:url('referee/orderList')}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
-            <ul class="mui-table-view detalis-list list mainInfo border-b newReferee"></ul>
+            <ul class="mui-table-view detalis-list list mainInfo border-b newReferee refereeOrder"></ul>
 
             <div class="show-list hot-ads">
                 <img src="/static/frontend/images/ads1.jpg" />
@@ -423,7 +423,7 @@
 
             toLastEventList();//最近活动
             toLastMatchList();//最近比赛
-            toLastRefereeList(); //最近订单
+            toCheckReferee(); //是否有裁判身份
             toRecordEventList(); //活动纪录
             toRecordMatchList(); //赛事纪录
 
@@ -451,6 +451,7 @@
                     window.top.location.href = searchUrl;
                 }
             })
+
 
 
             //比赛报名功能
@@ -682,9 +683,9 @@
                 }
             });
         };
-
+        var referee_id = "";
         //获取最近订单
-        function toLastRefereeList() {
+        function toCheckReferee(referee_id) {
             mui.ajax("{:url('api/referee/getMemberReferee')}", {
                 data: {},
                 dataType: 'json',//服务器返回json格式数据
@@ -694,69 +695,74 @@
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
-                        var referee_id = data.data.id;
-                        mui.ajax("{:url('api/referee/matchapplylist')}", {
-                            data: {
-                                page: 1,
-                                referee_id: referee_id
-                            },
-                            dataType: 'json',//服务器返回json格式数据
-                            type: 'post',//HTTP请求类型
-                            timeout: 10000,//超时时间设置为10秒；
-                            headers: { 'Content-Type': 'application/json' },
-                            success: function (data) {
-                                console.log(data)
-                                var newli = '';
-                                if (data.code == 200) {
-                                    for (var i = 0; i <= data.data.slice(0, 4).length - 1; i++) {
-                                        var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data[i].match_id + '/team_id/' + + data.data[i].match.team_id;
-                                        newli += '<li class="mui-table-view-cell mui-media listli">'
-                                        newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].member_avatar + '" style="width:45px !important;height:45px !important;border-radius:50% !important;"><div class="mui-media-body wd">' + data.data[i].match.name + '';
-                                        if (data.data[i].match.match_time == 0) {
-                                            newli += '<p class="address" style="line-height:20px !important">比赛时间待定</p>';
-                                        } else {
-                                            newli += '<p class="address" style="line-height:20px !important">' + data.data[i].match.match_time + '</p>';
-                                        }
-                                        if (data.data[i].match.court == '') {
-                                            newli += '<p class="mui-ellipsis" style="line-height:20px !important">';
-                                            if (data.data[i].status == 1) {
-                                                newli += '<font class="tipCorner bggray" style="margin:0 5px 0 0 !important;">未回复</font>';
-                                            } else if (data.data[i].status == 2) {
-                                                newli += '<font class="tipCorner bgred" style="margin:0 5px 0 0 !important;">已同意</font>';
-                                            } else if (data.data[i].status == 3) {
-                                                newli += '<font class="tipCorner bgorange" style="margin:0 5px 0 0 !important;">已拒绝</font>';
-                                            }
-                                            newli += '比赛场地待定</p>';
-                                        } else {
-                                            newli += '<p class="mui-ellipsis" style="line-height:20px !important">'
-                                            if (data.data[i].status == 1) {
-                                                newli += '<font class="tipCorner bggray" style="margin:0 5px 0 0 !important;">未回复</font>';
-                                            } else if (data.data[i].status == 2) {
-                                                newli += '<font class="tipCorner bgred" style="margin:0 5px 0 0 !important;">已同意</font>';
-                                            } else if (data.data[i].status == 3) {
-                                                newli += '<font class="tipCorner bgorange" style="margin:0 5px 0 0 !important;">已拒绝</font>';
-                                            }
-                                            newli += data.data[i].match.court + '</p>';
-                                        }
-                                        newli += '</div></a></li>';
-                                    }
-                                }
-                                $("ul.newReferee").empty().append(newli);
-                                if (newli == '') {
-                                    $(".newReferee").prev().find(".noDataTip").append("（暂无数据）");
-                                }
-                            },
-                            error: function (xhr, type, errerThrown) {
-                                mui.toast('网络异常,请稍候再试');
-                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                            }
-                        });
-                    } else {
+                        referee_id = data.data.id;
+                        console.log(referee_id)
+                        toLastRefereeList(referee_id);
+                    }else{
+                        $(".refereeOrder").hide();
                     }
                 },
                 error: function (xhr, type, errorThrown) {
                     //异常处理；
                     console.log(type);
+                }
+            });
+        };
+        //获取最近订单
+        function toLastRefereeList() {
+            mui.ajax("{:url('api/referee/matchapplylist')}", {
+                data: {
+                    page: 1,
+                    referee_id: 2
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.slice(0, 4).length - 1; i++) {
+                            var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data[i].match_id + '/team_id/' + + data.data[i].team_id;
+                            newli += '<li class="mui-table-view-cell mui-media listli">'
+                            newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].member_avatar + '" style="width:45px !important;height:45px !important;border-radius:50% !important;"><div class="mui-media-body wd">' + data.data[i].match.name+'';
+                            if (data.data[i].match.match_time == 0) {
+                                newli += '<p class="address" style="line-height:20px !important">比赛时间待定</p>';
+                            } else {
+                                newli += '<p class="address" style="line-height:20px !important">' + data.data[i].match.match_time + '</p>';
+                            }
+                            if (data.data[i].match.court == '') {
+                                newli += '<p class="mui-ellipsis" style="line-height:20px !important">';
+                                if (data.data[i].status == 1) {
+                                    newli += '<font class="tipCorner bggray" style="margin:0 5px 0 0 !important;">未回复</font>';
+                                } else if (data.data[i].status == 2) {
+                                    newli += '<font class="tipCorner bgred" style="margin:0 5px 0 0 !important;">已同意</font>';
+                                } else if (data.data[i].status == 3) {
+                                    newli += '<font class="tipCorner bgorange" style="margin:0 5px 0 0 !important;">已拒绝</font>';
+                                }
+                                newli += '比赛场地待定</p>';
+                            } else {
+                                newli += '<p class="mui-ellipsis" style="line-height:20px !important">'
+                                if (data.data[i].status == 1) {
+                                    newli += '<font class="tipCorner bggray" style="margin:0 5px 0 0 !important;">未回复</font>';
+                                } else if (data.data[i].status == 2) {
+                                    newli += '<font class="tipCorner bgred" style="margin:0 5px 0 0 !important;">已同意</font>';
+                                } else if (data.data[i].status == 3) {
+                                    newli += '<font class="tipCorner bgorange" style="margin:0 5px 0 0 !important;">已拒绝</font>';
+                                }
+                                newli += data.data[i].match.court + '</p>';
+                            }
+                            newli += '</div></a></li>';
+                        }
+                        $("ul.newReferee").empty().append(newli);
+                    }else{
+                        $("ul.newReferee").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有订单数据哦</p></li>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                 }
             });
 

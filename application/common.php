@@ -363,3 +363,23 @@ function getfansnum($follow_id, $type=1) {
     ])->count();
     return ($count) ? $count : 0;
 }
+
+//二维数组验证一个值是否存在
+function deep_in_array($value, $array) {
+    foreach($array as $item) {
+        if(!is_array($item)) {
+            if ($item == $value) {
+                return true;
+            } else {
+                continue;
+            }
+        }
+
+        if(in_array($value, $item)) {
+            return true;
+        } else if(deep_in_array($value, $item)) {
+            return true;
+        }
+    }
+    return false;
+}

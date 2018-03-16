@@ -6,6 +6,7 @@ use app\service\MatchService;
 use app\service\MessageService;
 use app\service\RefereeService;
 use think\Exception;
+use think\Db;
 
 class Referee extends Base{
 	protected $refereeService;
@@ -295,17 +296,22 @@ class Referee extends Base{
         try{
             $map = input('param.');
 
-            // 无传入referee_id 根据当前会员查询裁判员信息
-            $refereeId = input('param.referee_id');
-            if (!$refereeId) {
-                $refereeInfo = $this->refereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
-            } else {
-                // 查询裁判员数据
-                $refereeInfo = $this->refereeService->getRefereeInfo(['id' => $refereeId]);
+            // 获取受邀列表 自动补上查询裁判条件
+            if (input('?apply_type') && input('apply_type') == 2) {
+                // 无传入referee_id 根据当前会员查询裁判员信息
+                $refereeId = input('param.referee_id');
+                if (!$refereeId) {
+                    $refereeInfo = $this->refereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
+                } else {
+                    // 查询裁判员数据
+                    $refereeInfo = $this->refereeService->getRefereeInfo(['id' => $refereeId]);
+                }
+                if ($refereeInfo) {
+                    $map['referee_id'] = $refereeInfo['id'];
+                }
             }
-            if ($refereeInfo) {
-                $map['referee_id'] = $refereeInfo['id'];
-            }
+
+
 
             if ( isset($map['page']) ) {
                 unset($map['page']);
@@ -331,16 +337,19 @@ class Referee extends Base{
             $map = input('param.');
             $page= input('param.page', 1);
 
-            /// 无传入referee_id 根据当前会员查询裁判员信息
-            $refereeId = input('param.referee_id');
-            if (!$refereeId) {
-                $refereeInfo = $this->refereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
-            } else {
-                // 查询裁判员数据
-                $refereeInfo = $this->refereeService->getRefereeInfo(['id' => $refereeId]);
-            }
-            if ($refereeInfo) {
-                $map['referee_id'] = $refereeInfo['id'];
+            // 获取受邀列表 自动补上查询裁判条件
+            if (input('?apply_type') && input('apply_type') == 2) {
+                // 无传入referee_id 根据当前会员查询裁判员信息
+                $refereeId = input('param.referee_id');
+                if (!$refereeId) {
+                    $refereeInfo = $this->refereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
+                } else {
+                    // 查询裁判员数据
+                    $refereeInfo = $this->refereeService->getRefereeInfo(['id' => $refereeId]);
+                }
+                if ($refereeInfo) {
+                    $map['referee_id'] = $refereeInfo['id'];
+                }
             }
 
             if ( isset($map['page']) ) {
@@ -404,7 +413,7 @@ class Referee extends Base{
             if ($matchInfo['is_finished_num'] ==1) {
                 return json(['code' => 100, 'msg' => '此比赛'.$matchInfo['is_finished'].'，请选择其他比赛']);
             }
-            if ($matchInfo['referee_type'] !=1) {
+            if ($matchInfo['referee_type'] === 0) {
                 return json(['code' => 100, 'msg' => '此比赛不需要裁判，请选择其他比赛']);
             }
             // 查询比赛战绩信息
@@ -417,7 +426,7 @@ class Referee extends Base{
 
             // 检查比赛已确认裁判人数，最多3个裁判
             $matchRefereeCount = $matchService->getMatchRefereeCount([ 'match_id' => $matchInfo['id'], 'referee_id' => $matchInfo['record']['id'], 'status' => 1 ]);
-            if ($matchRefereeCount == 3) {
+            if ($matchRefereeCount == $matchInfo['referee_max']) {
                 return json(['code' => 100, 'msg' => '此比赛裁判数已满，请选择其他比赛']);
             }
 
@@ -527,19 +536,18 @@ class Referee extends Base{
                 $replyStr = '对方回复：'.$reply;
             }
             $messageService = new MessageService();
-            // 组合保存比赛-裁判关系数组
-            $dataMatchReferee = [];
+
             // 查询有无原数据 有则更新数据
             $matchReferee = $matchS->getMatchReferee([
                 'match_id' => $applyInfo['match_id'],
                 'match_record_id' => $applyInfo['match_record_id'],
                 'referee_id' => $refereeInfo['id']
             ]);
-            if ($matchReferee) {
-                $dataMatchReferee['id'] = $matchReferee['id'];
-            }
             if ($status == 2) {
                 //同意
+                // 更新比赛referee_str字段：将裁判员信息插入
+                $matchS->setMatchRefereeStr($matchInfo, $refereeInfo);
+
                 // 保存比赛-裁判关系
                 $dataMatchReferee = [
                     'match_id' => $applyInfo['match_id'],
@@ -552,10 +560,10 @@ class Referee extends Base{
                     'referee_type' => 1,
                     'appearance_fee' => $refereeInfo['appearance_fee'],
                 ];
+                if ($matchReferee) {
+                    $dataMatchReferee['id'] = $matchReferee['id'];
+                }
                 $matchS->saveMatchReferee($dataMatchReferee);
-
-                // 更新比赛referee_str字段：将裁判员信息插入
-                $matchS->setMatchRefereeStr($matchInfo, $refereeInfo);
 
                 // 发送通知给邀请人
                 $wxTemplateID = config('wxTemplateID.refereeTask');
@@ -707,7 +715,7 @@ class Referee extends Base{
         try{
             $map = input('param.');
 
-            // 无传入referee_id 根据当前会员查询裁判员信息
+           /* 无传入referee_id 根据当前会员查询裁判员信息
             $refereeId = input('param.referee_id');
             if (!$refereeId) {
                 $refereeInfo = $this->refereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
@@ -717,7 +725,7 @@ class Referee extends Base{
             }
             if ($refereeInfo) {
                 $map['referee_id'] = $refereeInfo['id'];
-            }
+            }*/
 
             if (input('page')) {
                 unset($map['page']);
@@ -741,7 +749,7 @@ class Referee extends Base{
             $map = input('param.');
             $page = input('page', 1);
 
-            // 无传入referee_id 根据当前会员查询裁判员信息
+            /*无传入referee_id 根据当前会员查询裁判员信息
             $refereeId = input('param.referee_id');
             if (!$refereeId) {
                 $refereeInfo = $this->refereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
@@ -751,7 +759,7 @@ class Referee extends Base{
             }
             if ($refereeInfo) {
                 $map['referee_id'] = $refereeInfo['id'];
-            }
+            }*/
 
             if (input('page')) {
                 unset($map['page']);
@@ -765,6 +773,37 @@ class Referee extends Base{
                 return json(['code'=>100,'msg'=> __lang('MSG_000')]);
             }
         }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 裁判-比赛订单
+    public function refereeorders() {
+        // 裁判-比赛申请|邀请+比赛裁判关联，未完成的比赛先列出
+        try {
+            $map = input('param.');
+            $page = input('page', 1);
+            $size = input('size', 10);
+
+            if (input('page')) {
+                unset($map['page']);
+            }
+
+            $list = Db::view('match_referee_apply')
+                ->view('match', ['*', 'status' => 'match_status'], 'match.id=match_referee_apply.match_id', 'left')
+                ->whereNull('match_referee_apply.delete_time')
+                ->whereNull('match.delete_time')
+                ->order(['match.is_finished' => 'asc'])
+                ->page($page)
+                ->limit($size)
+                ->select();
+            if ($list) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $list];
+            } else { 
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
+            }
+            return json($response);
+        } catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
