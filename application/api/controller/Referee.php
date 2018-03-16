@@ -592,7 +592,7 @@ class Referee extends Base{
             // 发送通知给邀请人
             $messageService->sendMessageToMember($applyInfo['member_id'], $messageData, $wxTemplateID);
 
-            //return json($resSaveApply);
+            return json($resSaveApply);
         } catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
