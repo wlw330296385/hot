@@ -112,11 +112,11 @@ class BillService {
         $MessageService = new \app\service\MessageService;
         // 训练营的余额和历史会员增加
         $campInfo = db('camp')->where(['id'=>$data['camp_id']])->find();
-        $system_rebate = $campInfo['system_rebate'];
+        $schedule_rebate = $campInfo['schedule_rebate'];
         $campBlance = $data['balance_pay'];
         $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
         if($ress){
-            db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$system_rebate),'balance_pay'=>$data['balance_pay'],'system_rebate'=>$system_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'balance_pay'=>$data['balance_pay'],'price'=>$data['price'],'f_id'=>$data['id']]);
+            db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$schedule_rebate),'balance_pay'=>$data['balance_pay'],'schedule_rebate'=>$schedule_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'balance_pay'=>$data['balance_pay'],'price'=>$data['price'],'f_id'=>$data['id'],'rebate_type'=>$campInfo['rebate_type']]);
         }
         //开始课程操作,包括(模板消息发送,camp\camp_mamber和lesson的数据更新)
         if($data['goods_type'] == '课程'){
@@ -214,7 +214,7 @@ class BillService {
             'f_id' => $data['id'],
             's_balance'=>$campInfo['balance'],
             'e_balance'=>$campInfo['balance']+$data['balance_pay'],
-            'date' => date('Ymd', $daytime),
+            'date_str' => date('Ymd', $daytime),
             'datetime' => $daytime
         ];
         CampFinance::create($dataCampFinance);
@@ -233,7 +233,7 @@ class BillService {
                 'f_id' => $data['id'],
                 's_balance'=>$campInfo['balance'],
                 'e_balance'=>$campInfo['balance']+$data['balance_pay'],
-                'date' => date('Ymd', $daytime),
+                'date_str' => date('Ymd', $daytime),
                 'datetime' => $daytime
             ];
             CampFinance::create($dataCampFinance);
@@ -252,12 +252,12 @@ class BillService {
         $MessageService = new \app\service\MessageService;
         // 训练营的余额和历史会员增加
         $campInfo = db('camp')->where(['id'=>$data['camp_id']])->find();
-        $system_rebate = $campInfo['system_rebate'];
+        $schedule_rebate = $campInfo['schedule_rebate'];
         $campBlance = $data['balance_pay'];
         $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
 
         if($ress){
-            db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$system_rebate),'balance_pay'=>$data['balance_pay'],'system_rebate'=>$system_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'balance_pay'=>$data['balance_pay'],'price'=>$data['price'],'f_id'=>$data['id']]);
+            db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$schedule_rebate),'balance_pay'=>$data['balance_pay'],'schedule_rebate'=>$schedule_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'balance_pay'=>$data['balance_pay'],'price'=>$data['price'],'f_id'=>$data['id'],'rebate_type'=>$campInfo['rebate_type']]);
         }
         //开始课程操作,包括(模板消息发送,camp\camp_mamber和lesson的数据更新)
         if($data['goods_type'] == '课程'){
@@ -332,7 +332,7 @@ class BillService {
                 'f_id' => $data['id'],
                 's_balance'=>$campInfo['balance'],
                 'e_balance'=>$campInfo['balance']+$data['balance_pay'],
-                'date' => date('Ymd', $daytime),
+                'date_str' => date('Ymd', $daytime),
                 'datetime' => $daytime
             ];
             CampFinance::create($dataCampFinance);
@@ -351,7 +351,7 @@ class BillService {
                 'f_id' => $data['id'],
                 's_balance'=>$campInfo['balance'],
                 'e_balance'=>$campInfo['balance']+$data['balance_pay'],
-                'date' => date('Ymd', $daytime),
+                'date_str' => date('Ymd', $daytime),
                 'datetime' => $daytime
             ];
             CampFinance::create($dataCampFinance);
@@ -473,7 +473,7 @@ class BillService {
                                     'lesson'        => $billInfo['goods'],
                                     'camp_id'       => $billInfo['camp_id'],
                                     'camp'          => $billInfo['camp'],
-                                    'system_rebate' => 0,
+                                    'schedule_rebate' => 0,
                                     'member_id'     => $billInfo['member_id'],
                                     'member'        => $billInfo['member'],
                                     'create_time'   => time(),

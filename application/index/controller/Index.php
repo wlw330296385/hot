@@ -10,6 +10,10 @@ class Index extends Controller{
         db('log_wxpay')->count('*');
         echo db('log_wxpay')->getlastsql();
     }
+
+    public function index(){
+        phpinfo();
+    }
     
 
     public function test(){
@@ -92,15 +96,14 @@ class Index extends Controller{
             $data['balance_pay'] = $value['balance_pay'];
             $data['income'] = $value['balance_pay'];
             $data['create_time'] = $value['create_time'];
-            
-
             $data2['type'] = 1;
             $data2['camp_id'] = $value['camp_id'];
             $data2['camp'] = $value['camp'];
-            $data2['total'] = $value['total'];
             $data2['f_id'] = $value['id'];
             $data2['money'] = $value['balance_pay'];
             $data2['create_time'] = $value['create_time'];
+            $data2['date_str'] = date('Ymd',$value['create_time']);
+            $data2['datetime'] = $value['create_time'];
             if($campInfo['rebate_type'] == 2){
                 $data['s_balance'] = $campInfo['balance'];
                 $data['e_balance'] = $campInfo['balance'] + $value['balance_pay'];
@@ -315,9 +318,7 @@ class Index extends Controller{
     }
     
 
-    public function index(){
-        echo 'index';
-    }
+  
 
     public function adminAuth(){
         $res = db('admin_menu')
