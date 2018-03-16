@@ -219,10 +219,15 @@
                 <span class="course">
                     球队成员
                 </span>
+                <span class="more pdr15">
+                    <a href="{:url('team/teamMemberList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">全部队员</a>
+                </span>
             </div>
 
             <div class="nav-list mb">
-                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame overflow-x teamMemberList ptb4"></ul>
+                <a href="{:url('team/teamMemberList',['team_id'=>$teamInfo['id']])}">
+                    <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame overflow-x teamMemberList ptb4"></ul>
+                </a>
             </div>
 
             <div class="nav-list mb">
@@ -518,7 +523,9 @@
 
             // 付费方式文字转换中文
             var referee_cost_bear = "{$matchInfo.referee_cost_bear}";
-            if (referee_cost_bear == 1) {
+            if (referee_cost_bear == 0) {
+                $(".refereeCostBear").text("免费");
+            } else if (referee_cost_bear == 1) {
                 $(".refereeCostBear").text("费用AA");
             } else if (referee_cost_bear == 2) {
                 $(".refereeCostBear").text("主队负责");
