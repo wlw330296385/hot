@@ -582,6 +582,8 @@ class MatchService {
      * @param $referee 裁判员信息数组
      */
     public function setMatchRefereeStr($match=[], $referee) {
+        $refereeCost = $match['referee_cost'];
+        $refereeStr = $match['referee_str'];
         // 转格式后referee_str
         $matchRefereeStr = json_decode($match['referee_str'], true);
         if (empty($matchRefereeStr)) {
@@ -591,18 +593,30 @@ class MatchService {
                 'referee_id' => $referee['id'],
                 'referee_cost' => $referee['appearance_fee']
             ];
+            $refereeCost = $referee['appearance_fee'];
             $refereeStr = json_encode($refereeArr, JSON_UNESCAPED_UNICODE); //json不转码中文
             $refereeStr = '[' . $refereeStr .']';
-            $referee_cost = $match['referee_cost'] + $referee['appearance_fee'];
+        } else {
+            // 新加入的裁判不在数据中 补充新的裁判进referee_str
+            if ( !deep_in_array( $referee['id'], $matchRefereeStr ) ) {
+                array_push($matchRefereeStr, [
+                    'referee' => $referee['referee'],
+                    'referee_id' => $referee['id'],
+                    'referee_cost' => $referee['appearance_fee']
+                ]);
+                foreach ($matchRefereeStr as $matchReferee) {
+                    $refereeCost += $matchReferee['referee_cost'];
+                }
+                $refereeStr = json_encode($matchRefereeStr, JSON_UNESCAPED_UNICODE); //json不转码中文
+            }
         }
-
 
         // 更新比赛信息
         $model = new Match();
         $res = $model->isUpdate(true)->save([
             'id' => $match['id'],
             'referee_str' => $refereeStr,
-            'referee_cost' => $referee_cost
+            'referee_cost' => $refereeCost
         ]);
     }
 

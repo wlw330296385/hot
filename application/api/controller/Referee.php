@@ -404,7 +404,7 @@ class Referee extends Base{
             if ($matchInfo['is_finished_num'] ==1) {
                 return json(['code' => 100, 'msg' => '此比赛'.$matchInfo['is_finished'].'，请选择其他比赛']);
             }
-            if ($matchInfo['referee_type'] !=1) {
+            if ($matchInfo['referee_type'] === 0) {
                 return json(['code' => 100, 'msg' => '此比赛不需要裁判，请选择其他比赛']);
             }
             // 查询比赛战绩信息
@@ -417,7 +417,7 @@ class Referee extends Base{
 
             // 检查比赛已确认裁判人数，最多3个裁判
             $matchRefereeCount = $matchService->getMatchRefereeCount([ 'match_id' => $matchInfo['id'], 'referee_id' => $matchInfo['record']['id'], 'status' => 1 ]);
-            if ($matchRefereeCount == 3) {
+            if ($matchRefereeCount == $matchInfo['referee_max']) {
                 return json(['code' => 100, 'msg' => '此比赛裁判数已满，请选择其他比赛']);
             }
 
@@ -527,19 +527,18 @@ class Referee extends Base{
                 $replyStr = '对方回复：'.$reply;
             }
             $messageService = new MessageService();
-            // 组合保存比赛-裁判关系数组
-            $dataMatchReferee = [];
+
             // 查询有无原数据 有则更新数据
             $matchReferee = $matchS->getMatchReferee([
                 'match_id' => $applyInfo['match_id'],
                 'match_record_id' => $applyInfo['match_record_id'],
                 'referee_id' => $refereeInfo['id']
             ]);
-            if ($matchReferee) {
-                $dataMatchReferee['id'] = $matchReferee['id'];
-            }
             if ($status == 2) {
                 //同意
+                // 更新比赛referee_str字段：将裁判员信息插入
+                $matchS->setMatchRefereeStr($matchInfo, $refereeInfo);
+
                 // 保存比赛-裁判关系
                 $dataMatchReferee = [
                     'match_id' => $applyInfo['match_id'],
@@ -552,10 +551,10 @@ class Referee extends Base{
                     'referee_type' => 1,
                     'appearance_fee' => $refereeInfo['appearance_fee'],
                 ];
+                if ($matchReferee) {
+                    $dataMatchReferee['id'] = $matchReferee['id'];
+                }
                 $matchS->saveMatchReferee($dataMatchReferee);
-
-                // 更新比赛referee_str字段：将裁判员信息插入
-                $matchS->setMatchRefereeStr($matchInfo, $refereeInfo);
 
                 // 发送通知给邀请人
                 $wxTemplateID = config('wxTemplateID.refereeTask');
@@ -585,7 +584,7 @@ class Referee extends Base{
             // 发送通知给邀请人
             $messageService->sendMessageToMember($applyInfo['member_id'], $messageData, $wxTemplateID);
 
-            return json($resSaveApply);
+            //return json($resSaveApply);
         } catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
