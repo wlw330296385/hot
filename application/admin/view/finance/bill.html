@@ -19,17 +19,14 @@
                         <label for="" class="col-md-2 col-sm-2 control-label">商品类型</label>
                         <div class="col-md-10 col-sm-10">
                             <h5>
-                                {switch name="bill.goods_type"}
-                                {case value="1"}课程{/case}
-                                {default/} 其他
-                                {/switch}
+                                {$bill.goods_type}
                             </h5>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="" class="col-md-2 col-sm-2 control-label">商品描述</label>
                         <div class="col-md-10 col-sm-10">
-                            <h5>{$bill.goods_dec}</h5>
+                            <h5>{$bill.goods_des}</h5>
                         </div>
                     </div>
 
@@ -40,7 +37,7 @@
                         </div>
                     </div>
 
-                    {eq name="bill.goods_type" value="1"}
+                    {eq name="bill.goods_type_num" value="1"}
                     <div class="form-group">
                         <label for="" class="col-md-2 col-sm-2 control-label">学员姓名</label>
                         <div class="col-md-10 col-sm-10">
@@ -51,8 +48,8 @@
                         <label for="" class="col-md-2 col-sm-2 control-label">课程信息</label>
                         <div class="col-md-10 col-sm-10">
                             <h5>
-                                {$bill.lesson}
-                                <a class="btn btn-info" href="{:url('lesson/detail', ['id'=>$bill['lesson_id']])}">查看课程信息</a>
+                                {$bill.goods}
+                                <a class="btn btn-info" target="_blank" href="{:url('lesson/detail', ['id'=>$bill['goods_id']])}">查看课程信息</a>
                             </h5>
                         </div>
                     </div>
@@ -92,17 +89,19 @@
                     <div class="form-group">
                         <label for="" class="col-md-2 col-sm-2 control-label">支付类型</label>
                         <div class="col-md-10 col-sm-10">
-                            <h5>{$bill.pay_type}</h5>
+                            <h5>
+                                {switch name="bill.pay_type"}
+                                {case value="wxpay"}微信支付{/case}
+                                {case value="alipay"}支付宝{/case}
+                                {/switch}
+                            </h5>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="" class="col-md-2 col-sm-2 control-label">支付状态</label>
                         <div class="col-md-10 col-sm-10">
                             <h5>
-                                {switch name="bill.is_pay"}
-                                {case value="1"}已支付{/case}
-                                {default/}未支付
-                                {/switch}
+                                {$bill.is_pay}
                             </h5>
                         </div>
                     </div>
@@ -111,8 +110,10 @@
                         <div class="col-md-10 col-sm-10">
                             <h5>
                                 {switch name="bill.status"}
-                                {case value="1"}有效{/case}
-                                {default/}过期
+                                {case value="1"}已支付{/case}
+                                {case value="-1"}申请退款{/case}
+                                {case value="-2"}已退换{/case}
+                                {default /}未支付
                                 {/switch}
                             </h5>
                         </div>
@@ -126,7 +127,7 @@
                     <div class="form-group">
                         <label for="" class="col-md-2 col-sm-2 control-label">订单支付时间</label>
                         <div class="col-md-10 col-sm-10">
-                            <h5>{$bill.pay_time}</h5>
+                            <h5>{notempty name="bill.pay_time"}{$bill.pay_time|date="Y-m-d H:i",###}{/notempty}</h5>
                         </div>
                     </div>
                 </form>

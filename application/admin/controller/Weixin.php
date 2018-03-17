@@ -7,7 +7,9 @@ use app\service\WechatService;
 //use wechatsdk\TPwechat;
 
 class Weixin extends Backend {
-
+    public function _initialize(){
+        parent::_initialize();
+    }
     public function menu() {
         if (request()->isPost()) {
             // 参考dev/wexin/setmenu
@@ -15,9 +17,9 @@ class Weixin extends Backend {
             $menuData = [
                 'button' => [
                     [
-                        'name' => '大热篮球平台',
+                        'name' => '篮球管家',
                         'type' => 'view',
-                        'url' => $WechatS->oauthRedirect(url('frontend/login/wxlogin', '', '', true))
+                        'url' => $WechatS->oauthRedirect(url('frontend/index/wxindex', '', '', true))
                     ]
                 ]
             ];

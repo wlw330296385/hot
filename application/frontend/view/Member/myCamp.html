@@ -26,45 +26,43 @@
 
     <div class="list camp-list camp-lesson-list detalis-list coach mine">
         <ul class="mui-table-view mb">
-        {volist name='campList' id="vol"}
+            {notempty name="campList"}
+            {volist name='campList' id="vol"}
             <li class="mui-table-view-cell listli listinitial">
-                {if condition="$type eq 4"}
-                    {if condition="$iscamp"}
-                        {eq name="iscamp.check_status" value="0"}
-                            <a href="{:url('camp/campsetting',['camp_id'=>$vol['camp_id']])}" class="mui-navigate-right">{$vol.camp}[{$iscamp.status}]</a>
-                        {else/}<a href="{:url('camp/powerCamp',['camp_id'=>$vol['camp_id'],'type'=>$type])}" class="mui-navigate-right">{$vol.camp}</a>
-                        {/eq}
-                    {/if}
-                {else/} <a href="{:url('camp/powerCamp',['camp_id'=>$vol['camp_id'],'type'=>$type])}" class="mui-navigate-right">{$vol.camp}</a>
-                {/if}
+                {egt name="vol.type" value="2"}
+                <!--go camppower-->
+                {eq name="vol.type" value="4"}
+                {eq name="hasCamp.check_status" value="0"}
+                <!--有创建训练营但未审核-->
+                <a href="{:url('camp/campsetting',['camp_id'=>$vol['camp_id']])}" class="mui-navigate-right">{$vol.camp}[{$hasCamp.status}]</a>
+                {else/}<a href="{:url('camp/powerCamp',['camp_id'=>$vol['camp_id'],'type'=>$type])}" class="mui-navigate-right">{$vol.camp}</a>
+                {/eq}
+                <!--有创建训练营并审核-->
+                {else/}<a href="{:url('frontend/camp/powercamp', ['camp_id' => $vol['camp_id']])}" class="mui-navigate-right">{$vol.camp}</a>
+                {/eq}
+                <!--go clientofcamp-->
+                {else/}<a href="{:url('frontend/camp/clientofcamp', ['camp_id' => $vol['camp_id']])}" class="mui-navigate-right">{$vol.camp}</a>
+                {/egt}
             </li>
-        {/volist}
-        </ul>
-        {empty name="campList"}
+            {/volist}
+            {else/}
             {switch name="$type"}
-                {case value='1'}
-                    <p class="prompt whitebg">您没有学生身份！<a href="{:url('lesson/lessonList')}">我要报读篮球训练班</a></p>
-                {/case}
-                {case value='2'}
-                     {if condition="$iscoach"}
-                        {eq name="iscoach.check_status" value="0"}
-                            <p class="prompt whitebg">您教练身份未通过审核<a href="{:url('coach/updatecoach')}">完善教练信息</a></p>
-                            {else/}<p class="prompt whitebg"><a href="{:url('coach/updatecoach')}">编辑教练信息</a></p>
-                        {/eq}
-                    {else/}<p class="prompt whitebg">您没有教练身份！<a href="{:url('coach/createCoach')}">申请成为教练</a></p>
-                    {/if}
-                {/case}
-                {case value='3'}
-                    <p class="prompt whitebg">您没有管理员身份！<a href="#">请让您的管理员给您发送邀请</a></p>
-                {/case}
-                {case value='4'}
-                    <p class="prompt whitebg">您没有创建训练营！<a href="{:url('camp/createCamp')}">我要创建训练营</a></p>
-                {/case}
-                {case value='5'}
-                <p class="prompt whitebg">您没有粉丝身份！<a href="{:url('camp/campList')}">去关注训练营成为粉丝</a></p>
-                {/case}
+            {case value="-1"}<p class="prompt whitebg">您没有关注任何训练营<a href="{:url('frontend/camp/camplist')}">前往关注训练营成为粉丝</a>{/case}
+            {case value="1"}{if condition="!$hasStudent"}<p class="prompt whitebg">您没有学生身份！<a href="{:url('frontend/lesson/lessonlist')}">前往报读篮球训练班</a></p>{/if}{/case}
+            {case value="2"}
+            {if condition="$hasCoach"}
+            {eq name="hasCoach.check_status" value="0"}
+            <p class="prompt whitebg">您教练身份未通过审核<a href="{:url('coach/updatecoach')}">完善教练信息</a></p>
+            {else/}<p class="prompt whitebg">您还未加入训练营担任教练<a href="{:url('frontend/camp/camplist')}">前往加入训练营担任教练</a></p>
+            {/eq}
+            {else/}<p class="prompt whitebg">您没有教练身份！<a href="{:url('coach/createCoach')}">申请成为教练</a></p>
+            {/if}
+            {/case}
+            {case value="3"}<p class="prompt whitebg">您没有在训练营担任管理员！<a href="{:url('camp/camplist')}">前往加入训练营担任管理员</a>{/case}
+            {case value="4"}{if condition="!$hasCamp"}<p class="prompt whitebg">您没有创建训练营！<a href="{:url('camp/createCamp')}">创建训练营</a></p>{/if}{/case}
             {/switch}
-        {/empty}
+            {/notempty}
+        </ul>
     </div>
 </div>
 

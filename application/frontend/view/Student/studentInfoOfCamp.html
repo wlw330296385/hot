@@ -9,33 +9,39 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .subheader {
+            padding: 0
+        }
+        
+        .mui-control-content {
+            top: 170px !important;
+            width: 100% !important;
+        }
+        
+        #segmentedControl {
+            top: 0;
+        }
+    </style>
 </head>
 
-<body class=whitebg>
-<header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回学员列表</span></a>
-</header>
-<div class="mui-content">
+<body>
 
-    <div class="list camp-list camp-lesson-list detalis-list coach mt">
-        <ul class="mui-table-view list detalis-list" style="margin-top: -4px">
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回学员列表</span></a>
+        <ul class="mui-table-view list detalis-list" style="margin-top: 44px;">
             <li class="mui-table-view-cell mui-media listli list-wide">
                 <a href="javascript:;">
-                    <img class="mui-media-object mui-pull-left coachicon"
-                         src="/static/frontend/images/shuijiao.jpg">
+                    <img class="mui-media-object mui-pull-left coachicon" src="{$studentInfo['student_avatar']}">
                     <div class="mui-media-body">
-                        {$studentInfo['student']}<img src="{:getSex($studentInfo['student_sex'])}" class="sex" alt="">
+                        {$studentInfo['student']} <i class="icon iconfont icon-sex{$studentInfo['student_sex']}"></i>
                         <p class="mui-ellipsis">{$campInfo.camp}</p>
                     </div>
-                    <div class="price-frame camp-num">
+                    <div class="price-frame camp-num" style="float: initial">
                         <ul>
-                            <li class="fr">ID:{$studentInfo.id}</li>
+                            <li class="fr">ID:{$studentInfo.member.hot_id}</li>
                         </ul>
                     </div>
                 </a>
@@ -49,7 +55,13 @@
                 <a class="mui-control-item" href="#item4">订单</a>
             </div>
         </div>
-        <div class="item-list">
+    </header>
+
+    <div class="mui-content">
+
+        <div class="tab-pullRefresh list coach">
+
+            <!--档案-->
             <div id="item1" class="mui-control-content mui-active">
                 <ul class="mui-table-view list detalis-list mt55">
                     <li class="mui-table-view-cell listli">学员姓名<span>{$studentInfo['student']}</span></li>
@@ -69,111 +81,467 @@
                     <li class="mui-table-view-cell listli">家长姓名<span>{$studentInfo['parent']}</span></li>
                     <li class="mui-table-view-cell listli">手机号码<span>{$studentInfo['mobile']}</span></li>
                     <li class="mui-table-view-cell listli">紧急电话<span>{$studentInfo['emergency_telephone']}</span></li>
-                    <li class="mui-table-view-cell listli">个人备注<span>{$studentInfo['remarks']}</span></li>
+                    <li class="mui-table-view-cell listli border-b">个人备注<span>{$studentInfo['remarks']}</span></li>
                 </ul>
+                {if  $studentInfo['member_id'] == $memberInfo['id']}
+                <a class="mui-btn mui-btn-success  mui-btn-block" href="{:url('frontend/student/updateStudent',['student_id'=>$studentInfo['id']])}" >编辑资料</a>
+                {/if}
+                {eq name="studentcando" value="1"}
+                <button class="mui-btn mui-btn-block" type="button" id="leaveapply">申请离营</button> {/eq}
             </div>
-            <div id="item2" class="mui-control-content">
-                <ul class="mui-table-view mui-text-center mb">
-                {volist name='studentGradeList' id="vol"}
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table mui-navigate-right">
-                            <li class="mui-col-sm-4 mui-col-xs-4">{$vol.grade}</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">{$vol.week} {$vol.lesson_time}</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.gradecate}</li>
-                        </ul>
-                    </li>
-                {/volist}
-                </ul>
-            </div>
-            <div id="item3" class="mui-control-content">
-                <div class="nav-list">
-                    <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
-                            <span>当前所报</span>
-                            <div class="mui-media-body">{$allSchedule}</div>
-                        </a></li>
-                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
-                            <span>剩余课量</span>
-                            <div class="mui-media-body">{$restSchedule}</div>
-                        </a></li>
-                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
-                            <span>历史已上</span>
-                            <div class="mui-media-body">{$totalSchedule}</div>
-                        </a></li>
+
+            <!--班级-->
+            <div id="item2" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view mui-text-center">
+                        <li class="mui-table-view-cell border-b">
+                            <ul class="mui-row table">
+                                <li class="mui-col-sm-6 mui-col-xs-6">班级名称</li>
+                                <li class="mui-col-sm-6 mui-col-xs-6">课程名称</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="mui-table-view detalis-list list mui-text-center grade">
                     </ul>
                 </div>
-                <ul class="mui-table-view mui-text-center">
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-xs-2">状态</li>
-                            <li class="mui-col-xs-4">日期</li>
-                            <li class="mui-col-xs-4">班级</li>
-                            <li class="mui-col-xs-2">上课人数</li>
-                        </ul>
-                    </li>
-                    {volist name="studentScheduleList" id="vol"}
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-sm-2 mui-col-xs-2"><i class="mui-icon mui-icon-checkmarkempty">{$vol.status}</i></li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.schedule_time}</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4 ">{$vol.schedule}</li>
-                            <li class="mui-col-sm-2 mui-col-xs-2 ">{$vol.students-$vol.leave}</li>
-                        </ul>
-                    </li>
-                    {/volist}
-                </ul>
             </div>
-            <div id="item4" class="mui-control-content">
-                <div class="nav-list">
-                    <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                        <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"><a href="#">
-                            <span>总订单</span>
-                            <div class="mui-media-body">{$totalBill}</div>
-                        </a></li>
-                        <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"><a href="#">
-                            <span>已付款</span>
-                            <div class="mui-media-body">{$payBill}</div>
-                        </a></li>
-                        <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"><a href="#">
-                            <span>未付款</span>
-                            <div class="mui-media-body">{$notPayBill}</div>
-                        </a></li>
-                        <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"><a href="#">
-                            <span>退款</span>
-                            <div class="mui-media-body">{$repayBill}</div>
-                        </a></li>
-                    </ul>
+
+            <!--课量-->
+            <div id="item3" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+
+                    <div class="nav-list">
+                        <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                                <a href="#">
+                                    <span>当前所报</span>
+                                    <div class="mui-media-body">{$totalSchedule}</div>
+                                </a>
+                            </li>
+                            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                                <a href="#">
+                                    <span>剩余课量</span>
+                                    <div class="mui-media-body">{$restSchedule}</div>
+                                </a>
+                            </li>
+                            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                                <a href="#">
+                                    <span>历史已上</span>
+                                    <div class="mui-media-body">{$studentInfo['finished_schedule']}</div>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="mui-table-view mui-text-center">
+                            <li class="mui-table-view-cell border-b">
+                                <ul class="mui-row table">
+                                    <li class="mui-col-sm-6 mui-col-xs-6">上课时间</li>
+                                    <li class="mui-col-sm-6 mui-col-xs-6">班级</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <ul class="mui-table-view detalis-list list mui-text-center schedule "></ul>
                 </div>
-                <ul class="mui-table-view mui-text-center">
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class="mui-col-sm-4 mui-col-xs-4">订单名称(课程)</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">金额(元)</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">提交日期</li>
+            </div>
+
+            <!--订单-->
+            <div id="item4" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <div class="nav-list">
+                        <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                                <a href="#">
+                                    <span>总订单</span>
+                                    <div class="mui-media-body">{$totalBill}</div>
+                                </a>
+                            </li>
+                            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                                <a href="#">
+                                    <span>已付款</span>
+                                    <div class="mui-media-body">{$payBill}</div>
+                                </a>
+                            </li>
+                            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                                <a href="#">
+                                    <span>未付款</span>
+                                    <div class="mui-media-body">{$notPayBill}</div>
+                                </a>
+                            </li>
+                            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                                <a href="#">
+                                    <span>退款</span>
+                                    <div class="mui-media-body">{$repayBill}</div>
+                                </a>
+                            </li>
                         </ul>
-                    </li>
-                    {volist name="studentBillList" id="vol"}
-                    <li class="mui-table-view-cell">
-                        <ul class="mui-row table">
-                            <li class=" mui-col-xs-4">{$vol.lesson}</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">{$vol.is_pay}</li>
-                            <li class="mui-col-sm-4 mui-col-xs-4">{$vol.create_time}</li>
+                        <ul class="mui-table-view mui-text-center">
+                            <li class="mui-table-view-cell border-b">
+                                <ul class="mui-row table">
+                                    <li class="mui-col-sm-5 mui-col-xs-5">订单名称(课程)</li>
+                                    <li class="mui-col-sm-3 mui-col-xs-3">金额(元)</li>
+                                    <li class="mui-col-sm-4 mui-col-xs-4">提交日期</li>
+                                </ul>
+                            </li>
                         </ul>
-                    </li>
-                    {/volist}
-                </ul>
+                    </div>
+
+                    <ul class="mui-table-view detalis-list list bill mui-text-center"></ul>
+                </div>
             </div>
         </div>
 
     </div>
-
-</div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+    mui(".mui-content").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
+
+
+    jQuery(function ($) {
+        $('#leaveapply').on('click', '', function () {
+            mui.confirm('如有未完成课程请与训练营沟通', '确定要提交离营申请吗？', ['取消', '确定'], function (e) {
+                if (e.index == 1) {
+                    mui.ajax("{:url('api/student/applyleavecamp')}", {
+                        data: {
+                            student_id: "{$studentInfo.id}",
+                            camp_id: "{$camp_id}"
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            if (data.code === 200) {
+                                mui.alert('申请发送成功');
+                                mui.get("{:url('api/message/applyleavecamp')}", { 'id': data.data }, function (res) {
+
+                                });
+                            } else {
+                                mui.alert(data.msg);
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            //异常处理；
+                            console.log(type);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    $(function () {
+
+        //初始化全局变量
+        var gCount = 1;
+        var sCount = 1;
+
+        mui('#item2').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshG
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshG
+            }
+        });
+
+        mui('#item3').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshS
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshS
+            }
+        });
+
+        mui('#item4').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshB
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshB
+            }
+        });
+
+        //下拉刷新具体业务实现（班级）
+        function pulldownRefreshG() {
+            setTimeout(function () {
+                gCount = 1;//刷新并显示第一页
+                var page = gCount;
+                var gType = 1;//代表下拉刷新
+                toGradeList('item2', page, gType);//具体取数据的方法
+            }, 100);
+        }
+        //上拉加载具体业务实现（班级）
+        function pullupRefreshG() {
+            setTimeout(function () {
+                gCount++;//翻下一页
+                var page = gCount;
+                var gType = 2;//代表上拉加载
+                toGradeList('item2', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+        //下拉刷新具体业务实现（课量）
+        function pulldownRefreshS() {
+            setTimeout(function () {
+                sCount = 1;//刷新并显示第一页
+                var page = sCount;
+                var gType = 1;//代表下拉刷新
+                toScheduleList('item3', page, gType);//具体取数据的方法
+            }, 100);
+        }
+        //上拉加载具体业务实现（课量）
+        function pullupRefreshS() {
+            setTimeout(function () {
+                sCount++;//翻下一页
+                var page = sCount;
+                var gType = 2;//代表上拉加载
+                toScheduleList('item3', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+        //下拉刷新具体业务实现（订单）
+        function pulldownRefreshB() {
+            setTimeout(function () {
+                sCount = 1;//刷新并显示第一页
+                var page = sCount;
+                var gType = 1;//代表下拉刷新
+                toBillList('item4', page, gType);//具体取数据的方法
+            }, 100);
+        }
+        //上拉加载具体业务实现（订单）
+        function pullupRefreshB() {
+            setTimeout(function () {
+                sCount++;//翻下一页
+                var page = sCount;
+                var gType = 2;//代表上拉加载
+                toBillList('item4', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+
+    });
+    // 将时间戳转成日期格式
+    function gettime(t) {
+        var _time = new Date(t);
+        var year = _time.getFullYear();
+        var month = _time.getMonth() + 1;
+        var day = _time.getDate();
+        var hours = _time.getHours();
+        var minutes = _time.getMinutes();
+        return year + "-" + month + "-" + day + " " + hours + ":" + minutes;
+    }
+    //获取班级列表数据并追加到页面
+    var toGradeList = function (wList, page, gType) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/grade_member/getGradeMemberListNoPageApi','','',true)}/?page=" + page;
+        var campID = "{$camp_id}";
+        var studentID = "{$studentInfo.id}"
+        mui.ajax({
+            url: url,
+            data: {
+                camp_id: campID,
+                student_id: studentID
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            //processData:false,
+            success: function (data) {
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('grade/gradeInfoOfCamp')}" + '/grade_id/' + data.data[i].id + '/camp_id/' + data.data[i].camp_id;
+                        newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-6 mui-col-sm-6">' + data.data[i].grade + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data[i].lesson + '</li></ul></li></a>';
+                    }
+                    if (gType == 1) {
+                        //上拉刷新
+                        $("ul.grade").empty().append(newli);
+                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                        mui('#' + wList).pullRefresh().refresh(true);
+                        if (newli == '') {
+                            $("ul.grade").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        }
+                    } else {
+                        //下拉加载 gType==2
+                        $("ul.grade").append(newli);
+                    }
+                } else {
+                    mui.toast('数据获取失败,请稍候再试');
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+    //获取课量列表数据并追加到页面
+    var toScheduleList = function (wList, page, gType) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/schedule_member/getScheduleMemberListByPageApi','','',true)}/?page=" + page;
+        var campID = "{$camp_id}";
+        var studentID = "{$studentInfo.id}"
+        mui.ajax({
+            url: url,
+            data: {
+                camp_id: campID,
+                type: 1,
+                user_id: studentID
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            //processData:false,
+            success: function (data) {
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].schedule_id + '/camp_id/' + data.data.data[i].camp_id;
+                        // 将时间戳转成日期格式(建议后端转换)
+                        var time = data.data.data[i].schedule_time * 1000;//js时间戳精确到毫秒,所以要乘以1000后转换
+                        var schedule_time = gettime(time)
+                        newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-6 mui-col-sm-6">' + schedule_time + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].schedule + '</li></ul></li></a>';
+                    }
+                    if (gType == 1) {
+                        //上拉刷新
+                        $("ul.schedule").empty().append(newli);
+                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                        mui('#' + wList).pullRefresh().refresh(true);
+                        if (newli == '') {
+                            $("ul.schedule").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        }
+                    } else {
+                        //下拉加载 gType==2
+                        $("ul.schedule").append(newli);
+                    }
+                } else {
+                    mui.toast('数据获取失败,请稍候再试');
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+    //获取订单列表数据并追加到页面
+    var toBillList = function (wList, page, gType) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/bill/getBillListByPageApi','','',true)}/?page=" + page;
+        var campID = "{$camp_id}";
+        var studentID = "{$studentInfo.id}";
+        mui.ajax({
+            url: url,
+            data: {
+                camp_id: campID,
+                student_id: studentID
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            //processData:false,
+            success: function (data) {
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        var urls = "{:url('bill/billinfoofcamp')}" + '/bill_id/' + data.data.data[i].id + '/camp_id/' + data.data.data[i].camp_id;
+                        // 将时间戳转成日期格式(建议后端转换)
+                        var time = data.data.data[i].pay_time * 1000;//js时间戳精确到毫秒,所以要乘以1000后转换
+                        var pay_time = gettime(time)
+                        newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].goods + '</li><li class="mui-col-xs-3 mui-col-sm-3">' + data.data.data[i].balance_pay + '</li><li class="mui-col-xs-4 mui-col-sm-4">' + pay_time + '</li></ul></li></a>';
+                    }
+                    console.log(newli)
+                    if (gType == 1) {
+                        //上拉刷新
+                        $("ul.bill").empty().append(newli);
+                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                        mui('#' + wList).pullRefresh().refresh(true);
+                        if (newli == '') {
+                            $("ul.bill").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        }
+                    } else {
+                        //下拉加载 gType==2
+                        $("ul.bill").append(newli);
+                    }
+                } else {
+                    mui.toast('数据获取失败,请稍候再试');
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
 </script>
+
 </html>

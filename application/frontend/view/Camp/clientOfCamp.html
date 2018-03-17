@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>{$campInfo['camp']}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css" />
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+</head>
+
+<body class="whitebg">
+
+    <div class="mui-content">
+        <div id="tabbar" class="mui-control-content mui-active coach" style="margin-bottom:60px;">
+
+            <!--操作模块-->
+            <div class="img4x3" style="background-image: url({$campInfo['banner']})">
+                <!--<ul class="mui-table-view mui-grid-view mui-grid-9">-->
+                    <!--<li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12">-->
+                        <!--<a href="#">-->
+                            <!--<img class="coachicon" src="{$memberInfo['avatar']}">-->
+                            <!--<div class="f14">{$memberInfo['member']}</div>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                <!--</ul>-->
+                <!--<p class="coachid f12">ID:{$memberInfo['hot_id']}</p>-->
+            </div>
+            <div class="page-header">
+                <a href="{:url('camp/index')}" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow" style="color: #737373;font-size: 21px"></a>
+                <span class="more">{$campInfo['camp']}</span>
+            </div>
+
+
+            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module" style="margin:0px;">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                    <a href="{:url('event/eventOfOpen',['organization_id'=>$campInfo['id'],'target_type'=>1])}">
+                        <span class="icon iconfont icon-training-activity"></span>
+                        <div class="mui-media-body">公开活动</div>
+                    </a>
+                </li>
+
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                    <a href="{:url('event/eventOfCamp',['organization_id'=>$campInfo['id'],'target_type'=>2])}">
+                        <span class="icon iconfont icon-training-camp"></span>
+                        <div class="mui-media-body">营内活动</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                    <a href="{:url('event/eventOfGrade',['organization_id'=>$campInfo['id'],'target_type'=>3])}">
+                        <span class="icon iconfont icon-training-class"></span>
+                        <div class="mui-media-body">班内活动</div>
+                    </a>
+                </li>
+            </ul>
+
+
+            <div class="page-header">
+                <span class="course"><b>学员档案</b></span>
+            </div>
+            <ul class="mui-table-view list detalis-list">
+                {volist name="studentList" id="vol" empty="
+                <li class='mui-table-view-cell listli listinitial'>暂无</li>"}
+                <li class="mui-table-view-cell listli listinitial ">
+                    <a class="mui-navigate-right" href="{:url('student/studentInfoOfCamp',['type'=>1,'student_id'=>$vol['student_id'],'camp_id'=>$vol['camp_id']])}">
+                    {$vol.student}
+                </a>
+                </li>
+                {/volist}
+            </ul>
+
+            <div class="page-header">
+                <span class="course"><b>领队</b></span>
+            </div>
+            <ul class="mui-table-view list detalis-list">
+                {volist name="leaderList" id="vol" empty="
+                <li class='mui-table-view-cell listli listinitial'>暂无</li>"}
+                <li class="mui-table-view-cell listli listinitial ">
+                    <a class="mui-navigate-right" href="{:url('grade/gradeInfoOfCamp',['grade_id'=>$vol['id'],'camp_id'=>$vol['camp_id']])}">
+                    {$vol.grade}
+                </a>
+                </li>
+                {/volist}
+            </ul>
+
+            <div class="page-header">
+                <span class="course"><b>班主任</b></span>
+            </div>
+            <ul class="mui-table-view list detalis-list">
+                {volist name="teacherList" id="vol" empty="
+                <li class='mui-table-view-cell listli listinitial'>暂无</li>"}
+                <li class="mui-table-view-cell listli listinitial ">
+                    <a class="mui-navigate-right" href="{:url('grade/gradeInfoOfCamp',['grade_id'=>$vol['id'],'camp_id'=>$vol['camp_id']])}">
+                    {$vol.grade}
+                </a>
+                </li>
+                {/volist}
+            </ul>
+
+            <div class="page-header">
+                <span class="course"><b>粉丝</b></span>
+            </div>
+            <ul class="mui-table-view list detalis-list">
+                <li class="mui-table-view-cell listli listinitial ">暂无</li>
+            </ul>
+
+
+
+            <div class="page-header">
+                <span class="course"><b>训练营相关</b></span>
+            </div>
+            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module" style="margin:0px;">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                    <a href="{:url('camp/campInfo',['camp_id'=>$campInfo['id']])}">
+                        <span class="icon iconfont icon-training-camp"></span>
+                        <div class="mui-media-body">训练营介绍</div>
+                    </a>
+                </li>
+
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                    <a href="{:url('lesson/lessonList')}?camp_id={$campInfo['id']}&camp_name={$campInfo['camp']}">
+                        <span class="icon iconfont icon-training-case"></span>
+                        <div class="mui-media-body">课程列表</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                    <a href="{:url('coach/coachListOfCamp',['camp_id'=>$campInfo['id']])}/?campname={$campInfo.camp}">
+                        <span class="icon iconfont icon-training-coach"></span>
+                        <div class="mui-media-body">教练成员</div>
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+    </div>
+    {layout name="Layout/footer"}
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+</script>
+
+</html>

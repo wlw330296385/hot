@@ -5,11 +5,11 @@ class LessonVal extends Validate{
 
 
 	protected $rule = [
-        'lesson'        =>  'require|max:60',
+        'lesson'        =>  'require|max:60|token',
         'gradecate'	=> 'require',
-        'cost'         => 'require',
+        'cost'         => 'require|number',
         'dom'         => 'require',
-        'coach'         =>'require',
+        // 'coach'         =>'require',
         'week'           =>'require',
         'lesson_time'           =>'require',
         'province'              =>'require',
@@ -19,21 +19,22 @@ class LessonVal extends Validate{
     ];
     
     protected $message = [
-        'lesson.require'        =>  '课程名必须',
-        'gradecate.require'	=> '课程类型必须',
-        'cost.require'      =>'费用必须',
-        'dom'                 =>'dom字段必须',
-        'coach'                 =>'coach字段必须',
-        'week'                  =>'week字段必须',
-        'lesson_time'           =>'发布时间大于当前时间',
-        'province'              =>'province字段必须',
-        'city'                  =>'city字段必须',
-        'area'                  =>'area字段必须',
-        'court'                 =>'court字段必须',
+        'lesson.token'   =>'请不要重复提交',
+        'lesson.require'        =>  '请输入课程名称',
+        'gradecate.require'	=> '请选择课程类型',
+        'cost.require'      =>'请输入课程单价（数字）',
+        'dom'                 =>'请添加课量选项',
+        // 'coach'                 =>'请选择主教练',
+        'week'                  =>'请选择周期（星期几）',
+        'lesson_time'           =>'发布时间需要大于当前时间',
+        'province'              =>'请选择地区',
+        'city'                  =>'请选择地区',
+        'area'                  =>'请选择地区',
+        'court'                 =>'请选择训练场地',
     ];
     
     protected $scene = [
-        'add'   =>  ['gradecate','lesson','dom','cost','coach','week','lesson_time','province','city','area','court'],
+        'add'   =>  ['gradecate','lesson','dom','cost','week','lesson_time','province','city','area','court'],
         'edit'  =>  [],
     ];    
 

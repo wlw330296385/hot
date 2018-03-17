@@ -5,7 +5,7 @@ class billVal extends Validate{
 
 
 	protected $rule = [
-        'bill_order'        =>  'require',
+        'bill_order'        =>  'require|unique:bill|token',
         'goods_id'	=> 'require',
         'goods'         => 'require',
         'total'         =>'require',
@@ -19,24 +19,26 @@ class billVal extends Validate{
     ];
     
     protected $message = [
-        'bill_order'        =>  '订单必须',
+        'bill_order.require'        =>  '订单号生成失败',
+        'bill_order.unique'        =>  '订单号重复,请刷新页面',
+        'bill.token'        =>'重复提交订单,请刷新页面',
         'goods_id'	=> '商品必须',
         'goods'      =>  '商品必须',
-        'camp'                  =>'所属训练营必须',
-        'total'                 =>'字段必须',
-        'price'                 =>'字段必须',
-        'camp_id'                  =>'字段必须',
+        'camp'                  =>'缺少训练营',
+        'total'                 =>'缺少购买总数',
+        'price'                 =>'缺少单价',
+        'camp_id'                  =>'没指定训练营',
         'camp'           =>'训练营',
-        'student_id'              =>'student_id字段必须',
-        'student'                  =>'student字段必须',
-        'member_id'                  =>'member_id字段必须',
-        'member'                 =>'member字段必须',
+        'student_id'              =>'请先添加学生，并且注意点【确认添加】按钮',
+        'student'                  =>'请先添加学生姓名，并且注意点【确认添加】按钮',
+        'member_id'                  =>'没指定会员号',
+        'member'                 =>'没指定会员名称',
         'score_pay'     =>'score_pay.require'
     ];
     
     protected $scene = [
         'add'   =>  ['bill_order','goods_id','goods','camp','total','price','camp_id','camp','student_id','student','member_id','member','score_pay'],
-        'edit'  =>  ['total'],
+        'edit'  =>  [],
     ];    
 
 }

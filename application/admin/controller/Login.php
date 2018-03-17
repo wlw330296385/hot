@@ -4,7 +4,7 @@ use think\Controller;
 use think\Request;
 use think\Validate;
 use app\service\AuthService;
-
+use think\Cache;
 class Login extends Controller
 {
     public function __construct()
@@ -17,6 +17,10 @@ class Login extends Controller
             $this->error('你已经登录，无需重复登录', url('Index/index'));
         }
         if ( Request::instance()->isPost() ) {
+            $cache_tag  = strtolower('_sidebar_menus_'.session('admin.id'));
+            Cache::rm($cache_tag); 
+            session('admin', null);
+            cookie('keeplogin', null);
             //dump( Request::instance()->post() );
             $username = input('username/s');
             $password = input('password');
@@ -58,8 +62,18 @@ class Login extends Controller
     }
 
     public function logout() {
+        // $cache_tag  = strtolower('_sidebar_menus_'.session('admin.id'));
+        // Cache::rm($cache_tag); 
+        // $group_id = session('admin.group_id');
+        // Cache::rm('group_id_menu_auth_'.$group_id); 
+        Cache::clear(); 
         session('admin', null);
         cookie('keeplogin', null);
         $this->success('退出成功', url('Login/index'));
+    }
+
+    public function clearCache(){
+        Cache::clear(); 
+        $this->success('清空成功');
     }
 }

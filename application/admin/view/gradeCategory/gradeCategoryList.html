@@ -1,0 +1,130 @@
+{extend name="layout/common"}
+
+{block name="page-content"}
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+            <em>班级类型管理</em>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="panel-heading">
+            <div class="panel-lead clearfix">
+                <em>训练项目列表</em>
+                <ul class="pull-right">
+                    <li><button class="btn btn-danger" id="sub-gradeCategory">全部删除</button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="{:url('admin/gradecategory/updateGradeCategory')}" class="btn btn-success">添加</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="no-padding">
+            <div class="fixed-table-container no-border">
+                <div class="row">
+                    {volist name="gradeCategoryList" id="vo"}
+                    <div class="col-sm-6 col-md-3 col-xs-12">
+                        <ul class="list-group">
+                            <li class="list-group-item" data-id="{$vo.id}">
+                                <label>
+                                    <input type="checkbox" class="gradeCategory_item"  value="{$vo.id}" data-pid="0">
+                                    <span class="gradeCategory_p" data-id="{$vo.id}"  >{$vo.name}</span>
+                                </label>
+                            </li>
+                            {if condition="$vo['daughter']"}
+                            {volist name="vo['daughter']" id="vo2"}
+                            <li class="list-group-item clearfix">
+                                    <input type="checkbox" class="gradeCategory_item" name="gradeCategorycise-list" value="{$vo2.id}" data-pid="{$vo2.pid}">
+                                    <a href="{:url('admin/gradecategory/updateGradeCategory',['gradeCategory_id'=>$vo2.id])}">
+                                        <span>{$vo2.name}</span>
+                                    </a>
+                            </li>
+                            {/volist}
+                            {/if}
+                        </ul>
+                    </div>
+                    {/volist}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript">
+"use struct";
+$(function() {
+
+    
+    $('#sub-gradeCategory').on('click',function() {
+        if ( $('.gradeCategory_item').is(':checked') ) {
+            var selected = "";
+            $('.gradeCategory_item:checked').each(function() {
+                var gradeCategory_parent = $(this).parent().parent().parent().find('.gradeCategory_p'),
+                    gradeCategory_parent_id = gradeCategory_parent.attr('data-id'),
+                    gradeCategory_parent_txt = gradeCategory_parent.html(),
+                    cur_id = $(this).val();
+                    selected += cur_id+',';
+            });
+        } else {
+            alert('请选择班级类型');
+            return;
+        }
+        selected = selected.substring(0, selected.length-1);
+        layui.use('layer', function(){
+          var layer = layui.layer;
+          layer.confirm('确认全部删除?', {
+              btn: ['是','不'] //按钮
+            }, function(){
+                deleteAll(selected);
+
+            }, function(){
+              layer.msg('如果要添加,请点击右上角添加', {
+                time: 3000, //20s后自动关闭
+                btn: ['明白了', '知道了']
+              });
+            });
+        });       
+
+        
+        
+    });
+
+
+
+
+
+
+    // 修改父类
+    $('.gradeCategory_p').on('click',function(){
+        var id = $('.gradeCategory_p').attr('data-id');
+         layui.use('layer', function(){
+            layer.open({
+              type: 2,
+              title: '修改父类',
+              shadeClose: true,
+              shade: 0.8,
+              area: ['375px', '500px'],
+              content: "{:url('admin/gradecategory/updategradecategoryP')}"+'/gradeCategory_id/'+id //iframe的url
+            }); 
+         })
+    })
+
+
+
+
+
+})
+
+
+function deleteAll(ids){
+        layer.msg('该类型被使用,不允许删除');
+        return true;
+}
+
+
+
+
+</script>
+{/block}

@@ -5,11 +5,15 @@ use app\model\Student as StudentModel;
 use think\Db;
 
 class Student extends Backend {
+    public function _initialize(){
+        parent::_initialize();
+    }
     // 学员列表
     public function index() {
         // 搜索筛选
+        $map = [];
         if ($cur_camp = $this->cur_camp) {
-            $map['camp_id'] = $cur_camp['camp_id'];
+            $map['grade_member.camp_id'] = $cur_camp['camp_id'];
         }
         $camp = input('camp');
         if ($camp) {
@@ -17,24 +21,21 @@ class Student extends Backend {
         }
         $name = input('name');
         if ($name) {
-            $map['grade_member.student'] = ['like', '%'. $name .'%'];
+            $map['student.student'] = ['like', '%'. $name .'%'];
         }
         $tel = input('tel');
         if ($tel) {
             $map['member.telephone'] = $tel;
         }
-
         // 视图查询 grade_member - student
-        $map['type'] = ['in', [1,5]];
-        $map['status'] = ['>', 0];
-        $list = Db::view('student', 'id, student,member_id')
-            ->view('grade_member', 'grade,camp_id,camp,type,status', 'grade_member.student_id=student.id')
-            ->view('member','member,telephone', 'member.id=student.member_id')
-            ->where($map)->paginate(15);
-        //dump($list);
-
-        $breadcrumb = ['title' => '学员列表', 'ptitle' => '训练营'];
-        $this->assign('breadcrumb', $breadcrumb);
+        $list = Db::view('student','student,member_id,id')
+            ->view('member', 'member,hot_id,telephone', 'member.id=student.member_id', 'left')
+            ->view('grade_member', 'camp,camp_id,grade,grade_id,status', 'grade_member.student_id=student.id', 'LEFT')
+            ->where($map)
+            ->where('grade_member.delete_time', null)
+            ->order('student.member_id desc')
+            ->paginate(15);
+//        dump($list->toArray());die;
         $this->assign('list', $list);
         return $this->fetch();
     }
@@ -46,11 +47,45 @@ class Student extends Backend {
         $data['_incamp'] = Db::view('student', 'id, student,member_id')
             ->view('grade_member', 'grade,camp,type,status', 'grade_member.student_id=student.id')
             ->where(['student_id' => $data['id']])->select();
-//        dump($data);
 
-        $breadcrumb = ['title' => '学员档案', 'ptitle' => '训练营'];
-        $this->assign('breadcrumb', $breadcrumb);
-        $this->assign('student', $data);
         return view();
+    }
+
+
+    // 创建|修改学生
+    public function updateStudent(){
+        $student_id = input('param.student_id');
+        $StudentService = new \app\service\StudentService;
+        $member_id = input('param.member_id');
+        $memberInfo = db('member')->where(['id'=>$member_id])->find();
+            
+            
+        if($student_id){
+            if(request()->isPost()){
+                $data = input('post.');
+                $result = $StudentService->updateStudent($data,$student_id);
+                if($result){
+                    echo  "<script>alert('".$result['msg']."');</script>";
+                }
+            }
+            // 编辑学生
+            $memberInfo = db('member')->where(['id'=>$member_id])->find();
+            $this->assign('memberInfo',$memberInfo);
+            return view('student/updateStudent');
+        }else{
+            if(request()->isPost()){
+                $data = input('post.');
+                $data['member'] = $memberInfo['member'];
+                $result = $StudentService->createStudent($data);
+                if($result){
+                    echo  "<script>alert('".$result['msg']."');</script>";
+                }
+            }
+            // 创建学生
+            $memberInfo = db('member')->where(['id'=>$member_id])->find();
+            $this->assign('memberInfo',$memberInfo);
+            return view('student/createStudent');
+        }
+        
     }
 }

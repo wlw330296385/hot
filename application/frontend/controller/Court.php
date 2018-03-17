@@ -20,10 +20,23 @@ class Court extends Base{
 
     public function courtInfo(){
     	$court_id = input('param.court_id');
-    	$courtInfo = $this->CourtService->getCourtInfo(['id'=>$court_id]);
-        $mediaList = db('court_media')->where(['court_id'=>$court_id])->limit(3)->select();
+        $camp_id = input('param.camp_id')?input('param.camp_id'):0;
+        $isCourt = -1;
+        $power = 0;
+        $button = 0;
+        $courtInfo = $this->CourtService->getCourtInfoWithCourtCamp($court_id,$camp_id);
+        $CampService = new \app\service\CampService;
+        $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
+        if($camp_id!=$courtInfo['camp_id'] && $power>2 && $courtInfo['status'] == 1){
+            // 可以将场地添加到自己场地
+            $button = 1;
+        }elseif ( $courtInfo['camp_id'] == $camp_id && $power>2 && $courtInfo['status'] == -1){
+            //可以编辑
+            $button = 2;
+        }
+        $this->assign('camp_id',$camp_id);
+        $this->assign('button',$button);
         $this->assign('courtInfo',$courtInfo);
-        $this->assign('mediaList',$mediaList);
     	return view('Court/courtInfo');
     }
 
@@ -53,9 +66,13 @@ class Court extends Base{
         $camp_id = input('param.camp_id');
         $CampService = new \app\service\CampService;
         $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
+
         if($power<2){
             $this->error('请先加入一个训练营并成为管理员或者创建训练营');
         }
+
+        $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
+        $this->assign('campInfo',$campInfo);
         return view('Court/createCourt');
     }
     // 分页获取数据
@@ -68,4 +85,9 @@ class Court extends Base{
     	return json($result);
     }
 
+    public function searchCourtList(){
+        $camp_id = input('param.camp_id');
+        $this->assign('camp_id',$camp_id);
+        return view('Court/searchCourtList');
+    }
 }

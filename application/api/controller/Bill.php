@@ -14,27 +14,65 @@ class Bill extends Frontend{
     //获取会员订单接口
     public function getBillListApi(){
         try{
-            $map = input('post.');
             $page = input('param.page')?input('param.page'):1;
-            $result = $this->BillService->getBillList($map,$page);
-            $billList = $result['data'];
-            $billList['count'] = count($billList);
-            return json(['code'=>100,'data'=>$billList,'msg'=>'OK']);       
+            $map = input('post.');
+            if (input('?start') || input('?end')) {
+                $start = input('start');
+                $end = input('end');
+                $map['create_time'] = ['between', [$start, $end]];
+                unset($map['start']);
+                unset($map['end']);
+            }
+            $where = function($query) use($map){
+                $query -> where($map)->where(function($query){
+                    $query->whereOr('expire',0)->whereOr('expire','gt',time());
+                });
+            };
+            
+            $result = $this->BillService->getBillList($where,$page);
+            return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }   	
     }
 
+    //获取订单列表带page
+    public function getBillListByPageApi(){
+        try{
+            $map = input('post.');
+            if (input('?start') || input('?end')) {
+                $start = input('start');
+                $end = input('end');
+                $map['create_time'] = ['between', [$start, $end]];
+                unset($map['start']);
+                unset($map['end']);
+            }
+            // $map['member_id'] = $this->memberInfo['id'];
+            $where = function($query) use($map){
+                $query -> where($map)->where(function($query){
+                    $query->whereOr('expire',0)->whereOr('expire','gt',time());
+                });
+            };
+            $result = $this->BillService->getBillListByPage($where);
+            return json(['code'=>200,'data'=>$result,'msg'=>'OK']);       
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+
+
+
     //编辑|添加订单接口
     public function updateBillApi(){
         try{
-            $id = input('get.id');
+            $bill_id = input('param.bill_id');
             $data = input('post.');
             $data['member'] = $this->memberInfo['member'];
             $data['member_id'] = $this->memberInfo['id'];
-            $data['avatar'] = $this->memberInfo['avatar'];
-            if($id){
-                $result = $this->BillService->updateBill($data,$id);
+            if($bill_id){
+                $result = $this->BillService->updateBill($data,['id'=>$bill_id]);
             }else{
                 $result = $this->BillService->createBill($data);
             }
@@ -46,18 +84,31 @@ class Bill extends Frontend{
     }
 
 
-    public function updateBillInfoOfCampApi(){
+   public function payApi(){
         try{
-            $camp_id = input('param.camp_id');
-            // 判断权限
-            $isPower = $this->BillService->isPower($camp_id,$this->memberInfo['id']);
-            if($isPower<3){
-                return json(['code'=>100,'msg'=>'权限不足']);
+            $bill_order = input('param.bill_order');
+            $billInfo = db('bill')->where(['bill_order'=>$bill_order])->find();
+            if($billInfo){
+                if($billInfo['is_pay']!= 1 || $billInfo['status']!= 1){
+                    $data = input('post.');
+                    $data['status'] = 1;
+                    $data['is_pay'] = 1;
+                    $result = $this->BillService->pay($data,['bill_order'=>$bill_order]);  
+                    if($result){
+                        return json(['code'=>200,'msg'=>'支付成功']);
+                    }else{
+                        return json(['code'=>100,'msg'=>'该订单状态已失效']);
+                    }  
+                }else{
+                    return json(['code'=>200,'msg'=>'订单已支付']);
+                }
+            }else{
+                return json(['code'=>100,'msg'=>'订单号错误']);
             }
-            return json(['code'=>100,'data'=>$billList,'msg'=>'OK']);       
+            
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }   
-    }
+        } 
+   }
     
 }

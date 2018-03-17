@@ -15,6 +15,9 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style>
+        .success-frame .logowz { padding: 55px 0px 5px; }
+    </style>
 </head>
 
 <body  class="whitebg">
@@ -23,20 +26,27 @@
     <div class="success-frame">
 
         <div class="logowz">
-            <img src="/static/frontend/images/loginwz.jpg" width="150" alt="大热篮球">
+            <img src="/static/frontend/images/Logo-Gray.png" width="90" alt="篮球管家">
         </div>
         <div class="tip-box">
-            欢迎加入大热篮球，请选择您的身份，<br />完善个人信息，获取更多功能！
+            欢迎加入篮球管家，请选择您的身份，<br />完善个人信息，获取更多功能！
         </div>
-
-        <a href="{:url('index/search')}">
+        {if ($o_id<>0 && $o_type<>0)}
+        <a href="{:url('frontend/index/indexOfCamp',['o_id'=>$o_id,'o_type'=>$o_type])}">
             <div class="choise">
                 <button type="button" class="mui-btn mui-btn-success">搜索训练营/班级/球队</button>
                 <p>会员录找所属训练营或班级</p>
             </div>
         </a>
-
-        <a href="{:url('index/index')}">
+        {else /}
+        <a href="{:url('frontend/index/index')}">
+            <div class="choise">
+                <button type="button" class="mui-btn mui-btn-success">搜索训练营/班级/球队</button>
+                <p>会员录找所属训练营或班级</p>
+            </div>
+        </a>
+        {/if}
+        <a href="{:url('frontend/lesson/lessonlist')}">
 
             <div class="choise">
                 <button type="button" class="mui-btn mui-btn-success">新学员选报课程</button>

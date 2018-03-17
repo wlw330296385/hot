@@ -11,14 +11,15 @@ class Exercise extends Base{
 	}
 
 
-
-    public function exerciseListApi(){
+    // 获取列表
+    public function getExerciseListApi(){
         try{
-            $result = $this->ExerciseService->getExerciseList();
+            $map= input('post.');
+            $result = $this->ExerciseService->getExerciseList($map);
             if($result){
-                return json(['data'=>$result,'code'=>100,'msg'=>'OK']);
+                return json(['data'=>$result,'code'=>200,'msg'=>'OK']);
             }else{
-                return json(['code'=>200,'msg'=>'未获取到数据']);
+                return json(['code'=>100,'msg'=>'未获取到数据']);
             }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -26,6 +27,21 @@ class Exercise extends Base{
         
     }
 
-    
+    // 编辑项目
+    public function updateExerciseApi(){
+        try{
+            $data = input('post.');
+            $exercise_id = input('param.exercise_id');
+            if($exercise_id){
+                $result = $this->ExerciseService->updateExercise($data,['id'=>$exercise_id]);
+            }else{
+                $result = $this->ExerciseService->createExercise($data);
+            }
+            return json($result);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
 
 }

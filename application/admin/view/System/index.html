@@ -19,15 +19,15 @@
             <em>系统设置</em>
         </div>
         <ul class="nav nav-tabs">
-            <li><a href="#info" data-toggle="tab">平台信息</a></li>
+            <li class="active"><a href="#info" data-toggle="tab">平台信息</a></li>
             <li><a href="#banner" data-toggle="tab">平台banner图</a></li>
-            <li class="active"><a href="#score" data-toggle="tab">会员积分设置</a></li>
+            <li><a href="#score" data-toggle="tab">会员积分设置</a></li>
         </ul>
     </div>
     <div class="panel-body">
         <div class="tab-content">
             <!--#info-->
-            <div class="tab-pane fade" id="info">
+            <div class="tab-pane fade active in" id="info">
                 <div class="col-md-12 col-sm-12">
                     <div class="box no-border">
                         <form action="{:url('system/editinfo')}" class="form-horizontal" method="post" role="form">
@@ -87,32 +87,41 @@
 
             <!--#banner-->
             <div class="tab-pane fade" id="banner">
-                <form action="{:url('system/editbanner')}" enctype="multipart/form-data" method="post">
-                    <input type="hidden" name="id" value="{$site.id}">
-                    {:token()}
-                    <div class="row">
-                        {foreach name="banner" item="vo"}
+            {foreach name="banner" item="vo"}    
+            <div class="col-sm-8 col-md-4">     
 
-                                <div class="col-sm-4 col-md-4">
-                                    <a class="btn-banner" href="#" title="点击替换图片">
-                                        <img class="img-thumbnail" id="uploader-preview{$key+1}" src="{$vo}">
-                                        <div id="filePicker{$key+1}">选择上传</div>
-                                        <input id="uploader-input{$key+1}" type="hidden" name="banner[{$key}]" value="{$vo}">
-                                    </a>
+                <form action="{:url('system/editbanner')}" enctype="multipart/form-data" method="post" class="form-horizontal" >        
+                        <input type="hidden" name="id" value="{$vo.id}">
+                        <input type="hidden" name="banner" value="{$key}">
+                        <div class="col-sm-8 col-md-12">
+                            <a class="btn-banner" href="#" title="点击替换图片">
+                                <img class="img-thumbnail" id="uploader-preview{$key+1}" src="{$vo.url}">
+                                <div class="row">
+                                    <div id="filePicker{$key+1}">选择上传</div>
                                 </div>
-                        {/foreach}
+                                
+                                <input id="uploader-input{$key+1}" type="hidden" name="url" value="{$vo.banner}">
+                            </a>
+                        </div>
+                        
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="">排序</label>
+                        <div class="col-sm-8">
+                            <input type="number" name="ord" class="form-control" value="0">
+                        </div>
                     </div>
                     <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" class="btn btn-success">提 交</button>
                         <button type="submit" class="btn btn-default">取 消</button>
                     </div>
                 </form>
-
+            </div>
+            {/foreach}
             </div>
             <!--end #banner-->
 
             <!--#score-->
-            <div class="tab-pane fade active in" id="score">
+            <div class="tab-pane fade " id="score">
                 <div class="col-md-12 col-sm-12">
                     <div class="box no-border">
                         <form action="{:url('system/editscore')}" class="form-horizontal" method="post" role="form">
@@ -189,10 +198,19 @@
 
                                 <h4>抽取提成比例</h4>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label" for="">每一层级用户抽取提成比例</label>
+                                    <label class="col-sm-2 control-label" for="">一层级用户抽取提成比例</label>
                                     <div class="col-sm-10">
                                         <div class="input-group">
                                             <input type="text" class="form-control" name="rebate" value="{$site.rebate*100}">
+                                            <span class="input-group-addon">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="">二级级用户抽取提成比例</label>
+                                    <div class="col-sm-10">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="rebate" value="{$site.rebate2*100}">
                                             <span class="input-group-addon">%</span>
                                         </div>
                                     </div>
@@ -202,15 +220,6 @@
                                     <div class="col-sm-10">
                                         <div class="input-group">
                                             <input type="text" class="form-control" name="sysrebate" value="{$site.sysrebate*100}">
-                                            <span class="input-group-addon">%</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label" for="">评价分扣减比例</label>
-                                    <div class="col-sm-10">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" name="starrebate" value="{$site.starrebate*100}">
                                             <span class="input-group-addon">%</span>
                                         </div>
                                     </div>

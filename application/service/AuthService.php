@@ -1,12 +1,14 @@
 <?php
 namespace app\service;
-use app\model\Admin;
-
+use app\admin\model\Admin;
+use app\admin\model\AdminGroup;
+use app\admin\model\AdminMenu;
 class AuthService {
     public static function login($username, $password, $keeptime = 0) {
         $admin = Admin::get(['username' => $username]);
-        $admin_dataArr = $admin->toArray();
-        if (!$admin) {
+        if($admin){
+            $admin_dataArr = $admin->toArray();
+        }else{
             return false;
         }
         if ($admin->password != passwd($password) ) {
@@ -21,7 +23,6 @@ class AuthService {
         session('admin', $admin_dataArr);
 
         if ($keeptime) {
-            //cookie('keeplogin', $admin['id'], $keeptime);
 
             self::keeplogin($admin->id, $keeptime);
         }
@@ -77,5 +78,17 @@ class AuthService {
             'created_at' => time()
         ];
         db('log_admindo')->insert($data);
+    }
+
+    // 设置权限
+    final public function adminGroup(){
+        $result = AdminGroup::group_idAuth();
+        session('admin_group',$result);
+    }
+
+    // 检查权限
+    final public function checkAuth(){
+        $result = AdminGroup::checkAuth();
+        return $result;
     }
 }

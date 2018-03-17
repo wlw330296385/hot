@@ -10,21 +10,21 @@ class PlanVal extends Validate{
         'member_id'    => 'require',
         'camp' =>  'require',
         'outline' => 'require',
-        'exercise'=>'require',
+        // 'exercise'=>'require',
     ];
     
     protected $message = [
         'camp_id'  =>  'camp_id 必须大于0',
         'member_id'    => 'require',
         'member'  => 'require',
-        'camp' =>  'camp require',
-        'outline' => 'outline require',
-        'exercise'=>' exercise require',
+        'camp' =>  '请填写训练营',
+        'outline' => '请填写大纲名称',
+        // 'exercise'=>' exercise必须',
     ];
     
     protected $scene = [
-        'add'   =>  ['member','camp','member_id','outline','camp_id','exercise'],
-        'edit'  =>  ['member','camp','member_id','outline','camp_id','exercise'],
+        'add'   =>  ['member','camp','member_id','outline','camp_id',],
+        'edit'  =>  ['member','camp','member_id','outline','camp_id',],
     ];    
 
 }

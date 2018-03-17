@@ -18,59 +18,52 @@ class StudentService{
 
 
 	public function getStudentInfo($map){
-			$res = $this->studentModel->where($map)->find();
-			if($res){
-				$result = $res->toArray();
-				return $result;
-			}else{
-				return $res;
-			}
-			
+	    $model = new Student();
+        $res = $model->with('member')->where($map)->find();
+        if($res){
+            $result = $res->toArray();
+            return $result;
+        }else{
+            return $res;
+        }
 	}	
 
 	public function createStudent($data){
 		$validate = validate('StudentVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
-		$result = $this->studentModel->data($data)->save();
+        if(isset($data['address'])){
+            $res = explode(' ', $data['address']);
+            $data['student_province'] = $res[0];
+            $data['student_city'] = $res[1];
+            $data['student_area'] = isset($res[2])?$res[2]:$res[1];
+        }
+
+		$result = $this->studentModel->allowField(true)->data($data)->save();
 		if($result){
-			return ['code'=>100,'msg'=>'ok','data'=>$result];
+			return ['code'=>200,'msg'=>'添加成功','data'=>$result];
 		}else{
-			return ['code'=>200,'msg'=>$this->studentModel->getError()];
+			return ['code'=>100,'msg'=>$this->studentModel->getError()];
 		}
 	}
 
 	public function updateStudent($data,$id){
-		$validate = validate('CampVal');
-        if(!$validate->check($StudentVal)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+		$validate = validate('StudentVal');
+        if(!$validate->scene('edit')->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 100];
+        }
+        if(isset($data['address'])){
+            $res = explode(' ', $data['address']);
+            $data['student_province'] = $res[0];
+            $data['student_city'] = $res[1];
+            $data['student_area'] = isset($res[2])?$res[2]:$res[1];
         }
 		$result = $this->studentModel->save($data,['id'=>$id]);
 		if($result){
-			return ['code'=>100,'msg'=>'ok','data'=>$result];
+			return ['code'=>200,'msg'=>'ok','data'=>$result];
 		}else{
-			return ['code'=>200,'msg'=>$this->studentModel->getError()];
-		}
-	}
-	/**
-	 * 	购买课程
-	 */
-	public function buyLesson($request,$id = false){
-		//是否完善资料
-		$is_student = $this->studentModel->where(['member_id'=>$this->memberInfo['id']])->find();
-		if(!$is_student){
-			return false;
-		}
-		if($id){
-			$result = $this->gradeMemberModel->save($request,['id'=>$id]);
-		}else{
-			$result = $this->gradeMemberModel->save($request);
-		}
-		if($result){
-			return true;
-		}else{
-			return false;
+			return ['code'=>100,'msg'=>$this->studentModel->getError()];
 		}
 	}
 
@@ -113,8 +106,8 @@ class StudentService{
     }
 
      // 获取用户学生列表
-    public function getStudentList($map,$page = 1,$paginate = 10){
-        $result = $this->studentModel->where($map)->page($page,$paginate)->select();
+    public function getStudentList($map,$page = 1,$order = 'id desc',$paginate = 10){
+        $result = $this->studentModel->where($map)->order($order)->page($page,$paginate)->select();
 
         if($result){
 			$res = $result->toArray();
@@ -128,11 +121,18 @@ class StudentService{
 
     // 批量更新学生数据
     public function saveAllStudent($data){
+    	//重组上课学员
+        // foreach ($students as $key => $value) {
+        //     $students[$key]['grade_id'] = $grade_id;
+        //     $students[$key]['grade'] = $grade;
+        // }
+        // dump($students);die;
     	$result = $this->gradeMemberModel->saveAll($data);
+    	//echo $this->gradeMemberModel->getlastsql();
     	if($result){
-			return ['code'=>100,'msg'=>'ok','data'=>$result];
+			return ['code'=>200,'msg'=>__lang('MSG_200'),'data'=>$result];
 		}else{
-			return ['code'=>200,'msg'=>$this->gradeMemberModel->getError()];
+			return ['code'=>100,'msg'=>$this->gradeMemberModel->getError()];
 		}
     }
 
@@ -141,9 +141,9 @@ class StudentService{
     public function updateGradeMember($data,$id){
         $result = $this->gradeMemberModel->save($data,['id'=>$id]);
         if($result){
-			return ['code'=>100,'msg'=>'ok','data'=>$result];
+			return ['code'=>200,'msg'=>'ok','data'=>$result];
 		}else{
-			return ['code'=>200,'msg'=>$this->gradeMemberModel->getError()];
+			return ['code'=>100,'msg'=>$this->gradeMemberModel->getError()];
 		}
     }
 
@@ -151,5 +151,53 @@ class StudentService{
     // 已上课程+1
     public function setIncFinishedTotal($num = 1,$student_id){
     	$this->studentModel->where(['id'=>$student_id])->setInc('finished_total',$num);
+    }
+
+
+    // 准哥要的
+
+	public function getStudentListByPage($map=[], $order='', $paginate=10) {
+	    $result =  $this->studentModel->where($map)->order($order)->paginate($paginate);
+	    if($res){           
+	        $res = $result->toArray();
+	        return $res;
+	    }else{
+	        return $result;
+	    }
+        
+    }
+
+    // 学员参加的课程
+    public function getLessons($map=[]){
+        $where['lesson_member.camp_id'] = $map['camp_id'];
+        if (isset($map['student_id'])) {
+            $where['lesson_member.student_id'] = $map['student_id'];
+        }
+        $where['lesson_member.member_id'] = $map['member_id'];
+        if (isset($map['status'])) {
+            $where['lesson_member.status'] = $map['status'];
+        }
+        $result = Db::view('lesson')
+            ->view('lesson_member', ['student_id','student','member_id','member','status' => 'lesson_member_status','rest_schedule'], 'lesson_member.lesson_id=lesson.id')
+            ->where($where)
+            ->where('lesson.delete_time', null)
+            ->select();
+        return $result;
+    }
+
+    // 学员所在班级
+    public function getGrades($map=[]) {
+        $where['grade_member.camp_id'] = $map['camp_id'];
+        $where['grade_member.student_id'] = $map['student_id'];
+        $where['grade_member.member_id'] = $map['member_id'];
+        if (isset($map['status'])) {
+            $where['grade_member.status'] = $map['status'];
+        }
+        $result = Db::view('grade')
+            ->view('grade_member', ['student_id', 'student', 'member', 'member_id', 'status' => 'grade_member_status'], 'grade_member.grade_id=grade.id')
+            ->where($where)
+            ->where('grade.delete_time', null)
+            ->select();
+        return $result;
     }
 }

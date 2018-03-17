@@ -3,110 +3,337 @@
 
 <head>
     <meta charset="utf-8">
-    <title>训练场地详情页-</title>
+    <title>训练场地详情页</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--等级星星样式-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css" />
+    <style type="text/css">
+        #campList a {
+            width: auto;
+            display: inline;
+        }
+
+        .detalis-list .detalisli .coachicon:first-child {
+            margin-right: 0px;
+            margin-left: 10px;
+        }
+
+        #container {
+            width: 100%;
+            height: 250px;
+        }
+
+        #mapFrame {
+            height: 250px;
+        }
+
+        #map button {
+            top: 11px;
+            position: absolute;
+            right: 3px;
+            padding: 5px 8px;
+        }
+
+        #tip {
+            background-color: #ddf;
+            color: #333;
+            border: 1px solid silver;
+            box-shadow: 3px 4px 3px 0px silver;
+            position: absolute;
+            top: 10px;
+            left: 5px;
+            right: 55px;
+            border-radius: 5px;
+            overflow: hidden;
+            line-height: 20px;
+            width: 96%;
+        }
+
+        #tip input[type="text"] {
+            height: 25px;
+            border: 0;
+            padding-left: 5px;
+            width: 100%;
+            border-radius: 3px;
+            outline: none;
+            margin-bottom: 0;
+        }
+
+        #mapConfirm {
+            display: none
+        }
+    </style>
 </head>
 
-<body class=whitebg>
+<body>
+    <header id="header" class="mui-bar mui-bar-transparent">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title"></h1>
+    </header>
+    <div class="mui-content">
 
-
-<!--首页-->
-<div class="mui-content">
-
-    <!--图片轮播-->
-    <div id="slider" class="mui-slider">
-        <div class="mui-slider-group mui-slider-loop">
-            <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
-            <div class="mui-slider-item mui-slider-item-duplicate">
-                <a href="#">
-                    <img src="/static/frontend/images/cbd.jpg">
-                </a>
-            </div>
-            <!-- 第一张 -->
-            <div class="mui-slider-item">
-                <a href="#">
-                    <img src="/static/frontend/images/shuijiao.jpg">
-                </a>
-            </div>
-            <!-- 第二张 -->
-            <div class="mui-slider-item">
-                <a href="#">
-                    <img src="/static/frontend/images/muwu.jpg">
-                </a>
-            </div>
-            <!-- 第三张 -->
-            <div class="mui-slider-item">
-                <a href="#">
-                    <img src="/static/frontend/images/cbd.jpg">
-                </a>
-            </div>
-            <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
-            <div class="mui-slider-item mui-slider-item-duplicate">
-                <a href="#">
-                    <img src="/static/frontend/images/shuijiao.jpg">
-                </a>
-            </div>
-        </div>
-        <div class="mui-slider-indicator">
-            <div class="mui-indicator mui-active"></div>
-            <div class="mui-indicator"></div>
-            <div class="mui-indicator"></div>
-        </div>
-    </div>
-
-    <div class="list detalis-list">
-        <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell listli detalisli">北头篮球场(室外)<span>深圳市 南山区</span></li>
-        </ul>
-        <ul class="mui-table-view">
-            <li class="mui-table-view-cell listli detalisli">
-                <a class="mui-navigate-right">
-                   具体地址<span> <i class="mui-icon mui-icon-location"></i>桂庙路与月亮湾大道交界处(五</br>人足球场旁)</span>
-                </a>
-            </li>
-            <li class="mui-table-view-cell listli detalisli">营业时间<span class="fixed">周一至周五14:00-20:00 周末及节假日09:00=23:00</span></li>
-            <li class="mui-table-view-cell listli detalisli">散场<span>20元/人</span></li>
-            <li class="mui-table-view-cell listli detalisli">半场包场<span>100元/小时</span></li>
-            <li class="mui-table-view-cell listli detalisli">全场包场<span>200元/小时</span></li>
-            <li class="mui-table-view-cell listli detalisli">咨询电话<span>0755-26413300</span></li>
-            <li class="mui-table-view-cell listli detalisli">温馨提示
-                <div class="tips">
-                    <p>1、篮球场包场2小时起订</p>
-                    <p>2、周一至周五的18:00至20:00，20:00至22:00为固定时间段预定</p>
-                    <p>3、如退订请提前12小时联系场馆客服人员</p>
+        <!--图片轮播-->
+        <div id="slider" class="mui-slider">
+            <div class="mui-slider-group mui-slider-loop">
+                <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+                <div class="mui-slider-item mui-slider-item-duplicate">
+                    <div class="img4x3" style="background-image:url('{$courtInfo['covers'][0]}')"></div>
                 </div>
-            </li>
-        </ul>
+                <!-- 第一张 -->
+                {volist name="courtInfo.covers" id="vol"}
+                <div class="mui-slider-item">
+                    <div class="img4x3" style="background-image:url('{$vol}')"></div>
+                </div>
+                {/volist}
+                <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+                <div class="mui-slider-item mui-slider-item-duplicate">
+                    <div class="img4x3" style="background-image:url('{$courtInfo['covers'][0]}')"></div>
+                </div>
+            </div>
+            <div class="mui-slider-indicator">
+                {volist name="courtInfo.covers" id="vol"}
+                <div class="mui-indicator {if condition='$key' value=0} mui-active{/if}"></div>
+                {/volist}
+            </div>
+        </div>
+        <div class="list detalis-list">
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media" style="padding:15px 15px;">
+                    <a href="javascript:;">
+                        <div class="mui-media-body">
+                            {$courtInfo.court}
+
+                            <p class="mui-ellipsis">{switch name="courtInfo.outdoors"}{case value="1"}室内{/case} {case value="2"}室外{/case} {default
+                                /}室内|室外{/switch}
+                            </p>
+
+                        </div>
+                        {eq name="button" value="2" }
+                        <a href="{:url('court/updateCourt',['court_id'=>$courtInfo['id']])}" class="mui-btn mui-btn-primary">
+                            <div class="price-frame camp-num">
+                                <ul>
+                                    <li class="fr">
+                                        <span class="more">编辑</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </a>
+                        {/eq} {eq name="button" value="1"}
+                        <div class="price-frame camp-num" onclick="addCourt({$courtInfo['id']})">
+                            <ul>
+                                <li class="fr">
+                                    <span class="mui-btn mui-btn-primary">添加到我的训练营</span>
+                                </li>
+                            </ul>
+                        </div>
+                        {/eq}
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell listli detalisli">所属地区
+                    <span>{$courtInfo.province} {$courtInfo.city} {$courtInfo.area}</span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">具体地址
+                    <span>
+                        <a href="#mapFrame" class="location" style="display: block">
+                            <i class="mui-icon mui-icon-location"></i>{$courtInfo.location}</a>
+                    </span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">联系人
+                    <span>{$courtInfo.principal}</span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">营业时间
+                    <span class="fixed">{$courtInfo.open_time}</span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">散场
+                    <span>{$courtInfo.chip_rent}元/人</span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">半场包场
+                    <span>{$courtInfo.half_rent}元/小时</span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">全场包场
+                    <span>{$courtInfo.full_rent}元/小时</span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">咨询电话
+                    <span>{$courtInfo.contract}</span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli" id="campList" style="line-height: 40px;">已进驻训练营
+                    <span></span>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">温馨提示
+                    <span>{$courtInfo.remarks}</span>
+                </li>
+            </ul>
+        </div>
     </div>
-</div>
 
-</div>
+    <!-- map -->
+    <div id="mapFrame" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div id="map">
+            <div>{:token()}</div>
+            <div id="container"></div>
+            <div id="tip">
+                <input type="text" id="keyword" name="keyword" value="{$courtInfo.location}" onfocus='this.value=""' placeholder="请输入关键字：(选定后搜索)"
+                />
+            </div>
+            <button class="mui-btn-blue" id="mapConfirm">确认</button>
+        </div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <!--获取地址-->
+    <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
+
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        //轮播
+        var slider = mui("#slider");
+        slider.slider({
+            interval: 5000
+        });
+
+
+        $(function () {
+            // map(选择具体地址)
+            var map = new AMap.Map('container', {
+                resizeEnable: true,
+                zoom: 12,
+            });
+            var geocoder;
+
+            //点击获取地址
+            AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geolocation'], function () {
+                var geocoder = new AMap.Geocoder({
+
+                });
+                var marker = new AMap.Marker({
+                    map: map,
+                    bubble: true
+                })
+                //设置深圳站定位
+                var aa = {
+                    N: "{$courtInfo.lng}",
+                    Q: "{$courtInfo.lat}",
+                    lat: "{$courtInfo.lat}",
+                    lng: "{$courtInfo.lng}",
+                }
+                marker.setPosition(aa);
+
+                map.on('click', function (e) {
+                    marker.setPosition(e.lnglat);
+                    geocoder.getAddress(e.lnglat, function (status, result) {
+                        if (status == 'complete') {
+                            alert(result.regeocode.formattedAddress)
+                        }
+                    })
+                });
+
+                // geolocation = new AMap.Geolocation({
+                //     enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                //     timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+                //     maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+                //     convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+                //     showButton: true,        //显示定位按钮，默认：true
+                //     buttonPosition: 'RB',    //定位按钮停靠位置，默认：'LB'，左下角
+                //     buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                //     showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+                //     showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+                //     panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
+                //     zoomToAccuracy: true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+                // });
+
+                // geolocation.getCurrentPosition(function (status, result) {
+                //     console.log(result);
+                //     lng = result.position.lng;
+                //     lat = result.position.lat;
+                // });
+
+                // var autoOptions = {
+                //     city: "深圳市", //城市，默认全国
+                //     input: "keyword"//使用联想输入的input的id
+                // };
+                // autocomplete = new AMap.Autocomplete(autoOptions);
+                // var placeSearch = new AMap.PlaceSearch({
+                //     city: '',
+                //     map: map
+                // })
+                // AMap.event.addListener(autocomplete, "select", function (e) {
+                //     //TODO 针对选中的poi实现自己的功能
+                //     placeSearch.setCity(e.poi.adcode);
+                //     placeSearch.search(e.poi.name)
+                // });
+
+            });
+
+            // 搜多地区input不能选择
+            $(document).on('tap', '.location', function () {
+                console.log(211)
+                $("#keyword").attr("disabled",true);
+            })
+
+            //获取场地下训练营
+            toCampList('', '');
+
+        })
+
+
+        //训练营教练列表接口获取数据并追加到页面
+        var toCampList = function (page, gType) {
+            var url = "{:url('api/court/getCourtCampListNoPageApi','','',true)}";
+            var courtID = "{$courtInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    court_id: courtID,
+                    status: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('camp/campInfo')}" + '/camp_id/' + data.data[i].id;
+                            newli = newli + '<a href="' + urls + '"><img class="coachicon" src="' + data.data[i].logo + '" alt="' + data.data[i].camp + '"></a>'
+                            console.log(data.data[i].banner)
+                        }
+                        $("#campList span").append(newli);
+                    } else {
+                        mui.toast('训练营教练列表获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        function addCourt(court_id) {
+            var result = wooApi.asyncF("{:url('api/court/ownCourtApi')}", { 'court_id': court_id, 'camp_id': "{$camp_id}" });
+            if (result.code == 200) {
+                mui.toast(result.msg);
+                location.reload();
+            } else {
+                mui.toast('网络错误');
+            }
+        }
+    </script>
 </body>
-<script src="/static/frontend/js/mui.min.js"></script>
-<!--等级星星样式-->
-<script src="/static/frontend/js/feedback.js"></script>
-<script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
 
-    //轮播
-    var slider = mui("#slider");
-    slider.slider({
-        interval: 5000
-    });
-</script>
 </html>

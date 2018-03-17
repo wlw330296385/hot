@@ -22,9 +22,9 @@ class CertService {
     	$res = Cert::where($map)->page($page,$p)->select();
     	if($res){
     		$result = $res->toArray();
-    		return ['code'=>100,'msg'=>'ok','data'=>$result];
+    		return ['code'=>200,'msg'=>'ok','data'=>$result];
     	}else{
-    		return ['code'=>200,'msg'=>'暂无数据'];
+    		return ['code'=>100,'msg'=>'暂无数据'];
     	}
     }
 
@@ -32,12 +32,12 @@ class CertService {
     public function createCert($data){
         $validate = validate('CertVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
 
         $result = $this->certModel->save($data);
         if($result){
-            return ['code'=>100,'msg'=>'创建成功','data'=>$result];
+            return ['code'=>200,'msg'=>'创建成功','data'=>$result];
         }else{
             return ['code'=>100,'msg'=>'创建失败','data'=>$result];
         }
@@ -48,11 +48,11 @@ class CertService {
     public function updateCert($data,$id){
         $validate = validate('CertVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
         $result = $this->certModel->save($data,['id'=>$id]);
         if($result){
-            return ['code'=>100,'msg'=>'创建成功','data'=>$result];
+            return ['code'=>200,'msg'=>'创建成功','data'=>$result];
         }else{
             return ['code'=>100,'msg'=>'创建失败','data'=>$result];
         }

@@ -14,13 +14,15 @@ class Camp extends Base{
     // 搜索训练营
     public function searchCampApi(){
         try{
-            $map = [];
+            $map = input('post.');
             $keyword = input('param.keyword');
             $province = input('param.province');
             $page = input('param.page')?input('param.page'):1;
             $city = input('param.city');
             $area = input('param.area');
-            $map = ['province'=>$province,'city'=>$city,'area'=>$area];
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
             foreach ($map as $key => $value) {
                 if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
@@ -29,10 +31,56 @@ class Camp extends Base{
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['camp'] = ['LIKE','%'.$keyword.'%'];
             }
-            $campList = $this->CampService->getCampList($map,$page);
-            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+            $result = $this->CampService->getCampList($map,$page);
+             if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
         }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }       
+    }
+
+    // 获取训练营的列表有page
+    public function getCampListByPageApi(){
+        try{
+            $map = input('post.');
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $city = input('param.city');
+            $area = input('param.area');
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value==' '){
+                    unset($map[$key]);
+                }
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['camp'] = ['LIKE','%'.$keyword.'%'];
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+            $result = $this->CampService->getCampListByPage($map);
+             if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }       
     }
 
@@ -40,12 +88,16 @@ class Camp extends Base{
         try{
             $map = input('post.');
             $page = input('param.page')?input('param.page'):1;
-            $campList = $this->CampService->getCampList($map,$page);
+            $result = $this->CampService->getCampList($map,$page);
 
-            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
+             if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
 
         }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }  
     }
 
@@ -62,6 +114,7 @@ class Camp extends Base{
             $campData = [
                 'id' => $campid,
                 'logo' => input('post.logo'),
+                'camp_telephone' => input('post.camp_telephone'),
                 'banner' => input('post.banner'),
                 'company' => input('post.company'),
                 'location' => input('post.location'),
@@ -119,9 +172,23 @@ class Camp extends Base{
                 return ['code' => 100, 'msg' => '其他证明保存失败'];
             }
         }
+        
+        // 训练营上架状态更新认证信息 修改status=0     
+        $campinfo = db('camp')->where('id', $campid)->find();
+        if ($campinfo['status']) {
+            $updatecamp = db('camp')->where('id', $campid)->setField('status', 0);
+            if (!$updatecamp) {
+                return ['code' => 100, 'msg' => '更新训练营'.__lang('MSG_400')];
+            }
 
-        db('camp')->where('id', $campid)->setField('status', 0);
-
+            // 所有课程设置下架
+            $lessonM = new \app\model\Lesson();
+            $camplessonstatus = $lessonM->where(['camp_id' => $campid, 'status'=>1])->setField('status', -1);
+            // if (!$camplessonstatus) {
+            //     return ['code' => 100, 'msg' => '更新训练营课程'.__lang('MSG_400')];
+            // }
+        }
+    
         return ['code' => 200, 'msg' => __lang('MSG_200')];
     }
 
@@ -133,7 +200,7 @@ class Camp extends Base{
                 'member_id' => $this->memberInfo['id'],
                 'type' => input('post.camptype'),
                 'realname' => input('post.creator'),
-                'camp_telephone' => $telephone
+                //'camp_telephone' => $telephone
             ];
             $campS = new CampService();
             return $campS->createCamp($data);
@@ -142,7 +209,7 @@ class Camp extends Base{
         }
     } 
 
-
+    // 是否以创建训练营
     public function isCreateCampApi(){
         try{ 
             $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];
@@ -153,7 +220,91 @@ class Camp extends Base{
                 return json(['code'=>100,'msg'=>'没有训练营','data'=>'']);
             }
         }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
+    }
+
+    // 训练营评论
+    public function createCampCommentApi(){
+        try{ 
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $data['avatar'] = $this->memberInfo['avatar'];
+            // 是否有关系
+            
+            $result = $this->CampService->createCampComment($data);
+            return json($result);
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+    // 获取评论列表
+    public function getCampCommentListByPageApi(){
+        try{ 
+            $map = input('post.');
+            $result = $this->CampService->getCampCommentListByPage($map);
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'传参错误']);
+            }
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 获取热门课程
+    public function getHotCampList(){
+        $province = input('param.province');
+        $city = input('param.city');
+        $map['province']=$province;
+        $map['city'] = $city;
+        $map['hot'] = 1;
+        foreach ($map as $key => $value) {
+            if($value == ''|| empty($value) || $value==' '){
+                unset($map[$key]);
+            }
+        }
+        $result = $this->CampService->getCampList($map,1);
+        if($result){
+            shuffle($result);
+            return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+        }else{
+            return json(['code'=>100,'msg'=>'传参错误']);
+        }
+    }
+
+    // 开启/关闭训练营
+    public function campclose() {
+        $camp_id = input('param.camp_id');
+        $status = input('param.status'); // 训练营当前status值
+        if (!$camp_id || !$status) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+
+        $setcampstatus = 0;
+        if ($status == 1) {
+            // 执行关闭训练营
+            // 所有课程设置下架
+            $lessonM = new \app\model\Lesson();
+            $camplessonstatus = $lessonM->where(['camp_id' => $camp_id, 'status'=>1])->setField('status', -1);
+//            if (!$camplessonstatus) {
+//                return json(['code' => 100, 'msg' => '更新训练营课程'.__lang('MSG_400')]);
+//            }
+            $setcampstatus = 2;
+        } else {
+            // 执行开启训练营
+            $setcampstatus = 1;
+        }
+
+        $campS = new CampService();
+        $updateCampStatus = $campS->updateCampStatus($camp_id, $setcampstatus);
+        if (!$updateCampStatus) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
 }

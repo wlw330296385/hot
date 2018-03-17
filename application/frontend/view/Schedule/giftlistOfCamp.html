@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>赠课管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .mui-bar-nav~.mui-content .mui-pull-top-pocket {
+            top: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="header" class="mui-bar mui-bar-nav for-tab">
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control mb">
+                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id' => $camp_id])}"></a>
+                <a class="mui-control-item mui-active" href="#onlineGiftList">赠送概览</a>
+                <a class="mui-control-item" href="#offlineGiftList">赠送记录</a>
+                <a class="mui-control-item" href="#outlineGiftList">购买记录</a>
+                <a class="mui-control-item" href="{:url('schedule/giftbuy',['camp_id' => $camp_id])}">购买课时</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="tab-pullRefresh">
+            <div id="onlineGiftList" class="mui-scroll-wrapper mui-control-content mui-active">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b gift1">
+                    </ul>
+                </div>
+            </div>
+            <div id="offlineGiftList" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b gift2">
+                    </ul>
+                </div>
+            </div>
+            <div id="outlineGiftList" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b gift3">
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        mui("body").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
+
+        $(function () {
+
+            //初始化全局变量
+            var onCount = 1;
+            var offCount = 1;
+            var outCount = 1;
+
+            mui('#onlineGiftList').pullRefresh({
+                down: {
+                    //下拉刷新
+                    height: 50,//可选.默认50.触发下拉刷新拖动距离
+                    auto: true,//可选,默认false.自动下拉刷新一次
+                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                    callback: pulldownRefreshOn
+                },
+                up: {
+                    //上拉加载
+                    height: 150,//可选.默认50.触发上拉加载拖动距离
+                    //auto:true,//可选,默认false.自动上拉加载一次
+                    contentrefresh: '正在加载...',
+                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                    callback: pullupRefreshOn
+                }
+            });
+
+            mui('#offlineGiftList').pullRefresh({
+                down: {
+                    //下拉刷新
+                    height: 50,//可选.默认50.触发下拉刷新拖动距离
+                    auto: true,//可选,默认false.自动下拉刷新一次
+                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                    callback: pulldownRefreshOff
+                },
+                up: {
+                    //上拉加载
+                    height: 150,//可选.默认50.触发上拉加载拖动距离
+                    //auto:true,//可选,默认false.自动上拉加载一次
+                    contentrefresh: '正在加载...',
+                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                    callback: pullupRefreshOff
+                }
+            });
+
+            mui('#outlineGiftList').pullRefresh({
+                down: {
+                    //下拉刷新
+                    height: 50,//可选.默认50.触发下拉刷新拖动距离
+                    auto: true,//可选,默认false.自动下拉刷新一次
+                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                    callback: pulldownRefreshOut
+                },
+                up: {
+                    //上拉加载
+                    height: 150,//可选.默认50.触发上拉加载拖动距离
+                    //auto:true,//可选,默认false.自动上拉加载一次
+                    contentrefresh: '正在加载...',
+                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                    callback: pullupRefreshOut
+                }
+            });
+
+            //下拉刷新具体业务实现（赠送概览）
+            function pulldownRefreshOn() {
+                setTimeout(function () {
+                    onCount = 1;//刷新并显示第一页
+                    var page = onCount;
+                    var gType = 1;//代表下拉刷新
+                    toLessonList('onlineGiftList', page, gType);//具体取数据的方法
+                }, 100);
+            }
+
+            //上拉加载具体业务实现（赠送概览）
+            function pullupRefreshOn() {
+                setTimeout(function () {
+                    onCount++;//翻下一页
+                    var page = onCount;
+                    var gType = 2;//代表上拉加载
+                    toLessonList('onlineGiftList', page, gType);//具体取数据的方法
+                }, 100);
+            }
+
+            //下拉刷新具体业务实现（赠送记录）
+            function pulldownRefreshOff() {
+                setTimeout(function () {
+                    offCount = 1;//刷新并显示第一页
+                    var page = offCount;
+                    var gType = 1;//代表下拉刷新
+                    toGiftList('offlineGiftList', page, gType);//具体取数据的方法
+                }, 100);
+            }
+
+            //上拉加载具体业务实现（赠送记录）
+            function pullupRefreshOff() {
+                setTimeout(function () {
+                    offCount++;//翻下一页
+                    var page = offCount;
+                    var gType = 2;//代表上拉加载
+                    toGiftList('offlineGiftList', page, gType);//具体取数据的方法
+                }, 100);
+            }
+
+            //下拉刷新具体业务实现（购买记录）
+            function pulldownRefreshOut() {
+                setTimeout(function () {
+                    outCount = 1;//刷新并显示第一页
+                    var page = outCount;
+                    var gType = 1;//代表下拉刷新
+                    toList('outlineGiftList', page, gType);//具体取数据的方法
+                }, 100);
+            }
+
+            //上拉加载具体业务实现（购买记录）
+            function pullupRefreshOut() {
+                setTimeout(function () {
+                    outCount++;//翻下一页
+                    var page = outCount;
+                    var gType = 2;//代表上拉加载
+                    toList('outlineGiftList', page, gType);//具体取数据的方法
+                }, 100);
+            }
+        });
+
+
+        // 赠送概览（课程）列表
+        var toLessonList = function (wList, page, gType) {
+            var url = "{:url('api/lesson/getLessonListApi','','',true)}" + '/?page=' + page;
+            var campID = "{$camp_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+
+                    var newlessonli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('lesson/lessonInfoOfcamp')}" + '/camp_id/' + campID + '/lesson_id/' + data.data[i].id;
+                            newlessonli = newlessonli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><div class="mui-media-body wd83 ">' + data.data[i].lesson + '<p class="mui-ellipsis">历史赠送：' + data.data[i].total_giftschedule + '节 &nbsp;|&nbsp; 剩余赠送：' + data.data[i].resi_giftschedule + '节</p></div><div class="price-frame mui-text-center"><p class="price">' + data.data[i].unbalanced_giftschedule + '</p><p class="address">未结算</p></div></a></li>';
+                        }
+                    };
+
+                    // 根据状态获取课时列表
+                    if (gType == 1) {
+                        //上拉刷新
+                        $(".gift1").empty().append(newlessonli);
+                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                        mui('#' + wList).pullRefresh().refresh(true);
+                        if (newlessonli == '') {
+                            $("gift1").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        }
+
+                    } else {
+                        //下拉加载 gType==2
+                        $("gift1").append(newlessonli);
+                    }
+
+                    if (newlessonli != '') {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                    } else {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
+
+        // 赠送记录列表
+        var toGiftList = function (wList, page, gType) {
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/schedule/giftlist','','',true)}" + '/?page=' + page;
+            var campID = "{$camp_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    var newgiftli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var total_schedule = data.data[i].student_num * data.data[i].gift_schedule;
+                            var urls = "{:url('schedule/giftrecordInfo')}" + '/camp_id/' + campID + '/id/' + data.data[i].id;
+                            newgiftli = newgiftli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><div class="mui-media-body wd83 ">' + data.data[i].lesson + '<p class="mui-ellipsis">赠送人数：' + data.data[i].student_num + '人 &nbsp;|&nbsp; 人均赠送：' + data.data[i].gift_schedule + '节</p></div><div class="price-frame mui-text-center"><p class="price">' + total_schedule + '</p><p class="more">赠送</p></div></a></li>';
+                        }
+                    };
+
+                    // 根据状态获取课时列表
+                    if (gType == 1) {
+                        //上拉刷新
+                        $(".gift2").empty().append(newgiftli);
+                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                        mui('#' + wList).pullRefresh().refresh(true);
+                        if (newgiftli == '') {
+                            $(".gift2").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        }
+
+                    } else {
+                        //下拉加载 gType==2
+                        $(".gift2").append(newgiftli);
+                    }
+
+                    if (newgiftli != '') {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                    } else {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
+
+        // 购买记录列表
+        var toList = function (wList, page, gType) {
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/schedule/buygiftlist','','',true)}" + '/?page=' + page;
+            var campID = "{$camp_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('schedule/giftbuyInfo')}" + '/camp_id/' + campID + '/id/' + data.data[i].id;
+                            newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><div class="mui-media-body wd83 ">' + data.data[i].lesson.lesson + '<p class="mui-ellipsis">' + data.data[i].create_time
+                                + '</p></div><div class="price-frame mui-text-center"><p class="price">' + data.data[i].quantity + '</p><p class="more">购买</p></div></a></li>';
+                        }
+                    };
+
+                    // 根据状态获取课时列表
+                    if (gType == 1) {
+                        //上拉刷新
+                        $(".gift3").empty().append(newli);
+                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                        mui('#' + wList).pullRefresh().refresh(true);
+                        if (newli == '') {
+                            $(".gift3").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        }
+
+                    } else {
+                        //下拉加载 gType==2
+                        $(".gift3").append(newli);
+                    }
+
+                    if (newli != '') {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                    } else {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
+    </script>
+</body>
+
+</html>

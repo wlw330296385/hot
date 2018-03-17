@@ -1,7 +1,7 @@
 <?php
 namespace app\service;
 use app\model\Exercise;
-
+use app\common\validate\ExerciseVal;
 class ExerciseService {
     protected $exerciseModel;
 
@@ -10,7 +10,7 @@ class ExerciseService {
     }
     // 获取训练项目顶级分类
     public function getExerciseType() {
-        $result = Exercise::where([ 'camp_id' => 0, 'pid' => 0, 'status' => 1 ])->field(['id', 'exercise'])->select();
+        $result = Exercise::where([ 'camp_id' => 0, 'pid' => 0, 'status' => 1 ])->field(['id', 'exercise'])->order('id asc')->select();
         if($result){
             return $result->toArray();
         }else{
@@ -30,43 +30,76 @@ class ExerciseService {
 
     // 新增 训练项目数据
     public function addExercise($data) {
-        $model = new Exercise();
-        $res = $model->save($data);
-        //dump($res);
+        $validate = validate('ExerciseVal');
+        $exercise = $data['exercise'];
+        $camp_id = $data['camp_id'];
+        $validate->extend([
+            'exercise'=> function ($exercise,$camp_id) {
+                $isUnique = $this->exerciseModel->where(['camp_id'=>$data['camp_id'],'exercise'=>$data['exercise'],'status'=>1])->find();
+                return $isUnique?'项目名称已存在':true;
+            }
+        ]);
+        $result = $validate->check($data);
+        if(!$result){
+            return ['msg'=>$validate->getError(),'code'=>100];
+        }
+        $res = $this->exerciseModel->save($data);
         if (!$res)
-            return ['msg' => __lang('MSG_200_ERROR'), 'code' => 200];
+            return ['msg' => __lang('MSG_400'), 'code' => 100];
 
-        return ['msg' => __lang('MSG_100_SUCCESS'), 'code' => 100, 'data' => $res];
+        return ['msg' => __lang('MSG_200'), 'code' => 100, 'data' => $res];
     }
 
     // 更新 训练项目数据
-    public function updateExercise($data, $condi) {
-        $model = new Exercise();
-        $res = $model->save($data, $condi);
+    public function updateExercise($data, $map) {
+        $validate = validate('ExerciseVal');
+        $exercise = $data['exercise'];
+        $camp_id = $data['camp_id'];
+        $isUnique = $this->exerciseModel->where(['camp_id'=>$camp_id,'exercise'=>$exercise,'status'=>1])->where(['id'=>['<>',$map['id']]])->find();
+        if($isUnique){
+            return ['msg'=>'项目名已存在','code'=>100];
+        }
+        $result = $validate->check($data);
+        if(!$result){
+            return ['msg'=>$validate->getError(),'code'=>100];
+        }
+        $res = $this->exerciseModel->save($data, $map);
         if (!$res)
-            return ['msg' => __lang('MSG_200_ERROR'), 'code' => 200];
+            return ['msg' => __lang('MSG_400'), 'code' => 100];
 
-        return ['msg' => __lang('MSG_100_SUCCESS'), 'code' => 100, 'data' => $res];
-    }
+        return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $res];
+    }   
 
     public function createExercise($data){
+        $validate = validate('ExerciseVal');
+        $exercise = $data['exercise'];
+        $camp_id = $data['camp_id'];
+        $isUnique = $this->exerciseModel->where(['camp_id'=>$camp_id,'exercise'=>$exercise,'status'=>1])->find();
+        if($isUnique){
+            return ['msg'=>'项目名已存在','code'=>100];
+        }
+        $res = $validate->check($data);
+        if(!$res){
+            return ['msg'=>$validate->getError(),'code'=>100];
+        }
         $result = $this->exerciseModel->save($data);
         if($result){
-            return ['code'=>100,'msg'=>__lang('MSG_101_SUCCESS'),'data'=>$result];
+            return ['code'=>200,'msg'=>__lang('MSG_200'),'data'=>$this->exerciseModel->id];
         }else{
-            return ['code'=>200,'msg'=>__lang('MSG_201_DBNOTFOUND')];
+            return ['code'=>100,'msg'=>__lang('MSG_400')];
         }
     }
 
-    public function getExerciseList($p = 1){
-        $res = Exercise::all();
+    public function getExerciseList($map = []){
+        $res = $this->exerciseModel->where($map)->whereOr(['pid'=>0])->order('id asc')->select();
         if(!$res){
             return $res;
         }else{
-            $result = channelLevel($res->toArray(),0,'id','pid');
+            $result = $this->getExerciseTree($res->toArray(),0);
             return $result;
         }
     }
+
 
 
     // 获取训练营下的训练项目
@@ -86,16 +119,25 @@ class ExerciseService {
 
     protected function getExerciseTree($arr = [],$pid = 0){
         $list = [];
-         foreach ($arr as $key => $value) {
+         foreach ($arr as $key => &$value) {
             if($value['pid'] == $pid){
                 $value['daughter'] = $this->getExerciseTree($arr,$value['id']);
-              
-            } 
-            $list[] = $value;
+                $list[] = $value;
+            }
         }
         return $list;
     }
 
 
-
+    /**
+     * 返回权限
+     */
+    public function isPower($camp_id,$member_id){
+        $is_power = db('camp_member')
+                    ->where(['member_id'=>$member_id,'camp_id'=>$camp_id,'status'=>1])
+                    // ->where(function ($query) {
+                            // $query->where('type', 2)->whereor('type', 3)->whereor('type',4);})
+                    ->value('type');
+        return $is_power?$is_power:0;
+    }
 }

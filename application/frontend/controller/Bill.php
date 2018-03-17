@@ -1,7 +1,8 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Frontend;
+use app\frontend\controller\Base;
 use app\service\BillService;
+use app\service\WechatService;
 class Bill extends Base{
 	protected $BillService;
 	public function _initialize(){
@@ -16,23 +17,31 @@ class Bill extends Base{
 
     //训练营查看会员订单
     public function billInfoOfCamp(){
-        $bill_id = input('param.bill_id');
-        $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
-
+        $bill_id = input('param.id');
+        $bill_order = input('param.bill_order');
+        if($bill_id){
+            $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+        }else{
+            
+            $billInfo = $this->BillService->getBill(['bill_order'=>$bill_order]);
+        }
+        if(!$billInfo){
+            $this->error('订单信息已改变');
+        }
+        $lessonInfo = [];
+        $studentInfo = [];
         // 课程信息
         if($billInfo['goods_type'] == '课程'){
             $LessonService = new \app\service\LessonService;
             $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
-            $this->assign('lessonInfo',$lessonInfo);
             // 学生信息
             $StudentService = new \app\service\StudentService;
             $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
-            $this->assign('studentInfo',$studentInfo);
         }        
         // 判断权限
         $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
-
-
+        $this->assign('lessonInfo',$lessonInfo);
+        $this->assign('studentInfo',$studentInfo);
         $this->assign('power',$isPower);
         $this->assign('billInfo',$billInfo);
         return view('Bill/billInfoOfCamp');
@@ -41,7 +50,14 @@ class Bill extends Base{
     // 训练营修改会员订单
     public function updateBillInfoOfCamp(){
         $bill_id = input('param.bill_id');
-        $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+        $bill_order = input('param.bill_order');
+        if($bill_id){
+            $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+        }else{
+            
+            $billInfo = $this->BillService->getBill(['bill_order'=>$bill_order]);
+        }
+        $lessonInfo = [];
         // 判断权限
         $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
         if($isPower<3){
@@ -51,44 +67,84 @@ class Bill extends Base{
         if($billInfo['goods_type'] == '课程'){
             $LessonService = new \app\service\LessonService;
             $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
-            $this->assign('lessonInfo',$lessonInfo);
+           
             // 学生信息
             $StudentService = new \app\service\StudentService;
             $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
             $this->assign('studentInfo',$studentInfo);
         }        
-        
+        $this->assign('lessonInfo',$lessonInfo);
         $this->assign('power',$isPower);
         $this->assign('billInfo',$billInfo);
         return view('Bill/updateBillInfoOfCamp');
     }
 
 
+
+
     // 会员查看自己的订单信息
     public function billInfo(){
-    	$bill_id = input('param.bill_id');
-    	$billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+        $bill_order = input('param.bill_order');
+        if(!$bill_order){
+           $this->error('找不到订单号');
+        }
+            
+        $billInfo = $this->BillService->getBill(['bill_order'=>$bill_order]);
 
         if($billInfo['goods_type']=='课程'){
-            $lessonInfo = db('lesson')->where(['id'=>$billInfo['goods_id']])->find();
-            $this->assign('lessonInfo',$lessonInfo);
+            $LessonService = new \app\service\LessonService;
+            $goodsInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
+            
+            // 学生信息
+            $StudentService = new \app\service\StudentService;
+            $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
+            $this->assign('studentInfo',$studentInfo);
+        }elseif ($billInfo['goods_type']=='活动') {
+            $studentInfo = [];
+            $goodsInfo = db('event')->where(['id'=>$billInfo['goods_id']])->find();
+            $this->assign('studentInfo',$studentInfo);
         }
+        // 生成微信参数
+        $shareurl = request()->url(true);
+        $WechatService = new WechatService();
+        $jsApi = $WechatService->jsapi($shareurl);
+        $amount = ($billInfo['total']*$billInfo['price'])?($billInfo['total']*$billInfo['price']):1;
+        // $amount = 0.01;
+        $WechatJsPayService = new \app\service\WechatJsPayService;
+       
+        $result = $WechatJsPayService->pay(['order_no'=>$billInfo['bill_order'],'amount'=>$amount]);
 
+        if($result['code']==100){
+            $jsApiParameters = 0;
+        }else{
+            $jsApiParameters = $result['data']['jsApiParameters'];
+        }
         
-    	$this->assign('billInfo',$billInfo);
-    	return view('Bill/billInfo');
+        $this->assign('goodsInfo',$goodsInfo);
+        $this->assign('jsApiParameters',$jsApiParameters);
+        $this->assign('jsApi', $jsApi);
+        $this->assign('billInfo',$billInfo);
+        return view('Bill/billInfo');
     }
+
+
+
 
     // 获取会员订单列表
     public function billList(){
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        $camp_id = input('param.camp_id');
+        if($camp_id){
+            $home = db('camp')->where(['id'=>$camp_id])->value('camp');
+        }else{
+            $home = '我的订单';
+        }
     	$map = input('post.');
         $map['member_id'] = $member_id;
         $billList = $this->BillService->getBillList($map);
         $count = count($billList);
         // 已付款
         $payCount = 0;
-        
         $notPayCount = 0;
         foreach ($billList as $key => $value) {
             if($value['is_pay'] == '已付款'){
@@ -98,6 +154,7 @@ class Bill extends Base{
                 $notPayCount++;
             }
         }
+        $this->assign('home',$home);
         $this->assign('notPayCount',$notPayCount);
         $this->assign('payCount',$payCount);
         $this->assign('count',$count);
@@ -109,22 +166,10 @@ class Bill extends Base{
     public function getBillListApi(){
     	$map = input('post.');
         $result = $this->BillService->getBillList($map);
-        $billList = $result['data'];
         $billList['count'] = count($billList);
         return json(['code'=>100,'data'=>$billList,'msg'=>'OK']);    	
     }
-    //编辑|添加订单
-    public function createBill(){
-    	// 训练营主教练
-    	$map = input('post.');
-    	$coachList = db('grade_member')->where(['type'=>0,'camp_id'=>$camp_id,'status'=>1])->select();
-    	$assitantList = db('grade_member')->where(['type'=>8,'camp_id'=>$camp_id,'status'=>1])->select();
-    	$this->assign('coachList',$coachList);
-    	$this->assign('assitantList',$assitantList);
-    	return view('Bill/createBill');
-    }
-
-
+   
     public function comfirmBill(){
         // 生成订单号
         $billOrder = '1'.date('YmdHis',time()).rand(0000,9999).$this->memberInfo['id'];
@@ -137,12 +182,21 @@ class Bill extends Base{
     
     public function finishBill(){
         //查询是否成功支付
-        $billOrder = input('bill_order');
+        $billOrder = input('param.bill_order');
         if(!$billOrder){
             $this->error('未查询到订单');
         }else{
             $billInfo = $this->BillService->getBill(['bill_order'=>$billOrder]);
-        }       
+        }     
+        // 判断权限
+        $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
+        if($isPower > 1){
+            $title = "您有课程被购买,请及时跟进";
+        }else{
+            $title = "您的订单已支付成功";
+        }
+        $this->assign('title',$title);
+
         if($billInfo['goods_type'] == '课程'){
             // 课程信息
             $lessonInfo = db('lesson')->where(['id'=>$billInfo['goods_id']])->find();
@@ -155,12 +209,23 @@ class Bill extends Base{
 
     public function finishBookBill(){
         //查询是否成功支付
-        $billOrder = input('bill_order');
+        $billOrder = input('param.bill_order');
         if(!$billOrder){
             $this->error('未查询到订单');
         }else{
             $billInfo = $this->BillService->getBill(['bill_order'=>$billOrder]);
-        }       
+        }  
+
+         // 判断权限
+        $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
+
+        if($isPower > 1){
+            $title = "您的体验课被预约申请,请及时跟进";
+        }else{
+            $title = "您的体验课预约成功,请等待回复";
+        }
+        $this->assign('title',$title);
+
         if($billInfo['goods_type'] == '课程'){
             // 课程信息
             $lessonInfo = db('lesson')->where(['id'=>$billInfo['goods_id']])->find();

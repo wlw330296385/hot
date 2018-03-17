@@ -1,0 +1,81 @@
+{extend name="layout/common" /}
+
+{block name="page-content"}
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">编辑管理员</h3>
+            </div>
+            <form class="form-horizontal coach-form" method="post" action="{:url('user/update')}">
+                <input type="hidden" name="id" value="{$user.id}">
+                {:token()}
+                <div class="box-body">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">登录名</div>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" name="username" value="{$user.username}">
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">新密码</div>
+                        <div class="col-sm-5">
+                            <input type="password" class="form-control" name="password" value="">
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">真实姓名</div>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" name="truename" value="{$user.truename}">
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">职位</div>
+                        <div class="col-sm-5">
+                            {if $user.group_id<>1}
+                            <select class="form-control" required="required" name="group_id" >
+                                {volist name="groupTree" id="vol" }
+                                <optgroup label="{$vol.name}" >
+                                    {volist name="$vol.daughter" id="v" }
+                                    <option value="{$v.id}"  {if $v.id == $user.group_id} selected="selected" {/if}  >{$v.name}</option>
+                                    {/volist}
+                                </optgroup> 
+                                {/volist}
+                            </select>
+                            {else /}
+                                <select class="form-control" required="required" name="group_id" >
+                                    <option value="1" selected="selected" disabled="disabled">超级管理员</option>
+                                </select>
+                            {/if}
+                            
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+
+                </div>
+                <div class="box-footer">
+                    <div class="form-group">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-10">
+
+                            <button type="submit" class="btn btn-success" >提交修改</button>
+
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    "use strict";
+
+</script>
+{/block}

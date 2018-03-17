@@ -40,9 +40,19 @@
                             {$vo.status}
                         </td>
                         <td>
+                            {neq name="vo.status_num" value="0"}
                             <a href="{:url('camp/setcur', ['id' => $vo['id']])}" class="btn btn-xs btn-primary"><i class="fa  fa-exchange"></i> 设为当前查看</a>
-                            <a href="{:url('camp/show', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i></a>
-                            <a href="{:url('camp/sdel', ['id' => $vo['id']])}" class="btn btn-xs btn-danger del-btn"><i class="fa fa-trash"></i></a>
+                            {/neq}
+                            <a href="{:url('camp/show', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详细</a>
+                            <a href="{:url('camp/editstatus', ['id' => $vo['id']])}" class="btn btn-xs bg-purple change-btn">
+                                <i class="fa fa-inbox"></i>
+                                {switch name="vo.status_num"}
+                                {case value="1"}下架训练营{/case}
+                                {case value="2"}上架训练营{/case}
+                                {default /}审核训练营
+                                {/switch}
+                            </a>
+                            <a href="{:url('camp/sdel', ['id' => $vo['id']])}" class="btn btn-xs btn-danger del-btn"><i class="fa fa-trash"></i> 删除</a>
                         </td>
                     </tr>
                     {/volist}
@@ -55,4 +65,18 @@
         </div>
     </div>
 </div>
+{/block}
+
+{block name="js"}
+<script>
+$(function(){
+    $('.change-btn').click(function() {
+        if ( confirm('确定要'+$.trim($(this).text())+'吗?') ) {
+            return true;
+        }  else {
+            return false;
+        }
+    });
+});
+</script>
 {/block}

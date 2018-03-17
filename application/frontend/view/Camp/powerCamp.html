@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>训练营首页</title>
+    <title>{$campInfo['camp']}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -23,22 +23,22 @@
 
     <div id="tabbar" class="mui-control-content mui-active coach">
         <!--操作模块-->
-        <div class="coach-info">
-            <ul class="mui-table-view mui-grid-view mui-grid-9">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12">
-                    <a href="#">
-                        <span class="mui-icon mui-icon-contact"></span>
-                        <div class="mui-media-body">{$memberInfo['member']}</div>
-                    </a>
-                </li>
-            </ul>
-            <p class="coachid">ID:{$memberInfo['id']}</p>
+        <div class="img4x3" style="background-image: url({$campInfo['banner']})">
+            <!--<ul class="mui-table-view mui-grid-view mui-grid-9">-->
+                <!--<li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12">-->
+                    <!--<a href="#">-->
+                        <!--<img class="coachicon" src="{$memberInfo['avatar']}">-->
+                        <!--<div class="f16">{$memberInfo['member']}</div>-->
+                    <!--</a>-->
+                <!--</li>-->
+            <!--</ul>-->
+            <!--<p class="coachid f12">ID:{$memberInfo['hot_id']}</p>-->
         </div>
         <!--图文导航-->
         <div class="page-header">
-            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"
+            <a href="{:url('camp/index')}" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"
                style="color: #737373;font-size: 21px"></a>
-            <span class="more">{$campInfo['camp']}</span>
+            <span class="more">{$campInfo['camp']}管理</span>
         </div>
         <div class="nav-list">
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
@@ -65,106 +65,159 @@
 
 
         <!--操作模块-->
-        <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module">
-        
-     
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <a href="{:url('camp/campInfo',['camp_id'=>$campInfo['id']])}">
-                    <span class="mui-icon mui-icon-home"></span>
-                    <div class="mui-media-body">训练营介绍</div>
-                </a>
-            </li>
+        <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module" style="margin-bottom: 7px;">
 
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <a href="{:url('lesson/lessonList',['camp_id'=>$campInfo['id']])}">
-                    <span class="mui-icon mui-icon-chatbubble"></span>
-                    <div class="mui-media-body">课程列表</div>
-                </a>
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-
-            {gt name="power" value="1"}
-                <a href="{:url('grade/gradeListOfCamp',['camp_id'=>$campInfo['id']])}">
-            {else /}
-                <a href="{:url('grade/gradeList',['camp_id'=>$campInfo['id']])}">
-            {/gt}
-                    <span class="mui-icon mui-icon-search"></span>
-                    <div class="mui-media-body">班级</div>
-                </a>
-            </li>
-     
-           {gt name="power" value="1"} 
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                 <a href="{:url('grade/gradeListWeek',['camp_id'=>$campInfo['id']])}">
-                    <span class="mui-icon mui-icon-location"></span>
+                    <span class="icon iconfont icon-training-record"></span>
                     <div class="mui-media-body">录课</div>
                 </a>
             </li>
-            
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <a href="{:url('student/studentListOfCamp',['camp_id'=>$campInfo['id'],'type'=>5])}">
-                    <span class="mui-icon mui-icon-phone"></span>
-                    <div class="mui-media-body">体验生管理</div>
-                </a>
-            </li>
-             <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+             <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                 <a href="{:url('schedule/scheduleList',['camp_id'=>$campInfo['id']])}">
-                    <span class="mui-icon mui-icon-location"></span>
-                    <div class="mui-media-body">课时管理</div>
+                    <span class="icon iconfont icon-training-classtime"></span>
+                    <div class="mui-media-body">课时</div>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <a href="{:url('lesson/lessonListOfCamp',['camp_id'=>$campInfo['id']])}">
-                    <span class="mui-icon mui-icon-chatbubble"></span>
-                    <div class="mui-media-body">课程管理</div>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('grade/gradeListOfCamp',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-training-class"></span>
+                    <div class="mui-media-body">班级</div>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <a href="{:url('bill/billList',['camp_id'=>$campInfo['id']])}">
-                    <span class="mui-icon mui-icon-info"></span>
-                    <div class="mui-media-body">订单管理</div>
-                </a>
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <a href="{:url('plan/planList',['camp_id'=>$campInfo['id']])}">
-                    <span class="mui-icon mui-icon-info"></span>
-                    <div class="mui-media-body">教案管理</div>
-                </a>
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <a href="{:url('student/studentListOfCamp',['camp_id'=>$campInfo['id'],'type'=>1])}">
-                    <span class="mui-icon mui-icon-phone"></span>
-                    <div class="mui-media-body">学员管理</div>
-                </a>
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <a href="{:url('camp/coachlist',['campid'=>$campInfo['id']])}">
-                    <span class="mui-icon mui-icon-more"></span>
-                    <div class="mui-media-body">教练列表</div>
-                </a>
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <a href="{:url('salaryin/salaryOfCamp',['camp_id'=>$campInfo['id']])}">
-                    <span class="mui-icon mui-icon-more"></span>
-                    <div class="mui-media-body">工资列表</div>
-                </a>
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <a href="{:url('court/courtList',['camp_id'=>$campInfo['id']])}">
-                    <span class="mui-icon mui-icon-more"></span>
-                    <div class="mui-media-body">场地管理</div>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('event/eventListOfCamp',['organization_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-training-activity"></span>
+                    <div class="mui-media-body">活动</div>
                 </a>
             </li>
             
-            {/gt}
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="#">
+                    <span class="icon iconfont icon-training-game"></span>
+                    <div class="mui-media-body">比赛</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('lesson/lessonListOfCamp',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-training-course"></span>
+                    <div class="mui-media-body">课程</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('bill/billList')}?camp_id={$campInfo['id']}">
+                    <span class="icon iconfont icon-training-Order"></span>
+                    <div class="mui-media-body">订单</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('plan/planList',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-training-case"></span>
+                    <div class="mui-media-body">教案</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('camp/courtListOfCamp',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-training-site"></span>
+                    <div class="mui-media-body">场地</div>
+                </a>
+            </li>
+
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('student/studentListOfCamp',['camp_id'=>$campInfo['id'],'type'=>2])}">
+                    <span class="icon iconfont icon-training-Experience"></span>
+                    <div class="mui-media-body">体验生</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('student/studentListOfCamp',['camp_id'=>$campInfo['id'],'type'=>1])}">
+                    <span class="icon iconfont icon-training-Students"></span>
+                    <div class="mui-media-body">学员</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('camp/coachListOfCamp',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-training-coach"></span>
+                    <div class="mui-media-body">教练</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('camp/teachlistofcamp', ['camp_id' => $campInfo['id']])}">
+                    <span class="icon iconfont icon-training-coach"></span>
+                    <div class="mui-media-body">教务</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('salaryin/salaryOfCamp',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-training-wage"></span>
+                    <div class="mui-media-body">工资</div>
+                </a>
+            </li>
+
+        </ul>
+
+        <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module" style="margin-bottom: 7px;">
+            {egt name="power" value="3"}
+            <!--管理员、营主可操作-->
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('financial/statistics',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-training-finance"></span>
+                    <div class="mui-media-body">财务</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('schedule/giftrecord',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-training-giveaway"></span>
+                    <div class="mui-media-body">赠送课时</div>
+                </a>
+            </li>
+
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('schedule/giftlistOfCamp',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-training-management"></span>
+                    <div class="mui-media-body">赠课管理</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('recruitment/recruitmentListOfCamp',['organization_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-home-recruit"></span>
+                    <div class="mui-media-body">招募</div>
+                </a>
+            </li>
+            {/egt}
+
             {eq name="power" value="4"} 
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                 <a href="{:url('camp/campSetting',['camp_id'=>$campInfo['id']])}">
-                    <span class="mui-icon mui-icon-more"></span>
+                    <span class="icon iconfont icon-training-Set"></span>
                     <div class="mui-media-body">训练营设置</div>
                 </a>
             </li>
             {/eq}
+
+
+        </ul>
+
+        <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module">
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('camp/campInfo',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-training-camp"></span>
+                    <div class="mui-media-body">训练营介绍</div>
+                </a>
+            </li>
+
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="{:url('lesson/lessonList')}?camp_id={$campInfo['id']}&camp_name={$campInfo['camp']}">
+                    <span class="icon iconfont icon-training-List"></span>
+                    <div class="mui-media-body">课程列表</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                <a href="#">
+                    <span class="icon iconfont icon-training-EventsList"></span>
+                    <div class="mui-media-body">活动列表</div>
+                </a>
+            </li>
         </ul>
 
     </div>

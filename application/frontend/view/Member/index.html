@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>会员中心</title>
+    <title>个人中心</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -15,6 +15,37 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--自定义多色图标icon.js-->
+    <script src="/static/frontend/iconfont/iconfont.js"></script>
+    <style type="text/css">
+        .coloricon {
+            width: 2.4em;
+            height: 2.4em;
+            vertical-align: -0.7em;
+            fill: currentColor;
+            overflow: hidden;
+        }
+        .goConfirm .mui-media-body {
+            height: 24px !important;
+            line-height: 24px !important;
+        }
+        .listli span{
+            font-size: 12px;
+            color:#999;
+        }
+        .shenghe span{
+            border-radius: 5px;
+            background-color:#62a60a;
+            width: auto !important;
+            color: #FFF;
+            font-size: 10px;
+            padding: 0px 6px;
+
+        }
+        .shenghe span.wSheng{
+            background-color:#F90 !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -23,62 +54,70 @@
 
     <div id="tabbar" class="mui-control-content mui-active coach">
         <!--设置页面-->
-        <div class="member-setup goConfirm" data-href="{:url('member/memberSetup')}"><span class="icon iconfont icon-hotbasketball-Traini"></span></div>
+        <div class="member-setup goConfirm" data-href="{:url('member/memberSetup')}"><span class="icon iconfont icon-personal-Setup"></span></div>
         <!--操作模块-->
         <div class="coach-info">
             <ul class="mui-table-view mui-grid-view mui-grid-9">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                     <a href="#">
-                        <span class="num">{$memberInfo['hp']}</span>
-                        <div class="mui-media-body">阶衔</div>
+                        <span class="num">{$memberInfo['level']}</span>
+                        <div class="f12">阶衔</div>
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                     <a href="#">
-                        <span class="mui-icon mui-icon-contact"></span>
-                        <div class="mui-media-body">{$memberInfo['member']}</div>
+                        <img class="coachicon" src="{$memberInfo['avatar']}">
+                        <div class="f16">{$memberInfo['member']}</div>
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                     <a href="#">
                         <span class="num">{$memberInfo['level']}</span>
-                        <div class="mui-media-body">等级</div>
+                        <div class="f12">等级</div>
                     </a>
                 </li>
             </ul>
-            <p class="coachid">ID:{$memberInfo['id']}</p>
+            <p class="coachid f12">ID:{$memberInfo['hot_id']}</p>
         </div>
         <!--图文导航-->
         <div class="nav-list mb">
-            <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+            <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ptb4">
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli wd25">
                     <div class="goConfirm" data-href="{:url('score/myScore',['member_id'=>$memberInfo['id']])}">
-                        <span class="icon iconfont icon-hotpc-member"></span>
-                        <div class="mui-media-body">我的积分</div>
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-personal-integral"></use>
+                        </svg>
+                        <div class="mui-media-body mb">我的积分</div>
                     </div>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli wd25">
                     <div class="goConfirm" data-href="{:url('member/myWallet',['member_id'=>$memberInfo['id']])}">
-                        <span class="icon iconfont icon-hotbasketball-wage"></span>
-                        <div class="mui-media-body">我的余额</div>
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-personal-balance"></use>
+                        </svg>
+                        <div class="mui-media-body mb">我的余额</div>
                     </div>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli wd25">
-                    <div class="goConfirm" data-href="{:url('bill/billList',['member_id'=>$memberInfo['id']])}">
-                        <span class="icon iconfont icon-hotpc-Mall"></span>
-                        <div class="mui-media-body">我的订单</div>
+                    <div class="goConfirm" data-href="{:url('bill/billList')}?member_id={$memberInfo['id']}">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-personal-order"></use>
+                        </svg>
+                        <div class="mui-media-body mb">我的订单</div>
                     </div>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli wd25">
-                    <div class="goConfirm" data-href="{:url('member/myGroup',['member_id'=>$memberInfo['id']])}">
-                        <span class="icon iconfont icon-hotpc-Teamsteward"></span>
-                        <div class="mui-media-body">我的组织</div>
+                    <div class="goConfirm" data-href="{:url('member/myGroup',['hot_id'=>$memberInfo['hot_id']])}">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-personal-team"></use>
+                        </svg>
+                        <div class="mui-media-body mb">我的组织</div>
                     </div>
                 </li>
             </ul>
         </div>
         <!--个人信息-->
-        <ul class="mui-table-view list detalis-list border-b">
+        <ul class="mui-table-view list detalis-list">
             <li class="mui-table-view-cell listli listinitial">
                 <div class="mui-navigate-right goConfirm" data-href="{:url('member/memberInfo')}">
                     个人资料
@@ -97,15 +136,15 @@
             {gt name="memberInfo.id" value="0"}
             <!--教练-->
             {if condition="$coach"}
-            <li class="mui-table-view-cell listli listinitial ">
-                <div class="mui-navigate-right goConfirm" data-href="{:url('coach/updatecoach')}">教练员认证 <span>[{$coach.status}]</span></div>
+            <li class="mui-table-view-cell listli listinitial shenghe">
+                <div class="mui-navigate-right goConfirm" data-href="{:url('coach/updatecoach')}">教练员认证 <span class="{if $coach.status=='已审核'}ySheng{/if}">{$coach.status}</span></div>
             </li>
             {/if}
 
             <!--创建训练营-->
             {if condition="$camp"}
-            <li class="mui-table-view-cell listli listinitial ">
-                <div class="mui-navigate-right goConfirm" data-href="{:url('camp/campsetting', ['camp_id' => $camp['id']])}">训练营认证 <span>[{$camp.status}]</span></div>
+            <li class="mui-table-view-cell listli listinitial shenghe">
+                <div class="mui-navigate-right goConfirm" data-href="{:url('camp/campsetting', ['camp_id' => $camp['id']])}">训练营认证 <span class="{if $camp.status=='已审核'}ySheng{/if}">{$camp.status}</span></div>
             </li>
             {/if}
             {/gt}
@@ -113,11 +152,11 @@
 
 
         <div class="page-header">
-            <span class="course"><b>训练营身份</b></span>
+            <span class="course"><b>查看身份信息</b></span>
         </div>
         <ul class="mui-table-view list detalis-list mt55">
             <li class="mui-table-view-cell listli listinitial ">
-                <div class="mui-navigate-right goConfirm" data-href="{:url('member/myCamp',['type'=>5])}">
+                <div class="mui-navigate-right goConfirm" data-href="{:url('member/myCamp',['type'=>-1])}">
                     粉丝
                 </div>
             </li>
@@ -169,8 +208,11 @@
         $(".goConfirm").click(function () {
             var goUrl = $(this).attr("data-href");
             if ( "{$memberInfo.id}"<=0) {
-                var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
-                mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
+                mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function(e) {
+                    if (e.index===1) {
+                        window.location.href="{$fasturl}";
+                    }
+                });
             }else{
                 window.top.location.href = goUrl;
             }

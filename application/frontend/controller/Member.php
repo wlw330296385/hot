@@ -22,10 +22,25 @@ class Member extends Base{
 
         $hasCoach = $this->MemberService->hasCoach($this->memberInfo['id']);
         $hasCamp  = $this->MemberService->hasCamp($this->memberInfo['id']);
-
         $this->assign('coach', $hasCoach);
         $this->assign('camp', $hasCamp);
         return view('Member/index');
+    }
+
+    public function followlist() {
+	    return view('Member/followlist');
+    }
+
+    // 我的班级列表
+    public function myGrade() {
+        $member_id = $this->memberInfo['id'];
+        return view('Member/myGrade');
+    }
+
+    // 教练邀请列表
+    public function invitation() {
+        $member_id = $this->memberInfo['id'];
+        return view('Member/invitation');
     }
 
     // 会员设置页面
@@ -69,37 +84,18 @@ class Member extends Base{
             case 'schedule':
                 $studentAlbumList = [];
                 $coachAlbumList =[];
-                // $coachScheduleIDs = db('schedule_member')
-                //                     ->where(['type'=>1,'user_id'=>$coach_id])
-                //                     ->column('schedule_id');
-                // if($coachScheduleIDs){
-                //     $coachAlbumList = db('schedule_media')
-                //                 ->where('schedule_id','in',$coachScheduleIDs)
-                //                 ->limit('10')
-                //                 ->select();
-                // }
-                
-                // $studentScheduleIDs = db('schedule_member')
-                //                     ->where(['type'=>1])
-                //                     ->where('user_id','IN',$student_id)
-                //                     ->column('schedule_id');
-                // if($studentScheduleIDs){
-                //     $studentAlbumList = db('schedule_media')
-                //                 // ->field("*,(create_time,'%Y%m') months")
-                //                 ->where(['schedule_id','IN',$studentScheduleIDs])
-                //                 ->limit('10')
-                //                 ->select();
-                // }                    
+                   
                 $coachAlbumList = Db::view('schedule_member','schedule_id,schedule')
                                 ->view('schedule_media','url,create_time','schedule_member.schedule_id = schedule_media.schedule_id')
                                 ->where(['schedule_member.type'=>1,'schedule_member.user_id'=>$coach_id])
+                                ->order('schedule_member.id desc')
                                 ->select();
                  $studentAlbumList = Db::view('schedule_member','schedule_id,schedule')    
                                    ->view('schedule_media','url,create_time','schedule_member.schedule_id = schedule_media.schedule_id')
                                     ->where(['schedule_member.type'=>0])
                                     ->where('schedule_member.user_id','IN',$student_id)
-                                    ->select();            
-                // dump($coachAlbumList);die;                
+                                    ->order('schedule_member.id desc')
+                                    ->select();                  
                 //合并数组
                 $albumList = array_merge($studentAlbumList,$coachAlbumList);
                 break;
@@ -130,13 +126,8 @@ class Member extends Base{
 
     // 我的组织
     public function myGroup(){
-        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
-        $memberInfo = db('member')->find(['id'=>$member_id]);
-        $myGroupList = $this->MemberService->getMyGroup($member_id);
-        // dump($myGroupList);die;
-        $count = count($myGroupList,1);
-        $this->assign('memberInfo',$memberInfo);
-        $this->assign('count',$count);
+        $hot_id = input('param.hot_id')?input('param.hot_id'):$this->memberInfo['hot_id'];
+        $myGroupList = $this->MemberService->getMyGroup(['hot_id'=>$hot_id]);
         $this->assign('myGroupList',$myGroupList);
         return view('Member/myGroup');
     }
@@ -209,30 +200,27 @@ class Member extends Base{
 
     // 我名下的训练营
     public function myCamp(){
-        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
-        $type = input('param.type')?input('param.type'):4;
-        if($type){
-            $campList = db('camp_member')->where(['member_id'=>$member_id,'type'=>$type,'status'=>1])->select();
-            //dump($campList);
-
-            switch($type) {
-                case '2' : {
-                    $isCoach = $this->MemberService->hasCoach($this->memberInfo['id']);
-                    $this->assign('iscoach', $isCoach);
-                    break;
-                }
-                case '4' : {
-                    $hasCamp = $this->MemberService->hasCamp($this->memberInfo['id']);
-                    //dump($hasCamp);
-                    $this->assign('iscamp', $hasCamp);
-                    break;
-                }
-
+        $member_id = $this->memberInfo['id'];
+        $type = input('param.type', 4);
+        $campList = db('camp_member')->where(['member_id' => $member_id, 'type' => $type, 'status' => 1])->select();
+        switch ($type) {
+            case "1": {
+                $hasStudent = db('student')->where(['member_id' => $member_id])->select();
+                $this->assign('hasStudent', $hasStudent);
+                break;
             }
-
-        }else{
-            $campList = db('camp')->where(['member_id'=>$member_id,'status'=>1])->select();
+            case "2": {
+                $hasCoach = $this->MemberService->hasCoach($this->memberInfo['id']);
+                $this->assign('hasCoach', $hasCoach);
+                break;
+            }
+            case "4": {
+                $hasCamp = $this->MemberService->hasCamp($this->memberInfo['id']);
+                $this->assign('hasCamp', $hasCamp);
+                break;
+            }
         }
+
         $this->assign('type',$type);
         $this->assign('campList',$campList);
         return view('Member/myCamp');
@@ -253,6 +241,26 @@ class Member extends Base{
         return view('Member/myShare');
     }
 
+    // 用户协议说明页面
+    public function userAgreement(){
+        return view('Member/userAgreement');
+    }
 
+    public function bandWx(){
+        $hot_id = input('hot_id');
+        // 获取用户信息
+        $member = db('member')->field('id,hot_id,member,telephone,openid')->where(['openid'=>session('memberInfo.openid')])->find();
+        if(!$member){
+            $memebr  = [
+                'hot_id'=>'',
+                'id'=>0,
+                'member'=>'',
+                'telephone'=>'',
+                'openid' => 0
+            ];
+        }
+        $this->assign('member',$member);
+        return view('Member/bandWx');
+    }
 
 }

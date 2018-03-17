@@ -7,6 +7,9 @@ use think\Db;
 use app\model\Lesson as LessonModel;
 
 class Lesson extends Backend {
+    public function _initialize(){
+        parent::_initialize();
+    }
     // 列表
     public function index() {
         $map = [];
@@ -28,8 +31,7 @@ class Lesson extends Backend {
 
         $list = LessonModel::where($map)->paginate(15);
         
-        $breadcrumb = ['title' => '课程管理', 'ptitle' => '训练营'];
-        $this->assign( 'breadcrumb', $breadcrumb );
+        
         $this->assign('list', $list);
         return $this->fetch();
     }
@@ -89,4 +91,110 @@ class Lesson extends Backend {
         }
     }
 
+
+
+    // 购买课程
+    public function buyLesson(){
+        $LessonService = new LessonService;
+        $lessonList = $LessonService->getLessonList();
+        $breadcrumb = ['ptitle' => '课程管理', 'title' => '帮购买课程'];
+        $this->assign('breadcrumb',$breadcrumb);
+        $member_id = input('param.member_id');
+        $memebrInfo = db('member')->where(['id'=>$member_id])->find();
+        if(!$memebrInfo){
+            echo '找不到用户信息';die;
+        }
+        // 学生列表
+        $StudentModel = new \app\model\Student;
+        $studentList = $StudentModel->where(['member_id'=>$member_id])->select();
+
+        //训练营列表
+        $CampModel = new \app\model\Camp;
+        $campList = $CampModel->select();
+        if(request()->isPost()){
+            try{
+                $postData = input('post.');
+                $lessonInfo = db('lesson')->where(['id'=>$postData['lesson_id']])->find();
+
+                // 生成订单号
+                $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
+                $billInfo = [
+                    '__token__' => $postData['__token__'],
+                    'bill_order'=>$billOrder,
+                    'goods'=>$lessonInfo['lesson'],
+                    'goods_id'=>$lessonInfo['id'],
+                    'goods_des'=>"{$studentList[$postData['studentIndex']]['student']}购买{$lessonInfo['lesson']}",
+                    'camp_id'=>$lessonInfo['camp_id'],
+                    'camp'=>$lessonInfo['camp'],
+                    'price'=>$lessonInfo['cost'],
+                    'score_pay'=>$lessonInfo['score'],
+                    'goods_type'=>1,
+                    'pay_type'=>"system",
+                    'member'=>$memebrInfo['member'],
+                    'member_id'=>$memebrInfo['id'],
+                    'student'=>$studentList[$postData['studentIndex']]['student'],
+                    'student_id'=>$studentList[$postData['studentIndex']]['id'],
+                    'total'=>$postData['total'],
+                    'system_remarks'=>"system:{".$this->admin['username']."},id:{".$this->admin['id']."}",
+                    'bill_type'=>1
+                ];
+                $BillService = new \app\service\BillService;
+                $result = $BillService->createBill($billInfo);
+                if($result['code']==200){
+                    $res = $BillService->pay(['pay_time'=>time(),'expire'=>0,'balance_pay'=>$lessonInfo['cost']*$postData['total'],'status'=>1,'is_pay'=>1],['bill_order'=>$billOrder]);
+                    if($res){
+                        echo '<script type="text/javascript">alert("'.$result["msg"].'")</script>';
+                        // return json(['code'=>100,'msg'=>'操作成功']);
+                    }else{
+                        echo "<script type='text/javascript'>alert('后续操作有bug,请联系woo')</script>";
+                        // return json(['code'=>100,'msg'=>'后续操作有bug,请联系woo']);
+                    }
+                    
+                }else{
+                    return json(['code'=>100,'msg'=>'订单生成失败']);
+                }
+            }catch (Exception $e){
+                return json(['code'=>100,'msg'=>$e->getMessage()]);
+            }
+            
+        }
+        
+        $camp_id = cookie('camp_id')?cookie('camp_id'):1;
+        $this->assign('camp_id',$camp_id);
+        $this->assign('campList',$campList);
+        $this->assign('studentList',$studentList);
+        return $this->fetch('lesson/buyLesson');
+    }
+
+
+    // 编辑课程
+    public function edit(){
+        $lesson_id = input('param.lesson_id');
+        $LessonService = new \app\service\LessonService;
+        if(request()->isPost()){
+            $data = input('post.');
+            $Lesson = new \app\model\Lesson;
+            $result =$Lesson->save($data,['id'=>$lesson_id]);
+            // echo db('lesson')->getlastsql();die;
+            if ($result) {
+                // $this->success('成功','lesson/index');
+                echo "<script>alert('操作成功');window.location.href='".url('lesson/index')."';</script>";
+            }else{
+                // $this->error('失败');
+                echo "<script>alert('操作失败')</script>";
+            }
+        }else{
+
+            $lessonInfo = $LessonService->getLessonInfo(['id'=>$lesson_id]);
+
+            // 课程分类
+            $GradeCategoryService = new \app\service\GradeCategoryService;
+            $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
+
+            // dump($gradeCategoryList);die;
+            $this->assign('lessonInfo',$lessonInfo);
+            $this->assign('gradeCategoryList',$gradeCategoryList);
+            return view('lesson/edit');
+        }
+    }
 }

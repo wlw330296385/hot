@@ -27,16 +27,23 @@ class SalaryInService {
     }
 
 
-    // 获取订单列表
-    public function getSalaryInList($map,$page = 1 ,$paginate = 10 ,$order = 'id DESC'){
-        $res = $this->SalaryIn->where($map)->order('id DESC')->page($page,$paginate)->select();
+    // 获取工资列表
+    public function getSalaryInList($map,$order = 'id DESC'){
+        $res = $this->SalaryIn->where($map)->order($order)->select();
         if($res){
+            // 数据集转换为数组
             $result = $res->toArray();
+            // 数据字段内容格式转换
+            foreach ($result as $k => $val) {
+                // 课时上课时间(schedule_time)格式化
+                if ($val['schedule_time']) {
+                    $result[$k]['schedule_time'] = date('Y-m-d H:i', $val['schedule_time']);
+                }
+            }
             return $result;
         }else{
             return $res;
         }
-        
     }
 
     /**
@@ -214,7 +221,7 @@ class SalaryInService {
     }
 
     //获取教学分成列表
-    public function getSalaryList($startTime,$endTime,$map,$page = 1,$paginate = 10){
+    /*public function getSalaryList($startTime,$endTime,$map,$page = 1,$paginate = 10){
         $res = $this->SalaryIn
                     ->where($map)
                     ->where(['create_time'=>['between',[$startTime,$endTime]]])
@@ -226,9 +233,7 @@ class SalaryInService {
         }else{
             return $res;
         }
-                    
-        
-    }
+    }*/
 
     // 获取销售提成列表
     public function getGoodsSellList($startTime,$endTime,$member_id = 0,$page = 1,$paginate = 10){
@@ -261,20 +266,10 @@ class SalaryInService {
     }
 
 
-
-    public function saveSalaryin(){
-        
-    }
-
-
     // 统计工资总额
     public function countSalaryin($map){
-            $result = $this->SalaryIn
-                    ->where($map)
-                    ->sum('salary');
+        $result = $this->SalaryIn->where($map)->sum('salary+push_salary');
         return $result?$result:0;
     }
-
-
 
 }

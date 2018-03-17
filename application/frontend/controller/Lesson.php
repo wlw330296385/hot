@@ -3,6 +3,7 @@ namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\LessonService;
 use app\service\GradeService;
+use app\service\WechatService;
 
 class Lesson extends Base{
 	protected $LessonService;
@@ -32,8 +33,12 @@ class Lesson extends Base{
     public function lessonInfo(){
     	$lesson_id = input('param.lesson_id');
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
-        $this->assign('lessonInfoJson',json_encode($lessonInfo));
+        $lessonInfo['cover'] = request()->root(true) . $lessonInfo['cover'];
+        $isPower = $this->LessonService->isPower($lessonInfo['camp_id'],$this->memberInfo['id']);
+
+        $this->assign('isPower',$isPower);
         $this->assign('lessonInfo',$lessonInfo);
+        $this->assign('memberInfo', $this->memberInfo);
         return view('Lesson/lessonInfo');
     }
 
@@ -44,7 +49,7 @@ class Lesson extends Base{
         if($camp_id){
             $map['camp_id'] = $camp_id;
         }
-        $lessonList = $this->LessonService->getLessonPage($map);
+        $lessonList = $this->LessonService->getLessonList($map);
         // // 课程类型
         $GradeService = new \app\service\GradeService;
         $gradecateList = $GradeService->getGradeCategory();
@@ -53,50 +58,6 @@ class Lesson extends Base{
         $this->assign('lessonList',$lessonList);
         return view('Lesson/lessonList');
     }
-
-    //编辑课程
-    public function updateLesson(){
-    	//训练营主教练
-    	$camp_id = input('param.camp_id');
-        $lesson_id = input('param.lesson_id');
-        $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
-        if($is_power<2){
-            $this->error('您没有权限');
-        }
-        $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
-        
-        // 教练列表
-    	$staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
-
-    	$gradeCategoryList = $this->GradeService->getGradeCategory(1);
-        $courtService = new \app\service\CourtService;
-        $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
-        $this->assign('lessonInfo',$lessonInfo);
-        $this->assign('camp_id',$camp_id);
-    	$this->assign('gradeCategoryList',$gradeCategoryList);
-        $this->assign('courtList',$courtList);
-    	$this->assign('staffList',$staffList);
-    	return view('Lesson/updateLesson');
-    }
-
-    // 添加课程|发布课程
-    public function createLesson(){
-        //训练营主教练
-        $camp_id = input('param.camp_id');
-        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
-        // 教练列表
-        $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
-        $gradeCategoryList = $this->GradeService->getGradeCategory(1);
-        $courtService = new \app\service\CourtService;
-        $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
-        $this->assign('campInfo',$campInfo);
-        $this->assign('gradeCategoryList',$gradeCategoryList);
-        $this->assign('courtList',$courtList);
-        $this->assign('staffList',$staffList);
-        return view('Lesson/createLesson');
-    }
-
-
 
     // 购买课程
     // public function buyLesson(){
@@ -128,18 +89,20 @@ class Lesson extends Base{
     //     return view('Lesson/comfirmBill');
     // }
 
+
     // 课程订单购买页面
     public function comfirmBill(){
         $lesson_id = input('param.lesson_id');
         $total = input('param.total');
         if(!$lesson_id){
-            $this->error('参数错误');
+            $this->error('缺少课程id');
         }
         
         if(!$total){
-            $this->error('参数错误');
+            $this->error('缺少购买总数');
         }
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+
         // 生成订单号
         $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
         $jsonBillInfo = [
@@ -151,15 +114,19 @@ class Lesson extends Base{
             'score_pay'=>$lessonInfo['score'],
             'goods_type'=>1,
             'pay_type'=>'wxpay',
-            'type'=>1
         ];
         $amount = $total*$lessonInfo['cost'];
+        // $amount = 0.01;
         $WechatJsPayService = new \app\service\WechatJsPayService;
         $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
         
         $jsApiParameters = $result['data']['jsApiParameters'];
+        $shareurl = request()->url(true);
+        $wechatS = new WechatService();
+        $jsapi = $wechatS->jsapi($shareurl);
 
         $this->assign('jsApiParameters',$jsApiParameters);
+        $this->assign('jsapi', $jsapi);
         $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billOrder',$billOrder);
@@ -172,19 +139,14 @@ class Lesson extends Base{
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         // 生成订单号
         $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
-        // 生成微信参数
-        $jsonBillInfo = [
-            'goods'=>$lessonInfo['lesson'],
-            'goods_id'=>$lessonInfo['id'],
+        $jsonLessonInfo = [
+            'camp'  => $lessonInfo['camp'],
             'camp_id'=>$lessonInfo['camp_id'],
-            'camp'=>$lessonInfo['camp'],
-            'price'=>$lessonInfo['cost'],
-            'score_pay'=>0,
-            'goods_type'=>1,
-            'pay_type'=>'',
-            'type'=>2
+            'lesson'=>$lessonInfo['lesson'],
+            'lesson_id' =>$lessonInfo['id'],
+            'location' =>$lessonInfo['location'],
         ];
-        $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
+        $this->assign('jsonLessonInfo',json_encode($jsonLessonInfo));
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billOrder',$billOrder);
         return view('Lesson/bookBill');
@@ -205,9 +167,16 @@ class Lesson extends Base{
             $this->error('您没有权限');
         }
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+        // 私密课程 获取指定会员列表
+        $assignMemberList = [];
+        if ($lessonInfo['isprivate']) {
+            $assignMemberList = $this->LessonService->getAssignMember($lessonInfo['id']);
+        }
+
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('power',$power);
-        return view('Lesson/LessonInfoOfCamp');
+        $this->assign('assignMemberList', $assignMemberList);
+        return view('Lesson/lessonInfoOfCamp');
     }
 
 
@@ -226,6 +195,60 @@ class Lesson extends Base{
         return view('Lesson/lessonListOfCamp');
     }
 
+   //编辑课程
+    public function updateLesson(){
+    	//训练营主教练
+    	$camp_id = input('param.camp_id');
+        $lesson_id = input('param.lesson_id');
+        $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
+        if($is_power<2){
+            $this->error('您没有权限');
+        }
+        $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+        // 教练列表
+    	$staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
+        // 课程分类
+        $GradeCategoryService = new \app\service\GradeCategoryService;
+        $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
+        
+        $courtService = new \app\service\CourtService;
+        $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
+        // 私密课程 获取指定会员列表
+        $assignMemberList = [];
+        $assignMemberCount = 0;
+        if ($lessonInfo['isprivate']) {
+            $assignMemberList = $this->LessonService->getAssignMember($lessonInfo['id']);
+            $assignMemberCount = count($assignMemberList);
+        }
+
+        $this->assign('lessonInfo',$lessonInfo);
+        $this->assign('camp_id',$camp_id);
+    	$this->assign('gradeCategoryList',$gradeCategoryList);
+        $this->assign('courtList',$courtList);
+    	$this->assign('staffList',$staffList);
+    	$this->assign('assignMemberList', $assignMemberList);
+    	$this->assign('assignMemberCount', $assignMemberCount);
+    	return view('Lesson/updateLesson');
+    }
+
+    // 添加课程|发布课程
+    public function createLesson(){
+        //训练营主教练
+        $camp_id = input('param.camp_id');
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+        // 教练列表
+        $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
+        // 课程分类
+        $GradeCategoryService = new \app\service\GradeCategoryService;
+        $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
+        $courtService = new \app\service\CourtService;
+        $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
+        $this->assign('campInfo',$campInfo);
+        $this->assign('gradeCategoryList',$gradeCategoryList);
+        $this->assign('courtList',$courtList);
+        $this->assign('staffList',$staffList);
+        return view('Lesson/createLesson');
+    }
 
 
 }

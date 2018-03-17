@@ -3,47 +3,82 @@ namespace app\service;
 use app\model\Grade;
 use think\Db;
 use app\common\GradeVal;
+use app\model\GradeMember;
 class GradeService{
 
     private $GradeModel;
 
     public function __construct(){
         $this->GradeModel = new Grade;
+
     }
 
 
     // 班级列表
     public function getGradeList($map=[],$page = 1, $order='',$p=10) {
-        $result = [];
         $res = Grade::where($map)->order($order)->page($page,$p)->select();
-        if($res){           
-            $res = $res->toArray();
-            $result = $res;
+        // echo Grade::getlastsql();
+        if($res){   
+            $result = $res->toArray();
         }
-        return $result;
+        return $res;
     }
 
     // 班级分页
-    public function getGradePage($map=[],$page = 1, $order='', $paginate=10) {
-        $result =  Grade::where($map)->order($order)->page($page,$paginate)->select();
-        if($result){           
-            $result = $result->toArray();
+    public function getGradeListByPage($map , $order='', $paginate=10) {
+        $result =  $this->GradeModel
+                // ->with('gradeMember')
+                ->where($map)
+                ->order($order)
+                ->paginate($paginate);
+                // echo $this->GradeModel->getlastsql();die;
+
+        if($result){
+            $res = $result->toArray();
+            return $res;
+        }else{
+            return $result;
         }
-        return $result;
+        
     }
+
+    // 班级分页
+    public function getGradeListNoPage($map , $order='', $paginate=10) {
+        $result =  $this->GradeModel
+                // ->with('gradeMember')
+                ->where($map)
+                ->order($order)
+                ->select();
+
+        if($result){
+            $res = $result->toArray();
+            return $res;
+        }else{
+            return $result;
+        }
+        
+    }
+
 
     // 一个班级
     public function getGradeInfo($map=[]) {
         $res = $this->GradeModel->where($map)->find();
         if($res){           
             $result = $res->toArray();
+            $result['status_num'] = $res->getData('status');
             if($result['assistant']){
                 $assis = unserialize($result['assistant']);
                 $result['assistants'] = implode(',', $assis);
             }else{
                  $result['assistants'] = '';
             }
-            
+
+            if($result['assistant_id']){
+                $assis = unserialize($result['assistant_id']);
+                $result['assistant_ids'] = implode(',', $assis);
+            }else{
+                 $result['assistant_ids'] = '';
+            }
             return $result;
         }
         return $res;
@@ -71,36 +106,65 @@ class GradeService{
     public function createGrade($data){
         $validate = validate('GradeVal');
         if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+            return ['msg' => $validate->getError(), 'code' => 100];
         }
-        $result = $this->GradeModel->save($data);
+
+        if($data['assistants']){
+                $assistan_list = explode(',', $data['assistants']);
+                $seria = serialize($assistan_list);
+                $data['assistant'] = $seria;
+            }
+        if($data['assistant_ids']){
+            $assistan_list = explode(',', $data['assistant_ids']);
+            $seria = serialize($assistan_list);
+            $data['assistant_id'] = $seria;
+        }
+        $result = $this->GradeModel->allowField(true)->save($data);
          if (!$result) {
-            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
+            return [ 'msg' => __lang('MSG_400'), 'code' => 100 ];
         }else{
-             return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $this->GradeModel->id];
+            db('camp')->where(['id'=>$data['camp_id']])->setInc('total_grade');
+            return [ 'msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->GradeModel->id];
         }
     }
 
     // 编辑班级
     public function updateGrade($data,$id){
         $validate = validate('GradeVal');
-        if(!$validate->check($data)){
-            return ['msg' => $validate->getError(), 'code' => 200];
+        if(!$validate->scene('edit')->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 100];
+        }
+        if($data['assistants']){
+                $assistan_list = explode(',', $data['assistants']);
+                $seria = serialize($assistan_list);
+                $data['assistant'] = $seria;
+            }
+        if($data['assistant_ids']){
+            $assistan_list = explode(',', $data['assistant_ids']);
+            $seria = serialize($assistan_list);
+            $data['assistant_id'] = $seria;
         }
         $result = $this->GradeModel->save($data,['id'=>$id]);
          if (!$result) {
-            return [ 'msg' => __lang('MSG_201_DBNOTFOUND'), 'code' => 200 ];
+            return [ 'msg' => __lang('MSG_400'), 'code' =>100 ];
         }else{
-             return [ 'msg' => __lang('MSG_101_SUCCESS'), 'code' => 100, 'data' => $result];
+             return [ 'msg' => __lang('MSG_200'), 'code' => 200, 'data' => $result];
         }
     }
    
 
 
-    // 获取学生列表
-     public function getStudentList($grade_id,$page = 1,$paginate = 10){
-        $result = db('grade_member')->where(['grade_id'=>$grade_id,'type'=>1,'status'=>1])->page($page,$paginate)->select();
-        return $result;
+     // 获取学生列表
+     public function getStudentList($map,$page = 1,$paginate = 10){
+        $result = GradeMember::where($map)
+                // ->page($page,$paginate)
+                ->select();
+        if($result){
+            $res = $result->toArray();
+            return $res;
+        }else{
+            return $result;
+        }
     }
 
 
@@ -117,5 +181,20 @@ class GradeService{
         return $is_power?$is_power:0;
     
     }
+
+    // 修改班级status字段 2017/10/2
+    public function updateGradeStatus($gradeid, $status=0) {
+        $model = new Grade();
+        $result = $model->update(['id' => $gradeid, 'status' => $status]);
+//        dump($result);
+        return $result->toArray();
+    }
+
+    // (软)删除班级 2017/10/2
+    public function delGrade($id) {
+        $result = Grade::destroy($id);
+        return $result;
+    }
+
 
 }

@@ -14,7 +14,7 @@ class Base extends Controller{
 
     public function _initialize() {
         $this->memberInfo = session('memberInfo','','think');
-        $this->gettoken();
+        // $this->gettoken();
     }
 
     public function gettoken(){
@@ -35,7 +35,7 @@ class Base extends Controller{
     }
 
     public function checklogin(){
-        return json(['code'=>400,'msg'=>'请重新登录']);
+        return json(['code'=>100,'msg'=>'请重新登录']);
         redirect('frontend/login/login');
     }
 

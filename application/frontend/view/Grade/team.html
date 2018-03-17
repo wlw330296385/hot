@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>班级主页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+
+    <style>
+        .mui-control-content {
+            background-color: white;
+            min-height: 495px;
+            display: block;
+        }
+        
+        .mui-control-content .mui-loading {
+            margin-top: 50px;
+        }
+        
+        .mui-popover {
+            height: 260px;
+        }
+        
+        .page-header .more {
+            padding-right: 0px;
+        }
+        
+        .rightClass {
+            padding-top: 0 !important;
+            font-size: 12px;
+            color: #737373;
+        }
+        
+        .rightClass .mui-btn-danger {
+            padding: 2px 10px;
+            margin-bottom: 5px;
+        }
+        
+        .liFrame .listLeft {
+            text-align: center
+        }
+        
+        .liFrame h5 {
+            font-weight: bold;
+            color: #000
+        }
+        
+        .liFrame .listLeft h2 {
+            color: #dd524d;
+        }
+        
+        .liFrame .mui-media-body {
+            padding-left: 17px;
+        }
+        
+        .liFrame .mui-media-body .mui-ellipsis {
+            padding: 1px 0;
+            font-size: 13px;
+        }
+        
+        .liFrame .price-frame button {
+            top: 95px;
+        }
+        
+        .nav-list .nav-list-frame .navli {
+            width: 25%;
+        }
+        
+        .circle {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+        }
+        
+        #scrollboxframe {
+            overflow: hidden;
+            background-color: #fff;
+            padding: 20px 10px;
+        }
+        
+        #scrollbox {
+            float: left;
+        }
+        
+        #scrollbox ul {
+            overflow: hidden;
+            padding: 0;
+            margin: 0px;
+        }
+        
+        #scrollbox ul LI {
+            FLOAT: left;
+            width: 70px;
+            height: 50px;
+            text-align: center;
+            padding: 0px;
+            overflow: hidden;
+        }
+        
+        #scrollbox ul LI img {
+            width: 100%;
+            height: 50px;
+            padding: 0 5px;
+        }
+        
+        #arrRight {
+            padding-top: 10px;
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="header" class="mui-bar mui-bar-transparent">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="list camp-list detalis-list coach mt55">
+
+            <div class="img4x3" style="background-image:url('/static/frontend/images/ads1.jpg')"></div>
+
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media listli de " style="padding:11px 15px;">
+                    <a href="javascript:;">
+                        <img class="mui-media-object mui-pull-left" src="/static/frontend/images/ads1.jpg">
+                        <div class="mui-media-body">
+                            {$gradeInfo.grade}
+                            <p class="mui-ellipsis">{$gradeInfo.camp_id}</p>
+                        </div>
+                        <div class="price-frame rightClass">
+                            <ul>
+                                <li><button type="button" class="mui-btn mui-btn-danger follow">关注</button></li>
+                                <li class="fr">粉丝：152</li>
+                            </ul>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli detalisli">班级介绍
+                    <span class="about" style="width: 75%">尴尬颂德歌功搜噶搜噶搜噶搜噶三个傻瓜</span>
+                </li>
+            </ul>
+
+            <div class="nav-list mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame border-b">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                        <a href="{:url('lesson/lessonList')}">
+                            <img class="circle" src="/static/frontend/images/ads1.jpg" alt="">
+                            <div class="mui-media-body">班主任</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                        <a href="{:url('event/eventList')}">
+                            <img class="circle" src="/static/frontend/images/ads1.jpg" alt="">
+                            <div class="mui-media-body">领队</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                        <a href="{:url('court/courtList')}">
+                            <img class="circle" src="/static/frontend/images/ads1.jpg" alt="">
+                            <div class="mui-media-body">主教练</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                        <a href="{:url('court/courtList')}">
+                            <img class=" circle" src="/static/frontend/images/ads1.jpg" alt="">
+                            <div class="mui-media-body">助理教练</div>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="mui-table-view">
+                    <li class="mui-table-view-cell listli detalisli" style="line-height: 40px;">
+                        <a class="mui-navigate-right" href="">队员
+                            <img class="coachicon" src="/static/frontend/images/ads1.jpg" alt="">
+                            <img class="coachicon" src="/static/frontend/images/ads1.jpg" alt="">
+                            <img class="coachicon" src="/static/frontend/images/ads1.jpg" alt="">
+                            <img class="coachicon" src="/static/frontend/images/ads1.jpg" alt="">
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+
+            <div class="page-header">
+                <span class="course">班级活动</span>
+                <span class="more">更多</span>
+            </div>
+            <ul class="mui-table-view detalis-list list">
+                <li class="mui-table-view-cell mui-media listli liFrame">
+                    <div class="mui-pull-left listLeft">
+                        <img class="mui-media-object" src="/static/frontend/images/ads1.jpg">
+                        <div>
+                            <p>活动时间</p>
+                            <h2>15</h2>
+                            <p>10:30</p>
+                        </div>
+                    </div>
+                    <div class="mui-media-body wd60">
+                        <h5 class="title">标题-活动名称(最新)</h5>
+                        <p class="mui-ellipsis">活动类型</p>
+                        <p class="mui-ellipsis">地点：广州白云山</p>
+                        <p class="mui-ellipsis">教练：陈老师</p>
+                        <p class="mui-ellipsis">价格：<b class="colororange">￥100</b>/课时</p>
+                    </div>
+                    <div class="price-frame">
+                        <button type="button" class="mui-btn bggreen">报名</button>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media listli liFrame">
+                    <div class="mui-pull-left listLeft">
+                        <img class="mui-media-object" src="/static/frontend/images/ads1.jpg">
+                        <div>
+                            <p>活动时间</p>
+                            <h2>15</h2>
+                            <p>10:30</p>
+                        </div>
+                    </div>
+                    <div class="mui-media-body wd60">
+                        <h5 class="title">标题-活动名称(历史)</h5>
+                        <p class="mui-ellipsis">活动类型</p>
+                        <p class="mui-ellipsis">地点：广州白云山</p>
+                        <p class="mui-ellipsis">教练：陈老师</p>
+                        <p class="mui-ellipsis">价格：<b class="colororange">￥100</b>/课时</p>
+                    </div>
+                    <div class="price-frame">
+                        <button type="button" class="mui-btn bggreen">报名</button>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="page-header">
+                <span class="course">班级比赛</span>
+                <span class="more">更多</span>
+            </div>
+            <ul class="mui-table-view detalis-list list">
+                <li class="mui-table-view-cell mui-media listli liFrame">
+                    <div class="mui-pull-left listLeft">
+                        <img class="mui-media-object" src="/static/frontend/images/ads1.jpg">
+                        <div>
+                            <p>比赛时间</p>
+                            <h2>15</h2>
+                            <p>10:30</p>
+                        </div>
+                    </div>
+                    <div class="mui-media-body wd60">
+                        <h5 class="title">标题-比赛名称(最新)</h5>
+                        <p class="mui-ellipsis">比赛类型</p>
+                        <p class="mui-ellipsis">地点：向南小学篮球场</p>
+                        <p class="mui-ellipsis">教练：向南小学六三班</p>
+                        <p class="mui-ellipsis">价格：免费</p>
+                    </div>
+                    <div class="price-frame">
+                        <button type="button" class="mui-btn bggreen">报名</button>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media listli liFrame">
+                    <div class="mui-pull-left listLeft">
+                        <img class="mui-media-object" src="/static/frontend/images/ads1.jpg">
+                        <div>
+                            <p>比赛时间</p>
+                            <h2>15</h2>
+                            <p>10:30</p>
+                        </div>
+                    </div>
+                    <div class="mui-media-body wd60">
+                        <h5 class="title">标题-比赛名称(历史)</h5>
+                        <p class="mui-ellipsis">比赛类型</p>
+                        <p class="mui-ellipsis">地点：向南小学篮球场</p>
+                        <p class="mui-ellipsis">教练：向南小学六三班</p>
+                        <p class="mui-ellipsis">价格：免费</p>
+                    </div>
+                    <div class="price-frame">
+                        <button type="button" class="mui-btn bggreen">报名</button>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="page-header">
+                <span class="course">班级课时</span>
+                <span class="more">更多</span>
+            </div>
+            <ul class="mui-table-view detalis-list list">
+                <li class="mui-table-view-cell mui-media listli liFrame">
+                    <div class="mui-pull-left listLeft">
+                        <img class="mui-media-object" src="/static/frontend/images/ads1.jpg">
+                        <div>
+                            <p>训练时间</p>
+                            <h2>15</h2>
+                            <p>10:30</p>
+                        </div>
+                    </div>
+                    <div class="mui-media-body wd60">
+                        <h5 class="title">标题-课时名称</h5>
+                        <p class="mui-ellipsis">课时类型</p>
+                        <p class="mui-ellipsis">地点：南山村篮球场</p>
+                        <p class="mui-ellipsis">教练：黄教练</p>
+                        <p class="mui-ellipsis">价格：<b class="colororange">￥100</b>/课时</p>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="page-header">
+                <span class="course">班级相册</span>
+                <span class="more">查看更多</span>
+            </div>
+            <div id="scrollboxframe">
+                <div id="scrollbox">
+                    <ul>
+                        <li>
+                            <IMG src="/static/frontend/images/ads1.jpg">
+                        </li>
+                        <li>
+                            <IMG src="/static/frontend/images/1.jpg">
+                        </li>
+                        <li>
+                            <IMG src="/static/frontend/images/2.jpg">
+                        </li>
+                        <li>
+                            <IMG src="/static/frontend/images/3.jpg">
+                        </li>
+                        <li>
+                            <IMG src="/static/frontend/images/4.jpg">
+                        </li>
+                        <li>
+                            <IMG src="/static/frontend/images/1.jpg">
+                        </li>
+                        <li>
+                            <IMG src="/static/frontend/images/2.jpg">
+                        </li>
+                        <li>
+                            <IMG src="/static/frontend/images/3.jpg">
+                        </li>
+                    </ul>
+                </div>
+                <img src="/static/frontend/images/rightjt.gif" id="arrRight" />
+            </div>
+
+
+
+            <div class="page-header">
+                <span class="course">评论</span>
+                <span class="more">全部<b class="colororange">20</b>条评论</span>
+            </div>
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell detalisli listli">
+                    <img class="mui-pull-left coachicon" style="float: left" src="/static/frontend/images/ads1.jpg">woo123
+                    <div class="mui-pull-right">2017-10-30 16:36</div>
+                    <p class="mui-ellipsis">什么情况？</p>
+                </li>
+                <li class="mui-table-view-cell detalisli listli">
+                    <img class="mui-pull-left coachicon" style="float: left" src="/static/frontend/images/ads1.jpg">woo123
+                    <div class="mui-pull-right">2017-10-30 16:36</div>
+                    <p class="mui-ellipsis">什么情况？</p>
+                </li>
+            </ul>
+
+            <ul class="mui-table-view operation mt">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli">
+                    <a href="tel:18507717466">
+                       约比赛
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli">
+                    <a href="#pjpopover">我来评论</a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli">
+                    <a href="#join">申请加入</a>
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
+
+    <!-- 申请加入选择身份弹出框 -->
+    <div id="join" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course"><strong>请选择身份</strong></span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="camp-list camp-lesson-list detalis-list list">
+                    <ul class="mui-table-view ">
+                        <li class="mui-table-view-cell listli detalisli choiseType">学生<input type="text" name="" value="1" style="display: none"></li>
+                        <li class="mui-table-view-cell listli detalisli choiseType">教练<input type="text" name="" value="2" style="display: none"></li>
+                        <li class="mui-table-view-cell listli detalisli choiseType">管理员<input type="text" name="" value="3" style="display: none"></li>
+                        <li class="mui-table-view-cell listli detalisli choiseType">粉丝<input type="text" name="" value="-1" style="display: none"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 申请加入弹框 -->
+    <div id="yqpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <ul class="mui-table-view operation">
+                <h5><span class="type"></span>
+                    <a href="#yqpopover" class="mui-icon mui-icon-closeempty"></a>
+                </h5>
+                <li class="mui-table-view-cell listli">
+                    <textarea rows="4" class="remarks"></textarea>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli joinBtn">提交</li>
+            </ul>
+        </div>
+    </div>
+    <!-- 评论弹框 -->
+    <div id="pjpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <ul class="mui-table-view operation">
+                <h5><span>评论班级</span>
+                    <a href="#pjpopover" class="mui-icon mui-icon-closeempty"></a>
+                </h5>
+                <li class="mui-table-view-cell listli">
+                    <textarea rows="4" name="comment" class="data"></textarea>
+                    <input type="hidden" name="camp_id" value="{campInfo['id']}" class="data">
+                    <input type="hidden" name="camp" value="{campInfo['camp']}" class="data">
+
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="commentSubmit">提交</li>
+            </ul>
+        </div>
+    </div>
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/Designer.js"></script>
+    <script>
+        mui.init({
+            swipeBack: false
+        });
+        (function ($) {
+            $('.mui-scroll-wrapper').scroll({
+                indicators: true //是否显示滚    动条
+            });
+
+            // 关注教练(缺少参数，待完善)
+            $(".follow").on("tap", '', function () {
+                mui.ajax("{:url('api/follow/focus')}", {
+                    data: {
+                        type: 4,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                            followStatus();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+            //判断当前的关注状态
+            followStatus();
+
+        })(mui);
+
+        // 判断当前的关注状态(缺少参数，待完善)
+        function followStatus() {
+            mui.ajax("{:url('api/follow/getfollow')}", {
+                data: {
+                    type: 4,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data === 1) {
+                            $(".follow").text("取消关注");
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+
+        var scrollPic_02 = new ScrollPic();
+        var width = 280;
+        scrollPic_02.scrollContId = "scrollbox"; //内容容器ID
+        scrollPic_02.arrLeftId = "arrLeft";//左箭头ID
+        scrollPic_02.arrRightId = "arrRight"; //右箭头ID
+        scrollPic_02.frameWidth = width;//显示框宽度
+        scrollPic_02.pageWidth = 280; //翻页宽度
+        scrollPic_02.speed = 8; //移动速度(单位毫秒，越小越快)
+        scrollPic_02.space = 8; //每次移动像素(单位px，越大越快)
+        scrollPic_02.autoPlay = false; //自动播放
+        scrollPic_02.autoPlayTime = 3; //自动播放间隔时间(秒)
+        scrollPic_02.initialize(); //初始化
+    </script>
+
+</body>
+
+</html>

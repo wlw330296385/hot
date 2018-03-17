@@ -9,10 +9,26 @@ class GradeMemberService{
 	}
 
 
-	public function getList($map){
-		$result = GradeMember::where($map)->select();
-		if($result){
-            $result = $result->toArray();
+	public function getGradeMemberList($map,$page = 1,$paginate = 10){
+		$result = GradeMember::where($map)->page($page,$paginate)->select();
+		 if($result){
+            return $result->toArray();
+        }
+        return $result;
+    }
+
+    public function getGradeMemberListByPage($map,$paginate = 10){
+        $result = GradeMember::with('student')->where($map)->paginate($paginate);
+        if($result){
+            return $result->toArray();
+        }
+        return $result;
+    }
+
+    public function getGradeMemberListOfCampByPage($map,$paginate = 10){
+        $result = GradeMember::with('student')->distinct('true')->field('student_id')->where($map)->paginate($paginate);
+        if($result){
+            return $result->toArray();
         }
         return $result;
     }
@@ -33,6 +49,7 @@ class GradeMemberService{
     	$result = $this->gradememberModel->where($map)->count();
     	return $result?$result:0;
     }
+    
     
     
 }

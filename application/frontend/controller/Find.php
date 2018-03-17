@@ -12,4 +12,31 @@ class Find extends Base{
   
         return view('Find/index');
     }
+
+
+    public function test1() {
+  
+        return view('Find/test1');
+    }
+
+    public function test2() {
+  
+        return view('Find/test2');
+    }
+
+    public function test3() {
+  
+        return view('Find/test3');
+    }
+
+    public function test4() {
+  
+        return view('Find/test4');
+    }
+
+    public function test5() {
+  
+        return view('Find/test5');
+    }
+
 }

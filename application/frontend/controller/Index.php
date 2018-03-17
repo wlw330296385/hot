@@ -11,53 +11,88 @@ class Index extends Base{
 	}
 
     public function index() {
-        $page = input('param.page')?input('param.page'):1;
-    	$bannerList = unserialize($this->systemSetting['banner']); 
+
+        $bannerList = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1])->order('ord asc')->limit(3)->select();
+  
+                
+        // dump($bannerList);die;
     	// 热门课程
-    	$hotLessonList = $this->LessonService->getLessonList([],$page,'hot ASC',4);
+    	// $hotLessonList = $this->LessonService->getLessonList([],$page,'hot ASC',4);
     	//推荐课程
-    	$sortLessonList = $this->LessonService->getLessonList([],$page,'sort ASC',4);
+    	// $sortLessonList = $this->LessonService->getLessonList([],$page,'sort ASC',4);
     	$this->assign('bannerList',$bannerList);
-    	$this->assign('hotLessonList',$hotLessonList);
-    	$this->assign('sortLessonList',$sortLessonList);
+    	// $this->assign('hotLessonList',$hotLessonList);
+    	// $this->assign('sortLessonList',$sortLessonList);
         return view('Index/index');
     }
 
-
-
-    public function search(){
+    public function indexOfCamp(){
         
-        return view('Index/search');
+        $bannerList = db('banner')->where(['organization_id'=>$this->o_id,'organization_type'=>$this->o_type,'status'=>1])->order('ord asc')->limit(3)->select();
+        // 如果banner不够三张
+        if( count($bannerList)<2 ){
+            $res = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1])->order('ord asc')->limit((3-count($bannerList)))->select();
+            $bannerList = array_merge($bannerList,$res);
+        }
+
+        $this->assign('bannerList',$bannerList);
+        return view('Index/indexOfCamp');
     }
 
-
-    
-
-
-    
-
-    public function test(){
-
-        // $this->redirect('/frontend/index/index/pid/1');
-        dump($url = $_SERVER["REQUEST_URI"]);
-        // cookie(null);
-        session(null,'think');die;
-        // $param = input('param.');
-        // cache('param',$param);
-        // cookie('param', $param);
-        // dump($param);
-        // dump($this->memberInfo);
-        //session('memberInfo',['id'=>'0','openid'=>'o83291CzkRqonKdTVSJLGhYoU98Q','member'=>'woo'],'think');
-        //dump(session('memberInfo','','think'));
-        // dump(cache('param'));
-        // dump(cookie('param'));
-
-        // $WechatService = new WechatService;
-        // $callback1 = url('login/wxlogin','','', true);
-        // $callback2 = url('login/wxlogin');
-        // dump( $WechatService -> oauthredirect($callback1) );
-        // dump( $WechatService -> oauthredirect($callback2) );
-
-        return view('Index/test');
+    // 微信用户授权回调
+    public function wxindex() {
+        $WechatS = new WechatService;
+        $userinfo = $WechatS->oauthUserinfo();
+        if ($userinfo) {
+            cache('userinfo_'.$userinfo['openid'], $userinfo);
+            $isMember = db('member')->where(['openid' => $userinfo['openid']])->find();
+            if ($isMember) {
+                unset($isMember['password']);
+                cookie('mid', $isMember['id']);
+                cookie('openid', $isMember['openid']);
+                cookie('member', md5($isMember['id'].$isMember['member'].config('salekey')));
+                session('memberInfo', $isMember, 'think');
+                $this->redirect('frontend/Index/index');
+            } else {
+                $member = [
+                    'id' => 0,
+                    'openid' => $userinfo['openid'],
+                    'member' => $userinfo['nickname'],
+                    'nickname' => $userinfo['nickname'],
+                    'avatar' => str_replace("http://", "https://", $userinfo['headimgurl']),
+                    'hp' => 0,
+                    'level' => 0,
+                    'telephone' =>'',
+                    'email' =>'',
+                    'realname'  =>'',
+                    'province'  =>'',
+                    'city'  =>'',
+                    'area'  =>'',
+                    'location'  =>'',
+                    'sex'   =>0,
+                    'height'    =>0,
+                    'weight'    =>0,
+                    'charater'  =>'',
+                    'shoe_code' =>0,
+                    'birthday'  =>'0000-00-00',
+                    'create_time'=>0,
+                    'pid'   =>0,
+                    'hp'    =>0,
+                    'cert_id'   =>0,
+                    'score' =>0,
+                    'flow'  =>0,
+                    'balance'   =>0,
+                    'remarks'   =>0,
+                    'hot_id'=>00000000,
+                ];
+                cookie('mid', 0);
+                cookie('openid', $userinfo['openid']);
+                cookie('member', md5($member['id'].$member['member'].config('salekey')) );
+                session('memberInfo', $member, 'think');
+                $this->redirect('frontend/Index/index');
+            }
+        } else {
+            $this->redirect('frontend/index/index');
+        }
     }
 }

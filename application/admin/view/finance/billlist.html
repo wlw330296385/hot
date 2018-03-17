@@ -5,18 +5,25 @@
     <div class="panel-heading">
         <div class="panel-lead">
             <em>支付订单列表</em>
+
         </div>
     </div>
     <div class="panel-body">
         <div class="no-padding">
             <div class="bootstrap-table">
                 <div class="search-form">
-                    <form action="" class="form-inline" method="post">
+                    <form action="{:url('finanace/billlist')}" class="form-inline" method="post">
                         <fieldset>
                             {if condition="!isset($curcamp)"}
                             <div class="form-group">
                                 <label class="control-label">训练营</label>
-                                <input class="form-control" type="text" name="camp" >
+                                <!--<input class="form-control" type="text" name="camp" >-->
+                                <select name="camp_id" class="form-control">
+                                    <option value="">选择训练营</option>
+                                    {volist name="camplist" id="vo"}
+                                    <option value="{$vo.id}" {if condition="$camp_id eq $vo['id']"}selected{/if}>{$vo.camp}</option>
+                                    {/volist}
+                                </select>
                             </div>
                             {/if}
                             <div class="form-group">
@@ -29,12 +36,12 @@
                             </div>
                             <div class="form-group">
                                 <label class="control-label">购买商品</label>
-                                <input class="form-control" type="text" name="lesson" >
+                                <input class="form-control" type="text" name="goods" >
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-12 text-center">
                                     <button type="submit" class="btn btn-success btn-flat">搜索</button>
-                                    <button type="reset" class="btn btn-default btn-flat">重置</button>
+                                    <button type="submit" class="btn btn-default btn-flat">重置</button>
                                 </div>
                             </div>
                         </fieldset>
@@ -60,6 +67,7 @@
                                             <th>支付类型</th>
                                             <th>支付状态</th>
                                             <th>订单状态</th>
+                                            <th>备注</th>
                                             <th>操作</th>
                                         </tr>
                                         </thead>
@@ -70,17 +78,28 @@
                                             <td>{$vo.bill_order}</td>
                                             <td>{$vo.member}</td>
                                             <td>{$vo.goods_type}</td>
-                                            <td>{$vo.lesson}</td>
+                                            <td>{$vo.goods}</td>
                                             <td>{$vo.camp}</td>
                                             <td>{$vo.balance_pay}</td>
                                             <td>{$vo.score_pay}</td>
-                                            <td>{$vo.pay_type}</td>
+                                            <td>
+                                                {switch name="vo.pay_type"}
+                                                {case value="wxpay"}微信支付{/case}
+                                                {case value="alipay"}支付宝{/case}
+                                                {/switch}
+                                            </td>
                                             <td>{$vo.is_pay}</td>
                                             <td>
-                                                {$vo.status}
+                                                {switch name="vo.status"}
+                                                {case value="1"}已支付{/case}
+                                                {case value="-1"}申请退款{/case}
+                                                {case value="-2"}已退换{/case}
+                                                {default /}未支付
+                                                {/switch}
                                             </td>
+                                            <td></td>
                                             <td>
-                                                <a href="{:url('finance/bill', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i></a>
+                                                <a href="{:url('finance/bill', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"> 查看详情</i></a>
                                                 <!--<a href="" class="btn btn-xs btn-danger del-btn"><i class="fa fa-trash"></i></a>-->
                                             </td>
                                         </tr>

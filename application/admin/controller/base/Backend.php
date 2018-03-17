@@ -2,46 +2,46 @@
 // admin模块 控制器基类
 namespace app\admin\controller\base;
 
+use app\model\Camp;
 use app\service\SystemService;
-use think\Controller;
+use app\admin\controller\base\Base;
 use app\service\AuthService;
 use think\Cookie;
-
-class Backend extends Controller {
+use app\admin\model\AdminMenu as MenuModel;
+class Backend extends Base {
     public $cur_camp;
     public $site;
-
+    public $AuthService;
+    public $admin;
     public function _initialize() {
+        parent::_initialize();
         // 检查控制台登录
-        $AuthS = new AuthService();
-        if ( !$AuthS->islogin() ) {
+        $this->AuthService = new AuthService();
+        if ( !$this->AuthService->islogin() ) {
             $this->error('请登录后操作', url('Login/index'));
+        }else{
+            $this->admin = session('admin');
+            $this->assign('admin',$this->admin);
         }
-
-        // 获取平台数据
-        $SystemS = new SystemService();
-        $site = $SystemS->getSite();
-        $this->site = $site;
-
-        // 当前查看训练营
-        $curcamp = $this->getCurCamp();
-        $this->cur_camp = $curcamp;
-        $this->assign('curcamp', $curcamp);
-
-        $this->assign('site', $site);
-        $this->assign('admin', session('admin') );
+        if(config('develop_mode') == 0){
+            //存储权限节点
+            $this->AuthService->adminGroup();
+            // dump($_SESSION);
+            // dump(cache('group_id_menu_auth_5'));die;
+            //检查权限
+            if (!$this->AuthService->checkAuth()) $this->error('权限不足！');
+            // 获取面包屑导航
+            $_location =  MenuModel::getLocation('', true);
+            $this->assign('_location',$_location);
+        }else{
+            $this->assign('_location',[0=>['title'=>'开发者模式'],1=>['title'=>'不验证权限']]);
+        }
+        // 获取侧边栏菜单
+        $sidebar_menu = MenuModel::getSidebarMenu();
+        // dump($sidebar_menu);die;
+        $this->assign('_sidebar_menus', $sidebar_menu);
+        // dump($sidebar_menu);die;
+        
     }
 
-    // 获取当前查看训练营
-    public function getCurCamp() {
-        if ( Cookie::has('camp_id', 'curcamp_') ) {
-            $res = [
-                'camp_id' => Cookie::get('camp_id', 'curcamp_'),
-                'camp' => Cookie::get('camp', 'curcamp_')
-            ];
-            return $res;
-        } else {
-            return ;
-        }
-    }
 }

@@ -3,70 +3,215 @@
 
 <head>
     <meta charset="utf-8">
-    <title>训练项目-编辑</title>
+    <title>编辑训练项目</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <style>
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+        [data-type="time"] .mui-dtpicker-title h5 {
+            width: 100% !important;
+        }
+
+        [data-type="time"] .mui-picker {
+            width: 100% !important;
+        }
+
+        [data-type="time"] [data-id="title-h"] {
+            display: none !important;
+        }
+
+        [data-type="time"] .mui-dtpicker-body [data-id="picker-h"] {
+            display: none !important;
+        }
+    </style>
 </head>
 
-<body class=whitebg>
-<div class="mui-content whitebg program">
-    <form class="mui-input-group editorform">
-        <div class="mui-input-row">
-            <label>作者:</label>
-            <input type="text" placeholder="用户名/用户ID" value="{$ExerciseInfo.member}">
-        </div>
-        <div class="mui-input-row">
-            <label>所属:</label>
-            <input type="text" placeholder="训练营/平台" value="{$ExerciseInfo.camp}">
-        </div>
-        <div class="mui-input-row">
-            <label>适合阶段:</label>
-            <input type="text" placeholder="小学基础/小学增强/等阶段" value="{$ExerciseInfo.exercise_setion}">
-        </div>
-        <div class="mui-input-row ">
-            <label>项目类型:</label>
-            <!--<input type="text" placeholder="小学基础/小学增强/等阶段">-->
-            <i class="mui-icon mui-icon-arrowdown"></i>
-            <select>
-                <option>{$ExerciseInfo.exercise}</option>
-            {volist name='ExerciseType' id="vol"}
-                <option>{$vol.exercise}</option>
-            {/volist}    
-            </select>
+<body>
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
+    </header>
+    <div class="mui-content program mt">
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+        <input type="hidden" name="exercise_id" class="data" value="{$exerciseInfo.id}">
+        <form class="mui-input-group">
+            <div class="mui-input-row">
+                <label>作者</label>
+                <input type="text" name="{$memberInfo.member}" value="{$memberInfo.member}" disabled="1">
+            </div>
+            <div class="mui-input-row">
+                <label>所属</label>
+                <input type="text" name="camp" value="{$exerciseInfo.camp}" class="data" disabled="1">
+                <input type="hidden" name="camp_id" value="{$exerciseInfo.camp_id}" class="data">
+            </div>
 
-        </div>
-        <div class="mui-input-row height127">
-            <label>项目要领:</label>
-            <textarea rows="5" placeholder="">{$ExerciseInfo.exercise_detail}</textarea>
-        </div>
-        <div class="mui-input-row">
-            <label>上传视频</label>
-        </div>
-        <p>
-            <input type="checkbox" {:getChecked(1,$ExerciseInfo.is_open)}>是否对外开放
-        </p>
-        <div class="tjbtn">
-            <button type=button class=btn>提交</button>
-        </div>
-    </form>
-</div>
+            <div class="mui-input-row">
+                <a href="#" class="mui-navigate-right">
+                    <label>项目类型</label>
+                    <span class="select-row">
+                        <select id="exercise_setion">
+                            <option>请选择</option>
+                            {volist name="exerciseType" id="vol"}
+                            <option value="{$vol.id}">{$vol.exercise}</option>
+                            {/volist}
+                        </select>
+                        <input type="hidden" name="exercise_setion" value="{$exerciseInfo.exercise_setion}" class="data">
+                        <input type="hidden" name="pid" value="{$exerciseInfo.pid}" class="data">
+                    </span>
+                </a>
+
+            </div>
+            <div class="mui-input-row">
+                <label>项目名称</label>
+                <input type="text" placeholder="请填写项目名称" name="exercise" class="data" value="{$exerciseInfo.exercise}">
+            </div>
+            <div class="mui-input-row picker exercise_time" id="demo3" data-options='{"type":"time"}'>
+                <div class="mui-navigate-right">
+                    <label class="wd49">练习时间（分钟）</label>
+                    <span id="exercise_time" class="domData" name="exercise_time">{$exerciseInfo.exercise_time}</span>
+                </div>
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>项目要领</label>
+                <textarea rows="5" class="data mui-text-left" name="exercise_detail" placeholder="填写项目要领">{$exerciseInfo.exercise_detail}</textarea>
+            </div>
+            <!--<div class="mui-input-row">-->
+                <!--<label>上传视频</label>-->
+            <!--</div>-->
+
+        </form>
+        <!-- <div class="tip-box">
+            <input type="checkbox" value="1" name="is_open" class="data" checked style="width:16px;height:16px;">
+            <label>是否对外开放</label>
+        </div> -->
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" onclick="submitAction()">
+                提交修改
+            </li>
+        </ul>
+
+    </div>
+    <ul class="mui-table-view bggray2">
+        <li class="mui-table-view-cell mui-col-xs-12 opli">
+            <p class="f12">温馨提示：如果该项目已经运用到教案中，当前修改不会更新到相应的教案中，请知悉。</p>
+        </li>
+    </ul>
+
+
 
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
 
+    //弹出框滚动必须写在mui专用的初始化
+    (function ($) {
+        $(".mui-scroll-wrapper").scroll({
+            //bounce: false,//滚动条是否有弹力默认是true
+            indicators: true //是否显示滚动条,默认是true
+        });
+        $.ready(function () {
+
+            //练习时间
+            var resultTime = $('#exercise_time')[0];
+            var btnTime = $('.exercise_time');
+            btnTime.each(function (i, btn) {
+                btn.addEventListener('tap', function () {
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var id = this.getAttribute('id');
+                    var picker = new $.DtPicker(options);
+
+                    picker.show(function (rs) {
+                        resultTime.innerText = rs.i.text;
+                        picker.dispose();
+                    });
+                }, false);
+            });
+
+        });
+    })(mui);
+
+    $(function () {
+
+        // 关闭弹出菜单
+        $("body").on('click', '.mui-backdrop', function () {
+            mui(".mui-popover.mui-active").popover("toggle");
+        })
+
+        $('#exercise_setion').find('option[value="{$exerciseInfo.pid}"]').prop("selected", true);
+
+        // 课程类型更改选择
+        $('#exercise_setion').on('change', function () {
+            var exercise_setion = $('#exercise_setion option:selected').text();
+            var pid = $('#exercise_setion option:selected').val();
+            $('input[name=exercise_setion]').val(exercise_setion);
+            $('input[name=pid]').val(pid)
+        })
+
+
+        // 是否开放
+        $('input[name=is_open]').on('change', function () {
+            console.log($(this).val());
+            if (($(this).val()) == 1) {
+                $(this).val(0)
+            } else {
+                $(this).val(1)
+            }
+        })
+    })
+
+    // 获取数据并进行提交
+    function submitAction() {
+        var data = wooApi.getInputData('input', 'data');
+        datas = wooApi.getInputData('select', 'data', data);
+        // 获取其他标签值
+        arrData = wooApi.getDomData('domData', datas);
+        var objData = wooApi.arrTOobj(arrData);
+        var exercise_detail = $('textarea.data').val();
+        objData.exercise_detail = exercise_detail;
+        var url = "{:url('api/Exercise/updateExerciseApi')}";
+        var ajaxResult = wooApi.asyncF(url, objData);
+
+        if (ajaxResult.code == 200) {
+            mui.alert(ajaxResult.msg, '项目修改成功', '确定', function () {
+                var goUrl = "{:url('exercise/exerciseinfo')}" + '/exercise_id/{$exerciseInfo.id}/camp_id/{$campInfo.id}';
+                window.top.location.href = goUrl;
+            })
+        } else {
+            mui.alert(ajaxResult.msg, '修改失败');
+            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                if (data.code === 200) {
+                    $('input[name=__token__]').val(data.data);
+                }
+            }, 'json');
+        }
+    };
+
 </script>
+
 </html>

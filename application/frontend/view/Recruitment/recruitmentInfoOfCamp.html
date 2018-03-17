@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>招募详情-管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .show {
+            display: block;
+        }
+        
+        .hide {
+            display: none;
+        }
+        
+        .mui-icon-phone {
+            font-size: 13px !important;
+        }
+        
+        .mui-icon-phone:before {
+            font-size: 20px !important;
+        }
+    </style>
+</head>
+
+<body class="whitebg">
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a href="{:url('recruitment/recruitmentListOfCamp',['organization_id'=>$recruitmentInfo.organization_id])}" class="mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回招募列表</span></a>
+        <h1 class="mui-title">{$recruitmentInfo.organization}</h1>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="list camp-list detalis-list coach">
+
+            <ul class="mui-table-view list mb">
+                <li class="mui-table-view-cell mui-media listli">
+                    <img class="mui-media-object mui-pull-left" src="{$recruitmentInfo.cover}">
+                    <div class="mui-media-body">
+                        <strong>{$recruitmentInfo.recruitment}</strong>
+                        <p class="recruitment_type">{$recruitmentInfo.recruitment_type}</p>
+                    </div>
+                    <div class="price-frame">
+                        <a href="{:url('recruitment/updateRecruitment',['recruitment_id'=>$recruitmentInfo['id'],'organization_id'=>$recruitmentInfo['organization_id']])}"
+                            class="mui-navigate-right">
+                            <span class="editor-btn" style="padding-top:8px;">编辑</span>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+
+            <ul class="mui-table-view list">
+                <li class="mui-table-view-cell listli">招募人数<span>{if $recruitmentInfo.recruit_number ==0}不限{else /}{$recruitmentInfo.recruit_number}{/if}</span></li>
+                <li class="mui-table-view-cell listli">薪资范围<span>￥{$recruitmentInfo.min} - ￥{$recruitmentInfo.max}</span></li>
+                <li class="mui-table-view-cell listli">招募简介<span class="mui-text-left">{$recruitmentInfo.recruitment_des}</span></li>
+                <li class="mui-table-view-cell listli">招募要求<span class="mui-text-left">{$recruitmentInfo.requirement}</span></li>
+                <li class="mui-table-view-cell listli">截至日期<span>{$recruitmentInfo.deadlines}</span></li>
+                <li class="mui-table-view-cell listli">所属地区<span>{$recruitmentInfo.province} {$recruitmentInfo.city} {$recruitmentInfo.area}</span></li>
+                <li class="mui-table-view-cell listli">联系人<span>{$recruitmentInfo.contact}</span></li>
+                <li class="mui-table-view-cell listli">联系电话<span>{$recruitmentInfo.telephone}</span></li>
+            </ul>
+
+            <div class="page-header">
+                <span class="course">申请列表</span>
+                <span class="more">全部 <span class="signupCount colororange">0</span> 个申请</span>
+            </div>
+
+            <ul class="mui-table-view comment-list">
+            </ul>
+            <p class="dropdown"><a href="#" class="moreSignup">查看更多...</a></p>
+
+        </div>
+
+
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        $(function () {
+
+            //点击查看更多评论
+            $(".moreSignup").click(function () {
+                pullupRefresh();
+            })
+
+            //页面打开时获取一次最新评论信息
+            pulldownRefresh();
+
+        })
+
+        //下拉刷新具体业务实现
+        function pulldownRefresh() {
+            setTimeout(function () {
+                count = 1;//刷新并显示第一页
+                var page = count;
+                var gType = 1;//代表下拉刷新
+                toSignUpList(page, gType);//具体取数据的方法
+            }, 100);
+        }
+        //上拉加载具体业务实现
+        function pullupRefresh() {
+            setTimeout(function () {
+                count++;//翻下一页
+                var page = count;
+                var gType = 2;//代表上拉加载
+                toSignUpList(page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+        //接口获取数据并追加到页面
+        var toSignUpList = function (page, gType) {
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/recruitment/getRecruitmentMemberListByPageApi','','',true)}/?page=" + page;
+            var recruitment_id = "{$recruitmentInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    recruitment_id: recruitment_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    var newli = '';
+                    if (data.code == 200) {
+                        $(".signupCount").text(data.data.total);
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli"><div class="mui-pull-right">' + data.data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data.data[i].avatar + '">' + data.data.data[i].linkman + '<p>' + data.data.data[i].remarks + '</p><span class="mui-icon mui-icon-phone"><a href="tel:' + data.data.data[i].contact + '">' + data.data.data[i].contact + '</span></a></li>'
+                        }
+                        if (data.data.total == 0 || data.data.last_page == page) {
+                            $(".moreSignup").hide();
+                        }
+                    }
+                    if (gType == 1) {
+                        //上拉刷新
+                        $("ul.comment-list").empty().append(newli);
+                        if (newli == '') {
+                            $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>还没有人申请加入哦</p></li>');
+                        }
+                    } else {
+                        //下拉加载 gType==2
+                        $("ul.comment-list").append(newli);
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+    </script>
+</body>
+
+</html>

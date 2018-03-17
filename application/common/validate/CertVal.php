@@ -11,7 +11,7 @@ class CertVal extends Validate{
     ];
     
     protected $message = [
-        'member_id'        =>  'member_id必须',
+        'member_id'        =>  '没指定会员号',
         'cert_no.require'	=> '证件号码必须',
         'cert.unique'       =>'证件号码已被使用',
         'cert_type'      =>  '证件类型必须',

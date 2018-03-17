@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>球队主页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+
+    <style>
+        .mui-popover {
+            height: 260px;
+        }
+
+        .page-header .more {
+            padding-right: 0px;
+        }
+
+        #arrRight {
+            padding-top: 10px;
+            float: right;
+        }
+
+        .pdr15 {
+            padding-right: 15px !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="header" class="mui-bar mui-bar-transparent">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="list camp-list detalis-list coach mt55">
+
+            <div class="img4x3" style="background-image:url('{$teamInfo.cover}')"></div>
+
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media listli de " style="padding:11px 15px;">
+                    <a href="javascript:;">
+                        <img class="mui-media-object mui-pull-left coachicon" src="{$teamInfo.logo}" style="width:45px !important;height:45px !important">
+                        <div class="mui-media-body wd36">
+                            {$teamInfo.name}
+                            <p class="mui-ellipsis">{$teamInfo.city} {$teamInfo.area}</p>
+                        </div>
+                        <div class="price-frame" style="line-height:46px;width:45%">
+                            <p style="font-size:12px">队员：{$teamInfo.member_num}人 | 粉丝：{$teamInfo.fans_num}</p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="page-header whitebg mb">
+                <a href="#">
+                    <span class="course wd83">
+                        <b class="colororange">公告</b>：欢迎新队员尼克杨加入F18加入大家庭！！</span>
+                    <span class="more">更多</span>
+                </a>
+            </div>
+
+            <div class="page-header">
+                <span class="course">
+                    <b>球队成员</b>
+                </span>
+                <span class="more pdr15">
+                    <a href="{:url('team/teamMember',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">查看全部</a>
+                </span>
+            </div>
+
+            <div class="nav-list mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame overflow-x teamMemberList ptb4"></ul>
+            </div>
+
+            <div class="nav-list mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>平均年龄</span>
+                            <div class="mui-media-body">{$teamInfo.avg_age}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>平均身高</span>
+                            <div class="mui-media-body">{$teamInfo.avg_height}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>平均体重</span>
+                            <div class="mui-media-body">{$teamInfo.avg_weight}</div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!--最新赛事-->
+            <div class="page-header whitebg border-b">
+                <span class="course">最新赛事</span>
+                <span class="more pdr15">
+                    <a href="" class="mui-navigate-right">历史赛事</a>
+                </span>
+            </div>
+            <ul class="mui-table-view detalis-list list mainInfo mb">
+                <li class="mui-table-view-cell mui-media listli liFrame">
+                    <div class="mainInfoLeft fl mui-text-center">
+                        <p class="month bgred">11月</p>
+                        <h1 class="day">22</h1>
+                        <p class="hours">10：30</p>
+                    </div>
+                    <div class="mui-media-body mainInfoRight wd66">
+                        <h5>
+                            <strong class="title">主题：篮球比赛</strong>
+                            <span class="colororange status">[未开始]</span>
+                        </h5>
+                        <div class="divFrame">
+                            <p>对手：向南小学六二班</p>
+                            <p>地点：向南小学篮球场</p>
+                        </div>
+                        <div class=opFrame>
+                            <button class="mui-btn opbtn" style="margin-right: 8px">详情</button>
+                            <button class="mui-btn opbtn bgred">参加</button>
+                        </div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <div class="imgShow fl wd66">
+                        <img src="/static/frontend/images/ads1.jpg" alt="">
+                        <img src="/static/frontend/images/ads1.jpg" alt="">
+                        <img src="/static/frontend/images/ads1.jpg" alt="">
+                        <img src="/static/frontend/images/ads1.jpg" alt="">
+                        <img src="/static/frontend/images/ads1.jpg" alt="">
+                        <img src="/static/frontend/images/ads1.jpg" alt="">
+                    </div>
+                    <span class="singUpTip">
+                        <font class=colorred>12</font>/20 已报名</span>
+                </li>
+            </ul>
+
+            <!--最新活动-->
+            <div class="page-header whitebg border-b">
+                <span class="course">最新活动</span>
+                <span class="more pdr15">
+                    <a href="{:url('team/eventList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">历史活动</a>
+                </span>
+            </div>
+            <ul class="mui-table-view detalis-list list mainInfo mb">
+                <li class="mui-table-view-cell mui-media listli liFrame">
+                    <div class="mainInfoLeft fl mui-text-center">
+                        <p class="month bgblue">11月</p>
+                        <h1 class="day">22</h1>
+                        <p class="hours">10：30</p>
+                    </div>
+                    <div class="mui-media-body mainInfoRight wd66">
+                        <h5>
+                            <strong class="title">主题：对内训练</strong>
+                            <span class="colorgray status">[已结束]</span>
+                        </h5>
+                        <div class="divFrame">
+                            <p>组织者：尼克扬</p>
+                            <p>地点：李群室内篮球</p>
+                        </div>
+                        <div class=opFrame>
+                            <button class="mui-btn opbtn" style="margin-right: 8px">详情</button>
+                            <button class="mui-btn opbtn bggray">已结束</button>
+                        </div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <div class="imgShow fl wd66">
+                        <img src="/static/frontend/images/ads1.jpg" alt="">
+                        <img src="/static/frontend/images/ads1.jpg" alt="">
+                        <img src="/static/frontend/images/ads1.jpg" alt="">
+                        <img src="/static/frontend/images/ads1.jpg" alt="">
+                        <img src="/static/frontend/images/ads1.jpg" alt="">
+                        <img src="/static/frontend/images/ads1.jpg" alt="">
+                    </div>
+                    <span class="singUpTip">
+                        <font class=colorred>12</font>/20 已报名</span>
+                </li>
+            </ul>
+
+            <!--球队相册-->
+            <div class="page-header whitebg border-b">
+                <span class="course">球队相册</span>
+                <span class="more pdr15">
+                    <a href="{:url('team/album',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">查看更多</a>
+                </span>
+            </div>
+            <div class="picFrame whitebg">
+                <ul>
+                    <li>
+                        <img src="/static/frontend/images/ads1.jpg">
+                    </li>
+                    <li>
+                        <img src="/static/frontend/images/ads1.jpg">
+                    </li>
+                    <li>
+                        <img src="/static/frontend/images/ads1.jpg">
+                    </li>
+                    <li>
+                        <img src="/static/frontend/images/ads1.jpg">
+                    </li>
+                </ul>
+            </div>
+
+            <!--球队战绩-->
+            <div class="page-header">
+                <span class="course">球队战绩</span>
+                <span class="more pdr15">
+                    <a href="" class="mui-navigate-right">查看更多</a>
+                </span>
+            </div>
+            <div class="nav-list record mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>场次</span>
+                            <div class="mui-media-body colorred">28</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>胜</span>
+                            <div class="mui-media-body colorred">18</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>负</span>
+                            <div class="mui-media-body colorred">10</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>胜率</span>
+                            <div class="mui-media-body colorred">70%</div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!--球队印象-->
+            <div class="page-header whitebg border-b">
+                <span class="course">球队印象</span>
+                <span class="more pdr15">
+                    <a href="#Impress" class="mui-navigate-right myimpress">发表我的印象</a>
+                </span>
+            </div>
+            <div class="impress whitebg tagCommentList"></div>
+
+            <!--底部操作-->
+            <ul class="mui-table-view operation mt">
+                <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgred follow">
+                    关注球队
+                </li>
+                <a href="#yqpopover">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgblue">
+                        加入球队
+                    </li>
+                </a>
+            </ul>
+
+        </div>
+
+    </div>
+
+    <!-- 加入球队弹框 -->
+    <div id="yqpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <ul class="mui-table-view operation">
+                <h5>
+                    <span class="type"></span>
+                    <a href="#yqpopover" class="mui-icon mui-icon-closeempty"></a>
+                </h5>
+                <li class="mui-table-view-cell listli">
+                    <textarea rows="4" class="remarks" placeholder="你好，我想加入你们的球队，我打大前锋位置。"></textarea>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli joinBtn">提交申请</li>
+            </ul>
+        </div>
+    </div>
+    <!-- 发表印象 -->
+    <div id="Impress" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <ul class="mui-table-view operation">
+                <h5>
+                    <span>我的印象</span>
+                    <a href="#Impress" class="mui-icon mui-icon-closeempty"></a>
+                </h5>
+                <div class="impressSide whitebg tagAll"></div>
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli commentBtn" id="impressSubmit">提交</li>
+            </ul>
+        </div>
+    </div>
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        mui.init({
+            swipeBack: false
+        });
+        (function ($) {
+            $('.mui-scroll-wrapper').scroll({
+                indicators: true //是否显示滚    动条
+            });
+        })(mui);
+
+
+        $(function () {
+
+            // 印象评价
+            $(document).on("tap", '.choiseTag', function () {
+                if ($(this).hasClass("bgorange")) {
+                    $(this).removeClass("bgorange");
+                } else {
+                    $(this).addClass("bgorange");
+                }
+            });
+
+            $(document).on("tap", '.myimpress', function () {
+                $(".impressSide .bgorange").removeClass("bgorange");
+            });
+
+            // $(document).on("tap", '#impressSubmit', function () {
+            //     var hasOrange = $(".impressSide").children("span").hasClass("bgorange")
+            //     if (hasOrange == false) {
+            //         mui.toast("你还没有选择印象标签");
+            //         return false;
+            //     };
+            //     $(".impressSide .bgorange").each(function () {
+            //         var span = '<span>' + $(this).text() + '</span>';
+            //         $(".impress").append(span);
+            //     })
+            //     mui('#Impress').popover('toggle');
+            // });
+
+            // 关注球队
+            $(".follow").on("tap", '', function () {
+                var team_id = "{$teamInfo.id}";
+                mui.ajax("{:url('api/follow/focus')}", {
+                    data: {
+                        type: 4,
+                        team_id: team_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                            followStatus();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+            // 申请加入球队
+            $(".joinBtn").on("tap", '', function () {
+                var team_id = "{$teamInfo.id}";
+                var remarks = $(".remarks").val();
+
+                if (remarks == '') {
+                    mui.toast("请填写申请理由");
+                    return false;
+                }
+
+                
+                mui.ajax("{:url('api/team/applyjointeam')}", {
+                    data: {
+                        team_id: team_id,
+                        remarks: remarks
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast("操作成功，待球队审核...");
+                            mui('#yqpopover').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                            mui('#yqpopover').popover('toggle');
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+            // 发表印象标签
+            $(".commentBtn").on("tap", '', function () {
+                var commented = "{$teamInfo.name}";
+                var commented_id = "{$teamInfo.id}";
+
+                var tags = $(".tagAll .bgorange").map(function () {
+                    return $(this).attr("data-tag_name");
+                }).get().join(",");
+
+                var tag_ids = $(".tagAll .bgorange").map(function () {
+                    return $(this).attr("data-id");
+                }).get().join(",");
+
+                console.log(tags);
+                console.log(tag_ids);
+
+                if (!$(".tagAll .choiseTag").hasClass("bgorange")) {
+                    mui.toast("你还没有选择印象标签哦");
+                    return false;
+                }
+
+                mui.ajax("{:url('api/tag/addtagcomment')}", {
+                    data: {
+                        comment_type: 2,
+                        commented: commented,
+                        commented_id: commented_id,
+                        tags: tags,
+                        tag_ids: tag_ids,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast("发表成功，感谢你的评价！");
+                            toTagCommentList();
+                            mui('#Impress').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                            mui('#Impress').popover('toggle');
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+
+            followStatus(); //判断当前的关注状态
+            teamMemberlist(); //自定义获取球员列表
+            toTagAllList(); //所有标签列表
+            toTagCommentList(); //已经评价的标签列表
+        });
+
+        // 判断当前的关注状态
+        function followStatus() {
+            var team_id = "{$teamInfo.id}"
+            mui.ajax("{:url('api/follow/getfollow')}", {
+                data: {
+                    type: 4,
+                    team_id: team_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data === 1) {
+                            $(".follow").text("取消关注");
+                        } else {
+                            $(".follow").text("关注球队");
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+
+        //自定义获取球员列表
+        var teamMemberlist = function () {
+            var url = "{:url('api/team/teammemberlist','','',true)}";
+            var team_id = "{$teamInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    team_id: team_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli += '<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli logostyle" id="logoframe"><img class="logostyle" src="' + data.data[i].avatar + '" alt=""><div class="mui-media-body">' + data.data[i].role_text + '</div></li>'
+                        }
+                        $(".teamMemberList").empty();
+                        if (newli == '') {
+                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
+                        }
+                        $(".teamMemberList").append(newli);
+
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+
+        //获取所有标签列表
+        var toTagAllList = function () {
+            mui.ajax("{:url('api/tag/tagall')}", {
+                data: {},
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var div = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag_name + '" data-id="' + data.data[i].id + '">' + data.data[i].tag_name + '</span>'
+                        }
+                        $(".tagAll").empty();
+                        $(".tagAll").append(div);
+
+                        if (div == '') {
+                            $(".tagAll").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        };
+
+
+        //获取已评价标签列表
+        var toTagCommentList = function () {
+            mui.ajax("{:url('api/tag/commentlist')}", {
+                data: {
+                    comment_type: 2,
+                    commented_id: "{$teamInfo.id}",
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var div = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag + '" data-tag_id="' + data.data[i].id + '">' + data.data[i].tag + '(<samll>' + data.data[i].count + '</samll>)</span>'
+                        }
+                        $(".tagCommentList").empty();
+                        $(".tagCommentList").append(div);
+                    } else {
+                        $(".tagCommentList").append('<p class="mui-text-center">还没有印象标签哦</p>');
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        };
+
+
+
+    </script>
+
+</body>
+
+</html>

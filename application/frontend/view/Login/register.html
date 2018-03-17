@@ -107,11 +107,11 @@
                 success: function (data) {
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data);
-                    if (data.code == 200) {
+                    if (data.code == 100) {
                         mui.toast(data.msg);
                     } else {
                         //mui.toast(data.msg);
-                        window.location.href = "{:url('member/registerSuccess')}";
+                        window.location.href = data.goto;
                     }
                 },
                 error: function (xhr, type, errorThrown) {
@@ -157,7 +157,7 @@
                 }else{
                     telephone = document.getElementById('telephone').value;
                     var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/sms/validateSmsCodeApi','','',true)}");
-                    if(result == 100){
+                    if(result == 200){
                         flag = true;
                         mui.toast(result.msg);
                     }else{
@@ -188,7 +188,7 @@ function sendCode(obj){
         console.log(telephone);
         var result = smsCode.getMobileCodeApi(obj,telephone,"{:url('api/sms/getMobileCodeApi','','',true)}");
         console.log(result);
-        if(result.code == 100){
+        if(result.code == 200){
             flag = true;
             mui.toast(result.msg);
         }else{

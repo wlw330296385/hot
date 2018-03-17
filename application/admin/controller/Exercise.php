@@ -56,15 +56,12 @@ class Exercise extends Backend {
     public function show() {
         $id = input('id/d', 0);
         if (!$id) {
-            abort(404, __lang('MSG_202_MISSPARAM'));
+            abort(404, __lang('找不到id'));
         }
 
         $ExerciseS = new ExerciseService();
-        $exercise_res = $ExerciseS->getExerciseOne(['id' => $id]);
-        if ($exercise_res['code'] == 200) {
-            $this->error($exercise_res['msg']);
-        }
-        $exercise = $exercise_res['data'];
+        $exercise = $ExerciseS->getExerciseInfo(['id' => $id]);
+
         $view = ($exercise['camp_id'] > 0 && $exercise['member_id'] > 0) ? 'audit' : 'show';
         
         $this->assign('exercise', $exercise);
@@ -117,7 +114,7 @@ class Exercise extends Backend {
             if ( true !== $validate ) {
                 $this->error($validate);
             }
-
+            
             //dump($data);
             $execute = Db::name('exercise')->update($data);
             $AuthS = new AuthService();

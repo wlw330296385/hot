@@ -6,15 +6,16 @@ use app\service\SystemService;
 use app\service\AuthService;
 
 class System extends Backend {
+    public function _initialize(){
+        parent::_initialize();
+    }
     public function index(){
-        //dump($this->site);
-        $banner = unserialize($this->site['banner']);
-        //dump($banner);
+        $o_id = input('param.o_id',0);
+        $o_type = input('param.o_type',0);
+        $banner = db('banner')->where(['organization_id'=>$o_id,'organization_type'=>$o_type])->order('ord asc')->limit(3)->select();
 
-        $breadcrumb = ['title' => '系统设置'];
-        $this->assign( 'breadcrumb', $breadcrumb );
         $this->assign('banner', $banner);
-        return view();
+        return view('System/index');
     }
 
     // 设置平台信息
@@ -33,10 +34,10 @@ class System extends Backend {
             $AuthS = new AuthService();
             if ($result) {
                 $AuthS->record('修改平台信息 成功');
-                $this->success(__lang('MSG_100_SUCCESS'));
+                $this->success(__lang('MSG_200'));
             } else {
                 $AuthS->record('修改平台信息 失败');
-                $this->error(__lang('MSG_200_ERROR'));
+                $this->error(__lang('MSG_400'));
             }
         }
     }
@@ -44,19 +45,23 @@ class System extends Backend {
     // 平台banner
     public function editbanner() {
         if ( request()->isPost() ) {
-            $id = input('id');
-            $banner = input('banner/a');
-            //dump($banner);
-            $data = ['banner' => serialize($banner)];
-            $result = db('setting')->where('id', $id)->update($data);
-
+            $data = input('post.');
+            $bannerModel = new \app\model\Banner;
+            if($data['id']){
+                $id = $data['id'];
+                unset($data['id']);
+                $result = $bannerModel->save($data,['id'=>$id]);
+            }else{
+                $result = $bannerModel->save($data);
+            }
+            
             $AuthS = new AuthService();
             if ($result) {
                 $AuthS->record('修改平台banner 成功');
-                $this->success(__lang('MSG_100_SUCCESS'));
+                $this->success(__lang('MSG_200'));
             } else {
                 $AuthS->record('修改平台banner 失败');
-                $this->error(__lang('MSG_200_ERROR'));
+                $this->error(__lang('MSG_400'));
             }
         }
     }
@@ -86,10 +91,10 @@ class System extends Backend {
             $AuthS = new AuthService();
             if ($result) {
                 $AuthS->record('修改会员积分设置 成功');
-                $this->success(__lang('MSG_100_SUCCESS'));
+                $this->success(__lang('MSG_200'));
             } else {
                 $AuthS->record('修改会员积分设置 失败');
-                $this->error(__lang('MSG_200_ERROR'));
+                $this->error(__lang('MSG_400'));
             }
         }
     }

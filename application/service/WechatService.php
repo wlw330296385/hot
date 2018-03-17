@@ -102,7 +102,7 @@ class WechatService
             }
         }
      */
-    public function sendmessage($data) {
+    public function sendTemplate($data) {
         $weObj = new TPwechat($this->options);
         return $weObj->sendTemplateMessage($data);
     }
