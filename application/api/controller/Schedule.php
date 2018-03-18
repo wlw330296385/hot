@@ -27,6 +27,7 @@ class Schedule extends Base
     {
         try {
             $lesson_id = input('param.lesson_id');
+            
             $lesson_time = input('param.lesson_time');
             $grade_id = input('param.grade_id');
             $camp_id = input('param.camp_id');
