@@ -173,6 +173,11 @@ class Match extends Base
                         'match_id' => $matchId,
                         'match' => $matchData['name'],
                         'match_record_id' => $matchRecordId,
+<<<<<<< HEAD
+=======
+                        'team_id' => $matchData['team_id'],
+                        'team' => $matchData['team'],
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                         'referee_id' => $refereeInfo['id'],
                         'referee' => $refereeInfo['referee'],
                         'referee_avatar' => $refereeInfo['portraits'],
@@ -399,8 +404,11 @@ class Match extends Base
                     }
                     $isFinished = 1;
                     $post['finished_time'] = $matchTimeStamp;
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 }
             }
             // 以有无post[id]区分插入/更新数据
@@ -563,6 +571,45 @@ class Match extends Base
                             // 发送比赛完成信息给对手球队
                             // 发送比赛完成信息给对手球队 end
                         }
+<<<<<<< HEAD
+=======
+                        // 保存裁判出席名单
+                        if (!empty($post['refereeAttend_str']) && $post['refereeAttend_str'] != '[]') {
+                            $matchRefereeAttend = [];
+                            // 转换裁判出席比赛名单格式
+                            $refereeAttends = json_decode($post['refereeAttend_str'], true);
+                            if ($refereeAttends) {
+                                // 遍历组合更新match_referee数据
+                                foreach ($refereeAttends as $k => $referee) {
+                                    $matchRefereeAttend[$k] = [
+                                        'match_id' => $post['id'],
+                                        'match_record_id' => $recordData['id'],
+                                        'referee_id' => $referee['referee_id'],
+                                        'referee' => $referee['referee'],
+                                        'appearance_fee' => $referee['referee_cost'],
+                                        'is_attend' => 2, //裁判出席比赛is_attend=2
+                                        'status' => 1
+                                    ];
+                                    $matchRefereeInfo = $matchS->getMatchReferee([
+                                        'match_id' => $post['id'],
+                                        'match_record_id' => $recordData['id'],
+                                        'referee_id' => $referee['referee_id'],
+                                        'referee' => $referee['referee'],
+                                        'appearance_fee' => $referee['referee_cost'],
+                                    ]);
+                                    if ($matchRefereeInfo) {
+                                        $matchRefereeAttend[$k]['id'] = $matchRefereeInfo['id'];
+                                    }
+                                }
+                                // 批量更新match_referee数据
+                                $resSaveMatchReferee = $matchS->saveAllMatchReferee($matchRefereeAttend);
+                                if ($resSaveMatchReferee['code'] ==100) {
+                                    return json(['code' => 100, 'msg' => '保存裁判出席名单出错']);
+                                }
+                            }
+                        }
+                        // 保存裁判出席名单
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     }
                     // 比赛完成的操作 end
 
@@ -725,6 +772,46 @@ class Match extends Base
 
                         // 发送比赛完成信息给对手球队
                         // 发送比赛完成信息给对手球队 end
+<<<<<<< HEAD
+=======
+
+                        // 保存裁判出席名单
+                        if (!empty($post['refereeAttend_str']) && $post['refereeAttend_str'] != '[]') {
+                            $matchRefereeAttend = [];
+                            // 转换裁判出席比赛名单格式
+                            $refereeAttends = json_decode($post['refereeAttend_str'], true);
+                            if ($refereeAttends) {
+                                // 遍历组合更新match_referee数据
+                                foreach ($refereeAttends as $k => $referee) {
+                                    $matchRefereeAttend[$k] = [
+                                        'match_id' => $post['id'],
+                                        'match_record_id' => $resultSaveMatchRecord['data'],
+                                        'referee_id' => $referee['referee_id'],
+                                        'referee' => $referee['referee'],
+                                        'appearance_fee' => $referee['referee_cost'],
+                                        'is_attend' => 2, //裁判出席比赛is_attend=2
+                                        'status' => 1
+                                    ];
+                                    $matchRefereeInfo = $matchS->getMatchReferee([
+                                        'match_id' => $post['id'],
+                                        'match_record_id' => $resultSaveMatchRecord['data'],
+                                        'referee_id' => $referee['referee_id'],
+                                        'referee' => $referee['referee'],
+                                        'appearance_fee' => $referee['referee_cost'],
+                                    ]);
+                                    if ($matchRefereeInfo) {
+                                        $matchRefereeAttend[$k]['id'] = $matchRefereeInfo['id'];
+                                    }
+                                }
+                                // 批量更新match_referee数据
+                                $resSaveMatchReferee = $matchS->saveAllMatchReferee($matchRefereeAttend);
+                                if ($resSaveMatchReferee['code'] ==100) {
+                                    return json(['code' => 100, 'msg' => '保存裁判出席名单出错']);
+                                }
+                            }
+                        }
+                        // 保存裁判出席名单
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     }
                     // 比赛完成的操作 end
                 }

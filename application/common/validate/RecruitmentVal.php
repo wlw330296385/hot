@@ -15,7 +15,11 @@ class RecruitmentVal extends Validate{
     
     protected $message = [
         'recruitment.token'   =>'请不要重复提交',
+<<<<<<< HEAD
         'recruitment.require'  =>  '请填写班级名称',
+=======
+        'recruitment.require'  =>  '请填写招募名称',
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         'member_id.require'	=> '会员信息过期,请重新登录平台',
         'province.require' => '请选择所属地区',
         'telephone.require'=> '请选择联系人',

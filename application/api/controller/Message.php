@@ -22,7 +22,11 @@ class Message extends Base{
                 return json(['code'=>100,'msg'=>'OK']);
             }
         }catch(Exception $e){
+<<<<<<< HEAD
             return json(['code'=>100,'msg'=>$e->getMassege()]);
+=======
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
 
@@ -40,7 +44,11 @@ class Message extends Base{
                 return json(['code'=>100,'msg'=>'OK']);
             }
         }catch(Exception $e){
+<<<<<<< HEAD
             return json(['code'=>100,'msg'=>$e->getMassege()]);
+=======
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
 
@@ -48,10 +56,19 @@ class Message extends Base{
     public function getMessageMemberListByPageApi(){
         try{
             $status = input('param.status');
+<<<<<<< HEAD
             if($status){
                 $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id'],'status'=>$status]);
             }else{
                 $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id']]);
+=======
+            // 管家类型
+            $steward_type = input('param.steward_type', 1);
+            if($status){
+                $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id'],'status'=>$status, 'steward_type' => $steward_type]);
+            }else{
+                $messageMemberList = $this->MessageService->getMessageMemberListByPage(['member_id'=>$this->memberInfo['id'], 'steward_type' => $steward_type]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             }
             
             if($messageMemberList){
@@ -60,7 +77,11 @@ class Message extends Base{
                 return json(['code'=>100,'msg'=>'OK']);
             }
         }catch(Exception $e){
+<<<<<<< HEAD
             return json(['code'=>100,'msg'=>$e->getMassege()]);
+=======
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
 
@@ -77,7 +98,11 @@ class Message extends Base{
     			return json(['code'=>100,'msg'=>'没有这条消息']);
     		}
     	}catch (Exception $e){
+<<<<<<< HEAD
     		return json(['code'=>100,'msg'=>$e->getMassege()]);
+=======
+    		return json(['code'=>100,'msg'=>$e->getMessage()]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     	}
     }
 
@@ -92,7 +117,11 @@ class Message extends Base{
                 return json(['code'=>200,'msg'=>'没有这条消息']);
             }
         }catch (Exception $e){
+<<<<<<< HEAD
             return json(['code'=>200,'msg'=>$e->getMassege()]);
+=======
+            return json(['code'=>200,'msg'=>$e->getMessage()]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
 
@@ -109,7 +138,33 @@ class Message extends Base{
             }
             
         }catch (Exception $e){
+<<<<<<< HEAD
             return json(['code'=>100,'msg'=>$e->getMassege()]);
+=======
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+    // 发送个人消息
+    public function sendMessageApi(){
+        try{
+
+            $messageDataStr = input('post.messageData');
+            $saveDataStr = input('post.saveData');
+            $member_id = input('param.member_id');
+            $messageData = json_decode($messageDataStr,true);
+            $saveData = json_decode($saveDataStr,true);
+            $result = $this->MessageService->sendMessageMember($member_id,$messageData,$saveData);
+            if($result){
+                return json(['code'=>200,'msg'=>'发送成功']);
+            }else{
+                return json(['code'=>100,'msg'=>'发送失败']);
+            }
+
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
 
@@ -131,7 +186,11 @@ class Message extends Base{
             }
 
         }catch (Exception $e){
+<<<<<<< HEAD
             return json(['code'=>100,'msg'=>$e->getMassege()]);
+=======
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
 
@@ -147,17 +206,30 @@ class Message extends Base{
             }
             
         }catch (Exception $e){
+<<<<<<< HEAD
             return json(['code'=>100,'msg'=>$e->getMassege()]);
+=======
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
 
     //获取个人消息列表
+<<<<<<< HEAD
     public function getUnReadMessageMmeberListApi()
+=======
+    public function getMessageMmeberCountApi()
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     {
         try {
             $map = input('post.');
             $map['member_id'] = $this->memberInfo['id'];
+<<<<<<< HEAD
             $result = $this->MessageService->getMessageMemberListByPage($map);
+=======
+            $MessageMember = new \app\model\MessageMember;
+            $result = $MessageMember->where($map)->count();
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             if ($result) {
                 return json(['code' => 200, 'msg' => '获取成功', 'data' => $result]);
             } else {
@@ -165,7 +237,11 @@ class Message extends Base{
             }
 
         } catch (Exception $e) {
+<<<<<<< HEAD
             return json(['code' => 100, 'msg' => $e->getMassege()]);
+=======
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
 
@@ -180,7 +256,11 @@ class Message extends Base{
             }
             $campmember = $campmemberObj->toArray();
             $campmember['type_num'] = $campmemberObj->getData('type');
+<<<<<<< HEAD
             if ($campmember['type_num'] > 1) {
+=======
+            if ($campmember['type_num'] == -1 || ($campmember['type_num'] > 0 && $campmember['type_num'] < 4)) {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 if ($campmember['type_num'] == 3) {
                     $baseurl = 'frontend/camp/teachlistofcamp';
                 } else {
@@ -196,9 +276,16 @@ class Message extends Base{
 
                 $messageS = new MessageService();
                 $messageS->campJoinAudit($data, $campmember['camp_id']);
+<<<<<<< HEAD
             }
         }catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMassege()]);
+=======
+                return json(['code'=>100, 'msg'=>'操作成功']);
+            }
+        }catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
 
@@ -213,7 +300,11 @@ class Message extends Base{
             $campmember = $campmemberObj->toArray();
             $campmember['type_num'] = $campmemberObj->getData('type');
             $campmember['status_num'] = $campmemberObj->getData('status');
+<<<<<<< HEAD
             if ($campmember['type_num'] > 1) {
+=======
+            if ($campmember['type_num'] == -1 || ($campmember['type_num'] > 0 && $campmember['type_num'] < 4)) {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 $url = '';
                 $checkstr = '';
                 switch ($campmember['status_num']) {
@@ -242,7 +333,11 @@ class Message extends Base{
                 $messageS->campJoinAuditResult($data, $campmember['member_id']);
             }
         }catch (Exception $e) {
+<<<<<<< HEAD
             return json(['code' => 100, 'msg' => $e->getMassege()]);
+=======
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
 
@@ -278,7 +373,11 @@ class Message extends Base{
             $messageS = new MessageService();
             $messageS->sendCampMessage($applydata['camp_id'], $messageData, $saveData);
         }catch (Exception $e) {
+<<<<<<< HEAD
             return json(['code' => 100, 'msg' => $e->getMassege()]);
+=======
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
 }

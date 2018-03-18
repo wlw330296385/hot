@@ -22,6 +22,12 @@ class ScheduleMember extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
+<<<<<<< HEAD
+=======
+            if (!isset($map['status'])) {
+                $map['status'] = 1;
+            }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $result = $this->ScheduleMemberService->getScheduleMemberListOfCampByPage($map);    
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
@@ -36,13 +42,34 @@ class ScheduleMember extends Base{
     public function getScheduleMemberListByPageApi(){
         try{
             $map = input('post.');
+<<<<<<< HEAD
+=======
+            $y = input('param.y');
+            $m = input('param.m');
+            $d = input('param.d',1);
+            if($y&&$m){
+                $betweenTime = getStartAndEndUnixTimestamp($y,$m,$d);
+                $map['schedule_time'] = ['BETWEEN',[$betweenTime['start'],$betweenTime['end']]];
+            }
+            
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $keyword = input('param.keyword');
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['user'] = ['LIKE','%'.$keyword.'%'];
             } 
+<<<<<<< HEAD
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
+=======
+
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if (!isset($map['status'])) {
+                $map['status'] = 1;
+            }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $result = $this->ScheduleMemberService->getScheduleMemberListByPage($map);    
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);

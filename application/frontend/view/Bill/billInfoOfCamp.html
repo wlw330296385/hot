@@ -40,6 +40,7 @@
                 </a>
             </li>
         </ul>
+        {if !empty($billInfo)}
         <ul class="mui-table-view list detalis-list mb">
             <li class="mui-table-view-cell listli">课程单价<span><b class="colororange">￥{$billInfo.price}</b> / 元</span></li>
             <li class="mui-table-view-cell listli">所选课量<span><b class="colororange" id="total">{$billInfo.total}</b> / 节</span></li>
@@ -65,7 +66,7 @@
             <li class="mui-table-view-cell listli">家长姓名<span>{$studentInfo.parent}</span></li>
             <li class="mui-table-view-cell listli">手机号码<span class="width">{$studentInfo.emergency_telephone}</span></li>
         </ul>
-
+        {/if}
         {gt name="power" value="2"}       
         <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%">
         {switch name="$billInfo['status']" }
@@ -74,6 +75,17 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgblue">修改</li>
                 </a>
 
+<<<<<<< HEAD
+        {gt name="power" value="2"}       
+        <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%">
+        {switch name="$billInfo['status']" }
+        {case value="0" }
+                <a href="{:url('bill/updateBillInfoOfCamp',['bill_order'=>$billInfo['bill_order']])}">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgblue">修改</li>
+                </a>
+
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         {/case}
         {case value="1" }
         
@@ -82,15 +94,22 @@
         {/case}
         {case value="-1" }
         
+<<<<<<< HEAD
                     <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred" id="agreeRefund">同意退款</li>
+=======
+                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred" id="agreeRefund">申请退款</li>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             
         
         {/case}   
         {case value="-2" }
         
                     <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">已退款<span><b class="">￥{$billInfo.refundamount}</b>元</span></li>
+<<<<<<< HEAD
             
         
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         {/case} 
         {/switch}
     </ul>
@@ -110,6 +129,7 @@
 
     $(function(){
         $('#agreeRefund').on('click',function(){
+<<<<<<< HEAD
             result = wooApi.asyncF("{:url('api/bill/updateBillApi',['bill_order'=>$billInfo['bill_order']])}",{action:3});
             if(result.code == 200){
                  mui.alert('',result.msg,'确定',function(){
@@ -118,6 +138,20 @@
             }else{
                 mui.alert(result.msg);
             }
+=======
+            var re = confirm('是否确认同意退款?');
+            if(re===true){
+                result = wooApi.asyncF("{:url('api/bill/updateBillApi',['bill_id'=>$billInfo['id']])}",{action:3});
+                if(result.code == 200){
+                     mui.alert('',result.msg,'确定',function(){
+                        location.reload();
+                     });
+                }else{
+                    mui.alert(result.msg);
+                }
+            }
+            
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         })
     })
 

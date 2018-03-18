@@ -15,6 +15,7 @@ class GradeService{
 
 
     // 班级列表
+<<<<<<< HEAD
     public function getGradeList($map=[],$page = 1, $order='',$p=10) {
         $res = Grade::where($map)->order($order)->page($page,$p)->select();
         // echo Grade::getlastsql();
@@ -26,6 +27,29 @@ class GradeService{
 
     // 班级分页
     public function getGradeListByPage($map , $order='', $paginate=10) {
+=======
+    public function getGradeList($map=[],$page = 1, $order='id desc',$p=10) {
+        $res = Grade::with('lesson')->where($map)->order($order)->page($page,$p)->select();
+        // echo Grade::getlastsql();
+        if($res){   
+            $result = $res->toArray();
+        }
+        return $res;
+    }
+
+    // 获取班级列表（关联课程信息、无分页)
+    public function getGradeAllWithLesson($map , $order='id desc') {
+        $query = Grade::with('lesson')->where($map)->order($order)->select();
+        if($query){
+            return $query->toArray();
+        } else {
+            return $query;
+        }
+    }
+
+    // 班级分页
+    public function getGradeListByPage($map , $order='id desc', $paginate=10) {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $result =  $this->GradeModel
                 // ->with('gradeMember')
                 ->where($map)
@@ -40,6 +64,7 @@ class GradeService{
             return $result;
         }
         
+<<<<<<< HEAD
     }
 
     // 班级分页
@@ -59,6 +84,27 @@ class GradeService{
         
     }
 
+=======
+    }
+
+    // 班级分页
+    public function getGradeListNoPage($map , $order='id desc') {
+        $result =  $this->GradeModel
+                // ->with('gradeMember')
+                ->where($map)
+                ->order($order)
+                ->select();
+
+        if($result){
+            $res = $result->toArray();
+            return $res;
+        }else{
+            return $result;
+        }
+        
+    }
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
     // 一个班级
     public function getGradeInfo($map=[]) {
@@ -107,6 +153,7 @@ class GradeService{
         $validate = validate('GradeVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
+<<<<<<< HEAD
         }
 
         if($data['assistants']){
@@ -119,6 +166,20 @@ class GradeService{
             $seria = serialize($assistan_list);
             $data['assistant_id'] = $seria;
         }
+=======
+        }
+
+        if($data['assistants']){
+                $assistan_list = explode(',', $data['assistants']);
+                $seria = serialize($assistan_list);
+                $data['assistant'] = $seria;
+            }
+        if($data['assistant_ids']){
+            $assistan_list = explode(',', $data['assistant_ids']);
+            $seria = serialize($assistan_list);
+            $data['assistant_id'] = $seria;
+        }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $result = $this->GradeModel->allowField(true)->save($data);
          if (!$result) {
             return [ 'msg' => __lang('MSG_400'), 'code' => 100 ];
@@ -144,7 +205,7 @@ class GradeService{
             $seria = serialize($assistan_list);
             $data['assistant_id'] = $seria;
         }
-        $result = $this->GradeModel->save($data,['id'=>$id]);
+        $result = $this->GradeModel->allowField(true)->save($data,['id'=>$id]);
          if (!$result) {
             return [ 'msg' => __lang('MSG_400'), 'code' =>100 ];
         }else{
@@ -196,5 +257,18 @@ class GradeService{
         return $result;
     }
 
+<<<<<<< HEAD
 
+=======
+    // 批量更新班级-学生grade_member数据
+    public function saveAllGradeMember($data=[]) {
+        $model = new GradeMember();
+        $result = $model->isUpdate(true)->saveAll($data);
+        if ($result) {
+            return ['code' => 200, 'msg' => __lang('MSG_200')];
+        } else {
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 }

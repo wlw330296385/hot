@@ -8,12 +8,11 @@ class Grade extends Model {
 	protected $autoWriteTimestamp = true;
     protected $readonly = [
                             'create_time',
-                            'students',
                             ];
 
 
     public function getStatusAttr($value){
-    	$status = [0=>'已结束',1=>'正常'];
+    	$status = [-1=>'预排班级',1=>'当前班级', 2 => '下架班级'];
     	return $status[$value];
     }
 
@@ -24,5 +23,14 @@ class Grade extends Model {
 
     public function student(){
         return $this->hasMany('student','grade_id','member_id',[],'left join');
+    }
+
+    // 课程关系一对一
+    public function lesson() {
+        return $this->belongsTo('lesson');
+    }
+
+    public function gradeMember(){
+        return $this->hasMany('grade_member','grade_id')->field('student,grade_id');
     }
 }

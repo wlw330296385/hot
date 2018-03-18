@@ -52,7 +52,7 @@
                     </div>
                     <div class="price-frame">
                         <span>编辑</span>
-                        <p class="nump">{$scheduleInfo.students}/队员</p>
+                        <p class="nump">{$scheduleInfo.students} 队员</p>
                     </div>
                 </a>
                 {else/}
@@ -68,9 +68,21 @@
         </ul>
 
         <ul class="mui-table-view list detalis-list mb">
+<<<<<<< HEAD
             <li class="mui-table-view-cell listli">训练时间<span>{$scheduleInfo.lesson_time|date="Y-m-d H:i",###}</span>
             </li>
             <li class="mui-table-view-cell listli detalisli">学员名单<span class="students">{volist name="studentList" id="vol"}{$vol.student},{/volist}{volist name="expstudentList" id="vol"}{$vol.student},{/volist}</span>
+=======
+            <li class="mui-table-view-cell listli">训练时间<span>{$scheduleInfo.lesson_time}</span>
+            </li>
+            <li class="mui-table-view-cell listli detalisli">学员名单<span class="students">
+                {notempty name="studentList"}
+                {volist name="studentList" id="vol"}{$vol.student},{/volist}
+                {/notempty}
+                {notempty name="expstudentList"}
+                {volist name="expstudentList" id="vol"}{$vol.student},{/volist}
+                {/notempty}</span>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             </li>
             <li class="mui-table-view-cell listli">所属课程<span>{$scheduleInfo.lesson}</span></li>
             <li class="mui-table-view-cell listli">课程类型<span>{$scheduleInfo.grade}</span></li>
@@ -84,7 +96,23 @@
             <li class="mui-table-view-cell listli">主教底薪<span>{$scheduleInfo.coach_salary}</span></li>
             <li class="mui-table-view-cell listli">助教底薪<span>{$scheduleInfo.assistant_salary}</span></li>
             <li class="mui-table-view-cell listli">备注<span>{$scheduleInfo.remarks}</span></li>
+            <li class="mui-table-view-cell listli">教案<span>{$scheduleInfo.plan}</span></li>
         </ul>
+        <div class="exerciseList">
+                <div class="page-header">
+                    <span class="course"><b>训练项目</b></span>
+                </div>
+                    {volist name = "$scheduleInfo.exerciseList" id="vol" empty="<ul class='mui-table-view list eType'><li class='mui-table-view-cell listli detalisli'>没填写训练项目</li></ul>"}
+                    <ul class="mui-table-view list eType">
+                        <li class="mui-table-view-cell listli detalisli">
+                            <h5><strong class="daType">{$vol.exercise}</strong></h5>
+                            {volist name="$vol.sub" id="v"}
+                            <p>{$v.exercise} <i class="fr f12">{$v.exercise_time} 分钟</i></p>
+                            {/volist}
+                        </li>
+                    </ul>
+                    {/volist}
+        </div>
 
         <div class="page-header mt">
             <span class="course"><b>学员评价</b></span>
@@ -185,6 +213,7 @@
                 </div>
             </div>
             <div class="mui-col-xs-2 mui-col-sm-2"><span class="domData" name="score_item3">0</span>分</div>
+<<<<<<< HEAD
         </div>
 
         <div class="mui-row scoreStart">
@@ -206,6 +235,29 @@
             <textarea rows="3" placeholder="感谢您的评价，顺便写点意见吧" style="font-size: 14px" name="comment" class="data"></textarea>
         </div>
 
+=======
+        </div>
+
+        <div class="mui-row scoreStart">
+            <div class="mui-col-xs-3 mui-col-sm-3">工作态度</div>
+            <div class="mui-col-xs-7 mui-col-sm-7">
+                <div class="mui-page-content">
+                    <div class="icons mui-inline">
+                        <i data-index="1" class="mui-icon mui-icon-star"></i>
+                        <i data-index="2" class="mui-icon mui-icon-star"></i>
+                        <i data-index="3" class="mui-icon mui-icon-star"></i>
+                        <i data-index="4" class="mui-icon mui-icon-star"></i>
+                        <i data-index="5" class="mui-icon mui-icon-star"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="mui-col-xs-2 mui-col-sm-2"><span class="domData" name="score_item4">0</span>分</div>
+        </div>
+        <div class="mui-row scoreStart" style="border-bottom: 0;">
+            <textarea rows="3" placeholder="感谢您的评价，顺便写点意见吧" style="font-size: 14px" name="comment" class="data"></textarea>
+        </div>
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" style="border-radius: 0" onclick="submitAction()">提交</li>
         </ul>
@@ -226,12 +278,24 @@
         $(this).parent().parent().parent().siblings().children().text(index);
     });
 
+<<<<<<< HEAD
 
     //去掉学生最后一个逗号
     var cDoms = $(".students").text();
     cDoms = cDoms.substring(0, cDoms.length - 1);
     $(".students").text(cDoms);
 
+=======
+    $(function () {
+
+        //去掉学生最后一个逗号
+        var cDoms = $(".students").text();
+        console.log(cDoms);
+        cDoms = cDoms.substring(0, cDoms.length - 1);
+        $(".students").text(cDoms);
+
+    })
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
     // 获取数据并进行提交
     function submitAction() {

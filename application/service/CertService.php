@@ -65,14 +65,13 @@ class CertService {
         $map['member_id'] = $request['member_id'];
         $map['cert_type'] = $request['cert_type'];
         $find = $model->where($map)->find();
-
         if ($find) {
             $res = $model->save($request, $map);
         } else {
             $res = $model->save($request);
         }
 
-        if ($res) {
+        if ($res || ($res === 0)) {
             $response = ['code' => 200, 'msg' => __lang('MSG_200')];
         } else {
             $response = ['code' => 100, 'msg' => __lang('MSG_400')];

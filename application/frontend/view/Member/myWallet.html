@@ -19,7 +19,7 @@
 
 <body class=whitebg>
 <header id="header" class="mui-bar mui-bar-nav subheader subheader-other">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <a class="mui-icon mui-icon-left-nav mui-pull-left arrow" href="{:url('member/index')}"></a>
     <h1 class="mui-title">我的钱包</h1>
 </header>
 <div class="mui-content" style="padding: 0">
@@ -29,16 +29,23 @@
             <p><img src="/static/frontend/images/money.png" alt=""></p>
             <p>我的余额</p>
             <p>￥{$memberInfo['balance']}</p>
+            <p>冻结金额(￥{$buffer})</p>
         </div>
         <div class="nav-list mb">
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                 <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
-                    <a href="{:url('member/charge')}">
+                    <!--<a href="{:url('member/charge')}">-->
+                        <!--<span>充值</span>-->
+                    <!--</a>-->
+                    <a href="#" class="goConfirm">
                         <span>充值</span>
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
-                    <a href="{:url('member/withdraw')}">
+                    <!--<a href="{:url('member/withdraw')}">-->
+                        <!--<span>提现</span>-->
+                    <!--</a>-->
+                    <a href="#" class="goConfirm">
                         <span>提现</span>
                     </a>
                 </li>
@@ -47,7 +54,7 @@
         <a href="{:url('member/salaryDetail',['member_id'=>$memberInfo['id']])}">
             <div class="frame mui-text-center whitebg">
             <button type="button" class="btn">收支明细</button>
-            <p>大热篮球平台</p>
+            <p>篮球管家</p>
             </div>
         </a>
     </div>
@@ -55,10 +62,21 @@
 
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+    $(function () {
+
+        //搜索子页：搜索提交
+        $(".goConfirm").click(function () {
+            mui.toast('暂未开放，敬请期待');
+        })
+
+    })
+
 </script>
 </html>

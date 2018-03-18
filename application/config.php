@@ -23,6 +23,28 @@ return [
     'key'   =>'93a793a3b611f19008432d0032251f34',//注：key为商户平台设置的密钥key
     'sslcert_path'=>'',
     'sslkey_path'=>'',
+
+    // 模板消息
+    'wxTemplateID' => [
+        'successBill' => 'oB1u_CWLR0h9HE4CpszWjFE-9dFAQ89aufv7C1y-NyU',//支付成功
+        'successJoin' => 'aOTMBdZbOKo8fFEKS5HWNaw9Gu-2c8ASTOcXlL6129Q',//申请加入
+        'memberQuit' => 'b2DC63QQokA8WwfoaUb-FgUuyMOaiPBdzxH7Gm0-1hs',//成员退出
+        'successRefund' => 'MHLQONFLdMBSEGQS2AW06V3sFV5zEXQYq_iqbPJpAgQ',//申请退款成功
+        'successCheck' => 'xohb4WrWcaDosmQWQL27-l-zNgnMc03hpPORPjVjS88',//审核通过
+        //'errorCheck' => '   z03wxEVbhiEnXChfnBKEYhpYpCvIMLEPq0912RGgrQg',//未通过教练认证通知
+        'sendSchedule' => '_ld4qtOLJA1vl-oh0FxCliMK1tbGD0nOTq7Z4OmeFCE', //发送课时通知
+        'checkPend' => 'eq30-P4InOr-gndRqTdK8xAgpsMWdh3BWO1AArdxoeI', // 待审批事项通知
+        'eventJoin' =>'rgF4hfyPKVxeP9HSOSbmzf7iqITPB_Bo5UgGyc9j36s',//付费活动报名成功
+        'eventBook' =>'RvMcKdoOyu5RRlT7ucXtAgF5-dOA-n3Gd61eho4k4lw',//免费活动报名成功通知
+        'lessonBook'=>'G1EeDZ-4CS7MUTND_sEPKAzbZElqRygKzbftYfvGYF8',//预约体验成功,
+        'applyResult' => 'fIaJMxa6cpenLyViHq10WiFkz2Wd_ANs3H1SV0PXDMk', //申请结果通知
+        'statusChange' => '_MXeO37KI0lygDDJ82GEFciIQYW0GXzTcLl0Y8HgWPY', //业务状态变更通知
+        'scheduleExpend'=>'squ4uaAVXJ52Dhfjtlol08cpo49FonbFwN-wUFObAV4', //课时消耗通知
+        'refereeTask' => '9XyZ3Mb70gR8HmE0N6y_9TESECJYyi3r4kA_c45d_EU', // 裁判任务通知
+        'receviceInvitaion' => '68DeWPCsdhaPuLJfPCPwPhrjhxo3m2ZUqa7b9j8XIfg', // 邀请已接受通知
+        'refuseInvitaion' => 'oajS06HPl02rKIH-Xsvqm5_ogdPQv9cxl-Gs782Ifrg', // 拒绝邀请提醒
+    ],
+
     // 七牛云
     //accessKey
     'qn_accesskey' => 'OOzGcbsIECVSx8uNY7d6iy8z8j60LruYL88dCGj8',
@@ -36,6 +58,17 @@ return [
 	// 短信通道showapi
 	'sms_appid' => '45842',
     'sms_secret' => '9b3c9e8899a7484890ab1c100a8fca82',
+
+
+    //开发者模式,0:非|1:真
+    'develop_mode'=> 0,
+
+    // 固定默认图片
+    'default_image' => [
+        'member_avatar' =>'/static/default/avatar.png', // 默认会员头像
+        'upload_default' => '/static/frontent/images/uploadDefault.jpg', // 上传默认图片
+        'team_logo' => '/static/frontend/images/basketball.jpg', //球队logo
+    ],
 
     // +----------------------------------------------------------------------
     // | 应用设置
@@ -181,9 +214,9 @@ return [
     'exception_tmpl'         => THINK_PATH . 'tpl' . DS . 'think_exception.tpl',
 
     // 错误显示信息,非调试模式有效
-    'error_message'          => '页面错误！请稍后再试～',
+    'error_message'          => '此页面正在上新功能...',
     // 显示错误信息
-    'show_error_msg'         => false,
+    'show_error_msg'         => true,
     // 异常处理handle类 留空使用 \think\exception\Handle
     'exception_handle'       => '',
 
@@ -197,7 +230,8 @@ return [
         // 日志保存目录
         'path'  => LOG_PATH,
         // 日志记录级别
-        'level' => [],
+        'level' => ['error','sql','log','info'],
+        'apart_level' => ['error', 'sql','log','info'],
     ],
 
     // +----------------------------------------------------------------------
@@ -246,7 +280,7 @@ return [
         // cookie 名称前缀
         'prefix'    => '',
         // cookie 保存时间
-        'expire'    => 0,
+        'expire'    => 7200,
         // cookie 保存路径
         'path'      => '/',
         // cookie 有效域名

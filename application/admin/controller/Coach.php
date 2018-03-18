@@ -46,10 +46,18 @@ class Coach extends Backend {
                     $coach['cert']['coachcert'] = $value;
             }
         }
+<<<<<<< HEAD
+=======
+        $coachService = new CoachService();
+        $trueScheduleFlow = $coachService->schedulecount($id);
+        $trueStudentFlow = $coachService->teachstudents($id);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
         $breadcrumb = [ 'ptitle' => '教练管理' , 'title' => '教练详细' ];
         $this->assign( 'breadcrumb', $breadcrumb );
         $this->assign('coach', $coach);
+        $this->assign('trueScheduleFlow', $trueScheduleFlow);
+        $this->assign('trueStudentFlow', $trueStudentFlow);
         return view();
     }
 

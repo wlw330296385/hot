@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html>
 
@@ -908,4 +909,1032 @@
 
 </body>
 
+=======
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>篮球管家</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="x5-orientation" content="portrait">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--顶部下滑菜单 menu-wrapper.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/menu.wrapper.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <!--自定义多色图标icon.js-->
+    <script src="/static/frontend/iconfont/iconfont.js"></script>
+    <style type="text/css">
+        .coloricon {
+            width: 2.7em;
+            height: 2.7em;
+            vertical-align: -0.7em;
+            fill: currentColor;
+            overflow: hidden;
+        }
+
+        .goConfirm .mui-media-body {
+            height: 24px !important;
+            line-height: 24px !important;
+        }
+
+        .mui-backdrop {
+            background: rgba(0, 0, 0, 0.69)
+        }
+
+        @media screen and (min-width: 320px) {
+            .imgShowEvent {
+                width: 70% !important;
+            }
+            #giftpopover {
+                height: 68% !important;
+            }
+        }
+
+        @media screen and (min-width: 375px) {
+            .imgShowEvent {
+                width: 73% !important;
+            }
+            #giftpopover {
+                height: 74% !important;
+            }
+        }
+
+        @media screen and (min-width: 414px) {
+            .imgShowEvent {
+                width: 78% !important;
+            }
+        }
+
+        @media screen and (min-width: 400px) {
+            #giftpopover {
+                height: 80% !important;
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            #giftpopover {
+                height: 85% !important;
+                top: 8% !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="mt44 mt55">
+
+    <div class="mui-content">
+        <!--定位、搜索触发-->
+        <header id="header" class="mui-bar mui-bar-nav search1">
+            <div class="mui-pull-left mui-icon mui-icon-location" id="showCityPicker3">
+                <span class="address" id="cityResult3">篮球管家</span>
+            </div>
+            <div class="mui-pull-left">
+                <input type="search" id="search-input" placeholder="搜课程/活动/球场等">
+            </div>
+            <span class="mui-icon mui-icon-search searchicon" id="search-Btn"></span>
+        </header>
+
+        <div id="tabbar" class="mui-control-content mui-active">
+            <!--图片轮播-->
+            <div id="slider" class="mui-slider">
+                <div class="mui-slider-group mui-slider-loop">
+                    <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+                    <div class="mui-slider-item mui-slider-item-duplicate">
+                        <a href="#">
+                            <img src="{$bannerList[0]['url']}">
+                        </a>
+                    </div>
+                    <!-- 第一张 -->
+                    {volist name="bannerList" id="vol"}
+                    <div class="mui-slider-item">
+                        <a href="">
+                            <img src="{$vol.url}">
+                        </a>
+                    </div>
+                    {/volist}
+                    <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+                    <div class="mui-slider-item mui-slider-item-duplicate">
+                        <a href="#">
+                            <img src="{$bannerList[2]['url']}">
+                        </a>
+                    </div>
+                </div>
+                <div class="mui-slider-indicator">
+                    <div class="mui-indicator mui-active"></div>
+                    <div class="mui-indicator"></div>
+                    <div class="mui-indicator"></div>
+                </div>
+            </div>
+
+            <!--图文导航-->
+            <div class="nav-list">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ptb4">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                        <div class="goConfirm">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-home-equipment"></use>
+                            </svg>
+                            <div class="mui-media-body">装备</div>
+                        </div>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                        <a href="{:url('team/eventListOfPlatform')}">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-home-activity"></use>
+                            </svg>
+                            <div class="mui-media-body">活动</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                        <a href="{:url('team/matchListOfPlatform')}">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-home-game"></use>
+                            </svg>
+                            <div class="mui-media-body">比赛</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                        <a href="{:url('match/friendlylist')}">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-home-VS"></use>
+                            </svg>
+                            <div class="mui-media-body">约战</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                        <a href="{:url('frontend/court/courtList')}">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-home-court"></use>
+                            </svg>
+                            <div class="mui-media-body">球场</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                        <div class="goConfirm">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-home-Leaderboards"></use>
+                            </svg>
+                            <div class="mui-media-body">排行榜</div>
+                        </div>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                        <div class="goConfirm">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-home-task"></use>
+                            </svg>
+                            <div class="mui-media-body">任务</div>
+                        </div>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                        <a href="{:url('Team/teamlist')}">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-home-team"></use>
+                            </svg>
+                            <div class="mui-media-body">球队</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                        <a href="{:url('referee/refereeList')}">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-home-coach"></use>
+                            </svg>
+                            <div class="mui-media-body">裁判</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                        <div class="goConfirm">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-home-treasurechest"></use>
+                            </svg>
+                            <div class="mui-media-body">百宝箱</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 文章 -->
+            <!-- <div class="show-list">
+            <div class="mui-content" style="background-color:#fff">
+               <div class="page-header border-b">
+                    <span class="course">管家头条</span>
+                    <span class="more">
+                        <a href="{:url('frontend/article/articleList')}" class="mui-navigate-right">更多</a>
+                    </span>
+                </div>
+                <ul class="mui-table-view mui-grid-view">
+                    {volist name="ArticleList" id="vol"}
+                    <li class="mui-table-view-cell mui-media mui-col-xs-6">
+                        <a href="#">
+                            <img class="mui-media-object" src="{$vol.covers}">
+                            <div class="mui-media-body"  style="color: black">{$vol.title}</div>
+                            <div class="mui-media-body" style="color: #999">{$vol.abstract}</div>
+                        </a>
+                    </li>
+                    {/volist}
+                </ul>
+            </div>
+        </div> -->
+
+
+            <!--最近赛事-->
+            <div class="page-header border-b">
+                <span class="course">最近赛事</span>
+                <span class="more pdr15">
+                    <a href="" class="mui-navigate-right">更多</a>
+                </span>
+            </div>
+            <ul class="mui-table-view detalis-list list mainInfo border-b newMatch"></ul>
+
+            <!--最近活动-->
+            <div class="page-header border-b">
+                <span class="course">最近活动</span>
+                <span class="more pdr15">
+                    <a href="" class="mui-navigate-right">更多</a>
+                </span>
+            </div>
+            <ul class="mui-table-view detalis-list list mainInfo border-b newEvent"></ul>
+
+            <!--最近订单-->
+            <div class="page-header border-b refereeOrder">
+                <span class="course">最近订单</span>
+                <span class="more pdr15">
+                    <a href="{:url('referee/orderList')}" class="mui-navigate-right">更多</a>
+                </span>
+            </div>
+            <ul class="mui-table-view detalis-list list mainInfo border-b newReferee refereeOrder"></ul>
+
+            <div class="show-list hot-ads">
+                <img src="/static/frontend/images/ads1.jpg" />
+            </div>
+
+            <!--热门赛事-->
+            <div class="page-header border-b">
+                <span class="course">热门赛事</span>
+                <span class="more pdr15">
+                    <a href="{:url('team/matchListOfPlatform')}" class="mui-navigate-right">更多</a>
+                </span>
+            </div>
+            <ul class="mui-table-view detalis-list list mui-text-center mainInfo border-b recordMatch"></ul>
+
+            <!--热门活动-->
+            <div class="page-header border-b">
+                <span class="course">热门活动</span>
+                <span class="more pdr15">
+                    <a href="{:url('team/eventListOfPlatform')}" class="mui-navigate-right">更多</a>
+                </span>
+            </div>
+            <ul class="mui-table-view detalis-list list mainInfo border-b recordEvent"></ul>
+
+            <p class="pline"></p>
+
+            <!-- 《篮球管家》操作指南-->
+            <div class="page-header whitebg">
+                <a href="#" class="mui-navigate-right">
+                    <span class="course">《篮球管家》操作指南</span>
+                </a>
+            </div>
+            <input type="hidden" name="mid" value="{$mid}">
+        </div>
+
+    </div>
+
+    <div id="menu-wrapper" class="menu-wrapper hidden">
+        <div id="menu" class="menu search">
+            <!--搜索执行-->
+            <header id="header-search" class="mui-bar mui-bar-nav search1" style="position: relative !important;">
+                <div class="mui-pull-left mui-icon mui-icon-back" id="close-search"></div>
+                <div class="mui-pull-left searchType">搜课程</div>
+                <div class="mui-pull-left">
+                    <input type="search" id="searchInput" class="mui-input-clear" placeholder="请输入搜索关键字">
+                </div>
+                <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
+            </header>
+            <div class="search">
+                <div id="segmentedControl" class="mui-segmented-control">
+                    <span class="mui-control-item mui-active choise-segment" s-table="/frontend/lesson/lessonList/">课程</span>
+                    <span class="mui-control-item choise-segment" s-table="/frontend/camp/campList/">训练营</span>
+                    <span class="mui-control-item choise-segment" s-table="/frontend/court/courtList/">训练点</span>
+                    <span class="mui-control-item choise-segment" s-table="/frontend/coach/coachList/">教练员</span>
+                </div>
+
+                <div class="hot-search">
+                    <h4>热门搜索</h4>
+                    <ul class="hot-search-frame">
+                        <li s-keyword="" s-table="">
+                            <span>幼儿课程</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>基础课程</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>强化课程</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>初中课程</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>室内球场</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>室外球场</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>特色课程</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>男教练</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>女教练</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="menu-backdrop" class="menu-backdrop"></div>
+
+    <!--底部导航-->
+    {layout name="Layout/footer"}
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!--选择器-->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/common.js?v={:time()}"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+        //弹出菜单
+        mui('.mui-scroll-wrapper').scroll();
+
+        (function ($, doc) {
+            $.init();
+            $.ready(function () {
+                var _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+                ///级联示例
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
+                });
+                cityPicker3.setData(cityData3);
+                // 设置默认值
+                cityPicker3.pickers[0].setSelectedIndex(18);
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[1], 'text');
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                        var areas = getAreas(_getParam(items[0], 'text'), _getParam(items[1], 'text'));
+                        localStorage.currentArea = _getParam(items[2], 'text');
+                        localStorage.currentCity = _getParam(items[1], 'text');
+                        localStorage.currentProvince = _getParam(items[0], 'text');
+                        localStorage.currentAreas = areas;
+                    });
+                }, false);
+            });
+        })(mui, document);
+
+        //轮播
+        var slider = mui("#slider");
+        slider.slider({
+            interval: 5000
+        });
+        mui("body").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
+
+        $(function () {
+            //未开发提示
+            $(".goConfirm").click(function () {
+                mui.toast('暂未开放，敬请期待');
+            })
+
+            // if(window.localStorage){ alert("浏览支持localStorage") }else{ alert("浏览暂不支持localStorage") }
+            //localStorage.clear();
+
+            //获取定位省市区
+            var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
+            var sCity = getLocationTB['city'];
+            var sProvince = getLocationTB['province'];
+            $(".address").text(sCity);
+
+            toLastEventList();//最近活动
+            toLastMatchList();//最近比赛
+            toCheckReferee(); //是否有裁判身份
+            toRecordEventList(); //活动纪录
+            toRecordMatchList(); //赛事纪录
+
+            //提示框
+            if ($('input[name=mid]').val() == 0) {
+                mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                    if (e.index === 1) {
+                        window.location.href = "{$fasturl}";
+                    }
+                });
+            }
+
+            //搜索子页：类型选择
+            $(".mui-segmented-control").find(".choise-segment").click(function () {
+                $(".searchType span").text($(this).text());
+            })
+            //搜索子页：搜索提交
+            $("#searchBtn").click(function () {
+                var sKeyword = $("#searchInput").val();
+                if (sKeyword == 0) {
+                    mui.toast('请输入您要搜索的内容');
+                } else {
+                    var getType = $(".mui-segmented-control .mui-active").attr("s-table");
+                    var searchUrl = getType + '?keyword=' + sKeyword;
+                    window.top.location.href = searchUrl;
+                }
+            })
+
+
+
+            //比赛报名功能
+            $(document).on('tap', '.signupMatchBtn', function () {
+                //判断是否登陆会员
+                var match_id = matchid;
+                mui.ajax("{:url('api/match/joinmatch')}", {
+                    data: {
+                        match_id: matchid,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.alert('报名成功', '确定');
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+            //活动报名功能
+            $(document).on('tap', '.signupEventBtn', function () {
+                //判断是否登陆会员
+                var event_id = eventid;
+                mui.ajax("{:url('api/team/jointeamevent')}", {
+                    data: {
+                        event_id: eventid,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.alert('报名成功', '确定');
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+            //裁判接单功能
+            // $(document).on('tap', '.signupRefereeBtn', function () {
+            //     //判断是否登陆会员
+            //     var refereeMatch_id = refereeid;
+            //     mui.ajax("{:url('api/team/jointeamevent')}", {
+            //         data: {
+            //             event_id: eventid,
+            //         },
+            //         dataType: 'json',//服务器返回json格式数据
+            //         type: 'post',//HTTP请求类型
+            //         timeout: 10000,//超时时间设置为10秒；
+            //         headers: { 'Content-Type': 'application/json' },
+            //         success: function (data) {
+            //             console.log(data);
+            //             if (data.code == 200) {
+            //                 mui.alert('接单成功，等待对方回复', '确定');
+            //             } else {
+            //                 mui.toast(data.msg);
+            //             }
+            //         },
+            //         error: function (xhr, type, errorThrown) {
+            //             //异常处理；
+            //             console.log(type);
+            //         }
+            //     });
+            // });
+
+        })
+
+        //拼接搜索地址
+        function getSearchUrl(tb, ty, kw) {
+            var searchUrl = '/frontend/' + tb + '/' + tb + 'List/?' + ty + '=' + kw;
+        }
+
+        //搜索子页面
+        var menuWrapper = document.getElementById("menu-wrapper");
+        var menu = document.getElementById("menu");
+        var menuWrapperClassList = menuWrapper.classList;
+        var backdrop = document.getElementById("menu-backdrop");
+        backdrop.addEventListener('tap', toggleMenu);
+        var closeSearch = document.getElementById("close-search");
+        closeSearch.addEventListener('tap', toggleMenu);
+        document.getElementById("search-input").addEventListener('tap', toggleMenu);
+        document.getElementById("search-Btn").addEventListener('tap', toggleMenu);
+
+        var busying = false;
+        function toggleMenu() {
+            if (busying) {
+                return;
+            }
+            busying = true;
+            if (menuWrapperClassList.contains('mui-active')) {
+                document.body.classList.remove('menu-open');
+                menuWrapper.className = 'menu-wrapper fade-out-up animated';
+                menu.className = 'menu bounce-out-up animated';
+                setTimeout(function () {
+                    backdrop.style.opacity = 0;
+                    menuWrapper.classList.add('hidden');
+                }, 500);
+            } else {
+                document.body.classList.add('menu-open');
+                menuWrapper.className = 'menu-wrapper fade-in-down animated mui-active';
+                menu.className = 'menu bounce-in-down animated';
+                backdrop.style.opacity = 1;
+            }
+            setTimeout(function () {
+                busying = false;
+            }, 500);
+        }
+
+        var eventid = ''
+        //获取最近一条活动
+        function toLastEventList() {
+            var member_id = "{$memberInfo.id}"
+            mui.ajax("{:url('api/team/lastevent')}", {
+                data: {
+                    member_id: member_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var div = '';
+                    if (data.code == 200) {
+                        // 将时间戳转成日期格式
+                        var Tmonth = gettimem(data.data[0].start_time_stamp * 1000);
+                        var Tday = gettimed(data.data[0].start_time_stamp * 1000);
+                        var Ttime = gettimeh(data.data[0].start_time_stamp * 1000);
+                        eventid = data.data[0].id
+                        var url = "{:url('team/eventinfo')}" + '/team_id/' + data.data[0].team_id + '/event_id/' + data.data[0].id;
+                        div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgreen">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
+                        div += '<div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[0].event + '</h5>';
+                        div += '<div class="divFrame"><p>发起人：' + data.data[0].member + '</p><p>活动地点：' + data.data[0].location + '</p><p>活动类型：' + data.data[0].event_type + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
+                        if (data.data[0].is_finished_num == 1) {
+                            div += '<button class="mui-btn opbtn bggray">已结束</button>';
+                        } else {
+                            div += '<button class="mui-btn opbtn bggreen signupEventBtn">参加</button>';
+                        }
+                        div += ' </div></div></li>';
+                        // 人员头像版块
+                        div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl overflow-x imgShowEvent" style="padding:0 !important">';
+                        for (var j = 0; j <= data.data[0].memberlist.length - 1; j++) {
+                            div += '<img src="' + data.data[0].memberlist[j].avatar + '" alt="">';
+                        }
+                        div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[0].reg_number + '</font>/<font class="reg_all">' + data.data[0].max + '</font> 已报名</span></li>';
+                        $(".newEvent").empty().append(div);
+                    }
+                    if (data.code == 100) {
+                        $(".newEvent").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有活动数据，赶紧去创建活动吧</p></li>');
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        };
+
+        var matchid = ''
+        //获取最近一条比赛
+        function toLastMatchList() {
+            var member_id = "{$memberInfo.id}"
+            mui.ajax("{:url('api/team/lastmatch')}", {
+                data: {
+                    member_id: member_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var div = '';
+                    if (data.code == 200) {
+                        // 将时间戳转成日期格式
+                        var Tmonth = gettimem(data.data[0].match_time * 1000);
+                        var Tday = gettimed(data.data[0].match_time * 1000);
+                        var Ttime = gettimeh(data.data[0].match_time * 1000);
+                        matchid = data.data[0].id
+                        var url = "{:url('team/matchinfo')}" + '/team_id/' + data.data[0].team_id + '/match_id/' + data.data[0].id;
+                        div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center">';
+                        if (data.data[0].match_time == 0) {
+                            div += '<p class="month bgblack">0月</p><h1 class="day" style="font-size: 25px;padding: 15px 21px;">待定</h1><p class="hours">00:00</p>';
+                        } else {
+                            div += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorred">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
+                        }
+                        div += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[0].match + '</h5><div class="divFrame">';
+                        div += '<p>发起人：' + data.data[0].home_team + '</p>';
+                        div += '<p>比赛地点：' + data.data[0].court + '</p><p>比赛类型：' + data.data[0].type + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
+                        if (data.data[0].is_finished_num == 1) {
+                            div += '<button class="mui-btn opbtn bggray">已结束</button>';
+                        } else {
+                            div += '<button class="mui-btn opbtn bgred signupMatchBtn">参加</button>';
+                        }
+                        div += ' </div></div></li>';
+                        // 人员头像版块
+                        div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl overflow-x imgShowEvent" style="padding:0 !important">';
+                        for (var j = 0; j <= data.data[0].memberlist.length - 1; j++) {
+                            div += '<img src="' + data.data[0].memberlist[j].avatar + '" alt="">';
+                        }
+                        div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[0].reg_number + '</font>/<font class="reg_all">' + data.data[0].max + '</font> 已报名</span></li>';
+                        $(".newMatch").empty().append(div);
+                    }
+                    if (data.code == 100) {
+                        $(".newMatch").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有比赛数据，赶紧去创建比赛吧</p></li>');
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        };
+        var referee_id = "";
+        //获取最近订单
+        function toCheckReferee(referee_id) {
+            mui.ajax("{:url('api/referee/getMemberReferee')}", {
+                data: {},
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        referee_id = data.data.id;
+                        console.log(referee_id)
+                        toLastRefereeList(referee_id);
+                    }else{
+                        $(".refereeOrder").hide();
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        };
+        //获取最近订单
+        function toLastRefereeList() {
+            mui.ajax("{:url('api/referee/matchapplylist')}", {
+                data: {
+                    page: 1,
+                    referee_id: 2
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.slice(0, 4).length - 1; i++) {
+                            var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data[i].match_id + '/team_id/' + + data.data[i].team_id;
+                            newli += '<li class="mui-table-view-cell mui-media listli">'
+                            newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].member_avatar + '" style="width:45px !important;height:45px !important;border-radius:50% !important;"><div class="mui-media-body wd">' + data.data[i].match.name+'';
+                            if (data.data[i].match.match_time == 0) {
+                                newli += '<p class="address" style="line-height:20px !important">比赛时间待定</p>';
+                            } else {
+                                newli += '<p class="address" style="line-height:20px !important">' + data.data[i].match.match_time + '</p>';
+                            }
+                            if (data.data[i].match.court == '') {
+                                newli += '<p class="mui-ellipsis" style="line-height:20px !important">';
+                                if (data.data[i].status == 1) {
+                                    newli += '<font class="tipCorner bggray" style="margin:0 5px 0 0 !important;">未回复</font>';
+                                } else if (data.data[i].status == 2) {
+                                    newli += '<font class="tipCorner bgred" style="margin:0 5px 0 0 !important;">已同意</font>';
+                                } else if (data.data[i].status == 3) {
+                                    newli += '<font class="tipCorner bgorange" style="margin:0 5px 0 0 !important;">已拒绝</font>';
+                                }
+                                newli += '比赛场地待定</p>';
+                            } else {
+                                newli += '<p class="mui-ellipsis" style="line-height:20px !important">'
+                                if (data.data[i].status == 1) {
+                                    newli += '<font class="tipCorner bggray" style="margin:0 5px 0 0 !important;">未回复</font>';
+                                } else if (data.data[i].status == 2) {
+                                    newli += '<font class="tipCorner bgred" style="margin:0 5px 0 0 !important;">已同意</font>';
+                                } else if (data.data[i].status == 3) {
+                                    newli += '<font class="tipCorner bgorange" style="margin:0 5px 0 0 !important;">已拒绝</font>';
+                                }
+                                newli += data.data[i].match.court + '</p>';
+                            }
+                            newli += '</div></a></li>';
+                        }
+                        $("ul.newReferee").empty().append(newli);
+                    }else{
+                        $("ul.newReferee").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有订单数据哦</p></li>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                }
+            });
+
+        };
+
+        //获取热门赛事
+        function toRecordMatchList() {
+            var url = "{:url('api/team/hotmatch','','',true)}";
+            mui.ajax({
+                url: url,
+                data: {
+                    status: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.slice(0, 5).length - 1; i++) {
+                            // 将时间戳转成日期格式
+                            var matchTimeM = gettimeM(data.data[i].match_time * 1000);
+                            var matchTimeY = gettimeY(data.data[i].match_time * 1000);
+                            var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data[i].match_id;
+                            newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row" style="padding:0">'
+                            newli += '<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;"><p>' + (data.data.slice(0, i).length + 1) + '</p></li><li class="mui-col-xs-3 mui-col-sm-3"><p>' + matchTimeY + '</p><p>' + matchTimeM + '</p></li><li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">';
+                            if (data.data[i].home_score > data.data[i].away_score) {
+                                newli += '<p class="colororange">' + data.data[i].away_team + '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p class="colororange">' + data.data[i].home_score + ':' + data.data[i].away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
+                            } else {
+                                newli += '<p>' + data.data[i].away_team + '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p>' + data.data[i].home_score + ':' + data.data[i].away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
+                            }
+                            if (data.data[i].home_score > data.data[i].away_score) {
+                                newli += '<p class="colororange">胜</p>'
+                            } else if (data.data[i].home_score < data.data[i].away_score) {
+                                newli += '<p>负</p>'
+                            } else {
+                                newli += '<p>--</p>'
+                            }
+                            newli += '</li></ul></a></li>'
+                        }
+                    }
+                    $("ul.recordMatch").empty().append(newli);
+                    if (newli == '') {
+                        $("ul.recordMatch").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
+
+        //获取热门活动
+        function toRecordEventList() {
+            var url = "{:url('api/team/hotevent','','',true)}";
+            mui.ajax({
+                url: url,
+                data: {
+                    status: 1,
+                    hot: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('team/eventInfo')}" + '/event_id/' + data.data[i].id;
+                            newli += '<li class="mui-table-view-cell mui-media listli">'
+                            newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '" style="width:70px!important;height: 56px!important;"><div class="mui-media-body" style="width:51%">' + data.data[i].event + '';
+                            if (data.data[i].is_max == "已满人") {
+                                newli += '<font class="tipCorner bgred">满人</font>';
+                            }
+                            if (data.data[i].is_finished == "已结束") {
+                                newli += '<font class="tipCorner bggray">结束</font>';
+                            }
+                            newli += '<p class="mui-ellipsis">' + data.data[i].create_time + '</p></div><div class="price-frame rightLocation">' + data.data[i].reg_number + '人参与</div></a>'
+                            newli += '</li>';
+                        }
+                    }
+                    $("ul.recordEvent").empty().append(newli);
+                    if (newli == '') {
+                        $("ul.recordEvent").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
+
+        //创建补0函数
+        function p(s) {
+            return s < 10 ? '0' + s : s;
+        }
+        function gettimem(m) {
+            var _time = new Date(m);
+            var month = _time.getMonth() + 1;
+            return p(month);
+        }
+        function gettimed(d) {
+            var _time = new Date(d);
+            var day = _time.getDate();
+            return p(day);
+        }
+        function gettimeh(h) {
+            var _time = new Date(h);
+            var hours = _time.getHours();
+            var minutes = _time.getMinutes();
+            return p(hours) + ":" + p(minutes);
+        }
+        // 将时间戳转成日期格式
+        function gettimeM(M) {
+            var _time = new Date(M);
+            var month = _time.getMonth() + 1;
+            var day = _time.getDate();
+            return p(month) + "月" + p(day) + "日"
+        }
+        function gettimeY(Y) {
+            var _time = new Date(Y);
+            var year = _time.getFullYear();
+            return p(year) + "年";
+        }
+
+    </script>
+
+
+
+    <!-- 平台礼包 -->
+
+    {if $bonusInfo}
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
+    <div id="giftpopover" class="mui-popover">
+        <div id="gift-open"></div>
+        <span id="gift-close" class="mui-icon mui-icon-closeempty"></span>
+        <div class="page-header">
+            <h4>{$bonusInfo.bonus}</h4>
+            <p>{$bonusInfo.title}</p>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll middle-coupon">
+                {volist name= 'couponList' id='vol'}
+                <div class="coupon">
+                    <div class="orangebg">
+                        <div class="cNum">{$vol.price}
+                            <span>元</span>
+                        </div>
+                        <div class="cName">{$vol.coupon}</div>
+                        <div class="cDate">{$vol.start} 至 {$vol.end}</div>
+                        <i></i>
+                    </div>
+                    <div class="tips">
+                        <span>剩余领取：{$vol.max-$vol.publish}</span>
+                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情
+                            <span class="mui-icon mui-icon-forward"></span>
+                        </a>
+                    </div>
+                </div>
+                {/volist}
+            </div>
+        </div>
+        <div class="hbTips">
+            <a href="{$fasturl}">非会员注册后即可领取礼包，立即注册
+                <span class="mui-icon mui-icon-forward"></span>
+            </a>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var item_coupon_ids = JSON.stringify({ $item_coupon_ids });
+        var isBonus;
+
+        isBonus = localStorage.getItem('isBonus');
+
+        $(function () {
+            //阻止点击弹出层以外地方退出弹出层
+            window.addEventListener('tap', function (e) {
+                e.target.className == 'mui-backdrop mui-active' && e.stopPropagation();
+            }, true)
+            //打开获取大礼包
+            // 如果本地没有存储与大礼包id相同的值,则弹出大礼包;
+            if (isBonus != { $bonusInfo['id'] }) {
+                mui("#giftpopover").popover('show', document.getElementById("tabbar"));
+                $("#gift-open").animate({
+                    width: '+=20px',
+                    height: '+=20px',
+                    left: '-=10px',
+                    top: '-=10px',
+                }, "fast", function () {
+                    $("#gift-open").animate({
+                        width: '-=20px',
+                        height: '-=20px',
+                        left: '+=10px',
+                        top: '+=10px',
+                    }, "fast")
+                });
+            }
+
+            //关闭大礼包弹出层
+            mui("body").on("tap", "#gift-close", function () {
+                $("#giftpopover").animate({
+                    width: '-=40px',
+                    height: '-=40px',
+                    left: '+=20px',
+                    top: '+=20px',
+                }, "fast");
+                mui("#giftpopover").popover('hide');
+            });
+            //打开红包
+            $("#gift-open").on("tap", "", function () {
+                //            $(this).hide();
+                $(this).animate({
+                    top: '-400px',
+                    opacity: '0'
+                }, "fast");
+                if ({ $memberInfo.id } == 0) {
+                    mui.confirm('请注册成为篮球管家会员领取大礼包，感谢您的支持！', '提示', ['取消', '立即注册'], function (e) {
+                        if (e.index === 1) {
+                            window.location.href = "{$fasturl}";
+                        }
+
+                    });
+                } else {
+                    if ({ $item_coupon_ids }.length > 0) {
+                        // 领取礼包
+                        $.post(
+                            "{:url('api/bonus/grantBounusApi')}"
+                            , { 'bonus_id': { $bonusInfo.id } }
+                            , function (msg) {
+                                if (msg.code == 200) {
+                                    localStorage.setItem('isBonus', { $bonusInfo.id });
+                                    mui.confirm('领取成功,查看获得的卡券?', '恭喜!', ['不,谢谢', '立即查看'], function (e) {
+                                        if (e.index === 1) {
+
+                                            window.location.href = "{:url('frontend/coupon/itemcouponlist')}";
+                                        }
+                                    });
+                                } else {
+                                    mui.toast(msg.msg);
+                                }
+                            }
+                        );
+                    }
+                }
+            });
+        })
+    </script> {/if}
+
+
+    <!-- 平台礼包结束 -->
+
+
+</body>
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 </html>

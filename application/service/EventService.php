@@ -17,11 +17,19 @@ class EventService {
 
     // 获取所有活动
     public function getEventList($map=[],$page = 1,$order='',$paginate = 10) {
+<<<<<<< HEAD
         $result = Event::where($map)->order($order)->page($page,$paginate)->select();
+=======
+        $result = Event::where($map)->order(['start'=>'desc','end'=>'asc'])->page($page,$paginate)->select();
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
         if($result){
             $res = $result->toArray();
             foreach ($res as $key => &$value) {
+<<<<<<< HEAD
+=======
+                $value['doms'] = json_decode($value['dom'],true);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 $value['event_times'] = date('Y-m-d H:i',$value['event_time']);
                 $value['ends'] = date('Y-m-d H:i',$value['end']);
                 $value['starts'] = date('Y-m-d H:i',$value['start']);
@@ -38,6 +46,10 @@ class EventService {
         if($result){
             $res =  $result->toArray();
             foreach ($res['data'] as $key => &$value) {
+<<<<<<< HEAD
+=======
+                $value['doms'] = json_decode($value['dom'],true);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 $value['event_times'] = date('Y-m-d H:i',$value['event_time']);
                 $value['ends'] = date('Y-m-d H:i',$value['end']);
                 $value['starts'] = date('Y-m-d H:i',$value['start']);
@@ -63,6 +75,14 @@ class EventService {
         $result = Event::where($map)->find();
         if ($result){
             $res = $result->toArray();
+<<<<<<< HEAD
+=======
+            if($res['dom']){
+                $res['doms'] = json_decode($res['dom'],true);
+            }else{
+                $res['doms'] = ['name'=>'默认套餐','price'=>0];
+            }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $res['status_num'] = $result->getData('status');
             $res['event_times'] = date('Y-m-d H:i',$res['event_time']);
             $res['ends'] = date('Y-m-d H:i',$res['end']);

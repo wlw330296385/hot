@@ -557,7 +557,7 @@ abstract class Builder
             }
             $order = implode(',', $array);
         }
-        return !empty($order) ? ' ORDER BY ' . $order : '';
+        return !empty($order) ? ' ORDER BY ' . $order : ' ORDER BY id desc';
     }
 
     /**

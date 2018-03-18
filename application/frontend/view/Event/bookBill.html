@@ -11,6 +11,10 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+<<<<<<< HEAD
+=======
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     <style>
         .mui-popover {
             height: 300px;
@@ -59,6 +63,34 @@
             <ul class="mui-table-view">
                 <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
                 <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='2||3'}show{else/}hide{/eq}">所属训练营<span>{$eventInfo.organization}</span></li>
+<<<<<<< HEAD
+=======
+                {if !empty($couponListOfSystem)|| !empty($couponListOfCamp)}
+                    <li class="mui-table-view-cell listli">
+                        赠送卡券
+                        <span>
+                            <a href="#cppopover">
+                            <ul class="mini-coupon">
+
+                            {volist empty="" name="couponListOfSystem" id="vol" }
+                                <li><div><span>{$vol.coupon}</span>赠券</div><i></i></li>
+                            {/volist}
+
+                            {volist empty="" name="couponListOfCamp" id="vol" }
+                                <li><div><span>{$vol.coupon}</span>赠券</div><i></i></li>
+                            {/volist}
+
+                            </ul>
+                            </a>
+                        </span>
+                    </li>
+                    {/if}
+                <li class="mui-table-view-cell listli">
+                    {volist name="couponListOfCamp" id="vol" }
+                        <img src="{$vol.image_url}"  style="border:2px red">
+                    {/volist}
+                </li>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='3'}show{else/}hide{/eq}">所属班级<span>{$eventInfo.target}</span></li>
                 <li class="mui-table-view-cell listli">活动单价<span><b class="colororange">￥{$eventInfo.price}</b>（元）</span></li>
                 <li class="mui-table-view-cell listli">活动开始时间<span>{$eventInfo.starts}</span></li>
@@ -159,8 +191,14 @@ mui('.mui-scroll-wrapper').scroll();
 
 var total=wooApi.GetQueryString('total');
 var total_fee = "{$eventInfo.price}"*total;
+<<<<<<< HEAD
 var studentList = [{ student: "{$memberInfo.member}", student_id: 0, member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"}];
 // var studentList = new Array();
+=======
+var studentList = [{ student: "{$memberInfo.member}", student_id: "0", member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"}];
+// var studentList = new Array();
+var item_coupon_ids = JSON.stringify({$item_coupon_ids});
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 $(function () {
     $('.eventNum').val(total);
 
@@ -169,15 +207,23 @@ $(function () {
         //每次打开先清空所有选择
         $("input[name='checkbox-student']").prop("checked", false);
         //然后遍历出对应所选
+<<<<<<< HEAD
         for (var ii = 0; ii <= studentList.length - 1; ii++) {
             $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
                 return $(this).attr("data-student_id") == studentList[ii].student_id
+=======
+        var getStudentIDs = studentList[0].student_id.split(',');
+        for (var ii = 0; ii <= getStudentIDs.length - 1; ii++) {
+            $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
+                return $(this).attr("data-student_id") == getStudentIDs[ii]
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             }).prop("checked", true);
         }
     });
 
     // 学员名单
     $("#studentConfirm").on('tap', '', function () {
+<<<<<<< HEAD
         var studentNames = "";
         studentList = [];
         $("input[type=checkbox]:checked").each(function (i) {
@@ -190,6 +236,38 @@ $(function () {
             studentList.push(studentStr);
         });
         $(".studentCont").text(studentNames.substring(0, studentNames.length - 1))
+=======
+        var studentIDs = "";
+        var studentNames = "";
+        studentList = [];
+        if($("input[type=checkbox]:checked").length>total){
+            alert('参与人员不可大于报名人数['+total+']');
+            debug = '参与人员不可大于报名人数['+total+']';
+            return false;
+        }else if($("input[type=checkbox]:checked").length==0){
+            alert('请至少选取一个人，谢谢！');
+            return false;
+        }else{
+            $("input[type=checkbox]:checked").each(function (i) {
+                var student_id = $(this).attr("data-student_id");
+                var student = $(this).val();
+                var member = $(this).attr("data-member");
+                var member_id = $(this).attr("data-member_id");
+                //                    studentStr = { student: student, student_id: student_id, member:member, member_id:member_id, event:"{$eventInfo.event}", event_id:"{$eventInfo.id}"}
+                studentIDs += student_id + ',';
+                studentNames += student + ',';
+                //                    studentList.push(studentStr);
+            });
+            studentIDs = studentIDs.substring(0, studentIDs.length - 1);
+            studentNames = studentNames.substring(0, studentNames.length - 1);
+            $(".studentCont").text(studentNames)
+            var studentStr = { student: studentNames, student_id: studentIDs, total:total, member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"};
+            studentList.push(studentStr);
+        }
+        console.log(studentList)
+        debug = 1;
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         mui('#student').popover('toggle');
     })
 
@@ -199,6 +277,11 @@ $(function () {
 
 });
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 // 获取学生数据
 function getStudentList(){
     // 获取学生列表
@@ -234,6 +317,10 @@ function joinEvent(){
     var result = wooApi.asyncF(url+'/total/'+total,objData);
     
     if(result.code == 200){
+<<<<<<< HEAD
+=======
+        presentItemCoupon();
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         mui.alert("您已报名成功，请留意活动消息及公告。",result.msg,function(){
             // window.location.href="{:url('frontend/event/eventInfo',['event_id'=>$eventInfo['id']])}";
             window.location.href="{:url('frontend/event/eventList')}";
@@ -244,5 +331,16 @@ function joinEvent(){
 }
 
 
+<<<<<<< HEAD
+=======
+// 赠送卡券操作
+function presentItemCoupon(){
+    if({$item_coupon_ids}.length >0){
+        var res = wooApi.asyncT("{:url('api/Item_coupon/createItemCouponMemberListApi')}", {
+            'item_coupon_ids': item_coupon_ids,
+    });
+}
+}
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 </script>    
 </html>

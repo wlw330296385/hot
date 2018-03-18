@@ -26,6 +26,10 @@ class Login extends Base{
             if (Cookie::has('pid')) {
                 $data['pid'] = Cookie::get('pid');
             }
+            // 推荐人id
+            if (Cookie::has('pid')) {
+                $data['pid'] = Cookie::get('pid');
+            }
 
             $memberInfo = session('memberInfo', '', 'think');
             $memberS = new \app\service\MemberService;
@@ -37,7 +41,12 @@ class Login extends Base{
                 } else {
                     $data['openid'] = $memberInfo['openid'];
                     $data['nickname'] = $memberInfo['nickname'];
+<<<<<<< HEAD
                     $data['avatar'] = $memberInfo['avatar'];
+=======
+                    //$data['avatar'] = $memberInfo['avatar'];
+                    $data['avatar'] = $memberS->downwxavatar($memberInfo['avatar']);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 }
             }
 
@@ -132,9 +141,19 @@ class Login extends Base{
     }
 
     public function autoLogin(){
+<<<<<<< HEAD
         $id = input('param.id',1);
+=======
+        $id = input('param.id');
+        $hot_id = input('param.hot_id');
+        if(!$id){
+            $map = ['hot_id'=>$hot_id];
+        }else{
+            $map = ['id'=>$id];
+        }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $member =new \app\service\MemberService;
-        $memberInfo = $member->getMemberInfo(['id'=>$id]);
+        $memberInfo = $member->getMemberInfo($map);
         unset($memberInfo['password']);
         $this->memberInfo = $memberInfo;
         cookie('mid', $memberInfo['id']);
@@ -147,5 +166,20 @@ class Login extends Base{
         if ( session('?memberInfo') ) {
             return json( session('memberInfo', '','think') );
         }
+<<<<<<< HEAD
+=======
+    }
+
+
+    // 搜索推荐人
+    public function searchReferer(){
+        try{
+            $telephone = input('param.telephone');
+            $result = db('member')->where(['telephone'=>['like',"%$telephone%"]])->select();
+            return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     }
 }

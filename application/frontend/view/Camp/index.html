@@ -25,16 +25,28 @@
             fill: currentColor;
             overflow: hidden;
         }
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         .goConfirm .mui-media-body {
             height: 24px !important;
             line-height: 24px !important;
         }
+<<<<<<< HEAD
         
         /*.nav-list .nav-list-frame .navli {
             width: 25% !important;
         }*/
         
+=======
+
+        /*.nav-list .nav-list-frame .navli {
+            width: 25% !important;
+        }*/
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         .list .listli .mui-navigate-right {
             padding-right: 15px;
             width: auto;
@@ -51,6 +63,7 @@
             <!--操作模块-->
             <div class="coach-info">
                 <ul class="mui-table-view mui-grid-view mui-grid-9">
+<<<<<<< HEAD
 
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                         <a href="#">
@@ -188,11 +201,153 @@
             </div>
 
         </div>
+=======
 
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <img class="coachicon" src="{$memberInfo['avatar']}" style="border: 1px solid #4e4e4e;">
+                            <div class="f16">{$memberInfo['member']}</div>
+                        </a>
+                    </li>
+                </ul>
+                <p class="coachid f12">ID:{$memberInfo['hot_id']}</p>
+            </div>
+
+            <!--图文导航-->
+            <div class="nav-list mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ptb4">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli">
+                        <a href="{:url('member/mygrade')}">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-mine-class"></use>
+                            </svg>
+                            <div class="mui-media-body">班级</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli">
+                        <a href="{:url('/keeper/Team/myteam')}">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-mine-team"></use>
+                            </svg>
+                            <div class="mui-media-body">球队</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli">
+                        <div class="goConfirm">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-mine-Album"></use>
+                            </svg>
+                            <div class="mui-media-body">相册</div>
+                        </div>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli">
+                        <a href="{:url('member/followlist')}">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-mine-attention"></use>
+                            </svg>
+                            <div class="mui-media-body">关注</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli">
+                        <a href="{:url('member/invitation')}">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-mine-invite"></use>
+                            </svg>
+                            <div class="mui-media-body">邀请</div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!--最新消息-->
+            <div class="page-header mb" style="background-color: #FFF;">
+                <a href="{:url('message/index')}">
+                    <span class="course wd83">最新消息：{notempty name="messageList"}{$messageList[0]['title']}{/notempty}</span>
+                    <span class="more">更多</span>
+                </a>
+            </div>
+            {volist name="campList" id="vol"}
+            <div class="mb">
+                <ul class="mui-table-view list">
+                    {if condition="($vol.type == '其他') or ($vol.type == '学生')" }
+                    <a href="{:url('camp/clientOfcamp',['camp_id'=>$vol['camp_id']])}">
+                        {else/}
+                        <a href="{:url('camp/powerCamp',['camp_id'=>$vol['camp_id']])}">
+                            {/if}
+                            <li class="mui-table-view-cell listli" style="padding:15px;">
+                                <img src="{$vol.camp.logo}" class="img24"> {$vol.camp.camp}
+                                <span class="mui-navigate-right">{$vol.type}</span>
+                            </li>
+                        </a>
+                </ul>
+                <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module2">
+                    {if condition="($vol.type == '学生')" }
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="{:url('camp/campInfo',['camp_id'=>$vol['camp_id']])}">
+                            <span class="icon iconfont icon-training-camp"></span>
+                            <div class="mui-media-body">训练营介绍</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="{:url('schedule/scheduleListOfStudent')}?camp_id={$vol['camp_id']}">
+                            <!-- <a href="lesson/lessonList/?camp_id={$vol.id}"> -->
+                            <span class="icon iconfont icon-training-course"></span>
+                            <div class="mui-media-body">我的课时</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="{:url('camp/clientOfcamp',['camp_id'=>$vol['camp_id']])}">
+                            <span class="icon iconfont icon-training-myfiles"></span>
+                            <div class="mui-media-body colororange">我的档案</div>
+                        </a>
+                    </li>
+                    {else/}
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="{:url('camp/powerCamp',['camp_id'=>$vol['camp_id']])}">
+                            <span class="icon iconfont icon-training-camp"></span>
+                            <div class="mui-media-body">训练营管理</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="{:url('lesson/lessonList')}?camp_id={$vol['camp_id']}&camp_name={$vol.camp.camp}">
+                            <!-- <a href="lesson/lessonList/?camp_id={$vol.id}"> -->
+                            <span class="icon iconfont icon-training-course"></span>
+                            <div class="mui-media-body">课程</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="{:url('grade/gradeListWeek',['camp_id'=>$vol['camp_id']])}">
+                            <span class="icon iconfont icon-training-record"></span>
+                            <div class="mui-media-body colororange">录课</div>
+                        </a>
+                    </li>
+                    {/if}
+                </ul>
+            </div>
+            {/volist}
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
+
+            <div class="success-frame success-frame2">
+                <div class="choise">
+                    <a href="{:url('camp/camplist')}">
+                        <button type="button" class="mui-btn" style="font-size: 16px;">找训练营/俱乐部</button>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+<<<<<<< HEAD
+        <!--底部导航-->
+        {layout name="Layout/footer"}
+
+=======
 
         <!--底部导航-->
         {layout name="Layout/footer"}
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>

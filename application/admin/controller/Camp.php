@@ -44,24 +44,21 @@ class Camp extends Backend {
     // 修改训练营信息
     public function edit() {
         if ( request()->isPost() ) {
-            $id = input('id');
-            $sys_remarks = input('sys_remarks');
-            $token = input('__token__');
+            $request = request()->post();
+            $id = $request['id'];
             $rule = [
                 'id' => 'require',
                 '__token__' => 'token',
             ];
-            $data = [
-                'id' => $id,
-                '__token__' => $token,
-            ];
+
             $validate = new Validate($rule);
-            $result = $validate->check($data);
+            $result = $validate->check($request);
             if (!$result)
             {
                 $this->error($validate->getError());
                 return;
             }
+<<<<<<< HEAD
 
             $update = [
                 'id' => $id,
@@ -76,6 +73,23 @@ class Camp extends Backend {
                 $this->success(__lang('MSG_200'), 'camp/index');
             } else {
                 $Auth->record('训练营id:'. $id .' 修改平台备注 失败');
+=======
+            if (isset($request['__token__'])) {
+                unset($request['__token__']);
+            }
+            // 保存课时收入平台抽取比例空值
+            if (empty($request['schedule_rebate'])) {
+                $request['schedule_rebate'] = null;
+            }
+            $execute = Db::name('camp')->update($request);
+
+            $Auth = new AuthService();
+            if ( $execute || ($execute === 0) ) {
+                $Auth->record('训练营id:'. $id .' 修改信息 成功');
+                $this->success(__lang('MSG_200'), 'camp/index');
+            } else {
+                $Auth->record('训练营id:'. $id .' 修改信息 失败');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 $this->error(__lang('MSG_400'));
             }
         }
@@ -155,6 +169,11 @@ class Camp extends Backend {
         $result = $Camp->SoftDeleteCamp($id);
         $Auth = new AuthService();
         if ( $result ) {
+            db('camp_member')->where(['camp_id' => $id])->update([
+                'status' => -1,
+                'delete_time' => time(),
+                'system_remarks' => date('Ymd H:i', time()) . '控制台注销训练营'
+            ]);
             $Auth->record('训练营id:'. $id .' 软删除 成功');
             $this->success(__lang('MSG_200'), 'camp/index');
         } else {
@@ -199,7 +218,11 @@ class Camp extends Backend {
         $messageS = new MessageService();
         if ($camp['status_num'] == 1) { // 执行下架
             $lessonM = new \app\model\Lesson();
+<<<<<<< HEAD
             $lessonM->where(['camp_id' => $camp['id'], 'status'=>1])->setField('status', -1);
+=======
+            $lessonM->where(['camp_id' => $camp['id']])->setField('status', -1);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $setcampstatus = 2;
             $messageData = [
                 'title' => '您好,您的"'. $camp['camp'] .'"训练营被平台设为下架状态',

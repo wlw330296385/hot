@@ -440,9 +440,11 @@
     <?php } ?>
 
     <div class="copyright">
-        <a title="官方网站" href="http://www.thinkphp.cn">ThinkPHP</a> 
-        <span>V<?php echo THINK_VERSION; ?></span> 
-        <span>{ 十年磨一剑-为API开发设计的高性能框架 }</span>
+        <strong><p>页面更新维护中,暂不可用,稍后刷新页面即可 :)</p></strong> 
+        <a title="官方网站" href="https://m.hot-basketball.com/frontend/">返回篮球管家主页</a> 
+        <!-- <span>V<?php echo THINK_VERSION; ?></span>  -->
+        <p><?php echo date('Y-m-d H:i:s',time()); ?></p>
+        <span>{ 篮球管家 }</span>
     </div>
     <?php if(\think\App::$debug) { ?>
     <script>

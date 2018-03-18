@@ -11,12 +11,18 @@
         <div class="no-padding">
             <div class="bootstrap-table">
                 <div class="search-form">
-                    <form action="" class="form-inline" method="post">
+                    <form action="{:url('admin/grade/index')}" class="form-inline" method="get">
                         <fieldset>
                             {if condition="!isset($curcamp)"}
                             <div class="form-group">
                                 <label class="control-label">训练营</label>
-                                <input class="form-control" type="text" name="camp" >
+                                <!--<input class="form-control" type="text" name="camp" >-->
+                                <select name="camp_id" class="form-control">
+                                    <option value="">选择训练营</option>
+                                    {volist name="camplist" id="vo"}
+                                    <option value="{$vo.id}" {if condition="$Request.param.camp_id eq $vo['id']"}selected{/if}>{$vo.camp}</option>
+                                    {/volist}
+                                </select>
                             </div>
                             {/if}
                             <div class="form-group">
@@ -74,7 +80,11 @@
                                                 {$vo.status}
                                             </td>
                                             <td>
+<<<<<<< HEAD
                                                 <a href="{:url('grade/show', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i></a>
+=======
+                                                <a href="{:url('grade/show', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详细</a>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                                                 <!--<a href="{:url('grade/sdel', ['id' => $vo['id']])}" class="btn btn-xs btn-danger del-btn"><i class="fa fa-trash"></i></a>-->
                                             </td>
                                         </tr>
@@ -82,11 +92,9 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                {if condition="$list"}
                                 <div class="box-footer clearfix">
                                     {$list->render()}
                                 </div>
-                                {/if}
                             </div>
                         </div>
                     </div>

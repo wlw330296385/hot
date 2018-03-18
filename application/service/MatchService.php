@@ -577,6 +577,22 @@ class MatchService {
         }
     }
 
+<<<<<<< HEAD
+=======
+    // 批量保存比赛裁判关系记录
+    public function saveAllMatchReferee($data) {
+        $model = new MatchReferee();
+        // 带更新条件更新数据
+        $res = $model->allowField(true)->saveAll($data);
+        if ($res || ($res === 0)) {
+            return ['code' => 200, 'msg' => __lang('MSG_200')];
+        } else {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     /** 裁判员信息插入到比赛referee_str字段
      * @param $matchRefereeStr 比赛信息
      * @param $referee 裁判员信息数组

@@ -3,6 +3,7 @@ namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CampService;
 use app\service\CertService;
+use think\Exception;
 
 class Camp extends Base{
     protected $CampService;
@@ -15,6 +16,10 @@ class Camp extends Base{
     public function searchCampApi(){
         try{
             $map = input('post.');
+<<<<<<< HEAD
+=======
+            $orderBy = input('param.orderBy')?input('param.orderBy'):'total_schedule DESC';
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $keyword = input('param.keyword');
             $province = input('param.province');
             $page = input('param.page')?input('param.page'):1;
@@ -37,7 +42,11 @@ class Camp extends Base{
             if( isset($map['page']) ){
                 unset($map['page']);
             }
+<<<<<<< HEAD
             $result = $this->CampService->getCampList($map,$page);
+=======
+            $result = $this->CampService->getCampList($map,$page,10,$orderBy);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
              if($result){
                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
@@ -48,6 +57,47 @@ class Camp extends Base{
         }       
     }
 
+<<<<<<< HEAD
+=======
+    // 搜索全部训练营(一页全部)
+    public function searchCampListAllApi(){
+        try{
+            $map = input('post.');
+            $orderBy = input('param.orderBy')?input('param.orderBy'):'total_schedule DESC';
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $page = input('param.page')?input('param.page'):1;
+            $city = input('param.city');
+            $area = input('param.area');
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value==' '){
+                    unset($map[$key]);
+                }
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['camp'] = ['LIKE','%'.$keyword.'%'];
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+            $result = db('camp')->where($map)->select();
+             if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }       
+    }
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     // 获取训练营的列表有page
     public function getCampListByPageApi(){
         try{
@@ -118,7 +168,9 @@ class Camp extends Base{
                 'banner' => input('post.banner'),
                 'company' => input('post.company'),
                 'location' => input('post.location'),
-                'camp_introduction' => input('post.intro')
+                'camp_introduction' => input('post.intro'),
+                'camp_description' => input('post.camp_description')
+
             ];
 
             // 地区input 拆分成省 市 区 3个字段
@@ -260,9 +312,17 @@ class Camp extends Base{
     public function getHotCampList(){
         $province = input('param.province');
         $city = input('param.city');
+<<<<<<< HEAD
         $map['province']=$province;
         $map['city'] = $city;
         $map['hot'] = 1;
+=======
+        $status = input('param.status',1);
+        $map['province']=$province;
+        $map['city'] = $city;
+        $map['hot'] = 1;
+        $map['status'] = $status;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         foreach ($map as $key => $value) {
             if($value == ''|| empty($value) || $value==' '){
                 unset($map[$key]);
@@ -304,6 +364,102 @@ class Camp extends Base{
         $updateCampStatus = $campS->updateCampStatus($camp_id, $setcampstatus);
         if (!$updateCampStatus) {
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+<<<<<<< HEAD
+=======
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    }
+
+    // 训练营注销申请
+    public function campcancellapply() {
+        try {
+            // 检测会员登录
+            if (!$this->memberInfo || $this->memberInfo['id'] === 0) {
+                return json(['code' => 100, 'msg' => '请先登录或注册会员']);
+            }
+            $post = input('post.');
+            // 验证请求参数
+            $camp_id = input('post.camp_id');
+            if (!$camp_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            if ( !isset($post['reason']) || empty($post['reason']) ) {
+                return json(['code' => 100, 'msg' => '请填写注销原因']);
+            }
+            $campS = new CampService();
+            // 获取训练营数据
+            $campInfo = $campS->getCampInfo(['id' => $camp_id]);
+            if (!$campInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+            }
+            // 只有营主能操作
+            if ($campInfo['member_id'] != $this->memberInfo['id']) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+            }
+            // 查询有无申请注销记录
+            $cancellInfo = $campS->getCampCancellByCampId($camp_id);
+            // 有未处理申请 返回信息
+            if ($cancellInfo) {
+                if ($cancellInfo['status'] == 0) {
+                    return json(['code' => 100, 'msg' => '您已提交过注销申请，无需再次提交']);
+                } elseif ($cancellInfo['status'] != 1) {
+                    $post['id'] = $cancellInfo['id'];
+                }
+
+            }
+            
+            // 允许提交规则
+
+            // 组合插入数据
+            $post['camp'] = $campInfo['camp'];
+            $post['member_id'] = $this->memberInfo['id'];
+            $post['member'] = $this->memberInfo['member'];
+            $post['status'] = 0;
+            $result = $campS->saveCampCancell($post);
+            return json($result);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 撤回训练营注销申请
+    public function withdrawcancellapply() {
+        try {
+            $post = input('post.');
+            // 验证请求参数
+            $camp_id = input('post.camp_id');
+            if (!$camp_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            $campS = new CampService();
+            // 获取训练营数据
+            $campInfo = $campS->getCampInfo(['id' => $camp_id]);
+            if (!$campInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+            }
+            // 只有营主能操作
+            if ($campInfo['member_id'] != $this->memberInfo['id']) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+            }
+            // 查询有无申请注销记录
+            $cancellInfo = $campS->getCampCancellByCampId($camp_id);
+            if (!$cancellInfo) {
+                return json(['code' => 100, 'msg' => '无训练营注销申请记录']);
+            }
+            if ($cancellInfo['status'] == 1) {
+                return json(['code' => 100, 'msg' => '系统已受理训练营注销申请，无法操作']);
+            }
+
+            // 更新数据
+            $result = $campS->saveCampCancell([
+                'id' => $cancellInfo['id'],
+                'status' => -1,
+                'delete_time' => time()
+            ]);
+            return json($result);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }

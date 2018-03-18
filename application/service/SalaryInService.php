@@ -28,7 +28,11 @@ class SalaryInService {
 
 
     // 获取工资列表
+<<<<<<< HEAD
     public function getSalaryInList($map,$order = 'id DESC'){
+=======
+    public function getSalaryInList($map = [],$order = 'id DESC'){
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $res = $this->SalaryIn->where($map)->order($order)->select();
         if($res){
             // 数据集转换为数组
@@ -40,6 +44,28 @@ class SalaryInService {
                     $result[$k]['schedule_time'] = date('Y-m-d H:i', $val['schedule_time']);
                 }
             }
+<<<<<<< HEAD
+=======
+            return $result;
+        }else{
+            return $res;
+        }
+    }
+
+    // 获取工资列表（page页码）
+    public function getSalaryInPagintor($map = [],$order = 'id DESC', $paginate=10){
+        $res = $this->SalaryIn->where($map)->order($order)->paginate($paginate);
+        if($res){
+            // 数据集转换为数组
+            $result = $res->toArray();
+            // 数据字段内容格式转换
+            foreach ($result['data'] as $k => $val) {
+                // 课时上课时间(schedule_time)格式化
+                if ($val['schedule_time']) {
+                    $result['data'][$k]['schedule_time'] = date('Y-m-d H:i', $val['schedule_time']);
+                }
+            }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return $result;
         }else{
             return $res;
@@ -130,8 +156,12 @@ class SalaryInService {
                     ->where(['member_id'=>$member_id])
                     ->where(['create_time'=>['between',[$startTime,$endTime]]])
                     ->sum('salary');
-        // echo $this->SalaryIn->getlastsql();
-        return $scheduleIn?$scheduleIn:0;
+        $push_salary = $this->SalaryIn
+        ->where(['member_id'=>$member_id])
+        ->where(['create_time'=>['between',[$startTime,$endTime]]])
+        ->sum('push_salary');
+        $total = $scheduleIn+$push_salary;
+        return $total?$total:0;
     }
 
     // 按月获取系统奖励总额

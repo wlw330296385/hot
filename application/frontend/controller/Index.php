@@ -1,17 +1,27 @@
 <?php 
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
+use app\service\BannerService;
 use app\service\LessonService;
+use app\service\MemberService;
 use app\service\WechatService;
+use think\Cookie;
+
 class Index extends Base{
 	protected $LessonService;
 	public function _initialize(){
 		parent::_initialize();
 		$this->LessonService = new LessonService;
+		Cookie::set('steward_type', 1);
+        $module = request()->module();
+        $homeurl = url($module.'/index/index');
+        Cookie::set('module', $module);
+        Cookie::set('homeurl', $homeurl);
 	}
 
     public function index() {
 
+<<<<<<< HEAD
         $bannerList = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1])->order('ord asc')->limit(3)->select();
   
                 
@@ -23,6 +33,46 @@ class Index extends Base{
     	$this->assign('bannerList',$bannerList);
     	// $this->assign('hotLessonList',$hotLessonList);
     	// $this->assign('sortLessonList',$sortLessonList);
+=======
+        //$bannerList = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1,'steward_type' => 1])->order('ord asc')->limit(3)->select();
+        // 培训管家banner
+        $bannerService = new BannerService();
+        $bannerList = $bannerService->bannerList([
+            'organization_id'=>0,
+            'organization_type'=>0,
+            'status'=>1,
+            'steward_type' => cookie('steward_type')
+        ], 'ord desc', 3);
+  
+    	// 热门文章
+        $ArticleService= new \app\service\ArticleService;
+    	$ArticleList = $ArticleService->getArticleList([],1,'hot DESC',4);
+    	//红包
+        $bonus_type = input('param.bonus_type',1);
+        //平台礼包
+        $BonusService = new \app\admin\service\BonusService;
+        $bonusInfo = $BonusService->getBonusInfo(['bonus_type'=>1,'status'=>1]);
+
+        $couponList = [];
+        $item_coupon_ids = [];
+        if($bonusInfo){
+            $res = $bonusInfo->toArray();
+            $ItemCoupon = new \app\model\ItemCoupon;
+            $couponList = $ItemCoupon->where(['target_type'=>-1,'target_id'=>$bonusInfo['id'],'status'=>1])->select();
+            foreach ($couponList as $key => $value) {
+                $item_coupon_ids[] = $value['id'];
+            }
+            $this->assign('item_coupon_ids',json_encode($item_coupon_ids));
+            $this->assign('couponList',$couponList);
+            
+            // return $this->fetch('Widget:bonus');
+            // return $this->fetch('Widget/Bonus');
+        }
+        //平台礼包结束
+        $this->assign('bonusInfo',$bonusInfo);
+    	$this->assign('bannerList',$bannerList);
+    	$this->assign('ArticleList',$ArticleList);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         return view('Index/index');
     }
 
@@ -39,6 +89,7 @@ class Index extends Base{
         return view('Index/indexOfCamp');
     }
 
+<<<<<<< HEAD
     // 微信用户授权回调
     public function wxindex() {
         $WechatS = new WechatService;
@@ -46,6 +97,20 @@ class Index extends Base{
         if ($userinfo) {
             cache('userinfo_'.$userinfo['openid'], $userinfo);
             $isMember = db('member')->where(['openid' => $userinfo['openid']])->find();
+=======
+    // 微信授权回调
+    public function wxindex() {
+        $WechatS = new WechatService;
+        $memberS = new MemberService();
+        $userinfo = $WechatS->oauthUserinfo();
+        if ($userinfo) {
+            cache('userinfo_'.$userinfo['openid'], $userinfo);
+            $avatar = str_replace("http://", "https://", $userinfo['headimgurl']);
+            //$avatar = $memberS->downwxavatar($userinfo);
+
+            $dbMember = db('member');
+            $isMember = $dbMember->where(['openid' => $userinfo['openid']])->find();
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             if ($isMember) {
                 unset($isMember['password']);
                 cookie('mid', $isMember['id']);
@@ -59,7 +124,11 @@ class Index extends Base{
                     'openid' => $userinfo['openid'],
                     'member' => $userinfo['nickname'],
                     'nickname' => $userinfo['nickname'],
+<<<<<<< HEAD
                     'avatar' => str_replace("http://", "https://", $userinfo['headimgurl']),
+=======
+                    'avatar' => $avatar,
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     'hp' => 0,
                     'level' => 0,
                     'telephone' =>'',

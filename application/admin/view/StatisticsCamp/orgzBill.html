@@ -1,0 +1,446 @@
+{extend name="layout/common"/}
+
+{block name="page-content"}
+
+
+<!----------------------------------- 训练营（课时结算版）资金账单 ： 开始-------------------------------------------->
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box">
+			<!--<div class="box-header">-->
+			<!--<h3 class="box-title">教练员收益统计</h3>-->
+			<!--</div>-->
+			<!-- /.box-header -->
+			<div class="box-body">
+				<div class="dataTables_wrapper form-inline dt-bootstrap">
+					<div class="row hotTbHeader">
+						<div class="col-sm-12">
+							<div class="form-group">
+								<div class="input-group" data-toggle="modal" data-target="#campModal">
+									<input type="text" name="camp" class="form-control pull-right wAuto" placeholder="请选择训练营" value="">
+									<input type="hidden" name="camp_id" value="">
+									<div class="input-group-addon">
+										<i class="fa fa-angle-down"></i>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<!-- /.input group -->
+								<label>统计时间：</label>
+								<div class="input-group">
+									<input type="text" name="dateYM" class="form-control pull-right" id="dateYM">
+									<div class="input-group-addon">
+										<i class="fa fa-calendar"></i>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<!-- /.input group -->
+								<button type="button" class="btn btn-default" id="goSearch">确认查询</button>
+							</div>
+							<h3 class="totalRight">
+								<span><small>本月收入：</small><strong class="text-yellow monthIn"></strong></span>
+								<span><small>支出：</small><strong class="text-yellow monthOut"></strong></span>
+								<span><small>课时消费：</small><strong class="text-yellow monthXF"></strong></span>
+								<span><small>提现：</small><strong class="text-yellow monthTX"></strong></span>
+							</h3>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<table id="example3" class="table table-bordered table-striped dataTable hotTable">
+								<thead>
+								<tr role="row">
+									<th>结算日期</th>
+									<th class="mixTitle">
+										<ul class="dataCol-1">
+											<li>支出</li>
+											<li>
+												<ul class="dataCol-3">
+													<li>平台分成</li>
+												</ul>
+												<ul class="dataCol-3">
+													<li>购买赠课</li>
+												</ul>
+												<ul class="dataCol-3">
+													<li>课程退费</li>
+												</ul>
+											</li>
+										</ul>
+									</th>
+									<th class="mixTitle">
+										<ul class="dataCol-1">
+											<li>收入</li>
+											<li>
+												<ul class="dataCol-2">
+													<li>学费</li>
+												</ul>
+												<ul class="dataCol-2">
+													<li>活动</li>
+												</ul>
+											</li>
+										</ul>
+									</th>
+									<th class="mixTitle">
+										<ul class="dataCol-1">
+											<li>课时结算</li>
+											<li>
+												<ul class="dataCol-2">
+													<li>课时总价</li>
+												</ul>
+												<ul class="dataCol-2">
+													<li>教练工资</li>
+												</ul>
+											</li>
+										</ul>
+									</th>
+									<th>提现</th>
+									<th>余额</th>
+								</tr>
+								</thead>
+								<tbody>
+								<tr role="row">
+									<td>
+										<ul class="dateList dataCol-1">
+											{volist name='list1' id='vol'}
+											<li>{$key}</li>
+											{/volist}
+											<li>本月小计</li>
+										</ul>
+									</td>
+									<td>
+										<ul class="dataCol-3 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
+											{volist name='list4' id='vol'}
+											<li><span>{$vol.s_output}</span></li>
+											{/volist}
+											<li class="colTotal" id="hotOut"><</li>
+										</ul>
+										<ul class="dataCol-3 colCount" linkTo="/admin/Statistics_Camp/campGift/">
+											{volist name='list1' id='vol'}
+											<li><span>{$vol.s_output}</span></li>
+											{/volist}
+											<li class="colTotal" id="giftOut"><</li>
+										</ul>
+										<ul class="dataCol-3 colCount" linkTo="">
+											{volist name='list2' id='vol'}
+											<li><span>{$vol.s_output}</span></li>
+											{/volist}
+											<li class="colTotal" id="refundOut"><</li>
+										</ul>
+									</td>
+									<td>
+										<ul class="dataCol-2 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
+											{volist name='list_income1' id='vol'}
+											<li><span>{$vol.s_income}</span></li>
+											{/volist}
+											<li class="colTotal" id="scheduleIn"></li>
+										</ul>
+										<ul class="dataCol-2 colCount" linkTo="">
+											{volist name='list_income2' id='vol'}
+											<li><span>{$vol.s_income}</span></li>
+											{/volist}
+											<li class="colTotal" id="eventIn"></li>
+										</ul>
+									</td>
+									<td>
+										<ul class="dataCol-2 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
+											{volist name='list3' id='vol'}
+											<li><span>没有</span></li>
+											{/volist}
+											<li class="colTotal" id="scheduleXF"></li>
+										</ul>
+										<ul class="dataCol-2 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
+											{volist name='list3' id='vol'}
+											<li><span>{$vol.s_output}</span></li>
+											{/volist}
+											<li class="colTotal" id="coachOut"><</li>
+										</ul>
+									</td>
+									<td>
+										<ul class="dataCol-1 colCount">
+											{volist name='list_1' id='vol'}
+											<li><span>{$vol.s_output}</span></li>
+											{/volist}
+											<li class="colTotal" id="withdraw"></li>
+										</ul>
+									</td>
+									<td>
+										<ul class="dataCol-1">
+											{volist name='list1' id='vol'}
+											<li>-</li>
+											{/volist}
+											<li>-</li>
+										</ul>
+									</td>
+								</tr>
+								</tbody>
+								<tfoot>
+								<tr role="row">
+									<th>本月合计</th>
+									<th>总支出：<span class="monthOut"></span></th>
+									<th>总收入：<span class="monthIn"></span></th>
+									<th>总课时消费：<span class="monthXF"></span></th>
+									<th>总提现：<span class="monthTX"></span></th>
+									<th>余额：</th>
+								</tr>
+								</tfoot>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+	</div>
+	<!-- /.col -->
+</div>
+
+<!----------------------------------- 训练营（课时结算版）资金账单 ： 结束-------------------------------------------->
+
+
+
+<!-- Modal : Camp -->
+<div class="modal fade" id="campModal" tabindex="-1" role="dialog" aria-labelledby="campModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="campModalLabel">请选择训练营</h4>
+			</div>
+			<div class="modal-body">
+				<div class="input-group input-group-sm">
+					<input type="text" name="campKeyword" class="form-control campKeyword" placeholder="请输入训练营名称 ...">
+					<span class="input-group-btn">
+                      <button type="button" id="searchCampBtn" class="btn btn-default btn-flat"><i class="fa fa-search"></i> 搜索</button>
+                    </span>
+				</div>
+				<div class="tableScroll">
+					<table id="campList" class="table table-bordered table-striped dataTable">
+						<thead>
+						<tr role="row">
+							<th>训练营名称</th>
+							<th>所属地区</th>
+							<th>详情</th>
+							<th>操作</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr role="row" class="nodata"><td colspan="4">请搜索训练营</td></tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<h1>学费收入========================================</h1>
+{volist name="list_income1" id="vol"}
+<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;收入:{$vol.s_income}</p>
+{/volist}
+
+<h1>活动收入========================================</h1>
+{volist name="list_income2" id="vol"}
+<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;收入:{$vol.s_income}</p>
+{/volist}
+
+<h1>赠课支出========================================</h1>
+{volist name="list1" id="vol"}
+<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;支出:{$vol.s_output}</p>
+{/volist}
+
+<h1>课时退费支出========================================</h1>
+{volist name="list2" id="vol"}
+<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;支出:{$vol.s_output}</p>
+{/volist}
+
+<h1>课时教练支出支出========================================</h1>
+{volist name="list3" id="vol"}
+<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;支出:{$vol.s_output}</p>
+{/volist}
+
+<h1>:平台分成支出========================================</h1>
+{volist name="list4" id="vol"}
+<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;支出:{$vol.s_output}</p>
+{/volist}
+
+<h1>提现支出========================================</h1>
+{volist name="list_1" id="vol"}
+<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;支出:{$vol.s_output}</p>
+{/volist}
+{/block}
+
+
+
+
+
+
+{block name='js'}
+
+<script src="/static/plugins/datepicker/bootstrap-datepicker.js"></script>
+<script>
+
+    var currCampName = localStorage.getItem('currCampName');
+    var currCampID = localStorage.getItem('currCampID');
+    var currDateYM = localStorage.getItem('currDateYM');
+
+    $(function () {
+
+        //=========================== 初始化数据 ==============================//
+
+        //判断是否有年月的本地存储，没则获取当前月的上一个月
+        if(currDateYM==''||currDateYM==null) {
+            var currDate = new Date();
+            var currYear = currDate.getFullYear();
+            var currMonth = currDate.getMonth();
+            if(currMonth==0){
+                currDateYM = parseInt(currYear)-1+'-12';
+            }else{
+                currMonth = currMonth<10 ? "0"+currMonth:currMonth;
+                currDateYM = currYear+'-'+ currMonth ;
+            }
+            localStorage.setItem('currDateYM',currDateYM);
+        }
+
+        //判断是否有指定训练营和教练员的本地存储
+        $("input[name=dateYM]").val(currDateYM);
+        if(currCampID!=''&&currCampID!=null){
+            $("input[name=camp_id]").val(currCampID);
+            $("input[name=camp]").val(currCampName);
+            $(".campKeyword").val(currCampName);
+            $(".campName").text(currCampName);
+        }
+
+        //隔行变色
+        $(".hotTable tbody td ul").find("li:odd").addClass("even");
+
+
+        //遍历需要统计的数据列，并赋值到对应位置
+        $(".colCount").each(function () {
+            var liNum = 0;
+            $(this).find("li").not(".colTotal").each(function () {
+                liNum = liNum + parseInt($(this).text());
+            });
+            $(this).find("li.colTotal").text(liNum);
+        });
+
+        var mOut = parseInt($("#hotOut").text())+parseInt($("#giftOut").text())+parseInt($("#refundOut").text());
+        var mIn = parseInt($("#scheduleIn").text())+parseInt($("#eventIn").text());
+        $(".monthIn").text(mIn);
+        $(".monthOut").text(mOut);
+        $(".monthXF").text($("#scheduleXF").text());
+        $(".monthTX").text($("#withdraw").text());
+
+
+        //=========================== 初始化数据 ==============================//
+
+        toCampList('');
+        //平台后续换成分页版（地区代理商无需分页）
+
+        //选择年月
+        $('#dateYM').datepicker({
+            language: 'zh-CN',
+            autoclose: true,
+            format: "yyyy-mm",
+            minViewMode: 1,
+            todayBtn: true
+        });
+
+        //搜索训练营
+        $("#searchCampBtn").on("click", function () {
+            var keyword = $(".campKeyword").val();
+            if(keyword==""){
+                alert("请输入训练营名称！");
+            }else{
+                toCampList(keyword);
+            }
+        })
+
+        $("#campList tbody").on("click",".btn", function () {
+            var camp_id = $(this).attr("data-id");
+            var camp = $(this).attr("data-camp");
+            $("input[name=camp_id]").val(camp_id);
+            $("input[name=camp]").val(camp);
+            $(".campName").text(camp);
+            $('#campModal').modal('hide');
+        })
+
+        //查询统计
+        $("#goSearch").on("click", function () {
+            var camp = $("input[name=camp]").val();
+            var camp_id = $("input[name=camp_id]").val();
+            var getYM = $("input[name=dateYM]").val();
+            if(camp_id==""){
+                alert("请选择训练营！");
+                return false;
+            }
+            //设置本地存储
+            localStorage.setItem('currDateYM',getYM);
+            localStorage.setItem('currCampName',camp);
+            localStorage.setItem('currCampID',camp_id);
+            //拆分日期
+            var arrYM = getYM.split('-');
+            var getLastDate = new Date(arrYM[0],arrYM[1],0);
+            var beginDate = arrYM[0]+arrYM[1]+'01';
+            var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
+
+            window.location.href="{:url('/admin/Statistics_Camp/campBill/')}"+"camp_id/"+camp_id+"/monthstart/"+beginDate+"/monthend/"+endDate;;
+        })
+
+        //点击链接到详情页面
+        $(".colCount li span").on("click", function () {
+            var getLink = $(this).parent().parent().attr("linkTo");
+            var getLiIndex = $(this).parent().index();
+            var getDate = $(".dateList li").eq(getLiIndex).text();
+            window.open(getLink+"/camp_id/"+currCampID+"/monthstart/"+getDate+"/monthend/"+getDate);
+        })
+
+    });
+
+
+    //接口获取数据并追加到页面
+    var toCampList = function (keyword) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/camp/searchCampListAllApi','','',true)}";
+        $.ajax({
+            url: url,
+            data: {
+                status: 1,
+                keyword: keyword
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+            //processData:false,
+            success: function (data) {
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('camp/campInfo')}" + '/camp_id/' + data.data[i].id;
+                        newli += '<tr role="row" class="odd"><td>' + data.data[i].camp + '</td><td>' + data.data[i].city + '</td><td><a href="' + urls + '">查看详情</a></td><td><span class="btn btn-xs btn-info" data-camp="' + data.data[i].camp + '" data-id="' + data.data[i].id + '">确定</span></td></tr>';
+                    }
+                }
+                if (newli == '') {
+                    $("#campList tbody").html('<tr role="row" class="nodata"><td colspan="4">没有搜索到相关数据哦</td></tr>');
+                }else{
+                    $("#campList tbody").empty().append(newli);
+                }
+
+
+            },
+            error: function (xhr, type, errerThrown) {
+                alert('网络异常,请稍候再试');
+            }
+        });
+    };
+
+
+</script>
+{/block}

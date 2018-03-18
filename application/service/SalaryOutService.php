@@ -8,13 +8,16 @@ use app\model\SystemAward;
 class SalaryOutService {
 
     private $SalaryOut;
-    public function __construct($memberId)
+    public function __construct()
     {
         $this->SalaryOut = new SalaryOut;
     }
 
     public function getSalaryOut($map){
-        $result = $this->SalaryOut->with('lesson')->where($map)->find();
+        $result = $this->SalaryOut
+                // ->with('lesson')
+                ->where($map)
+                ->find();
         return $result;
     }
 
@@ -22,20 +25,31 @@ class SalaryOutService {
     // 获取提现记录列表
     public function getSalaryOutList($map,$p = 1,$order = 'id DESC'){
         $result = $this->SalaryOut->where($map)->order('id DESC')->page($p,10)->select();
+        // echo $this->SalaryOut->getlastsql();
         return $result;
     }
 
+    // 获取提现记录列表带(page)
+    public function getSalaryOutListByPage($map,$paginate = 10,$order = 'id DESC'){
+        $result = $this->SalaryOut->where($map)->order('id DESC')->paginate($paginate);
+        return $result;
+    }
     
     // 提交提现申请
     public function saveSalaryOut($data){
         $data['paytime'] = '';
         $data['is_pay'] = 0;
         $data['status'] = 0;
+        $data['buffer'] = $data['salary'];
+        $memberInfo = db('member')->where(['id'=>$data['member_id']])->find();
+        if($data['salary']>$memberInfo['balance']){
+             return ['msg' => '余额不足', 'code' => 100];
+        }
         $validate = validate('SalaryOutVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-        $result = $this->SalaryOut->save($data);
+        $result = $this->SalaryOut->allowField(true)->save($data);
         if($result){
             db('member')->where(['id'=>$data['member_id']])->setDec('balance',$data['salary']);
             $memberInfo = db('member')->where(['id'=>$data['member_id']])->find();

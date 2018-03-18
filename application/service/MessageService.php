@@ -147,6 +147,10 @@ class MessageService
             ->where($map)
             ->order('id desc')
             ->paginate($paginate);
+<<<<<<< HEAD
+=======
+            // echo $this->MessageMemberModel->getlastsql();die;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         if ($result) {
             $res = $result->toArray();
             return $res;
@@ -290,6 +294,7 @@ class MessageService
         ]);
     }
 
+<<<<<<< HEAD
     // 发送最新课时通知
     public function sendschedule($data, $members) {
         if (!is_array($members)) {
@@ -342,17 +347,27 @@ class MessageService
         }
     }
 
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     /** 发送站内信息和模板消息给一个会员 2017-12-8
      * @param $member_id 接收信息的会员id
      * @param $data 消息内容
      * $data = ['title' 'content', 'url', 'keyword1', 'keyword2', 'keyword3', 'remark']
      * @param $template_id 公众号模板消息id 应用config config('wxTemplateID.')
+<<<<<<< HEAD
      * @return array
+=======
+     * @return
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
      */
     public function sendMessageToMember($member_id, $data=[], $template_id) {
         if (!$member_id) {
             return ['code' => 100, 'msg' => __lang('MSG_402')];
         }
+<<<<<<< HEAD
+=======
+        $res = false;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $wechatS = new WechatService();
         $memberopenid = getMemberOpenid($member_id);
         $sendTemplateData = [
@@ -390,7 +405,75 @@ class MessageService
             'url' => $data['url'],
             'member_id' => $member_id,
             'create_time' => time(),
+<<<<<<< HEAD
             'status' => 1
         ]);
+=======
+            'status' => 1,
+            'steward_type' => isset($data['steward_type']) ? $data['steward_type'] : 1
+        ]);
+        $res = true;
+        return $res;
+    }
+
+    /**
+     * 发送站内信息和模板消息给多个会员 2018-1-31
+     * @param $member_ids  接收信息的会员id集合
+     * @param $data  消息内容
+     * $data = ['title' 'content', 'url', 'keyword1', 'keyword2', 'keyword3', 'remark']
+     * @param $template_id  公众号模板消息id 应用config config('wxTemplateID.')
+     * @return
+     */
+    public function sendMessageToMembers($member_ids=[], $data=[], $template_id) {
+        if (!is_array($member_ids)) {
+            return ['code' => 100, 'msg' => __lang('MSG_402')];
+        }
+        $res = false;
+        $wechatS = new WechatService();
+        foreach ($member_ids as $k => $val) {
+            $memberopenid = getMemberOpenid($val['id']);
+            $sendTemplateData = [
+                'touser' => $memberopenid,
+                'template_id' => $template_id,
+                'url' => $data['url'].'/openid/'.$memberopenid,
+                'data' => [
+                    'first' => ['value' => $data['content']],
+                    'keyword1' => ['value' => $data['keyword1']],
+                    'keyword2' => ['value' => $data['keyword2']],
+                    'remark' => ['value' => $data['remark']]
+                ]
+            ];
+            if (isset($data['keyword3'])) {
+                $sendTemplateData['data']['keyword3'] = [ 'value' => $data['keyword3'] ];
+            }
+//            dump($sendTemplateData);
+            $sendTemplateResult = $wechatS->sendTemplate($sendTemplateData);
+            $log_sendTemplateData = [
+                'wxopenid' => $sendTemplateData['touser'],
+                'member_id' => $val['id'],
+                'url' => $sendTemplateData['url'],
+                'content' => serialize($sendTemplateData),
+                'create_time' => time()
+            ];
+            if ($sendTemplateResult) {
+                $log_sendTemplateData['status'] = 1;
+            } else {
+                $log_sendTemplateData['status'] = 0;
+            }
+            db('log_sendtemplatemsg')->insert($log_sendTemplateData);
+
+            db('message_member')->insert([
+                'title' => $data['title'],
+                'content' => $data['content'],
+                'url' => $sendTemplateData['url'],
+                'member_id' => $val['id'],
+                'create_time' => time(),
+                'status' => 1,
+                'steward_type' => isset($data['steward_type']) ? $data['steward_type'] : 1
+            ]);
+        }
+        $res = true;
+        return $res;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     }
 }

@@ -3,6 +3,11 @@ namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CourtService;
 use think\Db;
+<<<<<<< HEAD
+=======
+use think\Exception;
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 class Court extends Base{
 	protected $CourtService;
 
@@ -99,6 +104,41 @@ class Court extends Base{
             }else{
                 return json(['code'=>100,'msg'=>'ok']);
             }
+<<<<<<< HEAD
+=======
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 分页获取lat,lng最近数据（带分页）
+    public function getCourtListOrderByDistanceApi(){
+        try{
+            $lat = input('param.lat',22.52369);
+            $lng = input('param.lng',114.0261);
+            $page = input('param.page',1);
+            $pe = $page*10;
+            $ps = ($page-1)*10;
+            $orderby = input('param.orderby','distance asc');
+            $map = ['status'=>1];
+            // $result = Db::query('select *,round(6378.138)*2*asin (sqrt(pow(sin((? *pi()/180 - lat*pi()/180)/2), 2)+cos(? *pi()/180)*cos(lat*pi()/180)*pow(sin((? *pi()/180 - lng*pi()/180)/2),2))) as distance from court where status=1 order by ? limit ?,?',
+            // [$lat,$lat,$lng,$orderby,$ps,$pe]
+            // );
+            $result = db('court')->field("`court`.*,round(6378.138)*2*asin (sqrt(pow(sin(($lat *pi()/180 - `court`.lat*pi()/180)/2), 2)+cos($lat *pi()/180)*cos(`court`.lat*pi()/180)*pow(sin(($lng *pi()/180 - `court`.lng*pi()/180)/2),2))) as distance")->where($map)->page($page)->order($orderby)->select();
+            
+            
+            if($result){
+                foreach ($result as $key => $value) {
+                    if($value['cover']){
+                        $result[$key]['covers'] = unserialize($value['cover']);
+                    }
+                    
+                }
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -144,6 +184,27 @@ class Court extends Base{
                 return json(['code'=>100,'msg'=>__lang('MSG_403')]);
             }
             $result = $this->CourtService->updateCourt($data,$court_id);
+<<<<<<< HEAD
+=======
+            return json($result);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 控制台修改场地
+    public function adminupdatecourtapi() {
+        try{
+            if (!session('?admin')) {
+                return json(['code'=>100,'msg'=>__lang('MSG_403')]);
+            }
+            $data = input('post.');
+            $court_id = input('param.court_id');
+            $data['member_id'] = session('admin.id');
+            $data['member'] = session('admin.username');
+            $data['system_remark'] = 'system:{'.session('admin.username').'}修改场地信息';
+            $result = $this->CourtService->updateCourt($data,$court_id);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

@@ -214,13 +214,36 @@ class Camp extends Base{
         $member_id = $this->memberInfo['id'];
         $power = $this->CampService->isPower($camp_id,$member_id);
         $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
+<<<<<<< HEAD
         $gradeCount = db('grade')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
         $scheduleCount = db('schedule')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
         $lessonCount = db('lesson')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
+=======
+        // 班级总数
+        $gradeCount = db('grade')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
+        // 课时总数
+        $scheduleList = db('schedule')->where(['camp_id'=>$camp_id])->where('delete_time', null)->select();
+        $totalSchedule = count($scheduleList);//已上课量
+        $totalScheduleStudent = 0;//上课人次;
+        foreach ($scheduleList as $key => $value) {
+            $totalScheduleStudent = $totalScheduleStudent + $value['students'];
+        }
+        // 课程总数
+        $lessonCount = db('lesson')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
+        
+        // 学生总数
+        $totalStudentList = db('lesson_member')->distinct(true)->field('student_id')->where(['camp_id'=>$camp_id])->where('delete_time', null)->select();
+        $totalStudent = count($totalStudentList);
+        //购买次数
+        $totalBill = db('bill')->where(['camp_id'=>$camp_id,'is_pay'=>1])->where('delete_time', null)->count();
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $this->assign('power',$power);
-        $this->assign('gradeCount',$gradeCount);
-        $this->assign('scheduleCount',$scheduleCount);
-        $this->assign('lessonCount',$lessonCount);
+        $this->assign('totalStudent',$totalStudent);//全部学生
+        $this->assign('totalBill',$totalBill);//购买次数
+        $this->assign('totalScheduleStudent',$totalScheduleStudent);//上课人次
+        $this->assign('gradeCount',$gradeCount);//全部班级
+        $this->assign('totalSchedule',$totalSchedule);//已上课量
+        $this->assign('lessonCount',$lessonCount);//全部课程
         $this->assign('campInfo',$campInfo); 
         return view('Camp/powerCamp');
     }
@@ -461,11 +484,44 @@ class Camp extends Base{
         //教练工资
         $SalaryInService = new \app\service\SalaryInService($member_id);
         $salaryList = $SalaryInService->getSalaryInList(['member_id'=>$coachInfo['member_id'],'type'=>1,'camp_id'=>$camp_id]);
+<<<<<<< HEAD
         // 平均月薪
         $averageSalaryByMonth = $SalaryInService->getAverageSalaryByMonth($coachInfo['member_id'],$camp_id);
         // 平均年薪
         $averageSalaryByYear = $SalaryInService->getAverageSalaryByYear($coachInfo['member_id'],$camp_id);
         // dump($salaryList);die;
+=======
+
+        // 本月工资
+        $monthStamp = getStartAndEndUnixTimestamp(date('Y'), date('m'));
+        $mapMonth = [
+            'camp_id' => $camp_id,
+            'member_id' => $coachInfo['member_id'],
+            'schedule_time' => ['between', [$monthStamp['start'], $monthStamp['end']]],
+            //'member_type' => ['lt', 5]
+            'type' => 1,
+        ];
+        // 本年工资
+        $yearStamp = getStartAndEndUnixTimestamp(date('Y'));
+        $mapYear = [
+            'camp_id' => $camp_id,
+            'member_id' => $coachInfo['member_id'],
+            'schedule_time' => ['between', [$yearStamp['start'], $yearStamp['end']]],
+            //'member_type' => ['lt', 5]
+            'type' => 1,
+        ];
+        // 如果教练是训练营营主 统计算入营主的份额
+        $coachIsCampPower4 = getCampPower($camp_id, $coachInfo['member_id']);
+        if ($coachIsCampPower4 && $coachIsCampPower4 != 4) {
+            $mapMonth['member_type'] = ['lt', 5];
+            $mapYear['member_type'] = ['lt', 5];
+        }
+        
+        $SalaryMonth = $SalaryInService->countSalaryin($mapMonth);
+        $SalaryYear = $SalaryInService->countSalaryin($mapYear);
+        // dump($salaryList);die;
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $this->assign('monthScheduleOfCoachList',$monthScheduleOfCoachList);//教练当月的课量
         $this->assign('monthScheduleOfCoach',$monthScheduleOfCoach);//当月课量数量
         $this->assign('gradeOfCoachList',$gradeOfCoachList);//教练班级
@@ -478,8 +534,13 @@ class Camp extends Base{
         $this->assign('coachInfo',$coachInfo);
         $this->assign('identCert',$identCert);
         $this->assign('coachCert',$coachCert);
+<<<<<<< HEAD
         $this->assign('averageSalaryByMonth',$averageSalaryByMonth);
         $this->assign('averageSalaryByYear',$averageSalaryByYear);
+=======
+        $this->assign('SalaryMonth',$SalaryMonth);
+        $this->assign('SalaryYear',$SalaryYear);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $this->assign('camp_id', $camp_id);
         return view('Camp/coachInfoOfCamp');
     }
@@ -521,4 +582,21 @@ class Camp extends Base{
         return view('Camp/teachInfoOfCamp');
     }
 
+<<<<<<< HEAD
+=======
+    // 训练营-粉丝列表
+    public function fanslist() {
+        return view('Camp/fansList');
+    }
+
+
+    // 注销训练营申请
+    public function cancell() {
+        $camp_id = input('camp_id');
+        $campCancellInfo = $this->CampService->getCampCancellByCampId($camp_id);
+        return view('Camp/cancell', [
+            'campCancellInfo' => $campCancellInfo
+        ]);
+    }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 }

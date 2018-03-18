@@ -37,7 +37,7 @@ class Schedule extends Backend {
                     $calendar_events[] = [
                         'id' => $val['id'],
                         'title' => $val['grade'],
-                        'start' => date('Y-m-d H:i', $val['lesson_time']),
+                        'start' => $val['lesson_time'],
                         'url' => url('schedule/detail', ['id' => $val['id']])
                     ];
                 }

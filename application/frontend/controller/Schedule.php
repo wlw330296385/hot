@@ -47,14 +47,24 @@ class Schedule extends Base
     // 课时列表
     public function scheduleListOfStudent(){
     	$student_id = input('param.student_id');
+<<<<<<< HEAD
     	$studentList = db('student')->where(['member_id'=>$this->memberInfo['id']])->where('delete_time',null)->select();
+=======
+    	$camp_id = input('param.camp_id');
+    	$studentList = db('lesson_member')->distinct(true)->field("student_id,student")->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>$camp_id])->where('delete_time',null)->select();
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     	if(!$studentList){
     		$this->error('您还没有创建学生');
     	}
     	if(!$student_id){
+<<<<<<< HEAD
     		$student_id = $studentList[0]['id'];
     	}
     	$camp_id = input('param.camp_id');
+=======
+    		$student_id = $studentList[0]['student_id'];
+    	}
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     	// 学生的班级
     	$gradeList = db('grade_member')->where(['student_id'=>$student_id,'camp_id'=>$camp_id])->where('delete_time',null)->select();
     	$gradeIDS = db('grade_member')->where(['student_id'=>$student_id,'camp_id'=>$camp_id])->where('delete_time',null)->column('grade_id');
@@ -97,6 +107,7 @@ class Schedule extends Base
 			}
 		}
 		$updateSchedule = 0;
+<<<<<<< HEAD
 		// 是否已被审核通过
 		if($scheduleInfo['status'] == 0){
 			// 判断权限
@@ -106,6 +117,26 @@ class Schedule extends Base
 			}
 		}
         //dump($scheduleInfo);
+=======
+
+		// 已结算课时不能编辑
+        if ($scheduleInfo['is_settle'] != 1) {
+            // 判断权限
+            $isPower = $this->ScheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
+            if($isPower>=2){
+                $updateSchedule = 1;
+            }
+        }
+
+
+        //课时指定的训练项目
+		if($scheduleInfo['exercise']){
+		    $scheduleInfo['exerciseList'] = json_decode($scheduleInfo['exercise'],true);
+		}else{
+		    $scheduleInfo['exerciseList'] = [];
+		}
+        
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 		$this->assign('updateSchedule',$updateSchedule);
 		$this->assign('studentList',$studentList);
         $this->assign('expstudentList',$expstudentList);
@@ -144,6 +175,7 @@ class Schedule extends Base
 		// 教案
 		$PlanService = new \app\service\PlanService;
 		$planInfo = $PlanService->getPlanInfo(['id'=>$gradeInfo['plan_id']]);
+<<<<<<< HEAD
 		if($planInfo){
 			$planInfo['exerciseList'] = [
 										'exercise'=> unserialize($planInfo['exercise']),
@@ -155,6 +187,16 @@ class Schedule extends Base
 										'exercise_id'=>[]
 									];
 		}
+=======
+		if($planInfo['exercise_str']){
+		    $planInfo['exerciseList'] = json_decode($planInfo['exercise_str'],true);
+		}else{
+		    $planInfo['exerciseList'] = [];
+		}
+
+		//dump($planInfo['exerciseList']);die;
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 		
 		// 班级学生
 		$studentList = db('grade_member')->where(['grade_id'=>$grade_id,'status'=>1,'type'=>1])->select();
@@ -178,6 +220,7 @@ class Schedule extends Base
 	public function updateSchedule(){
 		$schedule_id = input('param.schedule_id');
 		$scheduleInfo = $this->ScheduleService->getScheduleInfo(['id'=>$schedule_id]);
+<<<<<<< HEAD
 		// 是否已被审核通过
 		if($scheduleInfo['status'] != 0){
 			// 判断权限
@@ -198,6 +241,51 @@ class Schedule extends Base
         if ($scheduleInfo['expstudent_str']) {
             $expstudentList = unserialize($scheduleInfo['expstudent_str']);
         }
+=======
+
+		if(!$scheduleInfo){
+			$this->error('无此课时数据');
+		}
+
+        // 已结算课时不能编辑
+        if ($scheduleInfo['is_settle'] == 1) {
+            $this->error('课时已结算，不能修改了');
+        }
+
+        $isPower = $this->ScheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
+        if($isPower<2){
+            $this->error('你没有权限修改课时');
+        }
+
+ 		$studentList = [];
+        if ($scheduleInfo['student_str']) {
+            $studentList = unserialize($scheduleInfo['student_str']);
+        }
+        // 体验生名单
+        $expstudentList = [];
+        if ($scheduleInfo['expstudent_str']) {
+            $expstudentList = unserialize($scheduleInfo['expstudent_str']);
+        }
+
+
+        //课时指定的训练项目
+		if($scheduleInfo['exercise']){
+		    $scheduleInfo['exerciseList'] = json_decode($scheduleInfo['exercise'],true);
+		}else{
+		    $scheduleInfo['exerciseList'] = [];
+		}
+
+		// 教案
+		$PlanService = new \app\service\PlanService;
+		$planInfo = $PlanService->getPlanInfo(['id'=>$scheduleInfo['plan_id']]);
+		if($planInfo['exercise_str']){
+		    $planInfo['exerciseList'] = json_decode($planInfo['exercise_str'],true);
+		}else{
+		    $planInfo['exerciseList'] = [];
+		}
+
+		$this->assign('planInfo',$planInfo);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 		$this->assign('studentList',$studentList);
         $this->assign('expstudentList',$expstudentList);
 		$this->assign('scheduleInfo',$scheduleInfo);
@@ -208,6 +296,7 @@ class Schedule extends Base
 	public function giftlistofcamp() {
 	    return view('Schedule/giftlistOfCamp');
     }
+<<<<<<< HEAD
 
     // 购买赠送课时
     public function giftbuy() {
@@ -231,6 +320,31 @@ class Schedule extends Base
 	    return view('Schedule/giftrecord');
     }
 
+=======
+
+    // 购买赠送课时
+    public function giftbuy() {
+	    return view("Schedule/giftbuy");
+    }
+
+    public function giftbuyinfo() {
+	    $id = input('id', 0);
+	    if (!$id) {
+	        $this->error(__lang('MSG_402'));
+        }
+        $scheduleS = new ScheduleService();
+        $giftbuyinfo = $scheduleS->getbuygift(['id' => $id]);
+//	    dump($giftbuyinfo);
+        $this->assign('giftbuyInfo', $giftbuyinfo);
+        return view("Schedule/giftbuyInfo");
+    }
+
+    // 赠送课时 分配给学员
+    public function giftrecord() {
+	    return view('Schedule/giftrecord');
+    }
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     public function giftrecordinfo() {
         $id = input('id', 0);
         if (!$id) {

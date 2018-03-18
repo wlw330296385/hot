@@ -13,12 +13,36 @@ class Court extends Backend {
     }
     // 场地管理
     public function index() {
-        $court = CourtModel::paginate(15);
-
+        $court = CourtModel::order('id desc')->paginate(15);
+        //dump($court);
         $breadcrumb = [ 'ptitle' => '训练营' , 'title' => '场地管理' ];
         $this->assign( 'breadcrumb', $breadcrumb );
         $this->assign('list', $court);
         return $this->fetch();
+    }
+
+    // 新增场地
+    public function add() {
+        return view();
+    }
+
+    // 编辑场地
+    public function edit() {
+        $id = input('id');
+        $court = CourtModel::get($id);
+        //$court
+        $res = $court->toArray();
+        $res['status_num'] = $court->getData('status');
+        if (!empty($res['cover'])) {
+            $cover = unserialize($res['cover']);
+            if (!empty($cover)) {
+                $res['cover'] = $cover;
+            }
+        }
+        $breadcrumb = [ 'ptitle' => '教练管理' , 'title' => '教练详细' ];
+        $this->assign( 'breadcrumb', $breadcrumb );
+        $this->assign('court', $res);
+        return view();
     }
 
     // 场地详情
@@ -84,25 +108,37 @@ class Court extends Backend {
                 }
                 db('log_sendtemplatemsg')->insert($log_sendTemplateData);
 
+<<<<<<< HEAD
                 db('message')->insert([
                     'title' => $sendTemplateData['data']['first']['value'],
                     'content' => $sendTemplateData['data']['first']['value'],
                     'url' => $url,
                     'camp_id' => $court['camp_id'],
                     'is_system' => 1,
+=======
+                db('message_member')->insert([
+                    'title' => $sendTemplateData['data']['first']['value'],
+                    'content' => $sendTemplateData['data']['first']['value'],
+                    'url' => $url,
+                    'member_id' => $camp['member_id'],
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     'create_time' => time(),
                     'status' => 1
                 ]);
 
+<<<<<<< HEAD
                 $doing = '审核场地id: '. $id .' 审核操作:'. $checkstr .'成功';
+=======
+                $doing = '场地id: '. $id .' 设为平台场地:'. $checkstr .'成功';
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 $Auth->record($doing);
                 $response = [ 'status' => 1, 'msg' => __lang('MSG_200'), 'goto' => url('court/index') ];
             } else {
-                $doing = '审核场地id: '. $id .' 审核操作 失败';
+                $doing = '场地id: '. $id .' 设为平台场地 失败';
                 $Auth->record($doing);
                 $response = [ 'status' => 0, 'msg' => __lang('MSG_400') ];
             }
-            return $response;
+            return json($response);
         }
     }
 }

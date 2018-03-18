@@ -10,11 +10,12 @@ class Student extends Model{
     						'total_lession',
     						'finished_total',
     					];
+    protected $autoWriteTimestamp = true;
 
 
 
 	 public function member(){
-    	return $this->hasOne('member','member_id','id',[],'left join');
+    	return $this->belongsTo('member','member_id','id',[],'left join');
     }
 	
 

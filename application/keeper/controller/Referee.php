@@ -169,4 +169,12 @@ class Referee extends Base{
     public function judgingList(){
         return view('Referee/judgingList');
     }
+<<<<<<< HEAD
+=======
+
+    // 裁判订单列表
+    public function orderList(){
+        return view('Referee/orderList');
+    }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 }

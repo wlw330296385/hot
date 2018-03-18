@@ -56,11 +56,20 @@ class Member extends Base{
         return view('Member/registerSuccess');
     }
     
+    //个人信息-会员看
     public function memberInfo(){
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
         $memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);
         $this->assign('memberInfo',$memberInfo);
     	return view('Member/memberInfo');
+    }
+
+    //个人信息-他人看
+    public function memberInfoOther(){
+        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        $memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);
+        $this->assign('memberInfo',$memberInfo);
+    	return view('Member/memberInfoOther');
     }
 
     // 完善会员资料
@@ -146,7 +155,7 @@ class Member extends Base{
         // 获取身份证号码
         $ident = db('cert')->where(['member_id'=>$this->memberInfo['id'],'cert_type'=>1])->value('cert_no');
         // 交易单号
-        $tid = getTID($this->memberInfo['id']);
+        $tid = getTID($this->memberInfo['hot_id']);
         //银行卡列表
         $bankcardList = db('bankcard')->where(['member_id'=>$this->memberInfo['id']])->select();
 
@@ -162,7 +171,14 @@ class Member extends Base{
         if($member_id){
             $memberInfo = db('member')->where(['id'=>$member_id])->find();
             $this->assign('memberInfo',$memberInfo);
+        }else{
+            $memberInfo = $this->memberInfo;
         }
+
+        //被冻结金额
+        $buffer = db('salary_out')->where(['member_id'=>$memberInfo['id']])->sum('buffer');
+        $buffer = number_format($buffer, 2);
+        $this->assign('buffer',$buffer);
         return view('Member/myWallet');
     }
 
@@ -173,7 +189,7 @@ class Member extends Base{
         $salaryinList = $SalaryInService->getSalaryInList(['member_id'=>$member_id]);
         $SalaryOutService = new \app\service\SalaryOutService($member_id);
         $salaryoutList = $SalaryOutService->getSalaryOutList(['member_id'=>$this->memberInfo['id']]);
-
+        // dump($salaryoutList);die;
         $this->assign('salaryoutList',$salaryoutList);
         $this->assign('salaryinList',$salaryinList);
         return view('Member/salaryDetail');

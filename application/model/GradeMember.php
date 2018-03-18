@@ -8,7 +8,7 @@ class GradeMember extends Model {
 	protected $autoWriteTimestamp = true;
     protected $readonly = [
                             'create_time',
-                            'status',
+//                            'status',
                             'type',
                             ];
 
@@ -16,6 +16,11 @@ class GradeMember extends Model {
     public function getStatusAttr($value){
         $status = [0=>'待审核',1=>'正常',2=>'退出',3=>'被开除',4=>'已毕业'];
         return $status[$value];
+    }
+
+    public function getTypeAttr($value){
+        $type = [1=>'正式生',2=>'体验生'];
+         return $type[$value];
     }
     // 关联训练营
     public function camp(){
@@ -31,9 +36,8 @@ class GradeMember extends Model {
 
     // 关联班级
     public function grade(){
-    	return $this->hasOne('grade','id','grade_id',[],'left join');
+        return $this->hasOne('grade','id','grade_id',['gradeInfo'],'left join');
     }
-
 
     // 关联??多对多???
     public function coach(){
@@ -44,4 +48,5 @@ class GradeMember extends Model {
     public function student(){
     	return $this->hasOne('student','id','student_id',[],'left join');
     }
+
 }

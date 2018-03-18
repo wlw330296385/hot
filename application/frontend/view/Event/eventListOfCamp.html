@@ -168,6 +168,7 @@
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
 
+<<<<<<< HEAD
                         // 获取当前时间
                         var d = new Date()
                         var minutes = d.getMinutes()
@@ -177,6 +178,11 @@
                         var year = d.getFullYear()
                         var time = year + "-" + month + "-" + day + " " + hours + ":" + minutes;
                      
+=======
+                        var time = gettime();
+                        console.log(time)
+                        console.log(data.data.data[i].ends)
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                         var urls = "{:url('event/eventInfoOfCamp')}" + '/event_id/' + data.data.data[i].id + '/organization_id/' + organizationID;
 
                         newli += '<li class="mui-table-view-cell mui-media listli">'
@@ -187,12 +193,21 @@
                         }
                         newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '" style="width:70px!important;height: 56px!important;"><div class="mui-media-body" style="width:55%">' + data.data.data[i].event + '';
                         if (data.data.data[i].is_max == "已满人") {
+<<<<<<< HEAD
                             newli += '<font style="color:red">&nbsp;&nbsp;[满人]</font>';
                         }
                         if (data.data.data[i].ends < time) {
                             newli += '<font style="color:#b1b0b0">&nbsp;&nbsp;[过期]</font>';
                         }
                         newli += '<p class="mui-ellipsis">' + data.data.data[i].event_type + '</p></div><div class="price-frame mui-text-center">'
+=======
+                            newli += '<font class="tipCorner bgred">满人</font>';
+                        }
+                        if (data.data.data[i].ends < time) {
+                            newli += '<font class="tipCorner bggray">过期</font>';
+                        }
+                        newli += '<p class="mui-ellipsis">' + data.data.data[i].event_type + ' &nbsp;/&nbsp; ' + data.data.data[i].participator + ' 报名</p></div><div class="price-frame mui-text-center">'
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                         if (data.data.data[i].is_free == 2) {
                             newli += '<p class="price">￥<strong>' + data.data.data[i].price + '</strong></p>';
                         } else {
@@ -272,6 +287,25 @@
         });
     });
 
+<<<<<<< HEAD
+=======
+    //创建补0函数
+    function p(s) {
+        return s < 10 ? '0' + s : s;
+    }
+    //获取时间
+    function gettime() {
+        // 获取当前时间
+        var d = new Date()
+        var minutes = d.getMinutes()
+        var hours = d.getHours()
+        var day = d.getDate()
+        var month = d.getMonth() + 1
+        var year = d.getFullYear()
+        return year + '-' + p(month) + '-' + p(day) + " " + p(hours) + ":" + p(minutes);
+    }
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 </script>
 
 </html>

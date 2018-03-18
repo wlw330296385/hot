@@ -12,20 +12,35 @@ class ApplyService{
 
 	public function getApplyList($map,$page = 1,$paginate = 10){
 		$result = Apply::where($map)->page($page,$paginate)->select();
+<<<<<<< HEAD
 		 if($result){
             return $result->toArray();
         }
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         return $result;
     }
 
     public function getApplyListByPage($map,$paginate = 10){
         $result = Apply::where($map)->paginate($paginate);
+<<<<<<< HEAD
         if($result){
             return $result->toArray();
         }
         return $result;
     }
 
+=======
+        
+        return $result;
+    }
+
+    public function getApplyListWithMtachByPage($map,$paginate = 10){
+        $result = Apply::with('match')->where($map)->paginate($paginate);
+        
+        return $result;
+    }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
     // 统计用户数量
     public function countMembers($map){

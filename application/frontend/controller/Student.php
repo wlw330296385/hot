@@ -67,6 +67,7 @@ class Student extends Base
 							])
 							->order('grade_member.id desc')
 							->select();
+<<<<<<< HEAD
 		// 剩余课量
         $restSchedule = Db::name('lesson_member')->where([
             'camp_id' => $camp_id,
@@ -77,6 +78,25 @@ class Student extends Base
         if (!$restSchedule) {
             $restSchedule = 0;
         }
+=======
+		// 学员-课程课量
+        $schedulenum = db('lesson_member')->whereNull('delete_time')
+            ->where([
+                'camp_id' => $camp_id,
+                'student_id' => $student_id,
+                'type' => $type,
+                //'status' => 1
+            ])->field("sum(rest_schedule) as rest_schedule, sum(total_schedule) as total_scheulde")->select();
+        //dump($schedulenum);
+        if (!$schedulenum) {
+            $restSchedule = 0;
+            $totalScheule = 0;
+        } else {
+            $restSchedule = $schedulenum[0]['rest_schedule'];
+            $totalScheule = $schedulenum[0]['total_scheulde'];
+        }
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 		// 学生课量
 		$studentScheduleList = Db::view('schedule_member','*')
 								->view('schedule','students,leave','schedule.id=schedule_member.schedule_id')
@@ -97,6 +117,7 @@ class Student extends Base
 		// 未付款订单
 		$notPayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>0,'status'=>0,'expire'=>0]);
 		//退款订单 
+<<<<<<< HEAD
 		$repayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>1,'status'=>['lt',0],'expire'=>0]);
 		$payBill = $totalBill - $notPayBill;
 		// 历史课时|当前所报
@@ -107,6 +128,16 @@ class Student extends Base
 
 		$this->assign('totalSchedule',$totalSchedule);
 		$this->assign('restSchedule',$restSchedule);
+=======
+		$repayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>1,'status'=>-2,'expire'=>0]);
+		$payBill = $totalBill - $notPayBill;
+
+
+		// 学员自己可操作区显示
+        $studentcando = ($this->memberInfo['id'] == $studentInfo['member_id']) ? 1 : 0;
+		$this->assign('restSchedule',$restSchedule);
+        $this->assign('totalScheule',$totalScheule);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 		$this->assign('campInfo',$campInfo);
 		$this->assign('studentInfo',$studentInfo);
 		$this->assign('studentGradeList',$studentGradeList);
@@ -173,6 +204,13 @@ class Student extends Base
 		$studentInfo = $this->studentService->getStudentInfo(['id'=>$student_id]);
 		$this->assign('studentInfo',$studentInfo);
 		return view('Student/studentInfo');
+	}
+
+
+	public function tipStudentListOfCamp(){
+		$camp_id = input('param.camp_id');
+        $this->assign('camp_id',$camp_id);
+		return view('Student/tipStudentListOfCamp');
 	}
 		
 }

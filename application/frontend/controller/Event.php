@@ -20,6 +20,7 @@ class Event extends Base{
 
     public function bookBill(){
         $event_id = input('param.event_id');
+<<<<<<< HEAD
         $total = input('param.total');
         return view('Event/bookBill');
     }
@@ -32,16 +33,90 @@ class Event extends Base{
         $billOrder = '2'.getOrderID(rand(0,9));
         $jsonBillInfo = [
             'goods'=>$eventInfo['event'],
+=======
+
+        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]); 
+        // ---------------------------------------------------卡券系统
+        //卡券列表
+        $map = function($query) use($eventInfo){
+            $query->where('target_type',['=',2],['=',3],'or')
+                  ->where('target_id',['=',$eventInfo['id']],['=',0],'or');
+        };
+        // 平台卡券
+        $ItemCoupon = new \app\model\ItemCoupon;
+        $item_coupon_ids1 = $ItemCoupon
+                        ->where($map)
+                        ->where(['organization_type'=>1,'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->column('id');
+        // 训练营卡券
+        $item_coupon_ids2 = $ItemCoupon
+                        ->where(['organization_type'=>2,'organization_id'=>$eventInfo['organization_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->where($map)
+                        ->column('id');
+        $item_coupon_ids = array_merge($item_coupon_ids1,$item_coupon_ids2);
+         //卡券列表
+        $map = function($query) use($eventInfo){
+            $query->where('target_type',['=',2],['=',3],'or')
+                  ->where('target_id',['=',$eventInfo['id']],['=',0],'or');
+        };
+        // 平台卡券
+        $ItemCoupon = new \app\model\ItemCoupon;
+        $couponListOfSystem = $ItemCoupon
+                        ->where($map)
+                        ->where(['organization_type'=>1,'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->select();
+        // 训练营卡券
+        $couponListOfCamp = $ItemCoupon
+                        ->where(['organization_type'=>2,'organization_id'=>$eventInfo['organization_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->where($map)
+                        ->select();
+        if($couponListOfCamp){
+            $couponListOfCamp = $couponListOfCamp->toArray();
+        }else{
+            $couponListOfCamp = [];
+        }
+        if($couponListOfSystem){
+            $couponListOfSystem = $couponListOfSystem->toArray();
+        }else{
+            $couponListOfSystem = [];
+        }
+        // ---------------------------------------------------卡券系统
+    
+        $this->assign('couponListOfSystem',$couponListOfSystem);
+        $this->assign('couponListOfCamp',$couponListOfCamp);
+        $this->assign('item_coupon_ids',json_encode($item_coupon_ids));
+        $this->assign('eventInfo',$eventInfo);
+        return view('Event/bookBill');
+    }
+
+
+    public function comfirmBill() {
+        $event_id = input('param.event_id');
+        $total = input('param.total');
+        $domIndex = input('param.domIndex',0);
+        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);     
+        $billOrder = '2'.getOrderID(rand(0,9));
+        $jsonBillInfo = [
+            'goods'=>$eventInfo['event'].'-'.$eventInfo['doms'][$domIndex]['name'],
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             'goods_id'=>$eventInfo['id'],
             'camp_id'=>$eventInfo['organization_id'],
             'camp'=>$eventInfo['organization'],
             'organization_type'=>1,
+<<<<<<< HEAD
             'price'=>$eventInfo['price'],
+=======
+            'price'=>$eventInfo['doms'][$domIndex]['price'],
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             'score_pay'=>$eventInfo['score'],
             'goods_type'=>2,
             'pay_type'=>'wxpay',
         ];
+<<<<<<< HEAD
         $amount = $total*$eventInfo['price'];
+=======
+        $amount = $total*$eventInfo['doms'][$domIndex]['price'];
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         // $amount = 0.01;
         $WechatJsPayService = new \app\service\WechatJsPayService;
         $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
@@ -50,8 +125,62 @@ class Event extends Base{
         $shareurl = request()->url(true);
         $wechatS = new \app\service\WechatService;
         $jsapi = $wechatS->jsapi($shareurl);
+<<<<<<< HEAD
         // dump($jsApiParameters);
         // dump($jsapi);die;
+=======
+        $eventInfo['price'] = $eventInfo['doms'][$domIndex]['price'];
+        // ---------------------------------------------------卡券系统
+
+         //卡券列表
+        $map = function($query) use($eventInfo){
+            $query->where('target_type',['=',2],['=',3],'or')
+                  ->where('target_id',['=',$eventInfo['id']],['=',0],'or');
+        };
+        // 平台卡券
+        $ItemCoupon = new \app\model\ItemCoupon;
+        $couponListOfSystem = $ItemCoupon
+                        ->where($map)
+                        ->where(['organization_type'=>1,'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->select();
+        // 训练营卡券
+        $couponListOfCamp = $ItemCoupon
+                        ->where(['organization_type'=>2,'organization_id'=>$eventInfo['organization_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->where($map)
+                        ->select();
+  
+        if($couponListOfCamp){
+            $couponListOfCamp = $couponListOfCamp->toArray();
+        }else{
+            $couponListOfCamp = [];
+        }
+        if($couponListOfSystem){
+            $couponListOfSystem = $couponListOfSystem->toArray();
+        }else{
+            $couponListOfSystem = [];
+        }
+        //卡券列表
+        $map = function($query) use($eventInfo){
+            $query->where('target_type',['=',2],['=',3],'or')
+                  ->where('target_id',['=',$eventInfo['id']],['=',0],'or');
+        };
+        // 平台卡券
+        $ItemCoupon = new \app\model\ItemCoupon;
+        $item_coupon_ids1 = $ItemCoupon
+                        ->where($map)
+                        ->where(['organization_type'=>1,'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->column('id');
+        // 训练营卡券
+        $item_coupon_ids2 = $ItemCoupon
+                        ->where(['organization_type'=>2,'organization_id'=>$eventInfo['organization_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->where($map)
+                        ->column('id');
+        $item_coupon_ids = array_merge($item_coupon_ids1,$item_coupon_ids2);
+        // ---------------------------------------------------卡券系统
+        $this->assign('item_coupon_ids',json_encode($item_coupon_ids));
+        $this->assign('couponListOfSystem',$couponListOfSystem);
+        $this->assign('couponListOfCamp',$couponListOfCamp);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('jsapi', $jsapi);
         $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
@@ -60,6 +189,12 @@ class Event extends Base{
         return view('Event/comfirmBill');
     }
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     // 创建活动
     public function createEvent() {
         $organization_id = input('param.organization_id');
@@ -81,6 +216,10 @@ class Event extends Base{
     public function eventInfo() {
         $event_id = input('param.event_id');
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
+<<<<<<< HEAD
+=======
+   
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $variable = 1;
         if($eventInfo['status']=='下架'){
             $variable = 2 ;
@@ -100,12 +239,52 @@ class Event extends Base{
         }else{
             $EventMemberList = [];
         }
+<<<<<<< HEAD
+=======
+        // ---------------------------------------------------卡券系统
+        //卡券列表
+        $map = function($query) use($eventInfo){
+            $query->where('target_type',['=',2],['=',3],'or')
+                  ->where('target_id',['=',$eventInfo['id']],['=',0],'or');
+        };
+        // 平台卡券
+        $ItemCoupon = new \app\model\ItemCoupon;
+        $couponListOfSystem = $ItemCoupon
+                        ->where($map)
+                        ->where(['organization_type'=>1,'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->select();
+        // 训练营卡券
+        $couponListOfCamp = $ItemCoupon
+                        ->where(['organization_type'=>2,'organization_id'=>$eventInfo['organization_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->where($map)
+                        ->select();
+        if($couponListOfCamp){
+            $couponListOfCamp = $couponListOfCamp->toArray();
+        }else{
+            $couponListOfCamp = [];
+        }
+        if($couponListOfSystem){
+            $couponListOfSystem = $couponListOfSystem->toArray();
+        }else{
+            $couponListOfSystem = [];
+        }
+        // ---------------------------------------------------卡券系统
+  
+        $this->assign('couponListOfSystem',$couponListOfSystem);
+        $this->assign('couponListOfCamp',$couponListOfCamp);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $this->assign('EventMemberList',$EventMemberList);
         $this->assign('variable',$variable);
         $this->assign('eventInfo',$eventInfo);
         return view('Event/eventInfo');
     }
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     public function eventInfoOfCamp() {
         $event_id = input('param.event_id');
         $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
@@ -146,6 +325,24 @@ class Event extends Base{
         $this->assign('eventInfo',$eventInfo);
         return view('Event/updateEvent');
     }
+<<<<<<< HEAD
+=======
+    // 活动编辑
+    public function updateEventTEST() {
+        $event_id = input('param.event_id');
+        $eventInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
+        if($eventInfo['member_id'] != $this->memberInfo['id']){
+            $isPower = $this->EventService->isPower($eventInfo['organization_type'],$eventInfo['organization_id'],$this->memberInfo['id']);
+            if($isPower<3){
+                $this->error('您没有权限');
+            }
+        }
+
+
+        $this->assign('eventInfo',$eventInfo);
+        return view('Event/updateEventTEST');
+    }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     
     // 活动录入
     public function recordEvent() {

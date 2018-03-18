@@ -35,6 +35,8 @@ class Lesson extends Base{
             $map['province']=$province;
             $map['city']=$city;
             $map['area']=$area;
+<<<<<<< HEAD
+=======
             foreach ($map as $key => $value) {
                 if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
@@ -85,6 +87,63 @@ class Lesson extends Base{
             $map['province']=$province;
             $map['city']=$city;
             $map['area']=$area;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value==' '){
+                    unset($map[$key]);
+                }
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['lesson'] = ['LIKE','%'.$keyword.'%'];
+            }
+            if($camp_id){
+                $map['camp_id'] = $camp_id;
+            }
+            if ($hot) {
+                $map['hot'] = 1;
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+<<<<<<< HEAD
+            $map['isprivate'] = input('param.isprivate', 0);
+            $result = $this->LessonService->getLessonList($map,$page);
+            if($result){
+                shuffle($result);
+=======
+            $result = $this->LessonService->getLessonListByPage($map);
+            if($result){
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }       
+    }
+
+    // 搜索课程
+<<<<<<< HEAD
+    public function getLessonListByPageApi(){
+        try{
+            $map = input('post.');
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $city = input('param.city');
+            $area = input('param.area');
+            $camp_id = input('param.camp_id');
+            $gradecate_id = input('param.gradecate_id');
+            $hot = input('param.hot');
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
             foreach ($map as $key => $value) {
                 if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
@@ -120,6 +179,8 @@ class Lesson extends Base{
     }
 
     // 搜索课程
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     public function getLessonListNoPageApi(){
         try{
             $map = input('post.');
@@ -149,9 +210,12 @@ class Lesson extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
+<<<<<<< HEAD
             if( isset($map['page']) ){
                 unset($map['page']);
             }
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $result = $this->LessonService->getLessonListNoPage($map);
             if($result){
                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
@@ -317,7 +381,11 @@ class Lesson extends Base{
                         // 下架课程
                         $hasgradeused = $this->LessonService->hasgradeused($lesson['id']);
                         if ($hasgradeused) {
+<<<<<<< HEAD
                             return json(['code' => 100,'msg' => '该课程有班级所使用，不能操作']);
+=======
+                            return json(['code' => 100,'msg' => '该课程还有没上完课的班级,不可下架,请先设置班级为预排并删除班级']);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                         }
                         $response = $this->LessonService->updateLessonField($lesson['id'], "status", -1);
                         return json($response);
@@ -365,6 +433,7 @@ class Lesson extends Base{
                     unset($map[$key]);
                 }
             }
+<<<<<<< HEAD
             if(isset($map['camp_id'])){
                 $result = $this->LessonService->getLessonList($map,1,'hot desc',4);   
             }else{
@@ -378,6 +447,21 @@ class Lesson extends Base{
                 }
             }
             
+=======
+          
+            $result = $this->LessonService->getLessonList($map,1,'hot desc',4);
+            
+            if($result){
+                shuffle($result);
+                if( count($result)<4 ){
+                    $res = $this->LessonService->getLessonList(['status'=>1],1,'id desc',(4-count($result)));
+                    
+                    $result = array_merge($result,$res);
+                }
+            }
+            
+            
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

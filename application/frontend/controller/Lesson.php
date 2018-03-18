@@ -35,7 +35,45 @@ class Lesson extends Base{
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         $lessonInfo['cover'] = request()->root(true) . $lessonInfo['cover'];
         $isPower = $this->LessonService->isPower($lessonInfo['camp_id'],$this->memberInfo['id']);
+<<<<<<< HEAD
 
+=======
+        //卡券列表
+        $map = function($query)use($lessonInfo){
+            // $query->where(['target_type'=>1,'target_id'=>0])
+            // ->whereOr(['target_type'=>3])
+            // ->whereOr(['target_type'=>1,'target_id'=>$lessonInfo]);
+            // ;
+            $query->where('target_type',['=',1],['=',3],'or')
+                  ->where('target_id',['=',$lessonInfo['id']],['=',0],'or');
+        };
+
+        // dump($map);die;
+        // 卡券系统        
+        $ItemCoupon = new \app\model\ItemCoupon;
+        // 平台卡券
+        $couponListOfSystem = $ItemCoupon
+                            ->where($map)
+                            ->where(['organization_type'=>1,'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                            ->select();
+        // echo $ItemCoupon->getlastsql();die;
+        if($couponListOfSystem){
+            $couponListOfSystem = $couponListOfSystem->toArray();
+        }else{
+            $couponListOfSystem = [];
+        }
+        // dump($couponListOfSystem);die;
+        // 训练营卡券
+        $couponListOfCamp = $ItemCoupon->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])->where($map)->select();
+        // echo $ItemCoupon->getlastsql();die;
+        if($couponListOfCamp){
+            $couponListOfCamp = $couponListOfCamp->toArray();
+        }else{
+            $couponListOfCamp = [];
+        }
+        $this->assign('couponListOfSystem',$couponListOfSystem);
+        $this->assign('couponListOfCamp',$couponListOfCamp);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $this->assign('isPower',$isPower);
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('memberInfo', $this->memberInfo);
@@ -124,7 +162,50 @@ class Lesson extends Base{
         $shareurl = request()->url(true);
         $wechatS = new WechatService();
         $jsapi = $wechatS->jsapi($shareurl);
+<<<<<<< HEAD
+=======
+        
+        //卡券列表
+        $map = function($query) use($lessonInfo){
+            $query->where('target_type',['=',1],['=',3],'or')
+                  ->where('target_id',['=',$lessonInfo['id']],['=',0],'or');
+        };
+        // 平台卡券
+        $ItemCoupon = new \app\model\ItemCoupon;
+        $item_coupon_ids1 = $ItemCoupon
+                        ->where($map)
+                        ->where(['organization_type'=>1,'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->column('id');
+        // 训练营卡券
+        $item_coupon_ids2 = $ItemCoupon
+                        ->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                        ->where($map)
+                        ->column('id');
+        $item_coupon_ids = array_merge($item_coupon_ids1,$item_coupon_ids2);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
+         // 平台卡券
+        $couponListOfSystem = $ItemCoupon
+                            ->where($map)
+                            ->where(['organization_type'=>1,'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
+                            ->select();
+        // echo $ItemCoupon->getlastsql();die;
+        if($couponListOfSystem){
+            $couponListOfSystem = $couponListOfSystem->toArray();
+        }else{
+            $couponListOfSystem = [];
+        }
+        // dump($couponListOfSystem);die;
+        // 训练营卡券
+        $couponListOfCamp = $ItemCoupon->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])->where($map)->select();
+        if($couponListOfCamp){
+            $couponListOfCamp = $couponListOfCamp->toArray();
+        }else{
+            $couponListOfCamp = [];
+        }
+        $this->assign('couponListOfSystem',$couponListOfSystem);
+        $this->assign('couponListOfCamp',$couponListOfCamp);
+        $this->assign('item_coupon_ids',json_encode($item_coupon_ids));
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('jsapi', $jsapi);
         $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
@@ -236,6 +317,13 @@ class Lesson extends Base{
         //训练营主教练
         $camp_id = input('param.camp_id');
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+<<<<<<< HEAD
+=======
+        $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
+        if($is_power<2){
+            $this->error('您没有权限');
+        }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         // 教练列表
         $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         // 课程分类
@@ -251,4 +339,58 @@ class Lesson extends Base{
     }
 
 
+    // 课程转换
+    public function changeLesson(){
+    	//训练营
+        $camp_id = input('param.camp_id');
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+        $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
+        if($is_power<2){
+            $this->error('您没有权限');
+        }
+
+        // 课程列表
+        $lessonList = db('lesson')->where(['camp_id'=>$camp_id,'status'=>1])->where('delete_time','null')->select();
+
+        $this->assign('lessonList',$lessonList);
+        $this->assign('camp_id',$camp_id);
+        $this->assign('campInfo',$campInfo);
+        return view('Lesson/changeLesson');
+    }
+
+    //转课列表
+    public function changeLessonList(){
+        //训练营
+        $camp_id = input('param.camp_id');
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+        $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
+        if($is_power<2){
+            $this->error('您没有权限');
+        }
+
+        $this->assign('camp_id',$camp_id);
+        $this->assign('campInfo',$campInfo);
+        return view('Lesson/changeLessonList');
+    }
+
+    // 转课详情
+    public function changeLessonInfo(){
+        $transfer_lesson_id = input('param.transfer_lesson_id');
+        //训练营
+        $camp_id = input('param.camp_id');
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+        $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
+        if($is_power<2){
+            $this->error('您没有权限');
+        }
+
+        $TransferLesson = new \app\model\TransferLesson;
+        $changeLessonInfo = $TransferLesson->where(['id'=>$transfer_lesson_id])->find();
+        
+
+        $this->assign('changeLessonInfo',$changeLessonInfo);
+        $this->assign('camp_id',$camp_id);
+        $this->assign('campInfo',$campInfo);
+        return view('Lesson/changeLessonInfo');
+    }
 }

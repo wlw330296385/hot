@@ -48,7 +48,8 @@ class Login extends Controller
             $result = $this->Auth->login($username, $password, $keeplogin ? 86400 : 0);
             if ($result === true) {
                 $this->Auth->record('控制台 登录 成功');
-                $this->success('登录成功', url('Index/index'));
+                //$this->success('登录成功', url('Index/index'));
+                $this->redirect('Index/index');
             } else {
                 $this->Auth->record('控制台 登录 失败');
                 $this->error('用户名或密码错误');
@@ -69,7 +70,14 @@ class Login extends Controller
         Cache::clear(); 
         session('admin', null);
         cookie('keeplogin', null);
-        $this->success('退出成功', url('Login/index'));
+        //$this->success('退出成功', url('Login/index'));
+        $this->redirect('Index/index');
+    }
+
+    public function clearCache(){
+        cookie('keeplogin', null);
+        Cache::clear(); 
+        $this->success('清空成功');
     }
 
     public function clearCache(){

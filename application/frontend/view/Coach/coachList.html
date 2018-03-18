@@ -181,7 +181,9 @@
                     city: sCity,
                     area: sArea,
                     sex: sSex,
-                    keyword: keyword
+                    orderby:'schedule_flow desc',
+                    keyword: keyword,
+                    is_open:1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -194,11 +196,19 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             var urls = "{:url('coach/coachInfo')}" + '/coach_id/' + data.data[i].id;
                             var star = data.data[i].star;
+<<<<<<< HEAD
                             newli += '<li class="mui-table-view-cell mui-media listli list-wide"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body">' + data.data[i].coach + '<i class="icon iconfont icon-sex' + data.data[i].sex + '"></i><p class="mui-ellipsis">教龄:' + data.data[i].coach_year + '&nbsp;&nbsp;等级:' + data.data[i].coach_level + '</p></div><div class="price-frame">'
                             if (star == 0) {
                                 newli += '<div class="icons mui-inline"><i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i></div>';
                             } else {
                                 newli += '<div class="icons mui-inline">' + starShow(star) + '</div>';
+=======
+                            newli += '<li class="mui-table-view-cell mui-media listli list-wide"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body wd52">' + data.data[i].coach + '<i class="icon iconfont icon-sex' + data.data[i].sex + '"></i><p class="mui-ellipsis">教龄: ' + data.data[i].coach_year + '&nbsp;&nbsp; 课量: ' + data.data[i].schedule_flow + '&nbsp;&nbsp; 学员: ' + data.data[i].student_flow + '</p></div><div class="price-frame">'
+                            if (star == 0) {
+                                newli += '<div class="icons mui-inline"><i class="coloryellow f10 pdr5">3.0</i> <i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i></div>';
+                            } else {
+                                newli += '<div class="icons mui-inline"><i class="coloryellow f10 pdr5">' + star + '.0</i> ' + starShow(star) + '</div>';
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                             }
                             newli += '<p class="address">' + data.data[i].area + '</p></div></a></li>';
                         }
@@ -209,7 +219,11 @@
                         mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                         mui('#refreshContainer').pullRefresh().refresh(true);
                         if (newli == '') {
+<<<<<<< HEAD
                             $("ul.coach").html('<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>');
+=======
+                            $("ul.coach").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                         }
                     } else {
                         //下拉加载 gType==2

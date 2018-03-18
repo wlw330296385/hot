@@ -3,6 +3,11 @@ namespace app\service;
 use app\model\Coach;
 use app\common\validate\CoachVal;
 use app\model\Grade;
+<<<<<<< HEAD
+=======
+use app\model\Lesson;
+use app\model\Schedule;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 use think\Db;
 class CoachService{
 	private $CoachModel;
@@ -173,6 +178,7 @@ class CoachService{
     }
 
     // 教练在训练营的课程列表
+<<<<<<< HEAD
     public function inlessonlist($coach_id, $camp_id) {
         $model = new \app\model\Lesson();
         $iscoachlist = $model->where(['camp_id' => $camp_id, 'coach_id' => $coach_id])->select();
@@ -200,6 +206,37 @@ class CoachService{
         }
         $result = array_merge($iscoachlist->toArray(), $isassistantlist);
         return $result;
+=======
+    public function inlessonlist($coach_id, $camp_id=0) {
+        $model = new Lesson();
+        $map = [];
+        if ($camp_id) {
+            $map['camp_id'] = $camp_id;
+        }
+        $coach = $this->coachInfo(['id' => $coach_id]);
+        $lessonlist = $model->where($map)
+            ->where('coach_id = :coach_id or assistant like :coach', ['coach_id' => $coach_id, 'coach' => "%".$coach['coach']."%"])
+            ->select();
+        if ($lessonlist) {
+            return $lessonlist->toArray();
+        } else {
+            return $lessonlist;
+        }
+    }
+
+    // 教练课程流量统计
+    public function lessoncount($coach_id, $camp_id=0) {
+        $model = new Lesson();
+        $map = [];
+        if ($camp_id) {
+            $map['camp_id'] = $camp_id;
+        }
+        $coach = $this->coachInfo(['id' => $coach_id]);
+        $query = $model->where($map)
+            ->where('coach_id = :coach_id or assistant like :coach', ['coach_id' => $coach_id, 'coach' => "%".$coach['coach']."%"])
+            ->count();
+        return ($query) ? $query : 0;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     }
 
     // 教练执教学员统计
@@ -219,6 +256,23 @@ class CoachService{
         }
     }
 
+<<<<<<< HEAD
+=======
+    // 教练课时流量
+    public function schedulecount($coach_id, $camp_id=0) {
+        $model = new Schedule();
+        $map = [];
+        if ($camp_id) {
+            $map['camp_id'] = $camp_id;
+        }
+        $map['status'] = 1;
+        $coach = $this->coachInfo(['id' => $coach_id]);
+        $query = $model->where($map)
+            ->where('coach_id = :coach_id or assistant like :coach', ['coach_id' => $coach_id, 'coach' => "%".$coach['coach']."%"])
+            ->count();
+        return ($query) ? $query : 0;
+    }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
     // 创建教练评论
     public function createCoachComment($data){

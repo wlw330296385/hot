@@ -105,7 +105,10 @@
         <div class="list detalis-list">
             <ul class="mui-table-view mb" style="margin-top: -4px">
                 <li class="mui-table-view-cell mui-media" style="padding:15px 15px;">
+<<<<<<< HEAD
                     <a href="javascript:;">
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                         <div class="mui-media-body">
                             {$courtInfo.court}
 
@@ -115,6 +118,7 @@
 
                         </div>
                         {eq name="button" value="2" }
+<<<<<<< HEAD
                         <a href="{:url('court/updateCourt',['court_id'=>$courtInfo['id']])}" class="mui-btn mui-btn-primary">
                             <div class="price-frame camp-num">
                                 <ul>
@@ -134,6 +138,19 @@
                         </div>
                         {/eq}
                     </a>
+=======
+                        <a href="{:url('court/updateCourt',['court_id'=>$courtInfo['id']])}" class="mui-btn mui-btn-primary fr">编辑</a>
+                        {/eq} {eq name="button" value="1"}
+                        <div class="mui-btn mui-btn-primary fr" onclick="addCourt({$courtInfo['id']})">
+                            添加到我的训练营
+                        </div>
+                        {/eq}
+                        {eq name="button" value="3"}
+                        <div class="mui-btn fr">
+                            已添加
+                        </div>
+                        {/eq}
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 </li>
             </ul>
 
@@ -141,11 +158,21 @@
                 <li class="mui-table-view-cell listli detalisli">所属地区
                     <span>{$courtInfo.province} {$courtInfo.city} {$courtInfo.area}</span>
                 </li>
+<<<<<<< HEAD
                 <li class="mui-table-view-cell listli detalisli">具体地址
                     <span>
                         <a href="#mapFrame" class="location" style="display: block">
                             <i class="mui-icon mui-icon-location"></i>{$courtInfo.location}</a>
                     </span>
+=======
+                <li class="mui-table-view-cell listli detalisli">场地定位
+                    <span>
+                        <a href="#mapFrame" class="location" style="display: block">
+                            <i class="mui-icon mui-icon-location"></i>{$courtInfo.location}</a>
+                        <font class="getDistance colororange"></font>
+                    </span>
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 </li>
                 <li class="mui-table-view-cell listli detalisli">联系人
                     <span>{$courtInfo.principal}</span>
@@ -194,6 +221,86 @@
     <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
 
     <script>
+<<<<<<< HEAD
+=======
+        var lng = '{$courtInfo.lng}';
+        var lat = '{$courtInfo.lat}';
+        // map(选择具体地址)
+        {if $courtInfo.lng == '' || $courtInfo.lat == ''}
+        var map = new AMap.Map('container', {
+            resizeEnable: true,
+            zoom: 13
+        });
+        {else}
+        var map = new AMap.Map('container', {
+            resizeEnable: true,
+            zoom: 13,
+            center:[lng,lat]
+        });
+        {/if}
+        AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geolocation'], function () {
+            var geocoder = new AMap.Geocoder({
+
+            });
+            var marker = new AMap.Marker({
+                map: map,
+                bubble: true
+            })
+            geolocation = new AMap.Geolocation({
+                enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+                maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+                convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+                showButton: true,        //显示定位按钮，默认：true
+                buttonPosition: 'RB',    //定位按钮停靠位置，默认：'LB'，左下角
+                buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+                showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+                panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
+                zoomToAccuracy: true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+            });
+
+            geolocation.getCurrentPosition(function (status, result) {
+                console.log("getCurrentPosition");
+                console.log(result);
+                var lat1 = result.position.lat;
+                var lng1 = result.position.lng;
+                var lat2 = '{$courtInfo.lat}';
+                var lng2 = '{$courtInfo.lng}';
+                console.log(lat1)
+                console.log(lng1)
+                mui.ajax("{:url('api/Location/getDistanceApi')}", {
+                    data: {
+                        lat1: lat1,
+                        lng1: lng1,
+                        lat2: lat2,
+                        lng2: lng2
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            console.log(data.data);
+                            var getDistance = (data.data) / 1000;
+                            $(".getDistance").text('离你当前'+getDistance.toFixed(1)+'km');
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+        });
+
+    </script>
+    <script>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
@@ -207,6 +314,7 @@
 
 
         $(function () {
+<<<<<<< HEAD
             // map(选择具体地址)
             var map = new AMap.Map('container', {
                 resizeEnable: true,
@@ -283,6 +391,9 @@
                 console.log(211)
                 $("#keyword").attr("disabled",true);
             })
+=======
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
             //获取场地下训练营
             toCampList('', '');
@@ -315,7 +426,12 @@
                         }
                         $("#campList span").append(newli);
                     } else {
+<<<<<<< HEAD
                         mui.toast('训练营教练列表获取失败,请稍候再试');
+=======
+//                        mui.toast('训练营教练列表获取失败,请稍候再试');
+                        $("#campList span").append("暂无训练营进驻");
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     }
                 },
                 error: function (xhr, type, errerThrown) {

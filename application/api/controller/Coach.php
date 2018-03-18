@@ -17,9 +17,116 @@ class Coach extends Base{
     public function searchCoachListApi(){
         try{
             $map = input('post.');
+<<<<<<< HEAD
+=======
             $keyword = input('param.keyword');
             $province = input('param.province');
             $page = input('param.page')?input('param.page'):1;
+            $city = input('param.city');
+            $area = input('param.area');
+            $sex = input('param.sex');
+            $orderby = input('param.orderby','id desc');
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value==' '){
+                    unset($map[$key]);
+                }
+            }
+            if(!empty($sex)&&$sex!=''){
+                $map['sex'] = $sex;
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['coach'] = ['LIKE','%'.$keyword.'%'];
+            } 
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+            if( isset($map['orderby']) ){
+                unset($map['orderby']);
+            }
+            $coachList = $this->CoachService->getCoachList($map,$page,$orderby);
+            if($coachList){
+                return json(['code'=>200,'msg'=>'OK','data'=>$coachList]);
+            }else{
+                return json(['code'=>100,'msg'=>'OK','data'=>'']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+    // 搜索全部教练(一页全部)
+    public function searchCoachListAllApi(){
+        try{
+            $map = input('post.');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $page = input('param.page')?input('param.page'):1;
+            $city = input('param.city');
+            $area = input('param.area');
+            $sex = input('param.sex');
+<<<<<<< HEAD
+=======
+            $orderby = input('param.orderby','id desc');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value==' '){
+                    unset($map[$key]);
+                }
+            }
+            if(!empty($sex)&&$sex!=''){
+                $map['sex'] = $sex;
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['coach'] = ['LIKE','%'.$keyword.'%'];
+            } 
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+<<<<<<< HEAD
+            }
+            $coachList = $this->CoachService->getCoachList($map,$page);
+=======
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+            if( isset($map['orderby']) ){
+                unset($map['orderby']);
+            }
+            $coachList = db('coach')->where($map)->order($orderby)->select();
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
+            if($coachList){
+                return json(['code'=>200,'msg'=>'OK','data'=>$coachList]);
+            }else{
+                return json(['code'=>100,'msg'=>'OK','data'=>'']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 获取教练分页(有页码)
+    public function getCoachListByPageApi(){
+        try{
+            $map = input('post.');
+            $keyword = input('param.keyword');
+            $province = input('param.province');
             $city = input('param.city');
             $area = input('param.area');
             $sex = input('param.sex');
@@ -43,11 +150,27 @@ class Coach extends Base{
             if( isset($map['page']) ){
                 unset($map['page']);
             }
-            $coachList = $this->CoachService->getCoachList($map,$page);
+            $coachList = $this->CoachService->getCoachListByPage($map);
             if($coachList){
                 return json(['code'=>200,'msg'=>'OK','data'=>$coachList]);
             }else{
                 return json(['code'=>100,'msg'=>'OK','data'=>'']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    //获取教练列表（没分页、没查询）
+    public function getCoachListApi(){
+        try{
+            $map = input('post.');
+            $page = input('param.page')?input('param.page'):1;
+            $result = $this->CoachService->getCoachList($map,$page);
+             if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
             }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -123,7 +246,8 @@ class Coach extends Base{
                 'experience' => input('post.experience'),
                 'introduction' => input('post.introduction'),
                 'portraits' => input('post.portraits'),
-                'description' => input('post.description')
+                'description' => input('post.description'),
+                'is_open' => input('post.is_open', 1)
             ];
             // 地区input 拆分成省 市 区 3个字段
             $locationStr = input('post.locationStr');
@@ -182,7 +306,8 @@ class Coach extends Base{
                 'experience' => input('post.experience'),
                 'introduction' => input('post.introduction'),
                 'portraits' => input('post.portraits'),
-                'description' => input('post.description')
+                'description' => input('post.description'),
+                'is_open' => input('post.is_open', 1)
             ];
             // 地区input 拆分成省 市 区 3个字段
             $locationStr = input('post.locationStr');

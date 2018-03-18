@@ -1,10 +1,18 @@
 <?php
 namespace app\system\controller;
+use app\model\Coach;
+use app\model\Rebate;
+use app\service\CoachService;
+use app\service\ScheduleService;
 use app\service\SystemService;
+use app\service\MemberService;
 use app\model\SalaryIn;
+use app\model\CampFinance;
+use app\model\Income;
 use think\Controller;
 use think\Db;
-
+use think\Exception;
+use think\helper\Time;
 
 class Crontab extends Controller {
     public $setting;
@@ -15,297 +23,373 @@ class Crontab extends Controller {
         $this->setting = $SystemS::getSite();
     }
 
-    // 结算教练课时薪资 3天前课时记录
-    // 分成比例为73, 教练70%里50%为底薪 20%评分结果所得
-    public function schedulesalary() {
-        // 课时日后3天 生成课时薪资
-        $dayafter = 3;
-        // 当天开始时间&结束时间
-        $t = time();
-        $start_time = mktime(0,0,0,date("m",$t),date("d",$t),date("Y",$t))-(86400*$dayafter);
-        $end_time = mktime(23,59,59,date("m",$t),date("d",$t),date("Y",$t))-(86400*$dayafter);
-        $map['status'] = 1;
-        $map['create_time'] = ['BETWEEN',[$start_time,$end_time]];
-        Db::table('schedule')->field(true)->where($map)->chunk(50, function($schedules) {
-            foreach ($schedules as $val) {
-                $coach_id = $val['coach_id'];
-                $assistant_ids = $val['assistant_ids'];
-                $coach_salary = $val['coach_salary'];
-                $assistant_salary = $val['assistant_salary'];
-                $salary_base = $val['salary_base'];
-                $students = $val['students'];
-                // 课时评分提成 最大为20
-                $star = $val['star'];
-                // 学生人数基数薪资
-                $salaryBase = $salary_base*$students;
-                // 主教练薪资
-                $salaryCoach = ($salaryBase+$coach_salary)*(1-$this->setting['sysrebate']-$this->setting['starrebate'])+($salaryBase+$coach_salary)*$star/100;
-                // 有助教的话 主教练实际所得薪资
-                if (!empty($assistant_ids)) {
-                    // 助教薪资
-                    $salaryAssitant = ($salaryBase+$assistant_salary)*(1-$this->setting['sysrebate']-$this->setting['starrebate'])+($salaryBase+$assistant_salary)*$star/100;
-                    $salaryCoach = $salaryCoach - $salaryAssitant;
+    // 结算可结算已申课时工资收入&扣减课时学员课时数
+    public function schedulesalaryin() {
+        try {
+            // 获取可结算课时数据列表
+            // 赠课记录，有赠课记录先抵扣
+            // 91分 9进入运算 1平台收取
+            // 结算主教+助教收入，剩余给营主
+            // 上级会员收入提成(90%*5%,90%*3%)
+            //list($start, $end) = Time::yesterday();
+            //$map['update_time'] = ['between', [$start, $end]];
+            $map['status'] = 1;
+            $map['is_settle'] = 0;
+            // 当前时间日期
+            $nowDate = date('Ymd', time());
+            $map['can_settle_date'] = $nowDate;
+            // $map['can_settle_date'] = 20180314;
+            $map['rebate_type'] = 1;
+            //$map['questions'] = 0;
+            Db::name('schedule')->where($map)->whereNull('delete_time')->chunk(50, function ($schedules) {
+                foreach ($schedules as $schedule) {
+                    // 扣减课时学员课时数 start
+                    // 课时相关学员剩余课时-1
+                    $scheduleS = new ScheduleService();
+                    $students = unserialize($schedule['student_str']);
+                    $decStudentRestscheduleResult = $scheduleS->decStudentRestschedule($students, $schedule);
+                    // 扣减课时学员课时数 end
 
-                    $assistantList = $this->assitantIdArr($assistant_ids);
-                    if ($assistantList) {
-                        foreach ($assistantList as $assistant) {
-                            $memberAssistant = $this->getCoachMember($assistant);
-                            //dump($memberAssistant);
-                            if ($memberAssistant) {
-                                $salaryInAssistantData = [
-                                    'salary' => $salaryAssitant,
-                                    'member_id' => $memberAssistant['member_id'],
-                                    'member' => $memberAssistant['member'],
-                                    'realname' => $memberAssistant['realname'],
-                                    'pid' => $memberAssistant['pid'],
-                                    'level' => $memberAssistant['level'],
-                                    'lesson_id' => $val['lesson_id'],
-                                    'lesson' => $val['lesson'],
-                                    'grade_id' => $val['grade_id'],
-                                    'grade' => $val['grade'],
-                                    'camp_id' => $val['camp_id'],
-                                    'camp' => $val['camp'],
-                                    'create_time' => time(),
-                                    'update_time' => time(),
-                                    'status' => 1,
-                                    'type' => 1,
-                                    'member_type' => 4
-                                ];
-                                $this->insertSalaryIn($salaryInAssistantData);
-                            }
+                    // 课时工资收入结算 start
+                    // 课时正式学员人数
+                    $numScheduleStudent = count(unserialize($schedule['student_str']));
+                    $lesson = $lesson = Db::name('lesson')->where('id', $schedule['lesson_id'])->find();
+                    // 抵扣赠送课时数
+                    $numGiftSchedule = 0;
+                    $systemRemarks = '';
+                    if ($lesson['unbalanced_giftschedule'] > 0) {
+                        // 课程有未结算赠课数,  抵扣赠课课时：上课正式学员人数/2取整
+                        $numGiftSchedule = ceil($numScheduleStudent / 2);
+                        if ($lesson['unbalanced_giftschedule'] > $numGiftSchedule) {
+                            Db::name('lesson')->where('id', $schedule['lesson_id'])->setDec('unbalanced_giftschedule', $numGiftSchedule);
+                            $systemRemarks = $lesson['lesson'] . '抵扣赠课数：' . $numGiftSchedule;
+                        } else {
+                            $numGiftSchedule = 0;
                         }
                     }
-                }
+                    // 课时总收入
+                    $incomeSchedule = ($lesson['cost'] * ($numScheduleStudent - $numGiftSchedule));
+                    //$incomeScheulde1 = $incomeSchedule * (1-$this->setting['sysrebate']);
+                    // 课时工资提成
+                    $pushSalary = $schedule['salary_base'] * $numScheduleStudent;
+                    $coachMember = $this->getCoachMember($schedule['coach_id']);
 
-                // 教练所得薪资 salary_in
-                $memberCoach = $this->getCoachMember($coach_id);
-                if ($memberCoach) {
-                    $salaryInCoach = [
-                        'salary' => $salaryCoach,
-                        'member_id' => $memberCoach['member_id'],
-                        'member' => $memberCoach['member'],
-                        'realname' => $memberCoach['realname'],
-                        'pid' => $memberCoach['pid'],
-                        'level' => $memberCoach['level'],
-                        'lesson_id' => $val['lesson_id'],
-                        'lesson' => $val['lesson'],
-                        'grade_id' => $val['grade_id'],
-                        'grade' => $val['grade'],
-                        'camp_id' => $val['camp_id'],
-                        'camp' => $val['camp'],
-                        'create_time' => time(),
-                        'update_time' => time(),
+                    // 主教练薪资
+                    $incomeCoach = [
+                        'salary' => $schedule['coach_salary'],
+                        'push_salary' => $pushSalary,
+                        'member_id' => $coachMember['member']['id'],
+                        'member' => $coachMember['member']['member'],
+                        'realname' => $coachMember['coach'],
+                        'member_type' => 4,
+                        'pid' => $coachMember['member']['pid'],
+                        'level' => $coachMember['member']['level'],
+                        'schedule_id' => $schedule['id'],
+                        'lesson_id' => $schedule['lesson_id'],
+                        'lesson' => $schedule['lesson'],
+                        'grade_id' => $schedule['grade_id'],
+                        'grade' => $schedule['grade'],
+                        'camp_id' => $schedule['camp_id'],
+                        'camp' => $schedule['camp'],
+                        'schedule_time' => $schedule['lesson_time'],
                         'status' => 1,
                         'type' => 1,
-                        'member_type' => 1
                     ];
-                    $this->insertSalaryIn($salaryInCoach);
-                }
-
-            }
-        });
-    }
-
-    // 每天结算 当天内
-    // 推荐人收入提成 实际收入*返利比例(5%/3%)
-    public function salaryinrebate() {
-        // 当天开始时间&结束时间
-        $t = time();
-        $start_time = mktime(0,0,0,date("m",$t),date("d",$t),date("Y",$t));
-        $end_time = mktime(23,59,59,date("m",$t),date("d",$t),date("Y",$t));
-        $map['status'] = 1;
-        $map['create_time'] = ['BETWEEN',[$start_time,$end_time]];
-        DB::name('salary_in')->field(true)->where($map)->chunk(50, function($salaryins) {
-            foreach ($salaryins as $salaryin) {
-                if ($salaryin['pid']) {
-                    $memberRebates = $this->getMemberTier($salaryin);
-                    foreach ($memberRebates as $k => $memberRebate) {
-                        unset($memberRebates[$k]['pid']);
-                        $memberRebates[$k]['salary_id'] =  $salaryin['id'];
-                        $memberRebates[$k]['create_time'] = time();
-                        $memberRebates[$k]['update_time'] = time();
-                        if ($memberRebate['tier'] == 2) { //5%
-                            $memberRebates[$k]['salary'] = $salaryin['salary']*$this->setting['rebate'];
-                        } else if ($memberRebate['tier'] == 3) { //3%
-                            $memberRebates[$k]['salary'] = $salaryin['salary']*$this->setting['rebate2'];
+                    $this->insertSalaryIn($incomeCoach);
+                    $MemberFinanceData = [
+                                'member_id' => $coachMember['member']['id'],
+                                'member' => $coachMember['member']['member'],
+                                's_balance'=>$coachMember['member']['balance'],
+                                'e_balance'=>$coachMember['member']['balance']+$schedule['coach_salary']+$pushSalary,
+                                'money' =>$schedule['coach_salary']+$pushSalary,
+                                'type'=>1,
+                                'system_remarks'=>'课时主教练总薪资收入',
+                                'f_id'=>$schedule['id'],
+                            ];
+                    $this->insertMemberFinance($MemberFinanceData);
+                    // 助教薪资
+                    $incomeAssistant = [];
+                    if (!empty($schedule['assistant_id']) && $schedule['assistant_salary']) {
+                        $assistantMember = $this->getAssistantMember($schedule['assistant_id']);
+                        foreach ($assistantMember as $k => $val) {
+                            $incomeAssistant[$k] = [
+                                'salary' => $schedule['assistant_salary'],
+                                'push_salary' => $pushSalary,
+                                'member_id' => $val['member']['id'],
+                                'member' => $val['member']['member'],
+                                'realname' => $val['coach'],
+                                'member_type' => 3,
+                                'pid' => $val['member']['pid'],
+                                'level' => $val['member']['level'],
+                                'schedule_id' => $schedule['id'],
+                                'lesson_id' => $schedule['lesson_id'],
+                                'lesson' => $schedule['lesson'],
+                                'grade_id' => $schedule['grade_id'],
+                                'grade' => $schedule['grade'],
+                                'camp_id' => $schedule['camp_id'],
+                                'camp' => $schedule['camp'],
+                                'schedule_time' => $schedule['lesson_time'],
+                                'status' => 1,
+                                'type' => 1,
+                            ];
+                            $MemberFinanceData[$k] = [
+                                'member_id' => $val['member']['id'],
+                                'member' => $val['member']['member'],
+                                's_balance'=>$val['member']['balance'],
+                                'e_balance'=>$val['member']['balance']+$schedule['assistant_salary']+$pushSalary,
+                                'money' =>$schedule['assistant_salary']+$pushSalary,
+                                'type'=>1,
+                                'system_remarks'=>'课时助理教练总薪资收入',
+                                'f_id'=>$schedule['id'],
+                            ];
                         }
-                        $this->insertRebate($memberRebates[$k]);
+                        //dump($incomeAssistant);
+                        $this->insertSalaryIn($incomeAssistant, 1);
+                        $this->insertMemberFinance($MemberFinanceData,1);
                     }
-                    //dump($memberRebates);
-                }
-            }
-        });
-    }
 
-    // 每天结算 当天内
-    // HP业绩返利 3层返利100%
-    public function hprebate() {
-        // 当天开始时间&结束时间
-        $t = time();
-        $start_time = mktime(0,0,0,date("m",$t),date("d",$t),date("Y",$t));
-        $end_time = mktime(23,59,59,date("m",$t),date("d",$t),date("Y",$t));
-        $map['status'] = 1;
-        $map['create_time'] = ['BETWEEN',[$start_time,$end_time]];
-        $map['is_pay'] = 1;
-        Db::name('bill')->where($map)->chunk(50, function($bills){
-            foreach ($bills as $bill) {
-                $member = db('member')->where('id', $bill['member_id'])->find();
-                // 消费会员 HP
-                $memberHPRebateData = [
-                    'member_id' => $member['id'],
-                    'member' => $member['member'],
-                    'tier' => 1,
-                    'bill_id' => $bill['id'],
-                    'bill_order' => $bill['bill_order'],
-                    'rebate_hp' => ceil($bill['balance_pay']),
-                    'paymoney' => $bill['balance_pay'],
-                    'status' => 1,
-                    'create_time' => time(),
-                    'update_time' => time()
-                ];
-                $this->insertRebateHP($memberHPRebateData);
-
-                // 上线会员 HP
-                $memberPiersHPRebateData = $this->getMemberTier($member);
-                foreach ($memberPiersHPRebateData as $k => $val) {
-                    unset($memberPiersHPRebateData[$k]['pid']);
-                    $memberPiersHPRebateData[$k]['bill_id'] =  $bill['id'];
-                    $memberPiersHPRebateData[$k]['bill_order'] = $bill['bill_order'];
-                    $memberPiersHPRebateData[$k]['rebate_hp'] = ceil($bill['balance_pay']);
-                    $memberPiersHPRebateData[$k]['paymoney'] = $bill['balance_pay'];
-                    $memberPiersHPRebateData[$k]['status'] = 1;
-                    $memberPiersHPRebateData[$k]['create_time'] = time();
-                    $memberPiersHPRebateData[$k]['update_time'] = time();
-                    $this->insertRebateHP($memberPiersHPRebateData[$k]);
-                }
-            } 
-        });
-    }
-
-    // 每天结算 当天内
-    // 消费返回积分 上线50%/30%
-    public function scorerebate() {
-        // 当天开始时间&结束时间
-        $t = time();
-        $start_time = mktime(0,0,0,date("m",$t),date("d",$t),date("Y",$t));
-        $end_time = mktime(23,59,59,date("m",$t),date("d",$t),date("Y",$t));
-        $map['status'] = 1;
-        $map['create_time'] = ['BETWEEN',[$start_time,$end_time]];
-        $map['is_pay'] = 1;
-        Db::name('bill')->where($map)->chunk(50, function($bills){
-            foreach ($bills as $bill) {
-                $member = db('member')->where('id', $bill['member_id'])->find();
-                // 消费会员 HP
-                $memberScoreRebateData = [
-                    'member_id' => $member['id'],
-                    'member' => $member['member'],
-                    'tier' => 1,
-                    'bill_id' => $bill['id'],
-                    'bill_order' => $bill['bill_order'],
-                    'rebate_score' => ceil($bill['balance_pay']),
-                    'paymoney' => $bill['balance_pay'],
-                    'status' => 1,
-                    'create_time' => time(),
-                    'update_time' => time()
-                ];
-                $this->insertRebateScore($memberScoreRebateData);
-
-                // 上线会员 HP
-                $memberPiersScoreRebateData = $this->getMemberTier($member);
-                foreach ($memberPiersScoreRebateData as $k => $val) {
-                    unset($memberPiersScoreRebateData[$k]['pid']);
-                    $memberPiersScoreRebateData[$k]['bill_id'] =  $bill['id'];
-                    $memberPiersScoreRebateData[$k]['bill_order'] = $bill['bill_order'];
-                    if ($val['tier'] ==2) {
-                        $memberPiersScoreRebateData[$k]['rebate_score'] = ceil($bill['balance_pay']*0.5);
-                    } else if ($val['tier'] ==3) {
-                        $memberPiersScoreRebateData[$k]['rebate_score'] = ceil($bill['balance_pay']*0.3);
+                    // 剩余为训练营所得 课时收入*抽取比例-主教底薪-助教底薪-课时工资提成*教练人数。教练人数 = 助教人数+1（1代表主教人数）
+                    // 抽取比例：训练营有特定抽取比例以(1-特定抽取比例)计算|否则以(1-平台抽取比例)计算
+                    $campScheduleRebate = db('camp')->where('id', $schedule['camp_id'])->value('schedule_rebate');
+                    if (!empty($campScheduleRebate)) {
+                        $scheduleRebate = (1 - $campScheduleRebate);
+                    } else {
+                        $scheduleRebate = (1 - $this->setting['sysrebate']);
                     }
-                    $memberPiersScoreRebateData[$k]['paymoney'] = $bill['balance_pay'];
-                    $memberPiersScoreRebateData[$k]['status'] = 1;
-                    $memberPiersScoreRebateData[$k]['create_time'] = time();
-                    $memberPiersScoreRebateData[$k]['update_time'] = time();
-                    $this->insertRebateScore($memberPiersScoreRebateData[$k]);
+
+                    $incomeCampSalary = $incomeSchedule * $scheduleRebate - $schedule['coach_salary'] - $schedule['assistant_salary'] - ($pushSalary * (count($incomeAssistant) + 1));
+                    $incomeCamp = [
+                        'income' => $incomeCampSalary,
+                        'schedule_id'=>$schedule['id'],
+                        'schedule_id' => $schedule['id'],
+                        'lesson_id' => $schedule['lesson_id'],
+                        'lesson' => $schedule['lesson'],
+                        'camp_id' => $schedule['camp_id'],
+                        'camp' => $schedule['camp'],
+                        'schedule_time' => $schedule['lesson_time'],
+                        'status' => 1,
+                        'type' => 3,
+                        'system_rebate'=>(1-$scheduleRebate),
+                        'system_remarks' => $systemRemarks
+                    ];
+                    $this->insertIncome($incomeCamp);
+                    $campInfo = db('camp')->where(['id'=>$schedule['camp_id']])->find();
+                    // 保存训练营财务支出信息
+                    $dataCampFinance = [
+                        'camp_id' => $schedule['camp_id'],
+                        'camp' => $schedule['camp'],
+                        'money'=>$incomeSchedule,
+                        'type' => 3,
+                        'e_balance' => $campInfo['balance']+$incomeSchedule,
+                        's_balance'=>$campInfo['balance'],
+                        'f_id' => $schedule['id'],
+                        'date' => date('Ymd', $schedule['lesson_time']),
+                        'datetime' => $schedule['lesson_time']
+                    ];
+                    $this->insertcampfinance($dataCampFinance);
+
+                    // 更新课时数据
+                    Db::name('schedule')->where(['id' => $schedule['id']])->update(['is_settle' => 1, 'schedule_income' => $incomeSchedule, 'finish_settle_time' => time()]);
+                    db('schedule_member')->where(['schedule_id' => $schedule['id']])->update(['status' => 1, 'update_time' => time()]);
+                    // 课时工资收入结算 end
+                }
+            });
+        } catch (Exception $e) {
+            // 记录日志：错误信息
+            trace($e->getMessage(), 'error');
+        }
+    }
+
+    // 结算上一个月收入 会员分成
+    public function salaryinrebate(){
+        try {
+            list($start, $end) = Time::lastMonth();
+            $map['status'] = 1;
+            $map['has_rebate'] = 0;
+            $map['create_time'] = ['between', [$start, $end]];
+            $salaryins = DB::name('salary_in')->field(['member_id', 'sum(salary)+sum(push_salary)'=>'month_salary'])->where($map)->group('member_id')->where('delete_time', null)->select();
+            $datemonth = date('Ym', $end);
+            foreach ($salaryins as $salaryin) {
+                //dump($salaryin);
+                if ($salaryin['month_salary'] >0 ){
+                    $res = $this->insertRebate($salaryin['member_id'], $salaryin['month_salary'], $datemonth);
+                    if (!$res) { continue; }
                 }
             }
-        });
-    }
-
-    // 获取教练信息
-    protected function getCoachMember($coach_id) {
-        $member = Db::view('coach', ['id' => 'coach_id', 'member_id'])
-                    ->view('member','id,member,realname,pid,level', 'member.id=coach.member_id')
-                    ->where('coach.id', $coach_id)->find();
-        return $member ? $member : false;
-    }
-
-    protected function assitantIdArr($ids) {
-        $assitantArr = explode(',', $ids);
-        return $assitantArr ? $assitantArr : false;
-    }
-
-    // 插入salary_in表
-    protected function insertSalaryIn($data) {
-        $execute = db('salary_in')->insert($data);
-        if ($execute) {
-            db('member')->where('id', $data['member_id'])->setInc('balance', $data['salary']);
-            file_put_contents(ROOT_PATH.'data/salaryin/'.date('Y-m-d',time()).'.txt', json_encode(['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]).PHP_EOL, FILE_APPEND );
-        } else {
-            file_put_contents(ROOT_PATH.'data/salaryin/'.date('Y-m-d',time()).'.txt',json_encode(['error'=>$data,'time'=>date('Y-m-d H:i:s',time())]).PHP_EOL, FILE_APPEND  );
+            DB::name('salary_in')->where($map)->update(['has_rebate' => 1]);
+        }catch (Exception $e) {
+            // 记录日志：错误信息
+            trace($e->getMessage(), 'error');
         }
     }
 
-    // 插入rebate表
-    protected function insertRebate($data) {
-        $execute = db('rebate')->insert($data);
-        if ($execute) {
-            db('member')->where('id', $data['member_id'])->setInc('balance', $data['salary']);
-            file_put_contents(ROOT_PATH.'data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]).PHP_EOL, FILE_APPEND  );
-        } else {
-            file_put_contents(ROOT_PATH.'data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['error'=>$data,'time'=>date('Y-m-d H:i:s',time())]).PHP_EOL, FILE_APPEND );
+    // 获取教练会员
+    private function getCoachMember($coach_id) {
+        $coachM = new Coach();
+        $member = $coachM->with('member')->where(['id' => $coach_id])->find();
+        if ($member) {
+            return $member->toArray();
         }
     }
 
-    // 插入rebate_hp表
-    protected function insertRebateHP($data) {
-        $execute = db('rebate_hp')->insert($data);
-        if ($execute) {
-            db('member')->where('id', $data['member_id'])->setInc('hp', $data['rebate_hp']);
-            file_put_contents(ROOT_PATH.'data/rebate_hp/'.date('Y-m-d',time()).'.txt',json_encode(['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]).PHP_EOL, FILE_APPEND  );
+    // 获取营主会员
+    private function getCampMember($camp_id) {
+        $member = Db::view('member')
+            ->view('camp', '*','camp.member_id=member.id')
+            ->where(['camp.id' => $camp_id])
+            ->order('camp.id desc')
+            ->find();
+        return $member;
+    }
+
+    // 获取助教会员
+    private function getAssistantMember($assistant_id) {
+        $assistants = unserialize($assistant_id);
+        $member = [];
+        $coachM = new Coach();
+        foreach( $assistants as $k => $assistant ) {
+            $member[$k] = $coachM->with('member')->where(['id' => $assistant])->find()->toArray();
+        }
+        return $member;
+    }
+
+    // 保存收入记录
+    private function insertSalaryIn($data, $saveAll=0) {
+        $model = new \app\model\SalaryIn();
+        if ($saveAll == 1) {
+            $execute = $model->allowField(true)->saveAll($data);
         } else {
-            file_put_contents(ROOT_PATH.'data/rebate_hp/'.date('Y-m-d',time()).'.txt',json_encode(['error'=>$data,'time'=>date('Y-m-d H:i:s',time())]).PHP_EOL, FILE_APPEND  );
+            $execute = $model->allowField(true)->save($data);
+        }
+        if ($execute) {
+            $memberDb = db('member');
+            if ($saveAll ==1) {
+                foreach ($data as $val) {
+                    $memberDb->where('id', $val['member_id'])->setInc('balance', $val['salary']+$val['push_salary']);
+                }
+            } else {
+                $memberDb->where('id', $data['member_id'])->setInc('balance', $data['salary']+$data['push_salary']);
+            }
+            file_put_contents(ROOT_PATH.'data/salaryin/'.date('Y-m-d',time()).'.txt', json_encode(['time'=>date('Y-m-d H:i:s',time()), 'success'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND );
+            return true;
+        } else {
+            file_put_contents(ROOT_PATH.'data/salaryin/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'error'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND  );
+            return false;
+        }
+    }
+     // 保存课时收入记录
+    private function insertIncome($data, $saveAll=0) {
+        $model = new \app\model\Income();
+        if ($saveAll == 1) {
+            $execute = $model->allowField(true)->saveAll($data);
+        } else {
+            $execute = $model->allowField(true)->save($data);
+        }
+        if ($execute) {
+            $campDb = db('camp');
+            if ($saveAll ==1) {
+                foreach ($data as $val) {
+                    $campDb->where('id', $val['camp_id'])->inc('balance_true', $val['income'])->update();
+                }
+            } else {
+                $campDb->where('id', $data['camp_id'])->inc('balance_true', $data['income'])->update();
+            }
+            file_put_contents(ROOT_PATH.'data/income/'.date('Y-m-d',time()).'.txt', json_encode(['time'=>date('Y-m-d H:i:s',time()), 'success'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND );
+            return true;
+        } else {
+            file_put_contents(ROOT_PATH.'data/income/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'error'=>$data], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND  );
+            return false;
         }
     }
 
-    // 插入rebate_score表
-    protected function insertRebateScore($data) {
-        $execute = db('rebate_score')->insert($data);
-        if ($execute) {
-            db('member')->where('id', $data['member_id'])->setInc('score', $data['rebate_score']);
-            file_put_contents(ROOT_PATH.'data/rebate_score/'.date('Y-m-d',time()).'.txt',json_encode(['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]).PHP_EOL, FILE_APPEND  );
+    // 保存收入总记录
+    private function insertMemberFinance($data, $saveAll=0) {
+        $model = new \app\model\MemberFinance();
+        if ($saveAll == 1) {
+            $execute = $model->allowField(true)->saveAll($data);
         } else {
-            file_put_contents(ROOT_PATH.'data/rebate_score/'.date('Y-m-d',time()).'.txt',json_encode(['error'=>$data,'time'=>date('Y-m-d H:i:s',time())]).PHP_EOL, FILE_APPEND  );
+            $execute = $model->allowField(true)->save($data);
         }
     }
 
-    // 获取会员上下线层级
-    protected function getMemberTier($member) {
-        $tree = [];
-        $parent_member = db('member')->field(['id' => 'member_id','member','pid'])->where('id', $member['pid'])->find();
-        //dump($parent_member);
-        if ($parent_member) {
-            $parent_member['tier'] = 2;
-            $parent_member['sid'] = $member['id'];
-            $parent_member['s_member'] = $member['member'];
-            array_push($tree, $parent_member);
-            $parent_member2 = db('member')->field(['id' => 'member_id','member','pid'])->where('id', $parent_member['pid'])->find();
-            if ($parent_member2) {
-                $parent_member2['tier'] =3;
-                $parent_member2['sid'] = $parent_member['member_id'];
-                $parent_member2['s_member'] = $parent_member['member'];
-                array_push($tree, $parent_member2);
+    // 保存会员分成记录
+    private function insertRebate($member_id, $salary, $datemonth) {
+        $memberS = new MemberService();
+        $model = new Rebate();
+        $memberPiers = $memberS->getMemberPier($member_id);
+        if (!empty($memberPiers)) {
+            foreach ($memberPiers as $k => $memberPier) {
+                if ($memberPier['tier']==1) {
+                    $memberPiers[$k]['salary'] = $salary*$this->setting['rebate'];
+                } elseif ($memberPier['tier']==2){
+                    $memberPiers[$k]['salary'] = $salary*$this->setting['rebate2'];
+                }
+                $memberPiers[$k]['datemonth'] = $datemonth;
+            }
+            //dump($memberPiers);
+            $execute = $model->allowField(true)->saveAll($memberPiers);
+            if ($execute) {
+                $memberDb = db('member');
+                foreach ($memberPiers as $member) {
+                    $memberDb->where('id', $member['member_id'])->setInc('balance', $member['salary']);
+                }
+                file_put_contents(ROOT_PATH.'data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'success'=>$memberPiers], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND  );
+                return true;
+            } else {
+                file_put_contents(ROOT_PATH.'data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'error'=>$memberPiers], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND );
+                return false;
             }
         }
-        return $tree;
+    }
+
+    // 保存训练营财务记录
+    private function insertcampfinance($data, $saveAll=0) {
+        $model = new CampFinance();
+        if ($saveAll == 1) {
+            $model->allowField(true)->saveAll($data);
+        } else {
+            $model->allowField(true)->save($data);
+        }
+    }
+
+
+    // 统计更新教练流量数字段
+    public function coachflowcounter() {
+        try {
+            // 遍历coach数据
+            $coachs = db('coach')->select();
+            // 教练service
+            $coachService = new CoachService();
+            //dump($coachs);
+            $dataSaveAll = [];
+            foreach ($coachs as $key => $coach) {
+                // 课程流量
+                $lessonFlow = $coachService->lessoncount($coach['id']);
+                // 班级流量
+                $gradeList = $coachService->ingradelist($coach['id']);
+                //dump($gradeList);
+                $gradeFlow = count($gradeList);
+                // 学员流量
+                $studentFlow = $coachService->teachstudents($coach['id']);
+                // 课时流量
+                $scheduleFlow = $coachService->schedulecount($coach['id']);
+                $dataSaveAll[$key]['id'] = $coach['id'];
+                $dataSaveAll[$key]['lesson_flow'] = $lessonFlow;
+                $dataSaveAll[$key]['grade_flow'] = $gradeFlow;
+                $dataSaveAll[$key]['student_flow'] = $studentFlow+$coach['student_flow_init'];
+                $dataSaveAll[$key]['schedule_flow'] = $scheduleFlow+$coach['schedule_flow_init'];
+
+                // 顺手整理introduction值为图文内容格式
+                $newIntroduction = '<div class="operationDiv"><p>'. $coach['introduction'] .'</p></div>';
+                //$dataSaveAll[$key]['introduction'] = $newIntroduction;
+            }
+            //dump($dataSaveAll);
+            // 批量更新
+            $modelCoach = new Coach();
+            $res = $modelCoach->saveAll($dataSaveAll);
+            return json($res);
+        } catch (Exception $e) {
+            dump($e->getMessage());
+        }
     }
 }

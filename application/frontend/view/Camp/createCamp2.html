@@ -16,6 +16,13 @@
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <!-- webuploader -->
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+    <style>
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+
+    </style>
 </head>
 
 <body>
@@ -67,9 +74,47 @@
                     <label>联系电话</label>
                     <input type="tel" class="input camp_telephone" placeholder="请填写你的联系电话">
                 </div>
+<<<<<<< HEAD
                 <div class="mui-input-row h-auto">
                     <label>训练营简介</label>
                     <textarea rows="5" class="intro" placeholder="填写训练营简介"></textarea>
+=======
+
+                <div class="mui-input-row h-auto">
+                    <label>训练营宣言</label>
+                    <textarea rows="5" name="camp_description" class="camp_description" placeholder="训练营宣言"></textarea>
+                </div>
+
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="course">训练营图文介绍</span>
+                </div>
+                <div class="mui-input-row tuwenEditor">
+                    <textarea name="introduction" class="data introduction" style="display: none"></textarea>
+                    <div class="introBox"></div>
+                    <div class="mui-row mui-text-center mui-row-operation">
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame up pd">上移</a>
+                            <a class="frame down pd">下移</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame titleClass">添加标题</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame textClass">添加正文</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame imageClass">
+                                <div id="uploader-demo">
+                                    <div id="fileList" class="uploader-list"></div>
+                                    <div class="filePickerTwo">选择图片</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="f12">温馨提示：点击添加均为插入一段文字或一张图片，不可换行，如需换行请再次点击添加。</span>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 </div>
 
             </form>
@@ -94,11 +139,35 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+<<<<<<< HEAD
+=======
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/tuwen.js?v=<?php echo time();?>"></script>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
+<<<<<<< HEAD
+
+        //地区选择器
+        (function ($, doc) {
+            $.init();
+            $.ready(function () {
+                var _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+                ///级联示例
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
+                });
+                cityPicker3.setData(cityData3);
+                // 设置默认值
+                cityPicker3.pickers[0].setSelectedIndex(18);
+                cityPicker3.pickers[1].setSelectedIndex(2);
+                cityPicker3.pickers[2].setSelectedIndex(2);
+=======
 
         //地区选择器
         (function ($, doc) {
@@ -130,8 +199,25 @@
                 }, false);
             });
         })(mui, document);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                var locationvalue = doc.getElementById('location-input');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        locationvalue.value = _getParam(items[0], 'text') + "|" + _getParam(items[1], 'text') + "|" + _getParam(items[2], 'text')
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                    });
+                }, false);
+            });
+        })(mui, document);
 
+        $(function () {
+
+<<<<<<< HEAD
         $(function () {
 
             // 注册 step2
@@ -144,6 +230,27 @@
                 var location_input = $('input[name=location]').val();
                 var locationStr = $('input[name=locationStr]').val();
                 var intro = $('.intro').val();
+=======
+
+            // 注册 step2
+            $('.camp-step2').click(function () {
+
+                //图文编辑状态转换浏览状态
+                tuwenToView()
+
+                //获取最终含简单html标签的图文内容
+                var introHtml = $(".introBox").html();
+                /////////////////////////////////////////////////////////////////
+
+                var campid = $('input[name=campid]').val();
+                var logo = $('input[name=logo]').val();
+                var banner = $('input[name=banner]').val();
+                var company = $('input[name=company]').val();
+                var location_input = $('input[name=location]').val();
+                var locationStr = $('input[name=locationStr]').val();
+                var camp_telephone = $('.camp_telephone').val();
+                var camp_description = $('.camp_description').val();
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
                 if (logo == "" || banner == "") {
                     mui.toast('请上传图片');
@@ -154,8 +261,13 @@
                 } else if (!(/^1[34578]\d{9}$/).test(camp_telephone)) {
                     mui.toast("请输入正确的手机格式");
                     return false;
+<<<<<<< HEAD
                 } else if (intro == "") {
                     mui.toast("请填写训练营简介");
+=======
+                } else if (introHtml == "" || camp_description == "") {
+                    mui.toast("请填写训练营宣言和简介");
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     return false;
                 };
 
@@ -167,7 +279,12 @@
                         company: company,
                         location: location_input,
                         locationStr: locationStr,
+<<<<<<< HEAD
                         intro: intro,
+=======
+                        intro: introHtml,
+                        camp_description: camp_description,
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                         camp_telephone: camp_telephone
                     },
                     dataType: 'json',
@@ -179,6 +296,11 @@
                             mui.toast(res.msg + ',请完善训练营资质证明');
                             setTimeout(window.location.href = "{:url('camp/createcamp', '', '', true)}/step/3/camp_id/" + res.data, 3000);
                         } else {
+<<<<<<< HEAD
+=======
+                            //图文转换成可编辑状态
+                            tuwenToEdit()
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                             mui.toast(res.msg);
                         }
                     },

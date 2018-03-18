@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html>
 
@@ -297,4 +298,364 @@
 
 </script>
 
+=======
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>课程详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
+</head>
+
+<body class=whitebg>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader subheader-other">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+    <!--课程详情页-->
+    <div class="mui-content" style="padding: 0">
+        <div class="list camp-list coach mt55">
+            <div class="img4x3" style="background-image:url('{$lessonInfo.cover}')"></div>
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                    <a href="javascript:;">
+                        <div class="mui-media-body wd60 newline">
+                            <strong>{$lessonInfo.lesson}</strong>
+                            <p class="mui-ellipsis">{$lessonInfo.gradecate_setion}{$lessonInfo.gradecate}</p>
+                        </div>
+                        <div class="price-frame">
+                            <p class="price">￥<strong>{$lessonInfo.cost}</strong><span class="nofloat"> / 课时</span></p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+            <!-- 课程卡券 -->
+            <ul class="mui-table-view mb">
+                {if !empty($couponListOfSystem)|| !empty($couponListOfCamp)}
+                <li class="mui-table-view-cell listli">
+                    <a href="#cppopover">
+                    <ul class="mini-coupon">
+
+                    {volist empty="" name="couponListOfSystem" id="vol" }
+                        <li><div><span>{$vol.coupon}</span>赠券</div><i></i></li>
+                    {/volist}
+
+                    {volist empty="" name="couponListOfCamp" id="vol" }
+                        <li><div><span>{$vol.coupon}</span>赠券</div><i></i></li>
+                    {/volist}
+
+                    </ul>
+                    </a>
+                </li>
+                {/if}
+                <li class="mui-table-view-cell listli">选择课量
+                    <span class="wd83">
+                        {volist name="lessonInfo['doms']" id="vol" }
+                        <button type="button" class="mui-btn selectTotal" data="{$vol}">{$vol}节</button>
+                        {/volist}
+                    </span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <a class="mui-navigate-right" href="{:url('frontend/camp/campInfo',['camp_id'=>$lessonInfo['camp_id']])}">
+                    所属训练营<span class="wd66" id="aaa">{$lessonInfo.camp}</span>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-Startingtim colororange"></span>训练时间</label><span>{$lessonInfo.week} {$lessonInfo.lesson_time |} </span></li>
+                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-Activeobjec colororange"></span>训练地点</label><span>{$lessonInfo.court}</span></li>
+                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-Location colororange"></span>所属地区</label><span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span>
+                </li>
+                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-EventLocati colororange"></span>具体地址</label><span>{$lessonInfo.location}</span></li>
+                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-Quantity colororange"></span>人数范围</label><span>{$lessonInfo.min}-{$lessonInfo.max}人</span></li>
+
+                <li class="mui-table-view-cell listli">备注<span>{$lessonInfo.remarks}</span></li>
+            </ul>
+
+            <!--推荐人信息-->
+            {notempty name="pmember"}
+            <p class="pline"></p>
+            <div class="mui-row recommend">
+                <div class="mui-col-sm-3 mui-col-xs-3 recomLine"></div>
+                <div class="mui-col-sm-2 mui-col-xs-2 recomTxt">分享者</div>
+                <div class="mui-col-sm-2 mui-col-xs-2">
+                    <img src="{$pmember['avatar']}">
+                </div>
+                <div class="mui-col-sm-2 mui-col-xs-2 recomTxt">{$pmember.nickname}</div>
+                <div class="mui-col-sm-3 mui-col-xs-3 recomLine"></div>
+            </div>
+            {/notempty}
+
+        </div>
+        <ul class="mui-table-view operation">
+            <!--<li class="mui-table-view-cell mui-col-xs-12 opli bggreen" style="color: #fff">-->
+            <!--此功能维护中，请稍后再使用-->
+            <!--</li>-->
+            <li class="mui-table-view-cell mui-media mui-col-xs-2 opli"><a href="/frontend/"><span
+                    class="mui-icon icon iconfont icon-nav-Home"></span></a></li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 opli"><a href="tel:{$lessonInfo.telephone}"><span
+                    class="mui-icon mui-icon-phone"></span> 咨询</a></li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 opli bgblue" id="bookLesson">预约体验</li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" id="buyLesson">购买课程</a>
+            </li>
+        </ul>
+    </div>
+    <input type="hidden" name="{$shareurl}">
+
+
+    <!-- 卡券弹框 -->
+    <div id="cppopover" class="mui-popover" style="width: 95% !important;">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header explain-title">
+            <span class="course">本课程赠送卡券</span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+
+                {volist empty="" name="couponListOfSystem" id="vol" }
+
+                <div class="coupon">
+                    <div class="orangebg">
+                        <div class="cNum">{$vol.price}<span>元</span></div>
+                        <div class="cFrom">{$vol.organization}</div>
+                        <div class="cName">{$vol.coupon}</div>
+                        <div class="cDate">{$vol.start} 至 {$vol.end}</div>
+                        <i></i>
+                    </div>
+                    <div class="tips">
+                        <span>剩余领取：{$vol.max-$vol.publish}</span>
+                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>
+                    </div>
+                </div>
+                {/volist}
+
+                {volist empty="" name="couponListOfCamp" id="vol" }
+
+                <div class="coupon">
+                    <div class="orangebg">
+                        <div class="cNum">{$vol.price}<span>元</span></div>
+                        <div class="cFrom">{$vol.organization}</div>
+                        <div class="cName">{$vol.coupon}</div>
+                        <div class="cDate">{$vol.start} 至 {$vol.end}</div>
+                        <i></i>
+                    </div>
+                    <div class="tips">
+                        <span>剩余领取：{$vol.max-$vol.publish}</span>
+                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>
+                    </div>
+                </div>
+                {/volist}
+
+            </div>
+        </div>
+    </div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    })
+
+    //弹出菜单
+    mui('.mui-scroll-wrapper').scroll();
+
+    mui("body").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
+
+    mui.get("{:url('api/member/checkopenid')}", {}, function (data) {
+        console.log(data);
+    }, 'json');
+
+    var buyUrl = "{:url('lesson/comfirmBill',['lesson_id'=>$lessonInfo['id']])}";
+    var bookUrl = "{:url('lesson/bookBill',['lesson_id'=>$lessonInfo['id']])}";
+    
+    // 预约课程和购买课程
+    $(function () {
+
+        //        sessionStorage.lessonTotal = 0;
+        //        $('.selectTotal').on('click', function () {
+        //            $('.selectTotal').removeClass('mui-btn-warning');
+        //            var data = wooApi.selectLessonTotal2($(this));
+        //            // 存储课时
+        //            sessionStorage.lessonTotal = data;
+        //            console.log(sessionStorage.lessonTotal);
+        //        })
+
+        //选择课量
+        $('.selectTotal').on('tap', '', function () {
+            $('.selectTotal').removeClass('mui-btn-warning');
+            $(this).addClass('mui-btn-warning');
+        })
+
+        //预约体验
+        $('#bookLesson').on('tap', '', function () {
+            if ("{$isPower}" > 1) {
+                mui.alert('不允许购买自身训练营下的课程');
+                return false;
+            }
+            if ("{$memberInfo.id}" <= 0) {
+                mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                    if (e.index === 1) {
+                        window.location.href = "{$fasturl}";
+                    }
+                });
+            } else {
+                // sessionStorage.lessonTotal = 1;
+                // window.location.href = bookUrl;
+                window.location.href = bookUrl + '?total=1';
+            }
+        })
+
+        //购买课程
+        $('#buyLesson').on('tap', '', function () {
+            if ("{$isPower}" > 1) {
+                mui.alert('不允许购买自身训练营下的课程');
+                return false;
+            }
+            if ("{$memberInfo.id}" <= 0) {
+                mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                    if (e.index === 1) {
+                        window.location.href = "{$fasturl}";
+                    }
+                });
+            } else {
+                // var lessonTotal = sessionStorage.lessonTotal;
+                mui.ajax("{:url('api/lesson/canbuylesson')}", {
+                    data: {
+                        lesson_id: "{$lessonInfo.id}"
+                    },
+                    dataType: 'json',
+                    type: 'post',
+                    header: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        if (data.code === 200) {
+                            var lessonTotal = $('.mui-btn-warning').attr("data");
+                            if (lessonTotal == 0 || lessonTotal == null || lessonTotal == '') {
+                                //                    alert('请先选择课量');
+                                mui.alert('', '请先选择课量', function () { });
+                                return false;
+
+                            } else {
+                                // window.location.href = buyUrl;
+                                window.location.href = buyUrl + '?total=' + lessonTotal;
+                                //alert(lessonTotal);
+
+                            }
+                        } else {
+                            mui.alert(data.msg);
+                            return false;
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        mui.alert('网络异常，请稍后再试');
+                    }
+                });
+
+            }
+        })
+
+    })
+
+//    function book() {
+//        if ("{$isPower}" > 1) {
+//            mui.alert('不允许购买自身训练营下的课程');
+//            return false;
+//        }
+//        if ("{$memberInfo.id}" <= 0) {
+//            var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+//            mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
+//        } else {
+////            sessionStorage.lessonTotal = 1;
+//            // window.location.href = bookUrl;
+//            window.location.href = bookUrl + '?total=1';
+//        }
+//
+//    }
+//
+//    function buy() {
+//        if ("{$isPower}" > 1) {
+//            mui.alert('不允许购买自身训练营下的课程');
+//            return false;
+//        }
+//        if ("{$memberInfo.id}" <= 0) {
+//            var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+//            mui.confirm('请先完善您的基本信息，以便进行后续操作，谢谢！', '提示', btnArray);
+//        } else {
+////            var lessonTotal = sessionStorage.lessonTotal;
+//            if (selectLessonCount == 0) {
+//                alert('请先选择课量');
+//                return false;
+//
+//            } else {
+//                // window.location.href = buyUrl;
+//                window.location.href = buyUrl + '?total=' + selectLessonCount;
+////                alert(lessonTotal);
+//
+//            }
+//        }
+//
+//    }
+
+</script>
+
+<script>
+    wx.config({
+        //debug: true,
+        appId: "{$jsapi['appId']}",
+        timestamp: "{$jsapi['timestamp']}",
+        nonceStr: "{$jsapi['nonceStr']}",
+        signature: "{$jsapi['signature']}",
+        jsApiList: [
+            // 所有要调用的 API 都要加到这个列表中
+            'checkJsApi',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ'
+        ]
+    });
+    wx.ready(function () {
+        // 分享到朋友圈
+        wx.onMenuShareTimeline({
+            title: "{$lessonInfo.lesson}", // 分享标题
+            link: "{$shareurl}/pid/{$mid}", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: "{$lessonInfo.cover}", // 分享图标
+            success: function () {
+
+            },
+            cancel: function () {
+            }
+        });
+
+        // 分享给朋友
+        wx.onMenuShareAppMessage({
+            title: '{$lessonInfo.lesson}', // 分享标题
+            desc: '{$lessonInfo.camp}', // 分享描述
+            link: "{$shareurl}/pid/{$mid}", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: "{$lessonInfo.cover}", // 分享图标
+            type: "", // 分享类型,music、video或link，不填默认为link
+            dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+            success: function () {
+
+            },
+            cancel: function () {
+
+            }
+        });
+
+    });
+
+</script>
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 </html>

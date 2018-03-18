@@ -8,6 +8,13 @@
         </div>
     </div>
     <div class="panel-body">
+        <div class="no-padding">
+            <div class="fixed-table-toolbar">
+                <div class="bs-bars pull-left">
+                    <a href="{:url('court/add')}" class="btn btn-success btn-add"><i class="fa fa-plus"></i> 添加场地</a>
+                </div>
+            </div>
+        </div>
         <div class="box no-border">
             <div class="box-body">
                 <table class="table table-striped table-bordered table-hover">
@@ -15,6 +22,7 @@
                     <tr>
                         <th>ID</th>
                         <th>场地名称</th>
+                        <th>发布场地训练营</th>
                         <th>所在地区</th>
                         <th>具体地址</th>
                         <th>场地负责人</th>
@@ -28,6 +36,12 @@
                     <tr>
                         <td>{$vo.id}</td>
                         <td>{$vo.court}</td>
+                        <td>
+                            {gt name="vo.camp_id" value="0"}
+                            {$vo.camp}
+                            {else/}平台发布
+                            {/gt}
+                        </td>
                         <td>{$vo.province}-{$vo.city}-{$vo.area}</td>
                         <td>{$vo.location}</td>
                         <td>{$vo.principal}</td>
@@ -36,7 +50,8 @@
                             {$vo.status}
                         </td>
                         <td>
-                            <a href="{:url('court/detail', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i></a>
+                            <a href="{:url('court/edit', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 编辑场地</a>
+                            <a href="{:url('court/detail', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看场地</a>
                             <a href="{:url('court/sdel', ['id' => $vo['id']])}" class="btn btn-xs btn-danger del-btn"><i class="fa fa-trash"></i></a>
                         </td>
                     </tr>

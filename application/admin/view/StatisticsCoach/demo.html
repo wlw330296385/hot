@@ -1,0 +1,834 @@
+{extend name="layout/common"/}
+{block name="css"}
+
+    <link rel="stylesheet" href="/static/plugins/datatables/dataTables.bootstrap.css">
+
+{/block}
+{block name="page-content"}
+<div class="row">
+    <div class="col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box">
+            <span class="info-box-icon bg-aqua"><i class="icon iconfont icon-training-wage"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">总收益</span>
+                <span class="info-box-number">88960<small></small></span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+    <div class="col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box">
+            <span class="info-box-icon bg-red"><i class="icon iconfont icon-training-giveaway"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">赠课总人次</span>
+                <span class="info-box-number">41,410</span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+
+    <!-- fix for small devices only -->
+    <div class="clearfix visible-sm-block"></div>
+
+    <div class="col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box">
+            <span class="info-box-icon bg-green"><i class="icon iconfont icon-team-member"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">学员上课总人次</span>
+                <span class="info-box-number">760</span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+    <div class="col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box">
+            <span class="info-box-icon bg-yellow"><i class="icon iconfont icon-training-record"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">总课时</span>
+                <span class="info-box-number">2,000</span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+</div>
+
+
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#sysCount" data-toggle="tab">课时收益</a></li>
+            <li><a href="#wxCount" data-toggle="tab">返利收益</a></li>
+        </ul>
+    </div>
+    <div class="panel-body">
+
+        <div class="box-body">
+            <div class="dataTables_wrapper form-inline dt-bootstrap">
+                <div class="row hotTbHeader">
+                        <div class="form-group">
+                            <div class="input-group" data-toggle="modal" data-target="#campModal">
+                                <input type="text" name="camp" class="form-control pull-right wAuto" value="全部训练营">
+                                <input type="hidden" name="camp_id" value="">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-angle-down"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <!-- /.input group -->
+                            <label>当前教练：</label>
+                            <div class="input-group" data-toggle="modal" data-target="#coachModal">
+                                <input type="text" name="coach" class="form-control pull-right wAuto" value="">
+                                <input type="hidden" name="member_id" value="">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-angle-down"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <!-- /.input group -->
+                            <label>统计时间：</label>
+                            <div class="input-group">
+                                <input type="text" name="dateYM" class="form-control pull-right" id="dateYM">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <!-- /.input group -->
+                            <button type="button" class="btn btn-default" id="goSearch">确认查询</button>
+                        </div>
+                        <h3 class="totalRight"><small>本月总收益：</small><strong class="text-yellow">1800</strong></h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content">
+            <!-- 系统统计 -->
+            <div class="tab-pane fade active in" id="sysCount">
+                <div class="col-md-12 col-sm-12">
+                        <!-- Info boxes -->
+                        <div class="row pab10">
+
+                            <table id="example1" class="table table-bordered table-striped dataTable" role="grid"
+                                   aria-describedby="example1_info">
+                                <thead>
+                                <tr role="row">
+                                    <th class="sorting_asc">训练营</th>
+                                    <th>课程</th>
+                                    <th>课次</th>
+                                    <th>人次</th>
+                                    <th>赠课</th>
+                                    <th>总和</th>
+                                    <th>详情</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr role="row" class="odd">
+                                    <td class="sorting_1">大热篮球俱乐部</td>
+                                    <td>大热常规班3</td>
+                                    <td>3</td>
+                                    <td>17</td>
+                                    <td>4</td>
+                                    <td>4</td>
+                                    <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+                                </tr>
+                                <tr role="row" class="odd">
+                                    <td class="sorting_1">大热篮球俱乐部</td>
+                                    <td>大热常规班1</td>
+                                    <td>1</td>
+                                    <td>17</td>
+                                    <td>4</td>
+                                    <td>4</td>
+                                    <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+                                </tr>
+                                <tr role="row" class="odd">
+                                    <td class="sorting_1">大热篮球俱乐部</td>
+                                    <td>大热常规班2</td>
+                                    <td>2</td>
+                                    <td>17</td>
+                                    <td>4</td>
+                                    <td>4</td>
+                                    <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+
+                        </div>
+                        <!-- /.row -->
+                </div>
+            </div>
+
+            <!-- 微信统计 -->
+            <div class="tab-pane fade" id="wxCount">
+                <div class="col-md-12 col-sm-12">
+                        <!-- Info boxes -->
+                        <div class="row">
+
+
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <!--<div class="box-header">-->
+            <!--<h3 class="box-title">教练员收益统计</h3>-->
+            <!--</div>-->
+            <!-- /.box-header -->
+
+
+            <div class="box-body">
+                <div class="dataTables_wrapper form-inline dt-bootstrap">
+                    <div class="row hotTbHeader">
+                        <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input-group" data-toggle="modal" data-target="#campModal">
+                                        <input type="text" name="camp" class="form-control pull-right wAuto" value="全部训练营">
+                                        <input type="hidden" name="camp_id" value="">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-angle-down"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <!-- /.input group -->
+                                    <label>当前教练：</label>
+                                    <div class="input-group" data-toggle="modal" data-target="#coachModal">
+                                        <input type="text" name="coach" class="form-control pull-right wAuto" value="">
+                                        <input type="hidden" name="member_id" value="">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-angle-down"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <!-- /.input group -->
+                                    <label>统计时间：</label>
+                                    <div class="input-group">
+                                        <input type="text" name="dateYM" class="form-control pull-right" id="dateYM">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <!-- /.input group -->
+                                    <button type="button" class="btn btn-default" id="goSearch">确认查询</button>
+                                </div>
+                                <h3 class="totalRight"><small>本月总收益：</small><strong class="text-yellow">1800</strong></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+        </div>
+
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs pull-right">
+                <li><a href="#tab_1-1" data-toggle="tab" aria-expanded="true">返利</a></li>
+                <li class="active" class=""><a href="#tab_2-2" data-toggle="tab" aria-expanded="false">课时</a></li>
+                <li class="pull-left header">
+                        <span><i class="fa fa-th"></i> 安凯翔：</span>
+                        <span><small>本月课时收益：</small><strong class="text-yellow">23000</strong></span>
+                        <span><small>本月返利收益：</small><strong class="text-yellow">23000</strong></span>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab_1-1">
+
+                    <table id="example1" class="table table-bordered table-striped dataTable" role="grid"
+                           aria-describedby="example1_info">
+                        <thead>
+                        <tr role="row">
+                            <th class="sorting_asc">训练营</th>
+                            <th>课程</th>
+                            <th>课次</th>
+                            <th>人次</th>
+                            <th>赠课</th>
+                            <th>总和</th>
+                            <th>详情</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr role="row" class="odd">
+                            <td class="sorting_1">大热篮球俱乐部</td>
+                            <td>大热常规班3</td>
+                            <td>3</td>
+                            <td>17</td>
+                            <td>4</td>
+                            <td>4</td>
+                            <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td class="sorting_1">大热篮球俱乐部</td>
+                            <td>大热常规班1</td>
+                            <td>1</td>
+                            <td>17</td>
+                            <td>4</td>
+                            <td>4</td>
+                            <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td class="sorting_1">大热篮球俱乐部</td>
+                            <td>大热常规班2</td>
+                            <td>2</td>
+                            <td>17</td>
+                            <td>4</td>
+                            <td>4</td>
+                            <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="tab_2-2">
+
+
+
+                    <table id="example2" class="table table-bordered table-striped dataTable" role="grid"
+                           aria-describedby="example1_info">
+                        <thead>
+                        <tr role="row">
+                            <th class="sorting_asc">训练营</th>
+                            <th>课程</th>
+                            <th>课次</th>
+                            <th>人次</th>
+                            <th>赠课</th>
+                            <th>总和</th>
+                            <th>详情</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr role="row" class="odd">
+                            <td class="sorting_1">大热篮球俱乐部</td>
+                            <td>大热常规班3</td>
+                            <td>3</td>
+                            <td>17</td>
+                            <td>4</td>
+                            <td>4</td>
+                            <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td class="sorting_1">大热篮球俱乐部</td>
+                            <td>大热常规班1</td>
+                            <td>1</td>
+                            <td>17</td>
+                            <td>4</td>
+                            <td>4</td>
+                            <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td class="sorting_1">大热篮球俱乐部</td>
+                            <td>大热常规班2</td>
+                            <td>2</td>
+                            <td>17</td>
+                            <td>4</td>
+                            <td>4</td>
+                            <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+            <!-- /.tab-content -->
+        </div>
+
+        <!-- /.box -->
+    </div>
+    <!-- /.col -->
+</div>
+
+
+<!----------------------------------- 教练员资金账单 ： 开始-------------------------------------------->
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <!--<div class="box-header">-->
+            <!--<h3 class="box-title">教练员收益统计</h3>-->
+            <!--</div>-->
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div class="dataTables_wrapper form-inline dt-bootstrap">
+                    <div class="row hotTbHeader">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <div class="input-group" data-toggle="modal" data-target="#campModal">
+                                    <input type="text" name="camp" class="form-control pull-right wAuto" value="全部训练营">
+                                    <input type="hidden" name="camp_id" value="">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-angle-down"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <!-- /.input group -->
+                                <label>当前教练：</label>
+                                <div class="input-group" data-toggle="modal" data-target="#coachModal">
+                                    <input type="text" name="coach" class="form-control pull-right wAuto" value="">
+                                    <input type="hidden" name="member_id" value="">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-angle-down"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <!-- /.input group -->
+                                <label>统计时间：</label>
+                                <div class="input-group">
+                                    <input type="text" name="dateYM" class="form-control pull-right" id="dateYM">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <!-- /.input group -->
+                                <button type="button" class="btn btn-default" id="goSearch">确认查询</button>
+                            </div>
+                            <h3 class="totalRight">
+                                <span><small>本月收入：</small><strong class="text-yellow">1800</strong></span>
+                                <span><small>本月支出：</small><strong class="text-yellow">250</strong></span>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="example3" class="table table-bordered table-striped dataTable hotTable">
+                                <thead>
+                                <tr role="row">
+                                    <th>结算日期</th>
+                                    <th>支出</th>
+                                    <th>
+                                        <ul class="dataCol-1">
+                                            <li>收入</li>
+                                            <li>
+                                                <ul class="dataCol-2">
+                                                    <li>课时</li>
+                                                </ul>
+                                                <ul class="dataCol-2">
+                                                    <li>返利</li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </th>
+                                    <th>余额</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr role="row" class="odd">
+                                    <td>
+                                        <ul class="dateList dataCol-1">
+                                            <li>2018-01-01</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul class="w100">
+                                            <li>888</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul class="dataCol-2">
+                                            <li>888</li>
+                                        </ul>
+                                        <ul class="dataCol-2">
+                                            <li>888</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul class="dataCol-1">
+                                            <li>888</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+    </div>
+    <!-- /.col -->
+</div>
+
+<!----------------------------------- 教练员资金账单 ： 结束-------------------------------------------->
+
+
+
+
+
+
+<!-- Modal : Camp -->
+<div class="modal fade" id="campModal" tabindex="-1" role="dialog" aria-labelledby="campModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="campModalLabel">请选择训练营</h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group input-group-sm">
+                    <input type="text" name="campKeyword" class="form-control campKeyword" placeholder="请输入训练营名称 ...">
+                    <span class="input-group-btn">
+                      <button type="button" id="searchCampBtn" class="btn btn-default btn-flat"><i class="fa fa-search"></i> 搜索</button>
+                    </span>
+                </div>
+                <div class="tableScroll">
+                    <table id="campList" class="table table-bordered table-striped dataTable">
+                        <thead>
+                        <tr role="row">
+                            <th>训练营名称</th>
+                            <th>所属地区</th>
+                            <th>详情</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr role="row" class="nodata"><td colspan="4">请搜索训练营</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" id="backToAllCamp">选择全部训练营</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal : Coach -->
+<div class="modal fade" id="coachModal" tabindex="-1" role="dialog" aria-labelledby="coachModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="coachModalLabel">请选择教练员</h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group input-group-sm">
+                    <input type="text" name="coachKeyword" class="form-control coachKeyword" placeholder="请输入教练员名称 ...">
+                    <span class="input-group-btn">
+                      <button type="button" id="searchCoachBtn" class="btn btn-default btn-flat"><i class="fa fa-search"></i> 搜索</button>
+                    </span>
+                </div>
+                <div class="tableScroll">
+                    <table id="coachList" class="table table-bordered table-striped dataTable">
+                        <thead>
+                        <tr role="row">
+                            <th>教练员名称</th>
+                            <th>所属地区</th>
+                            <th>详情</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr role="row" class="nodata"><td colspan="4">请搜索教练员</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{/block}
+
+
+{block name='js'}
+
+<script src="/static/backend/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/backend/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<!-- Bootstrap WYSIHTML5 -->
+<!--<script src="/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>-->
+<!-- date-range-picker -->
+<!--<script src="/static/plugins/moment/moment.js"></script>-->
+<script src="/static/plugins/datepicker/bootstrap-datepicker.js"></script>
+<script>
+
+    $(function () {
+        $('#example1').DataTable({
+            'paging'      : true,
+            'lengthChange': false,
+            'searching'   : false,
+            'ordering'    : true,
+            'info'        : true,
+            'autoWidth'   : true
+        });
+
+
+
+        //=========================== 初始化数据 ==============================//
+
+        //获取上个月，并赋予统计时间栏
+        var getLastMonth = '';
+        var currDate = new Date();
+        var currYear = currDate.getFullYear();
+        var currMonth = currDate.getMonth();
+        if(currMonth==0){
+            getLastMonth = parseInt(currYear)-1+'-12';
+        }else{
+            currMonth = currMonth<10 ? "0"+currMonth:currMonth;
+            getLastMonth = currYear+'-'+ currMonth ;
+        }
+        $("input[name=dateYM]").val(getLastMonth);
+
+        //隔行变色
+        $(".hotTable tbody td ul").find("li:even").addClass("even");
+
+        //根据数据表统计总额
+        var monthOut = 0;
+        $(".cOut li").not(".colCount").each(function () {
+            monthOut = monthOut + parseInt($(this).text());
+        });
+        var scheduleIn = 0;
+        $(".sIn li").not(".colCount").each(function () {
+            scheduleIn = scheduleIn + parseInt($(this).text());
+        });
+        var rebateIn = 0;
+        $(".rIn li").not(".colCount").each(function () {
+            rebateIn = rebateIn + parseInt($(this).text());
+        });
+        $(".cOut li.colCount").text(monthOut);
+        $(".sIn li.colCount").text(monthOut);
+        $(".rIn li.colCount").text(monthOut);
+        $(".monthIn").text(scheduleIn+rebateIn);
+        $(".monthOut").text(monthOut);
+
+
+        //=========================== 初始化数据 ==============================//
+
+
+        //选择年月
+        $('#dateYM').datepicker({
+            language: 'zh-CN',
+            autoclose: true,
+            format: "yyyy-mm",
+            minViewMode: 1,
+            todayBtn: true
+        });
+
+        //搜索训练营
+        $("#backToAllCamp").on("click", function () {
+            $('input[name="camp"]').val('全部训练营');
+            $('input[name="camp_id"]').val('');
+            $("#coachModalLabel").text("请选择教练员");
+            $("#coachList tbody").empty().html('<tr role="row" class="nodata"><td colspan="4">请搜索教练员</td></tr>');
+            $('#campModal').modal('hide');
+        })
+
+        //搜索训练营
+        $("#searchCampBtn").on("click", function () {
+            var keyword = $(".campKeyword").val();
+            if(keyword==""){
+                alert("请输入训练营名称！");
+            }else{
+                toCampList(keyword);
+            }
+        })
+
+        //搜索教练员
+        $("#searchCoachBtn").on("click", function () {
+            var keyword = $(".coachKeyword").val();
+            var camp_id = $('input[name="camp_id"]').val();
+            if(keyword==""){
+                alert("请输入教练员名称！");
+            }else{
+                //判断是否有campid选择不同api
+                if(camp_id==""){
+                    toCoachList(keyword);
+                }else{
+                    //当前训练营的教练员列表查询
+                    $("#coachList tbody tr").removeClass("text-yellow");
+                    $("#coachList tbody tr td:first-child:contains('"+keyword+"')").parent().addClass("text-yellow");
+                    $("#coachList .text-yellow").each(function (i) {
+                        $("#coachList tbody tr:first-child").before($(this));
+                    });
+                }
+            }
+        })
+
+        $("#campList tbody").on("click",".btn", function () {
+            var camp_id = $(this).attr("data-id");
+            var camp = $(this).attr("data-camp");
+            $("input[name=camp_id]").val(camp_id);
+            $("input[name=camp]").val(camp);
+            $("input[name=member_id]").val('');
+            $("input[name=coach]").val('');
+            $("#coachModalLabel").text("请选择"+camp+"教练员");
+            toCampCoachList(camp_id);
+            $('#campModal').modal('hide');
+        })
+
+        $("#coachList tbody").on("click",".btn", function () {
+            var member_id = $(this).attr("data-member_id");
+            var coach = $(this).attr("data-coach");
+            $("input[name=member_id]").val(member_id);
+            $("input[name=coach]").val(coach);
+            $('#coachModal').modal('hide');
+        })
+
+        //查询统计
+        $("#goSearch").on("click", function () {
+            var camp_id = $("input[name=camp_id]").val();
+            var member_id = $("input[name=member_id]").val();
+            if(member_id==""){
+                alert("请选择教练员！");
+                return false;
+            }
+            var getYM = $("input[name=dateYM]").val();
+            var arrYM = getYM.split('-');
+            var getLastDate = new Date(arrYM[0],arrYM[1],0);
+            console.log(getLastDate.getDate())
+            beginDate = arrYM[0]+arrYM[1]+'01';
+            endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
+            console.log(beginDate)
+            console.log(endDate)
+            location.href="coachBill/camp_id/"+camp_id+"/member_id/"+member_id+"/monthstart/"+beginDate+"/monthend/"+endDate;
+        })
+
+        //接口获取数据并追加到页面
+        var toCampList = function (keyword) {
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/camp/searchCampListAllApi','','',true)}";
+            $.ajax({
+                url: url,
+                data: {
+                    status: 1,
+                    keyword: keyword
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+                //processData:false,
+                success: function (data) {
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('camp/campInfo')}" + '/camp_id/' + data.data[i].id;
+                            newli += '<tr role="row" class="odd"><td>' + data.data[i].camp + '</td><td>' + data.data[i].city + '</td><td><a href="' + urls + '">查看详情</a></td><td><span class="btn btn-xs btn-info" data-camp="' + data.data[i].camp + '" data-id="' + data.data[i].id + '">确定</span></td></tr>';
+                        }
+                    }
+                    if (newli == '') {
+                        $("#campList tbody").html('<tr role="row" class="nodata"><td colspan="4">没有搜索到相关数据哦</td></tr>');
+                    }else{
+                        $("#campList tbody").empty().append(newli);
+                    }
+
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    alert('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //接口获取数据并追加到页面：平台教练员
+        var toCoachList = function (keyword) {
+            console.log(keyword)
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/coach/searchCoachListAllApi','','',true)}";
+            $.ajax({
+                url: url,
+                data: {
+                    status: 1,
+                    page:1,
+                    keyword: keyword
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+                //processData:false,
+                success: function (data) {
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('coach/coachInfo')}" + '/coach_id/' + data.data[i].id;
+                            newli += '<tr role="row" class="odd"><td>' + data.data[i].coach + '</td><td>' + data.data[i].city + '</td><td><a href="' + urls + '">查看详情</a></td><td><span class="btn btn-xs btn-info" data-coach="' + data.data[i].coach + '" data-member_id="' + data.data[i].member_id + '">确定</span></td></tr>';
+                        }
+                    }
+                    if (newli == '') {
+                        $("#coachList tbody").html('<tr role="row" class="nodata"><td colspan="4">没有搜索到相关数据哦</td></tr>');
+                    }else{
+                        $("#coachList tbody").empty().append(newli);
+                    }
+
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    alert('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //接口获取数据并追加到页面：训练营教练员
+        var toCampCoachList = function (camp_id) {
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/camp_member/getCoachOfCampListAllApi','','',true)}"+"?camp_id="+camp_id;
+            $.ajax({
+                url: url,
+                data: {},
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+                //processData:false,
+                success: function (data) {
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('coach/coachInfo')}" + '/coach_id/' + data.data[i].id;
+                            newli += '<tr role="row" class="odd"><td>' + data.data[i].coach + '</td><td>' + data.data[i].city + '</td><td><a href="' + urls + '">查看详情</a></td><td><span class="btn btn-xs btn-info" data-coach="' + data.data[i].coach + '" data-member_id="' + data.data[i].member_id + '">确定</span></td></tr>';
+                        }
+                    }
+                    if (newli == '') {
+                        $("#coachList tbody").html('<tr role="row" class="nodata"><td colspan="4">没有搜索到相关数据哦</td></tr>');
+                    }else{
+                        $("#coachList tbody").empty().append(newli);
+                    }
+
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    alert('网络异常,请稍候再试');
+                }
+            });
+        };
+
+    })
+
+</script>
+
+{/block}

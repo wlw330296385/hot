@@ -5,18 +5,18 @@ use traits\model\SoftDelete;
 class SalaryIn extends Model{
 	use SoftDelete;
     protected $deleteTime = 'delete_time';
-	protected $type = [
-        
-    ];
     protected $autoWriteTimestamp = true;
 
-    protected $readonly = ['create_time'];
+//    protected $readonly = ['create_time'];
 
 
     public function getMemberTypeAttr($value){
-    	$arr = [1=>'教练',2=>'班主任',3=>'领队',4=>'副教练',5=>'机构'];
+    	$arr = [4=>'主教练',3=>'助教练',5=>'直接收入'];
     	return $arr[$value];
     }
 
+    public function schedule() {
+        return $this->hasOne('schedule', 'id', 'schedule_id', [] ,'left join');
+    }
 }
 

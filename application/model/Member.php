@@ -8,7 +8,7 @@ class Member extends Model{
     protected $autoWriteTimestamp = true;
 	protected $readonly = [
 //							'create_time',
-							'openid',
+							// 'openid',
 							'member',
 							'balance',
 							'score',
@@ -39,4 +39,8 @@ class Member extends Model{
 	public function coach(){
 		return $this->hasOne('coach','member_id','id',[],'LEFT');
 	}
+
+    public function student(){
+        return $this->hasMany('student','member_id','id',[],'LEFT');
+    }
 }

@@ -5,14 +5,25 @@ use traits\model\SoftDelete;
 class Lesson extends Model{
 	use SoftDelete;
     protected $deleteTime = 'delete_time';
-	protected $readonly = [
-							'create_time',
-							];
+    protected $autoWriteTimestamp = true;
+    //protected $readonly = ['create_time'];
 
     public function getStatusAttr($value){
-        $status = [0=>'已结束',1=>'正常'];
+        $status = [0=>'未审核',1=>'上架', -1 => '下架'];
         return $status[$value];
     }
+
+    // public function getEndAttr($value){
+    //     return date('Y-m-d',$value);           
+    // }
+    
+
+    // public function getStartAttr($value){
+    //     return date('Y-m-d',$value);    
+    // }    
+
+
+
 	// 关联场地表
 	public function court(){
 		return $this->hasOne('court','court_id','id',[],'LEFT JOIN')->field('province,city,area,location,principal,contract,chip_rent,full_rent,half_rent');

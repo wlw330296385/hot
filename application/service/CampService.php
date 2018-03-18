@@ -2,6 +2,7 @@
 namespace app\service;
 use app\model\Camp;
 use app\common\validate\CampVal;
+use app\model\CampCancell;
 use think\Db;
 use app\common\validate\CampCommentVal;
 use app\model\CampMember;
@@ -23,6 +24,10 @@ class CampService {
                 if ($val['star'] > 0) {
                     $result[$k]['star'] = ceil($val['star']/$val['star_num']);   
                 }
+<<<<<<< HEAD
+=======
+                $result[$k]['fans_num'] = getfansnum($val['id'], 2);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             }
             return $result;
         }else{
@@ -35,11 +40,18 @@ class CampService {
             if ($item['star'] > 0) {
                 $item['star'] = ceil($item['star']/$item['star_num']);
             }
+<<<<<<< HEAD
+=======
+            //$item['fans_num'] = getfansnum($item['id'], 2);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return $item;
         });
         
         if($res){
             $result = $res->toArray();
+            foreach ($result['data'] as $k => $val) {
+                $result['data'][$k]['fans_num'] = getfansnum($val['id'], 2);
+            }
             return $result;
         }else{
             return $res;
@@ -69,6 +81,10 @@ class CampService {
         }
         $result = $res->toArray();
         $result['status_num'] = $res->getData('status');
+<<<<<<< HEAD
+=======
+        $result['fans_num'] = getfansnum($result['id'], 2);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         return $result;
     }
 
@@ -79,6 +95,10 @@ class CampService {
         }
         $result = $res->toArray(); 
         $result['status_num'] = $res->getData('status');
+<<<<<<< HEAD
+=======
+        $result['fans_num'] = getfansnum($result['id'], 2);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         return $result;
     }
 
@@ -244,6 +264,7 @@ class CampService {
         $res = $model->where('id', $camp_id)->setField('status', $status);
         return $res;
     }
+<<<<<<< HEAD
 
     // 获取训练营下在营教练列表
     public function getCoachList($camp_id) {
@@ -256,5 +277,69 @@ class CampService {
             ->order('camp_member.id desc')
             ->select();
         return $list;
+=======
+
+    // 获取训练营下在营教练列表
+    public function getCoachList($camp_id) {
+        $map['camp_id'] = $camp_id;
+        $map['camp_member.status'] = 1;
+        $map['camp_member.type'] = ['in', '2,4'];
+        $list = Db::view('camp_member')
+            ->view('coach', '*', 'coach.member_id=camp_member.member_id')
+            ->where($map)
+            ->order('camp_member.id desc')
+            ->select();
+        return $list;
+    }
+
+    /** 保存训练营注销申请数据
+     * @param $data 保存的数据
+     * @param $where 更新数据条件
+     * @return array
+     */
+    public function saveCampCancell($data=[], $where=[]) {
+        $model = new CampCancell();
+        // 带更新条件更新数据
+        if (!empty($where)) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data, $where);
+            if ($res || ($res===0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        //显式更新数据
+        if (isset($data['id'])) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res || ($res===0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 插入数据
+        $res = $model->allowField(true)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+        } else {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+
+    }
+
+    // 获取训练营注销申请数据
+    public function getCampCancellByCampId($camp_id) {
+        $model = new CampCancell();
+        $res = $model->where(['camp_id' => $camp_id])->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        $result['status_text'] = $res->status_text;
+        return $result;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     }
 }
