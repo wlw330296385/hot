@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>创建队员</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <style>
+        .hotimg {
+            width: 45px !important;
+            height: 45px !important;
+            float: initial !important;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+        </a>
+        <h1 class="mui-title"></h1>
+    </header>
+
+    <div class="mui-content pt">
+
+        <div class="camp-list camp-lesson-list">
+            <input type="hidden" name="team_id" class="data" value="{$teamInfo.id}">
+            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+
+            <form action="" class="mui-input-group mt55" id="logoframe">
+
+                <div class="mui-input-row price-input-row">
+                    <label class="wd45">
+                        <i class="icon iconfont icon-activity-name colororange"></i>队员名称</label>
+                    <input type="text" name="name" class="data wd52" value="" placeholder="请输入姓名">
+                </div>
+
+                <div class="mui-input-row" id="showUserPicker">
+                    <label class="wd45">
+                        <i class="icon iconfont icon-cativity-number colororange"></i>队员号码</label>
+                    <span id='userResult' name="number" class="ui-alert mui-navigate-right pdr domData wd52"></span>
+                </div>
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label class="wd45">
+                            <i class="icon iconfont icon-activity-position colororange"></i>场上位置</label>
+                        <span class="location-choise max wd36">
+                            <select id="position" class="data" name="position">
+                                <option value="0">暂无</option>
+                                <option value="1">组织后卫</option>
+                                <option value="2">得分后卫</option>
+                                <option value="3">小前锋</option>
+                                <option value="4">大前锋</option>
+                                <option value="5">中锋</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row price-input-row">
+                    <label class="wd45">
+                        <i class="icon iconfont icon-activity-playerphone colororange"></i>队员手机号</label>
+                    <input type="text" name="telephone" class="data wd52" value="" placeholder="请输入球员手机号">
+                </div>
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label class="wd45">
+                            <i class="icon iconfont icon-activity-position colororange"></i>球队职务</label>
+                        <span class="location-choise max wd36">
+                            <select id="role" class="data" name="role">
+                                <option value="">请选择职务</option>
+                                <option value="">暂无</option>
+                                <option value="5">经理</option>
+                                <option value="4">教练</option>
+                                <option value="3">队长</option>
+                                <option value="2">副队长</option>
+                                <option value="1">队委</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="page-header" style="background: #efeff4;">
+                    <img src="/static/frontend/images/hot.png" class="hotimg" alt="">
+                    <span class="f12">说明：请确保填写的手机号码准确无误，该手机号将作为会员注册时候认领数据的依据。</span>
+                </div>
+            </form>
+
+            <ul class="mui-table-view operation">
+                <li class="mui-col-xs-12 opli bggreen" onclick="submitAction()">
+                    提交
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <!--选择器-->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/number.data.js"></script>
+    <script>
+        mui.init();
+        // 选择器
+        (function ($, doc) {
+            $.init();
+            $.ready(function () {
+                var _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+
+                //球号选择
+                var userPicker = new $.PopPicker();
+                userPicker.setData(numberData);
+
+                var showUserPickerButton = doc.getElementById('showUserPicker');
+                var userResult = doc.getElementById('userResult');
+                showUserPickerButton.addEventListener('tap', function (event) {
+                    userPicker.show(function (items) {
+                        userResult.innerText = _getParam(items[0], 'text');
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                    });
+                }, false);
+
+            });
+        })(mui, document);
+
+        // 获取数据并进行提交
+        function submitAction() {
+
+            var name = $("input[name=name]").val();
+            if (name == '') {
+                mui.toast("请填写球员名称");
+                return false;
+            }
+            if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
+                mui.toast("请输入正确的手机格式");
+                return false;
+            };
+
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var url = "{:url('api/team/addnoregmember')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                console.log(ajaxResult)
+                mui.alert(ajaxResult.msg, function () {
+                    var goUrl = "{:url('team/teamMember')}" + '/team_id/{$teamInfo.id}';
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                console.log(ajaxResult)
+                if (ajaxResult.data) {
+                    member_id = ajaxResult.data.id
+                    console.log(member_id)
+                    var btnArray = ['取消', '确定'];
+                    var addInfo = '<p style="vertical-align: middle;display: inline-flex;"><img src="' + ajaxResult.data.avatar + '" style="width:35px !important;height:35px !important; border-radius:50% !important;"><span style="margin:8px 0 0 10px;">' + ajaxResult.data.member + '</span></p >'
+                    mui.confirm("该手机已注册，是否发出邀请信息？", addInfo, btnArray, function (e) {
+                        if (e.index == 1) {
+                            addMember();
+                        }
+                    });
+                } else {
+                    mui.toast(ajaxResult.msg);
+                }
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
+        };
+
+        var member_id = "";
+        function addMember() {
+            var team_id = "{$team_id}";
+            mui.ajax("{:url('api/team/addmember')}", {
+                data: {
+                    team_id: team_id,
+                    member_id: member_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast("已经发送请求，请耐心等待回复");
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

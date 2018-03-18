@@ -1,0 +1,146 @@
+{extend name="layout/common"/}
+{block name="page-content"}
+    <div class="wrapper">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="box no-border">
+                    <form role="form" action="" method="post">
+                        {:token()}
+                        <input type="hidden" class="form-control" placeholder="礼包名" name="admin" value="{$admin.username}">
+                        <input type="hidden" class="form-control" placeholder="礼包名" name="admin_id" value="{$admin.id}">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="">礼包名</label>
+                                <input type="text" class="form-control" placeholder="礼包名" name="bonus" required="required">
+                            </div>
+                            
+                            
+                            
+                            <div class="form-group">
+                                <label for="">礼包标语</label>
+                                <textarea name="title" class="form-control" placeholder="大概描述,展示用" name="title" required="required"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>礼包条件</label>
+                                    <select class="form-control select2 select2-hidden-accessible" name="bonus_type" style="width: 100%;" tabindex="-1" aria-hidden="true">
+                                        <option selected="selected" value="1">每个会员登陆都送</option>
+                                        <option value="2">新注册会员则送</option>
+                                    </select>
+                            </div>
+                            <!-- <div class="form-group">
+                                <label>礼包类型</label>
+                                    <select class="form-control select2 select2-hidden-accessible" name="coupon_type" style="width: 100%;" tabindex="-1" aria-hidden="true" required="required">
+                                        <option selected="selected" value="1">礼品卡</option>
+                                    </select>
+                            </div>
+                            <div class="form-group">
+                                <label>选择礼包</label>
+                                    <select class="form-control select2 select2-hidden-accessible" name="coupon_id" style="width: 100%;" tabindex="-1" aria-hidden="true" id="coupon" required="required">
+                                    </select>
+                                    <input type="hidden" name="coupon" value="">
+                            </div>
+                             -->
+
+
+
+                            <div class="form-group">    
+                                <div class="box box-info">
+                                
+                                    <div class="box-header">
+                                        <h3 class="box-title">礼包详情
+                                            <small>图文内容</small>
+                                        </h3>
+
+                                    </div>
+                                    <script type="text/javascript" charset="utf-8" src="/static/UEditor/ueditor.config.js"></script>
+                                    <script type="text/javascript" charset="utf-8" src="/static/UEditor/ueditor.all.js"></script>
+                                    <script type="text/plain" id="description" name="description" style="width:800px;"></script>
+                                    <script type="text/javascript">var ue_info = UE.getEditor("description");</script>
+                                </div>
+                            </div>
+
+
+
+                            <div class="form-group">
+                                <label for="">系统备注</label>
+                                <input type="text" class="form-control" placeholder="" name="system_remarks">
+                            </div>
+                            
+                        </div>
+                        <div class="form-group">
+                            <label>状态</label>
+                                <select class="form-control select2 select2-hidden-accessible" name="status" style="width: 100%;" tabindex="-1" aria-hidden="true" required="required">
+                                    <option value="1">上架</option>
+                                    <option selected="selected" value="-1">下架</option>
+                                </select>
+                        </div>
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-success">提  交</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{/block}
+{block name='js'}
+
+
+<script src="/static/backend/layui/layui.js"></script>
+<!-- JQ -->
+<script src="/static/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script>
+  $(function () {
+
+    getBankcardList();
+
+    $('#coupon').on('change',function(){
+        let coupon = $('select#coupon option:selected').attr('data');
+        $('input[name=coupon]').val(coupon);
+    })
+        
+  });
+
+
+  //卡券接口获取数据并追加到页面
+    var getBankcardList = function (member_id) {
+        var url = "{:url('api/item_coupon/getItemCouponListNoPageApi')}";
+        $.post({
+            url: url,
+            data: {
+                'target_type':-1,
+                'status':1
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            success: function (data) {
+                if (data.code == 200) {
+                    let list = data.data;
+                    let newli = '';
+                    for (let i in list) {
+                        newli = `<option  value="${list[i].id}" data="${list[i].coupon}">${list[i].coupon}</option>`;
+                    }
+                    if (newli == '') {
+                        $('input[name=coupon]').val('');
+                        newli = "<option>没有相关礼品卡券,请先添加相关礼品卡券</option>"
+                    }else{
+                        $('input[name=coupon]').val(list[0].coupon);
+                    }
+                    $("#coupon").html(newli);
+                    
+                } else {
+                    newli = "<option>没有相关礼品卡券,请先添加相关礼品卡券</option>"
+                    $("#coupon").html(newli);
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+               alert('网络异常,请稍候再试');
+            }
+        });
+    };
+</script>
+{/block}
+
+

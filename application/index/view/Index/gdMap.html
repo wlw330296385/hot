@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>这里是index下的index</title>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no"> 
+</head>
+<style type="text/css">
+#container {width:375px; height: 250px; } 
+ #tip {
+            background-color: #ddf;
+            color: #333;
+            border: 1px solid silver;
+            box-shadow: 3px 4px 3px 0px silver;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            line-height: 20px;
+        }
+        #tip input[type="text"] {
+            height: 25px;
+            border: 0;
+            padding-left: 5px;
+            width: 280px;
+            border-radius: 3px;
+            outline: none;
+        } 	
+</style>
+
+<body>
+	<div>{:token()}</div>
+
+
+	<div id="container"></div>  
+	<div id="tip">
+	    <input type="text" id="keyword" name="keyword" value="请输入关键字：(选定后搜索)" onfocus='this.value=""'/>
+	</div>
+</body>
+
+
+
+
+
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
+
+
+<script type="text/javascript">
+
+//	var iniLng = "113.910423";
+//    var iniLat = "22.523812";
+//    var iniLng = "0";
+//    var iniLat = "0";
+    var mapCurrCity = "010";
+
+	var map = new AMap.Map('container',{
+			resizeEnable: true,
+            zoom: 15,
+//            center:[iniLng,iniLat]
+        });
+	
+	//点击获取地址
+    AMap.plugin(['AMap.Geocoder','AMap.PlaceSearch','AMap.Autocomplete','AMap.Geolocation'],function(){
+        var geocoder = new AMap.Geocoder({
+    	 	
+        });
+
+	    var marker = new AMap.Marker({
+	        map:map,
+	        bubble:true
+    	})
+    	//设置深圳站定位
+//    	var aa = {
+//        		N:iniLng,
+//        		Q:iniLat,
+//            	lat:iniLat,
+//				lng:iniLng,
+//			}
+//    	marker.setPosition(aa);
+        map.on('click',function(e){
+        	console.log("setPosition.e.lnglat:");
+        	console.log(e.lnglat);
+            marker.setPosition(e.lnglat);
+            geocoder.getAddress(e.lnglat,function(status,result){
+              	if(status=='complete'){
+                 	alert(result.regeocode.formattedAddress)
+              	}
+            })
+        })
+//        geocoder.getLocation("广东省深圳市南山区桂庙路口116号", function(status, result) {
+//		    if (status === 'complete' && result.info === 'OK') {
+//		        //TODO:获得了有效经纬度，可以做一些展示工作
+//		        console.log('getLocation:');
+//		        console.log(result);
+//		    }else{
+//		        //获取经纬度失败
+//		        console.log('获取经纬度失败');
+//		    }
+//		});
+
+
+//         geolocation = new AMap.Geolocation({
+//	        enableHighAccuracy: true,//是否使用高精度定位，默认:true
+//	        timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+//	        maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+//	        convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+//	        showButton: true,        //显示定位按钮，默认：true
+//	        buttonPosition: 'RB',    //定位按钮停靠位置，默认：'LB'，左下角
+//	        buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+//	        showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+//	        showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+//	        panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
+//	        zoomToAccuracy:true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+//	    });
+//
+//	    geolocation.getCurrentPosition(function(status,result){
+//	    	console.log("getCurrentPosition");
+//	    	console.log(result);
+//	    });
+
+
+     	var autoOptions = {
+	        city: mapCurrCity, //城市，默认全国
+	        input: "keyword"//使用联想输入的input的id
+		};
+		autocomplete= new AMap.Autocomplete(autoOptions);
+		var placeSearch = new AMap.PlaceSearch({
+		    city:'',
+		    map:map
+		})
+		AMap.event.addListener(autocomplete, "select", function(e){
+		 //TODO 针对选中的poi实现自己的功能
+		 placeSearch.setCity(e.poi.adcode);
+		 placeSearch.search(e.poi.name)
+		});
+
+
+    });
+
+
+ //    AMap.plugin('AMap.Geolocation', function () {
+	//     geolocation = new AMap.Geolocation({
+	//         enableHighAccuracy: true,//是否使用高精度定位，默认:true
+	//         timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+	//         maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+	//         convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+	//         showButton: true,        //显示定位按钮，默认：true
+	//         buttonPosition: 'RB',    //定位按钮停靠位置，默认：'LB'，左下角
+	//         buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+	//         showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+	//         showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+	//         panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
+	//         zoomToAccuracy:true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+	//     });
+	//     geolocation.getCurrentPosition(function(status,result){
+	//     	console.log(result);
+	//     });
+	// });
+
+
+	// AMap.plugin('AMap.Autocomplete',function(){
+	//     //实例化Autocomplete
+	//     var autoOptions = {
+	//         city: "", //城市，默认全国
+	//         input:"keyword"//使用联想输入的input的id
+	//     };
+	//     autocomplete= new AMap.Autocomplete(autoOptions);
+	//     //TODO: 使用autocomplete对象调用相关功能
+	// })
+	 
+</script>
+
+
+</html>

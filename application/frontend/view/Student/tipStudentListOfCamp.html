@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>提醒列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .list p {
+            font-size: 12px;
+        }
+
+        .list strong {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
+        <h1 class="mui-title">即将上完课时学员</h1>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="mui-input-row mui-search">
+            <input type="search" class="mui-input-clear keyword" placeholder="请输入学生名称">
+        </div>
+
+        <div id="tab-pullRefresh" class="mui-scroll-wrapper" style="top:80px">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list tipStudent"></ul>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script src="/static/frontend/js/smsCode.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
+
+        $(function () {
+
+            //初始化全局变量
+            var Count = 1;
+            var keyword = '';
+            $('.keyword').val(keyword);
+
+            //搜索体验生
+            $(".keyword").on("blur", '', function () {
+                keyword = $(".keyword").val();
+                count = 1;//显示第一页
+                var page = count;
+                var gType = 1;//代表下拉刷新
+                toTipStudent(page, gType, keyword);
+            })
+
+            //已付款订单
+            mui('#tab-pullRefresh').pullRefresh({
+                down: {
+                    //下拉刷新
+                    height: 50,//可选.默认50.触发下拉刷新拖动距离
+                    auto: true,//可选,默认false.自动下拉刷新一次
+                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                    callback: pulldownRefresh
+                },
+                up: {
+                    //上拉加载
+                    height: 150,//可选.默认50.触发上拉加载拖动距离
+                    //auto:true,//可选,默认false.自动上拉加载一次
+                    contentrefresh: '正在加载...',
+                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                    callback: pullupRefresh
+                }
+            });
+            //下拉刷新具体业务实现（上架）
+            function pulldownRefresh() {
+                setTimeout(function () {
+                    Count = 1;//刷新并显示第一页
+                    var page = Count;
+                    var gType = 1;//代表下拉刷新
+                    toTipStudent(page, gType, keyword);//具体取数据的方法
+                }, 100);
+            }
+            //上拉加载具体业务实现（上架）
+            function pullupRefresh() {
+                setTimeout(function () {
+                    Count++;//翻下一页
+                    var page = Count;
+                    var gType = 2;//代表上拉加载
+                    toTipStudent(page, gType, keyword);//具体取数据的方法
+                }, 100);
+            }
+        });
+
+        var isTip = true;
+        // 发送模板消息
+        $(document).on("tap", '.sendTip', function () {
+            var aa = $(this);
+            var member_id = aa.attr('data-member_id');
+
+            var url = "{:url('api/message/sendMessageApi')}/member_id/" + member_id;
+            var total_schedule = aa.attr('data-total_schedule');
+            var rest_schedule = aa.attr('data-rest_schedule');
+            var lesson = aa.attr('data-lesson');
+            var messageData = {
+                touser: '',
+                template_id: "{:config('wxTemplateID.scheduleExpend')}",
+                url: "{:url('frontend/message/index','','',true)}",
+                topcolor: "#FF0000",
+                data: {
+                    'first': { 'value': '您好，您所报的（课程）只剩下' + rest_schedule + '节课，请及时续费，谢谢。' },
+                    'keyword1': { 'value': total_schedule },
+                    'keyword2': { 'value': (total_schedule - rest_schedule) },
+                    'keyword3': { 'value': rest_schedule },
+                    'remark': { 'value': '如果您想续费,请重新购买课程' }
+                }
+
+            };
+            var saveData = {
+                title: '课时提醒',
+                content: '您好，您所报的（课程）只剩下' + rest_schedule + '节课，请及时续费，谢谢。',
+                url: "{:url('frontend/message/index','','',true)}",
+                member_id: member_id
+            };
+
+            var postParam = {
+                messageData: JSON.stringify(messageData),
+                saveData: JSON.stringify(saveData),
+            }
+            sendMsg(aa, url, postParam);
+        })
+
+        //训练营教练列表接口获取数据并追加到页面
+        var toTipStudent = function (page, gType, keyword) {
+            var url = "{:url('api/lesson_member/getLessonMemberListByPageApi','','',true)}?page=" + page + "&keyword=" + keyword;
+            var campID = "{$camp_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID,
+                    rest_schedule: 3,
+                    status: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
+                            newli += '<li class="mui-table-view-cell listli"><div class="fr"><button type="button" class="mui-btn mui-btn-outlined sendTip" data-member_id = "' + data.data.data[i].member_id + '" data-total_schedule="' + data.data.data[i].total_schedule + '" data-rest_schedule="' + data.data.data[i].rest_schedule + '"  data-lesson="' + data.data.data[i].lesson + '" >发送提醒</button></div><strong>' + data.data.data[i].student.student + '</strong> 剩余 ' + data.data.data[i].rest_schedule + ' 课时<p>' + data.data.data[i].lesson + '</p></li>'
+                        }
+                    }
+                    if (gType == 1) {
+                        //上拉刷新
+                        $("ul.tipStudent").empty().append(newli);
+                        mui('#tab-pullRefresh').pullRefresh().endPulldownToRefresh();
+                        mui('#tab-pullRefresh').pullRefresh().refresh(true);
+                        if (newli == '') {
+                            $("ul.tipStudent").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        }
+                    } else {
+                        //下拉加载 gType==2
+                        $("ul.tipStudent").append(newli);
+                    }
+
+                    if (newli != '') {
+                        mui('#tab-pullRefresh').pullRefresh().endPullupToRefresh(false);
+                    } else {
+                        mui('#tab-pullRefresh').pullRefresh().endPullupToRefresh(true);
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#tab-pullRefresh').pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
+
+    </script>
+</body>
+
+</html>

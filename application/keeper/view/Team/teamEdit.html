@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>编辑球队</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
+    <style>
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+
+        /* 球衣颜色 */
+
+        i.tip {
+            height: 0;
+            color: red;
+            float: right;
+            font-size: 22px;
+        }
+
+        i.color {
+            width: 12px;
+            height: 12px;
+            display: inline-block;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .colorCont i.color {
+            margin-top: 15px;
+            margin-right: 0;
+            margin-left: 5px;
+        }
+
+        .colorLineHeight li {
+            line-height: 43px;
+            padding: 0 15px !important;
+        }
+
+        .colorLineHeight li {
+            line-height: 43px;
+            padding: 0 15px !important;
+        }
+
+        .addInput {
+            margin-top: 15px;
+        }
+
+        .addBtn {
+            margin-top: 15px;
+            padding: 12px 11px;
+        }
+
+        .newCharater {
+            padding-left: 58px !important;
+        }
+
+        .cancel-dom {
+            font-size: 16px;
+            margin: 13px 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
+        <h1 class="mui-title"></h1>
+    </header>
+
+    <div class="mui-content pt">
+
+        <div class="camp-list camp-lesson-list">
+            <input type="hidden" name="id" class="data" value="{$teamInfo.id}">
+            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+
+            <form action="" class="mui-input-group mt55">
+
+                <div class="mui-input-row h-auto" id="logoframe">
+                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                        <label>
+                            <b>球队徽标</b>
+                        </label>
+                        <img id="preview_1" class="logostyle mtnone upload-preview" src="{$teamInfo.logo}" alt="">
+                        <input type="hidden" name="logo" value="{$teamInfo.logo}" class="data">
+                    </a>
+                </div>
+
+                <div class="mui-input-row">
+                    <label>球队名称
+                        <i class="tip">*</i>
+                    </label>
+                    <input type="text" name="name" value="{$teamInfo.name}" class="data" placeholder="请输入球队名称">
+                </div>
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>球队类型
+                            <i class="tip">*</i>
+                        </label>
+                        <span class="location-choise max">
+                            <select id="teamType" class="data" name="type">
+                                <option value="">--请选择--</option>
+                                <option value="1">训练营</option>
+                                <option value="2">企事业单位</option>
+                                <option value="3">业余组织</option>
+                                <option value="4">大学生</option>
+                                <option value="5">高中生</option>
+                                <option value="6">初中生</option>
+                                <option value="7">小学生</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row camp-input-row" {neq name="teamInfo.type" value="1" }style="display:none;" {/neq}>
+                    <a href="#camp" class="mui-navigate-right">
+                        <label class="wd36">所属训练营
+                            <i class="tip">*</i>
+                        </label>
+                        <span class="campCont domData" name="camp">{$teamInfo.camp}</span>
+                        <input type="hidden" name="camp_id" value="{$teamInfo.camp_id}" class="camp_id data">
+                    </a>
+                </div>
+
+                <div class="mui-input-row" id='showCityPicker3'>
+                    <a href="#" class="mui-navigate-right">
+                        <div class="mui-navigate-right">
+                            <label>所属地区
+                                <i class="tip">*</i>
+                            </label>
+                            <span id="cityResult3" class="ui-alert domData" name="address">{$teamInfo.province} {$teamInfo.city} {$teamInfo.area}</span>
+                            <input type="hidden" name="province" value="{$teamInfo.province}" class="data" id="province">
+                            <input type="hidden" name="city" value="{$teamInfo.city}" class="data" id="city">
+                            <input type="hidden" name="area" value="{$teamInfo.area}" class="data" id="area">
+                        </div>
+                    </a>
+                </div>
+
+                <div class="mui-input-row">
+                    <a href="#court" class="mui-navigate-right">
+                        <label>常驻场地</label>
+                        <span class="courtCont domData" name="court">{$teamInfo.court}</span>
+                        <input type="hidden" name="court_id" value="" class="court_id data">
+                    </a>
+                </div>
+
+                <div class="mui-input-row price-input-row h-auto">
+                    <a href="#colors" id="setColorsBox" class="mui-navigate-right">
+                        <label>球衣颜色</label>
+                        <span class="colorCont wd60" name="color">
+                            {volist name="$teamInfo.colors" id="color"}
+                            <i class="color {$color.color_style}"></i>
+                            <font data-eng="{$color.color_style}">{$color.color}</font>,{/volist}
+                        </span>
+                        <div id="hideCoList">
+                            {volist name="$teamInfo.colors" id="vol"}
+                            <input type="hidden" class="coList" data-eng="{$color.color_style}" data-color="{$color.color}"> {/volist}
+                        </div>
+                    </a>
+                </div>
+
+                <div class="mui-input-row">
+                    <a href="#leader" class="mui-navigate-right">
+                        <label>领队
+                            <i class="tip">*</i>
+                        </label>
+                        <span class="leader data" name="leader">{$teamInfo.leader}</span>
+                        <input type="hidden" name="leader_id" value="{$teamInfo.leader_id}" class="leader_id data">
+                        <input type="hidden" name="leader" value="{$teamInfo.leader}" class="leader_id data">
+                    </a>
+                </div>
+
+                <div class="mui-input-row">
+                    <a href="#manager" class="mui-navigate-right">
+                        <label>经理</label>
+                        <span class="manager data" name="manager">{$teamInfo.manager}</span>
+                        <input type="hidden" name="manager_id" value="{$teamInfo.manager_id}" class="manager_id data">
+                        <input type="hidden" name="manager" value="{$teamInfo.manager}" class="manager_id data">
+                    </a>
+                </div>
+
+                <div class="mui-input-row price-input-row h-auto">
+                    <a href="#coach" id="setCoachBox" class="mui-navigate-right">
+                        <label>教练</label>
+                        <span class="coach" name="coach" style="width: 60%">{volist name="roleslist.coach_names" id="vol"}{$vol.member},{/volist}</span>
+                        <div id="hideCoList">
+                            {volist name="roleslist.coach_names" id="vol"}
+                            <input type="hidden" class="coList" data-member_id="{$vol.member_id}" data-member="{$vol.member}"> {/volist}
+                        </div>
+                        <input type="hidden" name="coach_id" value="{$roleslist.coach_ids}" class="data">
+                        <input type="hidden" name="coach_member" value="{volist name="roleslist.coach_names" id="vol"}{$vol.member},{/volist}" class="data">
+                    </a>
+                </div>
+
+                <div class="mui-input-row price-input-row">
+                    <a href="#captain" class="mui-navigate-right">
+                        <label>队长</label>
+                        <span class="captain" name="captain">{$teamInfo.captain}</span>
+                        <input type="hidden" name="captain_id" value="{$teamInfo.captain_id}" class="data">
+                        <input type="hidden" name="captain" value="{$teamInfo.captain}" class="data">
+                    </a>
+                </div>
+                <div class="mui-input-row price-input-row">
+                    <a href="#viceCaptain" class="mui-navigate-right">
+                        <label>副队长</label>
+                        <span class="viceCaptain" name="vice_captain">{$teamInfo.vice_captain}</span>
+                        <input type="hidden" name="vice_captain_id" value="{$teamInfo.vice_captain_id}" class="data">
+                        <input type="hidden" name="vice_captain" value="{$teamInfo.vice_captain}" class="data">
+                    </a>
+                </div>
+
+                <div class="mui-input-row price-input-row h-auto">
+                    <a href="#committee" id="setCommitteeBox" class="mui-navigate-right">
+                        <label>队委</label>
+                        <span class="committee" name="committee" style="width: 60%">{volist name="roleslist.committee_names" id="vol"}{$vol.member},{/volist}</span>
+                        <div id="hideCtList">
+                            {volist name="roleslist.committee_names" id="vol"}
+                            <input type="hidden" class="ctList" data-member_id="{$vol.member_id}" data-member="{$vol.member}"> {/volist}
+                        </div>
+                        <input type="hidden" name="committee_id" value="{$roleslist.committee_ids}" class="data">
+                        <input type="hidden" name="committee_member" value="{volist name="roleslist.committee_names" id="vol"}{$vol.member},{/volist}" class="data">
+                    </a>
+                </div>
+
+                <div class="mui-input-row price-input-row">
+                    <label>平均年龄</label>
+                    <input type="text" name="avg_age" class="data" value="{$teamInfo.avg_age}" placeholder="请输入平均年龄">
+                </div>
+
+                <div class="mui-input-row price-input-row">
+                    <label>平均身高</label>
+                    <small class="unit">cm</small>
+                    <input type="text" name="avg_height" class="data wd52" value="{$teamInfo.avg_height}" placeholder="请输入平均身高" style="padding-right:0">
+                </div>
+
+                <div class="mui-input-row price-input-row">
+                    <label>平均体重</label>
+                    <small class="unit">kg</small>
+                    <input type="text" name="avg_weight" class="data wd52" value="{$teamInfo.avg_weight}" placeholder="请输入平均体重" style="padding-right:0">
+                </div>
+
+                <div class="mui-input-row price-input-row h-auto">
+                    <a href="#charater" id="setCharaterBox" class="mui-navigate-right">
+                        <label>球队特点</label>
+                        <span class="charater" name="charater" style="width: 60%">{$teamInfo.charater}</span>
+                        <div class="hideCheckCh hide">{volist name="$teamInfo.charater_arr" id="vo"}
+                            <input type="hidden" value="{$vo}"> {/volist}</div>
+                    </a>
+
+                </div>
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>生效状态</label>
+                        <span class="select-row freeStatus">
+                            <select id="teamStatus" class="data" name="status">
+                                <option value="-1">默认下架</option>
+                                <option value="1">上架</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row h-auto">
+                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(2)">
+                        <label>球队封面</label>
+                        <img id="preview_2" class="upload-preview" src="{$teamInfo.cover}" alt="">
+                        <input type="hidden" name="cover" value="{$teamInfo.cover}" class="cover data">
+                    </a>
+                </div>
+
+                <div class="mui-input-row h-auto">
+                    <label>球队宣言</label>
+                    <textarea rows="3" name="descri" class="data descri" value="{$teamInfo.descri}" placeholder="请填写球队宣言">{$teamInfo.descri}</textarea>
+                </div>
+
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="course">球队简介</span>
+                </div>
+                <div class="mui-input-row h-auto tuwenEditor">
+                    <textarea name="introduce" class="data introduce" style="display: none"></textarea>
+                    <div class="introBox">{$teamInfo.introduce}</div>
+                    <div class="mui-row mui-text-center mui-row-operation">
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame up pd">上移</a>
+                            <a class="frame down pd">下移</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame titleClass">添加标题</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame textClass">添加正文</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame imageClass">
+                                <div id="uploader-demo">
+                                    <div id="fileList" class="uploader-list"></div>
+                                    <div class="filePickerTwo">选择图片</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-header" style="background: #efeff4;">
+                    <img src="/static/frontend/images/hot.png" class="hotimg" alt="">
+                    <span class="f12">说明：点击添加均为插入一段文字或一张图片，不可换行，如需换行请再次点击添加。</span>
+                </div>
+
+            </form>
+
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" onclick="submitAction()">
+                    提交
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!--所属训练营-->
+    <div id="camp" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>所属训练营</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="CampDel">清除</button>
+            </span>
+        </div>
+        <div class="pop-search">
+            <input type="search" class="keywordLD" placeholder="请输入训练营名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchLD"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:88px !important;">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list campList"></ul>
+                <ul class="mui-pager">
+                    <li>
+                        <a href="#" class="prev_page">上一页</a>
+                    </li>
+                    <li>
+                        <span class="currPage">0</span>/
+                        <span class="camptotalPage">0</span>
+                    </li>
+                    <li>
+                        <a href="#" class="next_page">下一页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!--常驻场地-->
+    <div id="court" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>常驻球场</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="CourtDel">清除</button>
+            </span>
+        </div>
+        <div class="pop-search">
+            <input type="search" class="keywordCR" placeholder="请输入场地名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchCR"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:88px !important;">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list courtList"></ul>
+                <ul class="mui-pager">
+                    <li>
+                        <a href="#" class="prev_page">上一页</a>
+                    </li>
+                    <li>
+                        <span class="currPage">0</span>/
+                        <span class="totalPage">0</span>
+                    </li>
+                    <li>
+                        <a href="#" class="next_page">下一页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!--球衣颜色-->
+    <div id="colors" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course">
+                <strong>球衣颜色</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="colorConfirm">确认</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form class="mui-input-group colorList" id="refereeDiv">
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color black"></i>
+                            <font data-eng="black">黑色</font>
+                        </label>
+                        <input type="checkbox" value="black">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color white"></i>
+                            <font data-eng="white">白色</font>
+                        </label>
+                        <input type="checkbox" value="white">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color red"></i>
+                            <font data-eng="red">红色</font>
+                        </label>
+                        <input class="" type="checkbox" value="red">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color blue"></i>
+                            <font data-eng="blue">蓝色</font>
+                        </label>
+                        <input type="checkbox" value="blue">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color yellow"></i>
+                            <font data-eng="yellow">黄色</font>
+                        </label>
+                        <input name="checkbox-popl" class="" type="checkbox" value="yellow">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color green"></i>
+                            <font data-eng="green">绿色</font>
+                        </label>
+                        <input type="checkbox" value="green">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color orange"></i>
+                            <font data-eng="orange">橙色</font>
+                        </label>
+                        <input type="checkbox" value="orange">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color purple"></i>
+                            <font data-eng="purple">紫色</font>
+                        </label>
+                        <input type="checkbox" value="purple">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color gray"></i>
+                            <font data-eng="gray">灰色</font>
+                        </label>
+                        <input type="checkbox" value="gray">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color pink"></i>
+                            <font data-eng="pink">粉色</font>
+                        </label>
+                        <input type="checkbox" value="pink">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>
+                            <i class="color ching"></i>
+                            <font data-eng="ching">青色</font>
+                        </label>
+                        <input type="checkbox" value="ching">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--领队-->
+    <div id="leader" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course">
+                <strong>领队</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="leaderDel">清除</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list teamMemberList leaderList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!--经理-->
+    <div id="manager" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course">
+                <strong>经理</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="managerDel">清除</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list teamMemberList managerList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!--队长-->
+    <div id="captain" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course">
+                <strong>队长</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="captainDel">清除</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list teamMemberList captainList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!--副队长-->
+    <div id="viceCaptain" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course">
+                <strong>副队长</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="viceCaptainDel">清除</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list teamMemberList viceCaptainList"></ul>
+            </div>
+        </div>
+    </div>
+
+
+    <!--教练-->
+    <div id="coach" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course">
+                <strong>教练</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="coachConfirm">确认</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form id="coachDiv" class="mui-input-group coachList"></form>
+            </div>
+        </div>
+    </div>
+
+    <!--队委-->
+    <div id="committee" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course">
+                <strong>后勤</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="committeeConfirm">确认</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form id="committeeDiv" class="mui-input-group committeeList"></form>
+            </div>
+        </div>
+    </div>
+
+    <!--球队特点-->
+    <div id="charater" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd36">
+                <strong>球队特点</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="charaterConfirm">确认</button>
+            </span>
+            <span class="fr">
+                <button class="addCharater">添加</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form id="charaterDiv" class="mui-input-group charaterList">
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="球风良好" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="诚信守时" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="尊重对手" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="年轻气盛" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="老当益壮" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="球风硬朗" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="拖拉迟到" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="有啦啦队" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="氛围很好" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <input type="text" value="小动作多" disabled class="mui-text-left newCharater" />
+                        <input name="checkbox-charater" type="checkbox">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/libs/webuploader.min.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'team'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/tuwen.js?v=<?php echo time();?>"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        //弹出框滚动必须写在mui专用的初始化
+        (function ($) {
+            $(".mui-scroll-wrapper").scroll({
+                //bounce: false,//滚动条是否有弹力默认是true
+                indicators: true //是否显示滚动条,默认是true
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+        })(mui);
+
+        //选择器
+        var getProvince = '';
+        var getCity = '';
+        var getArea = '';
+        (function ($, doc) {
+            $.ready(function () {
+                var _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+
+                ///级联示例
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
+                });
+
+                // 获取省市区默认值
+                // 获取省索引值
+                function searchProvince(province) {
+                    for (var i = 0; i <= cityData3.length; i++) {
+                        if (cityData3[i].text == province) {
+                            return i;
+                        }
+                    }
+                }
+                //  获取市索引值
+                function searchCity(city) {
+                    for (var i = 0; i < cityData3.length; i++) {
+                        for (var j = 0; j < cityData3[i].children.length; j++) {
+                            if (cityData3[i].children[j].text == city) {
+                                return j;
+                            }
+                        }
+                    }
+                }
+                //  获取区索引值
+                function searchArea(area) {
+                    for (var i = 0; i < cityData3.length; i++) {
+                        for (var j = 0; j < cityData3[i].children.length; j++) {
+                            for (var k = 0; k < cityData3[i].children[j].children.length; k++) {
+                                if (cityData3[i].children[j].children[k].text == area) {
+                                    return k;
+                                }
+                            }
+                        }
+                    }
+                }
+                cityPicker3.pickers[0].setSelectedIndex(searchProvince("{$teamInfo.province}"));
+                cityPicker3.pickers[1].setSelectedIndex(searchCity("{$teamInfo.city}"));
+                cityPicker3.pickers[2].setSelectedIndex(searchArea("{$teamInfo.area}"));
+
+                cityPicker3.setData(cityData3);
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                        getProvince = _getParam(items[0], 'text');
+                        getCity = _getParam(items[1], 'text');
+                        getArea = _getParam(items[2], 'text');
+                        document.getElementById('province').value = getProvince;
+                        document.getElementById('city').value = getCity;
+                        document.getElementById('area').value = getArea;
+                    });
+                }, false);
+
+                //开始时间
+                var resultStart = $('#resultStart')[0];
+                var btnStart = $('.btnStart');
+                btnStart.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+
+                        picker.show(function (rs) {
+                            resultStart.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+
+                //结束时间
+                var resultEnd = $('#resultEnd')[0];
+                var btnEnd = $('.btnEnd');
+                btnEnd.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+
+                        picker.show(function (rs) {
+                            resultEnd.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+
+            });
+        })(mui, document);
+
+        // 主场客场颜色显示
+        function colorShow() {
+            $(".black").css("background", "black");
+            $(".white").css("background", "white");
+            $(".red").css("background", "red");
+            $(".blue").css("background", "blue");
+            $(".yellow").css("background", "yellow");
+            $(".green").css("background", "green");
+            $(".orange").css("background", "orange");
+            $(".purple").css("background", "purple");
+            $(".gray").css("background", "gray");
+            $(".pink").css("background", "pink");
+            $(".ching").css("background", "#00eaff");
+        };
+
+        var coachMemberList = '';
+        var charaterList = ''
+        $(function () {
+
+            //获取训练营粉丝列表
+            var campKeyword = '';
+            var courtKeyword = '';
+            var wCamp = '';
+            var wCourt = '';
+            var pageLD = 1;
+            var pageCR = 1;
+            toCampList(wCamp, campKeyword, 1);
+            toCourtList(wCourt, courtKeyword, 1);
+
+            colorShow(); // 调用主场客场颜色显示
+            toTeamMemberList(); //获取球员列表
+            TeamMemberOfCocahList(); //获取球员列表供选择教练
+            TeamMemberOfCommitteeList(); //获取球员列表供选择队委
+
+            // 设置球队类型默认值
+            $('#teamType option[value="{$teamInfo.type}"]').prop("selected", true);
+            // 设置球队特点默认值
+            $('#teamCharater option[value="{$teamInfo.charater}"]').prop("selected", true);
+            // 设置球队状态默认值
+            $('#teamStatus option[value="{$teamInfo.status}"]').prop("selected", true);
+
+            //去除最后一个逗号
+            var coachCont = $(".coach").text();
+            var committeeCont = $(".committee").text();
+            $(".coach").text(coachCont.substring(0, coachCont.length - 1));
+            $(".committee").text(committeeCont.substring(0, committeeCont.length - 1));
+
+            // 添加新对手
+            $(document).on("tap", ".addBtn", function () {
+                var court = $(".addInput").val();
+                $(".courtCont").text(court);
+                $("input[name=court_id]").val("-1");
+                mui("#court").popover("toggle");
+            })
+
+            // 球衣颜色
+            $("#colorConfirm").on('tap', '', function () {
+                $(".colorCont").empty();
+                var colorFrame_text = "";
+                $(".colorList input[type=checkbox]:checked").each(function () {
+                    var color_text = $.trim($(this).siblings().html());
+                    colorFrame_text += color_text + ','
+                    $(".colorCont").html(colorFrame_text.substring(0, colorFrame_text.length - 1));
+                });
+                mui("#colors").popover("toggle");
+            });
+            //球衣列表复选框赋值
+            $("#setColorsBox").on('tap', '', function () {
+                //每次打开先清空所有选择
+                $("input[name='checkbox-referee']").prop("checked", false);
+                //然后遍历出对应所选
+                $(".coList").each(function () {
+                    var eng = $(this).attr("data-eng");
+                    $("#refereeDiv").find("input[name='checkbox']").filter(function () {
+                        return $(this).attr("data-eng") == eng
+                    }).prop("checked", true);
+                });
+            });
+
+            // 选择球队类型判断是否显示所属训练营
+            $("#teamType").change(function () {
+                if ($(this).children('option:selected').val() != 1) {
+                    $(".camp-input-row").hide();
+                    $(".campCont").removeClass("domData").text('');
+                    $(".camp_id").removeClass("data");
+                } else {
+                    $(".camp-input-row").show();
+                    $(".campCont").addClass("domData").text('');
+                    $(".camp_id").addClass("data");
+                }
+            });
+
+            // 选择领队
+            $(".leaderList").on('tap', 'li', function () {
+                var leader = $(this).text();
+                $(".leader").text(leader);
+                var leader_id = $(this).attr('data-memberid');
+                $("input[name=leader_id]").val(leader_id);
+                $("input[name=leader]").val($(this).attr('data-member'));
+                mui("#leader").popover("toggle");
+            });
+            //清除领队
+            $("#leaderDel").on('tap', '', function () {
+                $(".leader").text('');
+                $("input[name=leader]").val("");
+                $("input[name=leader_id]").val("");
+                mui("#leader").popover("toggle");
+            });
+            // 选择领队
+            $(".managerList").on('tap', 'li', function () {
+                var manager = $(this).text();
+                $(".manager").text(manager);
+                var manager_id = $(this).attr('data-memberid');
+                $("input[name=manager_id]").val(manager_id);
+                $("input[name=manager]").val($(this).attr('data-member'));
+                mui("#manager").popover("toggle");
+            });
+            //清除领队
+            $("#managerDel").on('tap', '', function () {
+                $(".manager").text('');
+                $("input[name=manager]").val("");
+                $("input[name=manager_id]").val("");
+                mui("#manager").popover("toggle");
+            });
+            
+            // 选择队长
+            $(".captainList").on('tap', 'li', function () {
+                var captain = $(this).text();
+                $(".captain").text(captain);
+                var captain_id = $(this).attr('data-memberid');
+                $("input[name=captain_id]").val(captain_id);
+                $("input[name=captain]").val($(this).attr('data-member'));
+                mui("#captain").popover("toggle");
+            });
+            //清除队长
+            $("#captainDel").on('tap', '', function () {
+                $(".captain").text('');
+                $("input[name=captain]").val("");
+                $("input[name=captain_id]").val("");
+                mui("#captain").popover("toggle");
+            });
+            // 选择副队长
+            $(".viceCaptainList").on('tap', 'li', function () {
+                var viceCaptain = $(this).text();
+                $(".viceCaptain").text(viceCaptain);
+                var viceCaptain_id = $(this).attr('data-memberid');
+                $("input[name=vice_captain_id]").val(viceCaptain_id);
+                $("input[name=vice_captain]").val($(this).attr('data-member'));
+                mui("#viceCaptain").popover("toggle");
+            });
+            //清除队长
+            $("#viceCaptainDel").on('tap', '', function () {
+                $(".viceCaptain").text('');
+                $("input[name=vice_captain]").val("");
+                $("input[name=vice_captain_id]").val("");
+                mui("#viceCaptain").popover("toggle");
+            });
+            // 选择教练
+            $("#coachConfirm").on('tap', '', function () {
+                $(".coach").empty();
+                $("input[name=coach_id]").val("");
+                $('input[name=coach_member]').val('');
+                $("#hideCoList").empty();
+                var coachMember = "";
+                var coachMember_id = "";
+                var coList = "";
+                coachMemberList = [];
+                $(".coachList input[type=checkbox]:checked").each(function () {
+                    var member = $(this).attr("data-member");
+                    var member_id = $(this).attr("data-member_id");
+                    coachMember += member + ','
+                    coachMember_id += member_id + ','
+                    $(".coach").text(coachMember.substring(0, coachMember.length - 1));
+                    $("input[name=coach_id]").val(coachMember_id.substring(0, coachMember_id.length - 1));
+                    coList += '<input type="hidden" class="coList" data-member="' + member + '" data-member_id="' + member_id + '">';
+                    // 数组
+                    coachMemberList.push({ member: member, member_id: member_id });
+                });
+                $("#hideCoList").html(coList);
+                $('input[name=coach_member]').val(coachMember.substring(0, coachMember.length - 1));
+                console.log(coachMemberList)
+                mui("#coach").popover("toggle");
+            });
+
+            //教练列表复选框赋值
+            $("#setCoachBox").on('tap', '', function () {
+                //每次打开先清空所有选择
+                $("input[name='checkbox-coach']").prop("checked", false);
+                //然后遍历出对应所选
+                var str = $("input[name='coach_id']").val();
+                var s = str.split(',');
+                for (var i = 0; i < s.length; i++) {
+                    $("input[name='checkbox-coach']").filter(function (index) {
+                        return $(this).attr("data-member_id") == s[i]
+                    }).prop("checked", true);
+                }
+            });
+
+            // 选择队委
+            $("#committeeConfirm").on('tap', '', function () {
+                $(".committee").empty();
+                $("input[name=committee_id]").val("");
+                $('input[name=committee_member]').val('');
+                $("#hideCtList").empty();
+                var committeeMember = "";
+                var committeeMember_id = "";
+                var ctList = "";
+                committeeMemberList = [];
+                $(".committeeList input[type=checkbox]:checked").each(function () {
+                    var member = $(this).attr("data-member");
+                    var member_id = $(this).attr("data-member_id");
+                    committeeMember += member + ','
+                    committeeMember_id += member_id + ','
+                    $(".committee").text(committeeMember.substring(0, committeeMember.length - 1));
+                    $("input[name=committee_id]").val(committeeMember_id.substring(0, committeeMember_id.length - 1));
+                    ctList += '<input type="hidden" class="ctList" data-member="' + member + '" data-member_id="' + member_id + '">';
+                    // 数组
+                    committeeMemberList.push({ member: member, member_id: member_id });
+                });
+                $("#hideCtList").html(ctList);
+                $('input[name=committee_member]').val(committeeMember.substring(0, committeeMember.length - 1));
+                console.log(committeeMemberList)
+                mui("#committee").popover("toggle");
+            });
+
+            //队委列表复选框赋值
+            $("#setCommitteeBox").on('tap', '', function () {
+                //每次打开先清空所有选择
+                $("input[name='checkbox-committee']").prop("checked", false);
+                //然后遍历出对应所选
+                $(".ctList").each(function (i) {
+                    var member_id = $(this).attr("data-member_id");
+                    $("#committeeDiv").find("input[name='checkbox-committee']").filter(function () {
+                        return $(this).attr("data-member_id") == member_id
+                    }).prop("checked", true);
+                });
+            });
+
+            //////////////////////训练营////////////////////////////////////
+            // 所属训练营
+            $(".campList").on('tap', 'li', function () {
+                var camp = $(this).find("font").text();
+                $(".campCont").text(camp);
+                var camp_id = $(this).attr('data-camp_id');
+                $(".camp_id").val(camp_id);
+                mui("#camp").popover("toggle");
+            })
+            //清除所属训练营
+            $("#CampDel").on('tap', '', function () {
+                $(".campCont").text("");
+                $(".camp_id").val("");
+                mui("#camp").popover("toggle");
+            })
+            //搜索所属训练营
+            $("#searchLD").on("tap", function () {
+                var keyword = $(".keywordLD").val();
+                var pageLD = 1;
+                toCampList(keyword, "camp", pageLD);
+            })
+            //所属训练营弹出框页码控制
+            $("#camp").on('tap', '.next_page', function () {
+                var getTotalPage = $("#camp .camptotalPage").text();
+                pageLD++;
+                console.log(pageLD)
+                if (pageLD > getTotalPage) {
+                    mui.toast("已经最后一页了");
+                } else {
+                    var keyword = $(".keywordLD").val();
+                    toCampList(keyword, "camp", pageLD);
+                }
+            })
+            $("#camp").on('tap', '.prev_page', function () {
+                pageLD--;
+                if (pageLD < 1) {
+                    mui.toast("已经是第一页了");
+                } else {
+                    var keyword = $(".keywordLD").val();
+                    toCampList(keyword, "camp", pageLD);
+                }
+            })
+            //////////////////////////训练营///////////////////////////////////
+
+            //////////////////////常驻球场////////////////////////////////////
+            // 常驻球场
+            $(".courtList").on('tap', 'li', function () {
+                var court = $(this).find("font").text();
+                $(".courtCont").text(court);
+                var id = $(this).attr('data-id');
+                $(".court_id").val(id);
+                mui("#court").popover("toggle");
+            })
+            //清除常驻球场
+            $("#CourtDel").on('tap', '', function () {
+                $(".courtCont").text('');
+                $(".court_id").val("");
+                mui("#court").popover("toggle");
+            })
+            //搜索常驻球场
+            $("#searchCR").on("tap", function () {
+                var keyword = $(".keywordCR").val();
+                var pageCR = 1;
+                toCourtList(keyword, "court", pageCR);
+            })
+            //常驻球场弹出框页码控制
+            $("#court").on('tap', '.next_page', function () {
+                var getTotalPage = $("#court .totalPage").text();
+                pageCR++;
+                console.log(pageCR)
+                if (pageCR > getTotalPage) {
+                    mui.toast("已经最后一页了");
+                } else {
+                    var keyword = $(".keywordCR").val();
+                    toCourtList(keyword, "court", pageCR);
+                }
+            })
+            $("#court").on('tap', '.prev_page', function () {
+                pageCR--;
+                if (pageCR < 1) {
+                    mui.toast("已经是第一页了");
+                } else {
+                    var keyword = $(".keywordCR").val();
+                    toCourtList(keyword, "court", pageCR);
+                }
+            })
+            //////////////////////////训练营///////////////////////////////////
+
+            // 选择球队特点
+            $("#charaterConfirm").on('tap', '', function () {
+                $("input[name=checkbox-charater]").empty();
+                $(".hideCheckCh").empty();
+                if ($(".newCharater").val() == '') {
+                    mui.toast("添加的特点内容不能为空");
+                    return false;
+                }
+                var charaterCont = "";
+                $(".charaterList input[name='checkbox-charater']:checked").each(function () {
+                    var charater = $(this).siblings().val();
+                    var input = '<input type="hidden" value="' + $(this).siblings().val() + '">';
+                    $(".hideCheckCh").append(input);
+                    charaterCont += charater + ','
+                    $(".charater").text(charaterCont.substring(0, charaterCont.length - 1));
+                    charaterList = charaterCont.substring(0, charaterCont.length - 1)
+                });
+                console.log(charaterList)
+                mui("#charater").popover("toggle");
+            });
+
+            //球队特点列表复选框赋值
+            $("#setCharaterBox").on('tap', '', function () {
+                //每次打开先清空所有选择
+                $("input[name='checkbox-charater']").prop("checked", false);
+                //然后遍历出对应所选
+                $(".hideCheckCh input").each(function () {
+                    var checkCharacter = $(this).val();
+                    $("#charaterDiv").find("input[name='checkbox-charater']").filter(function () {
+                        return $(this).siblings().val() == checkCharacter
+                    }).prop("checked", true);
+                });
+            });
+
+            var addVal = '';
+            // 遍历输出的value值
+            $(".hideCheckCh input").each(function () {
+                var chVal = $(this).val();
+                addVal = "Yes";
+                //判断输出的value值与弹框中的value是否有相同
+                $(".newCharater").each(function () {
+                    if (chVal == $(this).val()) {
+                        addVal = "No";
+                        return false;
+                    }
+                });
+                //上面遍历如果没有相同值就添加到弹框内容去
+                if (addVal == "Yes") {
+                    var insertDiv = '<div class="mui-input-row mui-checkbox mui-left"><input type="text" value="' + chVal + '" disabled="" class="mui-text-left newCharater"><input name="checkbox-charater" type="checkbox"></div>'
+                    $(".charaterList .mui-input-row").eq(0).before(insertDiv)
+                }
+            });
+
+            // 新加的球队特点
+            $(".addCharater").on('tap', '', function () {
+                $(".charaterList .mui-input-row").eq(0).before('<div class="mui-input-row mui-checkbox mui-left"><input type="text" value="" placeholder="请输入添加的特点名称" class="mui-text-left newCharater wd83"/><i class="cancel-dom mui-icon mui-icon-close fr"></i><input name="checkbox-charater" type="checkbox"></div>');
+            })
+
+            // 删除
+            $(document).on('tap', ".cancel-dom", function () {
+                $(this).parent().remove();
+            });
+            ///////////////////////////////
+
+        });
+
+        // 获取数据并进行提交
+        function submitAction() {
+
+            var avg_age = $("input[name=avg_age]").val();
+            var avg_height = $("input[name=avg_height]").val();
+            var avg_weight = $("input[name=avg_weight]").val();
+            if (!(/^[0-9]*$/).test(avg_age)) {
+                mui.toast("平均年龄请填写数字");
+                return false;
+            }
+            if (!(/^[0-9]*$/).test(avg_height)) {
+                mui.toast("平均身高请填写数字");
+                return false;
+            }
+            if (!(/^[0-9]*$/).test(avg_weight)) {
+                mui.toast("平均体重请填写数字");
+                return false;
+            }
+
+            // 球衣颜色提交数组
+            colors = [];
+            $(".colorCont font").each(function () {
+                var color = $(this).text();
+                var color_style = $(this).attr("data-eng");
+                colors.push({ color: color, color_style: color_style });
+            });
+            console.log(colors)
+
+            //图文编辑状态转换浏览状态
+            tuwenToView()
+
+            //获取最终含简单html标签的图文内容
+            var introHtml = $(".introBox").html();
+            $(".introduce").val(introHtml);
+
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.colors = JSON.stringify(colors);
+            var introduce = $('textarea.introduce').val();
+            var descri = $('textarea.descri').val();
+            objData.introduce = introduce;
+            objData.descri = descri;
+            objData.charater = charaterList;
+            var url = "{:url('api/team/updateteam')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
+                    var goUrl = "{:url('team/teammanage')}" + '/team_id/{$teamInfo.id}';
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '修改失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
+        };
+
+        //训练营列表接口获取数据并追加到页面
+        var toCampList = function (keyword, wCamp, page) {
+            var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}/?page=" + page;
+            var wCampList = "ul.campList";
+            var currPage = ".currPage";
+            var totalPage = ".camptotalPage";
+            var member_id = "{$memberInfo.id}"
+            if (keyword != '' && wCamp != '') {
+                wCampList = "#" + wCamp + " ul.campList";
+                currPage = "#" + wCamp + " .currPage";
+                totalPage = "#" + wCamp + " .camptotalPage";
+            }
+            mui.ajax({
+                url: url,
+                data: {
+                    page: page,
+                    keyword: keyword,
+                    member_id: member_id,
+                    status: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-camp_id="' + data.data.data[i].camp_id + '"><font class="camp">' + data.data.data[i].camp + '</font></li>'
+                        }
+                        $(wCampList).empty();
+                        if (newli == '') {
+                            newli = '<p class="nodata">没有查找到数据哦</p>'
+                        }
+                        $(wCampList).append(newli);
+                        $(currPage).text(data.data.current_page);
+                        $(totalPage).text(data.data.last_page);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //场地列表接口获取数据并追加到页面 
+        var toCourtList = function (keyword, wCourt, page) {
+            var url = "{:url('api/court/getCourtListByPageApi','','',true)}/?page=" + page;
+            var wCourtList = "ul.courtList";
+            var currPage = ".currPage";
+            var totalPage = ".totalPage";
+            if (keyword != '' && wCourt != '') {
+                wCourtList = "#" + wCourt + " ul.courtList";
+                currPage = "#" + wCourt + " .currPage";
+                totalPage = "#" + wCourt + " .totalPage";
+            }
+            mui.ajax({
+                url: url,
+                data: {
+                    page: page,
+                    keyword: keyword
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '"><font class="court">' + data.data.data[i].court + '</font></li>'
+                        }
+                        $(wCourtList).empty();
+                        if (newli == '') {
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="请输入你要添加的场地" /><button class="mui-btn addBtn">确认</button></div>'
+                        }
+                        $(wCourtList).append(newli);
+                        $(currPage).text(data.data.current_page);
+                        $(totalPage).text(data.data.last_page);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //自定义获取球员列表(领队和队长)
+        var toTeamMemberList = function () {
+            var url = "{:url('api/team/teammemberlist','','',true)}";
+            var team_id = "{$teamInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    team_id: team_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var teamli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            teamli = teamli + '<li class="mui-table-view-cell listli detalisli" data-memberid="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '">' + data.data[i].member + '</li>'
+                        }
+                        $("ul.teamMemberList").empty();
+                        if (teamli == '') {
+                            teamli = '<p class="mui-text-center">没有查找到数据哦</p>'
+                        }
+                        $("ul.teamMemberList").append(teamli);
+
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //自定义获取球员列表(教练)
+        var TeamMemberOfCocahList = function () {
+            var url = "{:url('api/team/teammemberlist','','',true)}";
+            var team_id = "{$teamInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    team_id: team_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var teamOfCoachli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            teamOfCoachli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-coach" class="coach" type="checkbox" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"></div>'
+                        }
+                        $("#coachDiv").empty();
+                        if (teamOfCoachli == '') {
+                            teamOfCoachli = '<p class="mui-text-center">没有查找到数据哦</p>'
+                        }
+                        $("#coachDiv").append(teamOfCoachli);
+
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //自定义获取球员列表(后勤)
+        var TeamMemberOfCommitteeList = function () {
+            var url = "{:url('api/team/teammemberlist','','',true)}";
+            var team_id = "{$teamInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    team_id: team_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var teamOfCommitteehli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            teamOfCommitteehli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-committee" class="committee" type="checkbox" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"></div>'
+                        }
+                        $("#committeeDiv").empty();
+                        if (teamOfCommitteehli == '') {
+                            teamOfCommitteehli = '<p class="mui-text-center">没有查找到数据哦</p>'
+                        }
+                        $("#committeeDiv").append(teamOfCommitteehli);
+
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+    </script>
+</body>
+
+</html>

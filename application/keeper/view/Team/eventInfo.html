@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>活动详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style type="text/css">
+        .mui-preview-image.mui-fullscreen {
+            position: fixed;
+            z-index: 20;
+            background-color: #000;
+        }
+
+        .mui-preview-header,
+        .mui-preview-footer {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            z-index: 10;
+        }
+
+        .mui-preview-header {
+            height: 44px;
+            top: 0;
+        }
+
+        .mui-preview-footer {
+            height: 50px;
+            bottom: 0px;
+        }
+
+        .mui-preview-header .mui-preview-indicator {
+            display: block;
+            line-height: 50px;
+            color: #fff;
+            text-align: center;
+            margin: 15px auto 4;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            font-size: 16px;
+        }
+
+        .mui-preview-image {
+            display: none;
+            -webkit-animation-duration: 0.5s;
+            animation-duration: 0.5s;
+            -webkit-animation-fill-mode: both;
+            animation-fill-mode: both;
+        }
+
+        .mui-preview-image.mui-preview-in {
+            -webkit-animation-name: fadeIn;
+            animation-name: fadeIn;
+        }
+
+        .mui-preview-image.mui-preview-out {
+            background: none;
+            -webkit-animation-name: fadeOut;
+            animation-name: fadeOut;
+        }
+
+        .mui-preview-image.mui-preview-out .mui-preview-header,
+        .mui-preview-image.mui-preview-out .mui-preview-footer {
+            display: none;
+        }
+
+        .mui-zoom-scroller {
+            position: absolute;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .mui-preview-image img.mui-transitioning {
+            -webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        @-webkit-keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @-webkit-keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* 底部按钮点击去除背景颜色 */
+
+        .operation .opli a.mui-active {
+            background-color: inherit
+        }
+    </style>
+</head>
+
+<body class=whitebg>
+
+    <header id="header" class="mui-bar mui-bar-transparent">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+
+    <div class="mui-content">
+        <div class="list coach">
+            <div class="img4x3" style="background-image:url('{$eventInfo.cover}')"></div>
+
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell mui-media listli">
+                    <a href="javascript:;">
+                        <div class="mui-media-body wd52">
+                            <strong>{$eventInfo.event}</strong>
+                            <p class="mui-ellipsis">{$eventInfo.event_type}</p>
+                        </div>
+                        <div class="price-frame f18 rightLocation">{$eventInfo.team}</div>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Startingtim colororange"></span>开始时间</label>
+                    <span>{$eventInfo.start_time}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EndTime colororange"></span>结束时间</label>
+                    <span>{$eventInfo.end_time}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Location colororange"></span>所属地区</label>
+                    <span>{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>活动地点</label>
+                    <span>{$eventInfo.location}</span>
+                </li>
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="course">活动详情</span>
+                </div>
+                <li class="mui-table-view-cell listli introBox" style="padding:0 !important">{$eventInfo.event_des}</li>
+            </ul>
+
+            <div class="mui-table-view detalis-list list mainInfo mb">
+                <div class="page-header">
+                    <span class="course colororange statusText">报名人员</span>
+                    <span class="more">
+                        <a href="{:url('team/eventSignupList',['team_id'=>$teamInfo['id'],'event_id'=>$eventInfo['id']])}" class="mui-navigate-right">
+                            <b class="colororange">{$eventInfo.reg_number}</b> 人
+                        </a>
+                    </span>
+                </div>
+                <div class="imgShow overflow-x"></div>
+            </div>
+
+            <div class="page-header whitebg">
+                <span class="course">活动花絮</span>
+            </div>
+
+            {notempty name="eventInfo.album"}
+            <div class="mui-content-padded">
+                <div class="mui-row" style="min-height: 97px;max-height:299px;overflow-y:hidden;">
+                    {volist name="eventInfo.album" id="vol"}
+                    <div class="mui-col-xs-4 mui-col-sm-4" style="padding:0 2px">
+                        <img src="{$vol}" data-preview-src="" data-preview-group="1" style="width: 100%;height: 6rem;"> </div>
+                    {/volist}
+                </div>
+            </div>
+            {else/}
+            <p class="nohave">还没有上传花絮图哦</p>
+            {/notempty}
+
+        </div>
+
+        <div class="page-header whitebg border-b">
+            <span class="course wd52">评论</span>
+            <span class="more">评论
+                <span class="comment_count">0</span>&nbsp;|&nbsp;
+                <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>：
+                <span class="thumbup_count">0</span>
+            </span>
+        </div>
+
+        <ul class="mui-table-view comment-list mt55"></ul>
+
+        <!--底部操作-->
+        <ul class="mui-table-view operation mt">
+
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <a href="{:url('team/teamInfo',['team_id'=>$team_id])}">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+
+            <!-- 非队员已结束 -->
+            <li class="mui-table-view-cell mui-media mui-col-xs-10 mui-col-sm-10 opli bgblue status1 hide">
+                <a href="#fbcomment">
+                    发表评论
+                </a>
+            </li>
+
+            <!-- 队员未完成 -->
+            <li class="mui-table-view-cell mui-media mui-col-xs-10 mui-col-sm-10 opli bgred signupBtn status2 hide">
+                报名参加
+            </li>
+
+            <!-- 领队以上身份已结束 -->
+            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgblue status3 hide">
+                <a href="#fbcomment">
+                    发表评论
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bggreen status3 hide">
+                <a href="{:url('team/eventEdit',['team_id'=>$teamInfo['id'],'event_id'=>$eventInfo['id']])}">
+                    编辑/录入
+                </a>
+            </li>
+
+            <!-- 领队以上身份未完成 -->
+            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgred signupBtn status4 hide">
+                报名参加
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bggreen status4 hide">
+                <a href="{:url('team/eventEdit',['team_id'=>$teamInfo['id'],'event_id'=>$eventInfo['id']])}">
+                    编辑/录入
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+    </div>
+
+
+    <!-- 发表评论 -->
+    <div id="fbcomment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <ul class="mui-table-view operation">
+                <h5>
+                    <span class="type">发表评论</span>
+                    <a href="#fbcomment" class="mui-icon mui-icon-closeempty"></a>
+                </h5>
+                <li class="listli">
+                    <textarea rows="4" class="comment" placeholder="为这个活动做做评价吧。"></textarea>
+                </li>
+                <li class="mui-col-xs-12 opli commentBtn">提交申请</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="/static/frontend/js/mui.zoom.js"></script>
+    <script src="/static/frontend/js/mui.previewimage.js"></script>
+    <script>
+        mui.previewImage();
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        // a标签跳转
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
+
+        //轮播
+        var slider = mui("#slider");
+        slider.slider({
+            interval: 5000
+        });
+
+        var count = 1;
+
+        $(function () {
+
+            pulldownRefresh(); //页面打开时获取一次最新评论信息
+            isthumbsup(); //点赞状态
+            toSignUpList()
+
+            // 活动详情默认的提示
+            if ($(".introBox").html() == '') {
+                $(".introBox").append("<p class='nohave'>还没有活动详情描述哦</p>")
+            }
+
+            // 判断身份显示操作按钮
+            var teamrole = "{$teamrole}";
+            var is_finished = "{$eventInfo.is_finished}";
+
+            if (teamrole > 0 && is_finished == "已结束") {
+                $(".status3").show();
+            } else if (teamrole > 0 && is_finished == "未开始") {
+                $(".status4").show();
+            }
+
+            if (teamrole < 0 && is_finished == "已结束") {
+                $(".status1").show();
+            } else if (teamrole < 0 && is_finished == "未开始") {
+                $(".status2").show();
+            }
+
+            // 报名/参与人员的文字显示
+            if (is_finished == "已结束") {
+                $(".statusText").text("参与者");
+            }
+
+            //报名功能
+            $(".signupBtn").on('tap', function () {
+                //判断是否登陆会员
+                var event_id = "{$eventInfo.id}";
+                mui.ajax("{:url('api/team/jointeamevent')}", {
+                    data: {
+                        event_id: event_id,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.alert('报名成功', function () {
+                                location.reload();
+                            });
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+            //评论功能
+            $(".commentBtn").on('tap', function () {
+                var commented_id = "{$eventInfo.id}";
+                var comment = $(".comment").val();
+
+                if (comment == '') {
+                    mui.toast("评价内容不能为空哦");
+                    return false;
+                }
+
+                mui.ajax("{:url('api/team/addteamcomment')}", {
+                    data: {
+                        commented_id: commented_id,
+                        comment_type: 2,
+                        comment: comment
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.alert('评价成功，感谢你的评价！', function () {
+                                location.reload();
+                            });
+                            mui('#fbcomment').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+            //点赞功能
+            $(".thumbsup").on('tap', function () {
+                var commented_id = "{$eventInfo.id}";
+                mui.ajax("{:url('api/team/dianzan')}", {
+                    data: {
+                        commented_id: commented_id,
+                        comment_type: 2,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            $(".thumbup_count").text(data.thumbup_count);
+                            isthumbsup();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+        })
+
+        // 点赞状态
+        function isthumbsup() {
+            var commented_id = "{$eventInfo.id}";
+            mui.ajax("{:url('api/team/isthumbup')}", {
+                data: {
+                    commented_id: commented_id,
+                    comment_type: 2,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        $(".thumbup_count").text(data.thumbsup_count);
+                        if (data.thumbsup == 1) {
+                            $(".thumbsup").css("color", "red");
+                        } else {
+                            $(".thumbsup").css("color", "#737373");
+                        }
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+
+        //获取已经报名的活动人员列表
+        function toSignUpList() {
+            var url = "{:url('api/team/teameventmemberall')}";
+            var event_id = "{$eventInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    event_id: event_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var inactiveDiv = '';
+                        $(".imgShow").empty();
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            inactiveDiv += '<img src="' + data.data[i].avatar + '" style="margin-right:3px">'
+                        };
+                        $(".imgShow").append(inactiveDiv);
+                    }
+                    if (data.code == 100) {
+                        $(".imgShow").append('<p class="mui-text-center">还没有人员哦</p>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    console.log(type);
+                }
+            });
+        };
+
+
+        //下拉刷新具体业务实现
+        function pulldownRefresh() {
+            setTimeout(function () {
+                count = 1;//刷新并显示第一页
+                var page = count;
+                var gType = 1;//代表下拉刷新
+                toCommentList(page, gType);//具体取数据的方法
+            }, 100);
+        }
+        //上拉加载具体业务实现
+        function pullupRefresh() {
+            setTimeout(function () {
+                count++;//翻下一页
+                var page = count;
+                var gType = 2;//代表上拉加载
+                toCommentList(page, gType);//具体取数据的方法
+            }, 100);
+        }
+        //获取评论列表
+        function toCommentList(page, gType) {
+            var url = "{:url('api/team/teamcommentlist','','',true)}/?page=" + page;
+            var commented_id = "{$eventInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    commented_id: commented_id,
+                    comment_type: 2,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        $(".comment_count").text(data.data.length);
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
+                        }
+                    }
+                    if (gType == 1) {
+                        //上拉刷新
+                        $("ul.comment-list").empty().append(newli);
+                        if (newli == '') {
+                            $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
+                        }
+                    } else {
+                        //下拉加载 gType==2
+                        $("ul.comment-list").append(newli);
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>受邀比赛详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .operationFrame {
+            padding: 30px !important;
+        }
+
+        .operationFrame button {
+            padding: 8px 14px
+        }
+
+        .mui-popup-button {
+            font-size: 15px !important;
+        }
+
+        .teamLogo {
+            width: 100%;
+            border-radius: 50%;
+        }
+
+        @media screen and (min-width: 320px) {
+            .teamLogo {
+                height: 5.4rem;
+            }
+        }
+
+        @media screen and (min-width: 375px) {
+            .teamLogo {
+                height: 6.6rem;
+            }
+        }
+
+        @media screen and (min-width: 414px) {
+            .teamLogo {
+                height: 7.4rem;
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            .teamLogo {
+                height: 14.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body class=whitebg>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+
+    <div class="mui-content list ">
+
+        <form action="" class="mui-input-group mb">
+            <div class="mui-input-row h-auto">
+                <label class="wd45">回复的内容：</label>
+                <textarea class="reply wd52" value="{$applyInfo.reply}" placeholder="请填写同意或者拒绝理由">{$applyInfo.reply}</textarea>
+            </div>
+
+            <div class="mui-button-row h-auto operationFrame">
+                {eq name="$applyInfo.status" value="2"}
+                <p>你已经同意执裁比赛，点击拒绝按钮可以改变状态</p>{/eq} {eq name="$applyInfo.status" value="3"}
+                <p>你已经拒绝执裁比赛，点击同意按钮可以改变状态</p>{/eq}
+                <button class="mui-btn mui-btn-danger agree" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
+                <button class="mui-btn refuse" type="button" onclick="check_status(3)">拒绝</button>
+            </div>
+        </form>
+
+        <div class="list">
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli mui-text-center" style="padding:35px 15px 25px 15px;">
+                    <div class="mui-row">
+                        <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px;margin-left:13px">
+                            <img src="{$matchInfo.record.home_team_logo}" class="teamLogo">
+                        </div>
+                        <div class="mui-col-sm-3 mui-col-xs-3" style="padding: 12% 0;">
+                            <h3>VS</h3>
+                        </div>
+                        <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px">
+                            <img src="{$matchInfo.record.away_team_logo}" class="teamLogo awayLogo">
+                        </div>
+                    </div>
+                    <div class="mui-row">
+                        <div class="mui-col-sm-4 mui-col-xs-4" style="margin-left:13px">
+                            <strong class="f16 colororange">{$matchInfo.record.home_team}</strong>
+                        </div>
+                        <div class="mui-col-sm-3 mui-col-xs-3"></div>
+                        <div class="mui-col-sm-4 mui-col-xs-4">
+                            <strong class="f16 colororange away_team">{$matchInfo.record.away_team}</strong>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-opponent colororange"></span>对手</label>
+                    <span class="away_team">{$matchInfo.record.away_team}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EndTime colororange"></span>时间</label>
+                    <span class="match_time">{$matchInfo.match_time}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Location colororange"></span>地区</label>
+                    <span>{$matchInfo.province} {$matchInfo.city} {$matchInfo.area}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>比赛地点</label>
+                    <span class="court">{$matchInfo.court}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-category colororange"></span>比赛类型</label>
+                    <span class="match_time">{$matchInfo.type}</span>
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        $(function () {
+            // 如果对手为空
+            if ($(".away_team").text() == '') {
+                $(".away_team").text("暂无应战");
+            }
+
+            // 时间待定显示
+            var match_time = "{$matchInfo.match_time}";
+            var court = "{$matchInfo.court}";
+            if (match_time == 0) {
+                $(".match_time").text("待定");
+            }
+            if (court == '') {
+                $(".court").text("待定");
+            }
+
+            // 判断回复的状态
+            var status = "{$applyInfo.status}";
+            if (status == 2) {
+                $(".refuse").on("tap", "", function () {
+                    mui.confirm('你已经同意了执裁比赛，是否要更改为拒绝执裁比赛?', '', ['取消', '确定'], function (e) {
+                        if (e.index == 1) {
+                            check_status(3)
+                        }
+                    });
+                })
+            } else if (status == 3) {
+                $(".agree").on("tap", "", function () {
+                    mui.confirm('你已经拒绝了执裁比赛，是否要更改为同意执裁比赛?', '', ['取消', '确定'], function (e) {
+                        if (e.index == 1) {
+                            check_status(2)
+                        }
+                    });
+                })
+            }
+        })
+
+        // 审核操作
+        function check_status(value) {
+            var member = "{$memberInfo.member}";
+            var apply_id = "{$applyInfo.id}"
+            var reply = $(".reply").val();
+            mui.ajax("{:url('api/referee/replymatchinvit')}", {
+                data: {
+                    apply_id: apply_id,
+                    status: value,
+                    reply: reply
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (res) {
+                    console.log(res)
+                    if (res.code == 200) {
+                        var name = "{$matchInfo.name}"
+                        if (value == 2) {
+                            mui.toast('你已经同意执裁' + name + '比赛');
+                            window.setTimeout("history.back(-1)", 2000);
+                        } else {
+                            mui.toast('你已经拒绝执裁' + name + '比赛');
+                            window.setTimeout("history.back(-1)", 2000);
+                        }
+                    } else {
+                        mui.toast(res.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                    mui.toast('网络异常');
+                }
+            });
+        }
+
+    </script>
+
+</body>
+
+</html>

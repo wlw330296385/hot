@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>战绩列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <style>
+        /* 日期选择器视图 */
+
+        [data-type="month"] .mui-dtpicker-title h5 {
+            width: 100% !important;
+        }
+
+        [data-type="month"] .mui-picker {
+            width: 100% !important;
+        }
+
+        [data-type="month"] [data-id="title-m"] {
+            display: none !important;
+        }
+
+        [data-type="month"] .mui-dtpicker-body [data-id="picker-m"] {
+            display: none !important;
+        }
+
+        @media screen and (min-width:320px) {
+            #refreshContainer {
+                margin-top: 230px
+            }
+        }
+
+        @media screen and (min-width:375px) {
+            #refreshContainer {
+                margin-top: 209px
+            }
+        }
+    </style>
+</head>
+
+<body class=whitebg>
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">战绩列表</h1>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="list camp-list detalis-list otherInfo mt55">
+
+            <form action="" class="mui-input-group">
+                <div class="mui-input-row picker btn" id="demo6" data-options='{"type":"month"}'>
+                    <div class="mui-navigate-right">
+                        <label class="wd73" style="line-height:20px">
+                            <strong class="f16">{$teamInfo.name}战绩</strong>
+                        </label>
+                        <span id="result" class="ui-alert year">选择年份</span>
+                    </div>
+                </div>
+            </form>
+
+            <div class="nav-list record mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>场次</span>
+                            <div class="mui-media-body colorred">{$teamInfo.match_num}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>胜</span>
+                            <div class="mui-media-body colorred">{$teamInfo.match_win}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>负</span>
+                            <div class="mui-media-body colorred">{$teamInfo.match_lose}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>胜率</span>
+                            <div class="mui-media-body colorred">{$teamInfo.win_rate}</div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <ul class="mui-table-view mui-text-center">
+                <li class="mui-table-view-cell border-b">
+                    <ul class="mui-row" style="padding:0">
+                        <li class="mui-col-xs-1 mui-col-sm-1">
+                            <p>序号</p>
+                        </li>
+                        <li class="mui-col-xs-3 mui-col-sm-3">
+                            <p>日期</p>
+                        </li>
+                        <li class="mui-col-xs-4 mui-col-sm-4">
+                            <p>对手</p>
+                        </li>
+                        <li class="mui-col-xs-3 mui-col-sm-3">
+                            <p>比分</p>
+                        </li>
+                        <li class="mui-col-xs-1 mui-col-sm-1">
+                            <p>胜负</p>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <div id="refreshContainer" class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view mui-text-center match"></ul>
+                </div>
+            </div>
+
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="/keeper/">
+                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                    </a>
+                </li>
+                <a href="{:url('team/teamInfo',['team_id'=>$teamInfo['id']])}">
+                    <li class="mui-col-xs-10 mui-col-sm-10 opli bgred">
+                        球队主页
+                    </li>
+                </a>
+            </ul>
+
+        </div>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script>
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
+
+        (function ($) {
+            var result = $('#result')[0];
+            var btns = $('.btn');
+            btns.each(function (i, btn) {
+                btn.addEventListener('tap', function () {
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var id = this.getAttribute('id');
+
+                    var picker = new $.DtPicker(options);
+                    picker.show(function (rs) {
+                        result.innerText = rs.y.text;
+                        picker.dispose();
+                    });
+                }, false);
+            });
+        })(mui);
+
+        $(function () {
+
+            //初始化全局变量
+            var count = 1;
+            var sYear = '';
+
+            //选择年份
+            $(document).on('tap', '.mui-dtpicker-header .mui-btn', function () {
+                sYear = $(".year").text();
+                searchToList();
+            });
+
+            //搜索、下拉刷选后触发
+            function searchToList() {
+                count = 1;//显示第一页
+                var page = count;
+                var gType = 1;//代表下拉刷新
+                toList(page, gType);//具体取数据的方法
+            }
+
+            mui.init({
+                swipeBack: true, //启用右滑关闭功能
+                pullRefresh: {
+                    //下拉刷新上拉加载教练列表
+                    container: "#refreshContainer",
+                    down: {
+                        //下拉刷新
+                        height: 50,//可选.默认50.触发下拉刷新拖动距离
+                        auto: true,//可选,默认false.自动下拉刷新一次
+                        contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                        contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                        contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                        callback: pulldownRefresh
+                    },
+                    up: {
+                        //上拉加载
+                        height: 150,//可选.默认50.触发上拉加载拖动距离
+                        //auto:true,//可选,默认false.自动上拉加载一次
+                        contentrefresh: '正在加载...',
+                        contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                        callback: pullupRefresh
+                    }
+                }
+            });
+            //下拉刷新具体业务实现
+            function pulldownRefresh() {
+                setTimeout(function () {
+                    count = 1;//刷新并显示第一页
+                    var page = count;
+                    var gType = 1;//代表下拉刷新
+                    toList(page, gType);//具体取数据的方法
+                }, 100);
+            }
+            //上拉加载具体业务实现
+            function pullupRefresh() {
+                setTimeout(function () {
+                    count++;//翻下一页
+                    var page = count;
+                    var gType = 2;//代表上拉加载
+                    toList(page, gType);//具体取数据的方法
+                }, 100);
+            }
+
+            //接口获取数据并追加到页面
+            var toList = function (page, gType) {
+                //搜索关键字不能完全为空，否则查询为空
+                var url = "{:url('api/match/matchrecordlistpage','','',true)}" + '/?page=' + page;
+                var team_id = "{$team_id}"
+                mui.ajax({
+                    url: url,
+                    data: {
+                        team_id: team_id,
+                        // is_finished:1,
+                        // status:1,
+                        year: sYear,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data)
+                        var newli = '';
+                        if (data.code == 200) {
+                            for (var i = 0; i <= data.data.data.length - 1; i++) {
+                                // 将时间戳转成日期格式
+                                var matchTimeM = gettimeM(data.data.data[i].match_time * 1000);
+                                var matchTimeY = gettimeY(data.data.data[i].match_time * 1000);
+                                var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data.data[i].match_id + '/team_id/' + "{$team_id}";
+                                newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row" style="padding:0">'
+                                newli += '<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;"><p>' + (data.data.data.slice(0, i).length + 1) + '</p></li><li class="mui-col-xs-3 mui-col-sm-3"><p>' + matchTimeY + '</p><p>' + matchTimeM + '</p></li><li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">';
+                                if (data.data.data[i].home_score > data.data.data[i].away_score) {
+                                    newli += '<p class="colororange">' + data.data.data[i].away_team + '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p class="colororange">' + data.data.data[i].home_score + ':' + data.data.data[i].away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
+                                } else {
+                                    newli += '<p>' + data.data.data[i].away_team + '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p>' + data.data.data[i].home_score + ':' + data.data.data[i].away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
+                                }
+                                if (data.data.data[i].home_score > data.data.data[i].away_score) {
+                                    newli += '<p class="colororange">胜</p>'
+                                } else if (data.data.data[i].home_score < data.data.data[i].away_score) {
+                                    newli += '<p>负</p>'
+                                } else {
+                                    newli += '<p>--</p>'
+                                }
+                                newli += '</li></ul></a></li>'
+                            }
+                        }
+                        if (gType == 1) {
+                            //上拉刷新
+                            $(".match").empty().append(newli);
+                            mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                            mui('#refreshContainer').pullRefresh().refresh(true);
+                            if (newli == '') {
+                                $("ul.match").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                            }
+                        } else {
+                            //下拉加载 gType==2
+                            $(".match").append(newli);
+                        }
+                        if (newli != '') {
+                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                        } else {
+                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                        }
+
+                    },
+                    error: function (xhr, type, errerThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                    }
+                });
+            };
+        });
+
+        //创建补0函数
+        function p(s) {
+            return s < 10 ? '0' + s : s;
+        }
+        // 将时间戳转成日期格式
+        function gettimeM(M) {
+            var _time = new Date(M);
+            var month = _time.getMonth() + 1;
+            var day = _time.getDate();
+            return p(month) + "月" + p(day) + "日"
+        }
+        function gettimeY(Y) {
+            var _time = new Date(Y);
+            var year = _time.getFullYear();
+            return p(year) + "年";
+        }
+    </script>
+</body>
+
+</html>
