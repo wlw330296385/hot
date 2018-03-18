@@ -431,7 +431,7 @@ class Team extends Base {
         return view('Team/matchInfo');
     }
 
-    // 创建比赛
+    // 创建比赛信息
     public function creatematch() {
         $teamS = new TeamService();
         // 传入客队id 页面输出信息
@@ -453,6 +453,49 @@ class Team extends Base {
             'awayTeam' => $awayTeam,
             'refereeInfo' => $refereeInfo
         ]);
+    }
+
+    // 创建+录入比赛
+    public function directmatch() {
+        $match_id = input('match_id', 0);
+        $matchS = new MatchService();
+        $teamS = new TeamService();
+        $refereeS = new RefereeService();
+
+        // 传入客队id 页面输出信息
+        $awayTeam = [];
+        $awayTeamId = input('away_id');
+        if ($awayTeamId) {
+            $awayTeam = $teamS->getTeam(['id' => $awayTeamId]);
+        }
+
+        // 传入裁判id 页面输出信息
+        $refereeInfo = [];
+        $refereeId = input('referee_id');
+        $refereeS = new RefereeService();
+        if ($refereeId) {
+            $refereeInfo = $refereeS->getRefereeInfo(['id' => $refereeId]);
+        }
+
+        $memberlist = [];
+        $refereeList= [];
+        $matchInfo = [
+            'id' => 0,
+            'is_finished_num' => 0,
+            'is_finished' => '未完成',
+            'match_time' => 0,
+            'referee_type' => ''
+        ];
+        $directentry = 1;
+
+        $this->assign('match_id', $match_id);
+        $this->assign('matchInfo', $matchInfo);
+        $this->assign('directentry', $directentry);
+        $this->assign('memberList', $memberlist);
+        $this->assign('awayTeam', $awayTeam);
+        $this->assign('refereeList', $refereeList);
+        $this->assign('refereeInfo', $refereeInfo);
+        return view('Team/directMatch');
     }
 
     // 编辑比赛
