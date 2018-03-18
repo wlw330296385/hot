@@ -147,13 +147,15 @@ class TeamService
     }
 
     // 修改球队信息
-    public function updateTeam($data, $id)
+    public function updateTeam($data, $id, $validate=0)
     {
         $model = new Team();
-        // 验证数据
-        $validate = validate('TeamVal');
-        if (!$validate->scene('edit')->check($data)) {
-            return ['code' => 100, 'msg' => $validate->getError()];
+        if ($validate) { //$validate=1 启用验证器
+            // 验证数据
+            $validate = validate('TeamVal');
+            if (!$validate->scene('edit')->check($data)) {
+                return ['code' => 100, 'msg' => $validate->getError()];
+            }
         }
         // 保存数据，区分是否修改数据。成功返回true，失败记录错误信息
         //$res = $model->allowField(true)->update($data);
@@ -501,6 +503,11 @@ class TeamService
         }
 
         if ( !empty($data['coachMemberList']) && $data['coachMemberList'] != '[]' ) {
+            // 先将球队的"教练"status=-1为无效. 根据提交的"教练"数据覆盖或新增数据
+            $model->where([
+                'team_id' => $team_id,
+                'type' => 4
+            ])->update(['status' => -1]);
             // 转化提交"教练"数据
             $coachsData = json_decode($data['coachMemberList'], true);
             // 提交"教练"数据有无 team_member_role教练（type=4)数据
@@ -513,7 +520,8 @@ class TeamService
                         'id' => $hasRoleCoach['id'],
                         'member_id' => $coach['member_id'],
                         'member' => $coach['member'],
-                        'name' => $coach['name']
+                        'name' => $coach['name'],
+                        'status' => 1
                     ]);
                 } else {
                     // 插入新的教练team_member_role数据
@@ -536,6 +544,11 @@ class TeamService
         }
 
         if ( !empty($data['committeeMemberList']) && $data['committeeMemberList'] != '[]' ) {
+            // 先将球队的"队委"status=-1为无效. 根据提交的"队委"数据覆盖或新增数据
+            $model->where([
+                'team_id' => $team_id,
+                'type' => 1
+            ])->update(['status' => -1]);
             // 转化提交"队委"数据
             $committeesData = json_decode($data['committeeMemberList'], true);
             // 提交"队委"数据有无 team_member_role队委（type=1)数据
@@ -548,7 +561,8 @@ class TeamService
                         'id' => $hasRoleCommittee['id'],
                         'member_id' => $committee['member_id'],
                         'member' => $committee['member'],
-                        'name' => $committee['name']
+                        'name' => $committee['name'],
+                        'status' => 1
                     ]);
                 } else {
                     // 插入新的教练team_member_role数据

@@ -64,7 +64,7 @@ class Team extends Base
                     'captain_id' => $this->memberInfo['id'],
                     'captain' => $this->memberInfo['member']
                 ];
-                $saveTeamMemberRoleRes1 = $teamS->saveTeamMemberRole($teamMemberRoleData, $team_id);
+                $saveTeamMemberRoleRes1 = $teamS->setTeamMemberRole($teamMemberRoleData, $team_id);
                 if ($saveTeamMemberRoleRes1['code'] != 200) {
                     return json($saveTeamMemberRoleRes1);
                 }
@@ -94,7 +94,7 @@ class Team extends Base
                 return json($resSaveRole);
             }
 
-            $result = $teamS->updateTeam($data, $team_id);
+            $result = $teamS->updateTeam($data, $team_id, 1);
             if ($result['code'] == 200) {
                 // 更新team_member 球队名
                 db('team_member')->where('team_id', $team_id)->update(['team' => $data['name']]);
