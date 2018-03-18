@@ -275,7 +275,7 @@
             <div class="mui-input-row refereeCount hide">
                 <label>随机安排人数</label>
                 <input type="text" name="referee_count" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.referee_count}"
-                    {/eq} class="data refereeCount" placeholder="请填写随机安排的人数">
+                    {/eq} class="data countNum" placeholder="请填写随机安排的人数">
             </div>
             <div class="mui-input-row refereeRow hide h-auto">
                 <a href="#refereeDom" id="setReferee" class="mui-navigate-right">
@@ -287,6 +287,7 @@
                     <input type="hidden" name="referee_id" value="{volist name=" $refereeList " id="vol "}{$vol.referee_id},{/volist}" class="data">
                     <input type="hidden" name="referee_cost" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.referee_cost}"
                         {/eq} class="data">
+                        <input type="hidden" name="referee_count" class="data rowNum">
                 </a>
             </div>
             <div class="mui-input-row refereeRow hide h-auto">
@@ -1028,22 +1029,18 @@
             //裁判列表是否显示
             $("#refereeSlecct").change(function () {
                 var refereeNum = $(this).children("option:selected").val()
-                if (refereeNum == 2) {
-                    $(".refereeRow").show();
-                } else {
-                    $(".refereeRow").hide();
-                    $(".referee").text('');
-                    $('input[name=referee_id]').val('');
-                    $('input[name=referee_cost]').val('');
-                }
-                if (refereeNum == 1) {
-                    $(".refereeCount").show();
-                } else if (refereeNum == 0 || refereeNum == 2) {
+                if (refereeNum == 0) {
                     $(".refereeCount").hide();
-                    $(".refereeCount").val('');
+                    $(".refereeRow").hide();
+                } else if (refereeNum == 1) {
+                    $(".refereeCount").show();
+                    $(".refereeRow").hide();
+                } else if (refereeNum == 2) {
+                    $(".refereeCount").hide();
+                    $(".refereeRow").show();
                 }
             });
-
+           
             //清除裁判
             $("#RefereeDel").on('tap', '', function () {
                 $(".referee").text('');
@@ -1104,7 +1101,7 @@
                         $(".referee").text(refereeMember.substring(0, refereeMember.length - 1));
                         $("input[name=referee_id]").val(refereeMember_id.substring(0, refereeMember_id.length - 1));
                         $("input[name=referee_cost]").val(refereeSum);
-                        // $("input[name=referee_count]").val(refereeName.length);
+                        $(".refereeRow input[name=referee_count]").val(refereeName.length);
                         hideList += '<input type="hidden" data-referee="' + referee + '" data-referee_id="' + referee_id + '" data-referee_cost="' + referee_cost + '">';
                         mui("#refereeDom").popover("hide");
                     } else {
@@ -1554,11 +1551,15 @@
             // console.log(AwayMemberList)
 
             var refereeNum = $("#refereeSlecct").children("option:selected").val();
-            var refereeRow = $(".referee").text();
-            var refereeCount = $("input[name=referee_count]").val();
-            if (refereeNum == 2 && refereeRow == '') {
-                mui.toast("请选择裁判");
-                return false;
+            var refereeCount = $(".refereeCount input[name=referee_count]").val();
+            if (refereeNum == 2) {
+                $(".countNum").removeClass("data");
+                $(".rowNum").addClass("data");
+            } else if (refereeNum == 1) {
+                $("input[name=referee_id]").val("");
+                $("input[name=referee_cost]").val("");
+                $(".rowNum").removeClass("data");
+                $(".countNum").addClass("data");
             }
             if (!(/^[0-3]*$/).test(refereeCount)) {
                 mui.toast("裁判人数请填写数字且不能大于3人");
@@ -1941,12 +1942,9 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += '<li class="mui-input-row mui-checkbox mui-left" ><label class="wd52">' + data.data[i].referee + '</label><span class="wd45">出场费：' + data.data[i].appearance_fee + '</span><input name="checkbox-referee" class="" type="checkbox" data-referee="' + data.data[i].referee + '" data-referee_id="' + data.data[i].referee_id + '" data-referee_cost="' + data.data[i].appearance_fee + '"></li>'
                         }
-                        if (newli == '') {
-                            newli = '<p class="nohave">没有查找到数据哦</p>'
-                        }
                         $(".refereeAttendList").empty().append(newli);
                     } else {
-                        mui.toast('数据获取失败,请稍候再试');
+                        $(".refereeAttendList").empty().append('<p class="nohave">没有查找到数据哦</p>');
                     }
                 },
                 error: function (xhr, type, errerThrown) {
