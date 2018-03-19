@@ -629,7 +629,7 @@ class Team extends Base {
 
     // 裁判申请执裁比赛列表
     public function matchrefereeapplylist() {
-        return view('team/matchRefereeApplyList');
+        return view('Team/matchRefereeApplyList');
     }
 
     // 裁判申请执裁比赛详情
@@ -647,7 +647,7 @@ class Team extends Base {
         }
         $refereeInfo = $refereeService->getRefereeInfo(['id' =>$applyInfo['referee_id']]);
 
-        return view('team/matchRefereeApply', [
+        return view('Team/matchRefereeApply', [
             'applyInfo' => $applyInfo,
             'matchInfo' => $matchInfo,
             'refereeInfo' => $refereeInfo

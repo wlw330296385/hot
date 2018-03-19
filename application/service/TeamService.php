@@ -512,7 +512,7 @@ class TeamService
             $coachsData = json_decode($data['coachMemberList'], true);
             // 提交"教练"数据有无 team_member_role教练（type=4)数据
             foreach ($coachsData as $coach) {
-                $hasRoleCoach = $model->where(['team_id' => $team_id, 'member_id' => $coach['member_id'], 'member' => $coach['member'], 'name' => $coach['name'], 'type' => 4])->find();
+                $hasRoleCoach = $model->where(['team_id' => $team_id, 'member_id' => $coach['member_id'], 'member' => $coach['member'], 'type' => 4])->find();
                 if ($hasRoleCoach) {
                     $hasRoleCoach = $hasRoleCoach->toArray();
                     // 覆盖原"教练"team_member_role
@@ -553,7 +553,7 @@ class TeamService
             $committeesData = json_decode($data['committeeMemberList'], true);
             // 提交"队委"数据有无 team_member_role队委（type=1)数据
             foreach ($committeesData as $committee) {
-                $hasRoleCommittee = $model->where(['team_id' => $team_id, 'member_id' => $committee['member_id'], 'member' => $committee['member'], 'name' => $committee['name'], 'type' => 1])->find();
+                $hasRoleCommittee = $model->where(['team_id' => $team_id, 'member_id' => $committee['member_id'], 'member' => $committee['member'], 'type' => 1])->find();
                 if ($hasRoleCommittee) {
                     $hasRoleCommittee = $hasRoleCommittee->toArray();
                     // 覆盖原"教练"team_member_role
